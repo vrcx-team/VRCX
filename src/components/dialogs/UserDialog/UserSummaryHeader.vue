@@ -144,8 +144,8 @@
                         </Badge>
                     </TooltipWrapper>
                     <TooltipWrapper v-else-if="userDialog.ref.$platform === 'ios'" side="top" content="iOS">
-                        <Badge variant="outline" class="text-[#8e8e93] border-[#8e8e93]">
-                            <Apple class="m-0.5 text-[#8e8e93]" />
+                        <Badge variant="outline" class="text-platform-ios border-platform-ios">
+                            <Apple class="m-0.5 text-platform-ios" />
                         </Badge>
                     </TooltipWrapper>
                     <Badge v-else-if="userDialog.ref.$platform" variant="outline" class="x-tag-platform-other">

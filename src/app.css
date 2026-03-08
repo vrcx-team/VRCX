@@ -129,35 +129,35 @@ img.friends-list-avatar {
     width: 9px;
     height: 9px;
     content: '';
-    background: #909399;
+    background: var(--status-offline);
     border-radius: 50%;
 }
 
 .x-friend-item .status-icon.active::after {
-    background: #f4e05e;
+    background: var(--status-active);
 }
 
 .x-friend-item .status-icon.online::after {
-    background: #67c23a;
+    background: var(--status-online);
 }
 
 .x-friend-item .status-icon.joinme::after {
-    background: #00b8ff;
+    background: var(--status-joinme);
     mask-image: url(/images/masks/joinme.svg);
 }
 
 .x-friend-item .status-icon.askme::after {
-    background: #ff9500;
+    background: var(--status-askme);
     mask-image: url(/images/masks/askme.svg);
 }
 
 .x-friend-item .status-icon.busy::after {
-    background: #ff2c2c;
+    background: var(--status-busy);
     mask-image: url(/images/masks/busy.svg);
 }
 
 .x-friend-item .status-icon.offline::after {
-    background: #909399;
+    background: var(--status-offline);
 }
 
 .x-friend-item > .detail {
@@ -211,57 +211,57 @@ i.x-status-icon {
     display: inline-block;
     width: 10px;
     height: 10px;
-    background: #808080;
+    background: var(--status-offline-alt);
     border-radius: 50%;
 }
 
 i.x-user-status.active {
-    background: #f4e05e;
+    background: var(--status-active);
 }
 
 i.x-user-status.online {
-    background: #67c23a;
+    background: var(--status-online);
 }
 
 i.x-user-status.joinme {
-    background: #00b8ff;
+    background: var(--status-joinme);
     mask-image: url(/images/masks/joinme.svg);
 }
 
 i.x-user-status.askme {
-    background: #ff9500;
+    background: var(--status-askme);
     mask-image: url(/images/masks/askme.svg);
 }
 
 i.x-user-status.busy {
-    background: #ff2c2c;
+    background: var(--status-busy);
     mask-image: url(/images/masks/busy.svg);
 }
 
 i.x-status-icon.green {
-    background: #67c23a;
+    background: var(--status-online);
 }
 
 i.x-status-icon.blue {
-    background: #00b8ff;
+    background: var(--status-joinme);
 }
 
 i.x-status-icon.orange {
-    background: #ff9500;
+    background: var(--status-askme);
 }
 
 i.x-status-icon.red {
-    background: #ff2c2c;
+    background: var(--status-busy);
 }
 
 .x-tag-platform-pc {
-    color: #0078d4;
-    border-color: #0078d4 !important;
+    color: var(--platform-pc);
+    border-color: var(--platform-pc) !important;
 }
 
 .x-tag-platform-quest {
-    color: #3ddc84;
-    border-color: #3ddc84 !important;
+    color: var(--platform-quest);
+    border-color: var(--platform-quest) !important;
 }
 
 .x-tag-friend {

@@ -25,16 +25,13 @@
                                     class="absolute top-1 right-1 flex -space-x-1">
                                     <span
                                         v-if="platformInfo.isPC"
-                                        class="size-2.5 rounded-full border opacity-70"
-                                        style="background: #0078d4" />
+                                        class="size-2.5 rounded-full border opacity-70 bg-platform-pc" />
                                     <span
                                         v-if="platformInfo.isQuest"
-                                        class="size-2.5 rounded-full border opacity-70"
-                                        style="background: #3ddc84" />
+                                        class="size-2.5 rounded-full border opacity-70 bg-platform-quest" />
                                     <span
                                         v-if="platformInfo.isIos"
-                                        class="size-2.5 rounded-full border opacity-70"
-                                        style="background: #8e8e93" />
+                                        class="size-2.5 rounded-full border opacity-70 bg-platform-ios" />
                                 </div>
                             </div>
                             <div
@@ -175,7 +172,10 @@
                         <Badge v-if="platformInfo.isQuest" class="x-tag-platform-quest" variant="outline">
                             <Smartphone class="h-3 w-3" />
                         </Badge>
-                        <Badge v-if="platformInfo.isIos" class="text-[#8e8e93] border-[#8e8e93]" variant="outline">
+                        <Badge
+                            v-if="platformInfo.isIos"
+                            class="text-platform-ios border-platform-ios"
+                            variant="outline">
                             <Apple class="h-3 w-3" />
                         </Badge>
                     </div>

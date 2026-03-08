@@ -193,7 +193,7 @@ export function getColumns({
                         )}
                         {platforms.isIos && (
                             <Badge
-                                class="text-[#8e8e93] border-[#8e8e93]"
+                                class="text-platform-ios border-platform-ios"
                                 variant="outline"
                             >
                                 <Apple class="h-3.5 w-3.5" />

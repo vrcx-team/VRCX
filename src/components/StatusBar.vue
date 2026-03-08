@@ -593,11 +593,11 @@
     }
 
     .dot-green {
-        background: #67c23a;
+        background: var(--status-online);
     }
 
     .dot-gray {
-        background: #808080;
+        background: var(--status-offline-alt);
     }
 
     .status-label {

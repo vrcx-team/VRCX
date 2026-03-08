@@ -80,18 +80,28 @@
                             </TooltipWrapper>
                             <TooltipWrapper v-if="avatarDialog.isIos" side="top" content="iOS">
                                 <Badge
-                                    class="text-[#8e8e93] border-[#8e8e93]"
+                                    class="text-platform-ios border-platform-ios"
                                     variant="outline"
                                     style="margin-right: 5px; margin-top: 5px"
-                                    ><Apple class="h-4 w-4 text-[#8e8e93]" />
+                                    ><Apple class="h-4 w-4 text-platform-ios" />
                                     <span
                                         v-if="avatarDialog.platformInfo.ios"
-                                        :class="['x-grey', 'x-tag-border-left', 'text-[#8e8e93]', 'border-[#8e8e93]']"
+                                        :class="[
+                                            'x-grey',
+                                            'x-tag-border-left',
+                                            'text-platform-ios',
+                                            'border-platform-ios'
+                                        ]"
                                         >{{ avatarDialog.platformInfo.ios.performanceRating }}</span
                                     >
                                     <span
                                         v-if="avatarDialog.fileAnalysis.ios?._fileSize"
-                                        :class="['x-grey', 'x-tag-border-left', 'text-[#8e8e93]', 'border-[#8e8e93]']"
+                                        :class="[
+                                            'x-grey',
+                                            'x-tag-border-left',
+                                            'text-platform-ios',
+                                            'border-platform-ios'
+                                        ]"
                                         >{{ avatarDialog.fileAnalysis.ios._fileSize }}</span
                                     >
                                 </Badge>
@@ -738,6 +748,10 @@
         }
     );
 
+    /**
+     *
+     * @param tabName
+     */
     function handleAvatarDialogTab(tabName) {
         avatarDialog.value.lastActiveTab = tabName;
         if (tabName === 'JSON') {
@@ -745,10 +759,17 @@
         }
     }
 
+    /**
+     *
+     */
     function loadLastActiveTab() {
         handleAvatarDialogTab(avatarDialog.value.lastActiveTab);
     }
 
+    /**
+     *
+     * @param tabName
+     */
     function avatarDialogTabClick(tabName) {
         if (tabName === avatarDialog.value.lastActiveTab) {
             if (tabName === 'JSON') {
@@ -759,10 +780,17 @@
         handleAvatarDialogTab(tabName);
     }
 
+    /**
+     *
+     * @param imageId
+     */
     function getImageUrlFromImageId(imageId) {
         return `${AppDebug.endpointDomain}/file/${imageId}/1/`;
     }
 
+    /**
+     *
+     */
     function handleDialogOpen() {
         setAvatarTagsDialog.value.visible = false;
         avatarDialog.value.timeSpent = 0;
@@ -772,6 +800,9 @@
         getAvatarMemo();
     }
 
+    /**
+     *
+     */
     function getAvatarTimeSpent() {
         const D = avatarDialog.value;
         avatarDialog.value.timeSpent = 0;
@@ -785,6 +816,9 @@
         });
     }
 
+    /**
+     *
+     */
     function getAvatarMemo() {
         const D = avatarDialog.value;
         database.getAvatarMemoDB(D.id).then((res) => {
@@ -794,6 +828,10 @@
         });
     }
 
+    /**
+     *
+     * @param command
+     */
     function avatarDialogCommand(command) {
         const D = avatarDialog.value;
         switch (command) {
@@ -988,10 +1026,17 @@
         }
     }
 
+    /**
+     *
+     */
     function showChangeAvatarImageDialog() {
         document.getElementById('AvatarImageUploadButton').click();
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangeAvatarImage(e) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#AvatarImageUploadButton',
@@ -1010,6 +1055,10 @@
         cropDialogOpen.value = true;
     }
 
+    /**
+     *
+     * @param blob
+     */
     async function onCropConfirmAvatar(blob) {
         changeAvatarImageLoading.value = true;
         try {
@@ -1047,6 +1096,10 @@
         }
     }
 
+    /**
+     *
+     * @param avatar
+     */
     function promptChangeAvatarDescription(avatar) {
         modalStore
             .prompt({
@@ -1075,6 +1128,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param avatar
+     */
     function promptRenameAvatar(avatar) {
         modalStore
             .prompt({
@@ -1103,6 +1160,9 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     */
     function onAvatarMemoChange() {
         if (memo.value) {
             database.setAvatarMemo({
@@ -1115,18 +1175,33 @@
         }
     }
 
+    /**
+     *
+     * @param id
+     */
     function copyAvatarId(id) {
         copyToClipboard(id);
     }
 
+    /**
+     *
+     * @param id
+     */
     function copyAvatarUrl(id) {
         copyToClipboard(`https://vrchat.com/home/avatar/${id}`);
     }
 
+    /**
+     *
+     */
     function refreshAvatarDialogTreeData() {
         treeData.value = formatJsonVars(avatarDialog.value.ref);
     }
 
+    /**
+     *
+     * @param avatarId
+     */
     function showSetAvatarTagsDialog(avatarId) {
         const D = setAvatarTagsDialog.value;
         D.selectedAvatarIds = [avatarId];
@@ -1175,6 +1250,9 @@
         });
     }
 
+    /**
+     *
+     */
     function showSetAvatarStylesDialog() {
         const D = setAvatarStylesDialog.value;
         D.visible = true;
@@ -1199,10 +1277,17 @@
         });
     }
 
+    /**
+     *
+     */
     function displayAvatarGalleryUpload() {
         document.getElementById('AvatarGalleryUploadButton').click();
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangeAvatarGallery(e) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#AvatarGalleryUploadButton',

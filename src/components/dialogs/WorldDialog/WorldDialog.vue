@@ -83,13 +83,18 @@
 
                             <TooltipWrapper v-if="worldDialog.isIos" side="top" content="iOS">
                                 <Badge
-                                    class="text-[#8e8e93] border-[#8e8e93]"
+                                    class="text-platform-ios border-platform-ios"
                                     variant="outline"
                                     style="margin-right: 5px; margin-top: 5px">
-                                    <Apple class="h-4 w-4 text-[#8e8e93]" />
+                                    <Apple class="h-4 w-4 text-platform-ios" />
                                     <span
                                         v-if="worldDialog.fileAnalysis.ios?._fileSize"
-                                        :class="['x-grey', 'x-tag-border-left', 'text-[#8e8e93]', 'border-[#8e8e93]']">
+                                        :class="[
+                                            'x-grey',
+                                            'x-tag-border-left',
+                                            'text-platform-ios',
+                                            'border-platform-ios'
+                                        ]">
                                         {{ worldDialog.fileAnalysis.ios._fileSize }}
                                     </span>
                                 </Badge>

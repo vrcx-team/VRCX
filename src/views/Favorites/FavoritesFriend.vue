@@ -1407,15 +1407,15 @@
     }
 
     .group-item--public {
-        border-left: 3px solid #22c55e;
+        border-left: 3px solid var(--visibility-public);
     }
 
     .group-item--friends {
-        border-left: 3px solid #0ea5e9;
+        border-left: 3px solid var(--visibility-friends);
     }
 
     .group-item--private {
-        border-left: 3px solid #ef4444;
+        border-left: 3px solid var(--visibility-private);
     }
 
     .group-item.is-active {

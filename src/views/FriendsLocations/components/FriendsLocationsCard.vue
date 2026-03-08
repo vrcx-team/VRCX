@@ -277,51 +277,51 @@
     }
 
     .friend-card__status-dot--online {
-        background: #67c23a;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #67c23a 40%, transparent);
+        background: var(--status-online);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-online) 40%, transparent);
     }
 
     .friend-card__status-dot--active {
         background: transparent;
-        border: calc(2px * var(--card-scale)) solid #67c23a;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #67c23a 40%, transparent);
+        border: calc(2px * var(--card-scale)) solid var(--status-online);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-online) 40%, transparent);
     }
 
     .friend-card__status-dot--active-join {
         background: transparent;
-        border: calc(2px * var(--card-scale)) solid #00b8ff;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #00b8ff 40%, transparent);
+        border: calc(2px * var(--card-scale)) solid var(--status-joinme);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-joinme) 40%, transparent);
     }
 
     .friend-card__status-dot--active-ask {
         background: transparent;
-        border: calc(2px * var(--card-scale)) solid #ff9500;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #ff9500 40%, transparent);
+        border: calc(2px * var(--card-scale)) solid var(--status-askme);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-askme) 40%, transparent);
     }
 
     .friend-card__status-dot--active-busy {
         background: transparent;
-        border: calc(2px * var(--card-scale)) solid #ff2c2c;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #ff2c2c 40%, transparent);
+        border: calc(2px * var(--card-scale)) solid var(--status-busy);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-busy) 40%, transparent);
     }
 
     .friend-card__status-dot--join {
-        background: #00b8ff;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #00b8ff 40%, transparent);
+        background: var(--status-joinme);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-joinme) 40%, transparent);
     }
 
     .friend-card__status-dot--busy {
-        background: #ff2c2c;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #ff2c2c 40%, transparent);
+        background: var(--status-busy);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-busy) 40%, transparent);
     }
 
     .friend-card__status-dot--ask {
-        background: #ff9500;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #ff9500 40%, transparent);
+        background: var(--status-askme);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-askme) 40%, transparent);
     }
 
     .friend-card__status-dot--offline {
-        background: #737f8d;
+        background: var(--status-offline-card);
     }
 
     .friend-card__body {

@@ -1305,7 +1305,7 @@
                             <span v-text="feed.avatar.name" style="margin-left: 10px"></span>
                             <span
                                 v-if="feed.avatar.releaseStatus === 'public'"
-                                style="margin-left: 10px; color: #67c23a"
+                                style="margin-left: 10px; color: var(--status-online)"
                                 >(Public)</span
                             >
                             <span
@@ -1353,11 +1353,19 @@
                         </template>
                         <template v-else-if="feed.type === 'OnPlayerJoined'">
                             <span style="margin-left: 10px; color: #a3a3a3">has joined</span>
-                            <span v-if="feed.platform === 'Desktop'" style="color: #00b8ff; margin-left: 10px"
+                            <span
+                                v-if="feed.platform === 'Desktop'"
+                                style="color: var(--status-joinme); margin-left: 10px"
                                 >Desktop</span
                             >
-                            <span v-else-if="feed.platform === 'VR'" style="color: #00b8ff; margin-left: 10px">VR</span>
-                            <span v-else-if="feed.platform === 'Quest'" style="color: #67c23a; margin-left: 10px"
+                            <span
+                                v-else-if="feed.platform === 'VR'"
+                                style="color: var(--status-joinme); margin-left: 10px"
+                                >VR</span
+                            >
+                            <span
+                                v-else-if="feed.platform === 'Quest'"
+                                style="color: var(--platform-quest); margin-left: 10px"
                                 >Android</span
                             >
                             <span v-else-if="feed.platform === 'iOS'" style="color: #c7c7ce; margin-left: 10px"
