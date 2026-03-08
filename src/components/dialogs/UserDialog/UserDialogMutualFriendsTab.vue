@@ -1,0 +1,154 @@
+<template>
+    <div style="display: flex; align-items: center; justify-content: space-between">
+        <div style="display: flex; align-items: center">
+            <Button
+                class="rounded-full"
+                variant="ghost"
+                size="icon-sm"
+                :disabled="userDialog.isMutualFriendsLoading"
+                @click="getUserMutualFriends(userDialog.id)">
+                <Spinner v-if="userDialog.isMutualFriendsLoading" />
+                <RefreshCw v-else />
+            </Button>
+            <span style="margin-left: 6px">{{
+                t('dialog.user.groups.total_count', { count: userDialog.mutualFriends.length })
+            }}</span>
+        </div>
+        <div style="display: flex; align-items: center">
+            <span style="margin-right: 6px">{{ t('dialog.user.groups.sort_by') }}</span>
+            <Select
+                :model-value="userDialogMutualFriendSortingKey"
+                :disabled="userDialog.isMutualFriendsLoading"
+                @update:modelValue="setUserDialogMutualFriendSortingByKey">
+                <SelectTrigger size="sm" @click.stop>
+                    <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem
+                        v-for="(item, key) in userDialogMutualFriendSortingOptions"
+                        :key="String(key)"
+                        :value="String(key)">
+                        {{ t(item.name) }}
+                    </SelectItem>
+                </SelectContent>
+            </Select>
+        </div>
+    </div>
+    <ul class="flex flex-wrap items-start" style="margin-top: 8px; overflow: auto; max-height: 250px; min-width: 130px">
+        <li
+            v-for="user in userDialog.mutualFriends"
+            :key="user.id"
+            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
+            @click="showUserDialog(user.id)">
+            <div class="relative inline-block flex-none size-9 mr-2.5">
+                <img class="size-full rounded-full object-cover" :src="userImage(user)" loading="lazy" />
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <span
+                    class="block truncate font-medium leading-[18px]"
+                    :style="{ color: user.$userColour }"
+                    v-text="user.displayName"></span>
+            </div>
+        </li>
+    </ul>
+</template>
+
+<script setup>
+    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { Button } from '@/components/ui/button';
+    import { RefreshCw } from 'lucide-vue-next';
+    import { Spinner } from '@/components/ui/spinner';
+    import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
+
+    import {
+        compareByDisplayName,
+        compareByFriendOrder,
+        compareByLastActiveRef,
+        userImage
+    } from '../../../shared/utils';
+    import { database } from '../../../service/database';
+    import { processBulk } from '../../../service/request';
+    import { useOptionKeySelect } from '../../../composables/useOptionKeySelect';
+    import { useUserStore } from '../../../stores';
+    import { userDialogMutualFriendSortingOptions } from '../../../shared/constants';
+    import { userRequest } from '../../../api';
+
+    const { t } = useI18n();
+
+    const userStore = useUserStore();
+    const { userDialog, currentUser } = storeToRefs(userStore);
+    const { cachedUsers, showUserDialog } = userStore;
+
+    const { selectedKey: userDialogMutualFriendSortingKey, selectByKey: setUserDialogMutualFriendSortingByKey } =
+        useOptionKeySelect(
+            userDialogMutualFriendSortingOptions,
+            () => userDialog.value.mutualFriendSorting,
+            setUserDialogMutualFriendSorting
+        );
+
+    /**
+     *
+     * @param sortOrder
+     */
+    async function setUserDialogMutualFriendSorting(sortOrder) {
+        const D = userDialog.value;
+        D.mutualFriendSorting = sortOrder;
+        switch (sortOrder.value) {
+            case 'alphabetical':
+                D.mutualFriends.sort(compareByDisplayName);
+                break;
+            case 'lastActive':
+                D.mutualFriends.sort(compareByLastActiveRef);
+                break;
+            case 'friendOrder':
+                D.mutualFriends.sort(compareByFriendOrder);
+                break;
+        }
+    }
+
+    /**
+     *
+     * @param userId
+     */
+    async function getUserMutualFriends(userId) {
+        userDialog.value.mutualFriends = [];
+        if (currentUser.value.hasSharedConnectionsOptOut) {
+            return;
+        }
+        userDialog.value.isMutualFriendsLoading = true;
+        const params = {
+            userId,
+            n: 100,
+            offset: 0
+        };
+        processBulk({
+            fn: userRequest.getMutualFriends,
+            N: -1,
+            params,
+            handle: (args) => {
+                for (const json of args.json) {
+                    if (userDialog.value.mutualFriends.some((u) => u.id === json.id)) {
+                        continue;
+                    }
+                    const ref = cachedUsers.get(json.id);
+                    if (typeof ref !== 'undefined') {
+                        userDialog.value.mutualFriends.push(ref);
+                    } else {
+                        userDialog.value.mutualFriends.push(json);
+                    }
+                }
+                setUserDialogMutualFriendSorting(userDialog.value.mutualFriendSorting);
+            },
+            done: (success) => {
+                userDialog.value.isMutualFriendsLoading = false;
+                if (success) {
+                    const mutualIds = userDialog.value.mutualFriends.map((u) => u.id);
+                    database.updateMutualsForFriend(userId, mutualIds);
+                }
+            }
+        });
+    }
+
+    defineExpose({ getUserMutualFriends });
+</script>

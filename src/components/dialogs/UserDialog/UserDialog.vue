@@ -554,756 +554,23 @@
             </template>
 
             <template v-if="userDialog.id !== currentUser.id && !currentUser.hasSharedConnectionsOptOut" #mutual>
-                <div style="display: flex; align-items: center; justify-content: space-between">
-                    <div style="display: flex; align-items: center">
-                        <Button
-                            class="rounded-full"
-                            variant="ghost"
-                            size="icon-sm"
-                            :disabled="userDialog.isMutualFriendsLoading"
-                            @click="getUserMutualFriends(userDialog.id)">
-                            <Spinner v-if="userDialog.isMutualFriendsLoading" />
-                            <RefreshCw v-else />
-                        </Button>
-                        <span style="margin-left: 6px">{{
-                            t('dialog.user.groups.total_count', { count: userDialog.mutualFriends.length })
-                        }}</span>
-                    </div>
-                    <div style="display: flex; align-items: center">
-                        <span style="margin-right: 6px">{{ t('dialog.user.groups.sort_by') }}</span>
-                        <Select
-                            :model-value="userDialogMutualFriendSortingKey"
-                            :disabled="userDialog.isMutualFriendsLoading"
-                            @update:modelValue="setUserDialogMutualFriendSortingByKey">
-                            <SelectTrigger size="sm" @click.stop>
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem
-                                    v-for="(item, key) in userDialogMutualFriendSortingOptions"
-                                    :key="String(key)"
-                                    :value="String(key)">
-                                    {{ t(item.name) }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
-                <ul
-                    class="flex flex-wrap items-start"
-                    style="margin-top: 8px; overflow: auto; max-height: 250px; min-width: 130px">
-                    <li
-                        v-for="user in userDialog.mutualFriends"
-                        :key="user.id"
-                        class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                        @click="showUserDialog(user.id)">
-                        <div class="relative inline-block flex-none size-9 mr-2.5">
-                            <img class="size-full rounded-full object-cover" :src="userImage(user)" loading="lazy" />
-                        </div>
-                        <div class="flex-1 overflow-hidden">
-                            <span
-                                class="block truncate font-medium leading-[18px]"
-                                :style="{ color: user.$userColour }"
-                                v-text="user.displayName"></span>
-                        </div>
-                    </li>
-                </ul>
+                <UserDialogMutualFriendsTab ref="mutualFriendsTabRef" />
             </template>
 
             <template #Groups>
-                <div style="display: flex; align-items: center; justify-content: space-between">
-                    <div style="display: flex; align-items: center">
-                        <Button
-                            class="rounded-full"
-                            variant="ghost"
-                            size="icon-sm"
-                            :disabled="userDialog.isGroupsLoading"
-                            @click="getUserGroups(userDialog.id)">
-                            <Spinner v-if="userDialog.isGroupsLoading" />
-                            <RefreshCw v-else />
-                        </Button>
-                        <span style="margin-left: 6px">{{
-                            t('dialog.user.groups.total_count', { count: userDialog.userGroups.groups.length })
-                        }}</span>
-                        <template v-if="userDialogGroupEditMode">
-                            <span
-                                style="
-                                    margin-left: 8px;
-
-                                    font-size: 10px;
-                                "
-                                >{{ t('dialog.user.groups.hold_shift') }}</span
-                            >
-                        </template>
-                    </div>
-                    <div style="display: flex; align-items: center">
-                        <template v-if="!userDialogGroupEditMode">
-                            <span style="margin-right: 6px">{{ t('dialog.user.groups.sort_by') }}</span>
-                            <Select
-                                :model-value="userDialogGroupSortingKey"
-                                :disabled="userDialog.isGroupsLoading"
-                                @update:modelValue="setUserDialogGroupSortingByKey">
-                                <SelectTrigger size="sm" @click.stop>
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem
-                                        v-for="(item, key) in userDialogGroupSortingOptions"
-                                        :key="String(key)"
-                                        :value="String(key)"
-                                        :disabled="
-                                            item === userDialogGroupSortingOptions.inGame &&
-                                            userDialog.id !== currentUser.id
-                                        ">
-                                        {{ t(item.name) }}
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </template>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            v-if="userDialogGroupEditMode"
-                            @click="exitEditModeCurrentUserGroups">
-                            {{ t('dialog.user.groups.exit_edit_mode') }}
-                        </Button>
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            v-else-if="currentUser.id === userDialog.id"
-                            class="ml-2"
-                            @click="editModeCurrentUserGroups">
-                            {{ t('dialog.user.groups.edit_mode') }}
-                        </Button>
-                    </div>
-                </div>
-                <div style="margin-top: 8px">
-                    <template v-if="userDialogGroupEditMode">
-                        <div
-                            class="flex flex-wrap items-start"
-                            style="margin-top: 8px; margin-bottom: 16px; max-height: unset">
-                            <!-- Bulk actions dropdown (shown only in edit mode) -->
-                            <Select :model-value="bulkGroupActionValue" @update:modelValue="handleBulkGroupAction">
-                                <SelectTrigger size="sm" style="margin-right: 6px; margin-bottom: 6px" @click.stop>
-                                    <SelectValue :placeholder="t('dialog.group.actions.manage_selected')" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="visibility:visible">
-                                        {{ t('dialog.group.actions.visibility_everyone') }}
-                                    </SelectItem>
-                                    <SelectItem value="visibility:friends">
-                                        {{ t('dialog.group.actions.visibility_friends') }}
-                                    </SelectItem>
-                                    <SelectItem value="visibility:hidden">
-                                        {{ t('dialog.group.actions.visibility_hidden') }}
-                                    </SelectItem>
-                                    <SelectItem value="leave">
-                                        {{ t('dialog.user.groups.leave_group_tooltip') }}
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-
-                            <!-- Select All button -->
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                style="padding: 7px 16px; margin-bottom: 6px"
-                                @click="selectAllGroups">
-                                {{
-                                    userDialogGroupAllSelected
-                                        ? t('dialog.group.actions.deselect_all')
-                                        : t('dialog.group.actions.select_all')
-                                }}
-                            </Button>
-
-                            <div
-                                v-for="group in userDialogGroupEditGroups"
-                                :key="group.id"
-                                class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-full hover:rounded-[25px_5px_5px_25px]"
-                                @click="showGroupDialog(group.id)">
-                                <!-- Manual checkbox -->
-                                <div
-                                    style="
-                                        margin-left: 6px;
-                                        margin-right: 6px;
-                                        transform: scale(0.8);
-                                        transform-origin: left center;
-                                    "
-                                    @click.stop>
-                                    <Checkbox
-                                        :model-value="userDialogGroupEditSelectedGroupIds.includes(group.id)"
-                                        @update:modelValue="() => toggleGroupSelection(group.id)" />
-                                </div>
-
-                                <div style="margin-right: 3px; margin-left: 6px" @click.stop>
-                                    <Button
-                                        size="icon-sm"
-                                        variant="ghost"
-                                        style="
-                                            display: block;
-                                            padding: 7px;
-                                            font-size: 9px;
-                                            margin-left: 0;
-                                            rotate: 180deg;
-                                        "
-                                        @click="moveGroupTop(group.id)">
-                                        <DownloadIcon />
-                                    </Button>
-                                    <Button
-                                        size="icon-sm"
-                                        variant="ghost"
-                                        style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
-                                        @click="moveGroupBottom(group.id)">
-                                        <DownloadIcon />
-                                    </Button>
-                                </div>
-                                <div style="margin-right: 8px" @click.stop>
-                                    <Button
-                                        size="icon-sm"
-                                        variant="outline"
-                                        style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
-                                        @click="moveGroupUp(group.id)">
-                                        <ArrowUp />
-                                    </Button>
-                                    <Button
-                                        size="icon-sm"
-                                        variant="outline"
-                                        style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
-                                        @click="moveGroupDown(group.id)">
-                                        <ArrowDown />
-                                    </Button>
-                                </div>
-                                <div class="relative inline-block flex-none size-9 mr-2.5">
-                                    <img
-                                        class="size-full rounded-full object-cover"
-                                        :src="group.iconUrl"
-                                        loading="lazy" />
-                                </div>
-                                <div class="flex-1 overflow-hidden">
-                                    <span class="block truncate font-medium leading-[18px]" v-text="group.name"></span>
-                                    <span class="block truncate text-xs">
-                                        <TooltipWrapper
-                                            v-if="group.isRepresenting"
-                                            side="top"
-                                            :content="t('dialog.group.members.representing')">
-                                            <Tag style="margin-right: 6px" />
-                                        </TooltipWrapper>
-                                        <TooltipWrapper v-if="group.myMember?.visibility !== 'visible'" side="top">
-                                            <template #content>
-                                                <span
-                                                    >{{ t('dialog.group.members.visibility') }}
-                                                    {{ group.myMember.visibility }}</span
-                                                >
-                                            </template>
-                                            <Eye style="margin-right: 6px" />
-                                        </TooltipWrapper>
-                                        <span>({{ group.memberCount }})</span>
-                                    </span>
-                                </div>
-                                <Select
-                                    v-if="group.myMember?.visibility"
-                                    :model-value="group.myMember.visibility"
-                                    :disabled="group.privacy !== 'default'"
-                                    @update:modelValue="(value) => setGroupVisibility(group.id, value)">
-                                    <SelectTrigger size="sm" @click.stop>
-                                        <SelectValue
-                                            :placeholder="
-                                                group.myMember.visibility === 'visible'
-                                                    ? t('dialog.group.tags.visible')
-                                                    : group.myMember.visibility === 'friends'
-                                                      ? t('dialog.group.tags.friends')
-                                                      : group.myMember.visibility === 'hidden'
-                                                        ? t('dialog.group.tags.hidden')
-                                                        : group.myMember.visibility
-                                            " />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="visible">
-                                            {{ t('dialog.group.actions.visibility_everyone') }}
-                                        </SelectItem>
-                                        <SelectItem value="friends">
-                                            {{ t('dialog.group.actions.visibility_friends') }}
-                                        </SelectItem>
-                                        <SelectItem value="hidden">
-                                            {{ t('dialog.group.actions.visibility_hidden') }}
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <!--//- JSON is missing isSubscribedToAnnouncements, can't be implemented-->
-                                <!-- <Button size="sm" variant="outline"
-                                        @click.stop="
-                                            setGroupSubscription(group.id, !group.myMember.isSubscribedToAnnouncements)
-                                        ">
-                                        <span v-if="group.myMember.isSubscribedToAnnouncements"
-                                            ><BellOff style="margin-left: 6px" />
-                                            {{ t('dialog.group.tags.subscribed') }}</span
-                                        >
-                                        <span v-else
-                                            ><Bell style="margin-left: 6px" />
-                                            {{ t('dialog.group.tags.unsubscribed') }}</span
-                                        >
-                                    </Button> -->
-                                <TooltipWrapper side="right" :content="t('dialog.user.groups.leave_group_tooltip')">
-                                    <Button
-                                        class="rounded-full h-6 w-6"
-                                        size="icon-sm"
-                                        variant="outline"
-                                        v-if="shiftHeld"
-                                        style="margin-left: 6px"
-                                        @click.stop="leaveGroup(group.id)">
-                                        <LogOut />
-                                    </Button>
-                                    <Button
-                                        class="rounded-full h-6 w-6 text-red-600"
-                                        size="icon-sm"
-                                        variant="outline"
-                                        v-else
-                                        style="margin-left: 6px"
-                                        @click.stop="leaveGroupPrompt(group.id)">
-                                        <LogOut />
-                                    </Button>
-                                </TooltipWrapper>
-                            </div>
-                        </div>
-                    </template>
-                    <template v-else>
-                        <template v-if="userDialog.userGroups.ownGroups.length > 0">
-                            <span style="font-weight: bold; font-size: 16px">{{
-                                t('dialog.user.groups.own_groups')
-                            }}</span>
-                            <span style="font-size: 12px; margin-left: 6px"
-                                >{{ userDialog.userGroups.ownGroups.length }}/{{
-                                    // @ts-ignore
-                                    cachedConfig?.constants?.GROUPS?.MAX_OWNED
-                                }}</span
-                            >
-                            <div
-                                class="flex flex-wrap items-start"
-                                style="margin-top: 8px; margin-bottom: 16px; min-height: 60px">
-                                <div
-                                    v-for="group in userDialog.userGroups.ownGroups"
-                                    :key="group.id"
-                                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                                    @click="showGroupDialog(group.id)">
-                                    <div class="relative inline-block flex-none size-9 mr-2.5">
-                                        <img
-                                            class="size-full rounded-full object-cover"
-                                            :src="group.iconUrl"
-                                            loading="lazy" />
-                                    </div>
-                                    <div class="flex-1 overflow-hidden">
-                                        <span
-                                            class="block truncate font-medium leading-[18px]"
-                                            v-text="group.name"></span>
-                                        <span class="block truncate text-xs inline-flex! items-center">
-                                            <TooltipWrapper
-                                                v-if="group.isRepresenting"
-                                                side="top"
-                                                :content="t('dialog.group.members.representing')">
-                                                <Tag style="margin-right: 6px" />
-                                            </TooltipWrapper>
-                                            <TooltipWrapper v-if="group.memberVisibility !== 'visible'" side="top">
-                                                <template #content>
-                                                    <span
-                                                        >{{ t('dialog.group.members.visibility') }}
-                                                        {{ group.memberVisibility }}</span
-                                                    >
-                                                </template>
-                                                <Eye style="margin-right: 6px" />
-                                            </TooltipWrapper>
-                                            <span>({{ group.memberCount }})</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-                        <template v-if="userDialog.userGroups.mutualGroups.length > 0">
-                            <span style="font-weight: bold; font-size: 16px">{{
-                                t('dialog.user.groups.mutual_groups')
-                            }}</span>
-                            <span style="font-size: 12px; margin-left: 6px">{{
-                                userDialog.userGroups.mutualGroups.length
-                            }}</span>
-                            <div
-                                class="flex flex-wrap items-start"
-                                style="margin-top: 8px; margin-bottom: 16px; min-height: 60px">
-                                <div
-                                    v-for="group in userDialog.userGroups.mutualGroups"
-                                    :key="group.id"
-                                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                                    @click="showGroupDialog(group.id)">
-                                    <div class="relative inline-block flex-none size-9 mr-2.5">
-                                        <img
-                                            class="size-full rounded-full object-cover"
-                                            :src="group.iconUrl"
-                                            loading="lazy" />
-                                    </div>
-                                    <div class="flex-1 overflow-hidden">
-                                        <span
-                                            class="block truncate font-medium leading-[18px]"
-                                            v-text="group.name"></span>
-                                        <span class="block truncate text-xs inline-flex! items-center">
-                                            <TooltipWrapper
-                                                v-if="group.isRepresenting"
-                                                side="top"
-                                                :content="t('dialog.group.members.representing')">
-                                                <Tag style="margin-right: 6px" />
-                                            </TooltipWrapper>
-                                            <TooltipWrapper v-if="group.memberVisibility !== 'visible'" side="top">
-                                                <template #content>
-                                                    <span
-                                                        >{{ t('dialog.group.members.visibility') }}
-                                                        {{ group.memberVisibility }}</span
-                                                    >
-                                                </template>
-                                                <Eye style="margin-right: 6px" />
-                                            </TooltipWrapper>
-                                            <span>({{ group.memberCount }})</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-                        <template v-if="userDialog.userGroups.remainingGroups.length > 0">
-                            <span style="font-weight: bold; font-size: 16px">{{ t('dialog.user.groups.groups') }}</span>
-                            <span style="font-size: 12px; margin-left: 6px">
-                                {{ userDialog.userGroups.remainingGroups.length }}
-                                <template v-if="currentUser.id === userDialog.id">
-                                    /
-                                    <template v-if="isLocalUserVrcPlusSupporter">
-                                        {{ cachedConfig?.constants?.GROUPS?.MAX_JOINED_PLUS }}
-                                    </template>
-                                    <template v-else>
-                                        {{ cachedConfig?.constants?.GROUPS?.MAX_JOINED }}
-                                    </template>
-                                </template>
-                            </span>
-                            <div
-                                class="flex flex-wrap items-start"
-                                style="margin-top: 8px; margin-bottom: 16px; min-height: 60px">
-                                <div
-                                    v-for="group in userDialog.userGroups.remainingGroups"
-                                    :key="group.id"
-                                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                                    @click="showGroupDialog(group.id)">
-                                    <div class="relative inline-block flex-none size-9 mr-2.5">
-                                        <img
-                                            class="size-full rounded-full object-cover"
-                                            :src="group.iconUrl"
-                                            loading="lazy" />
-                                    </div>
-                                    <div class="flex-1 overflow-hidden">
-                                        <span
-                                            class="block truncate font-medium leading-[18px]"
-                                            v-text="group.name"></span>
-                                        <div class="block truncate text-xs inline-flex! items-center">
-                                            <TooltipWrapper
-                                                v-if="group.isRepresenting"
-                                                side="top"
-                                                :content="t('dialog.group.members.representing')">
-                                                <Tag style="margin-right: 6px" />
-                                            </TooltipWrapper>
-                                            <TooltipWrapper v-if="group.memberVisibility !== 'visible'" side="top">
-                                                <template #content>
-                                                    <span
-                                                        >{{ t('dialog.group.members.visibility') }}
-                                                        {{ group.memberVisibility }}</span
-                                                    >
-                                                </template>
-                                                <Eye style="margin-right: 6px" />
-                                            </TooltipWrapper>
-                                            <span>({{ group.memberCount }})</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-                    </template>
-                </div>
+                <UserDialogGroupsTab ref="groupsTabRef" />
             </template>
 
             <template #Worlds>
-                <div style="display: flex; align-items: center; justify-content: space-between">
-                    <div style="display: flex; align-items: center">
-                        <Button
-                            class="rounded-full"
-                            variant="ghost"
-                            size="icon-sm"
-                            :disabled="userDialog.isWorldsLoading"
-                            @click="refreshUserDialogWorlds()">
-                            <Spinner v-if="userDialog.isWorldsLoading" />
-                            <RefreshCw v-else />
-                        </Button>
-                        <span style="margin-left: 6px">{{
-                            t('dialog.user.worlds.total_count', { count: userDialog.worlds.length })
-                        }}</span>
-                    </div>
-                    <div style="display: flex; align-items: center">
-                        <span class="mr-1">{{ t('dialog.user.worlds.sort_by') }}</span>
-                        <Select
-                            :model-value="userDialogWorldSortingKey"
-                            :disabled="userDialog.isWorldsLoading"
-                            @update:modelValue="setUserDialogWorldSortingByKey">
-                            <SelectTrigger size="sm" @click.stop>
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem
-                                    v-for="(item, key) in userDialogWorldSortingOptions"
-                                    :key="String(key)"
-                                    :value="String(key)">
-                                    {{ t(item.name) }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <span class="ml-2 mr-1">{{ t('dialog.user.worlds.order_by') }}</span>
-                        <Select
-                            :model-value="userDialogWorldOrderKey"
-                            :disabled="userDialog.isWorldsLoading"
-                            @update:modelValue="setUserDialogWorldOrderByKey">
-                            <SelectTrigger size="sm" @click.stop>
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem
-                                    v-for="(item, key) in userDialogWorldOrderOptions"
-                                    :key="String(key)"
-                                    :value="String(key)">
-                                    {{ t(item.name) }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
-                <div class="flex flex-wrap items-start" style="margin-top: 8px; min-height: 60px">
-                    <template v-if="userDialog.worlds.length">
-                        <div
-                            v-for="world in userDialog.worlds"
-                            :key="world.id"
-                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                            @click="showWorldDialog(world.id)">
-                            <div class="relative inline-block flex-none size-9 mr-2.5">
-                                <img
-                                    class="size-full rounded-full object-cover"
-                                    :src="world.thumbnailImageUrl"
-                                    loading="lazy" />
-                            </div>
-                            <div class="flex-1 overflow-hidden">
-                                <span class="block truncate font-medium leading-[18px]" v-text="world.name"></span>
-                                <span v-if="world.occupants" class="block truncate text-xs"
-                                    >({{ world.occupants }})</span
-                                >
-                            </div>
-                        </div>
-                    </template>
-                    <div
-                        v-else-if="!userDialog.isWorldsLoading"
-                        style="
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            min-height: 120px;
-                            width: 100%;
-                        ">
-                        <DataTableEmpty type="nodata" />
-                    </div>
-                </div>
+                <UserDialogWorldsTab ref="worldsTabRef" />
             </template>
 
             <template #favorite-worlds>
-                <!-- <Button
-                        variant="outline"
-                        v-if="userFavoriteWorlds && userFavoriteWorlds.length > 0"
-                        type="default"
-                        :loading="userDialog.isFavoriteWorldsLoading"
-                        size="small"
-                        :icon="RefreshCw"
-                        circle
-                        style="position: absolute; right: 15px; bottom: 15px; z-index: 99"
-                        @click="getUserFavoriteWorlds(userDialog.id)">
-                    </Button> -->
-                <template v-if="userDialog.userFavoriteWorlds && userDialog.userFavoriteWorlds.length > 0">
-                    <DeprecationAlert
-                        v-if="userDialog.ref.id === currentUser.id"
-                        :feature-name="t('nav_tooltip.favorite_worlds')" />
-                    <TabsUnderline
-                        v-model="favoriteWorldsTab"
-                        :items="favoriteWorldTabs"
-                        :unmount-on-hide="false"
-                        class="zero-margin-tabs"
-                        style="margin-top: 8px; height: 50vh">
-                        <template
-                            v-for="(list, index) in userDialog.userFavoriteWorlds"
-                            :key="`favorite-worlds-label-${index}`"
-                            v-slot:[`label-${index}`]>
-                            <span>
-                                <i
-                                    class="x-status-icon"
-                                    style="margin-right: 8px"
-                                    :class="userFavoriteWorldsStatus(list[1])">
-                                </i>
-                                <span style="font-weight: bold; font-size: 14px" v-text="list[0]"></span>
-                                <span style="font-size: 10px; margin-left: 6px"
-                                    >{{ list[2].length }}/{{ favoriteLimits.maxFavoritesPerGroup.world }}</span
-                                >
-                            </span>
-                        </template>
-                        <template
-                            v-for="(list, index) in userDialog.userFavoriteWorlds"
-                            :key="`favorite-worlds-content-${index}`"
-                            v-slot:[String(index)]>
-                            <div
-                                class="flex flex-wrap items-start"
-                                style="margin-top: 8px; margin-bottom: 16px; min-height: 60px; max-height: none">
-                                <div
-                                    v-for="world in list[2]"
-                                    :key="world.favoriteId"
-                                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                                    @click="showWorldDialog(world.id)">
-                                    <div class="relative inline-block flex-none size-9 mr-2.5">
-                                        <img
-                                            class="size-full rounded-full object-cover"
-                                            :src="world.thumbnailImageUrl"
-                                            loading="lazy" />
-                                    </div>
-                                    <div class="flex-1 overflow-hidden">
-                                        <span
-                                            class="block truncate font-medium leading-[18px]"
-                                            v-text="world.name"></span>
-                                        <span v-if="world.occupants" class="block truncate text-xs"
-                                            >({{ world.occupants }})</span
-                                        >
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-                    </TabsUnderline>
-                </template>
-                <template v-else-if="!userDialog.isFavoriteWorldsLoading">
-                    <div style="display: flex; justify-content: center; align-items: center; height: 100%">
-                        <DataTableEmpty type="nodata" />
-                    </div>
-                </template>
+                <UserDialogFavoriteWorldsTab ref="favoriteWorldsTabRef" />
             </template>
 
             <template #Avatars>
-                <DeprecationAlert
-                    v-if="userDialog.ref.id === currentUser.id"
-                    :feature-name="t('nav_tooltip.my_avatars')" />
-                <div style="display: flex; align-items: center; justify-content: space-between">
-                    <div style="display: flex; align-items: center">
-                        <Button
-                            v-if="userDialog.ref.id === currentUser.id"
-                            class="rounded-full"
-                            variant="ghost"
-                            size="icon-sm"
-                            :disabled="userDialog.isAvatarsLoading"
-                            @click="refreshUserDialogAvatars()">
-                            <Spinner v-if="userDialog.isAvatarsLoading" />
-                            <RefreshCw v-else />
-                        </Button>
-                        <Button
-                            v-else
-                            class="rounded-full"
-                            variant="ghost"
-                            size="icon-sm"
-                            :disabled="userDialog.isAvatarsLoading"
-                            @click="setUserDialogAvatarsRemote(userDialog.id)">
-                            <Spinner v-if="userDialog.isAvatarsLoading" />
-                            <RefreshCw v-else />
-                        </Button>
-                        <span style="margin-left: 6px">{{
-                            t('dialog.user.avatars.total_count', { count: userDialogAvatars.length })
-                        }}</span>
-                    </div>
-                    <div class="flex items-center">
-                        <template v-if="userDialog.ref.id === currentUser.id">
-                            <Input
-                                v-model="avatarSearchQuery"
-                                class="h-8 w-40 mr-2"
-                                placeholder="Search avatars"
-                                @click.stop />
-                            <span class="mr-1">{{ t('dialog.user.avatars.sort_by') }}</span>
-                            <Select
-                                :model-value="userDialog.avatarSorting"
-                                :disabled="userDialog.isWorldsLoading"
-                                @update:modelValue="changeUserDialogAvatarSorting">
-                                <SelectTrigger size="sm" @click.stop>
-                                    <SelectValue
-                                        :placeholder="t(`dialog.user.avatars.sort_by_${userDialog.avatarSorting}`)" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="name">{{ t('dialog.user.avatars.sort_by_name') }}</SelectItem>
-                                    <SelectItem value="update">{{
-                                        t('dialog.user.avatars.sort_by_update')
-                                    }}</SelectItem>
-                                    <SelectItem value="createdAt">{{
-                                        t('dialog.user.avatars.sort_by_uploaded')
-                                    }}</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <span class="ml-2 mr-1">{{ t('dialog.user.avatars.group_by') }}</span>
-                            <Select
-                                :model-value="userDialog.avatarReleaseStatus"
-                                :disabled="userDialog.isWorldsLoading"
-                                @update:modelValue="(value) => (userDialog.avatarReleaseStatus = value)">
-                                <SelectTrigger size="sm" @click.stop>
-                                    <SelectValue
-                                        :placeholder="t(`dialog.user.avatars.${userDialog.avatarReleaseStatus}`)" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">{{ t('dialog.user.avatars.all') }}</SelectItem>
-                                    <SelectItem value="public">{{ t('dialog.user.avatars.public') }}</SelectItem>
-                                    <SelectItem value="private">{{ t('dialog.user.avatars.private') }}</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </template>
-                    </div>
-                </div>
-                <div
-                    class="flex flex-wrap items-start"
-                    style="margin-top: 8px; min-height: 60px; max-height: 50vh; overflow: auto">
-                    <template v-if="filteredUserDialogAvatars.length">
-                        <div
-                            v-for="avatar in filteredUserDialogAvatars"
-                            :key="avatar.id"
-                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                            @click="showAvatarDialog(avatar.id)">
-                            <div class="relative inline-block flex-none size-9 mr-2.5">
-                                <img
-                                    v-if="avatar.thumbnailImageUrl"
-                                    class="size-full rounded-full object-cover"
-                                    :src="avatar.thumbnailImageUrl"
-                                    loading="lazy" />
-                            </div>
-                            <div class="flex-1 overflow-hidden">
-                                <span class="block truncate font-medium leading-[18px]" v-text="avatar.name"></span>
-                                <span
-                                    v-if="avatar.releaseStatus === 'public'"
-                                    class="block truncate text-xs"
-                                    v-text="avatar.releaseStatus">
-                                </span>
-                                <span
-                                    v-else-if="avatar.releaseStatus === 'private'"
-                                    class="block truncate text-xs"
-                                    v-text="avatar.releaseStatus">
-                                </span>
-                                <span v-else class="block truncate text-xs" v-text="avatar.releaseStatus"></span>
-                            </div>
-                        </div>
-                    </template>
-                    <div
-                        v-else-if="!userDialog.isAvatarsLoading"
-                        style="
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            min-height: 120px;
-                            width: 100%;
-                        ">
-                        <DataTableEmpty type="nodata" />
-                    </div>
-                </div>
+                <UserDialogAvatarsTab ref="avatarsTabRef" />
             </template>
 
             <template #JSON>
@@ -1376,27 +643,6 @@
     import VueJsonPretty from 'vue-json-pretty';
 
     import {
-        compareByDisplayName,
-        compareByFriendOrder,
-        compareByLastActiveRef,
-        compareByMemberCount,
-        compareByName,
-        copyToClipboard,
-        downloadAndSaveJson,
-        formatDateFilter,
-        getFaviconUrl,
-        isFriendOnline,
-        isRealInstance,
-        openExternalLink,
-        parseLocation,
-        refreshInstancePlayerCount,
-        timeToText,
-        userImage,
-        userOnlineFor,
-        userOnlineForTimestamp,
-        userStatusClass
-    } from '../../../shared/utils';
-    import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
         useAuthStore,
@@ -1416,17 +662,30 @@
         useWorldStore
     } from '../../../stores';
     import {
+        copyToClipboard,
+        downloadAndSaveJson,
+        formatDateFilter,
+        getFaviconUrl,
+        isFriendOnline,
+        isRealInstance,
+        openExternalLink,
+        parseLocation,
+        refreshInstancePlayerCount,
+        timeToText,
+        userImage,
+        userOnlineFor,
+        userOnlineForTimestamp,
+        userStatusClass
+    } from '../../../shared/utils';
+    import {
         favoriteRequest,
         friendRequest,
-        groupRequest,
         miscRequest,
         notificationRequest,
         playerModerationRequest,
         userRequest,
         worldRequest
     } from '../../../api';
-    import { userDialogGroupSortingOptions, userDialogMutualFriendSortingOptions } from '../../../shared/constants';
-    import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
     import { database } from '../../../service/database';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
     import { processBulk } from '../../../service/request';
@@ -1434,6 +693,11 @@
     import DialogJsonTab from '../DialogJsonTab.vue';
     import InstanceActionBar from '../../InstanceActionBar.vue';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
+    import UserDialogAvatarsTab from './UserDialogAvatarsTab.vue';
+    import UserDialogFavoriteWorldsTab from './UserDialogFavoriteWorldsTab.vue';
+    import UserDialogGroupsTab from './UserDialogGroupsTab.vue';
+    import UserDialogMutualFriendsTab from './UserDialogMutualFriendsTab.vue';
+    import UserDialogWorldsTab from './UserDialogWorldsTab.vue';
     import UserSummaryHeader from './UserSummaryHeader.vue';
 
     const BioDialog = defineAsyncComponent(() => import('./BioDialog.vue'));
@@ -1459,56 +723,39 @@
         }
         return tabs;
     });
-    const favoriteWorldTabs = computed(() =>
-        (userDialog.value.userFavoriteWorlds || []).map((list, index) => ({
-            value: String(index),
-            label: list?.[0] ?? ''
-        }))
-    );
+    const favoriteWorldsTabRef = ref(null);
+    const mutualFriendsTabRef = ref(null);
+    const worldsTabRef = ref(null);
+    const avatarsTabRef = ref(null);
+    const groupsTabRef = ref(null);
 
     const modalStore = useModalStore();
     const instanceStore = useInstanceStore();
 
     const { hideUserNotes, hideUserMemos, isDarkMode } = storeToRefs(useAppearanceSettingsStore());
-    const { bioLanguage, avatarRemoteDatabase, translationApi, translationApiType } =
-        storeToRefs(useAdvancedSettingsStore());
+    const { bioLanguage, translationApi, translationApiType } = storeToRefs(useAdvancedSettingsStore());
     const { translateText } = useAdvancedSettingsStore();
     const { userDialog, languageDialog, currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const {
         cachedUsers,
         showUserDialog,
-        sortUserDialogAvatars,
         refreshUserDialogAvatars,
         showSendBoopDialog,
         toggleSharedConnectionsOptOut,
         toggleDiscordFriendsOptOut
     } = useUserStore();
-    const { favoriteLimits } = storeToRefs(useFavoriteStore());
-    const { showFavoriteDialog, handleFavoriteWorldList } = useFavoriteStore();
-    const { showAvatarDialog, lookupAvatars, showAvatarAuthorDialog } = useAvatarStore();
-    const { cachedAvatars } = useAvatarStore();
-    const { cachedWorlds, showWorldDialog } = useWorldStore();
-    const {
-        showGroupDialog,
-        applyGroup,
-        saveCurrentUserGroups,
-        updateInGameGroupOrder,
-        leaveGroup,
-        leaveGroupPrompt,
-        setGroupVisibility,
-        handleGroupList,
-        showModerateGroupDialog
-    } = useGroupStore();
-    const { currentUserGroups, inviteGroupDialog, inGameGroupOrder } = storeToRefs(useGroupStore());
+    const { showFavoriteDialog } = useFavoriteStore();
+    const { showAvatarDialog, showAvatarAuthorDialog } = useAvatarStore();
+    const { showWorldDialog } = useWorldStore();
+    const { showGroupDialog, showModerateGroupDialog } = useGroupStore();
+    const { inviteGroupDialog } = storeToRefs(useGroupStore());
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
     const { refreshInviteMessageTableData } = useInviteStore();
     const { friendLogTable } = storeToRefs(useFriendStore());
     const { getFriendRequest, handleFriendDelete } = useFriendStore();
     const { clearInviteImageUpload, showFullscreenImageDialog, showGalleryPage } = useGalleryStore();
 
-    const { cachedConfig } = storeToRefs(useAuthStore());
     const { applyPlayerModeration, handlePlayerModerationDelete } = useModerationStore();
-    const { shiftHeld } = storeToRefs(useUiStore());
 
     watch(
         () => userDialog.value.loading,
@@ -1525,20 +772,11 @@
         }
     );
 
-    const userDialogGroupEditMode = ref(false); // whether edit mode is active
-    const userDialogGroupEditGroups = ref([]); // editable group list
-    const userDialogGroupAllSelected = ref(false);
-    const userDialogGroupEditSelectedGroupIds = ref([]); // selected groups in edit mode
-
     const userDialogLastMutualFriends = ref('');
     const userDialogLastGroup = ref('');
     const userDialogLastAvatar = ref('');
     const userDialogLastWorld = ref('');
     const userDialogLastFavoriteWorld = ref('');
-
-    const favoriteWorldsTab = ref('0');
-    const userDialogWorldsRequestId = ref(0);
-    const userDialogFavoriteWorldsRequestId = ref(0);
 
     const sendInviteDialogVisible = ref(false);
     const sendInviteDialog = ref({
@@ -1583,49 +821,6 @@
     const isEditNoteAndMemoDialogVisible = ref(false);
     const vrchatCredit = ref(null);
     const treeData = ref({});
-
-    const userDialogAvatars = computed(() => {
-        const { avatars, avatarReleaseStatus } = userDialog.value;
-        if (avatarReleaseStatus === 'public' || avatarReleaseStatus === 'private') {
-            return avatars.filter((avatar) => avatar.releaseStatus === avatarReleaseStatus);
-        }
-        return avatars;
-    });
-    const avatarSearchQuery = ref('');
-    const filteredUserDialogAvatars = computed(() => {
-        const avatars = userDialogAvatars.value;
-        if (userDialog.value.ref?.id !== currentUser.value.id) {
-            return avatars;
-        }
-        const query = avatarSearchQuery.value.trim().toLowerCase();
-        if (!query) {
-            return avatars;
-        }
-        return avatars.filter((avatar) => (avatar.name || '').toLowerCase().includes(query));
-    });
-
-    watch(
-        () => userDialog.value.id,
-        () => {
-            avatarSearchQuery.value = '';
-        }
-    );
-
-    /**
-     *
-     * @param visibility
-     */
-    function userFavoriteWorldsStatus(visibility) {
-        const style = {};
-        if (visibility === 'public') {
-            style.green = true;
-        } else if (visibility === 'friends') {
-            style.blue = true;
-        } else {
-            style.red = true;
-        }
-        return style;
-    }
 
     /**
      *
@@ -1700,33 +895,33 @@
             }
             if (userDialogLastMutualFriends.value !== userId) {
                 userDialogLastMutualFriends.value = userId;
-                getUserMutualFriends(userId);
+                mutualFriendsTabRef.value?.getUserMutualFriends(userId);
             }
         } else if (tabName === 'Groups') {
             if (userDialogLastGroup.value !== userId) {
                 userDialogLastGroup.value = userId;
-                getUserGroups(userId);
+                groupsTabRef.value?.getUserGroups(userId);
             }
         } else if (tabName === 'Avatars') {
-            setUserDialogAvatars(userId);
+            avatarsTabRef.value?.setUserDialogAvatars(userId);
             if (userDialogLastAvatar.value !== userId) {
                 userDialogLastAvatar.value = userId;
                 if (userId === currentUser.value.id) {
                     refreshUserDialogAvatars();
                 } else {
-                    setUserDialogAvatarsRemote(userId);
+                    avatarsTabRef.value?.setUserDialogAvatarsRemote(userId);
                 }
             }
         } else if (tabName === 'Worlds') {
-            setUserDialogWorlds(userId);
+            worldsTabRef.value?.setUserDialogWorlds(userId);
             if (userDialogLastWorld.value !== userId) {
                 userDialogLastWorld.value = userId;
-                refreshUserDialogWorlds();
+                worldsTabRef.value?.refreshUserDialogWorlds();
             }
         } else if (tabName === 'favorite-worlds') {
             if (userDialogLastFavoriteWorld.value !== userId) {
                 userDialogLastFavoriteWorld.value = userId;
-                getUserFavoriteWorlds(userId);
+                favoriteWorldsTabRef.value?.getUserFavoriteWorlds(userId);
             }
         } else if (tabName === 'JSON') {
             refreshUserDialogTreeData();
@@ -1789,36 +984,6 @@
         D.status = currentUser.value.status;
         D.statusDescription = currentUser.value.statusDescription;
         D.visible = true;
-    }
-
-    /**
-     *
-     * @param userId
-     */
-    async function setUserDialogAvatarsRemote(userId) {
-        if (avatarRemoteDatabase.value && userId !== currentUser.value.id) {
-            userDialog.value.isAvatarsLoading = true;
-            const data = await lookupAvatars('authorId', userId);
-            const avatars = new Set();
-            userDialogAvatars.value.forEach((avatar) => {
-                avatars.add(avatar.id);
-            });
-            if (data && typeof data === 'object') {
-                data.forEach((avatar) => {
-                    if (avatar.id && !avatars.has(avatar.id)) {
-                        if (avatar.authorId === userId) {
-                            userDialog.value.avatars.push(avatar);
-                        } else {
-                            console.error(`Avatar authorId mismatch for ${avatar.id} - ${avatar.name}`);
-                        }
-                    }
-                });
-            }
-            userDialog.value.avatarSorting = 'name';
-            userDialog.value.avatarReleaseStatus = 'all';
-            userDialog.value.isAvatarsLoading = false;
-        }
-        sortUserDialogAvatars(userDialog.value.avatars);
     }
 
     /**
@@ -2309,305 +1474,6 @@
 
     /**
      *
-     * @param userId
-     */
-    async function getUserGroups(userId) {
-        exitEditModeCurrentUserGroups();
-        userDialog.value.isGroupsLoading = true;
-        userDialog.value.userGroups = {
-            groups: [],
-            ownGroups: [],
-            mutualGroups: [],
-            remainingGroups: []
-        };
-        const args = await groupRequest.getGroups({ userId });
-        handleGroupList(args);
-        if (userId !== userDialog.value.id) {
-            userDialog.value.isGroupsLoading = false;
-            return;
-        }
-        if (userId === currentUser.value.id) {
-            // update current user groups
-            currentUserGroups.value.clear();
-            args.json.forEach((group) => {
-                const ref = applyGroup(group);
-                if (!currentUserGroups.value.has(group.id)) {
-                    currentUserGroups.value.set(group.id, ref);
-                }
-            });
-
-            saveCurrentUserGroups();
-        }
-        userDialog.value.userGroups.groups = args.json;
-        for (let i = 0; i < args.json.length; ++i) {
-            const group = args.json[i];
-            if (!group?.id) {
-                console.error('getUserGroups, group ID is missing', group);
-                continue;
-            }
-            if (group.ownerId === userId) {
-                userDialog.value.userGroups.ownGroups.unshift(group);
-            }
-            if (userId === currentUser.value.id) {
-                // skip mutual groups for current user
-                if (group.ownerId !== userId) {
-                    userDialog.value.userGroups.remainingGroups.unshift(group);
-                }
-                continue;
-            }
-            if (group.mutualGroup) {
-                userDialog.value.userGroups.mutualGroups.unshift(group);
-            }
-            if (!group.mutualGroup && group.ownerId !== userId) {
-                userDialog.value.userGroups.remainingGroups.unshift(group);
-            }
-        }
-        if (userId === currentUser.value.id) {
-            userDialog.value.groupSorting = userDialogGroupSortingOptions.inGame;
-        } else if (userDialog.value.groupSorting.value === userDialogGroupSortingOptions.inGame.value) {
-            userDialog.value.groupSorting = userDialogGroupSortingOptions.alphabetical;
-        }
-        await sortCurrentUserGroups();
-        userDialog.value.isGroupsLoading = false;
-    }
-
-    /**
-     *
-     * @param userId
-     */
-    async function getUserMutualFriends(userId) {
-        userDialog.value.mutualFriends = [];
-        if (currentUser.value.hasSharedConnectionsOptOut) {
-            return;
-        }
-        userDialog.value.isMutualFriendsLoading = true;
-        const params = {
-            userId,
-            n: 100,
-            offset: 0
-        };
-        processBulk({
-            fn: userRequest.getMutualFriends,
-            N: -1,
-            params,
-            handle: (args) => {
-                for (const json of args.json) {
-                    if (userDialog.value.mutualFriends.some((u) => u.id === json.id)) {
-                        continue;
-                    }
-                    const ref = cachedUsers.get(json.id);
-                    if (typeof ref !== 'undefined') {
-                        userDialog.value.mutualFriends.push(ref);
-                    } else {
-                        userDialog.value.mutualFriends.push(json);
-                    }
-                }
-                setUserDialogMutualFriendSorting(userDialog.value.mutualFriendSorting);
-            },
-            done: (success) => {
-                userDialog.value.isMutualFriendsLoading = false;
-                if (success) {
-                    const mutualIds = userDialog.value.mutualFriends.map((u) => u.id);
-                    database.updateMutualsForFriend(userId, mutualIds);
-                }
-            }
-        });
-    }
-
-    /**
-     *
-     * @param a
-     * @param b
-     */
-    function sortGroupsByInGame(a, b) {
-        const aIndex = inGameGroupOrder.value.indexOf(a?.id);
-        const bIndex = inGameGroupOrder.value.indexOf(b?.id);
-        if (aIndex === -1 && bIndex === -1) {
-            return 0;
-        }
-        if (aIndex === -1) {
-            return 1;
-        }
-        if (bIndex === -1) {
-            return -1;
-        }
-        return aIndex - bIndex;
-    }
-
-    /**
-     *
-     */
-    async function sortCurrentUserGroups() {
-        const D = userDialog.value;
-        let sortMethod = () => 0;
-
-        switch (D.groupSorting.value) {
-            case 'alphabetical':
-                sortMethod = compareByName;
-                break;
-            case 'members':
-                sortMethod = compareByMemberCount;
-                break;
-            case 'inGame':
-                sortMethod = sortGroupsByInGame;
-                await updateInGameGroupOrder();
-                break;
-        }
-
-        userDialog.value.userGroups.ownGroups.sort(sortMethod);
-        userDialog.value.userGroups.mutualGroups.sort(sortMethod);
-        userDialog.value.userGroups.remainingGroups.sort(sortMethod);
-    }
-
-    /**
-     *
-     * @param userId
-     */
-    function setUserDialogAvatars(userId) {
-        const avatars = new Set();
-        userDialogAvatars.value.forEach((avatar) => {
-            avatars.add(avatar.id);
-        });
-        for (const ref of cachedAvatars.values()) {
-            if (ref.authorId === userId && !avatars.has(ref.id)) {
-                userDialog.value.avatars.push(ref);
-            }
-        }
-        sortUserDialogAvatars(userDialog.value.avatars);
-    }
-
-    /**
-     *
-     * @param userId
-     */
-    function setUserDialogWorlds(userId) {
-        const worlds = [];
-        for (const ref of cachedWorlds.values()) {
-            if (ref.authorId === userId) {
-                worlds.push(ref);
-            }
-        }
-        userDialog.value.worlds = worlds;
-    }
-
-    /**
-     *
-     */
-    function refreshUserDialogWorlds() {
-        const D = userDialog.value;
-        if (D.isWorldsLoading) {
-            return;
-        }
-        const requestId = ++userDialogWorldsRequestId.value;
-        D.isWorldsLoading = true;
-        const params = {
-            n: 50,
-            offset: 0,
-            sort: userDialog.value.worldSorting.value,
-            order: userDialog.value.worldOrder.value,
-            // user: 'friends',
-            userId: D.id,
-            releaseStatus: 'public'
-        };
-        if (params.userId === currentUser.value.id) {
-            params.user = 'me';
-            params.releaseStatus = 'all';
-        }
-        const worlds = [];
-        const worldIds = new Set();
-        (async () => {
-            try {
-                let offset = 0;
-                while (true) {
-                    const args = await worldRequest.getCachedWorlds({
-                        ...params,
-                        offset
-                    });
-                    if (requestId !== userDialogWorldsRequestId.value || D.id !== params.userId) {
-                        return;
-                    }
-                    for (const world of args.json) {
-                        if (!worldIds.has(world.id)) {
-                            worldIds.add(world.id);
-                            worlds.push(world);
-                        }
-                    }
-                    if (args.json.length < params.n) {
-                        break;
-                    }
-                    offset += params.n;
-                }
-                if (requestId === userDialogWorldsRequestId.value && D.id === params.userId) {
-                    userDialog.value.worlds = worlds;
-                }
-            } finally {
-                if (requestId === userDialogWorldsRequestId.value) {
-                    D.isWorldsLoading = false;
-                }
-            }
-        })().catch((err) => {
-            console.error('refreshUserDialogWorlds failed', err);
-        });
-    }
-
-    /**
-     *
-     * @param userId
-     */
-    async function getUserFavoriteWorlds(userId) {
-        const requestId = ++userDialogFavoriteWorldsRequestId.value;
-        userDialog.value.isFavoriteWorldsLoading = true;
-        favoriteWorldsTab.value = '0';
-        userDialog.value.userFavoriteWorlds = [];
-        const worldLists = [];
-        const groupArgs = await favoriteRequest.getCachedFavoriteGroups({
-            ownerId: userId,
-            n: 100,
-            offset: 0
-        });
-        if (requestId !== userDialogFavoriteWorldsRequestId.value || userDialog.value.id !== userId) {
-            if (requestId === userDialogFavoriteWorldsRequestId.value) {
-                userDialog.value.isFavoriteWorldsLoading = false;
-            }
-            return;
-        }
-        const worldGroups = groupArgs.json.filter((list) => list.type === 'world');
-        const tasks = worldGroups.map(async (list) => {
-            if (list.type !== 'world') {
-                return null;
-            }
-            const params = {
-                ownerId: userId,
-                n: 100,
-                offset: 0,
-                userId,
-                tag: list.name
-            };
-            try {
-                const args = await favoriteRequest.getCachedFavoriteWorlds(params);
-                handleFavoriteWorldList(args);
-                return [list.displayName, list.visibility, args.json];
-            } catch (err) {
-                console.error('getUserFavoriteWorlds', err);
-                return null;
-            }
-        });
-        const results = await Promise.all(tasks);
-        for (const result of results) {
-            if (result) {
-                worldLists.push(result);
-            }
-        }
-        if (requestId === userDialogFavoriteWorldsRequestId.value) {
-            if (userDialog.value.id === userId) {
-                userDialog.value.userFavoriteWorlds = worldLists;
-            }
-            userDialog.value.isFavoriteWorldsLoading = false;
-        }
-    }
-
-    /**
-     *
      */
     function showBioDialog() {
         const D = bioDialog.value;
@@ -2729,331 +1595,6 @@
      */
     function copyUserDisplayName(displayName) {
         copyToClipboard(displayName, 'User DisplayName copied to clipboard');
-    }
-
-    const userDialogGroupSortingKey = computed(() => {
-        const current = userDialog.value.groupSorting;
-        const found = Object.entries(userDialogGroupSortingOptions).find(([, option]) => {
-            if (option === current) {
-                return true;
-            }
-            return option?.value === current?.value || option?.name === current?.name;
-        });
-        return found ? String(found[0]) : '';
-    });
-
-    /**
-     *
-     * @param key
-     */
-    function setUserDialogGroupSortingByKey(key) {
-        const option = userDialogGroupSortingOptions[key];
-        if (!option) {
-            return;
-        }
-        setUserDialogGroupSorting(option);
-    }
-
-    /**
-     *
-     * @param sortOrder
-     */
-    async function setUserDialogGroupSorting(sortOrder) {
-        const D = userDialog.value;
-        if (D.groupSorting.value === sortOrder.value) {
-            return;
-        }
-        D.groupSorting = sortOrder;
-        await sortCurrentUserGroups();
-    }
-
-    const userDialogMutualFriendSortingKey = computed(() => {
-        const current = userDialog.value.mutualFriendSorting;
-        const found = Object.entries(userDialogMutualFriendSortingOptions).find(([, option]) => {
-            if (option === current) {
-                return true;
-            }
-            return option?.value === current?.value || option?.name === current?.name;
-        });
-        return found ? String(found[0]) : '';
-    });
-
-    /**
-     *
-     * @param key
-     */
-    function setUserDialogMutualFriendSortingByKey(key) {
-        const option = userDialogMutualFriendSortingOptions[key];
-        if (!option) {
-            return;
-        }
-        setUserDialogMutualFriendSorting(option);
-    }
-
-    /**
-     *
-     * @param sortOrder
-     */
-    async function setUserDialogMutualFriendSorting(sortOrder) {
-        const D = userDialog.value;
-        D.mutualFriendSorting = sortOrder;
-        switch (sortOrder.value) {
-            case 'alphabetical':
-                D.mutualFriends.sort(compareByDisplayName);
-                break;
-            case 'lastActive':
-                D.mutualFriends.sort(compareByLastActiveRef);
-                break;
-            case 'friendOrder':
-                D.mutualFriends.sort(compareByFriendOrder);
-                break;
-        }
-    }
-
-    /**
-     *
-     */
-    async function exitEditModeCurrentUserGroups() {
-        userDialogGroupEditMode.value = false;
-        userDialogGroupEditGroups.value = [];
-        userDialogGroupEditSelectedGroupIds.value = [];
-        userDialogGroupAllSelected.value = false;
-        await sortCurrentUserGroups();
-    }
-
-    /**
-     *
-     */
-    async function editModeCurrentUserGroups() {
-        await updateInGameGroupOrder();
-        userDialogGroupEditGroups.value = Array.from(currentUserGroups.value.values());
-        userDialogGroupEditGroups.value.sort(sortGroupsByInGame);
-        userDialogGroupEditMode.value = true;
-    }
-
-    /**
-     *
-     */
-    async function saveInGameGroupOrder() {
-        userDialogGroupEditGroups.value.sort(sortGroupsByInGame);
-        try {
-            await AppApi.SetVRChatRegistryKey(
-                `VRC_GROUP_ORDER_${currentUser.value.id}`,
-                JSON.stringify(inGameGroupOrder.value),
-                3
-            );
-        } catch (err) {
-            console.error(err);
-            toast.error('Failed to save in-game group order');
-        }
-    }
-
-    // Select all groups currently in the editable list by collecting their IDs
-    /**
-     *
-     */
-    function selectAllGroups() {
-        const allSelected = userDialogGroupEditSelectedGroupIds.value.length === userDialogGroupEditGroups.value.length;
-
-        // First update selection state
-        userDialogGroupEditSelectedGroupIds.value = allSelected ? [] : userDialogGroupEditGroups.value.map((g) => g.id);
-        userDialogGroupAllSelected.value = !allSelected;
-
-        // Toggle editMode off and back on to force checkbox UI update
-        userDialogGroupEditMode.value = false;
-        nextTick(() => {
-            userDialogGroupEditMode.value = true;
-        });
-    }
-
-    const bulkGroupActionValue = ref('');
-
-    /**
-     *
-     * @param value
-     */
-    function handleBulkGroupAction(value) {
-        bulkGroupActionValue.value = value;
-
-        if (value === 'leave') {
-            bulkLeaveGroups();
-        } else if (typeof value === 'string' && value.startsWith('visibility:')) {
-            const newVisibility = value.slice('visibility:'.length);
-            bulkSetVisibility(newVisibility);
-        }
-
-        nextTick(() => {
-            bulkGroupActionValue.value = '';
-        });
-    }
-
-    // Apply the given visibility to all selected groups
-    /**
-     *
-     * @param newVisibility
-     */
-    async function bulkSetVisibility(newVisibility) {
-        for (const groupId of userDialogGroupEditSelectedGroupIds.value) {
-            setGroupVisibility(groupId, newVisibility);
-        }
-    }
-
-    // Leave (remove user from) all selected groups
-    /**
-     *
-     */
-    function bulkLeaveGroups() {
-        for (const groupId of userDialogGroupEditSelectedGroupIds.value) {
-            leaveGroup(groupId);
-        }
-    }
-
-    // Toggle individual group selection for bulk actions
-    /**
-     *
-     * @param groupId
-     */
-    function toggleGroupSelection(groupId) {
-        const index = userDialogGroupEditSelectedGroupIds.value.indexOf(groupId);
-        if (index === -1) {
-            userDialogGroupEditSelectedGroupIds.value.push(groupId);
-        } else {
-            userDialogGroupEditSelectedGroupIds.value.splice(index, 1);
-        }
-    }
-
-    /**
-     *
-     * @param groupId
-     */
-    function moveGroupUp(groupId) {
-        const index = inGameGroupOrder.value.indexOf(groupId);
-        if (index > 0) {
-            inGameGroupOrder.value.splice(index, 1);
-            inGameGroupOrder.value.splice(index - 1, 0, groupId);
-            saveInGameGroupOrder();
-        }
-    }
-
-    /**
-     *
-     * @param groupId
-     */
-    function moveGroupDown(groupId) {
-        const index = inGameGroupOrder.value.indexOf(groupId);
-        if (index < inGameGroupOrder.value.length - 1) {
-            inGameGroupOrder.value.splice(index, 1);
-            inGameGroupOrder.value.splice(index + 1, 0, groupId);
-            saveInGameGroupOrder();
-        }
-    }
-
-    /**
-     *
-     * @param groupId
-     */
-    function moveGroupTop(groupId) {
-        const index = inGameGroupOrder.value.indexOf(groupId);
-        if (index > 0) {
-            inGameGroupOrder.value.splice(index, 1);
-            inGameGroupOrder.value.unshift(groupId);
-            saveInGameGroupOrder();
-        }
-    }
-
-    /**
-     *
-     * @param groupId
-     */
-    function moveGroupBottom(groupId) {
-        const index = inGameGroupOrder.value.indexOf(groupId);
-        if (index < inGameGroupOrder.value.length - 1) {
-            inGameGroupOrder.value.splice(index, 1);
-            inGameGroupOrder.value.push(groupId);
-            saveInGameGroupOrder();
-        }
-    }
-
-    /**
-     *
-     * @param sortOrder
-     */
-    async function setUserDialogWorldSorting(sortOrder) {
-        const D = userDialog.value;
-        if (D.worldSorting.value === sortOrder.value) {
-            return;
-        }
-        D.worldSorting = sortOrder;
-        refreshUserDialogWorlds();
-    }
-
-    const userDialogWorldSortingKey = computed(() => {
-        const current = userDialog.value.worldSorting;
-        const found = Object.entries(userDialogWorldSortingOptions).find(([, option]) => {
-            if (option === current) {
-                return true;
-            }
-            return option?.value === current?.value || option?.name === current?.name;
-        });
-        return found ? String(found[0]) : '';
-    });
-
-    /**
-     *
-     * @param key
-     */
-    function setUserDialogWorldSortingByKey(key) {
-        const option = userDialogWorldSortingOptions[key];
-        if (!option) {
-            return;
-        }
-        setUserDialogWorldSorting(option);
-    }
-
-    /**
-     *
-     * @param order
-     */
-    async function setUserDialogWorldOrder(order) {
-        const D = userDialog.value;
-        if (D.worldOrder.value === order.value) {
-            return;
-        }
-        D.worldOrder = order;
-        refreshUserDialogWorlds();
-    }
-
-    const userDialogWorldOrderKey = computed(() => {
-        const current = userDialog.value.worldOrder;
-        const found = Object.entries(userDialogWorldOrderOptions).find(([, option]) => {
-            if (option === current) {
-                return true;
-            }
-            return option?.value === current?.value || option?.name === current?.name;
-        });
-        return found ? String(found[0]) : '';
-    });
-
-    /**
-     *
-     * @param key
-     */
-    function setUserDialogWorldOrderByKey(key) {
-        const option = userDialogWorldOrderOptions[key];
-        if (!option) {
-            return;
-        }
-        setUserDialogWorldOrder(option);
-    }
-
-    /**
-     *
-     * @param sortOption
-     */
-    function changeUserDialogAvatarSorting(sortOption) {
-        const D = userDialog.value;
-        D.avatarSorting = sortOption;
-        sortUserDialogAvatars(D.avatars);
     }
 
     /**
