@@ -13,7 +13,7 @@
                         v-if="!worldDialog.loading"
                         :src="worldDialog.ref.thumbnailImageUrl"
                         class="cursor-pointer"
-                        style="width: 160px; height: 120px; border-radius: 12px"
+                        style="width: 160px; height: 120px; border-radius: var(--radius-xl)"
                         @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)"
                         loading="lazy" />
                 </div>

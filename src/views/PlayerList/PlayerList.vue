@@ -9,7 +9,7 @@
                 <img
                     :src="currentInstanceWorld.ref.thumbnailImageUrl"
                     class="cursor-pointer"
-                    style="flex: none; width: 160px; height: 120px; border-radius: 4px"
+                    style="flex: none; width: 160px; height: 120px; border-radius: var(--radius-md)"
                     @click="showFullscreenImageDialog(currentInstanceWorld.ref.imageUrl)"
                     loading="lazy" />
                 <div style="margin-left: 10px; display: flex; flex-direction: column; min-width: 320px; width: 100%">

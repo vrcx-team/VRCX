@@ -1348,7 +1348,7 @@
     }
 
     .group-item {
-        border-radius: 8px;
+        border-radius: var(--radius-lg);
         border: 1px solid var(--border);
         padding: 8px;
         cursor: pointer;
@@ -1540,7 +1540,7 @@
         align-items: center;
         box-sizing: border-box;
         border: 1px solid var(--border);
-        border-radius: calc(8px * var(--favorites-card-scale, 1));
+        border-radius: calc(var(--radius-lg) * var(--favorites-card-scale, 1));
         padding: var(--favorites-card-padding-y, 8px) var(--favorites-card-padding-x, 10px);
         cursor: pointer;
         transition: background-color 0.15s ease;
@@ -1570,7 +1570,7 @@
     :deep(.favorites-search-card__avatar) {
         width: calc(48px * var(--favorites-card-scale, 1));
         height: calc(48px * var(--favorites-card-scale, 1));
-        border-radius: calc(6px * var(--favorites-card-scale, 1));
+        border-radius: calc(var(--radius-lg) * var(--favorites-card-scale, 1));
         overflow: hidden;
         flex-shrink: 0;
     }

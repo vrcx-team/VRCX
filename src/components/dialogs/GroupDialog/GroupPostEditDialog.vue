@@ -91,7 +91,7 @@
                                             flex: none;
                                             width: 60px;
                                             height: 60px;
-                                            border-radius: 4px;
+                                            border-radius: var(--radius-md);
                                             object-fit: cover;
                                         "
                                         @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)"

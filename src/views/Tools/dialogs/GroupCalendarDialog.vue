@@ -500,7 +500,7 @@
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            border-radius: 8px;
+                            border-radius: var(--radius-xl);
                             font-size: 18px;
                             position: relative;
 
@@ -513,7 +513,7 @@
                                 right: 2px;
                                 min-width: 16px;
                                 height: 16px;
-                                border-radius: 8px;
+                                border-radius: var(--radius-xl);
                                 display: flex;
                                 align-items: center;
                                 justify-content: center;
@@ -591,7 +591,7 @@
                         font-weight: bold;
                         padding: 4px 12px 10px 12px;
                         cursor: pointer;
-                        border-radius: 4px;
+                        border-radius: var(--radius-md);
                         margin: 0 -12px 10px -12px;
                         display: flex;
                         align-items: center;

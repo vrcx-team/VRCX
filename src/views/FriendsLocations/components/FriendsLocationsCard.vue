@@ -240,7 +240,7 @@
         position: relative;
         display: grid;
         gap: calc(14px * var(--card-scale) * var(--card-spacing));
-        border-radius: 8px;
+        border-radius: var(--radius-lg);
         transition: background-color 0.15s ease;
         width: 100%;
         max-width: var(--friend-card-target-width, 220px);
@@ -355,7 +355,7 @@
         justify-content: center;
         min-height: calc(40px * var(--card-scale));
         padding: calc(6px * var(--card-scale)) calc(10px * var(--card-scale));
-        border-radius: calc(10px * var(--card-scale));
+        border-radius: calc(var(--radius-lg) * var(--card-scale));
         font-size: calc(12px * var(--card-scale));
         line-height: 1.3;
         box-sizing: border-box;

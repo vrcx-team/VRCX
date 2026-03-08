@@ -178,7 +178,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 10px;
+        border-radius: var(--radius-lg);
         font-size: 18px;
         position: relative;
     }
@@ -189,7 +189,7 @@
         right: -4px;
         min-width: 14px;
         height: 16px;
-        border-radius: 9px;
+        border-radius: var(--radius-lg);
         display: flex;
         align-items: center;
         justify-content: center;

@@ -12,7 +12,7 @@
                     <img
                         v-if="!groupDialog.loading"
                         :src="groupDialog.ref.iconUrl"
-                        style="width: 120px; height: 120px; border-radius: 12px"
+                        style="width: 120px; height: 120px; border-radius: var(--radius-xl)"
                         class="cursor-pointer"
                         @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)"
                         loading="lazy" />
@@ -349,7 +349,13 @@
                             v-if="!groupDialog.loading"
                             :src="groupDialog.ref.bannerUrl"
                             class="cursor-pointer"
-                            style="flex: none; width: 100%; aspect-ratio: 6/1; object-fit: cover; border-radius: 4px"
+                            style="
+                                flex: none;
+                                width: 100%;
+                                aspect-ratio: 6/1;
+                                object-fit: cover;
+                                border-radius: var(--radius-md);
+                            "
                             @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)"
                             loading="lazy" />
                     </div>
@@ -420,7 +426,7 @@
                                             flex: none;
                                             width: 60px;
                                             height: 60px;
-                                            border-radius: 4px;
+                                            border-radius: var(--radius-md);
                                             object-fit: cover;
                                         "
                                         @click="showFullscreenImageDialog(groupDialog.announcement.imageUrl)"
@@ -774,7 +780,7 @@
                                                 flex: none;
                                                 width: 60px;
                                                 height: 60px;
-                                                border-radius: 4px;
+                                                border-radius: var(--radius-md);
                                                 object-fit: cover;
                                             "
                                             @click="showFullscreenImageDialog(post.imageUrl)"

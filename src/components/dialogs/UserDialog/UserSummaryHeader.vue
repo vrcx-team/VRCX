@@ -8,14 +8,14 @@
                 "
                 class="cursor-pointer"
                 :src="userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride"
-                style="height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover"
+                style="height: 120px; width: 213.33px; border-radius: var(--radius-xl); object-fit: cover"
                 @click="showFullscreenImageDialog(userDialog.ref.profilePicOverride)"
                 loading="lazy" />
             <img
                 v-else-if="!userDialog.loading"
                 class="cursor-pointer"
                 :src="userDialog.ref.currentAvatarThumbnailImageUrl"
-                style="height: 120px; width: 160px; border-radius: 12px; object-fit: cover"
+                style="height: 120px; width: 160px; border-radius: var(--radius-xl); object-fit: cover"
                 @click="showFullscreenImageDialog(userDialog.ref.currentAvatarImageUrl)"
                 loading="lazy" />
         </div>
@@ -179,7 +179,7 @@
                                             flex: none;
                                             height: 32px;
                                             width: 32px;
-                                            border-radius: 3px;
+                                            border-radius: var(--radius-sm);
                                             object-fit: cover;
                                             margin-top: 5px;
                                             margin-right: 5px;
@@ -237,7 +237,7 @@
                 <img
                     class="cursor-pointer"
                     :src="userImage(userDialog.ref, true, '256', true)"
-                    style="flex: none; width: 120px; height: 120px; border-radius: 12px; object-fit: cover"
+                    style="flex: none; width: 120px; height: 120px; border-radius: var(--radius-xl); object-fit: cover"
                     @click="showFullscreenImageDialog(userDialog.ref.userIcon)"
                     loading="lazy" />
             </div>

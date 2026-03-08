@@ -258,7 +258,7 @@
         transition: background-color 0.15s ease;
         position: relative;
         overflow: visible;
-        border-radius: 8px;
+        border-radius: var(--radius-lg);
         width: 100%;
     }
 
@@ -287,7 +287,7 @@
         cursor: pointer;
         width: 100%;
         object-fit: cover;
-        border-radius: 8px 8px 0 0;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     }
 
     .timeline-view .event-card .banner {

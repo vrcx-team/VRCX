@@ -37,7 +37,7 @@
                     v-for="image in emojiTable"
                     :key="image.id"
                     :class="image.id === fileId ? 'x-image-selected' : ''"
-                    style="cursor: pointer; border: 1px solid transparent; border-radius: 8px"
+                    style="cursor: pointer; border: 1px solid transparent; border-radius: var(--radius-xl)"
                     @click="fileId = image.id">
                     <div
                         v-if="

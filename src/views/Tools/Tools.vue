@@ -501,7 +501,7 @@
             display: flex;
             align-items: center;
             padding: 8px 12px;
-            border-radius: 6px;
+            border-radius: var(--radius-lg);
             margin-bottom: 12px;
             transition: all 0.2s ease;
 
@@ -533,7 +533,7 @@
         transition: background-color 0.15s ease;
         position: relative;
         overflow: visible;
-        border-radius: 8px;
+        border-radius: var(--radius-lg);
         cursor: pointer;
         width: 100%;
 
@@ -555,7 +555,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border-radius: 12px;
+                border-radius: var(--radius-xl);
                 margin-right: 20px;
 
                 i {
