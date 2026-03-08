@@ -1143,26 +1143,12 @@
                     </TabsUnderline>
                 </template>
                 <template #JSON>
-                    <Button
-                        class="rounded-full mr-2"
-                        size="icon-sm"
-                        variant="ghost"
-                        @click="refreshGroupDialogTreeData()">
-                        <RefreshCw />
-                    </Button>
-                    <Button
-                        class="rounded-full"
-                        size="icon-sm"
-                        variant="ghost"
-                        @click="downloadAndSaveJson(groupDialog.id, groupDialog.ref)">
-                        <Download />
-                    </Button>
-                    <vue-json-pretty
-                        :key="treeData?.group?.id"
-                        :data="treeData"
-                        :deep="2"
-                        :theme="isDarkMode ? 'dark' : 'light'"
-                        show-icon />
+                    <DialogJsonTab
+                        :tree-data="treeData"
+                        :tree-data-key="treeData?.group?.id"
+                        :dialog-id="groupDialog.id"
+                        :dialog-ref="groupDialog.ref"
+                        @refresh="refreshGroupDialogTreeData()" />
                 </template>
             </TabsUnderline>
         </div>
@@ -1245,6 +1231,7 @@
     import { formatJsonVars } from '../../../shared/utils/base/ui';
     import { groupRequest } from '../../../api';
 
+    import DialogJsonTab from '../DialogJsonTab.vue';
     import GroupCalendarEventCard from '../../../views/Tools/components/GroupCalendarEventCard.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
     import InstanceActionBar from '../../InstanceActionBar.vue';

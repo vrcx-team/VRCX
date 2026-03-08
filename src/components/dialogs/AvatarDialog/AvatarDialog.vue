@@ -507,33 +507,13 @@
                     </div>
                 </template>
                 <template #JSON>
-                    <Button
-                        class="rounded-full mr-2"
-                        size="icon-sm"
-                        variant="ghost"
-                        @click="refreshAvatarDialogTreeData()">
-                        <RefreshCw />
-                    </Button>
-                    <Button
-                        class="rounded-full"
-                        size="icon-sm"
-                        variant="ghost"
-                        @click="downloadAndSaveJson(avatarDialog.id, avatarDialog.ref)">
-                        <Download />
-                    </Button>
-                    <vue-json-pretty
-                        :key="treeData?.id"
-                        :data="treeData"
-                        :deep="2"
-                        :theme="isDarkMode ? 'dark' : 'light'"
-                        show-icon />
-                    <br />
-                    <vue-json-pretty
-                        v-if="Object.keys(avatarDialog.fileAnalysis).length"
-                        :data="avatarDialog.fileAnalysis"
-                        :deep="2"
-                        :theme="isDarkMode ? 'dark' : 'light'"
-                        show-icon />
+                    <DialogJsonTab
+                        :tree-data="treeData"
+                        :tree-data-key="treeData?.id"
+                        :dialog-id="avatarDialog.id"
+                        :dialog-ref="avatarDialog.ref"
+                        :file-analysis="avatarDialog.fileAnalysis"
+                        @refresh="refreshAvatarDialogTreeData()" />
                 </template>
             </TabsUnderline>
             <template v-if="avatarDialog.visible">
@@ -630,6 +610,7 @@
     import { database } from '../../../service/database';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
 
+    import DialogJsonTab from '../DialogJsonTab.vue';
     import ImageCropDialog from '../ImageCropDialog.vue';
 
     const SetAvatarStylesDialog = defineAsyncComponent(() => import('./SetAvatarStylesDialog.vue'));

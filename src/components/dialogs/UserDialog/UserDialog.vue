@@ -1307,22 +1307,12 @@
             </template>
 
             <template #JSON>
-                <Button class="rounded-full mr-2" size="icon-sm" variant="ghost" @click="refreshUserDialogTreeData()">
-                    <RefreshCw />
-                </Button>
-                <Button
-                    class="rounded-full"
-                    size="icon-sm"
-                    variant="ghost"
-                    @click="downloadAndSaveJson(userDialog.id, userDialog.ref)">
-                    <Download />
-                </Button>
-                <vue-json-pretty
-                    :key="treeData?.id"
-                    :data="treeData"
-                    :deep="2"
-                    :theme="isDarkMode ? 'dark' : 'light'"
-                    show-icon />
+                <DialogJsonTab
+                    :tree-data="treeData"
+                    :tree-data-key="treeData?.id"
+                    :dialog-id="userDialog.id"
+                    :dialog-ref="userDialog.ref"
+                    @refresh="refreshUserDialogTreeData()" />
             </template>
         </TabsUnderline>
         <SendInviteDialog
@@ -1441,6 +1431,7 @@
     import { formatJsonVars } from '../../../shared/utils/base/ui';
     import { processBulk } from '../../../service/request';
 
+    import DialogJsonTab from '../DialogJsonTab.vue';
     import InstanceActionBar from '../../InstanceActionBar.vue';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
     import UserSummaryHeader from './UserSummaryHeader.vue';

@@ -694,33 +694,13 @@
                     </div>
                 </template>
                 <template #JSON>
-                    <Button
-                        class="rounded-full mr-2"
-                        size="icon-sm"
-                        variant="ghost"
-                        @click="refreshWorldDialogTreeData()">
-                        <RefreshCw />
-                    </Button>
-                    <Button
-                        class="rounded-full"
-                        size="icon-sm"
-                        variant="ghost"
-                        @click="downloadAndSaveJson(worldDialog.id, worldDialog.ref)">
-                        <Download />
-                    </Button>
-                    <vue-json-pretty
-                        :key="treeData?.id"
-                        :data="treeData"
-                        :deep="2"
-                        :theme="isDarkMode ? 'dark' : 'light'"
-                        show-icon />
-                    <br />
-                    <vue-json-pretty
-                        v-if="Object.keys(worldDialog.fileAnalysis).length"
-                        :data="worldDialog.fileAnalysis"
-                        :deep="2"
-                        :theme="isDarkMode ? 'dark' : 'light'"
-                        show-icon />
+                    <DialogJsonTab
+                        :tree-data="treeData"
+                        :tree-data-key="treeData?.id"
+                        :dialog-id="worldDialog.id"
+                        :dialog-ref="worldDialog.ref"
+                        :file-analysis="worldDialog.fileAnalysis"
+                        @refresh="refreshWorldDialogTreeData()" />
                 </template>
             </TabsUnderline>
         </div>
@@ -837,6 +817,7 @@
     import { database } from '../../../service/database';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
 
+    import DialogJsonTab from '../DialogJsonTab.vue';
     import ImageCropDialog from '../ImageCropDialog.vue';
     import InstanceActionBar from '../../InstanceActionBar.vue';
 
