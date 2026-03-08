@@ -65,8 +65,7 @@
                     :autosize="{ minRows: 2, maxRows: 5 }"
                     :rows="2"
                     placeholder=""
-                    style="margin-top: 10px"
-                    input-class="resize-none"
+                    input-class="resize-none mt-2"
                     @update:modelValue="(v) => updateDialog({ authorTags: v })" />
             </template>
 
@@ -83,8 +82,8 @@
 </template>
 
 <script setup>
-    import { Button } from '@/components/ui/button';
     import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -118,6 +117,10 @@
         }
     );
 
+    /**
+     *
+     * @param patch
+     */
     function updateDialog(patch) {
         emit('update:setAvatarStylesDialog', {
             ...props.setAvatarStylesDialog,
@@ -125,6 +128,9 @@
         });
     }
 
+    /**
+     *
+     */
     async function getAvatarStyles() {
         try {
             const ref = await avatarRequest.getAvailableAvatarStyles();
@@ -144,10 +150,16 @@
         }
     }
 
+    /**
+     *
+     */
     function closeSetAvatarStylesDialog() {
         updateDialog({ visible: false });
     }
 
+    /**
+     *
+     */
     function saveSetAvatarStylesDialog() {
         const primaryStyleId =
             props.setAvatarStylesDialog.availableAvatarStylesMap.get(props.setAvatarStylesDialog.primaryStyle) || '';

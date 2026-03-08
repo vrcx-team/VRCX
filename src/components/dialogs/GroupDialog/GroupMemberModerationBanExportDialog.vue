@@ -11,7 +11,7 @@
                 <DialogTitle>{{ t('dialog.group_member_moderation.export_bans') }}</DialogTitle>
             </DialogHeader>
 
-            <div style="margin-bottom: 10px" class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2 mb-2">
                 <label v-for="option in exportBansOptions" :key="option.label" class="inline-flex items-center gap-2">
                     <Checkbox
                         :model-value="checkedExportBansOptions.includes(option.label)"
@@ -24,8 +24,7 @@
                 v-model="exportContent"
                 :rows="15"
                 readonly
-                style="margin-top: 15px"
-                input-class="resize-none"
+                input-class="resize-none mt-4"
                 @click="handleCopyExportContent" />
         </DialogContent>
     </Dialog>

@@ -17,17 +17,15 @@
                         @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)"
                         loading="lazy" />
                 </div>
-                <div style="flex: 1; display: flex; align-items: flex-start; margin-left: 15px">
+                <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
                     <div class="group-header" style="flex: 1">
-                        <span v-if="groupDialog.ref.ownerId === currentUser.id" style="margin-right: 5px">👑</span>
+                        <span class="mr-1.5" v-if="groupDialog.ref.ownerId === currentUser.id">👑</span>
                         <span
-                            class="font-bold"
-                            style="margin-right: 5px; cursor: pointer"
+                            class="font-bold mr-1.5"
+                            style="cursor: pointer"
                             v-text="groupDialog.ref.name"
                             @click="copyToClipboard(groupDialog.ref.name)"></span>
-                        <span
-                            class="group-discriminator x-grey"
-                            style="font-family: monospace; font-size: 12px; margin-right: 5px">
+                        <span class="group-discriminator x-grey mr-1.5" style="font-family: monospace; font-size: 12px">
                             {{ groupDialog.ref.shortCode }}.{{ groupDialog.ref.discriminator }}
                         </span>
                         <TooltipWrapper v-for="item in groupDialog.ref.$languages" :key="item.key" side="top">
@@ -37,9 +35,9 @@
                             <span
                                 class="flags"
                                 :class="languageClass(item.key)"
-                                style="display: inline-block; margin-right: 5px"></span>
+                                style="display: inline-block; margin-right: 6px"></span>
                         </TooltipWrapper>
-                        <div style="margin-top: 5px">
+                        <div style="margin-top: 6px">
                             <span
                                 class="cursor-pointer x-grey"
                                 style="font-family: monospace"
@@ -50,85 +48,85 @@
                             <Badge
                                 v-if="groupDialog.ref.isVerified"
                                 variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                                style="margin-right: 6px; margin-top: 6px">
                                 {{ t('dialog.group.tags.verified') }}
                             </Badge>
                             <Badge
                                 v-if="groupDialog.ref.privacy === 'private'"
                                 variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                                style="margin-right: 6px; margin-top: 6px">
                                 {{ t('dialog.group.tags.private') }}
                             </Badge>
                             <Badge
                                 v-if="groupDialog.ref.privacy === 'default'"
                                 variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                                style="margin-right: 6px; margin-top: 6px">
                                 {{ t('dialog.group.tags.public') }}
                             </Badge>
                             <Badge
                                 v-if="groupDialog.ref.joinState === 'open'"
                                 variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                                style="margin-right: 6px; margin-top: 6px">
                                 {{ t('dialog.group.tags.open') }}
                             </Badge>
                             <Badge
                                 v-else-if="groupDialog.ref.joinState === 'request'"
                                 variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                                style="margin-right: 6px; margin-top: 6px">
                                 {{ t('dialog.group.tags.request') }}
                             </Badge>
                             <Badge
                                 v-else-if="groupDialog.ref.joinState === 'invite'"
                                 variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                                style="margin-right: 6px; margin-top: 6px">
                                 {{ t('dialog.group.tags.invite') }}
                             </Badge>
                             <Badge
                                 v-else-if="groupDialog.ref.joinState === 'closed'"
                                 variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                                style="margin-right: 6px; margin-top: 6px">
                                 {{ t('dialog.group.tags.closed') }}
                             </Badge>
                             <Badge
                                 v-if="groupDialog.inGroup"
                                 variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                                style="margin-right: 6px; margin-top: 6px">
                                 {{ t('dialog.group.tags.joined') }}
                             </Badge>
                             <Badge
                                 v-if="groupDialog.ref.myMember && groupDialog.ref.myMember.bannedAt"
                                 variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                                style="margin-right: 6px; margin-top: 6px">
                                 {{ t('dialog.group.tags.banned') }}
                             </Badge>
                             <template v-if="groupDialog.inGroup && groupDialog.ref.myMember">
                                 <Badge
                                     v-if="groupDialog.ref.myMember.visibility === 'visible'"
                                     variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px">
+                                    style="margin-right: 6px; margin-top: 6px">
                                     {{ t('dialog.group.tags.visible') }}
                                 </Badge>
                                 <Badge
                                     v-else-if="groupDialog.ref.myMember.visibility === 'friends'"
                                     variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px">
+                                    style="margin-right: 6px; margin-top: 6px">
                                     {{ t('dialog.group.tags.friends') }}
                                 </Badge>
                                 <Badge
                                     v-else-if="groupDialog.ref.myMember.visibility === 'hidden'"
                                     variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px">
+                                    style="margin-right: 6px; margin-top: 6px">
                                     {{ t('dialog.group.tags.hidden') }}
                                 </Badge>
                                 <Badge
                                     v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements"
                                     variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px">
+                                    style="margin-right: 6px; margin-top: 6px">
                                     {{ t('dialog.group.tags.subscribed') }}
                                 </Badge>
                             </template>
                         </div>
-                        <div style="margin-top: 5px">
+                        <div style="margin-top: 6px">
                             <pre
                                 v-show="groupDialog.ref.name !== groupDialog.ref.description"
                                 style="
@@ -151,7 +149,7 @@
                                     class="rounded-full mr-2"
                                     variant="secondary"
                                     size="icon-lg"
-                                    style="margin-left: 5px"
+                                    style="margin-left: 6px"
                                     @click="clearGroupRepresentation(groupDialog.id)">
                                     <BookmarkCheck />
                                 </Button>
@@ -362,11 +360,11 @@
                     <div class="flex flex-wrap items-start px-2.5" style="max-height: none">
                         <span
                             v-if="groupDialog.instances.length"
-                            style="font-size: 12px; font-weight: bold; margin: 5px">
+                            style="font-size: 12px; font-weight: bold; margin: 6px">
                             {{ t('dialog.group.info.instances') }}
                         </span>
                         <div v-for="room in groupDialog.instances" :key="room.tag" style="width: 100%">
-                            <div style="margin: 5px 0" class="flex items-center">
+                            <div style="margin: 6px 0" class="flex items-center">
                                 <Location :location="room.tag" class="text-sm" />
                                 <InstanceActionBar
                                     class="ml-1"
@@ -380,7 +378,7 @@
                             <div
                                 v-if="room.users.length"
                                 class="flex flex-wrap items-start"
-                                style="margin: 10px 0; padding: 0; max-height: unset">
+                                style="margin: 8px 0; padding: 0; max-height: unset">
                                 <div
                                     v-for="user in room.users"
                                     :key="user.id"
@@ -418,7 +416,7 @@
                                 <span style="display: block" v-text="groupDialog.announcement.title" />
                                 <div
                                     v-if="groupDialog.announcement.imageUrl"
-                                    style="display: inline-block; margin-right: 5px">
+                                    style="display: inline-block; margin-right: 6px">
                                     <img
                                         :src="groupDialog.announcement.imageUrl"
                                         class="cursor-pointer"
@@ -448,7 +446,7 @@
                                 <div
                                     v-if="groupDialog.announcement.id"
                                     class="text-xs"
-                                    style="float: right; margin-left: 5px">
+                                    style="float: right; margin-left: 6px">
                                     <TooltipWrapper v-if="groupDialog.announcement.roleIds.length" side="top">
                                         <template #content>
                                             <span>{{ t('dialog.group.posts.visibility') }}</span>
@@ -466,12 +464,12 @@
                                                 </span>
                                             </template>
                                         </template>
-                                        <Eye style="margin-right: 5px" />
+                                        <Eye style="margin-right: 6px" />
                                     </TooltipWrapper>
                                     <DisplayName
                                         :userid="groupDialog.announcement.authorId"
-                                        style="margin-right: 5px" />
-                                    <span v-if="groupDialog.announcement.editorId" style="margin-right: 5px">
+                                        style="margin-right: 6px" />
+                                    <span v-if="groupDialog.announcement.editorId" style="margin-right: 6px">
                                         ({{ t('dialog.group.posts.edited_by') }}
                                         <DisplayName :userid="groupDialog.announcement.editorId" />)
                                     </span>
@@ -502,7 +500,7 @@
                                             <Button
                                                 size="sm"
                                                 variant="ghost"
-                                                style="margin-left: 5px; padding: 0"
+                                                style="margin-left: 6px; padding: 0"
                                                 @click="
                                                     showGroupPostEditDialog(groupDialog.id, groupDialog.announcement)
                                                 "></Button>
@@ -511,7 +509,7 @@
                                             <Button
                                                 size="sm"
                                                 variant="ghost"
-                                                style="margin-left: 5px; padding: 0"
+                                                style="margin-left: 6px; padding: 0"
                                                 @click="confirmDeleteGroupPost(groupDialog.announcement)"></Button>
                                         </TooltipWrapper>
                                     </template>
@@ -623,7 +621,7 @@
                                 }}</span>
                                 <div
                                     v-if="groupDialog.ref.links && groupDialog.ref.links.length > 0"
-                                    style="margin-top: 5px"
+                                    style="margin-top: 6px"
                                     class="flex">
                                     <template v-for="(link, index) in groupDialog.ref.links" :key="index">
                                         <TooltipWrapper v-if="link">
@@ -636,7 +634,7 @@
                                                     width: 16px;
                                                     height: 16px;
                                                     vertical-align: middle;
-                                                    margin-right: 5px;
+                                                    margin-right: 6px;
                                                     cursor: pointer;
                                                 "
                                                 @click.stop="openExternalLink(link)"
@@ -687,8 +685,8 @@
                         </div>
                         <div
                             v-if="groupDialog.ref.membershipStatus === 'member'"
-                            style="width: 100%; margin-top: 10px; border-top: 1px solid #e4e7ed14">
-                            <div style="width: 100%; display: flex; margin-top: 10px">
+                            style="width: 100%; margin-top: 8px; border-top: 1px solid #e4e7ed14">
+                            <div style="width: 100%; display: flex; margin-top: 8px">
                                 <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
                                     <div class="flex-1 overflow-hidden">
                                         <span class="block truncate font-medium leading-[18px]">{{
@@ -755,7 +753,7 @@
                 </template>
                 <template #Posts>
                     <template v-if="groupDialog.visible">
-                        <span style="margin-right: 10px; vertical-align: top"
+                        <span style="margin-right: 8px; vertical-align: top"
                             >{{ t('dialog.group.posts.posts_count') }} {{ groupDialog.posts.length }}</span
                         >
                         <InputGroupField
@@ -763,7 +761,7 @@
                             clearable
                             size="sm"
                             :placeholder="t('dialog.group.posts.search_placeholder')"
-                            style="width: 89%; margin-bottom: 10px"
+                            style="width: 89%; margin-bottom: 8px"
                             @input="updateGroupPostSearch" />
                         <div class="flex flex-wrap items-start">
                             <div
@@ -772,7 +770,7 @@
                                 class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
                                 <div class="flex-1 overflow-hidden">
                                     <span style="display: block" v-text="post.title" />
-                                    <div v-if="post.imageUrl" style="display: inline-block; margin-right: 5px">
+                                    <div v-if="post.imageUrl" style="display: inline-block; margin-right: 6px">
                                         <img
                                             :src="post.imageUrl"
                                             class="cursor-pointer"
@@ -799,7 +797,7 @@
                                         >{{ post.text || '-' }}</pre
                                     >
                                     <br />
-                                    <div v-if="post.authorId" class="text-xs" style="float: right; margin-left: 5px">
+                                    <div v-if="post.authorId" class="text-xs" style="float: right; margin-left: 6px">
                                         <TooltipWrapper v-if="post.roleIds.length" side="top">
                                             <template #content>
                                                 <span>{{ t('dialog.group.posts.visibility') }}</span>
@@ -816,10 +814,10 @@
                                                     >
                                                 </template>
                                             </template>
-                                            <Eye style="margin-right: 5px" />
+                                            <Eye style="margin-right: 6px" />
                                         </TooltipWrapper>
-                                        <DisplayName :userid="post.authorId" style="margin-right: 5px" />
-                                        <span v-if="post.editorId" style="margin-right: 5px"
+                                        <DisplayName :userid="post.authorId" style="margin-right: 6px" />
+                                        <span v-if="post.editorId" style="margin-right: 6px"
                                             >({{ t('dialog.group.posts.edited_by') }}
                                             <DisplayName :userid="post.editorId" />)</span
                                         >
@@ -878,7 +876,7 @@
                         <span v-else style="font-weight: bold; font-size: 16px">{{
                             t('dialog.group.members.friends_only')
                         }}</span>
-                        <div style="margin-top: 10px">
+                        <div style="margin-top: 8px">
                             <Button
                                 class="rounded-full h-6 w-6"
                                 variant="ghost"
@@ -892,23 +890,23 @@
                                 class="rounded-full h-6 w-6 ml-2"
                                 size="icon-sm"
                                 variant="ghost"
-                                style="margin-left: 5px"
+                                style="margin-left: 6px"
                                 @click="downloadAndSaveJson(`${groupDialog.id}_members`, groupDialog.members)">
                                 <Download class="h-4 w-4" />
                             </Button>
                             <span
                                 v-if="groupDialog.memberSearch.length"
-                                style="font-size: 14px; margin-left: 5px; margin-right: 5px"
+                                style="font-size: 14px; margin-left: 6px; margin-right: 6px"
                                 >{{ groupDialog.memberSearchResults.length }}/{{ groupDialog.ref.memberCount }}</span
                             >
-                            <span v-else style="font-size: 14px; margin-left: 5px; margin-right: 5px"
+                            <span v-else style="font-size: 14px; margin-left: 6px; margin-right: 6px"
                                 >{{ groupDialog.members.length }}/{{ groupDialog.ref.memberCount }}</span
                             >
                             <div
                                 v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')"
                                 style="float: right"
                                 class="flex items-center">
-                                <span style="margin-right: 5px">{{ t('dialog.group.members.sort_by') }}</span>
+                                <span style="margin-right: 6px">{{ t('dialog.group.members.sort_by') }}</span>
                                 <Select
                                     v-model="groupDialogMemberSortValue"
                                     :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0">
@@ -948,13 +946,13 @@
                                 clearable
                                 size="sm"
                                 :placeholder="t('dialog.group.members.search')"
-                                style="margin-top: 10px; margin-bottom: 10px"
+                                style="margin-top: 8px; margin-bottom: 8px"
                                 @input="groupMembersSearch" />
                         </div>
                         <div
                             v-if="groupDialog.memberSearch.length"
                             class="flex flex-wrap items-start"
-                            style="margin-top: 10px; overflow: auto; max-height: 250px; min-width: 130px">
+                            style="margin-top: 8px; overflow: auto; max-height: 250px; min-width: 130px">
                             <div
                                 v-for="user in groupDialog.memberSearchResults"
                                 :key="user.id"
@@ -977,7 +975,7 @@
                                                 v-if="user.isRepresenting"
                                                 side="top"
                                                 :content="t('dialog.group.members.representing')">
-                                                <Tag style="margin-right: 5px" />
+                                                <Tag style="margin-right: 6px" />
                                             </TooltipWrapper>
                                             <TooltipWrapper v-if="user.visibility !== 'visible'" side="top">
                                                 <template #content>
@@ -986,13 +984,13 @@
                                                         {{ user.visibility }}</span
                                                     >
                                                 </template>
-                                                <Eye style="margin-right: 5px" />
+                                                <Eye style="margin-right: 6px" />
                                             </TooltipWrapper>
                                             <TooltipWrapper
                                                 v-if="!user.isSubscribedToAnnouncements"
                                                 side="top"
                                                 :content="t('dialog.group.members.unsubscribed_announcements')">
-                                                <MessageSquare style="margin-right: 5px" />
+                                                <MessageSquare style="margin-right: 6px" />
                                             </TooltipWrapper>
                                             <TooltipWrapper v-if="user.managerNotes" side="top">
                                                 <template #content>
@@ -1000,7 +998,7 @@
                                                     <br />
                                                     <span>{{ user.managerNotes }}</span>
                                                 </template>
-                                                <Pencil style="margin-right: 5px" />
+                                                <Pencil style="margin-right: 6px" />
                                             </TooltipWrapper>
                                         </template>
                                         <template v-for="roleId in user.roleIds" :key="roleId">
@@ -1017,7 +1015,7 @@
                         <ul
                             v-else-if="groupDialog.members.length > 0"
                             class="infinite-list flex flex-wrap items-start"
-                            style="margin-top: 10px; overflow: auto; max-height: 250px; min-width: 130px">
+                            style="margin-top: 8px; overflow: auto; max-height: 250px; min-width: 130px">
                             <li
                                 v-for="user in groupDialog.members"
                                 :key="user.id"
@@ -1040,7 +1038,7 @@
                                                 v-if="user.isRepresenting"
                                                 side="top"
                                                 :content="t('dialog.group.members.representing')">
-                                                <Tag style="margin-right: 5px" />
+                                                <Tag style="margin-right: 6px" />
                                             </TooltipWrapper>
                                             <TooltipWrapper v-if="user.visibility !== 'visible'" side="top">
                                                 <template #content>
@@ -1049,13 +1047,13 @@
                                                         {{ user.visibility }}</span
                                                     >
                                                 </template>
-                                                <Eye style="margin-right: 5px" />
+                                                <Eye style="margin-right: 6px" />
                                             </TooltipWrapper>
                                             <TooltipWrapper
                                                 v-if="!user.isSubscribedToAnnouncements"
                                                 side="top"
                                                 :content="t('dialog.group.members.unsubscribed_announcements')">
-                                                <MessageSquare style="margin-right: 5px" />
+                                                <MessageSquare style="margin-right: 6px" />
                                             </TooltipWrapper>
                                             <TooltipWrapper v-if="user.managerNotes" side="top">
                                                 <template #content>
@@ -1063,7 +1061,7 @@
                                                     <br />
                                                     <span>{{ user.managerNotes }}</span>
                                                 </template>
-                                                <Pencil style="margin-right: 5px" />
+                                                <Pencil style="margin-right: 6px" />
                                             </TooltipWrapper>
                                         </template>
                                         <template v-for="roleId in user.roleIds" :key="roleId">
@@ -1110,8 +1108,8 @@
                             :key="`label-${index}`"
                             v-slot:[`label-${index}`]>
                             <span style="font-weight: bold; font-size: 16px" v-text="gallery.name" />
-                            <i class="x-status-icon" style="margin-left: 5px" :class="groupGalleryStatus(gallery)" />
-                            <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
+                            <i class="x-status-icon" style="margin-left: 6px" :class="groupGalleryStatus(gallery)" />
+                            <span style="color: #909399; font-size: 12px; margin-left: 6px">{{
                                 groupDialog.galleries[gallery.id] ? groupDialog.galleries[gallery.id].length : 0
                             }}</span>
                         </template>
@@ -1119,13 +1117,13 @@
                             v-for="(gallery, index) in groupDialog.ref.galleries"
                             :key="`content-${index}`"
                             v-slot:[String(index)]>
-                            <span style="color: #c7c7c7; padding: 10px" v-text="gallery.description" />
+                            <span style="color: #c7c7c7; padding: 8px" v-text="gallery.description" />
                             <div
                                 style="
                                     display: grid;
                                     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                                    gap: 15px;
-                                    margin-top: 10px;
+                                    gap: 16px;
+                                    margin-top: 8px;
                                     max-height: 600px;
                                     overflow-y: auto;
                                 ">

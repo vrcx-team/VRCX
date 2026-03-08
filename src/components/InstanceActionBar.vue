@@ -53,10 +53,9 @@
         </TooltipWrapper>
         <TooltipWrapper v-if="showHistoryButton" side="top" :content="historyTooltip">
             <Button
-                class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground ml-1.5"
                 size="icon-sm"
                 variant="outline"
-                style="margin-left: 5px"
                 @click="handleHistory">
                 <History class="h-4 w-4" />
             </Button>
@@ -101,7 +100,7 @@
                         </span>
                         <span v-if="instance?.users?.length">{{ t('dialog.user.info.instance_users') }}<br /></span>
                         <template v-for="user in instance?.users || []" :key="user.id">
-                            <span style="cursor: pointer; margin-right: 5px" @click="showUserDialog(user.id)">
+                            <span style="cursor: pointer; margin-right: 6px" @click="showUserDialog(user.id)">
                                 {{ user.displayName }}
                             </span>
                         </template>
@@ -268,7 +267,7 @@
     const showLaunchButton = computed(() => props.showLaunch && checkCanInviteSelf(resolvedLaunchLocation.value));
     const showInviteYourself = computed(() => props.showInvite && checkCanInviteSelf(resolvedInviteLocation.value));
 
-    const inviteStyle = computed(() => (showLaunchButton.value ? 'margin-left: 5px' : ''));
+    const inviteStyle = computed(() => (showLaunchButton.value ? 'margin-left: 6px' : ''));
     const showRefreshButton = computed(() => props.showRefresh && typeof props.onRefresh === 'function');
     const showHistoryButton = computed(() => props.showHistory && typeof props.onHistory === 'function');
 

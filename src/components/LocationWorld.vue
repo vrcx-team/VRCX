@@ -9,7 +9,7 @@
         <TooltipWrapper v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
             <AlertTriangle :class="['inline-block', 'ml-1']" style="color: lightcoral" />
         </TooltipWrapper>
-        <Lock v-if="strict" style="display: inline-block; margin-left: 5px" />
+        <Lock class="ml-1.5" v-if="strict" style="display: inline-block" />
     </span>
 </template>
 
@@ -50,6 +50,9 @@
     const groupName = ref('');
     const isClosed = ref(false);
 
+    /**
+     *
+     */
     function parse() {
         const locObj = props.locationobject;
         location.value = locObj.tag;
@@ -94,6 +97,10 @@
         }
     }
 
+    /**
+     *
+     * @param accessTypeNameRaw
+     */
     function translateAccessType(accessTypeNameRaw) {
         const key = accessTypeLocaleKeyMap[accessTypeNameRaw];
         if (!key) {
@@ -118,10 +125,16 @@
         { immediate: true }
     );
 
+    /**
+     *
+     */
     function showLaunchDialog() {
         launchStore.showLaunchDialog(location.value, shortName.value);
     }
 
+    /**
+     *
+     */
     function showGroupDialog() {
         if (!location.value) return;
         const L = parseLocation(location.value);

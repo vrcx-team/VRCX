@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div class="options-container" style="margin-top: 0">
+        <div class="options-container mt-0">
             <span class="header">{{ t('view.settings.general.general.header') }}</span>
-            <div class="px-2.5 overflow-y-auto overflow-x-hidden" style="margin-top: 10px">
+            <div class="px-2.5 overflow-y-auto overflow-x-hidden mt-2">
                 <div class="box-border flex items-center p-1.5 text-[13px] cursor-default">
                     <div class="flex-1 overflow-hidden">
                         <span class="block truncate font-medium leading-[18px]">{{
@@ -57,12 +57,12 @@
             <div v-if="!noUpdater" class="text-sm mt-2 flex flex-col align-baseline">
                 <span class="name">{{ t('view.settings.general.vrcx_updater.update_action') }}</span>
                 <ToggleGroup
+                    class="mt-1.5"
                     type="single"
                     required
                     variant="outline"
                     size="sm"
                     :model-value="autoUpdateVRCX"
-                    style="margin-top: 5px"
                     @update:model-value="setAutoUpdateVRCX">
                     <ToggleGroupItem value="Off">{{
                         t('view.settings.general.vrcx_updater.auto_update_off')
@@ -124,7 +124,7 @@
             <span class="header inline-flex items-center"
                 >{{ t('view.settings.general.favorites.header') }}
                 <TooltipWrapper side="top" :content="t('view.settings.general.favorites.header_tooltip')">
-                    <Info style="width: 12px; height: 12px; margin-left: 4px; vertical-align: middle; cursor: help" />
+                    <Info class="ml-1" style="width: 12px; height: 12px; vertical-align: middle; cursor: help" />
                 </TooltipWrapper>
             </span>
             <br />
@@ -132,7 +132,7 @@
                 :model-value="localFavoriteFriendsGroups"
                 multiple
                 @update:modelValue="setLocalFavoriteFriendsGroups">
-                <SelectTrigger style="margin-top: 8px">
+                <SelectTrigger class="mt-2">
                     <SelectValue :placeholder="t('view.settings.general.favorites.group_placeholder')" />
                 </SelectTrigger>
                 <SelectContent>
@@ -253,6 +253,9 @@
         () => import('../../dialogs/OpenSourceSoftwareNoticeDialog.vue')
     );
 
+    /**
+     *
+     */
     function openOSSDialog() {
         ossDialog.value = true;
     }

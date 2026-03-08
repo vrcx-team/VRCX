@@ -7,16 +7,16 @@
 
             <div>
                 <InputGroupAction
+                    class="mt-1.5"
                     v-for="(domain, index) in urlList"
                     :key="index"
                     v-model="urlList[index]"
-                    size="sm"
-                    style="margin-top: 5px">
+                    size="sm">
                     <template #actions>
                         <Button variant="ghost" @click="urlList.splice(index, 1)"><Trash2 /></Button>
                     </template>
                 </InputGroupAction>
-                <Button size="sm" variant="outline" style="margin-top: 5px" @click="urlList.push('')">
+                <Button size="sm" variant="outline" style="margin-top: 6px" @click="urlList.push('')">
                     {{ t('dialog.allowed_video_player_domains.add_domain') }}
                 </Button>
             </div>

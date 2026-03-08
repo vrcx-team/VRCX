@@ -20,12 +20,12 @@
                     >.
                 </span>
                 <VueShowdown
-                    class="changelog-markdown"
+                    class="changelog-markdown mt-2"
                     :markdown="changeLogDialog.changeLog"
                     flavor="github"
                     :options="showdownOptions"
                     @click="handleLinkClick"
-                    style="height: 62vh; overflow-y: auto; margin-top: 10px" />
+                    style="height: 62vh; overflow-y: auto" />
             </div>
             <DialogFooter>
                 <Button

@@ -7,11 +7,11 @@
             <div v-if="chatboxBlacklistDialog.visible">
                 <h2>{{ t('dialog.chatbox_blacklist.keyword_blacklist') }}</h2>
                 <InputGroupAction
+                    class="mt-1.5"
                     v-for="(item, index) in chatboxBlacklist"
                     :key="index"
                     v-model="chatboxBlacklist[index]"
                     size="sm"
-                    style="margin-top: 5px"
                     @change="saveChatboxBlacklist">
                     <template #actions>
                         <Button
@@ -23,7 +23,7 @@
                         </Button>
                     </template>
                 </InputGroupAction>
-                <Button size="sm" variant="outline" style="margin-top: 5px" @click="chatboxBlacklist.push('')">
+                <Button size="sm" variant="outline" style="margin-top: 6px" @click="chatboxBlacklist.push('')">
                     {{ t('dialog.chatbox_blacklist.add_item') }}
                 </Button>
                 <br />
@@ -32,12 +32,12 @@
                     v-for="user in chatboxUserBlacklist"
                     :key="user[0]"
                     variant="outline"
-                    style="margin-right: 5px; margin-top: 5px">
+                    style="margin-right: 6px; margin-top: 6px">
                     <span>{{ user[1] }}</span>
                     <button
                         type="button"
                         style="
-                            margin-left: 6px;
+                            margin-left: 8px;
                             border: none;
                             background: transparent;
                             padding: 0;
@@ -81,6 +81,10 @@
 
     const emit = defineEmits(['deleteChatboxUserBlacklist']);
 
+    /**
+     *
+     * @param userId
+     */
     function deleteChatboxUserBlacklist(userId) {
         emit('deleteChatboxUserBlacklist', userId);
     }

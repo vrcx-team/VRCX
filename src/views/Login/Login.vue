@@ -1,6 +1,6 @@
 <template>
     <div class="x-login-container">
-        <div style="position: absolute; top: 0; left: 0; margin: 5px">
+        <div class="m-1.5" style="position: absolute; top: 0; left: 0">
             <LoginSettingsDialog />
             <TooltipWrapper v-if="!noUpdater" side="top" :content="t('view.login.updater')">
                 <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost" @click="showVRCXUpdateDialog"
@@ -29,7 +29,7 @@
         <div class="x-login">
             <div class="x-login-form-container">
                 <div>
-                    <h2 style="font-weight: bold; text-align: center; margin: 0">{{ t('view.login.login') }}</h2>
+                    <h2 class="m-0" style="font-weight: bold; text-align: center">{{ t('view.login.login') }}</h2>
                     <form id="login-form" @submit.prevent="onSubmit">
                         <FieldGroup class="gap-3">
                             <VeeField v-slot="{ field, errors }" name="username">
@@ -95,10 +95,10 @@
                 <hr v-if="Object.keys(savedCredentials).length !== 0" class="x-vertical-divider" />
 
                 <div v-if="Object.keys(savedCredentials).length !== 0">
-                    <h2 style="font-weight: bold; text-align: center; margin: 0">
+                    <h2 class="m-0" style="font-weight: bold; text-align: center">
                         {{ t('view.login.savedAccounts') }}
                     </h2>
-                    <div class="x-scroll-wrapper" style="margin-top: 10px">
+                    <div class="x-scroll-wrapper mt-2">
                         <div class="x-saved-account-list">
                             <div
                                 v-for="user in savedCredentials"

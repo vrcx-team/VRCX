@@ -1,6 +1,6 @@
 <template>
     <div class="x-container">
-        <div style="margin: 0 0 10px; display: flex; align-items: center">
+        <div class="mt-0 mx-0 mb-2" style="display: flex; align-items: center">
             <InputGroupField
                 :model-value="searchText"
                 :placeholder="t('view.search.search_placeholder')"
@@ -15,18 +15,18 @@
             </TooltipWrapper>
         </div>
         <TabsUnderline
+            class="mt-4"
             v-model="activeSearchTab"
             :items="searchTabs"
             aria-label="Search tabs"
-            :unmount-on-hide="false"
-            style="margin-top: 15px">
+            :unmount-on-hide="false">
             <template #user>
                 <div style="min-height: 60px">
-                    <label class="inline-flex items-center gap-2" style="margin-left: 10px">
+                    <label class="inline-flex items-center gap-2 ml-2">
                         <Checkbox v-model="searchUserByBio" />
                         <span>{{ t('view.search.user.search_by_bio') }}</span>
                     </label>
-                    <label class="inline-flex items-center gap-2" style="margin-left: 10px">
+                    <label class="inline-flex items-center gap-2 ml-2">
                         <Checkbox v-model="searchUserSortByLastLoggedIn" />
                         <span>{{ t('view.search.user.sort_by_last_logged_in') }}</span>
                     </label>
@@ -59,7 +59,7 @@
                             </div>
                         </div>
                     </div>
-                    <ButtonGroup v-if="searchUserResults.length" style="margin-top: 15px">
+                    <ButtonGroup class="mt-4" v-if="searchUserResults.length">
                         <Button
                             variant="outline"
                             size="sm"
@@ -85,7 +85,7 @@
                         <Select
                             :model-value="searchWorldCategoryIndex"
                             @update:modelValue="handleSearchWorldCategorySelect"
-                            style="margin-bottom: 15px">
+                            style="margin-bottom: 16px">
                             <SelectTrigger size="sm">
                                 <SelectValue :placeholder="t('view.search.world.category')" />
                             </SelectTrigger>
@@ -100,7 +100,7 @@
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
-                        <label class="inline-flex items-center gap-2" style="margin-left: 10px">
+                        <label class="inline-flex items-center gap-2" style="margin-left: 8px">
                             <Checkbox v-model="searchWorldLabs" />
                             <span>{{ t('view.search.world.community_lab') }}</span>
                         </label>
@@ -126,7 +126,7 @@
                             </div>
                         </div>
                     </div>
-                    <ButtonGroup v-if="searchWorldResults.length" style="margin-top: 15px">
+                    <ButtonGroup v-if="searchWorldResults.length" style="margin-top: 16px">
                         <Button
                             variant="outline"
                             size="sm"
@@ -154,7 +154,7 @@
                                 v-if="avatarRemoteDatabaseProviderList.length > 1"
                                 :model-value="avatarRemoteDatabaseProvider"
                                 @update:modelValue="setAvatarProvider"
-                                style="margin-right: 5px">
+                                style="margin-right: 6px">
                                 <SelectTrigger size="sm">
                                     <SelectValue :placeholder="t('view.search.avatar.search_provider')" />
                                 </SelectTrigger>
@@ -180,7 +180,7 @@
                                     <RefreshCw v-else />
                                 </Button>
                             </TooltipWrapper>
-                            <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
+                            <span style="font-size: 14px; margin-left: 6px; margin-right: 6px">{{
                                 t('view.search.avatar.result_count', {
                                     count: searchAvatarResults.length
                                 })
@@ -190,7 +190,7 @@
                             <RadioGroup
                                 :model-value="searchAvatarFilter"
                                 class="flex items-center gap-4"
-                                style="margin: 5px"
+                                style="margin: 6px"
                                 @update:modelValue="handleSearchAvatarFilterChange">
                                 <div class="flex items-center space-x-2">
                                     <RadioGroupItem id="searchAvatarFilter-all" value="all" />
@@ -211,7 +211,7 @@
                             <RadioGroup
                                 :model-value="searchAvatarFilterRemote"
                                 class="flex items-center gap-4"
-                                style="margin: 5px"
+                                style="margin: 6px"
                                 @update:modelValue="handleSearchAvatarFilterRemoteChange">
                                 <div class="flex items-center space-x-2">
                                     <RadioGroupItem id="searchAvatarFilterRemote-all" value="all" />
@@ -239,7 +239,7 @@
                         <Select
                             :model-value="searchAvatarSort"
                             :disabled="searchAvatarFilterRemote !== 'local'"
-                            style="margin: 5px"
+                            style="margin: 6px"
                             @update:modelValue="handleSearchAvatarSortChange">
                             <SelectTrigger size="sm">
                                 <SelectValue :placeholder="t('view.search.avatar.sort_name')" />
@@ -292,7 +292,7 @@
                             </div>
                         </div>
                     </div>
-                    <ButtonGroup v-if="searchAvatarPage.length" style="margin-top: 15px">
+                    <ButtonGroup v-if="searchAvatarPage.length" style="margin-top: 16px">
                         <Button
                             variant="outline"
                             size="sm"
@@ -332,10 +332,10 @@
                             <div class="flex-1 overflow-hidden">
                                 <span class="block truncate font-medium leading-[18px]">
                                     <span v-text="group.name"></span>
-                                    <span style="margin-left: 5px; font-weight: normal">({{ group.memberCount }})</span>
+                                    <span style="margin-left: 6px; font-weight: normal">({{ group.memberCount }})</span>
                                     <span
                                         style="
-                                            margin-left: 5px;
+                                            margin-left: 6px;
                                             color: #909399;
                                             font-weight: normal;
                                             font-family: monospace;
@@ -348,7 +348,7 @@
                             </div>
                         </div>
                     </div>
-                    <ButtonGroup v-if="searchGroupResults.length" style="margin-top: 15px">
+                    <ButtonGroup v-if="searchGroupResults.length" style="margin-top: 16px">
                         <Button
                             variant="outline"
                             size="sm"

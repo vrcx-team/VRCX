@@ -97,7 +97,7 @@
                                     :src="image.versions[image.versions.length - 1].file.url"
                                     loading="lazy" />
                             </div>
-                            <div class="float-right" style="margin-top: 5px">
+                            <div class="float-right" style="margin-top: 6px">
                                 <Button
                                     class="rounded-full mr-2"
                                     size="icon-sm"
@@ -169,7 +169,7 @@
                                     :src="image.versions[image.versions.length - 1].file.url"
                                     loading="lazy" />
                             </div>
-                            <div class="float-right" style="margin-top: 5px">
+                            <div class="float-right" style="margin-top: 6px">
                                 <Button
                                     class="rounded-full mr-2"
                                     size="icon-sm"
@@ -203,7 +203,7 @@
                     <br />
                     <br />
                     <div>
-                        <ButtonGroup style="margin-right: 10px">
+                        <ButtonGroup style="margin-right: 8px">
                             <Button variant="outline" size="sm" @click="refreshEmojiTable">
                                 <RefreshCw />
                                 {{ t('dialog.gallery_icons.refresh') }}
@@ -251,7 +251,7 @@
                                 @click="openExternalLink('https://vrcemoji.com')">
                                 {{ t('dialog.gallery_icons.create_animated_emoji') }}
                             </Button>
-                            <span style="margin-right: 10px">{{ t('dialog.gallery_icons.emoji_animation_fps') }}</span>
+                            <span style="margin-right: 8px">{{ t('dialog.gallery_icons.emoji_animation_fps') }}</span>
                             <NumberField
                                 v-model="emojiAnimFps"
                                 :min="1"
@@ -265,7 +265,7 @@
                                     <NumberFieldIncrement />
                                 </NumberFieldContent>
                             </NumberField>
-                            <span style="margin-right: 10px">{{
+                            <span style="margin-right: 8px">{{
                                 t('dialog.gallery_icons.emoji_animation_frame_count')
                             }}</span>
                             <NumberField
@@ -281,7 +281,7 @@
                                     <NumberFieldIncrement />
                                 </NumberFieldContent>
                             </NumberField>
-                            <label class="inline-flex items-center gap-2" style="margin-left: 10px; margin-right: 10px">
+                            <label class="inline-flex items-center gap-2" style="margin-left: 8px; margin-right: 8px">
                                 <Checkbox v-model="emojiAnimLoopPingPong" />
                                 <span>{{ t('dialog.gallery_icons.emoji_loop_pingpong') }}</span>
                             </label>
@@ -306,18 +306,18 @@
                                     :imageUrl="image.versions[image.versions.length - 1].file.url"
                                     :size="200"></Emoji>
                             </div>
-                            <div style="display: inline-block; margin: 5px">
+                            <div style="display: inline-block; margin: 6px">
                                 <span v-if="image.loopStyle === 'pingpong'">
-                                    <RefreshCw style="margin-right: 5px" />
+                                    <RefreshCw style="margin-right: 6px" />
                                 </span>
-                                <span style="margin-right: 5px">{{ image.animationStyle }}</span>
-                                <span v-if="image.framesOverTime" style="margin-right: 5px"
+                                <span style="margin-right: 6px">{{ image.animationStyle }}</span>
+                                <span v-if="image.framesOverTime" style="margin-right: 6px"
                                     >{{ image.framesOverTime }}fps</span
                                 >
-                                <span v-if="image.frames" style="margin-right: 5px">{{ image.frames }}frames</span>
+                                <span v-if="image.frames" style="margin-right: 6px">{{ image.frames }}frames</span>
                                 <br />
                             </div>
-                            <div class="float-right" style="margin-top: 5px">
+                            <div class="float-right" style="margin-top: 6px">
                                 <Button
                                     class="rounded-full mr-2"
                                     size="icon-sm"
@@ -382,7 +382,7 @@
                                     :src="image.versions[image.versions.length - 1].file.url"
                                     loading="lazy" />
                             </div>
-                            <div class="float-right" style="margin-top: 5px">
+                            <div class="float-right" style="margin-top: 6px">
                                 <Button
                                     class="rounded-full mr-2"
                                     size="icon-sm"
@@ -434,10 +434,10 @@
                             v-model="printUploadNote"
                             :rows="1"
                             :maxlength="32"
-                            style="margin-left: 10px; width: 300px"
+                            style="margin-left: 8px; width: 300px"
                             :placeholder="t('dialog.gallery_icons.note')"
                             input-class="resize-none min-h-0" />
-                        <label class="inline-flex items-center gap-2" style="margin-left: 10px; margin-right: 10px">
+                        <label class="inline-flex items-center gap-2" style="margin-left: 8px; margin-right: 8px">
                             <Checkbox v-model="printCropBorder" />
                             <span>{{ t('dialog.gallery_icons.crop_print_border') }}</span>
                         </label>
@@ -452,7 +452,7 @@
                                 :src="image.files.image"
                                 loading="lazy" />
                         </div>
-                        <div style="margin-top: 5px; width: 208px">
+                        <div style="margin-top: 6px; width: 208px">
                             <span class="block truncate" v-if="image.note" v-text="image.note"></span>
                             <span v-else class="block">&nbsp;</span>
                             <Location
@@ -519,7 +519,7 @@
                                 :src="item.imageUrl"
                                 loading="lazy" />
                         </div>
-                        <div style="margin-top: 5px; width: 208px">
+                        <div style="margin-top: 6px; width: 208px">
                             <span class="block truncate" v-text="item.name"></span>
                             <span v-if="item.description" class="block truncate" v-text="item.description"></span>
                             <span v-else class="block">&nbsp;</span>

@@ -17,10 +17,10 @@
                         @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)"
                         loading="lazy" />
                 </div>
-                <div style="flex: 1; display: flex; align-items: flex-start; margin-left: 15px">
+                <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
                     <div style="flex: 1">
                         <div>
-                            <span class="font-bold" style="margin-right: 5px; cursor: pointer" @click="copyWorldName">
+                            <span class="font-bold mr-1.5" style="cursor: pointer" @click="copyWorldName">
                                 <Home
                                     v-if="
                                         currentUser.$homeLocation &&
@@ -30,7 +30,7 @@
                                 {{ worldDialog.ref.name }}
                             </span>
                         </div>
-                        <div style="margin-top: 5px">
+                        <div class="mt-1.5">
                             <span
                                 class="cursor-pointer x-grey"
                                 style="font-family: monospace"
@@ -38,26 +38,20 @@
                                 v-text="worldDialog.ref.authorName" />
                         </div>
                         <div>
-                            <Badge
-                                v-if="worldDialog.ref.$isLabs"
-                                variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                            <Badge class="mr-1.5 mt-1.5" v-if="worldDialog.ref.$isLabs" variant="outline">
                                 {{ t('dialog.world.tags.labs') }}
                             </Badge>
                             <Badge
+                                class="mr-1.5 mt-1.5"
                                 v-else-if="worldDialog.ref.releaseStatus === 'public'"
-                                variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                                variant="outline">
                                 {{ t('dialog.world.tags.public') }}
                             </Badge>
-                            <Badge v-else variant="outline" style="margin-right: 5px; margin-top: 5px">
+                            <Badge class="mr-1.5 mt-1.5" v-else variant="outline">
                                 {{ t('dialog.world.tags.private') }}
                             </Badge>
                             <TooltipWrapper v-if="worldDialog.isPC" side="top" content="PC">
-                                <Badge
-                                    class="text-platform-pc border-platform-pc!"
-                                    variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px">
+                                <Badge class="text-platform-pc border-platform-pc! mr-1.5 mt-1.5" variant="outline">
                                     <Monitor class="h-4 w-4 text-platform-pc" />
                                     <span
                                         v-if="worldDialog.fileAnalysis.standalonewindows?._fileSize"
@@ -69,9 +63,8 @@
 
                             <TooltipWrapper v-if="worldDialog.isQuest" side="top" content="Quest">
                                 <Badge
-                                    class="text-platform-quest border-platform-quest!"
-                                    variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px">
+                                    class="text-platform-quest border-platform-quest! mr-1.5 mt-1.5"
+                                    variant="outline">
                                     <Smartphone class="h-4 w-4 text-platform-quest" />
                                     <span
                                         v-if="worldDialog.fileAnalysis.android?._fileSize"
@@ -82,10 +75,7 @@
                             </TooltipWrapper>
 
                             <TooltipWrapper v-if="worldDialog.isIos" side="top" content="iOS">
-                                <Badge
-                                    class="text-platform-ios border-platform-ios"
-                                    variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px">
+                                <Badge class="text-platform-ios border-platform-ios mr-1.5 mt-1.5" variant="outline">
                                     <Apple class="h-4 w-4 text-platform-ios" />
                                     <span
                                         v-if="worldDialog.fileAnalysis.ios?._fileSize"
@@ -95,29 +85,19 @@
                                 </Badge>
                             </TooltipWrapper>
 
-                            <Badge
-                                v-if="worldDialog.avatarScalingDisabled"
-                                variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                            <Badge class="mr-1.5 mt-1.5" v-if="worldDialog.avatarScalingDisabled" variant="outline">
                                 {{ t('dialog.world.tags.avatar_scaling_disabled') }}
                             </Badge>
-                            <Badge
-                                v-if="worldDialog.focusViewDisabled"
-                                variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                            <Badge class="mr-1.5 mt-1.5" v-if="worldDialog.focusViewDisabled" variant="outline">
                                 {{ t('dialog.world.tags.focus_view_disabled') }}
                             </Badge>
-                            <Badge
-                                v-if="worldDialog.ref.unityPackageUrl"
-                                variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                            <Badge class="mr-1.5 mt-1.5" v-if="worldDialog.ref.unityPackageUrl" variant="outline">
                                 {{ t('dialog.world.tags.future_proofing') }}
                             </Badge>
                             <Badge
                                 v-if="worldDialog.inCache"
                                 variant="outline"
-                                class="cursor-pointer"
-                                style="margin-right: 5px; margin-top: 5px"
+                                class="cursor-pointer mr-1.5 mt-1.5"
                                 @click="openFolderGeneric(worldDialog.cachePath)">
                                 <span v-text="worldDialog.cacheSize" />
                                 | {{ t('dialog.world.tags.cache') }}
@@ -125,10 +105,7 @@
                         </div>
                         <div>
                             <template v-for="tag in worldDialog.ref.tags" :key="tag">
-                                <Badge
-                                    v-if="tag.startsWith('content_')"
-                                    variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px">
+                                <Badge class="mr-1.5 mt-1.5" v-if="tag.startsWith('content_')" variant="outline">
                                     <span v-if="tag === 'content_horror'">
                                         {{ t('dialog.world.tags.content_horror') }}
                                     </span>
@@ -150,7 +127,7 @@
                                 </Badge>
                             </template>
                         </div>
-                        <div style="margin-top: 5px; display: flex; align-items: center">
+                        <div style="margin-top: 6px; display: flex; align-items: center">
                             <span
                                 v-show="worldDialog.ref.name !== worldDialog.ref.description"
                                 style="font-size: 12px; flex: 1; margin-right: 0.5em"
@@ -334,13 +311,13 @@
                     <div class="flex items-center text-sm">
                         <User />
                         {{ t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
-                        <User style="margin-left: 10px" />
+                        <User style="margin-left: 8px" />
                         {{
                             t('dialog.world.instances.private_count', {
                                 count: worldDialog.ref.privateOccupants
                             })
                         }}
-                        <Check style="margin-left: 10px" />
+                        <Check style="margin-left: 8px" />
                         {{
                             t('dialog.world.instances.capacity_count', {
                                 count: worldDialog.ref.recommendedCapacity,
@@ -351,7 +328,7 @@
                     <div v-for="room in worldDialog.rooms" :key="room.id">
                         <template
                             v-if="isAgeGatedInstancesVisible || !(room.ageGate || room.location?.includes('~ageGate'))">
-                            <div style="margin: 5px 0">
+                            <div style="margin: 6px 0">
                                 <div class="flex items-center">
                                     <LocationWorld
                                         class="text-sm"
@@ -376,7 +353,7 @@
                                 <div
                                     v-if="room.$location.userId || room.users.length"
                                     class="flex flex-wrap items-start"
-                                    style="margin: 10px 0; max-height: unset">
+                                    style="margin: 8px 0; max-height: unset">
                                     <div
                                         v-if="room.$location.userId"
                                         class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
@@ -582,7 +559,7 @@
                                 <TooltipWrapper
                                     v-if="Object.keys(worldDialog.fileAnalysis).length"
                                     side="top"
-                                    style="margin-left: 5px">
+                                    style="margin-left: 6px">
                                     <template #content>
                                         <template
                                             v-for="(created_at, platform) in worldDialogPlatformCreatedAt"
@@ -619,7 +596,7 @@
                                 <span class="block truncate font-medium leading-[18px]" style="display: inline">
                                     {{ t('dialog.world.info.publication_date') }}
                                 </span>
-                                <TooltipWrapper v-if="isTimeInLabVisible" side="top" style="margin-left: 5px">
+                                <TooltipWrapper v-if="isTimeInLabVisible" side="top" style="margin-left: 6px">
                                     <template #content>
                                         <span>
                                             {{ t('dialog.world.info.time_in_labs') }}

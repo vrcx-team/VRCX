@@ -14,28 +14,27 @@
             <div v-if="inviteDialog.visible" class="overflow-hidden">
                 <Location :location="inviteDialog.worldId" :link="false" class="cursor-default" />
                 <br />
-                <Button size="sm" class="mr-2" variant="outline" style="margin-top: 10px" @click="addSelfToInvite">{{
+                <Button size="sm" class="mr-2 mt-2" variant="outline" @click="addSelfToInvite">{{
                     t('dialog.invite.add_self')
                 }}</Button>
                 <Button
                     size="sm"
-                    class="mr-2"
+                    class="mr-2 mt-2"
                     variant="outline"
                     :disabled="inviteDialog.friendsInInstance.length === 0"
-                    style="margin-top: 10px"
                     @click="addFriendsInInstanceToInvite"
                     >{{ t('dialog.invite.add_friends_in_instance') }}</Button
                 >
                 <Button
+                    class="mt-2"
                     size="sm"
                     variant="outline"
                     :disabled="vipFriends.length === 0"
-                    style="margin-top: 10px"
                     @click="addFavoriteFriendsToInvite"
                     >{{ t('dialog.invite.add_favorite_friends') }}</Button
                 >
 
-                <div style="width: 100%; margin-top: 15px">
+                <div class="mt-4" style="width: 100%">
                     <VirtualCombobox
                         :model-value="Array.isArray(inviteDialog.userIds) ? inviteDialog.userIds : []"
                         @update:modelValue="setInviteUserIds"

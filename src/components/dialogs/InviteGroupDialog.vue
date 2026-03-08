@@ -9,7 +9,7 @@
                 <span>{{ t('dialog.invite_to_group.description') }}</span>
                 <br />
 
-                <div style="margin-top: 15px; width: 100%">
+                <div class="mt-4" style="width: 100%">
                     <VirtualCombobox
                         v-model="inviteGroupDialog.groupId"
                         :groups="groupPickerGroups"
@@ -36,7 +36,7 @@
                     </VirtualCombobox>
                 </div>
 
-                <div style="width: 100%; margin-top: 15px">
+                <div style="width: 100%; margin-top: 16px">
                     <VirtualCombobox
                         v-model="inviteGroupDialog.userIds"
                         :groups="friendPickerGroups"

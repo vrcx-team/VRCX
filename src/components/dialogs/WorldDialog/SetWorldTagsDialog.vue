@@ -19,14 +19,14 @@
                 <Checkbox v-model="setWorldTagsDialog.debugAllowed" />
                 <span>{{ t('dialog.set_world_tags.enable_debugging') }}</span>
             </label>
-            <div style="font-size: 12px; margin-top: 10px">{{ t('dialog.set_world_tags.author_tags') }}<br /></div>
+            <div class="mt-2" style="font-size: 12px">{{ t('dialog.set_world_tags.author_tags') }}<br /></div>
             <InputGroupTextareaField
                 v-model="setWorldTagsDialog.authorTags"
                 :rows="2"
                 placeholder=""
-                style="margin-top: 10px"
-                input-class="resize-none" />
-            <div style="font-size: 12px; margin-top: 10px">{{ t('dialog.set_world_tags.content_tags') }}<br /></div>
+               
+                input-class="resize-none mt-2" />
+            <div class="mt-2" style="font-size: 12px">{{ t('dialog.set_world_tags.content_tags') }}<br /></div>
             <label class="inline-flex items-center gap-2">
                 <Checkbox v-model="setWorldTagsDialog.contentHorror" />
                 <span>{{ t('dialog.set_world_tags.content_horror') }}</span>
@@ -51,7 +51,7 @@
                 <Checkbox v-model="setWorldTagsDialog.contentSex" />
                 <span>{{ t('dialog.set_world_tags.content_sex') }}</span>
             </label>
-            <div style="font-size: 12px; margin-top: 10px">
+            <div class="mt-2" style="font-size: 12px">
                 {{ t('dialog.set_world_tags.default_content_settings') }}<br />
             </div>
             <label class="inline-flex items-center gap-2">

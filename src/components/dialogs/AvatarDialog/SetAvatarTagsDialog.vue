@@ -43,7 +43,7 @@
                     v-model="setAvatarTagsDialog.selectedTagsCsv"
                     :rows="2"
                     :placeholder="t('dialog.set_avatar_tags.custom_tags_placeholder')"
-                    style="margin-top: 10px"
+                    class="mt-2"
                     input-class="resize-none"
                     @input="updateInputAvatarTags" />
                 <br />
@@ -59,7 +59,7 @@
                         t('dialog.set_avatar_tags.select_all')
                     }}</Button>
                 </template>
-                <span style="margin-left: 5px"
+                <span style="margin-left: 6px"
                     >{{ props.setAvatarTagsDialog.selectedAvatarIds.length }} /
                     {{ setAvatarTagsDialog.ownAvatars.length }}</span
                 >
@@ -67,7 +67,7 @@
                 <br />
                 <div
                     class="flex flex-wrap items-start max-h-[300px] overflow-hidden auto"
-                    style="margin-top: 10px; min-height: 60px">
+                    style="margin-top: 8px; min-height: 60px">
                     <div
                         v-for="avatar in setAvatarTagsDialog.ownAvatars"
                         :key="avatar.id"
@@ -96,7 +96,7 @@
                             <span v-else class="block truncate text-xs" v-text="avatar.releaseStatus"></span>
                             <span class="block truncate text-xs" v-text="avatarTagStrings.get(avatar.id)"></span>
                         </div>
-                        <Button size="sm" variant="ghost" style="margin-left: 5px" @click.stop>
+                        <Button size="sm" variant="ghost" style="margin-left: 6px" @click.stop>
                             <Checkbox
                                 :model-value="props.setAvatarTagsDialog.selectedAvatarIds.includes(avatar.id)"
                                 @update:modelValue="(val) => toggleAvatarSelection(avatar.id, val)" />

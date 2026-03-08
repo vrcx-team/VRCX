@@ -8,19 +8,19 @@ html {
 
 .x-container {
     position: relative;
-    padding: 10px;
+    padding: 8px;
     overflow: hidden auto;
     box-sizing: border-box;
     min-width: 0;
     background: var(--background);
     height: calc(100% - 20px);
-    margin: 10px 0 10px 0;
+    margin: 8px 0 8px 0;
     border-radius: var(--radius);
     border: 1px solid var(--border);
 }
 
 .aside-collapsed .x-container {
-    margin-right: 10px;
+    margin-right: 8px;
 }
 
 html.dark .x-container {

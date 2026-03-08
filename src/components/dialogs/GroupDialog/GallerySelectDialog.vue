@@ -7,7 +7,7 @@
 
             <div>
                 <span>{{ t('dialog.gallery_select.gallery') }}</span>
-                <span style="color: #909399; font-size: 12px; margin-left: 5px">{{ galleryTable.length }}/64</span>
+                <span class="ml-1.5" style="color: #909399; font-size: 12px">{{ galleryTable.length }}/64</span>
                 <br />
                 <input
                     id="GalleryUploadButton"
@@ -82,6 +82,11 @@
         }
     });
 
+    /**
+     *
+     * @param imageUrl
+     * @param fileId
+     */
     function selectImageGallerySelect(imageUrl, fileId) {
         const D = props.gallerySelectDialog;
         D.selectedFileId = fileId;
@@ -89,10 +94,17 @@
         D.visible = false;
     }
 
+    /**
+     *
+     */
     function displayGalleryUpload() {
         document.getElementById('GalleryUploadButton').click();
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangeGallery(e) {
         const clearFile = function () {
             const fileInput = /** @type{HTMLInputElement} */ (document.querySelector('#GalleryUploadButton'));

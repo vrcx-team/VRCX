@@ -57,8 +57,7 @@
                         v-model="notificationTable.filters[1].value"
                         :placeholder="t('view.notification.search_placeholder')"
                         clearable
-                        class="flex-[0.4]"
-                        style="margin: 0 10px" />
+                        class="flex-[0.4] my-0 mx-2" />
                     <TooltipWrapper side="bottom" :content="t('view.notification.refresh_tooltip')">
                         <Button
                             class="rounded-full"
@@ -139,6 +138,10 @@
         paginationHeight: 52
     });
 
+    /**
+     *
+     * @param row
+     */
     function getNotificationCreatedAt(row) {
         if (typeof row?.created_at === 'string' && row.created_at.length > 0) {
             return row.created_at;
@@ -149,6 +152,10 @@
         return '';
     }
 
+    /**
+     *
+     * @param row
+     */
     function getNotificationCreatedAtTs(row) {
         const createdAtRaw = row?.created_at ?? row?.createdAt;
         if (typeof createdAtRaw === 'number') {
@@ -263,6 +270,9 @@
 
     const sendInviteRequestResponseDialogVisible = ref(false);
 
+    /**
+     *
+     */
     function saveTableFilters() {
         configRepository.setString(
             'VRCX_notificationTableFilters',
@@ -270,15 +280,27 @@
         );
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleNotificationFilterChange(value) {
         notificationTable.value.filters[0].value = Array.isArray(value) ? value : [];
         saveTableFilters();
     }
 
+    /**
+     *
+     * @param url
+     */
     function getSmallThumbnailUrl(url) {
         return convertFileUrlToImageUrl(url);
     }
 
+    /**
+     *
+     * @param invite
+     */
     function showSendInviteResponseDialog(invite) {
         sendInviteResponseDialog.value.invite = invite;
         sendInviteResponseDialog.value.messageSlot = {};
@@ -287,6 +309,10 @@
         sendInviteResponseDialogVisible.value = true;
     }
 
+    /**
+     *
+     * @param invite
+     */
     function showSendInviteRequestResponseDialog(invite) {
         sendInviteResponseDialog.value.invite = invite;
         sendInviteResponseDialog.value.messageSlot = {};

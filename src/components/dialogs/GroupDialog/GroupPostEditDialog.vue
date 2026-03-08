@@ -19,8 +19,7 @@
                             <InputGroupTextareaField
                                 v-model="groupPostEditDialog.text"
                                 :rows="4"
-                                style="margin-top: 10px"
-                                input-class="resize-none" />
+                                input-class="resize-none mt-2" />
                         </FieldContent>
                     </Field>
                     <Field v-if="!groupPostEditDialog.postId">
@@ -84,7 +83,7 @@
                         <FieldLabel>{{ t('dialog.group_post_edit.image') }}</FieldLabel>
                         <FieldContent>
                             <template v-if="gallerySelectDialog.selectedFileId">
-                                <div style="display: inline-block; flex: none; margin-right: 5px">
+                                <div class="mr-1.5" style="display: inline-block; flex: none">
                                     <img
                                         :src="gallerySelectDialog.selectedImageUrl"
                                         style="
@@ -195,16 +194,26 @@
         return names.slice(0, 3).join(', ') + (names.length > 3 ? ` +${names.length - 3}` : '');
     });
 
+    /**
+     *
+     * @param value
+     */
     function handleRoleIdsChange(value) {
         const next = Array.isArray(value) ? value.map((v) => String(v ?? '')).filter(Boolean) : [];
         groupPostEditDialog.value.roleIds = next;
     }
 
+    /**
+     *
+     */
     function showGallerySelectDialog() {
         const D = gallerySelectDialog.value;
         D.visible = true;
         refreshGalleryTable();
     }
+    /**
+     *
+     */
     async function refreshGalleryTable() {
         const params = {
             n: 100,
@@ -216,6 +225,9 @@
             galleryTable.value = args.json.reverse();
         }
     }
+    /**
+     *
+     */
     function editGroupPost() {
         const D = groupPostEditDialog.value;
         if (!D.groupId || !D.postId) {
@@ -243,6 +255,9 @@
         });
         D.visible = false;
     }
+    /**
+     *
+     */
     function createGroupPost() {
         const D = groupPostEditDialog.value;
         if (!D.title || !D.text) {
@@ -267,6 +282,9 @@
         });
         D.visible = false;
     }
+    /**
+     *
+     */
     function clearImageGallerySelect() {
         const D = gallerySelectDialog.value;
         D.selectedFileId = '';

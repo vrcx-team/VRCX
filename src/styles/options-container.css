@@ -5,7 +5,7 @@
 
 .options-container {
     margin-top: 30px;
-    padding: 0 10px 10px 10px;
+    padding: 0 8px 8px 8px;
 }
 
 .options-container .header-bar {
@@ -25,7 +25,7 @@
 
 .options-container-item {
     font-size: 12px;
-    margin-top: 5px;
+    margin-top: 6px;
     display: flex;
     align-items: center;
 }

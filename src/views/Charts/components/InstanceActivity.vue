@@ -2,12 +2,12 @@
     <div id="chart" class="x-container">
         <div ref="instanceActivityRef" class="pt-12">
             <BackToTop :target="instanceActivityRef" :right="30" :bottom="30" :teleport="false" />
-            <div class="options-container instance-activity" style="margin-top: 0">
+            <div class="options-container instance-activity mt-0">
                 <div>
                     <span>{{ t('view.charts.instance_activity.header') }}</span>
                     <HoverCard>
                         <HoverCardTrigger as-child>
-                            <Info style="margin-left: 4px; font-size: 12px; opacity: 0.7" />
+                            <Info class="ml-1" style="font-size: 12px; opacity: 0.7" />
                         </HoverCardTrigger>
                         <HoverCardContent side="bottom" align="start" class="w-75">
                             <div class="tips-popover">
@@ -21,12 +21,7 @@
 
                 <div>
                     <TooltipWrapper :content="t('view.charts.instance_activity.refresh')" side="top">
-                        <Button
-                            class="rounded-full"
-                            size="icon"
-                            variant="ghost"
-                            style="margin-right: 5px"
-                            @click="reloadData">
+                        <Button class="rounded-full mr-1.5" size="icon" variant="ghost" @click="reloadData">
                             <RefreshCcw />
                         </Button>
                     </TooltipWrapper>
@@ -37,7 +32,7 @@
                                 <TooltipWrapper
                                     :content="t('view.charts.instance_activity.settings.header')"
                                     side="top">
-                                    <Button class="rounded-full" size="icon" variant="ghost" style="margin-right: 5px">
+                                    <Button class="rounded-full mr-1.5" size="icon" variant="ghost">
                                         <Settings />
                                     </Button>
                                 </TooltipWrapper>
@@ -215,6 +210,9 @@
         setInstanceActivityHeight();
     });
 
+    /**
+     *
+     */
     function setInstanceActivityHeight() {
         if (instanceActivityRef.value) {
             const availableHeight = window.innerHeight - 110;
@@ -259,6 +257,10 @@
         }
     });
 
+    /**
+     *
+     * @param value
+     */
     function handleBarWidthCommit(value) {
         changeBarWidth(value?.[0] ?? barWidthDraft.value, () => handleEchartsRerender());
     }
@@ -303,6 +305,10 @@
         return fromDate(selectedDate.value ?? new Date(), calendarTimeZone);
     });
 
+    /**
+     *
+     * @param dateValue
+     */
     function isCalendarDateDisabled(dateValue) {
         try {
             return getDatePickerDisabledDate(toDate(dateValue, calendarTimeZone));
@@ -311,6 +317,10 @@
         }
     }
 
+    /**
+     *
+     * @param dateValue
+     */
     function handleCalendarModelUpdate(dateValue) {
         if (!dateValue) return;
         selectedDate.value = toDate(dateValue, calendarTimeZone);
@@ -430,6 +440,10 @@
         }
     };
 
+    /**
+     *
+     * @param params
+     */
     function handleYAxisLabelClick(params) {
         const targetActivity = activityData.value[params?.dataIndex];
         if (!targetActivity) {
@@ -463,6 +477,9 @@
         }
     }
 
+    /**
+     *
+     */
     function getYAxisData() {
         return worldNameArray.value.map((worldName, index) => {
             const activityItem = activityData.value[index];
@@ -479,6 +496,9 @@
         });
     }
 
+    /**
+     *
+     */
     function initEcharts() {
         const chartsHeight = activityData.value.length * (barWidth.value + 10) + 200;
         const chartDom = activityChartRef.value;
@@ -533,6 +553,9 @@
         }
         afterInit();
     }
+    /**
+     *
+     */
     function getNewOption() {
         const getTooltip = (params) => {
             const activityDataArray = activityData.value;
@@ -560,7 +583,7 @@
 
             return `
                         <div style="display: flex; align-items: center;">
-                            <div style="width: 10px; height: 55px; background-color: ${color}; margin-right: 5px;"></div>
+                            <div style="width: 10px; height: 55px; background-color: ${color}; margin-right: 6px;"></div>
                             <div>
                                 <div>${name} #${location.instanceName} ${location.accessTypeName}</div>
                                 <div>${formattedJoinDateTime} - ${formattedLeftDateTime}</div>
@@ -673,10 +696,16 @@
         return echartsOption;
     }
 
+    /**
+     *
+     */
     function handleEchartsRerender() {
         initEcharts();
         handleSettingsChange();
     }
+    /**
+     *
+     */
     function handleSettingsChange() {
         handleChangeSettings(activityDetailChartRef);
 
@@ -716,12 +745,12 @@
     }
     .tips-popover {
         & > div {
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             font-size: 12px;
         }
         & > div:last-child {
             @extend %flex;
-            margin-top: 10px;
+            margin-top: 8px;
             i {
                 margin-right: 3px;
             }

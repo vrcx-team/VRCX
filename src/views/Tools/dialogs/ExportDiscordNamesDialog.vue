@@ -11,8 +11,7 @@
                 v-model="discordNamesContent"
                 :rows="15"
                 readonly
-                style="margin-top: 15px"
-                input-class="resize-none" />
+                input-class="resize-none mt-4" />
         </DialogContent>
     </Dialog>
 </template>

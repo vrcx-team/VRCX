@@ -23,7 +23,7 @@
                     </div>
                 </div>
 
-                <div style="margin-top: 15px; width: 100%">
+                <div class="mt-4" style="width: 100%">
                     <VirtualCombobox
                         :model-value="moderateGroupDialog.groupId"
                         @update:modelValue="setGroupId"

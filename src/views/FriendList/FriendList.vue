@@ -68,7 +68,7 @@
                                 <Button variant="outline" @click="showBulkUnfriendSelectionConfirm">
                                     {{ t('view.friend_list.bulk_unfriend_selection') }}
                                 </Button>
-                                <!-- el-button(size="small" @click="showBulkUnfriendAllConfirm" style="margin-right:5px") Bulk Unfriend All-->
+                                <!-- el-button(size="small" @click="showBulkUnfriendAllConfirm") Bulk Unfriend All-->
                             </div>
                             <div class="flex items-center mr-2">
                                 <span class="name mr-2 text-xs">{{ t('view.friend_list.bulk_unfriend') }}</span>
@@ -98,12 +98,12 @@
                     <DialogHeader>
                         <DialogTitle>{{ t('view.friend_list.load_dialog_title') }}</DialogTitle>
                     </DialogHeader>
-                    <div style="margin-bottom: 10px" v-text="t('view.friend_list.load_dialog_message')"></div>
+                    <div style="margin-bottom: 8px" v-text="t('view.friend_list.load_dialog_message')"></div>
                     <div class="flex items-center gap-2">
                         <Progress :model-value="friendsListLoadingPercent" class="h-4 w-full" />
                         <span class="text-xs w-10 text-right">{{ friendsListLoadingPercent }}%</span>
                     </div>
-                    <div style="margin-top: 10px; text-align: right">
+                    <div style="margin-top: 8px; text-align: right">
                         <span>{{ friendsListLoadingCurrent }} / {{ friendsListLoadingTotal }}</span>
                     </div>
                     <DialogFooter>

@@ -21,14 +21,9 @@
             <template #Info>
                 <template v-if="isFriendOnline(userDialog.friend) || currentUser.id === userDialog.id">
                     <div
+                        class="mb-2 pb-2"
                         v-if="userDialog.ref.location"
-                        style="
-                            display: flex;
-                            flex-direction: column;
-                            margin-bottom: 10px;
-                            padding-bottom: 10px;
-                            border-bottom: 1px solid #e4e7ed14;
-                        ">
+                        style="display: flex; flex-direction: column; border-bottom: 1px solid #e4e7ed14">
                         <div style="flex: none">
                             <template v-if="isRealInstance(userDialog.$location.tag)">
                                 <InstanceActionBar
@@ -48,7 +43,7 @@
                         </div>
                         <div
                             class="flex flex-wrap items-start"
-                            style="flex: 1; margin-top: 10px; max-height: 150px; overflow: auto">
+                            style="flex: 1; margin-top: 8px; max-height: 150px; overflow: auto">
                             <div
                                 v-if="userDialog.$location.userId"
                                 class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
@@ -177,7 +172,7 @@
                     </div>
                     <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
                         <div class="flex-1 overflow-hidden">
-                            <span class="block truncate font-medium leading-[18px]" style="margin-bottom: 5px">{{
+                            <span class="block truncate font-medium leading-[18px]" style="margin-bottom: 6px">{{
                                 t('dialog.user.info.represented_group')
                             }}</span>
                             <div
@@ -186,7 +181,7 @@
                                     (userDialog.representedGroup && userDialog.representedGroup.isRepresenting)
                                 "
                                 class="text-xs">
-                                <div style="display: inline-block; flex: none; margin-right: 5px">
+                                <div style="display: inline-block; flex: none; margin-right: 6px">
                                     <Avatar
                                         class="cursor-pointer size-15! rounded-lg!"
                                         :style="{
@@ -206,10 +201,10 @@
                                     @click="showGroupDialog(userDialog.representedGroup.groupId)">
                                     <span
                                         v-if="userDialog.representedGroup.ownerId === userDialog.id"
-                                        style="margin-right: 5px"
+                                        style="margin-right: 6px"
                                         >👑</span
                                     >
-                                    <span style="margin-right: 5px" v-text="userDialog.representedGroup.name"></span>
+                                    <span style="margin-right: 6px" v-text="userDialog.representedGroup.name"></span>
                                     <span>({{ userDialog.representedGroup.memberCount }})</span>
                                 </span>
                             </div>
@@ -248,12 +243,12 @@
                                     size="icon-sm"
                                     variant="ghost"
                                     v-if="userDialog.id === currentUser.id"
-                                    style="margin-left: 5px; padding: 0"
+                                    style="margin-left: 6px; padding: 0"
                                     @click="showBioDialog"
                                     ><Pencil class="h-3 w-3" />
                                 </Button>
                             </div>
-                            <div style="margin-top: 5px" class="flex items-center">
+                            <div style="margin-top: 6px" class="flex items-center">
                                 <TooltipWrapper v-for="(link, index) in userDialog.ref.bioLinks" :key="index">
                                     <template #content>
                                         <span v-text="link"></span>
@@ -265,7 +260,7 @@
                                             width: 16px;
                                             height: 16px;
                                             vertical-align: middle;
-                                            margin-right: 5px;
+                                            margin-right: 6px;
                                             cursor: pointer;
                                         "
                                         @click.stop="openExternalLink(link)"
@@ -570,12 +565,12 @@
                             <Spinner v-if="userDialog.isMutualFriendsLoading" />
                             <RefreshCw v-else />
                         </Button>
-                        <span style="margin-left: 5px">{{
+                        <span style="margin-left: 6px">{{
                             t('dialog.user.groups.total_count', { count: userDialog.mutualFriends.length })
                         }}</span>
                     </div>
                     <div style="display: flex; align-items: center">
-                        <span style="margin-right: 5px">{{ t('dialog.user.groups.sort_by') }}</span>
+                        <span style="margin-right: 6px">{{ t('dialog.user.groups.sort_by') }}</span>
                         <Select
                             :model-value="userDialogMutualFriendSortingKey"
                             :disabled="userDialog.isMutualFriendsLoading"
@@ -596,7 +591,7 @@
                 </div>
                 <ul
                     class="flex flex-wrap items-start"
-                    style="margin-top: 10px; overflow: auto; max-height: 250px; min-width: 130px">
+                    style="margin-top: 8px; overflow: auto; max-height: 250px; min-width: 130px">
                     <li
                         v-for="user in userDialog.mutualFriends"
                         :key="user.id"
@@ -627,13 +622,13 @@
                             <Spinner v-if="userDialog.isGroupsLoading" />
                             <RefreshCw v-else />
                         </Button>
-                        <span style="margin-left: 5px">{{
+                        <span style="margin-left: 6px">{{
                             t('dialog.user.groups.total_count', { count: userDialog.userGroups.groups.length })
                         }}</span>
                         <template v-if="userDialogGroupEditMode">
                             <span
                                 style="
-                                    margin-left: 10px;
+                                    margin-left: 8px;
 
                                     font-size: 10px;
                                 "
@@ -643,7 +638,7 @@
                     </div>
                     <div style="display: flex; align-items: center">
                         <template v-if="!userDialogGroupEditMode">
-                            <span style="margin-right: 5px">{{ t('dialog.user.groups.sort_by') }}</span>
+                            <span style="margin-right: 6px">{{ t('dialog.user.groups.sort_by') }}</span>
                             <Select
                                 :model-value="userDialogGroupSortingKey"
                                 :disabled="userDialog.isGroupsLoading"
@@ -682,14 +677,14 @@
                         </Button>
                     </div>
                 </div>
-                <div style="margin-top: 10px">
+                <div style="margin-top: 8px">
                     <template v-if="userDialogGroupEditMode">
                         <div
                             class="flex flex-wrap items-start"
-                            style="margin-top: 10px; margin-bottom: 15px; max-height: unset">
+                            style="margin-top: 8px; margin-bottom: 16px; max-height: unset">
                             <!-- Bulk actions dropdown (shown only in edit mode) -->
                             <Select :model-value="bulkGroupActionValue" @update:modelValue="handleBulkGroupAction">
-                                <SelectTrigger size="sm" style="margin-right: 5px; margin-bottom: 5px" @click.stop>
+                                <SelectTrigger size="sm" style="margin-right: 6px; margin-bottom: 6px" @click.stop>
                                     <SelectValue :placeholder="t('dialog.group.actions.manage_selected')" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -712,7 +707,7 @@
                             <Button
                                 size="sm"
                                 variant="outline"
-                                style="padding: 7px 15px; margin-bottom: 5px"
+                                style="padding: 7px 16px; margin-bottom: 6px"
                                 @click="selectAllGroups">
                                 {{
                                     userDialogGroupAllSelected
@@ -729,8 +724,8 @@
                                 <!-- Manual checkbox -->
                                 <div
                                     style="
-                                        margin-left: 5px;
-                                        margin-right: 5px;
+                                        margin-left: 6px;
+                                        margin-right: 6px;
                                         transform: scale(0.8);
                                         transform-origin: left center;
                                     "
@@ -740,7 +735,7 @@
                                         @update:modelValue="() => toggleGroupSelection(group.id)" />
                                 </div>
 
-                                <div style="margin-right: 3px; margin-left: 5px" @click.stop>
+                                <div style="margin-right: 3px; margin-left: 6px" @click.stop>
                                     <Button
                                         size="icon-sm"
                                         variant="ghost"
@@ -762,7 +757,7 @@
                                         <DownloadIcon />
                                     </Button>
                                 </div>
-                                <div style="margin-right: 10px" @click.stop>
+                                <div style="margin-right: 8px" @click.stop>
                                     <Button
                                         size="icon-sm"
                                         variant="outline"
@@ -791,7 +786,7 @@
                                             v-if="group.isRepresenting"
                                             side="top"
                                             :content="t('dialog.group.members.representing')">
-                                            <Tag style="margin-right: 5px" />
+                                            <Tag style="margin-right: 6px" />
                                         </TooltipWrapper>
                                         <TooltipWrapper v-if="group.myMember?.visibility !== 'visible'" side="top">
                                             <template #content>
@@ -800,7 +795,7 @@
                                                     {{ group.myMember.visibility }}</span
                                                 >
                                             </template>
-                                            <Eye style="margin-right: 5px" />
+                                            <Eye style="margin-right: 6px" />
                                         </TooltipWrapper>
                                         <span>({{ group.memberCount }})</span>
                                     </span>
@@ -840,11 +835,11 @@
                                             setGroupSubscription(group.id, !group.myMember.isSubscribedToAnnouncements)
                                         ">
                                         <span v-if="group.myMember.isSubscribedToAnnouncements"
-                                            ><BellOff style="margin-left: 5px" />
+                                            ><BellOff style="margin-left: 6px" />
                                             {{ t('dialog.group.tags.subscribed') }}</span
                                         >
                                         <span v-else
-                                            ><Bell style="margin-left: 5px" />
+                                            ><Bell style="margin-left: 6px" />
                                             {{ t('dialog.group.tags.unsubscribed') }}</span
                                         >
                                     </Button> -->
@@ -854,7 +849,7 @@
                                         size="icon-sm"
                                         variant="outline"
                                         v-if="shiftHeld"
-                                        style="margin-left: 5px"
+                                        style="margin-left: 6px"
                                         @click.stop="leaveGroup(group.id)">
                                         <LogOut />
                                     </Button>
@@ -863,7 +858,7 @@
                                         size="icon-sm"
                                         variant="outline"
                                         v-else
-                                        style="margin-left: 5px"
+                                        style="margin-left: 6px"
                                         @click.stop="leaveGroupPrompt(group.id)">
                                         <LogOut />
                                     </Button>
@@ -876,7 +871,7 @@
                             <span style="font-weight: bold; font-size: 16px">{{
                                 t('dialog.user.groups.own_groups')
                             }}</span>
-                            <span style="font-size: 12px; margin-left: 5px"
+                            <span style="font-size: 12px; margin-left: 6px"
                                 >{{ userDialog.userGroups.ownGroups.length }}/{{
                                     // @ts-ignore
                                     cachedConfig?.constants?.GROUPS?.MAX_OWNED
@@ -884,7 +879,7 @@
                             >
                             <div
                                 class="flex flex-wrap items-start"
-                                style="margin-top: 10px; margin-bottom: 15px; min-height: 60px">
+                                style="margin-top: 8px; margin-bottom: 16px; min-height: 60px">
                                 <div
                                     v-for="group in userDialog.userGroups.ownGroups"
                                     :key="group.id"
@@ -905,7 +900,7 @@
                                                 v-if="group.isRepresenting"
                                                 side="top"
                                                 :content="t('dialog.group.members.representing')">
-                                                <Tag style="margin-right: 5px" />
+                                                <Tag style="margin-right: 6px" />
                                             </TooltipWrapper>
                                             <TooltipWrapper v-if="group.memberVisibility !== 'visible'" side="top">
                                                 <template #content>
@@ -914,7 +909,7 @@
                                                         {{ group.memberVisibility }}</span
                                                     >
                                                 </template>
-                                                <Eye style="margin-right: 5px" />
+                                                <Eye style="margin-right: 6px" />
                                             </TooltipWrapper>
                                             <span>({{ group.memberCount }})</span>
                                         </span>
@@ -926,12 +921,12 @@
                             <span style="font-weight: bold; font-size: 16px">{{
                                 t('dialog.user.groups.mutual_groups')
                             }}</span>
-                            <span style="font-size: 12px; margin-left: 5px">{{
+                            <span style="font-size: 12px; margin-left: 6px">{{
                                 userDialog.userGroups.mutualGroups.length
                             }}</span>
                             <div
                                 class="flex flex-wrap items-start"
-                                style="margin-top: 10px; margin-bottom: 15px; min-height: 60px">
+                                style="margin-top: 8px; margin-bottom: 16px; min-height: 60px">
                                 <div
                                     v-for="group in userDialog.userGroups.mutualGroups"
                                     :key="group.id"
@@ -952,7 +947,7 @@
                                                 v-if="group.isRepresenting"
                                                 side="top"
                                                 :content="t('dialog.group.members.representing')">
-                                                <Tag style="margin-right: 5px" />
+                                                <Tag style="margin-right: 6px" />
                                             </TooltipWrapper>
                                             <TooltipWrapper v-if="group.memberVisibility !== 'visible'" side="top">
                                                 <template #content>
@@ -961,7 +956,7 @@
                                                         {{ group.memberVisibility }}</span
                                                     >
                                                 </template>
-                                                <Eye style="margin-right: 5px" />
+                                                <Eye style="margin-right: 6px" />
                                             </TooltipWrapper>
                                             <span>({{ group.memberCount }})</span>
                                         </span>
@@ -971,7 +966,7 @@
                         </template>
                         <template v-if="userDialog.userGroups.remainingGroups.length > 0">
                             <span style="font-weight: bold; font-size: 16px">{{ t('dialog.user.groups.groups') }}</span>
-                            <span style="font-size: 12px; margin-left: 5px">
+                            <span style="font-size: 12px; margin-left: 6px">
                                 {{ userDialog.userGroups.remainingGroups.length }}
                                 <template v-if="currentUser.id === userDialog.id">
                                     /
@@ -985,7 +980,7 @@
                             </span>
                             <div
                                 class="flex flex-wrap items-start"
-                                style="margin-top: 10px; margin-bottom: 15px; min-height: 60px">
+                                style="margin-top: 8px; margin-bottom: 16px; min-height: 60px">
                                 <div
                                     v-for="group in userDialog.userGroups.remainingGroups"
                                     :key="group.id"
@@ -1006,7 +1001,7 @@
                                                 v-if="group.isRepresenting"
                                                 side="top"
                                                 :content="t('dialog.group.members.representing')">
-                                                <Tag style="margin-right: 5px" />
+                                                <Tag style="margin-right: 6px" />
                                             </TooltipWrapper>
                                             <TooltipWrapper v-if="group.memberVisibility !== 'visible'" side="top">
                                                 <template #content>
@@ -1015,7 +1010,7 @@
                                                         {{ group.memberVisibility }}</span
                                                     >
                                                 </template>
-                                                <Eye style="margin-right: 5px" />
+                                                <Eye style="margin-right: 6px" />
                                             </TooltipWrapper>
                                             <span>({{ group.memberCount }})</span>
                                         </div>
@@ -1039,7 +1034,7 @@
                             <Spinner v-if="userDialog.isWorldsLoading" />
                             <RefreshCw v-else />
                         </Button>
-                        <span style="margin-left: 5px">{{
+                        <span style="margin-left: 6px">{{
                             t('dialog.user.worlds.total_count', { count: userDialog.worlds.length })
                         }}</span>
                     </div>
@@ -1080,7 +1075,7 @@
                         </Select>
                     </div>
                 </div>
-                <div class="flex flex-wrap items-start" style="margin-top: 10px; min-height: 60px">
+                <div class="flex flex-wrap items-start" style="margin-top: 8px; min-height: 60px">
                     <template v-if="userDialog.worlds.length">
                         <div
                             v-for="world in userDialog.worlds"
@@ -1136,7 +1131,7 @@
                         :items="favoriteWorldTabs"
                         :unmount-on-hide="false"
                         class="zero-margin-tabs"
-                        style="margin-top: 10px; height: 50vh">
+                        style="margin-top: 8px; height: 50vh">
                         <template
                             v-for="(list, index) in userDialog.userFavoriteWorlds"
                             :key="`favorite-worlds-label-${index}`"
@@ -1144,11 +1139,11 @@
                             <span>
                                 <i
                                     class="x-status-icon"
-                                    style="margin-right: 6px"
+                                    style="margin-right: 8px"
                                     :class="userFavoriteWorldsStatus(list[1])">
                                 </i>
                                 <span style="font-weight: bold; font-size: 14px" v-text="list[0]"></span>
-                                <span style="font-size: 10px; margin-left: 5px"
+                                <span style="font-size: 10px; margin-left: 6px"
                                     >{{ list[2].length }}/{{ favoriteLimits.maxFavoritesPerGroup.world }}</span
                                 >
                             </span>
@@ -1159,7 +1154,7 @@
                             v-slot:[String(index)]>
                             <div
                                 class="flex flex-wrap items-start"
-                                style="margin-top: 10px; margin-bottom: 15px; min-height: 60px; max-height: none">
+                                style="margin-top: 8px; margin-bottom: 16px; min-height: 60px; max-height: none">
                                 <div
                                     v-for="world in list[2]"
                                     :key="world.favoriteId"
@@ -1217,7 +1212,7 @@
                             <Spinner v-if="userDialog.isAvatarsLoading" />
                             <RefreshCw v-else />
                         </Button>
-                        <span style="margin-left: 5px">{{
+                        <span style="margin-left: 6px">{{
                             t('dialog.user.avatars.total_count', { count: userDialogAvatars.length })
                         }}</span>
                     </div>
@@ -1267,7 +1262,7 @@
                 </div>
                 <div
                     class="flex flex-wrap items-start"
-                    style="margin-top: 10px; min-height: 60px; max-height: 50vh; overflow: auto">
+                    style="margin-top: 8px; min-height: 60px; max-height: 50vh; overflow: auto">
                     <template v-if="filteredUserDialogAvatars.length">
                         <div
                             v-for="avatar in filteredUserDialogAvatars"

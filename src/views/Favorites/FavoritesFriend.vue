@@ -1323,7 +1323,7 @@
     }
 
     .favorites-dropdown {
-        padding: 10px;
+        padding: 8px;
     }
 
     .group-section {
@@ -1392,7 +1392,7 @@
     .group-item__visibility {
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 6px;
     }
 
     .group-item__visibility-text {
@@ -1430,7 +1430,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 6px;
+        gap: 8px;
         font-size: 14px;
     }
 
@@ -1539,7 +1539,7 @@
         box-sizing: border-box;
         border: 1px solid var(--border);
         border-radius: calc(var(--radius-lg) * var(--favorites-card-scale, 1));
-        padding: var(--favorites-card-padding-y, 8px) var(--favorites-card-padding-x, 10px);
+        padding: var(--favorites-card-padding-y, 8px) var(--favorites-card-padding-x, 8px);
         cursor: pointer;
         transition: background-color 0.15s ease;
         width: 100%;
@@ -1558,7 +1558,7 @@
     :deep(.favorites-search-card__content) {
         display: flex;
         align-items: center;
-        gap: var(--favorites-card-content-gap, 10px);
+        gap: var(--favorites-card-content-gap, 8px);
         flex: 1;
         min-width: 0;
     }
@@ -1612,7 +1612,7 @@
     :deep(.favorites-search-card__title) {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
     }
 
     :deep(.favorites-search-card__badges) {
@@ -1645,7 +1645,7 @@
 
     :deep(.favorites-search-card__action-group) {
         display: flex;
-        gap: var(--favorites-card-action-group-gap, 6px);
+        gap: var(--favorites-card-action-group-gap, 8px);
         width: 100%;
     }
 
@@ -1656,7 +1656,7 @@
     :deep(.favorites-search-card__action--checkbox) {
         align-items: center;
         justify-content: flex-end;
-        margin-right: var(--favorites-card-checkbox-margin, 10px);
+        margin-right: var(--favorites-card-checkbox-margin, 8px);
     }
 
     :deep(.favorites-search-card__action--checkbox [data-slot='checkbox']) {
@@ -1698,7 +1698,7 @@
         justify-content: space-between;
         font-size: 13px;
         font-weight: 600;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
     }
 
     .favorites-dropdown__control-value {

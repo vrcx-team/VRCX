@@ -5,7 +5,7 @@
                 <DialogTitle>{{ t('dialog.avatar_export.header') }}</DialogTitle>
             </DialogHeader>
 
-            <div style="margin-bottom: 10px" class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2 mb-2">
                 <label v-for="option in exportSelectOptions" :key="option.value" class="inline-flex items-center gap-2">
                     <Checkbox
                         :model-value="exportSelectedOptions.includes(option.label)"
@@ -35,9 +35,9 @@
                 </Select>
 
                 <Select
+                    class="ml-2"
                     :model-value="avatarExportLocalFavoriteGroupSelection"
-                    @update:modelValue="handleAvatarExportLocalFavoriteGroupSelect"
-                    style="margin-left: 10px">
+                    @update:modelValue="handleAvatarExportLocalFavoriteGroupSelect">
                     <SelectTrigger size="sm">
                         <SelectValue placeholder="Select Group" />
                     </SelectTrigger>
@@ -56,8 +56,7 @@
                 v-model="avatarExportContent"
                 :rows="15"
                 readonly
-                style="margin-top: 15px"
-                input-class="resize-none"
+                input-class="resize-none mt-4"
                 @click="handleCopyAvatarExportData" />
         </DialogContent>
     </Dialog>

@@ -10,46 +10,42 @@
                     {{ t('dialog.config_json.description2') }}
                 </div>
                 <br />
-                <span style="margin-right: 5px">{{ t('dialog.config_json.cache_size') }}</span>
+                <span class="mr-1.5">{{ t('dialog.config_json.cache_size') }}</span>
                 <span v-text="VRChatUsedCacheSize"></span>
                 <span>/</span>
                 <span v-text="totalCacheSize"></span>
                 <span>GB</span>
                 <TooltipWrapper side="top" :content="t('dialog.config_json.refresh')">
                     <Button
-                        class="rounded-full"
+                        class="rounded-full ml-1.5"
                         variant="outline"
                         size="icon-sm"
                         :disabled="VRChatCacheSizeLoading"
-                        style="margin-left: 5px"
                         @click="getVRChatCacheSize">
                         <Spinner v-if="VRChatCacheSizeLoading" />
                         <RefreshCw v-else />
                     </Button>
                 </TooltipWrapper>
 
-                <div style="margin-top: 10px">
-                    <span style="margin-right: 5px">{{ t('dialog.config_json.delete_all_cache') }}</span>
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        style="margin-left: 5px"
-                        @click="showDeleteAllVRChatCacheConfirm"
-                        >{{ t('dialog.config_json.delete_cache') }}</Button
-                    >
+                <div class="mt-2">
+                    <span class="mr-1.5">{{ t('dialog.config_json.delete_all_cache') }}</span>
+                    <Button class="ml-1.5" size="sm" variant="outline" @click="showDeleteAllVRChatCacheConfirm">{{
+                        t('dialog.config_json.delete_cache')
+                    }}</Button>
                 </div>
 
-                <div style="margin-top: 10px">
-                    <span style="margin-right: 5px">{{ t('dialog.config_json.delete_old_cache') }}</span>
-                    <Button size="sm" variant="outline" style="margin-left: 5px" @click="sweepVRChatCache">{{
+                <div class="mt-2">
+                    <span class="mr-1.5">{{ t('dialog.config_json.delete_old_cache') }}</span>
+                    <Button class="ml-1.5" size="sm" variant="outline" @click="sweepVRChatCache">{{
                         t('dialog.config_json.sweep_cache')
                     }}</Button>
                 </div>
 
-                <div v-for="(item, value) in VRChatConfigList" :key="value" style="display: block; margin-top: 10px">
+                <div class="mt-2" v-for="(item, value) in VRChatConfigList" :key="value" style="display: block">
                     <span style="word-break: keep-all">{{ item.name }}:</span>
                     <div style="display: flex">
                         <InputGroupAction
+                            class="mt-1.5"
                             v-model="VRChatConfigFile[value]"
                             :placeholder="item.default"
                             size="sm"
@@ -57,7 +53,7 @@
                             :min="item.min"
                             :max="item.max"
                             @input="refreshDialogValues"
-                            style="flex: 1; margin-top: 5px">
+                            style="flex: 1">
                             <template #actions>
                                 <Button
                                     size="icon-sm"
@@ -71,13 +67,13 @@
                     </div>
                 </div>
 
-                <div style="display: inline-block; margin-top: 10px">
+                <div style="display: inline-block; margin-top: 8px">
                     <span>{{ t('dialog.config_json.camera_resolution') }}</span>
                     <br />
                     <Select
                         :model-value="vrchatCameraResolutionKey"
                         @update:modelValue="(v) => (vrchatCameraResolutionKey = v)">
-                        <SelectTrigger size="sm" style="margin-top: 5px">
+                        <SelectTrigger size="sm" style="margin-top: 6px">
                             <SelectValue :placeholder="getVRChatCameraResolution()" />
                         </SelectTrigger>
                         <SelectContent>
@@ -94,13 +90,13 @@
                 </div>
                 <br />
 
-                <div style="display: inline-block; margin-top: 10px">
+                <div style="display: inline-block; margin-top: 8px">
                     <span>{{ t('dialog.config_json.spout_resolution') }}</span>
                     <br />
                     <Select
                         :model-value="vrchatSpoutResolutionKey"
                         @update:modelValue="(v) => (vrchatSpoutResolutionKey = v)">
-                        <SelectTrigger size="sm" style="margin-top: 5px">
+                        <SelectTrigger size="sm" style="margin-top: 6px">
                             <SelectValue :placeholder="getVRChatSpoutResolution()" />
                         </SelectTrigger>
                         <SelectContent>
@@ -117,13 +113,13 @@
                 </div>
                 <br />
 
-                <div style="display: inline-block; margin-top: 10px">
+                <div style="display: inline-block; margin-top: 8px">
                     <span>{{ t('dialog.config_json.screenshot_resolution') }}</span>
                     <br />
                     <Select
                         :model-value="vrchatScreenshotResolutionKey"
                         @update:modelValue="(v) => (vrchatScreenshotResolutionKey = v)">
-                        <SelectTrigger size="sm" style="margin-top: 5px">
+                        <SelectTrigger size="sm" style="margin-top: 6px">
                             <SelectValue :placeholder="getVRChatScreenshotResolution()" />
                         </SelectTrigger>
                         <SelectContent>
@@ -140,13 +136,13 @@
                 </div>
                 <br />
 
-                <label class="inline-flex items-center gap-2" style="margin-top: 5px; display: block">
+                <label class="inline-flex items-center gap-2" style="margin-top: 6px; display: block">
                     <Checkbox
                         v-model="VRChatConfigFile.picture_output_split_by_date"
                         @update:modelValue="refreshDialogValues" />
                     <span>{{ t('dialog.config_json.picture_sort_by_date') }}</span>
                 </label>
-                <label class="inline-flex items-center gap-2" style="margin-top: 5px; display: block">
+                <label class="inline-flex items-center gap-2" style="margin-top: 6px; display: block">
                     <Checkbox v-model="VRChatConfigFile.disableRichPresence" @update:modelValue="refreshDialogValues" />
                     <span>{{ t('dialog.config_json.disable_discord_presence') }}</span>
                 </label>
@@ -267,6 +263,10 @@
 
     const VRCHAT_RESOLUTION_DEFAULT_KEY = '__default__';
 
+    /**
+     *
+     * @param row
+     */
     function getVRChatResolutionKey(row) {
         const width = Number(row?.width);
         const height = Number(row?.height);
@@ -327,6 +327,9 @@
         }
     });
 
+    /**
+     *
+     */
     function showDeleteAllVRChatCacheConfirm() {
         modalStore
             .confirm({
@@ -341,6 +344,9 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     */
     async function deleteAllVRChatCache() {
         try {
             await AssetBundleManager.DeleteAllCache();
@@ -351,6 +357,10 @@
         getVRChatCacheSize();
     }
 
+    /**
+     *
+     * @param value
+     */
     async function openConfigFolderBrowser(value) {
         const oldPath = VRChatConfigFile.value[value];
         const newPath = await folderSelectorDialog(oldPath);
@@ -360,29 +370,47 @@
         }
     }
 
+    /**
+     *
+     */
     function refreshDialogValues() {
         loading.value = true;
         loading.value = false;
     }
 
+    /**
+     *
+     * @param res
+     */
     function setVRChatSpoutResolution(res) {
         VRChatConfigFile.value.camera_spout_res_height = res.height;
         VRChatConfigFile.value.camera_spout_res_width = res.width;
         refreshDialogValues();
     }
 
+    /**
+     *
+     * @param res
+     */
     function setVRChatCameraResolution(res) {
         VRChatConfigFile.value.camera_res_height = res.height;
         VRChatConfigFile.value.camera_res_width = res.width;
         refreshDialogValues();
     }
 
+    /**
+     *
+     * @param res
+     */
     function setVRChatScreenshotResolution(res) {
         VRChatConfigFile.value.screenshot_res_height = res.height;
         VRChatConfigFile.value.screenshot_res_width = res.width;
         refreshDialogValues();
     }
 
+    /**
+     *
+     */
     function getVRChatCameraResolution() {
         if (VRChatConfigFile.value.camera_res_height && VRChatConfigFile.value.camera_res_width) {
             const res = `${VRChatConfigFile.value.camera_res_width}x${VRChatConfigFile.value.camera_res_height}`;
@@ -391,6 +419,9 @@
         return '1920x1080 (1080p)';
     }
 
+    /**
+     *
+     */
     function getVRChatSpoutResolution() {
         if (VRChatConfigFile.value.camera_spout_res_height && VRChatConfigFile.value.camera_spout_res_width) {
             const res = `${VRChatConfigFile.value.camera_spout_res_width}x${VRChatConfigFile.value.camera_spout_res_height}`;
@@ -399,6 +430,9 @@
         return '1920x1080 (1080p)';
     }
 
+    /**
+     *
+     */
     function getVRChatScreenshotResolution() {
         if (VRChatConfigFile.value.screenshot_res_height && VRChatConfigFile.value.screenshot_res_width) {
             const res = `${VRChatConfigFile.value.screenshot_res_width}x${VRChatConfigFile.value.screenshot_res_height}`;
@@ -407,6 +441,9 @@
         return '1920x1080 (1080p)';
     }
 
+    /**
+     *
+     */
     function saveVRChatConfigFile() {
         for (const item in VRChatConfigFile.value) {
             if (item === 'picture_output_split_by_date') {
@@ -429,11 +466,17 @@
         closeDialog();
     }
 
+    /**
+     *
+     */
     function WriteVRChatConfigFile() {
         const json = JSON.stringify(VRChatConfigFile.value, null, '\t');
         AppApi.WriteConfigFile(json);
     }
 
+    /**
+     *
+     */
     async function readVRChatConfigFile() {
         const config = await AppApi.ReadConfigFileSafe();
         if (config) {
@@ -450,6 +493,9 @@
         }
     }
 
+    /**
+     *
+     */
     function closeDialog() {
         isVRChatConfigDialogVisible.value = false;
     }

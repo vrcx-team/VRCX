@@ -19,7 +19,7 @@
                 @click="showFullscreenImageDialog(userDialog.ref.currentAvatarImageUrl)"
                 loading="lazy" />
         </div>
-        <div style="flex: 1; display: flex; align-items: flex-start; margin-left: 15px">
+        <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
             <div style="flex: 1">
                 <div>
                     <TooltipWrapper v-if="userDialog.ref.status" side="top">
@@ -47,13 +47,13 @@
                     </template>
                     <span
                         class="font-bold"
-                        style="margin-left: 5px; margin-right: 5px; cursor: pointer"
+                        style="margin-left: 6px; margin-right: 6px; cursor: pointer"
                         v-text="userDialog.ref.displayName"
                         @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
                     <TooltipWrapper v-if="userDialog.ref.pronouns" side="top" :content="t('dialog.user.pronouns')">
                         <span
                             class="x-grey"
-                            style="margin-right: 5px; font-family: monospace; font-size: 12px"
+                            style="margin-right: 6px; font-family: monospace; font-size: 12px"
                             v-text="userDialog.ref.pronouns"></span>
                     </TooltipWrapper>
                     <TooltipWrapper v-for="item in userDialog.ref.$languages" :key="item.key" side="top">
@@ -63,13 +63,13 @@
                         <span
                             class="flags"
                             :class="languageClass(item.key)"
-                            style="display: inline-block; margin-right: 5px"></span>
+                            style="display: inline-block; margin-right: 6px"></span>
                     </TooltipWrapper>
                     <template v-if="userDialog.ref.id === currentUser.id">
                         <br />
                         <span
                             class="x-grey"
-                            style="margin-right: 10px; font-family: monospace; font-size: 12px; cursor: pointer"
+                            style="margin-right: 8px; font-family: monospace; font-size: 12px; cursor: pointer"
                             v-text="currentUser.username"
                             @click="copyUserDisplayName(currentUser.username)"></span>
                     </template>
@@ -181,8 +181,8 @@
                                             width: 32px;
                                             border-radius: var(--radius-sm);
                                             object-fit: cover;
-                                            margin-top: 5px;
-                                            margin-right: 5px;
+                                            margin-top: 6px;
+                                            margin-right: 6px;
                                         "
                                         :class="{ grayscale: badge.hidden }"
                                         loading="lazy" />
@@ -208,7 +208,7 @@
                                         </span>
                                         <template v-if="userDialog.id === currentUser.id">
                                             <br />
-                                            <label class="inline-flex items-center gap-2" style="margin-top: 5px">
+                                            <label class="inline-flex items-center gap-2" style="margin-top: 6px">
                                                 <Checkbox
                                                     v-model="badge.hidden"
                                                     @update:modelValue="toggleBadgeVisibility(badge)" />
@@ -233,7 +233,7 @@
                 </div>
             </div>
 
-            <div v-if="userDialog.ref.userIcon" style="flex: none; margin-right: 10px">
+            <div v-if="userDialog.ref.userIcon" style="flex: none; margin-right: 8px">
                 <img
                     class="cursor-pointer"
                     :src="userImage(userDialog.ref, true, '256', true)"

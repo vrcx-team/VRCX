@@ -1,5 +1,5 @@
 <template>
-    <div class="options-container" style="margin-top: 0">
+    <div class="options-container mt-0">
         <span class="header">{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.header') }}</span>
         <div class="options-container-item">
             <Button
@@ -46,8 +46,7 @@
             <RadioGroup
                 :model-value="openVRAlways ? 'true' : 'false'"
                 :disabled="!openVR"
-                class="gap-2 flex"
-                style="margin-top: 8px"
+                class="gap-2 flex mt-2"
                 @update:modelValue="handleOpenVRAlwaysRadio">
                 <div class="flex items-center space-x-2">
                     <RadioGroupItem id="openVRAlways-false" value="false" />
@@ -64,8 +63,7 @@
             <RadioGroup
                 :model-value="overlaybutton ? 'true' : 'false'"
                 :disabled="!openVR || !overlayWrist"
-                class="gap-2 flex"
-                style="margin-top: 8px"
+                class="gap-2 flex mt-2"
                 @update:modelValue="handleOverlayButtonRadio">
                 <div class="flex items-center space-x-2">
                     <RadioGroupItem id="overlaybutton-false" value="false" />
@@ -206,6 +204,10 @@
 
     const { saveOpenVROption } = useVrStore();
 
+    /**
+     *
+     * @param value
+     */
     function handleOpenVRAlwaysRadio(value) {
         const nextValue = value === 'true';
         if (nextValue !== openVRAlways.value) {
@@ -214,6 +216,10 @@
         }
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleOverlayButtonRadio(value) {
         const nextValue = value === 'true';
         if (nextValue !== overlaybutton.value) {

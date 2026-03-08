@@ -12,10 +12,10 @@
                 :maxlength="32"
                 autofocus />
             <InputGroupField
+                class="mt-1.5"
                 v-model="enablePrimaryPasswordDialog.rePassword"
                 :placeholder="t('dialog.primary_password.re_input_placeholder')"
                 type="password"
-                style="margin-top: 5px"
                 size="sm"
                 :maxlength="32" />
             <DialogFooter>
@@ -47,6 +47,9 @@
     const { enablePrimaryPasswordDialog } = storeToRefs(authStore);
     const { setPrimaryPassword } = authStore;
 
+    /**
+     *
+     */
     function handleSetPrimaryPassword() {
         setPrimaryPassword(enablePrimaryPasswordDialog.value.password);
         enablePrimaryPasswordDialog.value.visible = false;

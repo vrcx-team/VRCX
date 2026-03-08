@@ -9,7 +9,7 @@
                 <h3>{{ groupMemberModeration.groupRef.name }}</h3>
                 <TabsUnderline default-value="members" :items="groupModerationTabs" :unmount-on-hide="false">
                     <template #members>
-                        <div style="margin-top: 10px">
+                        <div class="mt-2">
                             <Button
                                 class="rounded-full"
                                 variant="outline"
@@ -19,13 +19,13 @@
                                 <Spinner v-if="isGroupMembersLoading" />
                                 <RefreshCw v-else />
                             </Button>
-                            <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">
+                            <span class="ml-1.5 mr-1.5" style="font-size: 14px">
                                 {{ groupMemberModerationTable.data.length }}/{{
                                     groupMemberModeration.groupRef.memberCount
                                 }}
                             </span>
-                            <div style="float: right; margin-top: 5px">
-                                <span style="margin-right: 5px">{{ t('dialog.group.members.sort_by') }}</span>
+                            <div class="mt-1.5" style="float: right">
+                                <span class="mr-1.5">{{ t('dialog.group.members.sort_by') }}</span>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger
                                         as-child
@@ -51,7 +51,7 @@
                                             "
                                             @click.stop>
                                             {{ t(memberSortOrder.name) }}
-                                            <ArrowDown style="margin-left: 5px" />
+                                            <ArrowDown class="ml-1.5" />
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent>
@@ -63,9 +63,7 @@
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
-                                <span class="ml-2" style="margin-right: 5px">{{
-                                    t('dialog.group.members.filter')
-                                }}</span>
+                                <span class="ml-2 mr-1.5">{{ t('dialog.group.members.filter') }}</span>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger
                                         as-child
@@ -91,7 +89,7 @@
                                             "
                                             @click.stop>
                                             {{ t(memberFilter.name) }}
-                                            <ArrowDown style="margin-left: 5px" />
+                                            <ArrowDown class="ml-1.5" />
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent>
@@ -117,14 +115,14 @@
                                 clearable
                                 size="sm"
                                 :placeholder="t('dialog.group.members.search')"
-                                style="margin-top: 10px; margin-bottom: 10px"
+                                style="margin-top: 8px; margin-bottom: 8px"
                                 @input="groupMembersSearch" />
                             <Button size="sm" variant="outline" @click="selectAll(groupMemberModerationTable.data)">{{
                                 t('dialog.group_member_moderation.select_all')
                             }}</Button>
                             <DataTableLayout
                                 v-if="groupMemberModerationTable.data.length"
-                                style="margin-top: 10px"
+                                style="margin-top: 8px"
                                 :table="groupMemberModerationTanstackTable"
                                 :loading="isGroupMembersLoading"
                                 :page-sizes="pageSizes"
@@ -133,7 +131,7 @@
                     </template>
 
                     <template #bans>
-                        <div style="margin-top: 10px">
+                        <div style="margin-top: 8px">
                             <div class="flex justify-between">
                                 <div class="flex gap-2 items-center">
                                     <Button
@@ -151,7 +149,7 @@
                                         @click="selectAll(groupBansModerationTable.data)"
                                         >{{ t('dialog.group_member_moderation.select_all') }}</Button
                                     >
-                                    <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
+                                    <span style="font-size: 14px; margin-left: 6px; margin-right: 6px">{{
                                         groupBansModerationTable.data.length
                                     }}</span>
                                 </div>
@@ -183,7 +181,7 @@
                             </div>
 
                             <DataTableLayout
-                                style="margin-top: 10px"
+                                style="margin-top: 8px"
                                 :table="groupBansModerationTanstackTable"
                                 :loading="isGroupMembersLoading"
                                 :page-sizes="pageSizes"
@@ -192,7 +190,7 @@
                     </template>
 
                     <template #invites>
-                        <div style="margin-top: 10px">
+                        <div style="margin-top: 8px">
                             <Button
                                 class="rounded-full"
                                 variant="outline"
@@ -208,7 +206,7 @@
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.group_member_moderation.sent_invites')
                                     }}</span>
-                                    <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
+                                    <span style="color: #909399; font-size: 12px; margin-left: 6px">{{
                                         groupInvitesModerationTable.data.length
                                     }}</span>
                                 </template>
@@ -216,7 +214,7 @@
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.group_member_moderation.join_requests')
                                     }}</span>
-                                    <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
+                                    <span style="color: #909399; font-size: 12px; margin-left: 6px">{{
                                         groupJoinRequestsModerationTable.data.length
                                     }}</span>
                                 </template>
@@ -224,7 +222,7 @@
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.group_member_moderation.blocked_requests')
                                     }}</span>
-                                    <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
+                                    <span style="color: #909399; font-size: 12px; margin-left: 6px">{{
                                         groupBlockedModerationTable.data.length
                                     }}</span>
                                 </template>
@@ -236,7 +234,7 @@
                                         >{{ t('dialog.group_member_moderation.select_all') }}</Button
                                     >
                                     <DataTableLayout
-                                        style="margin-top: 10px"
+                                        style="margin-top: 8px"
                                         :table="groupInvitesModerationTanstackTable"
                                         :loading="isGroupMembersLoading"
                                         :page-sizes="pageSizes"
@@ -266,7 +264,7 @@
                                         >{{ t('dialog.group_member_moderation.select_all') }}</Button
                                     >
                                     <DataTableLayout
-                                        style="margin-top: 10px"
+                                        style="margin-top: 8px"
                                         :table="groupJoinRequestsModerationTanstackTable"
                                         :loading="isGroupMembersLoading"
                                         :page-sizes="pageSizes"
@@ -326,7 +324,7 @@
                                         >{{ t('dialog.group_member_moderation.select_all') }}</Button
                                     >
                                     <DataTableLayout
-                                        style="margin-top: 10px"
+                                        style="margin-top: 8px"
                                         :table="groupBlockedModerationTanstackTable"
                                         :loading="isGroupMembersLoading"
                                         :page-sizes="pageSizes"
@@ -352,7 +350,7 @@
                     </template>
 
                     <template #logs>
-                        <div style="margin-top: 10px">
+                        <div style="margin-top: 8px">
                             <Button
                                 class="rounded-full"
                                 variant="outline"
@@ -362,14 +360,14 @@
                                 <Spinner v-if="isGroupMembersLoading" />
                                 <RefreshCw v-else />
                             </Button>
-                            <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
+                            <span style="font-size: 14px; margin-left: 6px; margin-right: 6px">{{
                                 groupLogsModerationTable.data.length
                             }}</span>
                             <br />
                             <div style="display: flex; justify-content: space-between; align-items: center">
                                 <div>
                                     <Select v-model="selectedAuditLogTypes" multiple>
-                                        <SelectTrigger style="margin: 10px 0; width: 250px">
+                                        <SelectTrigger style="margin: 8px 0; width: 250px">
                                             <SelectValue
                                                 :placeholder="t('dialog.group_member_moderation.filter_type')" />
                                         </SelectTrigger>
@@ -394,10 +392,10 @@
                                 clearable
                                 size="sm"
                                 :placeholder="t('dialog.group.members.search')"
-                                style="margin-top: 10px; margin-bottom: 10px" />
+                                style="margin-top: 8px; margin-bottom: 8px" />
                             <br />
                             <DataTableLayout
-                                style="margin-top: 10px"
+                                style="margin-top: 8px"
                                 :table="groupLogsModerationTanstackTable"
                                 :loading="isGroupMembersLoading"
                                 :page-sizes="pageSizes"
@@ -413,13 +411,13 @@
                 <InputGroupField
                     v-model="selectUserId"
                     size="sm"
-                    style="margin-top: 5px"
+                    style="margin-top: 6px"
                     :placeholder="t('dialog.group_member_moderation.user_id_placeholder')"
                     clearable />
                 <Button
                     size="sm"
                     variant="outline"
-                    style="margin-top: 10px"
+                    style="margin-top: 8px"
                     :disabled="!selectUserId"
                     @click="selectGroupMemberUserId"
                     >{{ t('dialog.group_member_moderation.select_user') }}</Button
@@ -431,7 +429,7 @@
                     class="rounded-full"
                     size="icon-sm"
                     variant="outline"
-                    style="margin-left: 5px"
+                    style="margin-left: 6px"
                     @click="clearAllSelected">
                     <Trash2
                 /></Button>
@@ -440,7 +438,7 @@
                     v-for="user in selectedUsersArray"
                     :key="user.id"
                     variant="outline"
-                    style="margin-right: 5px; margin-top: 5px">
+                    style="margin-right: 6px; margin-top: 6px">
                     <TooltipWrapper v-if="user.membershipStatus !== 'member'" side="top">
                         <template #content>
                             <span>{{ t('dialog.group_member_moderation.user_isnt_in_group') }}</span>
@@ -449,11 +447,11 @@
                     </TooltipWrapper>
                     <span
                         v-text="user.user?.displayName || user.userId"
-                        style="font-weight: bold; margin-left: 5px"></span>
+                        style="font-weight: bold; margin-left: 6px"></span>
                     <button
                         type="button"
                         style="
-                            margin-left: 6px;
+                            margin-left: 8px;
                             border: none;
                             background: transparent;
                             padding: 0;
@@ -474,14 +472,14 @@
                     class="text-xs"
                     :rows="2"
                     :placeholder="t('dialog.group_member_moderation.note_placeholder')"
-                    style="margin-top: 5px"
+                    style="margin-top: 6px"
                     input-class="resize-none min-h-0" />
                 <br />
                 <br />
                 <span class="name">{{ t('dialog.group_member_moderation.selected_roles') }}</span>
                 <br />
                 <Select v-model="selectedRoles" multiple>
-                    <SelectTrigger style="margin-top: 5px">
+                    <SelectTrigger style="margin-top: 6px">
                         <SelectValue :placeholder="t('dialog.group_member_moderation.choose_roles_placeholder')" />
                     </SelectTrigger>
                     <SelectContent>
@@ -566,14 +564,14 @@
                         @click="handleUnban"
                         >{{ t('dialog.group_member_moderation.unban') }}</Button
                     >
-                    <span v-if="progressCurrent" style="margin-top: 10px">
+                    <span v-if="progressCurrent" style="margin-top: 8px">
                         <Spinner class="inline-block ml-2 mr-2" />
                         {{ t('dialog.group_member_moderation.progress') }} {{ progressCurrent }}/{{ progressTotal }}
                     </span>
                     <Button
                         variant="secondary"
                         v-if="progressCurrent"
-                        style="margin-left: 5px"
+                        style="margin-left: 6px"
                         @click="progressTotal = 0"
                         >{{ t('dialog.group_member_moderation.cancel') }}</Button
                     >

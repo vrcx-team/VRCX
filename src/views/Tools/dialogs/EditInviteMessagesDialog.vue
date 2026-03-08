@@ -6,8 +6,8 @@
             </DialogHeader>
             <TabsUnderline v-model="activeTab" :items="editInviteTabs" :unmount-on-hide="false" class="mt-2.5">
                 <template #message>
-                    <DataTableLayout
-                        style="margin-top: 10px; cursor: pointer"
+                    <DataTableLayout class="mt-2"
+                        style="cursor: pointer"
                         :table="inviteMessageTanstackTable"
                         :loading="false"
                         :show-pagination="false"
@@ -15,7 +15,7 @@
                 </template>
                 <template #request>
                     <DataTableLayout
-                        style="margin-top: 10px; cursor: pointer"
+                        style="margin-top: 8px; cursor: pointer"
                         :table="inviteRequestTanstackTable"
                         :loading="false"
                         :show-pagination="false"
@@ -23,7 +23,7 @@
                 </template>
                 <template #requestResponse>
                     <DataTableLayout
-                        style="margin-top: 10px; cursor: pointer"
+                        style="margin-top: 8px; cursor: pointer"
                         :table="inviteRequestResponseTanstackTable"
                         :loading="false"
                         :show-pagination="false"
@@ -31,7 +31,7 @@
                 </template>
                 <template #response>
                     <DataTableLayout
-                        style="margin-top: 10px; cursor: pointer"
+                        style="margin-top: 8px; cursor: pointer"
                         :table="inviteResponseTanstackTable"
                         :loading="false"
                         :show-pagination="false"

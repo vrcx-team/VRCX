@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="options-container" style="margin-top: 0">
+        <div class="options-container mt-0">
             <span class="header">{{ t('view.settings.appearance.appearance.header') }}</span>
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.language') }}</span>
@@ -23,8 +23,8 @@
                     {{ t('view.settings.appearance.appearance.font_family') }}
 
                     <TooltipWrapper
+                        class="ml-1.5"
                         side="top"
-                        style="margin-left: 5px"
                         :content="t('view.settings.appearance.appearance.font_family_tooltip')">
                         <Info />
                     </TooltipWrapper>
@@ -443,6 +443,10 @@
 
     initGetZoomLevel();
 
+    /**
+     *
+     * @param value
+     */
     function handleSortFavoritesRadio(value) {
         const nextValue = value === 'true';
         if (nextValue !== sortFavorites.value) {
@@ -450,6 +454,10 @@
         }
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleInstanceUsersSortAlphabeticalRadio(value) {
         const nextValue = value === 'true';
         if (nextValue !== instanceUsersSortAlphabetical.value) {
@@ -457,6 +465,10 @@
         }
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleDtHour12Radio(value) {
         const nextValue = value === 'true';
         if (nextValue !== dtHour12.value) {
@@ -502,6 +514,9 @@
         }
     });
 
+    /**
+     *
+     */
     function addTablePageSizeFromInput() {
         const raw = String(tablePageSizesSearchTerm.value ?? '').trim();
         if (!raw) {
@@ -515,6 +530,9 @@
         tablePageSizesSearchTerm.value = '';
     }
 
+    /**
+     *
+     */
     async function initGetZoomLevel() {
         const handleWheel = (event) => {
             if (event.ctrlKey) {
@@ -528,10 +546,16 @@
         getZoomLevel();
     }
 
+    /**
+     *
+     */
     async function getZoomLevel() {
         zoomLevel.value = ((await AppApi.GetZoom()) + 10) * 10;
     }
 
+    /**
+     *
+     */
     function setZoomLevel() {
         AppApi.SetZoom(zoomLevel.value / 10 - 10);
     }

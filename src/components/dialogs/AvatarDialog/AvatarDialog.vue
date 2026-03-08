@@ -16,16 +16,16 @@
                         style="width: 160px; height: 120px; border-radius: var(--radius-xl); object-fit: cover"
                         loading="lazy" />
                 </div>
-                <div style="flex: 1; display: flex; align-items: flex-start; margin-left: 15px">
+                <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
                     <div style="flex: 1">
                         <div>
                             <span
-                                class="font-bold"
-                                style="margin-right: 5px; cursor: pointer"
+                                class="font-bold mr-1.5"
+                                style="cursor: pointer"
                                 v-text="avatarDialog.ref.name"
                                 @click="copyToClipboard(avatarDialog.ref.name)"></span>
                         </div>
-                        <div style="margin-top: 5px">
+                        <div class="mt-1.5">
                             <span
                                 class="cursor-pointer x-grey"
                                 style="font-family: monospace"
@@ -34,19 +34,16 @@
                         </div>
                         <div>
                             <Badge
+                                class="mr-1.5 mt-1.5"
                                 v-if="avatarDialog.ref.releaseStatus === 'public'"
-                                variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                                variant="outline">
                                 {{ t('dialog.avatar.tags.public') }}
                             </Badge>
-                            <Badge v-else variant="outline" style="margin-right: 5px; margin-top: 5px">
+                            <Badge class="mr-1.5 mt-1.5" v-else variant="outline">
                                 {{ t('dialog.avatar.tags.private') }}
                             </Badge>
                             <TooltipWrapper v-if="avatarDialog.isPC" side="top" content="PC">
-                                <Badge
-                                    class="text-platform-pc border-platform-pc!"
-                                    variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px"
+                                <Badge class="text-platform-pc border-platform-pc! mr-1.5 mt-1.5" variant="outline"
                                     ><Monitor class="h-4 w-4 text-platform-pc" />
                                     <span
                                         v-if="avatarDialog.platformInfo.pc"
@@ -62,9 +59,8 @@
                             </TooltipWrapper>
                             <TooltipWrapper v-if="avatarDialog.isQuest" side="top" content="Android">
                                 <Badge
-                                    class="text-platform-quest border-platform-quest!"
+                                    class="text-platform-quest border-platform-quest! mr-1.5 mt-1.5"
                                     variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px"
                                     ><Smartphone class="h-4 w-4 text-platform-quest" />
                                     <span
                                         v-if="avatarDialog.platformInfo.android"
@@ -79,10 +75,7 @@
                                 </Badge>
                             </TooltipWrapper>
                             <TooltipWrapper v-if="avatarDialog.isIos" side="top" content="iOS">
-                                <Badge
-                                    class="text-platform-ios border-platform-ios"
-                                    variant="outline"
-                                    style="margin-right: 5px; margin-top: 5px"
+                                <Badge class="text-platform-ios border-platform-ios mr-1.5 mt-1.5" variant="outline"
                                     ><Apple class="h-4 w-4 text-platform-ios" />
                                     <span
                                         v-if="avatarDialog.platformInfo.ios"
@@ -99,16 +92,15 @@
                             <Badge
                                 v-if="avatarDialog.inCache"
                                 variant="outline"
-                                class="cursor-pointer"
-                                style="margin-right: 5px; margin-top: 5px"
+                                class="cursor-pointer mr-1.5 mt-1.5"
                                 @click="openFolderGeneric(avatarDialog.cachePath)">
                                 <span v-text="avatarDialog.cacheSize"></span>
                                 &nbsp;{{ t('dialog.avatar.tags.cache') }}
                             </Badge>
                             <Badge
+                                class="mr-1.5 mt-1.5"
                                 v-if="avatarDialog.ref.styles?.primary || avatarDialog.ref.styles?.secondary"
                                 variant="outline"
-                                style="margin-right: 5px; margin-top: 5px"
                                 >{{ t('view.favorite.avatars.styles') }}
                                 <span
                                     v-if="avatarDialog.ref.styles.primary"
@@ -121,16 +113,10 @@
                                     >{{ avatarDialog.ref.styles.secondary }}</span
                                 >
                             </Badge>
-                            <Badge
-                                v-if="avatarDialog.isQuestFallback"
-                                variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                            <Badge class="mr-1.5 mt-1.5" v-if="avatarDialog.isQuestFallback" variant="outline">
                                 {{ t('dialog.avatar.tags.fallback') }}
                             </Badge>
-                            <Badge
-                                v-if="avatarDialog.hasImposter"
-                                variant="outline"
-                                style="margin-right: 5px; margin-top: 5px"
+                            <Badge class="mr-1.5 mt-1.5" v-if="avatarDialog.hasImposter" variant="outline"
                                 >{{ t('dialog.avatar.tags.impostor') }}
                                 <span
                                     v-if="avatarDialog.imposterVersion"
@@ -138,18 +124,12 @@
                                     >v{{ avatarDialog.imposterVersion }}</span
                                 >
                             </Badge>
-                            <Badge
-                                v-if="avatarDialog.ref.unityPackageUrl"
-                                variant="outline"
-                                style="margin-right: 5px; margin-top: 5px">
+                            <Badge class="mr-1.5 mt-1.5" v-if="avatarDialog.ref.unityPackageUrl" variant="outline">
                                 {{ t('dialog.avatar.tags.future_proofing') }}
                             </Badge>
                             <div>
                                 <template v-for="tag in avatarDialog.ref.tags" :key="tag">
-                                    <Badge
-                                        v-if="tag.startsWith('content_')"
-                                        variant="outline"
-                                        style="margin-right: 5px; margin-top: 5px">
+                                    <Badge class="mr-1.5 mt-1.5" v-if="tag.startsWith('content_')" variant="outline">
                                         <span v-if="tag === 'content_horror'">{{
                                             t('dialog.avatar.tags.content_horror')
                                         }}</span>
@@ -167,10 +147,7 @@
                                         }}</span>
                                         <span v-else>{{ tag.replace('content_', '') }}</span>
                                     </Badge>
-                                    <Badge
-                                        v-if="tag.startsWith('author_tag_')"
-                                        variant="outline"
-                                        style="margin-right: 5px; margin-top: 5px">
+                                    <Badge class="mr-1.5 mt-1.5" v-if="tag.startsWith('author_tag_')" variant="outline">
                                         <span>
                                             {{ tag.replace('author_tag_', '') }}
                                         </span>
@@ -178,7 +155,7 @@
                                 </template>
                             </div>
                         </div>
-                        <div style="margin-top: 5px">
+                        <div style="margin-top: 6px">
                             <span
                                 v-show="avatarDialog.ref.name !== avatarDialog.ref.description"
                                 style="font-size: 12px"
@@ -412,7 +389,7 @@
                         </div>
                         <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
                             <div class="flex-1 overflow-hidden">
-                                <span class="block truncate font-medium leading-[18px]" style="margin-bottom: 5px">{{
+                                <span class="block truncate font-medium leading-[18px]" style="margin-bottom: 6px">{{
                                     t('dialog.avatar.info.memo')
                                 }}</span>
                                 <InputGroupTextareaField
@@ -473,7 +450,7 @@
                                 <TooltipWrapper
                                     v-if="Object.keys(avatarDialog.fileAnalysis).length"
                                     side="top"
-                                    style="margin-left: 5px">
+                                    style="margin-left: 6px">
                                     <template #content>
                                         <template
                                             v-for="(created_at, platform) in avatarDialogPlatformCreatedAt"

@@ -1,5 +1,5 @@
 <template>
-    <DropdownMenu v-model:open="moveDropdownOpen" style="margin-left: 5px">
+    <DropdownMenu class="ml-1.5" v-model:open="moveDropdownOpen">
         <DropdownMenuTrigger as-child>
             <Button class="rounded-full w-6 h-6 text-xs" size="icon-sm" variant="ghost"
                 ><ArrowLeft class="h-4 w-4"
@@ -11,10 +11,11 @@
             </span>
             <DropdownMenuSeparator />
             <DropdownMenuItem
+                class="my-2 mx-0"
                 v-for="groupAPI in favoriteGroupList"
                 :key="groupAPI.name"
                 v-if="isLocalFavorite || groupAPI?.name !== currentGroup?.name"
-                style="display: block; margin: 10px 0"
+                style="display: block"
                 :disabled="groupAPI.count >= groupAPI.capacity"
                 @click="handleDropdownItemClick(groupAPI)">
                 {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
@@ -74,6 +75,10 @@
     });
     const moveDropdownOpen = ref(false);
 
+    /**
+     *
+     * @param groupAPI
+     */
     function handleDropdownItemClick(groupAPI) {
         moveDropdownOpen.value = false;
         if (props.isLocalFavorite) {
@@ -87,6 +92,11 @@
         }
     }
 
+    /**
+     *
+     * @param ref
+     * @param group
+     */
     function moveFavorite(ref, group) {
         favoriteRequest.deleteFavorite({ objectId: ref.id }).then(() => {
             favoriteRequest.addFavorite({
@@ -97,6 +107,10 @@
         });
     }
 
+    /**
+     *
+     * @param groupAPI
+     */
     function addFavoriteAvatar(groupAPI) {
         return favoriteRequest
             .addFavorite({
@@ -110,6 +124,10 @@
             });
     }
 
+    /**
+     *
+     * @param groupAPI
+     */
     function addFavoriteWorld(groupAPI) {
         return favoriteRequest
             .addFavorite({

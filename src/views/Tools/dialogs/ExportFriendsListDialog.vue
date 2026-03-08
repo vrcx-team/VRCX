@@ -10,8 +10,7 @@
                         v-model="exportFriendsListCsv"
                         :rows="15"
                         readonly
-                        style="margin-top: 15px"
-                        input-class="resize-none"
+                        input-class="resize-none mt-4"
                         @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
                 </template>
                 <template #json>
@@ -19,7 +18,7 @@
                         v-model="exportFriendsListJson"
                         :rows="15"
                         readonly
-                        style="margin-top: 15px"
+                        style="margin-top: 16px"
                         input-class="resize-none"
                         @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
                 </template>
@@ -79,6 +78,9 @@
         }
     );
 
+    /**
+     *
+     */
     function initExportFriendsListDialog() {
         const { friends } = currentUser.value;
         if (Array.isArray(friends) === false) {

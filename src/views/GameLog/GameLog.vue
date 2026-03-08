@@ -8,8 +8,8 @@
             :total-items="totalItems"
             :on-page-size-change="handlePageSizeChange">
             <template #toolbar>
-                <div style="margin: 0 0 10px; display: flex; align-items: center">
-                    <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
+                <div class="mt-0 mx-0 mb-2" style="display: flex; align-items: center">
+                    <div class="mr-2" style="flex: none; display: flex; align-items: center">
                         <TooltipWrapper side="bottom" :content="t('view.feed.favorites_only_tooltip')">
                             <div>
                                 <Toggle
@@ -55,10 +55,11 @@
                         </SelectContent>
                     </Select>
                     <InputGroupField
+                        class="ml-2"
                         v-model="gameLogTable.search"
                         :placeholder="t('view.game_log.search_placeholder')"
                         clearable
-                        style="flex: 0.4; margin-left: 10px"
+                        style="flex: 0.4"
                         @keyup.enter="gameLogTableLookup"
                         @change="gameLogTableLookup" />
                 </div>
@@ -90,6 +91,10 @@
     const vrcxStore = useVrcxStore();
     const modalStore = useModalStore();
 
+    /**
+     *
+     * @param row
+     */
     function getGameLogCreatedAt(row) {
         if (typeof row?.created_at === 'string' && row.created_at.length > 0) {
             return row.created_at;
@@ -112,6 +117,10 @@
         paginationHeight: 52
     });
 
+    /**
+     *
+     * @param row
+     */
     function deleteGameLogEntryPrompt(row) {
         modalStore
             .confirm({
@@ -122,6 +131,10 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param row
+     */
     function deleteGameLogEntry(row) {
         removeFromArray(gameLogTableData.value, row);
         database.deleteGameLogEntry(row);
@@ -133,6 +146,10 @@
         onDeletePrompt: deleteGameLogEntryPrompt
     });
 
+    /**
+     *
+     * @param value
+     */
     function handleGameLogFilterChange(value) {
         gameLogTable.value.filter = Array.isArray(value) ? value : [];
         gameLogTableLookup();
@@ -140,6 +157,10 @@
 
     const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
 
+    /**
+     *
+     * @param row
+     */
     function getGameLogRowId(row) {
         if (row?.rowId != null) return `row:${row.rowId}`;
 

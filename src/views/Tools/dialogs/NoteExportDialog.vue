@@ -15,28 +15,16 @@
                 {{ t('dialog.note_export.description8') }} <br />
             </div>
 
-            <Button
-                size="sm"
-                class="mr-2"
-                variant="outline"
-                :disabled="loading"
-                style="margin-top: 10px"
-                @click="updateNoteExportDialog">
+            <Button size="sm" class="mr-2 mt-2" variant="outline" :disabled="loading" @click="updateNoteExportDialog">
                 {{ t('dialog.note_export.refresh') }}
             </Button>
-            <Button
-                size="sm"
-                class="mr-2"
-                variant="outline"
-                :disabled="loading"
-                style="margin-top: 10px"
-                @click="exportNoteExport">
+            <Button size="sm" class="mr-2 mt-2" variant="outline" :disabled="loading" @click="exportNoteExport">
                 {{ t('dialog.note_export.export') }}
             </Button>
-            <Button v-if="loading" size="sm" variant="outline" style="margin-top: 10px" @click="cancelNoteExport">
+            <Button class="mt-2" v-if="loading" size="sm" variant="outline" @click="cancelNoteExport">
                 {{ t('dialog.note_export.cancel') }}
             </Button>
-            <span v-if="loading" style="margin: 10px">
+            <span class="m-2" v-if="loading">
                 <Spinner class="inline-block ml-2 mr-2" />
                 {{ t('dialog.note_export.progress') }} {{ progress }}/{{ progressTotal }}
             </span>
@@ -45,7 +33,7 @@
                 <Button size="sm" variant="outline" @click="errors = ''">
                     {{ t('dialog.note_export.clear_errors') }}
                 </Button>
-                <h2 style="font-weight: bold; margin: 0">
+                <h2 class="m-0" style="font-weight: bold">
                     {{ t('dialog.note_export.errors') }}
                 </h2>
                 <pre style="white-space: pre-wrap; font-size: 12px" v-text="errors"></pre>
@@ -57,7 +45,7 @@
                 :loading="loading"
                 :table-style="tableStyle"
                 :show-pagination="false"
-                style="margin-top: 10px" />
+                style="margin-top: 8px" />
         </DialogContent>
     </Dialog>
 </template>

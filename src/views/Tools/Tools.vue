@@ -1,6 +1,6 @@
 <template>
     <div id="chart" class="x-container">
-        <div class="options-container" style="margin-top: 0">
+        <div class="options-container mt-0">
             <span class="header">{{ t('view.tools.header') }}</span>
 
             <div class="tool-categories">
@@ -539,7 +539,7 @@
             }
 
             .category-title {
-                margin-left: 5px;
+                margin-left: 6px;
                 font-size: 16px;
                 font-weight: 600;
             }

@@ -333,7 +333,7 @@
         height: 24px;
         gap: 4px;
         cursor: pointer;
-        margin-left: 5px;
+        margin-left: 6px;
     }
 
     .event-card .event-content {

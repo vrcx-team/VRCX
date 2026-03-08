@@ -337,7 +337,7 @@
     }
 
     .friend-card__signature {
-        margin-top: calc(6px * var(--card-spacing));
+        margin-top: calc(8px * var(--card-spacing));
         font-size: calc(13px * var(--card-scale));
         line-height: 1.4;
         overflow: hidden;
@@ -352,7 +352,7 @@
         align-items: center;
         justify-content: center;
         min-height: calc(40px * var(--card-scale));
-        padding: calc(6px * var(--card-scale)) calc(10px * var(--card-scale));
+        padding: calc(8px * var(--card-scale)) calc(8px * var(--card-scale));
         border-radius: calc(var(--radius-lg) * var(--card-scale));
         font-size: calc(12px * var(--card-scale));
         line-height: 1.3;

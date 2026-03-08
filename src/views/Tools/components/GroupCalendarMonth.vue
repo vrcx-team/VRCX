@@ -56,20 +56,36 @@
 
     const selectedDayKey = computed(() => dayjs(props.modelValue).format('YYYY-MM-DD'));
 
+    /**
+     *
+     * @param dateValue
+     */
     function toKey(dateValue) {
         return dayjs(toDate(dateValue, timeZone)).format('YYYY-MM-DD');
     }
 
+    /**
+     *
+     * @param dateValue
+     */
     function eventCountFor(dateValue) {
         const key = toKey(dateValue);
         return props.eventsByDate?.[key]?.length ?? 0;
     }
 
+    /**
+     *
+     * @param dateValue
+     */
     function hasFollowingFor(dateValue) {
         const key = toKey(dateValue);
         return Boolean(props.followingByDate?.[key]);
     }
 
+    /**
+     *
+     * @param next
+     */
     function onUpdateModelValue(next) {
         if (!next) return;
         internalValue.value = next;
@@ -78,6 +94,10 @@
         emit('update:modelValue', asDate);
     }
 
+    /**
+     *
+     * @param next
+     */
     function onUpdatePlaceholder(next) {
         if (!next) return;
         placeholder.value = next;
@@ -85,6 +105,10 @@
         emit('update:modelValue', toDate(next, timeZone));
     }
 
+    /**
+     *
+     * @param dateValue
+     */
     function dayLabel(dateValue) {
         return dayjs(toDate(dateValue, timeZone)).format('D');
     }
@@ -195,7 +219,7 @@
         justify-content: center;
         font-size: 12px;
         z-index: 10;
-        padding: 0 5px;
+        padding: 0 6px;
         line-height: 14px;
     }
 

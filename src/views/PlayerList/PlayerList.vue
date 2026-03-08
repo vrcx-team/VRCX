@@ -12,7 +12,7 @@
                     style="flex: none; width: 160px; height: 120px; border-radius: var(--radius-md)"
                     @click="showFullscreenImageDialog(currentInstanceWorld.ref.imageUrl)"
                     loading="lazy" />
-                <div style="margin-left: 10px; display: flex; flex-direction: column; min-width: 320px; width: 100%">
+                <div class="ml-2" style="display: flex; flex-direction: column; min-width: 320px; width: 100%">
                     <div class="flex items-center">
                         <span
                             class="cursor-pointer"
@@ -41,27 +41,24 @@
                             @click="showUserDialog(currentInstanceWorld.ref.authorId)"
                             v-text="currentInstanceWorld.ref.authorName"></span>
                     </div>
-                    <div style="margin-top: 5px">
-                        <Badge v-if="currentInstanceWorld.ref.$isLabs" variant="outline" style="margin-right: 5px">
+                    <div class="mt-1.5">
+                        <Badge class="mr-1.5" v-if="currentInstanceWorld.ref.$isLabs" variant="outline">
                             {{ t('dialog.world.tags.labs') }}
                         </Badge>
                         <Badge
+                            class="mr-1.5"
                             v-else-if="currentInstanceWorld.ref.releaseStatus === 'public'"
-                            variant="outline"
-                            style="margin-right: 5px">
+                            variant="outline">
                             {{ t('dialog.world.tags.public') }}
                         </Badge>
                         <Badge
+                            class="mr-1.5"
                             v-else-if="currentInstanceWorld.ref.releaseStatus === 'private'"
-                            variant="outline"
-                            style="margin-right: 5px">
+                            variant="outline">
                             {{ t('dialog.world.tags.private') }}
                         </Badge>
                         <TooltipWrapper v-if="currentInstanceWorld.isPC" side="top" content="PC">
-                            <Badge
-                                class="text-platform-pc border-platform-pc!"
-                                variant="outline"
-                                style="margin-right: 5px"
+                            <Badge class="text-platform-pc border-platform-pc! mr-1.5" variant="outline"
                                 ><Monitor class="h-4 w-4" />
                                 <span
                                     v-if="currentInstanceWorld.fileAnalysis.standalonewindows?._fileSize"
@@ -71,10 +68,7 @@
                             </Badge>
                         </TooltipWrapper>
                         <TooltipWrapper v-if="currentInstanceWorld.isQuest" side="top" content="Android">
-                            <Badge
-                                class="text-platform-quest border-platform-quest!"
-                                variant="outline"
-                                style="margin-right: 5px"
+                            <Badge class="text-platform-quest border-platform-quest! mr-1.5" variant="outline"
                                 ><Smartphone class="h-4 w-4" />
                                 <span
                                     v-if="currentInstanceWorld.fileAnalysis.android?._fileSize"
@@ -84,10 +78,7 @@
                             </Badge>
                         </TooltipWrapper>
                         <TooltipWrapper v-if="currentInstanceWorld.isIos" side="top" content="iOS">
-                            <Badge
-                                class="text-platform-ios border-platform-ios"
-                                variant="outline"
-                                style="margin-right: 5px"
+                            <Badge class="text-platform-ios border-platform-ios mr-1.5" variant="outline"
                                 ><Apple class="h-4 w-4 text-platform-ios" />
                                 <span
                                     v-if="currentInstanceWorld.fileAnalysis.ios?._fileSize"
@@ -97,18 +88,18 @@
                             </Badge>
                         </TooltipWrapper>
                         <Badge
+                            class="mr-1.5 mt-1.5"
                             v-if="currentInstanceWorld.avatarScalingDisabled"
-                            variant="outline"
-                            style="margin-right: 5px; margin-top: 5px">
+                            variant="outline">
                             {{ t('dialog.world.tags.avatar_scaling_disabled') }}
                         </Badge>
-                        <Badge v-if="currentInstanceWorld.inCache" variant="outline" style="margin-right: 5px">
+                        <Badge class="mr-1.5" v-if="currentInstanceWorld.inCache" variant="outline">
                             <span>{{ currentInstanceWorld.cacheSize }} {{ t('dialog.world.tags.cache') }}</span>
                         </Badge>
                     </div>
-                    <div style="margin-top: 5px">
+                    <div class="mt-1.5">
                         <LocationWorld :locationobject="currentInstanceLocation" :currentuserid="currentUser.id" />
-                        <span v-if="lastLocation.playerList.size > 0" style="margin-left: 5px">
+                        <span class="ml-1.5" v-if="lastLocation.playerList.size > 0">
                             {{ lastLocation.playerList.size }}
                             <template v-if="lastLocation.friendList.size > 0"
                                 >({{ lastLocation.friendList.size }})</template
@@ -116,14 +107,14 @@
                             &nbsp;&horbar; <Timer v-if="lastLocation.date" :epoch="lastLocation.date" />
                         </span>
                     </div>
-                    <div style="margin-top: 5px">
+                    <div class="mt-1.5">
                         <span
                             v-show="currentInstanceWorld.ref.name !== currentInstanceWorld.ref.description"
                             class="inline-block max-w-full align-middle text-xs break-words"
                             v-text="currentInstanceWorld.ref.description"></span>
                     </div>
                 </div>
-                <div style="display: flex; flex-direction: column; margin-left: 20px">
+                <div class="ml-5" style="display: flex; flex-direction: column">
                     <div class="box-border flex items-center p-1.5 text-[13px] cursor-default">
                         <div class="flex-1 overflow-hidden">
                             <span class="block truncate font-medium leading-[18px]">{{
@@ -162,7 +153,7 @@
                 </div>
             </div>
 
-            <div v-if="photonLoggingEnabled" ref="playerListPhotonRef" style="margin-bottom: 10px">
+            <div class="mb-2" v-if="photonLoggingEnabled" ref="playerListPhotonRef">
                 <PhotonEventTable @show-chatbox-blacklist="showChatboxBlacklistDialog" />
             </div>
 

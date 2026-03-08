@@ -429,6 +429,10 @@
         });
     });
 
+    /**
+     *
+     * @param groupKey
+     */
     function toggleGroupCollapse(groupKey) {
         if (collapsedGroups.has(groupKey)) {
             collapsedGroups.delete(groupKey);
@@ -898,6 +902,9 @@
         }
     });
 
+    /**
+     *
+     */
     async function loadInitialSettings() {
         try {
             const [storedScale, storedSpacing, storedShowSameInstance] = await Promise.all([
@@ -954,7 +961,7 @@
         display: flex;
         gap: 20px;
         align-items: center;
-        padding: 6px 2px 0 2px;
+        padding: 8px 2px 0 2px;
     }
 
     .friend-view__tabs {
@@ -1002,7 +1009,7 @@
     }
 
     .friend-view__virtual-row--header {
-        padding: 4px 10px;
+        padding: 4px 8px;
         padding-bottom: calc(var(--friend-card-gap, 14px) - 4px);
     }
 
@@ -1044,7 +1051,7 @@
     .friend-view__scale-control {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         min-width: 160px;
     }
 

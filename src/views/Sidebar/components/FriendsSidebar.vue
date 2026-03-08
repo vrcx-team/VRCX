@@ -482,7 +482,7 @@
                             buildFriendRow(friend, `instance:${groupKey}:${friend?.id ?? idx}`, {
                                 isGroupByInstance: true,
                                 paddingBottom: idx === friendArr.length - 1 ? 5 : undefined,
-                                itemStyle: idx === friendArr.length - 1 ? { marginBottom: '5px' } : undefined
+                                itemStyle: idx === friendArr.length - 1 ? { marginBottom: '6px' } : undefined
                             })
                         );
                     });
