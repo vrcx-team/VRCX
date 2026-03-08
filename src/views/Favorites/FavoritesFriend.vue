@@ -112,7 +112,7 @@
                                         v-for="group in favoriteFriendGroups"
                                         :key="group.key"
                                         :class="[
-                                            'group-item',
+                                            'group-item hover:shadow-sm',
                                             `group-item--${group.visibility}`,
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]"
@@ -203,7 +203,7 @@
                                         v-for="group in localFriendFavoriteGroups"
                                         :key="group"
                                         :class="[
-                                            'group-item',
+                                            'group-item hover:shadow-sm',
                                             { 'is-active': !hasSearchInput && isGroupActive('local', group) }
                                         ]"
                                         @click="handleGroupClick('local', group)">
@@ -249,7 +249,7 @@
                                 </div>
                                 <div
                                     v-if="!isCreatingLocalGroup"
-                                    class="group-item group-item--new"
+                                    class="group-item hover:shadow-sm group-item--new"
                                     @click="startLocalGroupCreation">
                                     <Plus />
                                     <span>{{ t('view.favorite.worlds.new_group') }}</span>
@@ -383,7 +383,7 @@
                                         <div
                                             v-for="favorite in friendFavoriteSearchResults"
                                             :key="favorite.id"
-                                            class="favorites-search-card"
+                                            class="favorites-search-card hover:shadow-sm"
                                             @click="showUserDialog(favorite.id)">
                                             <div class="favorites-search-card__content">
                                                 <div class="favorites-search-card__avatar">
@@ -1357,7 +1357,6 @@
 
     .group-item:hover {
         background-color: var(--accent);
-        box-shadow: var(--shadow-sm);
     }
 
     .group-item__top {
@@ -1549,7 +1548,6 @@
 
     :deep(.favorites-search-card:hover) {
         background-color: var(--accent);
-        box-shadow: var(--shadow-sm);
     }
 
     :deep(.favorites-search-card.is-selected) {

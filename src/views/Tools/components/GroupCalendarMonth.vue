@@ -230,7 +230,7 @@
         transform: translateX(-50%);
         width: 6px;
         height: 6px;
-        border-radius: var(--radius-full);
+        border-radius: var(--rounded-full);
         background-color: var(--group-calendar-event-dot, #ef4444);
         z-index: 5;
         pointer-events: none;

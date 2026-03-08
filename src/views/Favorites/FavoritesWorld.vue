@@ -112,7 +112,7 @@
                                         v-for="group in favoriteWorldGroups"
                                         :key="group.key"
                                         :class="[
-                                            'group-item',
+                                            'group-item hover:shadow-sm',
                                             `group-item--${group.visibility}`,
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]"
@@ -186,7 +186,7 @@
                                         v-for="group in worldGroupPlaceholders"
                                         :key="group.key"
                                         :class="[
-                                            'group-item',
+                                            'group-item hover:shadow-sm',
                                             'group-item--placeholder',
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]">
@@ -195,7 +195,7 @@
                                             <span class="group-item__count">--/--</span>
                                         </div>
                                         <div class="group-item__bottom">
-                                            <div class="group-item__placeholder-tag"></div>
+                                            <div class="group-item__placeholder-tag rounded-full"></div>
                                         </div>
                                     </div>
                                 </template>
@@ -223,7 +223,7 @@
                                         v-for="group in localWorldFavoriteGroups"
                                         :key="group"
                                         :class="[
-                                            'group-item',
+                                            'group-item hover:shadow-sm',
                                             { 'is-active': !hasSearchInput && isGroupActive('local', group) }
                                         ]"
                                         @click="handleGroupClick('local', group)">
@@ -269,7 +269,7 @@
                                 </div>
                                 <div
                                     v-if="!isCreatingLocalGroup"
-                                    class="group-item group-item--new"
+                                    class="group-item hover:shadow-sm group-item--new"
                                     @click="startLocalGroupCreation">
                                     <Plus />
                                     <span>{{ t('view.favorite.worlds.new_group') }}</span>
@@ -354,7 +354,7 @@
                                         <div
                                             v-for="favorite in worldFavoriteSearchResults"
                                             :key="favorite.id"
-                                            class="favorites-search-card"
+                                            class="favorites-search-card hover:shadow-sm"
                                             @click="showWorldDialog(favorite.id)">
                                             <div class="favorites-search-card__content">
                                                 <div
@@ -1588,7 +1588,6 @@
 
     .group-item:hover {
         background-color: var(--accent);
-        box-shadow: var(--shadow-sm);
     }
 
     .group-item__top {
@@ -1658,7 +1657,6 @@
     .group-item__placeholder-tag {
         width: 64px;
         height: 18px;
-        border-radius: var(--radius-full);
     }
 
     .group-item--new {
@@ -1759,7 +1757,7 @@
 
     .favorites-content__scroll--local::-webkit-scrollbar-thumb {
         background-color: var(--border);
-        border-radius: var(--radius-full);
+        border-radius: var(--rounded-full);
         border: 2px solid transparent;
         background-clip: content-box;
     }
@@ -1838,7 +1836,6 @@
 
     :deep(.favorites-search-card:hover) {
         background-color: var(--accent);
-        box-shadow: var(--shadow-sm);
     }
 
     :deep(.favorites-search-card.is-selected) {

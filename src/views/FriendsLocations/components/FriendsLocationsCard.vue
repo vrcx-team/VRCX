@@ -11,7 +11,7 @@
                             <AvatarFallback>{{ avatarFallback }}</AvatarFallback>
                         </Avatar>
                     </div>
-                    <span class="friend-card__status-dot" :class="statusDotClass"></span>
+                    <span class="friend-card__status-dot rounded-full" :class="statusDotClass"></span>
                     <div class="friend-card__name ml-0.5" :title="friend.name">{{ friend.name }}</div>
                 </div>
                 <div class="friend-card__body">
@@ -266,7 +266,6 @@
         right: calc(8px * var(--card-scale));
         inline-size: calc(12px * var(--card-scale));
         block-size: calc(12px * var(--card-scale));
-        border-radius: var(--radius-full);
         pointer-events: none;
     }
 

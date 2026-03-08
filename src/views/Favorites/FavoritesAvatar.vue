@@ -110,7 +110,7 @@
                                         v-for="group in favoriteAvatarGroups"
                                         :key="group.key"
                                         :class="[
-                                            'group-item',
+                                            'group-item hover:shadow-sm',
                                             `group-item--${group.visibility}`,
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]"
@@ -184,7 +184,7 @@
                                         v-for="group in avatarGroupPlaceholders"
                                         :key="group.key"
                                         :class="[
-                                            'group-item',
+                                            'group-item hover:shadow-sm',
                                             'group-item--placeholder',
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]">
@@ -193,7 +193,7 @@
                                             <span class="group-item__count">--/--</span>
                                         </div>
                                         <div class="group-item__bottom">
-                                            <div class="group-item__placeholder-tag"></div>
+                                            <div class="group-item__placeholder-tag rounded-full"></div>
                                         </div>
                                     </div>
                                 </template>
@@ -223,7 +223,7 @@
                                         v-for="group in localAvatarFavoriteGroups"
                                         :key="group"
                                         :class="[
-                                            'group-item',
+                                            'group-item hover:shadow-sm',
                                             { 'is-active': !hasSearchInput && isGroupActive('local', group) }
                                         ]"
                                         @click="handleGroupClick('local', group)">
@@ -274,7 +274,7 @@
                                     :content="t('view.favorite.avatars.local_favorites')">
                                     <div
                                         :class="[
-                                            'group-item',
+                                            'group-item hover:shadow-sm',
                                             'group-item--new',
                                             { 'is-disabled': !isLocalUserVrcPlusSupporter }
                                         ]"
@@ -316,7 +316,7 @@
                             <div class="group-section__list">
                                 <div
                                     :class="[
-                                        'group-item',
+                                        'group-item hover:shadow-sm',
                                         { 'is-active': !hasSearchInput && isGroupActive('history', historyGroupKey) }
                                     ]"
                                     @click="handleGroupClick('history', historyGroupKey)">
@@ -406,7 +406,7 @@
                                         <div
                                             v-for="favorite in avatarFavoriteSearchResults"
                                             :key="favorite.id"
-                                            class="favorites-search-card"
+                                            class="favorites-search-card hover:shadow-sm"
                                             @click="showAvatarDialog(favorite.id)">
                                             <div class="favorites-search-card__content">
                                                 <div
@@ -1717,7 +1717,6 @@
 
     .group-item:hover {
         background-color: var(--accent);
-        box-shadow: var(--shadow-sm);
     }
 
     .group-item__top {
@@ -1784,7 +1783,6 @@
     .group-item__placeholder-tag {
         width: 64px;
         height: 18px;
-        border-radius: var(--radius-full);
     }
 
     .group-item--new {
@@ -1922,7 +1920,6 @@
 
     :deep(.favorites-search-card:hover) {
         background-color: var(--accent);
-        box-shadow: var(--shadow-sm);
     }
 
     :deep(.favorites-search-card__content) {

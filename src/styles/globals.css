@@ -228,7 +228,7 @@
 
 ::-webkit-scrollbar-thumb {
     background-color: var(--border);
-    border-radius: var(--radius-full);
+    border-radius: var(--rounded-full);
     border: 2px solid transparent;
     background-clip: content-box;
 }
