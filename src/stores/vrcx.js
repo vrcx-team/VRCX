@@ -241,6 +241,13 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     /**
+     * @param {boolean} value
+     */
+    function setIpcEnabled(value) {
+        ipcEnabled.value = value;
+    }
+
+    /**
      *
      */
     function clearVRCXCache() {
@@ -870,6 +877,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         appStartAt,
         proxyServer,
         setProxyServer,
+        setIpcEnabled,
         currentlyDroppingFile,
         isRegistryBackupDialogVisible,
         ipcEnabled,

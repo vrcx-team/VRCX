@@ -1981,6 +1981,13 @@ export const useUserStore = defineStore('User', () => {
     }
 
     /**
+     * @param {string} value
+     */
+    function setCurrentUserColour(value) {
+        currentUser.value.$userColour = value;
+    }
+
+    /**
      *
      */
     function toggleSharedConnectionsOptOut() {
@@ -2026,6 +2033,7 @@ export const useUserStore = defineStore('User', () => {
         handleConfig,
         showSendBoopDialog,
         setUserDialogMemo,
+        setCurrentUserColour,
         checkNote,
         toggleSharedConnectionsOptOut,
         toggleDiscordFriendsOptOut

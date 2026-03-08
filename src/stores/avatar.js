@@ -319,6 +319,10 @@ export const useAvatarStore = defineStore('Avatar', () => {
         return ref;
     }
 
+    function resetCachedAvatarModerations() {
+        cachedAvatarModerations.clear();
+    }
+
     /**
      *
      */
@@ -797,6 +801,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
 
         showAvatarDialog,
         applyAvatarModeration,
+        resetCachedAvatarModerations,
         getAvatarGallery,
         updateVRChatAvatarCache,
         getAvatarHistory,

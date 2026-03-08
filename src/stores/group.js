@@ -962,6 +962,10 @@ export const useGroupStore = defineStore('Group', () => {
         }
     }
 
+    function clearGroupInstances() {
+        groupInstances.value = [];
+    }
+
     /**
      *
      * @param {object} json
@@ -1197,6 +1201,7 @@ export const useGroupStore = defineStore('Group', () => {
         loadCurrentUserGroups,
         handleGroupPost,
         handleGroupUserInstances,
+        clearGroupInstances,
         handleGroupMember,
         handleGroupPermissions,
         handleGroupMemberProps,
