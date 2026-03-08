@@ -602,50 +602,26 @@
 </template>
 
 <script setup>
-    import {
-        AlertTriangle,
-        ArrowDown,
-        ArrowUp,
-        Copy,
-        Download,
-        DownloadIcon,
-        Eye,
-        Info,
-        Languages,
-        LogOut,
-        MoreHorizontal,
-        Pencil,
-        RefreshCw,
-        Tag,
-        Trash2
-    } from 'lucide-vue-next';
-    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
+    import { Copy, Info, Languages, MoreHorizontal, Pencil, Trash2 } from 'lucide-vue-next';
     import {
         DropdownMenu,
         DropdownMenuContent,
         DropdownMenuItem,
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
+    import { computed, defineAsyncComponent, ref, watch } from 'vue';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
-    import { Checkbox } from '@/components/ui/checkbox';
-    import { DataTableEmpty } from '@/components/ui/data-table';
-    import { Input } from '@/components/ui/input';
     import { Spinner } from '@/components/ui/spinner';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import DeprecationAlert from '@/components/DeprecationAlert.vue';
-    import VueJsonPretty from 'vue-json-pretty';
-
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
-        useAuthStore,
         useAvatarStore,
         useFavoriteStore,
         useFriendStore,
@@ -657,19 +633,16 @@
         useModalStore,
         useModerationStore,
         useNotificationStore,
-        useUiStore,
         useUserStore,
         useWorldStore
     } from '../../../stores';
     import {
         copyToClipboard,
-        downloadAndSaveJson,
         formatDateFilter,
         getFaviconUrl,
         isFriendOnline,
         isRealInstance,
         openExternalLink,
-        parseLocation,
         refreshInstancePlayerCount,
         timeToText,
         userImage,
@@ -677,18 +650,9 @@
         userOnlineForTimestamp,
         userStatusClass
     } from '../../../shared/utils';
-    import {
-        favoriteRequest,
-        friendRequest,
-        miscRequest,
-        notificationRequest,
-        playerModerationRequest,
-        userRequest,
-        worldRequest
-    } from '../../../api';
-    import { database } from '../../../service/database';
+    import { miscRequest, userRequest } from '../../../api';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
-    import { processBulk } from '../../../service/request';
+    import { useUserDialogCommands } from './useUserDialogCommands';
 
     import DialogJsonTab from '../DialogJsonTab.vue';
     import InstanceActionBar from '../../InstanceActionBar.vue';
@@ -757,6 +721,39 @@
 
     const { applyPlayerModeration, handlePlayerModerationDelete } = useModerationStore();
 
+    const {
+        sendInviteDialogVisible,
+        sendInviteDialog,
+        sendInviteRequestDialogVisible,
+        userDialogCommand,
+        registerCallbacks
+    } = useUserDialogCommands(userDialog, {
+        t,
+        toast,
+        modalStore,
+        currentUser,
+        cachedUsers,
+        friendLogTable,
+        lastLocation,
+        lastLocationDestination,
+        inviteGroupDialog,
+        showUserDialog,
+        showFavoriteDialog,
+        showAvatarDialog,
+        showAvatarAuthorDialog,
+        showModerateGroupDialog,
+        showSendBoopDialog,
+        showGalleryPage,
+        getFriendRequest,
+        handleFriendDelete,
+        applyPlayerModeration,
+        handlePlayerModerationDelete,
+        refreshInviteMessageTableData,
+        clearInviteImageUpload,
+        instanceStore,
+        useNotificationStore
+    });
+
     watch(
         () => userDialog.value.loading,
         () => {
@@ -777,14 +774,6 @@
     const userDialogLastAvatar = ref('');
     const userDialogLastWorld = ref('');
     const userDialogLastFavoriteWorld = ref('');
-
-    const sendInviteDialogVisible = ref(false);
-    const sendInviteDialog = ref({
-        messageSlot: {},
-        userId: '',
-        params: {}
-    });
-    const sendInviteRequestDialogVisible = ref(false);
 
     const socialStatusDialog = ref({
         visible: false,
@@ -966,6 +955,17 @@
         D.visible = true;
     }
 
+    // Register simple dialog openers as callbacks for the command composable
+    registerCallbacks({
+        showSocialStatusDialog,
+        showLanguageDialog,
+        showBioDialog,
+        showPronounsDialog,
+        showEditNoteAndMemoDialog: () => {
+            isEditNoteAndMemoDialogVisible.value = true;
+        }
+    });
+
     /**
      *
      */
@@ -1026,450 +1026,6 @@
         if (args.json) {
             toast.success(t('message.badge.updated'));
         }
-    }
-
-    /**
-     *
-     * @param userId
-     * @param type
-     */
-    function setPlayerModeration(userId, type) {
-        const D = userDialog.value;
-        AppApi.SetVRChatUserModeration(currentUser.value.id, userId, type).then((result) => {
-            if (result) {
-                if (type === 4) {
-                    D.isShowAvatar = false;
-                    D.isHideAvatar = true;
-                } else if (type === 5) {
-                    D.isShowAvatar = true;
-                    D.isHideAvatar = false;
-                } else {
-                    D.isShowAvatar = false;
-                    D.isHideAvatar = false;
-                }
-            } else {
-                toast.error(t('message.avatar.change_moderation_failed'));
-            }
-        });
-    }
-
-    /**
-     *
-     * @param params
-     * @param userId
-     */
-    function showSendInviteDialog(params, userId) {
-        sendInviteDialog.value = {
-            params,
-            userId,
-            messageSlot: {}
-        };
-        refreshInviteMessageTableData('message');
-        clearInviteImageUpload();
-        sendInviteDialogVisible.value = true;
-    }
-
-    /**
-     *
-     * @param params
-     * @param userId
-     */
-    function showSendInviteRequestDialog(params, userId) {
-        sendInviteDialog.value = {
-            params,
-            userId,
-            messageSlot: {}
-        };
-        refreshInviteMessageTableData('request');
-        clearInviteImageUpload();
-        sendInviteRequestDialogVisible.value = true;
-    }
-
-    /**
-     *
-     * @param groupId
-     * @param userId
-     */
-    function showInviteGroupDialog(groupId, userId) {
-        inviteGroupDialog.value.groupId = groupId;
-        inviteGroupDialog.value.userId = userId;
-        inviteGroupDialog.value.visible = true;
-    }
-
-    /**
-     *
-     * @param command
-     */
-    function userDialogCommand(command) {
-        let L;
-        const D = userDialog.value;
-        if (D.visible === false) {
-            return;
-        }
-        if (command === 'Refresh') {
-            const userId = D.id;
-            D.id = '';
-            showUserDialog(userId);
-        } else if (command === 'Share') {
-            copyUserURL(D.id);
-        } else if (command === 'Add Favorite') {
-            showFavoriteDialog('friend', D.id);
-        } else if (command === 'Edit Social Status') {
-            showSocialStatusDialog();
-        } else if (command === 'Edit Language') {
-            showLanguageDialog();
-        } else if (command === 'Edit Bio') {
-            showBioDialog();
-        } else if (command === 'Edit Pronouns') {
-            showPronounsDialog();
-        } else if (command === 'Request Invite') {
-            notificationRequest
-                .sendRequestInvite(
-                    {
-                        platform: 'standalonewindows'
-                    },
-                    D.id
-                )
-                .then((args) => {
-                    toast('Request invite sent');
-                    return args;
-                });
-        } else if (command === 'Invite Message') {
-            L = parseLocation(lastLocation.value.location);
-            worldRequest
-                .getCachedWorld({
-                    worldId: L.worldId
-                })
-                .then((args) => {
-                    showSendInviteDialog(
-                        {
-                            instanceId: lastLocation.value.location,
-                            worldId: lastLocation.value.location,
-                            worldName: args.ref.name
-                        },
-                        D.id
-                    );
-                });
-        } else if (command === 'Request Invite Message') {
-            showSendInviteRequestDialog(
-                {
-                    platform: 'standalonewindows'
-                },
-                D.id
-            );
-        } else if (command === 'Invite') {
-            let currentLocation = lastLocation.value.location;
-            if (lastLocation.value.location === 'traveling') {
-                currentLocation = lastLocationDestination.value;
-            }
-            L = parseLocation(currentLocation);
-            worldRequest
-                .getCachedWorld({
-                    worldId: L.worldId
-                })
-                .then((args) => {
-                    notificationRequest
-                        .sendInvite(
-                            {
-                                instanceId: L.tag,
-                                worldId: L.tag,
-                                worldName: args.ref.name
-                            },
-                            D.id
-                        )
-                        .then((_args) => {
-                            toast(t('message.invite.sent'));
-                            return _args;
-                        });
-                });
-        } else if (command === 'Show Avatar Author') {
-            const { currentAvatarImageUrl } = D.ref;
-            showAvatarAuthorDialog(D.id, D.$avatarInfo.ownerId, currentAvatarImageUrl);
-        } else if (command === 'Show Fallback Avatar Details') {
-            const { fallbackAvatar } = D.ref;
-            if (fallbackAvatar) {
-                showAvatarDialog(fallbackAvatar);
-            } else {
-                toast.error('No fallback avatar set');
-            }
-        } else if (command === 'Previous Instances') {
-            showPreviousInstancesListDialog(D.ref);
-        } else if (command === 'Manage Gallery') {
-            userDialog.value.visible = false;
-            showGalleryPage();
-        } else if (command === 'Invite To Group') {
-            showInviteGroupDialog('', D.id);
-        } else if (command === 'Send Boop') {
-            showSendBoopDialog(D.id);
-        } else if (command === 'Group Moderation') {
-            showModerateGroupDialog(D.id);
-        } else if (command === 'Hide Avatar') {
-            if (D.isHideAvatar) {
-                setPlayerModeration(D.id, 0);
-            } else {
-                setPlayerModeration(D.id, 4);
-            }
-        } else if (command === 'Show Avatar') {
-            if (D.isShowAvatar) {
-                setPlayerModeration(D.id, 0);
-            } else {
-                setPlayerModeration(D.id, 5);
-            }
-        } else if (command === 'Edit Note Memo') {
-            isEditNoteAndMemoDialogVisible.value = true;
-        } else {
-            const i18nPreFix = 'dialog.user.actions.';
-            const formattedCommand = command.toLowerCase().replace(/ /g, '_');
-            const displayCommandText = t(`${i18nPreFix}${formattedCommand}`).includes('i18nPreFix')
-                ? command
-                : t(`${i18nPreFix}${formattedCommand}`);
-
-            modalStore
-                .confirm({
-                    description: t('confirm.message', {
-                        command: displayCommandText
-                    }),
-                    title: t('confirm.title'),
-                    confirmText: t('confirm.confirm_button'),
-                    cancelText: t('confirm.cancel_button')
-                })
-                .then(({ ok }) => {
-                    if (ok) {
-                        performUserDialogCommand(command, D.id);
-                    }
-                })
-                .catch(() => {});
-        }
-    }
-
-    /**
-     *
-     * @param args
-     */
-    function handleSendFriendRequest(args) {
-        const ref = cachedUsers.get(args.params.userId);
-        if (typeof ref === 'undefined') {
-            return;
-        }
-        const friendLogHistory = {
-            created_at: new Date().toJSON(),
-            type: 'FriendRequest',
-            userId: ref.id,
-            displayName: ref.displayName
-        };
-        friendLogTable.value.data.push(friendLogHistory);
-        database.addFriendLogHistory(friendLogHistory);
-
-        const D = userDialog.value;
-        if (D.visible === false || D.id !== args.params.userId) {
-            return;
-        }
-        if (args.json.success) {
-            D.isFriend = true;
-        } else {
-            D.outgoingRequest = true;
-        }
-    }
-
-    /**
-     *
-     * @param args
-     */
-    function handleCancelFriendRequest(args) {
-        const ref = cachedUsers.get(args.params.userId);
-        if (typeof ref === 'undefined') {
-            return;
-        }
-        const friendLogHistory = {
-            created_at: new Date().toJSON(),
-            type: 'CancelFriendRequest',
-            userId: ref.id,
-            displayName: ref.displayName
-        };
-        friendLogTable.value.data.push(friendLogHistory);
-        database.addFriendLogHistory(friendLogHistory);
-        const D = userDialog.value;
-        if (D.visible === false || D.id !== args.params.userId) {
-            return;
-        }
-        D.outgoingRequest = false;
-    }
-
-    /**
-     *
-     * @param args
-     */
-    function handleSendPlayerModeration(args) {
-        const ref = applyPlayerModeration(args.json);
-        const D = userDialog.value;
-        if (D.visible === false || (ref.targetUserId !== D.id && ref.sourceUserId !== currentUser.value.id)) {
-            return;
-        }
-        if (ref.type === 'block') {
-            D.isBlock = true;
-        } else if (ref.type === 'mute') {
-            D.isMute = true;
-        } else if (ref.type === 'interactOff') {
-            D.isInteractOff = true;
-        } else if (ref.type === 'muteChat') {
-            D.isMuteChat = true;
-        }
-        toast.success(t('message.user.moderated'));
-    }
-
-    /**
-     *
-     * @param command
-     * @param userId
-     */
-    async function performUserDialogCommand(command, userId) {
-        let args;
-        let key;
-        switch (command) {
-            case 'Delete Favorite':
-                favoriteRequest.deleteFavorite({
-                    objectId: userId
-                });
-                break;
-            case 'Accept Friend Request':
-                key = getFriendRequest(userId);
-                if (key === '') {
-                    const args = await friendRequest.sendFriendRequest({
-                        userId
-                    });
-                    handleSendFriendRequest(args);
-                } else {
-                    notificationRequest
-                        .acceptFriendRequestNotification({
-                            notificationId: key
-                        })
-                        .then((args) => {
-                            useNotificationStore().handleNotificationAccept(args);
-                        })
-                        .catch((err) => {
-                            if (err && err.message && err.message.includes('404')) {
-                                useNotificationStore().handleNotificationHide(key);
-                            }
-                        });
-                }
-                break;
-            case 'Decline Friend Request':
-                key = getFriendRequest(userId);
-                if (key === '') {
-                    const args = await friendRequest.cancelFriendRequest({
-                        userId
-                    });
-                    handleCancelFriendRequest(args);
-                } else {
-                    notificationRequest
-                        .hideNotification({
-                            notificationId: key
-                        })
-                        .then(() => {
-                            useNotificationStore().handleNotificationHide(key);
-                        });
-                }
-                break;
-            case 'Cancel Friend Request': {
-                args = await friendRequest.cancelFriendRequest({
-                    userId
-                });
-                handleCancelFriendRequest(args);
-                break;
-            }
-            case 'Send Friend Request': {
-                args = await friendRequest.sendFriendRequest({
-                    userId
-                });
-                handleSendFriendRequest(args);
-                break;
-            }
-            case 'Moderation Unblock':
-                args = await playerModerationRequest.deletePlayerModeration({
-                    moderated: userId,
-                    type: 'block'
-                });
-                handlePlayerModerationDelete(args);
-                break;
-            case 'Moderation Block': {
-                args = await playerModerationRequest.sendPlayerModeration({
-                    moderated: userId,
-                    type: 'block'
-                });
-                handleSendPlayerModeration(args);
-                break;
-            }
-            case 'Moderation Unmute':
-                args = await playerModerationRequest.deletePlayerModeration({
-                    moderated: userId,
-                    type: 'mute'
-                });
-                handlePlayerModerationDelete(args);
-                break;
-            case 'Moderation Mute': {
-                args = await playerModerationRequest.sendPlayerModeration({
-                    moderated: userId,
-                    type: 'mute'
-                });
-                handleSendPlayerModeration(args);
-                break;
-            }
-            case 'Moderation Enable Avatar Interaction':
-                args = await playerModerationRequest.deletePlayerModeration({
-                    moderated: userId,
-                    type: 'interactOff'
-                });
-                handlePlayerModerationDelete(args);
-                break;
-            case 'Moderation Disable Avatar Interaction': {
-                args = await playerModerationRequest.sendPlayerModeration({
-                    moderated: userId,
-                    type: 'interactOff'
-                });
-                handleSendPlayerModeration(args);
-                break;
-            }
-            case 'Moderation Enable Chatbox':
-                args = await playerModerationRequest.deletePlayerModeration({
-                    moderated: userId,
-                    type: 'muteChat'
-                });
-                handlePlayerModerationDelete(args);
-                break;
-            case 'Moderation Disable Chatbox': {
-                args = await playerModerationRequest.sendPlayerModeration({
-                    moderated: userId,
-                    type: 'muteChat'
-                });
-                handleSendPlayerModeration(args);
-                break;
-            }
-            case 'Report Hacking':
-                reportUserForHacking(userId);
-                break;
-            case 'Unfriend':
-                args = await friendRequest.deleteFriend(
-                    {
-                        userId
-                    },
-                    t('dialog.user.actions.unfriend_success_msg')
-                );
-                handleFriendDelete(args);
-                break;
-        }
-    }
-
-    /**
-     *
-     * @param userId
-     */
-    function reportUserForHacking(userId) {
-        miscRequest.reportUser({
-            userId,
-            contentType: 'user',
-            reason: 'behavior-hacking',
-            type: 'report'
-        });
     }
 
     /**

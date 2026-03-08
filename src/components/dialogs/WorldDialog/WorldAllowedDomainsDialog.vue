@@ -59,10 +59,7 @@
             return props.worldAllowedDomainsDialog.visible;
         },
         set(val) {
-            emit('update:worldAllowedDomainsDialog', {
-                ...props.worldAllowedDomainsDialog,
-                visible: val
-            });
+            props.worldAllowedDomainsDialog.visible = val;
         }
     });
 

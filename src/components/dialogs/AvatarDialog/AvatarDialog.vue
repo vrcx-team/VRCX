@@ -571,17 +571,6 @@
     import VueJsonPretty from 'vue-json-pretty';
 
     import {
-        commaNumber,
-        compareUnityVersion,
-        copyToClipboard,
-        downloadAndSaveJson,
-        formatDateFilter,
-        openExternalLink,
-        openFolderGeneric,
-        replaceVrcPackageUrl,
-        timeToText
-    } from '../../../shared/utils';
-    import {
         useAppearanceSettingsStore,
         useAvatarStore,
         useFavoriteStore,
@@ -592,23 +581,27 @@
         useUserStore
     } from '../../../stores';
     import {
+        commaNumber,
+        compareUnityVersion,
+        copyToClipboard,
+        downloadAndSaveJson,
+        formatDateFilter,
+        openFolderGeneric,
+        timeToText
+    } from '../../../shared/utils';
+    import {
         DropdownMenu,
         DropdownMenuContent,
         DropdownMenuItem,
         DropdownMenuSeparator,
         DropdownMenuTrigger
     } from '../../ui/dropdown-menu';
-    import {
-        handleImageUploadInput,
-        readFileAsBase64,
-        resizeImageToFitLimits,
-        uploadImageLegacy,
-        withUploadTimeout
-    } from '../../../shared/utils/imageUpload';
-    import { avatarModerationRequest, avatarRequest, favoriteRequest } from '../../../api';
     import { Badge } from '../../ui/badge';
+    import { avatarRequest } from '../../../api';
     import { database } from '../../../service/database';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
+    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
+    import { useAvatarDialogCommands } from './useAvatarDialogCommands';
 
     import DialogJsonTab from '../DialogJsonTab.vue';
     import ImageCropDialog from '../ImageCropDialog.vue';
@@ -632,14 +625,35 @@
     const uiStore = useUiStore();
 
     const { t } = useI18n();
+
+    const {
+        cropDialogOpen,
+        cropDialogFile,
+        changeAvatarImageLoading,
+        avatarDialogCommand,
+        onFileChangeAvatarImage,
+        onCropConfirmAvatar,
+        registerCallbacks
+    } = useAvatarDialogCommands(avatarDialog, {
+        t,
+        toast,
+        modalStore,
+        userDialog,
+        currentUser,
+        cachedAvatars,
+        cachedAvatarModerations,
+        showAvatarDialog,
+        showFavoriteDialog,
+        applyAvatarModeration,
+        applyAvatar,
+        sortUserDialogAvatars,
+        uiStore
+    });
+
     const avatarDialogTabs = computed(() => [
         { value: 'Info', label: t('dialog.avatar.info.header') },
         { value: 'JSON', label: t('dialog.avatar.json.header') }
     ]);
-
-    const cropDialogOpen = ref(false);
-    const cropDialogFile = ref(null);
-    const changeAvatarImageLoading = ref(false);
 
     const treeData = ref({});
     const memo = ref('');
@@ -813,333 +827,11 @@
      *
      * @param command
      */
-    function avatarDialogCommand(command) {
-        const D = avatarDialog.value;
-        switch (command) {
-            case 'Refresh':
-                const avatarId = D.id;
-                showAvatarDialog(avatarId, { forceRefresh: true });
-                break;
-            case 'Share':
-                copyAvatarUrl(D.id);
-                break;
-            case 'Rename':
-                promptRenameAvatar(D);
-                break;
-            case 'Change Image':
-                showChangeAvatarImageDialog();
-                break;
-            case 'Change Description':
-                promptChangeAvatarDescription(D);
-                break;
-            case 'Change Content Tags':
-                showSetAvatarTagsDialog(D.id);
-                break;
-            case 'Change Styles and Author Tags':
-                showSetAvatarStylesDialog();
-                break;
-            case 'Download Unity Package':
-                openExternalLink(replaceVrcPackageUrl(avatarDialog.value.ref.unityPackageUrl));
-                break;
-            case 'Add Favorite':
-                showFavoriteDialog('avatar', D.id);
-                break;
-            default:
-                const commandLabelMap = {
-                    'Delete Favorite': t('dialog.avatar.actions.favorite_tooltip'),
-                    'Select Fallback Avatar': t('dialog.avatar.actions.select_fallback'),
-                    'Block Avatar': t('dialog.avatar.actions.block'),
-                    'Unblock Avatar': t('dialog.avatar.actions.unblock'),
-                    'Make Public': t('dialog.avatar.actions.make_public'),
-                    'Make Private': t('dialog.avatar.actions.make_private'),
-                    Delete: t('dialog.avatar.actions.delete'),
-                    'Delete Imposter': t('dialog.avatar.actions.delete_impostor'),
-                    'Create Imposter': t('dialog.avatar.actions.create_impostor'),
-                    'Regenerate Imposter': t('dialog.avatar.actions.regenerate_impostor')
-                };
-                modalStore
-                    .confirm({
-                        title: t('confirm.title'),
-                        description: t('confirm.command_question', {
-                            command: commandLabelMap[command] ?? command
-                        })
-                    })
-                    .then(({ ok }) => {
-                        if (!ok) return;
-                        switch (command) {
-                            case 'Delete Favorite':
-                                favoriteRequest.deleteFavorite({
-                                    objectId: D.id
-                                });
-                                break;
-                            case 'Select Fallback Avatar':
-                                avatarRequest
-                                    .selectFallbackAvatar({
-                                        avatarId: D.id
-                                    })
-                                    .then((args) => {
-                                        toast.success(t('message.avatar.fallback_changed'));
-                                        return args;
-                                    });
-                                break;
-                            case 'Block Avatar':
-                                avatarModerationRequest
-                                    .sendAvatarModeration({
-                                        avatarModerationType: 'block',
-                                        targetAvatarId: D.id
-                                    })
-                                    .then((args) => {
-                                        // 'AVATAR-MODERATION';
-                                        applyAvatarModeration(args.json);
-                                        toast.success(t('message.avatar.blocked'));
-                                        return args;
-                                    });
-                                break;
-                            case 'Unblock Avatar':
-                                avatarModerationRequest
-                                    .deleteAvatarModeration({
-                                        avatarModerationType: 'block',
-                                        targetAvatarId: D.id
-                                    })
-                                    .then((args) => {
-                                        cachedAvatarModerations.delete(args.params.targetAvatarId);
-                                        const D = avatarDialog.value;
-                                        if (
-                                            args.params.avatarModerationType === 'block' &&
-                                            D.id === args.params.targetAvatarId
-                                        ) {
-                                            D.isBlocked = false;
-                                        }
-                                    });
-                                break;
-                            case 'Make Public':
-                                avatarRequest
-                                    .saveAvatar({
-                                        id: D.id,
-                                        releaseStatus: 'public'
-                                    })
-                                    .then((args) => {
-                                        applyAvatar(args.json);
-                                        toast.success(t('message.avatar.updated_public'));
-                                        return args;
-                                    });
-                                break;
-                            case 'Make Private':
-                                avatarRequest
-                                    .saveAvatar({
-                                        id: D.id,
-                                        releaseStatus: 'private'
-                                    })
-                                    .then((args) => {
-                                        applyAvatar(args.json);
-                                        toast.success(t('message.avatar.updated_private'));
-                                        return args;
-                                    });
-                                break;
-                            case 'Delete':
-                                avatarRequest
-                                    .deleteAvatar({
-                                        avatarId: D.id
-                                    })
-                                    .then((args) => {
-                                        const { json } = args;
-                                        cachedAvatars.delete(json._id);
-                                        if (userDialog.value.id === json.authorId) {
-                                            const map = new Map();
-                                            for (const ref of cachedAvatars.values()) {
-                                                if (ref.authorId === json.authorId) {
-                                                    map.set(ref.id, ref);
-                                                }
-                                            }
-                                            const array = Array.from(map.values());
-                                            sortUserDialogAvatars(array);
-                                        }
-
-                                        toast.success(t('message.avatar.deleted'));
-                                        uiStore.jumpBackDialogCrumb();
-                                        return args;
-                                    });
-                                break;
-                            case 'Delete Imposter':
-                                avatarRequest
-                                    .deleteImposter({
-                                        avatarId: D.id
-                                    })
-                                    .then((args) => {
-                                        toast.success(t('message.avatar.impostor_deleted'));
-                                        showAvatarDialog(D.id);
-                                        return args;
-                                    });
-                                break;
-                            case 'Create Imposter':
-                                avatarRequest
-                                    .createImposter({
-                                        avatarId: D.id
-                                    })
-                                    .then((args) => {
-                                        toast.success(t('message.avatar.impostor_queued'));
-                                        return args;
-                                    });
-                                break;
-                            case 'Regenerate Imposter':
-                                avatarRequest
-                                    .deleteImposter({
-                                        avatarId: D.id
-                                    })
-                                    .then((args) => {
-                                        showAvatarDialog(D.id);
-                                        return args;
-                                    })
-                                    .finally(() => {
-                                        avatarRequest
-                                            .createImposter({
-                                                avatarId: D.id
-                                            })
-                                            .then((args) => {
-                                                toast.success(t('message.avatar.impostor_regenerated'));
-                                                return args;
-                                            });
-                                    });
-                                break;
-                        }
-                    });
-                break;
-        }
-    }
-
-    /**
-     *
-     */
-    function showChangeAvatarImageDialog() {
-        document.getElementById('AvatarImageUploadButton').click();
-    }
-
-    /**
-     *
-     * @param e
-     */
-    function onFileChangeAvatarImage(e) {
-        const { file, clearInput } = handleImageUploadInput(e, {
-            inputSelector: '#AvatarImageUploadButton',
-            tooLargeMessage: () => t('message.file.too_large'),
-            invalidTypeMessage: () => t('message.file.not_image')
-        });
-        if (!file) {
-            return;
-        }
-        if (!avatarDialog.value.visible || avatarDialog.value.loading) {
-            clearInput();
-            return;
-        }
-        clearInput();
-        cropDialogFile.value = file;
-        cropDialogOpen.value = true;
-    }
-
-    /**
-     *
-     * @param blob
-     */
-    async function onCropConfirmAvatar(blob) {
-        changeAvatarImageLoading.value = true;
-        try {
-            await withUploadTimeout(
-                (async () => {
-                    const base64Body = await readFileAsBase64(blob);
-                    const base64File = await resizeImageToFitLimits(base64Body);
-                    if (LINUX) {
-                        const args = await avatarRequest.uploadAvatarImage(base64File);
-                        const fileUrl = args.json.versions[args.json.versions.length - 1].file.url;
-                        await avatarRequest.saveAvatar({
-                            id: avatarDialog.value.id,
-                            imageUrl: fileUrl
-                        });
-                    } else {
-                        await uploadImageLegacy('avatar', {
-                            entityId: avatarDialog.value.id,
-                            imageUrl: avatarDialog.value.ref.imageUrl,
-                            base64File,
-                            blob
-                        });
-                    }
-                })()
-            );
-            toast.success(t('message.upload.success'));
-            // force refresh cover image
-            const avatarId = avatarDialog.value.id;
-            showAvatarDialog(avatarId, { forceRefresh: true });
-        } catch (error) {
-            console.error('avatar image upload process failed:', error);
-            toast.error(t('message.upload.error'));
-        } finally {
-            changeAvatarImageLoading.value = false;
-            cropDialogOpen.value = false;
-        }
-    }
-
-    /**
-     *
-     * @param avatar
-     */
-    function promptChangeAvatarDescription(avatar) {
-        modalStore
-            .prompt({
-                title: t('prompt.change_avatar_description.header'),
-                description: t('prompt.change_avatar_description.description'),
-                confirmText: t('prompt.change_avatar_description.ok'),
-                cancelText: t('prompt.change_avatar_description.cancel'),
-                inputValue: avatar.ref.description,
-                errorMessage: t('prompt.change_avatar_description.input_error')
-            })
-            .then(({ ok, value }) => {
-                if (!ok) return;
-                if (value && value !== avatar.ref.description) {
-                    avatarRequest
-                        .saveAvatar({
-                            id: avatar.id,
-                            description: value
-                        })
-                        .then((args) => {
-                            applyAvatar(args.json);
-                            toast.success(t('prompt.change_avatar_description.message.success'));
-                            return args;
-                        });
-                }
-            })
-            .catch(() => {});
-    }
-
-    /**
-     *
-     * @param avatar
-     */
-    function promptRenameAvatar(avatar) {
-        modalStore
-            .prompt({
-                title: t('prompt.rename_avatar.header'),
-                description: t('prompt.rename_avatar.description'),
-                confirmText: t('prompt.rename_avatar.ok'),
-                cancelText: t('prompt.rename_avatar.cancel'),
-                inputValue: avatar.ref.name,
-                errorMessage: t('prompt.rename_avatar.input_error')
-            })
-            .then(({ ok, value }) => {
-                if (!ok) return;
-                if (value && value !== avatar.ref.name) {
-                    avatarRequest
-                        .saveAvatar({
-                            id: avatar.id,
-                            name: value
-                        })
-                        .then((args) => {
-                            applyAvatar(args.json);
-                            toast.success(t('prompt.rename_avatar.message.success'));
-                            return args;
-                        });
-                }
-            })
-            .catch(() => {});
-    }
+    // Register component callbacks for the command composable
+    registerCallbacks({
+        showSetAvatarTagsDialog: () => showSetAvatarTagsDialog(avatarDialog.value.id),
+        showSetAvatarStylesDialog
+    });
 
     /**
      *
@@ -1162,14 +854,6 @@
      */
     function copyAvatarId(id) {
         copyToClipboard(id);
-    }
-
-    /**
-     *
-     * @param id
-     */
-    function copyAvatarUrl(id) {
-        copyToClipboard(`https://vrchat.com/home/avatar/${id}`);
     }
 
     /**

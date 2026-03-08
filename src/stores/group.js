@@ -168,14 +168,11 @@ export const useGroupStore = defineStore('Group', () => {
         D.members = [];
         D.memberFilter = groupDialogFilterOptions.everyone;
         D.calendar = [];
-        const loadGroupRequest = forceRefresh
-            ? groupRequest.getGroup({
-                  groupId,
-                  includeRoles: false
-              })
-            : groupRequest.getCachedGroup({
-                  groupId
-              });
+        const loadGroupRequest = groupRequest.getGroup({
+            groupId,
+            includeRoles: false
+        });
+
         loadGroupRequest
             .catch((err) => {
                 D.loading = false;
@@ -962,6 +959,9 @@ export const useGroupStore = defineStore('Group', () => {
         }
     }
 
+    /**
+     *
+     */
     function clearGroupInstances() {
         groupInstances.value = [];
     }
