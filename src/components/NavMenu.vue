@@ -148,6 +148,10 @@
                 <ContextMenuItem :disabled="!hasNotifications" @click="clearAllNotifications">
                     {{ t('nav_menu.mark_all_read') }}
                 </ContextMenuItem>
+                <ContextMenuSeparator />
+                <ContextMenuItem @click="handleOpenCustomNavDialog">
+                    {{ t('nav_menu.custom_nav.header') }}
+                </ContextMenuItem>
             </ContextMenuContent>
         </ContextMenu>
 
@@ -361,7 +365,13 @@
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
     import { computed, defineAsyncComponent, h, onMounted, ref, watch } from 'vue';
-    import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
+    import {
+        ContextMenu,
+        ContextMenuContent,
+        ContextMenuItem,
+        ContextMenuSeparator,
+        ContextMenuTrigger
+    } from '@/components/ui/context-menu';
     import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
     import { ChevronRight, Heart } from 'lucide-vue-next';
     import { Kbd } from '@/components/ui/kbd';

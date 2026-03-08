@@ -37,7 +37,7 @@
                         </Badge>
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent class="w-auto p-3" align="start">
+                <PopoverContent class="w-80 p-3" align="start">
                     <div class="flex flex-col gap-3">
                         <Field>
                             <FieldLabel>{{ t('dialog.avatar.info.visibility') }}</FieldLabel>
@@ -177,6 +177,17 @@
             class="cursor-pointer min-h-0">
             <template #row-context-menu="{ row }">
                 <ContextMenuContent>
+                    <ContextMenuItem @click="handleContextMenuAction('details', row.original)">
+                        <Eye class="size-4" />
+                        {{ t('dialog.avatar.actions.view_details') }}
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                        :disabled="row.original.id === currentAvatarId"
+                        @click="handleContextMenuAction('wear', row.original)">
+                        <Check class="size-4" />
+                        {{ t('view.favorite.select_avatar_tooltip') }}
+                    </ContextMenuItem>
+                    <ContextMenuSeparator />
                     <ContextMenuItem @click="handleContextMenuAction('manageTags', row.original)">
                         <Tag class="size-4" />
                         {{ t('dialog.avatar.actions.manage_tags') }}
@@ -284,6 +295,8 @@
 
 <script setup>
     import {
+        Check,
+        Eye,
         Image as ImageIcon,
         LayoutGrid,
         List,
