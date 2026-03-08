@@ -1,7 +1,7 @@
 <template>
     <div ref="scrollRootRef" class="relative h-full">
         <div ref="scrollViewportRef" class="h-full w-full overflow-auto">
-            <div class="x-friend-list px-1.5 py-2.5">
+            <div class="px-1.5 py-2.5">
                 <div v-if="virtualRows.length" class="relative w-full box-border" :style="virtualContainerStyle">
                     <template v-for="item in virtualItems" :key="String(item.virtualItem.key)">
                         <div
@@ -12,7 +12,7 @@
                             :style="rowStyle(item)">
                             <template v-if="item.row.type === 'group-header'">
                                 <div
-                                    class="x-friend-group cursor-pointer pt-4 pb-1.5 text-xs"
+                                    class="cursor-pointer pt-4 pb-1.5 text-xs"
                                     :style="
                                         item.row.headerPaddingTop
                                             ? { paddingTop: item.row.headerPaddingTop }
@@ -32,13 +32,18 @@
                             <template v-else-if="item.row.type === 'group-item'">
                                 <ContextMenu>
                                     <ContextMenuTrigger as-child>
-                                        <div class="x-friend-item" @click="showGroupDialog(item.row.ownerId)">
+                                        <div
+                                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
+                                            @click="showGroupDialog(item.row.ownerId)">
                                             <template v-if="item.row.isVisible">
-                                                <div class="avatar">
-                                                    <img :src="getSmallGroupIconUrl(item.row.iconUrl)" loading="lazy" />
+                                                <div class="relative inline-block flex-none size-9 mr-2.5">
+                                                    <img
+                                                        class="size-full rounded-full object-cover"
+                                                        :src="getSmallGroupIconUrl(item.row.iconUrl)"
+                                                        loading="lazy" />
                                                 </div>
-                                                <div class="detail">
-                                                    <span class="name">
+                                                <div class="flex-1 overflow-hidden">
+                                                    <span class="block truncate font-medium leading-[18px]">
                                                         <span v-text="item.row.name"></span>
                                                         <span class="ml-1.5 font-normal">
                                                             ({{ item.row.userCount }}/{{ item.row.capacity }})

@@ -1,8 +1,10 @@
 <template>
-    <div class="x-friend-item hover:bg-muted/50" @click="showUserDialog(friend.id)">
+    <div
+        class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
+        @click="showUserDialog(friend.id)">
         <template v-if="friend.ref">
             <div
-                class="avatar"
+                class="relative inline-block flex-none size-9 mr-2.5"
                 :class="isFriendActiveOrOffline ? undefined : userStatusClass(friend.ref, friend.pendingOffline)">
                 <Avatar class="size-full rounded-full">
                     <AvatarImage :src="userImage(friend.ref, true)" class="object-cover" />
@@ -11,11 +13,17 @@
                     </AvatarFallback>
                 </Avatar>
             </div>
-            <div class="detail h-9 flex flex-col justify-between">
-                <span v-if="!hideNicknames && friend.$nickName" class="name" :style="{ color: friend.ref.$userColour }">
+            <div class="flex-1 overflow-hidden h-9 flex flex-col justify-between">
+                <span
+                    v-if="!hideNicknames && friend.$nickName"
+                    class="block truncate font-medium leading-[18px]"
+                    :style="{ color: friend.ref.$userColour }">
                     {{ friend.ref.displayName }} ({{ friend.$nickName }})
                 </span>
-                <span v-else class="name" :style="{ color: friend.ref.$userColour }"
+                <span
+                    v-else
+                    class="block truncate font-medium leading-[18px]"
+                    :style="{ color: friend.ref.$userColour }"
                     >{{ friend.ref.displayName
                     }}{{ isGroupByInstance && allFavoriteFriendIds.has(friend.id) ? ' ⭐' : '' }}</span
                 >
@@ -70,6 +78,8 @@
 
     import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
     import { userImage, userStatusClass } from '../../../shared/utils';
+
+    import '@/styles/status-icon.css';
 
     const props = defineProps({
         friend: { type: Object, required: true },

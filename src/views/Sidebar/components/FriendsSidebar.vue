@@ -1,7 +1,7 @@
 <template>
     <div class="relative h-full">
         <div ref="scrollViewportRef" class="h-full w-full overflow-auto">
-            <div class="x-friend-list px-1.5 py-2.5">
+            <div class="px-1.5 py-2.5">
                 <div v-if="virtualRows.length" class="relative w-full box-border" :style="virtualContainerStyle">
                     <template v-for="item in virtualItems" :key="String(item.virtualItem.key)">
                         <div
@@ -12,7 +12,7 @@
                             :style="rowStyle(item)">
                             <template v-if="item.row.type === 'toggle-header'">
                                 <div
-                                    class="x-friend-group flex cursor-pointer items-center pt-4 pb-1.5 text-xs"
+                                    class="flex cursor-pointer items-center pt-4 pb-1.5 text-xs"
                                     :style="item.row.headerPadding ? { padding: item.row.headerPadding } : undefined"
                                     @click="item.row.onClick && item.row.onClick()">
                                     <ChevronDown
@@ -31,15 +31,22 @@
                                 <ContextMenu>
                                     <ContextMenuTrigger as-child>
                                         <div
-                                            class="x-friend-item hover:bg-muted/50"
+                                            class="friend-row box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
                                             @click="showUserDialog(currentUser.id)">
-                                            <div class="avatar" :class="userStatusClass(currentUser)">
-                                                <img :src="userImage(currentUser)" loading="lazy" />
+                                            <div
+                                                class="relative inline-block flex-none size-9 mr-2.5"
+                                                :class="userStatusClass(currentUser)">
+                                                <img
+                                                    class="size-full rounded-full object-cover"
+                                                    :src="userImage(currentUser)"
+                                                    loading="lazy" />
                                             </div>
-                                            <div class="detail h-9 flex flex-col justify-between">
-                                                <span class="name" :style="{ color: currentUser.$userColour }">{{
-                                                    currentUser.displayName
-                                                }}</span>
+                                            <div class="flex-1 overflow-hidden h-9 flex flex-col justify-between">
+                                                <span
+                                                    class="block truncate font-medium leading-[18px]"
+                                                    :style="{ color: currentUser.$userColour }"
+                                                    >{{ currentUser.displayName }}</span
+                                                >
                                                 <Location
                                                     v-if="isGameRunning && !gameLogDisabled"
                                                     class="extra block truncate text-xs"
@@ -207,6 +214,8 @@
     import FriendItem from './FriendItem.vue';
     import Location from '../../../components/Location.vue';
     import configRepository from '../../../service/config';
+
+    import '@/styles/status-icon.css';
 
     const { t } = useI18n();
 

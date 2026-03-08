@@ -1,0 +1,69 @@
+/*
+ * Status icon styles for avatar status indicator dots and mask cutouts.
+ */
+
+.status-icon::after {
+    position: absolute;
+    right: 0.75px;
+    bottom: 0.75px;
+    width: 9px;
+    height: 9px;
+    content: '';
+    background: var(--status-offline);
+    border-radius: 50%;
+}
+
+.status-icon.active::after {
+    background: var(--status-active);
+}
+
+.status-icon.online::after {
+    background: var(--status-online);
+}
+
+.status-icon.joinme::after {
+    background: var(--status-joinme);
+    mask-image: url(/images/masks/joinme.svg);
+}
+
+.status-icon.askme::after {
+    background: var(--status-askme);
+    mask-image: url(/images/masks/askme.svg);
+}
+
+.status-icon.busy::after {
+    background: var(--status-busy);
+    mask-image: url(/images/masks/busy.svg);
+}
+
+.status-icon.offline::after {
+    background: var(--status-offline);
+}
+
+.active img,
+.offline img {
+    filter: grayscale(1);
+}
+
+.friend-row:hover .active img,
+.friend-row:hover .offline img {
+    filter: none;
+}
+
+/* Avatar mask cutout for status dot */
+.status-icon img {
+    mask-image: url(/images/masks/usercutout.svg);
+}
+
+.status-icon.mobile img {
+    mask-image: url(/images/masks/usercutoutmobile.svg);
+}
+
+.status-icon.mobile::after {
+    right: -2px;
+    bottom: -0.5px;
+    width: 14px;
+    height: 14px;
+    border-radius: 0;
+    mask-image: url(/images/masks/phone.svg) !important;
+}
