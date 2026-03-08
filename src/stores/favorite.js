@@ -971,6 +971,27 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
+     * @param {object} avatarRef
+     */
+    function syncLocalAvatarFavoriteRef(avatarRef) {
+        if (!avatarRef?.id) {
+            return;
+        }
+        for (let i = 0; i < localAvatarFavoriteGroups.value.length; ++i) {
+            const groupName = localAvatarFavoriteGroups.value[i];
+            const group = localAvatarFavorites[groupName];
+            if (!group) {
+                continue;
+            }
+            for (let j = 0; j < group.length; ++j) {
+                if (group[j]?.id === avatarRef.id) {
+                    group[j] = avatarRef;
+                }
+            }
+        }
+    }
+
+    /**
      *
      * @param {string} worldId
      * @param {string} group
@@ -1892,6 +1913,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         setAvatarImportDialogInput,
         setWorldImportDialogInput,
         setFriendImportDialogInput,
+        syncLocalAvatarFavoriteRef,
         addLocalWorldFavorite,
         hasLocalWorldFavorite,
         hasLocalAvatarFavorite,

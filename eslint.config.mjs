@@ -69,6 +69,25 @@ export default defineConfig([
             'no-unused-vars': 'warn',
             'no-case-declarations': 'off',
             'no-control-regex': 'warn',
+            // Store boundary rule:
+            // 1) Disallow `xxxStore.xxx = ...`
+            // 2) Disallow `xxxStore.xxx++ / --`
+            // Reason: prevent direct cross-store mutation and enforce owner-store actions.
+            'no-restricted-syntax': [
+                'error',
+                {
+                    selector:
+                        "AssignmentExpression[left.type='MemberExpression'][left.object.type='Identifier'][left.object.name=/Store$/]",
+                    message:
+                        'Do not mutate store state directly via *Store.* assignment. Use owner-store actions.'
+                },
+                {
+                    selector:
+                        "UpdateExpression[argument.type='MemberExpression'][argument.object.type='Identifier'][argument.object.name=/Store$/]",
+                    message:
+                        'Do not mutate store state directly via *Store.* update operators. Use owner-store actions.'
+                }
+            ],
 
             'vue/no-mutating-props': 'warn',
             'vue/multi-word-component-names': 'off',

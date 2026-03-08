@@ -117,28 +117,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         favoriteStore.applyFavorite('avatar', ref.id);
         if (favoriteStore.localAvatarFavoritesList.includes(ref.id)) {
             const avatarRef = ref;
-            for (
-                let i = 0;
-                i < favoriteStore.localAvatarFavoriteGroups.length;
-                ++i
-            ) {
-                const groupName = favoriteStore.localAvatarFavoriteGroups[i];
-                if (!favoriteStore.localAvatarFavorites[groupName]) {
-                    continue;
-                }
-                for (
-                    let j = 0;
-                    j < favoriteStore.localAvatarFavorites[groupName].length;
-                    ++j
-                ) {
-                    const favoriteRef =
-                        favoriteStore.localAvatarFavorites[groupName][j];
-                    if (favoriteRef.id === avatarRef.id) {
-                        favoriteStore.localAvatarFavorites[groupName][j] =
-                            avatarRef;
-                    }
-                }
-            }
+            favoriteStore.syncLocalAvatarFavoriteRef(avatarRef);
 
             // update db cache
             database.addAvatarToCache(avatarRef);
