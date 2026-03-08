@@ -17,7 +17,7 @@
                                                 class="inline-flex size-6 items-center justify-center text-lg relative">
                                                 <span
                                                     v-if="isNavItemNotified(item)"
-                                                    class="notify-dot-not-collapsed"
+                                                    class="notify-dot-not-collapsed bg-red-500"
                                                     :class="{ '-right-1!': isCollapsed }"
                                                     aria-hidden="true"></span>
                                             </i>
@@ -49,7 +49,7 @@
                                                         class="inline-flex size-6 items-center justify-center text-lg relative"
                                                         ><span
                                                             v-if="isNavItemNotified(item)"
-                                                            class="notify-dot -right-1!"
+                                                            class="notify-dot bg-red-500 -right-1!"
                                                             aria-hidden="true"></span
                                                     ></i>
                                                     <span v-show="!isCollapsed">{{
@@ -71,7 +71,7 @@
                                                         class="inline-flex size-4 items-center justify-center text-base relative"
                                                         ><span
                                                             v-if="isEntryNotified(entry)"
-                                                            class="notify-dot -right-1! top-0.5!"
+                                                            class="notify-dot bg-red-500 -right-1! top-0.5!"
                                                             aria-hidden="true"></span
                                                     ></i>
                                                     <span>{{ t(entry.label) }}</span>
@@ -100,7 +100,7 @@
                                                             class="inline-flex size-6 items-center justify-center text-lg relative"
                                                             ><span
                                                                 v-if="isNavItemNotified(item)"
-                                                                class="notify-dot"
+                                                                class="notify-dot bg-red-500"
                                                                 aria-hidden="true"></span
                                                         ></i>
                                                         <span v-show="!isCollapsed">{{
@@ -127,7 +127,7 @@
                                                                     class="inline-flex size-5 items-center justify-center text-base relative"
                                                                     ><span
                                                                         v-if="isEntryNotified(entry)"
-                                                                        class="notify-dot -right-0.5!"
+                                                                        class="notify-dot bg-red-500-right-0.5!"
                                                                         aria-hidden="true"></span
                                                                 ></i>
                                                                 <span>{{ t(entry.label) }}</span>
@@ -390,7 +390,12 @@
         useUiStore,
         useVRCXUpdaterStore
     } from '../stores';
-    import { getFirstNavRoute, isEntryNotified, normalizeHiddenKeys, sanitizeLayout } from './navMenuUtils';
+    import {
+        getFirstNavRoute,
+        isEntryNotified as checkEntryNotified,
+        normalizeHiddenKeys,
+        sanitizeLayout
+    } from './navMenuUtils';
     import { THEME_CONFIG, links, navDefinitions } from '../shared/constants';
     import { openExternalLink } from '../shared/utils';
 
@@ -402,6 +407,7 @@
     const router = useRouter();
 
     const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    const DEFAULT_FOLDER_ICON = 'ri-folder-line';
 
     const getItemTooltip = (item) => {
         const label = item.titleIsCustom ? item.title : t(item.title || '');
@@ -461,6 +467,7 @@
     const { notifiedMenus } = storeToRefs(uiStore);
     const { clearAllNotifications } = uiStore;
     const hasNotifications = computed(() => notifiedMenus.value.length > 0);
+    const isEntryNotified = (entry) => checkEntryNotified(entry, notifiedMenus.value);
     const { directAccessPaste } = useSearchStore();
     const { logout } = useAuthStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -710,7 +717,7 @@
             return true;
         }
         if (item.children?.length) {
-            return item.children.some((entry) => isEntryNotified(entry, notifiedMenus.value));
+            return item.children.some((entry) => isEntryNotified(entry));
         }
         return false;
     };
@@ -804,7 +811,6 @@
         right: 0;
         width: 6px;
         height: 6px;
-        background-color: var(--color-red-500);
         border-radius: 50%;
         transform: translateY(-50%);
     }
@@ -815,7 +821,6 @@
         right: 0;
         width: 6px;
         height: 6px;
-        background-color: var(--color-red-500);
         border-radius: 50%;
         transform: translateY(-50%);
     }
