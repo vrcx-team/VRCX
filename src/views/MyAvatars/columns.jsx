@@ -94,7 +94,7 @@ export function getColumns({
                 return (
                     <img
                         src={ref.thumbnailImageUrl}
-                        class="cursor-pointer rounded-sm object-cover"
+                        class="avatar-table-thumbnail cursor-pointer rounded-sm object-cover"
                         style="width: 34px; height: 22px;"
                         loading="lazy"
                         onClick={() => onShowAvatarDialog(ref.id)}

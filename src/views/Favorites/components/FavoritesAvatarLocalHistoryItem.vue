@@ -98,3 +98,14 @@
         return props.favorite.thumbnailImageUrl.replace('256', '128');
     });
 </script>
+
+<style scoped>
+    .favorites-search-card img {
+        filter: saturate(0.8) contrast(0.8);
+        transition: filter 0.2s ease;
+    }
+
+    .favorites-search-card:hover img {
+        filter: saturate(1) contrast(1);
+    }
+</style>

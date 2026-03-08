@@ -250,7 +250,7 @@
                     :ref="virtualizer.measureElement"
                     :style="{ transform: `translateY(${vItem.virtualItem.start}px)` }">
                     <div
-                        class="grid gap-[var(--avatar-card-gap,12px)] p-0.5"
+                        class="grid gap-(--avatar-card-gap,12px) p-0.5"
                         :style="{
                             gridTemplateColumns: `repeat(var(--avatar-grid-columns, 1), minmax(var(--avatar-card-min-width, 200px), var(--avatar-card-target-width, 1fr)))`,
                             ...gridStyle(filteredAvatars.length)
@@ -258,6 +258,7 @@
                         <MyAvatarCard
                             v-for="avatar in vItem.row.items"
                             :key="avatar.id"
+                            v-memo="[currentAvatarId, cardScale]"
                             :avatar="avatar"
                             :current-avatar-id="currentAvatarId"
                             :card-scale="cardScale"
@@ -877,3 +878,14 @@
         refreshAvatars();
     });
 </script>
+
+<style scoped>
+    :deep(.avatar-table-thumbnail) {
+        filter: saturate(0.8) contrast(0.8);
+        transition: filter 0.2s ease;
+    }
+
+    :deep(tr:hover .avatar-table-thumbnail) {
+        filter: saturate(1) contrast(1);
+    }
+</style>
