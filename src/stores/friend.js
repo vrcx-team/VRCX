@@ -18,6 +18,9 @@ import {
 } from '../shared/utils';
 import { friendRequest, userRequest } from '../api';
 import { AppDebug } from '../service/appConfig';
+import { createFriendPresenceCoordinator } from './coordinators/friendPresenceCoordinator';
+import { createFriendRelationshipCoordinator } from './coordinators/friendRelationshipCoordinator';
+import { createFriendSyncCoordinator } from './coordinators/friendSyncCoordinator';
 import { database } from '../service/database';
 import { reconnectWebSocket } from '../service/websocket';
 import { useAppearanceSettingsStore } from './settings/appearance';
@@ -377,262 +380,13 @@ export const useFriendStore = defineStore('Friend', () => {
      * @param {string?} stateInput
      */
     function updateFriend(id, stateInput = undefined) {
-        const ctx = friends.get(id);
-        if (typeof ctx === 'undefined') {
-            return;
-        }
-        const ref = userStore.cachedUsers.get(id);
-        if (stateInput && typeof ref !== 'undefined') {
-            ctx.ref.state = stateInput;
-        }
-        if (stateInput === 'online') {
-            const pendingOffline = pendingOfflineMap.get(id);
-            if (AppDebug.debugFriendState && pendingOffline) {
-                const time = (Date.now() - pendingOffline.startTime) / 1000;
-                console.log(`${ctx.name} pendingOfflineCancelTime ${time}`);
-            }
-            ctx.pendingOffline = false;
-            pendingOfflineMap.delete(id);
-        }
-        const isVIP = localFavoriteFriends.has(id);
-        let location = '';
-        let $location_at = undefined;
-        if (typeof ref !== 'undefined') {
-            location = ref.location;
-            $location_at = ref.$location_at;
-
-            const currentState = stateInput || ctx.state;
-            // wtf, fetch user if offline in an instance
-            if (
-                currentState !== 'online' &&
-                isRealInstance(ref.location) &&
-                ref.$lastFetch < Date.now() - 10000 // 10 seconds
-            ) {
-                console.log(
-                    `Fetching offline friend in an instance ${ctx.name}`
-                );
-                userRequest.getUser({
-                    userId: id
-                });
-            }
-            // wtf, fetch user if online in an offline location
-            if (
-                currentState === 'online' &&
-                ref.location === 'offline' &&
-                ref.$lastFetch < Date.now() - 10000 // 10 seconds
-            ) {
-                console.log(
-                    `Fetching online friend in an offline location ${ctx.name}`
-                );
-                userRequest.getUser({
-                    userId: id
-                });
-            }
-        }
-        if (typeof stateInput === 'undefined' || ctx.state === stateInput) {
-            // this is should be: undefined -> user
-            if (ctx.ref !== ref) {
-                ctx.ref = ref;
-                // NOTE
-                // AddFriend (CurrentUser) 이후,
-                // 서버에서 오는 순서라고 보면 될 듯.
-                if (ctx.state === 'online') {
-                    if (watchState.isFriendsLoaded) {
-                        userRequest.getUser({
-                            userId: id
-                        });
-                    }
-                }
-            }
-            if (ctx.isVIP !== isVIP) {
-                ctx.isVIP = isVIP;
-            }
-            if (typeof ref !== 'undefined' && ctx.name !== ref.displayName) {
-                ctx.name = ref.displayName;
-            }
-        } else if (
-            ctx.state === 'online' &&
-            (stateInput === 'active' || stateInput === 'offline')
-        ) {
-            ctx.ref = ref;
-            ctx.isVIP = isVIP;
-            if (typeof ref !== 'undefined') {
-                ctx.name = ref.displayName;
-            }
-            if (!watchState.isFriendsLoaded) {
-                updateFriendDelayedCheck(
-                    ctx,
-                    stateInput,
-                    location,
-                    $location_at
-                );
-                return;
-            }
-            // prevent status flapping
-            if (pendingOfflineMap.has(id)) {
-                if (AppDebug.debugFriendState) {
-                    console.log(ctx.name, 'pendingOfflineAlreadyWaiting');
-                }
-                return;
-            }
-            if (AppDebug.debugFriendState) {
-                console.log(ctx.name, 'pendingOfflineBegin');
-            }
-            pendingOfflineMap.set(id, {
-                startTime: Date.now(),
-                newState: stateInput,
-                previousLocation: location,
-                previousLocationAt: $location_at
-            });
-            ctx.pendingOffline = true;
-        } else {
-            ctx.ref = ref;
-            ctx.isVIP = isVIP;
-            if (typeof ref !== 'undefined') {
-                ctx.name = ref.displayName;
-                updateFriendDelayedCheck(
-                    ctx,
-                    ctx.ref.state,
-                    location,
-                    $location_at
-                );
-            }
-        }
+        friendPresenceCoordinator.runUpdateFriendFlow(id, stateInput);
     }
 
     async function pendingOfflineWorkerFunction() {
         pendingOfflineWorker = workerTimers.setInterval(() => {
-            const now = Date.now();
-            for (const [id, pending] of pendingOfflineMap.entries()) {
-                if (now - pending.startTime >= pendingOfflineDelay) {
-                    const ctx = friends.get(id);
-                    if (typeof ctx === 'undefined') {
-                        pendingOfflineMap.delete(id);
-                        continue;
-                    }
-                    ctx.pendingOffline = false;
-                    if (pending.newState === ctx.state) {
-                        console.error(
-                            ctx.name,
-                            'pendingOfflineCancelledStateMatched, this should never happen'
-                        );
-                        pendingOfflineMap.delete(id);
-                        continue;
-                    }
-                    if (AppDebug.debugFriendState) {
-                        console.log(ctx.name, 'pendingOfflineEnd');
-                    }
-                    pendingOfflineMap.delete(id);
-                    updateFriendDelayedCheck(
-                        ctx,
-                        pending.newState,
-                        pending.previousLocation,
-                        pending.previousLocationAt
-                    );
-                }
-            }
+            friendPresenceCoordinator.runPendingOfflineTickFlow();
         }, 1000);
-    }
-
-    /**
-     * @param {Object} ctx
-     * @param {string} newState
-     * @param {string} location
-     * @param {number} $location_at
-     */
-    async function updateFriendDelayedCheck(
-        ctx,
-        newState,
-        location,
-        $location_at
-    ) {
-        let feed;
-        let groupName;
-        let worldName;
-        const id = ctx.id;
-        if (AppDebug.debugFriendState) {
-            console.log(
-                `${ctx.name} updateFriendState ${ctx.state} -> ${newState}`
-            );
-            if (
-                typeof ctx.ref !== 'undefined' &&
-                location !== ctx.ref.location
-            ) {
-                console.log(
-                    `${ctx.name} pendingOfflineLocation ${location} -> ${ctx.ref.location}`
-                );
-            }
-        }
-        if (!friends.has(id)) {
-            console.log('Friend not found', id);
-            return;
-        }
-        const isVIP = localFavoriteFriends.has(id);
-        const ref = ctx.ref;
-        if (ctx.state !== newState && typeof ctx.ref !== 'undefined') {
-            if (
-                (newState === 'offline' || newState === 'active') &&
-                ctx.state === 'online'
-            ) {
-                ctx.ref.$online_for = '';
-                ctx.ref.$offline_for = Date.now();
-                ctx.ref.$active_for = '';
-                if (newState === 'active') {
-                    ctx.ref.$active_for = Date.now();
-                }
-                const ts = Date.now();
-                const time = ts - $location_at;
-                worldName = await getWorldName(location);
-                groupName = await getGroupName(location);
-                feed = {
-                    created_at: new Date().toJSON(),
-                    type: 'Offline',
-                    userId: ref.id,
-                    displayName: ref.displayName,
-                    location,
-                    worldName,
-                    groupName,
-                    time
-                };
-                feedStore.addFeed(feed);
-                database.addOnlineOfflineToDatabase(feed);
-            } else if (
-                newState === 'online' &&
-                (ctx.state === 'offline' || ctx.state === 'active')
-            ) {
-                ctx.ref.$previousLocation = '';
-                ctx.ref.$travelingToTime = Date.now();
-                ctx.ref.$location_at = Date.now();
-                ctx.ref.$online_for = Date.now();
-                ctx.ref.$offline_for = '';
-                ctx.ref.$active_for = '';
-                worldName = await getWorldName(location);
-                groupName = await getGroupName(location);
-                feed = {
-                    created_at: new Date().toJSON(),
-                    type: 'Online',
-                    userId: id,
-                    displayName: ctx.name,
-                    location,
-                    worldName,
-                    groupName,
-                    time: ''
-                };
-                feedStore.addFeed(feed);
-                database.addOnlineOfflineToDatabase(feed);
-            }
-            if (newState === 'active') {
-                ctx.ref.$active_for = Date.now();
-            }
-        }
-        if (ctx.state !== newState) {
-            ctx.state = newState;
-            updateOnlineFriendCounter();
-        }
-        if (ref?.displayName) {
-            ctx.name = ref.displayName;
-        }
-        ctx.isVIP = isVIP;
     }
 
     /**
@@ -903,12 +657,7 @@ export const useFriendStore = defineStore('Friend', () => {
      * @returns {Promise<void>}
      */
     async function refreshFriendsList() {
-        // If we just got user less then 2 min before code call, don't call it again
-        if (updateLoopStore.nextCurrentUserRefresh < 300) {
-            await userStore.getCurrentUser();
-        }
-        await refreshFriends();
-        reconnectWebSocket();
+        await friendSyncCoordinator.runRefreshFriendsListFlow();
     }
 
     function updateOnlineFriendCounter(forceUpdate = false) {
@@ -1099,41 +848,7 @@ export const useFriendStore = defineStore('Friend', () => {
      * @param {string} id
      */
     function deleteFriendship(id) {
-        const ctx = friendLog.get(id);
-        if (typeof ctx === 'undefined') {
-            return;
-        }
-        friendRequest
-            .getFriendStatus({
-                userId: id,
-                currentUserId: userStore.currentUser.id
-            })
-            .then((args) => {
-                if (args.params.currentUserId !== userStore.currentUser.id) {
-                    // safety check for delayed response
-                    return;
-                }
-                handleFriendStatus(args);
-                if (!args.json.isFriend && friendLog.has(id)) {
-                    const friendLogHistory = {
-                        created_at: new Date().toJSON(),
-                        type: 'Unfriend',
-                        userId: id,
-                        displayName: ctx.displayName || id
-                    };
-                    friendLogTable.value.data.push(friendLogHistory);
-                    database.addFriendLogHistory(friendLogHistory);
-                    notificationStore.queueFriendLogNoty(friendLogHistory);
-                    sharedFeedStore.addEntry(friendLogHistory);
-                    friendLog.delete(id);
-                    database.deleteFriendLogCurrent(id);
-                    favoriteStore.handleFavoriteDelete(id);
-                    if (!appearanceSettingsStore.hideUnfriends) {
-                        uiStore.notifyMenu('friend-log');
-                    }
-                    deleteFriend(id);
-                }
-            });
+        friendRelationshipCoordinator.runDeleteFriendshipFlow(id);
     }
 
     /**
@@ -1141,20 +856,7 @@ export const useFriendStore = defineStore('Friend', () => {
      * @param {object} ref
      */
     function updateFriendships(ref) {
-        let id;
-        const set = new Set();
-        for (id of ref.friends) {
-            set.add(id);
-            addFriendship(id);
-        }
-        for (id of friendLog.keys()) {
-            if (id === userStore.currentUser.id) {
-                friendLog.delete(id);
-                database.deleteFriendLogCurrent(id);
-            } else if (!set.has(id)) {
-                deleteFriendship(id);
-            }
-        }
+        friendRelationshipCoordinator.runUpdateFriendshipsFlow(ref);
     }
 
     /**
@@ -1654,34 +1356,7 @@ export const useFriendStore = defineStore('Friend', () => {
     }
 
     async function initFriendsList() {
-        const userId = userStore.currentUser.id;
-        isRefreshFriendsLoading.value = true;
-        watchState.isFriendsLoaded = false;
-        friendLog = new Map();
-
-        try {
-            if (await configRepository.getBool(`friendLogInit_${userId}`)) {
-                await getFriendLog(userStore.currentUser);
-            } else {
-                await initFriendLog(userStore.currentUser);
-            }
-        } catch (err) {
-            if (!AppDebug.dontLogMeOut) {
-                toast.error(t('message.friend.load_failed'));
-                authStore.handleLogoutEvent();
-                throw err;
-            }
-        }
-
-        tryApplyFriendOrder(); // once again
-        getAllUserStats(); // joinCount, lastSeen, timeSpent
-
-        // remove old data from json file and migrate to SQLite (July 2021)
-        if (await VRCXStorage.Get(`${userId}_friendLogUpdatedAt`)) {
-            VRCXStorage.Remove(`${userId}_feedTable`);
-            migrateMemos();
-            migrateFriendLog(userId);
-        }
+        await friendSyncCoordinator.runInitFriendsListFlow();
     }
 
     /**
@@ -1690,6 +1365,78 @@ export const useFriendStore = defineStore('Friend', () => {
     function setRefreshFriendsLoading(value) {
         isRefreshFriendsLoading.value = value;
     }
+
+    const friendPresenceCoordinator = createFriendPresenceCoordinator({
+        friends,
+        localFavoriteFriends,
+        pendingOfflineMap,
+        pendingOfflineDelay,
+        watchState,
+        appDebug: AppDebug,
+        getCachedUsers: () => userStore.cachedUsers,
+        isRealInstance,
+        requestUser: (userId) =>
+            userRequest.getUser({
+                userId
+            }),
+        getWorldName,
+        getGroupName,
+        feedStore,
+        database,
+        updateOnlineFriendCounter,
+        now: () => Date.now(),
+        nowIso: () => new Date().toJSON()
+    });
+
+    const friendRelationshipCoordinator = createFriendRelationshipCoordinator({
+        friendLog,
+        friendLogTable,
+        getCurrentUserId: () => userStore.currentUser.id,
+        requestFriendStatus: (params) => friendRequest.getFriendStatus(params),
+        handleFriendStatus,
+        addFriendship,
+        deleteFriend,
+        database,
+        notificationStore,
+        sharedFeedStore,
+        favoriteStore,
+        uiStore,
+        shouldNotifyUnfriend: () => !appearanceSettingsStore.hideUnfriends,
+        nowIso: () => new Date().toJSON()
+    });
+
+    const friendSyncCoordinator = createFriendSyncCoordinator({
+        getNextCurrentUserRefresh: () => updateLoopStore.nextCurrentUserRefresh,
+        getCurrentUser: () => userStore.getCurrentUser(),
+        refreshFriends,
+        reconnectWebSocket,
+        getCurrentUserId: () => userStore.currentUser.id,
+        getCurrentUserRef: () => userStore.currentUser,
+        setRefreshFriendsLoading: (value) => {
+            isRefreshFriendsLoading.value = value;
+        },
+        setFriendsLoaded: (value) => {
+            watchState.isFriendsLoaded = value;
+        },
+        resetFriendLog: () => {
+            friendLog = new Map();
+        },
+        isFriendLogInitialized: (userId) =>
+            configRepository.getBool(`friendLogInit_${userId}`),
+        getFriendLog,
+        initFriendLog,
+        isDontLogMeOut: () => AppDebug.dontLogMeOut,
+        showLoadFailedToast: () => toast.error(t('message.friend.load_failed')),
+        handleLogoutEvent: () => authStore.handleLogoutEvent(),
+        tryApplyFriendOrder,
+        getAllUserStats,
+        hasLegacyFriendLogData: (userId) =>
+            VRCXStorage.Get(`${userId}_friendLogUpdatedAt`),
+        removeLegacyFeedTable: (userId) =>
+            VRCXStorage.Remove(`${userId}_feedTable`),
+        migrateMemos,
+        migrateFriendLog
+    });
 
     return {
         state,
