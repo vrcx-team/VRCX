@@ -175,12 +175,20 @@
         }
     });
 
+    /**
+     *
+     * @param event
+     */
     async function openCalendarEvent(event) {
         const content = await getCalendarIcs(event);
         if (!content) return;
         await AppApi.OpenCalendarFile(content);
     }
 
+    /**
+     *
+     * @param event
+     */
     async function getCalendarIcs(event) {
         const url = `${AppDebug.endpointDomain}/calendar/${event.ownerId}/${event.id}.ics`;
         try {
@@ -198,6 +206,10 @@
         }
     }
 
+    /**
+     *
+     * @param event
+     */
     async function downloadEventIcs(event) {
         const content = await getCalendarIcs(event);
         if (!content) return;
@@ -211,6 +223,10 @@
         URL.revokeObjectURL(link.href);
     }
 
+    /**
+     *
+     * @param event
+     */
     async function toggleEventFollow(event) {
         const args = await groupRequest.followGroupEvent({
             groupId: event.ownerId,
@@ -220,6 +236,10 @@
         emit('update-following-calendar-data', args.json);
     }
 
+    /**
+     *
+     * @param event
+     */
     function copyEventLink(event) {
         const eventLink = `https://vrchat.com/home/group/${event.ownerId}/calendar/${event.id}`;
         navigator.clipboard.writeText(eventLink);
@@ -264,9 +284,7 @@
 
     .event-card:hover {
         background-color: var(--accent);
-        box-shadow:
-            0 4px 6px -1px rgb(0 0 0 / 0.1),
-            0 2px 4px -2px rgb(0 0 0 / 0.1);
+        box-shadow: var(--shadow-sm);
     }
 
     .event-card.grouped-card {

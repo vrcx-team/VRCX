@@ -424,18 +424,30 @@
         isAutoChangeStatusDialogVisible.value = true;
     };
 
+    /**
+     *
+     */
     function showExportDiscordNamesDialog() {
         isExportDiscordNamesDialogVisible.value = true;
     }
 
+    /**
+     *
+     */
     function showExportFriendsListDialog() {
         isExportFriendsListDialogVisible.value = true;
     }
 
+    /**
+     *
+     */
     function showExportAvatarsListDialog() {
         isExportAvatarsListDialogVisible.value = true;
     }
 
+    /**
+     *
+     */
     function openVrcPhotosFolder() {
         AppApi.OpenVrcPhotosFolder().then((result) => {
             if (result) {
@@ -446,6 +458,9 @@
         });
     }
 
+    /**
+     *
+     */
     function openVrcScreenshotsFolder() {
         AppApi.OpenVrcScreenshotsFolder().then((result) => {
             if (result) {
@@ -456,6 +471,9 @@
         });
     }
 
+    /**
+     *
+     */
     function openVrcxAppDataFolder() {
         AppApi.OpenVrcxAppDataFolder().then((result) => {
             if (result) {
@@ -466,6 +484,9 @@
         });
     }
 
+    /**
+     *
+     */
     function openVrcAppDataFolder() {
         AppApi.OpenVrcAppDataFolder().then((result) => {
             if (result) {
@@ -476,6 +497,9 @@
         });
     }
 
+    /**
+     *
+     */
     function openCrashVrcCrashDumps() {
         AppApi.OpenCrashVrcCrashDumps().then((result) => {
             if (result) {
@@ -539,9 +563,7 @@
 
         &:hover {
             background-color: var(--accent);
-            box-shadow:
-                0 4px 6px -1px rgb(0 0 0 / 0.1),
-                0 2px 4px -2px rgb(0 0 0 / 0.1);
+            box-shadow: var(--shadow-sm);
         }
 
         .tool-content {
