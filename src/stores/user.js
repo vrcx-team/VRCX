@@ -358,7 +358,7 @@ export const useUserStore = defineStore('User', () => {
             ...args.json
         };
         args.ref = ref;
-        authStore.cachedConfig = ref;
+        authStore.setCachedConfig(ref);
         if (typeof args.ref?.whiteListedAssetUrls !== 'object') {
             console.error('Invalid config whiteListedAssetUrls');
         }
@@ -878,7 +878,7 @@ export const useUserStore = defineStore('User', () => {
             });
         showUserDialogHistory.delete(userId);
         showUserDialogHistory.add(userId);
-        searchStore.quickSearchItems = searchStore.quickSearchUserHistory();
+        searchStore.setQuickSearchItems(searchStore.quickSearchUserHistory());
     }
 
     /**
@@ -1126,11 +1126,11 @@ export const useUserStore = defineStore('User', () => {
             showUserDialog(found.id);
             return;
         }
-        searchStore.searchText = ref.displayName;
+        searchStore.setSearchText(ref.displayName);
         await searchStore.searchUserByDisplayName(ref.displayName);
         for (ctx of searchStore.searchUserResults) {
             if (ctx.displayName === ref.displayName) {
-                searchStore.searchText = '';
+                searchStore.setSearchText('');
                 searchStore.clearSearch();
                 showUserDialog(ctx.id);
                 return;
@@ -1716,7 +1716,7 @@ export const useUserStore = defineStore('User', () => {
      * @returns {import('../types/api/user').GetCurrentUserResponse}
      */
     function applyCurrentUser(json) {
-        authStore.attemptingAutoLogin = false;
+        authStore.setAttemptingAutoLogin(false);
         let ref = currentUser.value;
         if (watchState.isLoggedIn) {
             if (json.currentAvatar !== ref.currentAvatar) {
@@ -1981,10 +1981,59 @@ export const useUserStore = defineStore('User', () => {
     }
 
     /**
+     * @param {boolean} value
+     */
+    function setUserDialogVisible(value) {
+        userDialog.value.visible = value;
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    function setUserDialogIsFavorite(value) {
+        userDialog.value.isFavorite = value;
+    }
+
+    /**
      * @param {string} value
      */
     function setCurrentUserColour(value) {
         currentUser.value.$userColour = value;
+    }
+
+    /**
+     * @param {string} location
+     * @param {string} travelingToLocation
+     * @param {number} timestamp
+     */
+    function setCurrentUserLocationState(
+        location,
+        travelingToLocation,
+        timestamp = Date.now()
+    ) {
+        currentUser.value.$location_at = timestamp;
+        currentUser.value.$travelingToTime = timestamp;
+        currentUser.value.$locationTag = location;
+        currentUser.value.$travelingToLocation = travelingToLocation;
+    }
+
+    /**
+     * @param {number} value
+     */
+    function setCurrentUserTravelingToTime(value) {
+        currentUser.value.$travelingToTime = value;
+    }
+
+    function markCurrentUserGameStarted() {
+        currentUser.value.$online_for = Date.now();
+        currentUser.value.$offline_for = '';
+        currentUser.value.$previousAvatarSwapTime = Date.now();
+    }
+
+    function markCurrentUserGameStopped() {
+        currentUser.value.$online_for = 0;
+        currentUser.value.$offline_for = Date.now();
+        currentUser.value.$previousAvatarSwapTime = null;
     }
 
     /**
@@ -2033,7 +2082,13 @@ export const useUserStore = defineStore('User', () => {
         handleConfig,
         showSendBoopDialog,
         setUserDialogMemo,
+        setUserDialogVisible,
+        setUserDialogIsFavorite,
         setCurrentUserColour,
+        setCurrentUserLocationState,
+        setCurrentUserTravelingToTime,
+        markCurrentUserGameStarted,
+        markCurrentUserGameStopped,
         checkNote,
         toggleSharedConnectionsOptOut,
         toggleDiscordFriendsOptOut

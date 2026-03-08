@@ -224,6 +224,20 @@ export const useInstanceStore = defineStore('Instance', () => {
     }
 
     /**
+     * @param {boolean} value
+     */
+    function setPreviousInstancesInfoDialogVisible(value) {
+        previousInstancesInfoDialog.value.visible = value;
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    function setPreviousInstancesListDialogVisible(value) {
+        previousInstancesListDialog.value.visible = value;
+    }
+
+    /**
      *
      * @param input
      */
@@ -1438,6 +1452,8 @@ export const useInstanceStore = defineStore('Instance', () => {
         instanceQueueReady,
         instanceQueueUpdate,
         hidePreviousInstancesDialogs,
+        setPreviousInstancesInfoDialogVisible,
+        setPreviousInstancesListDialogVisible,
         showPreviousInstancesInfoDialog,
         showPreviousInstancesListDialog,
         addInstanceJoinHistory,

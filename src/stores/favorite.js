@@ -339,15 +339,15 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         const { ref } = args;
         const userDialog = userStore.userDialog;
         if (userDialog.visible && ref.favoriteId === userDialog.id) {
-            userDialog.isFavorite = true;
+            userStore.setUserDialogIsFavorite(true);
         }
         const worldDialog = worldStore.worldDialog;
         if (worldDialog.visible && ref.favoriteId === worldDialog.id) {
-            worldDialog.isFavorite = true;
+            worldStore.setWorldDialogIsFavorite(true);
         }
         const avatarDialog = avatarStore.avatarDialog;
         if (avatarDialog.visible && ref.favoriteId === avatarDialog.id) {
-            avatarDialog.isFavorite = true;
+            avatarStore.setAvatarDialogIsFavorite(true);
         }
     }
 
@@ -432,17 +432,17 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         friendStore.updateSidebarFavorites();
         const userDialog = userStore.userDialog;
         if (userDialog.visible && userDialog.id === ref.favoriteId) {
-            userDialog.isFavorite = false;
+            userStore.setUserDialogIsFavorite(false);
         }
         const worldDialog = worldStore.worldDialog;
         if (worldDialog.visible && worldDialog.id === ref.favoriteId) {
-            worldDialog.isFavorite = localWorldFavoritesList.value.includes(
-                worldDialog.id
+            worldStore.setWorldDialogIsFavorite(
+                localWorldFavoritesList.value.includes(worldDialog.id)
             );
         }
         const avatarDialog = avatarStore.avatarDialog;
         if (avatarDialog.visible && avatarDialog.id === ref.favoriteId) {
-            avatarDialog.isFavorite = false;
+            avatarStore.setAvatarDialogIsFavorite(false);
         }
         countFavoriteGroups();
     }
@@ -950,6 +950,27 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
+     * @param {string} value
+     */
+    function setAvatarImportDialogInput(value) {
+        avatarImportDialogInput.value = value;
+    }
+
+    /**
+     * @param {string} value
+     */
+    function setWorldImportDialogInput(value) {
+        worldImportDialogInput.value = value;
+    }
+
+    /**
+     * @param {string} value
+     */
+    function setFriendImportDialogInput(value) {
+        friendImportDialogInput.value = value;
+    }
+
+    /**
      *
      * @param {string} worldId
      * @param {string} group
@@ -979,7 +1000,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             worldStore.worldDialog.visible &&
             worldStore.worldDialog.id === worldId
         ) {
-            worldStore.worldDialog.isFavorite = true;
+            worldStore.setWorldDialogIsFavorite(true);
         }
 
         // update UI
@@ -1034,7 +1055,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             avatarStore.avatarDialog.visible &&
             avatarStore.avatarDialog.id === avatarId
         ) {
-            avatarStore.avatarDialog.isFavorite = true;
+            avatarStore.setAvatarDialogIsFavorite(true);
         }
 
         // update UI
@@ -1302,8 +1323,9 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             avatarStore.avatarDialog.visible &&
             avatarStore.avatarDialog.id === avatarId
         ) {
-            avatarStore.avatarDialog.isFavorite =
-                getCachedFavoritesByObjectId(avatarId);
+            avatarStore.setAvatarDialogIsFavorite(
+                getCachedFavoritesByObjectId(avatarId)
+            );
         }
 
         // update UI
@@ -1519,8 +1541,9 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             worldStore.worldDialog.visible &&
             worldStore.worldDialog.id === worldId
         ) {
-            worldStore.worldDialog.isFavorite =
-                getCachedFavoritesByObjectId(worldId);
+            worldStore.setWorldDialogIsFavorite(
+                getCachedFavoritesByObjectId(worldId)
+            );
         }
 
         // update UI
@@ -1614,7 +1637,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
         const userDialog = userStore.userDialog;
         if (userDialog.visible && userDialog.id === userId) {
-            userDialog.isFavorite = true;
+            userStore.setUserDialogIsFavorite(true);
         }
         friendStore.updateLocalFavoriteFriends();
     }
@@ -1667,9 +1690,10 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
         const userDialog = userStore.userDialog;
         if (userDialog.visible && userDialog.id === userId) {
-            userDialog.isFavorite =
+            userStore.setUserDialogIsFavorite(
                 getCachedFavoritesByObjectId(userId) ||
-                isInAnyLocalFriendGroup(userId);
+                    isInAnyLocalFriendGroup(userId)
+            );
         }
         friendStore.updateLocalFavoriteFriends();
     }
@@ -1865,6 +1889,9 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         showWorldImportDialog,
         showAvatarImportDialog,
         showFriendImportDialog,
+        setAvatarImportDialogInput,
+        setWorldImportDialogInput,
+        setFriendImportDialogInput,
         addLocalWorldFavorite,
         hasLocalWorldFavorite,
         hasLocalAvatarFavorite,

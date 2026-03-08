@@ -406,7 +406,7 @@ export const useAppearanceSettingsStore = defineStore(
             }
             if (randomUserColours.value) {
                 const colour = await getNameColour(userStore.currentUser.id);
-                userStore.currentUser.$userColour = colour;
+                userStore.setCurrentUserColour(colour);
                 userColourInit();
             } else {
                 applyUserTrustLevel(userStore.currentUser);
@@ -1016,14 +1016,14 @@ export const useAppearanceSettingsStore = defineStore(
                 return;
             }
 
-            vrcxStore.maxTableSize = nextMaxTableSize;
+            vrcxStore.setMaxTableSize(nextMaxTableSize);
             await configRepository.setInt(
                 'VRCX_maxTableSize_v2',
                 vrcxStore.maxTableSize
             );
             database.setMaxTableSize(vrcxStore.maxTableSize);
 
-            vrcxStore.searchLimit = nextSearchLimit;
+            vrcxStore.setSearchLimit(nextSearchLimit);
             await configRepository.setInt(
                 'VRCX_searchLimit',
                 vrcxStore.searchLimit
@@ -1043,7 +1043,7 @@ export const useAppearanceSettingsStore = defineStore(
                 return;
             }
             const colour = await getNameColour(userStore.currentUser.id);
-            userStore.currentUser.$userColour = colour;
+            userStore.setCurrentUserColour(colour);
             await userColourInit();
         }
 

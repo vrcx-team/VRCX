@@ -215,6 +215,20 @@ export const useWorldStore = defineStore('World', () => {
     }
 
     /**
+     * @param {boolean} value
+     */
+    function setWorldDialogVisible(value) {
+        worldDialog.visible = value;
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    function setWorldDialogIsFavorite(value) {
+        worldDialog.isFavorite = value;
+    }
+
+    /**
      *
      */
     function updateVRChatWorldCache() {
@@ -323,6 +337,8 @@ export const useWorldStore = defineStore('World', () => {
         worldDialog,
         cachedWorlds,
         showWorldDialog,
+        setWorldDialogVisible,
+        setWorldDialogIsFavorite,
         setWorldDialogLoading,
         updateVRChatWorldCache,
         applyWorld,

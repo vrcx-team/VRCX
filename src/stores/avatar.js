@@ -250,6 +250,20 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     /**
+     * @param {boolean} value
+     */
+    function setAvatarDialogVisible(value) {
+        avatarDialog.value.visible = value;
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    function setAvatarDialogIsFavorite(value) {
+        avatarDialog.value.isFavorite = value;
+    }
+
+    /**
      *
      * @param {string} avatarId
      * @returns {Promise<string[]>}
@@ -812,6 +826,8 @@ export const useAvatarStore = defineStore('Avatar', () => {
         lookupAvatars,
         selectAvatarWithConfirmation,
         selectAvatarWithoutConfirmation,
+        setAvatarDialogVisible,
+        setAvatarDialogIsFavorite,
         setAvatarDialogLoading,
         showAvatarAuthorDialog,
         addAvatarWearTime,

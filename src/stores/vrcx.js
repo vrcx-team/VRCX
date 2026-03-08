@@ -248,6 +248,27 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     /**
+     * @param {number} value
+     */
+    function setClearVRCXCacheFrequency(value) {
+        clearVRCXCacheFrequency.value = value;
+    }
+
+    /**
+     * @param {number} value
+     */
+    function setMaxTableSize(value) {
+        maxTableSize.value = value;
+    }
+
+    /**
+     * @param {number} value
+     */
+    function setSearchLimit(value) {
+        searchLimit.value = value;
+    }
+
+    /**
      *
      */
     function clearVRCXCache() {
@@ -522,7 +543,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 for (const [id, dt] of Object.entries(data.Event7List)) {
                     photonStore.photonEvent7List.set(parseInt(id, 10), dt);
                 }
-                photonStore.photonLastEvent7List = Date.parse(data.dt);
+                photonStore.setPhotonLastEvent7List(Date.parse(data.dt));
                 break;
             case 'VrcxMessage':
                 if (AppDebug.debugPhotonLogging || AppDebug.debugIPC) {
@@ -538,7 +559,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     photonStore.setPhotonLoggingEnabled();
                 }
                 ipcEnabled.value = true;
-                updateLoopStore.ipcTimeout = 60; // 30 seconds
+                updateLoopStore.setIpcTimeout(60); // 30 seconds
                 break;
             case 'MsgPing':
                 if (AppDebug.debugIPC) {
@@ -719,13 +740,13 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 if (!type) break;
                 const data = input.replace(`import/${type}/`, '');
                 if (type === 'avatar') {
-                    favoriteStore.avatarImportDialogInput = data;
+                    favoriteStore.setAvatarImportDialogInput(data);
                     favoriteStore.showAvatarImportDialog();
                 } else if (type === 'world') {
-                    favoriteStore.worldImportDialogInput = data;
+                    favoriteStore.setWorldImportDialogInput(data);
                     favoriteStore.showWorldImportDialog();
                 } else if (type === 'friend') {
-                    favoriteStore.friendImportDialogInput = data;
+                    favoriteStore.setFriendImportDialogInput(data);
                     favoriteStore.showFriendImportDialog();
                 }
                 break;
@@ -878,6 +899,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         proxyServer,
         setProxyServer,
         setIpcEnabled,
+        setClearVRCXCacheFrequency,
+        setMaxTableSize,
+        setSearchLimit,
         currentlyDroppingFile,
         isRegistryBackupDialogVisible,
         ipcEnabled,

@@ -155,27 +155,23 @@ export const useGameStore = defineStore('Game', () => {
         if (isGameRunningArg !== isGameRunning.value) {
             isGameRunning.value = isGameRunningArg;
             if (isGameRunningArg) {
-                userStore.currentUser.$online_for = Date.now();
-                userStore.currentUser.$offline_for = '';
-                userStore.currentUser.$previousAvatarSwapTime = Date.now();
+                userStore.markCurrentUserGameStarted();
             } else {
                 await configRepository.setBool('isGameNoVR', isGameNoVR.value);
-                userStore.currentUser.$online_for = 0;
-                userStore.currentUser.$offline_for = Date.now();
+                userStore.markCurrentUserGameStopped();
                 instanceStore.removeAllQueuedInstances();
                 autoVRChatCacheManagement();
                 checkIfGameCrashed();
-                updateLoopStore.ipcTimeout = 0;
+                updateLoopStore.setIpcTimeout(0);
                 avatarStore.addAvatarWearTime(
                     userStore.currentUser.currentAvatar
                 );
-                userStore.currentUser.$previousAvatarSwapTime = null;
             }
             locationStore.lastLocationReset();
             gameLogStore.clearNowPlaying();
             vrStore.updateVRLastLocation();
             workerTimers.setTimeout(() => checkVRChatDebugLogging(), 60000);
-            updateLoopStore.nextDiscordUpdate = 0;
+            updateLoopStore.setNextDiscordUpdate(0);
             console.log(new Date(), 'isGameRunning', isGameRunningArg);
         }
 
@@ -192,6 +188,13 @@ export const useGameStore = defineStore('Game', () => {
             isHmdAfk.value = isHmdAfkArg;
             console.log('isHmdAfk', isHmdAfkArg);
         }
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    function setIsGameNoVR(value) {
+        isGameNoVR.value = value;
     }
 
     async function checkVRChatDebugLogging() {
@@ -260,6 +263,7 @@ export const useGameStore = defineStore('Game', () => {
         sweepVRChatCache,
         getVRChatCacheSize,
         updateIsGameRunning,
+        setIsGameNoVR,
         getVRChatRegistryKey,
         checkVRChatDebugLogging,
         updateIsHmdAfk

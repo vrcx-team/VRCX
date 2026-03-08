@@ -174,11 +174,11 @@ export const useAuthStore = defineStore('Auth', () => {
                 })
             }).show();
         }
-        userStore.userDialog.visible = false;
+        userStore.setUserDialogVisible(false);
         watchState.isLoggedIn = false;
         watchState.isFriendsLoaded = false;
         watchState.isFavoritesLoaded = false;
-        notificationStore.notificationInitStatus = false;
+        notificationStore.setNotificationInitStatus(false);
         await updateStoredUser(userStore.currentUser);
         webApiService.clearCookies();
         loginForm.value.lastUserLoggedIn = '';
@@ -222,7 +222,7 @@ export const useAuthStore = defineStore('Auth', () => {
                             loginForm.value.loading = false;
                         })
                         .catch((err) => {
-                            updateLoopStore.nextCurrentUserRefresh = 60; // 1min
+                            updateLoopStore.setNextCurrentUserRefresh(60); // 1min
                             console.error(err);
                         });
                 });
@@ -275,8 +275,9 @@ export const useAuthStore = defineStore('Auth', () => {
      *
      */
     function enablePrimaryPasswordChange() {
-        advancedSettingsStore.enablePrimaryPassword =
-            !advancedSettingsStore.enablePrimaryPassword;
+        advancedSettingsStore.setEnablePrimaryPassword(
+            !advancedSettingsStore.enablePrimaryPassword
+        );
 
         enablePrimaryPasswordDialog.value.password = '';
         enablePrimaryPasswordDialog.value.rePassword = '';
@@ -292,7 +293,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 })
                 .then(async ({ ok, value }) => {
                     if (!ok) {
-                        advancedSettingsStore.enablePrimaryPassword = true;
+                        advancedSettingsStore.setEnablePrimaryPassword(true);
                         advancedSettingsStore.setEnablePrimaryPasswordConfigRepository(
                             true
                         );
@@ -327,7 +328,9 @@ export const useAuthStore = defineStore('Auth', () => {
                                 );
                             })
                             .catch(async () => {
-                                advancedSettingsStore.enablePrimaryPassword = true;
+                                advancedSettingsStore.setEnablePrimaryPassword(
+                                    true
+                                );
                                 advancedSettingsStore.setEnablePrimaryPasswordConfigRepository(
                                     true
                                 );
@@ -336,7 +339,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 })
                 .catch((err) => {
                     console.error(err);
-                    advancedSettingsStore.enablePrimaryPassword = true;
+                    advancedSettingsStore.setEnablePrimaryPassword(true);
                     advancedSettingsStore.setEnablePrimaryPasswordConfigRepository(
                         true
                     );
@@ -547,7 +550,7 @@ export const useAuthStore = defineStore('Auth', () => {
         delete savedCredentials[userId];
         // Disable primary password when no account is available.
         if (Object.keys(savedCredentials).length === 0) {
-            advancedSettingsStore.enablePrimaryPassword = false;
+            advancedSettingsStore.setEnablePrimaryPassword(false);
             advancedSettingsStore.setEnablePrimaryPasswordConfigRepository(
                 false
             );
@@ -845,7 +848,7 @@ export const useAuthStore = defineStore('Auth', () => {
         } else if (json.requiresTwoFactorAuth) {
             promptTOTP();
         } else {
-            updateLoopStore.nextCurrentUserRefresh = 420; // 7mins
+            updateLoopStore.setNextCurrentUserRefresh(420); // 7mins
             userStore.applyCurrentUser(json);
             initWebsocket();
         }
@@ -961,6 +964,15 @@ export const useAuthStore = defineStore('Auth', () => {
         AppApi.CheckGameRunning(); // restore state from hot-reload
     }
 
+    function setCachedConfig(value) {
+        cachedConfig.value = value;
+        state.cachedConfig = value;
+    }
+
+    function setAttemptingAutoLogin(value) {
+        attemptingAutoLogin.value = value;
+    }
+
     return {
         state,
 
@@ -989,6 +1001,8 @@ export const useAuthStore = defineStore('Auth', () => {
         handleLogoutEvent,
         handleCurrentUserUpdate,
         loginComplete,
-        getAllSavedCredentials
+        getAllSavedCredentials,
+        setCachedConfig,
+        setAttemptingAutoLogin
     };
 });

@@ -967,6 +967,13 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     /**
+     * @param {boolean} value
+     */
+    function setGroupDialogVisible(value) {
+        groupDialog.value.visible = value;
+    }
+
+    /**
      *
      * @param {object} json
      * @returns {*}
@@ -1202,6 +1209,7 @@ export const useGroupStore = defineStore('Group', () => {
         handleGroupPost,
         handleGroupUserInstances,
         clearGroupInstances,
+        setGroupDialogVisible,
         handleGroupMember,
         handleGroupPermissions,
         handleGroupMemberProps,

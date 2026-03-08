@@ -56,6 +56,20 @@ export const useSearchStore = defineStore('Search', () => {
         searchUserResults.value = [];
     }
 
+    /**
+     * @param {string} value
+     */
+    function setSearchText(value) {
+        searchText.value = value;
+    }
+
+    /**
+     * @param {Array} value
+     */
+    function setQuickSearchItems(value) {
+        quickSearchItems.value = value;
+    }
+
     async function searchUserByDisplayName(displayName) {
         const params = {
             n: 10,
@@ -426,6 +440,8 @@ export const useSearchStore = defineStore('Search', () => {
         directAccessParse,
         directAccessPaste,
         directAccessWorld,
-        verifyShortName
+        verifyShortName,
+        setSearchText,
+        setQuickSearchItems
     };
 });
