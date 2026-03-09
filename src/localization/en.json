@@ -1241,7 +1241,7 @@
                 "change_image": "Change Image",
                 "change_allowed_video_player_domains": "Change Allowed Video Player Domains",
                 "download_package": "Download Unity Package",
-                "publish_to_labs": "Publish To Labs",
+                "publish_to_labs": "Publish To Labs. You can only publish once per week (7 days).",
                 "unpublish": "Unpublish",
                 "delete_persistent_data": "Delete Persistent Data",
                 "delete": "Delete"
