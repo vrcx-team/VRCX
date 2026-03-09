@@ -5,7 +5,7 @@
                 <DialogTitle>{{ t('dialog.avatar_import.header') }}</DialogTitle>
             </DialogHeader>
             <div style="display: flex; align-items: center; justify-content: space-between">
-                <div style="font-size: 12px">{{ t('dialog.avatar_import.description') }}</div>
+                <div class="text-xs">{{ t('dialog.avatar_import.description') }}</div>
                 <div style="display: flex; align-items: center">
                     <div v-if="avatarImportDialog.progress">
                         {{ t('dialog.avatar_import.process_progress') }} {{ avatarImportDialog.progress }} /
@@ -97,7 +97,7 @@
                 <h2 class="my-1.5 mx-0" style="font-weight: bold">
                     {{ t('dialog.avatar_import.errors') }}
                 </h2>
-                <pre style="white-space: pre-wrap; font-size: 12px" v-text="avatarImportDialog.errors"></pre>
+                <pre class="whitespace-pre-wrap text-xs" v-text="avatarImportDialog.errors"></pre>
             </template>
             <DataTableLayout
                 class="min-w-0 w-full"

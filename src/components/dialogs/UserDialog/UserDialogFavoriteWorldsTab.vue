@@ -26,7 +26,7 @@
                 v-slot:[`label-${index}`]>
                 <span>
                     <i class="x-status-icon" style="margin-right: 8px" :class="userFavoriteWorldsStatus(list[1])"> </i>
-                    <span style="font-weight: bold; font-size: 14px" v-text="list[0]"></span>
+                    <span class="font-bold text-sm" v-text="list[0]"></span>
                     <span style="font-size: 10px; margin-left: 6px"
                         >{{ list[2].length }}/{{ favoriteLimits.maxFavoritesPerGroup.world }}</span
                     >

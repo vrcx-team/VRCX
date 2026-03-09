@@ -69,7 +69,7 @@
                 </Select>
             </div>
             <template v-if="screenshotMetadataDialog.searchIndex !== null">
-                <span class="ml-2" style="white-space: pre-wrap; font-size: 12px">{{
+                <span class="ml-2 whitespace-pre-wrap text-xs">{{
                     screenshotMetadataDialog.searchIndex + 1 + '/' + screenshotMetadataDialog.searchResults.length
                 }}</span>
             </template>
@@ -133,9 +133,7 @@
                 </Carousel>
             </div>
             <template v-if="screenshotMetadataDialog.metadata.error">
-                <pre
-                    style="white-space: pre-wrap; font-size: 12px"
-                    v-text="screenshotMetadataDialog.metadata.error"></pre>
+                <pre class="whitespace-pre-wrap text-xs" v-text="screenshotMetadataDialog.metadata.error"></pre>
                 <br />
             </template>
             <span v-for="user in screenshotMetadataDialog.metadata.players" :key="user.id" style="margin-top: 6px">

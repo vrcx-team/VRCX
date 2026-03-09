@@ -17,9 +17,9 @@
             v-for="(gallery, index) in groupDialog.ref.galleries"
             :key="`label-${index}`"
             v-slot:[`label-${index}`]>
-            <span style="font-weight: bold; font-size: 16px" v-text="gallery.name" />
+            <span class="text-base font-bold" v-text="gallery.name" />
             <i class="x-status-icon" style="margin-left: 6px" :class="groupGalleryStatus(gallery)" />
-            <span class="text-muted-foreground" style="font-size: 12px; margin-left: 6px">{{
+            <span class="text-muted-foreground text-xs ml-1.5">{{
                 groupDialog.galleries[gallery.id] ? groupDialog.galleries[gallery.id].length : 0
             }}</span>
         </template>

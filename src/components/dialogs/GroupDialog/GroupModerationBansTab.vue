@@ -11,25 +11,16 @@
                     <Spinner v-if="loading" />
                     <RefreshCw v-else />
                 </Button>
-                <Button
-                    size="sm"
-                    variant="outline"
-                    @click="$emit('select-all', tableData.data)"
-                    >{{ t('dialog.group_member_moderation.select_all') }}</Button
-                >
-                <span style="font-size: 14px; margin-left: 6px; margin-right: 6px">{{
-                    tableData.data.length
-                }}</span>
+                <Button size="sm" variant="outline" @click="$emit('select-all', tableData.data)">{{
+                    t('dialog.group_member_moderation.select_all')
+                }}</Button>
+                <span class="text-sm mx-1.5">{{ tableData.data.length }}</span>
             </div>
 
             <div class="flex gap-2 items-center">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    :disabled="!tableData.data.length"
-                    @click="$emit('export')"
-                    >{{ t('dialog.group_member_moderation.export_bans') }}</Button
-                >
+                <Button variant="outline" size="sm" :disabled="!tableData.data.length" @click="$emit('export')">{{
+                    t('dialog.group_member_moderation.export_bans')
+                }}</Button>
                 <Button
                     variant="outline"
                     size="sm"

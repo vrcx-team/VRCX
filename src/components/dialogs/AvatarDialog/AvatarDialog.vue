@@ -27,8 +27,7 @@
                         </div>
                         <div class="mt-1.5">
                             <span
-                                class="cursor-pointer x-grey"
-                                style="font-family: monospace"
+                                class="cursor-pointer x-grey font-mono"
                                 @click="showUserDialog(avatarDialog.ref.authorId)"
                                 v-text="avatarDialog.ref.authorName"></span>
                         </div>
@@ -158,7 +157,7 @@
                         <div style="margin-top: 6px">
                             <span
                                 v-show="avatarDialog.ref.name !== avatarDialog.ref.description"
-                                style="font-size: 12px"
+                                class="text-xs"
                                 v-text="avatarDialog.ref.description"></span>
                         </div>
                     </div>

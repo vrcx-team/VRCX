@@ -7,7 +7,7 @@
                     <span class="shrink-0">{{ t('view.charts.instance_activity.header') }}</span>
                     <HoverCard>
                         <HoverCardTrigger as-child>
-                            <Info class="ml-1" style="font-size: 12px; opacity: 0.7" />
+                            <Info class="ml-1 text-xs opacity-70" />
                         </HoverCardTrigger>
                         <HoverCardContent side="bottom" align="start" class="w-75">
                             <div>

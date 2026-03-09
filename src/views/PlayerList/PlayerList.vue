@@ -36,8 +36,7 @@
                     </div>
                     <div>
                         <span
-                            class="cursor-pointer x-grey"
-                            style="font-family: monospace"
+                            class="cursor-pointer x-grey font-mono"
                             @click="showUserDialog(currentInstanceWorld.ref.authorId)"
                             v-text="currentInstanceWorld.ref.authorName"></span>
                     </div>

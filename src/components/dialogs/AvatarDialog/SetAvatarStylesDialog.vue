@@ -58,7 +58,7 @@
 
                 <br />
 
-                <div style="font-size: 12px">{{ t('dialog.set_world_tags.author_tags') }}</div>
+                <div class="text-xs">{{ t('dialog.set_world_tags.author_tags') }}</div>
 
                 <InputGroupTextareaField
                     :model-value="setAvatarStylesDialog.authorTags"

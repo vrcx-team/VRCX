@@ -29,7 +29,7 @@
                 t('view.player_list.photon.chatbox_blacklist')
             }}</Button>
             <TooltipWrapper side="bottom" :content="t('view.player_list.photon.status_tooltip')">
-                <div style="display: inline-flex; align-items: center; font-size: 14px">
+                <div class="inline-flex items-center text-sm">
                     <span v-if="ipcEnabled && !photonEventIcon">🟢</span>
                     <span v-else-if="ipcEnabled">⚪</span>
                     <span v-else>🔴</span>
@@ -45,8 +45,7 @@
                     :table-style="tableStyle"
                     :page-sizes="pageSizes"
                     :total-items="currentTotal"
-                    :on-page-size-change="handleCurrentPageSizeChange"
-                    />
+                    :on-page-size-change="handleCurrentPageSizeChange" />
             </template>
             <template #previous>
                 <DataTableLayout

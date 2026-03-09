@@ -180,7 +180,7 @@
                                     <RefreshCw v-else />
                                 </Button>
                             </TooltipWrapper>
-                            <span style="font-size: 14px; margin-left: 6px; margin-right: 6px">{{
+                            <span class="text-sm mx-1.5">{{
                                 t('view.search.avatar.result_count', {
                                     count: searchAvatarResults.length
                                 })
@@ -334,13 +334,8 @@
                                     <span v-text="group.name"></span>
                                     <span style="margin-left: 6px; font-weight: normal">({{ group.memberCount }})</span>
                                     <span
-                                        class="text-muted-foreground"
-                                        style="
-                                            margin-left: 6px;
-                                            font-weight: normal;
-                                            font-family: monospace;
-                                            font-size: 12px;
-                                        "
+                                        class="text-muted-foreground font-mono text-xs"
+                                        style="margin-left: 6px; font-weight: normal"
                                         >{{ group.shortCode }}.{{ group.discriminator }}</span
                                     >
                                 </span>

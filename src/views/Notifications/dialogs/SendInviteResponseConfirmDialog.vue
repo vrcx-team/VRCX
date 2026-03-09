@@ -6,7 +6,7 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.invite_response_message.header') }}</DialogTitle>
             </DialogHeader>
-            <div style="font-size: 12px">
+            <div class="text-xs">
                 <span>{{ t('dialog.invite_response_message.confirmation') }}</span>
             </div>
 

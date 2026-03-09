@@ -52,8 +52,8 @@
                         @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
                     <TooltipWrapper v-if="userDialog.ref.pronouns" side="top" :content="t('dialog.user.pronouns')">
                         <span
-                            class="x-grey"
-                            style="margin-right: 6px; font-family: monospace; font-size: 12px"
+                            class="x-grey font-mono text-xs"
+                            style="margin-right: 6px"
                             v-text="userDialog.ref.pronouns"></span>
                     </TooltipWrapper>
                     <TooltipWrapper v-for="item in userDialog.ref.$languages" :key="item.key" side="top">
@@ -68,8 +68,8 @@
                     <template v-if="userDialog.ref.id === currentUser.id">
                         <br />
                         <span
-                            class="x-grey"
-                            style="margin-right: 8px; font-family: monospace; font-size: 12px; cursor: pointer"
+                            class="x-grey font-mono text-xs"
+                            style="margin-right: 8px; cursor: pointer"
                             v-text="currentUser.username"
                             @click="copyUserDisplayName(currentUser.username)"></span>
                     </template>
@@ -197,12 +197,9 @@
                                     <div style="display: block; width: 275px; word-break: normal">
                                         <span>{{ badge.badgeName }}</span>
                                         <br />
-                                        <span class="x-grey" style="font-size: 12px">{{ badge.badgeDescription }}</span>
+                                        <span class="x-grey text-xs">{{ badge.badgeDescription }}</span>
                                         <br />
-                                        <span
-                                            v-if="badge.assignedAt"
-                                            class="x-grey"
-                                            style="font-family: monospace; font-size: 12px">
+                                        <span v-if="badge.assignedAt" class="x-grey font-mono text-xs">
                                             {{ t('dialog.user.badges.assigned') }}:
                                             {{ formatDateFilter(badge.assignedAt, 'long') }}
                                         </span>
@@ -229,7 +226,7 @@
                     </TooltipWrapper>
                 </div>
                 <div>
-                    <span style="font-size: 12px" v-text="userDialog.ref.statusDescription"></span>
+                    <span class="text-xs" v-text="userDialog.ref.statusDescription"></span>
                 </div>
             </div>
 

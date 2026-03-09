@@ -4,7 +4,7 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.notification_position.header') }}</DialogTitle>
             </DialogHeader>
-            <div style="font-size: 12px">
+            <div class="text-xs">
                 {{ t('dialog.notification_position.description') }}
             </div>
             <div class="relative mx-auto mt-4 size-75">

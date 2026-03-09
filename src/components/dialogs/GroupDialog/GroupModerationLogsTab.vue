@@ -1,30 +1,19 @@
 <template>
     <div style="margin-top: 8px">
-        <Button
-            class="rounded-full"
-            variant="outline"
-            size="icon-sm"
-            :disabled="loading"
-            @click="$emit('refresh')">
+        <Button class="rounded-full" variant="outline" size="icon-sm" :disabled="loading" @click="$emit('refresh')">
             <Spinner v-if="loading" />
             <RefreshCw v-else />
         </Button>
-        <span style="font-size: 14px; margin-left: 6px; margin-right: 6px">{{
-            tableData.data.length
-        }}</span>
+        <span class="text-sm mx-1.5">{{ tableData.data.length }}</span>
         <br />
         <div style="display: flex; justify-content: space-between; align-items: center">
             <div>
                 <Select v-model="selectedAuditLogTypes" multiple>
                     <SelectTrigger style="margin: 8px 0; width: 250px">
-                        <SelectValue
-                            :placeholder="t('dialog.group_member_moderation.filter_type')" />
+                        <SelectValue :placeholder="t('dialog.group_member_moderation.filter_type')" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem
-                            v-for="type in auditLogTypes"
-                            :key="type"
-                            :value="type">
+                        <SelectItem v-for="type in auditLogTypes" :key="type" :value="type">
                             {{ getAuditLogTypeName(type) }}
                         </SelectItem>
                     </SelectContent>

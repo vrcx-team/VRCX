@@ -4,7 +4,7 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.launch_options.header') }}</DialogTitle>
             </DialogHeader>
-            <div style="font-size: 12px">
+            <div class="text-xs">
                 {{ t('dialog.launch_options.description') }} <br />
                 {{ t('dialog.launch_options.example') }}
                 <div>--fps=144</div>

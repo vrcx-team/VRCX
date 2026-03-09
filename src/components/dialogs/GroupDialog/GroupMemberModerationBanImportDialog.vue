@@ -53,7 +53,7 @@
                 <Button size="sm" variant="secondary" @click="errors = ''">
                     {{ t('dialog.group_member_moderation.import_bans_clear_errors') }}
                 </Button>
-                <pre class="mt-1.5" style="white-space: pre-wrap; font-size: 12px" v-text="errors"></pre>
+                <pre class="mt-1.5 text-xs" style="white-space: pre-wrap" v-text="errors"></pre>
             </template>
 
             <template v-if="resultMessage">

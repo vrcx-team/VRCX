@@ -16,7 +16,7 @@
             :on-sort-change="handleSortChange">
             <template #toolbar>
                 <div style="display: flex; align-items: center; justify-content: space-between">
-                    <span style="font-size: 14px" v-text="headerText"></span>
+                    <span class="text-sm" v-text="headerText"></span>
                     <InputGroupField
                         v-model="search"
                         :placeholder="t('dialog.previous_instances.search_placeholder')"

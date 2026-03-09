@@ -19,14 +19,13 @@
                 <Checkbox v-model="setWorldTagsDialog.debugAllowed" />
                 <span>{{ t('dialog.set_world_tags.enable_debugging') }}</span>
             </label>
-            <div class="mt-2" style="font-size: 12px">{{ t('dialog.set_world_tags.author_tags') }}<br /></div>
+            <div class="mt-2 text-xs">{{ t('dialog.set_world_tags.author_tags') }}<br /></div>
             <InputGroupTextareaField
                 v-model="setWorldTagsDialog.authorTags"
                 :rows="2"
                 placeholder=""
-               
                 input-class="resize-none mt-2" />
-            <div class="mt-2" style="font-size: 12px">{{ t('dialog.set_world_tags.content_tags') }}<br /></div>
+            <div class="mt-2 text-xs">{{ t('dialog.set_world_tags.content_tags') }}<br /></div>
             <label class="inline-flex items-center gap-2">
                 <Checkbox v-model="setWorldTagsDialog.contentHorror" />
                 <span>{{ t('dialog.set_world_tags.content_horror') }}</span>
@@ -51,9 +50,7 @@
                 <Checkbox v-model="setWorldTagsDialog.contentSex" />
                 <span>{{ t('dialog.set_world_tags.content_sex') }}</span>
             </label>
-            <div class="mt-2" style="font-size: 12px">
-                {{ t('dialog.set_world_tags.default_content_settings') }}<br />
-            </div>
+            <div class="mt-2 text-xs">{{ t('dialog.set_world_tags.default_content_settings') }}<br /></div>
             <label class="inline-flex items-center gap-2">
                 <Checkbox v-model="setWorldTagsDialog.emoji" />
                 <span>{{ t('dialog.new_instance.content_emoji') }}</span>
@@ -178,6 +175,9 @@
         }
     );
 
+    /**
+     *
+     */
     function showSetWorldTagsDialog() {
         const D = setWorldTagsDialog.value;
 
@@ -249,6 +249,9 @@
         D.contentTags = contentTags.toString();
     }
 
+    /**
+     *
+     */
     function saveSetWorldTagsDialog() {
         const D = setWorldTagsDialog.value;
         const authorTags = D.authorTags.trim().split(',');

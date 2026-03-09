@@ -4,7 +4,7 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.note_export.header') }}</DialogTitle>
             </DialogHeader>
-            <div style="font-size: 12px">
+            <div class="text-xs">
                 {{ t('dialog.note_export.description1') }} <br />
                 {{ t('dialog.note_export.description2') }} <br />
                 {{ t('dialog.note_export.description3') }} <br />
@@ -36,7 +36,7 @@
                 <h2 class="m-0" style="font-weight: bold">
                     {{ t('dialog.note_export.errors') }}
                 </h2>
-                <pre style="white-space: pre-wrap; font-size: 12px" v-text="errors"></pre>
+                <pre class="whitespace-pre-wrap text-xs" v-text="errors"></pre>
             </template>
 
             <DataTableLayout

@@ -10,7 +10,7 @@
             <template #content>
                 <span class="truncate">{{ avatarTags }}</span>
             </template>
-            <span style="font-size: 12px" class="truncate text-muted-foreground">{{ avatarTags }}</span>
+            <span class="truncate text-xs text-muted-foreground">{{ avatarTags }}</span>
         </TooltipWrapper>
     </div>
 </template>

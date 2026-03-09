@@ -5,7 +5,7 @@
                 <DialogTitle>{{ t('dialog.config_json.header') }}</DialogTitle>
             </DialogHeader>
             <div>
-                <div style="font-size: 12px; word-break: keep-all">
+                <div class="text-xs break-keep">
                     {{ t('dialog.config_json.description1') }} <br />
                     {{ t('dialog.config_json.description2') }}
                 </div>

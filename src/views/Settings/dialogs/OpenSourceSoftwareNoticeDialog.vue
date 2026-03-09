@@ -11,7 +11,7 @@
 
                 <div class="mt-4" v-for="lib in openSourceSoftwareLicenses" :key="lib.name">
                     <p style="font-weight: bold">{{ lib.name }}</p>
-                    <pre style="font-size: 12px; white-space: pre-line">{{ lib.licenseText }}</pre>
+                    <pre class="text-xs whitespace-pre-line">{{ lib.licenseText }}</pre>
                 </div>
             </div>
         </DialogContent>

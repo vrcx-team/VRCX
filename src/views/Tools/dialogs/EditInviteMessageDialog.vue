@@ -4,7 +4,7 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.edit_invite_message.header') }}</DialogTitle>
             </DialogHeader>
-            <div style="font-size: 12px">
+            <div class="text-xs">
                 <span>{{ t('dialog.edit_invite_message.description') }}</span>
                 <InputGroupTextareaField
                     v-model="message"

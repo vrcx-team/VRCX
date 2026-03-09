@@ -14,14 +14,7 @@
                 t('dialog.user.groups.total_count', { count: userDialog.userGroups.groups.length })
             }}</span>
             <template v-if="userDialogGroupEditMode">
-                <span
-                    style="
-                        margin-left: 8px;
-
-                        font-size: 10px;
-                    "
-                    >{{ t('dialog.user.groups.hold_shift') }}</span
-                >
+                <span class="text-[10px]" style="margin-left: 8px">{{ t('dialog.user.groups.hold_shift') }}</span>
             </template>
         </div>
         <div style="display: flex; align-items: center">
@@ -240,8 +233,8 @@
         </template>
         <template v-else>
             <template v-if="userDialog.userGroups.ownGroups.length > 0">
-                <span style="font-weight: bold; font-size: 16px">{{ t('dialog.user.groups.own_groups') }}</span>
-                <span style="font-size: 12px; margin-left: 6px"
+                <span class="text-base font-bold">{{ t('dialog.user.groups.own_groups') }}</span>
+                <span class="text-xs ml-1.5"
                     >{{ userDialog.userGroups.ownGroups.length }}/{{
                         // @ts-ignore
                         cachedConfig?.constants?.GROUPS?.MAX_OWNED
@@ -281,8 +274,8 @@
                 </div>
             </template>
             <template v-if="userDialog.userGroups.mutualGroups.length > 0">
-                <span style="font-weight: bold; font-size: 16px">{{ t('dialog.user.groups.mutual_groups') }}</span>
-                <span style="font-size: 12px; margin-left: 6px">{{ userDialog.userGroups.mutualGroups.length }}</span>
+                <span class="text-base font-bold">{{ t('dialog.user.groups.mutual_groups') }}</span>
+                <span class="text-xs ml-1.5">{{ userDialog.userGroups.mutualGroups.length }}</span>
                 <div class="flex flex-wrap items-start" style="margin-top: 8px; margin-bottom: 16px; min-height: 60px">
                     <div
                         v-for="group in userDialog.userGroups.mutualGroups"
@@ -317,8 +310,8 @@
                 </div>
             </template>
             <template v-if="userDialog.userGroups.remainingGroups.length > 0">
-                <span style="font-weight: bold; font-size: 16px">{{ t('dialog.user.groups.groups') }}</span>
-                <span style="font-size: 12px; margin-left: 6px">
+                <span class="text-base font-bold">{{ t('dialog.user.groups.groups') }}</span>
+                <span class="text-xs ml-1.5">
                     {{ userDialog.userGroups.remainingGroups.length }}
                     <template v-if="currentUser.id === userDialog.id">
                         /

@@ -32,15 +32,8 @@
                             loading="lazy" />
                     </div>
                     <pre
-                        class="text-xs"
-                        style="
-                            display: inline-block;
-                            vertical-align: top;
-                            font-family: inherit;
-                            font-size: 12px;
-                            white-space: pre-wrap;
-                            margin: 0;
-                        "
+                        class="text-xs font-[inherit]"
+                        style="display: inline-block; vertical-align: top; white-space: pre-wrap; margin: 0"
                         >{{ post.text || '-' }}</pre
                     >
                     <br />

@@ -25,7 +25,7 @@
                             style="cursor: pointer"
                             v-text="groupDialog.ref.name"
                             @click="copyToClipboard(groupDialog.ref.name)"></span>
-                        <span class="group-discriminator x-grey mr-1.5" style="font-family: monospace; font-size: 12px">
+                        <span class="group-discriminator x-grey mr-1.5 font-mono text-xs">
                             {{ groupDialog.ref.shortCode }}.{{ groupDialog.ref.discriminator }}
                         </span>
                         <TooltipWrapper v-for="item in groupDialog.ref.$languages" :key="item.key" side="top">
@@ -39,8 +39,7 @@
                         </TooltipWrapper>
                         <div style="margin-top: 6px">
                             <span
-                                class="cursor-pointer x-grey"
-                                style="font-family: monospace"
+                                class="cursor-pointer x-grey font-mono"
                                 @click="showUserDialog(groupDialog.ref.ownerId)"
                                 v-text="groupDialog.ownerDisplayName"></span>
                         </div>
@@ -129,13 +128,8 @@
                         <div style="margin-top: 6px">
                             <pre
                                 v-show="groupDialog.ref.name !== groupDialog.ref.description"
-                                style="
-                                    font-family: inherit;
-                                    font-size: 12px;
-                                    white-space: pre-wrap;
-                                    max-height: 40vh;
-                                    overflow-y: auto;
-                                "
+                                class="text-xs font-[inherit]"
+                                style="white-space: pre-wrap; max-height: 40vh; overflow-y: auto"
                                 v-text="groupDialog.ref.description"></pre>
                         </div>
                     </div>

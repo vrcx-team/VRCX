@@ -78,15 +78,8 @@
             <div class="flex-1 overflow-hidden" @click="isEditNoteAndMemoDialogVisible = true">
                 <span class="block truncate font-medium leading-[18px]">{{ t('dialog.user.info.note') }}</span>
                 <pre
-                    class="text-xs"
-                    style="
-                        font-family: inherit;
-                        font-size: 12px;
-                        white-space: pre-wrap;
-                        margin: 0 0.5em 0 0;
-                        max-height: 210px;
-                        overflow-y: auto;
-                    "
+                    class="text-xs font-[inherit]"
+                    style="white-space: pre-wrap; margin: 0 0.5em 0 0; max-height: 210px; overflow-y: auto"
                     >{{ userDialog.note }}</pre
                 >
             </div>
@@ -97,15 +90,8 @@
             <div class="flex-1 overflow-hidden" @click="isEditNoteAndMemoDialogVisible = true">
                 <span class="block truncate font-medium leading-[18px]">{{ t('dialog.user.info.memo') }}</span>
                 <pre
-                    class="text-xs"
-                    style="
-                        font-family: inherit;
-                        font-size: 12px;
-                        white-space: pre-wrap;
-                        margin: 0 0.5em 0 0;
-                        max-height: 210px;
-                        overflow-y: auto;
-                    "
+                    class="text-xs font-[inherit]"
+                    style="white-space: pre-wrap; margin: 0 0.5em 0 0; max-height: 210px; overflow-y: auto"
                     >{{ userDialog.memo }}</pre
                 >
             </div>
@@ -180,15 +166,8 @@
             <div class="flex-1 overflow-hidden">
                 <span class="block truncate font-medium leading-[18px]">{{ t('dialog.user.info.bio') }}</span>
                 <pre
-                    class="text-xs truncate"
-                    style="
-                        font-family: inherit;
-                        font-size: 12px;
-                        white-space: pre-wrap;
-                        margin: 0 0.5em 0 0;
-                        max-height: 210px;
-                        overflow-y: auto;
-                    "
+                    class="text-xs truncate font-[inherit]"
+                    style="white-space: pre-wrap; margin: 0 0.5em 0 0; max-height: 210px; overflow-y: auto"
                     >{{ bioCache.translated || userDialog.ref.bio || '-' }}</pre
                 >
                 <div style="float: right">

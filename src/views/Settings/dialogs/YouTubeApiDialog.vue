@@ -4,7 +4,7 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.youtube_api.header') }}</DialogTitle>
             </DialogHeader>
-            <div style="font-size: 12px">{{ t('dialog.youtube_api.description') }} <br /></div>
+            <div class="text-xs">{{ t('dialog.youtube_api.description') }} <br /></div>
 
             <InputGroupTextareaField
                 v-model="youTubeApiKey"
@@ -15,9 +15,7 @@
                 show-count />
 
             <DialogFooter>
-                <Button
-                    variant="outline"
-                    @click="openExternalLink('https://smashballoon.com/doc/youtube-api-key/')">
+                <Button variant="outline" @click="openExternalLink('https://smashballoon.com/doc/youtube-api-key/')">
                     {{ t('dialog.youtube_api.guide') }}
                 </Button>
                 <Button @click="testYouTubeApiKey">

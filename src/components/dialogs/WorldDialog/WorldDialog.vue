@@ -32,8 +32,7 @@
                         </div>
                         <div class="mt-1.5">
                             <span
-                                class="cursor-pointer x-grey"
-                                style="font-family: monospace"
+                                class="cursor-pointer x-grey font-mono"
                                 @click="showUserDialog(worldDialog.ref.authorId)"
                                 v-text="worldDialog.ref.authorName" />
                         </div>
@@ -130,7 +129,8 @@
                         <div style="margin-top: 6px; display: flex; align-items: center">
                             <span
                                 v-show="worldDialog.ref.name !== worldDialog.ref.description"
-                                style="font-size: 12px; flex: 1; margin-right: 0.5em"
+                                class="text-xs"
+                                style="flex: 1; margin-right: 0.5em"
                                 >{{ translatedDescription || worldDialog.ref.description }}</span
                             >
                             <Button

@@ -9,7 +9,7 @@
             loading="lazy" />
     </div>
     <div class="flex flex-wrap items-start px-2.5" style="max-height: none">
-        <span v-if="groupDialog.instances.length" style="font-size: 12px; font-weight: bold; margin: 6px">
+        <span v-if="groupDialog.instances.length" class="text-xs font-bold" style="margin: 6px">
             {{ t('dialog.group.info.instances') }}
         </span>
         <div v-for="room in groupDialog.instances" :key="room.tag" style="width: 100%">
@@ -71,15 +71,8 @@
                         loading="lazy" />
                 </div>
                 <pre
-                    class="text-xs"
-                    style="
-                        display: inline-block;
-                        vertical-align: top;
-                        font-family: inherit;
-                        font-size: 12px;
-                        white-space: pre-wrap;
-                        margin: 0;
-                    "
+                    class="text-xs font-[inherit]"
+                    style="display: inline-block; vertical-align: top; white-space: pre-wrap; margin: 0"
                     >{{ groupDialog.announcement.text || '-' }}</pre
                 >
                 <br />
@@ -146,11 +139,9 @@
         <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
             <div class="flex-1 overflow-hidden">
                 <span class="block truncate font-medium leading-[18px]">{{ t('dialog.group.info.rules') }}</span>
-                <pre
-                    class="text-xs"
-                    style="font-family: inherit; font-size: 12px; white-space: pre-wrap; margin: 0 0.5em 0 0"
-                    >{{ groupDialog.ref.rules || '-' }}</pre
-                >
+                <pre class="text-xs font-[inherit] whitespace-pre-wrap mr-2 my-0 ml-0">{{
+                    groupDialog.ref.rules || '-'
+                }}</pre>
             </div>
         </div>
         <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">

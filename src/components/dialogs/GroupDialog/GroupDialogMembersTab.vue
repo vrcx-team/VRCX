@@ -1,11 +1,9 @@
 <template>
     <template v-if="groupDialog.visible">
-        <span
-            v-if="hasGroupPermission(groupDialog.ref, 'group-members-viewall')"
-            style="font-weight: bold; font-size: 16px"
-            >{{ t('dialog.group.members.all_members') }}</span
-        >
-        <span v-else style="font-weight: bold; font-size: 16px">{{ t('dialog.group.members.friends_only') }}</span>
+        <span v-if="hasGroupPermission(groupDialog.ref, 'group-members-viewall')" class="text-base font-bold">{{
+            t('dialog.group.members.all_members')
+        }}</span>
+        <span v-else class="text-base font-bold">{{ t('dialog.group.members.friends_only') }}</span>
         <div style="margin-top: 8px">
             <Button
                 class="rounded-full h-6 w-6"
@@ -24,10 +22,10 @@
                 @click="downloadAndSaveJson(`${groupDialog.id}_members`, groupDialog.members)">
                 <Download class="h-4 w-4" />
             </Button>
-            <span v-if="groupDialog.memberSearch.length" style="font-size: 14px; margin-left: 6px; margin-right: 6px"
+            <span v-if="groupDialog.memberSearch.length" class="text-sm mx-1.5"
                 >{{ groupDialog.memberSearchResults.length }}/{{ groupDialog.ref.memberCount }}</span
             >
-            <span v-else style="font-size: 14px; margin-left: 6px; margin-right: 6px"
+            <span v-else class="text-sm mx-1.5"
                 >{{ groupDialog.members.length }}/{{ groupDialog.ref.memberCount }}</span
             >
             <div

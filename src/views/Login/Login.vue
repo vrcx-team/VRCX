@@ -132,7 +132,7 @@
             </div>
 
             <div class="x-legal-notice-container">
-                <div style="text-align: center; font-size: 12px">
+                <div class="text-center text-xs">
                     <p>
                         <a class="cursor-pointer" @click="openExternalLink('https://vrchat.com/home/password')">{{
                             t('view.login.forgotPassword')

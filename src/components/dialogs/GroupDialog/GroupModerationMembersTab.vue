@@ -1,28 +1,15 @@
 <template>
     <div class="mt-2">
-        <Button
-            class="rounded-full"
-            variant="outline"
-            size="icon-sm"
-            :disabled="loading"
-            @click="$emit('refresh')">
+        <Button class="rounded-full" variant="outline" size="icon-sm" :disabled="loading" @click="$emit('refresh')">
             <Spinner v-if="loading" />
             <RefreshCw v-else />
         </Button>
-        <span class="ml-1.5 mr-1.5" style="font-size: 14px">
-            {{ tableData.data.length }}/{{ groupRef.memberCount }}
-        </span>
+        <span class="ml-1.5 mr-1.5 text-sm"> {{ tableData.data.length }}/{{ groupRef.memberCount }} </span>
         <div class="mt-1.5" style="float: right">
             <span class="mr-1.5">{{ t('dialog.group.members.sort_by') }}</span>
             <DropdownMenu>
-                <DropdownMenuTrigger
-                    as-child
-                    :disabled="sortFilterDisabled">
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        :disabled="sortFilterDisabled"
-                        @click.stop>
+                <DropdownMenuTrigger as-child :disabled="sortFilterDisabled">
+                    <Button size="sm" variant="outline" :disabled="sortFilterDisabled" @click.stop>
                         {{ t(memberSortOrder.name) }}
                         <ArrowDown class="ml-1.5" />
                     </Button>
@@ -38,14 +25,8 @@
             </DropdownMenu>
             <span class="ml-2 mr-1.5">{{ t('dialog.group.members.filter') }}</span>
             <DropdownMenu>
-                <DropdownMenuTrigger
-                    as-child
-                    :disabled="sortFilterDisabled">
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        :disabled="sortFilterDisabled"
-                        @click.stop>
+                <DropdownMenuTrigger as-child :disabled="sortFilterDisabled">
+                    <Button size="sm" variant="outline" :disabled="sortFilterDisabled" @click.stop>
                         {{ t(memberFilter.name) }}
                         <ArrowDown class="ml-1.5" />
                     </Button>
@@ -58,9 +39,7 @@
                         {{ t(item.name) }}
                     </DropdownMenuItem>
                     <template v-for="role in groupRef.roles" :key="role.name">
-                        <DropdownMenuItem
-                            v-if="!role.defaultRole"
-                            @click="$emit('filter-change', role)">
+                        <DropdownMenuItem v-if="!role.defaultRole" @click="$emit('filter-change', role)">
                             {{ t(role.name) }}
                         </DropdownMenuItem>
                     </template>
@@ -125,11 +104,7 @@
     const { t } = useI18n();
 
     const sortFilterDisabled = computed(() =>
-        Boolean(
-            props.loading ||
-                props.memberSearch.length ||
-                !hasGroupPermission(props.groupRef, 'group-bans-manage')
-        )
+        Boolean(props.loading || props.memberSearch.length || !hasGroupPermission(props.groupRef, 'group-bans-manage'))
     );
 
     const columns = computed(() => createColumns(props.columnContext));
