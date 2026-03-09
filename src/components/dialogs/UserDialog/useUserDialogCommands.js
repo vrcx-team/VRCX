@@ -6,7 +6,7 @@ import {
     miscRequest,
     notificationRequest,
     playerModerationRequest,
-    worldRequest
+    queryRequest
 } from '../../../api';
 import { copyToClipboard, parseLocation } from '../../../shared/utils';
 import { database } from '../../../service/database';
@@ -259,8 +259,8 @@ export function useUserDialogCommands(
             },
             'Invite Message': () => {
                 const L = parseLocation(lastLocation.value.location);
-                worldRequest
-                    .getCachedWorld({
+                queryRequest
+                    .fetch('world', {
                         worldId: L.worldId
                     })
                     .then((args) => {
@@ -288,8 +288,8 @@ export function useUserDialogCommands(
                     currentLocation = lastLocationDestination.value;
                 }
                 const L = parseLocation(currentLocation);
-                worldRequest
-                    .getCachedWorld({
+                queryRequest
+                    .fetch('world', {
                         worldId: L.worldId
                     })
                     .then((args) => {

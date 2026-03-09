@@ -5,8 +5,8 @@
 <script setup>
     import { ref, watch } from 'vue';
 
+    import { queryRequest } from '../api';
     import { useUserStore } from '../stores';
-    import { userRequest } from '../api';
 
     const userStore = useUserStore();
 
@@ -22,18 +22,24 @@
 
     const username = ref(props.userid);
 
+    /**
+     *
+     */
     async function parse() {
         username.value = props.userid;
         if (props.hint) {
             username.value = props.hint;
         } else if (props.userid) {
-            const args = await userRequest.getCachedUser({ userId: props.userid });
+            const args = await queryRequest.fetch('user', { userId: props.userid });
             if (args?.json?.displayName) {
                 username.value = args.json.displayName;
             }
         }
     }
 
+    /**
+     *
+     */
     function showUserDialog() {
         userStore.showUserDialog(props.userid);
     }

@@ -75,7 +75,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { miscRequest, notificationRequest, userRequest } from '../../api';
+    import { miscRequest, notificationRequest, queryRequest } from '../../api';
     import { useGalleryStore, useNotificationStore, useUserStore } from '../../stores';
     import { VirtualCombobox } from '../ui/virtual-combobox';
     import { photonEmojis } from '../../shared/constants/photon.js';
@@ -99,7 +99,7 @@
         (visible) => {
             if (visible) {
                 displayName.value = '';
-                userRequest.getCachedUser({ userId: sendBoopDialog.value.userId }).then((user) => {
+                queryRequest.fetch('user', { userId: sendBoopDialog.value.userId }).then((user) => {
                     displayName.value = user.ref.displayName;
                 });
             }

@@ -29,6 +29,7 @@ import {
     avatarRequest,
     groupRequest,
     instanceRequest,
+    queryRequest,
     userRequest
 } from '../api';
 import { processBulk, request } from '../service/request';
@@ -715,8 +716,8 @@ export const useUserStore = defineStore('User', () => {
             });
         }
         AppApi.SendIpc('ShowUserDialog', userId);
-        userRequest
-            .getCachedUser({
+        queryRequest
+            .fetch('user', {
                 userId
             })
             .catch((err) => {

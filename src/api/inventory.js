@@ -1,11 +1,9 @@
+import { queryClient } from '../queries';
 import { request } from '../service/request';
-import {
-    entityQueryPolicies,
-    fetchWithEntityPolicy,
-    queryClient,
-    queryKeys
-} from '../queries';
 
+/**
+ *
+ */
 function refetchActiveInventoryQueries() {
     queryClient
         .invalidateQueries({
@@ -35,17 +33,6 @@ const inventoryReq = {
             };
             return args;
         });
-    },
-
-    getCachedUserInventoryItem(params) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.userInventoryItem(params),
-            policy: entityQueryPolicies.inventoryCollection,
-            queryFn: () => inventoryReq.getUserInventoryItem(params)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
     },
 
     /**
@@ -80,17 +67,6 @@ const inventoryReq = {
             };
             return args;
         });
-    },
-
-    getCachedInventoryItems(params) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.inventoryItems(params),
-            policy: entityQueryPolicies.inventoryCollection,
-            queryFn: () => inventoryReq.getInventoryItems(params)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
     },
 
     /**

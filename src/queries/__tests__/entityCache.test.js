@@ -4,6 +4,7 @@ import {
     _entityCacheInternals,
     fetchWithEntityPolicy,
     patchAndRefetchActiveQuery,
+    patchUserFromEvent,
     patchQueryDataWithRecency
 } from '../entityCache';
 import { queryClient } from '../client';
@@ -129,5 +130,55 @@ describe('entity query cache helpers', () => {
         expect(_entityCacheInternals.shouldReplaceCurrent(newer, older)).toBe(
             false
         );
+    });
+
+    test('internal completeness guard requires params + entity identifier', () => {
+        expect(_entityCacheInternals.hasCompleteEntityData(undefined)).toBe(
+            false
+        );
+        expect(_entityCacheInternals.hasCompleteEntityData({})).toBe(false);
+        expect(
+            _entityCacheInternals.hasCompleteEntityData({
+                params: {}
+            })
+        ).toBe(false);
+        expect(
+            _entityCacheInternals.hasCompleteEntityData({
+                params: { userId: 'usr_1' }
+            })
+        ).toBe(true);
+    });
+
+    test('patchUserFromEvent skips placeholder cache entries', () => {
+        const queryKey = ['user', 'usr_1'];
+        queryClient.setQueryData(queryKey, {
+            params: {}
+        });
+
+        patchUserFromEvent({
+            id: 'usr_1',
+            displayName: 'Alice'
+        });
+
+        expect(queryClient.getQueryData(queryKey)).toEqual({
+            params: {}
+        });
+    });
+
+    test('patchUserFromEvent patches when query has complete data', () => {
+        const queryKey = ['user', 'usr_1'];
+        queryClient.setQueryData(queryKey, {
+            params: { userId: 'usr_1' },
+            ref: { id: 'usr_1', displayName: 'Old' },
+            json: { id: 'usr_1', displayName: 'Old' }
+        });
+
+        patchUserFromEvent({
+            id: 'usr_1',
+            displayName: 'New'
+        });
+
+        const data = queryClient.getQueryData(queryKey);
+        expect(data.ref.displayName).toBe('New');
     });
 });

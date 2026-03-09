@@ -1,16 +1,17 @@
+import { queryClient } from '../queries';
 import { request } from '../service/request';
 import { useUserStore } from '../stores';
-import {
-    entityQueryPolicies,
-    fetchWithEntityPolicy,
-    queryClient,
-    queryKeys
-} from '../queries';
 
+/**
+ *
+ */
 function getCurrentUserId() {
     return useUserStore().currentUser.id;
 }
 
+/**
+ *
+ */
 function refetchActiveGalleryQueries() {
     queryClient
         .invalidateQueries({
@@ -70,17 +71,6 @@ const vrcPlusImageReq = {
         });
     },
 
-    getCachedPrints(params) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.prints(params),
-            policy: entityQueryPolicies.galleryCollection,
-            queryFn: () => vrcPlusImageReq.getPrints(params)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
-    },
-
     deletePrint(printId) {
         return request(`prints/${printId}`, {
             method: 'DELETE'
@@ -120,17 +110,6 @@ const vrcPlusImageReq = {
             };
             return args;
         });
-    },
-
-    getCachedPrint(params) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.print(params.printId),
-            policy: entityQueryPolicies.galleryCollection,
-            queryFn: () => vrcPlusImageReq.getPrint(params)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
     },
 
     uploadEmoji(imageData, params) {

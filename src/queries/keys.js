@@ -2,7 +2,11 @@ export const queryKeys = Object.freeze({
     user: (userId) => ['user', userId],
     avatar: (avatarId) => ['avatar', avatarId],
     world: (worldId) => ['world', worldId],
-    group: (groupId, includeRoles = false) => ['group', groupId, Boolean(includeRoles)],
+    group: (groupId, includeRoles = false) => [
+        'group',
+        groupId,
+        Boolean(includeRoles)
+    ],
     groupPosts: ({ groupId, n = 100, offset = 0 } = {}) => [
         'group',
         groupId,
@@ -12,8 +16,19 @@ export const queryKeys = Object.freeze({
             offset: Number(offset)
         }
     ],
-    groupMember: ({ groupId, userId } = {}) => ['group', groupId, 'member', userId],
-    groupMembers: ({ groupId, n = 100, offset = 0, sort = '', roleId = '' } = {}) => [
+    groupMember: ({ groupId, userId } = {}) => [
+        'group',
+        groupId,
+        'member',
+        userId
+    ],
+    groupMembers: ({
+        groupId,
+        n = 100,
+        offset = 0,
+        sort = '',
+        roleId = ''
+    } = {}) => [
         'group',
         groupId,
         'members',
@@ -41,7 +56,6 @@ export const queryKeys = Object.freeze({
         'calendarEvent',
         eventId
     ],
-    instance: (worldId, instanceId) => ['instance', worldId, instanceId],
     worldsByUser: ({
         userId,
         n = 50,
@@ -91,7 +105,13 @@ export const queryKeys = Object.freeze({
             type: String(type || '')
         }
     ],
-    favoriteWorlds: ({ n = 300, offset = 0, ownerId = '', userId = '', tag = '' } = {}) => [
+    favoriteWorlds: ({
+        n = 300,
+        offset = 0,
+        ownerId = '',
+        userId = '',
+        tag = ''
+    } = {}) => [
         'favorite',
         'worlds',
         {
@@ -102,7 +122,13 @@ export const queryKeys = Object.freeze({
             tag: String(tag || '')
         }
     ],
-    favoriteAvatars: ({ n = 300, offset = 0, tag = '', ownerId = '', userId = '' } = {}) => [
+    favoriteAvatars: ({
+        n = 300,
+        offset = 0,
+        tag = '',
+        ownerId = '',
+        userId = ''
+    } = {}) => [
         'favorite',
         'avatars',
         {
@@ -129,7 +155,12 @@ export const queryKeys = Object.freeze({
         }
     ],
     print: (printId) => ['gallery', 'print', printId],
-    inventoryItems: ({ n = 100, offset = 0, order = 'newest', types = '' } = {}) => [
+    inventoryItems: ({
+        n = 100,
+        offset = 0,
+        order = 'newest',
+        types = ''
+    } = {}) => [
         'inventory',
         'items',
         {

@@ -19,8 +19,8 @@ import { createOverlayDispatch } from '../notification/overlayDispatch';
 function makeDeps(overrides = {}) {
     return {
         getUserIdFromNoty: vi.fn(() => ''),
-        userRequest: {
-            getCachedUser: vi.fn().mockResolvedValue({ json: null })
+        queryRequest: {
+            fetch: vi.fn().mockResolvedValue({ json: null })
         },
         notificationsSettingsStore: {
             notificationTimeout: 5000
@@ -66,7 +66,7 @@ describe('notyGetImage', () => {
 
     test('looks up user currentAvatarThumbnailImageUrl when no image URLs', async () => {
         deps.getUserIdFromNoty.mockReturnValue('usr_abc');
-        deps.userRequest.getCachedUser.mockResolvedValue({
+        deps.queryRequest.fetch.mockResolvedValue({
             json: {
                 currentAvatarThumbnailImageUrl: 'https://avatar.jpg'
             }
@@ -80,7 +80,7 @@ describe('notyGetImage', () => {
 
     test('returns profilePicOverride when available', async () => {
         deps.getUserIdFromNoty.mockReturnValue('usr_abc');
-        deps.userRequest.getCachedUser.mockResolvedValue({
+        deps.queryRequest.fetch.mockResolvedValue({
             json: {
                 profilePicOverride: 'https://profile.jpg',
                 currentAvatarThumbnailImageUrl: 'https://avatar.jpg'
@@ -95,7 +95,7 @@ describe('notyGetImage', () => {
     test('returns userIcon when displayVRCPlusIconsAsAvatar is enabled', async () => {
         deps.getUserIdFromNoty.mockReturnValue('usr_abc');
         deps.appearanceSettingsStore.displayVRCPlusIconsAsAvatar = true;
-        deps.userRequest.getCachedUser.mockResolvedValue({
+        deps.queryRequest.fetch.mockResolvedValue({
             json: {
                 userIcon: 'https://icon.jpg',
                 profilePicOverride: 'https://profile.jpg',
@@ -114,12 +114,12 @@ describe('notyGetImage', () => {
 
         const result = await dispatch.notyGetImage({});
         expect(result).toBe('');
-        expect(deps.userRequest.getCachedUser).not.toHaveBeenCalled();
+        expect(deps.queryRequest.fetch).not.toHaveBeenCalled();
     });
 
     test('returns empty string when user lookup fails', async () => {
         deps.getUserIdFromNoty.mockReturnValue('usr_abc');
-        deps.userRequest.getCachedUser.mockRejectedValue(
+        deps.queryRequest.fetch.mockRejectedValue(
             new Error('Network error')
         );
         dispatch = createOverlayDispatch(deps);
@@ -130,7 +130,7 @@ describe('notyGetImage', () => {
 
     test('returns empty string when user has no json', async () => {
         deps.getUserIdFromNoty.mockReturnValue('usr_abc');
-        deps.userRequest.getCachedUser.mockResolvedValue({ json: null });
+        deps.queryRequest.fetch.mockResolvedValue({ json: null });
         dispatch = createOverlayDispatch(deps);
 
         const result = await dispatch.notyGetImage({});

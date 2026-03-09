@@ -37,12 +37,6 @@ export const entityQueryPolicies = Object.freeze({
         retry: 1,
         refetchOnWindowFocus: false
     }),
-    instance: Object.freeze({
-        staleTime: 0,
-        gcTime: 10 * SECOND,
-        retry: 0,
-        refetchOnWindowFocus: false
-    }),
     friendList: Object.freeze({
         staleTime: 20 * SECOND,
         gcTime: 90 * SECOND,
@@ -76,7 +70,7 @@ export const entityQueryPolicies = Object.freeze({
 });
 
 /**
- * @param {'user'|'avatar'|'world'|'group'|'groupCollection'|'worldCollection'|'instance'|'friendList'|'favoriteCollection'|'galleryCollection'|'inventoryCollection'|'fileObject'} entity
+ * @param {'user'|'avatar'|'world'|'group'|'groupCollection'|'worldCollection'|'friendList'|'favoriteCollection'|'galleryCollection'|'inventoryCollection'|'fileObject'} entity
  * @returns {{staleTime: number, gcTime: number, retry: number, refetchOnWindowFocus: boolean}}
  */
 export function getEntityQueryPolicy(entity) {

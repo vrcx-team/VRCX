@@ -9,20 +9,13 @@ import {
     getPrintLocalDate,
     openExternalLink
 } from '../shared/utils';
-import {
-    inventoryRequest,
-    userRequest,
-    vrcPlusIconRequest,
-    vrcPlusImageRequest
-} from '../api';
+import { queryRequest, vrcPlusImageRequest } from '../api';
 import { AppDebug } from '../service/appConfig';
 import { handleImageUploadInput } from '../shared/utils/imageUpload';
 import { router } from '../plugin/router';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useModalStore } from './modal';
 import { watchState } from '../service/watchState';
-
-import miscReq from '../api/misc';
 
 import * as workerTimers from 'worker-timers';
 
@@ -100,6 +93,10 @@ export const useGalleryStore = defineStore('Gallery', () => {
         { flush: 'sync' }
     );
 
+    /**
+     *
+     * @param args
+     */
     function handleFilesList(args) {
         if (args.params.tag === 'gallery') {
             galleryTable.value = args.json.reverse();
@@ -117,12 +114,19 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
     }
 
+    /**
+     *
+     * @param args
+     */
     function handleGalleryImageAdd(args) {
         if (Object.keys(galleryTable.value).length !== 0) {
             galleryTable.value.unshift(args.json);
         }
     }
 
+    /**
+     *
+     */
     function showGalleryPage() {
         galleryDialogVisible.value = true;
         if (router.currentRoute.value?.name === 'gallery') {
@@ -132,6 +136,9 @@ export const useGalleryStore = defineStore('Gallery', () => {
         router.push({ name: 'gallery' });
     }
 
+    /**
+     *
+     */
     function loadGalleryData() {
         refreshGalleryTable();
         refreshVRCPlusIconsTable();
@@ -141,14 +148,17 @@ export const useGalleryStore = defineStore('Gallery', () => {
         getInventory();
     }
 
+    /**
+     *
+     */
     function refreshGalleryTable() {
         galleryDialogGalleryLoading.value = true;
         const params = {
             n: 100,
             tag: 'gallery'
         };
-        vrcPlusIconRequest
-            .getCachedFileList(params)
+        queryRequest
+            .fetch('galleryFiles', params)
             .then((args) => handleFilesList(args))
             .catch((error) => {
                 console.error('Error fetching gallery files:', error);
@@ -158,14 +168,17 @@ export const useGalleryStore = defineStore('Gallery', () => {
             });
     }
 
+    /**
+     *
+     */
     function refreshVRCPlusIconsTable() {
         galleryDialogIconsLoading.value = true;
         const params = {
             n: 100,
             tag: 'icon'
         };
-        vrcPlusIconRequest
-            .getCachedFileList(params)
+        queryRequest
+            .fetch('galleryFiles', params)
             .then((args) => handleFilesList(args))
             .catch((error) => {
                 console.error('Error fetching VRC Plus icons:', error);
@@ -175,6 +188,10 @@ export const useGalleryStore = defineStore('Gallery', () => {
             });
     }
 
+    /**
+     *
+     * @param e
+     */
     function inviteImageUpload(e) {
         const { file } = handleImageUploadInput(e, {
             inputSelector: null,
@@ -192,6 +209,9 @@ export const useGalleryStore = defineStore('Gallery', () => {
         r.readAsBinaryString(file);
     }
 
+    /**
+     *
+     */
     function clearInviteImageUpload() {
         const buttonList = document.querySelectorAll(
             '.inviteImageUploadButton'
@@ -200,14 +220,17 @@ export const useGalleryStore = defineStore('Gallery', () => {
         uploadImage.value = '';
     }
 
+    /**
+     *
+     */
     function refreshStickerTable() {
         galleryDialogStickersLoading.value = true;
         const params = {
             n: 100,
             tag: 'sticker'
         };
-        vrcPlusIconRequest
-            .getCachedFileList(params)
+        queryRequest
+            .fetch('galleryFiles', params)
             .then((args) => handleFilesList(args))
             .catch((error) => {
                 console.error('Error fetching stickers:', error);
@@ -217,12 +240,22 @@ export const useGalleryStore = defineStore('Gallery', () => {
             });
     }
 
+    /**
+     *
+     * @param args
+     */
     function handleStickerAdd(args) {
         if (Object.keys(stickerTable.value).length !== 0) {
             stickerTable.value.unshift(args.json);
         }
     }
 
+    /**
+     *
+     * @param displayName
+     * @param userId
+     * @param inventoryId
+     */
     async function trySaveStickerToFile(displayName, userId, inventoryId) {
         if (instanceStickersCache.value.includes(inventoryId)) {
             return;
@@ -231,7 +264,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         if (instanceStickersCache.value.length > 100) {
             instanceStickersCache.value.shift();
         }
-        const args = await inventoryRequest.getCachedUserInventoryItem({
+        const args = await queryRequest.fetch('userInventoryItem', {
             inventoryId,
             userId
         });
@@ -262,13 +295,16 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
     }
 
+    /**
+     *
+     */
     async function refreshPrintTable() {
         galleryDialogPrintsLoading.value = true;
         const params = {
             n: 100
         };
         try {
-            const args = await vrcPlusImageRequest.getCachedPrints(params);
+            const args = await queryRequest.fetch('prints', params);
             args.json.sort((a, b) => {
                 return (
                     new Date(b.timestamp).getTime() -
@@ -283,6 +319,10 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
     }
 
+    /**
+     *
+     * @param printId
+     */
     function queueSavePrintToFile(printId) {
         if (state.printCache.includes(printId)) {
             return;
@@ -304,8 +344,12 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
     }
 
+    /**
+     *
+     * @param printId
+     */
     async function trySavePrintToFile(printId) {
-        const args = await vrcPlusImageRequest.getCachedPrint({ printId });
+        const args = await queryRequest.fetch('print', { printId });
         const imageUrl = args.json?.files?.image;
         if (!imageUrl) {
             console.error('Print image URL is missing', args);
@@ -314,7 +358,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         const print = args.json;
         const createdAt = getPrintLocalDate(print);
         try {
-            const owner = await userRequest.getCachedUser({
+            const owner = await queryRequest.fetch('user', {
                 userId: print.ownerId
             });
             console.log(
@@ -349,14 +393,17 @@ export const useGalleryStore = defineStore('Gallery', () => {
     // #endregion
     // #region | Emoji
 
+    /**
+     *
+     */
     function refreshEmojiTable() {
         galleryDialogEmojisLoading.value = true;
         const params = {
             n: 100,
             tag: 'emoji'
         };
-        vrcPlusIconRequest
-            .getCachedFileList(params)
+        queryRequest
+            .fetch('galleryFiles', params)
             .then((args) => handleFilesList(args))
             .catch((error) => {
                 console.error('Error fetching emojis:', error);
@@ -366,6 +413,9 @@ export const useGalleryStore = defineStore('Gallery', () => {
             });
     }
 
+    /**
+     *
+     */
     async function getInventory() {
         inventoryTable.value = [];
         advancedSettingsStore.currentUserInventory.clear();
@@ -378,8 +428,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         try {
             for (let i = 0; i < 100; i++) {
                 params.offset = i * params.n;
-                const args =
-                    await inventoryRequest.getCachedInventoryItems(params);
+                const args = await queryRequest.fetch('inventoryItems', params);
                 for (const item of args.json.data) {
                     advancedSettingsStore.currentUserInventory.set(
                         item.id,
@@ -400,6 +449,9 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
     }
 
+    /**
+     *
+     */
     async function tryDeleteOldPrints() {
         if (!advancedSettingsStore.autoDeleteOldPrints) {
             return;
@@ -435,6 +487,11 @@ export const useGalleryStore = defineStore('Gallery', () => {
         await refreshPrintTable();
     }
 
+    /**
+     *
+     * @param imageUrl
+     * @param fileName
+     */
     function showFullscreenImageDialog(imageUrl, fileName) {
         if (!imageUrl) {
             return;
@@ -445,6 +502,11 @@ export const useGalleryStore = defineStore('Gallery', () => {
         D.visible = true;
     }
 
+    /**
+     *
+     * @param inventoryId
+     * @param userId
+     */
     function queueCheckInstanceInventory(inventoryId, userId) {
         if (
             state.instanceInventoryCache.includes(inventoryId) ||
@@ -472,8 +534,13 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
     }
 
+    /**
+     *
+     * @param inventoryId
+     * @param userId
+     */
     async function trySaveEmojiToFile(inventoryId, userId) {
-        const args = await inventoryRequest.getCachedUserInventoryItem({
+        const args = await queryRequest.fetch('userInventoryItem', {
             inventoryId,
             userId
         });
@@ -486,7 +553,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
             return;
         }
 
-        const userArgs = await userRequest.getCachedUser({
+        const userArgs = await queryRequest.fetch('user', {
             userId: args.json.holderId
         });
         const displayName = userArgs.json?.displayName ?? '';
@@ -537,6 +604,10 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
     }
 
+    /**
+     *
+     * @param fileId
+     */
     async function getCachedEmoji(fileId) {
         return new Promise((resolve, reject) => {
             let ref = cachedEmoji.get(fileId);
@@ -544,8 +615,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
                 resolve(ref);
                 return;
             }
-            miscReq
-                .getCachedFile({ fileId })
+            queryRequest
+                .fetch('file', { fileId })
                 .then((args) => {
                     cachedEmoji.set(fileId, args.json);
                     resolve(args.json);

@@ -63,9 +63,9 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { groupRequest, userRequest } from '../../api';
     import { hasGroupModerationPermission, userImage } from '../../shared/utils';
     import { VirtualCombobox } from '../ui/virtual-combobox';
+    import { queryRequest } from '../../api';
     import { useGroupStore } from '../../stores';
 
     const { currentUserGroups, moderateGroupDialog } = storeToRefs(useGroupStore());
@@ -114,8 +114,8 @@
     function initDialog() {
         const D = moderateGroupDialog.value;
         if (D.groupId) {
-            groupRequest
-                .getCachedGroup({
+            queryRequest
+                .fetch('group', {
                     groupId: D.groupId
                 })
                 .then((args) => {
@@ -127,7 +127,7 @@
         }
 
         if (D.userId) {
-            userRequest.getCachedUser({ userId: D.userId }).then((args) => {
+            queryRequest.fetch('user', { userId: D.userId }).then((args) => {
                 D.userObject = args.ref;
             });
         }

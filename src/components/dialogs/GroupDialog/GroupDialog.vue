@@ -407,9 +407,9 @@
         removeFromArray
     } from '../../../shared/utils';
     import { useGalleryStore, useGroupStore, useModalStore, useUserStore } from '../../../stores';
+    import { groupRequest, queryRequest } from '../../../api';
     import { Badge } from '../../ui/badge';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
-    import { groupRequest } from '../../../api';
 
     import DialogJsonTab from '../DialogJsonTab.vue';
     import GroupDialogInfoTab from './GroupDialogInfoTab.vue';
@@ -796,7 +796,7 @@
                 selectedImageUrl: post.imageUrl
             };
         }
-        groupRequest.getCachedGroup({ groupId }).then((args) => {
+        queryRequest.fetch('group', { groupId }).then((args) => {
             D.groupRef = args.ref;
         });
         D.visible = true;

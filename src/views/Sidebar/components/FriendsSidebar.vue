@@ -205,7 +205,7 @@
     } from '../../../stores';
     import { buildFriendRow, buildInstanceHeaderRow, buildToggleRow, estimateRowSize } from '../friendsSidebarUtils';
     import { getFriendsSortFunction, isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
-    import { instanceRequest, notificationRequest, userRequest, worldRequest } from '../../../api';
+    import { instanceRequest, notificationRequest, queryRequest, userRequest } from '../../../api';
     import { checkCanInvite, checkCanInviteSelf } from '../../../shared/utils/invite.js';
     import { getFriendsLocations } from '../../../shared/utils/location.js';
     import { parseLocation } from '../../../shared/utils';
@@ -753,7 +753,7 @@
             currentLocation = lastLocationDestination.value;
         }
         const L = parseLocation(currentLocation);
-        worldRequest.getCachedWorld({ worldId: L.worldId }).then((args) => {
+        queryRequest.fetch('world', { worldId: L.worldId }).then((args) => {
             notificationRequest
                 .sendInvite(
                     {

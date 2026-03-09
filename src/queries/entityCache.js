@@ -15,6 +15,10 @@ const RECENCY_FIELDS = [
     'createdAt'
 ];
 
+/**
+ *
+ * @param data
+ */
 function getComparableEntity(data) {
     if (!data || typeof data !== 'object') {
         return null;
@@ -32,6 +36,10 @@ function getComparableEntity(data) {
     return data;
 }
 
+/**
+ *
+ * @param value
+ */
 function parseTimestamp(value) {
     if (typeof value === 'number' && Number.isFinite(value)) {
         return value;
@@ -45,6 +53,10 @@ function parseTimestamp(value) {
     return null;
 }
 
+/**
+ *
+ * @param data
+ */
 function getRecencyTimestamp(data) {
     const comparable = getComparableEntity(data);
     if (!comparable) {
@@ -61,6 +73,11 @@ function getRecencyTimestamp(data) {
     return null;
 }
 
+/**
+ *
+ * @param currentData
+ * @param nextData
+ */
 function shouldReplaceCurrent(currentData, nextData) {
     if (typeof currentData === 'undefined') {
         return true;
@@ -78,6 +95,35 @@ function shouldReplaceCurrent(currentData, nextData) {
     }
 
     return true;
+}
+
+/**
+ *
+ * @param data
+ */
+function hasCompleteEntityData(data) {
+    if (!data || typeof data !== 'object') {
+        return false;
+    }
+
+    const params = data.params;
+    if (!params || typeof params !== 'object') {
+        return false;
+    }
+
+    const hasEntityId = Boolean(
+        data?.ref?.id ||
+        data?.json?.id ||
+        params.userId ||
+        params.avatarId ||
+        params.worldId ||
+        params.groupId ||
+        params.fileId ||
+        params.printId ||
+        params.inventoryId
+    );
+
+    return hasEntityId;
 }
 
 /**
@@ -142,7 +188,8 @@ export async function patchAndRefetchActiveQuery({ queryKey, nextData }) {
 export function patchUserFromEvent(ref) {
     if (!ref?.id) return;
     const queryKey = queryKeys.user(ref.id);
-    if (!queryClient.getQueryData(queryKey)) return;
+    const existing = queryClient.getQueryData(queryKey);
+    if (!hasCompleteEntityData(existing)) return;
     patchQueryDataWithRecency({
         queryKey,
         nextData: {
@@ -160,7 +207,8 @@ export function patchUserFromEvent(ref) {
 export function patchAvatarFromEvent(ref) {
     if (!ref?.id) return;
     const queryKey = queryKeys.avatar(ref.id);
-    if (!queryClient.getQueryData(queryKey)) return;
+    const existing = queryClient.getQueryData(queryKey);
+    if (!hasCompleteEntityData(existing)) return;
     patchQueryDataWithRecency({
         queryKey,
         nextData: {
@@ -178,7 +226,8 @@ export function patchAvatarFromEvent(ref) {
 export function patchWorldFromEvent(ref) {
     if (!ref?.id) return;
     const queryKey = queryKeys.world(ref.id);
-    if (!queryClient.getQueryData(queryKey)) return;
+    const existing = queryClient.getQueryData(queryKey);
+    if (!hasCompleteEntityData(existing)) return;
     patchQueryDataWithRecency({
         queryKey,
         nextData: {
@@ -204,7 +253,8 @@ export function patchGroupFromEvent(ref) {
     };
 
     const keyFalse = queryKeys.group(ref.id, false);
-    if (queryClient.getQueryData(keyFalse)) {
+    const existingFalse = queryClient.getQueryData(keyFalse);
+    if (hasCompleteEntityData(existingFalse)) {
         patchQueryDataWithRecency({
             queryKey: keyFalse,
             nextData
@@ -212,7 +262,8 @@ export function patchGroupFromEvent(ref) {
     }
 
     const keyTrue = queryKeys.group(ref.id, true);
-    if (queryClient.getQueryData(keyTrue)) {
+    const existingTrue = queryClient.getQueryData(keyTrue);
+    if (hasCompleteEntityData(existingTrue)) {
         patchQueryDataWithRecency({
             queryKey: keyTrue,
             nextData
@@ -220,30 +271,8 @@ export function patchGroupFromEvent(ref) {
     }
 }
 
-/**
- * @param {object} ref
- */
-export function patchInstanceFromEvent(ref) {
-    if (!ref?.id) return;
-
-    const [worldId, instanceId] = String(ref.id).split(':');
-    if (!worldId || !instanceId) return;
-
-    const queryKey = queryKeys.instance(worldId, instanceId);
-    if (!queryClient.getQueryData(queryKey)) return;
-
-    patchQueryDataWithRecency({
-        queryKey,
-        nextData: {
-            cache: false,
-            json: ref,
-            params: { worldId, instanceId },
-            ref
-        }
-    });
-}
-
 export const _entityCacheInternals = {
+    hasCompleteEntityData,
     getRecencyTimestamp,
     shouldReplaceCurrent
 };

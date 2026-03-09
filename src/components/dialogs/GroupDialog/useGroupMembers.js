@@ -1,22 +1,23 @@
 import { computed, ref } from 'vue';
-import { debounce } from '../../../shared/utils';
+
 import {
     groupDialogFilterOptions,
     groupDialogSortingOptions
 } from '../../../shared/constants';
-import { groupRequest } from '../../../api';
+import { groupRequest, queryRequest } from '../../../api';
+import { debounce } from '../../../shared/utils';
+
 import * as workerTimers from 'worker-timers';
 
 /**
  * Composable for managing group member loading, searching, sorting, and filtering.
- *
  * @param {import('vue').Ref} groupDialog - reactive ref to the group dialog state
- * @param {Object} deps - external dependencies
+ * @param {object} deps - external dependencies
  * @param {import('vue').Ref} deps.currentUser - reactive ref to the current user
  * @param {Function} deps.applyGroupMember - function to apply group member data
  * @param {Function} deps.handleGroupMember - function to handle group member updates
  * @param {Function} deps.t - i18n translation function
- * @returns {Object} members composable API
+ * @returns {object} members composable API
  */
 export function useGroupMembers(
     groupDialog,
@@ -185,8 +186,8 @@ export function useGroupMembers(
             loadMoreGroupMembersParams.value.roleId = D.memberFilter.id;
         }
         if (D.inGroup) {
-            await groupRequest
-                .getCachedGroupMember({
+            await queryRequest
+                .fetch('groupMember', {
                     groupId: D.id,
                     userId: currentUser.value.id
                 })
@@ -219,8 +220,8 @@ export function useGroupMembers(
         }
         D.memberSearch = '';
         isGroupMembersLoading.value = true;
-        await groupRequest
-            .getCachedGroupMembers(params)
+        await queryRequest
+            .fetch('groupMembers', params)
             .finally(() => {
                 isGroupMembersLoading.value = false;
             })
@@ -278,7 +279,7 @@ export function useGroupMembers(
     }
 
     /**
-     * @param {Object} sortOrder
+     * @param {object} sortOrder
      */
     async function setGroupMemberSortOrder(sortOrder) {
         const D = groupDialog.value;
@@ -290,7 +291,7 @@ export function useGroupMembers(
     }
 
     /**
-     * @param {Object} filter
+     * @param {object} filter
      */
     async function setGroupMemberFilter(filter) {
         const D = groupDialog.value;

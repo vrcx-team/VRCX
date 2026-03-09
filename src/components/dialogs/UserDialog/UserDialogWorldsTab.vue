@@ -87,8 +87,8 @@
 
     import { useUserStore, useWorldStore } from '../../../stores';
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
+    import { queryRequest } from '../../../api';
     import { useOptionKeySelect } from '../../../composables/useOptionKeySelect';
-    import { worldRequest } from '../../../api';
 
     const { t } = useI18n();
 
@@ -141,7 +141,7 @@
             try {
                 let offset = 0;
                 while (true) {
-                    const args = await worldRequest.getCachedWorlds({
+                    const args = await queryRequest.fetch('worldsByUser', {
                         ...params,
                         offset
                     });

@@ -1,6 +1,10 @@
 export { queryClient } from './client';
 export { queryKeys } from './keys';
-export { entityQueryPolicies, getEntityQueryPolicy, toQueryOptions } from './policies';
+export {
+    entityQueryPolicies,
+    getEntityQueryPolicy,
+    toQueryOptions
+} from './policies';
 export {
     fetchWithEntityPolicy,
     patchAndRefetchActiveQuery,
@@ -9,6 +13,5 @@ export {
     patchAvatarFromEvent,
     patchWorldFromEvent,
     patchGroupFromEvent,
-    patchInstanceFromEvent,
     refetchActiveEntityQuery
 } from './entityCache';

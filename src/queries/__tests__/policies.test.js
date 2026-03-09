@@ -50,13 +50,6 @@ describe('query policy configuration', () => {
             refetchOnWindowFocus: false
         });
 
-        expect(entityQueryPolicies.instance).toMatchObject({
-            staleTime: 0,
-            gcTime: 10000,
-            retry: 0,
-            refetchOnWindowFocus: false
-        });
-
         expect(entityQueryPolicies.friendList).toMatchObject({
             staleTime: 20000,
             gcTime: 90000,
@@ -103,9 +96,6 @@ describe('query policy configuration', () => {
         );
         expect(getEntityQueryPolicy('worldCollection')).toBe(
             entityQueryPolicies.worldCollection
-        );
-        expect(getEntityQueryPolicy('instance')).toBe(
-            entityQueryPolicies.instance
         );
         expect(getEntityQueryPolicy('friendList')).toBe(
             entityQueryPolicies.friendList

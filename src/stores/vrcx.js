@@ -9,7 +9,7 @@ import {
     SEARCH_LIMIT_MAX,
     SEARCH_LIMIT_MIN
 } from '../shared/constants';
-import { avatarRequest, worldRequest } from '../api';
+import { avatarRequest, queryRequest } from '../api';
 import {
     clearPiniaActionTrail,
     getPiniaActionTrail
@@ -684,7 +684,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     toast.error('Invalid local favorite world command');
                     break;
                 }
-                worldRequest.getCachedWorld({ worldId: id }).then(() => {
+                queryRequest.fetch('world', { worldId: id }).then(() => {
                     searchStore.directAccessWorld(id);
                     favoriteStore.addLocalWorldFavorite(id, group);
                 });

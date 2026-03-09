@@ -1,6 +1,6 @@
 import { parseLocation } from './location';
+import { queryRequest } from '../../api';
 import { rpcWorlds } from '../constants';
-import { worldRequest } from '../../api';
 
 /**
  *
@@ -13,7 +13,7 @@ async function getWorldName(location) {
     const L = parseLocation(location);
     if (L.isRealInstance && L.worldId) {
         try {
-            const args = await worldRequest.getCachedWorld({
+            const args = await queryRequest.fetch('world', {
                 worldId: L.worldId
             });
             worldName = args.ref.name;

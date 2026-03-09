@@ -94,14 +94,12 @@ const {
     mockSendRequestInvite,
     mockSendInvite,
     mockSelfInvite,
-    mockGetCachedWorld
+    mockQueryFetch
 } = vi.hoisted(() => ({
     mockSendRequestInvite: vi.fn().mockResolvedValue({}),
     mockSendInvite: vi.fn().mockResolvedValue({}),
     mockSelfInvite: vi.fn().mockResolvedValue({}),
-    mockGetCachedWorld: vi
-        .fn()
-        .mockResolvedValue({ ref: { name: 'Test World' } })
+    mockQueryFetch: vi.fn().mockResolvedValue({ ref: { name: 'Test World' } })
 }));
 
 vi.mock('../../../../api', () => {
@@ -116,9 +114,7 @@ vi.mock('../../../../api', () => {
     return {
         request: p(),
         userRequest: p(),
-        worldRequest: p({
-            getCachedWorld: (...args) => mockGetCachedWorld(...args)
-        }),
+        worldRequest: p(),
         instanceRequest: p({
             selfInvite: (...args) => mockSelfInvite(...args)
         }),
@@ -139,7 +135,10 @@ vi.mock('../../../../api', () => {
         groupRequest: p(),
         inventoryRequest: p(),
         propRequest: p(),
-        imageRequest: p()
+        imageRequest: p(),
+        queryRequest: p({
+            fetch: (...args) => mockQueryFetch(...args)
+        })
     };
 });
 

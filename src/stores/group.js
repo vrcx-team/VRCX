@@ -10,12 +10,7 @@ import {
     replaceBioSymbols,
     sanitizeEntityJson
 } from '../shared/utils';
-import {
-    groupRequest,
-    instanceRequest,
-    userRequest,
-    worldRequest
-} from '../api';
+import { groupRequest, instanceRequest, queryRequest } from '../api';
 import { database } from '../service/database';
 import { groupDialogFilterOptions } from '../shared/constants/';
 import { patchGroupFromEvent } from '../queries';
@@ -195,8 +190,8 @@ export const useGroupStore = defineStore('Group', () => {
                     D.ownerDisplayName = ref.ownerId;
                     D.visible = true;
                     D.loading = false;
-                    userRequest
-                        .getCachedUser({
+                    queryRequest
+                        .fetch('user', {
                             userId: ref.ownerId
                         })
                         .then((args1) => {
@@ -221,10 +216,10 @@ export const useGroupStore = defineStore('Group', () => {
      * @returns {Promise<void>}
      */
     async function groupOwnerChange(ref, oldUserId, newUserId) {
-        const oldUser = await userRequest.getCachedUser({
+        const oldUser = await queryRequest.fetch('user', {
             userId: oldUserId
         });
-        const newUser = await userRequest.getCachedUser({
+        const newUser = await queryRequest.fetch('user', {
             userId: newUserId
         });
         const oldDisplayName = oldUser?.ref?.displayName;
@@ -422,7 +417,7 @@ export const useGroupStore = defineStore('Group', () => {
         let total = Infinity;
         let pages = 0;
         do {
-            const args = await groupRequest.getCachedGroupPosts({
+            const args = await queryRequest.fetch('groupPosts', {
                 groupId: params.groupId,
                 n,
                 offset
@@ -466,8 +461,8 @@ export const useGroupStore = defineStore('Group', () => {
 
         const refPromise = existingRef
             ? Promise.resolve({ ref: existingRef })
-            : groupRequest
-                  .getCachedGroup({ groupId, includeRoles: true })
+            : queryRequest
+                  .fetch('group', { groupId, includeRoles: true })
                   .then((args) => ({ ref: applyGroup(args.json), args }));
 
         return refPromise
@@ -507,8 +502,8 @@ export const useGroupStore = defineStore('Group', () => {
                             }
                             for (const json of args.json.instances) {
                                 instanceStore.applyInstance(json);
-                                worldRequest
-                                    .getCachedWorld({
+                                queryRequest
+                                    .fetch('world', {
                                         worldId: json.world.id
                                     })
                                     .then((args1) => {
@@ -521,16 +516,16 @@ export const useGroupStore = defineStore('Group', () => {
                                 });
                             }
                         });
-                    groupRequest
-                        .getCachedGroupCalendar(groupId)
+                    queryRequest
+                        .fetch('groupCalendar', { groupId })
                         .then((args) => {
                             if (groupDialog.value.id === args.params.groupId) {
                                 D.calendar = args.json.results;
                                 for (const event of D.calendar) {
                                     applyGroupEvent(event);
                                     // fetch again for isFollowing
-                                    groupRequest
-                                        .getCachedGroupCalendarEvent({
+                                    queryRequest
+                                        .fetch('groupCalendarEvent', {
                                             groupId,
                                             eventId: event.id
                                         })
@@ -1175,7 +1170,7 @@ export const useGroupStore = defineStore('Group', () => {
 
         D.groupRef = {};
         D.auditLogTypes = [];
-        groupRequest.getCachedGroup({ groupId }).then((args) => {
+        queryRequest.fetch('group', { groupId }).then((args) => {
             D.groupRef = args.ref;
             if (hasGroupPermission(D.groupRef, 'group-audit-view')) {
                 groupRequest.getGroupAuditLogTypes({ groupId }).then((args) => {

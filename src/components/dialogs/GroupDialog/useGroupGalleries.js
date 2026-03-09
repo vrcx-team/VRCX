@@ -1,9 +1,9 @@
 import { computed, ref } from 'vue';
-import { groupRequest } from '../../../api';
+
+import { queryRequest } from '../../../api';
 
 /**
  * Composable for managing group gallery loading and display state.
- *
  * @param {import('vue').Ref} groupDialog - reactive ref to the group dialog state
  * @returns {{
  *   isGroupGalleryLoading: import('vue').Ref<boolean>,
@@ -26,7 +26,7 @@ export function useGroupGalleries(groupDialog) {
     );
 
     /**
-     * @param {Object} gallery
+     * @param {object} gallery
      */
     function groupGalleryStatus(gallery) {
         const style = {};
@@ -42,6 +42,7 @@ export function useGroupGalleries(groupDialog) {
 
     /**
      *
+     * @param obj
      */
     function updateGroupDialogData(obj) {
         groupDialog.value = {
@@ -79,7 +80,7 @@ export function useGroupGalleries(groupDialog) {
             };
             const count = 50; // 5000 max
             for (let i = 0; i < count; i++) {
-                const args = await groupRequest.getCachedGroupGallery(params);
+                const args = await queryRequest.fetch('groupGallery', params);
                 if (args) {
                     for (const json of args.json) {
                         if (groupDialog.value.id === json.groupId) {

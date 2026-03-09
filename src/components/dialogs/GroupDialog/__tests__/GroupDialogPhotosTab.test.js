@@ -84,10 +84,8 @@ vi.mock('../../../../service/request', () => ({
     failedGetRequests: new Map()
 }));
 vi.mock('../../../../api', () => ({
-    groupRequest: {
-        getCachedGroupGallery: vi
-            .fn()
-            .mockResolvedValue({ json: [], params: {} })
+    queryRequest: {
+        fetch: vi.fn().mockResolvedValue({ json: [], params: {} })
     },
     userRequest: {}
 }));

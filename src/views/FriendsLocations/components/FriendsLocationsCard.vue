@@ -77,7 +77,7 @@
 
     import { isRealInstance, parseLocation, userImage, userStatusClass } from '../../../shared/utils';
     import { useGameStore, useLaunchStore, useLocationStore, useUserStore } from '../../../stores';
-    import { instanceRequest, notificationRequest, worldRequest } from '../../../api';
+    import { instanceRequest, notificationRequest, queryRequest } from '../../../api';
     import { checkCanInvite, checkCanInviteSelf } from '../../../shared/utils/invite.js';
 
     import Location from '../../../components/Location.vue';
@@ -186,7 +186,7 @@
             currentLocation = lastLocationDestination.value;
         }
         const L = parseLocation(currentLocation);
-        worldRequest.getCachedWorld({ worldId: L.worldId }).then((args) => {
+        queryRequest.fetch('world', { worldId: L.worldId }).then((args) => {
             notificationRequest
                 .sendInvite(
                     {
