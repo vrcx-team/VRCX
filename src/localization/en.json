@@ -2645,9 +2645,12 @@
         "clear_input": "Clear input"
     },
     "status_bar": {
-        "vrchat": "VRChat",
-        "vrchat_running": "VRChat is running",
-        "vrchat_stopped": "VRChat is not running",
+        "game": "Game",
+        "game_running": "VRChat is running",
+        "game_stopped": "VRChat is not running",
+        "servers": "Servers",
+        "servers_ok": "VRChat servers are operational",
+        "servers_issue": "VRChat Server Issues",
         "steamvr": "SteamVR",
         "steamvr_running": "SteamVR is running",
         "steamvr_stopped": "SteamVR is not running",

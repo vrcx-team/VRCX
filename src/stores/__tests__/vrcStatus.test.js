@@ -5,32 +5,15 @@ const mocks = vi.hoisted(() => ({
     execute: vi.fn(),
     formatDateFilter: vi.fn(() => 'formatted-time'),
     openExternalLink: vi.fn(),
-    toast: {
-        warning: vi.fn(),
-        success: vi.fn(),
-        dismiss: vi.fn()
-    }
+    toastWarning: vi.fn(() => 'toast-id-1'),
+    toastSuccess: vi.fn(() => 'toast-id-2'),
+    toastDismiss: vi.fn()
 }));
 
 vi.mock('../../service/webapi', () => ({
     default: {
         execute: (...args) => mocks.execute(...args)
     }
-}));
-
-vi.mock('../../shared/utils', () => ({
-    formatDateFilter: (...args) => mocks.formatDateFilter(...args),
-    openExternalLink: (...args) => mocks.openExternalLink(...args)
-}));
-
-vi.mock('vue-sonner', () => ({
-    toast: mocks.toast
-}));
-
-vi.mock('vue-i18n', () => ({
-    useI18n: () => ({
-        t: (key) => key
-    })
 }));
 
 vi.mock('worker-timers', () => ({
@@ -40,6 +23,28 @@ vi.mock('worker-timers', () => ({
     clearTimeout: vi.fn()
 }));
 
+vi.mock('vue-sonner', () => ({
+    toast: {
+        warning: (...args) => mocks.toastWarning(...args),
+        success: (...args) => mocks.toastSuccess(...args),
+        dismiss: (...args) => mocks.toastDismiss(...args)
+    }
+}));
+
+vi.mock('../../shared/utils', () => ({
+    formatDateFilter: (...args) => mocks.formatDateFilter(...args),
+    openExternalLink: (...args) => mocks.openExternalLink(...args)
+}));
+
+vi.mock('vue-i18n', () => ({
+    useI18n: () => ({
+        t: (key) => key
+    })
+}));
+
+/**
+ *
+ */
 function flushPromises() {
     return new Promise((resolve) => setTimeout(resolve, 0));
 }
@@ -77,7 +82,7 @@ describe('useVrcStatusStore.getVrcStatus', () => {
             headers: { Referer: 'https://vrcx.app' }
         });
         expect(store.lastStatus).toBe('Failed to fetch VRC status');
-        expect(mocks.toast.warning).toHaveBeenCalledTimes(1);
+        expect(store.hasIssue).toBe(true);
     });
 
     test('fetches summary for incident status and appends component summary', async () => {
@@ -110,7 +115,7 @@ describe('useVrcStatusStore.getVrcStatus', () => {
         );
         expect(store.lastStatus).toBe('Partial System Outage');
         expect(store.statusText).toBe('Partial System Outage: API, CDN');
-        expect(mocks.toast.warning).toHaveBeenCalled();
+        expect(store.hasIssue).toBe(true);
     });
 
     test('clears status when all systems are operational', async () => {
@@ -128,5 +133,132 @@ describe('useVrcStatusStore.getVrcStatus', () => {
         expect(mocks.execute).toHaveBeenCalledTimes(1);
         expect(store.lastStatus).toBe('');
         expect(store.statusText).toBe('');
+    });
+});
+
+describe('useVrcStatusStore dual-mode notification', () => {
+    beforeEach(async () => {
+        mocks.execute.mockResolvedValue({
+            status: 200,
+            data: JSON.stringify({
+                page: { updated_at: '2026-01-01T00:00:00.000Z' },
+                status: { description: 'All Systems Operational' }
+            })
+        });
+
+        setActivePinia(createPinia());
+        useVrcStatusStore();
+        await flushPromises();
+        vi.clearAllMocks();
+    });
+
+    test('does not show toast before initialized (startup race prevention)', async () => {
+        const store = useVrcStatusStore();
+        // Do NOT call setStatusBarServersVisible — initialized remains false
+
+        mocks.execute
+            .mockResolvedValueOnce({
+                status: 200,
+                data: JSON.stringify({
+                    page: { updated_at: '2026-01-02T00:00:00.000Z' },
+                    status: { description: 'Partial System Outage' }
+                })
+            })
+            .mockResolvedValueOnce({
+                status: 200,
+                data: JSON.stringify({
+                    components: [{ name: 'API', status: 'major_outage' }]
+                })
+            });
+
+        await store.getVrcStatus();
+        await flushPromises();
+
+        expect(mocks.toastWarning).not.toHaveBeenCalled();
+    });
+
+    test('shows toast when statusBarServersVisible is false and initialized', async () => {
+        const store = useVrcStatusStore();
+        // Initialize via action (simulates StatusBar onMounted with servers=false)
+        store.setStatusBarServersVisible(false);
+
+        mocks.execute
+            .mockResolvedValueOnce({
+                status: 200,
+                data: JSON.stringify({
+                    page: { updated_at: '2026-01-02T00:00:00.000Z' },
+                    status: { description: 'Partial System Outage' }
+                })
+            })
+            .mockResolvedValueOnce({
+                status: 200,
+                data: JSON.stringify({
+                    components: [{ name: 'API', status: 'major_outage' }]
+                })
+            });
+
+        await store.getVrcStatus();
+        await flushPromises();
+
+        expect(mocks.toastWarning).toHaveBeenCalled();
+        expect(mocks.toastWarning.mock.calls[0][0]).toBe(
+            'status_bar.servers_issue'
+        );
+    });
+
+    test('does NOT show toast when statusBarServersVisible is true', async () => {
+        const store = useVrcStatusStore();
+        store.setStatusBarServersVisible(true);
+
+        mocks.execute
+            .mockResolvedValueOnce({
+                status: 200,
+                data: JSON.stringify({
+                    page: { updated_at: '2026-01-02T00:00:00.000Z' },
+                    status: { description: 'Partial System Outage' }
+                })
+            })
+            .mockResolvedValueOnce({
+                status: 200,
+                data: JSON.stringify({
+                    components: [{ name: 'API', status: 'major_outage' }]
+                })
+            });
+
+        await store.getVrcStatus();
+        await flushPromises();
+
+        expect(mocks.toastWarning).not.toHaveBeenCalled();
+    });
+
+    test('triggers toast when switching from StatusBar mode to toast mode with active issue', async () => {
+        const store = useVrcStatusStore();
+        store.setStatusBarServersVisible(true);
+
+        // Create an issue while in StatusBar mode
+        mocks.execute
+            .mockResolvedValueOnce({
+                status: 200,
+                data: JSON.stringify({
+                    page: { updated_at: '2026-01-02T00:00:00.000Z' },
+                    status: { description: 'Major Outage' }
+                })
+            })
+            .mockResolvedValueOnce({
+                status: 200,
+                data: JSON.stringify({
+                    components: [{ name: 'API', status: 'major_outage' }]
+                })
+            });
+
+        await store.getVrcStatus();
+        await flushPromises();
+        expect(mocks.toastWarning).not.toHaveBeenCalled();
+
+        // Switch to toast mode - should trigger notification
+        store.setStatusBarServersVisible(false);
+        await flushPromises();
+
+        expect(mocks.toastWarning).toHaveBeenCalledTimes(1);
     });
 });

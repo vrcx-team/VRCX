@@ -1,10 +1,12 @@
 <template>
-    <div class="status-bar" @contextmenu.prevent>
+    <div
+        class="shrink-0 h-[22px] flex items-center bg-sidebar border-t border-border font-mono text-xs select-none overflow-hidden"
+        @contextmenu.prevent>
         <ContextMenu>
             <ContextMenuTrigger as-child>
-                <div class="status-bar-inner">
+                <div class="flex items-center w-full h-full px-2">
                     <!-- Left section -->
-                    <div class="status-bar-left">
+                    <div class="flex items-center flex-1 min-w-0 [&>*:first-child]:pl-0.5">
                         <TooltipWrapper
                             v-if="visibility.proxy"
                             :content="
@@ -13,23 +15,15 @@
                                     : t('status_bar.proxy')
                             "
                             side="top">
-                            <div class="status-bar-item status-bar-clickable" @click="handleProxyClick">
-                                <span class="status-dot" :class="vrcxStore.proxyServer ? 'dot-green' : 'dot-gray'" />
-                                <span class="status-label">{{ vrcxStore.proxyServer || t('status_bar.proxy') }}</span>
-                            </div>
-                        </TooltipWrapper>
-
-                        <TooltipWrapper
-                            v-if="!isMacOS && visibility.vrchat"
-                            :content="
-                                gameStore.isGameRunning
-                                    ? t('status_bar.vrchat_running')
-                                    : t('status_bar.vrchat_stopped')
-                            "
-                            side="top">
-                            <div class="status-bar-item">
-                                <span class="status-dot" :class="gameStore.isGameRunning ? 'dot-green' : 'dot-gray'" />
-                                <span class="status-label">{{ t('status_bar.vrchat') }}</span>
+                            <div
+                                class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border cursor-pointer hover:bg-accent"
+                                @click="handleProxyClick">
+                                <span
+                                    class="inline-block size-2 rounded-full shrink-0"
+                                    :class="vrcxStore.proxyServer ? 'bg-status-online' : 'bg-status-offline-alt'" />
+                                <span class="text-foreground text-[11px]">{{
+                                    vrcxStore.proxyServer || t('status_bar.proxy')
+                                }}</span>
                             </div>
                         </TooltipWrapper>
 
@@ -41,20 +35,76 @@
                                     : t('status_bar.steamvr_stopped')
                             "
                             side="top">
-                            <div class="status-bar-item">
+                            <div class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
                                 <span
-                                    class="status-dot"
-                                    :class="gameStore.isSteamVRRunning ? 'dot-green' : 'dot-gray'" />
-                                <span class="status-label">{{ t('status_bar.steamvr') }}</span>
+                                    class="inline-block size-2 rounded-full shrink-0"
+                                    :class="
+                                        gameStore.isSteamVRRunning ? 'bg-status-online' : 'bg-status-offline-alt'
+                                    " />
+                                <span class="text-foreground text-[11px]">{{ t('status_bar.steamvr') }}</span>
                             </div>
                         </TooltipWrapper>
 
+                        <TooltipWrapper
+                            v-if="!isMacOS && visibility.vrchat"
+                            :content="
+                                gameStore.isGameRunning ? t('status_bar.game_running') : t('status_bar.game_stopped')
+                            "
+                            side="top">
+                            <div class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
+                                <span
+                                    class="inline-block size-2 rounded-full shrink-0"
+                                    :class="gameStore.isGameRunning ? 'bg-status-online' : 'bg-status-offline-alt'" />
+                                <span class="text-foreground text-[11px]">{{ t('status_bar.game') }}</span>
+                            </div>
+                        </TooltipWrapper>
+
+                        <HoverCard v-if="visibility.servers" v-model:open="serversHoverOpen">
+                            <HoverCardTrigger as-child>
+                                <TooltipWrapper
+                                    v-if="!vrcStatusStore.hasIssue"
+                                    :content="t('status_bar.servers_ok')"
+                                    side="top">
+                                    <div
+                                        class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border cursor-pointer hover:bg-accent"
+                                        @click="vrcStatusStore.openStatusPage()">
+                                        <span class="inline-block size-2 rounded-full shrink-0 bg-status-online" />
+                                        <span class="text-foreground text-[11px]">{{ t('status_bar.servers') }}</span>
+                                    </div>
+                                </TooltipWrapper>
+                                <div
+                                    v-else
+                                    class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
+                                    <span class="inline-block size-2 rounded-full shrink-0 bg-[#e6a23c]" />
+                                    <span class="text-foreground text-[11px]">{{ t('status_bar.servers') }}</span>
+                                </div>
+                            </HoverCardTrigger>
+                            <HoverCardContent
+                                v-if="vrcStatusStore.hasIssue"
+                                class="w-[280px] px-3 py-2.5"
+                                side="top"
+                                align="start"
+                                :side-offset="4">
+                                <div class="flex items-center gap-1.5 mb-1.5">
+                                    <span class="inline-block size-2 rounded-full shrink-0 bg-[#e6a23c]" />
+                                    <span class="font-semibold text-xs text-foreground">{{
+                                        t('status_bar.servers_issue')
+                                    }}</span>
+                                </div>
+                                <p class="text-[11px] text-muted-foreground m-0 leading-[1.4]">
+                                    {{ vrcStatusStore.statusText }}
+                                </p>
+                            </HoverCardContent>
+                        </HoverCard>
+
                         <TooltipWrapper v-if="visibility.ws" :content="wsTooltip" side="top">
-                            <div class="status-bar-item status-bar-ws">
-                                <span class="status-dot" :class="wsState.connected ? 'dot-green' : 'dot-gray'" />
-                                <span class="status-label">WebSocket</span>
-                                <canvas ref="wsCanvasRef" class="ws-sparkline" />
-                                <span class="status-label-mono">{{
+                            <div class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
+                                <span
+                                    class="inline-block size-2 rounded-full shrink-0"
+                                    :class="wsState.connected ? 'bg-status-online' : 'bg-status-offline-alt'" />
+                                <span class="text-foreground text-[11px]">WebSocket</span>
+                                <canvas ref="wsCanvasRef" class="shrink-0 rounded-sm" />
+                                <span class="text-[10px] text-foreground">{{
                                     t('status_bar.ws_avg_per_minute', { count: msgsPerMinuteAvg })
                                 }}</span>
                             </div>
@@ -62,18 +112,19 @@
                     </div>
 
                     <!-- Right section -->
-                    <div class="status-bar-right">
+                    <div class="flex items-center ml-auto [&>*:last-child]:border-r-0 [&>*:last-child]:pr-0.5">
                         <template v-if="visibility.clocks">
                             <Popover
                                 v-for="(clock, idx) in visibleClocks"
                                 :key="idx"
                                 v-model:open="clockPopoverOpen[idx]">
                                 <PopoverTrigger as-child>
-                                    <div class="status-bar-item status-bar-clickable">
-                                        <span class="status-label-mono">{{ formatClock(clock) }}</span>
+                                    <div
+                                        class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border cursor-pointer hover:bg-accent">
+                                        <span class="text-[10px] text-foreground">{{ formatClock(clock) }}</span>
                                     </div>
                                 </PopoverTrigger>
-                                <PopoverContent class="status-bar-clock-popover" side="top" align="center">
+                                <PopoverContent class="w-[280px]" side="top" align="center">
                                     <div class="flex flex-col gap-2 p-1">
                                         <label class="text-xs font-medium">{{ t('status_bar.timezone') }}</label>
                                         <Select
@@ -105,20 +156,22 @@
                             :content="t('status_bar.zoom_tooltip')"
                             side="top"
                             :disabled="zoomEditing">
-                            <div class="status-bar-item status-bar-clickable" @click="toggleZoomEdit">
+                            <div
+                                class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border cursor-pointer hover:bg-accent"
+                                @click="toggleZoomEdit">
                                 <template v-if="zoomEditing">
-                                    <span class="status-label-mono">{{ t('status_bar.zoom') }}</span>
+                                    <span class="text-[10px] text-foreground">{{ t('status_bar.zoom') }}</span>
                                     <NumberField
                                         v-model="zoomLevel"
                                         :step="1"
                                         :format-options="{ maximumFractionDigits: 0 }"
-                                        class="status-bar-zoom-field"
+                                        class="w-20"
                                         @update:modelValue="setZoomLevel">
                                         <NumberFieldContent>
                                             <NumberFieldDecrement />
                                             <NumberFieldInput
                                                 ref="zoomInputRef"
-                                                class="status-bar-zoom-input"
+                                                class="h-[18px] text-[11px] px-0.5 text-center"
                                                 @blur="zoomEditing = false"
                                                 @keydown.enter="zoomEditing = false"
                                                 @keydown.escape="zoomEditing = false" />
@@ -127,16 +180,16 @@
                                     </NumberField>
                                 </template>
                                 <template v-else>
-                                    <span class="status-label-mono">{{ t('status_bar.zoom') }}</span>
-                                    <span class="status-label-mono">{{ zoomLevel }}%</span>
+                                    <span class="text-[10px] text-foreground">{{ t('status_bar.zoom') }}</span>
+                                    <span class="text-[10px] text-foreground">{{ zoomLevel }}%</span>
                                 </template>
                             </div>
                         </TooltipWrapper>
 
                         <TooltipWrapper v-if="visibility.uptime" :content="t('status_bar.app_uptime')" side="top">
-                            <div class="status-bar-item">
-                                <span class="status-label-mono">{{ t('status_bar.app_uptime_short') }}</span>
-                                <span class="status-label-mono">{{ appUptimeText }}</span>
+                            <div class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
+                                <span class="text-[10px] text-foreground">{{ t('status_bar.app_uptime_short') }}</span>
+                                <span class="text-[10px] text-foreground">{{ appUptimeText }}</span>
                             </div>
                         </TooltipWrapper>
                     </div>
@@ -148,7 +201,12 @@
                     v-if="!isMacOS"
                     :model-value="visibility.vrchat"
                     @update:model-value="toggleVisibility('vrchat')">
-                    {{ t('status_bar.vrchat') }}
+                    {{ t('status_bar.game') }}
+                </ContextMenuCheckboxItem>
+                <ContextMenuCheckboxItem
+                    :model-value="visibility.servers"
+                    @update:model-value="toggleVisibility('servers')">
+                    {{ t('status_bar.servers') }}
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     v-if="!isMacOS"
@@ -211,8 +269,8 @@
         ContextMenuSubTrigger,
         ContextMenuTrigger
     } from '@/components/ui/context-menu';
+    import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
     import {
         NumberField,
         NumberFieldContent,
@@ -220,8 +278,9 @@
         NumberFieldIncrement,
         NumberFieldInput
     } from '@/components/ui/number-field';
+    import { useGameStore, useGeneralSettingsStore, useVrcStatusStore, useVrcxStore } from '@/stores';
+    import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-    import { useGameStore, useGeneralSettingsStore, useVrcxStore } from '@/stores';
     import { useIntervalFn, useNow } from '@vueuse/core';
     import { TooltipWrapper } from '@/components/ui/tooltip';
     import { useI18n } from 'vue-i18n';
@@ -251,7 +310,28 @@
 
     const gameStore = useGameStore();
     const vrcxStore = useVrcxStore();
+    const vrcStatusStore = useVrcStatusStore();
     const generalSettingsStore = useGeneralSettingsStore();
+
+    // --- Servers status HoverCard ---
+    const serversHoverOpen = ref(false);
+    let serversHoverTimer = null;
+
+    watch(
+        () => vrcStatusStore.hasIssue,
+        (hasIssue) => {
+            if (hasIssue && visibility.servers) {
+                serversHoverOpen.value = true;
+                clearTimeout(serversHoverTimer);
+                serversHoverTimer = setTimeout(() => {
+                    serversHoverOpen.value = false;
+                }, 5000);
+            } else {
+                serversHoverOpen.value = false;
+                clearTimeout(serversHoverTimer);
+            }
+        }
+    );
 
     const VISIBILITY_KEY = 'VRCX_statusBarVisibility';
 
@@ -264,6 +344,9 @@
     function toggleVisibility(key) {
         visibility[key] = !visibility[key];
         configRepository.setString(VISIBILITY_KEY, JSON.stringify(visibility));
+        if (key === 'servers') {
+            vrcStatusStore.setStatusBarServersVisible(visibility.servers);
+        }
     }
 
     // --- WebSocket message rate + sparkline ---
@@ -455,6 +538,12 @@
         }
 
         drawSparkline();
+        vrcStatusStore.setStatusBarServersVisible(visibility.servers);
+    });
+
+    onBeforeUnmount(() => {
+        clearTimeout(serversHoverTimer);
+        vrcStatusStore.setStatusBarServersVisible(false);
     });
 
     watch(
@@ -519,118 +608,3 @@
         generalSettingsStore.promptProxySettings();
     }
 </script>
-
-<style scoped>
-    .status-bar {
-        flex-shrink: 0;
-        height: 22px;
-        display: flex;
-        align-items: center;
-        background: var(--sidebar);
-        border-top: 1px solid var(--border);
-        font-family: 'Consolas', 'Courier New', monospace;
-        font-size: 12px;
-        user-select: none;
-        overflow: hidden;
-    }
-
-    .status-bar-inner {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-        padding: 0 8px;
-    }
-
-    .status-bar-left {
-        display: flex;
-        align-items: center;
-        gap: 0;
-        flex: 1;
-        min-width: 0;
-    }
-
-    .status-bar-right {
-        display: flex;
-        align-items: center;
-        gap: 0;
-        margin-left: auto;
-    }
-
-    .status-bar-item {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        padding: 0 8px;
-        height: 22px;
-        white-space: nowrap;
-        border-right: 1px solid var(--border);
-    }
-
-    .status-bar-left .status-bar-item:first-child {
-        padding-left: 2px;
-    }
-
-    .status-bar-right .status-bar-item:last-child {
-        border-right: none;
-        padding-right: 2px;
-    }
-
-    .status-bar-clickable {
-        cursor: pointer;
-    }
-
-    .status-bar-clickable:hover {
-        background: var(--accent);
-    }
-
-    .status-dot {
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        flex-shrink: 0;
-    }
-
-    .dot-green {
-        background: var(--status-online);
-    }
-
-    .dot-gray {
-        background: var(--status-offline-alt);
-    }
-
-    .status-label {
-        color: hsl(var(--foreground));
-        font-size: 11px;
-    }
-
-    .status-label-mono {
-        font-size: 10px;
-        color: hsl(var(--foreground));
-    }
-
-    .status-bar-ws {
-        gap: 4px;
-    }
-
-    .ws-sparkline {
-        flex-shrink: 0;
-        border-radius: var(--radius-sm);
-    }
-
-    .status-bar-zoom-field {
-        width: 80px;
-    }
-
-    .status-bar-zoom-input {
-        height: 18px;
-        font-size: 11px;
-        padding: 0 2px;
-        text-align: center;
-    }
-
-    .status-bar-clock-popover {
-        width: 280px;
-    }
-</style>
