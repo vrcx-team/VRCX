@@ -19,7 +19,7 @@ import { AppDebug } from '../../service/appConfig.js';
 import { compareUnityVersion } from './avatar';
 import { getAvailablePlatforms } from './platformUtils';
 import { i18n } from '../../plugin/i18n';
-import { miscRequest } from '../../api';
+import { queryRequest } from '../../api';
 
 /**
  * @param {string} fileName
@@ -263,7 +263,7 @@ async function getBundleDateSize(ref) {
         if (!fileId || !version) {
             continue;
         }
-        const args = await miscRequest.getFileAnalysis({
+        const args = await queryRequest.fetch('fileAnalysis', {
             fileId,
             version,
             variant

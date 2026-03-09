@@ -31,6 +31,30 @@ export const entityQueryPolicies = Object.freeze({
         retry: 1,
         refetchOnWindowFocus: false
     }),
+    groupCalendarCollection: Object.freeze({
+        staleTime: 120 * SECOND,
+        gcTime: 600 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    groupFollowingCalendarCollection: Object.freeze({
+        staleTime: 60 * SECOND,
+        gcTime: 300 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    groupFeaturedCalendarCollection: Object.freeze({
+        staleTime: 300 * SECOND,
+        gcTime: 900 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    groupCalendarEvent: Object.freeze({
+        staleTime: 120 * SECOND,
+        gcTime: 600 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
     worldCollection: Object.freeze({
         staleTime: 60 * SECOND,
         gcTime: 300 * SECOND,
@@ -61,6 +85,42 @@ export const entityQueryPolicies = Object.freeze({
         retry: 1,
         refetchOnWindowFocus: false
     }),
+    inventoryObject: Object.freeze({
+        staleTime: 60 * SECOND,
+        gcTime: 300 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    avatarGallery: Object.freeze({
+        staleTime: 30 * SECOND,
+        gcTime: 120 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    fileAnalysis: Object.freeze({
+        staleTime: 120 * SECOND,
+        gcTime: 600 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    worldPersistData: Object.freeze({
+        staleTime: 120 * SECOND,
+        gcTime: 600 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    mutualCounts: Object.freeze({
+        staleTime: 120 * SECOND,
+        gcTime: 600 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    visits: Object.freeze({
+        staleTime: 300 * SECOND,
+        gcTime: 900 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
     fileObject: Object.freeze({
         staleTime: 60 * SECOND,
         gcTime: 300 * SECOND,
@@ -68,14 +128,6 @@ export const entityQueryPolicies = Object.freeze({
         refetchOnWindowFocus: false
     })
 });
-
-/**
- * @param {'user'|'avatar'|'world'|'group'|'groupCollection'|'worldCollection'|'friendList'|'favoriteCollection'|'galleryCollection'|'inventoryCollection'|'fileObject'} entity
- * @returns {{staleTime: number, gcTime: number, retry: number, refetchOnWindowFocus: boolean}}
- */
-export function getEntityQueryPolicy(entity) {
-    return entityQueryPolicies[entity];
-}
 
 /**
  * @param {{staleTime: number, gcTime: number, retry: number, refetchOnWindowFocus: boolean}} policy

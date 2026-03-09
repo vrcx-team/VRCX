@@ -50,12 +50,42 @@ export const queryKeys = Object.freeze({
         }
     ],
     groupCalendar: (groupId) => ['group', groupId, 'calendar'],
+    groupCalendars: ({ n = 100, offset = 0, date = '' } = {}) => [
+        'group',
+        'calendar',
+        {
+            n: Number(n),
+            offset: Number(offset),
+            date: String(date || '')
+        }
+    ],
+    followingGroupCalendars: ({ n = 100, offset = 0, date = '' } = {}) => [
+        'group',
+        'calendar',
+        'following',
+        {
+            n: Number(n),
+            offset: Number(offset),
+            date: String(date || '')
+        }
+    ],
+    featuredGroupCalendars: ({ n = 100, offset = 0, date = '' } = {}) => [
+        'group',
+        'calendar',
+        'featured',
+        {
+            n: Number(n),
+            offset: Number(offset),
+            date: String(date || '')
+        }
+    ],
     groupCalendarEvent: ({ groupId, eventId } = {}) => [
         'group',
         groupId,
         'calendarEvent',
         eventId
     ],
+    avatarGallery: (avatarId) => ['avatar', avatarId, 'gallery'],
     worldsByUser: ({
         userId,
         n = 50,
@@ -176,5 +206,20 @@ export const queryKeys = Object.freeze({
         userId,
         inventoryId
     ],
+    inventoryItem: (inventoryId) => ['inventory', 'item', inventoryId],
+    inventoryTemplate: (inventoryTemplateId) => [
+        'inventory',
+        'template',
+        inventoryTemplateId
+    ],
+    fileAnalysis: ({ fileId, version, variant } = {}) => [
+        'analysis',
+        fileId,
+        Number(version),
+        String(variant || '')
+    ],
+    worldPersistData: (worldId) => ['world', worldId, 'persistData'],
+    mutualCounts: (userId) => ['user', userId, 'mutualCounts'],
+    visits: () => ['visits'],
     file: (fileId) => ['file', fileId]
 });

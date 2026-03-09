@@ -249,8 +249,8 @@ export const useAvatarStore = defineStore('Avatar', () => {
      */
     async function getAvatarGallery(avatarId) {
         const D = avatarDialog.value;
-        const args = await avatarRequest
-            .getAvatarGallery(avatarId)
+        const args = await queryRequest
+            .fetch('avatarGallery', { avatarId })
             .finally(() => {
                 D.galleryLoading = false;
             });

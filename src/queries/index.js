@@ -2,7 +2,6 @@ export { queryClient } from './client';
 export { queryKeys } from './keys';
 export {
     entityQueryPolicies,
-    getEntityQueryPolicy,
     toQueryOptions
 } from './policies';
 export {

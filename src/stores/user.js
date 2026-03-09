@@ -841,8 +841,8 @@ export const useUserStore = defineStore('User', () => {
                         });
                         if (!currentUser.value.hasSharedConnectionsOptOut) {
                             try {
-                                userRequest
-                                    .getMutualCounts({ userId })
+                                queryRequest
+                                    .fetch('mutualCounts', { userId })
                                     .then((args) => {
                                         if (args.params.userId === D.id) {
                                             D.mutualFriendCount =

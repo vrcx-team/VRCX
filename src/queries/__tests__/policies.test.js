@@ -2,7 +2,6 @@ import { describe, expect, test } from 'vitest';
 
 import {
     entityQueryPolicies,
-    getEntityQueryPolicy,
     toQueryOptions
 } from '../policies';
 
@@ -42,6 +41,32 @@ describe('query policy configuration', () => {
             retry: 1,
             refetchOnWindowFocus: false
         });
+        expect(entityQueryPolicies.groupCalendarCollection).toMatchObject({
+            staleTime: 120000,
+            gcTime: 600000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        });
+        expect(
+            entityQueryPolicies.groupFollowingCalendarCollection
+        ).toMatchObject({
+            staleTime: 60000,
+            gcTime: 300000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        });
+        expect(entityQueryPolicies.groupFeaturedCalendarCollection).toMatchObject({
+            staleTime: 300000,
+            gcTime: 900000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        });
+        expect(entityQueryPolicies.groupCalendarEvent).toMatchObject({
+            staleTime: 120000,
+            gcTime: 600000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        });
 
         expect(entityQueryPolicies.worldCollection).toMatchObject({
             staleTime: 60000,
@@ -77,6 +102,42 @@ describe('query policy configuration', () => {
             retry: 1,
             refetchOnWindowFocus: false
         });
+        expect(entityQueryPolicies.inventoryObject).toMatchObject({
+            staleTime: 60000,
+            gcTime: 300000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        });
+        expect(entityQueryPolicies.avatarGallery).toMatchObject({
+            staleTime: 30000,
+            gcTime: 120000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        });
+        expect(entityQueryPolicies.fileAnalysis).toMatchObject({
+            staleTime: 120000,
+            gcTime: 600000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        });
+        expect(entityQueryPolicies.worldPersistData).toMatchObject({
+            staleTime: 120000,
+            gcTime: 600000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        });
+        expect(entityQueryPolicies.mutualCounts).toMatchObject({
+            staleTime: 120000,
+            gcTime: 600000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        });
+        expect(entityQueryPolicies.visits).toMatchObject({
+            staleTime: 300000,
+            gcTime: 900000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        });
 
         expect(entityQueryPolicies.fileObject).toMatchObject({
             staleTime: 60000,
@@ -84,34 +145,6 @@ describe('query policy configuration', () => {
             retry: 1,
             refetchOnWindowFocus: false
         });
-    });
-
-    test('exposes entity policy lookup', () => {
-        expect(getEntityQueryPolicy('user')).toBe(entityQueryPolicies.user);
-        expect(getEntityQueryPolicy('avatar')).toBe(entityQueryPolicies.avatar);
-        expect(getEntityQueryPolicy('world')).toBe(entityQueryPolicies.world);
-        expect(getEntityQueryPolicy('group')).toBe(entityQueryPolicies.group);
-        expect(getEntityQueryPolicy('groupCollection')).toBe(
-            entityQueryPolicies.groupCollection
-        );
-        expect(getEntityQueryPolicy('worldCollection')).toBe(
-            entityQueryPolicies.worldCollection
-        );
-        expect(getEntityQueryPolicy('friendList')).toBe(
-            entityQueryPolicies.friendList
-        );
-        expect(getEntityQueryPolicy('favoriteCollection')).toBe(
-            entityQueryPolicies.favoriteCollection
-        );
-        expect(getEntityQueryPolicy('galleryCollection')).toBe(
-            entityQueryPolicies.galleryCollection
-        );
-        expect(getEntityQueryPolicy('inventoryCollection')).toBe(
-            entityQueryPolicies.inventoryCollection
-        );
-        expect(getEntityQueryPolicy('fileObject')).toBe(
-            entityQueryPolicies.fileObject
-        );
     });
 
     test('normalizes policy values to query options', () => {

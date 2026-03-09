@@ -67,10 +67,30 @@ const registry = Object.freeze({
         policy: entityQueryPolicies.groupCollection,
         queryFn: (params) => groupRequest.getGroupCalendar(params.groupId)
     },
+    groupCalendars: {
+        key: (params) => queryKeys.groupCalendars(params),
+        policy: entityQueryPolicies.groupCalendarCollection,
+        queryFn: (params) => groupRequest.getGroupCalendars(params)
+    },
+    followingGroupCalendars: {
+        key: (params) => queryKeys.followingGroupCalendars(params),
+        policy: entityQueryPolicies.groupFollowingCalendarCollection,
+        queryFn: (params) => groupRequest.getFollowingGroupCalendars(params)
+    },
+    featuredGroupCalendars: {
+        key: (params) => queryKeys.featuredGroupCalendars(params),
+        policy: entityQueryPolicies.groupFeaturedCalendarCollection,
+        queryFn: (params) => groupRequest.getFeaturedGroupCalendars(params)
+    },
     groupCalendarEvent: {
         key: (params) => queryKeys.groupCalendarEvent(params),
-        policy: entityQueryPolicies.groupCollection,
+        policy: entityQueryPolicies.groupCalendarEvent,
         queryFn: (params) => groupRequest.getGroupCalendarEvent(params)
+    },
+    avatarGallery: {
+        key: (params) => queryKeys.avatarGallery(params.avatarId),
+        policy: entityQueryPolicies.avatarGallery,
+        queryFn: (params) => avatarRequest.getAvatarGallery(params.avatarId)
     },
     friends: {
         key: (params) => queryKeys.friends(params),
@@ -122,10 +142,40 @@ const registry = Object.freeze({
         policy: entityQueryPolicies.inventoryCollection,
         queryFn: (params) => inventoryRequest.getUserInventoryItem(params)
     },
+    inventoryItem: {
+        key: (params) => queryKeys.inventoryItem(params.inventoryId),
+        policy: entityQueryPolicies.inventoryObject,
+        queryFn: (params) => inventoryRequest.getInventoryItem(params)
+    },
     inventoryItems: {
         key: (params) => queryKeys.inventoryItems(params),
         policy: entityQueryPolicies.inventoryCollection,
         queryFn: (params) => inventoryRequest.getInventoryItems(params)
+    },
+    inventoryTemplate: {
+        key: (params) => queryKeys.inventoryTemplate(params.inventoryTemplateId),
+        policy: entityQueryPolicies.inventoryObject,
+        queryFn: (params) => inventoryRequest.getInventoryTemplate(params)
+    },
+    fileAnalysis: {
+        key: (params) => queryKeys.fileAnalysis(params),
+        policy: entityQueryPolicies.fileAnalysis,
+        queryFn: (params) => miscRequest.getFileAnalysis(params)
+    },
+    worldPersistData: {
+        key: (params) => queryKeys.worldPersistData(params.worldId),
+        policy: entityQueryPolicies.worldPersistData,
+        queryFn: (params) => miscRequest.hasWorldPersistData(params)
+    },
+    mutualCounts: {
+        key: (params) => queryKeys.mutualCounts(params.userId),
+        policy: entityQueryPolicies.mutualCounts,
+        queryFn: (params) => userRequest.getMutualCounts(params)
+    },
+    visits: {
+        key: () => queryKeys.visits(),
+        policy: entityQueryPolicies.visits,
+        queryFn: () => miscRequest.getVisits()
     },
     file: {
         key: (params) => queryKeys.file(params.fileId),

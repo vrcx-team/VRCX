@@ -376,10 +376,9 @@
 </template>
 
 <script setup>
-    import { Languages, Package, RefreshCcw, Settings, Trash2 } from 'lucide-vue-next';
+    import { Languages, RefreshCcw, Trash2 } from 'lucide-vue-next';
     import { computed, reactive, ref } from 'vue';
     import { Button } from '@/components/ui/button';
-    import { ButtonGroup } from '@/components/ui/button-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -395,7 +394,6 @@
         useGeneralSettingsStore,
         useGroupStore,
         useInstanceStore,
-        useLaunchStore,
         useNotificationsSettingsStore,
         usePhotonStore,
         useUiStore,
@@ -405,7 +403,7 @@
         useVrcxStore,
         useWorldStore
     } from '../../../../stores';
-    import { authRequest, miscRequest } from '../../../../api';
+    import { authRequest, queryRequest } from '../../../../api';
     import { openExternalLink } from '../../../../shared/utils';
 
     import AvatarProviderDialog from '../../dialogs/AvatarProviderDialog.vue';
@@ -420,10 +418,9 @@
     const advancedSettingsStore = useAdvancedSettingsStore();
     const notificationsSettingsStore = useNotificationsSettingsStore();
     const { updateVRLastLocation, updateOpenVR } = useVrStore();
-    const { showLaunchOptions } = useLaunchStore();
     const { enablePrimaryPasswordChange } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
-    const { clearVRCXCache, showRegistryBackupDialog } = useVrcxStore();
+    const { clearVRCXCache } = useVrcxStore();
     const { showConsole } = useUiStore();
     const { disableGameLogDialog } = useGameLogStore();
 
@@ -576,7 +573,7 @@
      *
      */
     function getVisits() {
-        miscRequest.getVisits().then((args) => {
+        queryRequest.fetch('visits').then((args) => {
             visits.value = args.json;
         });
     }
