@@ -18,7 +18,7 @@ import {
 } from '../api';
 import { database } from '../service/database';
 import { groupDialogFilterOptions } from '../shared/constants/';
-import { patchGroupFromEvent } from '../query';
+import { patchGroupFromEvent } from '../queries';
 import { useGameStore } from './game';
 import { useInstanceStore } from './instance';
 import { useModalStore } from './modal';
@@ -170,7 +170,7 @@ export const useGroupStore = defineStore('Group', () => {
         D.calendar = [];
         const loadGroupRequest = groupRequest.getGroup({
             groupId,
-            includeRoles: false
+            includeRoles: true
         });
 
         loadGroupRequest
@@ -208,7 +208,7 @@ export const useGroupStore = defineStore('Group', () => {
                         }
                     });
                     instanceStore.applyGroupDialogInstances();
-                    getGroupDialogGroup(groupId);
+                    getGroupDialogGroup(groupId, ref);
                 }
             });
     }
@@ -457,17 +457,25 @@ export const useGroupStore = defineStore('Group', () => {
     /**
      *
      * @param groupId
+     * @param {object} [existingRef]
+     * @returns { Promise<object> }
      */
-    function getGroupDialogGroup(groupId) {
+    function getGroupDialogGroup(groupId, existingRef) {
         const D = groupDialog.value;
         D.isGetGroupDialogGroupLoading = false;
-        return groupRequest
-            .getCachedGroup({ groupId, includeRoles: true })
+
+        const refPromise = existingRef
+            ? Promise.resolve({ ref: existingRef })
+            : groupRequest
+                  .getCachedGroup({ groupId, includeRoles: true })
+                  .then((args) => ({ ref: applyGroup(args.json), args }));
+
+        return refPromise
             .catch((err) => {
                 throw err;
             })
-            .then((args) => {
-                const ref = applyGroup(args.json);
+            .then((result) => {
+                const ref = result.ref;
                 if (D.id === ref.id) {
                     D.loading = false;
                     D.ref = ref;
@@ -537,7 +545,7 @@ export const useGroupStore = defineStore('Group', () => {
                         });
                 }
                 nextTick(() => (D.isGetGroupDialogGroupLoading = false));
-                return args;
+                return result.args || result;
             });
     }
 

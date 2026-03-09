@@ -16,7 +16,7 @@ import {
 } from '../shared/utils';
 import { instanceRequest, miscRequest, worldRequest } from '../api';
 import { database } from '../service/database';
-import { patchWorldFromEvent } from '../query';
+import { patchWorldFromEvent } from '../queries';
 import { processBulk } from '../service/request';
 import { useFavoriteStore } from './favorite';
 import { useInstanceStore } from './instance';

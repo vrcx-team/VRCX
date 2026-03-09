@@ -36,7 +36,7 @@ import { AppDebug } from '../service/appConfig';
 import { createUserEventCoordinator } from './coordinators/userEventCoordinator';
 import { createUserSessionCoordinator } from './coordinators/userSessionCoordinator';
 import { database } from '../service/database';
-import { patchUserFromEvent } from '../query';
+import { patchUserFromEvent } from '../queries';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAuthStore } from './auth';
 import { useAvatarStore } from './avatar';

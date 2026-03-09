@@ -5,7 +5,7 @@ import {
     fetchWithEntityPolicy,
     patchAndRefetchActiveQuery,
     queryKeys
-} from '../query';
+} from '../queries';
 
 const worldReq = {
     /**

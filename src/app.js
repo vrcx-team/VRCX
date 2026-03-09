@@ -9,7 +9,7 @@ import {
     initSentry
 } from './plugin';
 import { initPiniaPlugins, pinia } from './stores';
-import { queryClient } from './query';
+import { queryClient } from './queries';
 
 import App from './App.vue';
 

@@ -12,7 +12,7 @@ import { createAuthAutoLoginCoordinator } from './coordinators/authAutoLoginCoor
 import { createAuthCoordinator } from './coordinators/authCoordinator';
 import { database } from '../service/database';
 import { escapeTag } from '../shared/utils';
-import { queryClient } from '../query';
+import { queryClient } from '../queries';
 import { request } from '../service/request';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useGeneralSettingsStore } from './settings/general';

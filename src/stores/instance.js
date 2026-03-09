@@ -33,7 +33,7 @@ import {
     instanceContentSettings
 } from '../shared/constants';
 import { database } from '../service/database';
-import { patchInstanceFromEvent } from '../query';
+import { patchInstanceFromEvent } from '../queries';
 import { resolveRef } from '../shared/utils/resolveRef';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFriendStore } from './friend';

@@ -23,7 +23,7 @@ vi.mock('../../stores', () => ({
     })
 }));
 
-vi.mock('../../query', () => ({
+vi.mock('../../queries', () => ({
     entityQueryPolicies: {
         favoriteCollection: {
             staleTime: 60000,

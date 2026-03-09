@@ -22,7 +22,11 @@ function getComparableEntity(data) {
     if (data.ref && typeof data.ref === 'object') {
         return data.ref;
     }
-    if (data.json && typeof data.json === 'object' && !Array.isArray(data.json)) {
+    if (
+        data.json &&
+        typeof data.json === 'object' &&
+        !Array.isArray(data.json)
+    ) {
         return data.json;
     }
     return data;
@@ -137,8 +141,10 @@ export async function patchAndRefetchActiveQuery({ queryKey, nextData }) {
  */
 export function patchUserFromEvent(ref) {
     if (!ref?.id) return;
+    const queryKey = queryKeys.user(ref.id);
+    if (!queryClient.getQueryData(queryKey)) return;
     patchQueryDataWithRecency({
-        queryKey: queryKeys.user(ref.id),
+        queryKey,
         nextData: {
             cache: false,
             json: ref,
@@ -153,8 +159,10 @@ export function patchUserFromEvent(ref) {
  */
 export function patchAvatarFromEvent(ref) {
     if (!ref?.id) return;
+    const queryKey = queryKeys.avatar(ref.id);
+    if (!queryClient.getQueryData(queryKey)) return;
     patchQueryDataWithRecency({
-        queryKey: queryKeys.avatar(ref.id),
+        queryKey,
         nextData: {
             cache: false,
             json: ref,
@@ -169,8 +177,10 @@ export function patchAvatarFromEvent(ref) {
  */
 export function patchWorldFromEvent(ref) {
     if (!ref?.id) return;
+    const queryKey = queryKeys.world(ref.id);
+    if (!queryClient.getQueryData(queryKey)) return;
     patchQueryDataWithRecency({
-        queryKey: queryKeys.world(ref.id),
+        queryKey,
         nextData: {
             cache: false,
             json: ref,
@@ -193,15 +203,21 @@ export function patchGroupFromEvent(ref) {
         ref
     };
 
-    patchQueryDataWithRecency({
-        queryKey: queryKeys.group(ref.id, false),
-        nextData
-    });
+    const keyFalse = queryKeys.group(ref.id, false);
+    if (queryClient.getQueryData(keyFalse)) {
+        patchQueryDataWithRecency({
+            queryKey: keyFalse,
+            nextData
+        });
+    }
 
-    patchQueryDataWithRecency({
-        queryKey: queryKeys.group(ref.id, true),
-        nextData
-    });
+    const keyTrue = queryKeys.group(ref.id, true);
+    if (queryClient.getQueryData(keyTrue)) {
+        patchQueryDataWithRecency({
+            queryKey: keyTrue,
+            nextData
+        });
+    }
 }
 
 /**
@@ -213,8 +229,11 @@ export function patchInstanceFromEvent(ref) {
     const [worldId, instanceId] = String(ref.id).split(':');
     if (!worldId || !instanceId) return;
 
+    const queryKey = queryKeys.instance(worldId, instanceId);
+    if (!queryClient.getQueryData(queryKey)) return;
+
     patchQueryDataWithRecency({
-        queryKey: queryKeys.instance(worldId, instanceId),
+        queryKey,
         nextData: {
             cache: false,
             json: ref,

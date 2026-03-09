@@ -18,7 +18,7 @@ vi.mock('../../stores', () => ({
     })
 }));
 
-vi.mock('../../query', () => ({
+vi.mock('../../queries', () => ({
     entityQueryPolicies: {
         group: {
             staleTime: 60000,

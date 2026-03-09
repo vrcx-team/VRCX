@@ -17,7 +17,7 @@ import {
 import { avatarRequest, miscRequest } from '../api';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
-import { patchAvatarFromEvent } from '../query';
+import { patchAvatarFromEvent } from '../queries';
 import { processBulk } from '../service/request';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
