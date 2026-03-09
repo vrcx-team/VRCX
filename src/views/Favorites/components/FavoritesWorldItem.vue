@@ -2,75 +2,82 @@
     <ContextMenu>
         <ContextMenuTrigger as-child>
             <div :class="cardClasses" @click="$emit('click')">
-                <template v-if="favorite.ref">
+                <template v-if="localFavRef?.name">
                     <div class="favorites-search-card__content">
                         <div
                             class="favorites-search-card__avatar"
-                            :class="{ 'is-empty': !favorite.ref.thumbnailImageUrl }"
+                            :class="{ 'is-empty': !localFavRef.thumbnailImageUrl }"
                             v-once>
                             <img
-                                v-if="favorite.ref.thumbnailImageUrl"
+                                v-if="localFavRef.thumbnailImageUrl"
                                 :src="smallThumbnail"
                                 loading="lazy"
                                 decoding="async"
                                 fetchpriority="low" />
                         </div>
                         <div class="favorites-search-card__detail">
-                            <div class="favorites-search-card__title">
-                                <span class="name text-sm">{{ props.favorite.ref.name }}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="name text-sm">{{ localFavRef.name }}</span>
                                 <span
-                                    v-if="favorite.deleted || favorite.ref.releaseStatus === 'private'"
-                                    class="favorites-search-card__badges">
+                                    v-if="
+                                        !isLocalFavorite &&
+                                        (favorite.deleted || localFavRef.releaseStatus === 'private')
+                                    "
+                                    class="inline-flex items-center gap-1 text-sm">
                                     <AlertTriangle
                                         v-if="favorite.deleted"
                                         :title="t('view.favorite.unavailable_tooltip')"
                                         class="h-4 w-4" />
                                     <Lock
-                                        v-if="favorite.ref.releaseStatus === 'private'"
+                                        v-if="localFavRef.releaseStatus === 'private'"
                                         :title="t('view.favorite.private')"
                                         class="h-4 w-4" />
                                 </span>
                             </div>
                             <span class="text-xs text-muted-foreground">
-                                {{ props.favorite.ref.authorName }}
-                                <template v-if="props.favorite.ref.occupants">
-                                    ({{ props.favorite.ref.occupants }})
-                                </template>
+                                {{ localFavRef.authorName }}
+                                <template v-if="localFavRef.occupants"> ({{ localFavRef.occupants }}) </template>
                             </span>
                         </div>
                     </div>
                     <div class="favorites-search-card__actions">
                         <template v-if="editMode">
                             <div
-                                class="favorites-search-card__action favorites-search-card__action--checkbox"
+                                v-if="!isLocalFavorite"
+                                class="flex justify-end w-full favorites-search-card__action--checkbox"
                                 @click.stop>
                                 <Checkbox v-model="isSelected" />
                             </div>
-                            <div class="favorites-search-card__action-group">
-                                <div
-                                    class="favorites-search-card__action favorites-search-card__action--full"
-                                    @click.stop>
+                            <div class="flex gap-[var(--favorites-card-action-group-gap,8px)] w-full">
+                                <div class="flex justify-end w-full flex-1" @click.stop>
                                     <FavoritesMoveDropdown
                                         :favoriteGroup="favoriteWorldGroups"
                                         :currentFavorite="props.favorite"
                                         :currentGroup="group"
-                                        class="favorites-search-card__dropdown"
+                                        class="w-full"
+                                        :is-local-favorite="isLocalFavorite"
                                         type="world" />
                                 </div>
-                                <div class="favorites-search-card__action">
+                                <div class="flex justify-end w-full">
                                     <Button
                                         size="icon-sm"
-                                        variant="ghost"
+                                        :variant="
+                                            isLocalFavorite && shiftHeld
+                                                ? 'destructive'
+                                                : isLocalFavorite
+                                                  ? 'outline'
+                                                  : 'ghost'
+                                        "
                                         class="rounded-full text-xs h-6 w-6"
-                                        @click.stop="handleDeleteFavorite">
+                                        @click.stop="handlePrimaryDeleteAction">
                                         <Trash2 class="h-4 w-4" />
                                     </Button>
                                 </div>
                             </div>
                         </template>
                         <template v-else>
-                            <div class="favorites-search-card__action-group">
-                                <div class="favorites-search-card__action">
+                            <div class="flex gap-[var(--favorites-card-action-group-gap,8px)] w-full">
+                                <div class="flex justify-end w-full">
                                     <TooltipWrapper side="top" :content="inviteOrLaunchText">
                                         <Button
                                             size="icon-sm"
@@ -81,7 +88,7 @@
                                         /></Button>
                                     </TooltipWrapper>
                                 </div>
-                                <div class="favorites-search-card__action">
+                                <div class="flex justify-end w-full">
                                     <TooltipWrapper
                                         v-if="showDangerUnfavorite"
                                         side="top"
@@ -117,17 +124,17 @@
                         <div class="favorites-search-card__detail" v-once>
                             <span>{{ favorite.name || favorite.id }}</span>
                             <AlertTriangle
-                                v-if="favorite.deleted"
+                                v-if="!isLocalFavorite && favorite.deleted"
                                 :title="t('view.favorite.unavailable_tooltip')"
                                 class="h-4 w-4" />
                         </div>
                     </div>
                     <div class="favorites-search-card__actions">
-                        <div class="favorites-search-card__action">
+                        <div class="flex justify-end w-full">
                             <Button
                                 class="rounded-full text-xs h-6 w-6"
                                 size="icon-sm"
-                                variant="ghost"
+                                :variant="isLocalFavorite ? 'outline' : 'ghost'"
                                 @click.stop="handleDeleteFavorite">
                                 <Trash2 class="h-4 w-4" />
                             </Button>
@@ -184,6 +191,8 @@
         set: (value) => emit('toggle-select', value)
     });
 
+    const localFavRef = computed(() => (props.isLocalFavorite ? props.favorite : props.favorite?.ref));
+
     const showDangerUnfavorite = computed(() => {
         return shiftHeld.value;
     });
@@ -198,8 +207,8 @@
     ]);
 
     const smallThumbnail = computed(() => {
-        const url = props.favorite.ref.thumbnailImageUrl?.replace('256', '128');
-        return url || props.favorite.ref.thumbnailImageUrl;
+        const url = localFavRef.value?.thumbnailImageUrl?.replace('256', '128');
+        return url || localFavRef.value?.thumbnailImageUrl;
     });
 
     const inviteOrLaunchText = computed(() => {
@@ -207,6 +216,21 @@
             ? t('dialog.world.actions.new_instance_and_open_ingame')
             : t('dialog.world.actions.new_instance_and_self_invite');
     });
+
+    /**
+     * @returns {void}
+     */
+    function handlePrimaryDeleteAction() {
+        if (props.isLocalFavorite) {
+            if (shiftHeld.value) {
+                emit('remove-local-world-favorite', props.favorite.id, props.group);
+                return;
+            }
+            showFavoriteDialog('world', props.favorite.id);
+            return;
+        }
+        deleteFavorite(props.favorite.id);
+    }
 
     /**
      *
@@ -237,13 +261,6 @@
     }
 </script>
 
-<style scoped>
-    .favorites-search-card img {
-        filter: saturate(0.8) contrast(0.8);
-        transition: filter 0.2s ease;
-    }
-
-    .favorites-search-card:hover img {
-        filter: saturate(1) contrast(1);
-    }
+<style>
+    @import './favorites-card.css';
 </style>

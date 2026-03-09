@@ -13,7 +13,7 @@
                                 fetchpriority="low" />
                         </div>
                         <div class="favorites-search-card__detail">
-                            <div class="favorites-search-card__title">
+                            <div class="flex items-center gap-2">
                                 <span class="name text-sm">{{ props.favorite.name }}</span>
                             </div>
                             <span class="text-xs">
@@ -24,18 +24,16 @@
                     </div>
                     <div class="favorites-search-card__actions">
                         <template v-if="editMode">
-                            <div class="favorites-search-card__action-group">
-                                <div
-                                    class="favorites-search-card__action favorites-search-card__action--full"
-                                    @click.stop>
+                            <div class="flex gap-[var(--favorites-card-action-group-gap,8px)] w-full">
+                                <div class="flex justify-end w-full flex-1" @click.stop>
                                     <FavoritesMoveDropdown
                                         :favoriteGroup="favoriteWorldGroups"
                                         :currentFavorite="props.favorite"
-                                        class="favorites-search-card__dropdown"
+                                        class="w-full"
                                         isLocalFavorite
                                         type="world" />
                                 </div>
-                                <div class="favorites-search-card__action">
+                                <div class="flex justify-end w-full">
                                     <Button
                                         size="icon-sm"
                                         :variant="shiftHeld ? 'destructive' : 'outline'"
@@ -47,8 +45,8 @@
                             </div>
                         </template>
                         <template v-else>
-                            <div class="favorites-search-card__action-group">
-                                <div class="favorites-search-card__action">
+                            <div class="flex gap-[var(--favorites-card-action-group-gap,8px)] w-full">
+                                <div class="flex justify-end w-full">
                                     <TooltipWrapper side="top" :content="inviteOrLaunchText">
                                         <Button
                                             size="icon-sm"
@@ -59,7 +57,7 @@
                                         /></Button>
                                     </TooltipWrapper>
                                 </div>
-                                <div class="favorites-search-card__action">
+                                <div class="flex justify-end w-full">
                                     <TooltipWrapper
                                         v-if="showDangerUnfavorite"
                                         side="top"
@@ -97,7 +95,7 @@
                         </div>
                     </div>
                     <div class="favorites-search-card__actions">
-                        <div class="favorites-search-card__action">
+                        <div class="flex justify-end w-full">
                             <Button
                                 class="rounded-full text-xs h-6 w-6"
                                 size="icon-sm"
@@ -173,7 +171,7 @@
     });
 
     /**
-     *
+     * @returns {void}
      */
     function handlePrimaryDeleteAction() {
         if (shiftHeld.value) {
@@ -200,13 +198,6 @@
     }
 </script>
 
-<style scoped>
-    .favorites-search-card img {
-        filter: saturate(0.8) contrast(0.8);
-        transition: filter 0.2s ease;
-    }
-
-    .favorites-search-card:hover img {
-        filter: saturate(1) contrast(1);
-    }
+<style>
+    @import './favorites-card.css';
 </style>

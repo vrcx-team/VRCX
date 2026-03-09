@@ -1,98 +1,37 @@
 <template>
     <div class="x-container">
-        <div class="favorites-page">
-            <div class="favorites-toolbar">
-                <div>
-                    <Select :model-value="sortFavorites" @update:modelValue="handleSortFavoritesChange">
-                        <SelectTrigger size="sm" class="favorites-toolbar__select">
-                            <span class="flex items-center gap-2">
-                                <ArrowUpDown class="h-4 w-4" />
-                                <SelectValue
-                                    :placeholder="t('view.settings.appearance.appearance.sort_favorite_by_name')" />
-                            </span>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem
-                                    :value="false"
-                                    :text-value="t('view.settings.appearance.appearance.sort_favorite_by_name')">
-                                    {{ t('view.settings.appearance.appearance.sort_favorite_by_name') }}
-                                </SelectItem>
-                                <SelectItem
-                                    :value="true"
-                                    :text-value="t('view.settings.appearance.appearance.sort_favorite_by_date')">
-                                    {{ t('view.settings.appearance.appearance.sort_favorite_by_date') }}
-                                </SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div class="favorites-toolbar__right">
-                    <InputGroupSearch
-                        v-model="worldFavoriteSearch"
-                        class="favorites-toolbar__search"
-                        :placeholder="t('view.favorite.worlds.search')"
-                        @input="searchWorldFavorites" />
-                    <DropdownMenu v-model:open="worldToolbarMenuOpen">
-                        <DropdownMenuTrigger as-child>
-                            <Button class="rounded-full" size="icon" variant="ghost"><Ellipsis /></Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent class="favorites-dropdown">
-                            <li class="favorites-dropdown__control" @click.stop>
-                                <div class="favorites-dropdown__control-header">
-                                    <span>Scale</span>
-                                    <span class="favorites-dropdown__control-value">
-                                        {{ worldCardScalePercent }}%
-                                    </span>
-                                </div>
-                                <Slider
-                                    v-model="worldCardScaleValue"
-                                    class="favorites-dropdown__slider"
-                                    :min="worldCardScaleSlider.min"
-                                    :max="worldCardScaleSlider.max"
-                                    :step="worldCardScaleSlider.step" />
-                            </li>
-                            <li class="favorites-dropdown__control" @click.stop>
-                                <div class="favorites-dropdown__control-header">
-                                    <span>Spacing</span>
-                                    <span class="favorites-dropdown__control-value">
-                                        {{ worldCardSpacingPercent }}%
-                                    </span>
-                                </div>
-                                <Slider
-                                    v-model="worldCardSpacingValue"
-                                    class="favorites-dropdown__slider"
-                                    :min="worldCardSpacingSlider.min"
-                                    :max="worldCardSpacingSlider.max"
-                                    :step="worldCardSpacingSlider.step" />
-                            </li>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem @click="handleWorldImportClick">
-                                {{ t('view.favorite.import') }}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem @click="handleWorldExportClick">
-                                {{ t('view.favorite.export') }}
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </div>
+        <div class="flex flex-col h-full min-h-0 pb-0">
+            <FavoritesToolbar
+                :sort-favorites="sortFavorites"
+                v-model:search-query="worldFavoriteSearch"
+                :search-placeholder="t('view.favorite.worlds.search')"
+                v-model:toolbar-menu-open="worldToolbarMenuOpen"
+                v-model:card-scale-value="worldCardScaleValue"
+                :card-scale-percent="worldCardScalePercent"
+                :card-scale-slider="worldCardScaleSlider"
+                v-model:card-spacing-value="worldCardSpacingValue"
+                :card-spacing-percent="worldCardSpacingPercent"
+                :card-spacing-slider="worldCardSpacingSlider"
+                @update:sort-favorites="handleSortFavoritesChange"
+                @search="searchWorldFavorites"
+                @import="handleWorldImportClick"
+                @export="handleWorldExportClick" />
             <ResizablePanelGroup
-                ref="worldSplitterGroupRef"
+                ref="splitterGroupRef"
                 direction="horizontal"
-                class="favorites-splitter"
-                @layout="handleWorldSplitterLayout">
+                class="flex-1 min-h-0 favorites-splitter"
+                @layout="handleLayout">
                 <ResizablePanel
-                    ref="worldSplitterPanelRef"
-                    :default-size="worldSplitterDefaultSize"
-                    :min-size="worldSplitterMinSize"
-                    :max-size="worldSplitterMaxSize"
+                    ref="splitterPanelRef"
+                    :default-size="splitterDefaultSize"
+                    :min-size="splitterMinSize"
+                    :max-size="splitterMaxSize"
                     :collapsed-size="0"
                     collapsible
                     :order="1">
-                    <div class="favorites-groups-panel">
-                        <div class="group-section">
-                            <div class="group-section__header">
+                    <div class="h-full pr-2 overflow-auto flex flex-col gap-3">
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center justify-between font-semibold text-sm mb-[9px]">
                                 <span>{{ t('view.favorite.worlds.vrchat_favorites') }}</span>
                                 <TooltipWrapper side="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
                                     <Button
@@ -106,7 +45,7 @@
                                     </Button>
                                 </TooltipWrapper>
                             </div>
-                            <div class="group-section__list">
+                            <div class="flex flex-col gap-2">
                                 <template v-if="favoriteWorldGroups.length">
                                     <div
                                         v-for="group in favoriteWorldGroups"
@@ -117,15 +56,13 @@
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]"
                                         @click="handleGroupClick('remote', group.key)">
-                                        <div class="group-item__top">
-                                            <span class="group-item__name">{{ group.displayName }}</span>
-                                            <span class="group-item__count"
-                                                >{{ group.count }}/{{ group.capacity }}</span
-                                            >
+                                        <div class="flex items-start justify-between mb-1 text-[13px]">
+                                            <span class="font-semibold">{{ group.displayName }}</span>
+                                            <span class="text-xs">{{ group.count }}/{{ group.capacity }}</span>
                                         </div>
-                                        <div class="group-item__bottom">
-                                            <span class="group-item__visibility">
-                                                <span class="group-item__visibility-text">{{
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="flex items-center gap-1.5">
+                                                <span class="text-[11px] text-muted-foreground">{{
                                                     t(`view.favorite.visibility.${group.visibility}`)
                                                 }}</span>
                                             </span>
@@ -187,22 +124,22 @@
                                         :key="group.key"
                                         :class="[
                                             'group-item hover:shadow-sm',
-                                            'group-item--placeholder',
+                                            'pointer-events-none opacity-70',
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]">
-                                        <div class="group-item__top">
-                                            <span class="group-item__name">{{ group.displayName }}</span>
-                                            <span class="group-item__count">--/--</span>
+                                        <div class="flex items-start justify-between mb-1 text-[13px]">
+                                            <span class="font-semibold">{{ group.displayName }}</span>
+                                            <span class="text-xs">--/--</span>
                                         </div>
-                                        <div class="group-item__bottom">
-                                            <div class="group-item__placeholder-tag rounded-full"></div>
+                                        <div class="flex items-center justify-between gap-2">
+                                            <div class="w-16 h-[18px] rounded-full"></div>
                                         </div>
                                     </div>
                                 </template>
                             </div>
                         </div>
-                        <div class="group-section">
-                            <div class="group-section__header">
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center justify-between font-semibold text-sm mb-[9px]">
                                 <span>{{ t('view.favorite.worlds.local_favorites') }}</span>
                                 <Button
                                     class="rounded-full"
@@ -217,7 +154,7 @@
                                     {{ t('view.favorite.worlds.cancel_refresh') }}
                                 </Button>
                             </div>
-                            <div class="group-section__list">
+                            <div class="flex flex-col gap-2">
                                 <template v-if="localWorldFavoriteGroups.length">
                                     <div
                                         v-for="group in localWorldFavoriteGroups"
@@ -227,13 +164,11 @@
                                             { 'is-active': !hasSearchInput && isGroupActive('local', group) }
                                         ]"
                                         @click="handleGroupClick('local', group)">
-                                        <div class="group-item__top">
-                                            <span class="group-item__name">{{ group }}</span>
-                                            <div class="group-item__right">
-                                                <span class="group-item__count">{{
-                                                    localWorldFavGroupLength(group)
-                                                }}</span>
-                                                <div class="group-item__bottom">
+                                        <div class="flex items-start justify-between mb-1 text-[13px]">
+                                            <span class="font-semibold">{{ group }}</span>
+                                            <div class="flex items-center flex-col">
+                                                <span class="text-xs">{{ localWorldFavGroupLength(group) }}</span>
+                                                <div class="flex items-center justify-between gap-2">
                                                     <DropdownMenu
                                                         :open="activeGroupMenu === localGroupMenuKey(group)"
                                                         @update:open="
@@ -264,12 +199,12 @@
                                         </div>
                                     </div>
                                 </template>
-                                <div v-else class="group-empty">
+                                <div v-else class="text-center text-xs py-3">
                                     <DataTableEmpty type="nodata" />
                                 </div>
                                 <div
                                     v-if="!isCreatingLocalGroup"
-                                    class="group-item hover:shadow-sm group-item--new"
+                                    class="group-item hover:shadow-sm border-dashed flex items-center justify-center gap-2 text-sm"
                                     @click="startLocalGroupCreation">
                                     <Plus />
                                     <span>{{ t('view.favorite.worlds.new_group') }}</span>
@@ -279,7 +214,7 @@
                                     ref="newLocalGroupInput"
                                     v-model="newLocalGroupName"
                                     size="sm"
-                                    class="group-item__input"
+                                    class="w-full"
                                     :placeholder="t('view.favorite.worlds.new_group')"
                                     @keyup.enter="handleLocalGroupCreationConfirm"
                                     @keyup.esc="cancelLocalGroupCreation"
@@ -288,11 +223,20 @@
                         </div>
                     </div>
                 </ResizablePanel>
-                <ResizableHandle @dragging="setWorldSplitterDragging" />
+                <ResizableHandle @dragging="splitterSetDragging" />
                 <ResizablePanel :order="2">
-                    <div class="favorites-content">
-                        <div class="favorites-content__header">
-                            <div class="favorites-content__title">
+                    <div class="flex flex-col h-full min-h-0 pl-[26px]">
+                        <FavoritesContentHeader
+                            v-model:edit-mode="worldEditMode"
+                            :edit-mode-disabled="isSearchActive"
+                            :edit-mode-visible="worldEditMode && !isSearchActive"
+                            :is-all-selected="isAllWorldsSelected"
+                            :has-selection="hasWorldSelection"
+                            @toggle-select-all="toggleSelectAllWorlds"
+                            @clear-selection="clearSelectedWorlds"
+                            @copy-selection="copySelectedWorlds"
+                            @bulk-unfavorite="showWorldBulkUnfavoriteSelectionConfirm">
+                            <template #title>
                                 <span v-if="isSearchActive">{{ t('view.favorite.worlds.search') }}</span>
                                 <template v-else-if="activeRemoteGroup">
                                     <span
@@ -306,47 +250,11 @@
                                     <small>{{ activeLocalGroupCount }}</small>
                                 </span>
                                 <span v-else>No Group Selected</span>
-                            </div>
-                            <div class="favorites-content__edit">
-                                <span>{{ t('view.favorite.edit_mode') }}</span>
-                                <Switch v-model="worldEditMode" :disabled="isSearchActive" />
-                            </div>
-                        </div>
-                        <div class="favorites-content__edit-actions">
-                            <div v-if="worldEditMode && !isSearchActive" class="favorites-content__actions">
-                                <Button size="sm" variant="outline" @click="toggleSelectAllWorlds">
-                                    {{
-                                        isAllWorldsSelected
-                                            ? t('view.favorite.deselect_all')
-                                            : t('view.favorite.select_all')
-                                    }}
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    variant="secondary"
-                                    :disabled="!hasWorldSelection"
-                                    @click="clearSelectedWorlds">
-                                    {{ t('view.favorite.clear') }}
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    :disabled="!hasWorldSelection"
-                                    @click="copySelectedWorlds">
-                                    {{ t('view.favorite.copy') }}
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    :disabled="!hasWorldSelection"
-                                    @click="showWorldBulkUnfavoriteSelectionConfirm">
-                                    {{ t('view.favorite.bulk_unfavorite') }}
-                                </Button>
-                            </div>
-                        </div>
-                        <div ref="worldFavoritesContainerRef" class="favorites-content__list">
+                            </template>
+                        </FavoritesContentHeader>
+                        <div ref="worldFavoritesContainerRef" class="flex-1 min-h-0">
                             <template v-if="isSearchActive">
-                                <div class="favorites-content__scroll favorites-content__scroll--native">
+                                <div class="h-full pr-2 overflow-auto">
                                     <div
                                         v-if="worldFavoriteSearchResults.length"
                                         class="favorites-search-grid"
@@ -377,7 +285,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div v-else class="favorites-empty">
+                                    <div v-else class="flex items-center justify-center text-[13px] h-full">
                                         <DataTableEmpty type="nomatch" />
                                     </div>
                                 </div>
@@ -385,7 +293,7 @@
                             <template v-else>
                                 <div
                                     v-if="activeRemoteGroup && isRemoteGroupSelected"
-                                    class="favorites-content__scroll favorites-content__scroll--native">
+                                    class="h-full pr-2 overflow-auto">
                                     <template v-if="currentRemoteFavorites.length">
                                         <div
                                             class="favorites-card-list"
@@ -401,14 +309,14 @@
                                                 @click="showWorldDialog(favorite.id)" />
                                         </div>
                                     </template>
-                                    <div v-else class="favorites-empty">
+                                    <div v-else class="flex items-center justify-center text-[13px] h-full">
                                         <DataTableEmpty type="nodata" />
                                     </div>
                                 </div>
                                 <div
                                     v-else-if="activeLocalGroupName && isLocalGroupSelected"
                                     ref="localFavoritesViewportRef"
-                                    class="favorites-content__scroll favorites-content__scroll--native favorites-content__scroll--local focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1"
+                                    class="h-full pr-2 overflow-auto favorites-content__scroll--local focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1"
                                     data-reka-scroll-area-viewport=""
                                     data-slot="scroll-area-viewport"
                                     tabindex="0"
@@ -425,12 +333,13 @@
                                                     :ref="localVirtualizer.measureElement"
                                                     :style="{ transform: `translateY(${item.virtualItem.start}px)` }">
                                                     <div class="favorites-card-virtual-row-grid">
-                                                        <FavoritesWorldLocalItem
+                                                        <FavoritesWorldItem
                                                             v-for="favorite in getLocalRowItems(item.row)"
                                                             :key="favorite.key"
                                                             :group="activeLocalGroupName"
                                                             :favorite="favorite.favorite"
                                                             :edit-mode="worldEditMode"
+                                                            is-local-favorite
                                                             @remove-local-world-favorite="removeLocalWorldFavorite"
                                                             @click="showWorldDialog(favorite.favorite.id)" />
                                                     </div>
@@ -438,11 +347,11 @@
                                             </template>
                                         </div>
                                     </template>
-                                    <div v-else class="favorites-empty">
+                                    <div v-else class="flex items-center justify-center text-[13px] h-full">
                                         <DataTableEmpty type="nodata" />
                                     </div>
                                 </div>
-                                <div v-else class="favorites-empty">
+                                <div v-else class="flex items-center justify-center text-[13px] h-full">
                                     <DataTableEmpty type="nodata" />
                                 </div>
                             </template>
@@ -456,11 +365,11 @@
 </template>
 
 <script setup>
-    import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-    import { ArrowUpDown, Ellipsis, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
-    import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
+    import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+    import { Ellipsis, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { DataTableEmpty } from '@/components/ui/data-table';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -473,32 +382,24 @@
         DropdownMenuContent,
         DropdownMenuItem,
         DropdownMenuPortal,
-        DropdownMenuSeparator,
         DropdownMenuSub,
         DropdownMenuSubContent,
         DropdownMenuSubTrigger,
         DropdownMenuTrigger
     } from '../../components/ui/dropdown-menu';
-    import {
-        Select,
-        SelectContent,
-        SelectGroup,
-        SelectItem,
-        SelectTrigger,
-        SelectValue
-    } from '../../components/ui/select';
     import { useAppearanceSettingsStore, useFavoriteStore, useModalStore, useWorldStore } from '../../stores';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { favoriteRequest, worldRequest } from '../../api';
-    import { Slider } from '../../components/ui/slider';
-    import { Switch } from '../../components/ui/switch';
     import { debounce } from '../../shared/utils';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
+    import { useFavoritesGroupPanel } from './composables/useFavoritesGroupPanel.js';
+    import { useFavoritesLocalGroups } from './composables/useFavoritesLocalGroups.js';
+    import { useFavoritesSplitter } from './composables/useFavoritesSplitter.js';
 
+    import FavoritesContentHeader from './components/FavoritesContentHeader.vue';
+    import FavoritesToolbar from './components/FavoritesToolbar.vue';
     import FavoritesWorldItem from './components/FavoritesWorldItem.vue';
-    import FavoritesWorldLocalItem from './components/FavoritesWorldLocalItem.vue';
     import WorldExportDialog from './dialogs/WorldExportDialog.vue';
-    import configRepository from '../../service/config.js';
 
     import * as workerTimers from 'worker-timers';
 
@@ -580,42 +481,55 @@
             }
         }
     });
-    const worldGroupVisibilityDotColors = {
-        public: 'bg-green-500',
-        friends: 'bg-sky-500',
-        private: 'bg-red-500'
-    };
+
     const worldGroupVisibilityOptions = ref(['public', 'friends', 'private']);
-    const worldSplitterSize = ref(260);
-    const worldSplitterFallbackWidth = typeof window !== 'undefined' && window.innerWidth ? window.innerWidth : 1200;
-    const worldSplitterGroupRef = ref(null);
-    const worldSplitterPanelRef = ref(null);
-    const worldSplitterWidth = ref(worldSplitterFallbackWidth);
-    const worldSplitterDraggingCount = ref(0);
-    let worldSplitterObserver = null;
+    const {
+        splitterGroupRef,
+        splitterPanelRef,
+        defaultSize: splitterDefaultSize,
+        minSize: splitterMinSize,
+        maxSize: splitterMaxSize,
+        handleLayout,
+        setDragging: splitterSetDragging
+    } = useFavoritesSplitter({ configKey: 'VRCX_FavoritesWorldSplitter' });
     const worldExportDialogVisible = ref(false);
     const worldFavoriteSearch = ref('');
     const worldFavoriteSearchResults = ref([]);
-    const selectedGroup = ref(null);
-    const isCreatingLocalGroup = ref(false);
-    const newLocalGroupName = ref('');
-    const newLocalGroupInput = ref(null);
     const worldGroupPlaceholders = WORLD_GROUP_PLACEHOLDERS;
-    const hasUserSelectedWorldGroup = ref(false);
-    const remoteGroupsResolved = ref(false);
     const refreshingLocalFavorites = ref(false);
     const worker = ref(null);
     const refreshCancelToken = ref(null);
     const worldEditMode = ref(false);
-    const activeGroupMenu = ref(null);
     const worldToolbarMenuOpen = ref(false);
+
+    const {
+        activeGroupMenu,
+        hasUserSelectedGroup: hasUserSelectedWorldGroup,
+        remoteGroupsResolved,
+        isRemoteGroupSelected,
+        isLocalGroupSelected,
+        remoteGroupMenuKey,
+        localGroupMenuKey,
+        activeRemoteGroup,
+        activeLocalGroupName,
+        activeLocalGroupCount,
+        handleGroupMenuVisible,
+        selectGroup,
+        isGroupActive,
+        ensureSelectedGroup
+    } = useFavoritesGroupPanel({
+        remoteGroups: favoriteWorldGroups,
+        localGroups: localWorldFavoriteGroups,
+        localFavorites: localWorldFavorites,
+        clearSelection: () => {
+            selectedFavoriteWorlds.value = [];
+        },
+        placeholders: WORLD_GROUP_PLACEHOLDERS
+    });
+
     const hasWorldSelection = computed(() => selectedFavoriteWorlds.value.length > 0);
     const hasSearchInput = computed(() => worldFavoriteSearch.value.trim().length > 0);
     const isSearchActive = computed(() => worldFavoriteSearch.value.trim().length >= 3);
-    const isRemoteGroupSelected = computed(() => selectedGroup.value?.type === 'remote');
-    const isLocalGroupSelected = computed(() => selectedGroup.value?.type === 'local');
-    const remoteGroupMenuKey = (key) => `remote:${key}`;
-    const localGroupMenuKey = (key) => `local:${key}`;
 
     const closeWorldToolbarMenu = () => {
         worldToolbarMenuOpen.value = false;
@@ -636,116 +550,6 @@
         closeWorldToolbarMenu();
         showExportDialog();
     }
-
-    onBeforeMount(() => {
-        loadWorldSplitterPreferences();
-    });
-
-    /**
-     *
-     */
-    async function loadWorldSplitterPreferences() {
-        const storedSize = await configRepository.getString('VRCX_FavoritesWorldSplitter', '260');
-        const parsedSize = Number(storedSize);
-        if (Number.isFinite(parsedSize) && parsedSize >= 0) {
-            worldSplitterSize.value = parsedSize;
-        }
-    }
-
-    const getWorldSplitterWidthRaw = () => {
-        const element = worldSplitterGroupRef.value?.$el ?? worldSplitterGroupRef.value;
-        const width = element?.getBoundingClientRect?.().width;
-        return Number.isFinite(width) ? width : null;
-    };
-
-    const getWorldSplitterWidth = () => {
-        const width = getWorldSplitterWidthRaw();
-        return Number.isFinite(width) && width > 0 ? width : worldSplitterFallbackWidth;
-    };
-
-    const resolveDraggingPayload = (payload) => {
-        if (typeof payload === 'boolean') {
-            return payload;
-        }
-        if (payload && typeof payload === 'object') {
-            if (typeof payload.detail === 'boolean') {
-                return payload.detail;
-            }
-            if (typeof payload.dragging === 'boolean') {
-                return payload.dragging;
-            }
-        }
-        return Boolean(payload);
-    };
-
-    const setWorldSplitterDragging = (payload) => {
-        const isDragging = resolveDraggingPayload(payload);
-        const next = worldSplitterDraggingCount.value + (isDragging ? 1 : -1);
-        worldSplitterDraggingCount.value = Math.max(0, next);
-    };
-
-    const pxToPercent = (px, groupWidth, min = 0) => {
-        const width = groupWidth ?? getWorldSplitterWidth();
-        return Math.min(100, Math.max(min, (px / width) * 100));
-    };
-
-    const percentToPx = (percent, groupWidth) => (percent / 100) * groupWidth;
-
-    const worldSplitterDefaultSize = computed(() => pxToPercent(worldSplitterSize.value, worldSplitterWidth.value, 0));
-    const worldSplitterMinSize = computed(() => pxToPercent(0, worldSplitterWidth.value, 0));
-    const worldSplitterMaxSize = computed(() => pxToPercent(360, worldSplitterWidth.value, 0));
-
-    const handleWorldSplitterLayout = (sizes) => {
-        if (!Array.isArray(sizes) || !sizes.length) {
-            return;
-        }
-
-        if (worldSplitterDraggingCount.value === 0) {
-            return;
-        }
-
-        const rawWidth = getWorldSplitterWidthRaw();
-        if (!Number.isFinite(rawWidth) || rawWidth <= 0) {
-            return;
-        }
-
-        const nextSize = sizes[0];
-        if (!Number.isFinite(nextSize)) {
-            return;
-        }
-
-        const nextPx = Math.round(percentToPx(nextSize, rawWidth));
-        const clampedPx = Math.min(360, Math.max(0, nextPx));
-        worldSplitterSize.value = clampedPx;
-        configRepository.setString('VRCX_FavoritesWorldSplitter', clampedPx.toString());
-    };
-
-    const updateWorldSplitterWidth = () => {
-        const width = getWorldSplitterWidth();
-        worldSplitterWidth.value = width;
-        const targetSize = pxToPercent(worldSplitterSize.value, width, 0);
-        worldSplitterPanelRef.value?.resize?.(targetSize);
-    };
-
-    onMounted(async () => {
-        await nextTick();
-        updateWorldSplitterWidth();
-        const element = worldSplitterGroupRef.value?.$el ?? worldSplitterGroupRef.value;
-        if (element && typeof ResizeObserver !== 'undefined') {
-            worldSplitterObserver = new ResizeObserver(updateWorldSplitterWidth);
-            worldSplitterObserver.observe(element);
-        }
-    });
-
-    watch(worldSplitterSize, (value, previous) => {
-        if (value === previous) {
-            return;
-        }
-        if (worldSplitterDraggingCount.value > 0) {
-            return;
-        }
-        updateWorldSplitterWidth();
-    });
 
     const groupedWorldFavorites = computed(() => {
         const grouped = {};
@@ -780,28 +584,6 @@
             pushIfNew(favorite.ref);
         });
         return entries;
-    });
-
-    const activeRemoteGroup = computed(() => {
-        if (!isRemoteGroupSelected.value) {
-            return null;
-        }
-        return favoriteWorldGroups.value.find((group) => group.key === selectedGroup.value.key) || null;
-    });
-
-    const activeLocalGroupName = computed(() => {
-        if (!isLocalGroupSelected.value) {
-            return '';
-        }
-        return selectedGroup.value.key;
-    });
-
-    const activeLocalGroupCount = computed(() => {
-        if (!activeLocalGroupName.value) {
-            return 0;
-        }
-        const favorites = localWorldFavorites.value[activeLocalGroupName.value];
-        return favorites ? favorites.length : 0;
     });
 
     const currentRemoteFavorites = computed(() => {
@@ -961,31 +743,6 @@
 
     /**
      *
-     * @param key
-     * @param visible
-     */
-    function handleGroupMenuVisible(key, visible) {
-        if (visible) {
-            activeGroupMenu.value = key;
-            return;
-        }
-        if (activeGroupMenu.value === key) {
-            activeGroupMenu.value = null;
-        }
-    }
-
-    /**
-     *
-     */
-    function ensureSelectedGroup() {
-        if (selectedGroup.value && isGroupAvailable(selectedGroup.value)) {
-            return;
-        }
-        selectDefaultGroup();
-    }
-
-    /**
-     *
      * @param type
      * @param key
      */
@@ -995,75 +752,6 @@
             doSearchWorldFavorites('');
         }
         selectGroup(type, key, { userInitiated: true });
-    }
-
-    /**
-     *
-     */
-    function selectDefaultGroup() {
-        if (!hasUserSelectedWorldGroup.value) {
-            const remoteKey = favoriteWorldGroups.value[0]?.key || worldGroupPlaceholders[0]?.key || null;
-            if (remoteKey) {
-                selectGroup('remote', remoteKey);
-                return;
-            }
-        }
-        if (favoriteWorldGroups.value.length) {
-            selectGroup('remote', favoriteWorldGroups.value[0].key);
-            return;
-        }
-        if (localWorldFavoriteGroups.value.length) {
-            selectGroup('local', localWorldFavoriteGroups.value[0]);
-            return;
-        }
-        selectedGroup.value = null;
-        clearSelectedWorlds();
-    }
-
-    /**
-     *
-     * @param group
-     */
-    function isGroupAvailable(group) {
-        if (!group) {
-            return false;
-        }
-        if (group.type === 'remote') {
-            if (!remoteGroupsResolved.value) {
-                return true;
-            }
-            return favoriteWorldGroups.value.some((item) => item.key === group.key);
-        }
-        if (group.type === 'local') {
-            return localWorldFavoriteGroups.value.includes(group.key);
-        }
-        return false;
-    }
-
-    /**
-     *
-     * @param type
-     * @param key
-     * @param options
-     */
-    function selectGroup(type, key, options = {}) {
-        if (selectedGroup.value?.type === type && selectedGroup.value?.key === key) {
-            return;
-        }
-        selectedGroup.value = { type, key };
-        if (options.userInitiated) {
-            hasUserSelectedWorldGroup.value = true;
-        }
-        clearSelectedWorlds();
-    }
-
-    /**
-     *
-     * @param type
-     * @param key
-     */
-    function isGroupActive(type, key) {
-        return selectedGroup.value?.type === type && selectedGroup.value?.key === key;
     }
 
     /**
@@ -1080,40 +768,17 @@
     /**
      *
      */
-    function startLocalGroupCreation() {
-        if (isCreatingLocalGroup.value) {
-            return;
-        }
-        isCreatingLocalGroup.value = true;
-        newLocalGroupName.value = '';
-        nextTick(() => {
-            newLocalGroupInput.value?.focus?.();
-        });
-    }
-
-    /**
-     *
-     */
-    function cancelLocalGroupCreation() {
-        isCreatingLocalGroup.value = false;
-        newLocalGroupName.value = '';
-    }
-
-    /**
-     *
-     */
-    function handleLocalGroupCreationConfirm() {
-        const name = newLocalGroupName.value.trim();
-        if (!name) {
-            cancelLocalGroupCreation();
-            return;
-        }
-        newLocalWorldFavoriteGroup(name);
-        cancelLocalGroupCreation();
-        nextTick(() => {
-            selectGroup('local', name, { userInitiated: true });
-        });
-    }
+    const {
+        isCreatingLocalGroup,
+        newLocalGroupName,
+        newLocalGroupInput,
+        startLocalGroupCreation,
+        cancelLocalGroupCreation,
+        handleLocalGroupCreationConfirm
+    } = useFavoritesLocalGroups({
+        createGroup: newLocalWorldFavoriteGroup,
+        selectGroup
+    });
 
     /**
      *
@@ -1489,259 +1154,13 @@
 
     onBeforeUnmount(() => {
         cancelLocalWorldRefresh();
-        if (worldSplitterObserver) {
-            worldSplitterObserver.disconnect();
-            worldSplitterObserver = null;
-        }
     });
 </script>
 
-<style scoped>
-    .favorites-page {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        min-height: 0;
-        padding-bottom: 0;
-    }
+<style>
+    @import './favorites-layout.css';
 
-    .favorites-toolbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 12px;
-        flex-wrap: wrap;
-    }
-
-    .favorites-toolbar__select {
-        min-width: 200px;
-    }
-
-    .favorites-toolbar__right {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex: 1;
-    }
-
-    .favorites-toolbar__search {
-        flex: 1;
-    }
-
-    .favorites-splitter {
-        flex: 1;
-        min-height: 0;
-    }
-
-    .favorites-splitter :deep([data-slot='resizable-handle']) {
-        opacity: 0;
-        transition: opacity 0.2s ease;
-    }
-
-    .favorites-splitter :deep([data-slot='resizable-handle']:hover),
-    .favorites-splitter :deep([data-slot='resizable-handle']:focus-visible) {
-        opacity: 1;
-    }
-
-    .favorites-dropdown {
-        padding: 8px;
-    }
-
-    .favorites-groups-panel {
-        height: 100%;
-        padding-right: 8px;
-        overflow: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .group-section {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .group-section__header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-weight: 600;
-        font-size: 14px;
-        margin-bottom: 9px;
-    }
-
-    .group-section__list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .group-item {
-        border-radius: var(--radius-lg);
-        border: 1px solid var(--border);
-        padding: 8px;
-        cursor: pointer;
-        transition: background-color 0.15s ease;
-    }
-
-    .group-item:hover {
-        background-color: var(--accent);
-    }
-
-    .group-item__top {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        margin-bottom: 4px;
-        font-size: 13px;
-    }
-
-    .group-item__name {
-        font-weight: 600;
-    }
-
-    .group-item__right {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-    }
-
-    .group-item__count {
-        font-size: 12px;
-    }
-
-    .group-item__bottom {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-    }
-
-    .group-item__visibility {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .group-item__visibility-text {
-        font-size: 11px;
-        color: var(--muted-foreground);
-    }
-
-    .group-item__visibility-dot {
-        display: none;
-    }
-
-    .group-item--public {
-        border-left: 3px solid var(--visibility-public);
-    }
-
-    .group-item--friends {
-        border-left: 3px solid var(--visibility-friends);
-    }
-
-    .group-item--private {
-        border-left: 3px solid var(--visibility-private);
-    }
-
-    .group-item.is-active {
-    }
-
-    .group-item--placeholder {
-        pointer-events: none;
-        opacity: 0.7;
-    }
-
-    .group-item__placeholder-tag {
-        width: 64px;
-        height: 18px;
-    }
-
-    .group-item--new {
-        border-style: dashed;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        font-size: 14px;
-    }
-
-    .group-item__input {
-        width: 100%;
-    }
-
-    .group-empty {
-        text-align: center;
-        font-size: 12px;
-        padding: 12px 0;
-    }
-
-    .favorites-content {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        min-height: 0;
-        padding-left: 26px;
-    }
-
-    .favorites-content__header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 12px;
-    }
-
-    .favorites-content__title {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        font-size: 16px;
-        font-weight: 600;
-        padding-left: 2px;
-    }
-
-    .favorites-content__title small {
-        font-size: 12px;
-        font-weight: normal;
-    }
-
-    .favorites-content__edit {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
-    }
-
-    .favorites-content__edit-actions {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-    }
-
-    .favorites-content__actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 12px;
-    }
-
-    .favorites-content__list {
-        flex: 1;
-        min-height: 0;
-    }
-
-    .favorites-content__scroll {
-        height: 100%;
-        padding-right: 8px;
-    }
-
-    .favorites-content__scroll--native {
-        overflow: auto;
-    }
-
+    /* World-specific: scrollbar for local favorites */
     .favorites-content__scroll--local {
         scrollbar-width: thin;
         scrollbar-color: var(--border) transparent;
@@ -1762,28 +1181,7 @@
         background-clip: content-box;
     }
 
-    .favorites-search-grid {
-        display: grid;
-        grid-template-columns: repeat(
-            var(--favorites-grid-columns, 1),
-            minmax(var(--favorites-card-min-width, 240px), var(--favorites-card-target-width, 1fr))
-        );
-        gap: var(--favorites-card-gap, 12px);
-        justify-content: start;
-        padding-bottom: 12px;
-    }
-
-    .favorites-card-list {
-        display: grid;
-        grid-template-columns: repeat(
-            var(--favorites-grid-columns, 1),
-            minmax(var(--favorites-card-min-width, 260px), var(--favorites-card-target-width, 1fr))
-        );
-        gap: var(--favorites-card-gap, 12px);
-        justify-content: start;
-        padding: 4px 2px 12px 2px;
-    }
-
+    /* World-specific: virtual row layout */
     .favorites-card-virtual {
         width: 100%;
         position: relative;
@@ -1809,182 +1207,5 @@
         justify-content: start;
         padding: 4px 2px 0 2px;
         box-sizing: border-box;
-    }
-
-    .favorites-card-list::after {
-        content: '';
-    }
-
-    :deep(.favorites-search-card--world) {
-        min-width: var(--favorites-card-min-width, 240px);
-        max-width: var(--favorites-card-target-width, 320px);
-    }
-
-    :deep(.favorites-search-card) {
-        display: flex;
-        align-items: center;
-        box-sizing: border-box;
-        border: 1px solid var(--border);
-        border-radius: calc(var(--radius-lg) * var(--favorites-card-scale, 1));
-        padding: var(--favorites-card-padding-y, 8px) var(--favorites-card-padding-x, 8px);
-        cursor: pointer;
-        transition: background-color 0.15s ease;
-        width: 100%;
-        min-width: var(--favorites-card-min-width, 240px);
-        max-width: var(--favorites-card-target-width, 320px);
-    }
-
-    :deep(.favorites-search-card:hover) {
-        background-color: var(--accent);
-    }
-
-    :deep(.favorites-search-card.is-selected) {
-    }
-
-    :deep(.favorites-search-card__content) {
-        display: flex;
-        align-items: center;
-        gap: var(--favorites-card-content-gap, 8px);
-        flex: 1;
-        min-width: 0;
-    }
-
-    :deep(.favorites-search-card__avatar) {
-        width: calc(48px * var(--favorites-card-scale, 1));
-        height: calc(48px * var(--favorites-card-scale, 1));
-        border-radius: calc(var(--radius-lg) * var(--favorites-card-scale, 1));
-        overflow: hidden;
-        flex-shrink: 0;
-    }
-
-    :deep(.favorites-search-card__avatar img) {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    :deep(.favorites-search-card__avatar.is-empty) {
-        background: repeating-linear-gradient(
-            -45deg,
-            rgba(148, 163, 184, 0.25),
-            rgba(148, 163, 184, 0.25) 10px,
-            rgba(255, 255, 255, 0.35) 10px,
-            rgba(255, 255, 255, 0.35) 20px
-        );
-    }
-
-    :deep(.favorites-search-card__detail) {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        font-size: calc(13px * var(--favorites-card-scale, 1));
-        min-width: 0;
-    }
-
-    :deep(.favorites-search-card__detail .name) {
-        font-weight: 600;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    :deep(.favorites-search-card__detail .extra) {
-        font-size: calc(12px * var(--favorites-card-scale, 1));
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    :deep(.favorites-search-card__title) {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    :deep(.favorites-search-card__badges) {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 14px;
-    }
-
-    :deep(.favorites-search-card__actions) {
-        display: flex;
-        flex-direction: column;
-        gap: var(--favorites-card-action-gap, 8px);
-        margin-left: var(--favorites-card-action-margin, 8px);
-        align-items: center;
-        justify-content: center;
-        flex: 0 0 auto;
-        min-width: 48px;
-    }
-
-    :deep(.favorites-search-card__action) {
-        display: flex;
-        justify-content: flex-end;
-        width: 100%;
-    }
-
-    :deep(.favorites-search-card__dropdown) {
-        width: 100%;
-    }
-
-    :deep(.favorites-search-card__action-group) {
-        display: flex;
-        gap: var(--favorites-card-action-group-gap, 8px);
-        width: 100%;
-    }
-
-    :deep(.favorites-search-card__action-group .favorites-search-card__action--full) {
-        flex: 1;
-    }
-
-    :deep(.favorites-search-card__action--checkbox) {
-        align-items: center;
-        justify-content: flex-end;
-        margin-right: var(--favorites-card-checkbox-margin, 8px);
-    }
-
-    :deep(.favorites-search-card__action--checkbox [data-slot='checkbox']) {
-        margin: 0;
-    }
-
-    :deep(.favorites-search-card__actions:empty) {
-        display: none;
-    }
-
-    .favorites-empty {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        height: 100%;
-    }
-
-    .favorites-dropdown__control {
-        list-style: none;
-        padding: 12px 16px 8px;
-        min-width: 220px;
-        cursor: default;
-    }
-
-    .favorites-dropdown__control:not(:last-child) {
-    }
-
-    .favorites-dropdown__control-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-size: 13px;
-        font-weight: 600;
-        margin-bottom: 8px;
-    }
-
-    .favorites-dropdown__control-value {
-        font-size: 12px;
-    }
-
-    .favorites-dropdown__slider {
-        padding: 0 4px 4px;
     }
 </style>

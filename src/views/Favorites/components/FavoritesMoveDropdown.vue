@@ -5,7 +5,7 @@
                 ><ArrowLeft class="h-4 w-4"
             /></Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent class="favorites-dropdown">
+        <DropdownMenuContent class="p-2">
             <span style="font-weight: bold; display: block; text-align: center">
                 {{ t(tooltipContent) }}
             </span>

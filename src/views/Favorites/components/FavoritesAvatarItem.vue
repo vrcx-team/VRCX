@@ -10,9 +10,9 @@
                             <img v-if="localFavFakeRef.thumbnailImageUrl" :src="smallThumbnail" loading="lazy" />
                         </div>
                         <div class="favorites-search-card__detail">
-                            <div class="favorites-search-card__title">
+                            <div class="flex items-center gap-2">
                                 <span class="name text-sm">{{ localFavFakeRef.name }}</span>
-                                <span class="favorites-search-card__badges">
+                                <span class="inline-flex items-center gap-1 text-sm">
                                     <TooltipWrapper
                                         v-if="favorite.deleted"
                                         side="top"
@@ -34,23 +34,21 @@
                         <template v-if="editMode">
                             <div
                                 v-if="!isLocalFavorite"
-                                class="favorites-search-card__action favorites-search-card__action--checkbox"
+                                class="flex justify-end w-full favorites-search-card__action--checkbox"
                                 @click.stop>
                                 <Checkbox v-model="isSelected" />
                             </div>
-                            <div class="favorites-search-card__action-group">
-                                <div
-                                    class="favorites-search-card__action favorites-search-card__action--full"
-                                    @click.stop>
+                            <div class="flex gap-[var(--favorites-card-action-group-gap,8px)] w-full">
+                                <div class="flex justify-end w-full flex-1" @click.stop>
                                     <FavoritesMoveDropdown
                                         :favoriteGroup="favoriteAvatarGroups"
                                         :currentFavorite="props.favorite"
                                         :currentGroup="group"
-                                        class="favorites-search-card__dropdown"
+                                        class="w-full"
                                         :is-local-favorite="isLocalFavorite"
                                         type="avatar" />
                                 </div>
-                                <div class="favorites-search-card__action">
+                                <div class="flex justify-end w-full">
                                     <TooltipWrapper
                                         side="left"
                                         :content="
@@ -70,8 +68,8 @@
                             </div>
                         </template>
                         <template v-else>
-                            <div class="favorites-search-card__action-group">
-                                <div class="favorites-search-card__action" v-if="canSelectAvatar">
+                            <div class="flex gap-(--favorites-card-action-group-gap,8px) w-full">
+                                <div class="flex justify-end w-full" v-if="canSelectAvatar">
                                     <TooltipWrapper side="top" :content="t('view.favorite.select_avatar_tooltip')">
                                         <Button
                                             size="icon-sm"
@@ -83,7 +81,7 @@
                                         /></Button>
                                     </TooltipWrapper>
                                 </div>
-                                <div class="favorites-search-card__action">
+                                <div class="flex justify-end w-full">
                                     <TooltipWrapper
                                         v-if="showDangerUnfavorite"
                                         side="bottom"
@@ -121,7 +119,7 @@
                         </div>
                     </div>
                     <div class="favorites-search-card__actions">
-                        <div class="favorites-search-card__action">
+                        <div class="flex justify-end w-full">
                             <Button
                                 class="rounded-full text-xs h-6 w-6"
                                 size="icon-sm"
@@ -238,13 +236,6 @@
     }
 </script>
 
-<style scoped>
-    .favorites-search-card img {
-        filter: saturate(0.8) contrast(0.8);
-        transition: filter 0.2s ease;
-    }
-
-    .favorites-search-card:hover img {
-        filter: saturate(1) contrast(1);
-    }
+<style>
+    @import './favorites-card.css';
 </style>
