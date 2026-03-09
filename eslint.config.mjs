@@ -33,7 +33,8 @@ export default defineConfig([
                 VERSION: 'readonly',
                 NIGHTLY: 'readonly',
                 webApiService: 'readonly',
-                process: 'readonly'
+                process: 'readonly',
+                AppDebug: 'readonly'
             }
         }
     },
@@ -42,7 +43,8 @@ export default defineConfig([
             '**/webpack.*.js',
             '**/jest.config.js',
             'src-electron/*.js',
-            'src/localization/*.js'
+            'src/localization/*.js',
+            'src/shared/utils/localizationHelperCLI.js'
         ],
         languageOptions: {
             sourceType: 'commonjs',
@@ -59,7 +61,10 @@ export default defineConfig([
         ],
         languageOptions: {
             globals: {
-                ...globals.jest
+                ...globals.jest,
+                ...globals.node,
+                vi: 'readonly',
+                vitest: 'readonly'
             }
         }
     },
@@ -116,5 +121,12 @@ export default defineConfig([
             'pretty-import/sort-import-names': 'warn'
         }
     },
-    eslintPluginPrettierRecommended
+    {
+        ...eslintPluginPrettierRecommended,
+        ignores: [
+            '**/__tests__/**',
+            '**/*.spec.{js,mjs,cjs,vue}',
+            '**/*.test.{js,mjs,cjs,vue}'
+        ]
+    }
 ]);
