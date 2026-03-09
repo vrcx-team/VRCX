@@ -1,3 +1,97 @@
+/* Noty animate.css keyframes (inlined, only the 4 animations used by noty.js) */
+
+.animate__animated {
+    animation-duration: 1s;
+    animation-fill-mode: both;
+}
+
+@keyframes bounceInLeft {
+    from,
+    60%,
+    75%,
+    90%,
+    to {
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    0% {
+        opacity: 0;
+        transform: translate3d(-3000px, 0, 0) scaleX(3);
+    }
+
+    60% {
+        opacity: 1;
+        transform: translate3d(25px, 0, 0) scaleX(1);
+    }
+
+    75% {
+        transform: translate3d(-10px, 0, 0) scaleX(0.98);
+    }
+
+    90% {
+        transform: translate3d(5px, 0, 0) scaleX(0.995);
+    }
+
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.animate__bounceInLeft {
+    animation-name: bounceInLeft;
+}
+
+@keyframes bounceOutLeft {
+    20% {
+        opacity: 1;
+        transform: translate3d(20px, 0, 0) scaleX(0.9);
+    }
+
+    to {
+        opacity: 0;
+        transform: translate3d(-2000px, 0, 0) scaleX(2);
+    }
+}
+
+.animate__bounceOutLeft {
+    animation-name: bounceOutLeft;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.animate__fadeIn {
+    animation-name: fadeIn;
+}
+
+@keyframes zoomOut {
+    from {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+        transform: scale3d(0.3, 0.3, 0.3);
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.animate__zoomOut {
+    animation-name: zoomOut;
+}
+
+/* Noty mint theme */
+
 .noty_layout {
     word-break: break-all;
 }

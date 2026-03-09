@@ -3,8 +3,6 @@ import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
-import Noty from 'noty';
-
 import {
     arraysMatch,
     compareByCreatedAt,
@@ -1247,13 +1245,9 @@ export const useUserStore = defineStore('User', () => {
         userRequest.saveCurrentUser(params).then(() => {
             const text = `Status automatically changed to ${newStatus}`;
             if (AppDebug.errorNoty) {
-                AppDebug.errorNoty.close();
+                toast.dismiss(AppDebug.errorNoty);
             }
-            AppDebug.errorNoty = new Noty({
-                type: 'info',
-                text
-            });
-            AppDebug.errorNoty.show();
+            AppDebug.errorNoty = toast.info(text);
             console.log(text);
         });
     }

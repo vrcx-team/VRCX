@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-@import 'animate.css/animate.min.css';
+@import '../styles/noty.css';
 @import 'noty/lib/noty.css';
 @import 'remixicon/fonts/remixicon.css';
 

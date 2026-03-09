@@ -1,8 +1,6 @@
 import { storeToRefs } from 'pinia';
 import { toast } from 'vue-sonner';
 
-import Noty from 'noty';
-
 import {
     useAvatarStore,
     useInstanceStore,
@@ -44,10 +42,7 @@ function downloadAndSaveJson(fileName, data) {
         link.click();
         document.body.removeChild(link);
     } catch {
-        new Noty({
-            type: 'error',
-            text: escapeTag('Failed to download JSON.')
-        }).show();
+        toast.error(escapeTag('Failed to download JSON.'));
     }
 }
 

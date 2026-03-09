@@ -1,7 +1,5 @@
 import { toast } from 'vue-sonner';
 
-import Noty from 'noty';
-
 import {
     useAuthStore,
     useModalStore,
@@ -189,12 +187,9 @@ export function request(endpoint, options) {
                     text = data.OK;
                 }
                 if (text) {
-                    new Noty({
-                        type: 'success',
-                        text: options.customMsg
-                            ? options.customMsg
-                            : escapeTag(text)
-                    }).show();
+                    toast.success(
+                        options.customMsg ? options.customMsg : escapeTag(text)
+                    );
                 }
                 return data;
             }

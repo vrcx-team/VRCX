@@ -3,8 +3,6 @@ import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
-import Noty from 'noty';
-
 import {
     DEFAULT_MAX_TABLE_SIZE,
     DEFAULT_SEARCH_LIMIT,
@@ -727,10 +725,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     avatarStore
                         .selectAvatarWithoutConfirmation(avatarId)
                         .then(() => {
-                            new Noty({
-                                type: 'success',
-                                text: 'Avatar changed via launch command'
-                            }).show();
+                            toast.success('Avatar changed via launch command');
                         });
                     shouldFocusWindow = false;
                 }

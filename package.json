@@ -56,7 +56,6 @@
         "@vitest/coverage-v8": "^4.0.18",
         "@vue/test-utils": "^2.4.6",
         "@vueuse/core": "^14.2.1",
-        "animate.css": "^4.1.1",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "cross-env": "^10.1.0",
