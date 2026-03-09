@@ -52,7 +52,8 @@ vi.mock('../../../../shared/utils', () => ({
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
         t: (key) => key,
-        te: () => false
+        te: () => false,
+        locale: require('vue').ref('en')
     })
 }));
 
@@ -72,13 +73,19 @@ vi.mock('@/components/ui/avatar', () => ({
         props: ['src'],
         template: '<img data-testid="avatar-image" :src="src" />'
     },
-    AvatarFallback: { template: '<span data-testid="avatar-fallback"><slot /></span>' }
+    AvatarFallback: {
+        template: '<span data-testid="avatar-fallback"><slot /></span>'
+    }
 }));
 
 vi.mock('@/components/ui/hover-card', () => ({
     HoverCard: { template: '<div data-testid="hover-card"><slot /></div>' },
-    HoverCardTrigger: { template: '<div data-testid="hover-trigger"><slot /></div>' },
-    HoverCardContent: { template: '<div data-testid="hover-content"><slot /></div>' }
+    HoverCardTrigger: {
+        template: '<div data-testid="hover-trigger"><slot /></div>'
+    },
+    HoverCardContent: {
+        template: '<div data-testid="hover-content"><slot /></div>'
+    }
 }));
 
 vi.mock('@/components/ui/badge', () => ({
@@ -197,9 +204,9 @@ describe('NotificationItem.vue', () => {
         });
 
         await wrapper.get('[data-icon="Link"]').trigger('click');
-        expect(mocks.notificationStore.openNotificationLink).toHaveBeenCalledWith(
-            'group:grp_123'
-        );
+        expect(
+            mocks.notificationStore.openNotificationLink
+        ).toHaveBeenCalledWith('group:grp_123');
     });
 
     test('unmount queues mark-as-seen for unseen notification', () => {

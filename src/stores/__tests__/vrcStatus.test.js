@@ -39,7 +39,9 @@ vi.mock('../../shared/utils', () => ({
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
         t: (key) => key
-    })
+    ,
+            locale: require('vue').ref('en')
+        })
 }));
 
 /**

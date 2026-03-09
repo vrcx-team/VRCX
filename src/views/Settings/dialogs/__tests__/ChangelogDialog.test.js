@@ -20,7 +20,9 @@ vi.mock('pinia', () => ({
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
         t: (key) => key
-    })
+    ,
+            locale: require('vue').ref('en')
+        })
 }));
 
 vi.mock('../../../../stores', () => ({

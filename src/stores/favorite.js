@@ -213,8 +213,9 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      *
-     * @param list
-     * @param selectionRef
+     * @param {Array} list
+     * @param {object} selectionRef
+     * @returns {void}
      */
     function syncFavoriteSelection(list, selectionRef) {
         if (!Array.isArray(list)) {
@@ -263,7 +264,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     );
 
     /**
-     *
+     * @returns {void}
      */
     function getCachedFavoriteGroupsByTypeName() {
         const group = {};
@@ -286,7 +287,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      *
-     * @param objectId
+     * @param {string} objectId
+     * @returns {object | undefined}
      */
     function getCachedFavoritesByObjectId(objectId) {
         return cachedFavoritesByObjectId.get(objectId);
@@ -294,7 +296,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      *
-     * @param args
+     * @param {object} args
+     * @returns {void}
      */
     function handleFavoriteAdd(args) {
         handleFavorite({
@@ -330,7 +333,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      *
-     * @param args
+     * @param {object} args
+     * @returns {void}
      */
     function handleFavorite(args) {
         args.ref = applyFavoriteCached(args.json);
@@ -353,7 +357,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      *
-     * @param objectId
+     * @param {string} objectId
+     * @returns {void}
      */
     function handleFavoriteDelete(objectId) {
         const ref = getCachedFavoritesByObjectId(objectId);
@@ -365,7 +370,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      *
-     * @param args
+     * @param {object}  args
+     * @returns {void}
      */
     function handleFavoriteGroup(args) {
         args.ref = applyFavoriteGroup(args.json);
@@ -373,7 +379,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      *
-     * @param args
+     * @param {object} args
+     * @returns {void}
      */
     function handleFavoriteGroupClear(args) {
         const key = `${args.params.type}:${args.params.group}`;
@@ -387,7 +394,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      *
-     * @param args
+     * @param {object} args
+     * @returns {void}
      */
     function handleFavoriteWorldList(args) {
         for (const json of args.json) {
@@ -400,7 +408,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      *
-     * @param args
+     * @param {object} args
      */
     function handleFavoriteAvatarList(args) {
         for (const json of args.json) {
@@ -413,7 +421,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      *
-     * @param ref
+     * @param {object} ref
+     * @returns {void}
      */
     function handleFavoriteAtDelete(ref) {
         const favorite = state.favoriteObjects.get(ref.favoriteId);
@@ -583,7 +592,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
+     * @returns {void}
      */
     function refreshFavoriteGroups() {
         if (isFavoriteGroupLoading.value) {
@@ -813,8 +822,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      *
-     * @param json
-     * @returns {any}
+     * @param {object} json
+     * @returns {object}
      */
     function applyFavoriteGroup(json) {
         let ref = cachedFavoriteGroups.value[json.id];
@@ -829,8 +838,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      *
-     * @param json
-     * @returns {any}
+     * @param {object} json
+     * @returns {object}
      */
     function applyFavoriteCached(json) {
         let ref = cachedFavorites.get(json.id);
@@ -866,7 +875,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      *
-     * @param tag
+     * @param {string} tag
+     * @returns {void}
      */
     async function refreshFavoriteAvatars(tag) {
         const params = {
@@ -879,7 +889,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
+     * @returns {void}
      */
     function refreshFavoriteItems() {
         const types = {
@@ -929,21 +939,21 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
+     * @returns {void}
      */
     function showWorldImportDialog() {
         worldImportDialogVisible.value = true;
     }
 
     /**
-     *
+     * @returns {void}
      */
     function showAvatarImportDialog() {
         avatarImportDialogVisible.value = true;
     }
 
     /**
-     *
+     * @returns {void}
      */
     function showFriendImportDialog() {
         friendImportDialogVisible.value = true;
@@ -1104,7 +1114,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      *
-     * @param objectId
+     * @param {string} objectId
+     * @returns {void}
      */
     function updateFavoriteDialog(objectId) {
         const D = favoriteDialog.value;
@@ -1199,7 +1210,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
+     * @returns {void}
      */
     function sortLocalAvatarFavorites() {
         if (!appearanceSettingsStore.sortFavorites) {
@@ -1389,7 +1400,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
+     * @returns {void}
      */
     function sortLocalWorldFavorites() {
         if (!appearanceSettingsStore.sortFavorites) {
@@ -1450,6 +1461,10 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                     });
                     await new Promise((resolve) => setTimeout(resolve, 500));
                 } catch (err) {
+                    console.error(
+                        `Failed to fetch avatar ${favorite.id}:`,
+                        err
+                    );
                     result.invalid++;
                     result.invalidIds.push(favorite.id);
                 }

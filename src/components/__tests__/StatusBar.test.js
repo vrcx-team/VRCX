@@ -226,9 +226,7 @@ describe('StatusBar.vue - Servers indicator', () => {
     test('shows Servers indicator with green dot when no issues', () => {
         const wrapper = mountStatusBar();
         expect(wrapper.text()).toContain('Servers');
-        const serversDots = wrapper.findAll(
-            '.bg-\\[var\\(--status-online\\)\\]'
-        );
+        const serversDots = wrapper.findAll('.bg-status-online');
         expect(serversDots.length).toBeGreaterThan(0);
         expect(wrapper.find('.bg-\\[\\#e6a23c\\]').exists()).toBe(false);
     });

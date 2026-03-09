@@ -80,9 +80,11 @@ vi.mock('../../../../service/request', () => ({
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
         t: (key) => key
-    }),
+    ,
+            locale: require('vue').ref('en')
+        }),
     createI18n: () => ({
-        global: { t: (key) => key },
+        global: { t: (key) => key , locale: require('vue').ref('en') },
         install: vi.fn()
     })
 }));

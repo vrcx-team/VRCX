@@ -42,7 +42,8 @@ vi.mock('pinia', () => ({
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key)
+        t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
+        locale: require('vue').ref('en')
     })
 }));
 

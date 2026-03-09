@@ -4,15 +4,20 @@ import { mount } from '@vue/test-utils';
 
 // ─── Mocks (must be before any imports that use them) ────────────────
 
-vi.mock('vue-i18n', () => ({
-    useI18n: () => ({
-        t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key)
-    }),
-    createI18n: () => ({
-        global: { t: (key) => key },
-        install: vi.fn()
-    })
-}));
+vi.mock('vue-i18n', () => {
+    const { ref } = require('vue');
+    return {
+        useI18n: () => ({
+            t: (key, params) =>
+                params ? `${key}:${JSON.stringify(params)}` : key,
+            locale: ref('en')
+        }),
+        createI18n: () => ({
+            global: { t: (key) => key, locale: ref('en') },
+            install: vi.fn()
+        })
+    };
+});
 
 vi.mock('../../../../plugin/router', () => {
     const { ref } = require('vue');
