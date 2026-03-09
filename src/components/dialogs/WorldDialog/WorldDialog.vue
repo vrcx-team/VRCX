@@ -385,7 +385,6 @@
 
     import {
         useAdvancedSettingsStore,
-        useAppearanceSettingsStore,
         useFavoriteStore,
         useGalleryStore,
         useGameStore,
@@ -442,7 +441,9 @@
         worldDialogCommand,
         onFileChangeWorldImage,
         onCropConfirmWorld,
-        copyWorldName
+        copyWorldName,
+        showWorldAllowedDomainsDialog,
+        registerCallbacks
     } = useWorldDialogCommands(worldDialog, {
         t,
         toast,
@@ -454,6 +455,18 @@
         newInstanceSelfInvite,
         showPreviousInstancesListDialog: openPreviousInstancesListDialog,
         showFullscreenImageDialog
+    });
+
+    registerCallbacks({
+        showSetWorldTagsDialog: () => {
+            isSetWorldTagsDialogVisible.value = true;
+        },
+        showWorldAllowedDomainsDialog: () => {
+            showWorldAllowedDomainsDialog();
+        },
+        showChangeWorldImageDialog: () => {
+            document.getElementById('WorldImageUploadButton').click();
+        }
     });
 
     const worldDialogTabs = computed(() => [

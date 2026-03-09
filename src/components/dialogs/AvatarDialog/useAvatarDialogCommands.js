@@ -203,26 +203,10 @@ export function useAvatarDialogCommands(
     // --- Command map ---
     // Direct commands: function
     // String commands: delegate to component callback
-    // Confirmed commands: { confirm: true, label: string, handler: fn }
+    // Confirmed commands: { confirm: () => ({title, description, ...}), handler: fn }
 
     function buildCommandMap() {
         const D = () => avatarDialog.value;
-
-        const confirmLabelMap = {
-            'Delete Favorite': () =>
-                t('dialog.avatar.actions.favorite_tooltip'),
-            'Select Fallback Avatar': () =>
-                t('dialog.avatar.actions.select_fallback'),
-            'Block Avatar': () => t('dialog.avatar.actions.block'),
-            'Unblock Avatar': () => t('dialog.avatar.actions.unblock'),
-            'Make Public': () => t('dialog.avatar.actions.make_public'),
-            'Make Private': () => t('dialog.avatar.actions.make_private'),
-            Delete: () => t('dialog.avatar.actions.delete'),
-            'Delete Imposter': () => t('dialog.avatar.actions.delete_impostor'),
-            'Create Imposter': () => t('dialog.avatar.actions.create_impostor'),
-            'Regenerate Imposter': () =>
-                t('dialog.avatar.actions.regenerate_impostor')
-        };
 
         return {
             // --- Direct commands ---
@@ -254,15 +238,23 @@ export function useAvatarDialogCommands(
 
             // --- Confirmed commands ---
             'Delete Favorite': {
-                confirm: true,
-                label: confirmLabelMap['Delete Favorite'],
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.avatar.actions.favorite_tooltip')
+                    })
+                }),
                 handler: (id) => {
                     favoriteRequest.deleteFavorite({ objectId: id });
                 }
             },
             'Select Fallback Avatar': {
-                confirm: true,
-                label: confirmLabelMap['Select Fallback Avatar'],
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.avatar.actions.select_fallback')
+                    })
+                }),
                 handler: (id) => {
                     avatarRequest
                         .selectFallbackAvatar({ avatarId: id })
@@ -273,8 +265,12 @@ export function useAvatarDialogCommands(
                 }
             },
             'Block Avatar': {
-                confirm: true,
-                label: confirmLabelMap['Block Avatar'],
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.avatar.actions.block')
+                    })
+                }),
                 handler: (id) => {
                     avatarModerationRequest
                         .sendAvatarModeration({
@@ -290,8 +286,12 @@ export function useAvatarDialogCommands(
                 }
             },
             'Unblock Avatar': {
-                confirm: true,
-                label: confirmLabelMap['Unblock Avatar'],
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.avatar.actions.unblock')
+                    })
+                }),
                 handler: (id) => {
                     avatarModerationRequest
                         .deleteAvatarModeration({
@@ -313,8 +313,12 @@ export function useAvatarDialogCommands(
                 }
             },
             'Make Public': {
-                confirm: true,
-                label: confirmLabelMap['Make Public'],
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.avatar.actions.make_public')
+                    })
+                }),
                 handler: (id) => {
                     avatarRequest
                         .saveAvatar({ id, releaseStatus: 'public' })
@@ -326,8 +330,12 @@ export function useAvatarDialogCommands(
                 }
             },
             'Make Private': {
-                confirm: true,
-                label: confirmLabelMap['Make Private'],
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.avatar.actions.make_private')
+                    })
+                }),
                 handler: (id) => {
                     avatarRequest
                         .saveAvatar({ id, releaseStatus: 'private' })
@@ -339,8 +347,12 @@ export function useAvatarDialogCommands(
                 }
             },
             Delete: {
-                confirm: true,
-                label: confirmLabelMap['Delete'],
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.avatar.actions.delete')
+                    })
+                }),
                 handler: (id) => {
                     avatarRequest
                         .deleteAvatar({ avatarId: id })
@@ -365,8 +377,12 @@ export function useAvatarDialogCommands(
                 }
             },
             'Delete Imposter': {
-                confirm: true,
-                label: confirmLabelMap['Delete Imposter'],
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.avatar.actions.delete_impostor')
+                    })
+                }),
                 handler: (id) => {
                     avatarRequest
                         .deleteImposter({ avatarId: id })
@@ -378,8 +394,12 @@ export function useAvatarDialogCommands(
                 }
             },
             'Create Imposter': {
-                confirm: true,
-                label: confirmLabelMap['Create Imposter'],
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.avatar.actions.create_impostor')
+                    })
+                }),
                 handler: (id) => {
                     avatarRequest
                         .createImposter({ avatarId: id })
@@ -390,8 +410,12 @@ export function useAvatarDialogCommands(
                 }
             },
             'Regenerate Imposter': {
-                confirm: true,
-                label: confirmLabelMap['Regenerate Imposter'],
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.avatar.actions.regenerate_impostor')
+                    })
+                }),
                 handler: (id) => {
                     avatarRequest
                         .deleteImposter({ avatarId: id })
@@ -456,20 +480,11 @@ export function useAvatarDialogCommands(
 
         // Confirmed command
         if (entry.confirm) {
-            const displayLabel =
-                typeof entry.label === 'function' ? entry.label() : command;
-            modalStore
-                .confirm({
-                    title: t('confirm.title'),
-                    description: t('confirm.command_question', {
-                        command: displayLabel
-                    })
-                })
-                .then(({ ok }) => {
-                    if (ok) {
-                        entry.handler(D.id);
-                    }
-                });
+            modalStore.confirm(entry.confirm()).then(({ ok }) => {
+                if (ok) {
+                    entry.handler(D.id);
+                }
+            });
         }
     }
 
