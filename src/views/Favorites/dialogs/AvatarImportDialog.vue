@@ -5,7 +5,7 @@
                 <DialogTitle>{{ t('dialog.avatar_import.header') }}</DialogTitle>
             </DialogHeader>
             <div style="display: flex; align-items: center; justify-content: space-between">
-                <div style="font-size: 12px">{{ t('dialog.avatar_import.description') }}</div>
+                <div class="text-xs">{{ t('dialog.avatar_import.description') }}</div>
                 <div style="display: flex; align-items: center">
                     <div v-if="avatarImportDialog.progress">
                         {{ t('dialog.avatar_import.process_progress') }} {{ avatarImportDialog.progress }} /
@@ -20,18 +20,14 @@
                     </Button>
                 </div>
             </div>
-            <InputGroupTextareaField
-                v-model="avatarImportDialog.input"
-                :rows="10"
-                style="margin-top: 10px"
-                input-class="resize-none" />
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
+            <InputGroupTextareaField v-model="avatarImportDialog.input" :rows="10" input-class="resize-none mt-2" />
+            <div class="mt-1.5" style="display: flex; align-items: center; justify-content: space-between">
                 <div>
                     <div class="flex items-center gap-2">
                         <Select
+                            class="mr-1.5"
                             :model-value="avatarImportFavoriteGroupSelection"
-                            @update:modelValue="handleAvatarImportGroupSelect"
-                            style="margin-right: 5px">
+                            @update:modelValue="handleAvatarImportGroupSelect">
                             <SelectTrigger size="sm">
                                 <SelectValue :placeholder="t('dialog.avatar_import.select_group_placeholder')" />
                             </SelectTrigger>
@@ -49,9 +45,9 @@
                         </Select>
 
                         <Select
+                            class="ml-2"
                             :model-value="avatarImportLocalFavoriteGroupSelection"
-                            @update:modelValue="handleAvatarImportLocalGroupSelect"
-                            style="margin-left: 10px">
+                            @update:modelValue="handleAvatarImportLocalGroupSelect">
                             <SelectTrigger size="sm">
                                 <SelectValue :placeholder="t('dialog.avatar_import.select_group_placeholder')" />
                             </SelectTrigger>
@@ -64,7 +60,7 @@
                             </SelectContent>
                         </Select>
                     </div>
-                    <span v-if="avatarImportDialog.avatarImportFavoriteGroup" style="margin-left: 5px">
+                    <span class="ml-1.5" v-if="avatarImportDialog.avatarImportFavoriteGroup">
                         {{ avatarImportTable.data.length }} /
                         {{
                             avatarImportDialog.avatarImportFavoriteGroup.capacity -
@@ -88,7 +84,7 @@
                     </Button>
                 </div>
             </div>
-            <span v-if="avatarImportDialog.importProgress" style="margin: 10px">
+            <span class="m-2" v-if="avatarImportDialog.importProgress">
                 <Spinner class="inline-block ml-2 mr-2" />
                 {{ t('dialog.avatar_import.import_progress') }}
                 {{ avatarImportDialog.importProgress }}/{{ avatarImportDialog.importProgressTotal }}
@@ -98,10 +94,10 @@
                 <Button size="sm" variant="secondary" @click="avatarImportDialog.errors = ''">
                     {{ t('dialog.avatar_import.clear_errors') }}
                 </Button>
-                <h2 style="font-weight: bold; margin: 5px 0">
+                <h2 class="my-1.5 mx-0" style="font-weight: bold">
                     {{ t('dialog.avatar_import.errors') }}
                 </h2>
-                <pre style="white-space: pre-wrap; font-size: 12px" v-text="avatarImportDialog.errors"></pre>
+                <pre class="whitespace-pre-wrap text-xs" v-text="avatarImportDialog.errors"></pre>
             </template>
             <DataTableLayout
                 class="min-w-0 w-full"
@@ -109,7 +105,7 @@
                 :loading="avatarImportDialog.loading"
                 :table-style="tableStyle"
                 :show-pagination="false"
-                style="margin-top: 10px" />
+                style="margin-top: 8px" />
         </DialogContent>
     </Dialog>
 </template>
@@ -212,6 +208,9 @@
         }
     );
 
+    /**
+     *
+     */
     async function processAvatarImportList() {
         const D = avatarImportDialog.value;
         D.loading = true;
@@ -253,21 +252,35 @@
         D.progressTotal = 0;
     }
 
+    /**
+     *
+     * @param ref
+     */
     function deleteItemAvatarImport(ref) {
         removeFromArray(avatarImportTable.value.data, ref);
         avatarImportDialog.value.avatarIdList.delete(ref.id);
     }
 
+    /**
+     *
+     */
     function resetAvatarImport() {
         avatarImportDialog.value.input = '';
         avatarImportDialog.value.errors = '';
     }
 
+    /**
+     *
+     */
     function clearAvatarImportTable() {
         avatarImportTable.value.data = [];
         avatarImportDialog.value.avatarIdList = new Set();
     }
 
+    /**
+     *
+     * @param group
+     */
     function selectAvatarImportGroup(group) {
         avatarImportDialog.value.avatarImportLocalFavoriteGroup = null;
         avatarImportDialog.value.avatarImportFavoriteGroup = group;
@@ -275,6 +288,10 @@
         avatarImportLocalFavoriteGroupSelection.value = '';
     }
 
+    /**
+     *
+     * @param group
+     */
     function selectAvatarImportLocalGroup(group) {
         avatarImportDialog.value.avatarImportFavoriteGroup = null;
         avatarImportDialog.value.avatarImportLocalFavoriteGroup = group;
@@ -282,20 +299,37 @@
         avatarImportLocalFavoriteGroupSelection.value = group ?? '';
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleAvatarImportGroupSelect(value) {
         avatarImportFavoriteGroupSelection.value = value;
         const group = favoriteAvatarGroups.value.find((g) => g.name === value) ?? null;
         selectAvatarImportGroup(group);
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleAvatarImportLocalGroupSelect(value) {
         avatarImportLocalFavoriteGroupSelection.value = value;
         selectAvatarImportLocalGroup(value || null);
     }
 
+    /**
+     *
+     */
     function cancelAvatarImport() {
         avatarImportDialog.value.loading = false;
     }
+    /**
+     *
+     * @param ref
+     * @param group
+     * @param message
+     */
     function addFavoriteAvatar(ref, group, message) {
         return favoriteRequest
             .addFavorite({
@@ -310,6 +344,9 @@
                 return args;
             });
     }
+    /**
+     *
+     */
     async function importAvatarImportTable() {
         const D = avatarImportDialog.value;
         if (!D.avatarImportFavoriteGroup && !D.avatarImportLocalFavoriteGroup) {

@@ -8,18 +8,18 @@
                 "
                 class="cursor-pointer"
                 :src="userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride"
-                style="height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover"
+                style="height: 120px; width: 213.33px; border-radius: var(--radius-xl); object-fit: cover"
                 @click="showFullscreenImageDialog(userDialog.ref.profilePicOverride)"
                 loading="lazy" />
             <img
                 v-else-if="!userDialog.loading"
                 class="cursor-pointer"
                 :src="userDialog.ref.currentAvatarThumbnailImageUrl"
-                style="height: 120px; width: 160px; border-radius: 12px; object-fit: cover"
+                style="height: 120px; width: 160px; border-radius: var(--radius-xl); object-fit: cover"
                 @click="showFullscreenImageDialog(userDialog.ref.currentAvatarImageUrl)"
                 loading="lazy" />
         </div>
-        <div style="flex: 1; display: flex; align-items: flex-start; margin-left: 15px">
+        <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
             <div style="flex: 1">
                 <div>
                     <TooltipWrapper v-if="userDialog.ref.status" side="top">
@@ -47,13 +47,13 @@
                     </template>
                     <span
                         class="font-bold"
-                        style="margin-left: 5px; margin-right: 5px; cursor: pointer"
+                        style="margin-left: 6px; margin-right: 6px; cursor: pointer"
                         v-text="userDialog.ref.displayName"
                         @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
                     <TooltipWrapper v-if="userDialog.ref.pronouns" side="top" :content="t('dialog.user.pronouns')">
                         <span
-                            class="x-grey"
-                            style="margin-right: 5px; font-family: monospace; font-size: 12px"
+                            class="x-grey font-mono text-xs"
+                            style="margin-right: 6px"
                             v-text="userDialog.ref.pronouns"></span>
                     </TooltipWrapper>
                     <TooltipWrapper v-for="item in userDialog.ref.$languages" :key="item.key" side="top">
@@ -63,13 +63,13 @@
                         <span
                             class="flags"
                             :class="languageClass(item.key)"
-                            style="display: inline-block; margin-right: 5px"></span>
+                            style="display: inline-block; margin-right: 6px"></span>
                     </TooltipWrapper>
                     <template v-if="userDialog.ref.id === currentUser.id">
                         <br />
                         <span
-                            class="x-grey"
-                            style="margin-right: 10px; font-family: monospace; font-size: 12px; cursor: pointer"
+                            class="x-grey font-mono text-xs"
+                            style="margin-right: 8px; cursor: pointer"
                             v-text="currentUser.username"
                             @click="copyUserDisplayName(currentUser.username)"></span>
                     </template>
@@ -84,7 +84,7 @@
                         v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"
                         side="top"
                         :content="t('dialog.user.tags.age_verified')">
-                        <Badge variant="outline" class="x-tag-age-verification">
+                        <Badge variant="outline" class="text-[#3b82f6] border-[#3b82f6]!">
                             <template v-if="userDialog.ref.ageVerificationStatus === '18+'">
                                 <IdCard class="h-4 w-4" /> 18+
                             </template>
@@ -97,7 +97,7 @@
                         v-if="userDialog.isFriend && userDialog.friend"
                         side="top"
                         :content="t('dialog.user.tags.friend_number')">
-                        <Badge variant="outline" class="x-tag-friend">
+                        <Badge variant="outline" class="text-amber-400 border-amber-400!">
                             <UserPlus class="h-4 w-4" />
                             {{ userDialog.ref.$friendNumber ? userDialog.ref.$friendNumber : '' }}
                         </Badge>
@@ -106,7 +106,7 @@
                         v-if="userDialog.mutualFriendCount"
                         side="top"
                         :content="t('dialog.user.tags.mutual_friends')">
-                        <Badge variant="outline" class="x-tag-mutual-friend border-zinc-500/50! dark:border-zinc-400!">
+                        <Badge variant="outline" class="border-zinc-500/50! dark:border-zinc-400!">
                             <Users class="h-4 w-4" />
                             {{ userDialog.mutualFriendCount }}
                         </Badge>
@@ -117,7 +117,7 @@
                         :content="t('dialog.user.tags.open_in_discord')">
                         <Badge
                             variant="outline"
-                            class="x-tag-discord cursor-pointer"
+                            class="text-[#7289da] border-[#7289da]! cursor-pointer"
                             @click="openDiscordProfile(userDialog.ref.discordId)">
                             <i class="ri-discord-line text-xs"></i>
                             {{ t('dialog.user.tags.discord') }}
@@ -134,21 +134,21 @@
                     </Badge>
 
                     <TooltipWrapper v-if="userDialog.ref.$platform === 'standalonewindows'" side="top" content="PC">
-                        <Badge variant="outline" class="x-tag-platform-pc">
-                            <Monitor class="m-0.5 x-tag-platform-pc" />
+                        <Badge variant="outline" class="text-platform-pc border-platform-pc!">
+                            <Monitor class="m-0.5 text-platform-pc" />
                         </Badge>
                     </TooltipWrapper>
                     <TooltipWrapper v-else-if="userDialog.ref.$platform === 'android'" side="top" content="Android">
-                        <Badge variant="outline" class="x-tag-platform-quest">
-                            <Smartphone class="m-0.5 x-tag-platform-quest" />
+                        <Badge variant="outline" class="text-platform-quest border-platform-quest!">
+                            <Smartphone class="m-0.5 text-platform-quest" />
                         </Badge>
                     </TooltipWrapper>
                     <TooltipWrapper v-else-if="userDialog.ref.$platform === 'ios'" side="top" content="iOS">
-                        <Badge variant="outline" class="text-[#8e8e93] border-[#8e8e93]">
-                            <Apple class="m-0.5 text-[#8e8e93]" />
+                        <Badge variant="outline" class="text-platform-ios border-platform-ios">
+                            <Apple class="m-0.5 text-platform-ios" />
                         </Badge>
                     </TooltipWrapper>
-                    <Badge v-else-if="userDialog.ref.$platform" variant="outline" class="x-tag-platform-other">
+                    <Badge v-else-if="userDialog.ref.$platform" variant="outline" class="text-muted-foreground">
                         {{ userDialog.ref.$platform }}
                     </Badge>
 
@@ -179,10 +179,10 @@
                                             flex: none;
                                             height: 32px;
                                             width: 32px;
-                                            border-radius: 3px;
+                                            border-radius: var(--radius-sm);
                                             object-fit: cover;
-                                            margin-top: 5px;
-                                            margin-right: 5px;
+                                            margin-top: 6px;
+                                            margin-right: 6px;
                                         "
                                         :class="{ grayscale: badge.hidden }"
                                         loading="lazy" />
@@ -197,18 +197,15 @@
                                     <div style="display: block; width: 275px; word-break: normal">
                                         <span>{{ badge.badgeName }}</span>
                                         <br />
-                                        <span class="x-grey" style="font-size: 12px">{{ badge.badgeDescription }}</span>
+                                        <span class="x-grey text-xs">{{ badge.badgeDescription }}</span>
                                         <br />
-                                        <span
-                                            v-if="badge.assignedAt"
-                                            class="x-grey"
-                                            style="font-family: monospace; font-size: 12px">
+                                        <span v-if="badge.assignedAt" class="x-grey font-mono text-xs">
                                             {{ t('dialog.user.badges.assigned') }}:
                                             {{ formatDateFilter(badge.assignedAt, 'long') }}
                                         </span>
                                         <template v-if="userDialog.id === currentUser.id">
                                             <br />
-                                            <label class="inline-flex items-center gap-2" style="margin-top: 5px">
+                                            <label class="inline-flex items-center gap-2" style="margin-top: 6px">
                                                 <Checkbox
                                                     v-model="badge.hidden"
                                                     @update:modelValue="toggleBadgeVisibility(badge)" />
@@ -229,15 +226,15 @@
                     </TooltipWrapper>
                 </div>
                 <div>
-                    <span style="font-size: 12px" v-text="userDialog.ref.statusDescription"></span>
+                    <span class="text-xs" v-text="userDialog.ref.statusDescription"></span>
                 </div>
             </div>
 
-            <div v-if="userDialog.ref.userIcon" style="flex: none; margin-right: 10px">
+            <div v-if="userDialog.ref.userIcon" style="flex: none; margin-right: 8px">
                 <img
                     class="cursor-pointer"
                     :src="userImage(userDialog.ref, true, '256', true)"
-                    style="flex: none; width: 120px; height: 120px; border-radius: 12px; object-fit: cover"
+                    style="flex: none; width: 120px; height: 120px; border-radius: var(--radius-xl); object-fit: cover"
                     @click="showFullscreenImageDialog(userDialog.ref.userIcon)"
                     loading="lazy" />
             </div>

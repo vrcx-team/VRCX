@@ -16,13 +16,13 @@
                     autosize />
 
                 <InputGroupAction
+                    class="mt-1.5"
                     v-for="(link, index) in bioDialog.bioLinks"
                     :key="index"
                     v-model="bioDialog.bioLinks[index]"
                     :maxlength="1000"
                     show-count
-                    size="sm"
-                    style="margin-top: 5px">
+                    size="sm">
                     <template #leading>
                         <img :src="getFaviconUrl(link)" style="width: 16px; height: 16px; vertical-align: middle" />
                     </template>
@@ -71,6 +71,9 @@
         }
     });
 
+    /**
+     *
+     */
     function saveBio() {
         const D = props.bioDialog;
         if (D.loading) {

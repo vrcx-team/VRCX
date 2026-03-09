@@ -24,9 +24,9 @@
             </Select>
 
             <Select
+                class="mt-4"
                 :model-value="friendExportLocalFavoriteGroupSelection"
-                @update:modelValue="handleFriendExportLocalGroupSelect"
-                style="margin-top: 15px">
+                @update:modelValue="handleFriendExportLocalGroupSelect">
                 <SelectTrigger size="sm">
                     <SelectValue placeholder="Select Group" />
                 </SelectTrigger>
@@ -45,8 +45,7 @@
                 v-model="friendExportContent"
                 :rows="15"
                 readonly
-                style="margin-top: 15px"
-                input-class="resize-none"
+                input-class="resize-none mt-4"
                 @click="handleCopyFriendExportData" />
         </DialogContent>
     </Dialog>

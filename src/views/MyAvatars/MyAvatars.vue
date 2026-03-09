@@ -37,7 +37,7 @@
                         </Badge>
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent class="w-auto p-3" align="start">
+                <PopoverContent class="w-80 p-3" align="start">
                     <div class="flex flex-col gap-3">
                         <Field>
                             <FieldLabel>{{ t('dialog.avatar.info.visibility') }}</FieldLabel>
@@ -177,6 +177,17 @@
             class="cursor-pointer min-h-0">
             <template #row-context-menu="{ row }">
                 <ContextMenuContent>
+                    <ContextMenuItem @click="handleContextMenuAction('details', row.original)">
+                        <Eye class="size-4" />
+                        {{ t('dialog.avatar.actions.view_details') }}
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                        :disabled="row.original.id === currentAvatarId"
+                        @click="handleContextMenuAction('wear', row.original)">
+                        <Check class="size-4" />
+                        {{ t('view.favorite.select_avatar_tooltip') }}
+                    </ContextMenuItem>
+                    <ContextMenuSeparator />
                     <ContextMenuItem @click="handleContextMenuAction('manageTags', row.original)">
                         <Tag class="size-4" />
                         {{ t('dialog.avatar.actions.manage_tags') }}
@@ -239,7 +250,7 @@
                     :ref="virtualizer.measureElement"
                     :style="{ transform: `translateY(${vItem.virtualItem.start}px)` }">
                     <div
-                        class="grid gap-[var(--avatar-card-gap,12px)] p-0.5"
+                        class="grid gap-(--avatar-card-gap,12px) p-0.5"
                         :style="{
                             gridTemplateColumns: `repeat(var(--avatar-grid-columns, 1), minmax(var(--avatar-card-min-width, 200px), var(--avatar-card-target-width, 1fr)))`,
                             ...gridStyle(filteredAvatars.length)
@@ -247,6 +258,7 @@
                         <MyAvatarCard
                             v-for="avatar in vItem.row.items"
                             :key="avatar.id"
+                            v-memo="[currentAvatarId, cardScale]"
                             :avatar="avatar"
                             :current-avatar-id="currentAvatarId"
                             :card-scale="cardScale"
@@ -284,6 +296,8 @@
 
 <script setup>
     import {
+        Check,
+        Eye,
         Image as ImageIcon,
         LayoutGrid,
         List,
@@ -864,3 +878,14 @@
         refreshAvatars();
     });
 </script>
+
+<style scoped>
+    :deep(.avatar-table-thumbnail) {
+        filter: saturate(0.8) contrast(0.8);
+        transition: filter 0.2s ease;
+    }
+
+    :deep(tr:hover .avatar-table-thumbnail) {
+        filter: saturate(1) contrast(1);
+    }
+</style>

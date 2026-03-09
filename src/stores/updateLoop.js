@@ -98,7 +98,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                     vrcxStore.tryAutoBackupVrcRegistry();
                 }
                 if (--state.ipcTimeout <= 0) {
-                    vrcxStore.ipcEnabled = false;
+                    vrcxStore.setIpcEnabled(false);
                 }
                 if (
                     --state.nextClearVRCXCacheCheck <= 0 &&
@@ -141,7 +141,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 }
             }
         } catch (err) {
-            friendStore.isRefreshFriendsLoading = false;
+            friendStore.setRefreshFriendsLoading(false);
             console.error(err);
         }
         workerTimers.setTimeout(() => updateLoop(), 1000);
@@ -149,6 +149,22 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
 
     function setNextClearVRCXCacheCheck(value) {
         state.nextClearVRCXCacheCheck = value;
+    }
+
+    function setNextGroupInstanceRefresh(value) {
+        state.nextGroupInstanceRefresh = value;
+    }
+
+    function setNextDiscordUpdate(value) {
+        state.nextDiscordUpdate = value;
+    }
+
+    function setIpcTimeout(value) {
+        state.ipcTimeout = value;
+    }
+
+    function setNextCurrentUserRefresh(value) {
+        state.nextCurrentUserRefresh = value;
     }
 
     return {
@@ -159,6 +175,10 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         nextDiscordUpdate,
         ipcTimeout,
         updateLoop,
+        setIpcTimeout,
+        setNextCurrentUserRefresh,
+        setNextDiscordUpdate,
+        setNextGroupInstanceRefresh,
         setNextClearVRCXCacheCheck
     };
 });

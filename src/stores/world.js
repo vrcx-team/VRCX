@@ -16,7 +16,7 @@ import {
 } from '../shared/utils';
 import { instanceRequest, miscRequest, worldRequest } from '../api';
 import { database } from '../service/database';
-import { patchWorldFromEvent } from '../query';
+import { patchWorldFromEvent } from '../queries';
 import { processBulk } from '../service/request';
 import { useFavoriteStore } from './favorite';
 import { useInstanceStore } from './instance';
@@ -208,6 +208,27 @@ export const useWorldStore = defineStore('World', () => {
     }
 
     /**
+     * @param {boolean} value
+     */
+    function setWorldDialogLoading(value) {
+        worldDialog.loading = value;
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    function setWorldDialogVisible(value) {
+        worldDialog.visible = value;
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    function setWorldDialogIsFavorite(value) {
+        worldDialog.isFavorite = value;
+    }
+
+    /**
      *
      */
     function updateVRChatWorldCache() {
@@ -316,6 +337,9 @@ export const useWorldStore = defineStore('World', () => {
         worldDialog,
         cachedWorlds,
         showWorldDialog,
+        setWorldDialogVisible,
+        setWorldDialogIsFavorite,
+        setWorldDialogLoading,
         updateVRChatWorldCache,
         applyWorld,
         preloadOwnWorlds

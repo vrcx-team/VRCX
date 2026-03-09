@@ -1,6 +1,6 @@
 <template>
     <template v-if="watchState.isLoggedIn">
-        <div class="main-layout-wrapper">
+        <div class="flex flex-col flex-1 h-full min-h-0 min-w-0 overflow-hidden">
             <SidebarProvider
                 :open="sidebarOpen"
                 :width="navWidth"

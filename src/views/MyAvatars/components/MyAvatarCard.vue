@@ -1,11 +1,11 @@
 <template>
-    <HoverCard :open-delay="700" :close-delay="100">
+    <HoverCard :open="hoverOpen" :open-delay="700" :close-delay="100" @update:open="handleHoverOpen">
         <HoverCardTrigger as="div">
-            <ContextMenu>
+            <ContextMenu @update:open="handleContextMenuOpen">
                 <ContextMenuTrigger as="div">
                     <div class="avatar-card-wrapper rounded-lg" @click="$emit('click')">
                         <Card
-                            class="avatar-card flex flex-col gap-0 p-0 cursor-pointer overflow-hidden rounded-lg relative transition-colors hover:bg-accent hover:shadow-md"
+                            class="avatar-card x-hover-card flex flex-col gap-0 p-0 cursor-pointer overflow-hidden rounded-lg relative hover:bg-accent hover:shadow-sm"
                             :class="isActive ? 'border-2 border-primary' : 'border border-border/50'">
                             <div class="w-full aspect-5/2 overflow-hidden bg-muted relative">
                                 <img
@@ -25,16 +25,13 @@
                                     class="absolute top-1 right-1 flex -space-x-1">
                                     <span
                                         v-if="platformInfo.isPC"
-                                        class="size-2.5 rounded-full border opacity-70"
-                                        style="background: #0078d4" />
+                                        class="size-2.5 rounded-full border opacity-70 bg-platform-pc" />
                                     <span
                                         v-if="platformInfo.isQuest"
-                                        class="size-2.5 rounded-full border opacity-70"
-                                        style="background: #3ddc84" />
+                                        class="size-2.5 rounded-full border opacity-70 bg-platform-quest" />
                                     <span
                                         v-if="platformInfo.isIos"
-                                        class="size-2.5 rounded-full border opacity-70"
-                                        style="background: #8e8e93" />
+                                        class="size-2.5 rounded-full border opacity-70 bg-platform-ios" />
                                 </div>
                             </div>
                             <div
@@ -70,6 +67,10 @@
                     <ContextMenuItem @click="emit('context-action', 'details', avatar)">
                         <Eye class="size-4" />
                         {{ t('dialog.avatar.actions.view_details') }}
+                    </ContextMenuItem>
+                    <ContextMenuItem :disabled="isActive" @click="emit('context-action', 'wear', avatar)">
+                        <Check class="size-4" />
+                        {{ t('view.favorite.select_avatar_tooltip') }}
                     </ContextMenuItem>
                     <ContextMenuSeparator />
                     <ContextMenuItem @click="emit('context-action', 'manageTags', avatar)">
@@ -122,7 +123,16 @@
         <HoverCardContent class="w-80 p-3 text-sm" side="right" :side-offset="8" align="start">
             <div class="flex flex-col gap-2">
                 <!-- Name -->
-                <div class="font-medium text-base truncate">{{ avatar.name }}</div>
+                <div class="flex items-start gap-1">
+                    <div class="font-medium text-base truncate flex-1 min-w-0">{{ avatar.name }}</div>
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        class="shrink-0 size-6 rounded-full"
+                        @click="emit('context-action', 'details', avatar)">
+                        <ExternalLink class="size-3" />
+                    </Button>
+                </div>
 
                 <!-- Tags -->
                 <div v-if="avatar.$tags?.length" class="flex flex-wrap gap-1">
@@ -154,18 +164,21 @@
                         </Badge>
                     </span>
 
-                    <span class="text-muted-foreground">{{ t('dialog.avatar.info.version') }}</span>
-                    <span>{{ avatar.version ?? '-' }}</span>
-
                     <span class="text-muted-foreground">{{ t('dialog.avatar.info.platform') }}</span>
                     <div class="flex items-center gap-1">
-                        <Badge v-if="platformInfo.isPC" class="x-tag-platform-pc" variant="outline">
+                        <Badge v-if="platformInfo.isPC" class="text-platform-pc border-platform-pc!" variant="outline">
                             <Monitor class="h-3 w-3" />
                         </Badge>
-                        <Badge v-if="platformInfo.isQuest" class="x-tag-platform-quest" variant="outline">
+                        <Badge
+                            v-if="platformInfo.isQuest"
+                            class="text-platform-quest border-platform-quest!"
+                            variant="outline">
                             <Smartphone class="h-3 w-3" />
                         </Badge>
-                        <Badge v-if="platformInfo.isIos" class="text-[#8e8e93] border-[#8e8e93]" variant="outline">
+                        <Badge
+                            v-if="platformInfo.isIos"
+                            class="text-platform-ios border-platform-ios"
+                            variant="outline">
                             <Apple class="h-3 w-3" />
                         </Badge>
                     </div>
@@ -185,6 +198,9 @@
                         <span>{{ iosPerf }}</span>
                     </template>
 
+                    <span class="text-muted-foreground">{{ t('dialog.avatar.info.version') }}</span>
+                    <span>{{ avatar.version ?? '-' }}</span>
+
                     <template v-if="avatar.$timeSpent">
                         <span class="text-muted-foreground">{{ t('dialog.avatar.info.time_spent') }}</span>
                         <span>{{ timeToText(avatar.$timeSpent) }}</span>
@@ -202,7 +218,19 @@
 </template>
 
 <script setup>
-    import { Apple, Eye, Image as ImageIcon, Monitor, Pencil, RefreshCw, Smartphone, Tag, User } from 'lucide-vue-next';
+    import {
+        Apple,
+        Check,
+        ExternalLink,
+        Eye,
+        Image as ImageIcon,
+        Monitor,
+        Pencil,
+        RefreshCw,
+        Smartphone,
+        Tag,
+        User
+    } from 'lucide-vue-next';
     import {
         ContextMenu,
         ContextMenuContent,
@@ -212,14 +240,32 @@
     } from '@/components/ui/context-menu';
     import { formatDateFilter, getAvailablePlatforms, getPlatformInfo, timeToText } from '@/shared/utils';
     import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+    import { computed, ref } from 'vue';
     import { Badge } from '@/components/ui/badge';
+    import { Button } from '@/components/ui/button';
     import { Card } from '@/components/ui/card';
     import { Separator } from '@/components/ui/separator';
-    import { computed } from 'vue';
     import { getTagColor } from '@/shared/constants';
     import { useI18n } from 'vue-i18n';
 
     const { t } = useI18n();
+
+    const hoverOpen = ref(false);
+    const contextMenuOpen = ref(false);
+
+    const handleContextMenuOpen = (open) => {
+        contextMenuOpen.value = open;
+        if (open) {
+            hoverOpen.value = false;
+        }
+    };
+
+    const handleHoverOpen = (open) => {
+        if (contextMenuOpen.value) {
+            return;
+        }
+        hoverOpen.value = open;
+    };
 
     const props = defineProps({
         avatar: {

@@ -3,7 +3,6 @@ import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
-import Noty from 'noty';
 import dayjs from 'dayjs';
 
 import {
@@ -369,13 +368,9 @@ export const useNotificationStore = defineStore('Notification', () => {
                     .then((_args) => {
                         const text = `Auto invite sent to ${ref.senderUsername}`;
                         if (AppDebug.errorNoty) {
-                            AppDebug.errorNoty.close();
+                            toast.dismiss(AppDebug.errorNoty);
                         }
-                        AppDebug.errorNoty = new Noty({
-                            type: 'info',
-                            text
-                        });
-                        AppDebug.errorNoty.show();
+                        AppDebug.errorNoty = toast.info(text);
                         console.log(text);
                         notificationRequest
                             .hideNotification({
@@ -390,6 +385,24 @@ export const useNotificationStore = defineStore('Notification', () => {
                         console.error(err);
                     });
             });
+    }
+
+    /**
+     * @param {object} entry
+     */
+    function appendNotificationTableEntry(entry) {
+        notificationTable.value.data.push(entry);
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    function setNotificationInitStatus(value) {
+        notificationInitStatus.value = value;
+    }
+
+    function clearUnseenNotifications() {
+        unseenNotifications.value = [];
     }
 
     /**
@@ -1323,10 +1336,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                 console.log('Notification response', args);
                 if (!args.json) return;
                 handleNotificationV2Hide(notificationId);
-                new Noty({
-                    type: 'success',
-                    text: escapeTag(args.json)
-                }).show();
+                toast.success(escapeTag(args.json));
             })
             .catch(() => {
                 handleNotificationV2Hide(notificationId);
@@ -1474,6 +1484,9 @@ export const useNotificationStore = defineStore('Notification', () => {
         isNotificationExpired,
         openNotificationLink,
         queueMarkAsSeen,
-        markAllAsSeen
+        markAllAsSeen,
+        appendNotificationTableEntry,
+        setNotificationInitStatus,
+        clearUnseenNotifications
     };
 });

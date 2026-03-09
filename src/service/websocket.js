@@ -1,6 +1,6 @@
 import { reactive } from 'vue';
 
-import Noty from 'noty';
+import { toast } from 'vue-sonner';
 
 import {
     useFriendStore,
@@ -99,12 +99,9 @@ function connectWebSocket(token) {
     };
     socket.onerror = () => {
         if (AppDebug.errorNoty) {
-            AppDebug.errorNoty.close();
+            toast.dismiss(AppDebug.errorNoty);
         }
-        AppDebug.errorNoty = new Noty({
-            type: 'error',
-            text: 'WebSocket Error'
-        }).show();
+        AppDebug.errorNoty = toast.error('WebSocket Error');
         socket.onclose(
             new CloseEvent('close', {
                 code: 1006, // Abnormal Closure
@@ -190,12 +187,9 @@ function handlePipeline(args) {
     if (typeof err !== 'undefined') {
         console.error('PIPELINE: error', args);
         if (AppDebug.errorNoty) {
-            AppDebug.errorNoty.close();
+            toast.dismiss(AppDebug.errorNoty);
         }
-        AppDebug.errorNoty = new Noty({
-            type: 'error',
-            text: escapeTag(`WebSocket Error: ${err}`)
-        }).show();
+        AppDebug.errorNoty = toast.error(escapeTag(`WebSocket Error: ${err}`));
         return;
     }
     if (typeof content === 'undefined') {
@@ -564,7 +558,7 @@ function handlePipeline(args) {
                 uiStore.notifyMenu('notification');
             }
             notificationStore.queueNotificationNoty(noty);
-            notificationStore.notificationTable.data.push(noty);
+            notificationStore.appendNotificationTableEntry(noty);
             sharedFeedStore.addEntry(noty);
             break;
 

@@ -6,10 +6,10 @@
                     <img :src="userImage(favorite.ref, true)" loading="lazy" />
                 </div>
                 <div class="favorites-search-card__detail">
-                    <div class="favorites-search-card__title">
+                    <div class="flex items-center gap-2">
                         <span class="name text-sm" :style="displayNameStyle">{{ favorite.ref.displayName }}</span>
                     </div>
-                    <div v-if="favorite.ref.location !== 'offline'" class="favorites-search-card__location">
+                    <div v-if="favorite.ref.location !== 'offline'" class="text-xs truncate">
                         <Location
                             :location="favorite.ref.location"
                             :traveling="favorite.ref.travelingToLocation"
@@ -20,22 +20,19 @@
             </div>
             <div class="favorites-search-card__actions">
                 <template v-if="editMode">
-                    <div class="favorites-search-card__action favorites-search-card__action--checkbox" @click.stop>
+                    <div class="flex justify-end w-full favorites-search-card__action--checkbox" @click.stop>
                         <Checkbox v-model="isSelected" />
                     </div>
-                    <div class="favorites-search-card__action-group">
-                        <div
-                            v-if="group?.type !== 'local'"
-                            class="favorites-search-card__action favorites-search-card__action--full"
-                            @click.stop>
+                    <div class="flex gap-[var(--favorites-card-action-group-gap,8px)] w-full">
+                        <div v-if="group?.type !== 'local'" class="flex justify-end w-full flex-1" @click.stop>
                             <FavoritesMoveDropdown
                                 :favoriteGroup="favoriteFriendGroups"
                                 :currentGroup="group"
                                 :currentFavorite="favorite"
-                                class="favorites-search-card__dropdown"
+                                class="w-full"
                                 type="friend" />
                         </div>
-                        <div class="favorites-search-card__action">
+                        <div class="flex justify-end w-full">
                             <TooltipWrapper side="left" :content="t('view.favorite.unfavorite_tooltip')">
                                 <Button
                                     size="icon-sm"
@@ -49,7 +46,7 @@
                     </div>
                 </template>
                 <template v-else>
-                    <div class="favorites-search-card__action">
+                    <div class="flex justify-end w-full">
                         <TooltipWrapper side="right" :content="t('view.favorite.edit_favorite_tooltip')">
                             <Button
                                 size="icon-sm"
@@ -71,7 +68,7 @@
                 </div>
             </div>
             <div class="favorites-search-card__actions">
-                <div class="favorites-search-card__action">
+                <div class="flex justify-end w-full">
                     <Button
                         class="rounded-full text-xs h-6 w-6"
                         size="icon-sm"
@@ -135,6 +132,9 @@
         return {};
     });
 
+    /**
+     * @returns {void}
+     */
     function handleDeleteFavorite() {
         if (props.group?.type === 'local') {
             removeLocalFriendFavorite(props.favorite.id, props.group.key);
@@ -145,3 +145,7 @@
         }
     }
 </script>
+
+<style>
+    @import './favorites-card.css';
+</style>

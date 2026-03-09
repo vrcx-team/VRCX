@@ -1,6 +1,6 @@
 <template>
     <div class="x-container">
-        <div style="margin: 0 0 10px; display: flex; align-items: center">
+        <div class="mt-0 mx-0 mb-2" style="display: flex; align-items: center">
             <InputGroupField
                 :model-value="searchText"
                 :placeholder="t('view.search.search_placeholder')"
@@ -15,32 +15,37 @@
             </TooltipWrapper>
         </div>
         <TabsUnderline
+            class="mt-4"
             v-model="activeSearchTab"
             :items="searchTabs"
             aria-label="Search tabs"
-            :unmount-on-hide="false"
-            style="margin-top: 15px">
+            :unmount-on-hide="false">
             <template #user>
                 <div style="min-height: 60px">
-                    <label class="inline-flex items-center gap-2" style="margin-left: 10px">
+                    <label class="inline-flex items-center gap-2 ml-2">
                         <Checkbox v-model="searchUserByBio" />
                         <span>{{ t('view.search.user.search_by_bio') }}</span>
                     </label>
-                    <label class="inline-flex items-center gap-2" style="margin-left: 10px">
+                    <label class="inline-flex items-center gap-2 ml-2">
                         <Checkbox v-model="searchUserSortByLastLoggedIn" />
                         <span>{{ t('view.search.user.sort_by_last_logged_in') }}</span>
                     </label>
-                    <div class="x-friend-list" style="min-height: 500px">
+                    <div style="min-height: 500px">
                         <div
                             v-for="user in searchUserResults"
                             :key="user.id"
-                            class="x-friend-item"
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
                             @click="showUserDialog(user.id)">
-                            <div class="avatar">
-                                <img :src="userImage(user, true)" loading="lazy" />
+                            <div class="relative inline-block flex-none size-9 mr-2.5">
+                                <img
+                                    class="size-full rounded-full object-cover"
+                                    :src="userImage(user, true)"
+                                    loading="lazy" />
                             </div>
-                            <div class="detail">
-                                <span class="name" v-text="user.displayName"></span>
+                            <div class="flex-1 overflow-hidden">
+                                <span
+                                    class="block truncate font-medium leading-[18px]"
+                                    v-text="user.displayName"></span>
                                 <span
                                     v-if="randomUserColours"
                                     class="block truncate text-xs"
@@ -54,7 +59,7 @@
                             </div>
                         </div>
                     </div>
-                    <ButtonGroup v-if="searchUserResults.length" style="margin-top: 15px">
+                    <ButtonGroup class="mt-4" v-if="searchUserResults.length">
                         <Button
                             variant="outline"
                             size="sm"
@@ -80,7 +85,7 @@
                         <Select
                             :model-value="searchWorldCategoryIndex"
                             @update:modelValue="handleSearchWorldCategorySelect"
-                            style="margin-bottom: 15px">
+                            style="margin-bottom: 16px">
                             <SelectTrigger size="sm">
                                 <SelectValue :placeholder="t('view.search.world.category')" />
                             </SelectTrigger>
@@ -95,22 +100,25 @@
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
-                        <label class="inline-flex items-center gap-2" style="margin-left: 10px">
+                        <label class="inline-flex items-center gap-2" style="margin-left: 8px">
                             <Checkbox v-model="searchWorldLabs" />
                             <span>{{ t('view.search.world.community_lab') }}</span>
                         </label>
                     </div>
-                    <div class="x-friend-list" style="min-height: 500px">
+                    <div style="min-height: 500px">
                         <div
                             v-for="world in searchWorldResults"
                             :key="world.id"
-                            class="x-friend-item"
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
                             @click="showWorldDialog(world.id)">
-                            <div class="avatar">
-                                <img :src="world.thumbnailImageUrl" loading="lazy" />
+                            <div class="relative inline-block flex-none size-9 mr-2.5">
+                                <img
+                                    class="size-full rounded-full object-cover"
+                                    :src="world.thumbnailImageUrl"
+                                    loading="lazy" />
                             </div>
-                            <div class="detail">
-                                <span class="name" v-text="world.name"></span>
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]" v-text="world.name"></span>
                                 <span v-if="world.occupants" class="block truncate text-xs"
                                     >{{ world.authorName }} ({{ world.occupants }})</span
                                 >
@@ -118,7 +126,7 @@
                             </div>
                         </div>
                     </div>
-                    <ButtonGroup v-if="searchWorldResults.length" style="margin-top: 15px">
+                    <ButtonGroup v-if="searchWorldResults.length" style="margin-top: 16px">
                         <Button
                             variant="outline"
                             size="sm"
@@ -146,7 +154,7 @@
                                 v-if="avatarRemoteDatabaseProviderList.length > 1"
                                 :model-value="avatarRemoteDatabaseProvider"
                                 @update:modelValue="setAvatarProvider"
-                                style="margin-right: 5px">
+                                style="margin-right: 6px">
                                 <SelectTrigger size="sm">
                                     <SelectValue :placeholder="t('view.search.avatar.search_provider')" />
                                 </SelectTrigger>
@@ -172,7 +180,7 @@
                                     <RefreshCw v-else />
                                 </Button>
                             </TooltipWrapper>
-                            <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">{{
+                            <span class="text-sm mx-1.5">{{
                                 t('view.search.avatar.result_count', {
                                     count: searchAvatarResults.length
                                 })
@@ -182,7 +190,7 @@
                             <RadioGroup
                                 :model-value="searchAvatarFilter"
                                 class="flex items-center gap-4"
-                                style="margin: 5px"
+                                style="margin: 6px"
                                 @update:modelValue="handleSearchAvatarFilterChange">
                                 <div class="flex items-center space-x-2">
                                     <RadioGroupItem id="searchAvatarFilter-all" value="all" />
@@ -203,7 +211,7 @@
                             <RadioGroup
                                 :model-value="searchAvatarFilterRemote"
                                 class="flex items-center gap-4"
-                                style="margin: 5px"
+                                style="margin: 6px"
                                 @update:modelValue="handleSearchAvatarFilterRemoteChange">
                                 <div class="flex items-center space-x-2">
                                     <RadioGroupItem id="searchAvatarFilterRemote-all" value="all" />
@@ -231,7 +239,7 @@
                         <Select
                             :model-value="searchAvatarSort"
                             :disabled="searchAvatarFilterRemote !== 'local'"
-                            style="margin: 5px"
+                            style="margin: 6px"
                             @update:modelValue="handleSearchAvatarSortChange">
                             <SelectTrigger size="sm">
                                 <SelectValue :placeholder="t('view.search.avatar.sort_name')" />
@@ -251,18 +259,26 @@
                             </SelectContent>
                         </Select>
                     </div>
-                    <div class="x-friend-list" style="margin-top: 20px; min-height: 500px">
+                    <div style="margin-top: 20px; min-height: 500px">
                         <div
                             v-for="avatar in searchAvatarPage"
                             :key="avatar.id"
-                            class="x-friend-item"
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
                             @click="showAvatarDialog(avatar.id)">
-                            <div class="avatar">
-                                <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
-                                <img v-else-if="avatar.imageUrl" :src="avatar.imageUrl" loading="lazy" />
+                            <div class="relative inline-block flex-none size-9 mr-2.5">
+                                <img
+                                    v-if="avatar.thumbnailImageUrl"
+                                    class="size-full rounded-full object-cover"
+                                    :src="avatar.thumbnailImageUrl"
+                                    loading="lazy" />
+                                <img
+                                    v-else-if="avatar.imageUrl"
+                                    class="size-full rounded-full object-cover"
+                                    :src="avatar.imageUrl"
+                                    loading="lazy" />
                             </div>
-                            <div class="detail">
-                                <span class="name" v-text="avatar.name"></span>
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]" v-text="avatar.name"></span>
                                 <span
                                     v-if="avatar.releaseStatus === 'public'"
                                     class="block truncate text-xs"
@@ -276,7 +292,7 @@
                             </div>
                         </div>
                     </div>
-                    <ButtonGroup v-if="searchAvatarPage.length" style="margin-top: 15px">
+                    <ButtonGroup v-if="searchAvatarPage.length" style="margin-top: 16px">
                         <Button
                             variant="outline"
                             size="sm"
@@ -301,27 +317,25 @@
             </template>
             <template #group>
                 <div style="min-height: 60px">
-                    <div class="x-friend-list" style="min-height: 500px">
+                    <div style="min-height: 500px">
                         <div
                             v-for="group in searchGroupResults"
                             :key="group.id"
-                            class="x-friend-item"
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
                             @click="showGroupDialog(group.id)">
-                            <div class="avatar">
-                                <img :src="getSmallThumbnailUrl(group.iconUrl)" loading="lazy" />
+                            <div class="relative inline-block flex-none size-9 mr-2.5">
+                                <img
+                                    class="size-full rounded-full object-cover"
+                                    :src="getSmallThumbnailUrl(group.iconUrl)"
+                                    loading="lazy" />
                             </div>
-                            <div class="detail">
-                                <span class="name">
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]">
                                     <span v-text="group.name"></span>
-                                    <span style="margin-left: 5px; font-weight: normal">({{ group.memberCount }})</span>
+                                    <span style="margin-left: 6px; font-weight: normal">({{ group.memberCount }})</span>
                                     <span
-                                        style="
-                                            margin-left: 5px;
-                                            color: #909399;
-                                            font-weight: normal;
-                                            font-family: monospace;
-                                            font-size: 12px;
-                                        "
+                                        class="text-muted-foreground font-mono text-xs"
+                                        style="margin-left: 6px; font-weight: normal"
                                         >{{ group.shortCode }}.{{ group.discriminator }}</span
                                     >
                                 </span>
@@ -329,7 +343,7 @@
                             </div>
                         </div>
                     </div>
-                    <ButtonGroup v-if="searchGroupResults.length" style="margin-top: 15px">
+                    <ButtonGroup v-if="searchGroupResults.length" style="margin-top: 16px">
                         <Button
                             variant="outline"
                             size="sm"
@@ -428,16 +442,28 @@
     const searchWorldCategoryIndex = ref(null);
     const searchWorldResults = ref([]);
 
+    /**
+     *
+     * @param value
+     */
     function handleSearchAvatarFilterChange(value) {
         searchAvatarFilter.value = value;
         searchAvatar();
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleSearchAvatarFilterRemoteChange(value) {
         searchAvatarFilterRemote.value = value;
         searchAvatar();
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleSearchAvatarSortChange(value) {
         searchAvatarSort.value = value;
         searchAvatar();
@@ -453,10 +479,17 @@
     const searchGroupParams = ref({});
     const searchGroupResults = ref([]);
 
+    /**
+     *
+     * @param url
+     */
     function getSmallThumbnailUrl(url) {
         return convertFileUrlToImageUrl(url);
     }
 
+    /**
+     *
+     */
     function handleClearSearch() {
         searchUserParams.value = {};
         searchWorldParams.value = {};
@@ -469,15 +502,26 @@
         clearSearch();
     }
 
+    /**
+     *
+     * @param text
+     */
     function updateSearchText(text) {
         searchText.value = text;
     }
 
+    /**
+     *
+     * @param tabName
+     */
     function handleSearchTabChange(tabName) {
         searchText.value = '';
         activeSearchTab.value = tabName;
     }
 
+    /**
+     *
+     */
     function search() {
         switch (activeSearchTab.value) {
             case 'user':
@@ -495,6 +539,9 @@
         }
     }
 
+    /**
+     *
+     */
     async function searchUser() {
         searchUserParams.value = {
             n: 10,
@@ -506,12 +553,20 @@
         await handleMoreSearchUser();
     }
 
+    /**
+     *
+     * @param go
+     */
     async function handleMoreSearchUser(go = null) {
         isSearchUserLoading.value = true;
         await moreSearchUser(go, searchUserParams.value);
         isSearchUserLoading.value = false;
     }
 
+    /**
+     *
+     * @param ref
+     */
     function searchWorld(ref) {
         searchWorldOption.value = '';
         searchWorldCategoryIndex.value = ref?.index ?? null;
@@ -581,12 +636,20 @@
         moreSearchWorld();
     }
 
+    /**
+     *
+     * @param index
+     */
     function handleSearchWorldCategorySelect(index) {
         searchWorldCategoryIndex.value = index;
         const row = cachedConfig.value?.dynamicWorldRows?.find((r) => r.index === index);
         searchWorld(row || {});
     }
 
+    /**
+     *
+     * @param go
+     */
     function moreSearchWorld(go) {
         const params = searchWorldParams.value;
         if (go) {
@@ -614,6 +677,9 @@
             });
     }
 
+    /**
+     *
+     */
     async function searchAvatar() {
         let ref;
         isSearchAvatarLoading.value = true;
@@ -712,6 +778,10 @@
         searchAvatarResults.value = avatarsArray;
         searchAvatarPage.value = avatarsArray.slice(0, 10);
     }
+    /**
+     *
+     * @param n
+     */
     function moreSearchAvatar(n) {
         let offset;
         if (n === -1) {
@@ -724,6 +794,9 @@
         }
         searchAvatarPage.value = searchAvatarResults.value.slice(offset, offset + 10);
     }
+    /**
+     *
+     */
     async function searchGroup() {
         searchGroupParams.value = {
             n: 10,
@@ -732,6 +805,10 @@
         };
         await moreSearchGroup();
     }
+    /**
+     *
+     * @param go
+     */
     async function moreSearchGroup(go) {
         const params = searchGroupParams.value;
         if (go) {

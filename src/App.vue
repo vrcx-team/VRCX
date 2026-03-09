@@ -2,7 +2,10 @@
     <TooltipProvider>
         <MacOSTitleBar></MacOSTitleBar>
 
-        <div id="x-app" class="x-app" :class="{ 'with-macos-titlebar': isMacOS }">
+        <div
+            id="x-app"
+            class="flex w-screen h-screen overflow-hidden cursor-default [&>.x-container]:pt-[15px]"
+            :class="{ 'pt-7': isMacOS }">
             <RouterView></RouterView>
             <Toaster position="top-center" :theme="theme"></Toaster>
 
@@ -31,7 +34,6 @@
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
 
     import '@/styles/globals.css';
-    import '@/app.css';
 
     console.log(`isLinux: ${LINUX}`);
 
@@ -61,10 +63,3 @@
         store.game.checkVRChatDebugLogging();
     });
 </script>
-
-<style scoped>
-    /* Add title bar spacing for macOS */
-    .x-app.with-macos-titlebar {
-        padding-top: 28px;
-    }
-</style>

@@ -78,16 +78,14 @@ export const useLocationStore = defineStore('Location', () => {
         } else {
             ref.$location_at = lastLocation.value.date;
             ref.$travelingToTime = lastLocationDestinationTime.value;
-            userStore.currentUser.$travelingToTime =
-                lastLocationDestinationTime.value;
+            userStore.setCurrentUserTravelingToTime(
+                lastLocationDestinationTime.value
+            );
         }
     }
 
     async function setCurrentUserLocation(location, travelingToLocation) {
-        userStore.currentUser.$location_at = Date.now();
-        userStore.currentUser.$travelingToTime = Date.now();
-        userStore.currentUser.$locationTag = location;
-        userStore.currentUser.$travelingToLocation = travelingToLocation;
+        userStore.setCurrentUserLocationState(location, travelingToLocation);
         updateCurrentUserLocation();
 
         // janky gameLog support for Quest
@@ -144,25 +142,7 @@ export const useLocationStore = defineStore('Location', () => {
             dateTime = new Date().toJSON();
         }
         const dateTimeStamp = Date.parse(dateTime);
-        photonStore.photonLobby = new Map();
-        photonStore.photonLobbyCurrent = new Map();
-        photonStore.photonLobbyMaster = 0;
-        photonStore.photonLobbyCurrentUser = 0;
-        photonStore.photonLobbyUserData = new Map();
-        photonStore.photonLobbyWatcherLoopStop();
-        photonStore.photonLobbyAvatars = new Map();
-        photonStore.photonLobbyLastModeration = new Map();
-        photonStore.photonLobbyJointime = new Map();
-        photonStore.photonLobbyActivePortals = new Map();
-        photonStore.photonEvent7List = new Map();
-        photonStore.photonLastEvent7List = 0;
-        photonStore.photonLastChatBoxMsg = new Map();
-        photonStore.moderationEventQueue = new Map();
-        if (photonStore.photonEventTable.data.length > 0) {
-            photonStore.photonEventTablePrevious.data =
-                photonStore.photonEventTable.data;
-            photonStore.photonEventTable.data = [];
-        }
+        photonStore.resetLocationPhotonState();
         const playerList = Array.from(lastLocation.value.playerList.values());
         const dataBaseEntries = [];
         for (const ref of playerList) {
@@ -198,11 +178,38 @@ export const useLocationStore = defineStore('Location', () => {
         instanceStore.updateCurrentInstanceWorld();
         vrStore.updateVRLastLocation();
         instanceStore.getCurrentInstanceUserList();
-        gameLogStore.lastVideoUrl = '';
-        gameLogStore.lastResourceloadUrl = '';
+        gameLogStore.resetLastMediaUrls();
         userStore.applyUserDialogLocation();
         instanceStore.applyWorldDialogInstances();
         instanceStore.applyGroupDialogInstances();
+    }
+
+    /**
+     * @param {{date: number|null, location: string, name: string, playerList: Map<any, any>, friendList: Map<any, any>}} value
+     */
+    function setLastLocation(value) {
+        lastLocation.value = value;
+    }
+
+    /**
+     * @param {string} value
+     */
+    function setLastLocationLocation(value) {
+        lastLocation.value.location = value;
+    }
+
+    /**
+     * @param {string} value
+     */
+    function setLastLocationDestination(value) {
+        lastLocationDestination.value = value;
+    }
+
+    /**
+     * @param {number} value
+     */
+    function setLastLocationDestinationTime(value) {
+        lastLocationDestinationTime.value = value;
     }
 
     return {
@@ -211,6 +218,10 @@ export const useLocationStore = defineStore('Location', () => {
         lastLocationDestinationTime,
         updateCurrentUserLocation,
         setCurrentUserLocation,
-        lastLocationReset
+        lastLocationReset,
+        setLastLocation,
+        setLastLocationLocation,
+        setLastLocationDestination,
+        setLastLocationDestinationTime
     };
 });

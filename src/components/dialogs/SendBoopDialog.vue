@@ -28,8 +28,8 @@
                 style="
                     display: grid;
                     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-                    gap: 5px;
-                    margin-top: 10px;
+                    gap: 6px;
+                    margin-top: 8px;
                     max-height: 600px;
                     overflow-y: auto;
                 ">
@@ -37,7 +37,7 @@
                     v-for="image in emojiTable"
                     :key="image.id"
                     :class="image.id === fileId ? 'x-image-selected' : ''"
-                    style="cursor: pointer; border: 1px solid transparent; border-radius: 8px"
+                    style="cursor: pointer; border: 1px solid transparent; border-radius: var(--radius-xl)"
                     @click="fileId = image.id">
                     <div
                         v-if="
@@ -109,6 +109,9 @@
         }
     );
 
+    /**
+     *
+     */
     function closeDialog() {
         sendBoopDialog.value.visible = false;
     }
@@ -120,6 +123,10 @@
         }
     });
 
+    /**
+     *
+     * @param emojiName
+     */
     function getEmojiValue(emojiName) {
         if (!emojiName) {
             return '';
@@ -139,6 +146,9 @@
         }
     ]);
 
+    /**
+     *
+     */
     function sendBoop() {
         const D = sendBoopDialog.value;
         dismissBoop(D.userId);
@@ -152,6 +162,10 @@
         D.visible = false;
     }
 
+    /**
+     *
+     * @param userId
+     */
     function dismissBoop(userId) {
         // JANK: This is a hack to remove boop notifications when responding
         const array = notificationTable.value.data;

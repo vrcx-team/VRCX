@@ -13,7 +13,7 @@
 
             <template v-if="isLocalUserVrcPlusSupporter">
                 <!--            <template v-if="gallerySelectDialog.selectedFileId">-->
-                <!--                <div style="display: inline-block; flex: none; margin-right: 5px">-->
+                <!--                <div class="mr-1.5" style="display: inline-block; flex: none">-->
                 <!--                    <el-popover placement="right" :width="500px" trigger="click">-->
                 <!--                        <template #reference>-->
                 <!--                            <img-->
@@ -33,7 +33,7 @@
                 <!--                </el-button>-->
                 <!--            </template>-->
                 <!--            <template v-else>-->
-                <!--                <el-button size="small" @click="showGallerySelectDialog" style="margin-right: 5px">-->
+                <!--                <el-button size="small" @click="showGallerySelectDialog" style="margin-right: 6px">-->
                 <!--                    {{ t('dialog.invite_message.select_image') }}-->
                 <!--                </el-button>-->
                 <!--            </template>-->
@@ -41,7 +41,7 @@
             </template>
 
             <DataTableLayout
-                style="margin-top: 10px"
+                style="margin-top: 8px"
                 :table="inviteMessageTanstackTable"
                 :loading="false"
                 :show-pagination="false"
@@ -137,15 +137,27 @@
         initialSorting: [{ id: 'slot', desc: false }]
     });
 
+    /**
+     *
+     * @param row
+     */
     function handleInviteMessageRowClick(row) {
         showSendInviteConfirmDialog(row?.original);
     }
 
+    /**
+     *
+     * @param row
+     */
     function showSendInviteConfirmDialog(row) {
         emit('update:sendInviteDialog', { ...props.sendInviteDialog, messageSlot: row });
         isSendInviteConfirmDialogVisible.value = true;
     }
 
+    /**
+     *
+     * @param row
+     */
     function showEditAndSendInviteDialog(row) {
         emit('update:sendInviteDialog', { ...props.sendInviteDialog, messageSlot: row });
         editAndSendInviteDialog.value = {
@@ -154,10 +166,16 @@
         };
     }
 
+    /**
+     *
+     */
     function cancelSendInvite() {
         emit('update:sendInviteDialogVisible', false);
     }
 
+    /**
+     *
+     */
     function closeInviteDialog() {
         cancelSendInvite();
         emit('closeInviteDialog');

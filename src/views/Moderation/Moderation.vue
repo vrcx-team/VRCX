@@ -23,7 +23,7 @@
             <InputGroupField
                 v-model="playerModerationTable.filters[1].value"
                 :placeholder="t('view.moderation.search_placeholder')"
-                class="filter-input flex-[0.4]" />
+                class="w-[150px] mx-2.5 flex-[0.4]" />
             <TooltipWrapper side="bottom" :content="t('view.moderation.refresh_tooltip')">
                 <Button
                     class="rounded-full"
@@ -179,10 +179,3 @@
         };
     };
 </script>
-
-<style scoped>
-    .filter-input {
-        width: 150px;
-        margin: 0 10px;
-    }
-</style>

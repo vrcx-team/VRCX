@@ -5,7 +5,12 @@ import { i18n } from '../../../plugin';
 
 const { t } = i18n.global;
 
-export const createColumns = ({ onShowWorld, onShowUser, onDelete, onShowFullscreenImage }) => [
+export const createColumns = ({
+    onShowWorld,
+    onShowUser,
+    onDelete,
+    onShowFullscreenImage
+}) => [
     {
         id: 'image',
         header: () => t('table.import.image'),
@@ -85,13 +90,13 @@ export const createColumns = ({ onShowWorld, onShowUser, onDelete, onShowFullscr
             const label = status
                 ? status.charAt(0).toUpperCase() + status.slice(1)
                 : '';
-            const color =
+            const colorClass =
                 status === 'public'
-                    ? '#67c23a'
+                    ? 'text-status-online'
                     : status === 'private'
-                      ? '#f56c6c'
-                      : undefined;
-            return <span style={{ color }}>{label}</span>;
+                      ? 'text-destructive'
+                      : '';
+            return <span class={colorClass}>{label}</span>;
         }
     },
     {

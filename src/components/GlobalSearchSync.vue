@@ -17,7 +17,7 @@
     watch(
         () => filterState.search,
         async (value) => {
-            globalSearchStore.query = value;
+            globalSearchStore.setQuery(value);
 
             // When query < 2 chars, override the built-in filter
             // so all items (hint categories) stay visible

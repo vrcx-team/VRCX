@@ -6,11 +6,9 @@
             </DialogHeader>
             <InputGroupTextareaField
                 v-model="exportAvatarsListCsv"
-                
                 :rows="15"
                 readonly
-                style="margin-top: 15px"
-                input-class="resize-none"
+                input-class="resize-none mt-4"
                 @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
         </DialogContent>
     </Dialog>

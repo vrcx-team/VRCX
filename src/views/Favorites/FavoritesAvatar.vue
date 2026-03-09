@@ -1,96 +1,37 @@
 <template>
     <div class="x-container">
-        <div class="favorites-page">
-            <div class="favorites-toolbar">
-                <div>
-                    <Select :model-value="sortFavorites" @update:modelValue="handleSortFavoritesChange">
-                        <SelectTrigger size="sm" class="favorites-toolbar__select">
-                            <span class="flex items-center gap-2">
-                                <ArrowUpDown class="h-4 w-4" />
-                                <SelectValue
-                                    :placeholder="t('view.settings.appearance.appearance.sort_favorite_by_name')" />
-                            </span>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem
-                                    :value="false"
-                                    :text-value="t('view.settings.appearance.appearance.sort_favorite_by_name')">
-                                    {{ t('view.settings.appearance.appearance.sort_favorite_by_name') }}
-                                </SelectItem>
-                                <SelectItem
-                                    :value="true"
-                                    :text-value="t('view.settings.appearance.appearance.sort_favorite_by_date')">
-                                    {{ t('view.settings.appearance.appearance.sort_favorite_by_date') }}
-                                </SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div class="favorites-toolbar__right">
-                    <InputGroupSearch
-                        v-model="avatarFavoriteSearch"
-                        class="favorites-toolbar__search"
-                        :placeholder="t('view.favorite.avatars.search')"
-                        @input="searchAvatarFavorites" />
-                    <DropdownMenu v-model:open="avatarToolbarMenuOpen">
-                        <DropdownMenuTrigger as-child>
-                            <Button class="rounded-full" size="icon-sm" variant="ghost"> <Ellipsis /> </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent class="favorites-dropdown">
-                            <li class="favorites-dropdown__control" @click.stop>
-                                <div class="favorites-dropdown__control-header">
-                                    <span>{{ t('view.friends_locations.scale') }}</span>
-                                    <span class="favorites-dropdown__control-value">{{ avatarCardScalePercent }}%</span>
-                                </div>
-                                <Slider
-                                    v-model="avatarCardScaleValue"
-                                    class="favorites-dropdown__slider"
-                                    :min="avatarCardScaleSlider.min"
-                                    :max="avatarCardScaleSlider.max"
-                                    :step="avatarCardScaleSlider.step" />
-                            </li>
-                            <li class="favorites-dropdown__control" @click.stop>
-                                <div class="favorites-dropdown__control-header">
-                                    <span>{{ t('view.friends_locations.spacing') }}</span>
-                                    <span class="favorites-dropdown__control-value">
-                                        {{ avatarCardSpacingPercent }}%
-                                    </span>
-                                </div>
-                                <Slider
-                                    v-model="avatarCardSpacingValue"
-                                    class="favorites-dropdown__slider"
-                                    :min="avatarCardSpacingSlider.min"
-                                    :max="avatarCardSpacingSlider.max"
-                                    :step="avatarCardSpacingSlider.step" />
-                            </li>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem @click="handleAvatarImportClick">
-                                {{ t('view.favorite.import') }}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem @click="handleAvatarExportClick">
-                                {{ t('view.favorite.export') }}
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </div>
+        <div class="flex flex-col h-full min-h-0 pb-0">
+            <FavoritesToolbar
+                :sort-favorites="sortFavorites"
+                v-model:search-query="avatarFavoriteSearch"
+                :search-placeholder="t('view.favorite.avatars.search')"
+                v-model:toolbar-menu-open="avatarToolbarMenuOpen"
+                v-model:card-scale-value="avatarCardScaleValue"
+                :card-scale-percent="avatarCardScalePercent"
+                :card-scale-slider="avatarCardScaleSlider"
+                v-model:card-spacing-value="avatarCardSpacingValue"
+                :card-spacing-percent="avatarCardSpacingPercent"
+                :card-spacing-slider="avatarCardSpacingSlider"
+                @update:sort-favorites="handleSortFavoritesChange"
+                @search="searchAvatarFavorites"
+                @import="handleAvatarImportClick"
+                @export="handleAvatarExportClick" />
             <ResizablePanelGroup
-                ref="avatarSplitterGroupRef"
+                ref="splitterGroupRef"
                 direction="horizontal"
-                class="favorites-splitter"
-                @layout="handleAvatarSplitterLayout">
+                class="flex-1 min-h-0 favorites-splitter"
+                @layout="handleLayout">
                 <ResizablePanel
-                    ref="avatarSplitterPanelRef"
-                    :default-size="avatarSplitterDefaultSize"
-                    :min-size="avatarSplitterMinSize"
-                    :max-size="avatarSplitterMaxSize"
+                    ref="splitterPanelRef"
+                    :default-size="splitterDefaultSize"
+                    :min-size="splitterMinSize"
+                    :max-size="splitterMaxSize"
                     :collapsed-size="0"
                     collapsible
                     :order="1">
-                    <div class="favorites-groups-panel">
-                        <div class="group-section">
-                            <div class="group-section__header">
+                    <div class="h-full pr-2 overflow-auto flex flex-col gap-3">
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center justify-between font-semibold text-sm mb-[9px]">
                                 <span>{{ t('view.favorite.avatars.vrchat_favorites') }}</span>
                                 <TooltipWrapper side="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
                                     <Button
@@ -104,26 +45,24 @@
                                     </Button>
                                 </TooltipWrapper>
                             </div>
-                            <div class="group-section__list">
+                            <div class="flex flex-col gap-2">
                                 <template v-if="favoriteAvatarGroups.length">
                                     <div
                                         v-for="group in favoriteAvatarGroups"
                                         :key="group.key"
                                         :class="[
-                                            'group-item',
+                                            'group-item x-hover-card hover:shadow-sm',
                                             `group-item--${group.visibility}`,
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]"
                                         @click="handleGroupClick('remote', group.key)">
-                                        <div class="group-item__top">
-                                            <span class="group-item__name">{{ group.displayName }}</span>
-                                            <span class="group-item__count"
-                                                >{{ group.count }}/{{ group.capacity }}</span
-                                            >
+                                        <div class="flex items-start justify-between mb-1 text-[13px]">
+                                            <span class="font-semibold">{{ group.displayName }}</span>
+                                            <span class="text-xs">{{ group.count }}/{{ group.capacity }}</span>
                                         </div>
-                                        <div class="group-item__bottom">
-                                            <span class="group-item__visibility">
-                                                <span class="group-item__visibility-text">{{
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="flex items-center gap-1.5">
+                                                <span class="text-[11px] text-muted-foreground">{{
                                                     t(`view.favorite.visibility.${group.visibility}`)
                                                 }}</span>
                                             </span>
@@ -184,23 +123,23 @@
                                         v-for="group in avatarGroupPlaceholders"
                                         :key="group.key"
                                         :class="[
-                                            'group-item',
-                                            'group-item--placeholder',
+                                            'group-item x-hover-card hover:shadow-sm',
+                                            'pointer-events-none opacity-70',
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]">
-                                        <div class="group-item__top">
-                                            <span class="group-item__name">{{ group.displayName }}</span>
-                                            <span class="group-item__count">--/--</span>
+                                        <div class="flex items-start justify-between mb-1 text-[13px]">
+                                            <span class="font-semibold">{{ group.displayName }}</span>
+                                            <span class="text-xs">--/--</span>
                                         </div>
-                                        <div class="group-item__bottom">
-                                            <div class="group-item__placeholder-tag"></div>
+                                        <div class="flex items-center justify-between gap-2">
+                                            <div class="w-16 h-[18px] rounded-full"></div>
                                         </div>
                                     </div>
                                 </template>
                             </div>
                         </div>
-                        <div class="group-section">
-                            <div class="group-section__header">
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center justify-between font-semibold text-sm mb-[9px]">
                                 <span>{{ t('view.favorite.avatars.local_favorites') }}</span>
                                 <template v-if="!refreshingLocalFavorites">
                                     <Button
@@ -217,22 +156,20 @@
                                     {{ t('view.favorite.avatars.cancel_refresh') }}
                                 </Button>
                             </div>
-                            <div class="group-section__list">
+                            <div class="flex flex-col gap-2">
                                 <template v-if="localAvatarFavoriteGroups.length">
                                     <div
                                         v-for="group in localAvatarFavoriteGroups"
                                         :key="group"
                                         :class="[
-                                            'group-item',
+                                            'group-item x-hover-card hover:shadow-sm',
                                             { 'is-active': !hasSearchInput && isGroupActive('local', group) }
                                         ]"
                                         @click="handleGroupClick('local', group)">
-                                        <div class="group-item__top">
-                                            <span class="group-item__name">{{ group }}</span>
-                                            <div class="group-item__right">
-                                                <span class="group-item__count">{{
-                                                    localAvatarFavGroupLength(group)
-                                                }}</span>
+                                        <div class="flex items-start justify-between mb-1 text-[13px]">
+                                            <span class="font-semibold">{{ group }}</span>
+                                            <div class="flex items-center flex-col">
+                                                <span class="text-xs">{{ localAvatarFavGroupLength(group) }}</span>
                                                 <DropdownMenu
                                                     :open="activeGroupMenu === localGroupMenuKey(group)"
                                                     @update:open="
@@ -265,7 +202,7 @@
                                         </div>
                                     </div>
                                 </template>
-                                <div v-else class="group-empty">
+                                <div v-else class="text-center text-xs py-3">
                                     <DataTableEmpty type="nodata" />
                                 </div>
                                 <TooltipWrapper
@@ -274,9 +211,9 @@
                                     :content="t('view.favorite.avatars.local_favorites')">
                                     <div
                                         :class="[
-                                            'group-item',
-                                            'group-item--new',
-                                            { 'is-disabled': !isLocalUserVrcPlusSupporter }
+                                            'group-item x-hover-card hover:shadow-sm',
+                                            'border-dashed flex items-center justify-center gap-2 text-sm',
+                                            { 'opacity-50 cursor-not-allowed': !isLocalUserVrcPlusSupporter }
                                         ]"
                                         @click="startLocalGroupCreation">
                                         <Plus />
@@ -288,15 +225,15 @@
                                     ref="newLocalGroupInput"
                                     v-model="newLocalGroupName"
                                     size="sm"
-                                    class="group-item__input"
+                                    class="w-full"
                                     :placeholder="t('view.favorite.avatars.new_group')"
                                     @keyup.enter="handleLocalGroupCreationConfirm"
                                     @keyup.esc="cancelLocalGroupCreation"
                                     @blur="cancelLocalGroupCreation" />
                             </div>
                         </div>
-                        <div class="group-section">
-                            <div class="group-section__header">
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center justify-between font-semibold text-sm mb-[9px]">
                                 <span>{{ t('view.favorite.avatars.local_history') }}</span>
                                 <DropdownMenu
                                     :open="activeGroupMenu === historyGroupMenuKey"
@@ -313,29 +250,38 @@
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
-                            <div class="group-section__list">
+                            <div class="flex flex-col gap-2">
                                 <div
                                     :class="[
-                                        'group-item',
+                                        'group-item x-hover-card hover:shadow-sm',
                                         { 'is-active': !hasSearchInput && isGroupActive('history', historyGroupKey) }
                                     ]"
                                     @click="handleGroupClick('history', historyGroupKey)">
-                                    <div class="group-item__top">
-                                        <span class="group-item__name">{{
+                                    <div class="flex items-start justify-between mb-1 text-[13px]">
+                                        <span class="font-semibold">{{
                                             t('view.favorite.avatars.local_history')
                                         }}</span>
-                                        <span class="group-item__count">{{ avatarHistory.length }}/100</span>
+                                        <span class="text-xs">{{ avatarHistory.length }}/100</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </ResizablePanel>
-                <ResizableHandle @dragging="setAvatarSplitterDragging" />
+                <ResizableHandle @dragging="splitterSetDragging" />
                 <ResizablePanel :order="2">
-                    <div class="favorites-content">
-                        <div class="favorites-content__header">
-                            <div class="favorites-content__title">
+                    <div class="flex flex-col h-full min-h-0 pl-[26px]">
+                        <FavoritesContentHeader
+                            v-model:edit-mode="avatarEditMode"
+                            :edit-mode-disabled="isSearchActive || !activeRemoteGroup"
+                            :edit-mode-visible="avatarEditMode && !isSearchActive && activeRemoteGroup"
+                            :is-all-selected="isAllAvatarsSelected"
+                            :has-selection="hasAvatarSelection"
+                            @toggle-select-all="toggleSelectAllAvatars"
+                            @clear-selection="clearSelectedAvatars"
+                            @copy-selection="copySelectedAvatars"
+                            @bulk-unfavorite="showAvatarBulkUnfavoriteSelectionConfirm">
+                            <template #title>
                                 <span v-if="isSearchActive">{{ t('view.favorite.avatars.search') }}</span>
                                 <template v-else-if="activeRemoteGroup">
                                     <span>
@@ -356,47 +302,9 @@
                                     </span>
                                 </template>
                                 <span v-else>{{ t('view.favorite.avatars.no_group_selected') }}</span>
-                            </div>
-                            <div class="favorites-content__edit">
-                                <span>{{ t('view.favorite.edit_mode') }}</span>
-                                <Switch v-model="avatarEditMode" :disabled="isSearchActive || !activeRemoteGroup" />
-                            </div>
-                        </div>
-                        <div class="favorites-content__edit-actions">
-                            <div
-                                v-if="avatarEditMode && !isSearchActive && activeRemoteGroup"
-                                class="favorites-content__actions">
-                                <Button size="sm" variant="outline" @click="toggleSelectAllAvatars">
-                                    {{
-                                        isAllAvatarsSelected
-                                            ? t('view.favorite.deselect_all')
-                                            : t('view.favorite.select_all')
-                                    }}
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    variant="secondary"
-                                    :disabled="!hasAvatarSelection"
-                                    @click="clearSelectedAvatars">
-                                    {{ t('view.favorite.clear') }}
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    :disabled="!hasAvatarSelection"
-                                    @click="copySelectedAvatars">
-                                    {{ t('view.favorite.copy') }}
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    :disabled="!hasAvatarSelection"
-                                    @click="showAvatarBulkUnfavoriteSelectionConfirm">
-                                    {{ t('view.favorite.bulk_unfavorite') }}
-                                </Button>
-                            </div>
-                        </div>
-                        <div ref="avatarFavoritesContainerRef" class="favorites-content__list">
+                            </template>
+                        </FavoritesContentHeader>
+                        <div ref="avatarFavoritesContainerRef" class="flex-1 min-h-0">
                             <template v-if="isSearchActive">
                                 <div class="favorites-content__scroll favorites-content__scroll--native">
                                     <div
@@ -406,7 +314,7 @@
                                         <div
                                             v-for="favorite in avatarFavoriteSearchResults"
                                             :key="favorite.id"
-                                            class="favorites-search-card"
+                                            class="favorites-search-card x-hover-card hover:shadow-sm"
                                             @click="showAvatarDialog(favorite.id)">
                                             <div class="favorites-search-card__content">
                                                 <div
@@ -418,7 +326,7 @@
                                                         loading="lazy" />
                                                 </div>
                                                 <div class="favorites-search-card__detail">
-                                                    <div class="favorites-search-card__title">
+                                                    <div class="flex items-center gap-2">
                                                         <span class="name">{{ favorite.name }}</span>
                                                     </div>
                                                     <span class="text-xs">{{ favorite.authorName }}</span>
@@ -432,7 +340,7 @@
                                 </div>
                             </template>
                             <template v-else-if="activeRemoteGroup">
-                                <div class="favorites-content__scroll favorites-content__scroll--native">
+                                <div class="h-full pr-2 overflow-auto">
                                     <template v-if="currentRemoteFavorites.length">
                                         <div
                                             class="favorites-card-list"
@@ -448,13 +356,13 @@
                                                 @click="showAvatarDialog(favorite.id)" />
                                         </div>
                                     </template>
-                                    <div v-else class="favorites-empty">
+                                    <div v-else class="flex items-center justify-center text-[13px] h-full">
                                         <DataTableEmpty type="nodata" />
                                     </div>
                                 </div>
                             </template>
                             <template v-else-if="!remoteAvatarGroupsResolved">
-                                <div class="favorites-content__scroll favorites-content__scroll--native">
+                                <div class="h-full pr-2 overflow-auto">
                                     <div
                                         class="favorites-card-list"
                                         :style="avatarFavoritesGridStyle(avatarGroupPlaceholders.length)">
@@ -466,7 +374,7 @@
                                 </div>
                             </template>
                             <template v-else-if="activeLocalGroupName">
-                                <ScrollArea class="favorites-content__scroll">
+                                <ScrollArea class="h-full pr-2">
                                     <template v-if="currentLocalFavorites.length">
                                         <div
                                             class="favorites-card-list"
@@ -481,13 +389,13 @@
                                                 @click="showAvatarDialog(favorite.id)" />
                                         </div>
                                     </template>
-                                    <div v-else class="favorites-empty">
+                                    <div v-else class="flex items-center justify-center text-[13px] h-full">
                                         <DataTableEmpty type="nodata" />
                                     </div>
                                 </ScrollArea>
                             </template>
                             <template v-else-if="isHistorySelected">
-                                <div class="favorites-content__scroll favorites-content__scroll--native">
+                                <div class="h-full pr-2 overflow-auto">
                                     <template v-if="avatarHistory.length">
                                         <div
                                             class="favorites-card-list"
@@ -499,13 +407,15 @@
                                                 @click="showAvatarDialog(favorite.id)" />
                                         </div>
                                     </template>
-                                    <div v-else class="favorites-empty">
+                                    <div v-else class="flex items-center justify-center text-[13px] h-full">
                                         <DataTableEmpty type="nodata" />
                                     </div>
                                 </div>
                             </template>
                             <template v-else>
-                                <div class="favorites-empty">{{ t('view.favorite.avatars.no_group_selected') }}</div>
+                                <div class="flex items-center justify-center text-[13px] h-full">
+                                    {{ t('view.favorite.avatars.no_group_selected') }}
+                                </div>
                             </template>
                         </div>
                     </div>
@@ -517,11 +427,11 @@
 </template>
 
 <script setup>
-    import { computed, markRaw, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
-    import { ArrowUpDown, Ellipsis, Loader, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
-    import { InputGroupField, InputGroupSearch } from '@/components/ui/input-group';
+    import { computed, markRaw, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue';
+    import { Ellipsis, Loader, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { DataTableEmpty } from '@/components/ui/data-table';
+    import { InputGroupField } from '@/components/ui/input-group';
     import { ScrollArea } from '@/components/ui/scroll-area';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
@@ -534,20 +444,11 @@
         DropdownMenuContent,
         DropdownMenuItem,
         DropdownMenuPortal,
-        DropdownMenuSeparator,
         DropdownMenuSub,
         DropdownMenuSubContent,
         DropdownMenuSubTrigger,
         DropdownMenuTrigger
     } from '../../components/ui/dropdown-menu';
-    import {
-        Select,
-        SelectContent,
-        SelectGroup,
-        SelectItem,
-        SelectTrigger,
-        SelectValue
-    } from '../../components/ui/select';
     import {
         useAppearanceSettingsStore,
         useAvatarStore,
@@ -557,16 +458,18 @@
     } from '../../stores';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { avatarRequest, favoriteRequest } from '../../api';
-    import { Slider } from '../../components/ui/slider';
-    import { Switch } from '../../components/ui/switch';
     import { debounce } from '../../shared/utils';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
+    import { useFavoritesGroupPanel } from './composables/useFavoritesGroupPanel.js';
+    import { useFavoritesLocalGroups } from './composables/useFavoritesLocalGroups.js';
+    import { useFavoritesSplitter } from './composables/useFavoritesSplitter.js';
 
     import AvatarExportDialog from './dialogs/AvatarExportDialog.vue';
     import FavoritesAvatarItem from './components/FavoritesAvatarItem.vue';
     import FavoritesAvatarLocalHistoryItem from './components/FavoritesAvatarLocalHistoryItem.vue';
+    import FavoritesContentHeader from './components/FavoritesContentHeader.vue';
+    import FavoritesToolbar from './components/FavoritesToolbar.vue';
     import InvalidAvatarsProgressToast from './components/InvalidAvatarsProgressToast.jsx';
-    import configRepository from '../../service/config.js';
 
     import * as workerTimers from 'worker-timers';
 
@@ -575,20 +478,17 @@
         displayName: `Group ${index + 1}`
     }));
 
-    const avatarGroupVisibilityDotColors = {
-        public: 'bg-green-500',
-        friends: 'bg-sky-500',
-        private: 'bg-red-500'
-    };
     const avatarGroupVisibilityOptions = ref(['public', 'friends', 'private']);
     const historyGroupKey = 'local-history';
-    const avatarSplitterSize = ref(260);
-    const avatarSplitterFallbackWidth = typeof window !== 'undefined' && window.innerWidth ? window.innerWidth : 1200;
-    const avatarSplitterGroupRef = ref(null);
-    const avatarSplitterPanelRef = ref(null);
-    const avatarSplitterWidth = ref(avatarSplitterFallbackWidth);
-    const avatarSplitterDraggingCount = ref(0);
-    let avatarSplitterObserver = null;
+    const {
+        splitterGroupRef,
+        splitterPanelRef,
+        defaultSize: splitterDefaultSize,
+        minSize: splitterMinSize,
+        maxSize: splitterMaxSize,
+        handleLayout,
+        setDragging: splitterSetDragging
+    } = useFavoritesSplitter({ configKey: 'VRCX_FavoritesAvatarSplitter' });
 
     const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
@@ -671,18 +571,40 @@
     const avatarFavoriteSearch = ref('');
     const avatarFavoriteSearchResults = ref([]);
     const avatarEditMode = ref(false);
-    const selectedGroup = ref(null);
-    const activeGroupMenu = ref(null);
     const avatarToolbarMenuOpen = ref(false);
-    const isCreatingLocalGroup = ref(false);
-    const newLocalGroupName = ref('');
-    const newLocalGroupInput = ref(null);
     const refreshingLocalFavorites = ref(false);
     const worker = ref(null);
     const refreshCancelToken = ref(null);
     const avatarGroupPlaceholders = AVATAR_GROUP_PLACEHOLDERS;
-    const hasUserSelectedAvatarGroup = ref(false);
-    const remoteAvatarGroupsResolved = ref(false);
+
+    const {
+        activeGroupMenu,
+        hasUserSelectedGroup: hasUserSelectedAvatarGroup,
+        remoteGroupsResolved: remoteAvatarGroupsResolved,
+
+        isHistorySelected,
+        remoteGroupMenuKey,
+        localGroupMenuKey,
+        activeRemoteGroup,
+        activeLocalGroupName,
+        activeLocalGroupCount,
+        handleGroupMenuVisible,
+        selectGroup,
+        isGroupActive,
+        ensureSelectedGroup
+    } = useFavoritesGroupPanel({
+        remoteGroups: favoriteAvatarGroups,
+        localGroups: localAvatarFavoriteGroups,
+        localFavorites: localAvatarFavorites,
+        clearSelection: () => {
+            selectedFavoriteAvatars.value = [];
+        },
+        placeholders: AVATAR_GROUP_PLACEHOLDERS,
+        hasHistory: true,
+        historyItems: avatarHistory
+    });
+
+    const historyGroupMenuKey = 'history';
 
     /**
      *
@@ -698,13 +620,6 @@
     const hasAvatarSelection = computed(() => selectedFavoriteAvatars.value.length > 0);
     const hasSearchInput = computed(() => avatarFavoriteSearch.value.trim().length > 0);
     const isSearchActive = computed(() => avatarFavoriteSearch.value.trim().length >= 3);
-    const isRemoteGroupSelected = computed(() => selectedGroup.value?.type === 'remote');
-    const isLocalGroupSelected = computed(() => selectedGroup.value?.type === 'local');
-    const isHistorySelected = computed(() => selectedGroup.value?.type === 'history');
-
-    const remoteGroupMenuKey = (key) => `remote:${key}`;
-    const localGroupMenuKey = (key) => `local:${key}`;
-    const historyGroupMenuKey = 'history';
 
     const closeAvatarToolbarMenu = () => {
         avatarToolbarMenuOpen.value = false;
@@ -726,118 +641,6 @@
         showAvatarExportDialog();
     }
 
-    onBeforeMount(() => {
-        loadAvatarSplitterPreferences();
-    });
-
-    /**
-     *
-     */
-    async function loadAvatarSplitterPreferences() {
-        const storedSize = await configRepository.getString('VRCX_FavoritesAvatarSplitter', '260');
-        const parsedSize = Number(storedSize);
-        if (Number.isFinite(parsedSize) && parsedSize >= 0) {
-            avatarSplitterSize.value = parsedSize;
-        }
-    }
-
-    const getAvatarSplitterWidthRaw = () => {
-        const element = avatarSplitterGroupRef.value?.$el ?? avatarSplitterGroupRef.value;
-        const width = element?.getBoundingClientRect?.().width;
-        return Number.isFinite(width) ? width : null;
-    };
-
-    const getAvatarSplitterWidth = () => {
-        const width = getAvatarSplitterWidthRaw();
-        return Number.isFinite(width) && width > 0 ? width : avatarSplitterFallbackWidth;
-    };
-
-    const resolveDraggingPayload = (payload) => {
-        if (typeof payload === 'boolean') {
-            return payload;
-        }
-        if (payload && typeof payload === 'object') {
-            if (typeof payload.detail === 'boolean') {
-                return payload.detail;
-            }
-            if (typeof payload.dragging === 'boolean') {
-                return payload.dragging;
-            }
-        }
-        return Boolean(payload);
-    };
-
-    const setAvatarSplitterDragging = (payload) => {
-        const isDragging = resolveDraggingPayload(payload);
-        const next = avatarSplitterDraggingCount.value + (isDragging ? 1 : -1);
-        avatarSplitterDraggingCount.value = Math.max(0, next);
-    };
-
-    const pxToPercent = (px, groupWidth, min = 0) => {
-        const width = groupWidth ?? getAvatarSplitterWidth();
-        return Math.min(100, Math.max(min, (px / width) * 100));
-    };
-
-    const percentToPx = (percent, groupWidth) => (percent / 100) * groupWidth;
-
-    const avatarSplitterDefaultSize = computed(() =>
-        pxToPercent(avatarSplitterSize.value, avatarSplitterWidth.value, 0)
-    );
-    const avatarSplitterMinSize = computed(() => pxToPercent(0, avatarSplitterWidth.value, 0));
-    const avatarSplitterMaxSize = computed(() => pxToPercent(360, avatarSplitterWidth.value, 0));
-
-    const handleAvatarSplitterLayout = (sizes) => {
-        if (!Array.isArray(sizes) || !sizes.length) {
-            return;
-        }
-
-        if (avatarSplitterDraggingCount.value === 0) {
-            return;
-        }
-
-        const rawWidth = getAvatarSplitterWidthRaw();
-        if (!Number.isFinite(rawWidth) || rawWidth <= 0) {
-            return;
-        }
-
-        const nextSize = sizes[0];
-        if (!Number.isFinite(nextSize)) {
-            return;
-        }
-
-        const nextPx = Math.round(percentToPx(nextSize, rawWidth));
-        const clampedPx = Math.min(360, Math.max(0, nextPx));
-        avatarSplitterSize.value = clampedPx;
-        configRepository.setString('VRCX_FavoritesAvatarSplitter', clampedPx.toString());
-    };
-
-    const updateAvatarSplitterWidth = () => {
-        const width = getAvatarSplitterWidth();
-        avatarSplitterWidth.value = width;
-        const targetSize = pxToPercent(avatarSplitterSize.value, width, 0);
-        avatarSplitterPanelRef.value?.resize?.(targetSize);
-    };
-
-    onMounted(async () => {
-        await nextTick();
-        updateAvatarSplitterWidth();
-        const element = avatarSplitterGroupRef.value?.$el ?? avatarSplitterGroupRef.value;
-        if (element && typeof ResizeObserver !== 'undefined') {
-            avatarSplitterObserver = new ResizeObserver(updateAvatarSplitterWidth);
-            avatarSplitterObserver.observe(element);
-        }
-    });
-
-    watch(avatarSplitterSize, (value, previous) => {
-        if (value === previous) {
-            return;
-        }
-        if (avatarSplitterDraggingCount.value > 0) {
-            return;
-        }
-        updateAvatarSplitterWidth();
-    });
-
     const groupedAvatarFavorites = computed(() => {
         const grouped = {};
         favoriteAvatars.value.forEach((avatar) => {
@@ -850,28 +653,6 @@
             grouped[avatar.groupKey].push(avatar);
         });
         return grouped;
-    });
-
-    const activeRemoteGroup = computed(() => {
-        if (!isRemoteGroupSelected.value) {
-            return null;
-        }
-        return favoriteAvatarGroups.value.find((group) => group.key === selectedGroup.value.key) || null;
-    });
-
-    const activeLocalGroupName = computed(() => {
-        if (!isLocalGroupSelected.value) {
-            return '';
-        }
-        return selectedGroup.value.key;
-    });
-
-    const activeLocalGroupCount = computed(() => {
-        if (!activeLocalGroupName.value) {
-            return 0;
-        }
-        const favorites = localAvatarFavorites.value[activeLocalGroupName.value];
-        return favorites ? favorites.length : 0;
     });
 
     const currentRemoteFavorites = computed(() => {
@@ -936,119 +717,6 @@
 
     /**
      *
-     * @param key
-     * @param visible
-     */
-    function handleGroupMenuVisible(key, visible) {
-        if (visible) {
-            activeGroupMenu.value = key;
-            return;
-        }
-        if (activeGroupMenu.value === key) {
-            activeGroupMenu.value = null;
-        }
-    }
-
-    /**
-     *
-     */
-    function ensureSelectedGroup() {
-        if (selectedGroup.value && isGroupAvailable(selectedGroup.value)) {
-            return;
-        }
-        selectDefaultGroup();
-    }
-
-    /**
-     *
-     */
-    function selectDefaultGroup() {
-        if (!hasUserSelectedAvatarGroup.value) {
-            const remote =
-                favoriteAvatarGroups.value.find((group) => group.count > 0) ||
-                favoriteAvatarGroups.value[0] ||
-                avatarGroupPlaceholders[0];
-            if (remote) {
-                selectGroup('remote', remote.key);
-                return;
-            }
-        } else if (favoriteAvatarGroups.value.length) {
-            const remote = favoriteAvatarGroups.value.find((group) => group.count > 0) || favoriteAvatarGroups.value[0];
-            if (remote) {
-                selectGroup('remote', remote.key);
-                return;
-            }
-        }
-        if (localAvatarFavoriteGroups.value.length) {
-            selectGroup('local', localAvatarFavoriteGroups.value[0]);
-            return;
-        }
-        if (avatarHistory.value.length) {
-            selectGroup('history', historyGroupKey);
-            return;
-        }
-        selectedGroup.value = null;
-        clearSelectedAvatars();
-    }
-
-    /**
-     *
-     * @param group
-     */
-    function isGroupAvailable(group) {
-        if (!group) {
-            return false;
-        }
-        if (group.type === 'remote') {
-            if (!remoteAvatarGroupsResolved.value) {
-                return true;
-            }
-            return favoriteAvatarGroups.value.some((item) => item.key === group.key);
-        }
-        if (group.type === 'local') {
-            return localAvatarFavoriteGroups.value.includes(group.key);
-        }
-        if (group.type === 'history') {
-            return avatarHistory.value.length > 0;
-        }
-        return false;
-    }
-
-    /**
-     *
-     * @param type
-     * @param key
-     * @param options
-     */
-    function selectGroup(type, key, options = {}) {
-        if (selectedGroup.value?.type === type && selectedGroup.value?.key === key) {
-            return;
-        }
-        selectedGroup.value = { type, key };
-        if (options.userInitiated) {
-            hasUserSelectedAvatarGroup.value = true;
-        }
-        clearSelectedAvatars();
-    }
-
-    /**
-     *
-     */
-    function clearSelectedAvatars() {
-        selectedFavoriteAvatars.value = [];
-    }
-
-    /**
-     *
-     * @param type
-     * @param key
-     */
-    function isGroupActive(type, key) {
-        return selectedGroup.value?.type === type && selectedGroup.value?.key === key;
-    }
-
-    /**
-     *
      * @param type
      * @param key
      */
@@ -1063,42 +731,18 @@
     /**
      *
      */
-    function startLocalGroupCreation() {
-        if (!isLocalUserVrcPlusSupporter.value || isCreatingLocalGroup.value) {
-            return;
-        }
-        isCreatingLocalGroup.value = true;
-        newLocalGroupName.value = '';
-        nextTick(() => {
-            newLocalGroupInput.value?.focus?.();
-        });
-    }
-
-    /**
-     *
-     */
-    function cancelLocalGroupCreation() {
-        isCreatingLocalGroup.value = false;
-        newLocalGroupName.value = '';
-    }
-
-    /**
-     *
-     */
-    function handleLocalGroupCreationConfirm() {
-        const name = newLocalGroupName.value.trim();
-        if (!name) {
-            cancelLocalGroupCreation();
-            return;
-        }
-        newLocalAvatarFavoriteGroup(name);
-        cancelLocalGroupCreation();
-        nextTick(() => {
-            if (localAvatarFavoriteGroups.value.includes(name)) {
-                selectGroup('local', name, { userInitiated: true });
-            }
-        });
-    }
+    const {
+        isCreatingLocalGroup,
+        newLocalGroupName,
+        newLocalGroupInput,
+        startLocalGroupCreation,
+        cancelLocalGroupCreation,
+        handleLocalGroupCreationConfirm
+    } = useFavoritesLocalGroups({
+        createGroup: newLocalAvatarFavoriteGroup,
+        selectGroup,
+        canCreate: () => isLocalUserVrcPlusSupporter.value
+    });
 
     /**
      *
@@ -1113,6 +757,13 @@
         } else {
             selectedFavoriteAvatars.value = selectedFavoriteAvatars.value.filter((selectedId) => selectedId !== id);
         }
+    }
+
+    /**
+     *
+     */
+    function clearSelectedAvatars() {
+        selectedFavoriteAvatars.value = [];
     }
 
     /**
@@ -1607,10 +1258,6 @@
 
     onBeforeUnmount(() => {
         cancelLocalAvatarRefresh();
-        if (avatarSplitterObserver) {
-            avatarSplitterObserver.disconnect();
-            avatarSplitterObserver = null;
-        }
     });
 
     /**
@@ -1625,451 +1272,6 @@
     }
 </script>
 
-<style scoped>
-    .favorites-page {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        min-height: 0;
-        padding-bottom: 0;
-    }
-
-    .favorites-toolbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 12px;
-        flex-wrap: wrap;
-    }
-
-    .favorites-toolbar__select {
-        min-width: 200px;
-    }
-
-    .favorites-toolbar__right {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex: 1;
-    }
-
-    .favorites-toolbar__search {
-        flex: 1;
-    }
-
-    .favorites-splitter {
-        flex: 1;
-        min-height: 0;
-    }
-
-    .favorites-splitter :deep([data-slot='resizable-handle']) {
-        opacity: 0;
-        transition: opacity 0.2s ease;
-    }
-
-    .favorites-splitter :deep([data-slot='resizable-handle']:hover),
-    .favorites-splitter :deep([data-slot='resizable-handle']:focus-visible) {
-        opacity: 1;
-    }
-
-    .favorites-groups-panel {
-        height: 100%;
-        padding-right: 8px;
-        overflow: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .favorites-dropdown {
-        padding: 10px;
-    }
-
-    .group-section {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .group-section__header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-weight: 600;
-        font-size: 14px;
-        margin-bottom: 9px;
-    }
-
-    .group-section__list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .group-item {
-        border-radius: 8px;
-        border: 1px solid var(--border);
-        padding: 8px;
-        cursor: pointer;
-        transition: background-color 0.15s ease;
-    }
-
-    .group-item:hover {
-        background-color: var(--accent);
-        box-shadow:
-            0 4px 6px -1px rgb(0 0 0 / 0.1),
-            0 2px 4px -2px rgb(0 0 0 / 0.1);
-    }
-
-    .group-item__top {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        margin-bottom: 4px;
-        font-size: 13px;
-    }
-
-    .group-item__name {
-        font-weight: 600;
-    }
-
-    .group-item__right {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-    }
-
-    .group-item__count {
-        font-size: 12px;
-    }
-
-    .group-item__bottom {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-    }
-
-    .group-item__visibility {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .group-item__visibility-text {
-        font-size: 11px;
-        color: var(--muted-foreground);
-    }
-
-    .group-item__visibility-dot {
-        display: none;
-    }
-
-    .group-item--public {
-        border-left: 3px solid #22c55e;
-    }
-
-    .group-item--friends {
-        border-left: 3px solid #0ea5e9;
-    }
-
-    .group-item--private {
-        border-left: 3px solid #ef4444;
-    }
-
-    .group-item--placeholder {
-        pointer-events: none;
-        opacity: 0.7;
-    }
-
-    .group-item__placeholder-tag {
-        width: 64px;
-        height: 18px;
-        border-radius: 999px;
-    }
-
-    .group-item--new {
-        border-style: dashed;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        font-size: 14px;
-    }
-
-    .group-item--new.is-disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    .group-item__input {
-        width: 100%;
-    }
-
-    .group-empty {
-        text-align: center;
-        font-size: 12px;
-        padding: 12px 0;
-    }
-
-    .favorites-content {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        min-height: 0;
-        padding-left: 26px;
-    }
-
-    .favorites-content__header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 12px;
-    }
-
-    .favorites-content__title {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        font-size: 16px;
-        font-weight: 600;
-        padding-left: 2px;
-    }
-
-    .favorites-content__title small {
-        font-size: 12px;
-        font-weight: normal;
-    }
-
-    .favorites-content__edit {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
-    }
-
-    .favorites-content__edit-actions {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-    }
-
-    .favorites-content__actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 12px;
-    }
-
-    .favorites-content__list {
-        flex: 1;
-        min-height: 0;
-    }
-
-    .favorites-content__scroll {
-        height: 100%;
-        padding-right: 8px;
-    }
-
-    .favorites-content__scroll--native {
-        overflow: auto;
-    }
-
-    .favorites-search-grid {
-        display: grid;
-        grid-template-columns: repeat(
-            var(--favorites-grid-columns, 1),
-            minmax(var(--favorites-card-min-width, 240px), var(--favorites-card-target-width, 1fr))
-        );
-        gap: var(--favorites-card-gap, 12px);
-        justify-content: start;
-        padding-bottom: 12px;
-    }
-
-    .favorites-card-list {
-        display: grid;
-        grid-template-columns: repeat(
-            var(--favorites-grid-columns, 1),
-            minmax(var(--favorites-card-min-width, 260px), var(--favorites-card-target-width, 1fr))
-        );
-        gap: var(--favorites-card-gap, 12px);
-        justify-content: start;
-        padding: 4px 2px 12px 2px;
-    }
-
-    .favorites-card-list::after {
-        content: '';
-    }
-
-    :deep(.favorites-search-card--avatar) {
-        min-width: var(--favorites-card-min-width, 240px);
-        max-width: var(--favorites-card-target-width, 320px);
-    }
-
-    :deep(.favorites-search-card) {
-        display: flex;
-        align-items: center;
-        box-sizing: border-box;
-        border: 1px solid var(--border);
-        border-radius: calc(8px * var(--favorites-card-scale, 1));
-        padding: var(--favorites-card-padding-y, 8px) var(--favorites-card-padding-x, 10px);
-        cursor: pointer;
-        transition: background-color 0.15s ease;
-        width: 100%;
-        min-width: var(--favorites-card-min-width, 240px);
-        max-width: var(--favorites-card-target-width, 320px);
-    }
-
-    :deep(.favorites-search-card:hover) {
-        background-color: var(--accent);
-        box-shadow:
-            0 4px 6px -1px rgb(0 0 0 / 0.1),
-            0 2px 4px -2px rgb(0 0 0 / 0.1);
-    }
-
-    :deep(.favorites-search-card__content) {
-        display: flex;
-        align-items: center;
-        gap: var(--favorites-card-content-gap, 10px);
-        flex: 1;
-        min-width: 0;
-    }
-
-    :deep(.favorites-search-card__avatar) {
-        width: calc(48px * var(--favorites-card-scale, 1));
-        height: calc(48px * var(--favorites-card-scale, 1));
-        border-radius: calc(6px * var(--favorites-card-scale, 1));
-        overflow: hidden;
-        flex-shrink: 0;
-    }
-
-    :deep(.favorites-search-card__avatar img) {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    :deep(.favorites-search-card__avatar.is-empty) {
-        background: repeating-linear-gradient(
-            -45deg,
-            rgba(148, 163, 184, 0.25),
-            rgba(148, 163, 184, 0.25) 10px,
-            rgba(255, 255, 255, 0.35) 10px,
-            rgba(255, 255, 255, 0.35) 20px
-        );
-    }
-
-    :deep(.favorites-search-card__detail) {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        font-size: calc(13px * var(--favorites-card-scale, 1));
-        min-width: 0;
-    }
-
-    :deep(.favorites-search-card__detail .name) {
-        font-weight: 600;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    :deep(.favorites-search-card__detail .extra) {
-        font-size: calc(12px * var(--favorites-card-scale, 1));
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    :deep(.favorites-search-card__title) {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    :deep(.favorites-search-card__badges) {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 14px;
-    }
-
-    :deep(.favorites-search-card__actions) {
-        display: flex;
-        flex-direction: column;
-        gap: var(--favorites-card-action-gap, 8px);
-        margin-left: var(--favorites-card-action-margin, 8px);
-        align-items: center;
-        justify-content: center;
-        flex: 0 0 auto;
-        min-width: 48px;
-    }
-
-    :deep(.favorites-search-card__action) {
-        display: flex;
-        justify-content: flex-end;
-        width: 100%;
-    }
-
-    :deep(.favorites-search-card__dropdown) {
-        width: 100%;
-    }
-
-    :deep(.favorites-search-card__action-group) {
-        display: flex;
-        gap: var(--favorites-card-action-group-gap, 6px);
-        width: 100%;
-    }
-
-    :deep(.favorites-search-card__action-group .favorites-search-card__action--full) {
-        flex: 1;
-    }
-
-    :deep(.favorites-search-card__action--checkbox) {
-        align-items: center;
-        justify-content: flex-end;
-        margin-right: var(--favorites-card-checkbox-margin, 10px);
-    }
-
-    :deep(.favorites-search-card__action--checkbox [data-slot='checkbox']) {
-        margin: 0;
-    }
-
-    :deep(.favorites-search-card__actions:empty) {
-        display: none;
-    }
-
-    .favorites-empty {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        height: 100%;
-    }
-
-    .favorites-dropdown__control {
-        list-style: none;
-        padding: 12px 16px 8px;
-        min-width: 220px;
-        cursor: default;
-    }
-
-    .favorites-dropdown__control-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-size: 13px;
-        font-weight: 600;
-        margin-bottom: 6px;
-    }
-
-    .favorites-dropdown__control-value {
-        font-size: 12px;
-    }
-
-    .favorites-dropdown__slider {
-        padding: 0 4px 4px;
-    }
+<style>
+    @import './favorites-layout.css';
 </style>

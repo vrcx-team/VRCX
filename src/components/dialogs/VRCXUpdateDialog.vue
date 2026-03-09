@@ -4,14 +4,14 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.vrcx_updater.header') }}</DialogTitle>
             </DialogHeader>
-            <div style="margin-top: 15px">
+            <div class="mt-4">
                 <template v-if="updateInProgress">
                     <Progress :model-value="updateProgress" class="w-full" />
                     <div class="mt-2 text-xs" v-text="updateProgressText()"></div>
                     <br />
                 </template>
                 <template v-else>
-                    <div v-if="VRCXUpdateDialog.updatePending" style="margin-bottom: 15px">
+                    <div v-if="VRCXUpdateDialog.updatePending" style="margin-bottom: 16px">
                         <span>{{ pendingVRCXInstall }}</span>
                         <br />
                         <span>{{ t('dialog.vrcx_updater.ready_for_update') }}</span>

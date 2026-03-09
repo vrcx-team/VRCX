@@ -17,7 +17,7 @@ import {
 import { avatarRequest, miscRequest } from '../api';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
-import { patchAvatarFromEvent } from '../query';
+import { patchAvatarFromEvent } from '../queries';
 import { processBulk } from '../service/request';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
@@ -117,28 +117,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         favoriteStore.applyFavorite('avatar', ref.id);
         if (favoriteStore.localAvatarFavoritesList.includes(ref.id)) {
             const avatarRef = ref;
-            for (
-                let i = 0;
-                i < favoriteStore.localAvatarFavoriteGroups.length;
-                ++i
-            ) {
-                const groupName = favoriteStore.localAvatarFavoriteGroups[i];
-                if (!favoriteStore.localAvatarFavorites[groupName]) {
-                    continue;
-                }
-                for (
-                    let j = 0;
-                    j < favoriteStore.localAvatarFavorites[groupName].length;
-                    ++j
-                ) {
-                    const favoriteRef =
-                        favoriteStore.localAvatarFavorites[groupName][j];
-                    if (favoriteRef.id === avatarRef.id) {
-                        favoriteStore.localAvatarFavorites[groupName][j] =
-                            avatarRef;
-                    }
-                }
-            }
+            favoriteStore.syncLocalAvatarFavoriteRef(avatarRef);
 
             // update db cache
             database.addAvatarToCache(avatarRef);
@@ -243,6 +222,27 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     /**
+     * @param {boolean} value
+     */
+    function setAvatarDialogLoading(value) {
+        avatarDialog.value.loading = value;
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    function setAvatarDialogVisible(value) {
+        avatarDialog.value.visible = value;
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    function setAvatarDialogIsFavorite(value) {
+        avatarDialog.value.isFavorite = value;
+    }
+
+    /**
      *
      * @param {string} avatarId
      * @returns {Promise<string[]>}
@@ -310,6 +310,10 @@ export const useAvatarStore = defineStore('Avatar', () => {
         }
 
         return ref;
+    }
+
+    function resetCachedAvatarModerations() {
+        cachedAvatarModerations.clear();
     }
 
     /**
@@ -790,6 +794,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
 
         showAvatarDialog,
         applyAvatarModeration,
+        resetCachedAvatarModerations,
         getAvatarGallery,
         updateVRChatAvatarCache,
         getAvatarHistory,
@@ -800,6 +805,9 @@ export const useAvatarStore = defineStore('Avatar', () => {
         lookupAvatars,
         selectAvatarWithConfirmation,
         selectAvatarWithoutConfirmation,
+        setAvatarDialogVisible,
+        setAvatarDialogIsFavorite,
+        setAvatarDialogLoading,
         showAvatarAuthorDialog,
         addAvatarWearTime,
         preloadOwnAvatars

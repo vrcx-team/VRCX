@@ -3,12 +3,14 @@
         <span v-if="avatarName" class="flex items-center mr-1"
             >{{ avatarName }} <Lock v-if="avatarType && avatarType === '(own)'" class="h-4 w-4 ml-1"
         /></span>
-        <span v-else class="flex items-center mr-1 text-muted-foreground">Unknown Avatar</span>
+        <span v-else class="flex items-center mr-1 text-muted-foreground">{{
+            t('dialog.user.info.unknown_avatar')
+        }}</span>
         <TooltipWrapper v-if="avatarTags">
             <template #content>
                 <span class="truncate">{{ avatarTags }}</span>
             </template>
-            <span style="font-size: 12px" class="truncate text-muted-foreground">{{ avatarTags }}</span>
+            <span class="truncate text-xs text-muted-foreground">{{ avatarTags }}</span>
         </TooltipWrapper>
     </div>
 </template>
@@ -16,10 +18,12 @@
 <script setup>
     import { ref, watch } from 'vue';
     import { Lock } from 'lucide-vue-next';
+    import { useI18n } from 'vue-i18n';
 
     import { TooltipWrapper } from './ui/tooltip';
     import { useAvatarStore } from '../stores';
 
+    const { t } = useI18n();
     const avatarStore = useAvatarStore();
 
     const props = defineProps({

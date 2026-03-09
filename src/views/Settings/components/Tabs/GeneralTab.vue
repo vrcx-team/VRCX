@@ -1,32 +1,44 @@
 <template>
     <div>
-        <div class="options-container" style="margin-top: 0">
+        <div class="options-container mt-0">
             <span class="header">{{ t('view.settings.general.general.header') }}</span>
-            <div class="x-friend-list" style="margin-top: 10px">
-                <div class="x-friend-item" style="cursor: default">
-                    <div class="detail">
-                        <span class="name">{{ t('view.settings.general.general.version') }}</span>
+            <div class="px-2.5 overflow-y-auto overflow-x-hidden mt-2">
+                <div class="box-border flex items-center p-1.5 text-[13px] cursor-default">
+                    <div class="flex-1 overflow-hidden">
+                        <span class="block truncate font-medium leading-[18px]">{{
+                            t('view.settings.general.general.version')
+                        }}</span>
                         <span class="block truncate text-xs" v-text="appVersion"></span>
                     </div>
                 </div>
-                <div class="x-friend-item" @click="checkForVRCXUpdate">
-                    <div class="detail">
-                        <span class="name">{{ t('view.settings.general.general.latest_app_version') }}</span>
+                <div class="box-border flex items-center p-1.5 text-[13px] cursor-pointer" @click="checkForVRCXUpdate">
+                    <div class="flex-1 overflow-hidden">
+                        <span class="block truncate font-medium leading-[18px]">{{
+                            t('view.settings.general.general.latest_app_version')
+                        }}</span>
                         <span v-if="latestAppVersion" class="block truncate text-xs" v-text="latestAppVersion"></span>
                         <span v-else class="block truncate text-xs">{{
                             t('view.settings.general.general.latest_app_version_refresh')
                         }}</span>
                     </div>
                 </div>
-                <div class="x-friend-item" @click="openExternalLink(links.github)">
-                    <div class="detail">
-                        <span class="name">{{ t('view.settings.general.general.repository_url') }}</span>
+                <div
+                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer"
+                    @click="openExternalLink(links.github)">
+                    <div class="flex-1 overflow-hidden">
+                        <span class="block truncate font-medium leading-[18px]">{{
+                            t('view.settings.general.general.repository_url')
+                        }}</span>
                         <span v-once class="block truncate text-xs">{{ links.github }}</span>
                     </div>
                 </div>
-                <div class="x-friend-item" @click="openExternalLink(links.discord)">
-                    <div class="detail">
-                        <span class="name">{{ t('view.settings.general.general.support') }}</span>
+                <div
+                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer"
+                    @click="openExternalLink(links.discord)">
+                    <div class="flex-1 overflow-hidden">
+                        <span class="block truncate font-medium leading-[18px]">{{
+                            t('view.settings.general.general.support')
+                        }}</span>
                         <span v-once class="block truncate text-xs">{{ links.discord }}</span>
                     </div>
                 </div>
@@ -45,12 +57,12 @@
             <div v-if="!noUpdater" class="text-sm mt-2 flex flex-col align-baseline">
                 <span class="name">{{ t('view.settings.general.vrcx_updater.update_action') }}</span>
                 <ToggleGroup
+                    class="mt-1.5"
                     type="single"
                     required
                     variant="outline"
                     size="sm"
                     :model-value="autoUpdateVRCX"
-                    style="margin-top: 5px"
                     @update:model-value="setAutoUpdateVRCX">
                     <ToggleGroupItem value="Off">{{
                         t('view.settings.general.vrcx_updater.auto_update_off')
@@ -112,7 +124,7 @@
             <span class="header inline-flex items-center"
                 >{{ t('view.settings.general.favorites.header') }}
                 <TooltipWrapper side="top" :content="t('view.settings.general.favorites.header_tooltip')">
-                    <Info style="width: 12px; height: 12px; margin-left: 4px; vertical-align: middle; cursor: help" />
+                    <Info class="ml-1" style="width: 12px; height: 12px; vertical-align: middle; cursor: help" />
                 </TooltipWrapper>
             </span>
             <br />
@@ -120,7 +132,7 @@
                 :model-value="localFavoriteFriendsGroups"
                 multiple
                 @update:modelValue="setLocalFavoriteFriendsGroups">
-                <SelectTrigger style="margin-top: 8px">
+                <SelectTrigger class="mt-2">
                     <SelectValue :placeholder="t('view.settings.general.favorites.group_placeholder')" />
                 </SelectTrigger>
                 <SelectContent>
@@ -153,7 +165,7 @@
                     @click="openExternalLink('https://github.com/vrcx-team/VRCX/graphs/contributors')" />
             </div>
         </div>
-        <div class="options-container" style="margin-top: 45px; border-top: 1px solid #eee; padding-top: 30px">
+        <div class="options-container border-t border-border" style="margin-top: 45px; padding-top: 30px">
             <span class="header">{{ t('view.settings.general.legal_notice.header') }}</span>
             <div class="options-container-item" style="display: block">
                 <p>
@@ -241,6 +253,9 @@
         () => import('../../dialogs/OpenSourceSoftwareNoticeDialog.vue')
     );
 
+    /**
+     *
+     */
     function openOSSDialog() {
         ossDialog.value = true;
     }

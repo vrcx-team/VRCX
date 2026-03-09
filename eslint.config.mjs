@@ -33,7 +33,8 @@ export default defineConfig([
                 VERSION: 'readonly',
                 NIGHTLY: 'readonly',
                 webApiService: 'readonly',
-                process: 'readonly'
+                process: 'readonly',
+                AppDebug: 'readonly'
             }
         }
     },
@@ -42,7 +43,8 @@ export default defineConfig([
             '**/webpack.*.js',
             '**/jest.config.js',
             'src-electron/*.js',
-            'src/localization/*.js'
+            'src/localization/*.js',
+            'src/shared/utils/localizationHelperCLI.js'
         ],
         languageOptions: {
             sourceType: 'commonjs',
@@ -59,7 +61,10 @@ export default defineConfig([
         ],
         languageOptions: {
             globals: {
-                ...globals.jest
+                ...globals.jest,
+                ...globals.node,
+                vi: 'readonly',
+                vitest: 'readonly'
             }
         }
     },
@@ -69,6 +74,25 @@ export default defineConfig([
             'no-unused-vars': 'warn',
             'no-case-declarations': 'off',
             'no-control-regex': 'warn',
+            // Store boundary rule:
+            // 1) Disallow `xxxStore.xxx = ...`
+            // 2) Disallow `xxxStore.xxx++ / --`
+            // Reason: prevent direct cross-store mutation and enforce owner-store actions.
+            'no-restricted-syntax': [
+                'error',
+                {
+                    selector:
+                        "AssignmentExpression[left.type='MemberExpression'][left.object.type='Identifier'][left.object.name=/Store$/]",
+                    message:
+                        'Do not mutate store state directly via *Store.* assignment. Use owner-store actions.'
+                },
+                {
+                    selector:
+                        "UpdateExpression[argument.type='MemberExpression'][argument.object.type='Identifier'][argument.object.name=/Store$/]",
+                    message:
+                        'Do not mutate store state directly via *Store.* update operators. Use owner-store actions.'
+                }
+            ],
 
             'vue/no-mutating-props': 'warn',
             'vue/multi-word-component-names': 'off',
@@ -77,7 +101,12 @@ export default defineConfig([
         }
     },
     jsdoc({
-        config: 'flat/recommended'
+        config: 'flat/recommended',
+        rules: {
+            'jsdoc/require-param-description': 'off',
+            'jsdoc/require-returns-description': 'off',
+            'jsdoc/reject-function-type': 'off'
+        }
     }),
     {
         ignores: [
@@ -97,5 +126,12 @@ export default defineConfig([
             'pretty-import/sort-import-names': 'warn'
         }
     },
-    eslintPluginPrettierRecommended
+    {
+        ...eslintPluginPrettierRecommended,
+        ignores: [
+            '**/__tests__/**',
+            '**/*.spec.{js,mjs,cjs,vue}',
+            '**/*.test.{js,mjs,cjs,vue}'
+        ]
+    }
 ]);

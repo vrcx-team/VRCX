@@ -494,6 +494,34 @@ export const usePhotonStore = defineStore('Photon', () => {
         AppApi.ExecuteVrOverlayFunction('updateHudTimeout', '[]');
     }
 
+    function resetLocationPhotonState() {
+        photonLobby.value = new Map();
+        photonLobbyCurrent.value = new Map();
+        photonLobbyMaster.value = 0;
+        photonLobbyCurrentUser.value = 0;
+        photonLobbyUserData.value = new Map();
+        photonLobbyWatcherLoopStop();
+        photonLobbyAvatars.value = new Map();
+        photonLobbyLastModeration.value = new Map();
+        photonLobbyJointime.value = new Map();
+        photonLobbyActivePortals.value = new Map();
+        photonEvent7List.value = new Map();
+        photonLastEvent7List.value = 0;
+        photonLastChatBoxMsg.value = new Map();
+        moderationEventQueue.value = new Map();
+        if (photonEventTable.value.data.length > 0) {
+            photonEventTablePrevious.value.data = photonEventTable.value.data;
+            photonEventTable.value.data = [];
+        }
+    }
+
+    /**
+     * @param {number} value
+     */
+    function setPhotonLastEvent7List(value) {
+        photonLastEvent7List.value = value;
+    }
+
     function photonLobbyWatcher() {
         if (!state.photonLobbyWatcherLoop) {
             return;
@@ -1845,6 +1873,8 @@ export const usePhotonStore = defineStore('Photon', () => {
         promptPhotonOverlayMessageTimeout,
         promptPhotonLobbyTimeoutThreshold,
         photonLobbyWatcherLoopStop,
+        resetLocationPhotonState,
+        setPhotonLastEvent7List,
         parsePhotonEvent,
         parseVRCEvent,
         moderationAgainstTable

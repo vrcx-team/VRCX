@@ -8,9 +8,11 @@ import Noty from 'noty';
 import { closeWebSocket, initWebsocket } from '../service/websocket';
 import { AppDebug } from '../service/appConfig';
 import { authRequest } from '../api';
+import { createAuthAutoLoginCoordinator } from './coordinators/authAutoLoginCoordinator';
+import { createAuthCoordinator } from './coordinators/authCoordinator';
 import { database } from '../service/database';
 import { escapeTag } from '../shared/utils';
-import { queryClient } from '../query';
+import { queryClient } from '../queries';
 import { request } from '../service/request';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useGeneralSettingsStore } from './settings/general';
@@ -174,20 +176,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 })
             }).show();
         }
-        userStore.userDialog.visible = false;
-        watchState.isLoggedIn = false;
-        watchState.isFriendsLoaded = false;
-        watchState.isFavoritesLoaded = false;
-        notificationStore.notificationInitStatus = false;
-        await updateStoredUser(userStore.currentUser);
-        webApiService.clearCookies();
-        loginForm.value.lastUserLoggedIn = '';
-        await configRepository.remove('lastUserLoggedIn');
-        // workerTimers.setTimeout(() => location.reload(), 500);
-        attemptingAutoLogin.value = false;
-        state.autoLoginAttempts.clear();
-        closeWebSocket();
-        queryClient.clear();
+        await authCoordinator.runLogoutFlow();
     }
 
     /**
@@ -222,7 +211,7 @@ export const useAuthStore = defineStore('Auth', () => {
                             loginForm.value.loading = false;
                         })
                         .catch((err) => {
-                            updateLoopStore.nextCurrentUserRefresh = 60; // 1min
+                            updateLoopStore.setNextCurrentUserRefresh(60); // 1min
                             console.error(err);
                         });
                 });
@@ -257,26 +246,21 @@ export const useAuthStore = defineStore('Auth', () => {
                 await webApiService.clearCookies();
                 delete user.cookies;
                 relogin(user).then(() => {
-                    new Noty({
-                        type: 'success',
-                        text: t('message.auth.email_2fa_resent')
-                    }).show();
+                    toast.success(t('message.auth.email_2fa_resent'));
                 });
                 return;
             }
         }
-        new Noty({
-            type: 'error',
-            text: t('message.auth.email_2fa_no_credentials')
-        }).show();
+        toast.error(t('message.auth.email_2fa_no_credentials'));
     }
 
     /**
      *
      */
     function enablePrimaryPasswordChange() {
-        advancedSettingsStore.enablePrimaryPassword =
-            !advancedSettingsStore.enablePrimaryPassword;
+        advancedSettingsStore.setEnablePrimaryPassword(
+            !advancedSettingsStore.enablePrimaryPassword
+        );
 
         enablePrimaryPasswordDialog.value.password = '';
         enablePrimaryPasswordDialog.value.rePassword = '';
@@ -292,7 +276,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 })
                 .then(async ({ ok, value }) => {
                     if (!ok) {
-                        advancedSettingsStore.enablePrimaryPassword = true;
+                        advancedSettingsStore.setEnablePrimaryPassword(true);
                         advancedSettingsStore.setEnablePrimaryPasswordConfigRepository(
                             true
                         );
@@ -327,7 +311,9 @@ export const useAuthStore = defineStore('Auth', () => {
                                 );
                             })
                             .catch(async () => {
-                                advancedSettingsStore.enablePrimaryPassword = true;
+                                advancedSettingsStore.setEnablePrimaryPassword(
+                                    true
+                                );
                                 advancedSettingsStore.setEnablePrimaryPasswordConfigRepository(
                                     true
                                 );
@@ -336,7 +322,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 })
                 .catch((err) => {
                     console.error(err);
-                    advancedSettingsStore.enablePrimaryPassword = true;
+                    advancedSettingsStore.setEnablePrimaryPassword(true);
                     advancedSettingsStore.setEnablePrimaryPasswordConfigRepository(
                         true
                     );
@@ -547,7 +533,7 @@ export const useAuthStore = defineStore('Auth', () => {
         delete savedCredentials[userId];
         // Disable primary password when no account is available.
         if (Object.keys(savedCredentials).length === 0) {
-            advancedSettingsStore.enablePrimaryPassword = false;
+            advancedSettingsStore.setEnablePrimaryPassword(false);
             advancedSettingsStore.setEnablePrimaryPasswordConfigRepository(
                 false
             );
@@ -556,10 +542,7 @@ export const useAuthStore = defineStore('Auth', () => {
             'savedCredentials',
             JSON.stringify(savedCredentials)
         );
-        new Noty({
-            type: 'success',
-            text: t('message.auth.account_removed')
-        }).show();
+        toast.success(t('message.auth.account_removed'));
     }
 
     /**
@@ -845,9 +828,7 @@ export const useAuthStore = defineStore('Auth', () => {
         } else if (json.requiresTwoFactorAuth) {
             promptTOTP();
         } else {
-            updateLoopStore.nextCurrentUserRefresh = 420; // 7mins
-            userStore.applyCurrentUser(json);
-            initWebsocket();
+            authCoordinator.runLoginSuccessFlow(json);
         }
     }
 
@@ -855,70 +836,7 @@ export const useAuthStore = defineStore('Auth', () => {
      *
      */
     async function handleAutoLogin() {
-        if (attemptingAutoLogin.value) {
-            return;
-        }
-        attemptingAutoLogin.value = true;
-        const user = await getSavedCredentials(
-            loginForm.value.lastUserLoggedIn
-        );
-        if (!user) {
-            attemptingAutoLogin.value = false;
-            return;
-        }
-        if (advancedSettingsStore.enablePrimaryPassword) {
-            console.error(
-                'Primary password is enabled, this disables auto login.'
-            );
-            attemptingAutoLogin.value = false;
-            handleLogoutEvent();
-            return;
-        }
-        const attemptsInLastHour = Array.from(state.autoLoginAttempts).filter(
-            (timestamp) => timestamp > new Date().getTime() - 3600000
-        ).length;
-        if (attemptsInLastHour >= 3) {
-            console.error(
-                'More than 3 auto login attempts within the past hour, logging out instead of attempting auto login.'
-            );
-            attemptingAutoLogin.value = false;
-            handleLogoutEvent();
-            AppApi.FlashWindow();
-            return;
-        }
-        state.autoLoginAttempts.add(new Date().getTime());
-        console.log('Attempting automatic login...');
-        relogin(user)
-            .then(() => {
-                if (AppDebug.errorNoty) {
-                    AppDebug.errorNoty.close();
-                }
-                AppDebug.errorNoty = new Noty({
-                    type: 'success',
-                    text: t('message.auth.auto_login_success')
-                }).show();
-                console.log('Automatically logged in.');
-            })
-            .catch((err) => {
-                if (AppDebug.errorNoty) {
-                    AppDebug.errorNoty.close();
-                }
-                AppDebug.errorNoty = new Noty({
-                    type: 'error',
-                    text: t('message.auth.auto_login_failed')
-                }).show();
-                console.error('Failed to login automatically.', err);
-            })
-            .finally(() => {
-                attemptingAutoLogin.value = false;
-                if (!navigator.onLine) {
-                    AppDebug.errorNoty = new Noty({
-                        type: 'error',
-                        text: t('message.auth.offline')
-                    }).show();
-                    console.error(`You're offline.`);
-                }
-            });
+        await authAutoLoginCoordinator.runHandleAutoLoginFlow();
     }
 
     /**
@@ -961,6 +879,71 @@ export const useAuthStore = defineStore('Auth', () => {
         AppApi.CheckGameRunning(); // restore state from hot-reload
     }
 
+    /**
+     * @param {object} value Latest config payload.
+     */
+    function setCachedConfig(value) {
+        cachedConfig.value = value;
+        state.cachedConfig = value;
+    }
+
+    /**
+     * @param {boolean} value Auto-login attempt flag.
+     */
+    function setAttemptingAutoLogin(value) {
+        attemptingAutoLogin.value = value;
+    }
+
+    const authAutoLoginCoordinator = createAuthAutoLoginCoordinator({
+        getIsAttemptingAutoLogin: () => attemptingAutoLogin.value,
+        setAttemptingAutoLogin,
+        getLastUserLoggedIn: () => loginForm.value.lastUserLoggedIn,
+        getSavedCredentials,
+        isPrimaryPasswordEnabled: () =>
+            advancedSettingsStore.enablePrimaryPassword,
+        handleLogoutEvent,
+        autoLoginAttempts: state.autoLoginAttempts,
+        relogin,
+        notifyAutoLoginSuccess: () => {
+            if (AppDebug.errorNoty) {
+                toast.dismiss(AppDebug.errorNoty);
+            }
+            AppDebug.errorNoty = toast.success(
+                t('message.auth.auto_login_success')
+            );
+        },
+        notifyAutoLoginFailed: () => {
+            if (AppDebug.errorNoty) {
+                toast.dismiss(AppDebug.errorNoty);
+            }
+            AppDebug.errorNoty = toast.error(
+                t('message.auth.auto_login_failed')
+            );
+        },
+        notifyOffline: () => {
+            AppDebug.errorNoty = toast.error(t('message.auth.offline'));
+        },
+        flashWindow: () => AppApi.FlashWindow(),
+        isOnline: () => navigator.onLine,
+        now: () => Date.now()
+    });
+
+    const authCoordinator = createAuthCoordinator({
+        userStore,
+        notificationStore,
+        updateLoopStore,
+        initWebsocket,
+        updateStoredUser,
+        webApiService,
+        loginForm,
+        configRepository,
+        setAttemptingAutoLogin,
+        autoLoginAttempts: state.autoLoginAttempts,
+        closeWebSocket,
+        queryClient,
+        watchState
+    });
+
     return {
         state,
 
@@ -989,6 +972,8 @@ export const useAuthStore = defineStore('Auth', () => {
         handleLogoutEvent,
         handleCurrentUserUpdate,
         loginComplete,
-        getAllSavedCredentials
+        getAllSavedCredentials,
+        setCachedConfig,
+        setAttemptingAutoLogin
     };
 });

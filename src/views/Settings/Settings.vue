@@ -1,6 +1,6 @@
 <template>
     <div class="x-container">
-        <div class="options-container" style="margin-top: 0; padding: 5px">
+        <div class="options-container mt-0 p-1.5">
             <span class="header">{{ t('view.settings.header') }}</span>
         </div>
         <TabsUnderline

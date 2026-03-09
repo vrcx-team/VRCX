@@ -7,7 +7,7 @@
 
             <div>
                 <span>{{ t('dialog.gallery_select.gallery') }}</span>
-                <span style="color: #909399; font-size: 12px; margin-left: 5px">{{ galleryTable.length }}/64</span>
+                <span class="ml-1.5 text-muted-foreground text-xs">{{ galleryTable.length }}/64</span>
                 <br />
                 <input
                     id="GalleryUploadButton"
@@ -37,8 +37,7 @@
                 <div
                     v-for="image in galleryTable"
                     :key="image.id"
-                    class="x-friend-item"
-                    style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                    class="box-border inline-block mt-2.5 cursor-default">
                     <template v-if="image.versions && image.versions.length > 0">
                         <div
                             v-if="image.versions[image.versions.length - 1].file.url"
@@ -83,6 +82,11 @@
         }
     });
 
+    /**
+     *
+     * @param imageUrl
+     * @param fileId
+     */
     function selectImageGallerySelect(imageUrl, fileId) {
         const D = props.gallerySelectDialog;
         D.selectedFileId = fileId;
@@ -90,10 +94,17 @@
         D.visible = false;
     }
 
+    /**
+     *
+     */
     function displayGalleryUpload() {
         document.getElementById('GalleryUploadButton').click();
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangeGallery(e) {
         const clearFile = function () {
             const fileInput = /** @type{HTMLInputElement} */ (document.querySelector('#GalleryUploadButton'));

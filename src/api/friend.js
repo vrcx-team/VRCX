@@ -5,7 +5,7 @@ import {
     fetchWithEntityPolicy,
     queryClient,
     queryKeys
-} from '../query';
+} from '../queries';
 
 function refetchActiveFriendListQueries() {
     queryClient

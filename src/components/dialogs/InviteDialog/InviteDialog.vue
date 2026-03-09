@@ -14,28 +14,27 @@
             <div v-if="inviteDialog.visible" class="overflow-hidden">
                 <Location :location="inviteDialog.worldId" :link="false" class="cursor-default" />
                 <br />
-                <Button size="sm" class="mr-2" variant="outline" style="margin-top: 10px" @click="addSelfToInvite">{{
+                <Button size="sm" class="mr-2 mt-2" variant="outline" @click="addSelfToInvite">{{
                     t('dialog.invite.add_self')
                 }}</Button>
                 <Button
                     size="sm"
-                    class="mr-2"
+                    class="mr-2 mt-2"
                     variant="outline"
                     :disabled="inviteDialog.friendsInInstance.length === 0"
-                    style="margin-top: 10px"
                     @click="addFriendsInInstanceToInvite"
                     >{{ t('dialog.invite.add_friends_in_instance') }}</Button
                 >
                 <Button
+                    class="mt-2"
                     size="sm"
                     variant="outline"
                     :disabled="vipFriends.length === 0"
-                    style="margin-top: 10px"
                     @click="addFavoriteFriendsToInvite"
                     >{{ t('dialog.invite.add_favorite_friends') }}</Button
                 >
 
-                <div style="width: 100%; margin-top: 15px">
+                <div class="mt-4" style="width: 100%">
                     <VirtualCombobox
                         :model-value="Array.isArray(inviteDialog.userIds) ? inviteDialog.userIds : []"
                         @update:modelValue="setInviteUserIds"
@@ -46,15 +45,22 @@
                         :search-placeholder="t('dialog.invite.select_placeholder')"
                         :clearable="true">
                         <template #item="{ item, selected }">
-                            <div class="x-friend-item flex w-full items-center">
+                            <div class="flex w-full items-center p-1.5 text-[13px]">
                                 <template v-if="item.user">
-                                    <div :class="['avatar', userStatusClass(item.user)]">
-                                        <img :src="userImage(item.user)" loading="lazy" />
+                                    <div
+                                        class="relative inline-block flex-none size-9 mr-2.5"
+                                        :class="userStatusClass(item.user)">
+                                        <img
+                                            class="size-full rounded-full object-cover"
+                                            :src="userImage(item.user)"
+                                            loading="lazy" />
                                     </div>
-                                    <div class="detail">
-                                        <span class="name" :style="{ color: item.user.$userColour }">{{
-                                            item.user.displayName
-                                        }}</span>
+                                    <div class="flex-1 overflow-hidden">
+                                        <span
+                                            class="block truncate font-medium leading-[18px]"
+                                            :style="{ color: item.user.$userColour }"
+                                            >{{ item.user.displayName }}</span
+                                        >
                                     </div>
                                 </template>
                                 <template v-else>
@@ -178,6 +184,10 @@
         return groups;
     });
 
+    /**
+     *
+     * @param value
+     */
     function setInviteUserIds(value) {
         const next = Array.isArray(value) ? value.map((v) => String(v ?? '')).filter(Boolean) : [];
         const ids = Array.isArray(props.inviteDialog.userIds) ? props.inviteDialog.userIds : [];
@@ -193,6 +203,10 @@
         return map;
     });
 
+    /**
+     *
+     * @param userId
+     */
     function resolveUserDisplayName(userId) {
         if (currentUser.value?.id && currentUser.value.id === userId) {
             return currentUser.value.displayName;
@@ -201,10 +215,18 @@
         return friend?.ref?.displayName ?? friend?.name ?? String(userId);
     }
 
+    /**
+     *
+     */
     function closeInviteDialog() {
         emit('closeInviteDialog');
     }
 
+    /**
+     *
+     * @param params
+     * @param userId
+     */
     function showSendInviteDialog(params, userId) {
         sendInviteDialog.value = {
             params,
@@ -216,6 +238,9 @@
         sendInviteDialogVisible.value = true;
     }
 
+    /**
+     *
+     */
     function addSelfToInvite() {
         const D = props.inviteDialog;
         if (!D.userIds.includes(currentUser.value.id)) {
@@ -223,6 +248,9 @@
         }
     }
 
+    /**
+     *
+     */
     function addFriendsInInstanceToInvite() {
         const D = props.inviteDialog;
         for (const friend of D.friendsInInstance) {
@@ -232,6 +260,9 @@
         }
     }
 
+    /**
+     *
+     */
     function addFavoriteFriendsToInvite() {
         const D = props.inviteDialog;
         for (const friend of vipFriends.value) {
@@ -241,6 +272,9 @@
         }
     }
 
+    /**
+     *
+     */
     function sendInvite() {
         modalStore
             .confirm({

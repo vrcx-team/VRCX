@@ -4,15 +4,10 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.discord_names.header') }}</DialogTitle>
             </DialogHeader>
-            <div style="font-size: 12px">
+            <div class="text-xs">
                 {{ t('dialog.discord_names.description') }}
             </div>
-            <InputGroupTextareaField
-                v-model="discordNamesContent"
-                :rows="15"
-                readonly
-                style="margin-top: 15px"
-                input-class="resize-none" />
+            <InputGroupTextareaField v-model="discordNamesContent" :rows="15" readonly input-class="resize-none mt-4" />
         </DialogContent>
     </Dialog>
 </template>
@@ -98,5 +93,3 @@
         emit('update:discordNamesDialogVisible', false);
     }
 </script>
-
-<style scoped></style>

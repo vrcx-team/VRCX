@@ -1,0 +1,119 @@
+/**
+ * Shared card styles for all Favorites item components.
+ * FavoritesAvatar.vue, FavoritesFriend.vue, and FavoritesWorld.vue.
+ */
+
+.favorites-search-card {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius-lg) * var(--favorites-card-scale, 1));
+    padding: var(--favorites-card-padding-y, 8px)
+        var(--favorites-card-padding-x, 8px);
+    cursor: pointer;
+    width: 100%;
+    min-width: var(--favorites-card-min-width, 240px);
+    max-width: var(--favorites-card-target-width, 320px);
+}
+
+.favorites-search-card:hover {
+    background-color: var(--accent);
+    box-shadow: var(--shadow-sm);
+}
+
+.favorites-search-card__content {
+    display: flex;
+    align-items: center;
+    gap: var(--favorites-card-content-gap, 8px);
+    flex: 1;
+    min-width: 0;
+}
+
+.favorites-search-card__avatar {
+    width: calc(48px * var(--favorites-card-scale, 1));
+    height: calc(48px * var(--favorites-card-scale, 1));
+    border-radius: calc(var(--radius-lg) * var(--favorites-card-scale, 1));
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.favorites-search-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.8) contrast(0.8);
+    transition: filter 0.2s ease;
+}
+
+.favorites-search-card:hover .favorites-search-card__avatar img {
+    filter: saturate(1) contrast(1);
+}
+
+.favorites-search-card__avatar.is-empty {
+    background: repeating-linear-gradient(
+        -45deg,
+        rgba(148, 163, 184, 0.25),
+        rgba(148, 163, 184, 0.25) 10px,
+        rgba(255, 255, 255, 0.35) 10px,
+        rgba(255, 255, 255, 0.35) 20px
+    );
+}
+
+.favorites-search-card__detail {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: calc(13px * var(--favorites-card-scale, 1));
+    min-width: 0;
+}
+
+.favorites-search-card__detail .name {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.favorites-search-card__detail .extra {
+    font-size: calc(12px * var(--favorites-card-scale, 1));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.favorites-search-card__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--favorites-card-action-gap, 8px);
+    margin-left: var(--favorites-card-action-margin, 8px);
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    min-width: 48px;
+}
+
+.favorites-search-card__actions:empty {
+    display: none;
+}
+
+.favorites-search-card__action-group .favorites-search-card__action--full {
+    flex: 1;
+}
+
+.favorites-search-card__action--checkbox {
+    align-items: center;
+    justify-content: flex-end;
+    margin-right: var(--favorites-card-checkbox-margin, 8px);
+}
+
+.favorites-search-card__action--checkbox [data-slot='checkbox'] {
+    margin: 0;
+}
+
+/* Entity-specific overrides */
+
+.favorites-search-card--avatar {
+    min-width: var(--favorites-card-min-width, 240px);
+    max-width: var(--favorites-card-target-width, 320px);
+}

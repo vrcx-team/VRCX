@@ -379,7 +379,7 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             })
             .then(async ({ ok, value }) => {
                 if (ok) {
-                    vrcxStore.proxyServer = value;
+                    vrcxStore.setProxyServer(value);
                     await VRCXStorage.Set(
                         'VRCX_ProxyServer',
                         vrcxStore.proxyServer

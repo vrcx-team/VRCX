@@ -1,10 +1,10 @@
 <template>
     <div style="width: 100%">
-        <div style="height: 25px; margin-top: 60px">
+        <div class="mt-15" style="height: 25px">
             <transition name="el-fade-in-linear">
                 <Location
                     v-show="!isLoading"
-                    class="location"
+                    class="flex items-center justify-center"
                     :location="activityDetailData[0]?.location"
                     is-open-previous-instance-info-dialog />
             </transition>
@@ -106,6 +106,9 @@
         }
     });
 
+    /**
+     *
+     */
     function initResizeObserver() {
         resizeObserver.value = new ResizeObserver((entries) => {
             if (!echartsInstance) {
@@ -126,6 +129,9 @@
         });
     }
 
+    /**
+     *
+     */
     async function initEcharts() {
         if (!activityDetailChartRef.value || !props.activityDetailData || props.activityDetailData.length === 0) {
             isLoading.value = false;
@@ -183,6 +189,10 @@
         setTimeout(afterInit, 50);
     }
 
+    /**
+     *
+     * @param params
+     */
     function handleClickYAxisLabel(params) {
         const userData = usersFirstActivity.value[params.dataIndex];
         if (userData?.user_id) {
@@ -190,6 +200,9 @@
         }
     }
 
+    /**
+     *
+     */
     function getNewOption() {
         if (!props.activityDetailData || props.activityDetailData.length === 0) {
             return {
@@ -346,7 +359,7 @@
 
             return `
                     <div style="display: flex; align-items: center;">
-                        <div style="width: 10px; height: 55px; background-color: ${color}; margin-right: 5px;"></div>
+                        <div style="width: 10px; height: 55px; background-color: ${color}; margin-right: 6px;"></div>
                         <div>
                             <div>${instanceData.display_name} ${friendOrFavIcon(instanceData.display_name)}</div>
                             <div>${formattedJoinDateTime} - ${formattedLeftDateTime}</div>
@@ -407,11 +420,3 @@
         initEcharts
     });
 </script>
-
-<style scoped>
-    .location {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-</style>

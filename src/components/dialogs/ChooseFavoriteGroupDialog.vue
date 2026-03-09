@@ -104,9 +104,8 @@
     import { Button } from '@/components/ui/button';
     import { Check } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
-
-    import Noty from 'noty';
 
     import { useFavoriteStore, useUserStore } from '../../stores';
     import { favoriteRequest } from '../../api';
@@ -159,6 +158,9 @@
         }
     );
 
+    /**
+     * @returns {void}
+     */
     function initFavoriteDialog() {
         if (favoriteDialog.value.type === 'friend') {
             groups.value = favoriteFriendGroups.value;
@@ -169,6 +171,11 @@
         }
     }
 
+    /**
+     *
+     * @param {object} group
+     * @returns {void}
+     */
     function addFavorite(group) {
         const D = favoriteDialog.value;
         loading.value = true;
@@ -180,7 +187,7 @@
             })
             .then(() => {
                 isVisible.value = false;
-                new Noty({ type: 'success', text: 'Favorite added!' }).show();
+                toast.success('Favorite added!');
             })
             .finally(() => {
                 loading.value = false;

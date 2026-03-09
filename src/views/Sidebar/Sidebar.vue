@@ -1,7 +1,7 @@
 <template>
     <div class="x-aside-container">
         <div style="display: flex; align-items: baseline">
-            <div class="search-container" style="flex: 1; padding: 10px; padding-left: 0">
+            <div class="search-container p-2 pl-0" style="flex: 1">
                 <button
                     type="button"
                     class="border-input dark:bg-input/30 flex h-9 w-full items-center gap-2 rounded-md border bg-transparent px-3 shadow-xs transition-[color,box-shadow] hover:border-ring cursor-pointer overflow-hidden"
@@ -209,7 +209,7 @@
             variant="equal"
             fill
             class="zero-margin-tabs"
-            style="height: calc(100% - 70px); margin-top: 5px">
+            style="height: calc(100% - 70px); margin-top: 6px">
             <template #label-friends>
                 <span>{{ t('side_panel.friends') }}</span>
                 <span class="sidebar-tab-count"> ({{ onlineFriendCount }}/{{ friends.size }}) </span>
@@ -380,16 +380,16 @@
         display: flex;
         flex: none;
         flex-direction: column;
-        padding: 10px 5px 5px 5px;
+        padding: 8px 6px 6px 6px;
         order: 99;
         height: 100%;
         box-sizing: border-box;
-        padding-left: 10px;
+        padding-left: 8px;
     }
 
     .sidebar-tab-count {
         font-size: 12px;
-        margin-left: 10px;
+        margin-left: 8px;
     }
 
     .search-container {

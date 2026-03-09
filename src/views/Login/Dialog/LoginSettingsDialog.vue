@@ -102,7 +102,7 @@
     }
 
     async function saveProxy() {
-        vrcxStore.proxyServer = proxyServerLocal.value;
+        vrcxStore.setProxyServer(proxyServerLocal.value);
         await VRCXStorage.Set('VRCX_ProxyServer', vrcxStore.proxyServer);
         await VRCXStorage.Save();
     }

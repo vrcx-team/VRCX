@@ -231,6 +231,13 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     function setEnablePrimaryPasswordConfigRepository(value) {
         configRepository.setBool('enablePrimaryPassword', value);
     }
+
+    /**
+     * @param {boolean} value
+     */
+    function setEnablePrimaryPassword(value) {
+        enablePrimaryPassword.value = value;
+    }
     function setRelaunchVRChatAfterCrash() {
         relaunchVRChatAfterCrash.value = !relaunchVRChatAfterCrash.value;
         configRepository.setBool(
@@ -969,7 +976,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             .then(async ({ ok, value }) => {
                 if (!ok) return;
                 if (value && !isNaN(parseInt(value, 10))) {
-                    vrcxStore.clearVRCXCacheFrequency = Math.trunc(
+                    vrcxStore.setClearVRCXCacheFrequency(
                         parseInt(value, 10) * 3600 * 2
                     );
                     updateLoopStore.setNextClearVRCXCacheCheck(
@@ -1026,6 +1033,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         vrcRegistryAskRestore,
         sentryErrorReporting,
 
+        setEnablePrimaryPassword,
         setEnablePrimaryPasswordConfigRepository,
         setBioLanguage,
         setRelaunchVRChatAfterCrash,

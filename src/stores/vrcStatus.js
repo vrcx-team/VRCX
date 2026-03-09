@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -17,10 +17,15 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
     const lastStatusSummary = ref('');
     const lastTimeFetched = ref(0);
     const pollingInterval = ref(0);
+
+    const statusBarServersVisible = ref(false);
+    const initialized = ref(false);
+
     const alertRef = ref(null);
+    const lastStatusText = ref('');
+
     const { t } = useI18n();
 
-    const lastStatusText = ref('');
     const statusText = computed(() => {
         if (lastStatus.value && lastStatusSummary.value) {
             return `${lastStatus.value}: ${lastStatusSummary.value}`;
@@ -28,6 +33,11 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
         return lastStatus.value;
     });
 
+    const hasIssue = computed(() => !!lastStatus.value);
+
+    /**
+     * @returns {void}
+     */
     function dismissAlert() {
         if (!alertRef.value) {
             return;
@@ -36,30 +46,32 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
         alertRef.value = null;
     }
 
-    function updateAlert() {
-        if (lastStatusText.value === statusText.value) {
-            return;
-        }
-        lastStatusText.value = statusText.value;
+    /**
+     * @returns {void}
+     */
+    function openStatusPage() {
+        openExternalLink('https://status.vrchat.com');
+    }
 
-        if (!statusText.value) {
-            if (alertRef.value) {
-                dismissAlert();
-                alertRef.value = toast.success(t('status.title'), {
-                    description: `${formatDateFilter(lastStatusTime.value, 'short')}: All Systems Operational`,
-                    position: 'bottom-right',
-                    action: {
-                        label: 'Open',
-                        onClick: () => openStatusPage()
-                    }
-                });
-            }
-            return;
+    /**
+     * @param {boolean} visible
+     * @returns {void}
+     */
+    function setStatusBarServersVisible(visible) {
+        statusBarServersVisible.value = visible;
+        if (!initialized.value) {
+            initialized.value = true;
         }
+    }
 
+    /**
+     * @param {string} text
+     * @returns {void}
+     */
+    function showWarningToast(text) {
         dismissAlert();
-        alertRef.value = toast.warning(t('status.title'), {
-            description: `${formatDateFilter(lastStatusTime.value, 'short')}: ${statusText.value}`,
+        alertRef.value = toast.warning(t('status_bar.servers_issue'), {
+            description: `${formatDateFilter(lastStatusTime.value, 'short')}: ${text}`,
             duration: Infinity,
             closeButton: true,
             position: 'bottom-right',
@@ -70,10 +82,49 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
         });
     }
 
-    function openStatusPage() {
-        openExternalLink('https://status.vrchat.com');
-    }
+    watch(statusText, (newVal) => {
+        if (statusBarServersVisible.value || !initialized.value) {
+            return;
+        }
 
+        if (lastStatusText.value === newVal) {
+            return;
+        }
+        lastStatusText.value = newVal;
+
+        if (!newVal) {
+            if (alertRef.value) {
+                dismissAlert();
+                alertRef.value = toast.success(t('status_bar.servers_issue'), {
+                    description: `${formatDateFilter(lastStatusTime.value, 'short')}: ${t('status_bar.servers_ok')}`,
+                    position: 'bottom-right',
+                    action: {
+                        label: 'Open',
+                        onClick: () => openStatusPage()
+                    }
+                });
+            }
+            return;
+        }
+
+        showWarningToast(newVal);
+    });
+
+    watch(statusBarServersVisible, (visible) => {
+        if (!visible && hasIssue.value && statusText.value) {
+            lastStatusText.value = '';
+            showWarningToast(statusText.value);
+            lastStatusText.value = statusText.value;
+        }
+        if (visible) {
+            dismissAlert();
+            lastStatusText.value = '';
+        }
+    });
+
+    /**
+     * @returns {Promise<void>}
+     */
     async function getVrcStatus() {
         const response = await webApiService.execute({
             url: `${vrcStatusApiUrl}/status.json`,
@@ -87,7 +138,6 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
             console.error('Failed to fetch VRChat status', response);
             lastStatus.value = 'Failed to fetch VRC status';
             pollingInterval.value = 2 * 60 * 1000; // 2 minutes
-            updateAlert();
             return;
         }
         const data = JSON.parse(response.data);
@@ -95,15 +145,16 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
         if (data.status.description === 'All Systems Operational') {
             lastStatus.value = '';
             pollingInterval.value = 15 * 60 * 1000; // 15 minutes
-            updateAlert();
             return;
         }
         lastStatus.value = data.status.description;
         pollingInterval.value = 2 * 60 * 1000; // 2 minutes
-        updateAlert();
         getVrcStatusSummary();
     }
 
+    /**
+     * @returns {Promise<void>}
+     */
     async function getVrcStatusSummary() {
         const response = await webApiService.execute({
             url: `${vrcStatusApiUrl}/summary.json`,
@@ -127,16 +178,21 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
             summary = summary.slice(0, -2);
         }
         lastStatusSummary.value = summary;
-        updateAlert();
     }
 
     // ran from Cef and Electron when browser is focused
+    /**
+     * @returns {void}
+     */
     function onBrowserFocus() {
         if (Date.now() - lastTimeFetched.value > 60 * 1000) {
             getVrcStatus();
         }
     }
 
+    /**
+     * @returns {void}
+     */
     function init() {
         getVrcStatus();
         workerTimers.setInterval(() => {
@@ -150,7 +206,13 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
 
     return {
         lastStatus,
+        lastStatusTime,
+        lastStatusSummary,
         statusText,
+        hasIssue,
+        statusBarServersVisible,
+        setStatusBarServersVisible,
+        openStatusPage,
         onBrowserFocus,
         getVrcStatus
     };

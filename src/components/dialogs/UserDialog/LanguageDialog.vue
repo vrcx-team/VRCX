@@ -6,20 +6,19 @@
             </DialogHeader>
 
             <div>
-                <div v-for="item in currentUser.$languages" :key="item.key" style="margin: 6px 0">
-                    <Badge variant="outline" style="margin-right: 5px">
+                <div class="my-2 mx-0" v-for="item in currentUser.$languages" :key="item.key">
+                    <Badge class="mr-1.5" variant="outline">
                         <span
-                            class="flags"
+                            class="flags mr-1.5"
                             :class="languageClass(item.key)"
-                            style="display: inline-block; margin-right: 5px"></span>
+                            style="display: inline-block"></span>
                         {{ item.value }} ({{ item.key.toUpperCase() }})
                         <button
+                            class="ml-2 p-0"
                             type="button"
                             style="
-                                margin-left: 6px;
                                 border: none;
                                 background: transparent;
-                                padding: 0;
                                 display: inline-flex;
                                 align-items: center;
                                 color: inherit;
@@ -36,7 +35,7 @@
                         languageDialog.loading || (currentUser.$languages && currentUser.$languages.length === 3)
                     "
                     @update:modelValue="handleAddUserLanguage">
-                    <SelectTrigger size="sm" style="margin-top: 14px">
+                    <SelectTrigger class="mt-3.5" size="sm">
                         <SelectValue :placeholder="t('dialog.language.select_language')" />
                     </SelectTrigger>
                     <SelectContent>
@@ -47,9 +46,9 @@
                                 :value="item.key"
                                 :text-value="item.value">
                                 <span
-                                    class="flags"
+                                    class="flags mr-1.5"
                                     :class="languageClass(item.key)"
-                                    style="display: inline-block; margin-right: 5px"></span>
+                                    style="display: inline-block"></span>
                                 {{ item.value }} ({{ item.key.toUpperCase() }})
                             </SelectItem>
                         </SelectGroup>
@@ -79,11 +78,19 @@
 
     const selectedLanguageToAdd = ref('');
 
+    /**
+     *
+     * @param language
+     */
     function handleAddUserLanguage(language) {
         addUserLanguage(language);
         selectedLanguageToAdd.value = '';
     }
 
+    /**
+     *
+     * @param language
+     */
     function removeUserLanguage(language) {
         if (language !== String(language)) {
             return;
@@ -99,6 +106,10 @@
             });
     }
 
+    /**
+     *
+     * @param language
+     */
     function addUserLanguage(language) {
         if (language !== String(language)) {
             return;

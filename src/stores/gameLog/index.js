@@ -202,6 +202,11 @@ export const useGameLogStore = defineStore('GameLog', () => {
         vrStore.updateVrNowPlaying();
     }
 
+    function resetLastMediaUrls() {
+        lastVideoUrl.value = '';
+        lastResourceloadUrl.value = '';
+    }
+
     /**
      *
      * @param data
@@ -317,13 +322,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
         for (i = data.length - 1; i > -1; i--) {
             ctx = data[i];
             if (ctx.type === 'Location') {
-                locationStore.lastLocation = {
+                locationStore.setLastLocation({
                     date: Date.parse(ctx.created_at),
                     location: ctx.location,
                     name: ctx.worldName,
                     playerList: new Map(),
                     friendList: new Map()
-                };
+                });
                 length = i;
                 break;
             }
@@ -556,10 +561,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
                         location: gameLog.location
                     });
                     locationStore.lastLocationReset(gameLog.dt);
-                    locationStore.lastLocation.location = 'traveling';
-                    locationStore.lastLocationDestination = gameLog.location;
-                    locationStore.lastLocationDestinationTime = Date.parse(
-                        gameLog.dt
+                    locationStore.setLastLocationLocation('traveling');
+                    locationStore.setLastLocationDestination(gameLog.location);
+                    locationStore.setLastLocationDestinationTime(
+                        Date.parse(gameLog.dt)
                     );
                     state.lastLocationAvatarList.clear();
                     instanceStore.removeQueuedInstance(gameLog.location);
@@ -580,13 +585,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 if (gameStore.isGameRunning) {
                     locationStore.lastLocationReset(gameLog.dt);
                     clearNowPlaying();
-                    locationStore.lastLocation = {
+                    locationStore.setLastLocation({
                         date: Date.parse(gameLog.dt),
                         location: gameLog.location,
                         name: worldName,
                         playerList: new Map(),
                         friendList: new Map()
-                    };
+                    });
                     instanceStore.removeQueuedInstance(gameLog.location);
                     locationStore.updateCurrentUserLocation();
                     vrStore.updateVRLastLocation();
@@ -881,12 +886,12 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 }
                 break;
             case 'openvr-init':
-                gameStore.isGameNoVR = false;
+                gameStore.setIsGameNoVR(false);
                 configRepository.setBool('isGameNoVR', gameStore.isGameNoVR);
                 vrStore.updateOpenVR();
                 break;
             case 'desktop-mode':
-                gameStore.isGameNoVR = true;
+                gameStore.setIsGameNoVR(true);
                 configRepository.setBool('isGameNoVR', gameStore.isGameNoVR);
                 vrStore.updateOpenVR();
                 break;
@@ -1021,6 +1026,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         lastResourceloadUrl,
 
         clearNowPlaying,
+        resetLastMediaUrls,
         tryLoadPlayerList,
         gameLogIsFriend,
         gameLogIsFavorite,

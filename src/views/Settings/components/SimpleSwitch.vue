@@ -25,6 +25,10 @@
 
     const emit = defineEmits(['change']);
 
+    /**
+     *
+     * @param event
+     */
     function change(event) {
         emit('change', event);
     }
@@ -45,7 +49,7 @@
         align-items: center;
     }
     .simple-switch > .switch {
-        margin-left: 10px;
+        margin-left: 8px;
     }
     .simple-switch .tooltip {
         margin-left: 3px;

@@ -1,5 +1,5 @@
 <template>
-    <div class="options-container" style="margin-top: 0">
+    <div class="options-container mt-0">
         <span class="header">{{ t('view.settings.discord_presence.discord_presence.header') }}</span>
         <div class="options-container-item">
             <span>{{ t('view.settings.discord_presence.discord_presence.description') }}</span>

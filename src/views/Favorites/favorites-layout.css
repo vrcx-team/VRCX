@@ -1,0 +1,76 @@
+/**
+ * Shared layout styles for Favorites tab pages.
+ * FavoritesAvatar.vue, FavoritesFriend.vue, and FavoritesWorld.vue.
+ */
+
+/* ============ Splitter ============ */
+
+.favorites-splitter [data-slot='resizable-handle'] {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.favorites-splitter [data-slot='resizable-handle']:hover,
+.favorites-splitter [data-slot='resizable-handle']:focus-visible {
+    opacity: 1;
+}
+
+/* ============ Group Item ============ */
+
+.group-item {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    padding: 8px;
+    cursor: pointer;
+}
+
+.group-item:hover {
+    background-color: var(--accent);
+    box-shadow: var(--shadow-sm);
+}
+
+.group-item--public {
+    border-left: 3px solid var(--visibility-public);
+}
+
+.group-item--friends {
+    border-left: 3px solid var(--visibility-friends);
+}
+
+.group-item--private {
+    border-left: 3px solid var(--visibility-private);
+}
+
+/* ============ Grid Layouts ============ */
+
+.favorites-search-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        var(--favorites-grid-columns, 1),
+        minmax(
+            var(--favorites-card-min-width, 240px),
+            var(--favorites-card-target-width, 1fr)
+        )
+    );
+    gap: var(--favorites-card-gap, 12px);
+    justify-content: start;
+    padding-bottom: 12px;
+}
+
+.favorites-card-list {
+    display: grid;
+    grid-template-columns: repeat(
+        var(--favorites-grid-columns, 1),
+        minmax(
+            var(--favorites-card-min-width, 260px),
+            var(--favorites-card-target-width, 1fr)
+        )
+    );
+    gap: var(--favorites-card-gap, 12px);
+    justify-content: start;
+    padding: 4px 2px 12px 2px;
+}
+
+.favorites-card-list::after {
+    content: '';
+}

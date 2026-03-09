@@ -453,8 +453,8 @@
                     min-width: 200px;
                     padding-left: 4px;
                     padding-right: 16px;
-                    margin-left: 10px;
-                    margin-right: 6px;
+                    margin-left: 8px;
+                    margin-right: 8px;
                     overflow: auto;
                     height: 50vh;
 
@@ -465,7 +465,7 @@
                     }
 
                     .timeline-group {
-                        padding: 0 20px 6px 10px;
+                        padding: 0 20px 8px 8px;
                     }
 
                     .timeline-timestamp {
@@ -500,7 +500,7 @@
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            border-radius: 8px;
+                            border-radius: var(--radius-xl);
                             font-size: 18px;
                             position: relative;
 
@@ -513,7 +513,7 @@
                                 right: 2px;
                                 min-width: 16px;
                                 height: 16px;
-                                border-radius: 8px;
+                                border-radius: var(--radius-xl);
                                 display: flex;
                                 align-items: center;
                                 justify-content: center;
@@ -545,10 +545,10 @@
         display: flex;
         justify-content: flex-end;
         align-items: center;
-        margin-top: 10px;
+        margin-top: 8px;
         .featured-switch-text {
             font-size: 13px;
-            margin-right: 5px;
+            margin-right: 6px;
         }
     }
 
@@ -589,10 +589,10 @@
                     .group-header {
                         font-size: 16px;
                         font-weight: bold;
-                        padding: 4px 12px 10px 12px;
+                        padding: 4px 12px 8px 12px;
                         cursor: pointer;
-                        border-radius: 4px;
-                        margin: 0 -12px 10px -12px;
+                        border-radius: var(--radius-md);
+                        margin: 0 -12px 8px -12px;
                         display: flex;
                         align-items: center;
 

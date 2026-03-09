@@ -1,7 +1,10 @@
 <template>
     <ContextMenu>
         <ContextMenuTrigger as-child>
-            <Card class="friend-card p-0 gap-0" :style="cardStyle" @click="showUserDialog(friend.id)">
+            <Card
+                class="friend-card x-hover-card p-0 gap-0 hover:bg-accent hover:shadow-sm"
+                :style="cardStyle"
+                @click="showUserDialog(friend.id)">
                 <div class="friend-card__header">
                     <div>
                         <Avatar
@@ -11,7 +14,7 @@
                             <AvatarFallback>{{ avatarFallback }}</AvatarFallback>
                         </Avatar>
                     </div>
-                    <span class="friend-card__status-dot" :class="statusDotClass"></span>
+                    <span class="friend-card__status-dot rounded-full" :class="statusDotClass"></span>
                     <div class="friend-card__name ml-0.5" :title="friend.name">{{ friend.name }}</div>
                 </div>
                 <div class="friend-card__body">
@@ -240,19 +243,11 @@
         position: relative;
         display: grid;
         gap: calc(14px * var(--card-scale) * var(--card-spacing));
-        border-radius: 8px;
-        transition: background-color 0.15s ease;
+        border-radius: var(--radius-lg);
         width: 100%;
         max-width: var(--friend-card-target-width, 220px);
         min-width: var(--friend-card-min-width, 220px);
         box-sizing: border-box;
-
-        &:hover {
-            background-color: var(--accent);
-            box-shadow:
-                0 4px 6px -1px rgb(0 0 0 / 0.1),
-                0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
     }
 
     .friend-card__header {
@@ -268,7 +263,6 @@
         right: calc(8px * var(--card-scale));
         inline-size: calc(12px * var(--card-scale));
         block-size: calc(12px * var(--card-scale));
-        border-radius: 999px;
         pointer-events: none;
     }
 
@@ -277,51 +271,51 @@
     }
 
     .friend-card__status-dot--online {
-        background: #67c23a;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #67c23a 40%, transparent);
+        background: var(--status-online);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-online) 40%, transparent);
     }
 
     .friend-card__status-dot--active {
         background: transparent;
-        border: calc(2px * var(--card-scale)) solid #67c23a;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #67c23a 40%, transparent);
+        border: calc(2px * var(--card-scale)) solid var(--status-online);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-online) 40%, transparent);
     }
 
     .friend-card__status-dot--active-join {
         background: transparent;
-        border: calc(2px * var(--card-scale)) solid #00b8ff;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #00b8ff 40%, transparent);
+        border: calc(2px * var(--card-scale)) solid var(--status-joinme);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-joinme) 40%, transparent);
     }
 
     .friend-card__status-dot--active-ask {
         background: transparent;
-        border: calc(2px * var(--card-scale)) solid #ff9500;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #ff9500 40%, transparent);
+        border: calc(2px * var(--card-scale)) solid var(--status-askme);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-askme) 40%, transparent);
     }
 
     .friend-card__status-dot--active-busy {
         background: transparent;
-        border: calc(2px * var(--card-scale)) solid #ff2c2c;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #ff2c2c 40%, transparent);
+        border: calc(2px * var(--card-scale)) solid var(--status-busy);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-busy) 40%, transparent);
     }
 
     .friend-card__status-dot--join {
-        background: #00b8ff;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #00b8ff 40%, transparent);
+        background: var(--status-joinme);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-joinme) 40%, transparent);
     }
 
     .friend-card__status-dot--busy {
-        background: #ff2c2c;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #ff2c2c 40%, transparent);
+        background: var(--status-busy);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-busy) 40%, transparent);
     }
 
     .friend-card__status-dot--ask {
-        background: #ff9500;
-        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, #ff9500 40%, transparent);
+        background: var(--status-askme);
+        box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-askme) 40%, transparent);
     }
 
     .friend-card__status-dot--offline {
-        background: #737f8d;
+        background: var(--status-offline-card);
     }
 
     .friend-card__body {
@@ -339,7 +333,7 @@
     }
 
     .friend-card__signature {
-        margin-top: calc(6px * var(--card-spacing));
+        margin-top: calc(8px * var(--card-spacing));
         font-size: calc(13px * var(--card-scale));
         line-height: 1.4;
         overflow: hidden;
@@ -354,8 +348,8 @@
         align-items: center;
         justify-content: center;
         min-height: calc(40px * var(--card-scale));
-        padding: calc(6px * var(--card-scale)) calc(10px * var(--card-scale));
-        border-radius: calc(10px * var(--card-scale));
+        padding: calc(8px * var(--card-scale)) calc(8px * var(--card-scale));
+        border-radius: calc(var(--radius-lg) * var(--card-scale));
         font-size: calc(12px * var(--card-scale));
         line-height: 1.3;
         box-sizing: border-box;

@@ -1,6 +1,6 @@
 <template>
     <div id="chart" class="x-container">
-        <div class="options-container" style="margin-top: 0">
+        <div class="options-container mt-0">
             <span class="header">{{ t('view.tools.header') }}</span>
 
             <div class="tool-categories">
@@ -12,7 +12,7 @@
                         <span class="category-title">{{ t('view.tools.pictures.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['image']">
-                        <Card class="tool-card p-0 gap-0">
+                        <Card class="tool-card x-hover-card p-0 gap-0 hover:bg-accent hover:shadow-sm">
                             <div class="tool-content text-2xl" @click="showScreenshotMetadataPage">
                                 <div class="tool-icon">
                                     <Camera />
@@ -424,18 +424,30 @@
         isAutoChangeStatusDialogVisible.value = true;
     };
 
+    /**
+     *
+     */
     function showExportDiscordNamesDialog() {
         isExportDiscordNamesDialogVisible.value = true;
     }
 
+    /**
+     *
+     */
     function showExportFriendsListDialog() {
         isExportFriendsListDialogVisible.value = true;
     }
 
+    /**
+     *
+     */
     function showExportAvatarsListDialog() {
         isExportAvatarsListDialogVisible.value = true;
     }
 
+    /**
+     *
+     */
     function openVrcPhotosFolder() {
         AppApi.OpenVrcPhotosFolder().then((result) => {
             if (result) {
@@ -446,6 +458,9 @@
         });
     }
 
+    /**
+     *
+     */
     function openVrcScreenshotsFolder() {
         AppApi.OpenVrcScreenshotsFolder().then((result) => {
             if (result) {
@@ -456,6 +471,9 @@
         });
     }
 
+    /**
+     *
+     */
     function openVrcxAppDataFolder() {
         AppApi.OpenVrcxAppDataFolder().then((result) => {
             if (result) {
@@ -466,6 +484,9 @@
         });
     }
 
+    /**
+     *
+     */
     function openVrcAppDataFolder() {
         AppApi.OpenVrcAppDataFolder().then((result) => {
             if (result) {
@@ -476,6 +497,9 @@
         });
     }
 
+    /**
+     *
+     */
     function openCrashVrcCrashDumps() {
         AppApi.OpenCrashVrcCrashDumps().then((result) => {
             if (result) {
@@ -501,7 +525,7 @@
             display: flex;
             align-items: center;
             padding: 8px 12px;
-            border-radius: 6px;
+            border-radius: var(--radius-lg);
             margin-bottom: 12px;
             transition: all 0.2s ease;
 
@@ -515,7 +539,7 @@
             }
 
             .category-title {
-                margin-left: 5px;
+                margin-left: 6px;
                 font-size: 16px;
                 font-weight: 600;
             }
@@ -530,19 +554,11 @@
     }
 
     .tool-card {
-        transition: background-color 0.15s ease;
         position: relative;
         overflow: visible;
-        border-radius: 8px;
+        border-radius: var(--radius-lg);
         cursor: pointer;
         width: 100%;
-
-        &:hover {
-            background-color: var(--accent);
-            box-shadow:
-                0 4px 6px -1px rgb(0 0 0 / 0.1),
-                0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
 
         .tool-content {
             display: flex;
@@ -555,7 +571,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border-radius: 12px;
+                border-radius: var(--radius-xl);
                 margin-right: 20px;
 
                 i {

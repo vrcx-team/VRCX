@@ -76,10 +76,12 @@
         </div>
         <div class="options-container">
             <span class="header">{{ t('view.profile.game_info.header') }}</span>
-            <div class="x-friend-list" style="margin-top: 10px">
-                <div class="x-friend-item">
-                    <div class="detail" @click="getVisits">
-                        <span class="name">{{ t('view.profile.game_info.online_users') }}</span>
+            <div class="px-2.5 overflow-y-auto overflow-x-hidden mt-2">
+                <div class="box-border flex items-center p-1.5 text-[13px] cursor-pointer">
+                    <div class="flex-1 overflow-hidden" @click="getVisits">
+                        <span class="block truncate font-medium leading-[18px]">{{
+                            t('view.profile.game_info.online_users')
+                        }}</span>
                         <span v-if="visits" class="block truncate text-xs">{{
                             t('view.profile.game_info.user_online', { count: visits })
                         }}</span>
@@ -105,7 +107,7 @@
             <div class="options-container">
                 <span class="header">{{ t('view.settings.advanced.advanced.app_launcher.header') }}</span>
                 <br />
-                <Button size="sm" variant="outline" style="margin-top: 5px" @click="openShortcutFolder()">{{
+                <Button class="mt-1.5" size="sm" variant="outline" @click="openShortcutFolder()">{{
                     t('view.settings.advanced.advanced.app_launcher.folder')
                 }}</Button>
                 <simple-switch
@@ -150,7 +152,7 @@
                 @change="changeTranslationAPI('VRCX_translationAPI')" />
             <div class="options-container-item">
                 <Button size="sm" variant="outline" @click="showTranslationApiDialog">
-                    <Languages class="h-4 w-4" style="margin-right: 5px" />
+                    <Languages class="h-4 w-4" style="margin-right: 6px" />
                     {{ t('view.settings.advanced.advanced.translation_api.translation_api_key') }}
                 </Button>
             </div>
@@ -503,18 +505,30 @@
 
     const isLinux = computed(() => LINUX);
 
+    /**
+     *
+     */
     function openShortcutFolder() {
         AppApi.OpenShortcutFolder();
     }
 
+    /**
+     *
+     */
     function showYouTubeApiDialog() {
         isYouTubeApiDialogVisible.value = true;
     }
 
+    /**
+     *
+     */
     function showTranslationApiDialog() {
         isTranslationApiDialogVisible.value = true;
     }
 
+    /**
+     *
+     */
     function refreshCacheSize() {
         cacheSize.cachedUsers = cachedUsers.size;
         cacheSize.cachedWorlds = cachedWorlds.size;
@@ -524,6 +538,10 @@
         cacheSize.cachedInstances = cachedInstances.size;
     }
 
+    /**
+     *
+     * @param configKey
+     */
     async function changeYouTubeApi(configKey = '') {
         if (configKey === 'VRCX_youtubeAPI') {
             advancedSettingsStore.setYouTubeApi();
@@ -536,17 +554,27 @@
         updateOpenVR();
     }
 
+    /**
+     *
+     * @param configKey
+     */
     async function changeTranslationAPI(configKey = '') {
         if (configKey === 'VRCX_translationAPI') {
             advancedSettingsStore.setTranslationApi();
         }
     }
 
+    /**
+     *
+     */
     async function refreshConfigTreeData() {
         await authRequest.getConfig();
         configTreeData.value = cachedConfig.value;
     }
 
+    /**
+     *
+     */
     function getVisits() {
         miscRequest.getVisits().then((args) => {
             visits.value = args.json;

@@ -4,32 +4,22 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.registry_backup.header') }}</DialogTitle>
             </DialogHeader>
-            <div style="margin-top: 10px">
-                <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px">
-                    <span class="name" style="margin-right: 24px">{{ t('dialog.registry_backup.auto_backup') }}</span>
+            <div class="mt-2">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="name mr-6">{{ t('dialog.registry_backup.auto_backup') }}</span>
                     <Switch :model-value="vrcRegistryAutoBackup" @update:modelValue="setVrcRegistryAutoBackup" />
                 </div>
-                <div
-                    style="
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                        font-size: 12px;
-                        margin-top: 5px;
-                    ">
-                    <span class="name" style="margin-right: 24px">{{
-                        t('dialog.registry_backup.ask_to_restore')
-                    }}</span>
+                <div class="mt-1.5 flex items-center justify-between text-xs">
+                    <span class="name mr-6">{{ t('dialog.registry_backup.ask_to_restore') }}</span>
                     <Switch :model-value="vrcRegistryAskRestore" @update:modelValue="setVrcRegistryAskRestore" />
                 </div>
                 <DataTableLayout
-                    class="min-w-0 w-full"
+                    class="min-w-0 w-full mt-2"
                     :table="table"
                     :loading="false"
                     :table-style="tableStyle"
-                    :show-pagination="false"
-                    style="margin-top: 10px" />
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px">
+                    :show-pagination="false" />
+                <div class="mt-2" style="display: flex; align-items: center; justify-content: space-between">
                     <Button size="sm" variant="destructive" @click="deleteVrcRegistry">{{
                         t('dialog.registry_backup.reset')
                     }}</Button>
@@ -111,11 +101,18 @@
         }
     );
 
+    /**
+     *
+     */
     async function updateRegistryBackupDialog() {
         const backupsJson = await configRepository.getString('VRCX_VRChatRegistryBackups');
         registryBackupTable.value.data = JSON.parse(backupsJson || '[]');
     }
 
+    /**
+     *
+     * @param row
+     */
     function restoreVrcRegistryBackup(row) {
         modalStore
             .confirm({
@@ -139,10 +136,18 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param row
+     */
     function saveVrcRegistryBackupToFile(row) {
         downloadAndSaveJson(row.name, row.data);
     }
 
+    /**
+     *
+     * @param row
+     */
     async function deleteVrcRegistryBackup(row) {
         const backups = registryBackupTable.value.data;
         removeFromArray(backups, row);
@@ -150,6 +155,9 @@
         await updateRegistryBackupDialog();
     }
 
+    /**
+     *
+     */
     function deleteVrcRegistry() {
         modalStore
             .confirm({
@@ -167,11 +175,18 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     * @param name
+     */
     async function handleBackupVrcRegistry(name) {
         await backupVrcRegistry(name);
         await updateRegistryBackupDialog();
     }
 
+    /**
+     *
+     */
     function promptVrcRegistryBackupName() {
         modalStore
             .prompt({
@@ -188,6 +203,9 @@
             .catch(() => {});
     }
 
+    /**
+     *
+     */
     async function openJsonFileSelectorDialogElectron() {
         return new Promise((resolve) => {
             const fileInput = document.createElement('input');
@@ -216,6 +234,9 @@
         });
     }
 
+    /**
+     *
+     */
     async function restoreVrcRegistryFromFile() {
         const filePath = await AppApi.OpenFileSelectorDialog(null, '.json', 'JSON Files (*.json)|*.json');
         if (WINDOWS) {
@@ -256,10 +277,16 @@
         }
     }
 
+    /**
+     *
+     */
     function clearVrcRegistryDialog() {
         registryBackupTable.value.data = [];
     }
 
+    /**
+     *
+     */
     function closeAndClearDialog() {
         closeDialog();
         // TODO: Element Plus had a distinct @closed event after animation.
@@ -267,13 +294,10 @@
         clearVrcRegistryDialog();
     }
 
+    /**
+     *
+     */
     function closeDialog() {
         isRegistryBackupDialogVisible.value = false;
     }
 </script>
-
-<style scoped>
-    .button-pd-0 {
-        padding: 0;
-    }
-</style>

@@ -4,7 +4,7 @@ import {
     fetchWithEntityPolicy,
     queryClient,
     queryKeys
-} from '../query';
+} from '../queries';
 
 function refetchActiveInventoryQueries() {
     queryClient

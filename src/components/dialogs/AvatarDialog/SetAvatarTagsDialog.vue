@@ -43,7 +43,7 @@
                     v-model="setAvatarTagsDialog.selectedTagsCsv"
                     :rows="2"
                     :placeholder="t('dialog.set_avatar_tags.custom_tags_placeholder')"
-                    style="margin-top: 10px"
+                    class="mt-2"
                     input-class="resize-none"
                     @input="updateInputAvatarTags" />
                 <br />
@@ -59,23 +59,32 @@
                         t('dialog.set_avatar_tags.select_all')
                     }}</Button>
                 </template>
-                <span style="margin-left: 5px"
+                <span style="margin-left: 6px"
                     >{{ props.setAvatarTagsDialog.selectedAvatarIds.length }} /
                     {{ setAvatarTagsDialog.ownAvatars.length }}</span
                 >
                 <Spinner v-if="setAvatarTagsDialog.loading" class="inline-block ml-2" />
                 <br />
-                <div class="x-friend-list" style="margin-top: 10px; min-height: 60px; max-height: 280px">
+                <div
+                    class="flex flex-wrap items-start max-h-[300px] overflow-hidden auto"
+                    style="margin-top: 8px; min-height: 60px">
                     <div
                         v-for="avatar in setAvatarTagsDialog.ownAvatars"
                         :key="avatar.id"
-                        :class="['item-width', 'x-friend-item', 'x-friend-item-border']"
+                        :class="[
+                            'w-[335px]',
+                            'box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:rounded-[25px_5px_5px_25px]'
+                        ]"
                         @click="showAvatarDialog(avatar.id)">
-                        <div class="avatar">
-                            <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
+                        <div class="relative inline-block flex-none size-9 mr-2.5">
+                            <img
+                                v-if="avatar.thumbnailImageUrl"
+                                class="size-full rounded-full object-cover"
+                                :src="avatar.thumbnailImageUrl"
+                                loading="lazy" />
                         </div>
-                        <div class="detail">
-                            <span class="name" v-text="avatar.name"></span>
+                        <div class="flex-1 overflow-hidden">
+                            <span class="block truncate font-medium leading-[18px]" v-text="avatar.name"></span>
                             <span
                                 v-if="avatar.releaseStatus === 'public'"
                                 class="block truncate text-xs"
@@ -87,7 +96,7 @@
                             <span v-else class="block truncate text-xs" v-text="avatar.releaseStatus"></span>
                             <span class="block truncate text-xs" v-text="avatarTagStrings.get(avatar.id)"></span>
                         </div>
-                        <Button size="sm" variant="ghost" style="margin-left: 5px" @click.stop>
+                        <Button size="sm" variant="ghost" style="margin-left: 6px" @click.stop>
                             <Checkbox
                                 :model-value="props.setAvatarTagsDialog.selectedAvatarIds.includes(avatar.id)"
                                 @update:modelValue="(val) => toggleAvatarSelection(avatar.id, val)" />
@@ -145,6 +154,9 @@
         }
     );
 
+    /**
+     *
+     */
     function closeSetAvatarTagsDialog() {
         emit('update:setAvatarTagsDialog', {
             ...props.setAvatarTagsDialog,
@@ -152,6 +164,9 @@
         });
     }
 
+    /**
+     *
+     */
     function updateSelectedAvatarTags() {
         const D = props.setAvatarTagsDialog;
         if (D.contentHorror) {
@@ -193,6 +208,11 @@
         D.selectedTagsCsv = D.selectedTags.join(',').replace(/content_/g, '');
     }
 
+    /**
+     *
+     * @param avatarId
+     * @param checked
+     */
     function toggleAvatarSelection(avatarId, checked) {
         const D = props.setAvatarTagsDialog;
         const isSelected = D.selectedAvatarIds.includes(avatarId);
@@ -204,6 +224,9 @@
         }
     }
 
+    /**
+     *
+     */
     function updateAvatarTagsString() {
         const D = props.setAvatarTagsDialog;
         for (const ref of D.ownAvatars) {
@@ -229,6 +252,9 @@
         }
     }
 
+    /**
+     *
+     */
     function setAvatarTagsSelectToggle() {
         const D = props.setAvatarTagsDialog;
         const allSelected = D.ownAvatars.length === D.selectedAvatarIds.length;
@@ -243,6 +269,9 @@
         }
     }
 
+    /**
+     *
+     */
     async function saveSetAvatarTagsDialog() {
         const D = props.setAvatarTagsDialog;
         if (D.loading) {
@@ -278,6 +307,9 @@
         }
     }
 
+    /**
+     *
+     */
     function updateInputAvatarTags() {
         const D = props.setAvatarTagsDialog;
         D.contentHorror = false;
@@ -311,9 +343,3 @@
         }
     }
 </script>
-
-<style scoped>
-    .item-width {
-        width: 335px;
-    }
-</style>

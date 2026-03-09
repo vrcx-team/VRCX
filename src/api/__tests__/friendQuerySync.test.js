@@ -15,7 +15,7 @@ vi.mock('../../stores/user', () => ({
     })
 }));
 
-vi.mock('../../query', () => ({
+vi.mock('../../queries', () => ({
     entityQueryPolicies: {
         friendList: {
             staleTime: 20000,

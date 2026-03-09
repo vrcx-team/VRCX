@@ -943,7 +943,7 @@
                     "app_launcher": {
                         "header": "App Launcher",
                         "folder": "Auto-Launch Folder",
-                        "folder_tooltip": "To auto-launch apps with VRChat, place shortcuts inside this folder, alteratively use the platform-specific subfolders",
+                        "folder_tooltip": "To auto-launch apps with VRChat, place shortcuts inside this folder, alteratively use the platform-specific subfolders, Steam app shortcuts are also supported",
                         "auto_close": "Auto close apps",
                         "run_process_once": "Open single instance of app"
                     },
@@ -1107,6 +1107,7 @@
                 "memo_placeholder": "Click to add a memo",
                 "avatar_info": "Avatar Info",
                 "avatar_info_last_seen": "Avatar Info Last Seen",
+                "unknown_avatar": "Unknown Avatar",
                 "represented_group": "Represented Group",
                 "bio": "Bio",
                 "last_seen": "Last Seen",
@@ -1735,6 +1736,17 @@
             "redeem": "Redeem",
             "create_animated_emoji": "Animated Emoji Generator",
             "crop_image": "Confirm Upload"
+        },
+        "image_crop": {
+            "rotate_left": "Rotate Left",
+            "rotate_right": "Rotate Right",
+            "flip_h": "Flip Horizontal",
+            "flip_v": "Flip Vertical",
+            "zoom_in": "Zoom In",
+            "zoom_out": "Zoom Out",
+            "mode_fit": "Switch to Fit Mode",
+            "mode_free": "Switch to Free Mode",
+            "reset": "Reset"
         },
         "gallery_select": {
             "header": "Select Image",
@@ -2634,9 +2646,12 @@
         "clear_input": "Clear input"
     },
     "status_bar": {
-        "vrchat": "VRChat",
-        "vrchat_running": "VRChat is running",
-        "vrchat_stopped": "VRChat is not running",
+        "game": "Game",
+        "game_running": "VRChat is running",
+        "game_stopped": "VRChat is not running",
+        "servers": "Servers",
+        "servers_ok": "VRChat servers are operational",
+        "servers_issue": "VRChat Server Issues",
         "steamvr": "SteamVR",
         "steamvr_running": "SteamVR is running",
         "steamvr_stopped": "SteamVR is not running",

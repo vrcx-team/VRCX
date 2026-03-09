@@ -1,0 +1,126 @@
+/*
+ * Status icon styles for avatar status indicator dots and mask cutouts.
+ */
+
+.status-icon::after {
+    position: absolute;
+    right: 0.75px;
+    bottom: 0.75px;
+    width: 9px;
+    height: 9px;
+    content: '';
+    background: var(--status-offline);
+    border-radius: 50%;
+}
+
+.status-icon.active::after {
+    background: var(--status-active);
+}
+
+.status-icon.online::after {
+    background: var(--status-online);
+}
+
+.status-icon.joinme::after {
+    background: var(--status-joinme);
+    mask-image: url(/images/masks/joinme.svg);
+}
+
+.status-icon.askme::after {
+    background: var(--status-askme);
+    mask-image: url(/images/masks/askme.svg);
+}
+
+.status-icon.busy::after {
+    background: var(--status-busy);
+    mask-image: url(/images/masks/busy.svg);
+}
+
+.status-icon.offline::after {
+    background: var(--status-offline);
+}
+
+.active img,
+.offline img {
+    filter: grayscale(1);
+}
+
+.friend-row:hover .active img,
+.friend-row:hover .offline img {
+    filter: none;
+}
+
+/* Avatar mask cutout for status dot */
+.status-icon img {
+    mask-image: url(/images/masks/usercutout.svg);
+}
+
+.status-icon.mobile img {
+    mask-image: url(/images/masks/usercutoutmobile.svg);
+}
+
+.status-icon.mobile::after {
+    right: -2px;
+    bottom: -0.5px;
+    width: 14px;
+    height: 14px;
+    border-radius: 0;
+    mask-image: url(/images/masks/phone.svg) !important;
+}
+
+/* Inline status dot indicators (used in dialogs and sidebar) */
+i.x-user-status,
+i.x-status-icon {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: var(--status-offline-alt);
+    border-radius: 50%;
+}
+
+/* Suppress the ::after pseudo-element on inline <i> status dots.
+   The ::after is for avatar containers (.status-icon divs), not for <i> dots
+   which display status via their own background property. */
+i.x-user-status::after,
+i.x-status-icon::after {
+    display: none;
+}
+
+i.x-user-status.active {
+    background: var(--status-active);
+}
+
+i.x-user-status.online {
+    background: var(--status-online);
+}
+
+i.x-user-status.joinme {
+    background: var(--status-joinme);
+    mask-image: url(/images/masks/joinme.svg);
+}
+
+i.x-user-status.askme {
+    background: var(--status-askme);
+    mask-image: url(/images/masks/askme.svg);
+}
+
+i.x-user-status.busy {
+    background: var(--status-busy);
+    mask-image: url(/images/masks/busy.svg);
+}
+
+i.x-status-icon.green {
+    background: var(--status-online);
+}
+
+i.x-status-icon.blue {
+    background: var(--status-joinme);
+}
+
+i.x-status-icon.orange {
+    background: var(--status-askme);
+}
+
+i.x-status-icon.red {
+    background: var(--status-busy);
+}

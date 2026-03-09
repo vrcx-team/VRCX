@@ -1,8 +1,7 @@
 import { reactive, ref, shallowReactive, watch } from 'vue';
 import { defineStore } from 'pinia';
+import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
-
-import Noty from 'noty';
 
 import {
     getEmojiFileName,
@@ -379,9 +378,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
         try {
             for (let i = 0; i < 100; i++) {
                 params.offset = i * params.n;
-                const args = await inventoryRequest.getCachedInventoryItems(
-                    params
-                );
+                const args =
+                    await inventoryRequest.getCachedInventoryItems(params);
                 for (const item of args.json.data) {
                     advancedSettingsStore.currentUserInventory.set(
                         item.id,
@@ -427,12 +425,9 @@ export const useGalleryStore = defineStore('Gallery', () => {
                 await vrcPlusImageRequest.deletePrint(printId);
                 const text = `Old print automatically deleted: ${printId}`;
                 if (AppDebug.errorNoty) {
-                    AppDebug.errorNoty.close();
+                    toast.dismiss(AppDebug.errorNoty);
                 }
-                AppDebug.errorNoty = new Noty({
-                    type: 'info',
-                    text
-                }).show();
+                AppDebug.errorNoty = toast.info(text);
             }
         } catch (err) {
             console.error('Failed to delete old print:', err);

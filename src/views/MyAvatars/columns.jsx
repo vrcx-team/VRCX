@@ -13,6 +13,7 @@ import {
     ArrowUpDown,
     Check,
     Ellipsis,
+    Eye,
     Image,
     Monitor,
     Pencil,
@@ -93,8 +94,8 @@ export function getColumns({
                 return (
                     <img
                         src={ref.thumbnailImageUrl}
-                        class="cursor-pointer rounded-sm object-cover"
-                        style="width: 36px; height: 24px;"
+                        class="avatar-table-thumbnail cursor-pointer rounded-sm object-cover"
+                        style="width: 34px; height: 22px;"
                         loading="lazy"
                         onClick={() => onShowAvatarDialog(ref.id)}
                     />
@@ -137,7 +138,7 @@ export function getColumns({
                 const tags = row.original.$tags || [];
                 if (!tags.length) return null;
                 return (
-                    <div class="flex flex-wrap gap-1">
+                    <div class="flex flex-nowrap gap-1 overflow-hidden">
                         {tags.map((entry) => {
                             const hashColor = getTagColor(entry.tag);
                             const storedColor =
@@ -192,7 +193,7 @@ export function getColumns({
                         )}
                         {platforms.isIos && (
                             <Badge
-                                class="text-[#8e8e93] border-[#8e8e93]"
+                                class="text-platform-ios border-platform-ios"
                                 variant="outline"
                             >
                                 <Apple class="h-3.5 w-3.5" />
@@ -367,14 +368,21 @@ export function getColumns({
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button
-                                    class="rounded-full"
-                                    size="icon-sm"
+                                    class="rounded-full h-6 w-6"
+                                    size="icon"
                                     variant="ghost"
                                 >
                                     <Ellipsis class="h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
+                                <DropdownMenuItem
+                                    onClick={() => onShowAvatarDialog(ref.id)}
+                                >
+                                    <Eye class="size-4" />
+                                    {t('dialog.avatar.actions.view_details')}
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                     onClick={() =>
                                         onContextMenuAction('manageTags', ref)

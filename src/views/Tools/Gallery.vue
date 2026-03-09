@@ -11,27 +11,25 @@
             <template #label-gallery>
                 <span>
                     {{ t('dialog.gallery_icons.gallery') }}
-                    <span class="gallery-tab-count"> {{ galleryTable.length }}/64 </span>
+                    <span class="text-xs ml-[5px]"> {{ galleryTable.length }}/64 </span>
                 </span>
             </template>
             <template #label-icons>
                 <span>
                     {{ t('dialog.gallery_icons.icons') }}
-                    <span class="gallery-tab-count"> {{ VRCPlusIconsTable.length }}/64 </span>
+                    <span class="text-xs ml-[5px]"> {{ VRCPlusIconsTable.length }}/64 </span>
                 </span>
             </template>
             <template #label-emojis>
                 <span>
                     {{ t('dialog.gallery_icons.emojis') }}
-                    <span class="gallery-tab-count">
-                        {{ emojiTable.length }}/{{ cachedConfigTyped.maxUserEmoji }}
-                    </span>
+                    <span class="text-xs ml-[5px]"> {{ emojiTable.length }}/{{ cachedConfigTyped.maxUserEmoji }} </span>
                 </span>
             </template>
             <template #label-stickers>
                 <span>
                     {{ t('dialog.gallery_icons.stickers') }}
-                    <span class="gallery-tab-count">
+                    <span class="text-xs ml-[5px]">
                         {{ stickerTable.length }}/{{ cachedConfigTyped.maxUserStickers }}
                     </span>
                 </span>
@@ -39,13 +37,13 @@
             <template #label-prints>
                 <span>
                     {{ t('dialog.gallery_icons.prints') }}
-                    <span class="gallery-tab-count"> {{ printTable.length }}/64 </span>
+                    <span class="text-xs ml-[5px]"> {{ printTable.length }}/64 </span>
                 </span>
             </template>
             <template #label-inventory>
                 <span>
                     {{ t('dialog.gallery_icons.inventory') }}
-                    <span class="gallery-tab-count">
+                    <span class="text-xs ml-[5px]">
                         {{ inventoryTable.length }}
                     </span>
                 </span>
@@ -85,10 +83,9 @@
                     </ButtonGroup>
                     <br />
                     <div
-                        class="x-friend-item"
+                        class="inline-block mt-2.5 w-auto cursor-default"
                         v-for="image in galleryTable"
-                        :key="image.id"
-                        style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                        :key="image.id">
                         <template v-if="image.versions && image.versions.length > 0">
                             <div
                                 class="h-[200px] w-[200px] rounded-[20px] overflow-hidden"
@@ -100,7 +97,7 @@
                                     :src="image.versions[image.versions.length - 1].file.url"
                                     loading="lazy" />
                             </div>
-                            <div class="float-right" style="margin-top: 5px">
+                            <div class="float-right" style="margin-top: 6px">
                                 <Button
                                     class="rounded-full mr-2"
                                     size="icon-sm"
@@ -158,10 +155,9 @@
                     </ButtonGroup>
                     <br />
                     <div
-                        class="x-friend-item"
+                        class="inline-block mt-2.5 w-auto cursor-default"
                         v-for="image in VRCPlusIconsTable"
-                        :key="image.id"
-                        style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                        :key="image.id">
                         <template v-if="image.versions && image.versions.length > 0"
                             ><div
                                 class="h-[200px] w-[200px] rounded-[20px] overflow-hidden"
@@ -173,7 +169,7 @@
                                     :src="image.versions[image.versions.length - 1].file.url"
                                     loading="lazy" />
                             </div>
-                            <div class="float-right" style="margin-top: 5px">
+                            <div class="float-right" style="margin-top: 6px">
                                 <Button
                                     class="rounded-full mr-2"
                                     size="icon-sm"
@@ -207,7 +203,7 @@
                     <br />
                     <br />
                     <div>
-                        <ButtonGroup style="margin-right: 10px">
+                        <ButtonGroup style="margin-right: 8px">
                             <Button variant="outline" size="sm" @click="refreshEmojiTable">
                                 <RefreshCw />
                                 {{ t('dialog.gallery_icons.refresh') }}
@@ -255,7 +251,7 @@
                                 @click="openExternalLink('https://vrcemoji.com')">
                                 {{ t('dialog.gallery_icons.create_animated_emoji') }}
                             </Button>
-                            <span style="margin-right: 10px">{{ t('dialog.gallery_icons.emoji_animation_fps') }}</span>
+                            <span style="margin-right: 8px">{{ t('dialog.gallery_icons.emoji_animation_fps') }}</span>
                             <NumberField
                                 v-model="emojiAnimFps"
                                 :min="1"
@@ -269,7 +265,7 @@
                                     <NumberFieldIncrement />
                                 </NumberFieldContent>
                             </NumberField>
-                            <span style="margin-right: 10px">{{
+                            <span style="margin-right: 8px">{{
                                 t('dialog.gallery_icons.emoji_animation_frame_count')
                             }}</span>
                             <NumberField
@@ -285,7 +281,7 @@
                                     <NumberFieldIncrement />
                                 </NumberFieldContent>
                             </NumberField>
-                            <label class="inline-flex items-center gap-2" style="margin-left: 10px; margin-right: 10px">
+                            <label class="inline-flex items-center gap-2" style="margin-left: 8px; margin-right: 8px">
                                 <Checkbox v-model="emojiAnimLoopPingPong" />
                                 <span>{{ t('dialog.gallery_icons.emoji_loop_pingpong') }}</span>
                             </label>
@@ -295,11 +291,7 @@
                         </template>
                     </div>
                     <br />
-                    <div
-                        class="x-friend-item"
-                        v-for="image in emojiTable"
-                        :key="image.id"
-                        style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                    <div class="inline-block mt-2.5 w-auto cursor-default" v-for="image in emojiTable" :key="image.id">
                         <template v-if="image.versions && image.versions.length > 0">
                             <div
                                 class="h-[200px] w-[200px] rounded-[20px] overflow-hidden cursor-pointer"
@@ -314,18 +306,18 @@
                                     :imageUrl="image.versions[image.versions.length - 1].file.url"
                                     :size="200"></Emoji>
                             </div>
-                            <div style="display: inline-block; margin: 5px">
+                            <div style="display: inline-block; margin: 6px">
                                 <span v-if="image.loopStyle === 'pingpong'">
-                                    <RefreshCw style="margin-right: 5px" />
+                                    <RefreshCw style="margin-right: 6px" />
                                 </span>
-                                <span style="margin-right: 5px">{{ image.animationStyle }}</span>
-                                <span v-if="image.framesOverTime" style="margin-right: 5px"
+                                <span style="margin-right: 6px">{{ image.animationStyle }}</span>
+                                <span v-if="image.framesOverTime" style="margin-right: 6px"
                                     >{{ image.framesOverTime }}fps</span
                                 >
-                                <span v-if="image.frames" style="margin-right: 5px">{{ image.frames }}frames</span>
+                                <span v-if="image.frames" style="margin-right: 6px">{{ image.frames }}frames</span>
                                 <br />
                             </div>
-                            <div class="float-right" style="margin-top: 5px">
+                            <div class="float-right" style="margin-top: 6px">
                                 <Button
                                     class="rounded-full mr-2"
                                     size="icon-sm"
@@ -377,10 +369,9 @@
                     </ButtonGroup>
                     <br />
                     <div
-                        class="x-friend-item"
+                        class="inline-block mt-2.5 w-auto cursor-default"
                         v-for="image in stickerTable"
-                        :key="image.id"
-                        style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                        :key="image.id">
                         <template v-if="image.versions && image.versions.length > 0">
                             <div
                                 class="h-[200px] w-[200px] rounded-[20px] overflow-hidden cursor-pointer"
@@ -391,7 +382,7 @@
                                     :src="image.versions[image.versions.length - 1].file.url"
                                     loading="lazy" />
                             </div>
-                            <div class="float-right" style="margin-top: 5px">
+                            <div class="float-right" style="margin-top: 6px">
                                 <Button
                                     class="rounded-full mr-2"
                                     size="icon-sm"
@@ -443,20 +434,16 @@
                             v-model="printUploadNote"
                             :rows="1"
                             :maxlength="32"
-                            style="margin-left: 10px; width: 300px"
+                            style="margin-left: 8px; width: 300px"
                             :placeholder="t('dialog.gallery_icons.note')"
                             input-class="resize-none min-h-0" />
-                        <label class="inline-flex items-center gap-2" style="margin-left: 10px; margin-right: 10px">
+                        <label class="inline-flex items-center gap-2" style="margin-left: 8px; margin-right: 8px">
                             <Checkbox v-model="printCropBorder" />
                             <span>{{ t('dialog.gallery_icons.crop_print_border') }}</span>
                         </label>
                     </div>
                     <br />
-                    <div
-                        class="x-friend-item"
-                        v-for="image in printTable"
-                        :key="image.id"
-                        style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                    <div class="inline-block mt-2.5 w-auto cursor-default" v-for="image in printTable" :key="image.id">
                         <div
                             class="h-[200px] w-[200px] rounded-[20px] overflow-hidden cursor-pointer"
                             @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))">
@@ -465,7 +452,7 @@
                                 :src="image.files.image"
                                 loading="lazy" />
                         </div>
-                        <div style="margin-top: 5px; width: 208px">
+                        <div style="margin-top: 6px; width: 208px">
                             <span class="block truncate" v-if="image.note" v-text="image.note"></span>
                             <span v-else class="block">&nbsp;</span>
                             <Location
@@ -475,12 +462,12 @@
                                 :hint="image.worldName" />
                             <span v-else class="block">&nbsp;</span>
                             <DisplayName
-                                class="block truncate gallery-meta"
+                                class="block truncate font-mono"
                                 v-if="image.authorId"
                                 :userid="image.authorId"
                                 :hint="image.authorName" />
-                            <span v-else class="gallery-meta">&nbsp;</span>
-                            <span v-if="image.createdAt" class="block truncate gallery-meta gallery-meta--small">
+                            <span v-else class="font-mono block">&nbsp;</span>
+                            <span v-if="image.createdAt" class="block truncate font-mono text-[11px]">
                                 {{ formatDateFilter(image.createdAt, 'long') }}
                             </span>
                             <span v-else class="block">&nbsp;</span>
@@ -523,21 +510,20 @@
                     </div>
                     <br />
                     <div
-                        class="x-friend-item"
+                        class="inline-block mt-2.5 w-auto cursor-default"
                         v-for="item in inventoryTable"
-                        :key="item.id"
-                        style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                        :key="item.id">
                         <div class="h-[200px] w-[200px] rounded-[20px] overflow-hidden cursor-default">
                             <img
                                 class="h-full w-full rounded-[15px] object-cover"
                                 :src="item.imageUrl"
                                 loading="lazy" />
                         </div>
-                        <div style="margin-top: 5px; width: 208px">
+                        <div style="margin-top: 6px; width: 208px">
                             <span class="block truncate" v-text="item.name"></span>
                             <span v-if="item.description" class="block truncate" v-text="item.description"></span>
                             <span v-else class="block">&nbsp;</span>
-                            <span class="block truncate gallery-meta gallery-meta--small">
+                            <span class="block truncate font-mono text-[11px]">
                                 {{ formatDateFilter(item.created_at, 'long') }}
                             </span>
                             <span v-if="item.itemType === 'prop'">{{ t('dialog.gallery_icons.item') }}</span>
@@ -687,19 +673,35 @@
         galleryDialogVisible.value = false;
     });
 
+    /**
+     *
+     */
     function startUpload() {
         pendingUploads.value += 1;
     }
 
+    /**
+     *
+     */
     function finishUpload() {
         pendingUploads.value = Math.max(0, pendingUploads.value - 1);
     }
 
+    /**
+     *
+     */
     function goBack() {
         galleryDialogVisible.value = false;
         router.push({ name: 'tools' });
     }
 
+    /**
+     *
+     * @param file
+     * @param title
+     * @param aspectRatio
+     * @param handler
+     */
     function openCropDialog(file, title, aspectRatio, handler) {
         cropDialogTitle.value = title;
         cropDialogAspectRatio.value = aspectRatio;
@@ -708,6 +710,10 @@
         cropDialogOpen.value = true;
     }
 
+    /**
+     *
+     * @param blob
+     */
     async function onCropConfirm(blob) {
         if (!cropDialogUploadHandler.value) {
             return;
@@ -722,6 +728,10 @@
         }
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangeGallery(e) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#GalleryUploadButton',
@@ -752,10 +762,17 @@
         });
     }
 
+    /**
+     *
+     */
     function displayGalleryUpload() {
         document.getElementById('GalleryUploadButton').click();
     }
 
+    /**
+     *
+     * @param fileId
+     */
     function setProfilePicOverride(fileId) {
         if (!isLocalUserVrcPlusSupporter.value) {
             toast.error(t('message.vrcplus.required'));
@@ -778,6 +795,10 @@
             });
     }
 
+    /**
+     *
+     * @param fileId
+     */
     function compareCurrentProfilePic(fileId) {
         const currentProfilePicOverride = extractFileId(currentUser.value.profilePicOverride);
         if (fileId === currentProfilePicOverride) {
@@ -786,6 +807,10 @@
         return false;
     }
 
+    /**
+     *
+     * @param fileId
+     */
     function deleteGalleryImage(fileId) {
         miscRequest.deleteFile(fileId).then((args) => {
             const array = galleryTable.value;
@@ -801,6 +826,10 @@
         });
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangeVRCPlusIcon(e) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#VRCPlusIconUploadButton',
@@ -833,10 +862,17 @@
         });
     }
 
+    /**
+     *
+     */
     function displayVRCPlusIconUpload() {
         document.getElementById('VRCPlusIconUploadButton').click();
     }
 
+    /**
+     *
+     * @param fileId
+     */
     function setVRCPlusIcon(fileId) {
         if (!isLocalUserVrcPlusSupporter.value) {
             toast.error(t('message.vrcplus.required'));
@@ -859,6 +895,10 @@
             });
     }
 
+    /**
+     *
+     * @param userIcon
+     */
     function compareCurrentVRCPlusIcon(userIcon) {
         const currentUserIcon = extractFileId(currentUser.value.userIcon);
         if (userIcon === currentUserIcon) {
@@ -867,6 +907,10 @@
         return false;
     }
 
+    /**
+     *
+     * @param fileId
+     */
     function deleteVRCPlusIcon(fileId) {
         miscRequest.deleteFile(fileId).then((args) => {
             const array = VRCPlusIconsTable.value;
@@ -881,6 +925,10 @@
         });
     }
 
+    /**
+     *
+     * @param fileName
+     */
     function parseEmojiFileName(fileName) {
         // remove file extension
         fileName = fileName.replace(/\.[^/.]+$/, '');
@@ -904,6 +952,10 @@
         }
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangeEmoji(e) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#EmojiUploadButton',
@@ -950,10 +1002,17 @@
         });
     }
 
+    /**
+     *
+     */
     function displayEmojiUpload() {
         document.getElementById('EmojiUploadButton').click();
     }
 
+    /**
+     *
+     * @param fileId
+     */
     function deleteEmoji(fileId) {
         miscRequest.deleteFile(fileId).then((args) => {
             const array = emojiTable.value;
@@ -968,6 +1027,10 @@
         });
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangeSticker(e) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#StickerUploadButton',
@@ -1002,10 +1065,17 @@
         });
     }
 
+    /**
+     *
+     */
     function displayStickerUpload() {
         document.getElementById('StickerUploadButton').click();
     }
 
+    /**
+     *
+     * @param fileId
+     */
     function deleteSticker(fileId) {
         miscRequest.deleteFile(fileId).then((args) => {
             const array = stickerTable.value;
@@ -1021,6 +1091,10 @@
         });
     }
 
+    /**
+     *
+     * @param e
+     */
     function onFileChangePrint(e) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#PrintUploadButton',
@@ -1063,10 +1137,17 @@
         });
     }
 
+    /**
+     *
+     */
     function displayPrintUpload() {
         document.getElementById('PrintUploadButton').click();
     }
 
+    /**
+     *
+     * @param printId
+     */
     function deletePrint(printId) {
         vrcPlusImageRequest.deletePrint(printId).then((args) => {
             const array = printTable.value;
@@ -1080,6 +1161,10 @@
         });
     }
 
+    /**
+     *
+     * @param inventoryId
+     */
     async function consumeInventoryBundle(inventoryId) {
         try {
             await inventoryRequest.consumeInventoryBundle({
@@ -1104,6 +1189,9 @@
         // inventoryItemsCreated: 0
     }
 
+    /**
+     *
+     */
     async function redeemReward() {
         modalStore
             .prompt({
@@ -1132,19 +1220,3 @@
             .catch(() => {});
     }
 </script>
-
-<style scoped>
-    .gallery-tab-count {
-        font-size: 12px;
-        margin-left: 5px;
-    }
-
-    .gallery-meta {
-        font-family: monospace;
-        display: block;
-    }
-
-    .gallery-meta--small {
-        font-size: 11px;
-    }
-</style>

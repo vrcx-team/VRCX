@@ -11,7 +11,7 @@
                 <DialogTitle>{{ t('dialog.group_member_moderation.export_logs') }}</DialogTitle>
             </DialogHeader>
 
-            <div style="margin-bottom: 10px" class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2 mb-2">
                 <label
                     v-for="option in checkGroupsLogsExportLogsOptions"
                     :key="option.label"
@@ -27,8 +27,7 @@
                 v-model="groupLogsExportContent"
                 :rows="15"
                 readonly
-                style="margin-top: 15px"
-                input-class="resize-none"
+                input-class="resize-none mt-4"
                 @click="handleCopyGroupLogsExportContent" />
         </DialogContent>
     </Dialog>

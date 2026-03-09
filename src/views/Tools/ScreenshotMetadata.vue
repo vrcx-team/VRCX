@@ -56,7 +56,7 @@
                     style="width: 200px"
                     @input="screenshotMetadataSearch" />
                 <Select :model-value="screenshotMetadataDialog.searchType" @update:modelValue="handleSearchTypeChange">
-                    <SelectTrigger size="sm" style="width: 150px; margin-left: 10px">
+                    <SelectTrigger class="ml-2" size="sm" style="width: 150px">
                         <SelectValue :placeholder="t('dialog.screenshot_metadata.search_type_placeholder')" />
                     </SelectTrigger>
                     <SelectContent>
@@ -69,7 +69,7 @@
                 </Select>
             </div>
             <template v-if="screenshotMetadataDialog.searchIndex !== null">
-                <span style="white-space: pre-wrap; font-size: 12px; margin-left: 10px">{{
+                <span class="ml-2 whitespace-pre-wrap text-xs">{{
                     screenshotMetadataDialog.searchIndex + 1 + '/' + screenshotMetadataDialog.searchResults.length
                 }}</span>
             </template>
@@ -81,12 +81,12 @@
                 <span v-text="screenshotMetadataDialog.metadata.note"></span>
                 <br />
             </template>
-            <span v-if="screenshotMetadataDialog.metadata.dateTime" style="margin-right: 5px">{{
+            <span v-if="screenshotMetadataDialog.metadata.dateTime" style="margin-right: 6px">{{
                 formatDateFilter(screenshotMetadataDialog.metadata.dateTime, 'long')
             }}</span>
             <span
                 v-if="screenshotMetadataDialog.metadata.fileResolution"
-                style="margin-right: 5px"
+                style="margin-right: 6px"
                 v-text="screenshotMetadataDialog.metadata.fileResolution"></span>
             <Badge v-if="screenshotMetadataDialog.metadata.fileSize" variant="outline">{{
                 screenshotMetadataDialog.metadata.fileSize
@@ -133,12 +133,10 @@
                 </Carousel>
             </div>
             <template v-if="screenshotMetadataDialog.metadata.error">
-                <pre
-                    style="white-space: pre-wrap; font-size: 12px"
-                    v-text="screenshotMetadataDialog.metadata.error"></pre>
+                <pre class="whitespace-pre-wrap text-xs" v-text="screenshotMetadataDialog.metadata.error"></pre>
                 <br />
             </template>
-            <span v-for="user in screenshotMetadataDialog.metadata.players" :key="user.id" style="margin-top: 5px">
+            <span v-for="user in screenshotMetadataDialog.metadata.players" :key="user.id" style="margin-top: 6px">
                 <span class="cursor-pointer" @click="lookupUser(user)" v-text="user.displayName"></span>
                 <span v-if="user.pos" v-text="'(' + user.pos.x + ', ' + user.pos.y + ', ' + user.pos.z + ')'"></span>
                 <br />
@@ -222,10 +220,17 @@
         }
     };
 
+    /**
+     *
+     */
     function goBack() {
         router.push({ name: 'tools' });
     }
 
+    /**
+     *
+     * @param event
+     */
     function handleDrop(event) {
         if (currentlyDroppingFile.value === null) {
             return;
@@ -238,6 +243,9 @@
         event.preventDefault();
     }
 
+    /**
+     *
+     */
     async function getAndDisplayScreenshotFromFile() {
         let filePath = '';
 
@@ -259,6 +267,9 @@
         getAndDisplayScreenshot(filePath);
     }
 
+    /**
+     *
+     */
     function getAndDisplayLastScreenshot() {
         screenshotMetadataResetSearch();
         AppApi.GetLastScreenshot().then((path) => {
@@ -269,6 +280,10 @@
         });
     }
 
+    /**
+     *
+     * @param path
+     */
     function copyImageToClipboard(path) {
         if (!path) {
             return;
@@ -277,6 +292,10 @@
             toast.success('Image copied to clipboard');
         });
     }
+    /**
+     *
+     * @param path
+     */
     function openImageFolder(path) {
         if (!path) {
             return;
@@ -285,6 +304,10 @@
             toast.success('Opened image folder');
         });
     }
+    /**
+     *
+     * @param path
+     */
     function deleteMetadata(path) {
         if (!path) {
             return;
@@ -299,6 +322,9 @@
             getAndDisplayScreenshot(D.metadata.filePath, true);
         });
     }
+    /**
+     *
+     */
     function uploadScreenshotToGallery() {
         const D = screenshotMetadataDialog;
         if (D.metadata.fileSizeBytes > 10000000) {
@@ -325,6 +351,9 @@
                 D.isUploading = false;
             });
     }
+    /**
+     *
+     */
     function screenshotMetadataSearch() {
         const D = screenshotMetadataDialog;
 
@@ -370,11 +399,19 @@
         }, 500);
     }
 
+    /**
+     *
+     * @param value
+     */
     function handleSearchTypeChange(value) {
         screenshotMetadataDialog.searchType = value;
         screenshotMetadataSearch();
     }
 
+    /**
+     *
+     * @param index
+     */
     function screenshotMetadataCarouselChange(index) {
         const D = screenshotMetadataDialog;
         const searchIndex = D.searchIndex;
@@ -405,6 +442,9 @@
         }
     }
 
+    /**
+     *
+     */
     function screenshotMetadataResetSearch() {
         const D = screenshotMetadataDialog;
 
@@ -413,6 +453,10 @@
         D.searchResults = null;
     }
 
+    /**
+     *
+     * @param index
+     */
     function screenshotMetadataCarouselChangeSearch(index) {
         const D = screenshotMetadataDialog;
         let searchIndex = D.searchIndex;
@@ -445,6 +489,10 @@
         D.searchIndex = searchIndex;
     }
 
+    /**
+     *
+     * @param api
+     */
     function handleScreenshotMetadataCarouselInit(api) {
         screenshotMetadataCarouselApi.value = api;
         api.on('select', handleCarouselSelect);
@@ -452,6 +500,9 @@
         resetCarouselIndex();
     }
 
+    /**
+     *
+     */
     function handleCarouselSelect() {
         if (ignoreCarouselSelect.value || !screenshotMetadataCarouselApi.value) {
             return;
@@ -460,6 +511,9 @@
         screenshotMetadataCarouselChange(index);
     }
 
+    /**
+     *
+     */
     function resetCarouselIndex() {
         const api = screenshotMetadataCarouselApi.value;
         if (!api) {
@@ -472,6 +526,11 @@
         }, 0);
     }
 
+    /**
+     *
+     * @param path
+     * @param needsCarouselFiles
+     */
     async function getAndDisplayScreenshot(path, needsCarouselFiles = true) {
         const metadata = await AppApi.GetScreenshotMetadata(path);
         displayScreenshotMetadata(metadata, needsCarouselFiles);

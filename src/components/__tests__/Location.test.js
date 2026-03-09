@@ -177,7 +177,7 @@ describe('Location.vue', () => {
 
         test('shows dash placeholder when location is empty', () => {
             const wrapper = mountLocation({ location: '' });
-            const placeholder = wrapper.find('.transparent');
+            const placeholder = wrapper.find('.text-transparent');
             expect(placeholder.exists()).toBe(true);
         });
     });

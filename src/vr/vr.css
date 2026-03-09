@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-@import 'animate.css/animate.min.css';
+@import '../styles/noty.css';
 @import 'noty/lib/noty.css';
 @import 'remixicon/fonts/remixicon.css';
 
@@ -31,6 +31,20 @@ body {
     --font-primary-cjk:
         'Noto Sans JP Variable', 'Noto Sans SC Variable',
         'Noto Sans KR Variable', 'Noto Sans TC Variable';
+
+    /* VRChat Status Colors (duplicated from globals.css for VR panel independence) */
+    --status-online: #67c23a;
+    --status-joinme: #00b8ff;
+    --status-askme: #ff9500;
+    --status-busy: #ff2c2c;
+    --status-active: #f4e05e;
+    --status-offline: #909399;
+    --status-offline-alt: #808080;
+
+    /* Platform Colors */
+    --platform-pc: #0078d4;
+    --platform-quest: #3ddc84;
+    --platform-ios: #8e8e93;
 }
 :root[lang='zh-CN'] {
     --font-primary-cjk:
@@ -387,30 +401,30 @@ i.x-user-status {
     display: inline-block;
     width: 13px;
     height: 13px;
-    background: #808080;
+    background: var(--status-offline-alt);
     border-radius: 50%;
 }
 
 i.x-user-status.active {
-    background: #f4e05e;
+    background: var(--status-active);
 }
 
 i.x-user-status.online {
-    background: #67c23a;
+    background: var(--status-online);
 }
 
 i.x-user-status.joinme {
-    background: #00b8ff;
+    background: var(--status-joinme);
     mask-image: url(/images/masks/joinme.svg);
 }
 
 i.x-user-status.askme {
-    background: #ff9500;
+    background: var(--status-askme);
     mask-image: url(/images/masks/askme.svg);
 }
 
 i.x-user-status.busy {
-    background: #ff2c2c;
+    background: var(--status-busy);
     mask-image: url(/images/masks/busy.svg);
 }
 

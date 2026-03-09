@@ -11,7 +11,7 @@
             </template>
 
             <DataTableLayout
-                style="margin-top: 10px"
+                style="margin-top: 8px"
                 :table="inviteRequestResponseTable"
                 :loading="false"
                 :show-pagination="false"
@@ -102,10 +102,18 @@
         initialSorting: [{ id: 'slot', desc: false }]
     });
 
+    /**
+     *
+     * @param row
+     */
     function handleInviteRequestResponseRowClick(row) {
         showSendInviteResponseConfirmDialog(row?.original);
     }
 
+    /**
+     *
+     * @param row
+     */
     function showEditAndSendInviteResponseDialog(row) {
         emit('update:sendInviteResponseDialog', { ...props.sendInviteResponseDialog, messageSlot: row });
         editAndSendInviteResponseDialog.value = {
@@ -114,15 +122,25 @@
         };
     }
 
+    /**
+     *
+     * @param row
+     */
     function showSendInviteResponseConfirmDialog(row) {
         emit('update:sendInviteResponseDialog', { ...props.sendInviteResponseDialog, messageSlot: row });
         sendInviteResponseConfirmDialog.value.visible = true;
     }
 
+    /**
+     *
+     */
     function closeInviteDialog() {
         cancelSendInviteRequestResponse();
     }
 
+    /**
+     *
+     */
     function closeResponseConfirmDialog() {
         sendInviteResponseConfirmDialog.value.visible = false;
         editAndSendInviteResponseDialog.value.visible = false;
@@ -132,6 +150,9 @@
     //     inviteMessagesRequest.refreshInviteMessageTableData(arg);
     // }
 
+    /**
+     *
+     */
     function cancelSendInviteRequestResponse() {
         emit('update:sendInviteRequestResponseDialogVisible', false);
     }

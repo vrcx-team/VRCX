@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="options-container" style="margin-top: 0">
+        <div class="options-container mt-0">
             <span class="header">{{ t('view.settings.notifications.notifications.header') }}</span>
             <div class="options-container-item">
                 <Button size="sm" variant="outline" @click="showNotyFeedFiltersDialog">{{
@@ -23,6 +23,7 @@
                 }}</span>
                 <br />
                 <ToggleGroup
+                    class="mt-1.5"
                     type="single"
                     required
                     variant="outline"
@@ -34,7 +35,6 @@
                         !ovrtHudNotifications &&
                         !ovrtWristNotifications
                     "
-                    style="margin-top: 5px"
                     @update:model-value="
                         setOverlayToast($event);
                         saveOpenVROption();
@@ -82,7 +82,7 @@
                 </div>
             </template>
             <div class="options-container-item">
-                <span class="name" style="vertical-align: top; padding-top: 10px">{{
+                <span class="name" style="vertical-align: top; padding-top: 8px">{{
                     t('view.settings.notifications.notifications.steamvr_notifications.notification_opacity')
                 }}</span>
                 <div style="flex: 0 0 300px; width: 300px; max-width: 100%; padding-top: 16px">
@@ -120,9 +120,7 @@
             </template>
             <template v-else>
                 <simple-switch
-                    :label="
-                        t('view.settings.notifications.notifications.steamvr_notifications.wayvr_notifications')
-                    "
+                    :label="t('view.settings.notifications.notifications.steamvr_notifications.wayvr_notifications')"
                     :value="xsNotifications"
                     @change="
                         setXsNotifications();
@@ -169,7 +167,7 @@
                     variant="outline"
                     size="sm"
                     :model-value="desktopToast"
-                    style="margin-top: 5px"
+                    style="margin-top: 6px"
                     @update:model-value="setDesktopToast(String($event))">
                     <ToggleGroupItem value="Never">{{
                         t('view.settings.notifications.notifications.conditions.never')
@@ -214,7 +212,7 @@
                     variant="outline"
                     size="sm"
                     :model-value="notificationTTS"
-                    style="margin-top: 5px"
+                    style="margin-top: 6px"
                     @update:model-value="saveNotificationTTS">
                     <ToggleGroupItem value="Never">{{
                         t('view.settings.notifications.notifications.conditions.never')
@@ -260,7 +258,7 @@
                 :label="t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')"
                 :value="isTestTTSVisible"
                 @change="isTestTTSVisible = !isTestTTSVisible" />
-            <div v-if="isTestTTSVisible" style="margin-top: 5px">
+            <div v-if="isTestTTSVisible" style="margin-top: 6px">
                 <InputGroupTextareaField
                     v-model="notificationTTSTest"
                     :placeholder="t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')"
@@ -372,10 +370,16 @@
         }
     });
 
+    /**
+     *
+     */
     function showNotyFeedFiltersDialog() {
         feedFiltersDialogMode.value = 'noty';
     }
 
+    /**
+     *
+     */
     function showNotificationPositionDialog() {
         isNotificationPositionDialogVisible.value = true;
     }

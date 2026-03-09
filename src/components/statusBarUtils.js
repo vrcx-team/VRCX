@@ -10,7 +10,8 @@ export const defaultVisibility = {
     ws: true,
     uptime: true,
     clocks: true,
-    zoom: true
+    zoom: true,
+    servers: true
 };
 
 /**

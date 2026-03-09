@@ -7,15 +7,15 @@
                         <img v-if="favorite.thumbnailImageUrl" :src="smallThumbnail" loading="lazy" />
                     </div>
                     <div class="favorites-search-card__detail">
-                        <div class="favorites-search-card__title">
+                        <div class="flex items-center gap-2">
                             <span class="name text-sm">{{ favorite.name }}</span>
                         </div>
                         <span class="text-xs">{{ favorite.authorName }}</span>
                     </div>
                 </div>
                 <div class="favorites-search-card__actions">
-                    <div class="favorites-search-card__action-group">
-                        <div class="favorites-search-card__action">
+                    <div class="flex gap-(--favorites-card-action-group-gap,8px) w-full">
+                        <div class="flex justify-end w-full">
                             <TooltipWrapper side="top" :content="t('view.favorite.select_avatar_tooltip')">
                                 <Button
                                     size="icon-sm"
@@ -28,7 +28,7 @@
                                 >
                             </TooltipWrapper>
                         </div>
-                        <div class="favorites-search-card__action">
+                        <div class="flex justify-end w-full">
                             <TooltipWrapper side="bottom" :content="t('view.favorite.edit_favorite_tooltip')">
                                 <Button
                                     v-if="favoriteExists"
@@ -98,3 +98,7 @@
         return props.favorite.thumbnailImageUrl.replace('256', '128');
     });
 </script>
+
+<style>
+    @import './favorites-card.css';
+</style>

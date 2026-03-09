@@ -442,7 +442,7 @@ export const useDiscordPresenceSettingsStore = defineStore(
          */
         async function saveDiscordOption(configLabel = '') {
             state.lastLocationDetails.tag = '';
-            updateLoopStore.nextDiscordUpdate = 3;
+            updateLoopStore.setNextDiscordUpdate(3);
             updateDiscord();
         }
 

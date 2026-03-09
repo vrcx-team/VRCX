@@ -9,9 +9,9 @@
                     <span>{{ t('dialog.open_source.description') }}</span>
                 </div>
 
-                <div v-for="lib in openSourceSoftwareLicenses" :key="lib.name" style="margin-top: 15px">
+                <div class="mt-4" v-for="lib in openSourceSoftwareLicenses" :key="lib.name">
                     <p style="font-weight: bold">{{ lib.name }}</p>
-                    <pre style="font-size: 12px; white-space: pre-line">{{ lib.licenseText }}</pre>
+                    <pre class="text-xs whitespace-pre-line">{{ lib.licenseText }}</pre>
                 </div>
             </div>
         </DialogContent>
@@ -35,6 +35,9 @@
 
     const emit = defineEmits(['update:ossDialog']);
 
+    /**
+     *
+     */
     function closeDialog() {
         emit('update:ossDialog', false);
     }

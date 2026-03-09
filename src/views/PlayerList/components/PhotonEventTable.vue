@@ -1,6 +1,6 @@
 <template>
     <div class="mt-5">
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap">
+        <div class="gap-2 mb-2" style="display: flex; align-items: center; flex-wrap: wrap">
             <Select
                 :model-value="photonEventTableTypeFilter"
                 multiple
@@ -29,7 +29,7 @@
                 t('view.player_list.photon.chatbox_blacklist')
             }}</Button>
             <TooltipWrapper side="bottom" :content="t('view.player_list.photon.status_tooltip')">
-                <div style="display: inline-flex; align-items: center; font-size: 14px">
+                <div class="inline-flex items-center text-sm">
                     <span v-if="ipcEnabled && !photonEventIcon">🟢</span>
                     <span v-else-if="ipcEnabled">⚪</span>
                     <span v-else>🔴</span>
@@ -39,14 +39,13 @@
         <TabsUnderline default-value="current" :items="photonTabs" :unmount-on-hide="false">
             <template #current>
                 <DataTableLayout
-                    class="min-w-0 w-full"
+                    class="min-w-0 w-full mb-2"
                     :table="currentTable"
                     :loading="false"
                     :table-style="tableStyle"
                     :page-sizes="pageSizes"
                     :total-items="currentTotal"
-                    :on-page-size-change="handleCurrentPageSizeChange"
-                    style="margin-bottom: 10px" />
+                    :on-page-size-change="handleCurrentPageSizeChange" />
             </template>
             <template #previous>
                 <DataTableLayout
@@ -57,7 +56,7 @@
                     :page-sizes="pageSizes"
                     :total-items="previousTotal"
                     :on-page-size-change="handlePreviousPageSizeChange"
-                    style="margin-bottom: 10px" />
+                    style="margin-bottom: 8px" />
             </template>
         </TabsUnderline>
     </div>

@@ -193,7 +193,7 @@ export const useModerationStore = defineStore('Moderation', () => {
             })
             .then((res) => {
                 // TODO: compare with cachedAvatarModerations
-                avatarStore.cachedAvatarModerations = new Map();
+                avatarStore.resetCachedAvatarModerations();
                 if (res[1]?.json) {
                     for (const json of res[1].json) {
                         avatarStore.applyAvatarModeration(json);

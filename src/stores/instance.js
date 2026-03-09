@@ -33,7 +33,7 @@ import {
     instanceContentSettings
 } from '../shared/constants';
 import { database } from '../service/database';
-import { patchInstanceFromEvent } from '../query';
+import { patchInstanceFromEvent } from '../queries';
 import { resolveRef } from '../shared/utils/resolveRef';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFriendStore } from './friend';
@@ -221,6 +221,20 @@ export const useInstanceStore = defineStore('Instance', () => {
     function hidePreviousInstancesDialogs() {
         previousInstancesInfoDialog.value.visible = false;
         previousInstancesListDialog.value.visible = false;
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    function setPreviousInstancesInfoDialogVisible(value) {
+        previousInstancesInfoDialog.value.visible = value;
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    function setPreviousInstancesListDialogVisible(value) {
+        previousInstancesListDialog.value.visible = value;
     }
 
     /**
@@ -1438,6 +1452,8 @@ export const useInstanceStore = defineStore('Instance', () => {
         instanceQueueReady,
         instanceQueueUpdate,
         hidePreviousInstancesDialogs,
+        setPreviousInstancesInfoDialogVisible,
+        setPreviousInstancesListDialogVisible,
         showPreviousInstancesInfoDialog,
         showPreviousInstancesListDialog,
         addInstanceJoinHistory,

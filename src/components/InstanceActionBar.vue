@@ -53,10 +53,9 @@
         </TooltipWrapper>
         <TooltipWrapper v-if="showHistoryButton" side="top" :content="historyTooltip">
             <Button
-                class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground ml-1.5"
                 size="icon-sm"
                 variant="outline"
-                style="margin-left: 5px"
                 @click="handleHistory">
                 <History class="h-4 w-4" />
             </Button>
@@ -80,11 +79,12 @@
                             <br /><br />
                         </template>
                         <span>
-                            <span class="x-tag-platform-pc">PC: </span>{{ instance?.platforms?.standalonewindows }}
+                            <span class="text-platform-pc border-platform-pc!">PC: </span
+                            >{{ instance?.platforms?.standalonewindows }}
                         </span>
-                        <br />
                         <span>
-                            <span class="x-tag-platform-quest">Android: </span>{{ instance?.platforms?.android }}
+                            <span class="text-platform-quest border-platform-quest!">Android: </span
+                            >{{ instance?.platforms?.android }}
                         </span>
                         <br />
                         <span><span>iOS: </span>{{ instance?.platforms?.ios }}</span>
@@ -100,7 +100,7 @@
                         </span>
                         <span v-if="instance?.users?.length">{{ t('dialog.user.info.instance_users') }}<br /></span>
                         <template v-for="user in instance?.users || []" :key="user.id">
-                            <span style="cursor: pointer; margin-right: 5px" @click="showUserDialog(user.id)">
+                            <span style="cursor: pointer; margin-right: 6px" @click="showUserDialog(user.id)">
                                 {{ user.displayName }}
                             </span>
                         </template>
@@ -267,7 +267,7 @@
     const showLaunchButton = computed(() => props.showLaunch && checkCanInviteSelf(resolvedLaunchLocation.value));
     const showInviteYourself = computed(() => props.showInvite && checkCanInviteSelf(resolvedInviteLocation.value));
 
-    const inviteStyle = computed(() => (showLaunchButton.value ? 'margin-left: 5px' : ''));
+    const inviteStyle = computed(() => (showLaunchButton.value ? 'margin-left: 6px' : ''));
     const showRefreshButton = computed(() => props.showRefresh && typeof props.onRefresh === 'function');
     const showHistoryButton = computed(() => props.showHistory && typeof props.onHistory === 'function');
 
@@ -379,12 +379,3 @@
         immediate: true
     });
 </script>
-
-<style scoped>
-    .inline-block {
-        display: inline-block;
-    }
-    .ml-5 {
-        margin-left: 5px;
-    }
-</style>

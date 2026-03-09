@@ -23,7 +23,7 @@ vi.mock('../../stores', () => ({
     })
 }));
 
-vi.mock('../../query', () => ({
+vi.mock('../../queries', () => ({
     entityQueryPolicies: {
         user: { staleTime: 20000, gcTime: 90000, retry: 1, refetchOnWindowFocus: false },
         avatar: { staleTime: 60000, gcTime: 300000, retry: 1, refetchOnWindowFocus: false },

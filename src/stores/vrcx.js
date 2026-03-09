@@ -3,8 +3,6 @@ import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
-import Noty from 'noty';
-
 import {
     DEFAULT_MAX_TABLE_SIZE,
     DEFAULT_SEARCH_LIMIT,
@@ -231,6 +229,41 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 AppApi.ShowDevTools();
             }
         }
+    }
+
+    /**
+     * @param {string} value
+     */
+    function setProxyServer(value) {
+        proxyServer.value = value;
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    function setIpcEnabled(value) {
+        ipcEnabled.value = value;
+    }
+
+    /**
+     * @param {number} value
+     */
+    function setClearVRCXCacheFrequency(value) {
+        clearVRCXCacheFrequency.value = value;
+    }
+
+    /**
+     * @param {number} value
+     */
+    function setMaxTableSize(value) {
+        maxTableSize.value = value;
+    }
+
+    /**
+     * @param {number} value
+     */
+    function setSearchLimit(value) {
+        searchLimit.value = value;
     }
 
     /**
@@ -508,7 +541,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 for (const [id, dt] of Object.entries(data.Event7List)) {
                     photonStore.photonEvent7List.set(parseInt(id, 10), dt);
                 }
-                photonStore.photonLastEvent7List = Date.parse(data.dt);
+                photonStore.setPhotonLastEvent7List(Date.parse(data.dt));
                 break;
             case 'VrcxMessage':
                 if (AppDebug.debugPhotonLogging || AppDebug.debugIPC) {
@@ -524,7 +557,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     photonStore.setPhotonLoggingEnabled();
                 }
                 ipcEnabled.value = true;
-                updateLoopStore.ipcTimeout = 60; // 30 seconds
+                updateLoopStore.setIpcTimeout(60); // 30 seconds
                 break;
             case 'MsgPing':
                 if (AppDebug.debugIPC) {
@@ -692,10 +725,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     avatarStore
                         .selectAvatarWithoutConfirmation(avatarId)
                         .then(() => {
-                            new Noty({
-                                type: 'success',
-                                text: 'Avatar changed via launch command'
-                            }).show();
+                            toast.success('Avatar changed via launch command');
                         });
                     shouldFocusWindow = false;
                 }
@@ -705,13 +735,13 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 if (!type) break;
                 const data = input.replace(`import/${type}/`, '');
                 if (type === 'avatar') {
-                    favoriteStore.avatarImportDialogInput = data;
+                    favoriteStore.setAvatarImportDialogInput(data);
                     favoriteStore.showAvatarImportDialog();
                 } else if (type === 'world') {
-                    favoriteStore.worldImportDialogInput = data;
+                    favoriteStore.setWorldImportDialogInput(data);
                     favoriteStore.showWorldImportDialog();
                 } else if (type === 'friend') {
-                    favoriteStore.friendImportDialogInput = data;
+                    favoriteStore.setFriendImportDialogInput(data);
                     favoriteStore.showFriendImportDialog();
                 }
                 break;
@@ -862,6 +892,11 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
         appStartAt,
         proxyServer,
+        setProxyServer,
+        setIpcEnabled,
+        setClearVRCXCacheFrequency,
+        setMaxTableSize,
+        setSearchLimit,
         currentlyDroppingFile,
         isRegistryBackupDialogVisible,
         ipcEnabled,

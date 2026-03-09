@@ -140,7 +140,7 @@ const Validate = function () {
 
     let hasRemoved = false;
     for (const [_, localeObj] of files) {
-        toRemove = [];
+        let toRemove = [];
         traverse(localeObj, (_, key, pathes) => {
             let currObj = enObj;
             for (const pathSegment of pathes) {
@@ -163,7 +163,7 @@ const Validate = function () {
         }
     }
 
-    toAdd = [];
+    let toAdd = [];
     traverse(enObj, (obj, key, pathes) => {
         // Add above_key to the toAdd entry
         if (

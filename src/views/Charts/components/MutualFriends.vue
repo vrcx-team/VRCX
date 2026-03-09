@@ -32,7 +32,7 @@
                         :close-on-select="true"
                         :deselect-on-reselect="true">
                         <template #item="{ item, selected }">
-                            <div class="x-friend-item flex w-full items-center">
+                            <div class="flex w-full items-center gap-2">
                                 <template v-if="item.user">
                                     <div :class="['avatar', userStatusClass(item.user)]">
                                         <img :src="userImage(item.user)" loading="lazy" />
@@ -172,7 +172,7 @@
                                             :search-placeholder="t('view.charts.mutual_friend.actions.go_to_friend')"
                                             :multiple="true">
                                             <template #item="{ item, selected }">
-                                                <div class="x-friend-item flex w-full items-center">
+                                                <div class="flex w-full items-center gap-2">
                                                     <template v-if="item.user">
                                                         <div :class="['avatar', userStatusClass(item.user)]">
                                                             <img :src="userImage(item.user)" loading="lazy" />

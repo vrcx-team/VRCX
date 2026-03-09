@@ -8,7 +8,7 @@
             :total-items="totalItems"
             :on-page-size-change="handlePageSizeChange">
             <template #toolbar>
-                <div style="margin: 0 0 10px; display: flex; align-items: center">
+                <div class="mt-0 mx-0 mb-2" style="display: flex; align-items: center">
                     <Select
                         multiple
                         :model-value="
@@ -37,9 +37,10 @@
                         </SelectContent>
                     </Select>
                     <InputGroupField
+                        class="ml-2"
                         v-model="friendLogTable.filters[1].value"
                         :placeholder="t('view.friend_log.search_placeholder')"
-                        style="flex: 0.4; margin-left: 10px" />
+                        style="flex: 0.4" />
                 </div>
             </template>
         </DataTableLayout>
@@ -142,13 +143,24 @@
     );
 
     const { t } = useI18n();
+    /**
+     *
+     */
     function saveTableFilters() {
         configRepository.setString('VRCX_friendLogTableFilters', JSON.stringify(friendLogTable.value.filters[0].value));
     }
+    /**
+     *
+     * @param value
+     */
     function handleFriendLogFilterChange(value) {
         friendLogTable.value.filters[0].value = Array.isArray(value) ? value : [];
         saveTableFilters();
     }
+    /**
+     *
+     * @param row
+     */
     function deleteFriendLogPrompt(row) {
         modalStore
             .confirm({
@@ -158,6 +170,10 @@
             .then(({ ok }) => ok && deleteFriendLog(row))
             .catch(() => {});
     }
+    /**
+     *
+     * @param row
+     */
     function deleteFriendLog(row) {
         removeFromArray(friendLogTable.value.data, row);
         database.deleteFriendLogHistory(row.rowId);

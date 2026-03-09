@@ -4,7 +4,7 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.notification_position.header') }}</DialogTitle>
             </DialogHeader>
-            <div style="font-size: 12px">
+            <div class="text-xs">
                 {{ t('dialog.notification_position.description') }}
             </div>
             <div class="relative mx-auto mt-4 size-75">
@@ -15,9 +15,8 @@
                     x="0px"
                     y="0px"
                     viewBox="80 80 80 100"
-                    style="margin-top: 24px"
                     xml:space="preserve"
-                    class="absolute inset-0 size-full">
+                    class="absolute inset-0 size-full mt-6">
                     <path
                         style="fill: black"
                         d="M291.89,5A3.11,3.11,0,0,1,295,8.11V160.64a3.11,3.11,0,0,1-3.11,3.11H8.11A3.11,3.11,0,0,1,5,160.64V8.11A3.11,3.11,0,0,1,8.11,5H291.89m0-5H8.11A8.11,8.11,0,0,0,0,8.11V160.64a8.11,8.11,0,0,0,8.11,8.11H291.89a8.11,8.11,0,0,0,8.11-8.11V8.11A8.11,8.11,0,0,0,291.89,0Z" />
@@ -109,6 +108,9 @@
 
     const emit = defineEmits(['update:isNotificationPositionDialogVisible']);
 
+    /**
+     *
+     */
     function closeDialog() {
         emit('update:isNotificationPositionDialogVisible', false);
     }

@@ -1,6 +1,6 @@
 <template>
     <!--//- Pictures | Screenshot Helper-->
-    <div class="options-container" style="margin-top: 0">
+    <div class="options-container mt-0">
         <span class="header">{{ t('view.settings.advanced.advanced.screenshot_helper.header') }}</span>
         <div class="options-container-item">
             <span class="name">{{ t('view.settings.advanced.advanced.screenshot_helper.description') }}</span>
@@ -41,7 +41,7 @@
     <div class="options-container">
         <span class="header">{{ t('view.settings.advanced.advanced.user_generated_content.header') }}</span>
         <br />
-        <div class="options-container-item" style="margin-bottom: 5px">
+        <div class="options-container-item mb-1.5">
             <span class="name" style="min-width: 300px">{{
                 t('view.settings.advanced.advanced.user_generated_content.description')
             }}</span>
@@ -61,7 +61,7 @@
         <br />
         <br />
         <br />
-        <span class="sub-header" style="margin-right: 5px">{{
+        <span class="sub-header mr-1.5">{{
             t('view.settings.advanced.advanced.save_instance_prints_to_file.header')
         }}</span>
         <TooltipWrapper
@@ -87,7 +87,7 @@
             @change="setSaveInstanceStickers()"
             :long-label="true" />
         <br />
-        <span class="sub-header" style="margin-right: 5px"
+        <span class="sub-header mr-1.5"
             >{{ t('view.settings.advanced.advanced.save_instance_emoji_to_file.header') }}
         </span>
         <TooltipWrapper

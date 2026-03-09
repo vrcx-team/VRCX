@@ -5,7 +5,7 @@
                 <DialogTitle>{{ t('dialog.friend_import.header') }}</DialogTitle>
             </DialogHeader>
             <div style="display: flex; align-items: center; justify-content: space-between">
-                <div style="font-size: 12px">{{ t('dialog.friend_import.description') }}</div>
+                <div class="text-xs">{{ t('dialog.friend_import.description') }}</div>
                 <div style="display: flex; align-items: center">
                     <div v-if="friendImportDialog.progress">
                         {{ t('dialog.friend_import.process_progress') }} {{ friendImportDialog.progress }} /
@@ -20,11 +20,7 @@
                     </Button>
                 </div>
             </div>
-            <InputGroupTextareaField
-                v-model="friendImportDialog.input"
-                :rows="10"
-                style="margin-top: 10px"
-                input-class="resize-none" />
+            <InputGroupTextareaField v-model="friendImportDialog.input" :rows="10" input-class="resize-none mt-2" />
             <div>
                 <div class="mb-2">
                     <div class="flex items-center gap-2">
@@ -48,9 +44,9 @@
                         </Select>
 
                         <Select
+                            class="ml-2"
                             :model-value="friendImportLocalFavoriteGroupSelection"
-                            @update:modelValue="handleFriendImportLocalGroupSelect"
-                            style="margin-left: 10px">
+                            @update:modelValue="handleFriendImportLocalGroupSelect">
                             <SelectTrigger size="sm">
                                 <SelectValue :placeholder="t('dialog.world_import.select_local_group_placeholder')" />
                             </SelectTrigger>
@@ -63,7 +59,7 @@
                             </SelectContent>
                         </Select>
                     </div>
-                    <span v-if="friendImportDialog.friendImportFavoriteGroup" style="margin-left: 5px">
+                    <span class="ml-1.5" v-if="friendImportDialog.friendImportFavoriteGroup">
                         {{ friendImportTable.data.length }} /
                         {{
                             friendImportDialog.friendImportFavoriteGroup.capacity -
@@ -92,7 +88,7 @@
                     </Button>
                 </div>
             </div>
-            <span v-if="friendImportDialog.importProgress" style="margin: 10px">
+            <span class="m-2" v-if="friendImportDialog.importProgress">
                 <Spinner class="inline-block ml-2 mr-2" />
                 {{ t('dialog.friend_import.import_progress') }} {{ friendImportDialog.importProgress }}/{{
                     friendImportDialog.importProgressTotal
@@ -103,8 +99,8 @@
                 <Button size="sm" variant="secondary" @click="friendImportDialog.errors = ''">
                     {{ t('dialog.friend_import.clear_errors') }}
                 </Button>
-                <h2 style="font-weight: bold; margin: 5px 0">{{ t('dialog.friend_import.errors') }}</h2>
-                <pre style="white-space: pre-wrap; font-size: 12px" v-text="friendImportDialog.errors"></pre>
+                <h2 class="my-1.5 mx-0" style="font-weight: bold">{{ t('dialog.friend_import.errors') }}</h2>
+                <pre class="whitespace-pre-wrap text-xs" v-text="friendImportDialog.errors"></pre>
             </template>
             <DataTableLayout
                 class="min-w-0 w-full"
@@ -112,7 +108,7 @@
                 :loading="friendImportDialog.loading"
                 :table-style="tableStyle"
                 :show-pagination="false"
-                style="margin-top: 10px" />
+                style="margin-top: 8px" />
         </DialogContent>
     </Dialog>
 </template>
