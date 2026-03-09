@@ -76,7 +76,7 @@
     import DeprecationAlert from '@/components/DeprecationAlert.vue';
 
     import { useFavoriteStore, useUserStore, useWorldStore } from '../../../stores';
-    import { queryRequest } from '../../../api';
+    import { favoriteRequest } from '../../../api';
 
     const { t } = useI18n();
 
@@ -121,7 +121,7 @@
         favoriteWorldsTab.value = '0';
         userDialog.value.userFavoriteWorlds = [];
         const worldLists = [];
-        const groupArgs = await queryRequest.fetch('favoriteGroups', {
+        const groupArgs = await favoriteRequest.getFavoriteGroups({
             ownerId: userId,
             n: 100,
             offset: 0
@@ -145,7 +145,7 @@
                 tag: list.name
             };
             try {
-                const args = await queryRequest.fetch('favoriteWorlds', params);
+                const args = await favoriteRequest.getFavoriteWorlds(params);
                 handleFavoriteWorldList(args);
                 return [list.displayName, list.visibility, args.json];
             } catch (err) {

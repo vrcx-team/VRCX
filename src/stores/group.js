@@ -417,7 +417,7 @@ export const useGroupStore = defineStore('Group', () => {
         let total = Infinity;
         let pages = 0;
         do {
-            const args = await queryRequest.fetch('groupPosts', {
+            const args = await groupRequest.getGroupPosts({
                 groupId: params.groupId,
                 n,
                 offset

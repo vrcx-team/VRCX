@@ -106,8 +106,8 @@
 
     import { formatDateFilter, getGroupName, replaceBioSymbols } from '../../../shared/utils';
     import { Switch } from '../../../components/ui/switch';
+    import { groupRequest } from '../../../api';
     import { processBulk } from '../../../service/request';
-    import { queryRequest } from '../../../api';
     import { useGroupStore } from '../../../stores';
 
     import GroupCalendarEventCard from '../components/GroupCalendarEventCard.vue';
@@ -355,7 +355,7 @@
         calendar.value = [];
         try {
             await processBulk({
-                fn: (bulkParams) => queryRequest.fetch('groupCalendars', bulkParams),
+                fn: (bulkParams) => groupRequest.getGroupCalendars(bulkParams),
                 N: -1,
                 params: {
                     n: 100,
@@ -384,7 +384,7 @@
         followingCalendar.value = [];
         try {
             await processBulk({
-                fn: (bulkParams) => queryRequest.fetch('followingGroupCalendars', bulkParams),
+                fn: (bulkParams) => groupRequest.getFollowingGroupCalendars(bulkParams),
                 N: -1,
                 params: {
                     n: 100,
@@ -411,7 +411,7 @@
         featuredCalendar.value = [];
         try {
             await processBulk({
-                fn: (bulkParams) => queryRequest.fetch('featuredGroupCalendars', bulkParams),
+                fn: (bulkParams) => groupRequest.getFeaturedGroupCalendars(bulkParams),
                 N: -1,
                 params: {
                     n: 100,

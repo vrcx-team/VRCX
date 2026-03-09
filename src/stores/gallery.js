@@ -9,7 +9,12 @@ import {
     getPrintLocalDate,
     openExternalLink
 } from '../shared/utils';
-import { queryRequest, vrcPlusImageRequest } from '../api';
+import {
+    inventoryRequest,
+    queryRequest,
+    vrcPlusIconRequest,
+    vrcPlusImageRequest
+} from '../api';
 import { AppDebug } from '../service/appConfig';
 import { handleImageUploadInput } from '../shared/utils/imageUpload';
 import { router } from '../plugin/router';
@@ -157,8 +162,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
             n: 100,
             tag: 'gallery'
         };
-        queryRequest
-            .fetch('galleryFiles', params)
+        vrcPlusIconRequest
+            .getFileList(params)
             .then((args) => handleFilesList(args))
             .catch((error) => {
                 console.error('Error fetching gallery files:', error);
@@ -177,8 +182,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
             n: 100,
             tag: 'icon'
         };
-        queryRequest
-            .fetch('galleryFiles', params)
+        vrcPlusIconRequest
+            .getFileList(params)
             .then((args) => handleFilesList(args))
             .catch((error) => {
                 console.error('Error fetching VRC Plus icons:', error);
@@ -229,8 +234,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
             n: 100,
             tag: 'sticker'
         };
-        queryRequest
-            .fetch('galleryFiles', params)
+        vrcPlusIconRequest
+            .getFileList(params)
             .then((args) => handleFilesList(args))
             .catch((error) => {
                 console.error('Error fetching stickers:', error);
@@ -304,7 +309,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
             n: 100
         };
         try {
-            const args = await queryRequest.fetch('prints', params);
+            const args = await vrcPlusImageRequest.getPrints(params);
             args.json.sort((a, b) => {
                 return (
                     new Date(b.timestamp).getTime() -
@@ -349,7 +354,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
      * @param printId
      */
     async function trySavePrintToFile(printId) {
-        const args = await queryRequest.fetch('print', { printId });
+        const args = await vrcPlusImageRequest.getPrint({ printId });
         const imageUrl = args.json?.files?.image;
         if (!imageUrl) {
             console.error('Print image URL is missing', args);
@@ -402,8 +407,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
             n: 100,
             tag: 'emoji'
         };
-        queryRequest
-            .fetch('galleryFiles', params)
+        vrcPlusIconRequest
+            .getFileList(params)
             .then((args) => handleFilesList(args))
             .catch((error) => {
                 console.error('Error fetching emojis:', error);
@@ -428,7 +433,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         try {
             for (let i = 0; i < 100; i++) {
                 params.offset = i * params.n;
-                const args = await queryRequest.fetch('inventoryItems', params);
+                const args = await inventoryRequest.getInventoryItems(params);
                 for (const item of args.json.data) {
                     advancedSettingsStore.currentUserInventory.set(
                         item.id,

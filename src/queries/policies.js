@@ -31,24 +31,6 @@ export const entityQueryPolicies = Object.freeze({
         retry: 1,
         refetchOnWindowFocus: false
     }),
-    groupCalendarCollection: Object.freeze({
-        staleTime: 120 * SECOND,
-        gcTime: 600 * SECOND,
-        retry: 1,
-        refetchOnWindowFocus: false
-    }),
-    groupFollowingCalendarCollection: Object.freeze({
-        staleTime: 60 * SECOND,
-        gcTime: 300 * SECOND,
-        retry: 1,
-        refetchOnWindowFocus: false
-    }),
-    groupFeaturedCalendarCollection: Object.freeze({
-        staleTime: 300 * SECOND,
-        gcTime: 900 * SECOND,
-        retry: 1,
-        refetchOnWindowFocus: false
-    }),
     groupCalendarEvent: Object.freeze({
         staleTime: 120 * SECOND,
         gcTime: 600 * SECOND,
@@ -61,33 +43,15 @@ export const entityQueryPolicies = Object.freeze({
         retry: 1,
         refetchOnWindowFocus: false
     }),
-    friendList: Object.freeze({
-        staleTime: 20 * SECOND,
-        gcTime: 90 * SECOND,
-        retry: 1,
-        refetchOnWindowFocus: false
-    }),
-    favoriteCollection: Object.freeze({
-        staleTime: 60 * SECOND,
-        gcTime: 300 * SECOND,
-        retry: 1,
-        refetchOnWindowFocus: false
-    }),
-    galleryCollection: Object.freeze({
-        staleTime: 60 * SECOND,
-        gcTime: 300 * SECOND,
+    favoriteLimits: Object.freeze({
+        staleTime: 600 * SECOND,
+        gcTime: 1800 * SECOND,
         retry: 1,
         refetchOnWindowFocus: false
     }),
     inventoryCollection: Object.freeze({
         staleTime: 20 * SECOND,
         gcTime: 120 * SECOND,
-        retry: 1,
-        refetchOnWindowFocus: false
-    }),
-    inventoryObject: Object.freeze({
-        staleTime: 60 * SECOND,
-        gcTime: 300 * SECOND,
         retry: 1,
         refetchOnWindowFocus: false
     }),
@@ -124,6 +88,24 @@ export const entityQueryPolicies = Object.freeze({
     fileObject: Object.freeze({
         staleTime: 60 * SECOND,
         gcTime: 300 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    avatarStyles: Object.freeze({
+        staleTime: 600 * SECOND,
+        gcTime: 3600 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    representedGroup: Object.freeze({
+        staleTime: 60 * SECOND,
+        gcTime: 300 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    vrchatCredits: Object.freeze({
+        staleTime: 120 * SECOND,
+        gcTime: 600 * SECOND,
         retry: 1,
         refetchOnWindowFocus: false
     })

@@ -42,20 +42,10 @@ const registry = Object.freeze({
         policy: entityQueryPolicies.group,
         queryFn: (params) => groupRequest.getGroup(params)
     },
-    groupPosts: {
-        key: (params) => queryKeys.groupPosts(params),
-        policy: entityQueryPolicies.groupCollection,
-        queryFn: (params) => groupRequest.getGroupPosts(params)
-    },
     groupMember: {
         key: (params) => queryKeys.groupMember(params),
         policy: entityQueryPolicies.groupCollection,
         queryFn: (params) => groupRequest.getGroupMember(params)
-    },
-    groupMembers: {
-        key: (params) => queryKeys.groupMembers(params),
-        policy: entityQueryPolicies.groupCollection,
-        queryFn: (params) => groupRequest.getGroupMembers(params)
     },
     groupGallery: {
         key: (params) => queryKeys.groupGallery(params),
@@ -67,21 +57,6 @@ const registry = Object.freeze({
         policy: entityQueryPolicies.groupCollection,
         queryFn: (params) => groupRequest.getGroupCalendar(params.groupId)
     },
-    groupCalendars: {
-        key: (params) => queryKeys.groupCalendars(params),
-        policy: entityQueryPolicies.groupCalendarCollection,
-        queryFn: (params) => groupRequest.getGroupCalendars(params)
-    },
-    followingGroupCalendars: {
-        key: (params) => queryKeys.followingGroupCalendars(params),
-        policy: entityQueryPolicies.groupFollowingCalendarCollection,
-        queryFn: (params) => groupRequest.getFollowingGroupCalendars(params)
-    },
-    featuredGroupCalendars: {
-        key: (params) => queryKeys.featuredGroupCalendars(params),
-        policy: entityQueryPolicies.groupFeaturedCalendarCollection,
-        queryFn: (params) => groupRequest.getFeaturedGroupCalendars(params)
-    },
     groupCalendarEvent: {
         key: (params) => queryKeys.groupCalendarEvent(params),
         policy: entityQueryPolicies.groupCalendarEvent,
@@ -92,70 +67,15 @@ const registry = Object.freeze({
         policy: entityQueryPolicies.avatarGallery,
         queryFn: (params) => avatarRequest.getAvatarGallery(params.avatarId)
     },
-    friends: {
-        key: (params) => queryKeys.friends(params),
-        policy: entityQueryPolicies.friendList,
-        queryFn: (params) => friendRequest.getFriends(params)
-    },
     favoriteLimits: {
         key: () => queryKeys.favoriteLimits(),
-        policy: entityQueryPolicies.favoriteCollection,
+        policy: entityQueryPolicies.favoriteLimits,
         queryFn: () => favoriteRequest.getFavoriteLimits()
-    },
-    favorites: {
-        key: (params) => queryKeys.favorites(params),
-        policy: entityQueryPolicies.favoriteCollection,
-        queryFn: (params) => favoriteRequest.getFavorites(params)
-    },
-    favoriteGroups: {
-        key: (params) => queryKeys.favoriteGroups(params),
-        policy: entityQueryPolicies.favoriteCollection,
-        queryFn: (params) => favoriteRequest.getFavoriteGroups(params)
-    },
-    favoriteWorlds: {
-        key: (params) => queryKeys.favoriteWorlds(params),
-        policy: entityQueryPolicies.favoriteCollection,
-        queryFn: (params) => favoriteRequest.getFavoriteWorlds(params)
-    },
-    favoriteAvatars: {
-        key: (params) => queryKeys.favoriteAvatars(params),
-        policy: entityQueryPolicies.favoriteCollection,
-        queryFn: (params) => favoriteRequest.getFavoriteAvatars(params)
-    },
-    galleryFiles: {
-        key: (params) => queryKeys.galleryFiles(params),
-        policy: entityQueryPolicies.galleryCollection,
-        queryFn: (params) => vrcPlusIconRequest.getFileList(params)
-    },
-    prints: {
-        key: (params) => queryKeys.prints(params),
-        policy: entityQueryPolicies.galleryCollection,
-        queryFn: (params) => vrcPlusImageRequest.getPrints(params)
-    },
-    print: {
-        key: (params) => queryKeys.print(params.printId),
-        policy: entityQueryPolicies.galleryCollection,
-        queryFn: (params) => vrcPlusImageRequest.getPrint(params)
     },
     userInventoryItem: {
         key: (params) => queryKeys.userInventoryItem(params),
         policy: entityQueryPolicies.inventoryCollection,
         queryFn: (params) => inventoryRequest.getUserInventoryItem(params)
-    },
-    inventoryItem: {
-        key: (params) => queryKeys.inventoryItem(params.inventoryId),
-        policy: entityQueryPolicies.inventoryObject,
-        queryFn: (params) => inventoryRequest.getInventoryItem(params)
-    },
-    inventoryItems: {
-        key: (params) => queryKeys.inventoryItems(params),
-        policy: entityQueryPolicies.inventoryCollection,
-        queryFn: (params) => inventoryRequest.getInventoryItems(params)
-    },
-    inventoryTemplate: {
-        key: (params) => queryKeys.inventoryTemplate(params.inventoryTemplateId),
-        policy: entityQueryPolicies.inventoryObject,
-        queryFn: (params) => inventoryRequest.getInventoryTemplate(params)
     },
     fileAnalysis: {
         key: (params) => queryKeys.fileAnalysis(params),
@@ -181,6 +101,21 @@ const registry = Object.freeze({
         key: (params) => queryKeys.file(params.fileId),
         policy: entityQueryPolicies.fileObject,
         queryFn: (params) => miscRequest.getFile(params)
+    },
+    avatarStyles: {
+        key: () => queryKeys.avatarStyles(),
+        policy: entityQueryPolicies.avatarStyles,
+        queryFn: () => avatarRequest.getAvailableAvatarStyles()
+    },
+    representedGroup: {
+        key: (params) => queryKeys.representedGroup(params.userId),
+        policy: entityQueryPolicies.representedGroup,
+        queryFn: (params) => groupRequest.getRepresentedGroup(params)
+    },
+    vrchatCredits: {
+        key: () => queryKeys.vrchatCredits(),
+        policy: entityQueryPolicies.vrchatCredits,
+        queryFn: () => miscRequest.getVRChatCredits()
     }
 });
 

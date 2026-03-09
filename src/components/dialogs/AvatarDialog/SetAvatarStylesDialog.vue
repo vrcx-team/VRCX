@@ -90,8 +90,8 @@
     import { watch } from 'vue';
 
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
+    import { avatarRequest, queryRequest } from '../../../api';
     import { arraysMatch } from '../../../shared/utils';
-    import { avatarRequest } from '../../../api';
     import { useAvatarStore } from '../../../stores';
 
     const props = defineProps({
@@ -133,7 +133,7 @@
      */
     async function getAvatarStyles() {
         try {
-            const ref = await avatarRequest.getAvailableAvatarStyles();
+            const ref = await queryRequest.fetch('avatarStyles');
             const styles = [];
             const stylesMap = new Map();
             for (const style of ref.json) {

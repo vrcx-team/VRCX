@@ -48,7 +48,9 @@ const mocks = vi.hoisted(() => ({
         localFriendFavorites: { value: {} }
     },
     locationStore: {
-        lastLocation: { value: { location: 'wrld_home:123', friendList: new Map() } },
+        lastLocation: {
+            value: { location: 'wrld_home:123', friendList: new Map() }
+        },
         lastLocationDestination: { value: '' }
     },
     gameStore: {
@@ -62,9 +64,7 @@ const mocks = vi.hoisted(() => ({
         sendRequestInvite: vi.fn().mockResolvedValue({}),
         sendInvite: vi.fn().mockResolvedValue({})
     },
-    worldRequest: {
-        getCachedWorld: vi.fn().mockResolvedValue({ ref: { name: 'World' } })
-    },
+    worldRequest: {},
     instanceRequest: {
         selfInvite: vi.fn().mockResolvedValue({})
     },
@@ -162,7 +162,8 @@ vi.mock('../../../../components/ui/context-menu', () => ({
     ContextMenuItem: {
         emits: ['click'],
         props: ['disabled'],
-        template: '<button :disabled="disabled" @click="$emit(\'click\')"><slot /></button>'
+        template:
+            '<button :disabled="disabled" @click="$emit(\'click\')"><slot /></button>'
     },
     ContextMenuSeparator: { template: '<hr />' },
     ContextMenuSub: { template: '<div><slot /></div>' },
@@ -277,7 +278,10 @@ describe('FriendsSidebar.vue', () => {
     test('renders same-instance section when grouping is enabled', async () => {
         mocks.appearanceStore.isSidebarGroupByInstance.value = true;
         mocks.friendStore.friendsInSameInstance.value = [
-            [makeFriend('usr_a', 'wrld_same:1'), makeFriend('usr_b', 'wrld_same:1')]
+            [
+                makeFriend('usr_a', 'wrld_same:1'),
+                makeFriend('usr_b', 'wrld_same:1')
+            ]
         ];
 
         const wrapper = mount(FriendsSidebar);

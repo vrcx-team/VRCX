@@ -408,6 +408,7 @@
     } from '../../../shared/utils';
     import { useGalleryStore, useGroupStore, useModalStore, useUserStore } from '../../../stores';
     import { groupRequest, queryRequest } from '../../../api';
+    import { queryKeys, refetchActiveEntityQuery } from '../../../queries';
     import { Badge } from '../../ui/badge';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
 
@@ -497,8 +498,6 @@
         }
     );
 
-
-
     /**
      *
      * @param groupId
@@ -536,6 +535,7 @@
                     });
                     getGroupDialogGroup(groupId);
                 }
+                refetchActiveEntityQuery(queryKeys.representedGroup(currentUser.value.id));
             });
     }
 
@@ -603,8 +603,6 @@
      *
      * @param gallery
      */
-
-
 
     /**
      *

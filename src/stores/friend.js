@@ -16,7 +16,7 @@ import {
     isRealInstance,
     migrateMemos
 } from '../shared/utils';
-import { friendRequest, queryRequest, userRequest } from '../api';
+import { friendRequest, userRequest } from '../api';
 import { AppDebug } from '../service/appConfig';
 import { createFriendPresenceCoordinator } from './coordinators/friendPresenceCoordinator';
 import { createFriendRelationshipCoordinator } from './coordinators/friendRelationshipCoordinator';
@@ -567,7 +567,7 @@ export const useFriendStore = defineStore('Friend', () => {
         async function fetchPage(offset) {
             const result = await executeWithBackoff(
                 async () => {
-                    const { json } = await queryRequest.fetch('friends', {
+                    const { json } = await friendRequest.getFriends({
                         ...args,
                         n: PAGE_SIZE,
                         offset
