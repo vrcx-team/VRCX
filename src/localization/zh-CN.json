@@ -56,6 +56,7 @@
         "whats_new": "更新日志",
         "update_available": "有新版本可用",
         "update": "更新",
+        "mark_all_read": "全部标为已读",
         "custom_nav": {
             "header": "自定义导航栏",
             "dialog_title": "自定义导航栏",
@@ -77,14 +78,30 @@
     },
     "side_panel": {
         "search_placeholder": "搜索",
+        "search_no_results": "未找到结果",
+        "search_min_chars": "请输入至少 2 个字符",
+        "search_categories": "搜点什么...",
+        "search_scope_all": "以及你给他们的备注",
+        "search_scope_own": "看看有什么好玩的东西",
+        "search_scope_joined": "找不到组织了吗？",
+        "search_friends": "好友",
+        "search_avatars": "模型",
+        "search_own_avatars": "属于我的模型",
+        "search_fav_avatars": "我收藏的模型",
+        "search_worlds": "世界",
+        "search_own_worlds": "我上传的世界",
+        "search_fav_worlds": "我收藏的世界",
+        "search_groups": "群组",
+        "search_own_groups": "我创建的群组",
+        "search_joined_groups": "我加入的群组",
         "search_result_active": "活跃",
         "search_result_offline": "离线",
-        "search_result_more": "搜索更多：",
+        "search_result_more": "更多：",
         "refresh_tooltip": "刷新好友列表",
         "groups": "群组房间",
         "friends": "好友",
         "me": "我",
-        "favorite": "具有分组的好友",
+        "favorite": "已分组的好友",
         "same_instance": "同一房间",
         "online": "在线",
         "active": "活跃中（仅登录网页端）",
@@ -93,7 +110,7 @@
         "settings": {
             "group_by_instance": "按房间分组",
             "split_favorite_friends": "按分组显示好友",
-            "hide_friends_in_same_instance": "隐藏同一实例中的好友",
+            "hide_friends_in_same_instance": "隐藏同一房间中的好友",
             "sort_primary": "主要排序方式",
             "sort_secondary": "次要排序方式",
             "sort_tertiary": "第三排序方式",
@@ -132,7 +149,7 @@
             }
         },
         "feed": {
-            "favorites_only_tooltip": "仅显示具有分组的好友",
+            "favorites_only_tooltip": "仅显示被分组的好友",
             "search_placeholder": "搜索",
             "filters": {
                 "GPS": "位置变动",
@@ -182,7 +199,9 @@
         },
         "my_avatars": {
             "filter": "筛选",
-            "clear_filters": "清除所有筛选条件"
+            "clear_filters": "清除所有筛选条件",
+            "table_view": "表格视图",
+            "grid_view": "卡片视图"
         },
         "search": {
             "search_placeholder": "搜索",
@@ -445,8 +464,8 @@
                     "layout_spacing_help": "好友节点的分布范围。数值越高，关系网内的节点距离越远。",
                     "edge_curvature": "连接线曲率",
                     "edge_curvature_help": "连接线的弯曲程度。数值越高，密集区域的线条越平滑。",
-                    "community_separation": "圈子间斥力",
-                    "community_separation_help": "不同圈子间的间隔。数值越高，关系网内不同圈子之间的距离越远。",
+                    "community_separation": "圈子间间距",
+                    "community_separation_help": "不同圈子间的间隔。数值越高，由圈子形成的集群就越清晰与独立",
                     "reset_defaults": "重置为默认值",
                     "exclude_friends": "排除好友",
                     "exclude_friends_placeholder": "选择好友",
@@ -568,7 +587,7 @@
                     "startup_linux": "向 VRCX.desktop 启动文件添加 “--startup” 参数，以便在系统启动时将 VRCX 以最小化窗口的方式启动。"
                 },
                 "favorites": {
-                    "header": "过滤好友分组",
+                    "header": "筛选好友分组",
                     "header_tooltip": "选择在各种功能（动态、游戏日志、通知和叠加界面）中显示的分组",
                     "group_placeholder": "选择分组"
                 },
@@ -644,6 +663,7 @@
                     "zoom": "界面缩放",
                     "vrcplus_profile_icons": "VRC+ 个人资料图标",
                     "show_instance_id": "显示房间 ID（及其自定义名称）",
+                    "show_status_bar": "显示底部状态栏",
                     "age_gated_instances": "显示具有年龄限制的房间",
                     "nicknames": "显示本地好友备注",
                     "sort_favorite_by": "收藏夹排序规则",
@@ -1087,6 +1107,7 @@
                 "memo_placeholder": "点此添加备注",
                 "avatar_info": "正在使用的模型",
                 "avatar_info_last_seen": "正在使用的模型",
+                "unknown_avatar": "未知模型",
                 "represented_group": "展示群组",
                 "bio": "个人简介",
                 "last_seen": "最后见面时间",
@@ -1306,7 +1327,8 @@
                 "create_impostor": "创建模型替身",
                 "manage_tags": "管理标签",
                 "manage_tags_placeholder": "添加标签...",
-                "manage_tags_hint": "点击标签以更改其颜色"
+                "manage_tags_hint": "点击标签以更改其颜色",
+                "view_details": "查看详细信息"
             },
             "info": {
                 "header": "信息",
@@ -1322,7 +1344,8 @@
                 "pc_performance": "PC 性能评级",
                 "android_performance": "Android 性能评级",
                 "ios_performance": "iOS 性能评级",
-                "time_spent": "模型使用时长",
+                "time_spent": "使用时长",
+                "visibility": "模型可见性",
                 "tags": "标签",
                 "memo": "备注",
                 "memo_placeholder": "点此添加备注",
@@ -1641,7 +1664,7 @@
             "clear_errors": "清除错误信息"
         },
         "friend_export": {
-            "header": "导出分组好友"
+            "header": "导出好友分组"
         },
         "friend_import": {
             "header": "导入好友",
@@ -1713,6 +1736,17 @@
             "redeem": "兑换码兑换",
             "create_animated_emoji": "动画表情生成器",
             "crop_image": "确认上传"
+        },
+        "image_crop": {
+            "rotate_left": "向左旋转",
+            "rotate_right": "向右旋转",
+            "flip_h": "水平翻转",
+            "flip_v": "垂直翻转",
+            "zoom_in": "放大",
+            "zoom_out": "缩小",
+            "mode_fit": "切换到适应模式",
+            "mode_free": "切换到自由模式",
+            "reset": "重置"
         },
         "gallery_select": {
             "header": "选择图片",
@@ -2045,7 +2079,7 @@
         "command_question": "继续？{command}",
         "clear_group": "确定要清空群组吗？",
         "delete_group": "确定要删除群组 {name} 吗？",
-        "delete_post": "确定要删除这个帖子吗？",
+        "delete_post": "确定要删除这个公告吗？",
         "block_group": "确定要屏蔽这个群组吗？",
         "unblock_group": "确定要取消屏蔽这个群组吗？",
         "leave_group": "确定要离开这个群组吗？",
@@ -2347,7 +2381,7 @@
             "home_reset": "重置出生点成功",
             "published": "已成功发布世界",
             "unpublished": "取消发布世界成功",
-            "persistent_data_deleted": "持久化数据清除成功",
+            "persistent_data_deleted": "世界存档数据清除成功",
             "deleted": "世界删除成功",
             "id_copied": "世界 ID 已复制到剪贴板",
             "url_copied": "世界 URL 已复制到剪贴板",
@@ -2400,6 +2434,10 @@
         "traveling": "正在传送"
     },
     "table": {
+        "header_menu": {
+            "reset_all": "重置所有列",
+            "lock_column_order": "锁定列排序"
+        },
         "pagination": {
             "rows_per_page": "每页显示行数",
             "first": "第一页",
@@ -2606,5 +2644,29 @@
         "back_to_top": "返回顶部",
         "toggle_password": "切换密码可见性",
         "clear_input": "清除输入"
+    },
+    "status_bar": {
+        "game": "游戏状态",
+        "game_running": "VRChat 目前正在运行",
+        "game_stopped": "VRChat 目前没有运行",
+        "servers": "服务器状态",
+        "servers_ok": "VRChat 服务目前一切正常",
+        "servers_issue": "VRChat 服务目前存在降级",
+        "steamvr": "SteamVR",
+        "steamvr_running": "SteamVR 目前正在运行",
+        "steamvr_stopped": "SteamVR 目前没有运行",
+        "proxy": "代理服务器",
+        "ws_connected": "已连接",
+        "ws_disconnected": "已断开",
+        "ws_avg_per_minute": "平均 {count} 次/分钟",
+        "zoom": "界面缩放",
+        "zoom_tooltip": "点击以调整界面缩放",
+        "app_uptime": "应用运行时长",
+        "app_uptime_short": "运行时长",
+        "clocks": "时钟",
+        "clock": "时钟",
+        "clocks_label": "时钟",
+        "clocks_none": "无",
+        "timezone": "时区"
     }
 }
