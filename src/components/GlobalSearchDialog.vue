@@ -59,14 +59,14 @@
                                 <Image class="size-4" />
                                 <span class="flex-1">{{ t('side_panel.search_avatars') }}</span>
                                 <span class="text-xs text-muted-foreground">{{
-                                    t('side_panel.search_scope_own')
+                                    t('side_panel.search_scope_avatars')
                                 }}</span>
                             </CommandItem>
                             <CommandItem :value="'hint-worlds'" disabled class="gap-3 opacity-70">
                                 <Globe class="size-4" />
                                 <span class="flex-1">{{ t('side_panel.search_worlds') }}</span>
                                 <span class="text-xs text-muted-foreground">{{
-                                    t('side_panel.search_scope_own')
+                                    t('side_panel.search_scope_worlds')
                                 }}</span>
                             </CommandItem>
                             <CommandItem :value="'hint-groups'" disabled class="gap-3 opacity-70">
