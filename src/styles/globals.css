@@ -16,30 +16,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-:root[lang='zh-CN'] {
-    --font-primary-cjk:
-        'Noto Sans SC Variable', 'Noto Sans JP Variable',
-        'Noto Sans KR Variable', 'Noto Sans TC Variable';
-}
-
-:root[lang='ja'] {
-    --font-primary-cjk:
-        'Noto Sans JP Variable', 'Noto Sans KR Variable',
-        'Noto Sans TC Variable', 'Noto Sans SC Variable';
-}
-
-:root[lang='ko'] {
-    --font-primary-cjk:
-        'Noto Sans KR Variable', 'Noto Sans JP Variable',
-        'Noto Sans TC Variable', 'Noto Sans SC Variable';
-}
-
-:root[lang='zh-TW'] {
-    --font-primary-cjk:
-        'Noto Sans TC Variable', 'Noto Sans JP Variable',
-        'Noto Sans KR Variable', 'Noto Sans SC Variable';
-}
-
 :root {
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
@@ -95,16 +71,6 @@
     --visibility-public: #22c55e;
     --visibility-friends: #0ea5e9;
     --visibility-private: #ef4444;
-
-    --font-western-primary: 'Inter Variable';
-    --font-western:
-        'ellipsis-font', -apple-system, var(--font-western-primary), 'Segoe UI',
-        'Roboto', 'Ubuntu', 'Cantarell', 'DejaVu Sans', sans-serif;
-    --font-symbol: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-    --font-fallback-cjk: sans-serif;
-    --font-primary-cjk:
-        'Noto Sans JP Variable', 'Noto Sans SC Variable',
-        'Noto Sans KR Variable', 'Noto Sans TC Variable';
 }
 
 .dark {
@@ -202,19 +168,51 @@
     --color-visibility-private: var(--visibility-private);
 }
 
-@layer base {
-    * {
-        @apply border-border outline-ring/50;
-        scrollbar-width: thin;
-        scrollbar-color: var(--border) transparent;
-    }
-    body {
-        @apply bg-background text-foreground;
-        font-family:
-            var(--font-western), var(--font-symbol), var(--font-primary-cjk),
-            var(--font-fallback-cjk);
-        margin: 0;
-    }
+html {
+    overflow: hidden;
+}
+
+.lucide.is-loading {
+    animation: rotating 2s linear infinite;
+}
+
+.x-container {
+    position: relative;
+    padding: 8px;
+    overflow: hidden auto;
+    box-sizing: border-box;
+    min-width: 0;
+    background: var(--background);
+    height: calc(100% - 20px);
+    margin: 8px 0 8px 0;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.aside-collapsed .x-container {
+    margin-right: 8px;
+}
+
+html.dark .x-container {
+    background: var(--sidebar);
+}
+
+[data-sonner-toast] [data-content] [data-description] {
+    white-space: pre-line;
+}
+
+* {
+    @apply border-border outline-ring/50;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+
+body {
+    @apply bg-background text-foreground;
+    font-family:
+        var(--font-western), var(--font-symbol), var(--font-primary-cjk),
+        var(--font-fallback-cjk);
+    margin: 0;
 }
 
 ::-webkit-scrollbar {
@@ -233,17 +231,15 @@
     background-clip: content-box;
 }
 
-@layer utilities {
-    .scrollbar-hidden {
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-    }
+.scrollbar-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
 
-    .scrollbar-hidden::-webkit-scrollbar {
-        width: 0;
-        height: 0;
-        display: none;
-    }
+.scrollbar-hidden::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
 }
 
 [data-slot='table-header'],
@@ -254,4 +250,32 @@
 .lucide {
     width: 1em;
     height: 1em;
+}
+
+/* ==========================================================================
+ * VRCX UI Standards
+ * These are project-wide conventions.
+ * Use them when building new components.
+ * ==========================================================================*/
+
+/* Hover Transitions
+ * Smooth hover state changes to avoid harsh flickering.
+ *   x-hover-card — Cards & panels (0.2s, bg + shadow)
+ *   x-hover-list — List items     (0.15s, bg). Skip for high-density lists (e.g. friend sidebar).
+ *   x-hover-icon — Icon buttons   (0.1s, bg + color)
+ */
+.x-hover-card {
+    transition:
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.x-hover-list {
+    transition: background-color 0.15s ease;
+}
+
+.x-hover-icon {
+    transition:
+        background-color 0.1s ease,
+        color 0.1s ease;
 }

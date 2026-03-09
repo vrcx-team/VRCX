@@ -5,7 +5,7 @@
                 <ContextMenuTrigger as="div">
                     <div class="avatar-card-wrapper rounded-lg" @click="$emit('click')">
                         <Card
-                            class="avatar-card flex flex-col gap-0 p-0 cursor-pointer overflow-hidden rounded-lg relative transition-colors hover:bg-accent hover:shadow-md"
+                            class="avatar-card x-hover-card flex flex-col gap-0 p-0 cursor-pointer overflow-hidden rounded-lg relative hover:bg-accent hover:shadow-sm"
                             :class="isActive ? 'border-2 border-primary' : 'border border-border/50'">
                             <div class="w-full aspect-5/2 overflow-hidden bg-muted relative">
                                 <img

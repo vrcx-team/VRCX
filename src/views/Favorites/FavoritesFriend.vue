@@ -51,7 +51,7 @@
                                         v-for="group in favoriteFriendGroups"
                                         :key="group.key"
                                         :class="[
-                                            'group-item hover:shadow-sm',
+                                            'group-item x-hover-card hover:shadow-sm',
                                             `group-item--${group.visibility}`,
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]"
@@ -140,7 +140,7 @@
                                         v-for="group in localFriendFavoriteGroups"
                                         :key="group"
                                         :class="[
-                                            'group-item hover:shadow-sm',
+                                            'group-item x-hover-card hover:shadow-sm',
                                             { 'is-active': !hasSearchInput && isGroupActive('local', group) }
                                         ]"
                                         @click="handleGroupClick('local', group)">
@@ -184,7 +184,7 @@
                                 </div>
                                 <div
                                     v-if="!isCreatingLocalGroup"
-                                    class="group-item hover:shadow-sm border-dashed flex items-center justify-center gap-2 text-sm"
+                                    class="group-item x-hover-card hover:shadow-sm border-dashed flex items-center justify-center gap-2 text-sm"
                                     @click="startLocalGroupCreation">
                                     <Plus />
                                     <span>{{ t('view.favorite.worlds.new_group') }}</span>
@@ -289,7 +289,7 @@
                                         <div
                                             v-for="favorite in friendFavoriteSearchResults"
                                             :key="favorite.id"
-                                            class="favorites-search-card hover:shadow-sm"
+                                            class="favorites-search-card x-hover-card hover:shadow-sm"
                                             @click="showUserDialog(favorite.id)">
                                             <div class="favorites-search-card__content">
                                                 <div class="favorites-search-card__avatar">

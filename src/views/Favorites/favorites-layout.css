@@ -22,11 +22,11 @@
     border: 1px solid var(--border);
     padding: 8px;
     cursor: pointer;
-    transition: background-color 0.15s ease;
 }
 
 .group-item:hover {
     background-color: var(--accent);
+    box-shadow: var(--shadow-sm);
 }
 
 .group-item--public {

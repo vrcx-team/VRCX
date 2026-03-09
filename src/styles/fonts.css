@@ -10,3 +10,39 @@
     src: local('Times New Roman');
     unicode-range: U+2026;
 }
+
+:root {
+    --font-western-primary: 'Inter Variable';
+    --font-western:
+        'ellipsis-font', -apple-system, var(--font-western-primary), 'Segoe UI',
+        'Roboto', 'Ubuntu', 'Cantarell', 'DejaVu Sans', sans-serif;
+    --font-symbol: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    --font-fallback-cjk: sans-serif;
+    --font-primary-cjk:
+        'Noto Sans JP Variable', 'Noto Sans SC Variable',
+        'Noto Sans KR Variable', 'Noto Sans TC Variable';
+}
+
+:root[lang='zh-CN'] {
+    --font-primary-cjk:
+        'Noto Sans SC Variable', 'Noto Sans JP Variable',
+        'Noto Sans KR Variable', 'Noto Sans TC Variable';
+}
+
+:root[lang='ja'] {
+    --font-primary-cjk:
+        'Noto Sans JP Variable', 'Noto Sans KR Variable',
+        'Noto Sans TC Variable', 'Noto Sans SC Variable';
+}
+
+:root[lang='ko'] {
+    --font-primary-cjk:
+        'Noto Sans KR Variable', 'Noto Sans JP Variable',
+        'Noto Sans TC Variable', 'Noto Sans SC Variable';
+}
+
+:root[lang='zh-TW'] {
+    --font-primary-cjk:
+        'Noto Sans TC Variable', 'Noto Sans JP Variable',
+        'Noto Sans KR Variable', 'Noto Sans SC Variable';
+}

@@ -12,7 +12,7 @@
                         <span class="category-title">{{ t('view.tools.pictures.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['image']">
-                        <Card class="tool-card p-0 gap-0">
+                        <Card class="tool-card x-hover-card p-0 gap-0 hover:bg-accent hover:shadow-sm">
                             <div class="tool-content text-2xl" @click="showScreenshotMetadataPage">
                                 <div class="tool-icon">
                                     <Camera />
@@ -554,17 +554,11 @@
     }
 
     .tool-card {
-        transition: background-color 0.15s ease;
         position: relative;
         overflow: visible;
         border-radius: var(--radius-lg);
         cursor: pointer;
         width: 100%;
-
-        &:hover {
-            background-color: var(--accent);
-            box-shadow: var(--shadow-sm);
-        }
 
         .tool-content {
             display: flex;

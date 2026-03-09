@@ -51,7 +51,7 @@
                                         v-for="group in favoriteWorldGroups"
                                         :key="group.key"
                                         :class="[
-                                            'group-item hover:shadow-sm',
+                                            'group-item x-hover-card hover:shadow-sm',
                                             `group-item--${group.visibility}`,
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]"
@@ -123,7 +123,7 @@
                                         v-for="group in worldGroupPlaceholders"
                                         :key="group.key"
                                         :class="[
-                                            'group-item hover:shadow-sm',
+                                            'group-item x-hover-card hover:shadow-sm',
                                             'pointer-events-none opacity-70',
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]">
@@ -160,7 +160,7 @@
                                         v-for="group in localWorldFavoriteGroups"
                                         :key="group"
                                         :class="[
-                                            'group-item hover:shadow-sm',
+                                            'group-item x-hover-card hover:shadow-sm',
                                             { 'is-active': !hasSearchInput && isGroupActive('local', group) }
                                         ]"
                                         @click="handleGroupClick('local', group)">
@@ -204,7 +204,7 @@
                                 </div>
                                 <div
                                     v-if="!isCreatingLocalGroup"
-                                    class="group-item hover:shadow-sm border-dashed flex items-center justify-center gap-2 text-sm"
+                                    class="group-item x-hover-card hover:shadow-sm border-dashed flex items-center justify-center gap-2 text-sm"
                                     @click="startLocalGroupCreation">
                                     <Plus />
                                     <span>{{ t('view.favorite.worlds.new_group') }}</span>
@@ -262,7 +262,7 @@
                                         <div
                                             v-for="favorite in worldFavoriteSearchResults"
                                             :key="favorite.id"
-                                            class="favorites-search-card hover:shadow-sm"
+                                            class="favorites-search-card x-hover-card hover:shadow-sm"
                                             @click="showWorldDialog(favorite.id)">
                                             <div class="favorites-search-card__content">
                                                 <div

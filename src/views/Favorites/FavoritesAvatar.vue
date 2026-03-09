@@ -51,7 +51,7 @@
                                         v-for="group in favoriteAvatarGroups"
                                         :key="group.key"
                                         :class="[
-                                            'group-item hover:shadow-sm',
+                                            'group-item x-hover-card hover:shadow-sm',
                                             `group-item--${group.visibility}`,
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]"
@@ -123,7 +123,7 @@
                                         v-for="group in avatarGroupPlaceholders"
                                         :key="group.key"
                                         :class="[
-                                            'group-item hover:shadow-sm',
+                                            'group-item x-hover-card hover:shadow-sm',
                                             'pointer-events-none opacity-70',
                                             { 'is-active': !hasSearchInput && isGroupActive('remote', group.key) }
                                         ]">
@@ -162,7 +162,7 @@
                                         v-for="group in localAvatarFavoriteGroups"
                                         :key="group"
                                         :class="[
-                                            'group-item hover:shadow-sm',
+                                            'group-item x-hover-card hover:shadow-sm',
                                             { 'is-active': !hasSearchInput && isGroupActive('local', group) }
                                         ]"
                                         @click="handleGroupClick('local', group)">
@@ -211,7 +211,7 @@
                                     :content="t('view.favorite.avatars.local_favorites')">
                                     <div
                                         :class="[
-                                            'group-item hover:shadow-sm',
+                                            'group-item x-hover-card hover:shadow-sm',
                                             'border-dashed flex items-center justify-center gap-2 text-sm',
                                             { 'opacity-50 cursor-not-allowed': !isLocalUserVrcPlusSupporter }
                                         ]"
@@ -253,7 +253,7 @@
                             <div class="flex flex-col gap-2">
                                 <div
                                     :class="[
-                                        'group-item hover:shadow-sm',
+                                        'group-item x-hover-card hover:shadow-sm',
                                         { 'is-active': !hasSearchInput && isGroupActive('history', historyGroupKey) }
                                     ]"
                                     @click="handleGroupClick('history', historyGroupKey)">
@@ -314,7 +314,7 @@
                                         <div
                                             v-for="favorite in avatarFavoriteSearchResults"
                                             :key="favorite.id"
-                                            class="favorites-search-card hover:shadow-sm"
+                                            class="favorites-search-card x-hover-card hover:shadow-sm"
                                             @click="showAvatarDialog(favorite.id)">
                                             <div class="favorites-search-card__content">
                                                 <div

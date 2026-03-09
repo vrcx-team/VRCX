@@ -34,7 +34,6 @@
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
 
     import '@/styles/globals.css';
-    import '@/app.css';
 
     console.log(`isLinux: ${LINUX}`);
 

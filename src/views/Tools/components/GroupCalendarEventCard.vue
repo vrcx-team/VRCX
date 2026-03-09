@@ -2,7 +2,7 @@
     <Popover :open="eventPopoverOpen">
         <PopoverTrigger as-child>
             <Card
-                class="event-card p-0 gap-0"
+                class="event-card x-hover-card p-0 gap-0 hover:bg-accent hover:shadow-sm"
                 :class="cardClass"
                 @mouseenter="openEventPopover"
                 @mouseleave="scheduleCloseEventPopover">
@@ -275,16 +275,10 @@
 
 <style scoped>
     .event-card {
-        transition: background-color 0.15s ease;
         position: relative;
         overflow: visible;
         border-radius: var(--radius-lg);
         width: 100%;
-    }
-
-    .event-card:hover {
-        background-color: var(--accent);
-        box-shadow: var(--shadow-sm);
     }
 
     .event-card.grouped-card {
