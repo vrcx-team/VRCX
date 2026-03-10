@@ -512,12 +512,8 @@
         localAvatarFavoriteGroups,
         avatarImportDialogInput
     } = storeToRefs(favoriteStore);
-    const {
-        showAvatarImportDialog,
-        localAvatarFavGroupLength,
-        localAvatarFavoritesList,
-        handleFavoriteGroup
-    } = favoriteStore;
+    const { showAvatarImportDialog, localAvatarFavGroupLength, localAvatarFavoritesList, handleFavoriteGroup } =
+        favoriteStore;
     const { avatarHistory } = storeToRefs(useAvatarStore());
     import { promptClearAvatarHistory, showAvatarDialog, applyAvatar } from '../../coordinators/avatarCoordinator';
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());

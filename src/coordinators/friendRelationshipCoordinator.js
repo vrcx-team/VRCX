@@ -205,9 +205,7 @@ export function updateFriendship(ref) {
             };
             friendLogTable.value.data.push(friendLogHistoryDisplayName);
             database.addFriendLogHistory(friendLogHistoryDisplayName);
-            notificationStore.queueFriendLogNoty(
-                friendLogHistoryDisplayName
-            );
+            notificationStore.queueFriendLogNoty(friendLogHistoryDisplayName);
             sharedFeedStore.addEntry(friendLogHistoryDisplayName);
             const friendLogCurrent = {
                 userId: ref.id,
@@ -321,7 +319,10 @@ export function updateUserCurrentStatus(ref) {
     friendStore.updateOnlineFriendCounter();
 
     if (appearanceSettingsStore.randomUserColours) {
-        getNameColour(userStore.currentUser.id, appearanceSettingsStore.isDarkMode).then((colour) => {
+        getNameColour(
+            userStore.currentUser.id,
+            appearanceSettingsStore.isDarkMode
+        ).then((colour) => {
             userStore.setCurrentUserColour(colour);
         });
     }

@@ -21,7 +21,11 @@ import { AppDebug } from '../services/appConfig';
 import { database } from '../services/database';
 import { useAvatarStore } from './avatar';
 import { applyAvatar } from '../coordinators/avatarCoordinator';
-import { showUserDialog, lookupUser, applyUser } from '../coordinators/userCoordinator';
+import {
+    showUserDialog,
+    lookupUser,
+    applyUser
+} from '../coordinators/userCoordinator';
 import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
 import { useGameLogStore } from './gameLog';

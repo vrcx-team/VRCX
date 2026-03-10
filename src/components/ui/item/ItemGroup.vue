@@ -1,17 +1,13 @@
 <script setup>
-import { cn } from "@/lib/utils";
+    import { cn } from '@/lib/utils';
 
-const props = defineProps({
-  class: { type: null, required: false },
-});
+    const props = defineProps({
+        class: { type: null, required: false }
+    });
 </script>
 
 <template>
-  <div
-    role="list"
-    data-slot="item-group"
-    :class="cn('group/item-group flex flex-col', props.class)"
-  >
-    <slot />
-  </div>
+    <div role="list" data-slot="item-group" :class="cn('group/item-group flex flex-col', props.class)">
+        <slot />
+    </div>
 </template>

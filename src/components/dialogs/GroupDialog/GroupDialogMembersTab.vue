@@ -216,12 +216,11 @@
     import { applyGroupMember, handleGroupMember } from '../../../coordinators/groupCoordinator';
     import { groupDialogSortingOptions } from '../../../shared/constants';
     import { useGroupMembers } from './useGroupMembers';
-import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { userImage } = useUserDisplay();
     const { t } = useI18n();
 
-    
     const { currentUser } = storeToRefs(useUserStore());
     const { groupDialog } = storeToRefs(useGroupStore());
 

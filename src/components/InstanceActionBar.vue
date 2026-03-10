@@ -355,8 +355,6 @@
         }
     };
 
-
-
     const closeInstance = (location) => {
         modalStore
             .confirm({

@@ -405,7 +405,10 @@ export const useAppearanceSettingsStore = defineStore(
                 });
             }
             if (randomUserColours.value) {
-                const colour = await getNameColour(userStore.currentUser.id, isDarkMode.value);
+                const colour = await getNameColour(
+                    userStore.currentUser.id,
+                    isDarkMode.value
+                );
                 userStore.setCurrentUserColour(colour);
                 userColourInit();
             } else {
@@ -1042,7 +1045,10 @@ export const useAppearanceSettingsStore = defineStore(
             if (!randomUserColours.value) {
                 return;
             }
-            const colour = await getNameColour(userStore.currentUser.id, isDarkMode.value);
+            const colour = await getNameColour(
+                userStore.currentUser.id,
+                isDarkMode.value
+            );
             userStore.setCurrentUserColour(colour);
             await userColourInit();
         }

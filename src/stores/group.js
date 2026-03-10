@@ -2,10 +2,7 @@ import { reactive, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { useI18n } from 'vue-i18n';
 
-import {
-    hasGroupPermission,
-    replaceBioSymbols
-} from '../shared/utils';
+import { hasGroupPermission, replaceBioSymbols } from '../shared/utils';
 import { groupRequest, queryRequest } from '../api';
 import { groupDialogFilterOptions } from '../shared/constants/';
 import { watchState } from '../services/watchState';

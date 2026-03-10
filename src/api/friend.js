@@ -23,7 +23,6 @@ const friendReq = {
      * @type {import('../types/api/friend').GetFriends}
      */
     getFriends(params) {
-
         return request('auth/user/friends', {
             method: 'GET',
             params

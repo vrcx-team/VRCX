@@ -3,13 +3,13 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 /**
- * @typedef {Object} ConfirmResult
+ * @typedef {object} ConfirmResult
  * @property {boolean} ok
  * @property {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
  */
 
 /**
- * @typedef {Object} ConfirmOptions
+ * @typedef {object} ConfirmOptions
  * @property {string} title
  * @property {string} description
  * @property {string=} confirmText
@@ -18,7 +18,7 @@ import { useI18n } from 'vue-i18n';
  */
 
 /**
- * @typedef {Object} AlertOptions
+ * @typedef {object} AlertOptions
  * @property {string} title
  * @property {string} description
  * @property {string=} confirmText
@@ -26,14 +26,14 @@ import { useI18n } from 'vue-i18n';
  */
 
 /**
- * @typedef {Object} PromptResult
+ * @typedef {object} PromptResult
  * @property {boolean} ok
  * @property {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
  * @property {string} value
  */
 
 /**
- * @typedef {Object} PromptOptions
+ * @typedef {object} PromptOptions
  * @property {string} title
  * @property {string} description
  * @property {string=} confirmText
@@ -46,7 +46,7 @@ import { useI18n } from 'vue-i18n';
  */
 
 /**
- * @typedef {Object} OtpPromptOptions
+ * @typedef {object} OtpPromptOptions
  * @property {string} title
  * @property {string} description
  * @property {'totp' | 'emailOtp' | 'otp'} mode

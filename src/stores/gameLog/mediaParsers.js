@@ -7,7 +7,6 @@ import {
 
 /**
  * Creates the media parser functions for the GameLog store.
- *
  * @param {object} deps
  * @param {import('vue').Ref} deps.nowPlaying
  * @param {Function} deps.setNowPlaying

@@ -80,8 +80,8 @@
     import { useUserDisplay } from '../../../composables/useUserDisplay';
 
     import '@/styles/status-icon.css';
-import { showUserDialog } from '../../../coordinators/userCoordinator';
-import { confirmDeleteFriend } from '../../../coordinators/friendRelationshipCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { confirmDeleteFriend } from '../../../coordinators/friendRelationshipCoordinator';
 
     const props = defineProps({
         friend: { type: Object, required: true },
@@ -92,7 +92,6 @@ import { confirmDeleteFriend } from '../../../coordinators/friendRelationshipCoo
     const { isRefreshFriendsLoading, allFavoriteFriendIds } = storeToRefs(useFriendStore());
     const { userImage, userStatusClass } = useUserDisplay();
 
-    
     const { t } = useI18n();
 
     const isFriendTraveling = computed(() => props.friend.ref?.location === 'traveling');

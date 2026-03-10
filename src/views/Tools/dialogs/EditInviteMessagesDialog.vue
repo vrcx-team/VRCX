@@ -6,7 +6,8 @@
             </DialogHeader>
             <TabsUnderline v-model="activeTab" :items="editInviteTabs" :unmount-on-hide="false" class="mt-2.5">
                 <template #message>
-                    <DataTableLayout class="mt-2"
+                    <DataTableLayout
+                        class="mt-2"
                         style="cursor: pointer"
                         :table="inviteMessageTanstackTable"
                         :loading="false"

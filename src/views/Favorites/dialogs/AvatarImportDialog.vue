@@ -131,12 +131,12 @@
 
     const emit = defineEmits(['update:avatarImportDialogInput']);
     const { t } = useI18n();
-    
+
     const { favoriteAvatarGroups, avatarImportDialogInput, avatarImportDialogVisible, localAvatarFavoriteGroups } =
         storeToRefs(useFavoriteStore());
     const { localAvatarFavGroupLength, getCachedFavoritesByObjectId } = useFavoriteStore();
     import { showAvatarDialog, applyAvatar } from '../../../coordinators/avatarCoordinator';
-import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
     const { showFullscreenImageDialog } = useGalleryStore();
 
     const avatarImportDialog = ref({

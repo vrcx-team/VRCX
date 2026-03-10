@@ -87,7 +87,7 @@
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
     import { createColumns } from './photonEventColumns.jsx';
     import { photonEventTableTypeFilterList } from '../../../shared/constants/photon';
-import { lookupUser } from '../../../coordinators/userCoordinator';
+    import { lookupUser } from '../../../coordinators/userCoordinator';
 
     const emit = defineEmits(['show-chatbox-blacklist']);
     const { t } = useI18n();
@@ -108,7 +108,6 @@ import { lookupUser } from '../../../coordinators/userCoordinator';
 
     const { stringComparer } = storeToRefs(useSearchStore());
 
-    
     const { showAvatarDialog } = useAvatarStore();
 
     const { showGroupDialog } = useGroupStore();

@@ -92,6 +92,7 @@ function getPlatformInfo(unityPackages) {
 /**
  *
  * @param {string} unitySortNumber
+ * @param sdkUnityVersion
  * @returns {boolean}
  */
 function compareUnityVersion(unitySortNumber, sdkUnityVersion) {

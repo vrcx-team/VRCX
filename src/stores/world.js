@@ -1,9 +1,7 @@
 import { reactive, shallowReactive, watch } from 'vue';
 import { defineStore } from 'pinia';
 
-import {
-    checkVRChatCache
-} from '../shared/utils';
+import { checkVRChatCache } from '../shared/utils';
 import { watchState } from '../services/watchState';
 
 export const useWorldStore = defineStore('World', () => {

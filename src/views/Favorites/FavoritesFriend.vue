@@ -398,12 +398,8 @@
         localFriendFavorites,
         localFriendFavoriteGroups
     } = storeToRefs(favoriteStore);
-    const {
-        showFriendImportDialog,
-        handleFavoriteGroup,
-        localFriendFavGroupLength,
-        newLocalFriendFavoriteGroup
-    } = favoriteStore;
+    const { showFriendImportDialog, handleFavoriteGroup, localFriendFavGroupLength, newLocalFriendFavoriteGroup } =
+        favoriteStore;
     const userStore = useUserStore();
     const { showUserDialog } = userStore;
     const { cachedUsers } = storeToRefs(userStore);

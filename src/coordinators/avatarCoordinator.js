@@ -129,11 +129,7 @@ export function showAvatarDialog(avatarId, options = {}) {
         .then((args) => {
             const ref = applyAvatar(args.json);
             D.ref = ref;
-            uiStore.setDialogCrumbLabel(
-                'avatar',
-                D.id,
-                D.ref?.name || D.id
-            );
+            uiStore.setDialogCrumbLabel('avatar', D.id, D.ref?.name || D.id);
             avatarStore.getAvatarGallery(avatarId);
             avatarStore.updateVRChatAvatarCache();
             if (/quest/.test(ref.tags)) {
@@ -333,8 +329,7 @@ export async function lookupAvatars(type, search) {
         const length =
             avatarProviderStore.avatarRemoteDatabaseProviderList.length;
         for (let i = 0; i < length; ++i) {
-            const url =
-                avatarProviderStore.avatarRemoteDatabaseProviderList[i];
+            const url = avatarProviderStore.avatarRemoteDatabaseProviderList[i];
             const avatarArray = await lookupAvatarsByAuthor(url, search);
             avatarArray.forEach((avatar) => {
                 if (!avatars.has(avatar.id)) {
@@ -362,10 +357,7 @@ export async function lookupAvatarByImageFileId(authorId, fileId) {
     }
 
     for (const providerUrl of avatarProviderStore.avatarRemoteDatabaseProviderList) {
-        const avatarArray = await lookupAvatarsByAuthor(
-            providerUrl,
-            authorId
-        );
+        const avatarArray = await lookupAvatarsByAuthor(providerUrl, authorId);
         for (const avatar of avatarArray) {
             if (extractFileId(avatar.imageUrl) === fileId) {
                 return avatar.id;
@@ -595,9 +587,7 @@ export async function showAvatarAuthorDialog(
         }
         if (!avatarId) {
             if (ownerUserId === refUserId) {
-                toast.warning(
-                    t('message.avatar_lookup.private_or_not_found')
-                );
+                toast.warning(t('message.avatar_lookup.private_or_not_found'));
             } else {
                 toast.warning(t('message.avatar_lookup.not_found'));
                 showUserDialog(avatarInfo.ownerId);

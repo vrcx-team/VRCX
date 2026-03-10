@@ -1364,6 +1364,8 @@ const gameLog = {
      *
      * @param {string} startDate: utc string of startOfDay
      * @param {string} endDate: utc string endOfDay
+     * @param startDate
+     * @param endDate
      * @returns
      */
     async getInstanceActivity(startDate, endDate) {

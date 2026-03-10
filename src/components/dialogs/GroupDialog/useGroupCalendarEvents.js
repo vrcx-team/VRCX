@@ -3,7 +3,6 @@ import { computed } from 'vue';
 /**
  * Composable for filtering group calendar events into past and upcoming,
  * and updating follow state on individual events.
- *
  * @param {import('vue').Ref} groupDialog - reactive ref to the group dialog state
  * @returns {{
  *   pastCalenderEvents: import('vue').ComputedRef<Array>,
@@ -35,7 +34,7 @@ export function useGroupCalendarEvents(groupDialog) {
     });
 
     /**
-     * @param {Object} event
+     * @param {object} event
      */
     function updateFollowingCalendarData(event) {
         const calendar = groupDialog.value.calendar;

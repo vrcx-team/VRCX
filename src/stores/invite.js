@@ -85,8 +85,6 @@ export const useInviteStore = defineStore('Invite', () => {
             });
     }
 
-
-
     return {
         inviteMessageTable,
         inviteResponseMessageTable,

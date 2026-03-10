@@ -217,7 +217,7 @@
     import configRepository from '../../../services/config';
 
     import '@/styles/status-icon.css';
-import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { t } = useI18n();
 
@@ -479,7 +479,11 @@ import { showUserDialog } from '../../../coordinators/userCoordinator';
                     if (!friendArr || !friendArr.length) return;
                     const groupKey = friendArr?.[0]?.ref?.$location?.tag ?? `group-${groupIndex}`;
                     rows.push(
-                        buildInstanceHeaderRow(getFriendsLocations(friendArr, lastLocation.value), friendArr.length, `instance:${groupKey}`)
+                        buildInstanceHeaderRow(
+                            getFriendsLocations(friendArr, lastLocation.value),
+                            friendArr.length,
+                            `instance:${groupKey}`
+                        )
                     );
                     friendArr.forEach((friend, idx) => {
                         rows.push(

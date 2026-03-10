@@ -50,4 +50,3 @@ export const useLocationStore = defineStore('Location', () => {
         setLastLocationDestinationTime
     };
 });
-

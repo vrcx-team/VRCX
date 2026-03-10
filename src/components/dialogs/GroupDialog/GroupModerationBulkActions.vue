@@ -40,9 +40,7 @@
                 </template>
                 <AlertTriangle style="margin-left: 3px; display: inline-block" />
             </TooltipWrapper>
-            <span
-                v-text="user.user?.displayName || user.userId"
-                style="font-weight: bold; margin-left: 6px"></span>
+            <span v-text="user.user?.displayName || user.userId" style="font-weight: bold; margin-left: 6px"></span>
             <button
                 type="button"
                 style="
@@ -79,10 +77,7 @@
                 <SelectValue :placeholder="t('dialog.group_member_moderation.choose_roles_placeholder')" />
             </SelectTrigger>
             <SelectContent>
-                <SelectItem
-                    v-for="role in groupRef.roles"
-                    :key="role.id"
-                    :value="role.id">
+                <SelectItem v-for="role in groupRef.roles" :key="role.id" :value="role.id">
                     {{ role.name }}
                 </SelectItem>
             </SelectContent>
@@ -96,9 +91,7 @@
                 variant="outline"
                 :disabled="
                     Boolean(
-                        !selectedRoles.length ||
-                        progressCurrent ||
-                        !hasGroupPermission(groupRef, 'group-roles-assign')
+                        !selectedRoles.length || progressCurrent || !hasGroupPermission(groupRef, 'group-roles-assign')
                     )
                 "
                 @click="$emit('add-roles')"
@@ -108,9 +101,7 @@
                 variant="secondary"
                 :disabled="
                     Boolean(
-                        !selectedRoles.length ||
-                        progressCurrent ||
-                        !hasGroupPermission(groupRef, 'group-roles-assign')
+                        !selectedRoles.length || progressCurrent || !hasGroupPermission(groupRef, 'group-roles-assign')
                     )
                 "
                 @click="$emit('remove-roles')"
@@ -118,45 +109,25 @@
             >
             <Button
                 variant="outline"
-                :disabled="
-                    Boolean(
-                        progressCurrent ||
-                        !hasGroupPermission(groupRef, 'group-members-manage')
-                    )
-                "
+                :disabled="Boolean(progressCurrent || !hasGroupPermission(groupRef, 'group-members-manage'))"
                 @click="$emit('save-note')"
                 >{{ t('dialog.group_member_moderation.save_note') }}</Button
             >
             <Button
                 variant="outline"
-                :disabled="
-                    Boolean(
-                        progressCurrent ||
-                        !hasGroupPermission(groupRef, 'group-members-remove')
-                    )
-                "
+                :disabled="Boolean(progressCurrent || !hasGroupPermission(groupRef, 'group-members-remove'))"
                 @click="$emit('kick')"
                 >{{ t('dialog.group_member_moderation.kick') }}</Button
             >
             <Button
                 variant="outline"
-                :disabled="
-                    Boolean(
-                        progressCurrent ||
-                        !hasGroupPermission(groupRef, 'group-bans-manage')
-                    )
-                "
+                :disabled="Boolean(progressCurrent || !hasGroupPermission(groupRef, 'group-bans-manage'))"
                 @click="$emit('ban')"
                 >{{ t('dialog.group_member_moderation.ban') }}</Button
             >
             <Button
                 variant="outline"
-                :disabled="
-                    Boolean(
-                        progressCurrent ||
-                        !hasGroupPermission(groupRef, 'group-bans-manage')
-                    )
-                "
+                :disabled="Boolean(progressCurrent || !hasGroupPermission(groupRef, 'group-bans-manage'))"
                 @click="$emit('unban')"
                 >{{ t('dialog.group_member_moderation.unban') }}</Button
             >

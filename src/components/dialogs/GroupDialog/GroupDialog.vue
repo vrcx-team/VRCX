@@ -426,7 +426,7 @@
     import GroupDialogPhotosTab from './GroupDialogPhotosTab.vue';
     import GroupDialogPostsTab from './GroupDialogPostsTab.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
-import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { t } = useI18n();
     const groupDialogTabs = computed(() => [
@@ -439,13 +439,9 @@ import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const modalStore = useModalStore();
 
-    
     const { currentUser } = storeToRefs(useUserStore());
     const { groupDialog, inviteGroupDialog } = storeToRefs(useGroupStore());
-    const {
-        updateGroupPostSearch,
-        showGroupMemberModerationDialog
-    } = useGroupStore();
+    const { updateGroupPostSearch, showGroupMemberModerationDialog } = useGroupStore();
 
     const { showFullscreenImageDialog } = useGalleryStore();
 

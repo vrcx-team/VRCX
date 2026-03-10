@@ -68,7 +68,10 @@ export function runUpdateCurrentUserLocationFlow() {
     }
 }
 
-export async function runSetCurrentUserLocationFlow(location, travelingToLocation) {
+export async function runSetCurrentUserLocationFlow(
+    location,
+    travelingToLocation
+) {
     const userStore = useUserStore();
     const instanceStore = useInstanceStore();
     const notificationStore = useNotificationStore();
@@ -147,7 +150,9 @@ export function runLastLocationResetFlow(gameLogDate) {
     }
     const dateTimeStamp = Date.parse(dateTime);
     photonStore.resetLocationPhotonState();
-    const playerList = Array.from(locationStore.lastLocation.playerList.values());
+    const playerList = Array.from(
+        locationStore.lastLocation.playerList.values()
+    );
     const dataBaseEntries = [];
     for (const ref of playerList) {
         const entry = {
@@ -162,7 +167,10 @@ export function runLastLocationResetFlow(gameLogDate) {
         gameLogStore.addGameLog(entry);
     }
     database.addGamelogJoinLeaveBulk(dataBaseEntries);
-    if (locationStore.lastLocation.date !== null && locationStore.lastLocation.date > 0) {
+    if (
+        locationStore.lastLocation.date !== null &&
+        locationStore.lastLocation.date > 0
+    ) {
         const update = {
             time: dateTimeStamp - locationStore.lastLocation.date,
             created_at: new Date(locationStore.lastLocation.date).toJSON()

@@ -67,11 +67,7 @@ export function applyGroup(json) {
     } else {
         if (groupStore.currentUserGroups.has(ref.id)) {
             // compare group props
-            if (
-                ref.ownerId &&
-                json.ownerId &&
-                ref.ownerId !== json.ownerId
-            ) {
+            if (ref.ownerId && json.ownerId && ref.ownerId !== json.ownerId) {
                 // owner changed
                 groupOwnerChange(json, ref.ownerId, json.ownerId);
             }
@@ -172,8 +168,7 @@ export function applyGroupMember(json) {
                 id: json.groupId,
                 memberVisibility: json.visibility,
                 isRepresenting: json.isRepresenting,
-                isSubscribedToAnnouncements:
-                    json.isSubscribedToAnnouncements,
+                isSubscribedToAnnouncements: json.isSubscribedToAnnouncements,
                 joinedAt: json.joinedAt,
                 roleIds: json.roleIds,
                 membershipStatus: json.membershipStatus
@@ -258,9 +253,7 @@ function groupRoleChange(ref, oldRoles, newRoles, oldRoleIds, newRoleIds) {
     for (const roleId of oldRoleIds) {
         if (!newRoleIds.includes(roleId)) {
             let roleName = '';
-            const role = oldRoles.find(
-                (fineRole) => fineRole.id === roleId
-            );
+            const role = oldRoles.find((fineRole) => fineRole.id === roleId);
             if (role) {
                 roleName = role.name;
             }
@@ -345,11 +338,7 @@ export function showGroupDialog(groupId, options = {}) {
             const ref = args.ref || applyGroup(args.json);
             if (groupId === ref.id) {
                 D.ref = ref;
-                uiStore.setDialogCrumbLabel(
-                    'group',
-                    D.id,
-                    D.ref?.name || D.id
-                );
+                uiStore.setDialogCrumbLabel('group', D.id, D.ref?.name || D.id);
                 D.inGroup = ref.membershipStatus === 'member';
                 D.ownerDisplayName = ref.ownerId;
                 D.visible = true;
@@ -447,7 +436,10 @@ export function getGroupDialogGroup(groupId, existingRef) {
                         if (groupStore.groupDialog.id === args.params.groupId) {
                             D.calendar = args.json.results;
                             for (const event of D.calendar) {
-                                Object.assign(event, groupStore.applyGroupEvent(event));
+                                Object.assign(
+                                    event,
+                                    groupStore.applyGroupEvent(event)
+                                );
                                 // fetch again for isFollowing
                                 queryRequest
                                     .fetch('groupCalendarEvent', {
@@ -457,7 +449,9 @@ export function getGroupDialogGroup(groupId, existingRef) {
                                     .then((args) => {
                                         Object.assign(
                                             event,
-                                            groupStore.applyGroupEvent(args.json)
+                                            groupStore.applyGroupEvent(
+                                                args.json
+                                            )
                                         );
                                     });
                             }
@@ -516,13 +510,11 @@ export function onGroupJoined(groupId) {
             name: '',
             iconUrl: ''
         });
-        groupRequest
-            .getGroup({ groupId, includeRoles: true })
-            .then((args) => {
-                applyGroup(args.json);
-                saveCurrentUserGroups();
-                return args;
-            });
+        groupRequest.getGroup({ groupId, includeRoles: true }).then((args) => {
+            applyGroup(args.json);
+            saveCurrentUserGroups();
+            return args;
+        });
     }
 }
 
@@ -541,7 +533,10 @@ export async function onGroupLeft(groupId) {
         );
         return;
     }
-    if (groupStore.groupDialog.visible && groupStore.groupDialog.id === groupId) {
+    if (
+        groupStore.groupDialog.visible &&
+        groupStore.groupDialog.id === groupId
+    ) {
         showGroupDialog(groupId);
     }
     if (groupStore.currentUserGroups.has(groupId)) {
@@ -615,10 +610,7 @@ export async function loadCurrentUserGroups(userId, groups) {
         const promises = groups.map(async (groupId) => {
             const groupRef = groupStore.cachedGroups.get(groupId);
 
-            if (
-                typeof groupRef !== 'undefined' &&
-                groupRef.roles?.length > 0
-            ) {
+            if (typeof groupRef !== 'undefined' && groupRef.roles?.length > 0) {
                 return;
             }
 
@@ -814,9 +806,7 @@ export function handleGroupRepresented(args) {
     const D = userStore.userDialog;
     const json = args.json;
     D.representedGroup = json;
-    D.representedGroup.$thumbnailUrl = convertFileUrlToImageUrl(
-        json.iconUrl
-    );
+    D.representedGroup.$thumbnailUrl = convertFileUrlToImageUrl(json.iconUrl);
     if (!json || !json.isRepresenting) {
         D.isRepresentedGroupLoading = false;
     }
@@ -887,7 +877,11 @@ export function handleGroupMemberProps(args) {
                 break;
             }
         }
-        for (i = 0; i < groupStore.groupDialog.memberSearchResults.length; ++i) {
+        for (
+            i = 0;
+            i < groupStore.groupDialog.memberSearchResults.length;
+            ++i
+        ) {
             member = groupStore.groupDialog.memberSearchResults[i];
             if (member.userId === args.json.userId) {
                 Object.assign(member, applyGroupMember(args.json));

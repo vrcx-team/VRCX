@@ -85,7 +85,6 @@
     const { userDialog, currentUser } = storeToRefs(useUserStore());
     const { favoriteLimits } = storeToRefs(useFavoriteStore());
 
-
     const favoriteWorldsTab = ref('0');
     const userDialogFavoriteWorldsRequestId = ref(0);
 

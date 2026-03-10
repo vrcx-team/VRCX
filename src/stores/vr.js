@@ -98,7 +98,7 @@ export const useVrStore = defineStore('Vr', () => {
         }
 
         /**
-         * @typedef {Object} VrConfigVarsPayload
+         * @typedef {object} VrConfigVarsPayload
          * @property {boolean} overlayNotifications
          * @property {boolean} hideDevicesFromFeed
          * @property {boolean} vrOverlayCpuUsage

@@ -181,8 +181,7 @@ function userImage(
     }
     if (
         (isUserDialogIcon && user.userIcon) ||
-        (displayVRCPlusIconsAsAvatar &&
-            user.userIcon)
+        (displayVRCPlusIconsAsAvatar && user.userIcon)
     ) {
         if (isIcon) {
             return convertFileUrlToImageUrl(user.userIcon);
@@ -233,10 +232,7 @@ function userImageFull(user, displayVRCPlusIconsAsAvatar = false) {
     if (!user) {
         return '';
     }
-    if (
-        displayVRCPlusIconsAsAvatar &&
-        user.userIcon
-    ) {
+    if (displayVRCPlusIconsAsAvatar && user.userIcon) {
         return user.userIcon;
     }
     if (user.profilePicOverride) {

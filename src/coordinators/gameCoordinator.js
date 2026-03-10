@@ -150,8 +150,7 @@ export function runCheckIfGameCrashedFlow() {
         // check if relaunched less than 2mins ago (prevent crash loop)
         if (
             gameStore.state.lastCrashedTime &&
-            new Date().getTime() -
-                gameStore.state.lastCrashedTime.getTime() <
+            new Date().getTime() - gameStore.state.lastCrashedTime.getTime() <
                 120_000
         ) {
             console.log('VRChat was recently crashed, not relaunching');
@@ -211,13 +210,9 @@ export async function runCheckVRChatDebugLoggingFlow() {
         return;
     }
     try {
-        const loggingEnabled = await gameStore.getVRChatRegistryKey(
-            'LOGGING_ENABLED'
-        );
-        if (
-            loggingEnabled === null ||
-            typeof loggingEnabled === 'undefined'
-        ) {
+        const loggingEnabled =
+            await gameStore.getVRChatRegistryKey('LOGGING_ENABLED');
+        if (loggingEnabled === null || typeof loggingEnabled === 'undefined') {
             // key not found
             return;
         }

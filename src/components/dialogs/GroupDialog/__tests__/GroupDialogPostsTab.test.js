@@ -130,7 +130,7 @@ const MOCK_POSTS = [
 ];
 
 /**
- * @param {Object} overrides
+ * @param {object} overrides
  */
 function mountComponent(overrides = {}) {
     const pinia = createTestingPinia({

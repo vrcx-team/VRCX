@@ -4,8 +4,7 @@ import { computed } from 'vue';
  * A composable that provides key-based selection for an options map.
  * Extracts the repeated pattern of finding the current option's key from an
  * options object and selecting a new option by key.
- *
- * @param {Object} optionsMap - A static object mapping string keys to option objects
+ * @param {object} optionsMap - A static object mapping string keys to option objects
  *   (each option should have at least `value` and `name` properties).
  * @param {() => any} getCurrentValue - A getter function that returns the currently
  *   selected option value (e.g., `() => userDialog.value.worldSorting`).

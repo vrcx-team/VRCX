@@ -133,9 +133,8 @@
     import { createColumns } from './worldImportColumns.jsx';
     import { removeFromArray } from '../../../shared/utils';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
-import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
 
-    
     const { favoriteWorldGroups, worldImportDialogInput, worldImportDialogVisible, localWorldFavoriteGroups } =
         storeToRefs(useFavoriteStore());
     const { localWorldFavGroupLength, getCachedFavoritesByObjectId } = useFavoriteStore();

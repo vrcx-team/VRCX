@@ -148,8 +148,8 @@
     import { router } from '../../plugins/router';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
-import { showUserDialog } from '../../coordinators/userCoordinator';
-import { confirmDeleteFriend, handleFriendDelete } from '../../coordinators/friendRelationshipCoordinator';
+    import { showUserDialog } from '../../coordinators/userCoordinator';
+    import { confirmDeleteFriend, handleFriendDelete } from '../../coordinators/friendRelationshipCoordinator';
 
     const { t } = useI18n();
 
@@ -160,7 +160,7 @@ import { confirmDeleteFriend, handleFriendDelete } from '../../coordinators/frie
     const { getAllUserStats, getAllUserMutualCount } = useFriendStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { randomUserColours } = storeToRefs(appearanceSettingsStore);
-    
+
     const { stringComparer, friendsListSearch } = storeToRefs(useSearchStore());
 
     const friendsListSearchFilters = ref([]);

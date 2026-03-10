@@ -58,6 +58,7 @@ export const TAG_COLORS = Object.freeze([
 /**
  * Deterministically map a tag name to a color from the palette.
  * Uses djb2 hash so the same tag always gets the same color.
+ * @param tagName
  */
 export function getTagColor(tagName) {
     let hash = 5381;

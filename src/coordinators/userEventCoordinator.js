@@ -223,9 +223,7 @@ export async function runHandleUserUpdateFlow(
                 avatarName: ''
             };
             try {
-                avatarInfo = await getAvatarName(
-                    currentAvatarImageUrl
-                );
+                avatarInfo = await getAvatarName(currentAvatarImageUrl);
             } catch (err) {
                 console.log(err);
             }

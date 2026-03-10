@@ -1,7 +1,6 @@
 /**
  * Generic resolver for user/world/group references.
  * Normalises the input, optionally fetches the display name if missing.
- *
  * @param {string|object|null|undefined} input
  * @param {object} opts
  * @param {object} opts.emptyDefault - value to return when input is falsy

@@ -203,7 +203,7 @@ export const useUiStore = defineStore('Ui', () => {
     }
 
     /**
-     * @param {Object} data
+     * @param {object} data
      * @param {string} data.type
      * @param {string} data.id
      * @param {string?} data.tag

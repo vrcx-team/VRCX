@@ -1,9 +1,6 @@
 export { queryClient } from './client';
 export { queryKeys } from './keys';
-export {
-    entityQueryPolicies,
-    toQueryOptions
-} from './policies';
+export { entityQueryPolicies, toQueryOptions } from './policies';
 export {
     fetchWithEntityPolicy,
     patchAndRefetchActiveQuery,

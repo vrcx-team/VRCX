@@ -438,7 +438,6 @@
         localWorldFavoritesList
     } = favoriteStore;
 
-
     const {
         cardScale: worldCardScale,
         cardSpacing: worldCardSpacing,

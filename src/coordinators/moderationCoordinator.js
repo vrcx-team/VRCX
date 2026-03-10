@@ -34,10 +34,7 @@ export async function runRefreshPlayerModerationsFlow() {
             moderationStore.deleteExpiredPlayerModerations();
         })
         .catch((error) => {
-            console.error(
-                'Failed to load player/avatar moderations:',
-                error
-            );
+            console.error('Failed to load player/avatar moderations:', error);
         })
         .finally(() => {
             moderationStore.playerModerationTable.loading = false;

@@ -1,5 +1,7 @@
 import { localeIncludes } from './base/string';
-import removeConfusables, { removeWhitespace } from '../../services/confusables';
+import removeConfusables, {
+    removeWhitespace
+} from '../../services/confusables';
 
 /**
  * Tests whether a name matches a query using locale-aware comparison.

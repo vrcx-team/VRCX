@@ -1,9 +1,7 @@
 import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 
-import {
-    checkVRChatCache
-} from '../shared/utils';
+import { checkVRChatCache } from '../shared/utils';
 import { database } from '../services/database';
 import { watchState } from '../services/watchState';
 

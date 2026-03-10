@@ -15,7 +15,11 @@ import { useGroupStore } from './group';
 import { showGroupDialog } from '../coordinators/groupCoordinator';
 import { showWorldDialog } from '../coordinators/worldCoordinator';
 import { showAvatarDialog } from '../coordinators/avatarCoordinator';
-import { applyUser, showUserDialog, lookupUser } from '../coordinators/userCoordinator';
+import {
+    applyUser,
+    showUserDialog,
+    lookupUser
+} from '../coordinators/userCoordinator';
 import { useModalStore } from './modal';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';

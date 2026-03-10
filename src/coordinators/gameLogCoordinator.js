@@ -14,7 +14,10 @@ import {
 import { i18n } from '../plugins/i18n';
 import { AppDebug } from '../services/appConfig';
 import { database } from '../services/database';
-import { runLastLocationResetFlow, runUpdateCurrentUserLocationFlow } from './locationCoordinator';
+import {
+    runLastLocationResetFlow,
+    runUpdateCurrentUserLocationFlow
+} from './locationCoordinator';
 import { getGroupName } from '../shared/utils';
 import { userRequest } from '../api';
 import { watchState } from '../services/watchState';
@@ -94,10 +97,7 @@ export async function tryLoadPlayerList() {
                     joinTime: Date.parse(ctx.created_at),
                     lastAvatar: ''
                 };
-                locationStore.lastLocation.playerList.set(
-                    ctx.userId,
-                    userMap
-                );
+                locationStore.lastLocation.playerList.set(ctx.userId, userMap);
                 if (friendStore.friends.has(ctx.userId)) {
                     locationStore.lastLocation.friendList.set(
                         ctx.userId,
@@ -133,7 +133,6 @@ export async function tryLoadPlayerList() {
 /**
  * Core game log entry processor. Dispatches game log events to the
  * appropriate stores based on type.
- *
  * @param {object} gameLog
  * @param {string} location
  */
@@ -160,10 +159,8 @@ export function addGameLogEntry(gameLog, location) {
     let userId = String(gameLog.userId || '');
     if (!userId && gameLog.displayName) {
         userId =
-            findUserByDisplayName(
-                userStore.cachedUsers,
-                gameLog.displayName
-            )?.id ?? '';
+            findUserByDisplayName(userStore.cachedUsers, gameLog.displayName)
+                ?.id ?? '';
     }
     switch (gameLog.type) {
         case 'location-destination':
@@ -213,10 +210,7 @@ export function addGameLogEntry(gameLog, location) {
                 instanceStore.applyWorldDialogInstances();
                 instanceStore.applyGroupDialogInstances();
             }
-            instanceStore.addInstanceJoinHistory(
-                gameLog.location,
-                gameLog.dt
-            );
+            instanceStore.addInstanceJoinHistory(gameLog.location, gameLog.dt);
             const L = parseLocation(gameLog.location);
             entry = createLocationEntry(
                 gameLog.dt,
@@ -282,7 +276,9 @@ export function addGameLogEntry(gameLog, location) {
             const time = dayjs(gameLog.dt) - ref1.joinTime;
             locationStore.lastLocation.playerList.delete(userId);
             locationStore.lastLocation.friendList.delete(userId);
-            gameLogStore.state.lastLocationAvatarList.delete(gameLog.displayName);
+            gameLogStore.state.lastLocationAvatarList.delete(
+                gameLog.displayName
+            );
             photonStore.photonLobbyAvatars.delete(userId);
             vrStore.updateVRLastLocation();
             instanceStore.getCurrentInstanceUserList();
@@ -499,7 +495,6 @@ export function addGameLogEntry(gameLog, location) {
 /**
  * Parses raw game log JSON and delegates to addGameLogEntry.
  * Called from C# / updateLoop.
- *
  * @param {string} json
  */
 export function addGameLogEvent(json) {
@@ -533,7 +528,6 @@ export async function getGameLogTable() {
 
 /**
  * Fetches all game log entries since dateTill and processes them.
- *
  * @param {string} dateTill
  */
 async function updateGameLog(dateTill) {

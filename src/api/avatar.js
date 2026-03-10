@@ -66,7 +66,6 @@ const avatarReq = {
      * @returns {Promise<{json: any, params}>}
      */
     selectAvatar(params) {
-
         return request(`avatars/${params.avatarId}/select`, {
             method: 'PUT',
             params
@@ -98,7 +97,6 @@ const avatarReq = {
      * @returns { Promise<{json: any, params}> }
      */
     selectFallbackAvatar(params) {
-
         return request(`avatars/${params.avatarId}/selectfallback`, {
             method: 'PUT',
             params

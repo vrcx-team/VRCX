@@ -38,7 +38,10 @@ async function getBundleLocation(input) {
             }
             if (
                 unityPackage.platform === 'standalonewindows' &&
-                compareUnityVersion(unityPackage.unitySortNumber, sdkUnityVersion)
+                compareUnityVersion(
+                    unityPackage.unitySortNumber,
+                    sdkUnityVersion
+                )
             ) {
                 assetUrl = unityPackage.assetUrl;
                 if (unityPackage.variant !== 'standard') {
@@ -61,7 +64,10 @@ async function getBundleLocation(input) {
             unityPackage = unityPackages[i];
             if (
                 unityPackage.platform === 'standalonewindows' &&
-                compareUnityVersion(unityPackage.unitySortNumber, sdkUnityVersion)
+                compareUnityVersion(
+                    unityPackage.unitySortNumber,
+                    sdkUnityVersion
+                )
             ) {
                 assetUrl = unityPackage.assetUrl;
                 break;

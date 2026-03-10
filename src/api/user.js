@@ -17,7 +17,6 @@ const userReq = {
      * @type {import('../types/api/user').GetUser}
      */
     getUser(params) {
-
         return request(`users/${params.userId}`, {
             method: 'GET'
         }).then((json) => {
@@ -57,7 +56,6 @@ const userReq = {
      * @returns {Promise<{json: any, params: {tags: string[]}}>}
      */
     addUserTags(params) {
-
         return request(`users/${getCurrentUserId()}/addTags`, {
             method: 'POST',
             params
@@ -76,7 +74,6 @@ const userReq = {
      * @returns {Promise<{json: any, params: {tags: string[]}}>}
      */
     removeUserTags(params) {
-
         return request(`users/${getCurrentUserId()}/removeTags`, {
             method: 'POST',
             params
@@ -114,7 +111,6 @@ const userReq = {
      * @type {import('../types/api/user').GetCurrentUser}
      */
     saveCurrentUser(params) {
-
         return request(`users/${getCurrentUserId()}`, {
             method: 'PUT',
             params

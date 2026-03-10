@@ -316,6 +316,7 @@ async function refreshCustomScript() {
 /**
  *
  * @param {number} hue
+ * @param isDarkMode
  * @returns {string}
  */
 function HueToHex(hue, isDarkMode) {

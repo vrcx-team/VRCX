@@ -399,7 +399,6 @@
 
     const appLanguageDisplayName = computed(() => getLanguageName(String(appLanguage.value)));
 
-
     const {
         setDisplayVRCPlusIconsAsAvatar,
         setHideNicknames,

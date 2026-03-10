@@ -34,7 +34,11 @@ import { useGameStore } from './game';
 import { useGroupStore } from './group';
 import { showGroupDialog } from '../coordinators/groupCoordinator';
 import { showWorldDialog } from '../coordinators/worldCoordinator';
-import { showAvatarDialog, selectAvatarWithConfirmation, selectAvatarWithoutConfirmation } from '../coordinators/avatarCoordinator';
+import {
+    showAvatarDialog,
+    selectAvatarWithConfirmation,
+    selectAvatarWithoutConfirmation
+} from '../coordinators/avatarCoordinator';
 import { showUserDialog, addCustomTag } from '../coordinators/userCoordinator';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
@@ -278,7 +282,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     /**
      *
      */
-
 
     /**
      *
@@ -655,10 +658,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 }
                 avatarRequest.getAvatar({ avatarId: avatarIdFav }).then(() => {
                     showAvatarDialog(avatarIdFav);
-                    addLocalAvatarFavorite(
-                        avatarIdFav,
-                        avatarGroup
-                    );
+                    addLocalAvatarFavorite(avatarIdFav, avatarGroup);
                 });
                 break;
             case 'addavatardb':
@@ -679,10 +679,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     // Makes sure the window is focused
                     shouldFocusWindow = true;
                 } else {
-                    selectAvatarWithoutConfirmation(avatarId)
-                        .then(() => {
-                            toast.success('Avatar changed via launch command');
-                        });
+                    selectAvatarWithoutConfirmation(avatarId).then(() => {
+                        toast.success('Avatar changed via launch command');
+                    });
                     shouldFocusWindow = false;
                 }
                 break;

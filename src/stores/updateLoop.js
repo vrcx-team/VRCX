@@ -14,7 +14,10 @@ import { useFriendStore } from './friend';
 import { useGameStore } from './game';
 import { useGroupStore } from './group';
 import { handleGroupUserInstances } from '../coordinators/groupCoordinator';
-import { getCurrentUser, updateAutoStateChange } from '../coordinators/userCoordinator';
+import {
+    getCurrentUser,
+    updateAutoStateChange
+} from '../coordinators/userCoordinator';
 import { useModerationStore } from './moderation';
 import { useUserStore } from './user';
 import { useVRCXUpdaterStore } from './vrcxUpdater';

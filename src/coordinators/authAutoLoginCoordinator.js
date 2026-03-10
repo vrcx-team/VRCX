@@ -65,9 +65,7 @@ export async function runHandleAutoLoginFlow({
         if (AppDebug.errorNoty) {
             toast.dismiss(AppDebug.errorNoty);
         }
-        AppDebug.errorNoty = toast.error(
-            t('message.auth.auto_login_failed')
-        );
+        AppDebug.errorNoty = toast.error(t('message.auth.auto_login_failed'));
         console.error('Failed to login automatically.', err);
     } finally {
         authStore.setAttemptingAutoLogin(false);
