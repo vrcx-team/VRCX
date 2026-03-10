@@ -6,7 +6,7 @@ import {
     deleteVRChatCache as _deleteVRChatCache,
     isRealInstance
 } from '../shared/utils';
-import { createGameCoordinator } from './coordinators/gameCoordinator';
+import { createGameCoordinator } from '../coordinators/gameCoordinator';
 import { database } from '../service/database';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarStore } from './avatar';

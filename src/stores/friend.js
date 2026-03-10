@@ -18,9 +18,9 @@ import {
 } from '../shared/utils';
 import { friendRequest, userRequest } from '../api';
 import { AppDebug } from '../service/appConfig';
-import { createFriendPresenceCoordinator } from './coordinators/friendPresenceCoordinator';
-import { createFriendRelationshipCoordinator } from './coordinators/friendRelationshipCoordinator';
-import { createFriendSyncCoordinator } from './coordinators/friendSyncCoordinator';
+import { createFriendPresenceCoordinator } from '../coordinators/friendPresenceCoordinator';
+import { createFriendRelationshipCoordinator } from '../coordinators/friendRelationshipCoordinator';
+import { createFriendSyncCoordinator } from '../coordinators/friendSyncCoordinator';
 import { database } from '../service/database';
 import { reconnectWebSocket } from '../service/websocket';
 import { useAppearanceSettingsStore } from './settings/appearance';

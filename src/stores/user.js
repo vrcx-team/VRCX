@@ -34,8 +34,8 @@ import {
 } from '../api';
 import { processBulk, request } from '../service/request';
 import { AppDebug } from '../service/appConfig';
-import { createUserEventCoordinator } from './coordinators/userEventCoordinator';
-import { createUserSessionCoordinator } from './coordinators/userSessionCoordinator';
+import { createUserEventCoordinator } from '../coordinators/userEventCoordinator';
+import { createUserSessionCoordinator } from '../coordinators/userSessionCoordinator';
 import { database } from '../service/database';
 import { patchUserFromEvent } from '../queries';
 import { useAppearanceSettingsStore } from './settings/appearance';
