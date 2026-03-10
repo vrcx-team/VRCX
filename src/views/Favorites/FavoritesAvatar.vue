@@ -519,7 +519,7 @@
         handleFavoriteGroup
     } = favoriteStore;
     const { avatarHistory } = storeToRefs(useAvatarStore());
-    const { promptClearAvatarHistory, showAvatarDialog, applyAvatar } = useAvatarStore();
+    import { promptClearAvatarHistory, showAvatarDialog, applyAvatar } from '../../coordinators/avatarCoordinator';
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { t } = useI18n();
 

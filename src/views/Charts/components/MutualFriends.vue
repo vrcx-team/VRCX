@@ -275,6 +275,7 @@
         useUserStore
     } from '../../../stores';
     import { userImage, userStatusClass } from '../../../shared/utils';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
     import { database } from '../../../service/database';
     import { watchState } from '../../../service/watchState';
 
@@ -290,7 +291,7 @@
     const { currentUser } = storeToRefs(userStore);
     const { isDarkMode } = storeToRefs(appearanceStore);
     const cachedUsers = userStore.cachedUsers;
-    const showUserDialog = (userId) => userStore.showUserDialog(userId);
+
 
     const fetchState = chartsStore.mutualGraphFetchState;
     const status = chartsStore.mutualGraphStatus;

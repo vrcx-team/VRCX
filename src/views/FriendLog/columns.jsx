@@ -10,12 +10,13 @@ import { storeToRefs } from 'pinia';
 
 import { formatDateFilter } from '../../shared/utils';
 import { i18n } from '../../plugin';
-import { useUiStore, useUserStore } from '../../stores';
+import { useUiStore } from '../../stores';
+import { showUserDialog } from '../../coordinators/userCoordinator';
 
 const { t } = i18n.global;
 
 export const createColumns = ({ onDelete, onDeletePrompt }) => {
-    const { showUserDialog } = useUserStore();
+
     const { shiftHeld } = storeToRefs(useUiStore());
 
     return [

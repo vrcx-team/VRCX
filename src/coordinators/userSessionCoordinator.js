@@ -2,9 +2,11 @@ import { getWorldName, parseLocation } from '../shared/utils';
 import { runUpdateFriendshipsFlow } from './friendRelationshipCoordinator';
 import { useAuthStore } from '../stores/auth';
 import { useAvatarStore } from '../stores/avatar';
+import { addAvatarToHistory, addAvatarWearTime } from './avatarCoordinator';
 import { useFriendStore } from '../stores/friend';
 import { useGameStore } from '../stores/game';
 import { useGroupStore } from '../stores/group';
+import { applyPresenceGroups } from './groupCoordinator';
 import { useInstanceStore } from '../stores/instance';
 import { useUserStore } from '../stores/user';
 
@@ -28,9 +30,9 @@ export function runAvatarSwapFlow(
         return;
     }
     if (json.currentAvatar !== ref.currentAvatar) {
-        avatarStore.addAvatarToHistory(json.currentAvatar);
+        addAvatarToHistory(json.currentAvatar);
         if (gameStore.isGameRunning) {
-            avatarStore.addAvatarWearTime(ref.currentAvatar);
+            addAvatarWearTime(ref.currentAvatar);
             ref.$previousAvatarSwapTime = now();
         }
     }
@@ -64,7 +66,7 @@ export function runPostApplySyncFlow(ref) {
     const instanceStore = useInstanceStore();
     const friendStore = useFriendStore();
 
-    groupStore.applyPresenceGroups(ref);
+    applyPresenceGroups(ref);
     instanceStore.applyQueuedInstance(ref.queuedInstance);
     friendStore.updateUserCurrentStatus(ref);
     if (typeof ref.friends !== 'undefined') {

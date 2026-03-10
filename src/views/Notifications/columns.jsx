@@ -31,13 +31,14 @@ import { checkCanInvite, formatDateFilter } from '../../shared/utils';
 import { i18n } from '../../plugin';
 import {
     useGameStore,
-    useGroupStore,
     useLocationStore,
     useUiStore,
     useUserStore,
-    useWorldStore,
     useNotificationStore
 } from '../../stores';
+import { showUserDialog } from '../../coordinators/userCoordinator';
+import { showWorldDialog } from '../../coordinators/worldCoordinator';
+import { showGroupDialog } from '../../coordinators/groupCoordinator';
 
 import Emoji from '../../components/Emoji.vue';
 
@@ -61,9 +62,8 @@ export const createColumns = ({
     deleteNotificationLog,
     deleteNotificationLogPrompt
 }) => {
-    const { showUserDialog, showSendBoopDialog } = useUserStore();
-    const { showWorldDialog } = useWorldStore();
-    const { showGroupDialog } = useGroupStore();
+    const { showSendBoopDialog } = useUserStore();
+
     const { shiftHeld } = storeToRefs(useUiStore());
     const { currentUser } = storeToRefs(useUserStore());
     const { lastLocation } = storeToRefs(useLocationStore());

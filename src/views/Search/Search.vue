@@ -402,13 +402,14 @@
         userImage
     } from '../../shared/utils';
     import { groupRequest, worldRequest } from '../../api';
+import { showUserDialog, refreshUserDialogAvatars } from '../../coordinators/userCoordinator';
 
     const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
     const { avatarRemoteDatabaseProviderList, avatarRemoteDatabaseProvider } = storeToRefs(useAvatarProviderStore());
     const { setAvatarProvider } = useAvatarProviderStore();
     const { userDialog } = storeToRefs(useUserStore());
-    const { showUserDialog, refreshUserDialogAvatars } = useUserStore();
+    
     const { showAvatarDialog, lookupAvatars, cachedAvatars } = useAvatarStore();
     const { cachedWorlds, showWorldDialog } = useWorldStore();
     const { showGroupDialog } = useGroupStore();

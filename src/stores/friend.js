@@ -25,6 +25,7 @@ import {
     runPendingOfflineTickFlow,
     runUpdateFriendFlow
 } from '../coordinators/friendPresenceCoordinator';
+import { applyUser } from '../coordinators/userCoordinator';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
 import { useAppearanceSettingsStore } from './settings/appearance';
@@ -981,7 +982,7 @@ export const useFriendStore = defineStore('Friend', () => {
         const sqlValues = [];
         const friends = await refreshFriends();
         for (const friend of friends) {
-            const ref = userStore.applyUser(friend);
+            const ref = applyUser(friend);
             const row = {
                 userId: ref.id,
                 displayName: ref.displayName,

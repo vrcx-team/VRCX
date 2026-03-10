@@ -16,6 +16,7 @@ import { escapeTag } from '../shared/utils';
 import { initWebsocket } from '../service/websocket';
 import { request } from '../service/request';
 import { runHandleAutoLoginFlow } from '../coordinators/authAutoLoginCoordinator';
+import { getCurrentUser } from '../coordinators/userCoordinator';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useGeneralSettingsStore } from './settings/general';
 import { useModalStore } from './modal';
@@ -197,8 +198,7 @@ export const useAuthStore = defineStore('Auth', () => {
                     throw err;
                 })
                 .then(() => {
-                    userStore
-                        .getCurrentUser()
+                    getCurrentUser()
                         .finally(() => {
                             loginForm.value.loading = false;
                         })
@@ -671,7 +671,7 @@ export const useAuthStore = defineStore('Auth', () => {
                         clearCookiesTryLogin();
                     })
                     .then(() => {
-                        userStore.getCurrentUser();
+                        getCurrentUser();
                     });
             })
             .catch(() => {
@@ -713,7 +713,7 @@ export const useAuthStore = defineStore('Auth', () => {
                         clearCookiesTryLogin();
                     })
                     .then(() => {
-                        userStore.getCurrentUser();
+                        getCurrentUser();
                     });
             })
             .catch(() => {
@@ -756,7 +756,7 @@ export const useAuthStore = defineStore('Auth', () => {
                         promptEmailOTP();
                     })
                     .then(() => {
-                        userStore.getCurrentUser();
+                        getCurrentUser();
                     });
             })
             .catch(() => {

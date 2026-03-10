@@ -2,6 +2,7 @@ import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
 import { useAvatarStore } from '../stores/avatar';
+import { getAvatarName } from './avatarCoordinator';
 import { useFeedStore } from '../stores/feed';
 import { useFriendStore } from '../stores/friend';
 import { useGeneralSettingsStore } from '../stores/settings/general';
@@ -222,7 +223,7 @@ export async function runHandleUserUpdateFlow(
                 avatarName: ''
             };
             try {
-                avatarInfo = await avatarStore.getAvatarName(
+                avatarInfo = await getAvatarName(
                     currentAvatarImageUrl
                 );
             } catch (err) {
@@ -233,7 +234,7 @@ export async function runHandleUserUpdateFlow(
                 avatarName: ''
             };
             try {
-                previousAvatarInfo = await avatarStore.getAvatarName(
+                previousAvatarInfo = await getAvatarName(
                     previousCurrentAvatarImageUrl
                 );
             } catch (err) {

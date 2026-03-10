@@ -44,6 +44,8 @@ import { useFriendStore } from '../friend';
 import { useGameStore } from '../game';
 import { useGeneralSettingsStore } from '../settings/general';
 import { useGroupStore } from '../group';
+import { showGroupDialog } from '../../coordinators/groupCoordinator';
+import { showUserDialog } from '../../coordinators/userCoordinator';
 import { useInstanceStore } from '../instance';
 import { useLocationStore } from '../location';
 import { useModalStore } from '../modal';
@@ -1415,10 +1417,10 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         switch (data[0]) {
             case 'group':
-                groupStore.showGroupDialog(data[1]);
+                showGroupDialog(data[1]);
                 break;
             case 'user':
-                userStore.showUserDialog(data[1]);
+                showUserDialog(data[1]);
                 break;
             case 'event':
                 const ids = data[1].split(',');
@@ -1427,7 +1429,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                     return;
                 }
 
-                groupStore.showGroupDialog(ids[0]);
+                showGroupDialog(ids[0]);
                 // ids[1] cal_ is the event id
                 break;
             case 'openNotificationLink':

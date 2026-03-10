@@ -1,5 +1,5 @@
 import { toast } from 'vue-sonner';
-import { useI18n } from 'vue-i18n';
+import { i18n } from '../plugin/i18n';
 
 import { AppDebug } from '../service/appConfig';
 import { useAdvancedSettingsStore } from '../stores/settings/advanced';
@@ -17,7 +17,7 @@ export async function runHandleAutoLoginFlow({
 } = {}) {
     const authStore = useAuthStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
-    const { t } = useI18n();
+    const t = i18n.global.t;
 
     if (authStore.attemptingAutoLogin) {
         return;

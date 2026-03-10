@@ -28,9 +28,10 @@
     import { timeToText } from '../../../shared/utils';
 
     import * as echarts from 'echarts';
+import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { isDarkMode, dtHour12 } = storeToRefs(useAppearanceSettingsStore());
-    const { showUserDialog } = useUserStore();
+    
     const { currentUser } = storeToRefs(useUserStore());
 
     const props = defineProps({

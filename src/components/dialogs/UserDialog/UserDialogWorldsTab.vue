@@ -86,6 +86,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useUserStore, useWorldStore } from '../../../stores';
+    import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
     import { queryRequest } from '../../../api';
     import { useOptionKeySelect } from '../../../composables/useOptionKeySelect';
@@ -94,7 +95,7 @@
 
     const userStore = useUserStore();
     const { userDialog, currentUser } = storeToRefs(userStore);
-    const { cachedWorlds, showWorldDialog } = useWorldStore();
+    const { cachedWorlds } = useWorldStore();
 
     const userDialogWorldsRequestId = ref(0);
 

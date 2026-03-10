@@ -13,6 +13,10 @@ import { useAvatarStore } from './avatar';
 import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
 import { useGroupStore } from './group';
+import { showGroupDialog } from '../coordinators/groupCoordinator';
+import { showWorldDialog } from '../coordinators/worldCoordinator';
+import { showAvatarDialog } from '../coordinators/avatarCoordinator';
+import { showUserDialog } from '../coordinators/userCoordinator';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
 
@@ -166,16 +170,16 @@ export const useGlobalSearchStore = defineStore('GlobalSearch', () => {
 
         switch (item.type) {
             case 'friend':
-                userStore.showUserDialog(item.id);
+                showUserDialog(item.id);
                 break;
             case 'avatar':
-                avatarStore.showAvatarDialog(item.id);
+                showAvatarDialog(item.id);
                 break;
             case 'world':
-                worldStore.showWorldDialog(item.id);
+                showWorldDialog(item.id);
                 break;
             case 'group':
-                groupStore.showGroupDialog(item.id);
+                showGroupDialog(item.id);
                 break;
         }
     }

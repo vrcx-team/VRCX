@@ -10,6 +10,10 @@ import { updateLocalizedStrings } from '../plugin/i18n';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAvatarStore } from './avatar';
 import { useGroupStore } from './group';
+import { showGroupDialog } from '../coordinators/groupCoordinator';
+import { showWorldDialog } from '../coordinators/worldCoordinator';
+import { showAvatarDialog } from '../coordinators/avatarCoordinator';
+import { showUserDialog } from '../coordinators/userCoordinator';
 import { useInstanceStore } from './instance';
 import { useNotificationStore } from './notification';
 import { useSearchStore } from './search';
@@ -142,19 +146,19 @@ export const useUiStore = defineStore('Ui', () => {
         }
         jumpDialogCrumb(index);
         if (item.type === 'user') {
-            userStore.showUserDialog(item.id);
+            showUserDialog(item.id);
             return;
         }
         if (item.type === 'world') {
-            worldStore.showWorldDialog(item.tag, item.shortName);
+            showWorldDialog(item.tag, item.shortName);
             return;
         }
         if (item.type === 'avatar') {
-            avatarStore.showAvatarDialog(item.id);
+            showAvatarDialog(item.id);
             return;
         }
         if (item.type === 'group') {
-            groupStore.showGroupDialog(item.id);
+            showGroupDialog(item.id);
             return;
         }
         if (item.type === 'previous-instances-user') {

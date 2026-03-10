@@ -7,6 +7,7 @@ import {
     useUpdateLoopStore,
     useUserStore
 } from '../stores';
+import { getCurrentUser } from '../coordinators/userCoordinator';
 import { AppDebug } from './appConfig.js';
 import { escapeTag } from '../shared/utils';
 import { i18n } from '../plugin/i18n';
@@ -207,7 +208,7 @@ export function request(endpoint, options) {
                 ) {
                     // trigger 2FA dialog                }
                     if (!authStore.twoFactorAuthDialogVisible) {
-                        userStore.getCurrentUser();
+                        getCurrentUser();
                     }
                     $throw(401, t('api.status_code.401'), endpoint);
                 }

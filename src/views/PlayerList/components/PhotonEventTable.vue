@@ -83,9 +83,11 @@
         useVrcxStore,
         useWorldStore
     } from '../../../stores';
+    import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
     import { createColumns } from './photonEventColumns.jsx';
     import { photonEventTableTypeFilterList } from '../../../shared/constants/photon';
+import { lookupUser } from '../../../coordinators/userCoordinator';
 
     const emit = defineEmits(['show-chatbox-blacklist']);
     const { t } = useI18n();
@@ -106,9 +108,9 @@
 
     const { stringComparer } = storeToRefs(useSearchStore());
 
-    const { lookupUser } = useUserStore();
+    
     const { showAvatarDialog } = useAvatarStore();
-    const { showWorldDialog } = useWorldStore();
+
     const { showGroupDialog } = useGroupStore();
     const { showFullscreenImageDialog } = useGalleryStore();
     const { ipcEnabled } = storeToRefs(useVrcxStore());

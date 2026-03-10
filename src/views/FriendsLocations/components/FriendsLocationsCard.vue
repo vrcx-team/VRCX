@@ -81,9 +81,10 @@
     import { checkCanInvite, checkCanInviteSelf } from '../../../shared/utils/invite.js';
 
     import Location from '../../../components/Location.vue';
+import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { t } = useI18n();
-    const { showUserDialog, showSendBoopDialog } = useUserStore();
+    const { showSendBoopDialog } = useUserStore();
     const launchStore = useLaunchStore();
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
     const { isGameRunning } = storeToRefs(useGameStore());

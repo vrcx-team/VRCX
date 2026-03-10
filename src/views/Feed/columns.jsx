@@ -16,7 +16,8 @@ import {
 } from 'lucide-vue-next';
 import { formatDateFilter, statusClass, timeToText } from '../../shared/utils';
 import { i18n } from '../../plugin';
-import { useUserStore, useGalleryStore } from '../../stores';
+import { useGalleryStore } from '../../stores';
+import { showUserDialog } from '../../coordinators/userCoordinator';
 
 const { t } = i18n.global;
 
@@ -276,7 +277,7 @@ export const columns = [
         header: () => t('table.feed.user'),
         meta: { label: () => t('table.feed.user') },
         cell: ({ row }) => {
-            const { showUserDialog } = useUserStore();
+
             const original = row.original;
             return (
                 <span

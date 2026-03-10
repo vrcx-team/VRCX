@@ -255,6 +255,8 @@
     import dayjs from 'dayjs';
 
     import { useGameStore, useGroupStore, useLocationStore, useNotificationStore, useUserStore } from '../../../stores';
+    import { showGroupDialog } from '../../../coordinators/groupCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
     import { checkCanInvite, userImage } from '../../../shared/utils';
 
     import Location from '../../../components/Location.vue';
@@ -461,13 +463,13 @@
         if (userId.startsWith('grp_') || n.type?.startsWith('group.') || n.type === 'groupChange') {
             const groupId = userId.startsWith('grp_') ? userId : n.data?.groupId || n.details?.groupId || '';
             if (groupId) {
-                groupStore.showGroupDialog(groupId);
+                showGroupDialog(groupId);
                 return;
             }
         }
 
         if (userId) {
-            userStore.showUserDialog(userId);
+            showUserDialog(userId);
             return;
         }
 

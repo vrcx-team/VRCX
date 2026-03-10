@@ -148,6 +148,7 @@
     import { router } from '../../plugin/router';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
+import { showUserDialog } from '../../coordinators/userCoordinator';
 
     const { t } = useI18n();
 
@@ -158,7 +159,7 @@
     const { getAllUserStats, getAllUserMutualCount, confirmDeleteFriend, handleFriendDelete } = useFriendStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { randomUserColours } = storeToRefs(appearanceSettingsStore);
-    const { showUserDialog } = useUserStore();
+    
     const { stringComparer, friendsListSearch } = storeToRefs(useSearchStore());
 
     const friendsListSearchFilters = ref([]);

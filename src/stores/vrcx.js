@@ -32,6 +32,10 @@ import { useGalleryStore } from './gallery';
 import { useGameLogStore } from './gameLog';
 import { useGameStore } from './game';
 import { useGroupStore } from './group';
+import { showGroupDialog } from '../coordinators/groupCoordinator';
+import { showWorldDialog } from '../coordinators/worldCoordinator';
+import { showAvatarDialog, selectAvatarWithConfirmation, selectAvatarWithoutConfirmation } from '../coordinators/avatarCoordinator';
+import { showUserDialog, addCustomTag } from '../coordinators/userCoordinator';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
 import { useModalStore } from './modal';
@@ -335,7 +339,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         let entry;
         switch (data.MsgType) {
             case 'CustomTag':
-                userStore.addCustomTag(data);
+                addCustomTag(data);
                 break;
             case 'ClearCustomTags':
                 userStore.customUserTags.forEach((value, key) => {
@@ -669,17 +673,17 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     !searchStore.directAccessWorld(input.replace('world/', ''))
                 ) {
                     // fallback for mangled world ids
-                    worldStore.showWorldDialog(commandArg);
+                    showWorldDialog(commandArg);
                 }
                 break;
             case 'avatar':
-                avatarStore.showAvatarDialog(commandArg);
+                showAvatarDialog(commandArg);
                 break;
             case 'user':
-                userStore.showUserDialog(commandArg);
+                showUserDialog(commandArg);
                 break;
             case 'group':
-                groupStore.showGroupDialog(commandArg);
+                showGroupDialog(commandArg);
                 break;
             case 'local-favorite-world':
                 console.log('local-favorite-world', commandArg);
@@ -701,7 +705,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     break;
                 }
                 avatarRequest.getAvatar({ avatarId: avatarIdFav }).then(() => {
-                    avatarStore.showAvatarDialog(avatarIdFav);
+                    showAvatarDialog(avatarIdFav);
                     addLocalAvatarFavorite(
                         avatarIdFav,
                         avatarGroup
@@ -722,12 +726,11 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     break;
                 }
                 if (advancedSettingsStore.showConfirmationOnSwitchAvatar) {
-                    avatarStore.selectAvatarWithConfirmation(avatarId);
+                    selectAvatarWithConfirmation(avatarId);
                     // Makes sure the window is focused
                     shouldFocusWindow = true;
                 } else {
-                    avatarStore
-                        .selectAvatarWithoutConfirmation(avatarId)
+                    selectAvatarWithoutConfirmation(avatarId)
                         .then(() => {
                             toast.success('Avatar changed via launch command');
                         });

@@ -19,9 +19,6 @@ export async function runRefreshPlayerModerationsFlow() {
         playerModerationRequest.getPlayerModerations(),
         avatarModerationRequest.getAvatarModerations()
     ])
-        .finally(() => {
-            moderationStore.playerModerationTable.loading = false;
-        })
         .then((res) => {
             avatarStore.resetCachedAvatarModerations();
             if (res[1]?.json) {
@@ -41,5 +38,8 @@ export async function runRefreshPlayerModerationsFlow() {
                 'Failed to load player/avatar moderations:',
                 error
             );
+        })
+        .finally(() => {
+            moderationStore.playerModerationTable.loading = false;
         });
 }

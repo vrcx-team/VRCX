@@ -118,11 +118,12 @@
     } from '../../../stores';
 
     import InstanceActionBar from '../../InstanceActionBar.vue';
+import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { t } = useI18n();
 
     const { isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
-    const { showUserDialog } = useUserStore();
+    
     const { currentUser } = storeToRefs(useUserStore());
     const { worldDialog } = storeToRefs(useWorldStore());
     const { lastLocation } = storeToRefs(useLocationStore());

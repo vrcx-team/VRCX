@@ -7,6 +7,7 @@ import { useAuthStore } from '../stores/auth';
 import { useFriendStore } from '../stores/friend';
 import { useUpdateLoopStore } from '../stores/updateLoop';
 import { useUserStore } from '../stores/user';
+import { getCurrentUser } from './userCoordinator';
 import { watchState } from '../service/watchState';
 
 import configRepository from '../service/config';
@@ -21,7 +22,7 @@ export async function runRefreshFriendsListFlow() {
 
     // If we just got user less then 2 min before code call, don't call it again
     if (updateLoopStore.nextCurrentUserRefresh < 300) {
-        await userStore.getCurrentUser();
+        await getCurrentUser();
     }
     await friendStore.refreshFriends();
     reconnectWebSocket();

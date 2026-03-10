@@ -75,7 +75,7 @@
     const { t } = useI18n();
 
     const { showFavoriteDialog, getCachedFavoritesByObjectId } = useFavoriteStore();
-    const { selectAvatarWithConfirmation } = useAvatarStore();
+    import { selectAvatarWithConfirmation } from '../../../coordinators/avatarCoordinator';
     const { currentUser } = storeToRefs(useUserStore());
 
     const props = defineProps({

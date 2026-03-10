@@ -43,8 +43,9 @@
     import { createColumns } from './previousInstancesInfoColumns.jsx';
     import { database } from '../../../service/database';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
+import { lookupUser } from '../../../coordinators/userCoordinator';
 
-    const { lookupUser } = useUserStore();
+    
     const { previousInstancesInfoDialog, previousInstancesInfoState } = storeToRefs(useInstanceStore());
     const { gameLogIsFriend, gameLogIsFavorite } = useGameLogStore();
     const { t } = useI18n();

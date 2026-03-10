@@ -161,6 +161,7 @@
     } from '../stores';
     import { checkCanInviteSelf, formatDateFilter, hasGroupPermission, parseLocation } from '../shared/utils';
     import { instanceRequest, miscRequest } from '../api';
+    import { showUserDialog } from '../coordinators/userCoordinator';
 
     defineOptions({
         inheritAttrs: false
@@ -352,9 +353,7 @@
         }
     };
 
-    const showUserDialog = (userId) => {
-        userStore.showUserDialog(userId);
-    };
+
 
     const closeInstance = (location) => {
         modalStore

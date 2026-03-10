@@ -1,5 +1,5 @@
 import { toast } from 'vue-sonner';
-import { useI18n } from 'vue-i18n';
+import { i18n } from '../plugin/i18n';
 
 import { instanceRequest } from '../api';
 import { parseLocation } from '../shared/utils';
@@ -16,7 +16,7 @@ export function runNewInstanceSelfInviteFlow(worldId) {
     const instanceStore = useInstanceStore();
     const launchStore = useLaunchStore();
     const inviteStore = useInviteStore();
-    const { t } = useI18n();
+    const t = i18n.global.t;
 
     instanceStore.createNewInstance(worldId).then((args) => {
         const location = args?.json?.location;

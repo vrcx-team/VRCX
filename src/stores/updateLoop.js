@@ -12,6 +12,8 @@ import { useFriendStore } from './friend';
 import { useGameLogStore } from './gameLog';
 import { useGameStore } from './game';
 import { useGroupStore } from './group';
+import { handleGroupUserInstances } from '../coordinators/groupCoordinator';
+import { getCurrentUser, updateAutoStateChange } from '../coordinators/userCoordinator';
 import { useModerationStore } from './moderation';
 import { useUserStore } from './user';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
@@ -73,7 +75,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
             if (watchState.isLoggedIn) {
                 if (--state.nextCurrentUserRefresh <= 0) {
                     state.nextCurrentUserRefresh = 300; // 5min
-                    userStore.getCurrentUser();
+                    getCurrentUser();
                 }
                 if (--state.nextFriendsRefresh <= 0) {
                     state.nextFriendsRefresh = 3600; // 1hour
@@ -92,7 +94,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                         state.nextGroupInstanceRefresh = 300; // 5min
                         const args =
                             await groupRequest.getUsersGroupInstances();
-                        groupStore.handleGroupUserInstances(args);
+                        handleGroupUserInstances(args);
                     }
                     AppApi.CheckGameRunning();
                 }
@@ -122,7 +124,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 }
                 if (--state.nextAutoStateChange <= 0) {
                     state.nextAutoStateChange = 3;
-                    userStore.updateAutoStateChange();
+                    updateAutoStateChange();
                 }
                 if (LINUX && --state.nextGetLogCheck <= 0) {
                     state.nextGetLogCheck = 0.5;

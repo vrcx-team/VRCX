@@ -119,7 +119,7 @@
     const { userDialog, currentUser } = storeToRefs(userStore);
     const { sortUserDialogAvatars, refreshUserDialogAvatars } = userStore;
 
-    const { showAvatarDialog, lookupAvatars } = useAvatarStore();
+    import { showAvatarDialog, lookupAvatars } from '../../../coordinators/avatarCoordinator';
     const { cachedAvatars } = useAvatarStore();
 
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());

@@ -9,10 +9,10 @@ import { formatDateFilter, openExternalLink } from '../../shared/utils';
 import { i18n } from '../../plugin';
 import {
     useInstanceStore,
-    useUiStore,
-    useUserStore,
-    useWorldStore
+    useUiStore
 } from '../../stores';
+import { lookupUser } from '../../coordinators/userCoordinator';
+import { showWorldDialog } from '../../coordinators/worldCoordinator';
 
 const { t } = i18n.global;
 
@@ -24,8 +24,9 @@ const UNACTIONABLE_TYPES = new Set([
 ]);
 
 export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
-    const { showWorldDialog } = useWorldStore();
-    const { lookupUser } = useUserStore();
+
+
+
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { shiftHeld } = storeToRefs(useUiStore());
 

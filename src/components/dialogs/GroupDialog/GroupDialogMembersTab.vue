@@ -212,15 +212,16 @@
 
     import { downloadAndSaveJson, hasGroupPermission, userImage } from '../../../shared/utils';
     import { useGroupStore, useUserStore } from '../../../stores';
+    import { applyGroupMember, handleGroupMember } from '../../../coordinators/groupCoordinator';
     import { groupDialogSortingOptions } from '../../../shared/constants';
     import { useGroupMembers } from './useGroupMembers';
+import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { t } = useI18n();
 
-    const { showUserDialog } = useUserStore();
+    
     const { currentUser } = storeToRefs(useUserStore());
     const { groupDialog } = storeToRefs(useGroupStore());
-    const { applyGroupMember, handleGroupMember } = useGroupStore();
 
     const {
         isGroupMembersDone,

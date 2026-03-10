@@ -216,6 +216,7 @@
     import configRepository from '../../../service/config';
 
     import '@/styles/status-icon.css';
+import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { t } = useI18n();
 
@@ -238,7 +239,7 @@
         sidebarSortMethods
     } = storeToRefs(appearanceSettingsStore);
     const { gameLogDisabled } = storeToRefs(useAdvancedSettingsStore());
-    const { showUserDialog, showSendBoopDialog } = useUserStore();
+    const { showSendBoopDialog } = useUserStore();
     const launchStore = useLaunchStore();
     const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends, localFriendFavorites } =
         storeToRefs(useFavoriteStore());

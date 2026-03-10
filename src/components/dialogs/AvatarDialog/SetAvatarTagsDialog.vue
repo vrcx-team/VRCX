@@ -128,8 +128,8 @@
     import { avatarRequest } from '../../../api';
     import { removeFromArray } from '../../../shared/utils';
     import { useAvatarStore } from '../../../stores';
+    import { showAvatarDialog, applyAvatar } from '../../../coordinators/avatarCoordinator';
 
-    const { showAvatarDialog, applyAvatar } = useAvatarStore();
     const { cachedAvatars } = useAvatarStore();
 
     const { t } = useI18n();

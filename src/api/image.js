@@ -1,4 +1,5 @@
 import { useAvatarStore, useWorldStore } from '../stores';
+import { applyWorld } from '../coordinators/worldCoordinator';
 import { request } from '../service/request';
 
 const imageReq = {
@@ -267,7 +268,7 @@ const imageReq = {
                 json,
                 params
             };
-            args.ref = worldStore.applyWorld(json);
+            args.ref = applyWorld(json);
             return args;
         });
     },

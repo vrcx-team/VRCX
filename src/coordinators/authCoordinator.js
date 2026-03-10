@@ -1,4 +1,4 @@
-import { useI18n } from 'vue-i18n';
+import { i18n } from '../plugin/i18n';
 
 import Noty from 'noty';
 
@@ -9,6 +9,7 @@ import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useUpdateLoopStore } from '../stores/updateLoop';
 import { useUserStore } from '../stores/user';
+import { applyCurrentUser } from './userCoordinator';
 import { watchState } from '../service/watchState';
 
 import configRepository from '../service/config';
@@ -21,7 +22,7 @@ export async function runLogoutFlow() {
     const authStore = useAuthStore();
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
-    const { t } = useI18n();
+    const t = i18n.global.t;
 
     if (watchState.isLoggedIn) {
         new Noty({
@@ -56,6 +57,6 @@ export function runLoginSuccessFlow(json) {
     const userStore = useUserStore();
 
     updateLoopStore.setNextCurrentUserRefresh(420); // 7mins
-    userStore.applyCurrentUser(json);
+    applyCurrentUser(json);
     initWebsocket();
 }

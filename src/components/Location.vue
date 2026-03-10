@@ -50,12 +50,13 @@
         useSearchStore,
         useWorldStore
     } from '../stores';
+    import { showWorldDialog } from '../coordinators/worldCoordinator';
     import { Spinner } from './ui/spinner';
     import { accessTypeLocaleKeyMap } from '../shared/constants';
 
     const { t } = useI18n();
 
-    const { cachedWorlds, showWorldDialog } = useWorldStore();
+    const { cachedWorlds } = useWorldStore();
     const { showGroupDialog } = useGroupStore();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { verifyShortName } = useSearchStore();

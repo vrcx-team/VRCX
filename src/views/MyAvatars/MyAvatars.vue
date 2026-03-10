@@ -347,12 +347,13 @@
     import ManageTagsDialog from './ManageTagsDialog.vue';
     import MyAvatarCard from './components/MyAvatarCard.vue';
     import configRepository from '../../service/config.js';
+    import { showAvatarDialog, selectAvatarWithoutConfirmation, applyAvatar } from '../../coordinators/avatarCoordinator';
 
     const { t } = useI18n();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const avatarStore = useAvatarStore();
     const modalStore = useModalStore();
-    const { showAvatarDialog, selectAvatarWithoutConfirmation, applyAvatar } = avatarStore;
+
     const { currentUser } = storeToRefs(useUserStore());
 
     const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);

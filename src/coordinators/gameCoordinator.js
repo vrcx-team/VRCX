@@ -7,6 +7,7 @@ import {
 import { database } from '../service/database';
 import { useAdvancedSettingsStore } from '../stores/settings/advanced';
 import { useAvatarStore } from '../stores/avatar';
+import { addAvatarWearTime } from './avatarCoordinator';
 import { useGameLogStore } from '../stores/gameLog';
 import { useGameStore } from '../stores/game';
 import { useInstanceStore } from '../stores/instance';
@@ -47,7 +48,7 @@ export async function runGameRunningChangedFlow(isGameRunning) {
         runAutoVRChatCacheManagementFlow();
         runCheckIfGameCrashedFlow();
         updateLoopStore.setIpcTimeout(0);
-        avatarStore.addAvatarWearTime(userStore.currentUser.currentAvatar);
+        addAvatarWearTime(userStore.currentUser.currentAvatar);
     }
 
     runLastLocationResetFlow();

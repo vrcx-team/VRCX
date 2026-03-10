@@ -73,12 +73,13 @@
     import { useUserStore } from '../../../stores';
     import { userDialogMutualFriendSortingOptions } from '../../../shared/constants';
     import { userRequest } from '../../../api';
+import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { t } = useI18n();
 
     const userStore = useUserStore();
     const { userDialog, currentUser } = storeToRefs(userStore);
-    const { cachedUsers, showUserDialog } = userStore;
+    const { cachedUsers } = userStore;
 
     const { selectedKey: userDialogMutualFriendSortingKey, selectByKey: setUserDialogMutualFriendSortingByKey } =
         useOptionKeySelect(

@@ -372,15 +372,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAuthStore, useGroupStore, useUiStore, useUserStore } from '../../../stores';
-    import { compareByMemberCount, compareByName } from '../../../shared/utils';
-    import { groupRequest } from '../../../api';
-    import { useOptionKeySelect } from '../../../composables/useOptionKeySelect';
-    import { userDialogGroupSortingOptions } from '../../../shared/constants';
-
-    const { t } = useI18n();
-
-    const { userDialog, currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
-    const {
+    import {
         showGroupDialog,
         applyGroup,
         saveCurrentUserGroups,
@@ -389,7 +381,15 @@
         leaveGroupPrompt,
         setGroupVisibility,
         handleGroupList
-    } = useGroupStore();
+    } from '../../../coordinators/groupCoordinator';
+    import { compareByMemberCount, compareByName } from '../../../shared/utils';
+    import { groupRequest } from '../../../api';
+    import { useOptionKeySelect } from '../../../composables/useOptionKeySelect';
+    import { userDialogGroupSortingOptions } from '../../../shared/constants';
+
+    const { t } = useI18n();
+
+    const { userDialog, currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { currentUserGroups, inGameGroupOrder } = storeToRefs(useGroupStore());
     const { cachedConfig } = storeToRefs(useAuthStore());
     const { shiftHeld } = storeToRefs(useUiStore());

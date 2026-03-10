@@ -2,10 +2,12 @@ import { toast } from 'vue-sonner';
 import { useFavoriteStore } from '../stores/favorite';
 import { useAppearanceSettingsStore } from '../stores/settings/appearance';
 import { useAvatarStore } from '../stores/avatar';
+import { applyAvatar } from './avatarCoordinator';
 import { useFriendStore } from '../stores/friend';
 import { useGeneralSettingsStore } from '../stores/settings/general';
 import { useUserStore } from '../stores/user';
 import { useWorldStore } from '../stores/world';
+import { applyWorld } from './worldCoordinator';
 import { runUpdateFriendFlow } from './friendPresenceCoordinator';
 import { avatarRequest, favoriteRequest, queryRequest } from '../api';
 import { database } from '../service/database';
@@ -177,7 +179,7 @@ export function handleFavoriteWorldList(args) {
         if (json.id === '???') {
             continue;
         }
-        worldStore.applyWorld(json);
+        applyWorld(json);
     }
 }
 
@@ -191,7 +193,7 @@ export function handleFavoriteAvatarList(args) {
         if (json.releaseStatus === 'hidden') {
             continue;
         }
-        avatarStore.applyAvatar(json);
+        applyAvatar(json);
     }
 }
 
@@ -652,7 +654,7 @@ export async function getLocalWorldFavorites() {
     for (let i = 0; i < worldCache.length; ++i) {
         const ref = worldCache[i];
         if (!worldStore.cachedWorlds.has(ref.id)) {
-            worldStore.applyWorld(ref);
+            applyWorld(ref);
         }
     }
 
@@ -909,7 +911,7 @@ export async function getLocalAvatarFavorites() {
     for (let i = 0; i < avatarCache.length; ++i) {
         const ref = avatarCache[i];
         if (!avatarStore.cachedAvatars.has(ref.id)) {
-            avatarStore.applyAvatar(ref);
+            applyAvatar(ref);
         }
     }
 

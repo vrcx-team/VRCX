@@ -395,6 +395,7 @@
         useUserStore,
         useWorldStore
     } from '../../../stores';
+    import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import {
         DropdownMenu,
         DropdownMenuContent,
@@ -412,15 +413,16 @@
     import ImageCropDialog from '../ImageCropDialog.vue';
     import WorldDialogInfoTab from './WorldDialogInfoTab.vue';
     import WorldDialogInstancesTab from './WorldDialogInstancesTab.vue';
+import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const SetWorldTagsDialog = defineAsyncComponent(() => import('./SetWorldTagsDialog.vue'));
     const WorldAllowedDomainsDialog = defineAsyncComponent(() => import('./WorldAllowedDomainsDialog.vue'));
     const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog.vue'));
 
-    const { showUserDialog } = useUserStore();
+    
     const { currentUser, userDialog } = storeToRefs(useUserStore());
     const { worldDialog } = storeToRefs(useWorldStore());
-    const { cachedWorlds, showWorldDialog } = useWorldStore();
+    const { cachedWorlds } = useWorldStore();
     const { lastLocation } = storeToRefs(useLocationStore());
     const { canOpenInstanceInGame } = useInviteStore();
     const { showFavoriteDialog } = useFavoriteStore();

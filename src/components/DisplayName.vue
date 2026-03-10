@@ -1,14 +1,12 @@
 <template>
-    <span @click="showUserDialog" class="cursor-pointer">{{ username }}</span>
+    <span @click="openUserDialog" class="cursor-pointer">{{ username }}</span>
 </template>
 
 <script setup>
     import { ref, watch } from 'vue';
 
     import { queryRequest } from '../api';
-    import { useUserStore } from '../stores';
-
-    const userStore = useUserStore();
+    import { showUserDialog } from '../coordinators/userCoordinator';
 
     const props = defineProps({
         userid: String,
@@ -40,9 +38,10 @@
     /**
      *
      */
-    function showUserDialog() {
-        userStore.showUserDialog(props.userid);
+    function openUserDialog() {
+        showUserDialog(props.userid);
     }
 
     watch([() => props.userid, () => props.location, () => props.forceUpdateKey], parse, { immediate: true });
 </script>
+

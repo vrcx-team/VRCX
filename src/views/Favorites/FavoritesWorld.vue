@@ -388,6 +388,7 @@
         DropdownMenuTrigger
     } from '../../components/ui/dropdown-menu';
     import { useAppearanceSettingsStore, useFavoriteStore, useModalStore, useWorldStore } from '../../stores';
+    import { showWorldDialog } from '../../coordinators/worldCoordinator';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { favoriteRequest, worldRequest } from '../../api';
     import { debounce } from '../../shared/utils';
@@ -436,7 +437,7 @@
         handleFavoriteGroup,
         localWorldFavoritesList
     } = favoriteStore;
-    const { showWorldDialog } = useWorldStore();
+
 
     const {
         cardScale: worldCardScale,

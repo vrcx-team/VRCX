@@ -12,6 +12,13 @@ import {
     useUiStore,
     useUserStore
 } from '../stores';
+import { applyUser, applyCurrentUser } from '../coordinators/userCoordinator';
+import {
+    onGroupLeft,
+    applyGroup,
+    getGroupDialogGroup,
+    handleGroupMember
+} from '../coordinators/groupCoordinator';
 import { escapeTag, parseLocation } from '../shared/utils';
 import { AppDebug } from './appConfig';
 import { groupRequest } from '../api';
@@ -260,7 +267,7 @@ function handlePipeline(args) {
             break;
 
         case 'friend-add':
-            userStore.applyUser(content.user);
+            applyUser(content.user);
             friendStore.handleFriendAdd({
                 params: {
                     userId: content.userId
@@ -298,7 +305,7 @@ function handlePipeline(args) {
 
                     ...content.user
                 };
-                userStore.applyUser(onlineJson);
+                applyUser(onlineJson);
             } else {
                 console.error('friend-online missing user id', content);
                 runUpdateFriendFlow(content.userId, 'online');
@@ -321,7 +328,7 @@ function handlePipeline(args) {
 
                     ...content.user
                 };
-                userStore.applyUser(activeJson);
+                applyUser(activeJson);
             } else {
                 console.error('friend-active missing user id', content);
                 runUpdateFriendFlow(content.userId, 'active');
@@ -342,11 +349,11 @@ function handlePipeline(args) {
                 travelingToWorld: 'offline',
                 travelingToInstance: 'offline'
             };
-            userStore.applyUser(offlineJson);
+            applyUser(offlineJson);
             break;
 
         case 'friend-update':
-            userStore.applyUser(content.user);
+            applyUser(content.user);
             break;
 
         case 'friend-location':
@@ -365,7 +372,7 @@ function handlePipeline(args) {
                     travelingToWorld: $travelingToLocation1.worldId,
                     travelingToInstance: $travelingToLocation1.instanceId
                 };
-                userStore.applyUser(jankLocationJson);
+                applyUser(jankLocationJson);
                 break;
             }
             const locationJson = {
@@ -378,12 +385,12 @@ function handlePipeline(args) {
                 ...content.user,
                 state: 'online' // JANK
             };
-            userStore.applyUser(locationJson);
+            applyUser(locationJson);
 
             break;
 
         case 'user-update':
-            userStore.applyCurrentUser(content.user);
+            applyCurrentUser(content.user);
             break;
 
         case 'user-location':
@@ -410,14 +417,14 @@ function handlePipeline(args) {
             break;
 
         case 'group-left':
-            groupStore.onGroupLeft(content.groupId);
+            onGroupLeft(content.groupId);
             break;
 
         case 'group-role-updated':
             const groupId = content.role.groupId;
             groupRequest
                 .getGroup({ groupId, includeRoles: true })
-                .then((args) => groupStore.applyGroup(args.json));
+                .then((args) => applyGroup(args.json));
             console.log('group-role-updated', content);
 
             // content {
@@ -446,9 +453,9 @@ function handlePipeline(args) {
                 groupStore.groupDialog.visible &&
                 groupStore.groupDialog.id === groupId1
             ) {
-                groupStore.getGroupDialogGroup(groupId1);
+                getGroupDialogGroup(groupId1);
             }
-            groupStore.handleGroupMember({
+            handleGroupMember({
                 json: member,
                 params: {
                     groupId: groupId1

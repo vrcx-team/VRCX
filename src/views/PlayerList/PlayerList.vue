@@ -196,6 +196,7 @@
 
     import ChatboxBlacklistDialog from './dialogs/ChatboxBlacklistDialog.vue';
     import Timer from '../../components/Timer.vue';
+import { showUserDialog, lookupUser } from '../../coordinators/userCoordinator';
 
     const PhotonEventTable = defineAsyncComponent(() => import('./components/PhotonEventTable.vue'));
 
@@ -203,7 +204,7 @@
     const photonStore = usePhotonStore();
     const { photonLoggingEnabled, chatboxUserBlacklist } = storeToRefs(photonStore);
     const { saveChatboxUserBlacklist } = photonStore;
-    const { showUserDialog, lookupUser } = useUserStore();
+    
     const { showWorldDialog } = useWorldStore();
     const { lastLocation } = storeToRefs(useLocationStore());
     const { currentInstanceLocation, currentInstanceWorld, currentInstanceUsersData } = storeToRefs(useInstanceStore());

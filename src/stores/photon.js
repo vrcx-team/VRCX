@@ -20,6 +20,8 @@ import { photonEmojis, photonEventType } from '../shared/constants/photon';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
 import { useAvatarStore } from './avatar';
+import { applyAvatar } from '../coordinators/avatarCoordinator';
+import { showUserDialog, lookupUser, applyUser } from '../coordinators/userCoordinator';
 import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
 import { useGameLogStore } from './gameLog';
@@ -424,9 +426,9 @@ export const usePhotonStore = defineStore('Photon', () => {
             const ref = photonLobby.value.get(photonId);
             if (typeof ref !== 'undefined') {
                 if (typeof ref.id !== 'undefined') {
-                    userStore.showUserDialog(ref.id);
+                    showUserDialog(ref.id);
                 } else if (typeof ref.displayName !== 'undefined') {
-                    userStore.lookupUser(ref);
+                    lookupUser(ref);
                 }
             } else {
                 toast.error('No user info available');
@@ -1475,7 +1477,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                 typeof ref.id !== 'undefined' &&
                 ref.currentAvatarImageUrl !== user.currentAvatarImageUrl
             ) {
-                userStore.applyUser({
+                applyUser({
                     ...ref,
                     currentAvatarImageUrl: user.currentAvatarImageUrl,
                     currentAvatarThumbnailImageUrl:
@@ -1803,7 +1805,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                 }
             }
         }
-        avatarStore.applyAvatar({
+        applyAvatar({
             id: avatar.id,
             authorId: avatar.authorId,
             authorName: avatar.authorName,

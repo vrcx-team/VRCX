@@ -80,6 +80,7 @@
     import { userImage, userStatusClass } from '../../../shared/utils';
 
     import '@/styles/status-icon.css';
+import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const props = defineProps({
         friend: { type: Object, required: true },
@@ -89,7 +90,7 @@
     const { hideNicknames } = storeToRefs(useAppearanceSettingsStore());
     const { isRefreshFriendsLoading, allFavoriteFriendIds } = storeToRefs(useFriendStore());
     const { confirmDeleteFriend } = useFriendStore();
-    const { showUserDialog } = useUserStore();
+    
     const { t } = useI18n();
 
     const isFriendTraveling = computed(() => props.friend.ref?.location === 'traveling');

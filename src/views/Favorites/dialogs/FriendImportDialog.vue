@@ -131,12 +131,13 @@
     import { favoriteRequest, userRequest } from '../../../api';
     import { createColumns } from './friendImportColumns.jsx';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
+import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { t } = useI18n();
 
     const emit = defineEmits(['update:friendImportDialogInput']);
 
-    const { showUserDialog } = useUserStore();
+    
     const { favoriteFriendGroups, friendImportDialogInput, friendImportDialogVisible, localFriendFavoriteGroups } =
         storeToRefs(useFavoriteStore());
     const { showFullscreenImageDialog } = useGalleryStore();

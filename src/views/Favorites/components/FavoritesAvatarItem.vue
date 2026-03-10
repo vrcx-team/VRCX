@@ -170,7 +170,7 @@
 
     const { favoriteAvatarGroups } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog } = useFavoriteStore();
-    const { selectAvatarWithConfirmation } = useAvatarStore();
+    import { selectAvatarWithConfirmation } from '../../../coordinators/avatarCoordinator';
     const { shiftHeld } = storeToRefs(useUiStore());
     const { currentUser } = storeToRefs(useUserStore());
 

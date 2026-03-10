@@ -66,11 +66,12 @@
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     import * as workerTimers from 'worker-timers';
+import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { t } = useI18n();
 
     const { friends } = storeToRefs(useFriendStore());
-    const { showUserDialog } = useUserStore();
+    
     const { showFullscreenImageDialog } = useGalleryStore();
 
     const props = defineProps({
