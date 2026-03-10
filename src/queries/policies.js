@@ -1,4 +1,5 @@
 const SECOND = 1000;
+const MINUTE = 60 * SECOND;
 
 export const entityQueryPolicies = Object.freeze({
     user: Object.freeze({
@@ -20,8 +21,8 @@ export const entityQueryPolicies = Object.freeze({
         refetchOnWindowFocus: false
     }),
     group: Object.freeze({
-        staleTime: 60 * SECOND,
-        gcTime: 300 * SECOND,
+        staleTime: 5 * MINUTE,
+        gcTime: 30 * MINUTE,
         retry: 1,
         refetchOnWindowFocus: false
     }),
@@ -62,8 +63,8 @@ export const entityQueryPolicies = Object.freeze({
         refetchOnWindowFocus: false
     }),
     fileAnalysis: Object.freeze({
-        staleTime: 120 * SECOND,
-        gcTime: 600 * SECOND,
+        staleTime: 10 * MINUTE,
+        gcTime: 60 * MINUTE,
         retry: 1,
         refetchOnWindowFocus: false
     }),

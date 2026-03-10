@@ -98,6 +98,7 @@
     import { convertFileUrlToImageUrl, parseLocation } from '../../../shared/utils';
     import { useInviteChecks } from '../../../composables/useInviteChecks';
     import { useAppearanceSettingsStore, useGroupStore, useLaunchStore } from '../../../stores';
+    import { showGroupDialog } from '../../../coordinators/groupCoordinator';
     import { instanceRequest } from '../../../api';
 
     import BackToTop from '../../../components/BackToTop.vue';
@@ -107,7 +108,7 @@
 
     const launchStore = useLaunchStore();
     const { isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
-    const { showGroupDialog, sortGroupInstancesByInGame } = useGroupStore();
+    const { sortGroupInstancesByInGame } = useGroupStore();
     const { groupInstances } = storeToRefs(useGroupStore());
     const { checkCanInviteSelf } = useInviteChecks();
 
