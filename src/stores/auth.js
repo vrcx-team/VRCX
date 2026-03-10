@@ -39,9 +39,7 @@ export const useAuthStore = defineStore('Auth', () => {
 
     const { t } = useI18n();
     const state = reactive({
-        autoLoginAttempts: new Set(),
-        enableCustomEndpoint: false,
-        cachedConfig: {}
+        autoLoginAttempts: new Set()
     });
 
     const loginForm = ref({
@@ -106,12 +104,12 @@ export const useAuthStore = defineStore('Auth', () => {
      *
      */
     async function init() {
-        const [lastUserLoggedIn, enableCustomEndpoint] = await Promise.all([
+        const [lastUserLoggedIn, savedEnableCustomEndpoint] = await Promise.all([
             configRepository.getString('lastUserLoggedIn', ''),
             configRepository.getBool('VRCX_enableCustomEndpoint', false)
         ]);
         loginForm.value.lastUserLoggedIn = lastUserLoggedIn;
-        state.enableCustomEndpoint = enableCustomEndpoint;
+        enableCustomEndpoint.value = savedEnableCustomEndpoint;
     }
 
     init();
@@ -191,22 +189,17 @@ export const useAuthStore = defineStore('Auth', () => {
             await applyAutoLoginDelay();
             // login at startup
             loginForm.value.loading = true;
-            authRequest
-                .getConfig()
-                .catch((err) => {
-                    loginForm.value.loading = false;
-                    throw err;
-                })
-                .then(() => {
-                    getCurrentUser()
-                        .finally(() => {
-                            loginForm.value.loading = false;
-                        })
-                        .catch((err) => {
-                            updateLoopStore.setNextCurrentUserRefresh(60); // 1min
-                            console.error(err);
-                        });
-                });
+            try {
+                await authRequest.getConfig();
+                try {
+                    await getCurrentUser();
+                } catch (err) {
+                    updateLoopStore.setNextCurrentUserRefresh(60); // 1min
+                    console.error(err);
+                }
+            } finally {
+                loginForm.value.loading = false;
+            }
         }
     }
 
@@ -435,7 +428,7 @@ export const useAuthStore = defineStore('Auth', () => {
     async function toggleCustomEndpoint() {
         await configRepository.setBool(
             'VRCX_enableCustomEndpoint',
-            state.enableCustomEndpoint
+            enableCustomEndpoint.value
         );
         loginForm.value.endpoint = '';
         loginForm.value.websocket = '';
@@ -552,87 +545,64 @@ export const useAuthStore = defineStore('Auth', () => {
                 AppDebug.endpointDomain = AppDebug.endpointDomainVrchat;
                 AppDebug.websocketDomain = AppDebug.websocketDomainVrchat;
             }
-            authRequest
-                .getConfig()
-                .catch((err) => {
-                    loginForm.value.loading = false;
-                    throw err;
-                })
-                .then((args) => {
-                    if (
-                        loginForm.value.saveCredentials &&
-                        advancedSettingsStore.enablePrimaryPassword
-                    ) {
-                        modalStore
-                            .prompt({
-                                title: t('prompt.primary_password.header'),
-                                description: t(
-                                    'prompt.primary_password.description'
-                                ),
-                                inputType: 'password',
-                                pattern: /[\s\S]{1,32}/
-                            })
-                            .then(async ({ ok, value }) => {
-                                if (!ok) return;
-                                const savedCredentials = JSON.parse(
-                                    await configRepository.getString(
-                                        'savedCredentials'
-                                    )
-                                );
-                                const saveCredential =
-                                    savedCredentials[
-                                        Object.keys(savedCredentials)[0]
-                                    ];
-                                security
-                                    .decrypt(
-                                        saveCredential.loginParams.password,
-                                        value
-                                    )
-                                    .then(() => {
-                                        security
-                                            .encrypt(
-                                                loginForm.value.password,
-                                                value
-                                            )
-                                            .then((pwd) => {
-                                                authLogin({
-                                                    username:
-                                                        loginForm.value
-                                                            .username,
-                                                    password:
-                                                        loginForm.value
-                                                            .password,
-                                                    endpoint:
-                                                        loginForm.value
-                                                            .endpoint,
-                                                    websocket:
-                                                        loginForm.value
-                                                            .websocket,
-                                                    saveCredentials:
-                                                        loginForm.value
-                                                            .saveCredentials,
-                                                    cipher: pwd
-                                                });
-                                            });
-                                    });
-                            })
-                            .finally(() => {
-                                loginForm.value.loading = false;
-                            })
-                            .catch(() => {});
-                        return args;
+            try {
+                await authRequest.getConfig();
+                if (
+                    loginForm.value.saveCredentials &&
+                    advancedSettingsStore.enablePrimaryPassword
+                ) {
+                    try {
+                        const { ok, value } = await modalStore.prompt({
+                            title: t('prompt.primary_password.header'),
+                            description: t(
+                                'prompt.primary_password.description'
+                            ),
+                            inputType: 'password',
+                            pattern: /[\s\S]{1,32}/
+                        });
+                        if (ok) {
+                            const savedCredentials = JSON.parse(
+                                await configRepository.getString(
+                                    'savedCredentials'
+                                )
+                            );
+                            const saveCredential =
+                                savedCredentials[
+                                    Object.keys(savedCredentials)[0]
+                                ];
+                            await security.decrypt(
+                                saveCredential.loginParams.password,
+                                value
+                            );
+                            const pwd = await security.encrypt(
+                                loginForm.value.password,
+                                value
+                            );
+                            await authLogin({
+                                username: loginForm.value.username,
+                                password: loginForm.value.password,
+                                endpoint: loginForm.value.endpoint,
+                                websocket: loginForm.value.websocket,
+                                saveCredentials:
+                                    loginForm.value.saveCredentials,
+                                cipher: pwd
+                            });
+                        }
+                    } catch {
+                        // prompt cancelled or crypto failed
                     }
-                    authLogin({
+                } else {
+                    await authLogin({
                         username: loginForm.value.username,
                         password: loginForm.value.password,
                         endpoint: loginForm.value.endpoint,
                         websocket: loginForm.value.websocket,
                         saveCredentials: loginForm.value.saveCredentials
-                    }).finally(() => {
-                        loginForm.value.loading = false;
                     });
-                    return args;
-                });
+                }
+            } finally {
+                loginForm.value.loading = false;
+            }
         }
     }
 
@@ -876,7 +846,6 @@ export const useAuthStore = defineStore('Auth', () => {
      */
     function setCachedConfig(value) {
         cachedConfig.value = value;
-        state.cachedConfig = value;
     }
 
     /**
@@ -915,6 +884,7 @@ export const useAuthStore = defineStore('Auth', () => {
         handleCurrentUserUpdate,
         loginComplete,
         getAllSavedCredentials,
+        getSavedCredentials,
         setCachedConfig,
         setAttemptingAutoLogin
     };

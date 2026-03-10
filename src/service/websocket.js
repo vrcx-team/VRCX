@@ -19,6 +19,10 @@ import {
     getGroupDialogGroup,
     handleGroupMember
 } from '../coordinators/groupCoordinator';
+import {
+    handleFriendAdd,
+    handleFriendDelete
+} from '../coordinators/friendRelationshipCoordinator';
 import { escapeTag, parseLocation } from '../shared/utils';
 import { AppDebug } from './appConfig';
 import { groupRequest } from '../api';
@@ -268,7 +272,7 @@ function handlePipeline(args) {
 
         case 'friend-add':
             applyUser(content.user);
-            friendStore.handleFriendAdd({
+            handleFriendAdd({
                 params: {
                     userId: content.userId
                 }
@@ -276,7 +280,7 @@ function handlePipeline(args) {
             break;
 
         case 'friend-delete':
-            friendStore.handleFriendDelete({
+            handleFriendDelete({
                 params: {
                     userId: content.userId
                 }

@@ -81,6 +81,7 @@
 
     import '@/styles/status-icon.css';
 import { showUserDialog } from '../../../coordinators/userCoordinator';
+import { confirmDeleteFriend } from '../../../coordinators/friendRelationshipCoordinator';
 
     const props = defineProps({
         friend: { type: Object, required: true },
@@ -89,7 +90,7 @@ import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { hideNicknames } = storeToRefs(useAppearanceSettingsStore());
     const { isRefreshFriendsLoading, allFavoriteFriendIds } = storeToRefs(useFriendStore());
-    const { confirmDeleteFriend } = useFriendStore();
+
     
     const { t } = useI18n();
 

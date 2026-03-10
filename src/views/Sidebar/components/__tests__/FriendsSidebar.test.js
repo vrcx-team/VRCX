@@ -23,7 +23,6 @@ const mocks = vi.hoisted(() => ({
         gameLogDisabled: { value: false }
     },
     userStore: {
-        showUserDialog: vi.fn(),
         showSendBoopDialog: vi.fn(),
         currentUser: {
             value: {
@@ -78,9 +77,13 @@ const mocks = vi.hoisted(() => ({
     }
 }));
 
-vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
-}));
+vi.mock('pinia', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        storeToRefs: (store) => store
+    };
+});
 
 vi.mock('@tanstack/vue-virtual', () => ({
     useVirtualizer: (optionsRef) => ({
@@ -109,6 +112,10 @@ vi.mock('../../../../stores', () => ({
     useLaunchStore: () => mocks.launchStore,
     useLocationStore: () => mocks.locationStore,
     useUserStore: () => mocks.userStore
+}));
+
+vi.mock('../../../../coordinators/userCoordinator', () => ({
+    showUserDialog: vi.fn()
 }));
 
 vi.mock('../../../../shared/utils', () => ({

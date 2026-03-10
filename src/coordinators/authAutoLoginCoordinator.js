@@ -52,31 +52,28 @@ export async function runHandleAutoLoginFlow({
     }
     autoLoginAttempts.add(currentTimestamp);
     console.log('Attempting automatic login...');
-    authStore
-        .relogin(user)
-        .then(() => {
-            if (AppDebug.errorNoty) {
-                toast.dismiss(AppDebug.errorNoty);
-            }
-            AppDebug.errorNoty = toast.success(
-                t('message.auth.auto_login_success')
-            );
-            console.log('Automatically logged in.');
-        })
-        .catch((err) => {
-            if (AppDebug.errorNoty) {
-                toast.dismiss(AppDebug.errorNoty);
-            }
-            AppDebug.errorNoty = toast.error(
-                t('message.auth.auto_login_failed')
-            );
-            console.error('Failed to login automatically.', err);
-        })
-        .finally(() => {
-            authStore.setAttemptingAutoLogin(false);
-            if (!isOnline()) {
-                AppDebug.errorNoty = toast.error(t('message.auth.offline'));
-                console.error(`You're offline.`);
-            }
-        });
+    try {
+        await authStore.relogin(user);
+        if (AppDebug.errorNoty) {
+            toast.dismiss(AppDebug.errorNoty);
+        }
+        AppDebug.errorNoty = toast.success(
+            t('message.auth.auto_login_success')
+        );
+        console.log('Automatically logged in.');
+    } catch (err) {
+        if (AppDebug.errorNoty) {
+            toast.dismiss(AppDebug.errorNoty);
+        }
+        AppDebug.errorNoty = toast.error(
+            t('message.auth.auto_login_failed')
+        );
+        console.error('Failed to login automatically.', err);
+    } finally {
+        authStore.setAttemptingAutoLogin(false);
+        if (!isOnline()) {
+            AppDebug.errorNoty = toast.error(t('message.auth.offline'));
+            console.error(`You're offline.`);
+        }
+    }
 }

@@ -390,7 +390,6 @@
         useAuthStore,
         useAvatarProviderStore,
         useAvatarStore,
-        useGameLogStore,
         useGeneralSettingsStore,
         useGroupStore,
         useInstanceStore,
@@ -400,10 +399,11 @@
         useUserStore,
         useVRCXUpdaterStore,
         useVrStore,
-        useVrcxStore,
         useWorldStore
     } from '../../../../stores';
     import { authRequest, queryRequest } from '../../../../api';
+    import { disableGameLogDialog } from '../../../../coordinators/gameLogCoordinator';
+    import { clearVRCXCache } from '../../../../coordinators/vrcxCoordinator';
     import { openExternalLink } from '../../../../shared/utils';
 
     import AvatarProviderDialog from '../../dialogs/AvatarProviderDialog.vue';
@@ -420,9 +420,7 @@
     const { updateVRLastLocation, updateOpenVR } = useVrStore();
     const { enablePrimaryPasswordChange } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
-    const { clearVRCXCache } = useVrcxStore();
     const { showConsole } = useUiStore();
-    const { disableGameLogDialog } = useGameLogStore();
 
     const generalSettingsStore = useGeneralSettingsStore();
     const { udonExceptionLogging, logResourceLoad, logEmptyAvatars, autoLoginDelayEnabled } =

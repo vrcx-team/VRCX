@@ -84,6 +84,12 @@ vi.mock('../../../../service/request', () => ({
     failedGetRequests: new Map()
 }));
 
+import * as userCoordinatorModule from '../../../../coordinators/userCoordinator';
+vi.mock('../../../../coordinators/userCoordinator', async (importOriginal) => {
+    const actual = await importOriginal();
+    return { ...actual, showUserDialog: vi.fn() };
+});
+
 import UserDialogMutualFriendsTab from '../UserDialogMutualFriendsTab.vue';
 import { useUserStore } from '../../../../stores';
 import { userDialogMutualFriendSortingOptions } from '../../../../shared/constants';
@@ -219,7 +225,7 @@ describe('UserDialogMutualFriendsTab.vue', () => {
             };
             userStore.currentUser = { id: 'usr_me' };
             const showUserDialogSpy = vi
-                .spyOn(userStore, 'showUserDialog')
+                .spyOn(userCoordinatorModule, 'showUserDialog')
                 .mockImplementation(() => {});
 
             const wrapper = mount(UserDialogMutualFriendsTab, {

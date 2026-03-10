@@ -149,6 +149,7 @@
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 import { showUserDialog } from '../../coordinators/userCoordinator';
+import { confirmDeleteFriend, handleFriendDelete } from '../../coordinators/friendRelationshipCoordinator';
 
     const { t } = useI18n();
 
@@ -156,7 +157,7 @@ import { showUserDialog } from '../../coordinators/userCoordinator';
 
     const { friends, allFavoriteFriendIds } = storeToRefs(useFriendStore());
     const modalStore = useModalStore();
-    const { getAllUserStats, getAllUserMutualCount, confirmDeleteFriend, handleFriendDelete } = useFriendStore();
+    const { getAllUserStats, getAllUserMutualCount } = useFriendStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { randomUserColours } = storeToRefs(appearanceSettingsStore);
     

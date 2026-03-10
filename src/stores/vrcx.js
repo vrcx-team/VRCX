@@ -46,6 +46,7 @@ import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
 import { useVrcStatusStore } from './vrcStatus';
 import { useWorldStore } from './world';
+import { clearVRCXCache } from '../coordinators/vrcxCoordinator';
 import { watchState } from '../service/watchState';
 
 import configRepository from '../service/config';
@@ -277,59 +278,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     /**
      *
      */
-    function clearVRCXCache() {
-        console.log('Clearing VRCX cache...');
-        failedGetRequests.clear();
-        userStore.cachedUsers.forEach((ref, id) => {
-            if (
-                !friendStore.friends.has(id) &&
-                !locationStore.lastLocation.playerList.has(ref.id) &&
-                id !== userStore.currentUser.id
-            ) {
-                userStore.cachedUsers.delete(id);
-            }
-        });
-        worldStore.cachedWorlds.forEach((ref, id) => {
-            if (
-                !favoriteStore.getCachedFavoritesByObjectId(id) &&
-                ref.authorId !== userStore.currentUser.id &&
-                !favoriteStore.localWorldFavoritesList.includes(id)
-            ) {
-                worldStore.cachedWorlds.delete(id);
-            }
-        });
-        avatarStore.cachedAvatars.forEach((ref, id) => {
-            if (
-                !favoriteStore.getCachedFavoritesByObjectId(id) &&
-                ref.authorId !== userStore.currentUser.id &&
-                !favoriteStore.localAvatarFavoritesList.includes(id) &&
-                !avatarStore.avatarHistory.includes(id)
-            ) {
-                avatarStore.cachedAvatars.delete(id);
-            }
-        });
-        groupStore.cachedGroups.forEach((ref, id) => {
-            if (!groupStore.currentUserGroups.has(id)) {
-                groupStore.cachedGroups.delete(id);
-            }
-        });
-        instanceStore.cachedInstances.forEach((ref, id) => {
-            if (
-                [...friendStore.friends.values()].some(
-                    (f) => f.$location?.tag === id
-                )
-            ) {
-                return;
-            }
-            // delete instances over an hour old
-            if (Date.parse(ref.$fetchedAt) < Date.now() - 3600000) {
-                instanceStore.cachedInstances.delete(id);
-            }
-        });
-        avatarStore.cachedAvatarNames.clear();
-        userStore.customUserTags.clear();
-        galleryStore.cachedEmoji.clear();
-    }
+
 
     /**
      *

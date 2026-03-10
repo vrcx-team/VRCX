@@ -1,5 +1,8 @@
 import { getWorldName, parseLocation } from '../shared/utils';
-import { runUpdateFriendshipsFlow } from './friendRelationshipCoordinator';
+import {
+    runUpdateFriendshipsFlow,
+    updateUserCurrentStatus
+} from './friendRelationshipCoordinator';
 import { useAuthStore } from '../stores/auth';
 import { useAvatarStore } from '../stores/avatar';
 import { addAvatarToHistory, addAvatarWearTime } from './avatarCoordinator';
@@ -68,7 +71,7 @@ export function runPostApplySyncFlow(ref) {
 
     applyPresenceGroups(ref);
     instanceStore.applyQueuedInstance(ref.queuedInstance);
-    friendStore.updateUserCurrentStatus(ref);
+    updateUserCurrentStatus(ref);
     if (typeof ref.friends !== 'undefined') {
         runUpdateFriendshipsFlow(ref);
     }

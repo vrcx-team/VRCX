@@ -21,9 +21,13 @@ const mocks = vi.hoisted(() => ({
     photonColumnToggleVisibility: vi.fn()
 }));
 
-vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
-}));
+vi.mock('pinia', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        storeToRefs: (store) => store
+    };
+});
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
@@ -43,9 +47,7 @@ vi.mock('../../../stores', () => ({
         saveChatboxUserBlacklist: (...args) => mocks.saveChatboxUserBlacklist(...args)
     }),
     useUserStore: () => ({
-        currentUser: mocks.currentUser,
-        showUserDialog: (...args) => mocks.showUserDialog(...args),
-        lookupUser: (...args) => mocks.lookupUser(...args)
+        currentUser: mocks.currentUser
     }),
     useWorldStore: () => ({
         showWorldDialog: (...args) => mocks.showWorldDialog(...args)
@@ -62,6 +64,11 @@ vi.mock('../../../stores', () => ({
     useGalleryStore: () => ({
         showFullscreenImageDialog: (...args) => mocks.showFullscreenImageDialog(...args)
     })
+}));
+
+vi.mock('../../../coordinators/userCoordinator', () => ({
+    showUserDialog: (...args) => mocks.showUserDialog(...args),
+    lookupUser: (...args) => mocks.lookupUser(...args)
 }));
 
 vi.mock('../../../lib/table/useVrcxVueTable', () => ({

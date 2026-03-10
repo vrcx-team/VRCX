@@ -41,6 +41,7 @@ import { useAdvancedSettingsStore } from '../settings/advanced';
 import { useAppearanceSettingsStore } from '../settings/appearance';
 import { useFavoriteStore } from '../favorite';
 import { useFriendStore } from '../friend';
+import { handleFriendAdd } from '../../coordinators/friendRelationshipCoordinator';
 import { useGameStore } from '../game';
 import { useGeneralSettingsStore } from '../settings/general';
 import { useGroupStore } from '../group';
@@ -533,7 +534,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                 notificationId: ref.id
             }
         });
-        friendStore.handleFriendAdd({
+        handleFriendAdd({
             params: {
                 userId: ref.senderUserId
             }

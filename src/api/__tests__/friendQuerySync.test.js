@@ -17,6 +17,12 @@ vi.mock('../../stores/user', () => ({
 vi.mock('../../queries', () => ({
     queryClient: {
         invalidateQueries: (...args) => mockInvalidateQueries(...args)
+    },
+    entityQueryPolicies: {
+        user: {},
+        avatar: {},
+        world: {},
+        worldCollection: {}
     }
 }));
 

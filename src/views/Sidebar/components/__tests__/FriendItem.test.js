@@ -7,22 +7,33 @@ const mocks = vi.hoisted(() => ({
     },
     friendStore: {
         isRefreshFriendsLoading: false,
-        allFavoriteFriendIds: new Set(),
-        confirmDeleteFriend: vi.fn()
+        allFavoriteFriendIds: new Set()
     },
-    userStore: {
-        showUserDialog: vi.fn()
-    }
+    userStore: {},
+    showUserDialog: vi.fn(),
+    confirmDeleteFriend: vi.fn()
 }));
 
-vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
-}));
+vi.mock('pinia', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        storeToRefs: (store) => store
+    };
+});
 
 vi.mock('../../../../stores', () => ({
     useAppearanceSettingsStore: () => mocks.appearanceStore,
     useFriendStore: () => mocks.friendStore,
     useUserStore: () => mocks.userStore
+}));
+
+vi.mock('../../../../coordinators/userCoordinator', () => ({
+    showUserDialog: (...args) => mocks.showUserDialog(...args)
+}));
+
+vi.mock('../../../../coordinators/friendRelationshipCoordinator', () => ({
+    confirmDeleteFriend: (...args) => mocks.confirmDeleteFriend(...args)
 }));
 
 vi.mock('../../../../shared/utils', () => ({
@@ -125,8 +136,8 @@ describe('FriendItem.vue', () => {
         mocks.appearanceStore.hideNicknames = false;
         mocks.friendStore.isRefreshFriendsLoading = false;
         mocks.friendStore.allFavoriteFriendIds = new Set();
-        mocks.friendStore.confirmDeleteFriend.mockReset();
-        mocks.userStore.showUserDialog.mockReset();
+        mocks.confirmDeleteFriend.mockReset();
+        mocks.showUserDialog.mockReset();
     });
 
     test('renders nickname when hideNicknames is false', () => {
@@ -149,7 +160,7 @@ describe('FriendItem.vue', () => {
     test('clicking row opens user dialog', async () => {
         const wrapper = mountItem();
         await wrapper.get('div').trigger('click');
-        expect(mocks.userStore.showUserDialog).toHaveBeenCalledWith('usr_1');
+        expect(mocks.showUserDialog).toHaveBeenCalledWith('usr_1');
     });
 
     test('renders delete action for orphan friend and triggers confirmDeleteFriend', async () => {
@@ -164,9 +175,9 @@ describe('FriendItem.vue', () => {
         expect(wrapper.text()).toContain('Ghost');
         const button = wrapper.get('[data-testid="delete-button"]');
         await button.trigger('click');
-        expect(mocks.friendStore.confirmDeleteFriend).toHaveBeenCalledWith(
+        expect(mocks.confirmDeleteFriend).toHaveBeenCalledWith(
             'usr_orphan'
         );
-        expect(mocks.userStore.showUserDialog).not.toHaveBeenCalled();
+        expect(mocks.showUserDialog).not.toHaveBeenCalled();
     });
 });

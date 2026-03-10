@@ -81,6 +81,12 @@ vi.mock('../../service/watchState', () => ({
     watchState: { isLoggedIn: false }
 }));
 
+import * as avatarCoordinatorModule from '../../coordinators/avatarCoordinator';
+vi.mock('../../coordinators/avatarCoordinator', async (importOriginal) => {
+    const actual = await importOriginal();
+    return { ...actual, showAvatarAuthorDialog: vi.fn() };
+});
+
 const i18n = createI18n({
     locale: 'en',
     fallbackLocale: 'en',
@@ -210,9 +216,7 @@ describe('AvatarInfo.vue', () => {
         test('does not call showAvatarAuthorDialog when no imageurl', async () => {
             const wrapper = mountAvatarInfo({});
             await wrapper.trigger('click');
-            const { useAvatarStore } = await import('../../stores');
-            const avatarStore = useAvatarStore();
-            expect(avatarStore.showAvatarAuthorDialog).not.toHaveBeenCalled();
+            expect(avatarCoordinatorModule.showAvatarAuthorDialog).not.toHaveBeenCalled();
         });
     });
 });

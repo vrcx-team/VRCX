@@ -38,6 +38,7 @@ import {
 import { runHandleUserUpdateFlow } from './userEventCoordinator';
 import { runUpdateCurrentUserLocationFlow } from './locationCoordinator';
 import { runUpdateFriendFlow } from './friendPresenceCoordinator';
+import { userOnFriend } from './friendRelationshipCoordinator';
 import { handleGroupRepresented } from './groupCoordinator';
 import { useAppearanceSettingsStore } from '../stores/settings/appearance';
 import { useAuthStore } from '../stores/auth';
@@ -56,7 +57,8 @@ import { useSharedFeedStore } from '../stores/sharedFeed';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
 
-const robotUrl = `${AppDebug.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
+const getRobotUrl = () =>
+    `${AppDebug.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
 
 /**
  * @param {import('../types/api/user').GetUserResponse} json
@@ -76,7 +78,7 @@ export function applyUser(json) {
     let ref = cachedUsers.get(json.id);
     let hasPropChanged = false;
     let changedProps = {};
-    sanitizeUserJson(json, robotUrl);
+    sanitizeUserJson(json, getRobotUrl());
     if (typeof ref === 'undefined') {
         ref = reactive(createDefaultUserRef(json));
         if (locationStore.lastLocation.playerList.has(json.id)) {
@@ -219,7 +221,7 @@ export function applyUser(json) {
         runUpdateFriendFlow(ref.id, ref.state);
     }
     applyFavorite('friend', ref.id);
-    friendStore.userOnFriend(ref);
+    userOnFriend(ref);
     const D = userDialog;
     if (D.visible && D.id === ref.id) {
         D.ref = ref;

@@ -5,11 +5,12 @@ import { database } from '../service/database';
 import { groupRequest } from '../api';
 import { runRefreshFriendsListFlow } from '../coordinators/friendSyncCoordinator';
 import { runUpdateIsGameRunningFlow } from '../coordinators/gameCoordinator';
+import { addGameLogEvent } from '../coordinators/gameLogCoordinator';
 import { runRefreshPlayerModerationsFlow } from '../coordinators/moderationCoordinator';
+import { clearVRCXCache } from '../coordinators/vrcxCoordinator';
 import { useAuthStore } from './auth';
 import { useDiscordPresenceSettingsStore } from './settings/discordPresence';
 import { useFriendStore } from './friend';
-import { useGameLogStore } from './gameLog';
 import { useGameStore } from './game';
 import { useGroupStore } from './group';
 import { handleGroupUserInstances } from '../coordinators/groupCoordinator';
@@ -31,7 +32,6 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     const moderationStore = useModerationStore();
     const vrcxStore = useVrcxStore();
     const discordPresenceSettingsStore = useDiscordPresenceSettingsStore();
-    const gameLogStore = useGameLogStore();
     const vrcxUpdaterStore = useVRCXUpdaterStore();
     const groupStore = useGroupStore();
     const vrStore = useVrStore();
@@ -114,7 +114,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 ) {
                     state.nextClearVRCXCacheCheck =
                         vrcxStore.clearVRCXCacheFrequency / 2;
-                    vrcxStore.clearVRCXCache();
+                    clearVRCXCache();
                 }
                 if (--state.nextDiscordUpdate <= 0) {
                     state.nextDiscordUpdate = 3;
@@ -131,7 +131,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                     const logLines = await LogWatcher.GetLogLines();
                     if (logLines) {
                         logLines.forEach((logLine) => {
-                            gameLogStore.addGameLogEvent(logLine);
+                            addGameLogEvent(logLine);
                         });
                     }
                 }

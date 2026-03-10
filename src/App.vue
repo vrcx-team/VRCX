@@ -26,6 +26,7 @@
     import { TooltipProvider } from './components/ui/tooltip';
     import { createGlobalStores } from './stores';
     import { initNoty } from './plugin/noty';
+    import { getGameLogTable } from './coordinators/gameLogCoordinator';
     import { runCheckVRChatDebugLoggingFlow } from './coordinators/gameCoordinator';
 
     import AlertDialogModal from './components/ui/alert-dialog/AlertDialogModal.vue';
@@ -57,7 +58,7 @@
     });
 
     onMounted(async () => {
-        store.gameLog.getGameLogTable();
+        getGameLogTable();
         await store.auth.migrateStoredUsers();
         store.auth.autoLoginAfterMounted();
         store.vrcx.checkAutoBackupRestoreVrcRegistry();

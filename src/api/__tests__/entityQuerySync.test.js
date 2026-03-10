@@ -29,6 +29,12 @@ vi.mock('../../queries', () => ({
         user: (userId) => ['user', userId],
         avatar: (avatarId) => ['avatar', avatarId],
         world: (worldId) => ['world', worldId]
+    },
+    entityQueryPolicies: {
+        user: {},
+        avatar: {},
+        world: {},
+        worldCollection: {}
     }
 }));
 

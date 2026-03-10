@@ -18,23 +18,26 @@ const mocks = vi.hoisted(() => ({
     },
     userStore: {
         cachedUsers: new Map(),
-        showUserDialog: vi.fn(),
         showSendBoopDialog: vi.fn()
     },
-    groupStore: {
-        showGroupDialog: vi.fn()
-    },
+    groupStore: {},
     locationStore: {
         lastLocation: { value: { location: 'wrld_home:123' } }
     },
     gameStore: {
         isGameRunning: { value: true }
-    }
+    },
+    showUserDialog: vi.fn(),
+    showGroupDialog: vi.fn()
 }));
 
-vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
-}));
+vi.mock('pinia', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        storeToRefs: (store) => store
+    };
+});
 
 vi.mock('../../../../stores', () => ({
     useNotificationStore: () => mocks.notificationStore,
@@ -42,6 +45,14 @@ vi.mock('../../../../stores', () => ({
     useGroupStore: () => mocks.groupStore,
     useLocationStore: () => mocks.locationStore,
     useGameStore: () => mocks.gameStore
+}));
+
+vi.mock('../../../../coordinators/userCoordinator', () => ({
+    showUserDialog: (...args) => mocks.showUserDialog(...args)
+}));
+
+vi.mock('../../../../coordinators/groupCoordinator', () => ({
+    showGroupDialog: (...args) => mocks.showGroupDialog(...args)
 }));
 
 vi.mock('../../../../shared/utils', () => ({
@@ -155,9 +166,9 @@ describe('NotificationItem.vue', () => {
         mocks.notificationStore.queueMarkAsSeen.mockReset();
         mocks.notificationStore.openNotificationLink.mockReset();
         mocks.notificationStore.isNotificationExpired.mockReturnValue(false);
-        mocks.userStore.showUserDialog.mockReset();
+        mocks.showUserDialog.mockReset();
         mocks.userStore.showSendBoopDialog.mockReset();
-        mocks.groupStore.showGroupDialog.mockReset();
+        mocks.showGroupDialog.mockReset();
         mocks.userStore.cachedUsers = new Map();
     });
 
@@ -170,7 +181,7 @@ describe('NotificationItem.vue', () => {
 
         expect(wrapper.text()).toContain('Alice');
         await wrapper.get('span.truncate.cursor-pointer').trigger('click');
-        expect(mocks.userStore.showUserDialog).toHaveBeenCalledWith('usr_123');
+        expect(mocks.showUserDialog).toHaveBeenCalledWith('usr_123');
     });
 
     test('clicking accept icon calls acceptFriendRequestNotification', async () => {

@@ -88,6 +88,12 @@ vi.mock('../../../../service/request', () => ({
     failedGetRequests: new Map()
 }));
 
+import * as worldCoordinatorModule from '../../../../coordinators/worldCoordinator';
+vi.mock('../../../../coordinators/worldCoordinator', async (importOriginal) => {
+    const actual = await importOriginal();
+    return { ...actual, showWorldDialog: vi.fn() };
+});
+
 import UserDialogWorldsTab from '../UserDialogWorldsTab.vue';
 import { useUserStore } from '../../../../stores';
 import {
@@ -235,10 +241,8 @@ describe('UserDialogWorldsTab.vue', () => {
         test('calls showWorldDialog when a world is clicked', async () => {
             const pinia = createTestingPinia({ stubActions: false });
             const userStore = useUserStore(pinia);
-            const { useWorldStore } = await import('../../../../stores');
-            const worldStore = useWorldStore(pinia);
             const showWorldDialogSpy = vi
-                .spyOn(worldStore, 'showWorldDialog')
+                .spyOn(worldCoordinatorModule, 'showWorldDialog')
                 .mockImplementation(() => {});
 
             userStore.userDialog = {

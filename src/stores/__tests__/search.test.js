@@ -90,29 +90,21 @@ const mockGroupStrictsearch = vi.fn();
 
 vi.mock('../user', () => ({
     useUserStore: () => ({
-        showUserDialog: mockShowUserDialog,
         cachedUsers: new Map(),
         showUserDialogHistory: new Set(),
-        currentUser: ref({ id: 'usr_me', homeLocation: '' }),
-        lookupUser: vi.fn(),
-        applyUser: vi.fn()
+        currentUser: ref({ id: 'usr_me', homeLocation: '' })
     })
 }));
 vi.mock('../avatar', () => ({
-    useAvatarStore: () => ({
-        showAvatarDialog: mockShowAvatarDialog
-    })
+    useAvatarStore: () => ({})
 }));
 vi.mock('../group', () => ({
-    useGroupStore: () => ({
-        showGroupDialog: mockShowGroupDialog
-    })
+    useGroupStore: () => ({})
 }));
 vi.mock('../world', () => ({
-    useWorldStore: () => ({
-        showWorldDialog: mockShowWorldDialog
-    })
+    useWorldStore: () => ({})
 }));
+
 vi.mock('../friend', () => ({
     useFriendStore: () => ({
         friends: new Map()
@@ -141,11 +133,28 @@ function makeApiMock() {
         groupRequest: {
             groupStrictsearch: (...args) => mockGroupStrictsearch(...args)
         },
+        queryRequest: {},
         miscRequest: {}
     };
 }
 vi.mock('../../api', () => makeApiMock());
 vi.mock('../../api/', () => makeApiMock());
+
+vi.mock('../../coordinators/userCoordinator', () => ({
+    showUserDialog: (...args) => mockShowUserDialog(...args),
+    lookupUser: vi.fn(),
+    applyUser: vi.fn()
+}));
+vi.mock('../../coordinators/avatarCoordinator', () => ({
+    showAvatarDialog: (...args) => mockShowAvatarDialog(...args),
+    getAvatarName: vi.fn()
+}));
+vi.mock('../../coordinators/groupCoordinator', () => ({
+    showGroupDialog: (...args) => mockShowGroupDialog(...args)
+}));
+vi.mock('../../coordinators/worldCoordinator', () => ({
+    showWorldDialog: (...args) => mockShowWorldDialog(...args)
+}));
 
 vi.mock('vue-sonner', () => ({
     toast: {

@@ -1,13 +1,331 @@
+import { i18n } from '../plugin/i18n';
+
 import { database } from '../service/database';
-import { friendRequest } from '../api';
+import { friendRequest, userRequest } from '../api';
+import { getNameColour } from '../shared/utils';
 import { handleFavoriteDelete } from './favoriteCoordinator';
 import { useAppearanceSettingsStore } from '../stores/settings/appearance';
 import { useFavoriteStore } from '../stores/favorite';
 import { useFriendStore } from '../stores/friend';
+import { useModalStore } from '../stores/modal';
 import { useNotificationStore } from '../stores/notification';
 import { useSharedFeedStore } from '../stores/sharedFeed';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
+import { watchState } from '../service/watchState';
+
+import configRepository from '../service/config';
+
+/**
+ * @param {object} args
+ */
+export function handleFriendStatus(args) {
+    const userStore = useUserStore();
+    const D = userStore.userDialog;
+    if (D.visible === false || D.id !== args.params.userId) {
+        return;
+    }
+    const { json } = args;
+    D.isFriend = json.isFriend;
+    D.incomingRequest = json.incomingRequest;
+    D.outgoingRequest = json.outgoingRequest;
+}
+
+/**
+ * @param {object} args
+ */
+export function handleFriendDelete(args) {
+    const userStore = useUserStore();
+    const friendStore = useFriendStore();
+    const D = userStore.userDialog;
+    if (D.visible === false || D.id !== args.params.userId) {
+        return;
+    }
+    D.isFriend = false;
+    runDeleteFriendshipFlow(args.params.userId);
+    friendStore.deleteFriend(args.params.userId);
+}
+
+/**
+ * @param {object} args
+ */
+export function handleFriendAdd(args) {
+    const friendStore = useFriendStore();
+    addFriendship(args.params.userId);
+    friendStore.addFriend(args.params.userId);
+}
+
+/**
+ * @param {string} userId
+ * @returns {string}
+ */
+export function getFriendRequest(userId) {
+    const notificationStore = useNotificationStore();
+    const array = notificationStore.notificationTable.data;
+    for (let i = array.length - 1; i >= 0; i--) {
+        if (
+            array[i].type === 'friendRequest' &&
+            array[i].senderUserId === userId
+        ) {
+            return array[i].id;
+        }
+    }
+    return '';
+}
+
+/**
+ * @param {string} userId
+ */
+function deleteFriendRequest(userId) {
+    const notificationStore = useNotificationStore();
+    const array = notificationStore.notificationTable.data;
+    for (let i = array.length - 1; i >= 0; i--) {
+        if (
+            array[i].type === 'friendRequest' &&
+            array[i].senderUserId === userId
+        ) {
+            array.splice(i, 1);
+            return;
+        }
+    }
+}
+
+/**
+ * @param {string} id
+ */
+export function addFriendship(id) {
+    const friendStore = useFriendStore();
+    const userStore = useUserStore();
+    const notificationStore = useNotificationStore();
+    const sharedFeedStore = useSharedFeedStore();
+    const uiStore = useUiStore();
+
+    const { friendLog, friendLogTable, state } = friendStore;
+
+    if (
+        !watchState.isFriendsLoaded ||
+        friendLog.has(id) ||
+        id === userStore.currentUser.id
+    ) {
+        return;
+    }
+    const ref = userStore.cachedUsers.get(id);
+    if (typeof ref === 'undefined') {
+        // deleted account on friends list
+        return;
+    }
+    friendRequest
+        .getFriendStatus({
+            userId: id,
+            currentUserId: userStore.currentUser.id
+        })
+        .then((args) => {
+            if (args.params.currentUserId !== userStore.currentUser.id) {
+                // safety check for delayed response
+                return;
+            }
+            handleFriendStatus(args);
+            if (args.json.isFriend && !friendLog.has(id)) {
+                if (state.friendNumber === 0) {
+                    state.friendNumber = friendStore.friends.size;
+                }
+                ref.$friendNumber = ++state.friendNumber;
+                configRepository.setInt(
+                    `VRCX_friendNumber_${userStore.currentUser.id}`,
+                    state.friendNumber
+                );
+                friendStore.addFriend(id, ref.state);
+                const friendLogHistory = {
+                    created_at: new Date().toJSON(),
+                    type: 'Friend',
+                    userId: id,
+                    displayName: ref.displayName,
+                    friendNumber: ref.$friendNumber
+                };
+                friendLogTable.value.data.push(friendLogHistory);
+                database.addFriendLogHistory(friendLogHistory);
+                notificationStore.queueFriendLogNoty(friendLogHistory);
+                sharedFeedStore.addEntry(friendLogHistory);
+                const friendLogCurrent = {
+                    userId: id,
+                    displayName: ref.displayName,
+                    trustLevel: ref.$trustLevel,
+                    friendNumber: ref.$friendNumber
+                };
+                friendLog.set(id, friendLogCurrent);
+                database.setFriendLogCurrent(friendLogCurrent);
+                uiStore.notifyMenu('friend-log');
+                deleteFriendRequest(id);
+                userRequest
+                    .getUser({
+                        userId: id
+                    })
+                    .then(() => {
+                        if (
+                            userStore.userDialog.visible &&
+                            id === userStore.userDialog.id
+                        ) {
+                            userStore.applyUserDialogLocation(true);
+                        }
+                    });
+            }
+        });
+}
+
+/**
+ * @param {object} ref
+ */
+export function updateFriendship(ref) {
+    const friendStore = useFriendStore();
+    const notificationStore = useNotificationStore();
+    const sharedFeedStore = useSharedFeedStore();
+    const uiStore = useUiStore();
+
+    const { friendLog, friendLogTable } = friendStore;
+
+    const ctx = friendLog.get(ref.id);
+    if (!watchState.isFriendsLoaded || typeof ctx === 'undefined') {
+        return;
+    }
+    if (ctx.friendNumber) {
+        ref.$friendNumber = ctx.friendNumber;
+    }
+    if (!ref.$friendNumber) {
+        ref.$friendNumber = 0; // no null
+    }
+    if (ctx.displayName !== ref.displayName) {
+        if (ctx.displayName) {
+            const friendLogHistoryDisplayName = {
+                created_at: new Date().toJSON(),
+                type: 'DisplayName',
+                userId: ref.id,
+                displayName: ref.displayName,
+                previousDisplayName: ctx.displayName,
+                friendNumber: ref.$friendNumber
+            };
+            friendLogTable.value.data.push(friendLogHistoryDisplayName);
+            database.addFriendLogHistory(friendLogHistoryDisplayName);
+            notificationStore.queueFriendLogNoty(
+                friendLogHistoryDisplayName
+            );
+            sharedFeedStore.addEntry(friendLogHistoryDisplayName);
+            const friendLogCurrent = {
+                userId: ref.id,
+                displayName: ref.displayName,
+                trustLevel: ref.$trustLevel,
+                friendNumber: ref.$friendNumber
+            };
+            friendLog.set(ref.id, friendLogCurrent);
+            database.setFriendLogCurrent(friendLogCurrent);
+            ctx.displayName = ref.displayName;
+            uiStore.notifyMenu('friend-log');
+        }
+    }
+    if (
+        ref.$trustLevel &&
+        ctx.trustLevel &&
+        ctx.trustLevel !== ref.$trustLevel
+    ) {
+        if (
+            (ctx.trustLevel === 'Trusted User' &&
+                ref.$trustLevel === 'Veteran User') ||
+            (ctx.trustLevel === 'Veteran User' &&
+                ref.$trustLevel === 'Trusted User')
+        ) {
+            const friendLogCurrent3 = {
+                userId: ref.id,
+                displayName: ref.displayName,
+                trustLevel: ref.$trustLevel,
+                friendNumber: ref.$friendNumber
+            };
+            friendLog.set(ref.id, friendLogCurrent3);
+            database.setFriendLogCurrent(friendLogCurrent3);
+            return;
+        }
+        const friendLogHistoryTrustLevel = {
+            created_at: new Date().toJSON(),
+            type: 'TrustLevel',
+            userId: ref.id,
+            displayName: ref.displayName,
+            trustLevel: ref.$trustLevel,
+            previousTrustLevel: ctx.trustLevel,
+            friendNumber: ref.$friendNumber
+        };
+        friendLogTable.value.data.push(friendLogHistoryTrustLevel);
+        database.addFriendLogHistory(friendLogHistoryTrustLevel);
+        notificationStore.queueFriendLogNoty(friendLogHistoryTrustLevel);
+        sharedFeedStore.addEntry(friendLogHistoryTrustLevel);
+        const friendLogCurrent2 = {
+            userId: ref.id,
+            displayName: ref.displayName,
+            trustLevel: ref.$trustLevel,
+            friendNumber: ref.$friendNumber
+        };
+        friendLog.set(ref.id, friendLogCurrent2);
+        database.setFriendLogCurrent(friendLogCurrent2);
+        uiStore.notifyMenu('friend-log');
+    }
+    ctx.trustLevel = ref.$trustLevel;
+}
+
+/**
+ * @param {string} id
+ */
+export function confirmDeleteFriend(id) {
+    const t = i18n.global.t;
+    const modalStore = useModalStore();
+    modalStore
+        .confirm({
+            description: t('confirm.unfriend'),
+            title: t('confirm.title')
+        })
+        .then(async ({ ok }) => {
+            if (!ok) return;
+            const args = await friendRequest.deleteFriend({
+                userId: id
+            });
+            handleFriendDelete(args);
+        })
+        .catch(() => {});
+}
+
+/**
+ * @param {object} ref
+ */
+export function userOnFriend(ref) {
+    const friendStore = useFriendStore();
+    const userStore = useUserStore();
+
+    updateFriendship(ref);
+    if (
+        watchState.isFriendsLoaded &&
+        ref.isFriend &&
+        !friendStore.friendLog.has(ref.id) &&
+        ref.id !== userStore.currentUser.id
+    ) {
+        addFriendship(ref.id);
+    }
+}
+
+/**
+ * @param {object} ref
+ */
+export function updateUserCurrentStatus(ref) {
+    const friendStore = useFriendStore();
+    const userStore = useUserStore();
+    const appearanceSettingsStore = useAppearanceSettingsStore();
+
+    if (watchState.isFriendsLoaded) {
+        friendStore.refreshFriendsStatus(ref);
+    }
+    friendStore.updateOnlineFriendCounter();
+
+    if (appearanceSettingsStore.randomUserColours) {
+        getNameColour(userStore.currentUser.id).then((colour) => {
+            userStore.setCurrentUserColour(colour);
+        });
+    }
+}
 
 /**
  * Validates and applies unfriend transition side effects.
@@ -43,7 +361,7 @@ export function runDeleteFriendshipFlow(
                 // safety check for delayed response
                 return;
             }
-            friendStore.handleFriendStatus(args);
+            handleFriendStatus(args);
             if (!args.json.isFriend && friendLog.has(id)) {
                 const friendLogHistory = {
                     created_at: nowIso(),
@@ -84,7 +402,7 @@ export function runUpdateFriendshipsFlow(
     const set = new Set();
     for (id of ref.friends) {
         set.add(id);
-        friendStore.addFriendship(id);
+        addFriendship(id);
     }
     for (id of friendLog.keys()) {
         if (id === userStore.currentUser.id) {
