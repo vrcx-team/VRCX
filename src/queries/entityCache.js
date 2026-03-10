@@ -1,3 +1,4 @@
+import { AppDebug, logWebRequest, withQueryLog } from '../services/appConfig';
 import { queryClient } from './client';
 import { queryKeys } from './keys';
 import { toQueryOptions } from './policies';
@@ -151,9 +152,15 @@ export async function fetchWithEntityPolicy({ queryKey, policy, queryFn }) {
 
     const data = await queryClient.fetchQuery({
         queryKey,
-        queryFn,
+        queryFn: () => withQueryLog(queryFn),
         ...toQueryOptions(policy)
     });
+
+    if (isFresh) {
+        logWebRequest('[QUERY CACHE HIT]', queryKey, data);
+    } else {
+        logWebRequest('[QUERY FETCH]', queryKey, data);
+    }
 
     return {
         data,

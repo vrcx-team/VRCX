@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
-import { AppDebug } from '../../services/appConfig';
+import { logWebRequest } from '../../services/appConfig';
 import { database } from '../../services/database';
 import { languageCodes } from '../../localization';
 import { useGameStore } from '../game';
@@ -464,9 +464,12 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             }
 
             const data = JSON.parse(response.data);
-            if (AppDebug.debugWebRequests) {
-                console.log(modelsURL, data, response);
-            }
+            logWebRequest(
+                '[EXTERNAL GET]',
+                modelsURL,
+                `(${response.status})`,
+                data
+            );
 
             if (data.data && Array.isArray(data.data)) {
                 return data.data
@@ -703,9 +706,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 }
             });
             const json = JSON.parse(response.data);
-            if (AppDebug.debugWebRequests) {
-                console.log(url, json, response);
-            }
+            logWebRequest('[EXTERNAL GET]', url, `(${response.status})`, json);
             if (response.status === 200) {
                 data = json;
             } else {
@@ -753,9 +754,12 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                     );
                 }
                 const data = JSON.parse(response.data);
-                if (AppDebug.debugWebRequests) {
-                    console.log(url, data, response);
-                }
+                logWebRequest(
+                    '[EXTERNAL POST]',
+                    url,
+                    `(${response.status})`,
+                    data
+                );
                 return data.data.translations[0].translatedText;
             } catch (err) {
                 toast.error(`Translation failed: ${err.message}`);
@@ -817,9 +821,12 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             }
 
             const data = JSON.parse(response.data);
-            if (AppDebug.debugWebRequests) {
-                console.log(endpoint, data, response);
-            }
+            logWebRequest(
+                '[EXTERNAL POST]',
+                endpoint,
+                `(${response.status})`,
+                data
+            );
 
             const translated = data?.choices?.[0]?.message?.content;
             return typeof translated === 'string' ? translated.trim() : null;

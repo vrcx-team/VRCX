@@ -13,7 +13,7 @@ import {
     storeAvatarImage
 } from '../shared/utils';
 import { avatarRequest, miscRequest, queryRequest } from '../api';
-import { AppDebug } from '../services/appConfig';
+import { logWebRequest } from '../services/appConfig';
 import { database } from '../services/database';
 import { patchAvatarFromEvent } from '../queries';
 import { processBulk } from '../services/request';
@@ -295,9 +295,7 @@ export async function lookupAvatars(type, search) {
                 }
             });
             const json = JSON.parse(response.data);
-            if (AppDebug.debugWebRequests) {
-                console.log(url, json, response);
-            }
+            logWebRequest('[EXTERNAL GET]', url, `(${response.status})`, json);
             if (response.status === 200 && typeof json === 'object') {
                 json.forEach((avatar) => {
                     if (!avatars.has(avatar.Id)) {
@@ -386,9 +384,7 @@ async function lookupAvatarByFileId(providerUrl, fileId) {
             }
         });
         const json = JSON.parse(response.data);
-        if (AppDebug.debugWebRequests) {
-            console.log(url, json, response);
-        }
+        logWebRequest('[EXTERNAL GET]', url, `(${response.status})`, json);
         if (response.status === 200 && typeof json === 'object') {
             const ref = {
                 authorId: '',
@@ -436,9 +432,7 @@ async function lookupAvatarsByAuthor(providerUrl, authorId) {
             }
         });
         const json = JSON.parse(response.data);
-        if (AppDebug.debugWebRequests) {
-            console.log(url, json, response);
-        }
+        logWebRequest('[EXTERNAL GET]', url, `(${response.status})`, json);
         if (response.status === 200 && typeof json === 'object') {
             json.forEach((avatar) => {
                 const ref = {

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
-import { AppDebug } from '../services/appConfig';
+import { logWebRequest } from '../services/appConfig';
 import { branches } from '../shared/constants';
 import { changeLogRemoveLinks } from '../shared/utils';
 
@@ -222,9 +222,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             return;
         }
         pendingVRCXUpdate.value = false;
-        if (AppDebug.debugWebRequests) {
-            console.log(url, json, response);
-        }
+        logWebRequest('[EXTERNAL GET]', url, `(${response.status})`, json);
         if (json === Object(json) && json.name && json.published_at) {
             changeLogDialog.value.buildName = json.name;
             changeLogDialog.value.changeLog = changeLogRemoveLinks(json.body);
@@ -309,9 +307,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             );
             return;
         }
-        if (AppDebug.debugWebRequests) {
-            console.log(url, json, response);
-        }
+        logWebRequest('[EXTERNAL GET]', url, `(${response.status})`, json);
         const releases = [];
         if (typeof json !== 'object' || json.message) {
             toast.error(

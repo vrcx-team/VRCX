@@ -12,7 +12,7 @@ import {
     replaceBioSymbols
 } from '../shared/utils';
 import { i18n } from '../plugins/i18n';
-import { AppDebug } from '../services/appConfig';
+import { AppDebug, logWebRequest } from '../services/appConfig';
 import { database } from '../services/database';
 import {
     runLastLocationResetFlow,
@@ -334,9 +334,7 @@ export function addGameLogEntry(gameLog, location) {
             vrcxStore.processScreenshot(gameLog.screenshotPath);
             break;
         case 'api-request':
-            if (AppDebug.debugWebRequests) {
-                console.log('API Request:', gameLog.url);
-            }
+            logWebRequest('[GAMELOG API]', gameLog.url);
             if (advancedSettingsStore.saveInstanceEmoji) {
                 const inv = parseInventoryFromUrl(gameLog.url);
                 if (inv) {

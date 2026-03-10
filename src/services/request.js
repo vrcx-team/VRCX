@@ -8,7 +8,7 @@ import {
     useUserStore
 } from '../stores';
 import { getCurrentUser } from '../coordinators/userCoordinator';
-import { AppDebug } from './appConfig.js';
+import { AppDebug, isApiLogSuppressed, logWebRequest } from './appConfig.js';
 import { escapeTag } from '../shared/utils';
 import { i18n } from '../plugins/i18n';
 import { statusCodes } from '../shared/constants/api.js';
@@ -139,11 +139,17 @@ export function request(endpoint, options) {
                 throw `API request blocked while logged out: ${endpoint}`;
             }
             const parsed = parseResponse(response);
-            if (AppDebug.debugWebRequests) {
+            if (!isApiLogSuppressed()) {
+                const tag = `[API ${init.method}]`;
                 if (!parsed.data) {
-                    console.log(init, 'no data', parsed);
+                    logWebRequest(tag, endpoint, `(${parsed.status}) no data`);
                 } else {
-                    console.log(init, 'parsed data', parsed.data);
+                    logWebRequest(
+                        tag,
+                        endpoint,
+                        `(${parsed.status})`,
+                        parsed.data
+                    );
                 }
             }
             if (parsed.hasApiError) {
