@@ -1,6 +1,6 @@
 import { nextTick } from 'vue';
 import { toast } from 'vue-sonner';
-import { i18n } from '../plugin/i18n';
+import { i18n } from '../plugins/i18n';
 
 import {
     checkVRChatCache,
@@ -14,9 +14,9 @@ import {
     sanitizeEntityJson
 } from '../shared/utils';
 import { instanceRequest, queryRequest, worldRequest } from '../api';
-import { database } from '../service/database';
+import { database } from '../services/database';
 import { patchWorldFromEvent } from '../queries';
-import { processBulk } from '../service/request';
+import { processBulk } from '../services/request';
 import { applyFavorite } from './favoriteCoordinator';
 import { useFavoriteStore } from '../stores/favorite';
 import { useInstanceStore } from '../stores/instance';

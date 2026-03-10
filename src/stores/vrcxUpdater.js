@@ -3,11 +3,11 @@ import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
-import { AppDebug } from '../service/appConfig';
+import { AppDebug } from '../services/appConfig';
 import { branches } from '../shared/constants';
 import { changeLogRemoveLinks } from '../shared/utils';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 import * as workerTimers from 'worker-timers';
 

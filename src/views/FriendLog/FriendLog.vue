@@ -66,12 +66,12 @@
     import { DataTableLayout } from '../../components/ui/data-table';
     import { InputGroupField } from '../../components/ui/input-group';
     import { createColumns } from './columns.jsx';
-    import { database } from '../../service/database';
+    import { database } from '../../services/database';
     import { removeFromArray } from '../../shared/utils';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
-    import configRepository from '../../service/config';
+    import configRepository from '../../services/config';
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const vrcxStore = useVrcxStore();

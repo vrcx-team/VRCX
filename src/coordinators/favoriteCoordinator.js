@@ -10,10 +10,10 @@ import { useWorldStore } from '../stores/world';
 import { applyWorld } from './worldCoordinator';
 import { runUpdateFriendFlow } from './friendPresenceCoordinator';
 import { avatarRequest, favoriteRequest, queryRequest } from '../api';
-import { database } from '../service/database';
-import { i18n } from '../plugin/i18n';
-import { processBulk } from '../service/request';
-import { watchState } from '../service/watchState';
+import { database } from '../services/database';
+import { i18n } from '../plugins/i18n';
+import { processBulk } from '../services/request';
+import { watchState } from '../services/watchState';
 import {
     compareByName,
     createDefaultFavoriteCachedRef,

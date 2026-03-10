@@ -32,7 +32,7 @@ import {
     accessTypeLocaleKeyMap,
     instanceContentSettings
 } from '../shared/constants';
-import { database } from '../service/database';
+import { database } from '../services/database';
 import { resolveRef } from '../shared/utils/resolveRef';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFriendStore } from './friend';
@@ -44,9 +44,9 @@ import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 export const useInstanceStore = defineStore('Instance', () => {
     const locationStore = useLocationStore();

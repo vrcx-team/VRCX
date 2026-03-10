@@ -1,8 +1,8 @@
-import { i18n } from '../plugin/i18n';
+import { i18n } from '../plugins/i18n';
 
 import Noty from 'noty';
 
-import { closeWebSocket, initWebsocket } from '../service/websocket';
+import { closeWebSocket, initWebsocket } from '../services/websocket';
 import { escapeTag } from '../shared/utils';
 import { queryClient } from '../queries';
 import { useAuthStore } from '../stores/auth';
@@ -10,10 +10,10 @@ import { useNotificationStore } from '../stores/notification';
 import { useUpdateLoopStore } from '../stores/updateLoop';
 import { useUserStore } from '../stores/user';
 import { applyCurrentUser } from './userCoordinator';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
-import configRepository from '../service/config';
-import webApiService from '../service/webapi';
+import configRepository from '../services/config';
+import webApiService from '../services/webapi';
 
 /**
  * Runs the shared logout side effects (including goodbye notification).

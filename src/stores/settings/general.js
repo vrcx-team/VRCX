@@ -7,7 +7,7 @@ import { useModalStore } from '../modal';
 import { useVRCXUpdaterStore } from '../vrcxUpdater';
 import { useVrcxStore } from '../vrcx';
 
-import configRepository from '../../service/config';
+import configRepository from '../../services/config';
 
 import * as workerTimers from 'worker-timers';
 

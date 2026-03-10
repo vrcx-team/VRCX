@@ -7,7 +7,7 @@ import { useInstanceStore } from '../stores/instance';
 import { useLocationStore } from '../stores/location';
 import { useUserStore } from '../stores/user';
 import { useWorldStore } from '../stores/world';
-import { failedGetRequests } from '../service/request';
+import { failedGetRequests } from '../services/request';
 
 /**
  * Clears caches across multiple stores while preserving data that is

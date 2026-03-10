@@ -140,7 +140,7 @@ vi.mock('../../../../shared/utils/location.js', () => ({
     getFriendsLocations: vi.fn(() => 'wrld_same:1')
 }));
 
-vi.mock('../../../../service/config', () => ({
+vi.mock('../../../../services/config', () => ({
     default: mocks.configRepository
 }));
 

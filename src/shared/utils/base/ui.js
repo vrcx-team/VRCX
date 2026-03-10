@@ -8,12 +8,12 @@ import {
     THEME_COLORS,
     THEME_CONFIG
 } from '../../constants';
-import { i18n } from '../../../plugin/i18n';
-import { router } from '../../../plugin/router';
+import { i18n } from '../../../plugins/i18n';
+import { router } from '../../../plugins/router';
 import { textToHex } from './string';
 import { useAppearanceSettingsStore } from '../../../stores';
 
-import configRepository from '../../../service/config.js';
+import configRepository from '../../../services/config.js';
 
 const THEME_COLOR_STORAGE_KEY = 'VRCX_themeColor';
 const THEME_COLOR_STYLE_ID = 'app-theme-color-style';

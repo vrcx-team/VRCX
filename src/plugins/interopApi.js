@@ -1,7 +1,7 @@
 // @ts-nocheck
 import InteropApi from '../ipc-electron/interopApi.js';
-import configRepository from '../service/config';
-import vrcxJsonStorage from '../service/jsonStorage';
+import configRepository from '../services/config.js';
+import vrcxJsonStorage from '../services/jsonStorage.js';
 
 export async function initInteropApi(isVrOverlay = false) {
     if (isVrOverlay) {

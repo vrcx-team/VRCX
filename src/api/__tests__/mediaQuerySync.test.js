@@ -4,7 +4,7 @@ const mockRequest = vi.fn();
 const mockInvalidateQueries = vi.fn().mockResolvedValue();
 const mockRemoveQueries = vi.fn();
 
-vi.mock('../../service/request', () => ({
+vi.mock('../../services/request', () => ({
     request: (...args) => mockRequest(...args)
 }));
 

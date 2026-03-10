@@ -4,9 +4,9 @@ import { toast } from 'vue-sonner';
 import { useMagicKeys } from '@vueuse/core';
 import { useRouter } from 'vue-router';
 
-import { AppDebug } from '../service/appConfig';
+import { AppDebug } from '../services/appConfig';
 import { refreshCustomCss } from '../shared/utils/base/ui';
-import { updateLocalizedStrings } from '../plugin/i18n';
+import { updateLocalizedStrings } from '../plugins/i18n';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAvatarStore } from './avatar';
 import { useGroupStore } from './group';

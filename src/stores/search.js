@@ -7,7 +7,7 @@ import { useRouter } from 'vue-router';
 import { compareByName, localeIncludes } from '../shared/utils';
 import { instanceRequest, userRequest } from '../api';
 import { groupRequest } from '../api/';
-import removeConfusables, { removeWhitespace } from '../service/confusables';
+import removeConfusables, { removeWhitespace } from '../services/confusables';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAvatarStore } from './avatar';
 import { useFriendStore } from './friend';
@@ -19,7 +19,7 @@ import { applyUser, showUserDialog, lookupUser } from '../coordinators/userCoord
 import { useModalStore } from './modal';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
 export const useSearchStore = defineStore('Search', () => {
     const userStore = useUserStore();

@@ -3,18 +3,18 @@ import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
-import { AppDebug } from '../../service/appConfig';
-import { database } from '../../service/database';
+import { AppDebug } from '../../services/appConfig';
+import { database } from '../../services/database';
 import { languageCodes } from '../../localization';
 import { useGameStore } from '../game';
 import { useModalStore } from '../modal';
 import { useUpdateLoopStore } from '../updateLoop';
 import { useVRCXUpdaterStore } from '../vrcxUpdater';
 import { useVrcxStore } from '../vrcx';
-import { watchState } from '../../service/watchState';
+import { watchState } from '../../services/watchState';
 
-import configRepository from '../../service/config';
-import webApiService from '../../service/webapi';
+import configRepository from '../../services/config';
+import webApiService from '../../services/webapi';
 
 export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const gameStore = useGameStore();

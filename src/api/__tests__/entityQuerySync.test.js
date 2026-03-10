@@ -7,7 +7,7 @@ const mockApplyCurrentUser = vi.fn((json) => ({ id: json.id || 'usr_me', ...json
 const mockApplyUser = vi.fn((json) => ({ ...json }));
 const mockApplyWorld = vi.fn((json) => ({ ...json }));
 
-vi.mock('../../service/request', () => ({
+vi.mock('../../services/request', () => ({
     request: (...args) => mockRequest(...args)
 }));
 

@@ -56,7 +56,7 @@
     } from '../../../shared/utils';
     import { DataTableLayout } from '../../ui/data-table';
     import { createPreviousInstancesColumns } from './previousInstancesColumns.jsx';
-    import { database } from '../../../service/database';
+    import { database } from '../../../services/database';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     const props = defineProps({

@@ -9,14 +9,14 @@ vi.mock('../../../../shared/utils', () => ({
     timeToText: vi.fn((ms) => `${Math.floor(ms / 1000)}s`)
 }));
 
-vi.mock('../../../../service/database', () => ({
+vi.mock('../../../../services/database', () => ({
     database: {
         setWorldMemo: vi.fn(),
         deleteWorldMemo: vi.fn()
     }
 }));
 
-const { database } = await import('../../../../service/database');
+const { database } = await import('../../../../services/database');
 const { compareUnityVersion } = await import('../../../../shared/utils');
 
 /**

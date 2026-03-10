@@ -9,7 +9,7 @@ import en from '../../localization/en.json';
 
 // --- Mocks ---
 
-vi.mock('../../service/config', () => ({
+vi.mock('../../services/config', () => ({
     default: {
         init: vi.fn(),
         getString: vi
@@ -36,14 +36,14 @@ vi.mock('../../service/config', () => ({
     }
 }));
 
-vi.mock('../../service/websocket', () => ({
+vi.mock('../../services/websocket', () => ({
     wsState: { connected: false, messageCount: 0, bytesReceived: 0 },
     initWebsocket: vi.fn(),
     closeWebSocket: vi.fn(),
     reconnectWebSocket: vi.fn()
 }));
 
-vi.mock('../../service/webapi', () => ({
+vi.mock('../../services/webapi', () => ({
     default: {
         execute: vi.fn().mockResolvedValue({
             status: 200,
@@ -62,13 +62,13 @@ vi.mock('worker-timers', () => ({
     clearTimeout: vi.fn()
 }));
 
-vi.mock('../../service/jsonStorage', () => ({
+vi.mock('../../services/jsonStorage', () => ({
     default: vi.fn()
 }));
-vi.mock('../../service/watchState', () => ({
+vi.mock('../../services/watchState', () => ({
     watchState: { isLoggedIn: false }
 }));
-vi.mock('../../service/database', () => ({
+vi.mock('../../services/database', () => ({
     database: new Proxy(
         {},
         {
@@ -79,7 +79,7 @@ vi.mock('../../service/database', () => ({
         }
     )
 }));
-vi.mock('../../plugin/router', () => ({
+vi.mock('../../plugins/router', () => ({
     router: {
         beforeEach: vi.fn(),
         push: vi.fn(),
@@ -100,7 +100,7 @@ vi.mock('vue-router', async (importOriginal) => {
         }))
     };
 });
-vi.mock('../../plugin/interopApi', () => ({
+vi.mock('../../plugins/interopApi', () => ({
     initInteropApi: vi.fn()
 }));
 

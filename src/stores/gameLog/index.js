@@ -12,7 +12,7 @@ import {
     getGroupName
 } from '../../shared/utils';
 import { createMediaParsers } from './mediaParsers';
-import { database } from '../../service/database';
+import { database } from '../../services/database';
 import { useAdvancedSettingsStore } from '../settings/advanced';
 import { useFriendStore } from '../friend';
 import { useGameStore } from '../game';
@@ -24,11 +24,11 @@ import { useUiStore } from '../ui';
 import { useUserStore } from '../user';
 import { useVrStore } from '../vr';
 import { useVrcxStore } from '../vrcx';
-import { watchState } from '../../service/watchState';
+import { watchState } from '../../services/watchState';
 
 import { tryLoadPlayerList, addGameLogEvent } from '../../coordinators/gameLogCoordinator';
 
-import configRepository from '../../service/config';
+import configRepository from '../../services/config';
 
 import * as workerTimers from 'worker-timers';
 

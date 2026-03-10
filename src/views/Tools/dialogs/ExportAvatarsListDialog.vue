@@ -23,7 +23,7 @@
 
     import { useAvatarStore, useUserStore } from '../../../stores';
     import { avatarRequest } from '../../../api';
-    import { processBulk } from '../../../service/request';
+    import { processBulk } from '../../../services/request';
 
     const { t } = useI18n();
 

@@ -1,7 +1,7 @@
 import { router } from './router';
 import { startRendererMemoryThresholdReport } from './piniaActionTrail';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 export async function isSentryOptedIn() {
     return NIGHTLY && configRepository.getBool('VRCX_SentryEnabled', false);

@@ -5,11 +5,11 @@ vi.mock('vue-sonner', () => ({
     toast: { error: vi.fn() }
 }));
 
-vi.mock('../../../service/request', () => ({
+vi.mock('../../../services/request', () => ({
     $throw: vi.fn()
 }));
 
-vi.mock('../../../service/appConfig', () => ({
+vi.mock('../../../services/appConfig', () => ({
     AppDebug: { endpointDomain: 'https://api.vrchat.cloud/api/1' }
 }));
 

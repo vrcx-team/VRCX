@@ -1,5 +1,5 @@
 import { patchAndRefetchActiveQuery, queryKeys } from '../queries';
-import { request } from '../service/request';
+import { request } from '../services/request';
 import { applyWorld } from '../coordinators/worldCoordinator';
 
 const worldReq = {

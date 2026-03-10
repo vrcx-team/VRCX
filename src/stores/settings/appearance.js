@@ -21,18 +21,18 @@ import {
     updateTrustColorClasses
 } from '../../shared/utils/base/ui';
 import { computeTrustLevel, getNameColour } from '../../shared/utils';
-import { database } from '../../service/database';
+import { database } from '../../services/database';
 import { languageCodes } from '../../localization';
-import { loadLocalizedStrings } from '../../plugin';
+import { loadLocalizedStrings } from '../../plugins';
 import { useFeedStore } from '../feed';
 import { useGameLogStore } from '../gameLog';
 import { useUiStore } from '../ui';
 import { useUserStore } from '../user';
 import { useVrStore } from '../vr';
 import { useVrcxStore } from '../vrcx';
-import { watchState } from '../../service/watchState';
+import { watchState } from '../../services/watchState';
 
-import configRepository from '../../service/config';
+import configRepository from '../../services/config';
 
 export const useAppearanceSettingsStore = defineStore(
     'AppearanceSettings',

@@ -109,7 +109,7 @@
 
     import SendInviteRequestResponseDialog from './dialogs/SendInviteRequestResponseDialog.vue';
     import SendInviteResponseDialog from './dialogs/SendInviteResponseDialog.vue';
-    import configRepository from '../../service/config';
+    import configRepository from '../../services/config';
 
     const { refreshInviteMessageTableData } = useInviteStore();
     const { clearInviteImageUpload } = useGalleryStore();

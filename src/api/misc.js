@@ -1,5 +1,5 @@
 import { queryClient, queryKeys } from '../queries';
-import { request } from '../service/request';
+import { request } from '../services/request';
 import { useUserStore } from '../stores';
 
 /**

@@ -1,13 +1,13 @@
 import { getGroupName, getWorldName, isRealInstance } from '../shared/utils';
-import { AppDebug } from '../service/appConfig';
-import { database } from '../service/database';
+import { AppDebug } from '../services/appConfig';
+import { database } from '../services/database';
 import { useFeedStore } from '../stores/feed';
 import { useFriendStore } from '../stores/friend';
 import { useNotificationStore } from '../stores/notification';
 import { useSharedFeedStore } from '../stores/sharedFeed';
 import { useUserStore } from '../stores/user';
 import { userRequest } from '../api';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
 /**
  * @param {object} ctx

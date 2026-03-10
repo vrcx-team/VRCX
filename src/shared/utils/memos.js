@@ -1,5 +1,5 @@
 import { useFriendStore, useUserStore } from '../../stores';
-import { database } from '../../service/database';
+import { database } from '../../services/database';
 
 /**
  * @returns {Promise<void>}

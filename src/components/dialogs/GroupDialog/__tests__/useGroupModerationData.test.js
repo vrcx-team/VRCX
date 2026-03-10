@@ -13,7 +13,7 @@ vi.mock('vue-i18n', () => ({
         install: vi.fn()
     })
 }));
-vi.mock('../../../../plugin/router', () => {
+vi.mock('../../../../plugins/router', () => {
     const { ref: vRef } = require('vue');
     return {
         router: {
@@ -38,8 +38,8 @@ vi.mock('vue-router', async (importOriginal) => {
         }))
     };
 });
-vi.mock('../../../../plugin/interopApi', () => ({ initInteropApi: vi.fn() }));
-vi.mock('../../../../service/database', () => ({
+vi.mock('../../../../plugins/interopApi', () => ({ initInteropApi: vi.fn() }));
+vi.mock('../../../../services/database', () => ({
     database: new Proxy(
         {},
         {
@@ -50,7 +50,7 @@ vi.mock('../../../../service/database', () => ({
         }
     )
 }));
-vi.mock('../../../../service/config', () => ({
+vi.mock('../../../../services/config', () => ({
     default: {
         init: vi.fn(),
         getString: vi.fn().mockImplementation((_k, d) => d ?? '{}'),
@@ -68,11 +68,11 @@ vi.mock('../../../../service/config', () => ({
         remove: vi.fn()
     }
 }));
-vi.mock('../../../../service/jsonStorage', () => ({ default: vi.fn() }));
-vi.mock('../../../../service/watchState', () => ({
+vi.mock('../../../../services/jsonStorage', () => ({ default: vi.fn() }));
+vi.mock('../../../../services/watchState', () => ({
     watchState: { isLoggedIn: false }
 }));
-vi.mock('../../../../service/request', () => ({
+vi.mock('../../../../services/request', () => ({
     request: vi.fn().mockResolvedValue({ json: {} }),
     processBulk: vi.fn(),
     buildRequestInit: vi.fn(),

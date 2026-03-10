@@ -15,10 +15,10 @@ import {
 } from './fileUtils';
 import { escapeTag, replaceBioSymbols } from './base/string';
 import { getFaviconUrl, replaceVrcPackageUrl } from './urlUtils';
-import { AppDebug } from '../../service/appConfig.js';
+import { AppDebug } from '../../services/appConfig.js';
 import { compareUnityVersion } from './avatar';
 import { getAvailablePlatforms } from './platformUtils';
-import { i18n } from '../../plugin/i18n';
+import { i18n } from '../../plugins/i18n';
 import { queryRequest } from '../../api';
 
 /**

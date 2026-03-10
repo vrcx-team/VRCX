@@ -7,7 +7,7 @@ import {
     getGroupName,
     getWorldName
 } from '../shared/utils';
-import { database } from '../service/database';
+import { database } from '../services/database';
 import { useFriendStore } from './friend';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
@@ -16,7 +16,7 @@ import { useNotificationStore } from './notification';
 import { useNotificationsSettingsStore } from './settings/notifications';
 import { useUserStore } from './user';
 import { useWristOverlaySettingsStore } from './settings/wristOverlay';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
 export const useSharedFeedStore = defineStore('SharedFeed', () => {
     const friendStore = useFriendStore();

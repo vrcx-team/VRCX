@@ -1,5 +1,5 @@
 import { queryClient } from '../queries';
-import { request } from '../service/request';
+import { request } from '../services/request';
 
 /**
  *

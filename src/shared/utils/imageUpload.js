@@ -1,7 +1,7 @@
 import { toast } from 'vue-sonner';
 
-import { $throw } from '../../service/request';
-import { AppDebug } from '../../service/appConfig.js';
+import { $throw } from '../../services/request';
+import { AppDebug } from '../../services/appConfig.js';
 import { extractFileId } from './index.js';
 import { imageRequest } from '../../api';
 

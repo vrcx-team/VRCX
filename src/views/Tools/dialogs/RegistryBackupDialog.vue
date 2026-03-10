@@ -52,7 +52,7 @@
     import { createColumns } from '../../Settings/dialogs/registryBackupColumns.jsx';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
-    import configRepository from '../../../service/config';
+    import configRepository from '../../../services/config';
 
     const { backupVrcRegistry } = useVrcxStore();
     const { isRegistryBackupDialogVisible } = storeToRefs(useVrcxStore());

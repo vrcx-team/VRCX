@@ -1,4 +1,4 @@
-import { request } from '../service/request';
+import { request } from '../services/request';
 import { useGalleryStore } from '../stores';
 
 const notificationReq = {

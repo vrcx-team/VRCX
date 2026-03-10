@@ -101,7 +101,7 @@
     import { groupRequest, queryRequest } from '../../api';
     import { VirtualCombobox } from '../ui/virtual-combobox';
 
-    import configRepository from '../../service/config';
+    import configRepository from '../../services/config';
 
     const { vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
     const { currentUserGroups, inviteGroupDialog } = storeToRefs(useGroupStore());

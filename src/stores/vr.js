@@ -13,7 +13,7 @@ import { usePhotonStore } from './photon';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUserStore } from './user';
 import { useWristOverlaySettingsStore } from './settings/wristOverlay';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
 export const useVrStore = defineStore('Vr', () => {
     const friendStore = useFriendStore();

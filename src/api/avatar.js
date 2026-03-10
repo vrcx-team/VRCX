@@ -1,5 +1,5 @@
 import { patchAndRefetchActiveQuery, queryKeys } from '../queries';
-import { request } from '../service/request';
+import { request } from '../services/request';
 import { useUserStore } from '../stores';
 import { applyCurrentUser } from '../coordinators/userCoordinator';
 

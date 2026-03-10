@@ -4,7 +4,7 @@ import {
     deleteVRChatCache as _deleteVRChatCache,
     isRealInstance
 } from '../shared/utils';
-import { database } from '../service/database';
+import { database } from '../services/database';
 import { useAdvancedSettingsStore } from '../stores/settings/advanced';
 import { useAvatarStore } from '../stores/avatar';
 import { addAvatarWearTime } from './avatarCoordinator';
@@ -21,7 +21,7 @@ import { useUserStore } from '../stores/user';
 import { useVrStore } from '../stores/vr';
 import { useWorldStore } from '../stores/world';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 import * as workerTimers from 'worker-timers';
 

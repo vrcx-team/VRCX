@@ -1,4 +1,4 @@
-import { request } from '../service/request';
+import { request } from '../services/request';
 import { handleConfig } from '../coordinators/userCoordinator';
 
 const loginReq = {

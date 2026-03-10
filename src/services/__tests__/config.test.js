@@ -1,5 +1,5 @@
 // Mock router to avoid transitive i18n.global error from columns.jsx
-vi.mock('../../plugin/router.js', () => ({
+vi.mock('../../plugins/router.js', () => ({
     router: { beforeEach: vi.fn(), push: vi.fn() },
     initRouter: vi.fn()
 }));

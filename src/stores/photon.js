@@ -17,8 +17,8 @@ import {
 } from '../shared/utils';
 import { instanceRequest, userRequest } from '../api';
 import { photonEmojis, photonEventType } from '../shared/constants/photon';
-import { AppDebug } from '../service/appConfig';
-import { database } from '../service/database';
+import { AppDebug } from '../services/appConfig';
+import { database } from '../services/database';
 import { useAvatarStore } from './avatar';
 import { applyAvatar } from '../coordinators/avatarCoordinator';
 import { showUserDialog, lookupUser, applyUser } from '../coordinators/userCoordinator';
@@ -33,7 +33,7 @@ import { useSharedFeedStore } from './sharedFeed';
 import { useUserStore } from './user';
 import { useVrStore } from './vr';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 import * as workerTimers from 'worker-timers';
 

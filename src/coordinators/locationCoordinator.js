@@ -4,7 +4,7 @@ import {
     isRealInstance,
     parseLocation
 } from '../shared/utils';
-import { database } from '../service/database';
+import { database } from '../services/database';
 import { useAdvancedSettingsStore } from '../stores/settings/advanced';
 import { useGameLogStore } from '../stores/gameLog';
 import { useGameStore } from '../stores/game';

@@ -28,7 +28,7 @@ import {
     getPlatformInfo,
     timeToText
 } from '../../shared/utils';
-import { i18n } from '../../plugin';
+import { i18n } from '../../plugins';
 
 const { t } = i18n.global;
 

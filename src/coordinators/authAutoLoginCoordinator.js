@@ -1,7 +1,7 @@
 import { toast } from 'vue-sonner';
-import { i18n } from '../plugin/i18n';
+import { i18n } from '../plugins/i18n';
 
-import { AppDebug } from '../service/appConfig';
+import { AppDebug } from '../services/appConfig';
 import { useAdvancedSettingsStore } from '../stores/settings/advanced';
 import { useAuthStore } from '../stores/auth';
 

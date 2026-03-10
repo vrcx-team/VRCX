@@ -10,7 +10,7 @@ const mocks = vi.hoisted(() => ({
     toastDismiss: vi.fn()
 }));
 
-vi.mock('../../service/webapi', () => ({
+vi.mock('../../services/webapi', () => ({
     default: {
         execute: (...args) => mocks.execute(...args)
     }

@@ -1,6 +1,6 @@
 import { nextTick } from 'vue';
 import { toast } from 'vue-sonner';
-import { i18n } from '../plugin/i18n';
+import { i18n } from '../plugins/i18n';
 
 import {
     convertFileUrlToImageUrl,
@@ -9,7 +9,7 @@ import {
     replaceBioSymbols
 } from '../shared/utils';
 import { groupRequest, instanceRequest, queryRequest } from '../api';
-import { database } from '../service/database';
+import { database } from '../services/database';
 import { groupDialogFilterOptions } from '../shared/constants/';
 import { patchGroupFromEvent } from '../queries';
 import { useGameStore } from '../stores/game';
@@ -19,9 +19,9 @@ import { useNotificationStore } from '../stores/notification';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
 import { useGroupStore } from '../stores/group';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 import * as workerTimers from 'worker-timers';
 

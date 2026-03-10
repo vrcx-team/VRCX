@@ -3,7 +3,7 @@ import { ArrowUpDown, UserMinus } from 'lucide-vue-next';
 import { Button } from '../../components/ui/button';
 import { Checkbox } from '../../components/ui/checkbox';
 import { TooltipWrapper } from '../../components/ui/tooltip';
-import { i18n } from '../../plugin';
+import { i18n } from '../../plugins';
 import {
     formatDateFilter,
     getFaviconUrl,

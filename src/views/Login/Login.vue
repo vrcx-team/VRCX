@@ -180,7 +180,7 @@
     import { useAppearanceSettingsStore, useAuthStore, useVRCXUpdaterStore } from '../../stores';
     import { getLanguageName, languageCodes } from '../../localization';
     import { openExternalLink, userImage } from '../../shared/utils';
-    import { watchState } from '../../service/watchState';
+    import { watchState } from '../../services/watchState';
 
     import LoginSettingsDialog from './Dialog/LoginSettingsDialog.vue';
 

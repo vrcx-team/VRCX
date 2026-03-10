@@ -6,7 +6,7 @@
  * Provides global stubs for CefSharp IPC bindings.
  */
 
-import { i18n } from './src/plugin/i18n';
+import { i18n } from './src/plugins/i18n';
 
 import en from './src/localization/en.json';
 

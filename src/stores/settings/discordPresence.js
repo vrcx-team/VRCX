@@ -26,7 +26,7 @@ import { useLocationStore } from '../location';
 import { useUpdateLoopStore } from '../updateLoop';
 import { useUserStore } from '../user';
 
-import configRepository from '../../service/config';
+import configRepository from '../../services/config';
 
 export const useDiscordPresenceSettingsStore = defineStore(
     'DiscordPresenceSettings',

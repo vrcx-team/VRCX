@@ -96,7 +96,7 @@
     import { SidebarInset, SidebarProvider } from '../../components/ui/sidebar';
     import { useAppearanceSettingsStore } from '../../stores';
     import { useMainLayoutResizable } from '../../composables/useMainLayoutResizable';
-    import { watchState } from '../../service/watchState';
+    import { watchState } from '../../services/watchState';
 
     import AvatarImportDialog from '../Favorites/dialogs/AvatarImportDialog.vue';
     import ChangelogDialog from '../Settings/dialogs/ChangelogDialog.vue';

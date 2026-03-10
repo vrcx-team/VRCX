@@ -9,7 +9,7 @@ import {
 } from '../shared/utils/base/ui';
 import { i18n, loadLocalizedStrings } from './i18n';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 export async function initUi() {
     try {

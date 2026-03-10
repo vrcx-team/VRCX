@@ -9,7 +9,7 @@ import {
     queryRequest
 } from '../../../api';
 import { copyToClipboard, parseLocation } from '../../../shared/utils';
-import { database } from '../../../service/database';
+import { database } from '../../../services/database';
 
 /**
  * Composable for UserDialog command dispatch.

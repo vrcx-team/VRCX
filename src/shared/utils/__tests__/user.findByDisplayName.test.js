@@ -4,7 +4,7 @@ vi.mock('../../../views/Feed/Feed.vue', () => ({
     default: { name: 'Feed' }
 }));
 vi.mock('../../../views/Feed/columns.jsx', () => ({ columns: [] }));
-vi.mock('../../../plugin/router', () => ({
+vi.mock('../../../plugins/router', () => ({
     default: { push: vi.fn(), currentRoute: { value: {} } }
 }));
 

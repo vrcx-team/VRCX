@@ -10,7 +10,7 @@ import {
 import { getCurrentUser } from '../coordinators/userCoordinator';
 import { AppDebug } from './appConfig.js';
 import { escapeTag } from '../shared/utils';
-import { i18n } from '../plugin/i18n';
+import { i18n } from '../plugins/i18n';
 import { statusCodes } from '../shared/constants/api.js';
 import { watchState } from './watchState';
 

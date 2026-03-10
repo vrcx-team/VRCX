@@ -25,7 +25,7 @@
     import { Toaster } from './components/ui/sonner';
     import { TooltipProvider } from './components/ui/tooltip';
     import { createGlobalStores } from './stores';
-    import { initNoty } from './plugin/noty';
+    import { initNoty } from './plugins/noty';
     import { getGameLogTable } from './coordinators/gameLogCoordinator';
     import { runCheckVRChatDebugLoggingFlow } from './coordinators/gameCoordinator';
 

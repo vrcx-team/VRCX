@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n';
 
 import { formatDateFilter, openExternalLink } from '../shared/utils';
 
-import webApiService from '../service/webapi';
+import webApiService from '../services/webapi';
 
 import * as workerTimers from 'worker-timers';
 

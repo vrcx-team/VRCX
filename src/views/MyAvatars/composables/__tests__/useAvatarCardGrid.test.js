@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../../../../service/config.js', () => ({
+vi.mock('../../../../services/config.js', () => ({
     default: {
         getString: vi.fn().mockResolvedValue('0.6'),
         setString: vi.fn()
@@ -247,7 +247,7 @@ describe('useAvatarCardGrid', () => {
 
     describe('persistence', () => {
         it('calls configRepository.setString when scale changes', async () => {
-            const config = (await import('../../../../service/config.js'))
+            const config = (await import('../../../../services/config.js'))
                 .default;
             const { cardScale } = createGrid();
             cardScale.value = 0.7;
@@ -258,7 +258,7 @@ describe('useAvatarCardGrid', () => {
         });
 
         it('calls configRepository.setString when spacing changes', async () => {
-            const config = (await import('../../../../service/config.js'))
+            const config = (await import('../../../../services/config.js'))
                 .default;
             const { cardSpacing } = createGrid();
             cardSpacing.value = 0.8;
@@ -269,7 +269,7 @@ describe('useAvatarCardGrid', () => {
         });
 
         it('uses custom config keys', async () => {
-            const config = (await import('../../../../service/config.js'))
+            const config = (await import('../../../../services/config.js'))
                 .default;
             const { cardScale } = createGrid({
                 scaleConfigKey: 'CUSTOM_SCALE'

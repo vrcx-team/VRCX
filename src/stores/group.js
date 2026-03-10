@@ -8,7 +8,7 @@ import {
 } from '../shared/utils';
 import { groupRequest, queryRequest } from '../api';
 import { groupDialogFilterOptions } from '../shared/constants/';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
 export const useGroupStore = defineStore('Group', () => {
     const { t } = useI18n();

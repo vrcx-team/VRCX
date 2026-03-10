@@ -585,7 +585,7 @@
     import { VirtualCombobox } from '../ui/virtual-combobox';
 
     import InviteDialog from './InviteDialog/InviteDialog.vue';
-    import configRepository from '../../service/config';
+    import configRepository from '../../services/config';
 
     const props = defineProps({
         newInstanceDialogLocationTag: {

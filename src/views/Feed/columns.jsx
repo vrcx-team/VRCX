@@ -15,7 +15,7 @@ import {
     ChevronRight
 } from 'lucide-vue-next';
 import { formatDateFilter, statusClass, timeToText } from '../../shared/utils';
-import { i18n } from '../../plugin/i18n';
+import { i18n } from '../../plugins/i18n';
 import { useGalleryStore } from '../../stores';
 import { showUserDialog } from '../../coordinators/userCoordinator';
 

@@ -6,7 +6,7 @@ const mockHandleFavoriteAdd = vi.fn();
 const mockHandleFavoriteDelete = vi.fn();
 const mockHandleFavoriteGroupClear = vi.fn();
 
-vi.mock('../../service/request', () => ({
+vi.mock('../../services/request', () => ({
     request: (...args) => mockRequest(...args)
 }));
 

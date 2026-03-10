@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 
 import { playerModerationRequest } from '../api';
 import { useUserStore } from './user';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
 export const useModerationStore = defineStore('Moderation', () => {
     const userStore = useUserStore();

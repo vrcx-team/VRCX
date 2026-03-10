@@ -6,7 +6,7 @@ import { ArrowUpDown, FileText, Trash2, X } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
 import { formatDateFilter, openExternalLink } from '../../shared/utils';
-import { i18n } from '../../plugin';
+import { i18n } from '../../plugins';
 import {
     useInstanceStore,
     useUiStore

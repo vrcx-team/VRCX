@@ -7,7 +7,7 @@ import {
     watch
 } from 'vue';
 
-import configRepository from '../../../service/config.js';
+import configRepository from '../../../services/config.js';
 
 /**
  *

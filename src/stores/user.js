@@ -18,8 +18,8 @@ import {
     instanceRequest,
     userRequest
 } from '../api';
-import { AppDebug } from '../service/appConfig';
-import { database } from '../service/database';
+import { AppDebug } from '../services/appConfig';
+import { database } from '../services/database';
 import { runUpdateCurrentUserLocationFlow } from '../coordinators/locationCoordinator';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFavoriteStore } from './favorite';
@@ -27,7 +27,7 @@ import { useFriendStore } from './friend';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
 import { useUiStore } from './ui';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
 import * as workerTimers from 'worker-timers';
 

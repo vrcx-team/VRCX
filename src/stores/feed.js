@@ -1,12 +1,12 @@
 import { ref, shallowRef, watch } from 'vue';
 import { defineStore } from 'pinia';
 
-import { database } from '../service/database';
+import { database } from '../services/database';
 import { useFriendStore } from './friend';
 import { useVrcxStore } from './vrcx';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 export const useFeedStore = defineStore('Feed', () => {
     const friendStore = useFriendStore();

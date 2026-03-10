@@ -276,10 +276,10 @@
     } from '../../../stores';
     import { userImage, userStatusClass } from '../../../shared/utils';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
-    import { database } from '../../../service/database';
-    import { watchState } from '../../../service/watchState';
+    import { database } from '../../../services/database';
+    import { watchState } from '../../../services/watchState';
 
-    import configRepository from '../../../service/config';
+    import configRepository from '../../../services/config';
 
     const { t } = useI18n();
     const friendStore = useFriendStore();

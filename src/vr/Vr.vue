@@ -1452,7 +1452,7 @@
     import { escapeTag, escapeTagRecursive } from '../shared/utils/base/string';
     import { changeHtmlLangAttribute } from '../shared/utils/base/ui';
     import { displayLocation } from '../shared/utils/location';
-    import { loadLocalizedStrings } from '../plugin/i18n';
+    import { loadLocalizedStrings } from '../plugins/i18n';
     import { removeFromArray } from '../shared/utils/base/array';
     import { timeToText } from '../shared/utils/base/format';
 

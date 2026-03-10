@@ -1,7 +1,7 @@
 import { reactive, ref } from 'vue';
 import { defineStore } from 'pinia';
 
-import configRepository from '../service/config.js';
+import configRepository from '../services/config.js';
 
 export const useGameStore = defineStore('Game', () => {
     const state = reactive({

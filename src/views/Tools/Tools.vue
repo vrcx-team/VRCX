@@ -347,7 +347,7 @@
     import { useVrcxStore } from '../../stores/vrcx';
 
     import AutoChangeStatusDialog from './dialogs/AutoChangeStatusDialog.vue';
-    import configRepository from '../../service/config.js';
+    import configRepository from '../../services/config.js';
 
     const GroupCalendarDialog = defineAsyncComponent(() => import('./dialogs/GroupCalendarDialog.vue'));
     const NoteExportDialog = defineAsyncComponent(() => import('./dialogs/NoteExportDialog.vue'));

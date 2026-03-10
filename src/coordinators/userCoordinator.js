@@ -1,6 +1,6 @@
 import { reactive } from 'vue';
 import { toast } from 'vue-sonner';
-import { i18n } from '../plugin/i18n';
+import { i18n } from '../plugins/i18n';
 
 import {
     arraysMatch,
@@ -22,11 +22,11 @@ import {
     queryRequest,
     userRequest
 } from '../api';
-import { processBulk, request } from '../service/request';
-import { AppDebug } from '../service/appConfig';
-import { database } from '../service/database';
+import { processBulk, request } from '../services/request';
+import { AppDebug } from '../services/appConfig';
+import { database } from '../services/database';
 import { patchUserFromEvent } from '../queries';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 import { applyAvatar, showAvatarDialog } from './avatarCoordinator';
 import { applyFavorite } from './favoriteCoordinator';
 import {

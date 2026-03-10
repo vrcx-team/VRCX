@@ -1,16 +1,16 @@
 import { toast } from 'vue-sonner';
 
-import { AppDebug } from '../service/appConfig';
+import { AppDebug } from '../services/appConfig';
 import { migrateMemos } from '../shared/utils';
-import { reconnectWebSocket } from '../service/websocket';
+import { reconnectWebSocket } from '../services/websocket';
 import { useAuthStore } from '../stores/auth';
 import { useFriendStore } from '../stores/friend';
 import { useUpdateLoopStore } from '../stores/updateLoop';
 import { useUserStore } from '../stores/user';
 import { getCurrentUser } from './userCoordinator';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 /**
  * Runs friend list refresh orchestration.

@@ -597,7 +597,7 @@
     } from '../../ui/dropdown-menu';
     import { Badge } from '../../ui/badge';
     import { avatarRequest } from '../../../api';
-    import { database } from '../../../service/database';
+    import { database } from '../../../services/database';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
     import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
     import { runDeleteVRChatCacheFlow as deleteVRChatCache } from '../../../coordinators/gameCoordinator';

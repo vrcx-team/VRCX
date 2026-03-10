@@ -334,11 +334,11 @@
     import { Slider } from '../../components/ui/slider';
     import { TooltipWrapper } from '../../components/ui/tooltip';
     import { avatarRequest } from '../../api';
-    import { database } from '../../service/database';
+    import { database } from '../../services/database';
     import { getColumns } from './columns';
     import { getPlatformInfo } from '../../shared/utils/avatar';
     import { getTagColor } from '../../shared/constants';
-    import { processBulk } from '../../service/request';
+    import { processBulk } from '../../services/request';
     import { useAvatarCardGrid } from './composables/useAvatarCardGrid';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
@@ -346,7 +346,7 @@
     import ImageCropDialog from '../../components/dialogs/ImageCropDialog.vue';
     import ManageTagsDialog from './ManageTagsDialog.vue';
     import MyAvatarCard from './components/MyAvatarCard.vue';
-    import configRepository from '../../service/config.js';
+    import configRepository from '../../services/config.js';
     import { showAvatarDialog, selectAvatarWithoutConfirmation, applyAvatar } from '../../coordinators/avatarCoordinator';
 
     const { t } = useI18n();

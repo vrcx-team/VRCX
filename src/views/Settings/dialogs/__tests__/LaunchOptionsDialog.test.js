@@ -36,7 +36,7 @@ vi.mock('../../../../stores', () => ({
     useLaunchStore: () => ({})
 }));
 
-vi.mock('../../../../service/config', () => ({
+vi.mock('../../../../services/config', () => ({
     default: mocks.configRepository
 }));
 

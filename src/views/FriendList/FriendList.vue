@@ -144,8 +144,8 @@
     import { Toggle } from '../../components/ui/toggle';
     import { createColumns } from './columns.jsx';
     import { localeIncludes } from '../../shared/utils';
-    import removeConfusables, { removeWhitespace } from '../../service/confusables';
-    import { router } from '../../plugin/router';
+    import removeConfusables, { removeWhitespace } from '../../services/confusables';
+    import { router } from '../../plugins/router';
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 import { showUserDialog } from '../../coordinators/userCoordinator';

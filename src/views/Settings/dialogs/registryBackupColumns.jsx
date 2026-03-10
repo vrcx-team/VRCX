@@ -2,7 +2,7 @@ import { Download, RotateCcw, Trash2 } from 'lucide-vue-next';
 
 import { Button } from '@/components/ui/button';
 import { TooltipWrapper } from '@/components/ui/tooltip';
-import { i18n } from '@/plugin';
+import { i18n } from '@/plugins';
 import { formatDateFilter } from '@/shared/utils';
 
 const { t } = i18n.global;

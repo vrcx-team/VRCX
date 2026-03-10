@@ -7,7 +7,7 @@ import {
     initPlugins,
     initRouter,
     initSentry
-} from './plugin';
+} from './plugins';
 import { initPiniaPlugins, pinia } from './stores';
 import { queryClient } from './queries';
 

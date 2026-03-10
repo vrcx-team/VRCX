@@ -16,7 +16,7 @@ vi.mock('pinia', async (importOriginal) => {
     };
 });
 
-vi.mock('../../../plugin', () => ({
+vi.mock('../../../plugins', () => ({
     i18n: {
         global: {
             t: (...args) => mocks.t(...args),

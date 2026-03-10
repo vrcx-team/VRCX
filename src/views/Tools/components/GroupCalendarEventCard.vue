@@ -115,7 +115,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useGalleryStore, useGroupStore } from '../../../stores';
-    import { AppDebug } from '../../../service/appConfig';
+    import { AppDebug } from '../../../services/appConfig';
     import { formatDateFilter } from '../../../shared/utils';
     import { groupRequest } from '../../../api';
 

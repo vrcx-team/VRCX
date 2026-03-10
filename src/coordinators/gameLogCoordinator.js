@@ -11,13 +11,13 @@ import {
     parsePrintFromUrl,
     replaceBioSymbols
 } from '../shared/utils';
-import { i18n } from '../plugin/i18n';
-import { AppDebug } from '../service/appConfig';
-import { database } from '../service/database';
+import { i18n } from '../plugins/i18n';
+import { AppDebug } from '../services/appConfig';
+import { database } from '../services/database';
 import { runLastLocationResetFlow, runUpdateCurrentUserLocationFlow } from './locationCoordinator';
 import { getGroupName } from '../shared/utils';
 import { userRequest } from '../api';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 import { toast } from 'vue-sonner';
 
 import { useAdvancedSettingsStore } from '../stores/settings/advanced';
@@ -36,7 +36,7 @@ import { useUserStore } from '../stores/user';
 import { useVrStore } from '../stores/vr';
 import { useVrcxStore } from '../stores/vrcx';
 
-import gameLogService from '../service/gameLog.js';
+import gameLogService from '../services/gameLog.js';
 
 import * as workerTimers from 'worker-timers';
 
@@ -579,4 +579,4 @@ export async function disableGameLogDialog() {
     }
 }
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';

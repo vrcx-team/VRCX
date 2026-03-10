@@ -28,7 +28,7 @@ import {
 import { storeToRefs } from 'pinia';
 
 import { checkCanInvite, formatDateFilter } from '../../shared/utils';
-import { i18n } from '../../plugin';
+import { i18n } from '../../plugins';
 import {
     useGameStore,
     useLocationStore,

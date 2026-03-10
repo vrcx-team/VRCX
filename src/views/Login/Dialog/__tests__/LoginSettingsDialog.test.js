@@ -32,7 +32,7 @@ vi.mock('../../../../stores', () => ({
     useVrcxStore: () => mocks.vrcxStore
 }));
 
-vi.mock('../../../../service/appConfig', () => ({
+vi.mock('../../../../services/appConfig', () => ({
     AppDebug: {
         endpointDomainVrchat: 'api.vrchat.cloud',
         websocketDomainVrchat: 'pipeline.vrchat.cloud'

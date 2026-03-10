@@ -154,7 +154,7 @@
     import { getFriendsSortFunction } from '../../shared/utils';
 
     import FriendLocationCard from './components/FriendsLocationsCard.vue';
-    import configRepository from '../../service/config.js';
+    import configRepository from '../../services/config.js';
 
     const { t } = useI18n();
 

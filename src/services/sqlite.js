@@ -1,4 +1,4 @@
-import { i18n } from '../plugin/i18n';
+import { i18n } from '../plugins/i18n';
 import { openExternalLink } from '../shared/utils';
 import { useModalStore } from '../stores';
 

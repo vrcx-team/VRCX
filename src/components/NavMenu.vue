@@ -399,7 +399,7 @@
     import { THEME_CONFIG, links, navDefinitions } from '../shared/constants';
     import { openExternalLink } from '../shared/utils';
 
-    import configRepository from '../service/config';
+    import configRepository from '../services/config';
 
     const CustomNavDialog = defineAsyncComponent(() => import('./dialogs/CustomNavDialog.vue'));
 

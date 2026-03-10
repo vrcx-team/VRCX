@@ -1,6 +1,6 @@
 import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
-import { AppDebug } from '../service/appConfig';
-import { database } from '../service/database';
+import { AppDebug } from '../services/appConfig';
+import { database } from '../services/database';
 import { useAvatarStore } from '../stores/avatar';
 import { getAvatarName } from './avatarCoordinator';
 import { useFeedStore } from '../stores/feed';

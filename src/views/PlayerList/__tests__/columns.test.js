@@ -9,7 +9,7 @@ const mocks = vi.hoisted(() => ({
     onUnblockChatbox: vi.fn()
 }));
 
-vi.mock('../../../plugin', () => ({
+vi.mock('../../../plugins', () => ({
     i18n: {
         global: {
             t: (key) => key

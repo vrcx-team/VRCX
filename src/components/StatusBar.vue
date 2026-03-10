@@ -284,7 +284,7 @@
     import { useIntervalFn, useNow } from '@vueuse/core';
     import { TooltipWrapper } from '@/components/ui/tooltip';
     import { useI18n } from 'vue-i18n';
-    import { wsState } from '@/service/websocket';
+    import { wsState } from '@/services/websocket';
 
     import dayjs from 'dayjs';
     import timezone from 'dayjs/plugin/timezone';
@@ -299,7 +299,7 @@
         parseClockOffset
     } from './statusBarUtils';
 
-    import configRepository from '../service/config';
+    import configRepository from '../services/config';
 
     dayjs.extend(utc);
     dayjs.extend(timezone);

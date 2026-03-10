@@ -213,7 +213,7 @@
     import BackToTop from '../../../components/BackToTop.vue';
     import FriendItem from './FriendItem.vue';
     import Location from '../../../components/Location.vue';
-    import configRepository from '../../../service/config';
+    import configRepository from '../../../services/config';
 
     import '@/styles/status-icon.css';
 import { showUserDialog } from '../../../coordinators/userCoordinator';

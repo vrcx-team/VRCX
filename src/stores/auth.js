@@ -9,12 +9,12 @@ import {
     runLoginSuccessFlow,
     runLogoutFlow
 } from '../coordinators/authCoordinator';
-import { AppDebug } from '../service/appConfig';
+import { AppDebug } from '../services/appConfig';
 import { authRequest } from '../api';
-import { database } from '../service/database';
+import { database } from '../services/database';
 import { escapeTag } from '../shared/utils';
-import { initWebsocket } from '../service/websocket';
-import { request } from '../service/request';
+import { initWebsocket } from '../services/websocket';
+import { request } from '../services/request';
 import { runHandleAutoLoginFlow } from '../coordinators/authAutoLoginCoordinator';
 import { getCurrentUser } from '../coordinators/userCoordinator';
 import { useAdvancedSettingsStore } from './settings/advanced';
@@ -22,11 +22,11 @@ import { useGeneralSettingsStore } from './settings/general';
 import { useModalStore } from './modal';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
-import configRepository from '../service/config';
-import security from '../service/security';
-import webApiService from '../service/webapi';
+import configRepository from '../services/config';
+import security from '../services/security';
+import webApiService from '../services/webapi';
 
 import * as workerTimers from 'worker-timers';
 

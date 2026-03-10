@@ -30,12 +30,12 @@ import {
     getUserIdFromNoty as getUserIdFromNotyBase,
     toNotificationText
 } from '../../shared/utils/notificationMessage';
-import { database, dbVars } from '../../service/database';
+import { database, dbVars } from '../../services/database';
 import {
     getNotificationCategory,
     getNotificationTs
 } from '../../shared/utils/notificationCategory';
-import { AppDebug } from '../../service/appConfig';
+import { AppDebug } from '../../services/appConfig';
 import { createOverlayDispatch } from './overlayDispatch';
 import { useAdvancedSettingsStore } from '../settings/advanced';
 import { useAppearanceSettingsStore } from '../settings/appearance';
@@ -55,9 +55,9 @@ import { useSharedFeedStore } from '../sharedFeed';
 import { useUiStore } from '../ui';
 import { useUserStore } from '../user';
 import { useWristOverlaySettingsStore } from '../settings/wristOverlay';
-import { watchState } from '../../service/watchState';
+import { watchState } from '../../services/watchState';
 
-import configRepository from '../../service/config';
+import configRepository from '../../services/config';
 
 export const useNotificationStore = defineStore('Notification', () => {
     const { t } = useI18n();

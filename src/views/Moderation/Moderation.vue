@@ -66,7 +66,7 @@
     import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
-    import configRepository from '../../service/config.js';
+    import configRepository from '../../services/config.js';
 
     const { t } = useI18n();
     const { playerModerationTable } = storeToRefs(useModerationStore());

@@ -100,7 +100,7 @@ vi.mock('../../../coordinators/friendRelationshipCoordinator', () => ({
     handleFriendDelete: (...args) => mocks.handleFriendDelete(...args)
 }));
 
-vi.mock('../../../plugin/router', () => ({
+vi.mock('../../../plugins/router', () => ({
     router: {
         push: (...args) => mocks.routerPush(...args)
     }
@@ -115,7 +115,7 @@ vi.mock('../../../api', () => ({
     }
 }));
 
-vi.mock('../../../service/confusables', () => ({
+vi.mock('../../../services/confusables', () => ({
     default: (value) => value,
     removeWhitespace: (value) => String(value ?? '').replace(/\s+/g, '')
 }));

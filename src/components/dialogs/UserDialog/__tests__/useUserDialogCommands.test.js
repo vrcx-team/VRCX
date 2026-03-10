@@ -33,7 +33,7 @@ vi.mock('../../../../shared/utils', () => ({
     parseLocation: vi.fn(() => ({ worldId: 'wrld_test', tag: 'wrld_test~123' }))
 }));
 
-vi.mock('../../../../service/database', () => ({
+vi.mock('../../../../services/database', () => ({
     database: {
         addFriendLogHistory: vi.fn()
     }
@@ -48,7 +48,7 @@ const {
     playerModerationRequest,
     miscRequest
 } = await import('../../../../api');
-const { database } = await import('../../../../service/database');
+const { database } = await import('../../../../services/database');
 
 function createMockUserDialog() {
     return ref({

@@ -165,7 +165,7 @@
     import { instanceRequest, queryRequest } from '../../api';
 
     import InviteDialog from './InviteDialog/InviteDialog.vue';
-    import configRepository from '../../service/config';
+    import configRepository from '../../services/config';
 
     const { t } = useI18n();
 

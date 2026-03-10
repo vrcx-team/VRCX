@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
 import { createRateLimiter, executeWithBackoff } from '../shared/utils';
-import { database } from '../service/database';
+import { database } from '../services/database';
 import { useFriendStore } from './friend';
 import { useUserStore } from './user';
 import { userRequest } from '../api';

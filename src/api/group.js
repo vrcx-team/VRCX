@@ -1,7 +1,7 @@
 import { useUserStore } from '../stores';
 import { applyGroup } from '../coordinators/groupCoordinator';
 import { queryClient } from '../queries';
-import { request } from '../service/request';
+import { request } from '../services/request';
 
 /**
  *

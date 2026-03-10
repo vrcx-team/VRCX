@@ -1,11 +1,11 @@
 import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 
-import { router } from '../plugin/router';
+import { router } from '../plugins/router';
 import { useAdvancedSettingsStore } from './settings/advanced';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();

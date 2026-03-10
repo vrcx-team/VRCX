@@ -1,6 +1,6 @@
 import { useAvatarStore, useWorldStore } from '../stores';
 import { applyWorld } from '../coordinators/worldCoordinator';
-import { request } from '../service/request';
+import { request } from '../services/request';
 
 const imageReq = {
     async uploadAvatarFailCleanup(id) {

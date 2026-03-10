@@ -80,7 +80,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAuthStore, useVRCXUpdaterStore, useVrcxStore } from '../../../stores';
-    import { AppDebug } from '../../../service/appConfig';
+    import { AppDebug } from '../../../services/appConfig';
 
     const { loginForm, enableCustomEndpoint } = storeToRefs(useAuthStore());
     const { toggleCustomEndpoint } = useAuthStore();

@@ -1,6 +1,6 @@
-import { i18n } from '../plugin/i18n';
+import { i18n } from '../plugins/i18n';
 
-import { database } from '../service/database';
+import { database } from '../services/database';
 import { friendRequest, userRequest } from '../api';
 import { getNameColour } from '../shared/utils';
 import { handleFavoriteDelete } from './favoriteCoordinator';
@@ -12,9 +12,9 @@ import { useNotificationStore } from '../stores/notification';
 import { useSharedFeedStore } from '../stores/sharedFeed';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 /**
  * @param {object} args

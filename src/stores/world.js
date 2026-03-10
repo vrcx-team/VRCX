@@ -4,7 +4,7 @@ import { defineStore } from 'pinia';
 import {
     checkVRChatCache
 } from '../shared/utils';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
 export const useWorldStore = defineStore('World', () => {
     const worldDialog = reactive({

@@ -13,11 +13,11 @@ import { avatarRequest, queryRequest } from '../api';
 import {
     clearPiniaActionTrail,
     getPiniaActionTrail
-} from '../plugin/piniaActionTrail';
+} from '../plugins/piniaActionTrail';
 import { debounce, parseLocation } from '../shared/utils';
-import { AppDebug } from '../service/appConfig';
-import { database } from '../service/database';
-import { failedGetRequests } from '../service/request';
+import { AppDebug } from '../services/appConfig';
+import { database } from '../services/database';
+import { failedGetRequests } from '../services/request';
 import { refreshCustomScript } from '../shared/utils/base/ui';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
@@ -47,9 +47,9 @@ import { useUserStore } from './user';
 import { useVrcStatusStore } from './vrcStatus';
 import { useWorldStore } from './world';
 import { clearVRCXCache } from '../coordinators/vrcxCoordinator';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 export const useVrcxStore = defineStore('Vrcx', () => {
     const gameStore = useGameStore();

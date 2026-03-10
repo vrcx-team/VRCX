@@ -15,12 +15,12 @@ import {
     vrcPlusIconRequest,
     vrcPlusImageRequest
 } from '../api';
-import { AppDebug } from '../service/appConfig';
+import { AppDebug } from '../services/appConfig';
 import { handleImageUploadInput } from '../shared/utils/imageUpload';
-import { router } from '../plugin/router';
+import { router } from '../plugins/router';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useModalStore } from './modal';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
 import * as workerTimers from 'worker-timers';
 

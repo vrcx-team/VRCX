@@ -1,7 +1,7 @@
 import { createPinia } from 'pinia';
 
-import { getSentry, isSentryOptedIn } from '../plugin';
-import { createPiniaActionTrailPlugin } from '../plugin/piniaActionTrail';
+import { getSentry, isSentryOptedIn } from '../plugins';
+import { createPiniaActionTrailPlugin } from '../plugins/piniaActionTrail';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAuthStore } from './auth';

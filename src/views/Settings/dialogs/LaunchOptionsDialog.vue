@@ -72,7 +72,7 @@
     import { openExternalLink } from '../../../shared/utils';
     import { useLaunchStore } from '../../../stores';
 
-    import configRepository from '../../../service/config';
+    import configRepository from '../../../services/config';
 
     const { t } = useI18n();
 

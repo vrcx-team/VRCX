@@ -588,7 +588,7 @@
     import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useModalStore, useUserStore } from '../../stores';
     import { handleImageUploadInput, readFileAsBase64, withUploadTimeout } from '../../shared/utils/imageUpload';
     import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../shared/constants';
-    import { AppDebug } from '../../service/appConfig';
+    import { AppDebug } from '../../services/appConfig';
 
     import Emoji from '../../components/Emoji.vue';
     import ImageCropDialog from '../../components/dialogs/ImageCropDialog.vue';

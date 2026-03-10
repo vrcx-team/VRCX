@@ -10,13 +10,13 @@ import {
     replaceReactiveObject
 } from '../shared/utils';
 import { favoriteRequest } from '../api';
-import { database } from '../service/database';
-import { processBulk } from '../service/request';
+import { database } from '../services/database';
+import { processBulk } from '../services/request';
 import { useAppearanceSettingsStore } from './settings/appearance';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 import { onLoginStateChanged } from '../coordinators/favoriteCoordinator';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 export const useFavoriteStore = defineStore('Favorite', () => {
     const appearanceSettingsStore = useAppearanceSettingsStore();

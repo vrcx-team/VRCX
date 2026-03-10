@@ -5,7 +5,7 @@ import {
     formatDateFilter,
     timeToText
 } from '../../../shared/utils';
-import { database } from '../../../service/database';
+import { database } from '../../../services/database';
 
 /**
  * Composable for WorldDialogInfoTab computed properties and actions.

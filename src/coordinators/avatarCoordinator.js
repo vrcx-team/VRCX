@@ -1,6 +1,6 @@
 import { nextTick } from 'vue';
 import { toast } from 'vue-sonner';
-import { i18n } from '../plugin/i18n';
+import { i18n } from '../plugins/i18n';
 
 import {
     createDefaultAvatarRef,
@@ -13,10 +13,10 @@ import {
     storeAvatarImage
 } from '../shared/utils';
 import { avatarRequest, miscRequest, queryRequest } from '../api';
-import { AppDebug } from '../service/appConfig';
-import { database } from '../service/database';
+import { AppDebug } from '../services/appConfig';
+import { database } from '../services/database';
 import { patchAvatarFromEvent } from '../queries';
-import { processBulk } from '../service/request';
+import { processBulk } from '../services/request';
 import { applyFavorite } from './favoriteCoordinator';
 import { refreshUserDialogAvatars, showUserDialog } from './userCoordinator';
 import { useAdvancedSettingsStore } from '../stores/settings/advanced';
@@ -28,7 +28,7 @@ import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
 import { useVRCXUpdaterStore } from '../stores/vrcxUpdater';
 
-import webApiService from '../service/webapi';
+import webApiService from '../services/webapi';
 
 /**
  * @param {object} json

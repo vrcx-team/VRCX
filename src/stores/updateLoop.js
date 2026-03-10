@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { watch } from 'vue';
 
-import { database } from '../service/database';
+import { database } from '../services/database';
 import { groupRequest } from '../api';
 import { runRefreshFriendsListFlow } from '../coordinators/friendSyncCoordinator';
 import { runUpdateIsGameRunningFlow } from '../coordinators/gameCoordinator';
@@ -20,7 +20,7 @@ import { useUserStore } from './user';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
 import { useVrStore } from './vr';
 import { useVrcxStore } from './vrcx';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
 import * as workerTimers from 'worker-timers';
 

@@ -108,13 +108,13 @@ vi.mock('../../../components/ui/input-group', () => ({
     }
 }));
 
-vi.mock('../../../service/config', () => ({
+vi.mock('../../../services/config', () => ({
     default: {
         setString: (...args) => mocks.configSetString(...args)
     }
 }));
 
-vi.mock('../../../service/database', () => ({
+vi.mock('../../../services/database', () => ({
     database: {
         deleteFriendLogHistory: (...args) => mocks.deleteFriendLogHistory(...args)
     }
