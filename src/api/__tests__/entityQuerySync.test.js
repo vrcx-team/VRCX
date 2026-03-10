@@ -22,6 +22,15 @@ vi.mock('../../stores', () => ({
     })
 }));
 
+vi.mock('../../coordinators/userCoordinator', () => ({
+    applyCurrentUser: (...args) => mockApplyCurrentUser(...args),
+    applyUser: (...args) => mockApplyUser(...args)
+}));
+
+vi.mock('../../coordinators/worldCoordinator', () => ({
+    applyWorld: (...args) => mockApplyWorld(...args)
+}));
+
 vi.mock('../../queries', () => ({
     patchAndRefetchActiveQuery: (...args) =>
         mockPatchAndRefetchActiveQuery(...args),

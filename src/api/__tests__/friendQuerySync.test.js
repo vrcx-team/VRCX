@@ -14,6 +14,10 @@ vi.mock('../../stores/user', () => ({
     })
 }));
 
+vi.mock('../../coordinators/userCoordinator', () => ({
+    applyUser: (...args) => mockApplyUser(...args)
+}));
+
 vi.mock('../../queries', () => ({
     queryClient: {
         invalidateQueries: (...args) => mockInvalidateQueries(...args)
