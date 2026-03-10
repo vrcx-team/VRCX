@@ -350,7 +350,8 @@
     } from '../../components/ui/dropdown-menu';
     import { useAppearanceSettingsStore, useFavoriteStore, useModalStore, useUserStore } from '../../stores';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
-    import { debounce, userImage } from '../../shared/utils';
+    import { debounce } from '../../shared/utils';
+    import { useUserDisplay } from '../../composables/useUserDisplay';
     import { favoriteRequest } from '../../api';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
     import { useFavoritesGroupPanel } from './composables/useFavoritesGroupPanel.js';
@@ -370,6 +371,7 @@
     import FavoritesToolbar from './components/FavoritesToolbar.vue';
     import FriendExportDialog from './dialogs/FriendExportDialog.vue';
 
+    const { userImage } = useUserDisplay();
     const friendGroupVisibilityOptions = ref(['public', 'friends', 'private']);
 
     const {

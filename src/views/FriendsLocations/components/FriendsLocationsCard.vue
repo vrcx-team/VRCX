@@ -75,13 +75,14 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import { isRealInstance, parseLocation, userImage, userStatusClass } from '../../../shared/utils';
+    import { isRealInstance, parseLocation } from '../../../shared/utils';
     import { useGameStore, useLaunchStore, useLocationStore, useUserStore } from '../../../stores';
     import { instanceRequest, notificationRequest, queryRequest } from '../../../api';
-    import { checkCanInvite, checkCanInviteSelf } from '../../../shared/utils/invite.js';
+    import { useInviteChecks } from '../../../composables/useInviteChecks';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
 
     import Location from '../../../components/Location.vue';
-import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { t } = useI18n();
     const { showSendBoopDialog } = useUserStore();
@@ -89,6 +90,8 @@ import { showUserDialog } from '../../../coordinators/userCoordinator';
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
     const { isGameRunning } = storeToRefs(useGameStore());
     const { currentUser } = storeToRefs(useUserStore());
+    const { checkCanInvite, checkCanInviteSelf } = useInviteChecks();
+    const { userImage, userStatusClass } = useUserDisplay();
 
     const props = defineProps({
         friend: {

@@ -27,10 +27,12 @@ import {
 } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
-import { checkCanInvite, formatDateFilter } from '../../shared/utils';
+import { formatDateFilter } from '../../shared/utils';
+import { checkCanInvite } from '../../shared/utils/invite';
 import { i18n } from '../../plugins';
 import {
     useGameStore,
+    useInstanceStore,
     useLocationStore,
     useUiStore,
     useUserStore,
@@ -70,10 +72,16 @@ export const createColumns = ({
     const { isGameRunning } = storeToRefs(useGameStore());
     const { isNotificationExpired } = useNotificationStore();
 
+    const { cachedInstances } = storeToRefs(useInstanceStore());
+
     const canInvite = () => {
         const location = lastLocation.value?.location;
         return (
-            Boolean(location) && isGameRunning.value && checkCanInvite(location)
+            Boolean(location) && isGameRunning.value && checkCanInvite(location, {
+                currentUserId: currentUser.value?.id,
+                lastLocationStr: lastLocation.value?.location,
+                cachedInstances: cachedInstances.value
+            })
         );
     };
 

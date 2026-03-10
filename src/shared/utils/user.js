@@ -1,4 +1,3 @@
-import { useAppearanceSettingsStore, useUserStore } from '../../stores';
 import { HueToHex } from './base/ui';
 import { convertFileUrlToImageUrl } from './common';
 import { languageMappings } from '../constants';
@@ -40,21 +39,22 @@ function languageClass(language) {
 /**
  *
  * @param {string} userId
+ * @param {boolean} isDarkMode
  * @returns
  */
-async function getNameColour(userId) {
+async function getNameColour(userId, isDarkMode) {
     const hue = await AppApi.GetColourFromUserID(userId);
-    return HueToHex(hue);
+    return HueToHex(hue, isDarkMode);
 }
 
 /**
  *
  * @param {object} user
  * @param {boolean} pendingOffline
+ * @param {object} currentUser - current user object from useUserStore
  * @returns
  */
-function userStatusClass(user, pendingOffline = false) {
-    const userStore = useUserStore();
+function userStatusClass(user, pendingOffline = false, currentUser) {
     const style = {
         'status-icon': true
     };
@@ -67,8 +67,8 @@ function userStatusClass(user, pendingOffline = false) {
     } else if (user.userId) {
         id = user.userId;
     }
-    if (id === userStore.currentUser.id) {
-        const platform = userStore.currentUser.presence?.platform;
+    if (id === currentUser?.id) {
+        const platform = currentUser.presence?.platform;
         return {
             ...style,
             ...statusClass(user.status),
@@ -89,10 +89,10 @@ function userStatusClass(user, pendingOffline = false) {
         user.location === 'private' &&
         user.state === '' &&
         id &&
-        !userStore.currentUser.onlineFriends.includes(id)
+        !(currentUser?.onlineFriends || []).includes(id)
     ) {
         // temp fix
-        if (userStore.currentUser.activeFriends.includes(id)) {
+        if ((currentUser?.activeFriends || []).includes(id)) {
             // Active
             style.active = true;
         } else {
@@ -166,21 +166,22 @@ function statusClass(status) {
  * @param {boolean} isIcon - is use for icon (about 40x40)
  * @param {string} resolution - requested icon resolution (default 128),
  * @param {boolean} isUserDialogIcon - is use for user dialog icon
+ * @param {boolean} displayVRCPlusIconsAsAvatar - from appearance settings store
  * @returns {string} - img url
  */
 function userImage(
     user,
     isIcon = false,
     resolution = '128',
-    isUserDialogIcon = false
+    isUserDialogIcon = false,
+    displayVRCPlusIconsAsAvatar = false
 ) {
-    const appAppearanceSettingsStore = useAppearanceSettingsStore();
     if (!user) {
         return '';
     }
     if (
         (isUserDialogIcon && user.userIcon) ||
-        (appAppearanceSettingsStore.displayVRCPlusIconsAsAvatar &&
+        (displayVRCPlusIconsAsAvatar &&
             user.userIcon)
     ) {
         if (isIcon) {
@@ -225,15 +226,15 @@ function userImage(
 /**
  *
  * @param {object} user
+ * @param {boolean} displayVRCPlusIconsAsAvatar - from appearance settings store
  * @returns {string|*}
  */
-function userImageFull(user) {
+function userImageFull(user, displayVRCPlusIconsAsAvatar = false) {
     if (!user) {
         return '';
     }
-    const appAppearanceSettingsStore = useAppearanceSettingsStore();
     if (
-        appAppearanceSettingsStore.displayVRCPlusIconsAsAvatar &&
+        displayVRCPlusIconsAsAvatar &&
         user.userIcon
     ) {
         return user.userIcon;

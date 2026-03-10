@@ -274,13 +274,14 @@
         useModalStore,
         useUserStore
     } from '../../../stores';
-    import { userImage, userStatusClass } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
     import { database } from '../../../services/database';
     import { watchState } from '../../../services/watchState';
 
     import configRepository from '../../../services/config';
 
+    const { userImage, userStatusClass } = useUserDisplay();
     const { t } = useI18n();
     const friendStore = useFriendStore();
     const userStore = useUserStore();

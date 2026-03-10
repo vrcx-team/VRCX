@@ -63,11 +63,13 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { hasGroupModerationPermission, userImage } from '../../shared/utils';
+    import { hasGroupModerationPermission } from '../../shared/utils';
+    import { useUserDisplay } from '../../composables/useUserDisplay';
     import { VirtualCombobox } from '../ui/virtual-combobox';
     import { queryRequest } from '../../api';
     import { useGroupStore } from '../../stores';
 
+    const { userImage } = useUserDisplay();
     const { currentUserGroups, moderateGroupDialog } = storeToRefs(useGroupStore());
     const { showGroupMemberModerationDialog } = useGroupStore();
     const { t } = useI18n();

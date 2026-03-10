@@ -2,6 +2,7 @@ import { storeToRefs } from 'pinia';
 import { toast } from 'vue-sonner';
 
 import {
+    useAuthStore,
     useAvatarStore,
     useInstanceStore,
     useModalStore,
@@ -47,6 +48,8 @@ function downloadAndSaveJson(fileName, data) {
 }
 
 async function deleteVRChatCache(ref) {
+    const authStore = useAuthStore();
+    const sdkUnityVersion = authStore.cachedConfig.sdkUnityVersion;
     let assetUrl = '';
     let variant = '';
     for (let i = ref.unityPackages.length - 1; i > -1; i--) {
@@ -60,7 +63,7 @@ async function deleteVRChatCache(ref) {
         }
         if (
             unityPackage.platform === 'standalonewindows' &&
-            compareUnityVersion(unityPackage.unitySortNumber)
+            compareUnityVersion(unityPackage.unitySortNumber, sdkUnityVersion)
         ) {
             assetUrl = unityPackage.assetUrl;
             if (!unityPackage.variant || unityPackage.variant === 'standard') {
@@ -86,6 +89,8 @@ async function checkVRChatCache(ref) {
     if (!ref.unityPackages) {
         return { Item1: -1, Item2: false, Item3: '' };
     }
+    const authStore = useAuthStore();
+    const sdkUnityVersion = authStore.cachedConfig.sdkUnityVersion;
     let assetUrl = '';
     let variant = '';
     for (let i = ref.unityPackages.length - 1; i > -1; i--) {
@@ -95,7 +100,7 @@ async function checkVRChatCache(ref) {
         }
         if (
             unityPackage.platform === 'standalonewindows' &&
-            compareUnityVersion(unityPackage.unitySortNumber)
+            compareUnityVersion(unityPackage.unitySortNumber, sdkUnityVersion)
         ) {
             assetUrl = unityPackage.assetUrl;
             if (!unityPackage.variant || unityPackage.variant === 'standard') {
@@ -153,7 +158,7 @@ function copyToClipboard(text, message = 'Copied successfully!') {
  * @param {number} resolution
  * @returns {string}
  */
-function convertFileUrlToImageUrl(url, resolution = 128) {
+function convertFileUrlToImageUrl(url, resolution = 128, endpointDomain = AppDebug.endpointDomain) {
     if (!url) {
         return '';
     }
@@ -170,7 +175,7 @@ function convertFileUrlToImageUrl(url, resolution = 128) {
     if (match) {
         const fileId = match[1];
         const version = match[2];
-        return `${AppDebug.endpointDomain}/image/file_${fileId}/${version}/${resolution}`;
+        return `${endpointDomain}/image/file_${fileId}/${version}/${resolution}`;
     }
     // no match return origin url
     return url;
@@ -223,6 +228,8 @@ function openDiscordProfile(discordId) {
  * @returns {Promise<object>}
  */
 async function getBundleDateSize(ref) {
+    const authStore = useAuthStore();
+    const sdkUnityVersion = authStore.cachedConfig.sdkUnityVersion;
     const avatarStore = useAvatarStore();
     const { avatarDialog } = storeToRefs(avatarStore);
     const worldStore = useWorldStore();
@@ -243,7 +250,7 @@ async function getBundleDateSize(ref) {
         ) {
             continue;
         }
-        if (!compareUnityVersion(unityPackage.unitySortNumber)) {
+        if (!compareUnityVersion(unityPackage.unitySortNumber, sdkUnityVersion)) {
             continue;
         }
 

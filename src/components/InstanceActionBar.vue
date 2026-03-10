@@ -159,7 +159,8 @@
         useModalStore,
         useUserStore
     } from '../stores';
-    import { checkCanInviteSelf, formatDateFilter, hasGroupPermission, parseLocation } from '../shared/utils';
+    import { formatDateFilter, hasGroupPermission, parseLocation } from '../shared/utils';
+    import { useInviteChecks } from '../composables/useInviteChecks';
     import { instanceRequest, miscRequest } from '../api';
     import { showUserDialog } from '../coordinators/userCoordinator';
 
@@ -180,6 +181,7 @@
     const { instanceJoinHistory } = storeToRefs(instanceStore);
     const { canOpenInstanceInGame } = storeToRefs(inviteStore);
     const { isOpeningInstance } = storeToRefs(launchStore);
+    const { checkCanInviteSelf } = useInviteChecks();
 
     const props = defineProps({
         location: {

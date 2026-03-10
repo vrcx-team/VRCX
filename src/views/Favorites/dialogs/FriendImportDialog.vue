@@ -125,7 +125,8 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import { removeFromArray, userImage, userImageFull } from '../../../shared/utils';
+    import { removeFromArray } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
     import { addLocalFriendFavorite } from '../../../coordinators/favoriteCoordinator';
     import { favoriteRequest, userRequest } from '../../../api';
@@ -133,6 +134,7 @@
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 import { showUserDialog } from '../../../coordinators/userCoordinator';
 
+    const { userImage, userImageFull } = useUserDisplay();
     const { t } = useI18n();
 
     const emit = defineEmits(['update:friendImportDialogInput']);

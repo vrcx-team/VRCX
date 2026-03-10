@@ -571,6 +571,7 @@
 
     import {
         useAppearanceSettingsStore,
+        useAuthStore,
         useAvatarStore,
         useFavoriteStore,
         useGalleryStore,
@@ -622,6 +623,7 @@ import { showUserDialog } from '../../../coordinators/userCoordinator';
     const { isGameRunning } = storeToRefs(useGameStore());
     const { showFullscreenImageDialog } = useGalleryStore();
     const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
+    const authStore = useAuthStore();
     const modalStore = useModalStore();
     const uiStore = useUiStore();
 
@@ -698,7 +700,7 @@ import { showUserDialog } from '../../../coordinators/userCoordinator';
                     // skip imposters
                     continue;
                 }
-                if (!compareUnityVersion(unityPackage.unitySortNumber)) {
+                if (!compareUnityVersion(unityPackage.unitySortNumber, authStore.cachedConfig.sdkUnityVersion)) {
                     continue;
                 }
                 let platform = 'PC';

@@ -123,7 +123,8 @@
 
     import { useAppearanceSettingsStore, useGalleryStore, useGroupStore, useUserStore } from '../../../stores';
     import { applyGroupMember, handleGroupMember, handleGroupMemberProps } from '../../../coordinators/groupCoordinator';
-    import { hasGroupPermission, userImage, userImageFull } from '../../../shared/utils';
+    import { hasGroupPermission } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
     import { groupRequest, userRequest } from '../../../api';
     import { resolveRoleNames } from './groupModerationUtils';
@@ -142,6 +143,7 @@
 import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     // ── Stores ───────────────────────────────────────────────────
+    const { userImage, userImageFull } = useUserDisplay();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { randomUserColours } = storeToRefs(appearanceSettingsStore);
     

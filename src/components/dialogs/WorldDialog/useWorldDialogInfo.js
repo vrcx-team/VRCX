@@ -16,7 +16,7 @@ import { database } from '../../../services/database';
  * @param {Function} deps.toast - toast notification function
  * @returns {Object} info composable API
  */
-export function useWorldDialogInfo(worldDialog, { t, toast }) {
+export function useWorldDialogInfo(worldDialog, { t, toast, sdkUnityVersion }) {
     const memo = computed({
         get() {
             return worldDialog.value.memo;
@@ -71,7 +71,7 @@ export function useWorldDialogInfo(worldDialog, { t, toast }) {
         const platforms = [];
         if (ref.unityPackages) {
             for (const unityPackage of ref.unityPackages) {
-                if (!compareUnityVersion(unityPackage.unitySortNumber)) {
+                if (!compareUnityVersion(unityPackage.unitySortNumber, sdkUnityVersion)) {
                     continue;
                 }
                 let platform = 'PC';

@@ -1,5 +1,4 @@
 import { isRealInstance } from './instance.js';
-import { useLocationStore } from '../../stores/location.js';
 
 export {
     parseLocation,
@@ -10,10 +9,12 @@ export {
 
 /**
  *
- * @param friendsArr
+ * @param {Array} friendsArr
+ * @param {object} lastLocation - last location from location store
+ * @param {Set} lastLocation.friendList
+ * @param {string} lastLocation.location
  */
-function getFriendsLocations(friendsArr) {
-    const locationStore = useLocationStore();
+function getFriendsLocations(friendsArr, lastLocation) {
     // prevent the instance title display as "Traveling".
     if (!friendsArr?.length) {
         return '';
@@ -28,9 +29,11 @@ function getFriendsLocations(friendsArr) {
             return friend.ref.travelingToLocation;
         }
     }
-    for (const friend of friendsArr) {
-        if (locationStore.lastLocation.friendList.has(friend.id)) {
-            return locationStore.lastLocation.location;
+    if (lastLocation) {
+        for (const friend of friendsArr) {
+            if (lastLocation.friendList.has(friend.id)) {
+                return lastLocation.location;
+            }
         }
     }
     return friendsArr[0].ref?.location;

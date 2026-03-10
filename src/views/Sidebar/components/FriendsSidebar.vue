@@ -204,9 +204,10 @@
         useUserStore
     } from '../../../stores';
     import { buildFriendRow, buildInstanceHeaderRow, buildToggleRow, estimateRowSize } from '../friendsSidebarUtils';
-    import { getFriendsSortFunction, isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
+    import { getFriendsSortFunction, isRealInstance } from '../../../shared/utils';
     import { instanceRequest, notificationRequest, queryRequest, userRequest } from '../../../api';
-    import { checkCanInvite, checkCanInviteSelf } from '../../../shared/utils/invite.js';
+    import { useInviteChecks } from '../../../composables/useInviteChecks';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { getFriendsLocations } from '../../../shared/utils/location.js';
     import { parseLocation } from '../../../shared/utils';
 
@@ -246,6 +247,8 @@ import { showUserDialog } from '../../../coordinators/userCoordinator';
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
     const { isGameRunning } = storeToRefs(useGameStore());
     const { currentUser } = storeToRefs(useUserStore());
+    const { checkCanInvite, checkCanInviteSelf } = useInviteChecks();
+    const { userImage, userStatusClass } = useUserDisplay();
 
     const isFriendsGroupMe = ref(true);
     const isVIPFriends = ref(true);
@@ -476,7 +479,7 @@ import { showUserDialog } from '../../../coordinators/userCoordinator';
                     if (!friendArr || !friendArr.length) return;
                     const groupKey = friendArr?.[0]?.ref?.$location?.tag ?? `group-${groupIndex}`;
                     rows.push(
-                        buildInstanceHeaderRow(getFriendsLocations(friendArr), friendArr.length, `instance:${groupKey}`)
+                        buildInstanceHeaderRow(getFriendsLocations(friendArr, lastLocation.value), friendArr.length, `instance:${groupKey}`)
                     );
                     friendArr.forEach((friend, idx) => {
                         rows.push(

@@ -147,7 +147,7 @@
     import { useVirtualizer } from '@tanstack/vue-virtual';
 
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
-    import { useAppearanceSettingsStore, useFavoriteStore, useFriendStore } from '../../stores';
+    import { useAppearanceSettingsStore, useFavoriteStore, useFriendStore, useLocationStore } from '../../stores';
     import { Slider } from '../../components/ui/slider';
     import { Switch } from '../../components/ui/switch';
     import { getFriendsLocations } from '../../shared/utils/location.js';
@@ -174,6 +174,9 @@
 
     const favoriteStore = useFavoriteStore();
     const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends, localFriendFavorites } = storeToRefs(favoriteStore);
+
+    const locationStore = useLocationStore();
+    const { lastLocation } = storeToRefs(locationStore);
 
     const collapsedGroups = reactive(new Set());
 
@@ -319,7 +322,7 @@
             .map((group, index) => {
                 if (!Array.isArray(group) || group.length === 0) return null;
                 const friends = group;
-                const instanceId = getFriendsLocations(friends) || `instance-${index + 1}`;
+                const instanceId = getFriendsLocations(friends, lastLocation.value) || `instance-${index + 1}`;
                 return {
                     instanceId: String(instanceId),
                     friends

@@ -321,7 +321,7 @@ export function updateUserCurrentStatus(ref) {
     friendStore.updateOnlineFriendCounter();
 
     if (appearanceSettingsStore.randomUserColours) {
-        getNameColour(userStore.currentUser.id).then((colour) => {
+        getNameColour(userStore.currentUser.id, appearanceSettingsStore.isDarkMode).then((colour) => {
             userStore.setCurrentUserColour(colour);
         });
     }

@@ -179,11 +179,13 @@
 
     import { useAppearanceSettingsStore, useAuthStore, useVRCXUpdaterStore } from '../../stores';
     import { getLanguageName, languageCodes } from '../../localization';
-    import { openExternalLink, userImage } from '../../shared/utils';
+    import { openExternalLink } from '../../shared/utils';
+    import { useUserDisplay } from '../../composables/useUserDisplay';
     import { watchState } from '../../services/watchState';
 
     import LoginSettingsDialog from './Dialog/LoginSettingsDialog.vue';
 
+    const { userImage } = useUserDisplay();
     const { showVRCXUpdateDialog } = useVRCXUpdaterStore();
     const router = useRouter();
     const route = useRoute();

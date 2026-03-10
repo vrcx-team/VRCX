@@ -108,7 +108,8 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { refreshInstancePlayerCount, userImage, userStatusClass } from '../../../shared/utils';
+    import { refreshInstancePlayerCount } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import {
         useAppearanceSettingsStore,
         useInstanceStore,
@@ -118,9 +119,10 @@
     } from '../../../stores';
 
     import InstanceActionBar from '../../InstanceActionBar.vue';
-import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { t } = useI18n();
+    const { userImage, userStatusClass } = useUserDisplay();
 
     const { isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
     

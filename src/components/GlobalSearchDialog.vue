@@ -6,10 +6,11 @@
     import { useI18n } from 'vue-i18n';
 
     import { useGlobalSearchStore } from '../stores/globalSearch';
-    import { userImage } from '../shared/utils';
+    import { useUserDisplay } from '../composables/useUserDisplay';
 
     import GlobalSearchSync from './GlobalSearchSync.vue';
 
+    const { userImage } = useUserDisplay();
     const globalSearchStore = useGlobalSearchStore();
     const {
         isOpen,

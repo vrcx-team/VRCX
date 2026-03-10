@@ -251,7 +251,7 @@
         DropdownMenuTrigger
     } from '../../ui/dropdown-menu';
     import { useGameStore, useLocationStore, useUserStore } from '../../../stores';
-    import { checkCanInvite } from '../../../shared/utils';
+    import { useInviteChecks } from '../../../composables/useInviteChecks';
 
     const props = defineProps({
         userDialogCommand: {
@@ -265,6 +265,7 @@
     const { userDialog, currentUser } = storeToRefs(useUserStore());
     const { isGameRunning } = storeToRefs(useGameStore());
     const { lastLocation } = storeToRefs(useLocationStore());
+    const { checkCanInvite } = useInviteChecks();
 
     const hasRequest = computed(() => userDialog.value.incomingRequest || userDialog.value.outgoingRequest);
     const hasRisk = computed(

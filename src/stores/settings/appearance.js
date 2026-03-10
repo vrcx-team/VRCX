@@ -405,7 +405,7 @@ export const useAppearanceSettingsStore = defineStore(
                 });
             }
             if (randomUserColours.value) {
-                const colour = await getNameColour(userStore.currentUser.id);
+                const colour = await getNameColour(userStore.currentUser.id, isDarkMode.value);
                 userStore.setCurrentUserColour(colour);
                 userColourInit();
             } else {
@@ -441,7 +441,7 @@ export const useAppearanceSettingsStore = defineStore(
             for (const [userId, hue] of Object.entries(dictObject)) {
                 const ref = userStore.cachedUsers.get(userId);
                 if (typeof ref !== 'undefined') {
-                    ref.$userColour = HueToHex(hue);
+                    ref.$userColour = HueToHex(hue, isDarkMode.value);
                 }
             }
         }
@@ -460,7 +460,7 @@ export const useAppearanceSettingsStore = defineStore(
             ref.$trustSortNum = trust.trustSortNum;
             if (randomUserColours.value && watchState.isFriendsLoaded) {
                 if (!ref.$userColour) {
-                    getNameColour(ref.id).then((colour) => {
+                    getNameColour(ref.id, isDarkMode.value).then((colour) => {
                         ref.$userColour = colour;
                     });
                 }
@@ -1042,7 +1042,7 @@ export const useAppearanceSettingsStore = defineStore(
             if (!randomUserColours.value) {
                 return;
             }
-            const colour = await getNameColour(userStore.currentUser.id);
+            const colour = await getNameColour(userStore.currentUser.id, isDarkMode.value);
             userStore.setCurrentUserColour(colour);
             await userColourInit();
         }

@@ -161,7 +161,8 @@
         useLocationStore,
         useModalStore
     } from '../../stores';
-    import { checkCanInvite, getLaunchURL, isRealInstance, parseLocation } from '../../shared/utils';
+    import { getLaunchURL, isRealInstance, parseLocation } from '../../shared/utils';
+    import { useInviteChecks } from '../../composables/useInviteChecks';
     import { instanceRequest, queryRequest } from '../../api';
 
     import InviteDialog from './InviteDialog/InviteDialog.vue';
@@ -178,6 +179,7 @@
 
     const { canOpenInstanceInGame } = storeToRefs(useInviteStore());
     const { isGameRunning } = storeToRefs(useGameStore());
+    const { checkCanInvite } = useInviteChecks();
 
     const launchModeLabel = computed(() =>
         launchDialog.value.desktop ? t('dialog.launch.start_as_desktop') : t('dialog.launch.launch')

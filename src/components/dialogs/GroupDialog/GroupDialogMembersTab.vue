@@ -210,13 +210,15 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { downloadAndSaveJson, hasGroupPermission, userImage } from '../../../shared/utils';
+    import { downloadAndSaveJson, hasGroupPermission } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { useGroupStore, useUserStore } from '../../../stores';
     import { applyGroupMember, handleGroupMember } from '../../../coordinators/groupCoordinator';
     import { groupDialogSortingOptions } from '../../../shared/constants';
     import { useGroupMembers } from './useGroupMembers';
 import { showUserDialog } from '../../../coordinators/userCoordinator';
 
+    const { userImage } = useUserDisplay();
     const { t } = useI18n();
 
     

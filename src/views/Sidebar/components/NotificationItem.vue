@@ -257,7 +257,8 @@
     import { useGameStore, useGroupStore, useLocationStore, useNotificationStore, useUserStore } from '../../../stores';
     import { showGroupDialog } from '../../../coordinators/groupCoordinator';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
-    import { checkCanInvite, userImage } from '../../../shared/utils';
+    import { useInviteChecks } from '../../../composables/useInviteChecks';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
 
     import Location from '../../../components/Location.vue';
 
@@ -275,6 +276,8 @@
     const { lastLocation } = storeToRefs(useLocationStore());
     const { isGameRunning } = storeToRefs(useGameStore());
     const { openNotificationLink, isNotificationExpired } = useNotificationStore();
+    const { checkCanInvite } = useInviteChecks();
+    const { userImage } = useUserDisplay();
 
     const senderName = computed(() => {
         const n = props.notification;

@@ -93,10 +93,11 @@
     import { favoriteRequest } from '../../../api';
     import { removeLocalFriendFavorite } from '../../../coordinators/favoriteCoordinator';
     import { useFavoriteStore } from '../../../stores';
-    import { userImage } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
 
     import FavoritesMoveDropdown from './FavoritesMoveDropdown.vue';
 
+    const { userImage } = useUserDisplay();
     const props = defineProps({
         favorite: { type: Object, required: true },
         group: { type: Object, default: null },

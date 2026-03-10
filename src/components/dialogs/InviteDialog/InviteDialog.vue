@@ -106,12 +106,14 @@
     import { useI18n } from 'vue-i18n';
 
     import { useFriendStore, useGalleryStore, useInviteStore, useModalStore, useUserStore } from '../../../stores';
-    import { parseLocation, userImage, userStatusClass } from '../../../shared/utils';
+    import { parseLocation } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { instanceRequest, notificationRequest } from '../../../api';
     import { VirtualCombobox } from '../../ui/virtual-combobox';
 
     import SendInviteDialog from './SendInviteDialog.vue';
 
+    const { userImage, userStatusClass } = useUserDisplay();
     const { vipFriends, onlineFriends, activeFriends } = storeToRefs(useFriendStore());
     const { refreshInviteMessageTableData } = useInviteStore();
     const { currentUser } = storeToRefs(useUserStore());

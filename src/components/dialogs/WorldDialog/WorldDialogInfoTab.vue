@@ -269,13 +269,14 @@
     import { useI18n } from 'vue-i18n';
 
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../ui/dropdown-menu';
-    import { useInstanceStore, useWorldStore } from '../../../stores';
+    import { useAuthStore, useInstanceStore, useWorldStore } from '../../../stores';
     import { openExternalLink } from '../../../shared/utils';
     import { useWorldDialogInfo } from './useWorldDialogInfo';
 
     const { t } = useI18n();
 
     const { worldDialog } = storeToRefs(useWorldStore());
+    const authStore = useAuthStore();
     const { showPreviousInstancesListDialog: openPreviousInstancesListDialog } = useInstanceStore();
 
     const {
@@ -293,7 +294,7 @@
         copyWorldName,
         commaNumber,
         formatDateFilter
-    } = useWorldDialogInfo(worldDialog, { t, toast });
+    } = useWorldDialogInfo(worldDialog, { t, toast, sdkUnityVersion: authStore.cachedConfig.sdkUnityVersion });
 
     /**
      *

@@ -95,7 +95,8 @@
         ContextMenuTrigger
     } from '../../../components/ui/context-menu';
     import { buildGroupHeaderRow, buildGroupItemRow, estimateGroupRowSize, getGroupId } from '../groupsSidebarUtils';
-    import { checkCanInviteSelf, convertFileUrlToImageUrl, parseLocation } from '../../../shared/utils';
+    import { convertFileUrlToImageUrl, parseLocation } from '../../../shared/utils';
+    import { useInviteChecks } from '../../../composables/useInviteChecks';
     import { useAppearanceSettingsStore, useGroupStore, useLaunchStore } from '../../../stores';
     import { instanceRequest } from '../../../api';
 
@@ -108,6 +109,7 @@
     const { isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
     const { showGroupDialog, sortGroupInstancesByInGame } = useGroupStore();
     const { groupInstances } = storeToRefs(useGroupStore());
+    const { checkCanInviteSelf } = useInviteChecks();
 
     const groupInstancesCfg = ref({});
     const scrollViewportRef = ref(null);

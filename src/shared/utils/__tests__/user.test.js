@@ -1,11 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-// Mock stores
-vi.mock('../../../stores', () => ({
-    useUserStore: vi.fn(),
-    useAppearanceSettingsStore: vi.fn()
-}));
-
 // Mock common.js
 vi.mock('../common', () => ({
     convertFileUrlToImageUrl: vi.fn((url) => `converted:${url}`)
@@ -21,16 +15,22 @@ vi.mock('../base/ui', () => ({
     HueToHex: vi.fn((h) => `#hue${h}`)
 }));
 
-// Mock transitive deps that get pulled in via stores
-vi.mock('../../../views/Feed/Feed.vue', () => ({
-    default: { template: '<div />' }
-}));
-vi.mock('../../../views/Feed/columns.jsx', () => ({ columns: [] }));
-vi.mock('../../../plugins/router', () => ({
-    default: { push: vi.fn(), currentRoute: { value: {} } }
+const storeMocks = vi.hoisted(() => ({
+    useUserStore: vi.fn(() => ({
+        currentUser: {
+            id: 'usr_store',
+            presence: { platform: 'standalonewindows' },
+            onlineFriends: [],
+            activeFriends: []
+        }
+    })),
+    useAppearanceSettingsStore: vi.fn(() => ({
+        displayVRCPlusIconsAsAvatar: false
+    }))
 }));
 
-import { useAppearanceSettingsStore, useUserStore } from '../../../stores';
+vi.mock('../../../stores', () => storeMocks);
+
 import {
     languageClass,
     parseUserUrl,
@@ -209,28 +209,42 @@ describe('User Utils', () => {
         });
     });
 
-    describe('userStatusClass (with store mock)', () => {
+    describe('userStatusClass (explicit currentUser)', () => {
+        let currentUser;
+
         beforeEach(() => {
-            useUserStore.mockReturnValue({
-                currentUser: {
-                    id: 'usr_me',
-                    presence: { platform: 'standalonewindows' },
-                    onlineFriends: [],
-                    activeFriends: []
-                }
-            });
+            vi.clearAllMocks();
+            currentUser = {
+                id: 'usr_me',
+                presence: { platform: 'standalonewindows' },
+                onlineFriends: [],
+                activeFriends: []
+            };
+        });
+
+        test('does not access stores when currentUser is passed (pure path)', () => {
+            userStatusClass(
+                { id: 'usr_me', status: 'active', isFriend: true },
+                false,
+                currentUser
+            );
+            expect(storeMocks.useUserStore).not.toHaveBeenCalled();
         });
 
         test('returns null for undefined user', () => {
-            expect(userStatusClass(undefined)).toBeNull();
+            expect(userStatusClass(undefined, false, currentUser)).toBeNull();
         });
 
         test('returns current user style with status', () => {
-            const result = userStatusClass({
-                id: 'usr_me',
-                status: 'active',
-                isFriend: true
-            });
+            const result = userStatusClass(
+                {
+                    id: 'usr_me',
+                    status: 'active',
+                    isFriend: true
+                },
+                false,
+                currentUser
+            );
             expect(result).toMatchObject({
                 'status-icon': true,
                 online: true,
@@ -239,35 +253,37 @@ describe('User Utils', () => {
         });
 
         test('returns mobile true for non-PC platform on current user', () => {
-            useUserStore.mockReturnValue({
-                currentUser: {
+            currentUser.presence = { platform: 'android' };
+            const result = userStatusClass(
+                {
                     id: 'usr_me',
-                    presence: { platform: 'android' },
-                    onlineFriends: [],
-                    activeFriends: []
-                }
-            });
-            const result = userStatusClass({
-                id: 'usr_me',
-                status: 'active'
-            });
+                    status: 'active'
+                },
+                false,
+                currentUser
+            );
             expect(result.mobile).toBe(true);
         });
 
         test('returns null for non-friend users', () => {
             expect(
-                userStatusClass({
-                    id: 'usr_other',
-                    status: 'active',
-                    isFriend: false
-                })
+                userStatusClass(
+                    {
+                        id: 'usr_other',
+                        status: 'active',
+                        isFriend: false
+                    },
+                    false,
+                    currentUser
+                )
             ).toBeNull();
         });
 
         test('returns offline style for pending offline friend', () => {
             const result = userStatusClass(
                 { id: 'usr_other', isFriend: true, status: 'active' },
-                true
+                true,
+                currentUser
             );
             expect(result).toMatchObject({
                 'status-icon': true,
@@ -309,7 +325,7 @@ describe('User Utils', () => {
                     status,
                     location,
                     state
-                });
+                }, false, currentUser);
                 expect(result[expected]).toBe(true);
             }
         });
@@ -321,7 +337,7 @@ describe('User Utils', () => {
                 status: 'active',
                 location: 'offline',
                 state: ''
-            });
+            }, false, currentUser);
             expect(result.offline).toBe(true);
         });
 
@@ -332,7 +348,7 @@ describe('User Utils', () => {
                 status: 'busy',
                 location: 'private',
                 state: 'active'
-            });
+            }, false, currentUser);
             expect(result.active).toBe(true);
         });
 
@@ -344,7 +360,7 @@ describe('User Utils', () => {
                 location: 'wrld_1',
                 state: 'online',
                 $platform: 'android'
-            });
+            }, false, currentUser);
             expect(result.mobile).toBe(true);
         });
 
@@ -356,7 +372,7 @@ describe('User Utils', () => {
                 location: 'wrld_1',
                 state: 'online',
                 $platform: 'standalonewindows'
-            });
+            }, false, currentUser);
             expect(result.mobile).toBeUndefined();
         });
 
@@ -364,7 +380,7 @@ describe('User Utils', () => {
             const result = userStatusClass({
                 userId: 'usr_me',
                 status: 'busy'
-            });
+            }, false, currentUser);
             expect(result).toMatchObject({
                 'status-icon': true,
                 busy: true,
@@ -373,79 +389,78 @@ describe('User Utils', () => {
         });
 
         test('handles private location with empty state (temp fix branch)', () => {
-            useUserStore.mockReturnValue({
-                currentUser: {
-                    id: 'usr_me',
-                    onlineFriends: [],
-                    activeFriends: ['usr_f']
-                }
-            });
+            currentUser.activeFriends = ['usr_f'];
             const result = userStatusClass({
                 id: 'usr_f',
                 isFriend: true,
                 status: 'busy',
                 location: 'private',
                 state: ''
-            });
+            }, false, currentUser);
             // activeFriends includes usr_f → active
             expect(result.active).toBe(true);
         });
 
         test('handles private location temp fix → offline branch', () => {
-            useUserStore.mockReturnValue({
-                currentUser: {
-                    id: 'usr_me',
-                    onlineFriends: [],
-                    activeFriends: []
-                }
-            });
+            currentUser.activeFriends = [];
             const result = userStatusClass({
                 id: 'usr_f',
                 isFriend: true,
                 status: 'busy',
                 location: 'private',
                 state: ''
-            });
+            }, false, currentUser);
             expect(result.offline).toBe(true);
         });
     });
 
-    describe('userImage (with store mock)', () => {
-        beforeEach(() => {
-            useAppearanceSettingsStore.mockReturnValue({
-                displayVRCPlusIconsAsAvatar: false
-            });
+    describe('userImage (explicit settings)', () => {
+        test('does not access appearance store when setting is passed (pure path)', () => {
+            userImage(
+                { thumbnailUrl: 'https://img.com/thumb' },
+                false,
+                '128',
+                false,
+                false
+            );
+            expect(storeMocks.useAppearanceSettingsStore).not.toHaveBeenCalled();
         });
 
         test('returns empty string for falsy user', () => {
-            expect(userImage(null)).toBe('');
-            expect(userImage(undefined)).toBe('');
+            expect(userImage(null, false, '128', false, false)).toBe('');
+            expect(userImage(undefined, false, '128', false, false)).toBe('');
         });
 
         test('returns profilePicOverrideThumbnail when available', () => {
             const user = {
                 profilePicOverrideThumbnail: 'https://img.com/pic/256/thumb'
             };
-            expect(userImage(user)).toBe('https://img.com/pic/256/thumb');
+            expect(userImage(user, false, '128', false, false)).toBe(
+                'https://img.com/pic/256/thumb'
+            );
         });
 
         test('replaces resolution for icon mode with profilePicOverrideThumbnail', () => {
             const user = {
                 profilePicOverrideThumbnail: 'https://img.com/pic/256/thumb'
             };
-            expect(userImage(user, true, '64')).toBe(
+            expect(userImage(user, true, '64', false, false)).toBe(
                 'https://img.com/pic/64/thumb'
             );
         });
 
         test('returns profilePicOverride when no thumbnail', () => {
             const user = { profilePicOverride: 'https://img.com/full' };
-            expect(userImage(user)).toBe('https://img.com/full');
+            expect(userImage(user, false, '128', false, false)).toBe(
+                'https://img.com/full'
+            );
         });
 
         test('returns thumbnailUrl as fallback', () => {
             const user = { thumbnailUrl: 'https://img.com/thumb' };
-            expect(userImage(user)).toBe('https://img.com/thumb');
+            expect(userImage(user, false, '128', false, false)).toBe(
+                'https://img.com/thumb'
+            );
         });
 
         test('returns currentAvatarThumbnailImageUrl as fallback', () => {
@@ -453,7 +468,9 @@ describe('User Utils', () => {
                 currentAvatarThumbnailImageUrl:
                     'https://img.com/avatar/256/thumb'
             };
-            expect(userImage(user)).toBe('https://img.com/avatar/256/thumb');
+            expect(userImage(user, false, '128', false, false)).toBe(
+                'https://img.com/avatar/256/thumb'
+            );
         });
 
         test('replaces resolution for icon mode with currentAvatarThumbnailImageUrl', () => {
@@ -461,7 +478,7 @@ describe('User Utils', () => {
                 currentAvatarThumbnailImageUrl:
                     'https://img.com/avatar/256/thumb'
             };
-            expect(userImage(user, true, '64')).toBe(
+            expect(userImage(user, true, '64', false, false)).toBe(
                 'https://img.com/avatar/64/thumb'
             );
         });
@@ -470,39 +487,37 @@ describe('User Utils', () => {
             const user = {
                 currentAvatarImageUrl: 'https://img.com/avatar/full'
             };
-            expect(userImage(user)).toBe('https://img.com/avatar/full');
+            expect(userImage(user, false, '128', false, false)).toBe(
+                'https://img.com/avatar/full'
+            );
         });
 
         test('converts currentAvatarImageUrl for icon mode', () => {
             const user = {
                 currentAvatarImageUrl: 'https://img.com/avatar/full'
             };
-            expect(userImage(user, true)).toBe(
+            expect(userImage(user, true, '128', false, false)).toBe(
                 'converted:https://img.com/avatar/full'
             );
         });
 
         test('returns empty string when user has no image fields', () => {
-            expect(userImage({})).toBe('');
+            expect(userImage({}, false, '128', false, false)).toBe('');
         });
 
         test('returns userIcon when displayVRCPlusIconsAsAvatar is true', () => {
-            useAppearanceSettingsStore.mockReturnValue({
-                displayVRCPlusIconsAsAvatar: true
-            });
             const user = {
                 userIcon: 'https://img.com/icon',
                 thumbnailUrl: 'https://img.com/thumb'
             };
-            expect(userImage(user)).toBe('https://img.com/icon');
+            expect(userImage(user, false, '128', false, true)).toBe(
+                'https://img.com/icon'
+            );
         });
 
         test('converts userIcon for icon mode when VRCPlus setting enabled', () => {
-            useAppearanceSettingsStore.mockReturnValue({
-                displayVRCPlusIconsAsAvatar: true
-            });
             const user = { userIcon: 'https://img.com/icon' };
-            expect(userImage(user, true)).toBe(
+            expect(userImage(user, true, '128', false, true)).toBe(
                 'converted:https://img.com/icon'
             );
         });
@@ -512,21 +527,23 @@ describe('User Utils', () => {
                 userIcon: 'https://img.com/icon',
                 thumbnailUrl: 'https://img.com/thumb'
             };
-            expect(userImage(user, false, '128', true)).toBe(
+            expect(userImage(user, false, '128', true, false)).toBe(
                 'https://img.com/icon'
             );
         });
     });
 
-    describe('userImageFull (with store mock)', () => {
-        beforeEach(() => {
-            useAppearanceSettingsStore.mockReturnValue({
-                displayVRCPlusIconsAsAvatar: false
-            });
+    describe('userImageFull (explicit settings)', () => {
+        test('does not access appearance store when setting is passed (pure path)', () => {
+            userImageFull(
+                { currentAvatarImageUrl: 'https://img.com/avatar' },
+                false
+            );
+            expect(storeMocks.useAppearanceSettingsStore).not.toHaveBeenCalled();
         });
 
         test('returns empty string for falsy user', () => {
-            expect(userImageFull(null)).toBe('');
+            expect(userImageFull(null, false)).toBe('');
         });
 
         test('returns profilePicOverride when available', () => {
@@ -534,25 +551,22 @@ describe('User Utils', () => {
                 profilePicOverride: 'https://img.com/full',
                 currentAvatarImageUrl: 'https://img.com/avatar'
             };
-            expect(userImageFull(user)).toBe('https://img.com/full');
+            expect(userImageFull(user, false)).toBe('https://img.com/full');
         });
 
         test('returns currentAvatarImageUrl as fallback', () => {
             const user = {
                 currentAvatarImageUrl: 'https://img.com/avatar'
             };
-            expect(userImageFull(user)).toBe('https://img.com/avatar');
+            expect(userImageFull(user, false)).toBe('https://img.com/avatar');
         });
 
         test('returns userIcon when VRCPlus setting enabled', () => {
-            useAppearanceSettingsStore.mockReturnValue({
-                displayVRCPlusIconsAsAvatar: true
-            });
             const user = {
                 userIcon: 'https://img.com/icon',
                 profilePicOverride: 'https://img.com/full'
             };
-            expect(userImageFull(user)).toBe('https://img.com/icon');
+            expect(userImageFull(user, true)).toBe('https://img.com/icon');
         });
     });
 });
