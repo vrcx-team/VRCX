@@ -108,7 +108,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { refreshInstancePlayerCount } from '../../../shared/utils';
+    import { refreshInstancePlayerCount } from '../../../coordinators/instanceCoordinator';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
     import {
         useAppearanceSettingsStore,
@@ -125,7 +125,7 @@
     const { userImage, userStatusClass } = useUserDisplay();
 
     const { isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
-    
+
     const { currentUser } = storeToRefs(useUserStore());
     const { worldDialog } = storeToRefs(useWorldStore());
     const { lastLocation } = storeToRefs(useLocationStore());

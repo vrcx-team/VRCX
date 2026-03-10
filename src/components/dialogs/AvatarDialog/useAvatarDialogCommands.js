@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+
 import {
     avatarModerationRequest,
     avatarRequest,
@@ -11,18 +12,32 @@ import {
 } from '../../../shared/utils';
 import {
     handleImageUploadInput,
-    readFileAsBase64,
     resizeImageToFitLimits,
-    uploadImageLegacy,
+    uploadImageLegacy
+} from '../../../coordinators/imageUploadCoordinator';
+import {
+    readFileAsBase64,
     withUploadTimeout
 } from '../../../shared/utils/imageUpload';
 
 /**
  * Composable for AvatarDialog command dispatch.
  * Uses a command map pattern instead of nested switch-case chains.
- *
  * @param {import('vue').Ref} avatarDialog - reactive ref to the avatar dialog state
  * @param {object} deps - external dependencies
+ * @param deps.t
+ * @param deps.toast
+ * @param deps.modalStore
+ * @param deps.userDialog
+ * @param deps.currentUser
+ * @param deps.cachedAvatars
+ * @param deps.cachedAvatarModerations
+ * @param deps.showAvatarDialog
+ * @param deps.showFavoriteDialog
+ * @param deps.applyAvatarModeration
+ * @param deps.applyAvatar
+ * @param deps.sortUserDialogAvatars
+ * @param deps.uiStore
  * @returns {object} command composable API
  */
 export function useAvatarDialogCommands(
@@ -205,6 +220,9 @@ export function useAvatarDialogCommands(
     // String commands: delegate to component callback
     // Confirmed commands: { confirm: () => ({title, description, ...}), handler: fn }
 
+    /**
+     *
+     */
     function buildCommandMap() {
         const D = () => avatarDialog.value;
 

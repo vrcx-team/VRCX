@@ -10,12 +10,12 @@ import {
     evictMapCache,
     extractFileId,
     findUserByDisplayName,
-    getUserMemo,
     getWorldName,
     isRealInstance,
     parseLocation,
     sanitizeUserJson
 } from '../shared/utils';
+import { getUserMemo } from './memoCoordinator';
 import {
     avatarRequest,
     instanceRequest,
@@ -73,7 +73,14 @@ export function applyUser(json) {
     const moderationStore = useModerationStore();
     const photonStore = usePhotonStore();
 
-    const { currentUser, cachedUsers, currentTravelers, customUserTags, state, userDialog } = userStore;
+    const {
+        currentUser,
+        cachedUsers,
+        currentTravelers,
+        customUserTags,
+        state,
+        userDialog
+    } = userStore;
 
     let ref = cachedUsers.get(json.id);
     let hasPropChanged = false;
@@ -114,10 +121,8 @@ export function applyUser(json) {
         if (json.state !== 'online') {
             runUpdateFriendFlow(ref.id, json.state);
         }
-        const {
-            hasPropChanged: _hasPropChanged,
-            changedProps: _changedProps
-        } = diffObjectProps(ref, json, arraysMatch);
+        const { hasPropChanged: _hasPropChanged, changedProps: _changedProps } =
+            diffObjectProps(ref, json, arraysMatch);
         for (const prop in json) {
             if (typeof json[prop] !== 'undefined') {
                 ref[prop] = json[prop];
@@ -235,10 +240,7 @@ export function applyUser(json) {
         }
     }
     if (hasPropChanged) {
-        if (
-            changedProps.location &&
-            changedProps.location[0] !== 'traveling'
-        ) {
+        if (changedProps.location && changedProps.location[0] !== 'traveling') {
             const ts = Date.now();
             changedProps.location.push(ts - ref.$location_at);
             ref.$location_at = ts;
@@ -286,11 +288,7 @@ export function showUserDialog(userId) {
     const D = userDialog;
     D.visible = true;
     if (isMainDialogOpen && D.id === userId) {
-        uiStore.setDialogCrumbLabel(
-            'user',
-            D.id,
-            D.ref?.displayName || D.id
-        );
+        uiStore.setDialogCrumbLabel('user', D.id, D.ref?.displayName || D.id);
         userStore.applyUserDialogLocation(true);
         return;
     }
@@ -429,8 +427,7 @@ export function showUserDialog(userId) {
                                 D.joinCount = ref1.joinCount;
                                 D.timeSpent = ref1.timeSpent;
                             }
-                            const displayNameMap =
-                                ref1.previousDisplayNames;
+                            const displayNameMap = ref1.previousDisplayNames;
                             const userNotifications =
                                 await database.getFriendLogHistoryForUserId(
                                     D.id,
@@ -457,12 +454,10 @@ export function showUserDialog(userId) {
                             }
                             D.dateFriendedInfo = dateFriendedInfo;
                             if (dateFriendedInfo.length > 0) {
-                                const latestFriendedInfo =
-                                    dateFriendedInfo[0];
+                                const latestFriendedInfo = dateFriendedInfo[0];
                                 D.unFriended =
                                     latestFriendedInfo.type === 'Unfriend';
-                                D.dateFriended =
-                                    latestFriendedInfo.created_at;
+                                D.dateFriended = latestFriendedInfo.created_at;
                             }
                             displayNameMap.forEach(
                                 (updated_at, displayName) => {
@@ -473,27 +468,24 @@ export function showUserDialog(userId) {
                                 }
                             );
                         });
-                    AppApi.GetVRChatUserModeration(
-                        currentUser.id,
-                        userId
-                    ).then((result) => {
-                        D.avatarModeration = result;
-                        if (result === 4) {
-                            D.isHideAvatar = true;
-                        } else if (result === 5) {
-                            D.isShowAvatar = true;
+                    AppApi.GetVRChatUserModeration(currentUser.id, userId).then(
+                        (result) => {
+                            D.avatarModeration = result;
+                            if (result === 4) {
+                                D.isHideAvatar = true;
+                            } else if (result === 5) {
+                                D.isShowAvatar = true;
+                            }
                         }
-                    });
+                    );
                     if (!currentUser.hasSharedConnectionsOptOut) {
                         try {
                             queryRequest
                                 .fetch('mutualCounts', { userId })
                                 .then((args) => {
                                     if (args.params.userId === D.id) {
-                                        D.mutualFriendCount =
-                                            args.json.friends;
-                                        D.mutualGroupCount =
-                                            args.json.groups;
+                                        D.mutualFriendCount = args.json.friends;
+                                        D.mutualGroupCount = args.json.groups;
                                     }
                                 });
                         } catch (error) {
@@ -501,8 +493,7 @@ export function showUserDialog(userId) {
                         }
                     }
                 } else {
-                    D.previousDisplayNames =
-                        currentUser.pastDisplayNames;
+                    D.previousDisplayNames = currentUser.pastDisplayNames;
                     database
                         .getUserStats(D.ref, inCurrentWorld)
                         .then((ref1) => {
@@ -673,11 +664,8 @@ export function handleConfig(args) {
     if (typeof args.ref?.whiteListedAssetUrls !== 'object') {
         console.error('Invalid config whiteListedAssetUrls');
     }
-    AppApi.PopulateImageHosts(
-        JSON.stringify(args.ref.whiteListedAssetUrls)
-    );
-    const languages =
-        args.ref?.constants?.LANGUAGE?.SPOKEN_LANGUAGE_OPTIONS;
+    AppApi.PopulateImageHosts(JSON.stringify(args.ref.whiteListedAssetUrls));
+    const languages = args.ref?.constants?.LANGUAGE?.SPOKEN_LANGUAGE_OPTIONS;
     if (!languages) {
         return;
     }
@@ -1047,10 +1035,7 @@ export function updateAutoStateChange() {
     }
 
     const params = { status: newStatus };
-    if (
-        withCompany &&
-        generalSettingsStore.autoStateChangeCompanyDescEnabled
-    ) {
+    if (withCompany && generalSettingsStore.autoStateChangeCompanyDescEnabled) {
         params.statusDescription =
             generalSettingsStore.autoStateChangeCompanyDesc;
     } else if (

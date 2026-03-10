@@ -1,20 +1,3 @@
-import { instanceRequest } from '../../api';
-import { parseLocation } from './locationParser';
-
-/**
- *
- * @param {object} instance
- */
-function refreshInstancePlayerCount(instance) {
-    const L = parseLocation(instance);
-    if (L.isRealInstance) {
-        instanceRequest.getInstance({
-            worldId: L.worldId,
-            instanceId: L.instanceId
-        });
-    }
-}
-
 /**
  *
  * @param {string} instanceId
@@ -131,9 +114,4 @@ function buildLegacyInstanceTag({
     return tags.join('');
 }
 
-export {
-    refreshInstancePlayerCount,
-    isRealInstance,
-    getLaunchURL,
-    buildLegacyInstanceTag
-};
+export { isRealInstance, getLaunchURL, buildLegacyInstanceTag };

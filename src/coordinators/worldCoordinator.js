@@ -8,11 +8,11 @@ import {
     evictMapCache,
     getAvailablePlatforms,
     getBundleDateSize,
-    getWorldMemo,
     isRealInstance,
     parseLocation,
     sanitizeEntityJson
 } from '../shared/utils';
+import { getWorldMemo } from './memoCoordinator';
 import { instanceRequest, queryRequest, worldRequest } from '../api';
 import { database } from '../services/database';
 import { patchWorldFromEvent } from '../queries';
@@ -118,21 +118,13 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
         .then((args) => {
             if (D.id === args.ref.id) {
                 D.ref = args.ref;
-                uiStore.setDialogCrumbLabel(
-                    'world',
-                    D.id,
-                    D.ref?.name || D.id
-                );
+                uiStore.setDialogCrumbLabel('world', D.id, D.ref?.name || D.id);
                 D.visible = true;
                 D.loading = false;
-                D.isFavorite = favoriteStore.getCachedFavoritesByObjectId(
-                    D.id
-                );
+                D.isFavorite = favoriteStore.getCachedFavoritesByObjectId(D.id);
                 if (!D.isFavorite) {
                     D.isFavorite =
-                        favoriteStore.localWorldFavoritesList.includes(
-                            D.id
-                        );
+                        favoriteStore.localWorldFavoritesList.includes(D.id);
                 }
                 let { isPC, isQuest, isIos } = getAvailablePlatforms(
                     args.ref.unityPackages

@@ -16,7 +16,7 @@ import {
     vrcPlusImageRequest
 } from '../api';
 import { AppDebug } from '../services/appConfig';
-import { handleImageUploadInput } from '../shared/utils/imageUpload';
+import { handleImageUploadInput } from '../coordinators/imageUploadCoordinator';
 import { router } from '../plugins/router';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useModalStore } from './modal';

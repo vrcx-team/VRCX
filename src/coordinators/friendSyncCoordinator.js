@@ -1,7 +1,7 @@
 import { toast } from 'vue-sonner';
 
 import { AppDebug } from '../services/appConfig';
-import { migrateMemos } from '../shared/utils';
+import { migrateMemos } from './memoCoordinator';
 import { reconnectWebSocket } from '../services/websocket';
 import { useAuthStore } from '../stores/auth';
 import { useFriendStore } from '../stores/friend';

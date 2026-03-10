@@ -600,14 +600,18 @@
     import { avatarRequest } from '../../../api';
     import { database } from '../../../services/database';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
-    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
+    import { handleImageUploadInput } from '../../../coordinators/imageUploadCoordinator';
     import { runDeleteVRChatCacheFlow as deleteVRChatCache } from '../../../coordinators/gameCoordinator';
-    import { showAvatarDialog, applyAvatar, selectAvatarWithoutConfirmation } from '../../../coordinators/avatarCoordinator';
+    import {
+        showAvatarDialog,
+        applyAvatar,
+        selectAvatarWithoutConfirmation
+    } from '../../../coordinators/avatarCoordinator';
     import { useAvatarDialogCommands } from './useAvatarDialogCommands';
 
     import DialogJsonTab from '../DialogJsonTab.vue';
     import ImageCropDialog from '../ImageCropDialog.vue';
-import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const SetAvatarStylesDialog = defineAsyncComponent(() => import('./SetAvatarStylesDialog.vue'));
     const SetAvatarTagsDialog = defineAsyncComponent(() => import('./SetAvatarTagsDialog.vue'));
@@ -617,8 +621,7 @@ import { showUserDialog } from '../../../coordinators/userCoordinator';
     const avatarStore = useAvatarStore();
     const { cachedAvatarModerations, cachedAvatars } = avatarStore;
     const { avatarDialog } = storeToRefs(avatarStore);
-    const { getAvatarGallery, applyAvatarModeration } =
-        avatarStore;
+    const { getAvatarGallery, applyAvatarModeration } = avatarStore;
     const { showFavoriteDialog } = useFavoriteStore();
     const { isGameRunning } = storeToRefs(useGameStore());
     const { showFullscreenImageDialog } = useGalleryStore();

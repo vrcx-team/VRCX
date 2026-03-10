@@ -8,9 +8,9 @@ import {
     createRateLimiter,
     executeWithBackoff,
     getFriendsSortFunction,
-    getUserMemo,
     isRealInstance
 } from '../shared/utils';
+import { getUserMemo } from '../coordinators/memoCoordinator';
 import { friendRequest, userRequest } from '../api';
 import {
     runInitFriendsListFlow,
@@ -260,8 +260,6 @@ export const useFriendStore = defineStore('Friend', () => {
     }
 
     init();
-
-
 
     /**
      *
@@ -699,12 +697,10 @@ export const useFriendStore = defineStore('Friend', () => {
      * @param {string} id
      */
 
-
     /**
      *
      * @param {object} ref
      */
-
 
     /**
      *
@@ -1128,7 +1124,6 @@ export const useFriendStore = defineStore('Friend', () => {
      *
      * @param id
      */
-
 
     /**
      * Clears all entries in friendLog.

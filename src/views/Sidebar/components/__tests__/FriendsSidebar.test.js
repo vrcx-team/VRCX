@@ -55,6 +55,9 @@ const mocks = vi.hoisted(() => ({
     gameStore: {
         isGameRunning: { value: true }
     },
+    instanceStore: {
+        cachedInstances: new Map()
+    },
     configRepository: {
         getBool: vi.fn(),
         setBool: vi.fn()
@@ -111,6 +114,7 @@ vi.mock('../../../../stores', () => ({
     useGameStore: () => mocks.gameStore,
     useLaunchStore: () => mocks.launchStore,
     useLocationStore: () => mocks.locationStore,
+    useInstanceStore: () => mocks.instanceStore,
     useUserStore: () => mocks.userStore
 }));
 
@@ -233,6 +237,7 @@ describe('FriendsSidebar.vue', () => {
         mocks.friendStore.activeFriends.value = [];
         mocks.friendStore.offlineFriends.value = [];
         mocks.friendStore.friendsInSameInstance.value = [];
+        mocks.instanceStore.cachedInstances = new Map();
 
         mocks.appearanceStore.isSidebarGroupByInstance.value = false;
         mocks.appearanceStore.isHideFriendsInSameInstance.value = false;

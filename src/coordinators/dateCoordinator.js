@@ -1,4 +1,4 @@
-import { useAppearanceSettingsStore } from '../../../stores';
+import { useAppearanceSettingsStore } from '../stores';
 
 function padZero(num) {
     return String(num).padStart(2, '0');

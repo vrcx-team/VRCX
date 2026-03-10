@@ -28,9 +28,12 @@ vi.mock('../../../../shared/utils', () => ({
 vi.mock('../../../../shared/utils/imageUpload', () => ({
     handleImageUploadInput: vi.fn(),
     readFileAsBase64: vi.fn(),
-    resizeImageToFitLimits: vi.fn(),
-    uploadImageLegacy: vi.fn(),
     withUploadTimeout: vi.fn((p) => p)
+}));
+
+vi.mock('../../../../coordinators/imageUploadCoordinator', () => ({
+    resizeImageToFitLimits: vi.fn(),
+    uploadImageLegacy: vi.fn()
 }));
 
 const { favoriteRequest, miscRequest, userRequest, worldRequest } =

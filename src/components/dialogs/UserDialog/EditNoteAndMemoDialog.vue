@@ -54,7 +54,8 @@
     import { useI18n } from 'vue-i18n';
 
     import { miscRequest, userRequest } from '../../../api';
-    import { replaceBioSymbols, saveUserMemo } from '../../../shared/utils';
+    import { replaceBioSymbols } from '../../../shared/utils';
+    import { saveUserMemo } from '../../../coordinators/memoCoordinator';
     import { useAppearanceSettingsStore, useUserStore } from '../../../stores';
 
     const { userDialog } = storeToRefs(useUserStore());

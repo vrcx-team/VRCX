@@ -15,7 +15,7 @@ vi.mock('../../../../plugins/router', () => ({
 }));
 
 import { useAppearanceSettingsStore } from '../../../../stores';
-import { formatDateFilter } from '../date';
+import { formatDateFilter } from '../../../../coordinators/dateCoordinator';
 
 describe('formatDateFilter', () => {
     beforeEach(() => {

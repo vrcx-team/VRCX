@@ -1,7 +1,7 @@
 export * from './base/array';
 export * from './base/devtool';
 export * from './base/format';
-export * from './base/date';
+export { formatDateFilter } from '../../coordinators/dateCoordinator';
 export * from './base/string';
 export * from './avatar';
 export * from './chart';
@@ -20,7 +20,6 @@ export * from './gallery';
 export * from './location';
 export * from './invite';
 export * from './world';
-export * from './memos';
 export * from './throttle';
 export * from './retry';
 export * from './gameLog';

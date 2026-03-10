@@ -18,14 +18,24 @@ const mocks = vi.hoisted(() => ({
     },
     userStore: {
         cachedUsers: new Map(),
-        showSendBoopDialog: vi.fn()
+        showSendBoopDialog: vi.fn(),
+        currentUser: { id: 'usr_me' }
+    },
+    friendStore: {
+        friends: new Map()
     },
     groupStore: {},
     locationStore: {
-        lastLocation: { value: { location: 'wrld_home:123' } }
+        lastLocation: {
+            location: 'wrld_home:123',
+            value: { location: 'wrld_home:123' }
+        }
     },
     gameStore: {
         isGameRunning: { value: true }
+    },
+    instanceStore: {
+        cachedInstances: new Map()
     },
     showUserDialog: vi.fn(),
     showGroupDialog: vi.fn()
@@ -42,9 +52,11 @@ vi.mock('pinia', async (importOriginal) => {
 vi.mock('../../../../stores', () => ({
     useNotificationStore: () => mocks.notificationStore,
     useUserStore: () => mocks.userStore,
+    useFriendStore: () => mocks.friendStore,
     useGroupStore: () => mocks.groupStore,
     useLocationStore: () => mocks.locationStore,
-    useGameStore: () => mocks.gameStore
+    useGameStore: () => mocks.gameStore,
+    useInstanceStore: () => mocks.instanceStore
 }));
 
 vi.mock('../../../../coordinators/userCoordinator', () => ({
@@ -58,6 +70,13 @@ vi.mock('../../../../coordinators/groupCoordinator', () => ({
 vi.mock('../../../../shared/utils', () => ({
     checkCanInvite: vi.fn(() => true),
     userImage: vi.fn(() => 'https://example.com/avatar.png')
+}));
+
+vi.mock('../../../../composables/useUserDisplay', () => ({
+    useUserDisplay: () => ({
+        userImage: vi.fn(() => 'https://example.com/avatar.png'),
+        userStatusClass: vi.fn(() => '')
+    })
 }));
 
 vi.mock('vue-i18n', () => ({
@@ -170,6 +189,8 @@ describe('NotificationItem.vue', () => {
         mocks.userStore.showSendBoopDialog.mockReset();
         mocks.showGroupDialog.mockReset();
         mocks.userStore.cachedUsers = new Map();
+        mocks.friendStore.friends = new Map();
+        mocks.instanceStore.cachedInstances = new Map();
     });
 
     test('renders sender and opens user dialog on sender click', async () => {

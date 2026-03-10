@@ -314,20 +314,24 @@
     import { useI18n } from 'vue-i18n';
     import { useVirtualizer } from '@tanstack/vue-virtual';
 
-    import {
-        handleImageUploadInput,
-        readFileAsBase64,
-        resizeImageToFitLimits,
-        uploadImageLegacy,
-        withUploadTimeout
-    } from '../../shared/utils/imageUpload';
     import { useAppearanceSettingsStore, useAvatarStore, useModalStore, useUserStore } from '../../stores';
     import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from '../../components/ui/context-menu';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
     import { Field, FieldContent, FieldLabel } from '../../components/ui/field';
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
+    import {
+        applyAvatar,
+        selectAvatarWithoutConfirmation,
+        showAvatarDialog
+    } from '../../coordinators/avatarCoordinator';
+    import {
+        handleImageUploadInput,
+        resizeImageToFitLimits,
+        uploadImageLegacy
+    } from '../../coordinators/imageUploadCoordinator';
     import { DataTableEmpty, DataTableLayout } from '../../components/ui/data-table';
     import { ToggleGroup, ToggleGroupItem } from '../../components/ui/toggle-group';
+    import { readFileAsBase64, withUploadTimeout } from '../../shared/utils/imageUpload';
     import { Badge } from '../../components/ui/badge';
     import { Button } from '../../components/ui/button';
     import { Input } from '../../components/ui/input';
@@ -347,7 +351,6 @@
     import ManageTagsDialog from './ManageTagsDialog.vue';
     import MyAvatarCard from './components/MyAvatarCard.vue';
     import configRepository from '../../services/config.js';
-    import { showAvatarDialog, selectAvatarWithoutConfirmation, applyAvatar } from '../../coordinators/avatarCoordinator';
 
     const { t } = useI18n();
     const appearanceSettingsStore = useAppearanceSettingsStore();

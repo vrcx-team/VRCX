@@ -1,19 +1,21 @@
 import { nextTick, ref } from 'vue';
 
 import {
-    handleImageUploadInput,
-    readFileAsBase64,
-    resizeImageToFitLimits,
-    uploadImageLegacy,
-    withUploadTimeout
-} from '../../../shared/utils/imageUpload';
-import {
     favoriteRequest,
     miscRequest,
     userRequest,
     worldRequest
 } from '../../../api';
+import {
+    handleImageUploadInput,
+    resizeImageToFitLimits,
+    uploadImageLegacy
+} from '../../../coordinators/imageUploadCoordinator';
 import { openExternalLink, replaceVrcPackageUrl } from '../../../shared/utils';
+import {
+    readFileAsBase64,
+    withUploadTimeout
+} from '../../../shared/utils/imageUpload';
 
 /**
  * Composable for WorldDialog commands, prompt functions, and image upload.
@@ -370,6 +372,9 @@ export function useWorldDialogCommands(
     // String commands: delegate to component callback
     // Confirmed commands: { confirm: () => ({title, description, ...}), handler: fn }
 
+    /**
+     *
+     */
     function buildCommandMap() {
         const D = () => worldDialog.value;
 

@@ -13,12 +13,12 @@ import {
     escapeTag,
     executeWithBackoff,
     findUserByDisplayName,
-    getUserMemo,
     parseLocation,
     parseNotificationDetails,
     removeFromArray,
     sanitizeNotificationJson
 } from '../../shared/utils';
+import { getUserMemo } from '../../coordinators/memoCoordinator';
 import {
     friendRequest,
     instanceRequest,
@@ -347,11 +347,13 @@ export const useNotificationStore = defineStore('Notification', () => {
                 }
             }
         }
-        if (!checkCanInvite(currentLocation, {
-            currentUserId: userStore.currentUser.id,
-            lastLocationStr: locationStore.lastLocation.location,
-            cachedInstances: instanceStore.cachedInstances
-        })) {
+        if (
+            !checkCanInvite(currentLocation, {
+                currentUserId: userStore.currentUser.id,
+                lastLocationStr: locationStore.lastLocation.location,
+                cachedInstances: instanceStore.cachedInstances
+            })
+        ) {
             return;
         }
 

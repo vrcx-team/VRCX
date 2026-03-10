@@ -17,6 +17,7 @@ const mocks = vi.hoisted(() => ({
     favoriteFriendGroups: null,
     groupedByGroupKeyFavoriteFriends: null,
     localFriendFavorites: null,
+    lastLocation: null,
     configGetString: vi.fn(),
     configGetBool: vi.fn(),
     configSetString: vi.fn(),
@@ -37,6 +38,10 @@ mocks.sidebarSortMethods = mocks.makeRef('status');
 mocks.favoriteFriendGroups = mocks.makeRef([]);
 mocks.groupedByGroupKeyFavoriteFriends = mocks.makeRef({});
 mocks.localFriendFavorites = mocks.makeRef({});
+mocks.lastLocation = mocks.makeRef({
+    location: 'wrld_home:123',
+    friendList: new Map()
+});
 
 vi.mock('pinia', () => ({
     storeToRefs: (store) => store
@@ -68,6 +73,9 @@ vi.mock('../../../stores', () => ({
         favoriteFriendGroups: mocks.favoriteFriendGroups,
         groupedByGroupKeyFavoriteFriends: mocks.groupedByGroupKeyFavoriteFriends,
         localFriendFavorites: mocks.localFriendFavorites
+    }),
+    useLocationStore: () => ({
+        lastLocation: mocks.lastLocation
     })
 }));
 
@@ -225,6 +233,10 @@ describe('FriendsLocations.vue', () => {
         mocks.favoriteFriendGroups.value = [];
         mocks.groupedByGroupKeyFavoriteFriends.value = {};
         mocks.localFriendFavorites.value = {};
+        mocks.lastLocation.value = {
+            location: 'wrld_home:123',
+            friendList: new Map()
+        };
 
         mocks.configGetString.mockReset();
         mocks.configGetBool.mockReset();

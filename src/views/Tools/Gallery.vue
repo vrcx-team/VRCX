@@ -586,7 +586,8 @@
     } from '../../shared/utils';
     import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../api';
     import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useModalStore, useUserStore } from '../../stores';
-    import { handleImageUploadInput, readFileAsBase64, withUploadTimeout } from '../../shared/utils/imageUpload';
+    import { readFileAsBase64, withUploadTimeout } from '../../shared/utils/imageUpload';
+    import { handleImageUploadInput } from '../../coordinators/imageUploadCoordinator';
     import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../shared/constants';
     import { AppDebug } from '../../services/appConfig';
 

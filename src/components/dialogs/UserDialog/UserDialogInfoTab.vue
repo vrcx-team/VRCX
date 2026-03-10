@@ -483,13 +483,13 @@
         isFriendOnline,
         isRealInstance,
         openExternalLink,
-        refreshInstancePlayerCount,
         timeToText,
         userImage,
         userOnlineFor,
         userOnlineForTimestamp,
         userStatusClass
     } from '../../../shared/utils';
+    import { refreshInstancePlayerCount } from '../../../coordinators/instanceCoordinator';
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
@@ -505,7 +505,7 @@
     import { queryRequest, userRequest } from '../../../api';
 
     import InstanceActionBar from '../../InstanceActionBar.vue';
-import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const EditNoteAndMemoDialog = defineAsyncComponent(() => import('./EditNoteAndMemoDialog.vue'));
 

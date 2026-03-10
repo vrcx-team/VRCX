@@ -13,7 +13,7 @@ vi.mock('../../../services/appConfig', () => ({
     AppDebug: { endpointDomain: 'https://api.vrchat.cloud/api/1' }
 }));
 
-vi.mock('../../utils/index.js', () => ({
+vi.mock('../../../shared/utils', () => ({
     extractFileId: vi.fn()
 }));
 
@@ -22,7 +22,8 @@ vi.mock('../../../api', () => ({
 }));
 
 import { toast } from 'vue-sonner';
-import { handleImageUploadInput, withUploadTimeout } from '../imageUpload';
+import { withUploadTimeout } from '../imageUpload';
+import { handleImageUploadInput } from '../../../coordinators/imageUploadCoordinator';
 
 // ─── withUploadTimeout ───────────────────────────────────────────────
 
