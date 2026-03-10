@@ -2,7 +2,9 @@ import { computed, ref } from 'vue';
 
 import {
     groupDialogFilterOptions,
-    groupDialogSortingOptions
+    groupDialogSortingOptions,
+    FILTER_EVERYONE,
+    FILTER_NO_ROLE
 } from '../../../shared/constants';
 import { groupRequest, queryRequest } from '../../../api';
 import { debounce } from '../../../shared/utils';
@@ -39,7 +41,7 @@ export function useGroupMembers(
             return groupDialog.value?.memberSortOrder?.value ?? '';
         },
         set(value) {
-            const option = Object.values(groupDialogSortingOptions).find(
+            const option = groupDialogSortingOptions.find(
                 (item) => item.value === value
             );
             if (option) {
@@ -61,11 +63,11 @@ export function useGroupMembers(
             if (!key) return;
 
             if (key === 'everyone') {
-                setGroupMemberFilter(groupDialogFilterOptions.everyone);
+                setGroupMemberFilter(FILTER_EVERYONE);
                 return;
             }
             if (key === 'usersWithNoRole') {
-                setGroupMemberFilter(groupDialogFilterOptions.usersWithNoRole);
+                setGroupMemberFilter(FILTER_NO_ROLE);
                 return;
             }
 
@@ -82,18 +84,16 @@ export function useGroupMembers(
     });
 
     const groupDialogMemberFilterGroups = computed(() => {
-        const filterItems = Object.values(groupDialogFilterOptions).map(
-            (item) => ({
-                value:
-                    item.id === null
-                        ? 'everyone'
-                        : item.id === ''
-                          ? 'usersWithNoRole'
-                          : `role:${item.id}`,
-                label: t(item.name),
-                search: t(item.name)
-            })
-        );
+        const filterItems = groupDialogFilterOptions.map((item) => ({
+            value:
+                item.id === null
+                    ? 'everyone'
+                    : item.id === ''
+                      ? 'usersWithNoRole'
+                      : `role:${item.id}`,
+            label: t(item.name),
+            search: t(item.name)
+        }));
 
         const roleItems = (groupDialog.value?.ref?.roles ?? [])
             .filter((role) => !role.defaultRole)

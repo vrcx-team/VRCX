@@ -386,9 +386,9 @@ export const columns = [
 
             if (type === 'Bio') {
                 return (
-                    <div class="block w-full min-w-0 truncate">
+                    <span class="block w-full min-w-0 truncate">
                         {original.bio}
-                    </div>
+                    </span>
                 );
             }
 
@@ -415,7 +415,7 @@ function formatDifference(
     markerDeletion = '<span class="x-text-removed">{{text}}</span>'
 ) {
     [oldString, newString] = [oldString, newString].map((s) =>
-        s
+        String(s ?? '')
             .replaceAll(/&/g, '&amp;')
             .replaceAll(/</g, '&lt;')
             .replaceAll(/>/g, '&gt;')

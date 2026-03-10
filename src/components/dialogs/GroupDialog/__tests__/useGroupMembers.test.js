@@ -80,12 +80,11 @@ vi.mock('../../../../services/request', () => ({
 }));
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
-    ,
-            locale: require('vue').ref('en')
-        }),
+        t: (key) => key,
+        locale: require('vue').ref('en')
+    }),
     createI18n: () => ({
-        global: { t: (key) => key , locale: require('vue').ref('en') },
+        global: { t: (key) => key, locale: require('vue').ref('en') },
         install: vi.fn()
     })
 }));
@@ -96,7 +95,7 @@ vi.mock('worker-timers', () => ({
 
 import { useGroupMembers } from '../useGroupMembers';
 import { groupRequest, queryRequest } from '../../../../api';
-import { groupDialogFilterOptions } from '../../../../shared/constants';
+import { FILTER_EVERYONE } from '../../../../shared/constants';
 
 /**
  *
@@ -409,9 +408,7 @@ describe('useGroupMembers', () => {
 
         test('marks done on error', async () => {
             const groupDialog = createGroupDialog();
-            queryRequest.fetch.mockRejectedValue(
-                new Error('fail')
-            );
+            queryRequest.fetch.mockRejectedValue(new Error('fail'));
 
             const {
                 loadMoreGroupMembers,
@@ -450,7 +447,7 @@ describe('useGroupMembers', () => {
     describe('setGroupMemberFilter', () => {
         test('does not reload when filter unchanged', async () => {
             const { markRaw } = require('vue');
-            const filter = markRaw(groupDialogFilterOptions.everyone);
+            const filter = markRaw(FILTER_EVERYONE);
             const groupDialog = createGroupDialog();
             // Use markRaw to prevent Vue from wrapping the filter in a Proxy
             groupDialog.value.memberFilter = filter;

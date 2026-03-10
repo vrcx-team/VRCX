@@ -243,3 +243,20 @@
         feedTableLookup();
     }
 </script>
+
+<style scoped>
+    .feed :deep(.x-text-removed) {
+        text-decoration: line-through;
+        color: #ff0000;
+        background-color: rgba(255, 0, 0, 0.2);
+        padding: 2px 2px;
+        border-radius: 4px;
+    }
+
+    .feed :deep(.x-text-added) {
+        color: rgb(35, 188, 35);
+        background-color: rgba(76, 255, 80, 0.2);
+        padding: 2px 2px;
+        border-radius: 4px;
+    }
+</style>

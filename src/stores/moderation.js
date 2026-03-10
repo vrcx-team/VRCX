@@ -1,7 +1,7 @@
 import { reactive, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 
-import { playerModerationRequest } from '../api';
+import { runRefreshPlayerModerationsFlow } from '../coordinators/moderationCoordinator';
 import { useUserStore } from './user';
 import { watchState } from '../services/watchState';
 
@@ -35,6 +35,9 @@ export const useModerationStore = defineStore('Moderation', () => {
             cachedPlayerModerationsUserIds.clear();
             playerModerationTable.value.loading = false;
             playerModerationTable.value.data = [];
+            if (isLoggedIn) {
+                runRefreshPlayerModerationsFlow();
+            }
         },
         { flush: 'sync' }
     );

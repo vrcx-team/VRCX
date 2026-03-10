@@ -5,12 +5,11 @@ import { i18n } from '../plugins/i18n';
 import {
     convertFileUrlToImageUrl,
     createDefaultGroupRef,
-    sanitizeEntityJson,
-    replaceBioSymbols
+    sanitizeEntityJson
 } from '../shared/utils';
 import { groupRequest, instanceRequest, queryRequest } from '../api';
 import { database } from '../services/database';
-import { groupDialogFilterOptions } from '../shared/constants/';
+import { FILTER_EVERYONE } from '../shared/constants/';
 import { patchGroupFromEvent } from '../queries';
 import { useGameStore } from '../stores/game';
 import { useInstanceStore } from '../stores/instance';
@@ -318,7 +317,7 @@ export function showGroupDialog(groupId, options = {}) {
     D.memberSearchResults = [];
     D.galleries = {};
     D.members = [];
-    D.memberFilter = groupDialogFilterOptions.everyone;
+    D.memberFilter = FILTER_EVERYONE;
     D.calendar = [];
     const loadGroupRequest = groupRequest.getGroup({
         groupId,
