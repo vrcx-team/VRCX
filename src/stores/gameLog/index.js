@@ -13,6 +13,7 @@ import {
 } from '../../shared/utils';
 import { createMediaParsers } from './mediaParsers';
 import { database } from '../../services/database';
+import { tryLoadPlayerList } from '../../coordinators/gameLogCoordinator';
 import { useAdvancedSettingsStore } from '../settings/advanced';
 import { useFriendStore } from '../friend';
 import { useGameStore } from '../game';
@@ -25,8 +26,6 @@ import { useUserStore } from '../user';
 import { useVrStore } from '../vr';
 import { useVrcxStore } from '../vrcx';
 import { watchState } from '../../services/watchState';
-
-import { tryLoadPlayerList, addGameLogEvent } from '../../coordinators/gameLogCoordinator';
 
 import configRepository from '../../services/config';
 
@@ -182,6 +181,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         vrStore.updateVrNowPlaying();
     }
 
+    /**
+     *
+     */
     function resetLastMediaUrls() {
         lastVideoUrl.value = '';
         lastResourceloadUrl.value = '';
@@ -470,9 +472,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
         addGameLogVRDancing,
         addGameLogZuwaZuwaDance,
         addGameLogLSMedia,
-        addGameLogPopcornPalace,
-
-        // Re-exported from coordinator (called by C# via window.$pinia)
-        addGameLogEvent
+        addGameLogPopcornPalace
     };
 });

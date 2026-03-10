@@ -413,13 +413,12 @@
     import ImageCropDialog from '../ImageCropDialog.vue';
     import WorldDialogInfoTab from './WorldDialogInfoTab.vue';
     import WorldDialogInstancesTab from './WorldDialogInstancesTab.vue';
-import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const SetWorldTagsDialog = defineAsyncComponent(() => import('./SetWorldTagsDialog.vue'));
     const WorldAllowedDomainsDialog = defineAsyncComponent(() => import('./WorldAllowedDomainsDialog.vue'));
-    const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog.vue'));
+    const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog/NewInstanceDialog.vue'));
 
-    
     const { currentUser, userDialog } = storeToRefs(useUserStore());
     const { worldDialog } = storeToRefs(useWorldStore());
     const { cachedWorlds } = useWorldStore();

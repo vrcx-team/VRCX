@@ -393,25 +393,20 @@
         useUserStore,
         useWorldStore
     } from '../../stores';
-    import {
-        compareByCreatedAt,
-        compareByName,
-        compareByUpdatedAt,
-        convertFileUrlToImageUrl,
-        replaceBioSymbols,
-        userImage
-    } from '../../shared/utils';
-    import { groupRequest, worldRequest } from '../../api';
-import { showUserDialog, refreshUserDialogAvatars } from '../../coordinators/userCoordinator';
+    import { convertFileUrlToImageUrl, replaceBioSymbols, userImage } from '../../shared/utils';
+    import { refreshUserDialogAvatars, showUserDialog } from '../../coordinators/userCoordinator';
+    import { groupRequest } from '../../api';
+    import { useSearchAvatar } from './composables/useSearchAvatar';
+    import { useSearchWorld } from './composables/useSearchWorld';
 
     const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
-    const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
     const { avatarRemoteDatabaseProviderList, avatarRemoteDatabaseProvider } = storeToRefs(useAvatarProviderStore());
     const { setAvatarProvider } = useAvatarProviderStore();
+    const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
     const { userDialog } = storeToRefs(useUserStore());
-    
-    const { showAvatarDialog, lookupAvatars, cachedAvatars } = useAvatarStore();
-    const { cachedWorlds, showWorldDialog } = useWorldStore();
+
+    const { showAvatarDialog } = useAvatarStore();
+    const { showWorldDialog } = useWorldStore();
     const { showGroupDialog } = useGroupStore();
     const { searchText, searchUserResults } = storeToRefs(useSearchStore());
     const { clearSearch, moreSearchUser } = useSearchStore();
@@ -427,55 +422,40 @@ import { showUserDialog, refreshUserDialogAvatars } from '../../coordinators/use
         { value: 'group', label: t('view.search.group.header') }
     ]);
 
+    const {
+        searchAvatarFilter,
+        searchAvatarSort,
+        searchAvatarFilterRemote,
+        searchAvatarPageNum,
+        searchAvatarResults,
+        searchAvatarPage,
+        isSearchAvatarLoading,
+        searchAvatar,
+        moreSearchAvatar,
+        handleSearchAvatarFilterChange,
+        handleSearchAvatarFilterRemoteChange,
+        handleSearchAvatarSortChange,
+        clearAvatarSearch
+    } = useSearchAvatar();
+
+    const {
+        searchWorldLabs,
+        searchWorldParams,
+        searchWorldCategoryIndex,
+        searchWorldResults,
+        isSearchWorldLoading,
+        searchWorld,
+        moreSearchWorld,
+        handleSearchWorldCategorySelect,
+        clearWorldSearch
+    } = useSearchWorld();
+
     const searchUserParams = ref({});
     const searchUserByBio = ref(false);
     const searchUserSortByLastLoggedIn = ref(false);
 
     const isSearchUserLoading = ref(false);
-    const isSearchWorldLoading = ref(false);
-    const isSearchAvatarLoading = ref(false);
     const isSearchGroupLoading = ref(false);
-
-    const searchWorldOption = ref('');
-    const searchWorldLabs = ref(false);
-    const searchWorldParams = ref({});
-
-    const searchWorldCategoryIndex = ref(null);
-    const searchWorldResults = ref([]);
-
-    /**
-     *
-     * @param value
-     */
-    function handleSearchAvatarFilterChange(value) {
-        searchAvatarFilter.value = value;
-        searchAvatar();
-    }
-
-    /**
-     *
-     * @param value
-     */
-    function handleSearchAvatarFilterRemoteChange(value) {
-        searchAvatarFilterRemote.value = value;
-        searchAvatar();
-    }
-
-    /**
-     *
-     * @param value
-     */
-    function handleSearchAvatarSortChange(value) {
-        searchAvatarSort.value = value;
-        searchAvatar();
-    }
-
-    const searchAvatarFilter = ref('');
-    const searchAvatarSort = ref('');
-    const searchAvatarFilterRemote = ref('');
-    const searchAvatarPageNum = ref(0);
-    const searchAvatarResults = ref([]);
-    const searchAvatarPage = ref([]);
 
     const searchGroupParams = ref({});
     const searchGroupResults = ref([]);
@@ -493,11 +473,8 @@ import { showUserDialog, refreshUserDialogAvatars } from '../../coordinators/use
      */
     function handleClearSearch() {
         searchUserParams.value = {};
-        searchWorldParams.value = {};
-        searchWorldResults.value = [];
-        searchAvatarResults.value = [];
-        searchAvatarPage.value = [];
-        searchAvatarPageNum.value = 0;
+        clearWorldSearch();
+        clearAvatarSearch();
         searchGroupParams.value = {};
         searchGroupResults.value = [];
         clearSearch();
@@ -564,237 +541,6 @@ import { showUserDialog, refreshUserDialogAvatars } from '../../coordinators/use
         isSearchUserLoading.value = false;
     }
 
-    /**
-     *
-     * @param ref
-     */
-    function searchWorld(ref) {
-        searchWorldOption.value = '';
-        searchWorldCategoryIndex.value = ref?.index ?? null;
-        const params = {
-            n: 10,
-            offset: 0
-        };
-        switch (ref.sortHeading) {
-            case 'featured':
-                params.sort = 'order';
-                params.featured = 'true';
-                break;
-            case 'trending':
-                params.sort = 'popularity';
-                params.featured = 'false';
-                break;
-            case 'updated':
-                params.sort = 'updated';
-                break;
-            case 'created':
-                params.sort = 'created';
-                break;
-            case 'publication':
-                params.sort = 'publicationDate';
-                break;
-            case 'shuffle':
-                params.sort = 'shuffle';
-                break;
-            case 'active':
-                searchWorldOption.value = 'active';
-                break;
-            case 'recent':
-                searchWorldOption.value = 'recent';
-                break;
-            case 'favorite':
-                searchWorldOption.value = 'favorites';
-                break;
-            case 'labs':
-                params.sort = 'labsPublicationDate';
-                break;
-            case 'heat':
-                params.sort = 'heat';
-                params.featured = 'false';
-                break;
-            default:
-                params.sort = 'relevance';
-                params.search = replaceBioSymbols(searchText.value);
-                break;
-        }
-        params.order = ref.sortOrder || 'descending';
-        if (ref.sortOwnership === 'mine') {
-            params.user = 'me';
-            params.releaseStatus = 'all';
-        }
-        if (ref.tag) {
-            params.tag = ref.tag;
-        }
-        if (!searchWorldLabs.value) {
-            if (params.tag) {
-                params.tag += ',system_approved';
-            } else {
-                params.tag = 'system_approved';
-            }
-        }
-        // TODO: option.platform
-        searchWorldParams.value = params;
-        moreSearchWorld();
-    }
-
-    /**
-     *
-     * @param index
-     */
-    function handleSearchWorldCategorySelect(index) {
-        searchWorldCategoryIndex.value = index;
-        const row = cachedConfig.value?.dynamicWorldRows?.find((r) => r.index === index);
-        searchWorld(row || {});
-    }
-
-    /**
-     *
-     * @param go
-     */
-    function moreSearchWorld(go) {
-        const params = searchWorldParams.value;
-        if (go) {
-            params.offset += params.n * go;
-            if (params.offset < 0) {
-                params.offset = 0;
-            }
-        }
-        isSearchWorldLoading.value = true;
-        worldRequest
-            .getWorlds(params, searchWorldOption.value)
-            .finally(() => {
-                isSearchWorldLoading.value = false;
-            })
-            .then((args) => {
-                const map = new Map();
-                for (const json of args.json) {
-                    const ref = cachedWorlds.get(json.id);
-                    if (typeof ref !== 'undefined') {
-                        map.set(ref.id, ref);
-                    }
-                }
-                searchWorldResults.value = Array.from(map.values());
-                return args;
-            });
-    }
-
-    /**
-     *
-     */
-    async function searchAvatar() {
-        let ref;
-        isSearchAvatarLoading.value = true;
-        if (!searchAvatarFilter.value) {
-            searchAvatarFilter.value = 'all';
-        }
-        if (!searchAvatarSort.value) {
-            searchAvatarSort.value = 'name';
-        }
-        if (!searchAvatarFilterRemote.value) {
-            searchAvatarFilterRemote.value = 'all';
-        }
-        if (searchAvatarFilterRemote.value !== 'local') {
-            searchAvatarSort.value = 'name';
-        }
-        const avatars = new Map();
-        const query = searchText.value;
-        const queryUpper = query.toUpperCase();
-        if (!query) {
-            for (ref of cachedAvatars.values()) {
-                switch (searchAvatarFilter.value) {
-                    case 'all':
-                        avatars.set(ref.id, ref);
-                        break;
-                    case 'public':
-                        if (ref.releaseStatus === 'public') {
-                            avatars.set(ref.id, ref);
-                        }
-                        break;
-                    case 'private':
-                        if (ref.releaseStatus === 'private') {
-                            avatars.set(ref.id, ref);
-                        }
-                        break;
-                }
-            }
-            isSearchAvatarLoading.value = false;
-        } else {
-            if (searchAvatarFilterRemote.value === 'all' || searchAvatarFilterRemote.value === 'local') {
-                for (ref of cachedAvatars.values()) {
-                    let match = ref.name.toUpperCase().includes(queryUpper);
-                    if (!match && ref.description) {
-                        match = ref.description.toUpperCase().includes(queryUpper);
-                    }
-                    if (!match && ref.authorName) {
-                        match = ref.authorName.toUpperCase().includes(queryUpper);
-                    }
-                    if (match) {
-                        switch (searchAvatarFilter.value) {
-                            case 'all':
-                                avatars.set(ref.id, ref);
-                                break;
-                            case 'public':
-                                if (ref.releaseStatus === 'public') {
-                                    avatars.set(ref.id, ref);
-                                }
-                                break;
-                            case 'private':
-                                if (ref.releaseStatus === 'private') {
-                                    avatars.set(ref.id, ref);
-                                }
-                                break;
-                        }
-                    }
-                }
-            }
-            if (
-                (searchAvatarFilterRemote.value === 'all' || searchAvatarFilterRemote.value === 'remote') &&
-                avatarRemoteDatabase.value &&
-                query.length >= 3
-            ) {
-                const data = await lookupAvatars('search', query);
-                if (data && typeof data === 'object') {
-                    data.forEach((avatar) => {
-                        avatars.set(avatar.id, avatar);
-                    });
-                }
-            }
-            isSearchAvatarLoading.value = false;
-        }
-        const avatarsArray = Array.from(avatars.values());
-        if (searchAvatarFilterRemote.value === 'local') {
-            switch (searchAvatarSort.value) {
-                case 'updated':
-                    avatarsArray.sort(compareByUpdatedAt);
-                    break;
-                case 'created':
-                    avatarsArray.sort(compareByCreatedAt);
-                    break;
-                case 'name':
-                    avatarsArray.sort(compareByName);
-                    break;
-            }
-        }
-        searchAvatarPageNum.value = 0;
-        searchAvatarResults.value = avatarsArray;
-        searchAvatarPage.value = avatarsArray.slice(0, 10);
-    }
-    /**
-     *
-     * @param n
-     */
-    function moreSearchAvatar(n) {
-        let offset;
-        if (n === -1) {
-            searchAvatarPageNum.value--;
-            offset = searchAvatarPageNum.value * 10;
-        }
-        if (n === 1) {
-            searchAvatarPageNum.value++;
-            offset = searchAvatarPageNum.value * 10;
-        }
-        searchAvatarPage.value = searchAvatarResults.value.slice(offset, offset + 10);
-    }
     /**
      *
      */

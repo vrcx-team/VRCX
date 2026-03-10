@@ -22,12 +22,12 @@
 <script setup>
     import { computed, onBeforeMount, onMounted } from 'vue';
 
+    import { addGameLogEvent, getGameLogTable } from './coordinators/gameLogCoordinator';
+    import { runCheckVRChatDebugLoggingFlow, runUpdateIsGameRunningFlow } from './coordinators/gameCoordinator';
     import { Toaster } from './components/ui/sonner';
     import { TooltipProvider } from './components/ui/tooltip';
     import { createGlobalStores } from './stores';
     import { initNoty } from './plugins/noty';
-    import { getGameLogTable } from './coordinators/gameLogCoordinator';
-    import { runCheckVRChatDebugLoggingFlow } from './coordinators/gameCoordinator';
 
     import AlertDialogModal from './components/ui/alert-dialog/AlertDialogModal.vue';
     import MacOSTitleBar from './components/MacOSTitleBar.vue';
@@ -51,6 +51,9 @@
 
     if (typeof window !== 'undefined') {
         window.$pinia = store;
+        // Bridge: attach coordinator functions to store for C# IPC callbacks
+        store.game.updateIsGameRunning = runUpdateIsGameRunningFlow;
+        store.gameLog.addGameLogEvent = addGameLogEvent;
     }
 
     onBeforeMount(() => {
