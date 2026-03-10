@@ -1,6 +1,5 @@
 import { computed, reactive, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
-import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -9,24 +8,27 @@ import {
     createRateLimiter,
     executeWithBackoff,
     getFriendsSortFunction,
-    getGroupName,
     getNameColour,
     getUserMemo,
-    getWorldName,
-    isRealInstance,
-    migrateMemos
+    isRealInstance
 } from '../shared/utils';
 import { friendRequest, userRequest } from '../api';
+import {
+    runDeleteFriendshipFlow,
+    runUpdateFriendshipsFlow
+} from '../coordinators/friendRelationshipCoordinator';
+import {
+    runInitFriendsListFlow,
+    runRefreshFriendsListFlow
+} from '../coordinators/friendSyncCoordinator';
+import {
+    runPendingOfflineTickFlow,
+    runUpdateFriendFlow
+} from '../coordinators/friendPresenceCoordinator';
 import { AppDebug } from '../service/appConfig';
-import { createFriendPresenceCoordinator } from '../coordinators/friendPresenceCoordinator';
-import { createFriendRelationshipCoordinator } from '../coordinators/friendRelationshipCoordinator';
-import { createFriendSyncCoordinator } from '../coordinators/friendSyncCoordinator';
 import { database } from '../service/database';
-import { reconnectWebSocket } from '../service/websocket';
 import { useAppearanceSettingsStore } from './settings/appearance';
-import { useAuthStore } from './auth';
 import { useFavoriteStore } from './favorite';
-import { useFeedStore } from './feed';
 import { useGeneralSettingsStore } from './settings/general';
 import { useGroupStore } from './group';
 import { useLocationStore } from './location';
@@ -34,7 +36,6 @@ import { useModalStore } from './modal';
 import { useNotificationStore } from './notification';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
-import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
 import { watchState } from '../service/watchState';
 
@@ -47,12 +48,9 @@ export const useFriendStore = defineStore('Friend', () => {
     const generalSettingsStore = useGeneralSettingsStore();
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
-    const feedStore = useFeedStore();
     const uiStore = useUiStore();
     const groupStore = useGroupStore();
     const sharedFeedStore = useSharedFeedStore();
-    const updateLoopStore = useUpdateLoopStore();
-    const authStore = useAuthStore();
     const locationStore = useLocationStore();
     const favoriteStore = useFavoriteStore();
     const modalStore = useModalStore();
@@ -64,7 +62,7 @@ export const useFriendStore = defineStore('Friend', () => {
         friendNumber: 0
     });
 
-    let friendLog = new Map();
+    const friendLog = new Map();
 
     const friends = reactive(new Map());
 
@@ -237,7 +235,7 @@ export const useFriendStore = defineStore('Friend', () => {
             onlineFriendCount.value = 0;
             pendingOfflineMap.clear();
             if (isLoggedIn) {
-                initFriendsList();
+                runInitFriendsListFlow(t);
                 pendingOfflineWorkerFunction();
             } else {
                 if (pendingOfflineWorker !== null) {
@@ -313,7 +311,7 @@ export const useFriendStore = defineStore('Friend', () => {
             return;
         }
         D.isFriend = false;
-        deleteFriendship(args.params.userId);
+        runDeleteFriendshipFlow(args.params.userId);
         deleteFriend(args.params.userId);
     }
 
@@ -405,19 +403,11 @@ export const useFriendStore = defineStore('Friend', () => {
     }
 
     /**
-     * @param {string} id
-     * @param {string?} stateInput
-     */
-    function updateFriend(id, stateInput = undefined) {
-        friendPresenceCoordinator.runUpdateFriendFlow(id, stateInput);
-    }
-
-    /**
      *
      */
     async function pendingOfflineWorkerFunction() {
         pendingOfflineWorker = workerTimers.setInterval(() => {
-            friendPresenceCoordinator.runPendingOfflineTickFlow();
+            runPendingOfflineTickFlow();
         }, 1000);
     }
 
@@ -454,7 +444,7 @@ export const useFriendStore = defineStore('Friend', () => {
         for (const friend of map) {
             const [id, state_input] = friend;
             if (friends.has(id)) {
-                updateFriend(id, state_input);
+                runUpdateFriendFlow(id, state_input);
             } else {
                 addFriend(id, state_input);
             }
@@ -698,10 +688,6 @@ export const useFriendStore = defineStore('Friend', () => {
     /**
      * @returns {Promise<void>}
      */
-    async function refreshFriendsList() {
-        await friendSyncCoordinator.runRefreshFriendsListFlow();
-    }
-
     /**
      *
      * @param forceUpdate
@@ -897,22 +883,6 @@ export const useFriendStore = defineStore('Friend', () => {
 
     /**
      *
-     * @param {string} id
-     */
-    function deleteFriendship(id) {
-        friendRelationshipCoordinator.runDeleteFriendshipFlow(id);
-    }
-
-    /**
-     *
-     * @param {object} ref
-     */
-    function updateFriendships(ref) {
-        friendRelationshipCoordinator.runUpdateFriendshipsFlow(ref);
-    }
-
-    /**
-     *
      * @param {object} ref
      */
     function updateFriendship(ref) {
@@ -1075,7 +1045,7 @@ export const useFriendStore = defineStore('Friend', () => {
             }
         }
         if (typeof currentUser.friends !== 'undefined') {
-            updateFriendships(currentUser);
+            runUpdateFriendshipsFlow(currentUser);
         }
     }
 
@@ -1440,90 +1410,13 @@ export const useFriendStore = defineStore('Friend', () => {
     }
 
     /**
-     *
+     * Clears all entries in friendLog.
+     * Uses .clear() instead of reassignment to keep the same Map reference,
+     * so that coordinators reading friendStore.friendLog stay in sync.
      */
-    async function initFriendsList() {
-        await friendSyncCoordinator.runInitFriendsListFlow();
+    function resetFriendLog() {
+        friendLog.clear();
     }
-
-    /**
-     * @param {boolean} value
-     */
-    function setRefreshFriendsLoading(value) {
-        isRefreshFriendsLoading.value = value;
-    }
-
-    const friendPresenceCoordinator = createFriendPresenceCoordinator({
-        friends,
-        localFavoriteFriends,
-        pendingOfflineMap,
-        pendingOfflineDelay,
-        watchState,
-        appDebug: AppDebug,
-        getCachedUsers: () => userStore.cachedUsers,
-        isRealInstance,
-        requestUser: (userId) =>
-            userRequest.getUser({
-                userId
-            }),
-        getWorldName,
-        getGroupName,
-        feedStore,
-        database,
-        updateOnlineFriendCounter,
-        now: () => Date.now(),
-        nowIso: () => new Date().toJSON()
-    });
-
-    const friendRelationshipCoordinator = createFriendRelationshipCoordinator({
-        friendLog,
-        friendLogTable,
-        getCurrentUserId: () => userStore.currentUser.id,
-        requestFriendStatus: (params) => friendRequest.getFriendStatus(params),
-        handleFriendStatus,
-        addFriendship,
-        deleteFriend,
-        database,
-        notificationStore,
-        sharedFeedStore,
-        favoriteStore,
-        uiStore,
-        shouldNotifyUnfriend: () => !appearanceSettingsStore.hideUnfriends,
-        nowIso: () => new Date().toJSON()
-    });
-
-    const friendSyncCoordinator = createFriendSyncCoordinator({
-        getNextCurrentUserRefresh: () => updateLoopStore.nextCurrentUserRefresh,
-        getCurrentUser: () => userStore.getCurrentUser(),
-        refreshFriends,
-        reconnectWebSocket,
-        getCurrentUserId: () => userStore.currentUser.id,
-        getCurrentUserRef: () => userStore.currentUser,
-        setRefreshFriendsLoading: (value) => {
-            isRefreshFriendsLoading.value = value;
-        },
-        setFriendsLoaded: (value) => {
-            watchState.isFriendsLoaded = value;
-        },
-        resetFriendLog: () => {
-            friendLog = new Map();
-        },
-        isFriendLogInitialized: (userId) =>
-            configRepository.getBool(`friendLogInit_${userId}`),
-        getFriendLog,
-        initFriendLog,
-        isDontLogMeOut: () => AppDebug.dontLogMeOut,
-        showLoadFailedToast: () => toast.error(t('message.friend.load_failed')),
-        handleLogoutEvent: () => authStore.handleLogoutEvent(),
-        tryApplyFriendOrder,
-        getAllUserStats,
-        hasLegacyFriendLogData: (userId) =>
-            VRCXStorage.Get(`${userId}_friendLogUpdatedAt`),
-        removeLegacyFeedTable: (userId) =>
-            VRCXStorage.Remove(`${userId}_feedTable`),
-        migrateMemos,
-        migrateFriendLog
-    });
 
     return {
         state,
@@ -1543,16 +1436,15 @@ export const useFriendStore = defineStore('Friend', () => {
         onlineFriendCount,
         friendLog,
         friendLogTable,
+        pendingOfflineMap,
+        pendingOfflineDelay,
 
-        initFriendsList,
         updateLocalFavoriteFriends,
         updateSidebarFavorites,
-        updateFriend,
         deleteFriend,
         refreshFriendsStatus,
         addFriend,
         refreshFriends,
-        refreshFriendsList,
         updateOnlineFriendCounter,
         getAllUserStats,
         getAllUserMutualCount,
@@ -1562,11 +1454,13 @@ export const useFriendStore = defineStore('Friend', () => {
         getFriendRequest,
         userOnFriend,
         confirmDeleteFriend,
-        updateFriendships,
         updateUserCurrentStatus,
         handleFriendAdd,
         handleFriendDelete,
-        initFriendLogHistoryTable,
-        setRefreshFriendsLoading
+        handleFriendStatus,
+        addFriendship,
+        tryApplyFriendOrder,
+        resetFriendLog,
+        initFriendLogHistoryTable
     };
 });

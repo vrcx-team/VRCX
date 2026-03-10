@@ -21,7 +21,7 @@
                         variant="ghost"
                         size="icon-sm"
                         :disabled="isRefreshFriendsLoading"
-                        @click="refreshFriendsList">
+                        @click="runRefreshFriendsListFlow">
                         <Spinner v-if="isRefreshFriendsLoading" />
                         <RefreshCw v-else />
                     </Button>
@@ -267,6 +267,7 @@
         useGroupStore,
         useNotificationStore
     } from '../../stores';
+    import { runRefreshFriendsListFlow } from '../../coordinators/friendSyncCoordinator';
     import { normalizeFavoriteGroupsChange, resolveFavoriteGroups } from './sidebarSettingsUtils';
     import { useGlobalSearchStore } from '../../stores/globalSearch';
 
@@ -277,7 +278,6 @@
     import NotificationCenterSheet from './components/NotificationCenterSheet.vue';
 
     const { friends, isRefreshFriendsLoading, onlineFriendCount } = storeToRefs(useFriendStore());
-    const { refreshFriendsList } = useFriendStore();
     const { groupInstances } = storeToRefs(useGroupStore());
     const notificationStore = useNotificationStore();
     const { isNotificationCenterOpen, hasUnseenNotifications } = storeToRefs(notificationStore);

@@ -1,80 +1,82 @@
+import { toast } from 'vue-sonner';
+import { useI18n } from 'vue-i18n';
+
+import { AppDebug } from '../service/appConfig';
+import { useAdvancedSettingsStore } from '../stores/settings/advanced';
+import { useAuthStore } from '../stores/auth';
+
 /**
- * @param {object} deps Coordinator dependencies.
- * @returns {object} Auto-login flow coordinator methods.
+ * Runs the full auto-login orchestration flow.
+ * @param {object} [options] Test seams.
+ * @param {function} [options.now] Timestamp provider.
+ * @param {function} [options.isOnline] Online-check provider.
  */
-export function createAuthAutoLoginCoordinator(deps) {
-    const {
-        getIsAttemptingAutoLogin,
-        setAttemptingAutoLogin,
-        getLastUserLoggedIn,
-        getSavedCredentials,
-        isPrimaryPasswordEnabled,
-        handleLogoutEvent,
-        autoLoginAttempts,
-        relogin,
-        notifyAutoLoginSuccess,
-        notifyAutoLoginFailed,
-        notifyOffline,
-        flashWindow,
-        isOnline,
-        now
-    } = deps;
+export async function runHandleAutoLoginFlow({
+    now = Date.now,
+    isOnline = () => navigator.onLine
+} = {}) {
+    const authStore = useAuthStore();
+    const advancedSettingsStore = useAdvancedSettingsStore();
+    const { t } = useI18n();
 
-    /**
-     * Runs the full auto-login orchestration flow.
-     */
-    async function runHandleAutoLoginFlow() {
-        if (getIsAttemptingAutoLogin()) {
-            return;
-        }
-        setAttemptingAutoLogin(true);
-        const user = await getSavedCredentials(getLastUserLoggedIn());
-        if (!user) {
-            setAttemptingAutoLogin(false);
-            return;
-        }
-        if (isPrimaryPasswordEnabled()) {
-            console.error(
-                'Primary password is enabled, this disables auto login.'
-            );
-            setAttemptingAutoLogin(false);
-            await handleLogoutEvent();
-            return;
-        }
-        const currentTimestamp = now();
-        const attemptsInLastHour = Array.from(autoLoginAttempts).filter(
-            (timestamp) => timestamp > currentTimestamp - 3600000
-        ).length;
-        if (attemptsInLastHour >= 3) {
-            console.error(
-                'More than 3 auto login attempts within the past hour, logging out instead of attempting auto login.'
-            );
-            setAttemptingAutoLogin(false);
-            await handleLogoutEvent();
-            flashWindow();
-            return;
-        }
-        autoLoginAttempts.add(currentTimestamp);
-        console.log('Attempting automatic login...');
-        relogin(user)
-            .then(() => {
-                notifyAutoLoginSuccess();
-                console.log('Automatically logged in.');
-            })
-            .catch((err) => {
-                notifyAutoLoginFailed();
-                console.error('Failed to login automatically.', err);
-            })
-            .finally(() => {
-                setAttemptingAutoLogin(false);
-                if (!isOnline()) {
-                    notifyOffline();
-                    console.error(`You're offline.`);
-                }
-            });
+    if (authStore.attemptingAutoLogin) {
+        return;
     }
-
-    return {
-        runHandleAutoLoginFlow
-    };
+    authStore.setAttemptingAutoLogin(true);
+    const user = await authStore.getSavedCredentials(
+        authStore.loginForm.lastUserLoggedIn
+    );
+    if (!user) {
+        authStore.setAttemptingAutoLogin(false);
+        return;
+    }
+    if (advancedSettingsStore.enablePrimaryPassword) {
+        console.error('Primary password is enabled, this disables auto login.');
+        authStore.setAttemptingAutoLogin(false);
+        await authStore.handleLogoutEvent();
+        return;
+    }
+    const currentTimestamp = now();
+    const autoLoginAttempts = authStore.state.autoLoginAttempts;
+    const attemptsInLastHour = Array.from(autoLoginAttempts).filter(
+        (timestamp) => timestamp > currentTimestamp - 3600000
+    ).length;
+    if (attemptsInLastHour >= 3) {
+        console.error(
+            'More than 3 auto login attempts within the past hour, logging out instead of attempting auto login.'
+        );
+        authStore.setAttemptingAutoLogin(false);
+        await authStore.handleLogoutEvent();
+        AppApi.FlashWindow();
+        return;
+    }
+    autoLoginAttempts.add(currentTimestamp);
+    console.log('Attempting automatic login...');
+    authStore
+        .relogin(user)
+        .then(() => {
+            if (AppDebug.errorNoty) {
+                toast.dismiss(AppDebug.errorNoty);
+            }
+            AppDebug.errorNoty = toast.success(
+                t('message.auth.auto_login_success')
+            );
+            console.log('Automatically logged in.');
+        })
+        .catch((err) => {
+            if (AppDebug.errorNoty) {
+                toast.dismiss(AppDebug.errorNoty);
+            }
+            AppDebug.errorNoty = toast.error(
+                t('message.auth.auto_login_failed')
+            );
+            console.error('Failed to login automatically.', err);
+        })
+        .finally(() => {
+            authStore.setAttemptingAutoLogin(false);
+            if (!isOnline()) {
+                AppDebug.errorNoty = toast.error(t('message.auth.offline'));
+                console.error(`You're offline.`);
+            }
+        });
 }

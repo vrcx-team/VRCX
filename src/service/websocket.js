@@ -1,5 +1,4 @@
 import { reactive } from 'vue';
-
 import { toast } from 'vue-sonner';
 
 import {
@@ -17,6 +16,7 @@ import { escapeTag, parseLocation } from '../shared/utils';
 import { AppDebug } from './appConfig';
 import { groupRequest } from '../api';
 import { request } from './request';
+import { runUpdateFriendFlow } from '../coordinators/friendPresenceCoordinator';
 import { watchState } from './watchState';
 
 import * as workerTimers from 'worker-timers';
@@ -300,7 +300,7 @@ function handlePipeline(args) {
                 userStore.applyUser(onlineJson);
             } else {
                 console.error('friend-online missing user id', content);
-                friendStore.updateFriend(content.userId, 'online');
+                runUpdateFriendFlow(content.userId, 'online');
             }
             break;
 
@@ -323,7 +323,7 @@ function handlePipeline(args) {
                 userStore.applyUser(activeJson);
             } else {
                 console.error('friend-active missing user id', content);
-                friendStore.updateFriend(content.userId, 'active');
+                runUpdateFriendFlow(content.userId, 'active');
             }
             break;
 

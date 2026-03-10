@@ -1,81 +1,68 @@
+import { toast } from 'vue-sonner';
+
+import { AppDebug } from '../service/appConfig';
+import { migrateMemos } from '../shared/utils';
+import { reconnectWebSocket } from '../service/websocket';
+import { useAuthStore } from '../stores/auth';
+import { useFriendStore } from '../stores/friend';
+import { useUpdateLoopStore } from '../stores/updateLoop';
+import { useUserStore } from '../stores/user';
+import { watchState } from '../service/watchState';
+
+import configRepository from '../service/config';
+
 /**
- * @param {object} deps Coordinator dependencies.
- * @returns {object} Friend sync coordinator methods.
+ * Runs friend list refresh orchestration.
  */
-export function createFriendSyncCoordinator(deps) {
-    const {
-        getNextCurrentUserRefresh,
-        getCurrentUser,
-        refreshFriends,
-        reconnectWebSocket,
-        getCurrentUserId,
-        getCurrentUserRef,
-        setRefreshFriendsLoading,
-        setFriendsLoaded,
-        resetFriendLog,
-        isFriendLogInitialized,
-        getFriendLog,
-        initFriendLog,
-        isDontLogMeOut,
-        showLoadFailedToast,
-        handleLogoutEvent,
-        tryApplyFriendOrder,
-        getAllUserStats,
-        hasLegacyFriendLogData,
-        removeLegacyFeedTable,
-        migrateMemos,
-        migrateFriendLog
-    } = deps;
+export async function runRefreshFriendsListFlow() {
+    const updateLoopStore = useUpdateLoopStore();
+    const userStore = useUserStore();
+    const friendStore = useFriendStore();
 
-    /**
-     * Runs friend list refresh orchestration.
-     */
-    async function runRefreshFriendsListFlow() {
-        // If we just got user less then 2 min before code call, don't call it again
-        if (getNextCurrentUserRefresh() < 300) {
-            await getCurrentUser();
-        }
-        await refreshFriends();
-        reconnectWebSocket();
+    // If we just got user less then 2 min before code call, don't call it again
+    if (updateLoopStore.nextCurrentUserRefresh < 300) {
+        await userStore.getCurrentUser();
     }
+    await friendStore.refreshFriends();
+    reconnectWebSocket();
+}
 
-    /**
-     * Runs full friend list initialization orchestration.
-     */
-    async function runInitFriendsListFlow() {
-        const userId = getCurrentUserId();
-        setRefreshFriendsLoading(true);
-        setFriendsLoaded(false);
-        resetFriendLog();
+/**
+ * Runs full friend list initialization orchestration.
+ * @param t
+ */
+export async function runInitFriendsListFlow(t) {
+    const userStore = useUserStore();
+    const friendStore = useFriendStore();
+    const authStore = useAuthStore();
 
-        try {
-            const currentUser = getCurrentUserRef();
-            if (await isFriendLogInitialized(userId)) {
-                await getFriendLog(currentUser);
-            } else {
-                await initFriendLog(currentUser);
-            }
-        } catch (err) {
-            if (!isDontLogMeOut()) {
-                showLoadFailedToast();
-                handleLogoutEvent();
-                throw err;
-            }
+    const userId = userStore.currentUser.id;
+    friendStore.isRefreshFriendsLoading = true;
+    watchState.isFriendsLoaded = false;
+    friendStore.resetFriendLog();
+
+    try {
+        const currentUser = userStore.currentUser;
+        if (await configRepository.getBool(`friendLogInit_${userId}`)) {
+            await friendStore.getFriendLog(currentUser);
+        } else {
+            await friendStore.initFriendLog(currentUser);
         }
-
-        tryApplyFriendOrder(); // once again
-        getAllUserStats(); // joinCount, lastSeen, timeSpent
-
-        // remove old data from json file and migrate to SQLite (July 2021)
-        if (await hasLegacyFriendLogData(userId)) {
-            removeLegacyFeedTable(userId);
-            migrateMemos();
-            migrateFriendLog(userId);
+    } catch (err) {
+        if (!AppDebug.dontLogMeOut) {
+            toast.error(t('message.friend.load_failed'));
+            authStore.handleLogoutEvent();
+            throw err;
         }
     }
 
-    return {
-        runRefreshFriendsListFlow,
-        runInitFriendsListFlow
-    };
+    friendStore.tryApplyFriendOrder(); // once again
+    friendStore.getAllUserStats(); // joinCount, lastSeen, timeSpent
+
+    // remove old data from json file and migrate to SQLite (July 2021)
+    if (await VRCXStorage.Get(`${userId}_friendLogUpdatedAt`)) {
+        VRCXStorage.Remove(`${userId}_feedTable`);
+        migrateMemos();
+        friendStore.migrateFriendLog(userId);
+    }
 }

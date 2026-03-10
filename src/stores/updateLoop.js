@@ -3,6 +3,7 @@ import { watch } from 'vue';
 
 import { database } from '../service/database';
 import { groupRequest } from '../api';
+import { runRefreshFriendsListFlow } from '../coordinators/friendSyncCoordinator';
 import { useAuthStore } from './auth';
 import { useDiscordPresenceSettingsStore } from './settings/discordPresence';
 import { useFriendStore } from './friend';
@@ -62,6 +63,9 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
 
     const ipcTimeout = state.ipcTimeout;
 
+    /**
+     *
+     */
     async function updateLoop() {
         try {
             if (watchState.isLoggedIn) {
@@ -71,7 +75,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 }
                 if (--state.nextFriendsRefresh <= 0) {
                     state.nextFriendsRefresh = 3600; // 1hour
-                    friendStore.refreshFriendsList();
+                    runRefreshFriendsListFlow();
                     authStore.updateStoredUser(userStore.currentUser);
                     if (
                         userStore.currentUser.last_activity &&
@@ -141,28 +145,48 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 }
             }
         } catch (err) {
-            friendStore.setRefreshFriendsLoading(false);
+            friendStore.isRefreshFriendsLoading = false;
             console.error(err);
         }
         workerTimers.setTimeout(() => updateLoop(), 1000);
     }
 
+    /**
+     *
+     * @param value
+     */
     function setNextClearVRCXCacheCheck(value) {
         state.nextClearVRCXCacheCheck = value;
     }
 
+    /**
+     *
+     * @param value
+     */
     function setNextGroupInstanceRefresh(value) {
         state.nextGroupInstanceRefresh = value;
     }
 
+    /**
+     *
+     * @param value
+     */
     function setNextDiscordUpdate(value) {
         state.nextDiscordUpdate = value;
     }
 
+    /**
+     *
+     * @param value
+     */
     function setIpcTimeout(value) {
         state.ipcTimeout = value;
     }
 
+    /**
+     *
+     * @param value
+     */
     function setNextCurrentUserRefresh(value) {
         state.nextCurrentUserRefresh = value;
     }

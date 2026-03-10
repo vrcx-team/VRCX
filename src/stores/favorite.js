@@ -13,6 +13,7 @@ import {
 import { avatarRequest, favoriteRequest, queryRequest } from '../api';
 import { database } from '../service/database';
 import { processBulk } from '../service/request';
+import { runUpdateFriendFlow } from '../coordinators/friendPresenceCoordinator';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAvatarStore } from './avatar';
 import { useFriendStore } from './friend';
@@ -339,7 +340,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     function handleFavorite(args) {
         args.ref = applyFavoriteCached(args.json);
         applyFavorite(args.ref.type, args.ref.favoriteId);
-        friendStore.updateFriend(args.ref.favoriteId);
+        runUpdateFriendFlow(args.ref.favoriteId);
         const { ref } = args;
         const userDialog = userStore.userDialog;
         if (userDialog.visible && ref.favoriteId === userDialog.id) {
@@ -437,7 +438,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             (id) => id !== ref.favoriteId
         );
 
-        friendStore.updateFriend(ref.favoriteId);
+        runUpdateFriendFlow(ref.favoriteId);
         friendStore.updateSidebarFavorites();
         const userDialog = userStore.userDialog;
         if (userDialog.visible && userDialog.id === ref.favoriteId) {

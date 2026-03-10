@@ -6,18 +6,15 @@ import {
     deleteVRChatCache as _deleteVRChatCache,
     isRealInstance
 } from '../shared/utils';
-import { createGameCoordinator } from '../coordinators/gameCoordinator';
 import { database } from '../service/database';
+import { runGameRunningChangedFlow } from '../coordinators/gameCoordinator';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarStore } from './avatar';
 import { useGameLogStore } from './gameLog';
-import { useInstanceStore } from './instance';
 import { useLaunchStore } from './launch';
 import { useLocationStore } from './location';
 import { useModalStore } from './modal';
 import { useNotificationStore } from './notification';
-import { useUpdateLoopStore } from './updateLoop';
-import { useUserStore } from './user';
 import { useVrStore } from './vr';
 import { useWorldStore } from './world';
 
@@ -32,11 +29,8 @@ export const useGameStore = defineStore('Game', () => {
     const avatarStore = useAvatarStore();
     const launchStore = useLaunchStore();
     const worldStore = useWorldStore();
-    const instanceStore = useInstanceStore();
     const gameLogStore = useGameLogStore();
     const vrStore = useVrStore();
-    const userStore = useUserStore();
-    const updateLoopStore = useUpdateLoopStore();
     const modalStore = useModalStore();
 
     const state = reactive({
@@ -168,22 +162,6 @@ export const useGameStore = defineStore('Game', () => {
         VRChatCacheSizeLoading.value = false;
     }
 
-    const gameCoordinator = createGameCoordinator({
-        userStore,
-        instanceStore,
-        updateLoopStore,
-        locationStore,
-        gameLogStore,
-        vrStore,
-        avatarStore,
-        configRepository,
-        workerTimers,
-        checkVRChatDebugLogging,
-        autoVRChatCacheManagement,
-        checkIfGameCrashed,
-        getIsGameNoVR: () => isGameNoVR.value
-    });
-
     // use in C#
     /**
      * @param {boolean} isGameRunningArg Game running flag from IPC.
@@ -195,7 +173,7 @@ export const useGameStore = defineStore('Game', () => {
         }
         if (isGameRunningArg !== isGameRunning.value) {
             isGameRunning.value = isGameRunningArg;
-            await gameCoordinator.runGameRunningChangedFlow(isGameRunningArg);
+            await runGameRunningChangedFlow(isGameRunningArg);
             console.log(new Date(), 'isGameRunning', isGameRunningArg);
         }
 
@@ -300,6 +278,8 @@ export const useGameStore = defineStore('Game', () => {
         setIsGameNoVR,
         getVRChatRegistryKey,
         checkVRChatDebugLogging,
+        autoVRChatCacheManagement,
+        checkIfGameCrashed,
         updateIsHmdAfk
     };
 });

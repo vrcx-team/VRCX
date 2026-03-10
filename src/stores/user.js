@@ -17,7 +17,6 @@ import {
     extractFileId,
     findUserByDisplayName,
     getAllUserMemos,
-    getGroupName,
     getUserMemo,
     getWorldName,
     isRealInstance,
@@ -27,22 +26,26 @@ import {
 } from '../shared/utils';
 import {
     avatarRequest,
-    groupRequest,
     instanceRequest,
     queryRequest,
     userRequest
 } from '../api';
+import {
+    runAvatarSwapFlow,
+    runFirstLoginFlow,
+    runHomeLocationSyncFlow,
+    runPostApplySyncFlow
+} from '../coordinators/userSessionCoordinator';
 import { processBulk, request } from '../service/request';
 import { AppDebug } from '../service/appConfig';
-import { createUserEventCoordinator } from '../coordinators/userEventCoordinator';
-import { createUserSessionCoordinator } from '../coordinators/userSessionCoordinator';
 import { database } from '../service/database';
 import { patchUserFromEvent } from '../queries';
+import { runHandleUserUpdateFlow } from '../coordinators/userEventCoordinator';
+import { runUpdateFriendFlow } from '../coordinators/friendPresenceCoordinator';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAuthStore } from './auth';
 import { useAvatarStore } from './avatar';
 import { useFavoriteStore } from './favorite';
-import { useFeedStore } from './feed';
 import { useFriendStore } from './friend';
 import { useGameStore } from './game';
 import { useGeneralSettingsStore } from './settings/general';
@@ -55,7 +58,6 @@ import { usePhotonStore } from './photon';
 import { useSearchStore } from './search';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
-import { useWorldStore } from './world';
 import { watchState } from '../service/watchState';
 
 import * as workerTimers from 'worker-timers';
@@ -73,8 +75,6 @@ export const useUserStore = defineStore('User', () => {
     const notificationStore = useNotificationStore();
     const authStore = useAuthStore();
     const groupStore = useGroupStore();
-    const feedStore = useFeedStore();
-    const worldStore = useWorldStore();
     const uiStore = useUiStore();
     const moderationStore = useModerationStore();
     const photonStore = usePhotonStore();
@@ -472,11 +472,11 @@ export const useUserStore = defineStore('User', () => {
                 { logLabel: 'User cache cleanup' }
             );
             cachedUsers.set(ref.id, ref);
-            friendStore.updateFriend(ref.id);
+            runUpdateFriendFlow(ref.id);
         } else {
             if (json.state !== 'online') {
                 // offline event before GPS to offline location
-                friendStore.updateFriend(ref.id, json.state);
+                runUpdateFriendFlow(ref.id, json.state);
             }
             const {
                 hasPropChanged: _hasPropChanged,
@@ -584,7 +584,7 @@ export const useUserStore = defineStore('User', () => {
             instanceStore.getCurrentInstanceUserList();
         }
         if (ref.state === 'online') {
-            friendStore.updateFriend(ref.id, ref.state); // online/offline
+            runUpdateFriendFlow(ref.id, ref.state); // online/offline
         }
         favoriteStore.applyFavorite('friend', ref.id);
         friendStore.userOnFriend(ref);
@@ -1145,7 +1145,7 @@ export const useUserStore = defineStore('User', () => {
      * @returns {Promise<void>}
      */
     async function handleUserUpdate(ref, props) {
-        await userEventCoordinator.runHandleUserUpdateFlow(ref, props);
+        await runHandleUserUpdateFlow(ref, props);
     }
 
     /**
@@ -1421,7 +1421,7 @@ export const useUserStore = defineStore('User', () => {
     function applyCurrentUser(json) {
         authStore.setAttemptingAutoLogin(false);
         let ref = currentUser.value;
-        userSessionCoordinator.runAvatarSwapFlow({
+        runAvatarSwapFlow({
             json,
             ref,
             isLoggedIn: watchState.isLoggedIn
@@ -1545,15 +1545,15 @@ export const useUserStore = defineStore('User', () => {
                 $travelingToLocation: '',
                 ...json
             };
-            userSessionCoordinator.runFirstLoginFlow(ref);
+            runFirstLoginFlow(ref);
         }
 
         ref.$isVRCPlus = ref.tags.includes('system_supporter');
         appearanceSettingsStore.applyUserTrustLevel(ref);
         applyUserLanguage(ref);
         applyPresenceLocation(ref);
-        userSessionCoordinator.runPostApplySyncFlow(ref);
-        userSessionCoordinator.runHomeLocationSyncFlow(ref);
+        runPostApplySyncFlow(ref);
+        runHomeLocationSyncFlow(ref);
 
         // when isGameRunning use gameLog instead of API
         const $location = parseLocation(locationStore.lastLocation.location);
@@ -1743,42 +1743,6 @@ export const useUserStore = defineStore('User', () => {
             hasDiscordFriendsOptOut: !currentUser.value.hasDiscordFriendsOptOut
         });
     }
-
-    const userSessionCoordinator = createUserSessionCoordinator({
-        avatarStore,
-        gameStore,
-        groupStore,
-        instanceStore,
-        friendStore,
-        authStore,
-        cachedUsers,
-        currentUser,
-        userDialog,
-        getWorldName,
-        parseLocation,
-        now: () => Date.now()
-    });
-
-    const userEventCoordinator = createUserEventCoordinator({
-        friendStore,
-        state,
-        parseLocation,
-        userDialog,
-        applyUserDialogLocation,
-        worldStore,
-        groupStore,
-        instanceStore,
-        appDebug: AppDebug,
-        getWorldName,
-        getGroupName,
-        feedStore,
-        database,
-        avatarStore,
-        generalSettingsStore,
-        checkNote,
-        now: () => Date.now(),
-        nowIso: () => new Date().toJSON()
-    });
 
     return {
         state,
