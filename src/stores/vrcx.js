@@ -22,6 +22,10 @@ import { refreshCustomScript } from '../shared/utils/base/ui';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
 import { useAvatarStore } from './avatar';
+import {
+    addLocalWorldFavorite,
+    addLocalAvatarFavorite
+} from '../coordinators/favoriteCoordinator';
 import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
 import { useGalleryStore } from './gallery';
@@ -686,7 +690,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 }
                 queryRequest.fetch('world', { worldId: id }).then(() => {
                     searchStore.directAccessWorld(id);
-                    favoriteStore.addLocalWorldFavorite(id, group);
+                    addLocalWorldFavorite(id, group);
                 });
                 break;
             case 'local-favorite-avatar':
@@ -698,7 +702,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 }
                 avatarRequest.getAvatar({ avatarId: avatarIdFav }).then(() => {
                     avatarStore.showAvatarDialog(avatarIdFav);
-                    favoriteStore.addLocalAvatarFavorite(
+                    addLocalAvatarFavorite(
                         avatarIdFav,
                         avatarGroup
                     );

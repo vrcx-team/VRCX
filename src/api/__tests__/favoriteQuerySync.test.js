@@ -11,15 +11,16 @@ vi.mock('../../service/request', () => ({
 }));
 
 vi.mock('../../stores', () => ({
-    useFavoriteStore: () => ({
-        handleFavoriteAdd: (...args) => mockHandleFavoriteAdd(...args),
-        handleFavoriteDelete: (...args) => mockHandleFavoriteDelete(...args),
-        handleFavoriteGroupClear: (...args) =>
-            mockHandleFavoriteGroupClear(...args)
-    }),
     useUserStore: () => ({
         currentUser: { id: 'usr_me' }
     })
+}));
+
+vi.mock('../../coordinators/favoriteCoordinator', () => ({
+    handleFavoriteAdd: (...args) => mockHandleFavoriteAdd(...args),
+    handleFavoriteDelete: (...args) => mockHandleFavoriteDelete(...args),
+    handleFavoriteGroupClear: (...args) =>
+        mockHandleFavoriteGroupClear(...args)
 }));
 
 vi.mock('../../queries', () => ({

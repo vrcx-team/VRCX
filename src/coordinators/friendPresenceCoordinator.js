@@ -3,6 +3,8 @@ import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
 import { useFeedStore } from '../stores/feed';
 import { useFriendStore } from '../stores/friend';
+import { useNotificationStore } from '../stores/notification';
+import { useSharedFeedStore } from '../stores/sharedFeed';
 import { useUserStore } from '../stores/user';
 import { userRequest } from '../api';
 import { watchState } from '../service/watchState';
@@ -25,6 +27,8 @@ export async function runUpdateFriendDelayedCheckFlow(
 ) {
     const friendStore = useFriendStore();
     const feedStore = useFeedStore();
+    const notificationStore = useNotificationStore();
+    const sharedFeedStore = useSharedFeedStore();
     const { friends, localFavoriteFriends } = friendStore;
 
     let feed;
@@ -72,7 +76,9 @@ export async function runUpdateFriendDelayedCheckFlow(
                 groupName,
                 time
             };
-            feedStore.addFeed(feed);
+            notificationStore.queueFeedNoty(feed);
+            sharedFeedStore.addEntry(feed);
+            feedStore.addFeedEntry(feed);
             database.addOnlineOfflineToDatabase(feed);
         } else if (
             newState === 'online' &&
@@ -96,7 +102,9 @@ export async function runUpdateFriendDelayedCheckFlow(
                 groupName,
                 time: ''
             };
-            feedStore.addFeed(feed);
+            notificationStore.queueFeedNoty(feed);
+            sharedFeedStore.addEntry(feed);
+            feedStore.addFeedEntry(feed);
             database.addOnlineOfflineToDatabase(feed);
         }
         if (newState === 'active') {

@@ -184,11 +184,12 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAdvancedSettingsStore, useGameStore, useModalStore } from '../../../stores';
+    import { runSweepVRChatCacheFlow as sweepVRChatCache } from '../../../coordinators/gameCoordinator';
     import { VRChatCameraResolutions, VRChatScreenshotResolutions } from '../../../shared/constants';
     import { getVRChatResolution, openExternalLink } from '../../../shared/utils';
 
     const { VRChatUsedCacheSize, VRChatTotalCacheSize, VRChatCacheSizeLoading } = storeToRefs(useGameStore());
-    const { sweepVRChatCache, getVRChatCacheSize } = useGameStore();
+    const { getVRChatCacheSize } = useGameStore();
     const { folderSelectorDialog } = useAdvancedSettingsStore();
     const { isVRChatConfigDialogVisible } = storeToRefs(useAdvancedSettingsStore());
     const modalStore = useModalStore();

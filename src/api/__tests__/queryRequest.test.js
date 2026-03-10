@@ -6,6 +6,9 @@ const mockGetWorlds = vi.fn();
 const mockGetGroupCalendar = vi.fn();
 
 vi.mock('../../queries', () => ({
+    queryClient: {
+        invalidateQueries: vi.fn().mockResolvedValue(undefined)
+    },
     entityQueryPolicies: {
         user: { staleTime: 20000, gcTime: 90000, retry: 1, refetchOnWindowFocus: false },
         worldCollection: { staleTime: 60000, gcTime: 300000, retry: 1, refetchOnWindowFocus: false },

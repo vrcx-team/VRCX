@@ -123,6 +123,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
+    import { addLocalAvatarFavorite } from '../../../coordinators/favoriteCoordinator';
     import { avatarRequest, favoriteRequest } from '../../../api';
     import { createColumns } from './avatarImportColumns.jsx';
     import { removeFromArray } from '../../../shared/utils';
@@ -133,7 +134,7 @@
     const { showUserDialog } = useUserStore();
     const { favoriteAvatarGroups, avatarImportDialogInput, avatarImportDialogVisible, localAvatarFavoriteGroups } =
         storeToRefs(useFavoriteStore());
-    const { addLocalAvatarFavorite, localAvatarFavGroupLength, getCachedFavoritesByObjectId } = useFavoriteStore();
+    const { localAvatarFavGroupLength, getCachedFavoritesByObjectId } = useFavoriteStore();
     const { showAvatarDialog, applyAvatar } = useAvatarStore();
     const { showFullscreenImageDialog } = useGalleryStore();
 

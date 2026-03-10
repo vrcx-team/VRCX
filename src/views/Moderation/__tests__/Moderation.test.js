@@ -25,9 +25,13 @@ mocks.pagination = mocks.makeRef({
     pageSize: 10
 });
 
-vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
-}));
+vi.mock('pinia', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        storeToRefs: (store) => store
+    };
+});
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
@@ -68,9 +72,17 @@ vi.mock('../../../api', () => ({
     }
 }));
 
-vi.mock('../../../shared/constants', () => ({
-    moderationTypes: ['block', 'mute', 'unmute']
+vi.mock('../../../coordinators/moderationCoordinator', () => ({
+    runRefreshPlayerModerationsFlow: (...args) => mocks.refreshPlayerModerations(...args)
 }));
+
+vi.mock('../../../shared/constants', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        moderationTypes: ['block', 'mute', 'unmute']
+    };
+});
 
 vi.mock('../columns.jsx', () => ({
     createColumns: (handlers) => {

@@ -1,5 +1,6 @@
 import { database } from '../service/database';
 import { friendRequest } from '../api';
+import { handleFavoriteDelete } from './favoriteCoordinator';
 import { useAppearanceSettingsStore } from '../stores/settings/appearance';
 import { useFavoriteStore } from '../stores/favorite';
 import { useFriendStore } from '../stores/friend';
@@ -56,7 +57,7 @@ export function runDeleteFriendshipFlow(
                 sharedFeedStore.addEntry(friendLogHistory);
                 friendLog.delete(id);
                 database.deleteFriendLogCurrent(id);
-                favoriteStore.handleFavoriteDelete(id);
+                handleFavoriteDelete(id);
                 if (!appearanceSettingsStore.hideUnfriends) {
                     uiStore.notifyMenu('friend-log');
                 }

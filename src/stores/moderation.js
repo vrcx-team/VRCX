@@ -1,13 +1,11 @@
 import { reactive, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 
-import { avatarModerationRequest, playerModerationRequest } from '../api';
-import { useAvatarStore } from './avatar';
+import { playerModerationRequest } from '../api';
 import { useUserStore } from './user';
 import { watchState } from '../service/watchState';
 
 export const useModerationStore = defineStore('Moderation', () => {
-    const avatarStore = useAvatarStore();
     const userStore = useUserStore();
 
     const cachedPlayerModerations = reactive(new Map());
@@ -37,9 +35,6 @@ export const useModerationStore = defineStore('Moderation', () => {
             cachedPlayerModerationsUserIds.clear();
             playerModerationTable.value.loading = false;
             playerModerationTable.value.data = [];
-            if (isLoggedIn) {
-                refreshPlayerModerations();
-            }
         },
         { flush: 'sync' }
     );
@@ -178,41 +173,7 @@ export const useModerationStore = defineStore('Moderation', () => {
         }
     }
 
-    async function refreshPlayerModerations() {
-        if (playerModerationTable.value.loading) {
-            return;
-        }
-        playerModerationTable.value.loading = true;
-        expirePlayerModerations();
-        Promise.all([
-            playerModerationRequest.getPlayerModerations(),
-            avatarModerationRequest.getAvatarModerations()
-        ])
-            .finally(() => {
-                playerModerationTable.value.loading = false;
-            })
-            .then((res) => {
-                // TODO: compare with cachedAvatarModerations
-                avatarStore.resetCachedAvatarModerations();
-                if (res[1]?.json) {
-                    for (const json of res[1].json) {
-                        avatarStore.applyAvatarModeration(json);
-                    }
-                }
-                if (res[0]?.json) {
-                    for (let json of res[0].json) {
-                        applyPlayerModeration(json);
-                    }
-                }
-                deleteExpiredPlayerModerations();
-            })
-            .catch((error) => {
-                console.error(
-                    'Failed to load player/avatar moderations:',
-                    error
-                );
-            });
-    }
+
 
     /**
      * Get user moderations
@@ -257,7 +218,8 @@ export const useModerationStore = defineStore('Moderation', () => {
         cachedPlayerModerationsUserIds,
         playerModerationTable,
 
-        refreshPlayerModerations,
+        expirePlayerModerations,
+        deleteExpiredPlayerModerations,
         applyPlayerModeration,
         handlePlayerModerationDelete,
         getUserModerations

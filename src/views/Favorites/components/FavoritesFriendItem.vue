@@ -91,6 +91,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { favoriteRequest } from '../../../api';
+    import { removeLocalFriendFavorite } from '../../../coordinators/favoriteCoordinator';
     import { useFavoriteStore } from '../../../stores';
     import { userImage } from '../../../shared/utils';
 
@@ -106,7 +107,7 @@
     const emit = defineEmits(['click', 'toggle-select']);
 
     const { favoriteFriendGroups } = storeToRefs(useFavoriteStore());
-    const { showFavoriteDialog, removeLocalFriendFavorite } = useFavoriteStore();
+    const { showFavoriteDialog } = useFavoriteStore();
     const { t } = useI18n();
 
     const isSelected = computed({

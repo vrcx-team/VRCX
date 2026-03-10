@@ -127,6 +127,7 @@
 
     import { removeFromArray, userImage, userImageFull } from '../../../shared/utils';
     import { useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
+    import { addLocalFriendFavorite } from '../../../coordinators/favoriteCoordinator';
     import { favoriteRequest, userRequest } from '../../../api';
     import { createColumns } from './friendImportColumns.jsx';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
@@ -139,7 +140,7 @@
     const { favoriteFriendGroups, friendImportDialogInput, friendImportDialogVisible, localFriendFavoriteGroups } =
         storeToRefs(useFavoriteStore());
     const { showFullscreenImageDialog } = useGalleryStore();
-    const { getCachedFavoritesByObjectId, localFriendFavGroupLength, addLocalFriendFavorite } = useFavoriteStore();
+    const { getCachedFavoritesByObjectId, localFriendFavGroupLength } = useFavoriteStore();
 
     const friendImportDialog = ref({
         loading: false,

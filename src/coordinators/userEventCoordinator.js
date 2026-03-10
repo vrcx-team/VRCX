@@ -7,6 +7,8 @@ import { useFriendStore } from '../stores/friend';
 import { useGeneralSettingsStore } from '../stores/settings/general';
 import { useGroupStore } from '../stores/group';
 import { useInstanceStore } from '../stores/instance';
+import { useNotificationStore } from '../stores/notification';
+import { useSharedFeedStore } from '../stores/sharedFeed';
 import { useUserStore } from '../stores/user';
 import { useWorldStore } from '../stores/world';
 
@@ -30,6 +32,8 @@ export async function runHandleUserUpdateFlow(
     const groupStore = useGroupStore();
     const instanceStore = useInstanceStore();
     const feedStore = useFeedStore();
+    const notificationStore = useNotificationStore();
+    const sharedFeedStore = useSharedFeedStore();
     const avatarStore = useAvatarStore();
     const generalSettingsStore = useGeneralSettingsStore();
 
@@ -139,7 +143,9 @@ export async function runHandleUserUpdateFlow(
                 previousLocation,
                 time
             };
-            feedStore.addFeed(feed);
+            notificationStore.queueFeedNoty(feed);
+            sharedFeedStore.addEntry(feed);
+            feedStore.addFeedEntry(feed);
             database.addGPSToDatabase(feed);
             // clear previousLocation after GPS
             ref.$previousLocation = '';
@@ -249,7 +255,9 @@ export async function runHandleUserUpdateFlow(
                 currentAvatarTags,
                 previousCurrentAvatarTags
             };
-            feedStore.addFeed(feed);
+            notificationStore.queueFeedNoty(feed);
+            sharedFeedStore.addEntry(feed);
+            feedStore.addFeedEntry(feed);
             database.addAvatarToDatabase(feed);
         }
     }
@@ -296,7 +304,9 @@ export async function runHandleUserUpdateFlow(
             previousStatus,
             previousStatusDescription
         };
-        feedStore.addFeed(feed);
+        notificationStore.queueFeedNoty(feed);
+        sharedFeedStore.addEntry(feed);
+        feedStore.addFeedEntry(feed);
         database.addStatusToDatabase(feed);
     }
     if (props.bio && props.bio[0] && props.bio[1]) {
@@ -316,7 +326,9 @@ export async function runHandleUserUpdateFlow(
             bio,
             previousBio
         };
-        feedStore.addFeed(feed);
+        notificationStore.queueFeedNoty(feed);
+        sharedFeedStore.addEntry(feed);
+        feedStore.addFeedEntry(feed);
         database.addBioToDatabase(feed);
     }
     if (

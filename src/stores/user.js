@@ -41,7 +41,9 @@ import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
 import { patchUserFromEvent } from '../queries';
 import { runHandleUserUpdateFlow } from '../coordinators/userEventCoordinator';
+import { runUpdateCurrentUserLocationFlow } from '../coordinators/locationCoordinator';
 import { runUpdateFriendFlow } from '../coordinators/friendPresenceCoordinator';
+import { applyFavorite } from '../coordinators/favoriteCoordinator';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAuthStore } from './auth';
 import { useAvatarStore } from './avatar';
@@ -424,7 +426,7 @@ export const useUserStore = defineStore('User', () => {
         } else {
             ref.$travelingToLocation = presence.travelingToWorld;
         }
-        locationStore.updateCurrentUserLocation();
+        runUpdateCurrentUserLocationFlow();
     }
 
     const robotUrl = `${AppDebug.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
@@ -546,7 +548,7 @@ export const useUserStore = defineStore('User', () => {
             if (ref.status) {
                 currentUser.value.status = ref.status;
             }
-            locationStore.updateCurrentUserLocation();
+            runUpdateCurrentUserLocationFlow();
         }
         // add user ref to playerList, friendList, photonLobby, photonLobbyCurrent
         const playerListRef = locationStore.lastLocation.playerList.get(ref.id);
@@ -586,7 +588,7 @@ export const useUserStore = defineStore('User', () => {
         if (ref.state === 'online') {
             runUpdateFriendFlow(ref.id, ref.state); // online/offline
         }
-        favoriteStore.applyFavorite('friend', ref.id);
+        applyFavorite('friend', ref.id);
         friendStore.userOnFriend(ref);
         const D = userDialog.value;
         if (D.visible && D.id === ref.id) {

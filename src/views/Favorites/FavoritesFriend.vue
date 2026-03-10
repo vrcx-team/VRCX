@@ -356,6 +356,14 @@
     import { useFavoritesGroupPanel } from './composables/useFavoritesGroupPanel.js';
     import { useFavoritesLocalGroups } from './composables/useFavoritesLocalGroups.js';
     import { useFavoritesSplitter } from './composables/useFavoritesSplitter.js';
+    import {
+        refreshFavorites,
+        getLocalWorldFavorites,
+        getLocalFriendFavorites,
+        deleteLocalFriendFavoriteGroup,
+        renameLocalFriendFavoriteGroup,
+        removeLocalFriendFavorite
+    } from '../../coordinators/favoriteCoordinator';
 
     import FavoritesContentHeader from './components/FavoritesContentHeader.vue';
     import FavoritesFriendItem from './components/FavoritesFriendItem.vue';
@@ -390,15 +398,9 @@
     } = storeToRefs(favoriteStore);
     const {
         showFriendImportDialog,
-        refreshFavorites,
-        getLocalWorldFavorites,
-        getLocalFriendFavorites,
         handleFavoriteGroup,
         localFriendFavGroupLength,
-        deleteLocalFriendFavoriteGroup,
-        renameLocalFriendFavoriteGroup,
-        newLocalFriendFavoriteGroup,
-        removeLocalFriendFavorite
+        newLocalFriendFavoriteGroup
     } = favoriteStore;
     const userStore = useUserStore();
     const { showUserDialog } = userStore;

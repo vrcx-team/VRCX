@@ -405,6 +405,7 @@
     import { deleteVRChatCache, openFolderGeneric } from '../../../shared/utils';
     import { Badge } from '../../ui/badge';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
+    import { runNewInstanceSelfInviteFlow as newInstanceSelfInvite } from '../../../coordinators/inviteCoordinator';
     import { useWorldDialogCommands } from './useWorldDialogCommands';
 
     import DialogJsonTab from '../DialogJsonTab.vue';
@@ -421,7 +422,7 @@
     const { worldDialog } = storeToRefs(useWorldStore());
     const { cachedWorlds, showWorldDialog } = useWorldStore();
     const { lastLocation } = storeToRefs(useLocationStore());
-    const { newInstanceSelfInvite, canOpenInstanceInGame } = useInviteStore();
+    const { canOpenInstanceInGame } = useInviteStore();
     const { showFavoriteDialog } = useFavoriteStore();
     const { showPreviousInstancesListDialog: openPreviousInstancesListDialog } = useInstanceStore();
     const { isGameRunning } = storeToRefs(useGameStore());

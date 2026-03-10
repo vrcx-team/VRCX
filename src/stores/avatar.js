@@ -19,6 +19,7 @@ import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
 import { patchAvatarFromEvent } from '../queries';
 import { processBulk } from '../service/request';
+import { applyFavorite } from '../coordinators/favoriteCoordinator';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
 import { useFavoriteStore } from './favorite';
@@ -114,7 +115,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
             listing.displayName = replaceBioSymbols(listing.displayName);
             listing.description = replaceBioSymbols(listing.description);
         }
-        favoriteStore.applyFavorite('avatar', ref.id);
+        applyFavorite('avatar', ref.id);
         if (favoriteStore.localAvatarFavoritesList.includes(ref.id)) {
             const avatarRef = ref;
             favoriteStore.syncLocalAvatarFavoriteRef(avatarRef);

@@ -600,6 +600,7 @@
     import { database } from '../../../service/database';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
     import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
+    import { runDeleteVRChatCacheFlow as deleteVRChatCache } from '../../../coordinators/gameCoordinator';
     import { useAvatarDialogCommands } from './useAvatarDialogCommands';
 
     import DialogJsonTab from '../DialogJsonTab.vue';
@@ -617,7 +618,6 @@
         avatarStore;
     const { showFavoriteDialog } = useFavoriteStore();
     const { isGameRunning } = storeToRefs(useGameStore());
-    const { deleteVRChatCache } = useGameStore();
     const { showFullscreenImageDialog } = useGalleryStore();
     const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
     const modalStore = useModalStore();

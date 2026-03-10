@@ -76,13 +76,13 @@
     import DeprecationAlert from '@/components/DeprecationAlert.vue';
 
     import { useFavoriteStore, useUserStore, useWorldStore } from '../../../stores';
+    import { handleFavoriteWorldList } from '../../../coordinators/favoriteCoordinator';
     import { favoriteRequest } from '../../../api';
 
     const { t } = useI18n();
 
     const { userDialog, currentUser } = storeToRefs(useUserStore());
     const { favoriteLimits } = storeToRefs(useFavoriteStore());
-    const { handleFavoriteWorldList } = useFavoriteStore();
     const { showWorldDialog } = useWorldStore();
 
     const favoriteWorldsTab = ref('0');

@@ -395,6 +395,13 @@
     import { useFavoritesGroupPanel } from './composables/useFavoritesGroupPanel.js';
     import { useFavoritesLocalGroups } from './composables/useFavoritesLocalGroups.js';
     import { useFavoritesSplitter } from './composables/useFavoritesSplitter.js';
+    import {
+        renameLocalWorldFavoriteGroup,
+        removeLocalWorldFavorite,
+        newLocalWorldFavoriteGroup,
+        refreshFavorites,
+        getLocalWorldFavorites
+    } from '../../coordinators/favoriteCoordinator';
 
     import FavoritesContentHeader from './components/FavoritesContentHeader.vue';
     import FavoritesToolbar from './components/FavoritesToolbar.vue';
@@ -426,13 +433,8 @@
         showWorldImportDialog,
         localWorldFavGroupLength,
         deleteLocalWorldFavoriteGroup,
-        renameLocalWorldFavoriteGroup,
-        removeLocalWorldFavorite,
-        newLocalWorldFavoriteGroup,
         handleFavoriteGroup,
-        localWorldFavoritesList,
-        refreshFavorites,
-        getLocalWorldFavorites
+        localWorldFavoritesList
     } = favoriteStore;
     const { showWorldDialog } = useWorldStore();
 

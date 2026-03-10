@@ -365,6 +365,7 @@
 
     import PresetColorPicker from '@/components/PresetColorPicker.vue';
     import TableLimitsDialog from '@/components/dialogs/TableLimitsDialog.vue';
+    import { saveSortFavoritesOption } from '@/coordinators/favoriteCoordinator';
 
     import SimpleSwitch from '../SimpleSwitch.vue';
 
@@ -398,7 +399,6 @@
 
     const appLanguageDisplayName = computed(() => getLanguageName(String(appLanguage.value)));
 
-    const { saveSortFavoritesOption } = useFavoriteStore();
 
     const {
         setDisplayVRCPlusIconsAsAvatar,

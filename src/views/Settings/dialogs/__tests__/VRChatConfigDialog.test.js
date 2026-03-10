@@ -59,7 +59,6 @@ vi.mock('../../../../stores', () => ({
         VRChatUsedCacheSize,
         VRChatTotalCacheSize,
         VRChatCacheSizeLoading,
-        sweepVRChatCache: mocks.sweepVRChatCache,
         getVRChatCacheSize: mocks.getVRChatCacheSize
     }),
     useAdvancedSettingsStore: () => ({
@@ -95,6 +94,10 @@ vi.mock('../../../../shared/constants', async (importOriginal) => {
 
 vi.mock('vue-sonner', () => ({
     toast: mocks.toast
+}));
+
+vi.mock('../../../../coordinators/gameCoordinator', () => ({
+    runSweepVRChatCacheFlow: (...args) => mocks.sweepVRChatCache(...args)
 }));
 
 // Set global mocks for CefSharp-injected APIs

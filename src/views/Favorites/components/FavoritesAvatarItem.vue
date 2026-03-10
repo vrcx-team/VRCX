@@ -152,6 +152,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAvatarStore, useFavoriteStore, useUiStore, useUserStore } from '../../../stores';
+    import { removeLocalAvatarFavorite } from '../../../coordinators/favoriteCoordinator';
     import { favoriteRequest } from '../../../api';
 
     import FavoritesMoveDropdown from './FavoritesMoveDropdown.vue';
@@ -168,7 +169,7 @@
     const { t } = useI18n();
 
     const { favoriteAvatarGroups } = storeToRefs(useFavoriteStore());
-    const { removeLocalAvatarFavorite, showFavoriteDialog } = useFavoriteStore();
+    const { showFavoriteDialog } = useFavoriteStore();
     const { selectAvatarWithConfirmation } = useAvatarStore();
     const { shiftHeld } = storeToRefs(useUiStore());
     const { currentUser } = storeToRefs(useUserStore());

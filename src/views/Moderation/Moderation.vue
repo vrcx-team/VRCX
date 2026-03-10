@@ -58,6 +58,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAppearanceSettingsStore, useModalStore, useModerationStore, useVrcxStore } from '../../stores';
+    import { runRefreshPlayerModerationsFlow as refreshPlayerModerations } from '../../coordinators/moderationCoordinator';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { createColumns } from './columns.jsx';
     import { moderationTypes } from '../../shared/constants';
@@ -69,7 +70,7 @@
 
     const { t } = useI18n();
     const { playerModerationTable } = storeToRefs(useModerationStore());
-    const { refreshPlayerModerations, handlePlayerModerationDelete } = useModerationStore();
+    const { handlePlayerModerationDelete } = useModerationStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const vrcxStore = useVrcxStore();
     const modalStore = useModalStore();

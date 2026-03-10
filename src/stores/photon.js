@@ -1,3 +1,5 @@
+// @deprecated
+// This store is no longer maintained.
 import { computed, reactive, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';

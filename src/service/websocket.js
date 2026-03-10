@@ -17,6 +17,7 @@ import { AppDebug } from './appConfig';
 import { groupRequest } from '../api';
 import { request } from './request';
 import { runUpdateFriendFlow } from '../coordinators/friendPresenceCoordinator';
+import { runSetCurrentUserLocationFlow } from '../coordinators/locationCoordinator';
 import { watchState } from './watchState';
 
 import * as workerTimers from 'worker-timers';
@@ -397,7 +398,7 @@ function handlePipeline(args) {
             // content.worldId // where did worldId go?
             // content.instance // without worldId, this is useless
 
-            locationStore.setCurrentUserLocation(
+            runSetCurrentUserLocationFlow(
                 content.location,
                 content.travelingToLocation
             );

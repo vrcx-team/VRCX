@@ -181,7 +181,7 @@ export const useVrStore = defineStore('Vr', () => {
             newState.overlayHand
         );
         if (!newState.active) {
-            gameStore.updateIsHmdAfk(false);
+            gameStore.setIsHmdAfk(false);
         }
 
         if (LINUX) {

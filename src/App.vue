@@ -26,6 +26,7 @@
     import { TooltipProvider } from './components/ui/tooltip';
     import { createGlobalStores } from './stores';
     import { initNoty } from './plugin/noty';
+    import { runCheckVRChatDebugLoggingFlow } from './coordinators/gameCoordinator';
 
     import AlertDialogModal from './components/ui/alert-dialog/AlertDialogModal.vue';
     import MacOSTitleBar from './components/MacOSTitleBar.vue';
@@ -60,6 +61,6 @@
         await store.auth.migrateStoredUsers();
         store.auth.autoLoginAfterMounted();
         store.vrcx.checkAutoBackupRestoreVrcRegistry();
-        store.game.checkVRChatDebugLogging();
+        runCheckVRChatDebugLoggingFlow();
     });
 </script>

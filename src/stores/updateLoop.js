@@ -4,6 +4,8 @@ import { watch } from 'vue';
 import { database } from '../service/database';
 import { groupRequest } from '../api';
 import { runRefreshFriendsListFlow } from '../coordinators/friendSyncCoordinator';
+import { runUpdateIsGameRunningFlow } from '../coordinators/gameCoordinator';
+import { runRefreshPlayerModerationsFlow } from '../coordinators/moderationCoordinator';
 import { useAuthStore } from './auth';
 import { useDiscordPresenceSettingsStore } from './settings/discordPresence';
 import { useFriendStore } from './friend';
@@ -82,7 +84,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                         new Date(userStore.currentUser.last_activity) >
                             new Date(Date.now() - 3600 * 1000) // 1hour
                     ) {
-                        moderationStore.refreshPlayerModerations();
+                        runRefreshPlayerModerationsFlow();
                     }
                 }
                 if (--state.nextGroupInstanceRefresh <= 0) {
@@ -133,7 +135,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 }
                 if (LINUX && --state.nextGameRunningCheck <= 0) {
                     state.nextGameRunningCheck = 1;
-                    gameStore.updateIsGameRunning(
+                    await runUpdateIsGameRunningFlow(
                         await AppApi.IsGameRunning(),
                         await AppApi.IsSteamVRRunning()
                     );

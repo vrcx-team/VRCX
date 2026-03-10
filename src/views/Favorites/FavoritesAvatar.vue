@@ -463,6 +463,15 @@
     import { useFavoritesGroupPanel } from './composables/useFavoritesGroupPanel.js';
     import { useFavoritesLocalGroups } from './composables/useFavoritesLocalGroups.js';
     import { useFavoritesSplitter } from './composables/useFavoritesSplitter.js';
+    import {
+        deleteLocalAvatarFavoriteGroup,
+        renameLocalAvatarFavoriteGroup,
+        newLocalAvatarFavoriteGroup,
+        refreshFavorites,
+        getLocalAvatarFavorites,
+        checkInvalidLocalAvatars,
+        removeInvalidLocalAvatars
+    } from '../../coordinators/favoriteCoordinator';
 
     import AvatarExportDialog from './dialogs/AvatarExportDialog.vue';
     import FavoritesAvatarItem from './components/FavoritesAvatarItem.vue';
@@ -506,15 +515,8 @@
     const {
         showAvatarImportDialog,
         localAvatarFavGroupLength,
-        deleteLocalAvatarFavoriteGroup,
-        renameLocalAvatarFavoriteGroup,
-        newLocalAvatarFavoriteGroup,
         localAvatarFavoritesList,
-        refreshFavorites,
-        getLocalAvatarFavorites,
-        handleFavoriteGroup,
-        checkInvalidLocalAvatars,
-        removeInvalidLocalAvatars
+        handleFavoriteGroup
     } = favoriteStore;
     const { avatarHistory } = storeToRefs(useAvatarStore());
     const { promptClearAvatarHistory, showAvatarDialog, applyAvatar } = useAvatarStore();

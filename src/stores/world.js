@@ -18,6 +18,7 @@ import { instanceRequest, queryRequest, worldRequest } from '../api';
 import { database } from '../service/database';
 import { patchWorldFromEvent } from '../queries';
 import { processBulk } from '../service/request';
+import { applyFavorite } from '../coordinators/favoriteCoordinator';
 import { useFavoriteStore } from './favorite';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
@@ -275,7 +276,7 @@ export const useWorldStore = defineStore('World', () => {
             Object.assign(ref, json);
         }
         ref.$isLabs = ref.tags.includes('system_labs');
-        favoriteStore.applyFavorite('world', ref.id);
+        applyFavorite('world', ref.id);
         const userDialog = userStore.userDialog;
         if (userDialog.visible && userDialog.$location.worldId === ref.id) {
             userStore.applyUserDialogLocation();

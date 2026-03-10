@@ -130,6 +130,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useFavoriteStore, useInstanceStore, useInviteStore, useUiStore } from '../../../stores';
+    import { runNewInstanceSelfInviteFlow as newInstanceSelfInvite } from '../../../coordinators/inviteCoordinator';
 
     import FavoritesMoveDropdown from './FavoritesMoveDropdown.vue';
 
@@ -142,7 +143,7 @@
     const emit = defineEmits(['remove-local-world-favorite', 'click']);
     const { favoriteWorldGroups } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog } = useFavoriteStore();
-    const { newInstanceSelfInvite } = useInviteStore();
+
     const { shiftHeld } = storeToRefs(useUiStore());
     const { t } = useI18n();
     const { canOpenInstanceInGame } = useInviteStore();

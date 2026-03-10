@@ -31,6 +31,7 @@ import { useGameStore } from '../game';
 import { useGeneralSettingsStore } from '../settings/general';
 import { useInstanceStore } from '../instance';
 import { useLocationStore } from '../location';
+import { runLastLocationResetFlow, runUpdateCurrentUserLocationFlow } from '../../coordinators/locationCoordinator';
 import { useModalStore } from '../modal';
 import { useNotificationStore } from '../notification';
 import { usePhotonStore } from '../photon';
@@ -376,7 +377,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 }
             });
 
-            locationStore.updateCurrentUserLocation();
+            runUpdateCurrentUserLocationFlow();
             instanceStore.updateCurrentInstanceWorld();
             vrStore.updateVRLastLocation();
             instanceStore.getCurrentInstanceUserList();
@@ -560,7 +561,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                         type: 'LocationDestination',
                         location: gameLog.location
                     });
-                    locationStore.lastLocationReset(gameLog.dt);
+                    runLastLocationResetFlow(gameLog.dt);
                     locationStore.setLastLocationLocation('traveling');
                     locationStore.setLastLocationDestination(gameLog.location);
                     locationStore.setLastLocationDestinationTime(
@@ -568,7 +569,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     );
                     state.lastLocationAvatarList.clear();
                     instanceStore.removeQueuedInstance(gameLog.location);
-                    locationStore.updateCurrentUserLocation();
+                    runUpdateCurrentUserLocationFlow();
                     clearNowPlaying();
                     instanceStore.updateCurrentInstanceWorld();
                     userStore.applyUserDialogLocation();
@@ -583,7 +584,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 );
                 const worldName = replaceBioSymbols(gameLog.worldName);
                 if (gameStore.isGameRunning) {
-                    locationStore.lastLocationReset(gameLog.dt);
+                    runLastLocationResetFlow(gameLog.dt);
                     clearNowPlaying();
                     locationStore.setLastLocation({
                         date: Date.parse(gameLog.dt),
@@ -593,7 +594,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                         friendList: new Map()
                     });
                     instanceStore.removeQueuedInstance(gameLog.location);
-                    locationStore.updateCurrentUserLocation();
+                    runUpdateCurrentUserLocationFlow();
                     vrStore.updateVRLastLocation();
                     instanceStore.updateCurrentInstanceWorld();
                     userStore.applyUserDialogLocation();
