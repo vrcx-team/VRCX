@@ -10,7 +10,7 @@ import {
     removeFromArray,
     replaceReactiveObject
 } from '../shared/utils';
-import { avatarRequest, favoriteRequest } from '../api';
+import { avatarRequest, favoriteRequest, queryRequest } from '../api';
 import { database } from '../service/database';
 import { processBulk } from '../service/request';
 import { useAppearanceSettingsStore } from './settings/appearance';
@@ -600,7 +600,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
         isFavoriteGroupLoading.value = true;
         processBulk({
-            fn: favoriteRequest.getCachedFavoriteGroups,
+            fn: (params) => favoriteRequest.getFavoriteGroups(params),
             N: -1,
             params: {
                 n: 50,
@@ -771,7 +771,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
         isFavoriteLoading.value = true;
         try {
-            const args = await favoriteRequest.getCachedFavoriteLimits();
+            const args = await queryRequest.fetch('favoriteLimits');
             favoriteLimits.value = {
                 ...favoriteLimits.value,
                 ...args.json
@@ -781,7 +781,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
         let newFavoriteSortOrder = [];
         processBulk({
-            fn: favoriteRequest.getCachedFavorites,
+            fn: (params) => favoriteRequest.getFavorites(params),
             N: -1,
             params: {
                 n: 300,
@@ -884,7 +884,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             offset: 0,
             tag
         };
-        const args = await favoriteRequest.getCachedFavoriteAvatars(params);
+        const args = await favoriteRequest.getFavoriteAvatars(params);
         handleFavoriteAvatarList(args);
     }
 
@@ -893,8 +893,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      */
     function refreshFavoriteItems() {
         const types = {
-            world: [0, favoriteRequest.getCachedFavoriteWorlds],
-            avatar: [0, favoriteRequest.getCachedFavoriteAvatars]
+            world: [0, (params) => favoriteRequest.getFavoriteWorlds(params)],
+            avatar: [0, (params) => favoriteRequest.getFavoriteAvatars(params)]
         };
         const tags = [];
         for (const ref of cachedFavorites.values()) {

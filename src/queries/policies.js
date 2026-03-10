@@ -31,33 +31,21 @@ export const entityQueryPolicies = Object.freeze({
         retry: 1,
         refetchOnWindowFocus: false
     }),
+    groupCalendarEvent: Object.freeze({
+        staleTime: 120 * SECOND,
+        gcTime: 600 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
     worldCollection: Object.freeze({
         staleTime: 60 * SECOND,
         gcTime: 300 * SECOND,
         retry: 1,
         refetchOnWindowFocus: false
     }),
-    instance: Object.freeze({
-        staleTime: 0,
-        gcTime: 10 * SECOND,
-        retry: 0,
-        refetchOnWindowFocus: false
-    }),
-    friendList: Object.freeze({
-        staleTime: 20 * SECOND,
-        gcTime: 90 * SECOND,
-        retry: 1,
-        refetchOnWindowFocus: false
-    }),
-    favoriteCollection: Object.freeze({
-        staleTime: 60 * SECOND,
-        gcTime: 300 * SECOND,
-        retry: 1,
-        refetchOnWindowFocus: false
-    }),
-    galleryCollection: Object.freeze({
-        staleTime: 60 * SECOND,
-        gcTime: 300 * SECOND,
+    favoriteLimits: Object.freeze({
+        staleTime: 600 * SECOND,
+        gcTime: 1800 * SECOND,
         retry: 1,
         refetchOnWindowFocus: false
     }),
@@ -67,21 +55,61 @@ export const entityQueryPolicies = Object.freeze({
         retry: 1,
         refetchOnWindowFocus: false
     }),
+    avatarGallery: Object.freeze({
+        staleTime: 30 * SECOND,
+        gcTime: 120 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    fileAnalysis: Object.freeze({
+        staleTime: 120 * SECOND,
+        gcTime: 600 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    worldPersistData: Object.freeze({
+        staleTime: 120 * SECOND,
+        gcTime: 600 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    mutualCounts: Object.freeze({
+        staleTime: 120 * SECOND,
+        gcTime: 600 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    visits: Object.freeze({
+        staleTime: 300 * SECOND,
+        gcTime: 900 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
     fileObject: Object.freeze({
         staleTime: 60 * SECOND,
         gcTime: 300 * SECOND,
         retry: 1,
         refetchOnWindowFocus: false
+    }),
+    avatarStyles: Object.freeze({
+        staleTime: 600 * SECOND,
+        gcTime: 3600 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    representedGroup: Object.freeze({
+        staleTime: 60 * SECOND,
+        gcTime: 300 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    vrchatCredits: Object.freeze({
+        staleTime: 120 * SECOND,
+        gcTime: 600 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
     })
 });
-
-/**
- * @param {'user'|'avatar'|'world'|'group'|'groupCollection'|'worldCollection'|'instance'|'friendList'|'favoriteCollection'|'galleryCollection'|'inventoryCollection'|'fileObject'} entity
- * @returns {{staleTime: number, gcTime: number, retry: number, refetchOnWindowFocus: boolean}}
- */
-export function getEntityQueryPolicy(entity) {
-    return entityQueryPolicies[entity];
-}
 
 /**
  * @param {{staleTime: number, gcTime: number, retry: number, refetchOnWindowFocus: boolean}} policy

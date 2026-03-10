@@ -475,7 +475,6 @@
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
-    import InstanceActionBar from '../../InstanceActionBar.vue';
 
     import {
         copyToClipboard,
@@ -502,7 +501,9 @@
         useUserStore,
         useWorldStore
     } from '../../../stores';
-    import { miscRequest, userRequest } from '../../../api';
+    import { queryRequest, userRequest } from '../../../api';
+
+    import InstanceActionBar from '../../InstanceActionBar.vue';
 
     const EditNoteAndMemoDialog = defineAsyncComponent(() => import('./EditNoteAndMemoDialog.vue'));
 
@@ -681,7 +682,7 @@
      *
      */
     function getVRChatCredits() {
-        miscRequest.getVRChatCredits().then((args) => (vrchatCredit.value = args.json?.balance));
+        queryRequest.fetch('vrchatCredits').then((args) => (vrchatCredit.value = args.json?.balance));
     }
 
     defineExpose({

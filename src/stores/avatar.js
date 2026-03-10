@@ -14,7 +14,7 @@ import {
     sanitizeEntityJson,
     storeAvatarImage
 } from '../shared/utils';
-import { avatarRequest, miscRequest } from '../api';
+import { avatarRequest, miscRequest, queryRequest } from '../api';
 import { AppDebug } from '../service/appConfig';
 import { database } from '../service/database';
 import { patchAvatarFromEvent } from '../queries';
@@ -174,7 +174,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         }
         const loadAvatarRequest = forceRefresh
             ? avatarRequest.getAvatar({ avatarId })
-            : avatarRequest.getCachedAvatar({ avatarId });
+            : queryRequest.fetch('avatar', { avatarId });
         loadAvatarRequest
             .then((args) => {
                 const ref = applyAvatar(args.json);
@@ -249,8 +249,8 @@ export const useAvatarStore = defineStore('Avatar', () => {
      */
     async function getAvatarGallery(avatarId) {
         const D = avatarDialog.value;
-        const args = await avatarRequest
-            .getAvatarGallery(avatarId)
+        const args = await queryRequest
+            .fetch('avatarGallery', { avatarId })
             .finally(() => {
                 D.galleryLoading = false;
             });
@@ -312,6 +312,9 @@ export const useAvatarStore = defineStore('Avatar', () => {
         return ref;
     }
 
+    /**
+     *
+     */
     function resetCachedAvatarModerations() {
         cachedAvatarModerations.clear();
     }

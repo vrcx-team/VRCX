@@ -3,9 +3,10 @@ import { ref } from 'vue';
 
 vi.mock('../../../../api', () => ({
     groupRequest: {
-        getGroupMembersSearch: vi.fn(),
-        getCachedGroupMember: vi.fn(),
-        getCachedGroupMembers: vi.fn()
+        getGroupMembersSearch: vi.fn()
+    },
+    queryRequest: {
+        fetch: vi.fn()
     },
     userRequest: {}
 }));
@@ -94,7 +95,7 @@ vi.mock('worker-timers', () => ({
 }));
 
 import { useGroupMembers } from '../useGroupMembers';
-import { groupRequest } from '../../../../api';
+import { groupRequest, queryRequest } from '../../../../api';
 import { groupDialogFilterOptions } from '../../../../shared/constants';
 
 /**
@@ -133,7 +134,7 @@ function createDeps(overrides = {}) {
 describe('useGroupMembers', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        groupRequest.getCachedGroupMembers.mockReset();
+        queryRequest.fetch.mockReset();
     });
 
     describe('groupDialogMemberSortValue', () => {
@@ -316,7 +317,7 @@ describe('useGroupMembers', () => {
 
             await loadMoreGroupMembers();
 
-            expect(groupRequest.getCachedGroupMembers).not.toHaveBeenCalled();
+            expect(queryRequest.fetch).not.toHaveBeenCalled();
         });
 
         test('does not load when already loading', async () => {
@@ -327,12 +328,12 @@ describe('useGroupMembers', () => {
 
             await loadMoreGroupMembers();
 
-            expect(groupRequest.getCachedGroupMembers).not.toHaveBeenCalled();
+            expect(queryRequest.fetch).not.toHaveBeenCalled();
         });
 
         test('marks done when fewer than n results returned', async () => {
             const groupDialog = createGroupDialog();
-            groupRequest.getCachedGroupMembers.mockResolvedValue({
+            queryRequest.fetch.mockResolvedValue({
                 json: [{ userId: 'usr_1' }],
                 params: { groupId: 'grp_1', n: 100, offset: 0 }
             });
@@ -359,7 +360,7 @@ describe('useGroupMembers', () => {
             const groupDialog = createGroupDialog({
                 members: [{ userId: 'existing' }]
             });
-            groupRequest.getCachedGroupMembers.mockResolvedValue({
+            queryRequest.fetch.mockResolvedValue({
                 json: [{ userId: 'usr_new' }],
                 params: { groupId: 'grp_1', n: 100, offset: 0 }
             });
@@ -384,7 +385,7 @@ describe('useGroupMembers', () => {
             const groupDialog = createGroupDialog({
                 members: [{ userId: 'usr_me' }]
             });
-            groupRequest.getCachedGroupMembers.mockResolvedValue({
+            queryRequest.fetch.mockResolvedValue({
                 json: [{ userId: 'usr_me' }, { userId: 'usr_2' }],
                 params: { groupId: 'grp_1', n: 100, offset: 0 }
             });
@@ -408,7 +409,7 @@ describe('useGroupMembers', () => {
 
         test('marks done on error', async () => {
             const groupDialog = createGroupDialog();
-            groupRequest.getCachedGroupMembers.mockRejectedValue(
+            queryRequest.fetch.mockRejectedValue(
                 new Error('fail')
             );
 
@@ -442,7 +443,7 @@ describe('useGroupMembers', () => {
 
             await setGroupMemberSortOrder({ value: 'joinedAt:desc' });
 
-            expect(groupRequest.getCachedGroupMembers).not.toHaveBeenCalled();
+            expect(queryRequest.fetch).not.toHaveBeenCalled();
         });
     });
 
@@ -460,7 +461,7 @@ describe('useGroupMembers', () => {
 
             await setGroupMemberFilter(filter);
 
-            expect(groupRequest.getCachedGroupMembers).not.toHaveBeenCalled();
+            expect(queryRequest.fetch).not.toHaveBeenCalled();
         });
     });
 });

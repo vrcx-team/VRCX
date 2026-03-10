@@ -1,11 +1,6 @@
+import { patchAndRefetchActiveQuery, queryKeys } from '../queries';
 import { request } from '../service/request';
 import { useUserStore } from '../stores';
-import {
-    entityQueryPolicies,
-    fetchWithEntityPolicy,
-    patchAndRefetchActiveQuery,
-    queryKeys
-} from '../queries';
 
 /**
  * @returns {string}
@@ -38,21 +33,6 @@ const userReq = {
             };
             return args;
         });
-    },
-
-    /**
-     * Fetch user from cache if they're in it. Otherwise, calls API.
-     * @type {import('../types/api/user').GetCachedUser}
-     */
-    getCachedUser(params) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.user(params.userId),
-            policy: entityQueryPolicies.user,
-            queryFn: () => userReq.getUser(params)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
     },
 
     /**
@@ -147,7 +127,10 @@ const userReq = {
                 queryKey: queryKeys.user(args.ref.id),
                 nextData: args
             }).catch((err) => {
-                console.error('Failed to refresh user query after mutation:', err);
+                console.error(
+                    'Failed to refresh user query after mutation:',
+                    err
+                );
             });
             return args;
         });

@@ -1,9 +1,14 @@
 import { useQuery } from '@tanstack/vue-query';
 
-import { avatarRequest, groupRequest, instanceRequest, userRequest, worldRequest } from '../api';
-import { queryKeys } from './keys';
+import { avatarRequest, groupRequest, userRequest, worldRequest } from '../api';
 import { entityQueryPolicies, toQueryOptions } from './policies';
+import { queryKeys } from './keys';
 
+/**
+ *
+ * @param userId
+ * @param options
+ */
 export function useUserQuery(userId, options = {}) {
     return useQuery({
         ...options,
@@ -14,6 +19,11 @@ export function useUserQuery(userId, options = {}) {
     });
 }
 
+/**
+ *
+ * @param avatarId
+ * @param options
+ */
 export function useAvatarQuery(avatarId, options = {}) {
     return useQuery({
         ...options,
@@ -24,6 +34,11 @@ export function useAvatarQuery(avatarId, options = {}) {
     });
 }
 
+/**
+ *
+ * @param worldId
+ * @param options
+ */
 export function useWorldQuery(worldId, options = {}) {
     return useQuery({
         ...options,
@@ -34,6 +49,12 @@ export function useWorldQuery(worldId, options = {}) {
     });
 }
 
+/**
+ *
+ * @param groupId
+ * @param includeRoles
+ * @param options
+ */
 export function useGroupQuery(groupId, includeRoles = false, options = {}) {
     return useQuery({
         ...options,
@@ -41,15 +62,5 @@ export function useGroupQuery(groupId, includeRoles = false, options = {}) {
         queryFn: () => groupRequest.getGroup({ groupId, includeRoles }),
         enabled: Boolean(groupId),
         ...toQueryOptions(entityQueryPolicies.group)
-    });
-}
-
-export function useInstanceQuery(worldId, instanceId, options = {}) {
-    return useQuery({
-        ...options,
-        queryKey: queryKeys.instance(worldId, instanceId),
-        queryFn: () => instanceRequest.getInstance({ worldId, instanceId }),
-        enabled: Boolean(worldId && instanceId),
-        ...toQueryOptions(entityQueryPolicies.instance)
     });
 }

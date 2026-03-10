@@ -6,10 +6,9 @@ import {
 
 /**
  * Creates the overlay dispatch functions for the Notification store.
- *
  * @param {object} deps
  * @param {Function} deps.getUserIdFromNoty
- * @param {object} deps.userRequest
+ * @param {object} deps.queryRequest
  * @param {object} deps.notificationsSettingsStore
  * @param {object} deps.advancedSettingsStore
  * @param {object} deps.appearanceSettingsStore
@@ -17,7 +16,7 @@ import {
  */
 export function createOverlayDispatch({
     getUserIdFromNoty,
-    userRequest,
+    queryRequest,
     notificationsSettingsStore,
     advancedSettingsStore,
     appearanceSettingsStore
@@ -54,6 +53,12 @@ export function createOverlayDispatch({
         return imageLocation;
     }
 
+    /**
+     *
+     * @param noty
+     * @param message
+     * @param image
+     */
     function displayDesktopToast(noty, message, image) {
         const result = getNotificationMessage(noty, message);
         if (result) {
@@ -100,6 +105,14 @@ export function createOverlayDispatch({
         AppApi.XSNotification('VRCX', text, timeout, opacity, image);
     }
 
+    /**
+     *
+     * @param playOvrtHudNotifications
+     * @param playOvrtWristNotifications
+     * @param noty
+     * @param message
+     * @param image
+     */
     function displayOvrtNotification(
         playOvrtHudNotifications,
         playOvrtWristNotifications,
@@ -146,8 +159,8 @@ export function createOverlayDispatch({
         } else if (noty.imageUrl) {
             imageUrl = noty.imageUrl;
         } else if (userId && !userId.startsWith('grp_')) {
-            imageUrl = await userRequest
-                .getCachedUser({
+            imageUrl = await queryRequest
+                .fetch('user', {
                     userId
                 })
                 .catch((err) => {

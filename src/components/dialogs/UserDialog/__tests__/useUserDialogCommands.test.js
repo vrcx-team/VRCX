@@ -25,11 +25,7 @@ vi.mock('../../../../api', () => ({
         sendPlayerModeration: vi.fn(),
         deletePlayerModeration: vi.fn()
     },
-    worldRequest: {
-        getCachedWorld: vi.fn(() =>
-            Promise.resolve({ ref: { name: 'TestWorld' } })
-        )
-    }
+    worldRequest: {}
 }));
 
 vi.mock('../../../../shared/utils', () => ({

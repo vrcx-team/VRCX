@@ -259,6 +259,9 @@ export const useFriendStore = defineStore('Friend', () => {
         { flush: 'sync' }
     );
 
+    /**
+     *
+     */
     async function init() {
         const friendLogTableFiltersValue = JSON.parse(
             await configRepository.getString('VRCX_friendLogTableFilters', '[]')
@@ -268,6 +271,10 @@ export const useFriendStore = defineStore('Friend', () => {
 
     init();
 
+    /**
+     *
+     * @param ref
+     */
     function updateUserCurrentStatus(ref) {
         if (watchState.isFriendsLoaded) {
             refreshFriendsStatus(ref);
@@ -281,6 +288,10 @@ export const useFriendStore = defineStore('Friend', () => {
         }
     }
 
+    /**
+     *
+     * @param args
+     */
     function handleFriendStatus(args) {
         const D = userStore.userDialog;
         if (D.visible === false || D.id !== args.params.userId) {
@@ -292,6 +303,10 @@ export const useFriendStore = defineStore('Friend', () => {
         D.outgoingRequest = json.outgoingRequest;
     }
 
+    /**
+     *
+     * @param args
+     */
     function handleFriendDelete(args) {
         const D = userStore.userDialog;
         if (D.visible === false || D.id !== args.params.userId) {
@@ -302,11 +317,19 @@ export const useFriendStore = defineStore('Friend', () => {
         deleteFriend(args.params.userId);
     }
 
+    /**
+     *
+     * @param args
+     */
     function handleFriendAdd(args) {
         addFriendship(args.params.userId);
         addFriend(args.params.userId);
     }
 
+    /**
+     *
+     * @param ref
+     */
     function userOnFriend(ref) {
         updateFriendship(ref);
         if (
@@ -337,6 +360,9 @@ export const useFriendStore = defineStore('Friend', () => {
         return '';
     }
 
+    /**
+     *
+     */
     function updateLocalFavoriteFriends() {
         const favoriteStore = useFavoriteStore();
         localFavoriteFriends.clear();
@@ -365,6 +391,9 @@ export const useFriendStore = defineStore('Friend', () => {
         updateSidebarFavorites();
     }
 
+    /**
+     *
+     */
     function updateSidebarFavorites() {
         for (const ctx of friends.values()) {
             const isVIP = localFavoriteFriends.has(ctx.id);
@@ -383,6 +412,9 @@ export const useFriendStore = defineStore('Friend', () => {
         friendPresenceCoordinator.runUpdateFriendFlow(id, stateInput);
     }
 
+    /**
+     *
+     */
     async function pendingOfflineWorkerFunction() {
         pendingOfflineWorker = workerTimers.setInterval(() => {
             friendPresenceCoordinator.runPendingOfflineTickFlow();
@@ -510,7 +542,7 @@ export const useFriendStore = defineStore('Friend', () => {
     }
 
     /**
-     * @param {Object} args
+     * @param {object} args
      * @returns {Promise<*[]>}
      */
     async function bulkRefreshFriends(args) {
@@ -528,10 +560,14 @@ export const useFriendStore = defineStore('Friend', () => {
             intervalMs: 60_000
         });
 
+        /**
+         *
+         * @param offset
+         */
         async function fetchPage(offset) {
             const result = await executeWithBackoff(
                 async () => {
-                    const { json } = await friendRequest.getCachedFriends({
+                    const { json } = await friendRequest.getFriends({
                         ...args,
                         n: PAGE_SIZE,
                         offset
@@ -553,6 +589,9 @@ export const useFriendStore = defineStore('Friend', () => {
         let stopFlag = false;
         const friends = [];
 
+        /**
+         *
+         */
         function getNextOffset() {
             if (stopFlag) return null;
             const cur = nextOffset;
@@ -561,6 +600,9 @@ export const useFriendStore = defineStore('Friend', () => {
             return cur;
         }
 
+        /**
+         *
+         */
         async function worker() {
             while (true) {
                 const offset = getNextOffset();
@@ -660,6 +702,10 @@ export const useFriendStore = defineStore('Friend', () => {
         await friendSyncCoordinator.runRefreshFriendsListFlow();
     }
 
+    /**
+     *
+     * @param forceUpdate
+     */
     function updateOnlineFriendCounter(forceUpdate = false) {
         const onlineFriendCounts =
             vipFriends.value.length + onlineFriends.value.length;
@@ -672,6 +718,9 @@ export const useFriendStore = defineStore('Friend', () => {
         }
     }
 
+    /**
+     *
+     */
     async function getAllUserStats() {
         let ref;
         let item;
@@ -741,6 +790,9 @@ export const useFriendStore = defineStore('Friend', () => {
         }
     }
 
+    /**
+     *
+     */
     async function getAllUserMutualCount() {
         const mutualCountMap = await database.getMutualCountForAllUsers();
         for (const [userId, mutualCount] of mutualCountMap.entries()) {
@@ -1027,6 +1079,9 @@ export const useFriendStore = defineStore('Friend', () => {
         }
     }
 
+    /**
+     *
+     */
     async function initFriendLogHistoryTable() {
         friendLogTable.value.loading = true;
         friendLogTable.value.data = await database.getFriendLogHistory();
@@ -1052,6 +1107,9 @@ export const useFriendStore = defineStore('Friend', () => {
         }
     }
 
+    /**
+     *
+     */
     async function tryApplyFriendOrder() {
         const lastUpdate = await configRepository.getString(
             `VRCX_lastStoreTime_${userStore.currentUser.id}`
@@ -1135,6 +1193,9 @@ export const useFriendStore = defineStore('Friend', () => {
         );
     }
 
+    /**
+     *
+     */
     async function restoreFriendNumber() {
         let message;
         let storedData = null;
@@ -1186,6 +1247,9 @@ export const useFriendStore = defineStore('Friend', () => {
         return true;
     }
 
+    /**
+     *
+     */
     function applyFriendLogFriendOrderInReverse() {
         state.friendNumber = friends.size + 1;
         const friendLogTable = getFriendLogFriendOrder();
@@ -1210,6 +1274,9 @@ export const useFriendStore = defineStore('Friend', () => {
         console.log('Applied friend order from friendLog');
     }
 
+    /**
+     *
+     */
     function getFriendLogFriendOrder() {
         const result = [];
         for (let i = 0; i < friendLogTable.value.data.length; i++) {
@@ -1235,6 +1302,12 @@ export const useFriendStore = defineStore('Friend', () => {
         return result;
     }
 
+    /**
+     *
+     * @param friendLogTable
+     * @param created_at
+     * @param backupUserIds
+     */
     function parseFriendOrderBackup(friendLogTable, created_at, backupUserIds) {
         let i;
         const backupTable = [];
@@ -1296,6 +1369,10 @@ export const useFriendStore = defineStore('Friend', () => {
         };
     }
 
+    /**
+     *
+     * @param userIdOrder
+     */
     function applyFriendOrderBackup(userIdOrder) {
         for (let i = 0; i < userIdOrder.length; i++) {
             const userId = userIdOrder[i];
@@ -1316,6 +1393,9 @@ export const useFriendStore = defineStore('Friend', () => {
         }
     }
 
+    /**
+     *
+     */
     function applyFriendLogFriendOrder() {
         const friendLogTable = getFriendLogFriendOrder();
         if (state.friendNumber === 0) {
@@ -1339,6 +1419,10 @@ export const useFriendStore = defineStore('Friend', () => {
         }
     }
 
+    /**
+     *
+     * @param id
+     */
     function confirmDeleteFriend(id) {
         modalStore
             .confirm({
@@ -1355,6 +1439,9 @@ export const useFriendStore = defineStore('Friend', () => {
             .catch(() => {});
     }
 
+    /**
+     *
+     */
     async function initFriendsList() {
         await friendSyncCoordinator.runInitFriendsListFlow();
     }

@@ -14,7 +14,7 @@ import {
     parseLocation,
     sanitizeEntityJson
 } from '../shared/utils';
-import { instanceRequest, miscRequest, worldRequest } from '../api';
+import { instanceRequest, queryRequest, worldRequest } from '../api';
 import { database } from '../service/database';
 import { patchWorldFromEvent } from '../queries';
 import { processBulk } from '../service/request';
@@ -190,8 +190,8 @@ export const useWorldStore = defineStore('World', () => {
                     D.isQuest = isQuest;
                     D.isIos = isIos;
                     updateVRChatWorldCache();
-                    miscRequest
-                        .hasWorldPersistData({
+                    queryRequest
+                        .fetch('worldPersistData', {
                             worldId: D.id
                         })
                         .then((args) => {

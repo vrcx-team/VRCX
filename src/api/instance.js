@@ -3,12 +3,6 @@ import { toast } from 'vue-sonner';
 import { i18n } from '../plugin/i18n';
 import { request } from '../service/request';
 import { useInstanceStore } from '../stores';
-import {
-    entityQueryPolicies,
-    fetchWithEntityPolicy,
-    patchAndRefetchActiveQuery,
-    queryKeys
-} from '../queries';
 
 const instanceReq = {
     /**
@@ -29,21 +23,6 @@ const instanceReq = {
     },
 
     /**
-     * @param {{worldId: string, instanceId: string}} params
-     * @returns {Promise<{json: any, ref: any, cache?: boolean, params}>}
-     */
-    getCachedInstance(params) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.instance(params.worldId, params.instanceId),
-            policy: entityQueryPolicies.instance,
-            queryFn: () => instanceReq.getInstance(params)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
-    },
-
-    /**
      * @type {import('../types/api/instance').CreateInstance}
      */
     createInstance(params) {
@@ -57,15 +36,6 @@ const instanceReq = {
                 params
             };
             args.ref = instanceStore.applyInstance(json);
-            patchAndRefetchActiveQuery({
-                queryKey: queryKeys.instance(args.ref.worldId, args.ref.instanceId),
-                nextData: args
-            }).catch((err) => {
-                console.error(
-                    'Failed to refresh instance query after instance creation:',
-                    err
-                );
-            });
             return args;
         });
     },
@@ -108,15 +78,6 @@ const instanceReq = {
                 params
             };
             args.ref = instanceStore.applyInstance(json);
-            patchAndRefetchActiveQuery({
-                queryKey: queryKeys.instance(args.ref.worldId, args.ref.instanceId),
-                nextData: args
-            }).catch((err) => {
-                console.error(
-                    'Failed to refresh instance query after short-name resolve:',
-                    err
-                );
-            });
             return args;
         });
     },

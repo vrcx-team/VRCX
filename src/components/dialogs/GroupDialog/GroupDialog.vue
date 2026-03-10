@@ -407,12 +407,14 @@
         removeFromArray
     } from '../../../shared/utils';
     import { useGalleryStore, useGroupStore, useModalStore, useUserStore } from '../../../stores';
+    import { groupRequest, queryRequest } from '../../../api';
+    import { queryKeys, refetchActiveEntityQuery } from '../../../queries';
     import { Badge } from '../../ui/badge';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
-    import { groupRequest } from '../../../api';
 
     import DialogJsonTab from '../DialogJsonTab.vue';
     import GroupDialogInfoTab from './GroupDialogInfoTab.vue';
+    import { useGroupDialogCommands } from './useGroupDialogCommands';
     import GroupDialogMembersTab from './GroupDialogMembersTab.vue';
     import GroupDialogPhotosTab from './GroupDialogPhotosTab.vue';
     import GroupDialogPostsTab from './GroupDialogPostsTab.vue';
@@ -444,6 +446,28 @@
 
     const { showFullscreenImageDialog } = useGalleryStore();
 
+    const { groupDialogCommand } = useGroupDialogCommands(groupDialog, {
+        t,
+        modalStore,
+        currentUser,
+        showGroupDialog,
+        leaveGroupPrompt,
+        setGroupVisibility,
+        setGroupSubscription,
+        showGroupMemberModerationDialog,
+        showInviteGroupDialog: (groupId, userId) => {
+            if (groupId) {
+                inviteGroupDialog.value.groupId = groupId;
+            }
+            if (userId) {
+                inviteGroupDialog.value.userId = userId;
+            }
+            inviteGroupDialog.value.visible = true;
+        },
+        showGroupPostEditDialog,
+        groupRequest
+    });
+
     const groupDialogTabCurrentName = ref('0');
     const treeData = ref({});
     const membersTabRef = ref(null);
@@ -473,21 +497,6 @@
             }
         }
     );
-
-    /**
-     *
-     * @param groupId
-     * @param userId
-     */
-    function showInviteGroupDialog(groupId, userId) {
-        if (groupId) {
-            inviteGroupDialog.value.groupId = groupId;
-        }
-        if (userId) {
-            inviteGroupDialog.value.userId = userId;
-        }
-        inviteGroupDialog.value.visible = true;
-    }
 
     /**
      *
@@ -526,6 +535,7 @@
                     });
                     getGroupDialogGroup(groupId);
                 }
+                refetchActiveEntityQuery(queryKeys.representedGroup(currentUser.value.id));
             });
     }
 
@@ -593,110 +603,6 @@
      *
      * @param gallery
      */
-
-    /**
-     *
-     * @param command
-     */
-    function groupDialogCommand(command) {
-        const D = groupDialog.value;
-        if (D.visible === false) {
-            return;
-        }
-        switch (command) {
-            case 'Share':
-                copyToClipboard(groupDialog.value.ref.$url);
-                break;
-            case 'Create Post':
-                showGroupPostEditDialog(groupDialog.value.id, null);
-                break;
-            case 'Moderation Tools':
-                showGroupMemberModerationDialog(groupDialog.value.id);
-                break;
-            case 'Invite To Group':
-                showInviteGroupDialog(D.id, '');
-                break;
-            case 'Refresh':
-                const groupId = D.id;
-                showGroupDialog(groupId, { forceRefresh: true });
-                break;
-            case 'Leave Group':
-                leaveGroupPrompt(D.id);
-                break;
-            case 'Block Group':
-                blockGroup(D.id);
-                break;
-            case 'Unblock Group':
-                unblockGroup(D.id);
-                break;
-            case 'Visibility Everyone':
-                setGroupVisibility(D.id, 'visible');
-                break;
-            case 'Visibility Friends':
-                setGroupVisibility(D.id, 'friends');
-                break;
-            case 'Visibility Hidden':
-                setGroupVisibility(D.id, 'hidden');
-                break;
-            case 'Subscribe To Announcements':
-                setGroupSubscription(D.id, true);
-                break;
-            case 'Unsubscribe To Announcements':
-                setGroupSubscription(D.id, false);
-                break;
-        }
-    }
-
-    /**
-     *
-     * @param groupId
-     */
-    function blockGroup(groupId) {
-        modalStore
-            .confirm({
-                description: t('confirm.block_group'),
-                title: t('confirm.title')
-            })
-            .then(({ ok }) => {
-                if (!ok) return;
-                groupRequest
-                    .blockGroup({
-                        groupId
-                    })
-                    .then((args) => {
-                        if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
-                            showGroupDialog(args.params.groupId);
-                        }
-                    });
-            })
-            .catch(() => {});
-    }
-
-    /**
-     *
-     * @param groupId
-     */
-    function unblockGroup(groupId) {
-        modalStore
-            .confirm({
-                description: t('confirm.unblock_group'),
-                title: t('confirm.title')
-            })
-            .then(({ ok }) => {
-                if (!ok) return;
-                groupRequest
-                    .unblockGroup({
-                        groupId,
-                        userId: currentUser.value.id
-                    })
-                    .then((args) => {
-                        if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
-                            showGroupDialog(args.params.groupId);
-                        }
-                    });
-            })
-            .catch(() => {});
-    }
 
     /**
      *
@@ -796,7 +702,7 @@
                 selectedImageUrl: post.imageUrl
             };
         }
-        groupRequest.getCachedGroup({ groupId }).then((args) => {
+        queryRequest.fetch('group', { groupId }).then((args) => {
             D.groupRef = args.ref;
         });
         D.visible = true;

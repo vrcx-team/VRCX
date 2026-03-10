@@ -29,6 +29,7 @@ import {
     avatarRequest,
     groupRequest,
     instanceRequest,
+    queryRequest,
     userRequest
 } from '../api';
 import { processBulk, request } from '../service/request';
@@ -715,8 +716,8 @@ export const useUserStore = defineStore('User', () => {
             });
         }
         AppApi.SendIpc('ShowUserDialog', userId);
-        userRequest
-            .getCachedUser({
+        queryRequest
+            .fetch('user', {
                 userId
             })
             .catch((err) => {
@@ -840,8 +841,8 @@ export const useUserStore = defineStore('User', () => {
                         });
                         if (!currentUser.value.hasSharedConnectionsOptOut) {
                             try {
-                                userRequest
-                                    .getMutualCounts({ userId })
+                                queryRequest
+                                    .fetch('mutualCounts', { userId })
                                     .then((args) => {
                                         if (args.params.userId === D.id) {
                                             D.mutualFriendCount =
@@ -867,8 +868,8 @@ export const useUserStore = defineStore('User', () => {
                                 }
                             });
                     }
-                    groupRequest
-                        .getRepresentedGroup({ userId })
+                    queryRequest
+                        .fetch('representedGroup', { userId })
                         .then((args1) => {
                             groupStore.handleGroupRepresented(args1);
                         });

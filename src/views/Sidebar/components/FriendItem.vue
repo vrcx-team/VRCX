@@ -48,7 +48,7 @@
                     </template>
                     <Location
                         v-else
-                        class="extra block truncate text-xs"
+                        class="extra block truncate text-xs!"
                         :location="locationProp"
                         :traveling="travelingProp"
                         :link="false" />

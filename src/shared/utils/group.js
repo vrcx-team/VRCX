@@ -1,5 +1,5 @@
-import { groupRequest } from '../../api';
 import { parseLocation } from './location';
+import { queryRequest } from '../../api';
 
 /**
  *
@@ -59,7 +59,7 @@ async function getGroupName(data) {
         }
     }
     try {
-        const args = await groupRequest.getCachedGroup({
+        const args = await queryRequest.fetch('group', {
             groupId
         });
         groupName = args.ref.name;

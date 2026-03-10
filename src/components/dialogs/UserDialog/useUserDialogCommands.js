@@ -6,7 +6,7 @@ import {
     miscRequest,
     notificationRequest,
     playerModerationRequest,
-    worldRequest
+    queryRequest
 } from '../../../api';
 import { copyToClipboard, parseLocation } from '../../../shared/utils';
 import { database } from '../../../service/database';
@@ -216,7 +216,7 @@ export function useUserDialogCommands(
 
     // --- Command map ---
     // Direct commands: function
-    // Confirmed commands: { confirm: true, handler: fn }
+    // Confirmed commands: { confirm: () => ({title, description, ...}), handler: fn }
 
     /**
      *
@@ -259,8 +259,8 @@ export function useUserDialogCommands(
             },
             'Invite Message': () => {
                 const L = parseLocation(lastLocation.value.location);
-                worldRequest
-                    .getCachedWorld({
+                queryRequest
+                    .fetch('world', {
                         worldId: L.worldId
                     })
                     .then((args) => {
@@ -288,8 +288,8 @@ export function useUserDialogCommands(
                     currentLocation = lastLocationDestination.value;
                 }
                 const L = parseLocation(currentLocation);
-                worldRequest
-                    .getCachedWorld({
+                queryRequest
+                    .fetch('world', {
                         worldId: L.worldId
                     })
                     .then((args) => {
@@ -360,7 +360,12 @@ export function useUserDialogCommands(
 
             // --- Confirmed commands ---
             'Delete Favorite': {
-                confirm: true,
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.user.actions.delete_favorite')
+                    })
+                }),
                 handler: (userId) => {
                     favoriteRequest.deleteFavorite({
                         objectId: userId
@@ -368,7 +373,12 @@ export function useUserDialogCommands(
                 }
             },
             'Accept Friend Request': {
-                confirm: true,
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.user.actions.accept_friend_request')
+                    })
+                }),
                 handler: async (userId) => {
                     const key = getFriendRequest(userId);
                     if (key === '') {
@@ -401,7 +411,12 @@ export function useUserDialogCommands(
                 }
             },
             'Decline Friend Request': {
-                confirm: true,
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.user.actions.decline_friend_request')
+                    })
+                }),
                 handler: async (userId) => {
                     const key = getFriendRequest(userId);
                     if (key === '') {
@@ -423,7 +438,12 @@ export function useUserDialogCommands(
                 }
             },
             'Cancel Friend Request': {
-                confirm: true,
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.user.actions.cancel_friend_request')
+                    })
+                }),
                 handler: async (userId) => {
                     const args = await friendRequest.cancelFriendRequest({
                         userId
@@ -432,7 +452,12 @@ export function useUserDialogCommands(
                 }
             },
             'Send Friend Request': {
-                confirm: true,
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.user.actions.send_friend_request')
+                    })
+                }),
                 handler: async (userId) => {
                     const args = await friendRequest.sendFriendRequest({
                         userId
@@ -441,7 +466,12 @@ export function useUserDialogCommands(
                 }
             },
             'Moderation Unblock': {
-                confirm: true,
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.user.actions.moderation_unblock')
+                    })
+                }),
                 handler: async (userId) => {
                     const args =
                         await playerModerationRequest.deletePlayerModeration({
@@ -452,7 +482,12 @@ export function useUserDialogCommands(
                 }
             },
             'Moderation Block': {
-                confirm: true,
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.user.actions.moderation_block')
+                    })
+                }),
                 handler: async (userId) => {
                     const args =
                         await playerModerationRequest.sendPlayerModeration({
@@ -463,7 +498,12 @@ export function useUserDialogCommands(
                 }
             },
             'Moderation Unmute': {
-                confirm: true,
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.user.actions.moderation_unmute')
+                    })
+                }),
                 handler: async (userId) => {
                     const args =
                         await playerModerationRequest.deletePlayerModeration({
@@ -474,7 +514,12 @@ export function useUserDialogCommands(
                 }
             },
             'Moderation Mute': {
-                confirm: true,
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.user.actions.moderation_mute')
+                    })
+                }),
                 handler: async (userId) => {
                     const args =
                         await playerModerationRequest.sendPlayerModeration({
@@ -485,7 +530,14 @@ export function useUserDialogCommands(
                 }
             },
             'Moderation Enable Avatar Interaction': {
-                confirm: true,
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t(
+                            'dialog.user.actions.moderation_enable_avatar_interaction'
+                        )
+                    })
+                }),
                 handler: async (userId) => {
                     const args =
                         await playerModerationRequest.deletePlayerModeration({
@@ -496,7 +548,14 @@ export function useUserDialogCommands(
                 }
             },
             'Moderation Disable Avatar Interaction': {
-                confirm: true,
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t(
+                            'dialog.user.actions.moderation_disable_avatar_interaction'
+                        )
+                    })
+                }),
                 handler: async (userId) => {
                     const args =
                         await playerModerationRequest.sendPlayerModeration({
@@ -507,7 +566,14 @@ export function useUserDialogCommands(
                 }
             },
             'Moderation Enable Chatbox': {
-                confirm: true,
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t(
+                            'dialog.user.actions.moderation_enable_chatbox'
+                        )
+                    })
+                }),
                 handler: async (userId) => {
                     const args =
                         await playerModerationRequest.deletePlayerModeration({
@@ -518,7 +584,14 @@ export function useUserDialogCommands(
                 }
             },
             'Moderation Disable Chatbox': {
-                confirm: true,
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t(
+                            'dialog.user.actions.moderation_disable_chatbox'
+                        )
+                    })
+                }),
                 handler: async (userId) => {
                     const args =
                         await playerModerationRequest.sendPlayerModeration({
@@ -529,7 +602,12 @@ export function useUserDialogCommands(
                 }
             },
             'Report Hacking': {
-                confirm: true,
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.user.actions.report_hacking')
+                    })
+                }),
                 handler: (userId) => {
                     miscRequest.reportUser({
                         userId,
@@ -540,7 +618,12 @@ export function useUserDialogCommands(
                 }
             },
             Unfriend: {
-                confirm: true,
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.user.actions.unfriend')
+                    })
+                }),
                 handler: async (userId) => {
                     const args = await friendRequest.deleteFriend(
                         {
@@ -601,23 +684,8 @@ export function useUserDialogCommands(
 
         // Confirmed command
         if (entry.confirm) {
-            const i18nPreFix = 'dialog.user.actions.';
-            const formattedCommand = command.toLowerCase().replace(/ /g, '_');
-            const displayCommandText = t(
-                `${i18nPreFix}${formattedCommand}`
-            ).includes('i18nPreFix')
-                ? command
-                : t(`${i18nPreFix}${formattedCommand}`);
-
             modalStore
-                .confirm({
-                    description: t('confirm.message', {
-                        command: displayCommandText
-                    }),
-                    title: t('confirm.title'),
-                    confirmText: t('confirm.confirm_button'),
-                    cancelText: t('confirm.cancel_button')
-                })
+                .confirm(entry.confirm())
                 .then(({ ok }) => {
                     if (ok) {
                         entry.handler(D.id);

@@ -23,8 +23,7 @@ import {
     friendRequest,
     instanceRequest,
     notificationRequest,
-    userRequest,
-    worldRequest
+    queryRequest
 } from '../../api';
 import {
     getNotificationMessage,
@@ -216,7 +215,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                     // get instance name for invite
                     const L = parseLocation(ref.details.worldId);
                     if (L.isRealInstance) {
-                        instanceRequest.getCachedInstance({
+                        instanceRequest.getInstance({
                             worldId: L.worldId,
                             instanceId: L.instanceId
                         });
@@ -350,8 +349,8 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
 
         const L = parseLocation(currentLocation);
-        worldRequest
-            .getCachedWorld({
+        queryRequest
+            .fetch('world', {
                 worldId: L.worldId
             })
             .then((args1) => {
@@ -401,6 +400,9 @@ export const useNotificationStore = defineStore('Notification', () => {
         notificationInitStatus.value = value;
     }
 
+    /**
+     *
+     */
     function clearUnseenNotifications() {
         unseenNotifications.value = [];
     }
@@ -996,7 +998,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         displayOvrtNotification
     } = createOverlayDispatch({
         getUserIdFromNoty,
-        userRequest,
+        queryRequest,
         notificationsSettingsStore,
         advancedSettingsStore,
         appearanceSettingsStore
@@ -1285,8 +1287,8 @@ export const useNotificationStore = defineStore('Notification', () => {
                     currentLocation = userStore.currentUser?.$locationTag;
                 }
                 const L = parseLocation(currentLocation);
-                worldRequest
-                    .getCachedWorld({ worldId: L.worldId })
+                queryRequest
+                    .fetch('world', { worldId: L.worldId })
                     .then((args) => {
                         notificationRequest
                             .sendInvite(

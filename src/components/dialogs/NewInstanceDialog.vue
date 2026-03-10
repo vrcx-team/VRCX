@@ -580,7 +580,7 @@
         useUserStore
     } from '../../stores';
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-    import { groupRequest, instanceRequest, worldRequest } from '../../api';
+    import { groupRequest, instanceRequest, queryRequest } from '../../api';
     import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
     import { VirtualCombobox } from '../ui/virtual-combobox';
 
@@ -797,8 +797,8 @@
             return;
         }
         const L = parseLocation(tag);
-        worldRequest
-            .getCachedWorld({
+        queryRequest
+            .fetch('world', {
                 worldId: L.worldId
             })
             .then((args) => {

@@ -121,7 +121,7 @@
         favoriteWorldsTab.value = '0';
         userDialog.value.userFavoriteWorlds = [];
         const worldLists = [];
-        const groupArgs = await favoriteRequest.getCachedFavoriteGroups({
+        const groupArgs = await favoriteRequest.getFavoriteGroups({
             ownerId: userId,
             n: 100,
             offset: 0
@@ -145,7 +145,7 @@
                 tag: list.name
             };
             try {
-                const args = await favoriteRequest.getCachedFavoriteWorlds(params);
+                const args = await favoriteRequest.getFavoriteWorlds(params);
                 handleFavoriteWorldList(args);
                 return [list.displayName, list.visibility, args.json];
             } catch (err) {

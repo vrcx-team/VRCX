@@ -2,13 +2,13 @@ import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { ref } from 'vue';
 
 vi.mock('../../../../api', () => ({
-    groupRequest: {
-        getCachedGroupGallery: vi.fn()
+    queryRequest: {
+        fetch: vi.fn()
     }
 }));
 
 import { useGroupGalleries } from '../useGroupGalleries';
-import { groupRequest } from '../../../../api';
+import { queryRequest } from '../../../../api';
 
 function createGroupDialog(overrides = {}) {
     return ref({
@@ -120,7 +120,7 @@ describe('useGroupGalleries', () => {
                     galleries: [{ id: 'g1', name: 'Gallery' }]
                 }
             });
-            groupRequest.getCachedGroupGallery.mockResolvedValue({
+            queryRequest.fetch.mockResolvedValue({
                 json: [],
                 params: { groupId: 'grp_1' }
             });
@@ -145,7 +145,7 @@ describe('useGroupGalleries', () => {
                     ]
                 }
             });
-            groupRequest.getCachedGroupGallery.mockResolvedValue({
+            queryRequest.fetch.mockResolvedValue({
                 json: [],
                 params: { groupId: 'grp_1' }
             });
@@ -153,7 +153,7 @@ describe('useGroupGalleries', () => {
             const { getGroupGalleries } = useGroupGalleries(groupDialog);
             await getGroupGalleries();
 
-            expect(groupRequest.getCachedGroupGallery).toHaveBeenCalledTimes(2);
+            expect(queryRequest.fetch).toHaveBeenCalledTimes(2);
         });
     });
 
@@ -162,7 +162,7 @@ describe('useGroupGalleries', () => {
             const groupDialog = createGroupDialog();
             const { getGroupGallery } = useGroupGalleries(groupDialog);
 
-            groupRequest.getCachedGroupGallery.mockResolvedValueOnce({
+            queryRequest.fetch.mockResolvedValueOnce({
                 json: [
                     {
                         groupId: 'grp_1',
@@ -190,7 +190,7 @@ describe('useGroupGalleries', () => {
             const groupDialog = createGroupDialog();
             const { getGroupGallery } = useGroupGalleries(groupDialog);
 
-            groupRequest.getCachedGroupGallery.mockResolvedValueOnce({
+            queryRequest.fetch.mockResolvedValueOnce({
                 json: [
                     {
                         groupId: 'grp_other',
@@ -211,7 +211,7 @@ describe('useGroupGalleries', () => {
             const groupDialog = createGroupDialog();
             const { getGroupGallery } = useGroupGalleries(groupDialog);
 
-            groupRequest.getCachedGroupGallery.mockResolvedValueOnce({
+            queryRequest.fetch.mockResolvedValueOnce({
                 json: Array.from({ length: 50 }, (_, i) => ({
                     groupId: 'grp_1',
                     galleryId: 'g1',
@@ -223,7 +223,7 @@ describe('useGroupGalleries', () => {
 
             await getGroupGallery('grp_1', 'g1');
 
-            expect(groupRequest.getCachedGroupGallery).toHaveBeenCalledTimes(1);
+            expect(queryRequest.fetch).toHaveBeenCalledTimes(1);
         });
 
         test('handles API errors gracefully', async () => {
@@ -233,7 +233,7 @@ describe('useGroupGalleries', () => {
                 .spyOn(console, 'error')
                 .mockImplementation(() => {});
 
-            groupRequest.getCachedGroupGallery.mockRejectedValueOnce(
+            queryRequest.fetch.mockRejectedValueOnce(
                 new Error('API Error')
             );
 

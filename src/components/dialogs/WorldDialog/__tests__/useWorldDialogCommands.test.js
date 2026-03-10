@@ -184,8 +184,17 @@ describe('useWorldDialogCommands', () => {
         test('Change Tags sets isSetWorldTagsDialogVisible to true', () => {
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const { worldDialogCommand, isSetWorldTagsDialogVisible } =
-                useWorldDialogCommands(worldDialog, deps);
+            const {
+                worldDialogCommand,
+                isSetWorldTagsDialogVisible,
+                registerCallbacks
+            } = useWorldDialogCommands(worldDialog, deps);
+
+            registerCallbacks({
+                showSetWorldTagsDialog: () => {
+                    isSetWorldTagsDialogVisible.value = true;
+                }
+            });
 
             worldDialogCommand('Change Tags');
             expect(isSetWorldTagsDialogVisible.value).toBe(true);
@@ -225,8 +234,18 @@ describe('useWorldDialogCommands', () => {
         test('Change Allowed Domains opens the allowed domains dialog', () => {
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const { worldDialogCommand, worldAllowedDomainsDialog } =
-                useWorldDialogCommands(worldDialog, deps);
+            const {
+                worldDialogCommand,
+                worldAllowedDomainsDialog,
+                showWorldAllowedDomainsDialog,
+                registerCallbacks
+            } = useWorldDialogCommands(worldDialog, deps);
+
+            registerCallbacks({
+                showWorldAllowedDomainsDialog: () => {
+                    showWorldAllowedDomainsDialog();
+                }
+            });
 
             worldDialogCommand('Change Allowed Domains');
             expect(worldAllowedDomainsDialog.value.visible).toBe(true);

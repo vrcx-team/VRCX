@@ -83,10 +83,14 @@ vi.mock('../../../../service/request', () => ({
 }));
 vi.mock('../../../../api', () => ({
     groupRequest: {},
-    userRequest: {}
+    userRequest: {},
+    queryRequest: {
+        fetch: vi.fn()
+    }
 }));
 
 import { useGroupModerationData } from '../useGroupModerationData';
+import { queryRequest } from '../../../../api';
 
 function createTables() {
     return {
@@ -124,9 +128,6 @@ function createDeps(overrides = {}) {
             getGroupMembers: vi.fn(),
             getGroupMembersSearch: vi.fn()
         },
-        userRequest: {
-            getCachedUser: vi.fn()
-        },
         ...overrides
     };
 }
@@ -134,6 +135,7 @@ function createDeps(overrides = {}) {
 describe('useGroupModerationData', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        queryRequest.fetch.mockReset();
     });
 
     describe('getAllGroupBans', () => {
@@ -343,7 +345,7 @@ describe('useGroupModerationData', () => {
             await addGroupMemberToSelection('usr_1');
 
             expect(deps.selection.setSelectedUsers).toHaveBeenCalledWith('usr_1', member);
-            expect(deps.userRequest.getCachedUser).not.toHaveBeenCalled();
+            expect(queryRequest.fetch).not.toHaveBeenCalled();
         });
 
         test('falls back to user API when member has no user object', async () => {
@@ -353,14 +355,14 @@ describe('useGroupModerationData', () => {
                 params: {}
             });
             deps.applyGroupMember.mockReturnValue({ userId: 'usr_1' });
-            deps.userRequest.getCachedUser.mockResolvedValue({
+            queryRequest.fetch.mockResolvedValue({
                 json: { id: 'usr_1', displayName: 'Alice' }
             });
 
             const { addGroupMemberToSelection } = useGroupModerationData(deps);
             await addGroupMemberToSelection('usr_1');
 
-            expect(deps.userRequest.getCachedUser).toHaveBeenCalledWith({ userId: 'usr_1' });
+            expect(queryRequest.fetch).toHaveBeenCalledWith('user', { userId: 'usr_1' });
             expect(deps.selection.setSelectedUsers).toHaveBeenCalledWith('usr_1', expect.objectContaining({
                 userId: 'usr_1',
                 displayName: 'Alice'

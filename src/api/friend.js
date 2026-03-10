@@ -1,12 +1,10 @@
+import { queryClient } from '../queries';
 import { request } from '../service/request';
 import { useUserStore } from '../stores/user';
-import {
-    entityQueryPolicies,
-    fetchWithEntityPolicy,
-    queryClient,
-    queryKeys
-} from '../queries';
 
+/**
+ *
+ */
 function refetchActiveFriendListQueries() {
     queryClient
         .invalidateQueries({
@@ -45,22 +43,6 @@ const friendReq = {
     },
 
     /**
-     * Fetch friends from query cache if still fresh. Otherwise, calls API.
-     * @param {{ n: number, offset: number, offline?: boolean }} params
-     * @returns {Promise<{json: any, params: { n: number, offset: number, offline?: boolean }, cache?: boolean}>}
-     */
-    getCachedFriends(params) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.friends(params),
-            policy: entityQueryPolicies.friendList,
-            queryFn: () => friendReq.getFriends(params)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
-    },
-
-    /**
      * @param {{ userId: string }} params
      * @returns {Promise<{json: any, params: { userId: string }}>}
      */
@@ -96,6 +78,7 @@ const friendReq = {
 
     /**
      * @param {{ userId: string }} params
+     * @param customMsg
      * @returns {Promise<{json: any, params: { userId: string }}>}
      */
     deleteFriend(params, customMsg) {

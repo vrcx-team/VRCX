@@ -1,16 +1,18 @@
 import { useGroupStore, useUserStore } from '../stores';
+import { queryClient } from '../queries';
 import { request } from '../service/request';
-import {
-    entityQueryPolicies,
-    fetchWithEntityPolicy,
-    queryClient,
-    queryKeys
-} from '../queries';
 
+/**
+ *
+ */
 function getCurrentUserId() {
     return useUserStore().currentUser.id;
 }
 
+/**
+ *
+ * @param groupId
+ */
 function refetchActiveGroupScope(groupId) {
     if (!groupId) {
         return;
@@ -47,7 +49,7 @@ const groupReq = {
 
     /**
      * @param {{ groupId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     cancelGroupRequest(params) {
         return request(`groups/${params.groupId}/requests`, {
@@ -63,7 +65,7 @@ const groupReq = {
 
     /**
      * @param {{ groupId: string, postId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     deleteGroupPost(params) {
         return request(`groups/${params.groupId}/posts/${params.postId}`, {
@@ -87,35 +89,18 @@ const groupReq = {
                 includeRoles: params.includeRoles || false
             }
         }).then((json) => {
+            const groupStore = useGroupStore();
             const args = {
                 json,
                 params
             };
+            args.ref = groupStore.applyGroup(json);
             return args;
         });
     },
     /**
-     *
-     * @param {{ groupId: string }} params
-     * @return { Promise<{json: any, ref: any, cache?: boolean, params}> }
-     */
-    getCachedGroup(params) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.group(params.groupId, params.includeRoles),
-            policy: entityQueryPolicies.group,
-            queryFn: () => groupReq.getGroup(params).then((args) => {
-                const groupStore = useGroupStore();
-                args.ref = groupStore.applyGroup(args.json);
-                return args;
-            })
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
-    },
-    /**
      * @param {{ userId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     getRepresentedGroup(params) {
         return request(`users/${params.userId}/groups/represented`, {
@@ -130,7 +115,7 @@ const groupReq = {
     },
     /**
      * @param {{ userId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     getGroups(params) {
         return request(`users/${params.userId}/groups`, {
@@ -145,7 +130,7 @@ const groupReq = {
     },
     /**
      * @param {{ groupId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     joinGroup(params) {
         return request(`groups/${params.groupId}/join`, {
@@ -161,7 +146,7 @@ const groupReq = {
     },
     /**
      * @param {{ groupId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     leaveGroup(params) {
         return request(`groups/${params.groupId}/leave`, {
@@ -177,7 +162,7 @@ const groupReq = {
     },
     /**
      * @param {{ query: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     groupStrictsearch(params) {
         return request(`groups/strictsearch`, {
@@ -199,7 +184,10 @@ const groupReq = {
         isSubscribedToAnnouncements: bool,
         managerNotes: string
     }
-    */
+     * @param userId
+     * @param groupId
+     * @param params
+     */
     setGroupMemberProps(userId, groupId, params) {
         return request(`groups/${groupId}/members/${userId}`, {
             method: 'PUT',
@@ -221,7 +209,7 @@ const groupReq = {
      * groupId: string,
      * roleId: string
      * }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     addGroupMemberRole(params) {
         return request(
@@ -244,7 +232,7 @@ const groupReq = {
      * groupId: string,
      * roleId: string
      * }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     removeGroupMemberRole(params) {
         return request(
@@ -278,7 +266,7 @@ const groupReq = {
      n: number,
      offset: number
      }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     getGroupPosts(params) {
         return request(`groups/${params.groupId}/posts`, {
@@ -291,16 +279,6 @@ const groupReq = {
             };
             return args;
         });
-    },
-    getCachedGroupPosts(params) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.groupPosts(params),
-            policy: entityQueryPolicies.groupCollection,
-            queryFn: () => groupReq.getGroupPosts(params)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
     },
     editGroupPost(params) {
         return request(`groups/${params.groupId}/posts/${params.postId}`, {
@@ -333,7 +311,7 @@ const groupReq = {
      * groupId: string,
      * userId: string
      * }} params
-     * @return { Promise<{json: any, params, ref?: any}> }
+     * @returns { Promise<{json: any, params, ref?: any}> }
      */
     getGroupMember(params) {
         return request(`groups/${params.groupId}/members/${params.userId}`, {
@@ -346,23 +324,13 @@ const groupReq = {
             return args;
         });
     },
-    getCachedGroupMember(params) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.groupMember(params),
-            policy: entityQueryPolicies.groupCollection,
-            queryFn: () => groupReq.getGroupMember(params)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
-    },
     /**
      * @param {{
      * groupId: string,
      * n: number,
      * offset: number
      * }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     getGroupMembers(params) {
         return request(`groups/${params.groupId}/members`, {
@@ -376,16 +344,6 @@ const groupReq = {
             return args;
         });
     },
-    getCachedGroupMembers(params) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.groupMembers(params),
-            policy: entityQueryPolicies.groupCollection,
-            queryFn: () => groupReq.getGroupMembers(params)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
-    },
     /**
      * @param {{
      * groupId: string,
@@ -393,7 +351,7 @@ const groupReq = {
      * n: number,
      * offset: number
      * }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     getGroupMembersSearch(params) {
         return request(`groups/${params.groupId}/members/search`, {
@@ -411,7 +369,7 @@ const groupReq = {
      * @param {{
      * groupId: string
      * }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     blockGroup(params) {
         return request(`groups/${params.groupId}/block`, {
@@ -430,7 +388,7 @@ const groupReq = {
      * groupId: string,
      * userId: string
      * }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     unblockGroup(params) {
         return request(`groups/${params.groupId}/members/${params.userId}`, {
@@ -449,7 +407,7 @@ const groupReq = {
      * groupId: string,
      * userId: string
      * }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     sendGroupInvite(params) {
         return request(`groups/${params.groupId}/invites`, {
@@ -470,7 +428,7 @@ const groupReq = {
      * groupId: string,
      * userId: string
      * }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     kickGroupMember(params) {
         return request(`groups/${params.groupId}/members/${params.userId}`, {
@@ -486,7 +444,7 @@ const groupReq = {
     },
     /**
      * @param {{ groupId: string, userId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     banGroupMember(params) {
         return request(`groups/${params.groupId}/bans`, {
@@ -517,7 +475,7 @@ const groupReq = {
     },
     /**
      * @param {{ groupId: string, userId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     deleteSentGroupInvite(params) {
         return request(`groups/${params.groupId}/invites/${params.userId}`, {
@@ -601,7 +559,7 @@ const groupReq = {
     },
     /**
      * @param {{ groupId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     getGroupAuditLogTypes(params) {
         return request(`groups/${params.groupId}/auditLogTypes`, {
@@ -615,8 +573,8 @@ const groupReq = {
         });
     },
     /**
-     * @param {{ groupId: string, n: number, offset: number, eventTypes?: array }} params
-     * @return { Promise<{json: any, params}> }
+     * @param {{groupId: string, n: number, offset: number, eventTypes?: Array}} params
+     * @returns { Promise<{json: any, params}> }
      */
     getGroupLogs(params) {
         return request(`groups/${params.groupId}/auditLogs`, {
@@ -632,7 +590,7 @@ const groupReq = {
     },
     /**
      * @param {{ groupId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     getGroupInvites(params) {
         return request(`groups/${params.groupId}/invites`, {
@@ -648,7 +606,7 @@ const groupReq = {
     },
     /**
      * @param {{ groupId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     getGroupJoinRequests(params) {
         return request(`groups/${params.groupId}/requests`, {
@@ -664,7 +622,7 @@ const groupReq = {
     },
     /**
      * @param {{ groupId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     getGroupInstances(params) {
         return request(
@@ -682,7 +640,7 @@ const groupReq = {
     },
     /**
      * @param {{ groupId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     getGroupRoles(params) {
         return request(`groups/${params.groupId}/roles`, {
@@ -715,7 +673,7 @@ const groupReq = {
      order: string,
      sortBy: string
      }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     groupSearch(params) {
         return request(`groups`, {
@@ -736,7 +694,7 @@ const groupReq = {
      n: number,
      offset: number
      }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     getGroupGallery(params) {
         return request(
@@ -756,16 +714,6 @@ const groupReq = {
             return args;
         });
     },
-    getCachedGroupGallery(params) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.groupGallery(params),
-            policy: entityQueryPolicies.groupCollection,
-            queryFn: () => groupReq.getGroupGallery(params)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
-    },
 
     getGroupCalendar(groupId) {
         return request(`calendar/${groupId}`, {
@@ -780,23 +728,13 @@ const groupReq = {
             return args;
         });
     },
-    getCachedGroupCalendar(groupId) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.groupCalendar(groupId),
-            policy: entityQueryPolicies.groupCollection,
-            queryFn: () => groupReq.getGroupCalendar(groupId)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
-    },
 
     /**
      * @param {{
      groupId: string,
      eventId: string
      }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     getGroupCalendarEvent(params) {
         return request(`calendar/${params.groupId}/${params.eventId}`, {
@@ -809,17 +747,6 @@ const groupReq = {
             return args;
         });
     },
-    getCachedGroupCalendarEvent(params) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.groupCalendarEvent(params),
-            policy: entityQueryPolicies.groupCollection,
-            queryFn: () => groupReq.getGroupCalendarEvent(params)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
-    },
-
     /**
      * @type {import('../types/api/group').GetCalendars}
      */

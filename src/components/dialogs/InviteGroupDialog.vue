@@ -98,7 +98,7 @@
 
     import { hasGroupPermission, userImage, userStatusClass } from '../../shared/utils';
     import { useFriendStore, useGroupStore, useModalStore } from '../../stores';
-    import { groupRequest, userRequest } from '../../api';
+    import { groupRequest, queryRequest } from '../../api';
     import { VirtualCombobox } from '../ui/virtual-combobox';
 
     import configRepository from '../../service/config';
@@ -224,8 +224,8 @@
                 inviteGroupDialog.value.groupName = '';
                 return;
             }
-            groupRequest
-                .getCachedGroup({ groupId })
+            queryRequest
+                .fetch('group', { groupId })
                 .then((args) => {
                     inviteGroupDialog.value.groupName = args.ref.name;
                 })
@@ -242,8 +242,8 @@
     function initDialog() {
         const D = inviteGroupDialog.value;
         if (D.groupId) {
-            groupRequest
-                .getCachedGroup({
+            queryRequest
+                .fetch('group', {
                     groupId: D.groupId
                 })
                 .then((args) => {
@@ -256,7 +256,7 @@
         }
 
         if (D.userId) {
-            userRequest.getCachedUser({ userId: D.userId }).then((args) => {
+            queryRequest.fetch('user', { userId: D.userId }).then((args) => {
                 D.userObject = args.ref;
                 D.userIds = [D.userId];
             });

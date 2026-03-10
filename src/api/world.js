@@ -1,11 +1,6 @@
+import { patchAndRefetchActiveQuery, queryKeys } from '../queries';
 import { request } from '../service/request';
 import { useWorldStore } from '../stores';
-import {
-    entityQueryPolicies,
-    fetchWithEntityPolicy,
-    patchAndRefetchActiveQuery,
-    queryKeys
-} from '../queries';
 
 const worldReq = {
     /**
@@ -23,21 +18,6 @@ const worldReq = {
             args.ref = worldStore.applyWorld(json);
             return args;
         });
-    },
-
-    /**
-     * @param {{worldId: string}} params
-     * @returns {Promise<{json: any, ref: any, cache?: boolean, params}>}
-     */
-    getCachedWorld(params) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.world(params.worldId),
-            policy: entityQueryPolicies.world,
-            queryFn: () => worldReq.getWorld(params)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
     },
 
     /**
@@ -63,24 +43,6 @@ const worldReq = {
             }
             return args;
         });
-    },
-    /**
-     * @param {object} params
-     * @param {string} [option]
-     * @returns {Promise<{json: any, cache?: boolean, params: any, option?: string}>}
-     */
-    getCachedWorlds(params, option) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.worldsByUser({
-                ...params,
-                option: option || ''
-            }),
-            policy: entityQueryPolicies.worldCollection,
-            queryFn: () => worldReq.getWorlds(params, option)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
     },
     /**
      * @param {{worldId: string}} params
@@ -116,7 +78,10 @@ const worldReq = {
                 queryKey: queryKeys.world(args.ref.id),
                 nextData: args
             }).catch((err) => {
-                console.error('Failed to refresh world query after mutation:', err);
+                console.error(
+                    'Failed to refresh world query after mutation:',
+                    err
+                );
             });
             return args;
         });
@@ -141,7 +106,10 @@ const worldReq = {
                 queryKey: queryKeys.world(args.ref.id),
                 nextData: args
             }).catch((err) => {
-                console.error('Failed to refresh world query after publish:', err);
+                console.error(
+                    'Failed to refresh world query after publish:',
+                    err
+                );
             });
             return args;
         });
@@ -166,7 +134,10 @@ const worldReq = {
                 queryKey: queryKeys.world(args.ref.id),
                 nextData: args
             }).catch((err) => {
-                console.error('Failed to refresh world query after unpublish:', err);
+                console.error(
+                    'Failed to refresh world query after unpublish:',
+                    err
+                );
             });
             return args;
         });

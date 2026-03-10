@@ -59,13 +59,6 @@ export function useWorldDialogCommands(
 
     /**
      *
-     */
-    function showChangeWorldImageDialog() {
-        document.getElementById('WorldImageUploadButton').click();
-    }
-
-    /**
-     *
      * @param e
      */
     function onFileChangeWorldImage(e) {
@@ -372,207 +365,240 @@ export function useWorldDialogCommands(
             .catch(() => {});
     }
 
+    // --- Command map ---
+    // Direct commands: function
+    // String commands: delegate to component callback
+    // Confirmed commands: { confirm: () => ({title, description, ...}), handler: fn }
+
+    function buildCommandMap() {
+        const D = () => worldDialog.value;
+
+        return {
+            // --- Direct commands ---
+            Refresh: () => {
+                const { tag, shortName } = D().$location;
+                showWorldDialog(tag, shortName, { forceRefresh: true });
+            },
+            Share: () => {
+                copyWorldUrl();
+            },
+            'Previous Instances': () => {
+                showPreviousInstancesListDialog(D().ref);
+            },
+            'New Instance': () => {
+                showNewInstanceDialog(D().$location.tag);
+            },
+            'New Instance and Self Invite': () => {
+                newInstanceSelfInvite(D().id);
+            },
+            'Add Favorite': () => {
+                showFavoriteDialog('world', D().id);
+            },
+            'Download Unity Package': () => {
+                openExternalLink(replaceVrcPackageUrl(D().ref.unityPackageUrl));
+            },
+            Rename: () => {
+                promptRenameWorld(D());
+            },
+            'Change Description': () => {
+                promptChangeWorldDescription(D());
+            },
+            'Change Capacity': () => {
+                promptChangeWorldCapacity(D());
+            },
+            'Change Recommended Capacity': () => {
+                promptChangeWorldRecommendedCapacity(D());
+            },
+            'Change YouTube Preview': () => {
+                promptChangeWorldYouTubePreview(D());
+            },
+
+            // --- Delegated to component ---
+            'Change Tags': 'showSetWorldTagsDialog',
+            'Change Allowed Domains': 'showWorldAllowedDomainsDialog',
+            'Change Image': 'showChangeWorldImageDialog',
+
+            // --- Confirmed commands ---
+            'Delete Favorite': {
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.world.actions.favorites_tooltip')
+                    })
+                }),
+                handler: (id) => {
+                    favoriteRequest.deleteFavorite({ objectId: id });
+                }
+            },
+            'Make Home': {
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.world.actions.make_home')
+                    })
+                }),
+                handler: (id) => {
+                    userRequest
+                        .saveCurrentUser({ homeLocation: id })
+                        .then((args) => {
+                            toast.success(t('message.world.home_updated'));
+                            return args;
+                        });
+                }
+            },
+            'Reset Home': {
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.world.actions.reset_home')
+                    })
+                }),
+                handler: () => {
+                    userRequest
+                        .saveCurrentUser({ homeLocation: '' })
+                        .then((args) => {
+                            toast.success(t('message.world.home_reset'));
+                            return args;
+                        });
+                }
+            },
+            Publish: {
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.world.actions.publish_to_labs')
+                    })
+                }),
+                handler: (id) => {
+                    worldRequest.publishWorld({ worldId: id }).then((args) => {
+                        toast.success(t('message.world.published'));
+                        return args;
+                    });
+                }
+            },
+            Unpublish: {
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.world.actions.unpublish')
+                    })
+                }),
+                handler: (id) => {
+                    worldRequest
+                        .unpublishWorld({ worldId: id })
+                        .then((args) => {
+                            toast.success(t('message.world.unpublished'));
+                            return args;
+                        });
+                }
+            },
+            'Delete Persistent Data': {
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t(
+                            'dialog.world.actions.delete_persistent_data'
+                        )
+                    })
+                }),
+                handler: (id) => {
+                    miscRequest
+                        .deleteWorldPersistData({ worldId: id })
+                        .then((args) => {
+                            if (
+                                args.params.worldId === worldDialog.value.id &&
+                                worldDialog.value.visible
+                            ) {
+                                worldDialog.value.hasPersistData = false;
+                            }
+                            toast.success(
+                                t('message.world.persistent_data_deleted')
+                            );
+                            return args;
+                        });
+                }
+            },
+            Delete: {
+                confirm: () => ({
+                    title: t('confirm.title'),
+                    description: t('confirm.command_question', {
+                        command: t('dialog.world.actions.delete')
+                    })
+                }),
+                handler: (id) => {
+                    worldRequest.deleteWorld({ worldId: id }).then((args) => {
+                        const { json } = args;
+                        cachedWorlds.delete(json.id);
+                        if (worldDialog.value.ref.authorId === json.authorId) {
+                            const map = new Map();
+                            for (const ref of cachedWorlds.values()) {
+                                if (ref.authorId === json.authorId) {
+                                    map.set(ref.id, ref);
+                                }
+                            }
+                            const array = Array.from(map.values());
+                            userDialog.value.worlds = array;
+                        }
+                        toast.success(t('message.world.deleted'));
+                        worldDialog.value.visible = false;
+                        return args;
+                    });
+                }
+            }
+        };
+    }
+
+    const commandMap = buildCommandMap();
+
+    // Callbacks for string-type commands (delegated to component)
+    let componentCallbacks = {};
+
     /**
-     *
-     * @param command
+     * Register component-level callbacks for string-type commands.
+     * @param {object} callbacks
+     */
+    function registerCallbacks(callbacks) {
+        componentCallbacks = callbacks;
+    }
+
+    /**
+     * Dispatch a world dialog command.
+     * @param {string} command
      */
     function worldDialogCommand(command) {
         const D = worldDialog.value;
         if (D.visible === false) {
             return;
         }
-        switch (command) {
-            case 'Delete Favorite':
-            case 'Make Home':
-            case 'Reset Home':
-            case 'Publish':
-            case 'Unpublish':
-            case 'Delete Persistent Data':
-            case 'Delete':
-                const commandLabelMap = {
-                    'Delete Favorite': t(
-                        'dialog.world.actions.favorites_tooltip'
-                    ),
-                    'Make Home': t('dialog.world.actions.make_home'),
-                    'Reset Home': t('dialog.world.actions.reset_home'),
-                    Publish: t('dialog.world.actions.publish_to_labs'),
-                    Unpublish: t('dialog.world.actions.unpublish'),
-                    'Delete Persistent Data': t(
-                        'dialog.world.actions.delete_persistent_data'
-                    ),
-                    Delete: t('dialog.world.actions.delete')
-                };
-                modalStore
-                    .confirm({
-                        description: t('confirm.command_question', {
-                            command: commandLabelMap[command] ?? command
-                        }),
-                        title: t('confirm.title')
-                    })
-                    .then(({ ok }) => {
-                        if (!ok) return;
-                        switch (command) {
-                            case 'Delete Favorite':
-                                favoriteRequest.deleteFavorite({
-                                    objectId: D.id
-                                });
-                                break;
-                            case 'Make Home':
-                                userRequest
-                                    .saveCurrentUser({
-                                        homeLocation: D.id
-                                    })
-                                    .then((args) => {
-                                        toast.success(
-                                            t('message.world.home_updated')
-                                        );
-                                        return args;
-                                    });
-                                break;
-                            case 'Reset Home':
-                                userRequest
-                                    .saveCurrentUser({
-                                        homeLocation: ''
-                                    })
-                                    .then((args) => {
-                                        toast.success(
-                                            t('message.world.home_reset')
-                                        );
-                                        return args;
-                                    });
-                                break;
-                            case 'Publish':
-                                worldRequest
-                                    .publishWorld({
-                                        worldId: D.id
-                                    })
-                                    .then((args) => {
-                                        toast.success(
-                                            t('message.world.published')
-                                        );
-                                        return args;
-                                    });
-                                break;
-                            case 'Unpublish':
-                                worldRequest
-                                    .unpublishWorld({
-                                        worldId: D.id
-                                    })
-                                    .then((args) => {
-                                        toast.success(
-                                            t('message.world.unpublished')
-                                        );
-                                        return args;
-                                    });
-                                break;
-                            case 'Delete Persistent Data':
-                                miscRequest
-                                    .deleteWorldPersistData({
-                                        worldId: D.id
-                                    })
-                                    .then((args) => {
-                                        if (
-                                            args.params.worldId ===
-                                                worldDialog.value.id &&
-                                            worldDialog.value.visible
-                                        ) {
-                                            worldDialog.value.hasPersistData = false;
-                                        }
-                                        toast.success(
-                                            t(
-                                                'message.world.persistent_data_deleted'
-                                            )
-                                        );
-                                        return args;
-                                    });
-                                break;
-                            case 'Delete':
-                                worldRequest
-                                    .deleteWorld({
-                                        worldId: D.id
-                                    })
-                                    .then((args) => {
-                                        const { json } = args;
-                                        cachedWorlds.delete(json.id);
-                                        if (
-                                            worldDialog.value.ref.authorId ===
-                                            json.authorId
-                                        ) {
-                                            const map = new Map();
-                                            for (const ref of cachedWorlds.values()) {
-                                                if (
-                                                    ref.authorId ===
-                                                    json.authorId
-                                                ) {
-                                                    map.set(ref.id, ref);
-                                                }
-                                            }
-                                            const array = Array.from(
-                                                map.values()
-                                            );
-                                            userDialog.value.worlds = array;
-                                        }
-                                        toast.success(
-                                            t('message.world.deleted')
-                                        );
-                                        D.visible = false;
-                                        return args;
-                                    });
-                                break;
-                        }
-                    })
-                    .catch(() => {});
-                break;
-            case 'Previous Instances':
-                showPreviousInstancesListDialog(D.ref);
-                break;
-            case 'Share':
-                copyWorldUrl();
-                break;
-            case 'Change Allowed Domains':
-                showWorldAllowedDomainsDialog();
-                break;
-            case 'Change Tags':
-                isSetWorldTagsDialogVisible.value = true;
-                break;
-            case 'Download Unity Package':
-                openExternalLink(
-                    replaceVrcPackageUrl(worldDialog.value.ref.unityPackageUrl)
-                );
-                break;
-            case 'Change Image':
-                showChangeWorldImageDialog();
-                break;
-            case 'Refresh':
-                const { tag, shortName } = worldDialog.value.$location;
-                showWorldDialog(tag, shortName, { forceRefresh: true });
-                break;
-            case 'New Instance':
-                showNewInstanceDialog(D.$location.tag);
-                break;
-            case 'Add Favorite':
-                showFavoriteDialog('world', D.id);
-                break;
-            case 'New Instance and Self Invite':
-                newInstanceSelfInvite(D.id);
-                break;
-            case 'Rename':
-                promptRenameWorld(D);
-                break;
-            case 'Change Description':
-                promptChangeWorldDescription(D);
-                break;
-            case 'Change Capacity':
-                promptChangeWorldCapacity(D);
-                break;
-            case 'Change Recommended Capacity':
-                promptChangeWorldRecommendedCapacity(D);
-                break;
-            case 'Change YouTube Preview':
-                promptChangeWorldYouTubePreview(D);
-                break;
-            default:
-                break;
+
+        const entry = commandMap[command];
+
+        if (!entry) {
+            return;
+        }
+
+        // String entry => delegate to component callback
+        if (typeof entry === 'string') {
+            const cb = componentCallbacks[entry];
+            if (cb) {
+                cb();
+            }
+            return;
+        }
+
+        // Direct function
+        if (typeof entry === 'function') {
+            entry();
+            return;
+        }
+
+        // Confirmed command
+        if (entry.confirm) {
+            modalStore.confirm(entry.confirm()).then(({ ok }) => {
+                if (ok) {
+                    entry.handler(D.id);
+                }
+            });
         }
     }
 
@@ -596,6 +622,7 @@ export function useWorldDialogCommands(
         promptChangeWorldDescription,
         promptChangeWorldCapacity,
         promptChangeWorldRecommendedCapacity,
-        promptChangeWorldYouTubePreview
+        promptChangeWorldYouTubePreview,
+        registerCallbacks
     };
 }

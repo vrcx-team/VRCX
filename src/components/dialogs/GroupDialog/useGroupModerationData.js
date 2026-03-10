@@ -1,12 +1,14 @@
 import { ref } from 'vue';
 import { toast } from 'vue-sonner';
+
 import { debounce } from '../../../shared/utils';
+import { queryRequest } from '../../../api';
+
 import * as workerTimers from 'worker-timers';
 
 /**
  * Composable for group moderation data fetching, member management,
  * searching, sorting and filtering.
- *
  * @param {object} deps
  * @param {import('vue').Ref} deps.groupMemberModeration - store ref
  * @param {import('vue').Ref} deps.currentUser - store ref
@@ -23,7 +25,6 @@ import * as workerTimers from 'worker-timers';
  * @param {object} deps.selection.selectedUsers
  * @param {Function} deps.selection.setSelectedUsers
  * @param {object} deps.groupRequest - API module
- * @param {object} deps.userRequest - API module
  */
 export function useGroupModerationData(deps) {
     const {
@@ -33,8 +34,7 @@ export function useGroupModerationData(deps) {
         handleGroupMember,
         tables,
         selection,
-        groupRequest,
-        userRequest
+        groupRequest
     } = deps;
 
     const isGroupMembersLoading = ref(false);
@@ -60,6 +60,9 @@ export function useGroupModerationData(deps) {
 
     // ── Members ──────────────────────────────────────────────────
 
+    /**
+     *
+     */
     async function getGroupMembers() {
         members.value = [];
         isGroupMembersDone.value = false;
@@ -94,6 +97,9 @@ export function useGroupModerationData(deps) {
         await loadMoreGroupMembers();
     }
 
+    /**
+     *
+     */
     async function loadMoreGroupMembers() {
         if (isGroupMembersDone.value || isGroupMembersLoading.value) {
             return;
@@ -119,7 +125,10 @@ export function useGroupModerationData(deps) {
                 for (let i = 0; i < args.json.length; i++) {
                     const member = args.json[i];
                     if (member.userId === currentUser.value.id) {
-                        if (members.value.length > 0 && members.value[0].userId === currentUser.value.id) {
+                        if (
+                            members.value.length > 0 &&
+                            members.value[0].userId === currentUser.value.id
+                        ) {
                             members.value.splice(0, 1);
                         }
                         break;
@@ -142,12 +151,18 @@ export function useGroupModerationData(deps) {
             });
     }
 
+    /**
+     *
+     */
     async function loadAllGroupMembers() {
         if (isGroupMembersLoading.value) {
             return;
         }
         await getGroupMembers();
-        while (groupMemberModeration.value.visible && !isGroupMembersDone.value) {
+        while (
+            groupMemberModeration.value.visible &&
+            !isGroupMembersDone.value
+        ) {
             isGroupMembersLoading.value = true;
             await new Promise((resolve) => {
                 workerTimers.setTimeout(resolve, 1000);
@@ -157,6 +172,10 @@ export function useGroupModerationData(deps) {
         }
     }
 
+    /**
+     *
+     * @param sortOrder
+     */
     async function setGroupMemberSortOrder(sortOrder) {
         if (memberSortOrder.value === sortOrder) {
             return;
@@ -165,6 +184,10 @@ export function useGroupModerationData(deps) {
         await getGroupMembers();
     }
 
+    /**
+     *
+     * @param filter
+     */
     async function setGroupMemberFilter(filter) {
         if (memberFilter.value === filter) {
             return;
@@ -173,6 +196,9 @@ export function useGroupModerationData(deps) {
         await getGroupMembers();
     }
 
+    /**
+     *
+     */
     function groupMembersSearch() {
         if (memberSearch.value.length < 3) {
             tables.members.data = [];
@@ -183,6 +209,9 @@ export function useGroupModerationData(deps) {
         debounce(groupMembersSearchDebounced, 200)();
     }
 
+    /**
+     *
+     */
     function groupMembersSearchDebounced() {
         const groupId = groupMemberModeration.value.id;
         const search = memberSearch.value;
@@ -208,7 +237,9 @@ export function useGroupModerationData(deps) {
                 if (groupId === args.params.groupId) {
                     tables.members.data = args.json.results.map((member) => ({
                         ...member,
-                        $selected: Boolean(selection.selectedUsers[member.userId])
+                        $selected: Boolean(
+                            selection.selectedUsers[member.userId]
+                        )
                     }));
                 }
             })
@@ -219,6 +250,10 @@ export function useGroupModerationData(deps) {
 
     // ── Bans ─────────────────────────────────────────────────────
 
+    /**
+     *
+     * @param groupId
+     */
     async function getAllGroupBans(groupId) {
         tables.bans.data = [];
         const params = { groupId, n: 100, offset: 0 };
@@ -229,7 +264,9 @@ export function useGroupModerationData(deps) {
             for (let i = 0; i < count; i++) {
                 const args = await groupRequest.getGroupBans(params);
                 if (args && args.json) {
-                    if (groupMemberModeration.value.id !== args.params.groupId) {
+                    if (
+                        groupMemberModeration.value.id !== args.params.groupId
+                    ) {
                         continue;
                     }
                     args.json.forEach((json) => {
@@ -257,6 +294,10 @@ export function useGroupModerationData(deps) {
 
     // ── Invites / Join Requests / Blocked ────────────────────────
 
+    /**
+     *
+     * @param groupId
+     */
     async function getAllGroupInvites(groupId) {
         tables.invites.data = [];
         const params = { groupId, n: 100, offset: 0 };
@@ -267,7 +308,9 @@ export function useGroupModerationData(deps) {
             for (let i = 0; i < count; i++) {
                 const args = await groupRequest.getGroupInvites(params);
                 if (args) {
-                    if (groupMemberModeration.value.id !== args.params.groupId) {
+                    if (
+                        groupMemberModeration.value.id !== args.params.groupId
+                    ) {
                         return;
                     }
                     for (const json of args.json) {
@@ -291,6 +334,10 @@ export function useGroupModerationData(deps) {
         }
     }
 
+    /**
+     *
+     * @param groupId
+     */
     async function getAllGroupJoinRequests(groupId) {
         tables.joinRequests.data = [];
         const params = { groupId, n: 100, offset: 0, blocked: false };
@@ -323,6 +370,10 @@ export function useGroupModerationData(deps) {
         }
     }
 
+    /**
+     *
+     * @param groupId
+     */
     async function getAllGroupBlockedRequests(groupId) {
         tables.blocked.data = [];
         const params = { groupId, n: 100, offset: 0, blocked: true };
@@ -355,6 +406,10 @@ export function useGroupModerationData(deps) {
         }
     }
 
+    /**
+     *
+     * @param groupId
+     */
     async function getAllGroupInvitesAndJoinRequests(groupId) {
         try {
             await Promise.all([
@@ -369,6 +424,11 @@ export function useGroupModerationData(deps) {
 
     // ── Logs ─────────────────────────────────────────────────────
 
+    /**
+     *
+     * @param groupId
+     * @param eventTypes
+     */
     async function getAllGroupLogs(groupId, eventTypes = []) {
         tables.logs.data = [];
         const params = { groupId, n: 100, offset: 0 };
@@ -382,11 +442,15 @@ export function useGroupModerationData(deps) {
             for (let i = 0; i < count; i++) {
                 const args = await groupRequest.getGroupLogs(params);
                 if (args) {
-                    if (groupMemberModeration.value.id !== args.params.groupId) {
+                    if (
+                        groupMemberModeration.value.id !== args.params.groupId
+                    ) {
                         continue;
                     }
                     for (const json of args.json.results) {
-                        const existsInData = newData.some((dataItem) => dataItem.id === json.id);
+                        const existsInData = newData.some(
+                            (dataItem) => dataItem.id === json.id
+                        );
                         if (!existsInData) {
                             newData.push(json);
                         }
@@ -410,10 +474,17 @@ export function useGroupModerationData(deps) {
 
     // ── User Selection ───────────────────────────────────────────
 
+    /**
+     *
+     * @param userId
+     */
     async function addGroupMemberToSelection(userId) {
         const D = groupMemberModeration.value;
         let member = {};
-        const memberArgs = await groupRequest.getGroupMember({ groupId: D.id, userId });
+        const memberArgs = await groupRequest.getGroupMember({
+            groupId: D.id,
+            userId
+        });
         if (memberArgs && memberArgs.json) {
             member = applyGroupMember(memberArgs.json);
         }
@@ -421,16 +492,21 @@ export function useGroupModerationData(deps) {
             selection.setSelectedUsers(member.userId, member);
             return;
         }
-        const userArgs = await userRequest.getCachedUser({ userId });
+        const userArgs = await queryRequest.fetch('user', { userId });
         member.userId = userArgs.json.id;
         member.user = userArgs.json;
         member.displayName = userArgs.json.displayName;
         selection.setSelectedUsers(member.userId, member);
     }
 
+    /**
+     *
+     * @param userIdInput
+     */
     async function selectGroupMemberUserId(userIdInput) {
         if (!userIdInput) return;
-        const regexUserId = /usr_[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}/g;
+        const regexUserId =
+            /usr_[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}/g;
         let match;
         const userIdList = new Set();
         while ((match = regexUserId.exec(userIdInput)) !== null) {
@@ -448,6 +524,9 @@ export function useGroupModerationData(deps) {
 
     // ── Reset ────────────────────────────────────────────────────
 
+    /**
+     *
+     */
     function resetData() {
         tables.members.data = [];
         tables.bans.data = [];

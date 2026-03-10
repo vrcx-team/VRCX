@@ -1,12 +1,10 @@
+import { queryClient, queryKeys } from '../queries';
 import { request } from '../service/request';
 import { useUserStore } from '../stores';
-import {
-    entityQueryPolicies,
-    fetchWithEntityPolicy,
-    queryClient,
-    queryKeys
-} from '../queries';
 
+/**
+ *
+ */
 function getCurrentUserId() {
     return useUserStore().currentUser.id;
 }
@@ -22,17 +20,6 @@ const miscReq = {
             };
             return args;
         });
-    },
-
-    getCachedFile(params) {
-        return fetchWithEntityPolicy({
-            queryKey: queryKeys.file(params.fileId),
-            policy: entityQueryPolicies.fileObject,
-            queryFn: () => miscReq.getFile(params)
-        }).then(({ data, cache }) => ({
-            ...data,
-            cache
-        }));
     },
 
     saveNote(params) {
@@ -55,7 +42,7 @@ const miscReq = {
      *       reason: string,
      *       type: string
      * }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     reportUser(params) {
         return request(`feedback/${params.userId}/user`, {
@@ -80,7 +67,7 @@ const miscReq = {
      *       version: number,
      *       variant: string
      * }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     getFileAnalysis(params) {
         return request(
@@ -218,6 +205,7 @@ const miscReq = {
     },
 
     /**
+     * @param params
      * @params {{
         userId: string,
         emojiId: string
