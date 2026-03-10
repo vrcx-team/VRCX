@@ -103,29 +103,30 @@ export default defineConfig([
     jsdoc({
         config: 'flat/recommended',
         rules: {
+            'jsdoc/require-jsdoc': 'off',
             'jsdoc/require-param-description': 'off',
             'jsdoc/require-returns-description': 'off',
             'jsdoc/reject-function-type': 'off'
         }
     }),
-    {
-        ignores: [
-            '**/__tests__/**',
-            '**/*.spec.{js,mjs,cjs,vue}',
-            '**/*.test.{js,mjs,cjs,vue}'
-        ],
-        plugins: { 'pretty-import': prettyImport },
-        rules: {
-            'pretty-import/separate-type-imports': 'warn',
-            'pretty-import/sort-import-groups': [
-                'warn',
-                {
-                    groupStyleImports: true
-                }
-            ],
-            'pretty-import/sort-import-names': 'warn'
-        }
-    },
+    // {
+    //     ignores: [
+    //         '**/__tests__/**',
+    //         '**/*.spec.{js,mjs,cjs,vue}',
+    //         '**/*.test.{js,mjs,cjs,vue}'
+    //     ],
+    //     plugins: { 'pretty-import': prettyImport },
+    //     rules: {
+    //         'pretty-import/separate-type-imports': 'warn',
+    //         'pretty-import/sort-import-groups': [
+    //             'warn',
+    //             {
+    //                 groupStyleImports: true
+    //             }
+    //         ],
+    //         'pretty-import/sort-import-names': 'warn'
+    //     }
+    // },
     {
         ...eslintPluginPrettierRecommended,
         ignores: [
