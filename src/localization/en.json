@@ -12,7 +12,8 @@
             "open": "Open",
             "confirm": "Confirm",
             "clear": "Clear",
-            "reset": "Reset"
+            "reset": "Reset",
+            "view_details": "View Details"
         },
         "time_units": {
             "y": "y",

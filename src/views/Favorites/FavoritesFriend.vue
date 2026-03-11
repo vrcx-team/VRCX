@@ -246,8 +246,7 @@
                                                 :group="activeRemoteGroup"
                                                 :selected="selectedFavoriteFriends.includes(favorite.id)"
                                                 :edit-mode="friendEditMode"
-                                                @toggle-select="toggleFriendSelection(favorite.id, $event)"
-                                                @click="showUserDialog(favorite.id)" />
+                                                @toggle-select="toggleFriendSelection(favorite.id, $event)" />
                                         </div>
                                     </template>
                                     <div v-else class="flex items-center justify-center text-[13px] h-full">
@@ -268,8 +267,7 @@
                                                 :group="{ key: activeLocalGroupName, type: 'local' }"
                                                 :selected="selectedFavoriteFriends.includes(favorite.id)"
                                                 :edit-mode="friendEditMode"
-                                                @toggle-select="toggleFriendSelection(favorite.id, $event)"
-                                                @click="showUserDialog(favorite.id)" />
+                                                @toggle-select="toggleFriendSelection(favorite.id, $event)" />
                                         </div>
                                     </template>
                                     <div v-else class="flex items-center justify-center text-[13px] h-full">

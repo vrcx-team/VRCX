@@ -1,101 +1,162 @@
 <template>
-    <div :class="cardClasses" @click="$emit('click')">
-        <template v-if="favorite.ref">
-            <div class="favorites-search-card__content">
-                <div class="favorites-search-card__avatar">
-                    <img :src="userImage(favorite.ref, true)" loading="lazy" />
-                </div>
-                <div class="favorites-search-card__detail">
-                    <div class="flex items-center gap-2">
-                        <span class="name text-sm" :style="displayNameStyle">{{ favorite.ref.displayName }}</span>
-                    </div>
-                    <div v-if="favorite.ref.location !== 'offline'" class="text-xs truncate">
-                        <Location
-                            :location="favorite.ref.location"
-                            :traveling="favorite.ref.travelingToLocation"
-                            :link="false" />
-                    </div>
-                    <span v-else class="text-xs text-muted-foreground">{{ favorite.ref.statusDescription }}</span>
-                </div>
-            </div>
-            <div class="favorites-search-card__actions">
-                <template v-if="editMode">
-                    <div class="flex justify-end w-full favorites-search-card__action--checkbox" @click.stop>
+    <template v-if="favorite.ref">
+        <ContextMenu>
+            <ContextMenuTrigger as-child>
+                <Item variant="outline" class="cursor-pointer" :style="itemStyle" @click="handleOpenProfile">
+                    <ItemMedia variant="image">
+                        <Avatar>
+                            <AvatarImage :src="userImage(favorite.ref, true)" loading="lazy" />
+                            <AvatarFallback>{{ avatarFallback }}</AvatarFallback>
+                        </Avatar>
+                    </ItemMedia>
+                    <ItemContent class="min-w-0">
+                        <ItemTitle class="truncate max-w-full" :style="displayNameStyle">{{ displayName }}</ItemTitle>
+                        <ItemDescription class="truncate line-clamp-1">
+                            <template v-if="favorite.ref.location !== 'offline'">
+                                <Location
+                                    :location="favorite.ref.location"
+                                    :traveling="favorite.ref.travelingToLocation"
+                                    :link="false" />
+                            </template>
+                            <template v-else>
+                                {{ favorite.ref.statusDescription }}
+                            </template>
+                        </ItemDescription>
+                    </ItemContent>
+                    <ItemActions v-if="editMode" @click.stop>
                         <Checkbox v-model="isSelected" />
-                    </div>
-                    <div class="flex gap-[var(--favorites-card-action-group-gap,8px)] w-full">
-                        <div v-if="group?.type !== 'local'" class="flex justify-end w-full flex-1" @click.stop>
-                            <FavoritesMoveDropdown
-                                :favoriteGroup="favoriteFriendGroups"
-                                :currentGroup="group"
-                                :currentFavorite="favorite"
-                                class="w-full"
-                                type="friend" />
-                        </div>
-                        <div class="flex justify-end w-full">
-                            <TooltipWrapper side="left" :content="t('view.favorite.unfavorite_tooltip')">
-                                <Button
-                                    size="icon-sm"
-                                    variant="ghost"
-                                    class="rounded-full text-xs h-6 w-6"
-                                    @click.stop="handleDeleteFavorite">
-                                    <Trash2 class="h-4 w-4" />
-                                </Button>
-                            </TooltipWrapper>
-                        </div>
-                    </div>
-                </template>
-                <template v-else>
-                    <div class="flex justify-end w-full">
-                        <TooltipWrapper side="right" :content="t('view.favorite.edit_favorite_tooltip')">
-                            <Button
-                                size="icon-sm"
-                                variant="ghost"
-                                class="rounded-full text-xs h-6 w-6"
-                                @click.stop="showFavoriteDialog('friend', favorite.id)"
-                                ><Star class="h-4 w-4"
-                            /></Button>
-                        </TooltipWrapper>
-                    </div>
-                </template>
-            </div>
-        </template>
-        <template v-else>
-            <div class="favorites-search-card__content">
-                <div class="favorites-search-card__avatar is-empty"></div>
-                <div class="favorites-search-card__detail">
-                    <span>{{ favorite.name || favorite.id }}</span>
-                </div>
-            </div>
-            <div class="favorites-search-card__actions">
-                <div class="flex justify-end w-full">
-                    <Button
-                        class="rounded-full text-xs h-6 w-6"
-                        size="icon-sm"
-                        variant="outline"
-                        @click.stop="handleDeleteFavorite">
-                        <Trash2 class="h-4 w-4" />
-                    </Button>
-                </div>
-            </div>
-        </template>
-    </div>
+                    </ItemActions>
+                    <DropdownMenu v-else>
+                        <DropdownMenuTrigger as-child>
+                            <Button size="icon-sm" variant="ghost" class="rounded-full" @click.stop>
+                                <MoreHorizontal class="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem @click="handleOpenProfile">
+                                {{ t('common.actions.view_details') }}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem v-if="favorite.ref.state === 'online'" @click="friendRequestInvite">
+                                {{ t('dialog.user.actions.request_invite') }}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem v-if="isGameRunning" :disabled="!canInviteToMyLocation" @click="friendInvite">
+                                {{ t('dialog.user.actions.invite') }}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem :disabled="!currentUser?.isBoopingEnabled" @click="friendSendBoop">
+                                {{ t('dialog.user.actions.send_boop') }}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator v-if="favorite.ref.state === 'online' && hasFriendLocation" />
+                            <DropdownMenuItem
+                                v-if="favorite.ref.state === 'online' && hasFriendLocation"
+                                :disabled="!canJoinFriend"
+                                @click="friendJoin">
+                                {{ t('dialog.user.info.launch_invite_tooltip') }}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                v-if="favorite.ref.state === 'online' && hasFriendLocation"
+                                :disabled="!canJoinFriend"
+                                @click="friendInviteSelf">
+                                {{ t('dialog.user.info.self_invite_tooltip') }}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem @click="showFavoriteDialog('friend', favorite.id)">
+                                {{ t('view.favorite.edit_favorite_tooltip') }}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem variant="destructive" @click="handleDeleteFavorite">
+                                {{ deleteMenuLabel }}
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </Item>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+                <ContextMenuItem @click="handleOpenProfile">{{ t('common.actions.view_details') }}</ContextMenuItem>
+                <ContextMenuItem v-if="favorite.ref.state === 'online'" @click="friendRequestInvite">
+                    {{ t('dialog.user.actions.request_invite') }}
+                </ContextMenuItem>
+                <ContextMenuItem v-if="isGameRunning" :disabled="!canInviteToMyLocation" @click="friendInvite">
+                    {{ t('dialog.user.actions.invite') }}
+                </ContextMenuItem>
+                <ContextMenuItem :disabled="!currentUser?.isBoopingEnabled" @click="friendSendBoop">
+                    {{ t('dialog.user.actions.send_boop') }}
+                </ContextMenuItem>
+                <ContextMenuSeparator v-if="favorite.ref.state === 'online' && hasFriendLocation" />
+                <ContextMenuItem
+                    v-if="favorite.ref.state === 'online' && hasFriendLocation"
+                    :disabled="!canJoinFriend"
+                    @click="friendJoin">
+                    {{ t('dialog.user.info.launch_invite_tooltip') }}
+                </ContextMenuItem>
+                <ContextMenuItem
+                    v-if="favorite.ref.state === 'online' && hasFriendLocation"
+                    :disabled="!canJoinFriend"
+                    @click="friendInviteSelf">
+                    {{ t('dialog.user.info.self_invite_tooltip') }}
+                </ContextMenuItem>
+                <ContextMenuSeparator />
+                <ContextMenuItem @click="showFavoriteDialog('friend', favorite.id)">
+                    {{ t('view.favorite.edit_favorite_tooltip') }}
+                </ContextMenuItem>
+                <ContextMenuItem variant="destructive" @click="handleDeleteFavorite">
+                    {{ deleteMenuLabel }}
+                </ContextMenuItem>
+            </ContextMenuContent>
+        </ContextMenu>
+    </template>
+    <template v-else>
+        <Item variant="outline" :style="itemStyle">
+            <ItemMedia variant="image">
+                <Avatar>
+                    <AvatarFallback>{{ avatarFallback }}</AvatarFallback>
+                </Avatar>
+            </ItemMedia>
+            <ItemContent class="min-w-0">
+                <ItemTitle class="truncate max-w-full">{{ favorite.name || favorite.id }}</ItemTitle>
+                <ItemDescription class="truncate line-clamp-1">{{ favorite.id }}</ItemDescription>
+            </ItemContent>
+            <ItemActions>
+                <Button class="rounded-full h-6 w-6" size="icon-sm" variant="outline" @click.stop="handleDeleteFavorite">
+                    <Trash2 class="h-4 w-4" />
+                </Button>
+            </ItemActions>
+        </Item>
+    </template>
 </template>
 
 <script setup>
-    import { Star, Trash2 } from 'lucide-vue-next';
+    import { MoreHorizontal, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
+    import {
+        ContextMenu,
+        ContextMenuContent,
+        ContextMenuItem,
+        ContextMenuSeparator,
+        ContextMenuTrigger
+    } from '@/components/ui/context-menu';
+    import {
+        DropdownMenu,
+        DropdownMenuContent,
+        DropdownMenuItem,
+        DropdownMenuSeparator,
+        DropdownMenuTrigger
+    } from '@/components/ui/dropdown-menu';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+    import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import { favoriteRequest } from '../../../api';
+    import { favoriteRequest, instanceRequest, notificationRequest, queryRequest } from '../../../api';
+    import { useInviteChecks } from '../../../composables/useInviteChecks';
     import { removeLocalFriendFavorite } from '../../../coordinators/favoriteCoordinator';
-    import { useFavoriteStore } from '../../../stores';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { parseLocation, isRealInstance } from '../../../shared/utils';
+    import { useFavoriteStore, useGameStore, useLocationStore, useLaunchStore, useUserStore } from '../../../stores';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
 
-    import FavoritesMoveDropdown from './FavoritesMoveDropdown.vue';
+    import Location from '../../../components/Location.vue';
 
     const { userImage } = useUserDisplay();
     const props = defineProps({
@@ -105,25 +166,25 @@
         selected: { type: Boolean, default: false }
     });
 
-    const emit = defineEmits(['click', 'toggle-select']);
+    const emit = defineEmits(['toggle-select']);
 
-    const { favoriteFriendGroups } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog } = useFavoriteStore();
+    const launchStore = useLaunchStore();
     const { t } = useI18n();
+    const { showSendBoopDialog } = useUserStore();
+    const { checkCanInvite, checkCanInviteSelf } = useInviteChecks();
+    const { currentUser } = storeToRefs(useUserStore());
+    const { isGameRunning } = storeToRefs(useGameStore());
+    const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
 
     const isSelected = computed({
         get: () => props.selected,
         set: (value) => emit('toggle-select', value)
     });
 
-    const cardClasses = computed(() => [
-        'favorites-search-card',
-        'favorites-search-card--friend',
-        {
-            'is-selected': props.selected,
-            'is-edit-mode': props.editMode
-        }
-    ]);
+    const displayName = computed(() => props.favorite?.ref?.displayName || props.favorite?.name || props.favorite?.id);
+
+    const avatarFallback = computed(() => displayName.value?.charAt(0)?.toUpperCase() || '?');
 
     const displayNameStyle = computed(() => {
         if (props.favorite?.ref?.$userColour) {
@@ -133,6 +194,94 @@
         }
         return {};
     });
+
+    const itemStyle = computed(() => ({
+        padding: 'var(--favorites-card-padding-y, 8px) var(--favorites-card-padding-x, 10px)',
+        gap: 'var(--favorites-card-content-gap, 10px)',
+        minWidth: 'var(--favorites-card-min-width, 220px)',
+        maxWidth: 'var(--favorites-card-target-width, 220px)',
+        width: '100%',
+        fontSize: 'calc(0.875rem * var(--favorites-card-scale, 1))'
+    }));
+
+    const deleteMenuLabel = computed(() =>
+        props.group?.type === 'local' ? t('view.favorite.delete_tooltip') : t('view.favorite.unfavorite_tooltip')
+    );
+
+    const canInviteToMyLocation = computed(() => checkCanInvite(lastLocation.value.location));
+
+    const hasFriendLocation = computed(() => {
+        const loc = props.favorite?.ref?.location;
+        return !!loc && isRealInstance(loc);
+    });
+
+    const canJoinFriend = computed(() => {
+        const loc = props.favorite?.ref?.location;
+        if (!loc || !isRealInstance(loc)) {
+            return false;
+        }
+        return checkCanInviteSelf(loc);
+    });
+
+    function handleOpenProfile() {
+        showUserDialog(props.favorite.id);
+    }
+
+    function friendRequestInvite() {
+        notificationRequest.sendRequestInvite({ platform: 'standalonewindows' }, props.favorite.id).then(() => {
+            toast.success('Request invite sent');
+        });
+    }
+
+    function friendInvite() {
+        let currentLocation = lastLocation.value.location;
+        if (currentLocation === 'traveling') {
+            currentLocation = lastLocationDestination.value;
+        }
+        const location = parseLocation(currentLocation);
+        queryRequest.fetch('world.location', { worldId: location.worldId }).then((args) => {
+            notificationRequest
+                .sendInvite(
+                    {
+                        instanceId: location.tag,
+                        worldId: location.tag,
+                        worldName: args.ref.name
+                    },
+                    props.favorite.id
+                )
+                .then(() => {
+                    toast.success(t('message.invite.sent'));
+                });
+        });
+    }
+
+    function friendSendBoop() {
+        showSendBoopDialog(props.favorite.id);
+    }
+
+    function friendJoin() {
+        const loc = props.favorite?.ref?.location;
+        if (!loc) {
+            return;
+        }
+        launchStore.showLaunchDialog(loc);
+    }
+
+    function friendInviteSelf() {
+        const loc = props.favorite?.ref?.location;
+        if (!loc) {
+            return;
+        }
+        const location = parseLocation(loc);
+        instanceRequest
+            .selfInvite({
+                instanceId: location.instanceId,
+                worldId: location.worldId
+            })
+            .then(() => {
+                toast.success(t('message.invite.self_sent'));
+            });
+    }
 
     /**
      * @returns {void}
@@ -148,6 +297,3 @@
     }
 </script>
 
-<style>
-    @import './favorites-card.css';
-</style>
