@@ -10,10 +10,15 @@ const showRegistryBackupDialog = vi.fn();
 const getString = vi.fn();
 const setString = vi.fn();
 const friends = ref([]);
+let routeName = 'not-tools';
 
 vi.mock('vue-router', () => ({
     useRouter: () => ({ push }),
-    useRoute: () => ({ name: 'not-tools' })
+    useRoute: () => ({
+        get name() {
+            return routeName;
+        }
+    })
 }));
 
 vi.mock('vue-i18n', () => ({
@@ -58,9 +63,22 @@ vi.mock('../dialogs/AutoChangeStatusDialog.vue', () => ({
 
 import Tools from '../Tools.vue';
 
+function findToolItemByTitle(wrapper, titleKey) {
+    return wrapper
+        .findAllComponents({ name: 'ToolItem' })
+        .find((component) => component.text().includes(titleKey));
+}
+
+function findCategoryHeaderByTitle(wrapper, titleKey) {
+    return wrapper
+        .findAll('div.cursor-pointer')
+        .find((node) => node.text().includes(titleKey));
+}
+
 describe('Tools.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        routeName = 'not-tools';
         getString.mockResolvedValue('{}');
     });
 
@@ -68,7 +86,12 @@ describe('Tools.vue', () => {
         const wrapper = mount(Tools);
         await flushPromises();
 
-        const screenshotItem = wrapper.findAllComponents({ name: 'ToolItem' })[0];
+        const screenshotItem = findToolItemByTitle(
+            wrapper,
+            'view.tools.pictures.screenshot'
+        );
+
+        expect(screenshotItem).toBeTruthy();
         await screenshotItem.trigger('click');
 
         expect(push).toHaveBeenCalledWith({ name: 'screenshot-metadata' });
@@ -78,7 +101,12 @@ describe('Tools.vue', () => {
         const wrapper = mount(Tools);
         await flushPromises();
 
-        const inventoryItem = wrapper.findAllComponents({ name: 'ToolItem' })[1];
+        const inventoryItem = findToolItemByTitle(
+            wrapper,
+            'view.tools.pictures.inventory'
+        );
+
+        expect(inventoryItem).toBeTruthy();
         await inventoryItem.trigger('click');
 
         expect(showGalleryPage).toHaveBeenCalled();
@@ -88,12 +116,37 @@ describe('Tools.vue', () => {
         const wrapper = mount(Tools);
         await flushPromises();
 
-        const firstCategoryHeader = wrapper.find('.category-header');
-        await firstCategoryHeader.trigger('click');
+        const imageCategoryHeader = findCategoryHeaderByTitle(
+            wrapper,
+            'view.tools.pictures.header'
+        );
+
+        expect(imageCategoryHeader).toBeTruthy();
+        await imageCategoryHeader.trigger('click');
 
         expect(setString).toHaveBeenCalledWith(
             'VRCX_toolsCategoryCollapsed',
-            expect.any(String)
+            expect.stringContaining('"image":true')
+        );
+    });
+
+    test('loads stored collapsed state before toggling category', async () => {
+        getString.mockResolvedValue('{"image":true}');
+
+        const wrapper = mount(Tools);
+        await flushPromises();
+
+        const imageCategoryHeader = findCategoryHeaderByTitle(
+            wrapper,
+            'view.tools.pictures.header'
+        );
+
+        expect(imageCategoryHeader).toBeTruthy();
+        await imageCategoryHeader.trigger('click');
+
+        expect(setString).toHaveBeenCalledWith(
+            'VRCX_toolsCategoryCollapsed',
+            expect.stringContaining('"image":false')
         );
     });
 });

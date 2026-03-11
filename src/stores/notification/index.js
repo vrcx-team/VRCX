@@ -437,7 +437,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     const seeQueue = [];
     const seenIds = new Set();
     let seeProcessing = false;
-    const SEE_CONCURRENCY = 2;
 
     /**
      *
@@ -445,48 +444,43 @@ export const useNotificationStore = defineStore('Notification', () => {
     async function processSeeQueue() {
         if (seeProcessing) return;
         seeProcessing = true;
-        const worker = async () => {
-            let item;
-            while ((item = seeQueue.shift())) {
-                const { id, version } = item;
-                try {
-                    await executeWithBackoff(
-                        async () => {
-                            if (version >= 2) {
-                                const args =
-                                    await notificationRequest.seeNotificationV2(
-                                        { notificationId: id }
-                                    );
-                                handleNotificationV2Update({
-                                    params: { notificationId: id },
-                                    json: { ...args.json, seen: true }
-                                });
-                            } else {
-                                await notificationRequest.seeNotification({
+        let item;
+        while ((item = seeQueue.shift())) {
+            const { id, version } = item;
+            try {
+                await executeWithBackoff(
+                    async () => {
+                        if (version >= 2) {
+                            const args =
+                                await notificationRequest.seeNotificationV2({
                                     notificationId: id
                                 });
-                                handleNotificationSee(id);
-                            }
-                        },
-                        {
-                            maxRetries: 3,
-                            baseDelay: 1000,
-                            shouldRetry: (err) =>
-                                err?.status === 429 ||
-                                (err?.message || '').includes('429')
+                            handleNotificationV2Update({
+                                params: { notificationId: id },
+                                json: { ...args.json, seen: true }
+                            });
+                        } else {
+                            await notificationRequest.seeNotification({
+                                notificationId: id
+                            });
+                            handleNotificationSee(id);
                         }
-                    );
-                } catch (err) {
-                    console.warn('Failed to mark notification as seen:', id);
-                    if (version >= 2) {
-                        handleNotificationV2Hide(id);
+                    },
+                    {
+                        maxRetries: 3,
+                        baseDelay: 1000,
+                        shouldRetry: (err) =>
+                            err?.status === 429 ||
+                            (err?.message || '').includes('429')
                     }
+                );
+            } catch (err) {
+                console.warn('Failed to mark notification as seen:', id);
+                if (version >= 2) {
+                    handleNotificationV2Hide(id);
                 }
             }
-        };
-        await Promise.all(
-            Array.from({ length: SEE_CONCURRENCY }, () => worker())
-        );
+        }
         seeProcessing = false;
     }
 

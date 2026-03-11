@@ -781,7 +781,7 @@
      * @param row
      */
     function handleRowClick(row) {
-        handleWearAvatar(row.original.id);
+        handleShowAvatarDialog(row.original.id);
     }
 
     /**

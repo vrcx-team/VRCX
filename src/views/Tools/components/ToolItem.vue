@@ -10,8 +10,8 @@
 
 <template>
     <Item variant="outline" class="cursor-pointer hover:bg-accent/50">
-        <ItemMedia variant="icon">
-            <component :is="icon" />
+        <ItemMedia variant="icon" class="bg-transparent border-0">
+            <component :is="icon" class="text-2xl" />
         </ItemMedia>
         <ItemContent>
             <ItemTitle>{{ title }}</ItemTitle>

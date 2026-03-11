@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { defineComponent, markRaw } from 'vue';
 import { mount } from '@vue/test-utils';
 
@@ -21,5 +21,24 @@ describe('ToolItem.vue', () => {
         expect(wrapper.find('[data-test="mock-icon"]').exists()).toBe(true);
         expect(wrapper.text()).toContain('Test title');
         expect(wrapper.text()).toContain('Test description');
+    });
+
+    test('forwards click handler from parent', async () => {
+        const onClick = vi.fn();
+
+        const wrapper = mount(ToolItem, {
+            props: {
+                icon: markRaw(defineComponent({ template: '<svg />' })),
+                title: 'Clickable title',
+                description: 'Clickable description'
+            },
+            attrs: {
+                onClick
+            }
+        });
+
+        await wrapper.trigger('click');
+
+        expect(onClick).toHaveBeenCalledTimes(1);
     });
 });

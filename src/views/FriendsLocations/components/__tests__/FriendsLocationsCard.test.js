@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { createI18n } from 'vue-i18n';
 import { createTestingPinia } from '@pinia/testing';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { ref } from 'vue';
 
 import FriendsLocationsCard from '../FriendsLocationsCard.vue';
@@ -94,12 +94,56 @@ const {
     mockSendRequestInvite,
     mockSendInvite,
     mockSelfInvite,
-    mockQueryFetch
+    mockQueryFetch,
+    mockShowUserDialog,
+    mockCheckCanInvite,
+    mockCheckCanInviteSelf,
+    mockUserStatusClass,
+    mockUserImage,
+    mockToastSuccess,
+    mockToastError,
+    mockToastDismiss
 } = vi.hoisted(() => ({
     mockSendRequestInvite: vi.fn().mockResolvedValue({}),
     mockSendInvite: vi.fn().mockResolvedValue({}),
     mockSelfInvite: vi.fn().mockResolvedValue({}),
-    mockQueryFetch: vi.fn().mockResolvedValue({ ref: { name: 'Test World' } })
+    mockQueryFetch: vi.fn().mockResolvedValue({ ref: { name: 'Test World' } }),
+    mockShowUserDialog: vi.fn(),
+    mockCheckCanInvite: vi.fn().mockReturnValue(true),
+    mockCheckCanInviteSelf: vi.fn().mockReturnValue(true),
+    mockUserStatusClass: vi
+        .fn()
+        .mockReturnValue({ online: true, joinme: false, active: false }),
+    mockUserImage: vi.fn().mockReturnValue('https://example.com/avatar.png'),
+    mockToastSuccess: vi.fn(),
+    mockToastError: vi.fn(),
+    mockToastDismiss: vi.fn()
+}));
+
+vi.mock('vue-sonner', () => ({
+    toast: {
+        success: (...args) => mockToastSuccess(...args),
+        error: (...args) => mockToastError(...args),
+        dismiss: (...args) => mockToastDismiss(...args)
+    }
+}));
+
+vi.mock('../../../../coordinators/userCoordinator', () => ({
+    showUserDialog: (...args) => mockShowUserDialog(...args)
+}));
+
+vi.mock('../../../../composables/useInviteChecks', () => ({
+    useInviteChecks: () => ({
+        checkCanInvite: (...args) => mockCheckCanInvite(...args),
+        checkCanInviteSelf: (...args) => mockCheckCanInviteSelf(...args)
+    })
+}));
+
+vi.mock('../../../../composables/useUserDisplay', () => ({
+    useUserDisplay: () => ({
+        userImage: (...args) => mockUserImage(...args),
+        userStatusClass: (...args) => mockUserStatusClass(...args)
+    })
 }));
 
 vi.mock('../../../../api', () => {
@@ -172,8 +216,10 @@ const stubs = {
         template: '<hr data-testid="context-menu-separator" />'
     },
     Card: {
-        template: '<div data-testid="card"><slot /></div>',
-        props: ['class', 'style']
+        template:
+            '<div data-testid="card" v-bind="$attrs" @click="$emit(\'click\')"><slot /></div>',
+        props: ['class', 'style'],
+        emits: ['click']
     },
     Avatar: { template: '<div><slot /></div>', props: ['class', 'style'] },
     AvatarImage: { template: '<img />', props: ['src'] },
@@ -271,9 +317,25 @@ function getMenuItemTexts(wrapper) {
     return getMenuItems(wrapper).map((item) => item.text().trim());
 }
 
+/**
+ *
+ * @param wrapper
+ * @param text
+ */
+function getMenuItemByText(wrapper, text) {
+    return getMenuItems(wrapper).find((item) => item.text().trim() === text);
+}
+
 describe('FriendsLocationsCard.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        mockCheckCanInvite.mockReturnValue(true);
+        mockCheckCanInviteSelf.mockReturnValue(true);
+        mockUserStatusClass.mockReturnValue({
+            online: true,
+            joinme: false,
+            active: false
+        });
     });
 
     describe('basic rendering', () => {
@@ -292,6 +354,13 @@ describe('FriendsLocationsCard.vue', () => {
                 friend: makeFriend({ name: 'Alice' })
             });
             expect(wrapper.text()).toContain('A');
+        });
+
+        test('shows ? as avatar fallback when name is empty', () => {
+            const wrapper = mountCard({
+                friend: makeFriend({ name: undefined })
+            });
+            expect(wrapper.text()).toContain('?');
         });
 
         test('hides location when displayInstanceInfo is false', () => {
@@ -402,6 +471,27 @@ describe('FriendsLocationsCard.vue', () => {
                 wrapper.find('[data-testid="context-menu-separator"]').exists()
             ).toBe(false);
         });
+
+        test('shows Invite but disabled when cannot invite to my location', () => {
+            mockCheckCanInvite.mockReturnValue(false);
+            const wrapper = mountCard({}, { isGameRunning: true });
+            const inviteItem = getMenuItemByText(wrapper, 'Invite');
+            expect(inviteItem?.attributes('data-disabled')).toBe('true');
+        });
+
+        test('shows Launch/Invite but disabled when cannot join friend instance', () => {
+            mockCheckCanInviteSelf.mockReturnValue(false);
+            const wrapper = mountCard({
+                friend: makeFriend({
+                    state: 'online',
+                    ref: { location: 'wrld_12345:67890~region(us)' }
+                })
+            });
+            const launchInviteItem = getMenuItemByText(wrapper, 'Launch/Invite');
+            const inviteYourselfItem = getMenuItemByText(wrapper, 'Invite Yourself');
+            expect(launchInviteItem?.attributes('data-disabled')).toBe('true');
+            expect(inviteYourselfItem?.attributes('data-disabled')).toBe('true');
+        });
     });
 
     describe('context menu disabled states', () => {
@@ -433,14 +523,34 @@ describe('FriendsLocationsCard.vue', () => {
             const wrapper = mountCard({
                 friend: makeFriend({ state: 'online' })
             });
-            const requestInviteItem = getMenuItems(wrapper).find(
-                (item) => item.text().trim() === 'Request Invite'
-            );
+            const requestInviteItem = getMenuItemByText(wrapper, 'Request Invite');
             await requestInviteItem.trigger('click');
             expect(mockSendRequestInvite).toHaveBeenCalledWith(
                 { platform: 'standalonewindows' },
                 'usr_test123'
             );
+        });
+
+        test('friendInvite resolves traveling location and calls sendInvite API', async () => {
+            const wrapper = mountCard(
+                {},
+                {
+                    isGameRunning: true,
+                    lastLocation: { location: 'traveling' },
+                    lastLocationDestination: 'wrld_dest:inst~region(us)'
+                }
+            );
+            const inviteItem = getMenuItemByText(wrapper, 'Invite');
+            await inviteItem.trigger('click');
+            await flushPromises();
+            expect(mockQueryFetch).toHaveBeenCalledWith('world.location', {
+                worldId: 'wrld_dest'
+            });
+            expect(mockSendInvite).toHaveBeenCalledTimes(1);
+            const [payload, userId] = mockSendInvite.mock.calls[0];
+            expect(payload.instanceId).toBe(payload.worldId);
+            expect(payload.worldName).toBe('Test World');
+            expect(userId).toBe('usr_test123');
         });
 
         test('friendInviteSelf calls selfInvite API', async () => {
@@ -450,14 +560,46 @@ describe('FriendsLocationsCard.vue', () => {
                     ref: { location: 'wrld_12345:67890~region(us)' }
                 })
             });
-            const selfInviteItem = getMenuItems(wrapper).find(
-                (item) => item.text().trim() === 'Invite Yourself'
-            );
+            const selfInviteItem = getMenuItemByText(wrapper, 'Invite Yourself');
             await selfInviteItem.trigger('click');
             expect(mockSelfInvite).toHaveBeenCalledWith({
                 instanceId: '67890~region(us)',
                 worldId: 'wrld_12345'
             });
+        });
+
+        test('clicking card opens user dialog', async () => {
+            const wrapper = mountCard();
+            await wrapper.find('[data-testid="card"]').trigger('click');
+            expect(mockShowUserDialog).toHaveBeenCalledWith('usr_test123');
+        });
+    });
+
+    describe('status dot classes', () => {
+        test('shows join status class when user status indicates join me', () => {
+            mockUserStatusClass.mockReturnValue({
+                joinme: true,
+                online: false,
+                active: false
+            });
+            const wrapper = mountCard();
+            expect(wrapper.find('.friend-card__status-dot').classes()).toContain(
+                'friend-card__status-dot--join'
+            );
+        });
+
+        test('shows active busy status class when active + busy', () => {
+            mockUserStatusClass.mockReturnValue({
+                joinme: false,
+                online: false,
+                active: true
+            });
+            const wrapper = mountCard({
+                friend: makeFriend({ status: 'busy' })
+            });
+            expect(wrapper.find('.friend-card__status-dot').classes()).toContain(
+                'friend-card__status-dot--active-busy'
+            );
         });
     });
 });

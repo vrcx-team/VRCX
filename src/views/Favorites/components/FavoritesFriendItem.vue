@@ -11,7 +11,7 @@
                     </ItemMedia>
                     <ItemContent class="min-w-0">
                         <ItemTitle class="truncate max-w-full" :style="displayNameStyle">{{ displayName }}</ItemTitle>
-                        <ItemDescription class="truncate line-clamp-1">
+                        <ItemDescription class="truncate line-clamp-1 text-xs!">
                             <template v-if="favorite.ref.location !== 'offline'">
                                 <Location
                                     :location="favorite.ref.location"
@@ -39,7 +39,10 @@
                             <DropdownMenuItem v-if="favorite.ref.state === 'online'" @click="friendRequestInvite">
                                 {{ t('dialog.user.actions.request_invite') }}
                             </DropdownMenuItem>
-                            <DropdownMenuItem v-if="isGameRunning" :disabled="!canInviteToMyLocation" @click="friendInvite">
+                            <DropdownMenuItem
+                                v-if="isGameRunning"
+                                :disabled="!canInviteToMyLocation"
+                                @click="friendInvite">
                                 {{ t('dialog.user.actions.invite') }}
                             </DropdownMenuItem>
                             <DropdownMenuItem :disabled="!currentUser?.isBoopingEnabled" @click="friendSendBoop">
@@ -115,7 +118,11 @@
                 <ItemDescription class="truncate line-clamp-1">{{ favorite.id }}</ItemDescription>
             </ItemContent>
             <ItemActions>
-                <Button class="rounded-full h-6 w-6" size="icon-sm" variant="outline" @click.stop="handleDeleteFavorite">
+                <Button
+                    class="rounded-full h-6 w-6"
+                    size="icon-sm"
+                    variant="outline"
+                    @click.stop="handleDeleteFavorite">
                     <Trash2 class="h-4 w-4" />
                 </Button>
             </ItemActions>
@@ -296,4 +303,3 @@
         }
     }
 </script>
-

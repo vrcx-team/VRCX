@@ -1,17 +1,19 @@
 <template>
     <div id="chart" class="x-container">
-        <div class="options-container mt-0">
+        <div class="options-container">
             <span class="header">{{ t('view.tools.header') }}</span>
 
-            <div class="tool-categories">
-                <div class="tool-category">
-                    <div class="category-header text-2xl" @click="toggleCategory('image')">
+            <div class="mt-5 px-5">
+                <div class="mb-6">
+                    <div
+                        class="cursor-pointer flex items-center p-2 px-3 rounded-lg mb-3 transition-all duration-200 ease-in-out"
+                        @click="toggleCategory('image')">
                         <ChevronDown
-                            class="rotation-transition"
-                            :class="{ 'is-rotated': categoryCollapsed['image'] }" />
-                        <span class="category-title">{{ t('view.tools.pictures.header') }}</span>
+                            class="text-sm mr-2 transition-transform duration-300"
+                            :class="{ '-rotate-90': categoryCollapsed['image'] }" />
+                        <span class="ml-1.5 text-base font-semibold">{{ t('view.tools.pictures.header') }}</span>
                     </div>
-                    <div class="tools-grid" v-show="!categoryCollapsed['image']">
+                    <div class="grid grid-cols-2 gap-4 ml-4" v-show="!categoryCollapsed['image']">
                         <ToolItem
                             :icon="Camera"
                             :title="t('view.tools.pictures.screenshot')"
@@ -25,14 +27,16 @@
                     </div>
                 </div>
 
-                <div class="tool-category">
-                    <div class="category-header" @click="toggleCategory('shortcuts')">
+                <div class="mb-6">
+                    <div
+                        class="cursor-pointer flex items-center p-2 px-3 rounded-lg mb-3 transition-all duration-200 ease-in-out"
+                        @click="toggleCategory('shortcuts')">
                         <ChevronDown
-                            class="rotation-transition"
-                            :class="{ 'is-rotated': categoryCollapsed['shortcuts'] }" />
-                        <span class="category-title">{{ t('view.tools.shortcuts.header') }}</span>
+                            class="text-sm mr-2 transition-transform duration-300"
+                            :class="{ '-rotate-90': categoryCollapsed['shortcuts'] }" />
+                        <span class="ml-1.5 text-base font-semibold">{{ t('view.tools.shortcuts.header') }}</span>
                     </div>
-                    <div class="tools-grid" v-show="!categoryCollapsed['shortcuts']">
+                    <div class="grid grid-cols-2 gap-4 ml-4" v-show="!categoryCollapsed['shortcuts']">
                         <ToolItem
                             :icon="Folder"
                             :title="t('view.tools.pictures.pictures.vrc_photos')"
@@ -61,14 +65,16 @@
                     </div>
                 </div>
 
-                <div class="tool-category">
-                    <div class="category-header" @click="toggleCategory('system')">
+                <div class="mb-6">
+                    <div
+                        class="cursor-pointer flex items-center p-2 px-3 rounded-lg mb-3 transition-all duration-200 ease-in-out"
+                        @click="toggleCategory('system')">
                         <ChevronDown
-                            class="rotation-transition"
-                            :class="{ 'is-rotated': categoryCollapsed['system'] }" />
-                        <span class="category-title">{{ t('view.tools.system_tools.header') }}</span>
+                            class="text-sm mr-2 transition-transform duration-300"
+                            :class="{ '-rotate-90': categoryCollapsed['system'] }" />
+                        <span class="ml-1.5 text-base font-semibold">{{ t('view.tools.system_tools.header') }}</span>
                     </div>
-                    <div class="tools-grid" v-show="!categoryCollapsed['system']">
+                    <div class="grid grid-cols-2 gap-4 ml-4" v-show="!categoryCollapsed['system']">
                         <ToolItem
                             :icon="Settings"
                             :title="t('view.tools.system_tools.vrchat_config')"
@@ -92,14 +98,16 @@
                     </div>
                 </div>
 
-                <div class="tool-category">
-                    <div class="category-header" @click="toggleCategory('group')">
+                <div class="mb-6">
+                    <div
+                        class="cursor-pointer flex items-center p-2 px-3 rounded-lg mb-3 transition-all duration-200 ease-in-out"
+                        @click="toggleCategory('group')">
                         <ChevronDown
-                            class="rotation-transition"
-                            :class="{ 'is-rotated': categoryCollapsed['group'] }" />
-                        <span class="category-title">{{ t('view.tools.group.header') }}</span>
+                            class="text-sm mr-2 transition-transform duration-300"
+                            :class="{ '-rotate-90': categoryCollapsed['group'] }" />
+                        <span class="ml-1.5 text-base font-semibold">{{ t('view.tools.group.header') }}</span>
                     </div>
-                    <div class="tools-grid" v-show="!categoryCollapsed['group']">
+                    <div class="grid grid-cols-2 gap-4 ml-4" v-show="!categoryCollapsed['group']">
                         <ToolItem
                             :icon="CalendarDays"
                             :title="t('view.tools.group.calendar')"
@@ -108,13 +116,17 @@
                     </div>
                 </div>
 
-                <div class="tool-category">
-                    <div class="category-header text-2xl" @click="toggleCategory('user')">
-                        <ChevronDown class="rotation-transition" :class="{ 'is-rotated': categoryCollapsed['user'] }" />
-                        <span class="category-title">{{ t('view.tools.export.header') }}</span>
+                <div class="mb-6">
+                    <div
+                        class="cursor-pointer flex items-center p-2 px-3 rounded-lg mb-3 transition-all duration-200 ease-in-out"
+                        @click="toggleCategory('user')">
+                        <ChevronDown
+                            class="text-sm mr-2 transition-transform duration-300"
+                            :class="{ '-rotate-90': categoryCollapsed['user'] }" />
+                        <span class="ml-1.5 text-base font-semibold">{{ t('view.tools.export.header') }}</span>
                     </div>
 
-                    <div class="tools-grid" v-show="!categoryCollapsed['user']">
+                    <div class="grid grid-cols-2 gap-4 ml-4" v-show="!categoryCollapsed['user']">
                         <ToolItem
                             :icon="FolderInput"
                             :title="t('view.tools.export.discord_names')"
@@ -138,14 +150,16 @@
                     </div>
                 </div>
 
-                <div class="tool-category">
-                    <div class="category-header" @click="toggleCategory('other')">
+                <div class="mb-6">
+                    <div
+                        class="cursor-pointer flex items-center p-2 px-3 rounded-lg mb-3 transition-all duration-200 ease-in-out"
+                        @click="toggleCategory('other')">
                         <ChevronDown
-                            class="rotation-transition"
-                            :class="{ 'is-rotated': categoryCollapsed['other'] }" />
-                        <span class="category-title">{{ t('view.tools.other.header') }}</span>
+                            class="text-sm mr-2 transition-transform duration-300"
+                            :class="{ '-rotate-90': categoryCollapsed['other'] }" />
+                        <span class="ml-1.5 text-base font-semibold">{{ t('view.tools.other.header') }}</span>
                     </div>
-                    <div class="tools-grid" v-show="!categoryCollapsed['other']">
+                    <div class="grid grid-cols-2 gap-4 ml-4" v-show="!categoryCollapsed['other']">
                         <ToolItem
                             :icon="SquarePen"
                             :title="t('view.tools.other.edit_invite_message')"
@@ -367,53 +381,3 @@
         });
     }
 </script>
-
-<style scoped>
-    .tool-categories {
-        margin-top: 20px;
-        padding: 0 20px;
-    }
-
-    .tool-category {
-        margin-bottom: 24px;
-
-        .category-header {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            padding: 8px 12px;
-            border-radius: var(--radius-lg);
-            margin-bottom: 12px;
-            transition: all 0.2s ease;
-
-            .rotation-transition {
-                font-size: 14px;
-                margin-right: 8px;
-                transition: transform 0.3s;
-            }
-
-            .category-title {
-                margin-left: 6px;
-                font-size: 16px;
-                font-weight: 600;
-            }
-        }
-    }
-
-    .tools-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-        margin-left: 16px;
-    }
-
-
-
-    .is-rotated {
-        transform: rotate(-90deg);
-    }
-
-    .rotation-transition {
-        transition: transform 0.2s ease-in-out;
-    }
-</style>
