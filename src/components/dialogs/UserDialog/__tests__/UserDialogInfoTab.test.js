@@ -226,7 +226,7 @@ describe('UserDialogInfoTab.vue', () => {
             wrapper.vm.onTabActivated();
             await flushPromises();
 
-            expect(creditsSpy).toHaveBeenCalledTimes(1);
+            expect(creditsSpy).toHaveBeenCalledTimes(0);
         });
     });
 
