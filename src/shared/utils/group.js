@@ -59,7 +59,7 @@ async function getGroupName(data) {
         }
     }
     try {
-        const args = await queryRequest.fetch('group', {
+        const args = await queryRequest.fetch('group.dialog', {
             groupId
         });
         groupName = args.ref.name;

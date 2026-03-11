@@ -221,7 +221,7 @@ export const useDiscordPresenceSettingsStore = defineStore(
                     groupAccessName: ''
                 };
                 try {
-                    const args = await queryRequest.fetch('world', {
+                    const args = await queryRequest.fetch('world.location', {
                         worldId: L.worldId
                     });
                     state.lastLocationDetails.worldName = args.ref.name;

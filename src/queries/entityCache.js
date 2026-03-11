@@ -140,10 +140,10 @@ export function patchQueryDataWithRecency({ queryKey, nextData }) {
 }
 
 /**
- * @param {{queryKey: unknown[], policy: {staleTime: number, gcTime: number, retry: number, refetchOnWindowFocus: boolean}, queryFn: () => Promise<any>}} options
+ * @param {{queryKey: unknown[], policy: {staleTime: number, gcTime: number, retry: number, refetchOnWindowFocus: boolean}, queryFn: () => Promise<any>, label?: string}} options
  * @returns {Promise<{data: any, cache: boolean}>}
  */
-export async function fetchWithEntityPolicy({ queryKey, policy, queryFn }) {
+export async function fetchWithEntityPolicy({ queryKey, policy, queryFn, label }) {
     const queryState = queryClient.getQueryState(queryKey);
     const isFresh =
         Boolean(queryState?.dataUpdatedAt) &&
@@ -157,9 +157,9 @@ export async function fetchWithEntityPolicy({ queryKey, policy, queryFn }) {
     });
 
     if (isFresh) {
-        logWebRequest('[QUERY CACHE HIT]', queryKey, data);
+        logWebRequest('[QUERY CACHE HIT]', label || queryKey[0], queryKey, data);
     } else {
-        logWebRequest('[QUERY FETCH]', queryKey, data);
+        logWebRequest('[QUERY FETCH]', label || queryKey[0], queryKey, data);
     }
 
     return {

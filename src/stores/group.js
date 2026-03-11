@@ -274,7 +274,7 @@ export const useGroupStore = defineStore('Group', () => {
 
         D.groupRef = {};
         D.auditLogTypes = [];
-        queryRequest.fetch('group', { groupId }).then((args) => {
+        queryRequest.fetch('group.dialog', { groupId }).then((args) => {
             D.groupRef = args.ref;
             if (hasGroupPermission(D.groupRef, 'group-audit-view')) {
                 groupRequest.getGroupAuditLogTypes({ groupId }).then((args) => {

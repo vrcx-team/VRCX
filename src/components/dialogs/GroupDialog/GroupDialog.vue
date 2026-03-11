@@ -701,7 +701,7 @@
                 selectedImageUrl: post.imageUrl
             };
         }
-        queryRequest.fetch('group', { groupId }).then((args) => {
+        queryRequest.fetch('group.dialog', { groupId }).then((args) => {
             D.groupRef = args.ref;
         });
         D.visible = true;

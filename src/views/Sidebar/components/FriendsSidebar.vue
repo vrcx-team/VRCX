@@ -761,7 +761,7 @@
             currentLocation = lastLocationDestination.value;
         }
         const L = parseLocation(currentLocation);
-        queryRequest.fetch('world', { worldId: L.worldId }).then((args) => {
+        queryRequest.fetch('world.location', { worldId: L.worldId }).then((args) => {
             notificationRequest
                 .sendInvite(
                     {

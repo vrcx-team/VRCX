@@ -363,7 +363,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         const print = args.json;
         const createdAt = getPrintLocalDate(print);
         try {
-            const owner = await queryRequest.fetch('user', {
+            const owner = await queryRequest.fetch('user.dialog', {
                 userId: print.ownerId
             });
             console.log(
@@ -558,7 +558,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
             return;
         }
 
-        const userArgs = await queryRequest.fetch('user', {
+        const userArgs = await queryRequest.fetch('user.dialog', {
             userId: args.json.holderId
         });
         const displayName = userArgs.json?.displayName ?? '';

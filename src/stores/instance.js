@@ -245,7 +245,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             emptyDefault: { id: '', displayName: '' },
             idAlias: 'userId',
             nameKey: 'displayName',
-            fetchFn: (id) => queryRequest.fetch('user', { userId: id })
+            fetchFn: (id) => queryRequest.fetch('user.dialog', { userId: id })
         });
     }
 
@@ -258,7 +258,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             emptyDefault: { id: '', name: '' },
             idAlias: 'worldId',
             nameKey: 'name',
-            fetchFn: (id) => queryRequest.fetch('world', { worldId: id })
+            fetchFn: (id) => queryRequest.fetch('world.location', { worldId: id })
         });
     }
 
@@ -271,7 +271,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             emptyDefault: { id: '', name: '' },
             idAlias: 'groupId',
             nameKey: 'name',
-            fetchFn: (id) => queryRequest.fetch('group', { groupId: id })
+            fetchFn: (id) => queryRequest.fetch('group.dialog', { groupId: id })
         });
     }
 
@@ -340,7 +340,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 !worldStore.cachedWorlds.get(location.worldId)?.name
             ) {
                 queryRequest
-                    .fetch('world', { worldId: location.worldId })
+                    .fetch('world.dialog', { worldId: location.worldId })
                     .then((args) => {
                         uiStore.setDialogCrumbLabel(
                             'previous-instances-info',
@@ -467,7 +467,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 });
         } else {
             queryRequest
-                .fetch('world', {
+                .fetch('world.location', {
                     worldId: currentInstanceLocation.value.worldId
                 })
                 .then((args) => {
@@ -537,7 +537,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         ref.$location = parseLocation(ref.location);
         if (ref.world?.id) {
             queryRequest
-                .fetch('world', {
+                .fetch('world.location', {
                     worldId: ref.world.id
                 })
                 .then((args) => {

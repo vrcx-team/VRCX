@@ -26,8 +26,8 @@ describe('query policy configuration', () => {
         });
 
         expect(entityQueryPolicies.group).toMatchObject({
-            staleTime: 60000,
-            gcTime: 300000,
+            staleTime: 300000,
+            gcTime: 1800000,
             retry: 1,
             refetchOnWindowFocus: false
         });
@@ -89,8 +89,8 @@ describe('query policy configuration', () => {
 
     test('file-related policies', () => {
         expect(entityQueryPolicies.fileAnalysis).toMatchObject({
-            staleTime: 120000,
-            gcTime: 600000,
+            staleTime: 600000,
+            gcTime: 3600000,
             retry: 1,
             refetchOnWindowFocus: false
         });
@@ -164,8 +164,8 @@ describe('query policy configuration', () => {
         const options = toQueryOptions(entityQueryPolicies.group);
 
         expect(options).toEqual({
-            staleTime: 60000,
-            gcTime: 300000,
+            staleTime: 300000,
+            gcTime: 1800000,
             retry: 1,
             refetchOnWindowFocus: false
         });

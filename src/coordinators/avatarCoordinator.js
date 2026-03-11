@@ -124,7 +124,7 @@ export function showAvatarDialog(avatarId, options = {}) {
     }
     const loadAvatarRequest = forceRefresh
         ? avatarRequest.getAvatar({ avatarId })
-        : queryRequest.fetch('avatar', { avatarId });
+        : queryRequest.fetch('avatar.dialog', { avatarId });
     loadAvatarRequest
         .then((args) => {
             const ref = applyAvatar(args.json);

@@ -224,10 +224,10 @@ function groupChange(ref, message) {
  * @returns {Promise<void>}
  */
 async function groupOwnerChange(ref, oldUserId, newUserId) {
-    const oldUser = await queryRequest.fetch('user', {
+    const oldUser = await queryRequest.fetch('user.dialog', {
         userId: oldUserId
     });
-    const newUser = await queryRequest.fetch('user', {
+    const newUser = await queryRequest.fetch('user.dialog', {
         userId: newUserId
     });
     const oldDisplayName = oldUser?.ref?.displayName;
@@ -343,7 +343,7 @@ export function showGroupDialog(groupId, options = {}) {
                 D.visible = true;
                 D.loading = false;
                 queryRequest
-                    .fetch('user', {
+                    .fetch('user.dialog', {
                         userId: ref.ownerId
                     })
                     .then((args1) => {
@@ -375,7 +375,7 @@ export function getGroupDialogGroup(groupId, existingRef) {
     const refPromise = existingRef
         ? Promise.resolve({ ref: existingRef })
         : queryRequest
-              .fetch('group', { groupId, includeRoles: true })
+              .fetch('group.dialog', { groupId, includeRoles: true })
               .then((args) => ({ ref: applyGroup(args.json), args }));
 
     return refPromise
@@ -416,7 +416,7 @@ export function getGroupDialogGroup(groupId, existingRef) {
                         for (const json of args.json.instances) {
                             instanceStore.applyInstance(json);
                             queryRequest
-                                .fetch('world', {
+                                .fetch('world.dialog', {
                                     worldId: json.world.id
                                 })
                                 .then((args1) => {

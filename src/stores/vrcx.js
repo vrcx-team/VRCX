@@ -644,7 +644,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     toast.error('Invalid local favorite world command');
                     break;
                 }
-                queryRequest.fetch('world', { worldId: id }).then(() => {
+                queryRequest.fetch('world.location', { worldId: id }).then(() => {
                     searchStore.directAccessWorld(id);
                     addLocalWorldFavorite(id, group);
                 });

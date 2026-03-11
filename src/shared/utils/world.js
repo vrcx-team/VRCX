@@ -13,7 +13,7 @@ async function getWorldName(location) {
     const L = parseLocation(location);
     if (L.isRealInstance && L.worldId) {
         try {
-            const args = await queryRequest.fetch('world', {
+            const args = await queryRequest.fetch('world.dialog', {
                 worldId: L.worldId
             });
             worldName = args.ref.name;

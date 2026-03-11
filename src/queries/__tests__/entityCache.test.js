@@ -1,5 +1,16 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
+const mockLogWebRequest = vi.fn();
+const mockWithQueryLog = vi.fn(async (fn) => fn());
+
+vi.mock('../../services/appConfig', () => ({
+    AppDebug: {
+        debugWebRequests: false
+    },
+    logWebRequest: (...args) => mockLogWebRequest(...args),
+    withQueryLog: (...args) => mockWithQueryLog(...args)
+}));
+
 import {
     _entityCacheInternals,
     fetchWithEntityPolicy,
@@ -13,6 +24,8 @@ describe('entity query cache helpers', () => {
     beforeEach(() => {
         queryClient.clear();
         vi.restoreAllMocks();
+        mockLogWebRequest.mockClear();
+        mockWithQueryLog.mockClear();
     });
 
     test('reports cache hit for fresh data', async () => {
@@ -73,6 +86,50 @@ describe('entity query cache helpers', () => {
         await fetchWithEntityPolicy({ queryKey, policy, queryFn });
 
         expect(callCount).toBe(2);
+    });
+
+    test('uses label in logs without changing cache behavior', async () => {
+        const queryKey = ['user', 'usr_9'];
+        const policy = {
+            staleTime: 20000,
+            gcTime: 90000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        };
+        const queryFn = vi.fn(async () => ({
+            json: { id: 'usr_9', updated_at: '2026-01-01T00:00:00.000Z' },
+            params: { userId: 'usr_9' },
+            ref: { id: 'usr_9', updated_at: '2026-01-01T00:00:00.000Z' }
+        }));
+
+        const first = await fetchWithEntityPolicy({
+            queryKey,
+            policy,
+            queryFn,
+            label: 'user.dialog'
+        });
+        const second = await fetchWithEntityPolicy({
+            queryKey,
+            policy,
+            queryFn
+        });
+
+        expect(first.cache).toBe(false);
+        expect(second.cache).toBe(true);
+        expect(mockLogWebRequest).toHaveBeenNthCalledWith(
+            1,
+            '[QUERY FETCH]',
+            'user.dialog',
+            queryKey,
+            expect.any(Object)
+        );
+        expect(mockLogWebRequest).toHaveBeenNthCalledWith(
+            2,
+            '[QUERY CACHE HIT]',
+            'user',
+            queryKey,
+            expect.any(Object)
+        );
     });
 
     test('does not overwrite newer data with older payload', () => {

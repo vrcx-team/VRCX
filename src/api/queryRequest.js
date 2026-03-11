@@ -21,14 +21,62 @@ const registry = Object.freeze({
         policy: entityQueryPolicies.user,
         queryFn: (params) => userRequest.getUser(params)
     },
+    'user.dialog': {
+        key: (params) => queryKeys.user(params.userId),
+        policy: Object.freeze({
+            ...entityQueryPolicies.user,
+            staleTime: 60_000
+        }),
+        queryFn: (params) => userRequest.getUser(params)
+    },
+    'user.force': {
+        key: (params) => queryKeys.user(params.userId),
+        policy: Object.freeze({
+            ...entityQueryPolicies.user,
+            staleTime: 0
+        }),
+        queryFn: (params) => userRequest.getUser(params)
+    },
     avatar: {
         key: (params) => queryKeys.avatar(params.avatarId),
         policy: entityQueryPolicies.avatar,
         queryFn: (params) => avatarRequest.getAvatar(params)
     },
+    'avatar.dialog': {
+        key: (params) => queryKeys.avatar(params.avatarId),
+        policy: Object.freeze({
+            ...entityQueryPolicies.avatar,
+            staleTime: 120_000
+        }),
+        queryFn: (params) => avatarRequest.getAvatar(params)
+    },
     world: {
         key: (params) => queryKeys.world(params.worldId),
         policy: entityQueryPolicies.world,
+        queryFn: (params) => worldRequest.getWorld(params)
+    },
+    'world.dialog': {
+        key: (params) => queryKeys.world(params.worldId),
+        policy: Object.freeze({
+            ...entityQueryPolicies.world,
+            staleTime: 120_000
+        }),
+        queryFn: (params) => worldRequest.getWorld(params)
+    },
+    'world.location': {
+        key: (params) => queryKeys.world(params.worldId),
+        policy: Object.freeze({
+            ...entityQueryPolicies.world,
+            staleTime: 120_000
+        }),
+        queryFn: (params) => worldRequest.getWorld(params)
+    },
+    'world.force': {
+        key: (params) => queryKeys.world(params.worldId),
+        policy: Object.freeze({
+            ...entityQueryPolicies.world,
+            staleTime: 0
+        }),
         queryFn: (params) => worldRequest.getWorld(params)
     },
     worldsByUser: {
@@ -40,6 +88,22 @@ const registry = Object.freeze({
     group: {
         key: (params) => queryKeys.group(params.groupId, params.includeRoles),
         policy: entityQueryPolicies.group,
+        queryFn: (params) => groupRequest.getGroup(params)
+    },
+    'group.dialog': {
+        key: (params) => queryKeys.group(params.groupId, params.includeRoles),
+        policy: Object.freeze({
+            ...entityQueryPolicies.group,
+            staleTime: 120_000
+        }),
+        queryFn: (params) => groupRequest.getGroup(params)
+    },
+    'group.force': {
+        key: (params) => queryKeys.group(params.groupId, params.includeRoles),
+        policy: Object.freeze({
+            ...entityQueryPolicies.group,
+            staleTime: 0
+        }),
         queryFn: (params) => groupRequest.getGroup(params)
     },
     groupMember: {
@@ -135,7 +199,8 @@ const queryRequest = {
         const { data, cache } = await fetchWithEntityPolicy({
             queryKey: entry.key(params),
             policy: entry.policy,
-            queryFn: () => entry.queryFn(params)
+            queryFn: () => entry.queryFn(params),
+            label: resource
         });
 
         return {

@@ -28,7 +28,7 @@
         if (props.hint) {
             username.value = props.hint;
         } else if (props.userid) {
-            const args = await queryRequest.fetch('user', { userId: props.userid });
+            const args = await queryRequest.fetch('user.dialog', { userId: props.userid });
             if (args?.json?.displayName) {
                 username.value = args.json.displayName;
             }

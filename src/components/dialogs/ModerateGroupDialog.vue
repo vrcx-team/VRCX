@@ -129,7 +129,7 @@
         }
 
         if (D.userId) {
-            queryRequest.fetch('user', { userId: D.userId }).then((args) => {
+            queryRequest.fetch('user.dialog', { userId: D.userId }).then((args) => {
                 D.userObject = args.ref;
             });
         }

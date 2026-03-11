@@ -492,7 +492,7 @@ export function useGroupModerationData(deps) {
             selection.setSelectedUsers(member.userId, member);
             return;
         }
-        const userArgs = await queryRequest.fetch('user', { userId });
+        const userArgs = await queryRequest.fetch('user.dialog', { userId });
         member.userId = userArgs.json.id;
         member.user = userArgs.json;
         member.displayName = userArgs.json.displayName;

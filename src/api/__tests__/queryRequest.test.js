@@ -161,6 +161,59 @@ describe('queryRequest', () => {
         expect(args.json.id).toBe('usr_1');
     });
 
+    test('uses same queryKey for user and user.dialog callers', async () => {
+        const data = { json: { id: 'usr_1' }, params: { userId: 'usr_1' } };
+        mockGetUser.mockResolvedValue(data);
+        mockFetchWithEntityPolicy.mockImplementation(async ({ queryFn }) => ({
+            data: await queryFn(),
+            cache: false
+        }));
+
+        await queryRequest.fetch('user', { userId: 'usr_1' });
+        await queryRequest.fetch('user.dialog', { userId: 'usr_1' });
+
+        const baseCall = mockFetchWithEntityPolicy.mock.calls[0][0];
+        const dialogCall = mockFetchWithEntityPolicy.mock.calls[1][0];
+        expect(baseCall.queryKey).toEqual(['user', 'usr_1']);
+        expect(dialogCall.queryKey).toEqual(baseCall.queryKey);
+    });
+
+    test('applies staleTime zero for user.force', async () => {
+        const data = { json: { id: 'usr_2' }, params: { userId: 'usr_2' } };
+        mockGetUser.mockResolvedValue(data);
+        mockFetchWithEntityPolicy.mockImplementation(async ({ queryFn }) => ({
+            data: await queryFn(),
+            cache: false
+        }));
+
+        await queryRequest.fetch('user.force', { userId: 'usr_2' });
+
+        expect(mockFetchWithEntityPolicy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                policy: expect.objectContaining({ staleTime: 0 }),
+                label: 'user.force'
+            })
+        );
+    });
+
+    test('applies staleTime 60000 for user.dialog', async () => {
+        const data = { json: { id: 'usr_3' }, params: { userId: 'usr_3' } };
+        mockGetUser.mockResolvedValue(data);
+        mockFetchWithEntityPolicy.mockImplementation(async ({ queryFn }) => ({
+            data: await queryFn(),
+            cache: false
+        }));
+
+        await queryRequest.fetch('user.dialog', { userId: 'usr_3' });
+
+        expect(mockFetchWithEntityPolicy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                policy: expect.objectContaining({ staleTime: 60_000 }),
+                label: 'user.dialog'
+            })
+        );
+    });
+
     test('supports worldsByUser option routing', async () => {
         const params = {
             userId: 'usr_me',
@@ -213,5 +266,12 @@ describe('queryRequest', () => {
             // @ts-expect-error verifying runtime guard
             queryRequest.fetch('missing_resource', {})
         ).rejects.toThrow('Unknown query resource');
+    });
+
+    test('throws on unknown caller variant', async () => {
+        await expect(
+            // @ts-expect-error verifying runtime guard
+            queryRequest.fetch('user.unknown', { userId: 'usr_1' })
+        ).rejects.toThrow('Unknown query resource: user.unknown');
     });
 });

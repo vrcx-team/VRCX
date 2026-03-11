@@ -362,7 +362,7 @@ describe('useGroupModerationData', () => {
             const { addGroupMemberToSelection } = useGroupModerationData(deps);
             await addGroupMemberToSelection('usr_1');
 
-            expect(queryRequest.fetch).toHaveBeenCalledWith('user', { userId: 'usr_1' });
+            expect(queryRequest.fetch).toHaveBeenCalledWith('user.dialog', { userId: 'usr_1' });
             expect(deps.selection.setSelectedUsers).toHaveBeenCalledWith('usr_1', expect.objectContaining({
                 userId: 'usr_1',
                 displayName: 'Alice'
