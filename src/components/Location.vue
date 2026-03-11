@@ -45,11 +45,11 @@
     } from '../shared/utils';
     import {
         useAppearanceSettingsStore,
-        useGroupStore,
         useInstanceStore,
         useSearchStore,
         useWorldStore
     } from '../stores';
+    import { showGroupDialog } from '../coordinators/groupCoordinator';
     import { showWorldDialog } from '../coordinators/worldCoordinator';
     import { Spinner } from './ui/spinner';
     import { accessTypeLocaleKeyMap } from '../shared/constants';
@@ -57,7 +57,6 @@
     const { t } = useI18n();
 
     const { cachedWorlds } = useWorldStore();
-    const { showGroupDialog } = useGroupStore();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { verifyShortName } = useSearchStore();
     const { cachedInstances } = useInstanceStore();

@@ -494,18 +494,18 @@
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
         useGalleryStore,
-        useGroupStore,
         useInstanceStore,
         useLocationStore,
         useModalStore,
         useUserStore,
-        useWorldStore
     } from '../../../stores';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { queryRequest, userRequest } from '../../../api';
 
     import InstanceActionBar from '../../InstanceActionBar.vue';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { showGroupDialog } from '../../../coordinators/groupCoordinator';
+
 
     const EditNoteAndMemoDialog = defineAsyncComponent(() => import('./EditNoteAndMemoDialog.vue'));
 
@@ -522,7 +522,6 @@
     const { userDialog, currentUser } = storeToRefs(useUserStore());
     const { toggleSharedConnectionsOptOut, toggleDiscordFriendsOptOut } = useUserStore();
 
-    const { showGroupDialog } = useGroupStore();
     const { lastLocation } = storeToRefs(useLocationStore());
     const { showFullscreenImageDialog } = useGalleryStore();
 
@@ -553,7 +552,7 @@
      *
      */
     function onTabActivated() {
-        if (vrchatCredit.value === null) {
+        if (currentUser.value.id === userDialog.value.id && vrchatCredit.value === null) {
             getVRChatCredits();
         }
     }

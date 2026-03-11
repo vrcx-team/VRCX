@@ -63,26 +63,26 @@ export const entityQueryPolicies = Object.freeze({
         refetchOnWindowFocus: false
     }),
     fileAnalysis: Object.freeze({
-        staleTime: 10 * MINUTE,
-        gcTime: 60 * MINUTE,
+        staleTime: 60 * MINUTE,
+        gcTime: 240 * MINUTE,
         retry: 1,
         refetchOnWindowFocus: false
     }),
     worldPersistData: Object.freeze({
-        staleTime: 120 * SECOND,
-        gcTime: 600 * SECOND,
+        staleTime: 30 * MINUTE,
+        gcTime: 120 * MINUTE,
         retry: 1,
         refetchOnWindowFocus: false
     }),
     mutualCounts: Object.freeze({
-        staleTime: 120 * SECOND,
-        gcTime: 600 * SECOND,
+        staleTime: 15 * MINUTE,
+        gcTime: 60 * MINUTE,
         retry: 1,
         refetchOnWindowFocus: false
     }),
     visits: Object.freeze({
-        staleTime: 300 * SECOND,
-        gcTime: 900 * SECOND,
+        staleTime: 30 * MINUTE,
+        gcTime: 120 * MINUTE,
         retry: 1,
         refetchOnWindowFocus: false
     }),
@@ -93,8 +93,8 @@ export const entityQueryPolicies = Object.freeze({
         refetchOnWindowFocus: false
     }),
     avatarStyles: Object.freeze({
-        staleTime: 600 * SECOND,
-        gcTime: 3600 * SECOND,
+        staleTime: 60 * MINUTE,
+        gcTime: 240 * MINUTE,
         retry: 1,
         refetchOnWindowFocus: false
     }),
