@@ -112,13 +112,13 @@
         }
     });
 
-    const avatarSize = computed(() => 48 * props.cardScale);
+    const avatarSize = computed(() => Math.max(36, 46 * props.cardScale));
 
     const cardStyle = computed(() => ({
         '--card-scale': props.cardScale,
         '--card-spacing': props.cardSpacing,
         cursor: 'pointer',
-        padding: `${24 * props.cardScale * props.cardSpacing}px`
+        padding: `${16 * props.cardScale * props.cardSpacing}px`
     }));
 
     const avatarFallback = computed(() => props.friend?.name?.charAt(0) ?? '?');
@@ -256,9 +256,9 @@
 
     .friend-card__header {
         display: grid;
-        grid-template-columns: auto 1fr;
-        align-items: flex-start;
-        gap: calc(12px * var(--card-scale) * var(--card-spacing));
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        gap: calc(10px * var(--card-scale) * var(--card-spacing));
     }
 
     .friend-card__status-dot {
@@ -324,35 +324,40 @@
 
     .friend-card__body {
         display: grid;
-        gap: calc(12px * var(--card-scale) * var(--card-spacing));
+        gap: calc(8px * var(--card-scale) * var(--card-spacing));
     }
 
     .friend-card__name {
-        font-size: calc(17px * var(--card-scale));
+        font-size: calc(16px * var(--card-scale));
         font-weight: 600;
-        line-height: 1.2;
+        line-height: 1.3;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
 
     .friend-card__signature {
-        margin-top: calc(8px * var(--card-spacing));
-        font-size: calc(13px * var(--card-scale));
+        font-size: calc(12px * var(--card-scale));
         line-height: 1.4;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         display: flex;
         align-items: center;
+        gap: calc(4px * var(--card-scale));
+        color: var(--muted-foreground);
+    }
+
+    .friend-card__signature :deep(svg) {
+        margin-top: calc(1px * var(--card-scale));
     }
 
     .friend-card__world {
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         min-height: calc(40px * var(--card-scale));
-        padding: calc(8px * var(--card-scale)) calc(8px * var(--card-scale));
+        padding: calc(7px * var(--card-scale)) calc(8px * var(--card-scale));
         border-radius: calc(var(--radius-lg) * var(--card-scale));
         font-size: calc(12px * var(--card-scale));
         line-height: 1.3;
