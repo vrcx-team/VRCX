@@ -6,7 +6,12 @@
             <ContextMenuTrigger as-child>
                 <div class="flex items-center w-full h-full px-2">
                     <!-- Left section -->
-                    <div class="flex items-center flex-1 min-w-0 [&>*:first-child]:pl-0.5">
+                    <div
+                        class="flex items-center flex-1 min-w-0 overflow-hidden [&>*:first-child]:pl-0.5"
+                        style="
+                            mask-image: linear-gradient(to right, black calc(100% - 20px), transparent 100%);
+                            -webkit-mask-image: linear-gradient(to right, black calc(100% - 20px), transparent 100%);
+                        ">
                         <TooltipWrapper
                             v-if="visibility.proxy"
                             :content="
@@ -112,7 +117,7 @@
                     </div>
 
                     <!-- Right section -->
-                    <div class="flex items-center ml-auto [&>*:last-child]:border-r-0 [&>*:last-child]:pr-0.5">
+                    <div class="flex items-center shrink-0 ml-auto [&>*:last-child]:border-r-0 [&>*:last-child]:pr-0.5">
                         <template v-if="visibility.clocks">
                             <Popover
                                 v-for="(clock, idx) in visibleClocks"
