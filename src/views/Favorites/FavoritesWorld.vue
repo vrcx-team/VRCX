@@ -305,8 +305,7 @@
                                                 :favorite="favorite"
                                                 :edit-mode="worldEditMode"
                                                 :selected="selectedFavoriteWorlds.includes(favorite.id)"
-                                                @toggle-select="toggleWorldSelection(favorite.id, $event)"
-                                                @click="showWorldDialog(favorite.id)" />
+                                                @toggle-select="toggleWorldSelection(favorite.id, $event)" />
                                         </div>
                                     </template>
                                     <div v-else class="flex items-center justify-center text-[13px] h-full">
@@ -339,9 +338,7 @@
                                                             :group="activeLocalGroupName"
                                                             :favorite="favorite.favorite"
                                                             :edit-mode="worldEditMode"
-                                                            is-local-favorite
-                                                            @remove-local-world-favorite="removeLocalWorldFavorite"
-                                                            @click="showWorldDialog(favorite.favorite.id)" />
+                                                            is-local-favorite />
                                                     </div>
                                                 </div>
                                             </template>
