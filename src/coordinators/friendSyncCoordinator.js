@@ -17,7 +17,6 @@ import configRepository from '../services/config';
  */
 export async function runRefreshFriendsListFlow() {
     const updateLoopStore = useUpdateLoopStore();
-    const userStore = useUserStore();
     const friendStore = useFriendStore();
 
     // If we just got user less then 2 min before code call, don't call it again
@@ -38,7 +37,7 @@ export async function runInitFriendsListFlow(t) {
     const authStore = useAuthStore();
 
     const userId = userStore.currentUser.id;
-    friendStore.isRefreshFriendsLoading = true;
+    friendStore.setIsRefreshFriendsLoading(true);
     watchState.isFriendsLoaded = false;
     friendStore.resetFriendLog();
 

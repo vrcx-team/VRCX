@@ -12,10 +12,7 @@ import {
 } from '../shared/utils';
 import { getUserMemo } from '../coordinators/memoCoordinator';
 import { friendRequest, userRequest } from '../api';
-import {
-    runInitFriendsListFlow,
-    runRefreshFriendsListFlow
-} from '../coordinators/friendSyncCoordinator';
+import { runInitFriendsListFlow } from '../coordinators/friendSyncCoordinator';
 import {
     runPendingOfflineTickFlow,
     runUpdateFriendFlow
@@ -45,7 +42,6 @@ export const useFriendStore = defineStore('Friend', () => {
     const userStore = useUserStore();
     const groupStore = useGroupStore();
     const locationStore = useLocationStore();
-    const favoriteStore = useFavoriteStore();
 
     const router = useRouter();
     const t = i18n.global.t;
@@ -1134,6 +1130,13 @@ export const useFriendStore = defineStore('Friend', () => {
         friendLog.clear();
     }
 
+    /**
+     * @param {boolean} value
+     */
+    function setIsRefreshFriendsLoading(value) {
+        isRefreshFriendsLoading.value = value;
+    }
+
     return {
         state,
 
@@ -1169,6 +1172,7 @@ export const useFriendStore = defineStore('Friend', () => {
         getFriendLog,
         tryApplyFriendOrder,
         resetFriendLog,
-        initFriendLogHistoryTable
+        initFriendLogHistoryTable,
+        setIsRefreshFriendsLoading
     };
 });

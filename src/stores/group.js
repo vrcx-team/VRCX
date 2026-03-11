@@ -4,7 +4,6 @@ import { useI18n } from 'vue-i18n';
 
 import { hasGroupPermission, replaceBioSymbols } from '../shared/utils';
 import { groupRequest, queryRequest } from '../api';
-import { groupDialogFilterOptions } from '../shared/constants/';
 import { watchState } from '../services/watchState';
 
 export const useGroupStore = defineStore('Group', () => {
@@ -288,6 +287,27 @@ export const useGroupStore = defineStore('Group', () => {
         D.visible = true;
     }
 
+    /**
+     * @param {boolean} value
+     */
+    function setCurrentUserGroupsInit(value) {
+        currentUserGroupsInit.value = value;
+    }
+
+    /**
+     * @param {Array} value
+     */
+    function setInGameGroupOrder(value) {
+        inGameGroupOrder.value = value;
+    }
+
+    /**
+     * @param {Array} value
+     */
+    function setGroupInstances(value) {
+        groupInstances.value = value;
+    }
+
     return {
         groupDialog,
         currentUserGroups,
@@ -306,6 +326,9 @@ export const useGroupStore = defineStore('Group', () => {
         clearGroupInstances,
         setGroupDialogVisible,
         showModerateGroupDialog,
-        showGroupMemberModerationDialog
+        showGroupMemberModerationDialog,
+        setCurrentUserGroupsInit,
+        setInGameGroupOrder,
+        setGroupInstances
     };
 });

@@ -33,10 +33,8 @@ export async function runGameRunningChangedFlow(isGameRunning) {
     const userStore = useUserStore();
     const instanceStore = useInstanceStore();
     const updateLoopStore = useUpdateLoopStore();
-    const locationStore = useLocationStore();
     const gameLogStore = useGameLogStore();
     const vrStore = useVrStore();
-    const avatarStore = useAvatarStore();
     const gameStore = useGameStore();
 
     if (isGameRunning) {

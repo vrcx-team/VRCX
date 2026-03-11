@@ -22,10 +22,6 @@ import { useWorldStore } from './world';
 
 export const useUiStore = defineStore('Ui', () => {
     const notificationStore = useNotificationStore();
-    const userStore = useUserStore();
-    const worldStore = useWorldStore();
-    const avatarStore = useAvatarStore();
-    const groupStore = useGroupStore();
     const instanceStore = useInstanceStore();
     const router = useRouter();
     const keys = useMagicKeys();

@@ -304,7 +304,7 @@ export function addGameLogEntry(gameLog, location) {
             if (gameLogStore.lastVideoUrl === gameLog.videoUrl) {
                 break;
             }
-            gameLogStore.lastVideoUrl = gameLog.videoUrl;
+            gameLogStore.setLastVideoUrl(gameLog.videoUrl);
             gameLogStore.addGameLogVideo(gameLog, location, userId);
             break;
         case 'video-sync':
@@ -321,7 +321,7 @@ export function addGameLogEntry(gameLog, location) {
             ) {
                 break;
             }
-            gameLogStore.lastResourceloadUrl = gameLog.resourceUrl;
+            gameLogStore.setLastResourceloadUrl(gameLog.resourceUrl);
             entry = createResourceLoadEntry(
                 gameLog.type,
                 gameLog.dt,

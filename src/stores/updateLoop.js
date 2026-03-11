@@ -11,14 +11,11 @@ import { clearVRCXCache } from '../coordinators/vrcxCoordinator';
 import { useAuthStore } from './auth';
 import { useDiscordPresenceSettingsStore } from './settings/discordPresence';
 import { useFriendStore } from './friend';
-import { useGameStore } from './game';
-import { useGroupStore } from './group';
 import { handleGroupUserInstances } from '../coordinators/groupCoordinator';
 import {
     getCurrentUser,
     updateAutoStateChange
 } from '../coordinators/userCoordinator';
-import { useModerationStore } from './moderation';
 import { useUserStore } from './user';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
 import { useVrStore } from './vr';
@@ -31,12 +28,9 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     const authStore = useAuthStore();
     const userStore = useUserStore();
     const friendStore = useFriendStore();
-    const gameStore = useGameStore();
-    const moderationStore = useModerationStore();
     const vrcxStore = useVrcxStore();
     const discordPresenceSettingsStore = useDiscordPresenceSettingsStore();
     const vrcxUpdaterStore = useVRCXUpdaterStore();
-    const groupStore = useGroupStore();
     const vrStore = useVrStore();
     const state = {
         nextCurrentUserRefresh: 300,
@@ -152,7 +146,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 }
             }
         } catch (err) {
-            friendStore.isRefreshFriendsLoading = false;
+            friendStore.setIsRefreshFriendsLoading(false);
             console.error(err);
         }
         workerTimers.setTimeout(() => updateLoop(), 1000);

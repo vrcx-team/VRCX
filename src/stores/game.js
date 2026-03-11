@@ -31,8 +31,6 @@ export const useGameStore = defineStore('Game', () => {
 
     init();
 
-    // --- Atomic setters ---
-
     /**
      * @param {boolean} value Game running flag.
      */
@@ -67,8 +65,6 @@ export const useGameStore = defineStore('Game', () => {
     function setLastCrashedTime(value) {
         state.lastCrashedTime = value;
     }
-
-    // --- Self-contained operations (no cross-store deps) ---
 
     /**
      * Fetches VRChat cache size from AssetBundleManager.

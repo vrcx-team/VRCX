@@ -118,20 +118,22 @@ function mountComponent(overrides = {}) {
     });
 
     const userStore = useUserStore(pinia);
-    userStore.userDialog = {
-        id: 'usr_me',
-        ref: { id: 'usr_me' },
-        avatars: [...MOCK_AVATARS],
-        avatarSorting: 'name',
-        avatarReleaseStatus: 'all',
-        isAvatarsLoading: false,
-        isWorldsLoading: false,
-        ...overrides
-    };
-    userStore.currentUser = {
-        id: 'usr_me',
-        ...overrides.currentUser
-    };
+    userStore.$patch({
+        userDialog: {
+            id: 'usr_me',
+            ref: { id: 'usr_me' },
+            avatars: [...MOCK_AVATARS],
+            avatarSorting: 'name',
+            avatarReleaseStatus: 'all',
+            isAvatarsLoading: false,
+            isWorldsLoading: false,
+            ...overrides
+        },
+        currentUser: {
+            id: 'usr_me',
+            ...overrides.currentUser
+        }
+    });
 
     return mount(UserDialogAvatarsTab, {
         global: {

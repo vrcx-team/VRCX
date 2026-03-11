@@ -109,92 +109,100 @@ function mountComponent(overrides = {}) {
     });
 
     const appearanceSettingsStore = useAppearanceSettingsStore(pinia);
-    appearanceSettingsStore.hideUserNotes = false;
-    appearanceSettingsStore.hideUserMemos = false;
+    appearanceSettingsStore.$patch({
+        hideUserNotes: false,
+        hideUserMemos: false
+    });
 
     const advancedSettingsStore = useAdvancedSettingsStore(pinia);
-    advancedSettingsStore.bioLanguage = 'en';
-    advancedSettingsStore.translationApi = '';
-    advancedSettingsStore.translationApiType = 'google';
-    advancedSettingsStore.translateText = vi.fn().mockResolvedValue('');
+    advancedSettingsStore.$patch({
+        bioLanguage: 'en',
+        translationApi: '',
+        translationApiType: 'google'
+    });
+    const advancedSettings = advancedSettingsStore;
+    advancedSettings.translateText = vi.fn().mockResolvedValue('');
 
     const userStore = useUserStore(pinia);
-    userStore.userDialog = {
-        id: 'usr_target',
-        friend: {
-            state: 'online',
-            ref: {
-                location: 'wrld_test:123'
-            }
-        },
-        ref: {
+    userStore.$patch({
+        userDialog: {
             id: 'usr_target',
-            location: 'wrld_test:123',
-            travelingToLocation: '',
-            profilePicOverride: '',
-            currentAvatarImageUrl: '',
-            currentAvatarTags: [],
-            bio: '',
-            bioLinks: [],
-            state: 'online',
-            $online_for: 1000,
-            last_login: '2025-01-01T00:00:00.000Z',
-            last_activity: '2025-01-01T00:00:00.000Z',
-            date_joined: '2020-01-01',
+            friend: {
+                state: 'online',
+                ref: {
+                    location: 'wrld_test:123'
+                }
+            },
+            ref: {
+                id: 'usr_target',
+                location: 'wrld_test:123',
+                travelingToLocation: '',
+                profilePicOverride: '',
+                currentAvatarImageUrl: '',
+                currentAvatarTags: [],
+                bio: '',
+                bioLinks: [],
+                state: 'online',
+                $online_for: 1000,
+                last_login: '2025-01-01T00:00:00.000Z',
+                last_activity: '2025-01-01T00:00:00.000Z',
+                date_joined: '2020-01-01',
+                allowAvatarCopying: true,
+                displayName: 'Target'
+            },
+            $location: {
+                tag: 'wrld_test:123',
+                shortName: 'Test',
+                userId: '',
+                user: null
+            },
+            instance: {
+                ref: {},
+                friendCount: 0
+            },
+            users: [
+                {
+                    id: 'usr_friend_1',
+                    displayName: 'Friend A',
+                    $userColour: '#ffffff',
+                    location: 'traveling',
+                    $travelingToTime: Date.now(),
+                    $location_at: Date.now()
+                }
+            ],
+            note: '',
+            memo: '',
+            isRepresentedGroupLoading: false,
+            representedGroup: null,
+            lastSeen: '2025-01-01T00:00:00.000Z',
+            joinCount: 0,
+            timeSpent: 0,
+            dateFriendedInfo: [],
+            unFriended: false,
+            dateFriended: '2025-01-01T00:00:00.000Z',
+            $homeLocationName: '',
+            ...overrides.userDialog
+        },
+        currentUser: {
+            id: 'usr_me',
             allowAvatarCopying: true,
-            displayName: 'Target'
-        },
-        $location: {
-            tag: 'wrld_test:123',
-            shortName: 'Test',
-            userId: '',
-            user: null
-        },
-        instance: {
-            ref: {},
-            friendCount: 0
-        },
-        users: [
-            {
-                id: 'usr_friend_1',
-                displayName: 'Friend A',
-                $userColour: '#ffffff',
-                location: 'traveling',
-                $travelingToTime: Date.now(),
-                $location_at: Date.now()
-            }
-        ],
-        note: '',
-        memo: '',
-        isRepresentedGroupLoading: false,
-        representedGroup: null,
-        lastSeen: '2025-01-01T00:00:00.000Z',
-        joinCount: 0,
-        timeSpent: 0,
-        dateFriendedInfo: [],
-        unFriended: false,
-        dateFriended: '2025-01-01T00:00:00.000Z',
-        $homeLocationName: '',
-        ...overrides.userDialog
-    };
-
-    userStore.currentUser = {
-        id: 'usr_me',
-        allowAvatarCopying: true,
-        isBoopingEnabled: true,
-        hasSharedConnectionsOptOut: false,
-        hasDiscordFriendsOptOut: false,
-        homeLocation: '',
-        ...overrides.currentUser
-    };
+            isBoopingEnabled: true,
+            hasSharedConnectionsOptOut: false,
+            hasDiscordFriendsOptOut: false,
+            homeLocation: '',
+            ...overrides.currentUser
+        }
+    });
 
     const locationStore = useLocationStore(pinia);
-    locationStore.lastLocation = {
-        location: 'wrld_test:123'
-    };
+    locationStore.$patch({
+        lastLocation: {
+            location: 'wrld_test:123'
+        }
+    });
 
-    const modalStore = useModalStore(pinia);
-    modalStore.confirm = vi.fn().mockResolvedValue({ ok: false });
+    const modal = useModalStore(pinia);
+    modal.confirm = vi.fn().mockResolvedValue({ ok: false });
 
     return shallowMount(UserDialogInfoTab, {
         global: {

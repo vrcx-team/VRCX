@@ -145,15 +145,17 @@ function mountComponent(overrides = {}) {
     });
 
     const groupStore = useGroupStore(pinia);
-    groupStore.groupDialog = {
-        id: 'grp_1',
-        visible: true,
-        ref: {
-            galleries: [...MOCK_GALLERIES]
-        },
-        galleries: { ...MOCK_GALLERY_IMAGES },
-        ...overrides
-    };
+    groupStore.$patch({
+        groupDialog: {
+            id: 'grp_1',
+            visible: true,
+            ref: {
+                galleries: [...MOCK_GALLERIES]
+            },
+            galleries: { ...MOCK_GALLERY_IMAGES },
+            ...overrides
+        }
+    });
 
     return mount(GroupDialogPhotosTab, {
         global: {

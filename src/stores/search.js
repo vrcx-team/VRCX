@@ -9,9 +9,7 @@ import { instanceRequest, userRequest } from '../api';
 import { groupRequest } from '../api/';
 import removeConfusables, { removeWhitespace } from '../services/confusables';
 import { useAppearanceSettingsStore } from './settings/appearance';
-import { useAvatarStore } from './avatar';
 import { useFriendStore } from './friend';
-import { useGroupStore } from './group';
 import { showGroupDialog } from '../coordinators/groupCoordinator';
 import { showWorldDialog } from '../coordinators/worldCoordinator';
 import { showAvatarDialog } from '../coordinators/avatarCoordinator';
@@ -22,7 +20,6 @@ import {
 } from '../coordinators/userCoordinator';
 import { useModalStore } from './modal';
 import { useUserStore } from './user';
-import { useWorldStore } from './world';
 import { watchState } from '../services/watchState';
 
 export const useSearchStore = defineStore('Search', () => {
@@ -30,9 +27,6 @@ export const useSearchStore = defineStore('Search', () => {
     const router = useRouter();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const friendStore = useFriendStore();
-    const worldStore = useWorldStore();
-    const avatarStore = useAvatarStore();
-    const groupStore = useGroupStore();
     const modalStore = useModalStore();
     const { t } = useI18n();
 

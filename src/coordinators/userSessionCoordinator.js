@@ -4,11 +4,8 @@ import {
     updateUserCurrentStatus
 } from './friendRelationshipCoordinator';
 import { useAuthStore } from '../stores/auth';
-import { useAvatarStore } from '../stores/avatar';
 import { addAvatarToHistory, addAvatarWearTime } from './avatarCoordinator';
-import { useFriendStore } from '../stores/friend';
 import { useGameStore } from '../stores/game';
-import { useGroupStore } from '../stores/group';
 import { applyPresenceGroups } from './groupCoordinator';
 import { useInstanceStore } from '../stores/instance';
 import { useUserStore } from '../stores/user';
@@ -26,7 +23,6 @@ export function runAvatarSwapFlow(
     { json, ref, isLoggedIn },
     { now = Date.now } = {}
 ) {
-    const avatarStore = useAvatarStore();
     const gameStore = useGameStore();
 
     if (!isLoggedIn) {
@@ -56,7 +52,7 @@ export function runFirstLoginFlow(ref, { now = Date.now } = {}) {
         ref.$previousAvatarSwapTime = now();
     }
     userStore.cachedUsers.clear(); // clear before running applyUser
-    userStore.currentUser = ref;
+    userStore.setCurrentUser(ref);
     authStore.loginComplete();
 }
 
@@ -65,9 +61,7 @@ export function runFirstLoginFlow(ref, { now = Date.now } = {}) {
  * @param {object} ref Current user state reference.
  */
 export function runPostApplySyncFlow(ref) {
-    const groupStore = useGroupStore();
     const instanceStore = useInstanceStore();
-    const friendStore = useFriendStore();
 
     applyPresenceGroups(ref);
     instanceStore.applyQueuedInstance(ref.queuedInstance);

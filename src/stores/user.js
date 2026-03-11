@@ -12,13 +12,12 @@ import {
     parseLocation,
     replaceBioSymbols
 } from '../shared/utils';
-import { getAllUserMemos, getUserMemo } from '../coordinators/memoCoordinator';
+import { getAllUserMemos } from '../coordinators/memoCoordinator';
 import { instanceRequest, userRequest } from '../api';
 import { AppDebug } from '../services/appConfig';
 import { database } from '../services/database';
 import { runUpdateCurrentUserLocationFlow } from '../coordinators/locationCoordinator';
 import { useAppearanceSettingsStore } from './settings/appearance';
-import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
@@ -30,7 +29,6 @@ import * as workerTimers from 'worker-timers';
 export const useUserStore = defineStore('User', () => {
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const friendStore = useFriendStore();
-    const favoriteStore = useFavoriteStore();
     const locationStore = useLocationStore();
     const instanceStore = useInstanceStore();
     const uiStore = useUiStore();
@@ -658,6 +656,27 @@ export const useUserStore = defineStore('User', () => {
     }
 
     /**
+     * @param {object} value
+     */
+    function setCurrentUser(value) {
+        currentUser.value = value;
+    }
+
+    /**
+     * @param {object} value
+     */
+    function setSubsetOfLanguages(value) {
+        subsetOfLanguages.value = value;
+    }
+
+    /**
+     * @param {Array} value
+     */
+    function setLanguageDialogLanguages(value) {
+        languageDialog.value.languages = value;
+    }
+
+    /**
      */
     function markCurrentUserGameStarted() {
         currentUser.value.$online_for = Date.now();
@@ -715,6 +734,9 @@ export const useUserStore = defineStore('User', () => {
         setCurrentUserColour,
         setCurrentUserLocationState,
         setCurrentUserTravelingToTime,
+        setCurrentUser,
+        setSubsetOfLanguages,
+        setLanguageDialogLanguages,
         markCurrentUserGameStarted,
         markCurrentUserGameStopped,
         checkNote,

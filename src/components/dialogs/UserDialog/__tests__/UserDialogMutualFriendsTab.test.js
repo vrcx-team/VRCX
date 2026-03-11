@@ -127,19 +127,22 @@ function mountComponent(overrides = {}) {
     });
 
     const userStore = useUserStore(pinia);
-    userStore.userDialog = {
-        id: 'usr_target',
-        ref: { id: 'usr_target' },
-        mutualFriends: [...MOCK_MUTUAL_FRIENDS],
-        mutualFriendSorting: userDialogMutualFriendSortingOptions.alphabetical,
-        isMutualFriendsLoading: false,
-        ...overrides
-    };
-    userStore.currentUser = {
-        id: 'usr_me',
-        hasSharedConnectionsOptOut: false,
-        ...overrides.currentUser
-    };
+    userStore.$patch({
+        userDialog: {
+            id: 'usr_target',
+            ref: { id: 'usr_target' },
+            mutualFriends: [...MOCK_MUTUAL_FRIENDS],
+            mutualFriendSorting:
+                userDialogMutualFriendSortingOptions.alphabetical,
+            isMutualFriendsLoading: false,
+            ...overrides
+        },
+        currentUser: {
+            id: 'usr_me',
+            hasSharedConnectionsOptOut: false,
+            ...overrides.currentUser
+        }
+    });
 
     return mount(UserDialogMutualFriendsTab, {
         global: {
@@ -215,15 +218,17 @@ describe('UserDialogMutualFriendsTab.vue', () => {
         test('calls showUserDialog when a friend is clicked', async () => {
             const pinia = createTestingPinia({ stubActions: false });
             const userStore = useUserStore(pinia);
-            userStore.userDialog = {
-                id: 'usr_target',
-                ref: { id: 'usr_target' },
-                mutualFriends: [...MOCK_MUTUAL_FRIENDS],
-                mutualFriendSorting:
-                    userDialogMutualFriendSortingOptions.alphabetical,
-                isMutualFriendsLoading: false
-            };
-            userStore.currentUser = { id: 'usr_me' };
+            userStore.$patch({
+                userDialog: {
+                    id: 'usr_target',
+                    ref: { id: 'usr_target' },
+                    mutualFriends: [...MOCK_MUTUAL_FRIENDS],
+                    mutualFriendSorting:
+                        userDialogMutualFriendSortingOptions.alphabetical,
+                    isMutualFriendsLoading: false
+                },
+                currentUser: { id: 'usr_me' }
+            });
             const showUserDialogSpy = vi
                 .spyOn(userCoordinatorModule, 'showUserDialog')
                 .mockImplementation(() => {});

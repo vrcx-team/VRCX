@@ -113,8 +113,8 @@ export function handleFavoriteAtDelete(ref) {
     favoriteStore.cachedFavoritesByObjectId.delete(ref.favoriteId);
     favoriteStore.state.favoriteObjects.delete(ref.favoriteId);
     friendStore.localFavoriteFriends.delete(ref.favoriteId);
-    favoriteStore.favoritesSortOrder = favoriteStore.favoritesSortOrder.filter(
-        (id) => id !== ref.favoriteId
+    favoriteStore.setFavoritesSortOrder(
+        favoriteStore.favoritesSortOrder.filter((id) => id !== ref.favoriteId)
     );
 
     runUpdateFriendFlow(ref.favoriteId);
@@ -389,14 +389,14 @@ export function refreshFavorites() {
     if (favoriteStore.isFavoriteLoading) {
         return;
     }
-    favoriteStore.isFavoriteLoading = true;
+    favoriteStore.setIsFavoriteLoading(true);
     queryRequest
         .fetch('favoriteLimits')
         .then((args) => {
-            favoriteStore.favoriteLimits = {
+            favoriteStore.setFavoriteLimits({
                 ...favoriteStore.favoriteLimits,
                 ...args.json
-            };
+            });
         })
         .catch((err) => {
             console.error(err);
@@ -430,12 +430,12 @@ export function refreshFavorites() {
                         }
                     }
                 }
-                favoriteStore.favoritesSortOrder = newFavoriteSortOrder;
+                favoriteStore.setFavoritesSortOrder(newFavoriteSortOrder);
             }
             refreshFavoriteItems();
             favoriteStore.refreshFavoriteGroups();
             friendStore.updateLocalFavoriteFriends();
-            favoriteStore.isFavoriteLoading = false;
+            favoriteStore.setIsFavoriteLoading(false);
             watchState.isFavoritesLoaded = true;
             favoriteStore.countFavoriteGroups();
         }
@@ -445,7 +445,7 @@ export function refreshFavorites() {
 /**
  *
  * @param {string} tag
- * @returns {void}
+ * @returns {Promise<void>}
  */
 export async function refreshFavoriteAvatars(tag) {
     const params = {

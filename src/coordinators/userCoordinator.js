@@ -669,7 +669,7 @@ export function handleConfig(args) {
     if (!languages) {
         return;
     }
-    userStore.subsetOfLanguages = languages;
+    userStore.setSubsetOfLanguages(languages);
     const data = [];
     for (const key in languages) {
         const value = languages[key];
@@ -678,7 +678,7 @@ export function handleConfig(args) {
             value
         });
     }
-    userStore.languageDialog.languages = data;
+    userStore.setLanguageDialogLanguages(data);
 }
 
 /**

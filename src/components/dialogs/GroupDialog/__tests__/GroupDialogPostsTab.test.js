@@ -138,21 +138,23 @@ function mountComponent(overrides = {}) {
     });
 
     const groupStore = useGroupStore(pinia);
-    groupStore.groupDialog = {
-        id: 'grp_1',
-        visible: true,
-        posts: [...MOCK_POSTS],
-        postsFiltered: [...MOCK_POSTS],
-        postsSearch: '',
-        ref: {
-            roles: [
-                { id: 'role_1', name: 'Admin' },
-                { id: 'role_2', name: 'Member' }
-            ],
-            permissions: []
-        },
-        ...overrides
-    };
+    groupStore.$patch({
+        groupDialog: {
+            id: 'grp_1',
+            visible: true,
+            posts: [...MOCK_POSTS],
+            postsFiltered: [...MOCK_POSTS],
+            postsSearch: '',
+            ref: {
+                roles: [
+                    { id: 'role_1', name: 'Admin' },
+                    { id: 'role_2', name: 'Member' }
+                ],
+                permissions: []
+            },
+            ...overrides
+        }
+    });
 
     return mount(GroupDialogPostsTab, {
         global: {

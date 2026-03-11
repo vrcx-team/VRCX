@@ -75,7 +75,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     const sharedFeedStore = useSharedFeedStore();
     const instanceStore = useInstanceStore();
     const modalStore = useModalStore();
-    const groupStore = useGroupStore();
 
     const notificationInitStatus = ref(false);
     const notificationTable = ref({

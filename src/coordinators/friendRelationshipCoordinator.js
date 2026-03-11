@@ -5,7 +5,6 @@ import { friendRequest, userRequest } from '../api';
 import { getNameColour } from '../shared/utils';
 import { handleFavoriteDelete } from './favoriteCoordinator';
 import { useAppearanceSettingsStore } from '../stores/settings/appearance';
-import { useFavoriteStore } from '../stores/favorite';
 import { useFriendStore } from '../stores/friend';
 import { useModalStore } from '../stores/modal';
 import { useNotificationStore } from '../stores/notification';
@@ -342,7 +341,6 @@ export function runDeleteFriendshipFlow(
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
     const sharedFeedStore = useSharedFeedStore();
-    const favoriteStore = useFavoriteStore();
     const uiStore = useUiStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
 

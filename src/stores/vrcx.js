@@ -17,21 +17,16 @@ import {
 import { debounce, parseLocation } from '../shared/utils';
 import { AppDebug } from '../services/appConfig';
 import { database } from '../services/database';
-import { failedGetRequests } from '../services/request';
 import { refreshCustomScript } from '../shared/utils/base/ui';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
-import { useAvatarStore } from './avatar';
 import {
     addLocalWorldFavorite,
     addLocalAvatarFavorite
 } from '../coordinators/favoriteCoordinator';
 import { useFavoriteStore } from './favorite';
-import { useFriendStore } from './friend';
-import { useGalleryStore } from './gallery';
 import { useGameLogStore } from './gameLog';
 import { useGameStore } from './game';
-import { useGroupStore } from './group';
 import { showGroupDialog } from '../coordinators/groupCoordinator';
 import { showWorldDialog } from '../coordinators/worldCoordinator';
 import {
@@ -40,7 +35,6 @@ import {
     selectAvatarWithoutConfirmation
 } from '../coordinators/avatarCoordinator';
 import { showUserDialog, addCustomTag } from '../coordinators/userCoordinator';
-import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
 import { useModalStore } from './modal';
 import { useNotificationStore } from './notification';
@@ -49,7 +43,6 @@ import { useSearchStore } from './search';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
 import { useVrcStatusStore } from './vrcStatus';
-import { useWorldStore } from './world';
 import { clearVRCXCache } from '../coordinators/vrcxCoordinator';
 import { watchState } from '../services/watchState';
 
@@ -59,12 +52,8 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     const gameStore = useGameStore();
     const locationStore = useLocationStore();
     const notificationStore = useNotificationStore();
-    const avatarStore = useAvatarStore();
-    const worldStore = useWorldStore();
-    const instanceStore = useInstanceStore();
-    const friendStore = useFriendStore();
+
     const favoriteStore = useFavoriteStore();
-    const groupStore = useGroupStore();
     const userStore = useUserStore();
     const photonStore = usePhotonStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
@@ -73,7 +62,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     const gameLogStore = useGameLogStore();
     const updateLoopStore = useUpdateLoopStore();
     const vrcStatusStore = useVrcStatusStore();
-    const galleryStore = useGalleryStore();
     const { t } = useI18n();
     const modalStore = useModalStore();
 
@@ -278,10 +266,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     function setSearchLimit(value) {
         searchLimit.value = value;
     }
-
-    /**
-     *
-     */
 
     /**
      *
@@ -644,10 +628,12 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     toast.error('Invalid local favorite world command');
                     break;
                 }
-                queryRequest.fetch('world.location', { worldId: id }).then(() => {
-                    searchStore.directAccessWorld(id);
-                    addLocalWorldFavorite(id, group);
-                });
+                queryRequest
+                    .fetch('world.location', { worldId: id })
+                    .then(() => {
+                        searchStore.directAccessWorld(id);
+                        addLocalWorldFavorite(id, group);
+                    });
                 break;
             case 'local-favorite-avatar':
                 console.log('local-favorite-avatar', commandArg);

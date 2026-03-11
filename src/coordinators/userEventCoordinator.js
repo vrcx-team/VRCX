@@ -1,7 +1,6 @@
 import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
 import { AppDebug } from '../services/appConfig';
 import { database } from '../services/database';
-import { useAvatarStore } from '../stores/avatar';
 import { getAvatarName } from './avatarCoordinator';
 import { useFeedStore } from '../stores/feed';
 import { useFriendStore } from '../stores/friend';
@@ -35,7 +34,6 @@ export async function runHandleUserUpdateFlow(
     const feedStore = useFeedStore();
     const notificationStore = useNotificationStore();
     const sharedFeedStore = useSharedFeedStore();
-    const avatarStore = useAvatarStore();
     const generalSettingsStore = useGeneralSettingsStore();
 
     const { state, userDialog, applyUserDialogLocation, checkNote } = userStore;

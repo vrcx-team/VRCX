@@ -57,7 +57,6 @@ function applyGroupLanguage(ref) {
  */
 export function applyGroup(json) {
     const groupStore = useGroupStore();
-    const userStore = useUserStore();
     let ref = groupStore.cachedGroups.get(json.id);
     sanitizeEntityJson(json, ['rules', 'name', 'description']);
     if (typeof ref === 'undefined') {
@@ -629,7 +628,7 @@ export async function loadCurrentUserGroups(userId, groups) {
         await Promise.allSettled(promises);
     }
 
-    groupStore.currentUserGroupsInit = true;
+    groupStore.setCurrentUserGroupsInit(true);
     getCurrentUserGroups();
 }
 
@@ -691,7 +690,7 @@ export async function updateInGameGroupOrder() {
     const groupStore = useGroupStore();
     const gameStore = useGameStore();
     const userStore = useUserStore();
-    groupStore.inGameGroupOrder = [];
+    groupStore.setInGameGroupOrder([]);
     try {
         const json = await gameStore.getVRChatRegistryKey(
             `VRC_GROUP_ORDER_${userStore.currentUser.id}`
@@ -699,7 +698,7 @@ export async function updateInGameGroupOrder() {
         if (!json) {
             return;
         }
-        groupStore.inGameGroupOrder = JSON.parse(json);
+        groupStore.setInGameGroupOrder(JSON.parse(json));
     } catch (err) {
         console.error(err);
     }
@@ -925,7 +924,7 @@ export function handleGroupMember(args) {
 export async function handleGroupUserInstances(args) {
     const groupStore = useGroupStore();
     const instanceStore = useInstanceStore();
-    groupStore.groupInstances = [];
+    groupStore.setGroupInstances([]);
     for (const json of args.json.instances) {
         if (args.json.fetchedAt) {
             // tack on fetchedAt

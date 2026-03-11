@@ -6,7 +6,6 @@ import { useI18n } from 'vue-i18n';
 import {
     compareByName,
     createDefaultFavoriteGroupRef,
-    removeFromArray,
     replaceReactiveObject
 } from '../shared/utils';
 import { favoriteRequest } from '../api';
@@ -15,8 +14,6 @@ import { processBulk } from '../services/request';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { watchState } from '../services/watchState';
 import { onLoginStateChanged } from '../coordinators/favoriteCoordinator';
-
-import configRepository from '../services/config';
 
 export const useFavoriteStore = defineStore('Favorite', () => {
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -736,6 +733,27 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         return indexA - indexB;
     }
 
+    /**
+     * @param {boolean} value
+     */
+    function setIsFavoriteLoading(value) {
+        isFavoriteLoading.value = value;
+    }
+
+    /**
+     * @param {object} value
+     */
+    function setFavoriteLimits(value) {
+        favoriteLimits.value = value;
+    }
+
+    /**
+     * @param {Array} value
+     */
+    function setFavoritesSortOrder(value) {
+        favoritesSortOrder.value = value;
+    }
+
     return {
         state,
 
@@ -799,6 +817,9 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         hasLocalFriendFavorite,
         isInAnyLocalFriendGroup,
         newLocalFriendFavoriteGroup,
-        countFavoriteGroups
+        countFavoriteGroups,
+        setIsFavoriteLoading,
+        setFavoriteLimits,
+        setFavoritesSortOrder
     };
 });

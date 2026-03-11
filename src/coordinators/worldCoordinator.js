@@ -3,7 +3,6 @@ import { toast } from 'vue-sonner';
 import { i18n } from '../plugins/i18n';
 
 import {
-    checkVRChatCache,
     createDefaultWorldRef,
     evictMapCache,
     getAvailablePlatforms,

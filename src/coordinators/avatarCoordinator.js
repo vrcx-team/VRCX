@@ -185,7 +185,7 @@ export async function getAvatarHistory() {
         }
         applyAvatar(avatar);
     }
-    avatarStore.avatarHistory = historyArray;
+    avatarStore.setAvatarHistory(historyArray);
 }
 
 /**
@@ -530,8 +530,8 @@ export async function checkAvatarCacheRemote(fileId, ownerUserId) {
     if (advancedSettingsStore.avatarRemoteDatabase) {
         try {
             toast.dismiss(avatarStore.loadingToastId);
-            avatarStore.loadingToastId = toast.loading(
-                t('message.avatar_lookup.loading')
+            avatarStore.setLoadingToastId(
+                toast.loading(t('message.avatar_lookup.loading'))
             );
             const avatarId = await lookupAvatarByImageFileId(
                 ownerUserId,

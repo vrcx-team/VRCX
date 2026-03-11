@@ -54,7 +54,6 @@ export async function runLogoutFlow() {
  */
 export function runLoginSuccessFlow(json) {
     const updateLoopStore = useUpdateLoopStore();
-    const userStore = useUserStore();
 
     updateLoopStore.setNextCurrentUserRefresh(420); // 7mins
     applyCurrentUser(json);

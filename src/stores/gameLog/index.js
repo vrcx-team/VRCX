@@ -2,8 +2,6 @@ import { reactive, ref, shallowRef, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { useRouter } from 'vue-router';
 
-import dayjs from 'dayjs';
-
 import {
     compareGameLogRows,
     findUserByDisplayName,
@@ -16,11 +14,7 @@ import { database } from '../../services/database';
 import { tryLoadPlayerList } from '../../coordinators/gameLogCoordinator';
 import { useAdvancedSettingsStore } from '../settings/advanced';
 import { useFriendStore } from '../friend';
-import { useGameStore } from '../game';
-import { useInstanceStore } from '../instance';
-import { useLocationStore } from '../location';
 import { useNotificationStore } from '../notification';
-import { useSharedFeedStore } from '../sharedFeed';
 import { useUiStore } from '../ui';
 import { useUserStore } from '../user';
 import { useVrStore } from '../vr';
@@ -34,15 +28,11 @@ import * as workerTimers from 'worker-timers';
 export const useGameLogStore = defineStore('GameLog', () => {
     const notificationStore = useNotificationStore();
     const vrStore = useVrStore();
-    const locationStore = useLocationStore();
     const friendStore = useFriendStore();
-    const instanceStore = useInstanceStore();
     const userStore = useUserStore();
     const uiStore = useUiStore();
     const vrcxStore = useVrcxStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
-    const gameStore = useGameStore();
-    const sharedFeedStore = useSharedFeedStore();
 
     const router = useRouter();
 
@@ -449,6 +439,20 @@ export const useGameLogStore = defineStore('GameLog', () => {
         gameLogTable.value.loading = false;
     }
 
+    /**
+     * @param {string} value
+     */
+    function setLastVideoUrl(value) {
+        lastVideoUrl.value = value;
+    }
+
+    /**
+     * @param {string} value
+     */
+    function setLastResourceloadUrl(value) {
+        lastResourceloadUrl.value = value;
+    }
+
     return {
         state,
 
@@ -472,6 +476,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
         addGameLogVRDancing,
         addGameLogZuwaZuwaDance,
         addGameLogLSMedia,
-        addGameLogPopcornPalace
+        addGameLogPopcornPalace,
+        setLastVideoUrl,
+        setLastResourceloadUrl
     };
 });

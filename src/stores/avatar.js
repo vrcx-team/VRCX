@@ -187,6 +187,20 @@ export const useAvatarStore = defineStore('Avatar', () => {
         database.clearAvatarHistory();
     }
 
+    /**
+     * @param {Array} value
+     */
+    function setAvatarHistory(value) {
+        avatarHistory.value = value;
+    }
+
+    /**
+     * @param {*} value
+     */
+    function setLoadingToastId(value) {
+        loadingToastId.value = value;
+    }
+
     return {
         avatarDialog,
         avatarHistory,
@@ -200,6 +214,8 @@ export const useAvatarStore = defineStore('Avatar', () => {
         getAvatarGallery,
         updateVRChatAvatarCache,
         clearAvatarHistory,
+        setAvatarHistory,
+        setLoadingToastId,
         setAvatarDialogVisible,
         setAvatarDialogIsFavorite,
         setAvatarDialogLoading

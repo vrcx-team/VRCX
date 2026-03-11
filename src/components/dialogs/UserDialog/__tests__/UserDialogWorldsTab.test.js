@@ -137,19 +137,21 @@ function mountComponent(overrides = {}) {
     });
 
     const userStore = useUserStore(pinia);
-    userStore.userDialog = {
-        id: 'usr_me',
-        ref: { id: 'usr_me' },
-        worlds: [...MOCK_WORLDS],
-        worldSorting: userDialogWorldSortingOptions.name,
-        worldOrder: userDialogWorldOrderOptions.descending,
-        isWorldsLoading: false,
-        ...overrides
-    };
-    userStore.currentUser = {
-        id: 'usr_me',
-        ...overrides.currentUser
-    };
+    userStore.$patch({
+        userDialog: {
+            id: 'usr_me',
+            ref: { id: 'usr_me' },
+            worlds: [...MOCK_WORLDS],
+            worldSorting: userDialogWorldSortingOptions.name,
+            worldOrder: userDialogWorldOrderOptions.descending,
+            isWorldsLoading: false,
+            ...overrides
+        },
+        currentUser: {
+            id: 'usr_me',
+            ...overrides.currentUser
+        }
+    });
 
     return mount(UserDialogWorldsTab, {
         global: {
@@ -245,15 +247,17 @@ describe('UserDialogWorldsTab.vue', () => {
                 .spyOn(worldCoordinatorModule, 'showWorldDialog')
                 .mockImplementation(() => {});
 
-            userStore.userDialog = {
-                id: 'usr_me',
-                ref: { id: 'usr_me' },
-                worlds: [...MOCK_WORLDS],
-                worldSorting: userDialogWorldSortingOptions.name,
-                worldOrder: userDialogWorldOrderOptions.descending,
-                isWorldsLoading: false
-            };
-            userStore.currentUser = { id: 'usr_me' };
+            userStore.$patch({
+                userDialog: {
+                    id: 'usr_me',
+                    ref: { id: 'usr_me' },
+                    worlds: [...MOCK_WORLDS],
+                    worldSorting: userDialogWorldSortingOptions.name,
+                    worldOrder: userDialogWorldOrderOptions.descending,
+                    isWorldsLoading: false
+                },
+                currentUser: { id: 'usr_me' }
+            });
 
             const wrapper = mount(UserDialogWorldsTab, {
                 global: {
