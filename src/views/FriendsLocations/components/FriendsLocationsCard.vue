@@ -1,30 +1,37 @@
 <template>
     <ContextMenu>
         <ContextMenuTrigger as-child>
-            <Card
-                class="friend-card x-hover-card p-0 gap-0 hover:bg-accent hover:shadow-sm"
-                :style="cardStyle"
-                @click="showUserDialog(friend.id)">
-                <div class="friend-card__header">
+            <Card class="friend-card x-hover-card relative" :style="cardStyle" @click="showUserDialog(friend.id)">
+                <div class="friend-card__header grid items-center mb-1.75">
                     <div>
-                        <Avatar
-                            class="friend-card__avatar"
-                            :style="{ width: `${avatarSize}px`, height: `${avatarSize}px` }">
+                        <Avatar :style="{ width: `${avatarSize}px`, height: `${avatarSize}px` }">
                             <AvatarImage :src="userImage(friend.ref, true)" />
                             <AvatarFallback>{{ avatarFallback }}</AvatarFallback>
                         </Avatar>
                     </div>
-                    <span class="friend-card__status-dot rounded-full" :class="statusDotClass"></span>
-                    <div class="friend-card__name ml-0.5" :title="friend.name">{{ friend.name }}</div>
+                    <span
+                        class="friend-card__status-dot absolute rounded-full pointer-events-none"
+                        :class="statusDotClass"></span>
+                    <div
+                        class="friend-card__name font-semibold leading-[1.3] overflow-hidden text-ellipsis whitespace-nowrap ml-2"
+                        :title="friend.name">
+                        {{ friend.name }}
+                    </div>
                 </div>
-                <div class="friend-card__body">
-                    <div class="friend-card__signature ml-1" :title="friend.ref?.statusDescription">
-                        <Pencil v-if="friend.ref?.statusDescription" class="h-3.5 w-3.5 mr-1" style="opacity: 0.7" />
+                <div class="friend-card__body grid">
+                    <div
+                        class="friend-card__signature flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-muted-foreground"
+                        :title="friend.ref?.statusDescription">
+                        <Pencil v-if="friend.ref?.statusDescription" class="h-3.5 w-3.5 mr-0.5" style="opacity: 0.7" />
                         {{ friend.ref?.statusDescription || '&nbsp;' }}
                     </div>
-                    <div v-if="displayInstanceInfo" @click.stop class="friend-card__world" :title="friend.worldName">
+                    <div
+                        v-if="displayInstanceInfo"
+                        @click.stop
+                        class="friend-card__world flex items-center justify-start box-border max-w-full min-w-0 overflow-hidden"
+                        :title="friend.worldName">
                         <Location
-                            class="friend-card__location"
+                            class="friend-card__location flex w-full overflow-hidden leading-[1.3] wrap-break-word text-center"
                             :location="friend.ref?.location"
                             :traveling="friend.ref?.travelingToLocation"
                             link />
@@ -118,7 +125,8 @@
         '--card-scale': props.cardScale,
         '--card-spacing': props.cardSpacing,
         cursor: 'pointer',
-        padding: `${16 * props.cardScale * props.cardSpacing}px`
+        padding: `${54 * props.cardScale * props.cardSpacing}px`,
+        paddingBottom: `${36 * props.cardScale * props.cardSpacing}px !important`
     }));
 
     const avatarFallback = computed(() => props.friend?.name?.charAt(0) ?? '?');
@@ -244,30 +252,21 @@
     .friend-card {
         --card-scale: 1;
         --card-spacing: 1;
-        position: relative;
-        display: grid;
         gap: calc(14px * var(--card-scale) * var(--card-spacing));
-        border-radius: var(--radius-lg);
-        width: 100%;
         max-width: var(--friend-card-target-width, 220px);
         min-width: var(--friend-card-min-width, 220px);
-        box-sizing: border-box;
     }
 
     .friend-card__header {
-        display: grid;
         grid-template-columns: auto minmax(0, 1fr);
-        align-items: center;
         gap: calc(10px * var(--card-scale) * var(--card-spacing));
     }
 
     .friend-card__status-dot {
-        position: absolute;
         top: calc(8px * var(--card-scale));
         right: calc(8px * var(--card-scale));
         inline-size: calc(12px * var(--card-scale));
         block-size: calc(12px * var(--card-scale));
-        pointer-events: none;
     }
 
     .friend-card__status-dot--hidden {
@@ -323,29 +322,17 @@
     }
 
     .friend-card__body {
-        display: grid;
         gap: calc(8px * var(--card-scale) * var(--card-spacing));
     }
 
     .friend-card__name {
-        font-size: calc(16px * var(--card-scale));
-        font-weight: 600;
-        line-height: 1.3;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        font-size: calc(18px * var(--card-scale));
     }
 
     .friend-card__signature {
         font-size: calc(12px * var(--card-scale));
         line-height: 1.4;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        display: flex;
-        align-items: center;
         gap: calc(4px * var(--card-scale));
-        color: var(--muted-foreground);
     }
 
     .friend-card__signature :deep(svg) {
@@ -353,18 +340,11 @@
     }
 
     .friend-card__world {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
         min-height: calc(40px * var(--card-scale));
         padding: calc(7px * var(--card-scale)) calc(8px * var(--card-scale));
         border-radius: calc(var(--radius-lg) * var(--card-scale));
         font-size: calc(12px * var(--card-scale));
         line-height: 1.3;
-        box-sizing: border-box;
-        max-width: 100%;
-        min-width: 0;
-        overflow: hidden;
     }
 
     :global(html.dark) .friend-card__world,
@@ -374,14 +354,8 @@
     }
 
     .friend-card__location {
-        display: flex;
-        width: 100%;
         max-height: calc(36px * var(--card-scale));
-        overflow: hidden;
-        line-height: 1.3;
         white-space: normal;
-        word-break: break-word;
-        text-align: center;
     }
 
     .friend-card__location :deep(.x-location__text) {
