@@ -352,8 +352,7 @@
                                                 :group="activeRemoteGroup"
                                                 :selected="selectedFavoriteAvatars.includes(favorite.id)"
                                                 :edit-mode="avatarEditMode"
-                                                @toggle-select="toggleAvatarSelection(favorite.id, $event)"
-                                                @click="showAvatarDialog(favorite.id)" />
+                                                @toggle-select="toggleAvatarSelection(favorite.id, $event)" />
                                         </div>
                                     </template>
                                     <div v-else class="flex items-center justify-center text-[13px] h-full">
@@ -385,8 +384,7 @@
                                                 :favorite="favorite"
                                                 :group="activeLocalGroupName"
                                                 is-local-favorite
-                                                :edit-mode="avatarEditMode"
-                                                @click="showAvatarDialog(favorite.id)" />
+                                                :edit-mode="avatarEditMode" />
                                         </div>
                                     </template>
                                     <div v-else class="flex items-center justify-center text-[13px] h-full">
@@ -403,8 +401,7 @@
                                             <FavoritesAvatarLocalHistoryItem
                                                 v-for="favorite in avatarHistory"
                                                 :key="favorite.id"
-                                                :favorite="favorite"
-                                                @click="showAvatarDialog(favorite.id)" />
+                                                :favorite="favorite" />
                                         </div>
                                     </template>
                                     <div v-else class="flex items-center justify-center text-[13px] h-full">
