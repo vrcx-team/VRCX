@@ -2,7 +2,11 @@
     <template v-if="favorite.ref">
         <ContextMenu>
             <ContextMenuTrigger as-child>
-                <Item variant="outline" class="cursor-pointer" :style="itemStyle" @click="handleOpenProfile">
+                <Item
+                    variant="outline"
+                    class="favorites-item cursor-pointer hover:bg-muted x-hover-list"
+                    :style="itemStyle"
+                    @click="handleOpenProfile">
                     <ItemMedia variant="image">
                         <Avatar>
                             <AvatarImage :src="userImage(favorite.ref, true)" loading="lazy" />
@@ -107,7 +111,7 @@
         </ContextMenu>
     </template>
     <template v-else>
-        <Item variant="outline" :style="itemStyle">
+        <Item variant="outline" class="favorites-item hover:bg-muted x-hover-list" :style="itemStyle">
             <ItemMedia variant="image">
                 <Avatar>
                     <AvatarFallback>{{ avatarFallback }}</AvatarFallback>
@@ -303,3 +307,14 @@
         }
     }
 </script>
+
+<style scoped>
+    .favorites-item :deep(img) {
+        filter: saturate(0.8) contrast(0.8);
+        transition: filter 0.2s ease;
+    }
+
+    .favorites-item:hover :deep(img) {
+        filter: saturate(1) contrast(1);
+    }
+</style>

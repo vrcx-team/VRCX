@@ -1,7 +1,10 @@
 <template>
     <ContextMenu>
         <ContextMenuTrigger as-child>
-            <Card class="friend-card x-hover-card relative" :style="cardStyle" @click="showUserDialog(friend.id)">
+            <Card
+                class="friend-card x-hover-card hover:bg-muted relative"
+                :style="cardStyle"
+                @click="showUserDialog(friend.id)">
                 <div class="friend-card__header grid items-center mb-1.75">
                     <div>
                         <Avatar :style="{ width: `${avatarSize}px`, height: `${avatarSize}px` }">

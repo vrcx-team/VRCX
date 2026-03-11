@@ -2,17 +2,21 @@
     <template v-if="localFavFakeRef">
         <ContextMenu>
             <ContextMenuTrigger as-child>
-                <Item variant="outline" class="cursor-pointer" :style="itemStyle" @click="handleViewDetails">
+                <Item
+                    variant="outline"
+                    class="favorites-item cursor-pointer hover:bg-muted x-hover-list"
+                    :style="itemStyle"
+                    @click="handleViewDetails">
                     <ItemMedia variant="image">
-                        <img
-                            v-if="smallThumbnail"
-                            :src="smallThumbnail"
-                            loading="lazy"
-                            decoding="async"
-                            fetchpriority="low"
-                            class="object-cover" />
-                        <Avatar v-else>
-                            <AvatarFallback>{{ avatarFallback }}</AvatarFallback>
+                        <Avatar class="rounded-sm size-full">
+                            <AvatarImage
+                                v-if="smallThumbnail"
+                                :src="smallThumbnail"
+                                loading="lazy"
+                                decoding="async"
+                                fetchpriority="low"
+                                class="rounded-sm object-cover" />
+                            <AvatarFallback class="rounded-sm">{{ avatarFallback }}</AvatarFallback>
                         </Avatar>
                     </ItemMedia>
                     <ItemContent class="min-w-0">
@@ -79,7 +83,7 @@
         </ContextMenu>
     </template>
     <template v-else>
-        <Item variant="outline" :style="itemStyle">
+        <Item variant="outline" class="favorites-item hover:bg-muted x-hover-list" :style="itemStyle">
             <ItemMedia variant="image" />
             <ItemContent class="min-w-0">
                 <ItemTitle class="truncate max-w-full">{{ favorite.name || favorite.id }}</ItemTitle>
@@ -95,7 +99,7 @@
 
 <script setup>
     import { AlertTriangle, Lock, MoreHorizontal, Trash2 } from 'lucide-vue-next';
-    import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import {
@@ -199,3 +203,14 @@
         favoriteRequest.deleteFavorite({ objectId: props.favorite.id });
     }
 </script>
+
+<style scoped>
+    .favorites-item :deep(img) {
+        filter: saturate(0.8) contrast(0.8);
+        transition: filter 0.2s ease;
+    }
+
+    .favorites-item:hover :deep(img) {
+        filter: saturate(1) contrast(1);
+    }
+</style>
