@@ -76,6 +76,15 @@ vi.mock('@/components/ui/item', () => ({
     ItemDescription: { template: '<div><slot /></div>' }
 }));
 
+vi.mock('@/components/ui/avatar', () => ({
+    Avatar: { template: '<div data-testid="avatar"><slot /></div>' },
+    AvatarImage: {
+        props: ['src'],
+        template: '<img data-testid="avatar-image" :src="src" />'
+    },
+    AvatarFallback: { template: '<span data-testid="avatar-fallback"><slot /></span>' }
+}));
+
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
@@ -243,6 +252,32 @@ describe('FavoritesWorldItem.vue', () => {
         });
 
         expect(wrapper.text()).toContain('wrld_missing_ref');
+    });
+
+    it('adds the unified hover classes on item', () => {
+        const wrapper = mountItem();
+
+        expect(wrapper.get('[data-testid="item"]').classes()).toEqual(
+            expect.arrayContaining(['favorites-item', 'hover:bg-muted', 'x-hover-list'])
+        );
+    });
+
+    it('uses rounded avatar fallback when thumbnail is missing', () => {
+        const wrapper = mountItem({
+            favorite: {
+                id: 'wrld_no_thumb',
+                ref: {
+                    name: 'No Thumb World',
+                    authorName: 'Author',
+                    thumbnailImageUrl: '',
+                    releaseStatus: 'public'
+                }
+            }
+        });
+
+        expect(wrapper.find('[data-testid="avatar-image"]').exists()).toBe(false);
+        expect(wrapper.get('[data-testid="avatar"]').classes()).toEqual(expect.arrayContaining(['rounded-sm', 'size-full']));
+        expect(wrapper.get('[data-testid="avatar-fallback"]').classes()).toContain('rounded-sm');
     });
 
     it('deletes local favorite via coordinator', async () => {

@@ -240,6 +240,14 @@ describe('FavoritesFriendItem.vue', () => {
         expect(mocks.showUserDialog).toHaveBeenCalledWith('usr_1');
     });
 
+    it('adds the unified hover classes on item', () => {
+        const wrapper = mountItem();
+
+        expect(wrapper.get('[data-testid="item"]').classes()).toEqual(
+            expect.arrayContaining(['favorites-item', 'hover:bg-muted', 'x-hover-list'])
+        );
+    });
+
     it('emits toggle-select in edit mode checkbox', async () => {
         const wrapper = mountItem({ editMode: true });
 
