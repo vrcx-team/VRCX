@@ -79,7 +79,8 @@
                                 </TooltipWrapper>
                                 <div
                                     v-else
-                                    class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
+                                    class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border cursor-pointer hover:bg-accent"
+                                    @click="vrcStatusStore.openStatusPage()">
                                     <span class="inline-block size-2 rounded-full shrink-0 bg-[#e6a23c]" />
                                     <span class="text-foreground text-[11px]">{{ t('status_bar.servers') }}</span>
                                 </div>
@@ -349,9 +350,6 @@
     function toggleVisibility(key) {
         visibility[key] = !visibility[key];
         configRepository.setString(VISIBILITY_KEY, JSON.stringify(visibility));
-        if (key === 'servers') {
-            vrcStatusStore.setStatusBarServersVisible(visibility.servers);
-        }
     }
 
     // --- WebSocket message rate + sparkline ---
@@ -543,12 +541,10 @@
         }
 
         drawSparkline();
-        vrcStatusStore.setStatusBarServersVisible(visibility.servers);
     });
 
     onBeforeUnmount(() => {
         clearTimeout(serversHoverTimer);
-        vrcStatusStore.setStatusBarServersVisible(false);
     });
 
     watch(

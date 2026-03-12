@@ -53,7 +53,7 @@
                     </ResizablePanelGroup>
                 </SidebarInset>
             </SidebarProvider>
-            <StatusBar v-if="showStatusBar" />
+            <StatusBar />
         </div>
 
         <!-- ## Dialogs ## -->
@@ -119,7 +119,7 @@
     const router = useRouter();
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const { navWidth, isNavCollapsed, showStatusBar } = storeToRefs(appearanceSettingsStore);
+    const { navWidth, isNavCollapsed } = storeToRefs(appearanceSettingsStore);
 
     const sidebarOpen = computed(() => !isNavCollapsed.value);
 

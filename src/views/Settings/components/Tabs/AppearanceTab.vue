@@ -83,10 +83,6 @@
                 :value="showInstanceIdInLocation"
                 @change="setShowInstanceIdInLocation" />
             <simple-switch
-                :label="t('view.settings.appearance.appearance.show_status_bar')"
-                :value="showStatusBar"
-                @change="setShowStatusBar" />
-            <simple-switch
                 :label="t('view.settings.appearance.appearance.nicknames')"
                 :value="!hideNicknames"
                 @change="
@@ -393,8 +389,7 @@
         notificationIconDot,
         tablePageSizes,
         isDataTableStriped,
-        showPointerOnHover,
-        showStatusBar
+        showPointerOnHover
     } = storeToRefs(appearanceSettingsStore);
 
     const appLanguageDisplayName = computed(() => getLanguageName(String(appLanguage.value)));
@@ -403,7 +398,6 @@
         setDisplayVRCPlusIconsAsAvatar,
         setHideNicknames,
         setShowInstanceIdInLocation,
-        setShowStatusBar,
         setIsAgeGatedInstancesVisible,
         setInstanceUsersSortAlphabetical,
         setDtHour12,

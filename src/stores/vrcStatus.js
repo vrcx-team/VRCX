@@ -1,9 +1,7 @@
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
-import { toast } from 'vue-sonner';
-import { useI18n } from 'vue-i18n';
 
-import { formatDateFilter, openExternalLink } from '../shared/utils';
+import { openExternalLink } from '../shared/utils';
 
 import webApiService from '../services/webapi';
 
@@ -18,14 +16,6 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
     const lastTimeFetched = ref(0);
     const pollingInterval = ref(0);
 
-    const statusBarServersVisible = ref(false);
-    const initialized = ref(false);
-
-    const alertRef = ref(null);
-    const lastStatusText = ref('');
-
-    const { t } = useI18n();
-
     const statusText = computed(() => {
         if (lastStatus.value && lastStatusSummary.value) {
             return `${lastStatus.value}: ${lastStatusSummary.value}`;
@@ -38,89 +28,9 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
     /**
      * @returns {void}
      */
-    function dismissAlert() {
-        if (!alertRef.value) {
-            return;
-        }
-        toast.dismiss(alertRef.value);
-        alertRef.value = null;
-    }
-
-    /**
-     * @returns {void}
-     */
     function openStatusPage() {
         openExternalLink('https://status.vrchat.com');
     }
-
-    /**
-     * @param {boolean} visible
-     * @returns {void}
-     */
-    function setStatusBarServersVisible(visible) {
-        statusBarServersVisible.value = visible;
-        if (!initialized.value) {
-            initialized.value = true;
-        }
-    }
-
-    /**
-     * @param {string} text
-     * @returns {void}
-     */
-    function showWarningToast(text) {
-        dismissAlert();
-        alertRef.value = toast.warning(t('status_bar.servers_issue'), {
-            description: `${formatDateFilter(lastStatusTime.value, 'short')}: ${text}`,
-            duration: Infinity,
-            closeButton: true,
-            position: 'bottom-right',
-            action: {
-                label: 'Open',
-                onClick: () => openStatusPage()
-            }
-        });
-    }
-
-    watch(statusText, (newVal) => {
-        if (statusBarServersVisible.value || !initialized.value) {
-            return;
-        }
-
-        if (lastStatusText.value === newVal) {
-            return;
-        }
-        lastStatusText.value = newVal;
-
-        if (!newVal) {
-            if (alertRef.value) {
-                dismissAlert();
-                alertRef.value = toast.success(t('status_bar.servers_issue'), {
-                    description: `${formatDateFilter(lastStatusTime.value, 'short')}: ${t('status_bar.servers_ok')}`,
-                    position: 'bottom-right',
-                    action: {
-                        label: 'Open',
-                        onClick: () => openStatusPage()
-                    }
-                });
-            }
-            return;
-        }
-
-        showWarningToast(newVal);
-    });
-
-    watch(statusBarServersVisible, (visible) => {
-        if (!visible && hasIssue.value && statusText.value) {
-            lastStatusText.value = '';
-            showWarningToast(statusText.value);
-            lastStatusText.value = statusText.value;
-        }
-        if (visible) {
-            dismissAlert();
-            lastStatusText.value = '';
-        }
-    });
 
     /**
      * @returns {Promise<void>}
@@ -210,8 +120,6 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
         lastStatusSummary,
         statusText,
         hasIssue,
-        statusBarServersVisible,
-        setStatusBarServersVisible,
         openStatusPage,
         onBrowserFocus,
         getVrcStatus
