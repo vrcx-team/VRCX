@@ -23,7 +23,7 @@ import {
     handleFriendAdd,
     handleFriendDelete
 } from '../coordinators/friendRelationshipCoordinator';
-import { escapeTag, parseLocation } from '../shared/utils';
+import { parseLocation } from '../shared/utils';
 import { AppDebug } from './appConfig';
 import { groupRequest } from '../api';
 import { request } from './request';
@@ -201,7 +201,7 @@ function handlePipeline(args) {
         if (AppDebug.errorNoty) {
             toast.dismiss(AppDebug.errorNoty);
         }
-        AppDebug.errorNoty = toast.error(escapeTag(`WebSocket Error: ${err}`));
+        AppDebug.errorNoty = toast.error(`WebSocket Error: ${err}`);
         return;
     }
     if (typeof content === 'undefined') {

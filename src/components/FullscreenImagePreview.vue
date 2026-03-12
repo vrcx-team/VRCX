@@ -108,7 +108,7 @@
     import { useGeneralSettingsStore } from '@/stores/settings/general';
     import { useI18n } from 'vue-i18n';
 
-    import { escapeTag, extractFileId } from '../shared/utils';
+    import { extractFileId } from '../shared/utils';
     import { useGalleryStore } from '../stores';
 
     const galleryStore = useGalleryStore();
@@ -301,7 +301,7 @@
             toast.success(t('message.image.copied_to_clipboard'));
         } catch (error) {
             console.error('Error downloading image:', error);
-            toast.error(escapeTag(`Failed to download image. ${url}`));
+            toast.error(`Failed to download image. ${url}`);
         } finally {
             toast.dismiss(msg);
         }
@@ -331,7 +331,7 @@
             document.body.removeChild(link);
         } catch (error) {
             console.error('Error downloading image:', error);
-            toast.error(escapeTag(`Failed to download image. ${url}`));
+            toast.error(`Failed to download image. ${url}`);
         } finally {
             toast.dismiss(msg);
         }

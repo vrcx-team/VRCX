@@ -10,7 +10,6 @@ import {
     checkCanInvite,
     createDefaultNotificationRef,
     createDefaultNotificationV2Ref,
-    escapeTag,
     executeWithBackoff,
     findUserByDisplayName,
     parseLocation,
@@ -1340,7 +1339,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                 console.log('Notification response', args);
                 if (!args.json) return;
                 handleNotificationV2Hide(notificationId);
-                toast.success(escapeTag(args.json));
+                toast.success(args.json);
             })
             .catch(() => {
                 handleNotificationV2Hide(notificationId);

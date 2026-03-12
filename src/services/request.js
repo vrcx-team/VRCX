@@ -9,7 +9,6 @@ import {
 } from '../stores';
 import { getCurrentUser } from '../coordinators/userCoordinator';
 import { AppDebug, isApiLogSuppressed, logWebRequest } from './appConfig.js';
-import { escapeTag } from '../shared/utils';
 import { i18n } from '../plugins/i18n';
 import { statusCodes } from '../shared/constants/api.js';
 import { watchState } from './watchState';
@@ -194,9 +193,7 @@ export function request(endpoint, options) {
                     text = data.OK;
                 }
                 if (text) {
-                    toast.success(
-                        options.customMsg ? options.customMsg : escapeTag(text)
-                    );
+                    toast.success(options.customMsg ? options.customMsg : text);
                 }
                 return data;
             }
@@ -355,7 +352,7 @@ export function $throw(code, error, endpoint) {
     ) {
         message[1] = `${t('api.error.message.error_message')}: "${t('api.error.message.unavailable')}"`;
     }
-    const text = message.map((s) => escapeTag(s)).join('\n');
+    const text = message.join('\n');
 
     if (text.length && !ignoreError) {
         toast.error(message[0], {
