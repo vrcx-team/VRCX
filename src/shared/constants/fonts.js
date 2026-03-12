@@ -2,7 +2,7 @@ const APP_FONT_DEFAULT_KEY = 'inter';
 
 const APP_FONT_CONFIG = Object.freeze({
     inter: {
-        cssName: "'Inter'",
+        cssName: "'Inter Variable'",
         link: null
     },
     noto_sans: {
