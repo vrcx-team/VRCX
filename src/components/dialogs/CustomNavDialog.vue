@@ -192,6 +192,7 @@
                     type: 'folder',
                     id: entry.id,
                     name: entry.name,
+                    nameKey: entry.nameKey || null,
                     icon: entry.icon,
                     items: Array.isArray(entry.items) ? [...entry.items] : []
                 };
@@ -667,6 +668,7 @@
             const entry = localLayout.value.find((e) => e.type === 'folder' && e.id === folderEditor.editingId);
             if (entry) {
                 entry.name = folderEditor.data.name.trim();
+                entry.nameKey = null;
                 entry.icon = folderEditor.data.icon?.trim() || DEFAULT_FOLDER_ICON;
                 localLayout.value = [...localLayout.value];
             }
@@ -675,6 +677,7 @@
                 type: 'folder',
                 id: folderEditor.data.id,
                 name: folderEditor.data.name.trim(),
+                nameKey: null,
                 icon: folderEditor.data.icon?.trim() || DEFAULT_FOLDER_ICON,
                 items: []
             });
