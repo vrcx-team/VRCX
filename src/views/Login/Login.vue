@@ -67,6 +67,7 @@
                                             :placeholder="t('view.login.field.password')"
                                             :aria-invalid="!!errors.length"
                                             clearable
+                                            show-password
                                             @update:modelValue="field.onChange"
                                             @blur="field.onBlur" />
                                         <FieldError v-if="errors.length" :errors="errors" />
@@ -74,12 +75,12 @@
                                 </Field>
                             </VeeField>
                         </FieldGroup>
-                        <label class="inline-flex items-center gap-2 mr-2 text-sm">
+                        <label class="inline-flex items-center gap-2 mr-2 mt-3 text-sm">
                             <Checkbox v-model="loginForm.saveCredentials" />
                             <span>{{ t('view.login.field.saveCredentials') }}</span>
                         </label>
 
-                        <Field class="mt-2">
+                        <Field class="mt-4">
                             <Button type="submit" size="lg" style="width: 100%">{{ t('view.login.login') }}</Button>
                         </Field>
                     </form>
@@ -100,32 +101,38 @@
                     </h2>
                     <div class="x-scroll-wrapper mt-2">
                         <div class="x-saved-account-list">
-                            <div
+                            <Item
                                 v-for="user in savedCredentials"
                                 :key="user.user.id"
-                                class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted rounded-xs"
+                                class="cursor-pointer hover:bg-muted p-2 border-0"
                                 @click="clickSavedLogin(user)">
-                                <div class="relative inline-block flex-none size-9 mr-2.5">
-                                    <img
-                                        class="size-full rounded-full object-cover"
-                                        :src="userImage(user.user)"
-                                        loading="lazy" />
-                                </div>
-                                <div class="flex-1 overflow-hidden">
-                                    <span
-                                        class="block truncate font-medium leading-[18px]"
-                                        v-text="user.user.displayName"></span>
-                                    <span class="block truncate text-xs" v-text="user.user.username"></span>
-                                    <span class="block truncate text-xs" v-text="user.loginParams.endpoint"></span>
-                                </div>
-                                <Button
-                                    size="icon-sm"
-                                    variant="ghost"
-                                    class="cursor-pointer ml-2"
-                                    @click.stop="clickDeleteSavedLogin(user.user.id)"
-                                    ><Trash2 class="text-sm"
-                                /></Button>
-                            </div>
+                                <ItemMedia variant="image">
+                                    <Avatar class="rounded-full">
+                                        <AvatarImage :src="userImage(user.user)" />
+                                        <AvatarFallback>
+                                            <User class="size-5 text-muted-foreground" />
+                                        </AvatarFallback>
+                                    </Avatar>
+                                </ItemMedia>
+                                <ItemContent class="min-w-0">
+                                    <ItemTitle class="truncate max-w-full">{{ user.user.displayName }}</ItemTitle>
+                                    <ItemDescription class="truncate text-xs!">
+                                        {{ user.user.username }}
+                                    </ItemDescription>
+                                    <ItemDescription v-if="user.loginParams.endpoint" class="truncate text-xs!">
+                                        {{ user.loginParams.endpoint }}
+                                    </ItemDescription>
+                                </ItemContent>
+                                <ItemActions @click.stop>
+                                    <Button
+                                        size="icon-sm"
+                                        variant="ghost"
+                                        class="cursor-pointer rounded-full"
+                                        @click="clickDeleteSavedLogin(user.user.id)"
+                                        ><Trash2 class="text-sm"
+                                    /></Button>
+                                </ItemActions>
+                            </Item>
                         </div>
                     </div>
                 </div>
@@ -166,7 +173,9 @@
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
     import { onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
-    import { ArrowBigDownDash, Languages, Trash2 } from 'lucide-vue-next';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+    import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
+    import { ArrowBigDownDash, Languages, Trash2, User } from 'lucide-vue-next';
     import { Field as VeeField, useForm } from 'vee-validate';
     import { useRoute, useRouter } from 'vue-router';
     import { Button } from '@/components/ui/button';
