@@ -221,6 +221,9 @@
             "avatar": {
                 "header": "Avatar",
                 "search_provider": "Search Provider",
+                "no_provider": "No avatar search provider configured",
+                "search_placeholder_avatar": "Type at least 3 characters",
+                "min_chars_warning": "Please enter at least 3 characters to search",
                 "refresh_tooltip": "Refresh own avatars",
                 "result_count": "Results {count}",
                 "all": "All",

@@ -111,12 +111,8 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     }
 
     async function saveAvatarProviderList() {
-        const length = avatarRemoteDatabaseProviderList.value.length;
-        for (let i = 0; i < length; ++i) {
-            if (!avatarRemoteDatabaseProviderList.value[i]) {
-                avatarRemoteDatabaseProviderList.value.splice(i, 1);
-            }
-        }
+        avatarRemoteDatabaseProviderList.value =
+            avatarRemoteDatabaseProviderList.value.filter(Boolean);
         await configRepository.setString(
             'VRCX_avatarRemoteDatabaseProviderList',
             JSON.stringify(avatarRemoteDatabaseProviderList.value)
