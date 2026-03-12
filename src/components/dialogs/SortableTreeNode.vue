@@ -19,7 +19,7 @@
         dragState: { type: Object, default: () => ({}) }
     });
 
-    const emit = defineEmits(['editFolder', 'deleteFolder', 'hide', 'toggle']);
+    const emit = defineEmits(['editFolder', 'deleteFolder', 'editDashboard', 'deleteDashboard', 'hide', 'toggle']);
 
     const { t } = useI18n();
 
@@ -27,6 +27,9 @@
 
     const nodeValue = computed(() => props.item.value);
     const isFolder = computed(() => nodeValue.value?.type === 'folder');
+    const isDashboard = computed(() => {
+        return !isFolder.value && nodeValue.value?.key?.startsWith('dashboard-');
+    });
     const hasChildren = computed(() => props.item.hasChildren);
     const level = computed(() => nodeValue.value?.level ?? 0);
     const nodeId = computed(() => (isFolder.value ? nodeValue.value?.id : nodeValue.value?.key));
@@ -43,7 +46,10 @@
             return nodeValue.value.name?.trim() || t('nav_menu.custom_nav.folder_name_placeholder');
         }
         const def = props.definitionsMap.get(nodeValue.value?.key);
-        return def ? t(def.labelKey) : nodeValue.value?.key || '';
+        if (!def) {
+            return nodeValue.value?.key || '';
+        }
+        return def.isDashboard ? def.labelKey : t(def.labelKey);
     });
 
     const displayIcon = computed(() => {
@@ -109,6 +115,14 @@
                         </DropdownMenuItem>
                         <DropdownMenuItem class="text-destructive" @click="emit('deleteFolder', nodeValue.id)">
                             {{ t('nav_menu.custom_nav.delete_folder') }}
+                        </DropdownMenuItem>
+                    </template>
+                    <template v-else-if="isDashboard">
+                        <DropdownMenuItem @click="emit('editDashboard', nodeValue.key)">
+                            {{ t('nav_menu.custom_nav.edit_dashboard') }}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem class="text-destructive" @click="emit('deleteDashboard', nodeValue.key)">
+                            {{ t('nav_menu.custom_nav.delete_dashboard') }}
                         </DropdownMenuItem>
                     </template>
                     <template v-else>

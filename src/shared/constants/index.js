@@ -13,3 +13,4 @@ export * from './link';
 export * from './ui';
 export * from './accessType';
 export * from './tags';
+export * from './dashboard';

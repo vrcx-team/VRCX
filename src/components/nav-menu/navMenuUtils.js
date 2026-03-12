@@ -127,6 +127,15 @@ export function sanitizeLayout(
         appendChartsFolder();
     }
 
+    // Ensure direct-access is always the last item
+    const directAccessIdx = normalized.findIndex(
+        (entry) => entry.type === 'item' && entry.key === 'direct-access'
+    );
+    if (directAccessIdx !== -1 && directAccessIdx !== normalized.length - 1) {
+        const [directAccessEntry] = normalized.splice(directAccessIdx, 1);
+        normalized.push(directAccessEntry);
+    }
+
     return normalized;
 }
 

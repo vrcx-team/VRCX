@@ -11,7 +11,7 @@ vi.mock('../../../stores', () => ({ useAppearanceSettingsStore: () => ({ navWidt
 vi.mock('../../../composables/useMainLayoutResizable', () => ({ useMainLayoutResizable: () => ({ asideDefaultSize: 30, asideMinSize: 0, asideMaxPx: 480, mainDefaultSize: 70, handleLayout: vi.fn(), isAsideCollapsed: () => false, isAsideCollapsedStatic: false, isSideBarTabShow: ref(true) }) }));
 vi.mock('../../../components/ui/resizable', () => ({ ResizablePanelGroup: { template: '<div><slot :layout="[]" /></div>' }, ResizablePanel: { template: '<div><slot /></div>' }, ResizableHandle: { template: '<div />' } }));
 vi.mock('../../../components/ui/sidebar', () => ({ SidebarProvider: { template: '<div><slot /></div>' }, SidebarInset: { template: '<div><slot /></div>' } }));
-vi.mock('../../../components/NavMenu.vue', () => ({ default: { template: '<div />' } }));
+vi.mock('../../../components/nav-menu/NavMenu.vue', () => ({ default: { template: '<div />' } }));
 vi.mock('../../Sidebar/Sidebar.vue', () => ({ default: { template: '<div />' } }));
 vi.mock('../../../components/StatusBar.vue', () => ({ default: { template: '<div />' } }));
 vi.mock('../../../components/dialogs/MainDialogContainer.vue', () => ({ default: { template: '<div />' } }));

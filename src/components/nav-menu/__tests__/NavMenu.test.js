@@ -23,7 +23,13 @@ const mocks = vi.hoisted(() => ({
     tableDensity: { value: 'standard' },
     isDarkMode: { value: false },
     isNavCollapsed: { value: false },
-    currentRoute: { value: { name: 'unknown', meta: {} } }
+    currentRoute: { value: { name: 'unknown', meta: {} } },
+    dashboards: { value: [] },
+    dashboardNavKeys: new Set(),
+    loadDashboards: vi.fn(() => Promise.resolve()),
+    getDashboardNavDefinitions: vi.fn(() => []),
+    createDashboard: vi.fn(() => Promise.resolve({ id: 'dashboard-1' })),
+    setEditingDashboardId: vi.fn()
 }));
 
 vi.mock('pinia', async (importOriginal) => {
@@ -41,15 +47,15 @@ vi.mock('vue-i18n', () => ({
     })
 }));
 
-vi.mock('../../views/Feed/Feed.vue', () => ({
+vi.mock('../../../views/Feed/Feed.vue', () => ({
     default: { template: '<div />' }
 }));
 
-vi.mock('../../views/Feed/columns.jsx', () => ({
+vi.mock('../../../views/Feed/columns.jsx', () => ({
     columns: []
 }));
 
-vi.mock('../../plugins/router', () => ({
+vi.mock('../../../plugins/router', () => ({
     router: {
         beforeEach: vi.fn(),
         push: vi.fn(),
@@ -60,11 +66,11 @@ vi.mock('../../plugins/router', () => ({
     initRouter: vi.fn()
 }));
 
-vi.mock('../../plugins/interopApi', () => ({
+vi.mock('../../../plugins/interopApi', () => ({
     initInteropApi: vi.fn()
 }));
 
-vi.mock('../../services/database', () => ({
+vi.mock('../../../services/database', () => ({
     database: new Proxy(
         {},
         {
@@ -76,11 +82,11 @@ vi.mock('../../services/database', () => ({
     )
 }));
 
-vi.mock('../../services/jsonStorage', () => ({
+vi.mock('../../../services/jsonStorage', () => ({
     default: vi.fn()
 }));
 
-vi.mock('../../services/watchState', () => ({
+vi.mock('../../../services/watchState', () => ({
     watchState: { isLoggedIn: false }
 }));
 
@@ -91,7 +97,7 @@ vi.mock('vue-router', () => ({
     })
 }));
 
-vi.mock('../../stores', () => ({
+vi.mock('../../../stores', () => ({
     useVRCXUpdaterStore: () => ({
         pendingVRCXUpdate: mocks.pendingVRCXUpdate,
         pendingVRCXInstall: mocks.pendingVRCXInstall,
@@ -118,17 +124,30 @@ vi.mock('../../stores', () => ({
         toggleThemeMode: (...args) => mocks.toggleThemeMode(...args),
         setTableDensity: vi.fn(),
         toggleNavCollapsed: (...args) => mocks.toggleNavCollapsed(...args)
+    }),
+    useDashboardStore: () => ({
+        dashboards: mocks.dashboards,
+        dashboardNavKeys: mocks.dashboardNavKeys,
+        loadDashboards: (...args) => mocks.loadDashboards(...args),
+        getDashboardNavDefinitions: (...args) =>
+            mocks.getDashboardNavDefinitions(...args),
+        createDashboard: (...args) => mocks.createDashboard(...args),
+        setEditingDashboardId: (...args) => mocks.setEditingDashboardId(...args)
+    }),
+    useModalStore: () => ({
+        confirm: vi.fn(() => Promise.resolve({ ok: false }))
     })
 }));
 
-vi.mock('../../services/config', () => ({
+vi.mock('../../../services/config', () => ({
     default: {
         getString: (...args) => mocks.getString(...args),
         setString: (...args) => mocks.setString(...args)
     }
 }));
 
-vi.mock('../../shared/constants', () => ({
+vi.mock('../../../shared/constants', () => ({
+    DASHBOARD_NAV_KEY_PREFIX: 'dashboard-',
     THEME_CONFIG: {
         system: { name: 'System' },
         light: { name: 'Light' },
@@ -155,20 +174,22 @@ vi.mock('../../shared/constants', () => ({
     ]
 }));
 
-vi.mock('./navMenuUtils', () => ({
+vi.mock('../navMenuUtils', () => ({
     getFirstNavRoute: () => 'feed',
     isEntryNotified: () => false,
     normalizeHiddenKeys: (keys) => keys || [],
     sanitizeLayout: (layout) => layout
 }));
 
-vi.mock('../../shared/utils', () => ({
+vi.mock('../../../shared/utils', () => ({
     openExternalLink: (...args) => mocks.openExternalLink(...args)
 }));
 
 vi.mock('@/shared/utils/base/ui', () => ({
     useThemeColor: () => ({
-        themeColors: { value: [{ key: 'blue', label: 'Blue', swatch: '#00f' }] },
+        themeColors: {
+            value: [{ key: 'blue', label: 'Blue', swatch: '#00f' }]
+        },
         currentThemeColor: { value: 'blue' },
         isApplyingThemeColor: { value: false },
         applyThemeColor: (...args) => mocks.applyThemeColor(...args),
@@ -178,6 +199,7 @@ vi.mock('@/shared/utils/base/ui', () => ({
 
 vi.mock('@/components/ui/sidebar', () => ({
     Sidebar: { template: '<div><slot /></div>' },
+    SidebarHeader: { template: '<div><slot /></div>' },
     SidebarContent: { template: '<div><slot /></div>' },
     SidebarFooter: { template: '<div><slot /></div>' },
     SidebarGroup: { template: '<div><slot /></div>' },
@@ -188,11 +210,13 @@ vi.mock('@/components/ui/sidebar', () => ({
     SidebarMenuSubItem: { template: '<div><slot /></div>' },
     SidebarMenuButton: {
         emits: ['click'],
-        template: '<button data-testid="menu-btn" @click="$emit(\'click\', $event)"><slot /></button>'
+        template:
+            '<button data-testid="menu-btn" @click="$emit(\'click\', $event)"><slot /></button>'
     },
     SidebarMenuSubButton: {
         emits: ['click'],
-        template: '<button data-testid="submenu-btn" @click="$emit(\'click\', $event)"><slot /></button>'
+        template:
+            '<button data-testid="submenu-btn" @click="$emit(\'click\', $event)"><slot /></button>'
     }
 }));
 
@@ -200,20 +224,32 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
     DropdownMenu: { template: '<div><slot /></div>' },
     DropdownMenuTrigger: { template: '<div><slot /></div>' },
     DropdownMenuContent: { template: '<div><slot /></div>' },
-    DropdownMenuItem: { emits: ['click', 'select'], template: '<button data-testid="dd-item" @click="$emit(\'click\')" @mousedown="$emit(\'select\', $event)"><slot /></button>' },
+    DropdownMenuItem: {
+        emits: ['click', 'select'],
+        template:
+            '<button data-testid="dd-item" @click="$emit(\'click\')" @mousedown="$emit(\'select\', $event)"><slot /></button>'
+    },
     DropdownMenuSeparator: { template: '<hr />' },
     DropdownMenuLabel: { template: '<div><slot /></div>' },
     DropdownMenuSub: { template: '<div><slot /></div>' },
     DropdownMenuSubTrigger: { template: '<div><slot /></div>' },
     DropdownMenuSubContent: { template: '<div><slot /></div>' },
-    DropdownMenuCheckboxItem: { emits: ['select'], template: '<button data-testid="dd-check" @click="$emit(\'select\')"><slot /></button>' }
+    DropdownMenuCheckboxItem: {
+        emits: ['select'],
+        template:
+            '<button data-testid="dd-check" @click="$emit(\'select\')"><slot /></button>'
+    }
 }));
 
 vi.mock('@/components/ui/context-menu', () => ({
     ContextMenu: { template: '<div><slot /></div>' },
     ContextMenuTrigger: { template: '<div><slot /></div>' },
     ContextMenuContent: { template: '<div><slot /></div>' },
-    ContextMenuItem: { emits: ['click'], template: '<button data-testid="ctx-item" @click="$emit(\'click\')"><slot /></button>' },
+    ContextMenuItem: {
+        emits: ['click'],
+        template:
+            '<button data-testid="ctx-item" @click="$emit(\'click\')"><slot /></button>'
+    },
     ContextMenuSeparator: { template: '<hr />' }
 }));
 
@@ -233,7 +269,8 @@ vi.mock('@/components/ui/tooltip', () => ({
 
 vi.mock('lucide-vue-next', () => ({
     ChevronRight: { template: '<i />' },
-    Heart: { template: '<i />' }
+    Heart: { template: '<i />' },
+    Plus: { template: '<i />' }
 }));
 
 import NavMenu from '../NavMenu.vue';
@@ -242,7 +279,9 @@ function mountComponent() {
     return mount(NavMenu, {
         global: {
             stubs: {
-                CustomNavDialog: { template: '<div data-testid="custom-nav-dialog" />' }
+                CustomNavDialog: {
+                    template: '<div data-testid="custom-nav-dialog" />'
+                }
             }
         }
     });
@@ -261,18 +300,25 @@ describe('NavMenu.vue', () => {
         mocks.openExternalLink.mockClear();
         mocks.getString.mockClear();
         mocks.setString.mockClear();
+        mocks.loadDashboards.mockClear();
+        mocks.getDashboardNavDefinitions.mockClear();
         mocks.currentRoute.value = { name: 'unknown', meta: {} };
     });
 
     it('initializes theme and navigates to first route on mount', async () => {
         mountComponent();
 
-        await Promise.resolve();
-        await Promise.resolve();
+        await vi.waitFor(() => {
+            expect(mocks.initThemeColor).toHaveBeenCalled();
+            expect(mocks.loadDashboards).toHaveBeenCalled();
+            expect(mocks.getString).toHaveBeenCalledWith(
+                'VRCX_customNavMenuLayoutList'
+            );
+        });
 
-        expect(mocks.initThemeColor).toHaveBeenCalled();
-        expect(mocks.getString).toHaveBeenCalledWith('VRCX_customNavMenuLayoutList');
-        expect(mocks.routerPush).toHaveBeenCalledWith({ name: 'feed' });
+        await vi.waitFor(() => {
+            expect(mocks.routerPush).toHaveBeenCalledWith({ name: 'feed' });
+        });
     });
 
     it('runs direct access action when direct-access menu is clicked', async () => {
@@ -280,7 +326,9 @@ describe('NavMenu.vue', () => {
         await vi.waitFor(() => {
             const target = wrapper
                 .findAll('[data-testid="menu-btn"]')
-                .find((node) => node.text().includes('nav_tooltip.direct_access'));
+                .find((node) =>
+                    node.text().includes('nav_tooltip.direct_access')
+                );
             expect(target).toBeTruthy();
         });
 

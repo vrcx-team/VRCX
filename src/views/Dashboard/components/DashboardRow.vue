@@ -1,0 +1,69 @@
+<template>
+    <div class="relative h-full min-h-[180px]">
+        <div v-if="isEditing" class="flex h-full gap-2">
+            <DashboardPanel
+                v-for="(panelKey, panelIndex) in row.panels"
+                :key="panelIndex"
+                :panel-key="panelKey"
+                :is-editing="true"
+                :class="row.panels.length === 1 ? 'w-full' : 'w-1/2'"
+                @select="(key) => emit('update-panel', rowIndex, panelIndex, key)" />
+
+            <Button
+                variant="ghost"
+                size="icon-sm"
+                class="absolute -right-1 top-2 z-20 bg-background/80"
+                @click="emit('remove-row', rowIndex)">
+                <X class="size-4" />
+            </Button>
+        </div>
+
+        <ResizablePanelGroup
+            v-else-if="row.panels.length === 2"
+            direction="horizontal"
+            :auto-save-id="`dashboard-${dashboardId}-row-${rowIndex}`"
+            class="h-full min-h-[180px]">
+            <ResizablePanel :default-size="50" :min-size="20">
+                <DashboardPanel :panel-key="row.panels[0]" class="h-full" />
+            </ResizablePanel>
+            <ResizableHandle />
+            <ResizablePanel :default-size="50" :min-size="20">
+                <DashboardPanel :panel-key="row.panels[1]" class="h-full" />
+            </ResizablePanel>
+        </ResizablePanelGroup>
+
+        <div v-else class="h-full">
+            <DashboardPanel :panel-key="row.panels[0]" class="h-full" />
+        </div>
+    </div>
+</template>
+
+<script setup>
+    import { X } from 'lucide-vue-next';
+
+    import { Button } from '@/components/ui/button';
+    import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
+
+    import DashboardPanel from './DashboardPanel.vue';
+
+    defineProps({
+        row: {
+            type: Object,
+            required: true
+        },
+        rowIndex: {
+            type: Number,
+            required: true
+        },
+        dashboardId: {
+            type: String,
+            required: true
+        },
+        isEditing: {
+            type: Boolean,
+            default: false
+        }
+    });
+
+    const emit = defineEmits(['update-panel', 'remove-row']);
+</script>

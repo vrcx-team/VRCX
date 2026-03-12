@@ -9,6 +9,7 @@ import Feed from './../views/Feed/Feed.vue';
 import FriendList from './../views/FriendList/FriendList.vue';
 import FriendLog from './../views/FriendLog/FriendLog.vue';
 import FriendsLocations from './../views/FriendsLocations/FriendsLocations.vue';
+import Dashboard from './../views/Dashboard/Dashboard.vue';
 import Gallery from './../views/Tools/Gallery.vue';
 import GameLog from './../views/GameLog/GameLog.vue';
 import Login from './../views/Login/Login.vue';
@@ -44,6 +45,13 @@ const routes = [
             { path: 'game-log', name: 'game-log', component: GameLog },
             { path: 'player-list', name: 'player-list', component: PlayerList },
             { path: 'search', name: 'search', component: Search },
+            {
+                path: 'dashboard/:id',
+                name: 'dashboard',
+                component: Dashboard,
+                props: true,
+                meta: { navKey: 'dashboard' }
+            },
             {
                 path: 'favorites/friends',
                 name: 'favorite-friends',

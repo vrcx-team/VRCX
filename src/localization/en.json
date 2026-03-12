@@ -58,6 +58,8 @@
         "update_available": "Update available",
         "update": "Update",
         "mark_all_read": "Mark All as Read",
+        "edit_dashboard": "Edit Dashboard",
+        "delete_dashboard": "Delete Dashboard",
         "custom_nav": {
             "header": "Customize Navigation",
             "dialog_title": "Customize Navigation Menu",
@@ -66,6 +68,8 @@
             "folder_icon_placeholder": "Icon class (e.g. ri-menu-fold-line)",
             "edit_folder": "Edit Folder",
             "delete_folder": "Delete Folder",
+            "edit_dashboard": "Edit Dashboard",
+            "delete_dashboard": "Delete Dashboard",
             "folder_empty": "This folder is empty",
             "folder_drop_here": "Drag items here",
             "hide": "Hide",
@@ -75,6 +79,39 @@
             "cancel": "Cancel",
             "restore_default": "Restore Default",
             "restore_default_confirm": "Restore navigation to its default order?"
+        }
+    },
+    "dashboard": {
+        "default_name": "Dashboard",
+        "new_dashboard": "New Dashboard",
+        "empty": "This dashboard is empty",
+        "actions": {
+            "start_editing": "Start Editing",
+            "add_row": "Add Row",
+            "add_full_row": "Add Full Row",
+            "add_split_row": "Add Split Row",
+            "cancel": "Cancel",
+            "save": "Save",
+            "delete": "Delete"
+        },
+        "toolbar": {
+            "editing": "Editing Dashboard",
+            "name_placeholder": "Dashboard Name",
+            "icon_placeholder": "Icon Class (Optional)"
+        },
+        "panel": {
+            "not_selected": "No Panel Selected",
+            "replace": "Replace Panel",
+            "select": "Select Panel",
+            "not_configured": "Panel Not Configured"
+        },
+        "selector": {
+            "title": "Select Panel Content",
+            "clear": "Clear Panel"
+        },
+        "confirmations": {
+            "delete_title": "Delete Dashboard",
+            "delete_description": "Are you sure you want to delete this dashboard? This action cannot be undone."
         }
     },
     "side_panel": {
