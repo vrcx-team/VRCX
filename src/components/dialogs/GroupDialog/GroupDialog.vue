@@ -561,7 +561,8 @@
         modalStore
             .confirm({
                 description: t('confirm.delete_post'),
-                title: t('confirm.title')
+                title: t('confirm.title'),
+                destructive: true
             })
             .then(({ ok }) => {
                 if (!ok) return;

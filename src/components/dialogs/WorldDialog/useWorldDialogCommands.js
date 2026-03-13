@@ -528,7 +528,8 @@ export function useWorldDialogCommands(
                     title: t('confirm.title'),
                     description: t('confirm.command_question', {
                         command: t('dialog.world.actions.delete')
-                    })
+                    }),
+                    destructive: true
                 }),
                 handler: (id) => {
                     worldRequest.deleteWorld({ worldId: id }).then((args) => {

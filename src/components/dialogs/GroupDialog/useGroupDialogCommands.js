@@ -84,7 +84,8 @@ export function useGroupDialogCommands(
             'Block Group': {
                 confirm: () => ({
                     title: t('confirm.title'),
-                    description: t('confirm.block_group')
+                    description: t('confirm.block_group'),
+                    destructive: true
                 }),
                 handler: (id) => {
                     groupRequest.blockGroup({ groupId: id }).then((args) => {

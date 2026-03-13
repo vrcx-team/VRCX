@@ -187,7 +187,8 @@
             "tab_group": "Group",
             "tab_other": "Other",
             "past_notifications": "Last 24 hours",
-            "no_new_notifications": "No new notifications in the past 24 hours"
+            "no_new_notifications": "No new notifications in the past 24 hours",
+            "no_unseen_notifications": "No unread notifications"
         }
     },
     "view": {

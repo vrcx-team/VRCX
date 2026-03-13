@@ -232,7 +232,8 @@ export function promptClearAvatarHistory() {
     modalStore
         .confirm({
             description: t('confirm.clear_avatar_history'),
-            title: 'Confirm'
+            title: t('confirm.title'),
+            destructive: true
         })
         .then(({ ok }) => {
             if (!ok) return;
@@ -472,7 +473,7 @@ export function selectAvatarWithConfirmation(id) {
     modalStore
         .confirm({
             description: t('confirm.select_avatar'),
-            title: 'Confirm'
+            title: t('confirm.title')
         })
         .then(({ ok }) => {
             if (!ok) return;

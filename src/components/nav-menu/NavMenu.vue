@@ -50,11 +50,11 @@
                                             </ContextMenuTrigger>
                                             <ContextMenuContent>
                                                 <ContextMenuItem
-                                                    :disabled="!hasNotifications"
+                                                    v-if="hasNotifications"
                                                     @click="clearAllNotifications">
                                                     {{ t('nav_menu.mark_all_read') }}
                                                 </ContextMenuItem>
-                                                <ContextMenuSeparator />
+                                                <ContextMenuSeparator v-if="hasNotifications" />
                                                 <template v-if="isDashboardItem(item)">
                                                     <ContextMenuItem @click="handleEditDashboard(item)">
                                                         {{ t('nav_menu.edit_dashboard') }}
@@ -101,10 +101,10 @@
                 </SidebarContent>
             </ContextMenuTrigger>
             <ContextMenuContent>
-                <ContextMenuItem :disabled="!hasNotifications" @click="clearAllNotifications">
+                <ContextMenuItem v-if="hasNotifications" @click="clearAllNotifications">
                     {{ t('nav_menu.mark_all_read') }}
                 </ContextMenuItem>
-                <ContextMenuSeparator />
+                <ContextMenuSeparator v-if="hasNotifications" />
                 <ContextMenuItem @click="handleQuickCreateDashboard">
                     {{ t('dashboard.new_dashboard') }}
                 </ContextMenuItem>
@@ -361,7 +361,8 @@
         }
         const { ok } = await modalStore.confirm({
             title: t('dashboard.confirmations.delete_title'),
-            description: t('dashboard.confirmations.delete_description')
+            description: t('dashboard.confirmations.delete_description'),
+            destructive: true
         });
         if (!ok) {
             return;

@@ -486,7 +486,8 @@ export function useUserDialogCommands(
                     title: t('confirm.title'),
                     description: t('confirm.command_question', {
                         command: t('dialog.user.actions.moderation_block')
-                    })
+                    }),
+                    destructive: true
                 }),
                 handler: async (userId) => {
                     const args =
@@ -518,7 +519,8 @@ export function useUserDialogCommands(
                     title: t('confirm.title'),
                     description: t('confirm.command_question', {
                         command: t('dialog.user.actions.moderation_mute')
-                    })
+                    }),
+                    destructive: true
                 }),
                 handler: async (userId) => {
                     const args =
@@ -554,7 +556,8 @@ export function useUserDialogCommands(
                         command: t(
                             'dialog.user.actions.moderation_disable_avatar_interaction'
                         )
-                    })
+                    }),
+                    destructive: true
                 }),
                 handler: async (userId) => {
                     const args =
@@ -590,7 +593,8 @@ export function useUserDialogCommands(
                         command: t(
                             'dialog.user.actions.moderation_disable_chatbox'
                         )
-                    })
+                    }),
+                    destructive: true
                 }),
                 handler: async (userId) => {
                     const args =
@@ -622,7 +626,8 @@ export function useUserDialogCommands(
                     title: t('confirm.title'),
                     description: t('confirm.command_question', {
                         command: t('dialog.user.actions.unfriend')
-                    })
+                    }),
+                    destructive: true
                 }),
                 handler: async (userId) => {
                     const args = await friendRequest.deleteFriend(

@@ -26,7 +26,7 @@
                         <RefreshCw v-else />
                     </Button>
                 </TooltipWrapper>
-                <ContextMenu>
+                <ContextMenu v-if="hasUnseenNotifications">
                     <ContextMenuTrigger as-child>
                         <TooltipWrapper side="bottom" :content="t('side_panel.notification_center.title')">
                             <Button
@@ -36,17 +36,26 @@
                                 @click="isNotificationCenterOpen = !isNotificationCenterOpen">
                                 <Bell />
                                 <span
-                                    v-if="hasUnseenNotifications"
                                     class="absolute top-1 right-1.25 size-1.5 rounded-full bg-red-500" />
                             </Button>
                         </TooltipWrapper>
                     </ContextMenuTrigger>
                     <ContextMenuContent>
-                        <ContextMenuItem :disabled="!hasUnseenNotifications" @click="markNotificationsRead">
+                        <ContextMenuItem @click="markNotificationsRead">
                             {{ t('nav_menu.mark_all_read') }}
                         </ContextMenuItem>
                     </ContextMenuContent>
                 </ContextMenu>
+                <TooltipWrapper v-else side="bottom" :content="t('side_panel.notification_center.title')">
+                    <Button
+                        class="rounded-full relative"
+                        variant="ghost"
+                        size="icon-sm"
+                        @click="isNotificationCenterOpen = !isNotificationCenterOpen"
+                        @contextmenu.prevent="toast.info(t('side_panel.notification_center.no_unseen_notifications'))">
+                        <Bell />
+                    </Button>
+                </TooltipWrapper>
                 <Popover v-model:open="isSettingsPopoverOpen">
                     <PopoverTrigger as-child>
                         <Button class="rounded-full" variant="ghost" size="icon-sm">
@@ -246,6 +255,7 @@
         SelectValue
     } from '@/components/ui/select';
     import { Bell, RefreshCw, Search, Settings } from 'lucide-vue-next';
+    import { toast } from 'vue-sonner';
     import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
     import { Field, FieldContent, FieldLabel } from '@/components/ui/field';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';

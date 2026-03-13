@@ -880,7 +880,8 @@
                     invalidIdsText,
                 title: t('view.favorite.avatars.confirm_delete_invalid'),
                 confirmText: t('confirm.confirm_button'),
-                cancelText: t('view.favorite.avatars.copy_removed_ids')
+                cancelText: t('view.favorite.avatars.copy_removed_ids'),
+                destructive: true
             });
 
             if (!confirmDeleteResult.ok) {
@@ -1000,7 +1001,8 @@
         modalStore
             .confirm({
                 description: t('confirm.clear_group'),
-                title: t('confirm.title')
+                title: t('confirm.title'),
+                destructive: true
             })
             .then(({ ok }) => {
                 if (ok) {
@@ -1050,7 +1052,8 @@
         modalStore
             .confirm({
                 description: t('confirm.delete_group', { name: group }),
-                title: t('confirm.title')
+                title: t('confirm.title'),
+                destructive: true
             })
             .then(({ ok }) => {
                 if (ok) {
@@ -1223,9 +1226,9 @@
         const total = selectedFavoriteAvatars.value.length;
         modalStore
             .confirm({
-                description: `Are you sure you want to unfavorite ${total} favorites?
-                This action cannot be undone.`,
-                title: `Delete ${total} favorites?`
+                description: t('confirm.bulk_unfavorite', { count: total }),
+                title: t('confirm.bulk_unfavorite_title', { count: total }),
+                destructive: true
             })
             .then(({ ok }) => {
                 if (ok) {

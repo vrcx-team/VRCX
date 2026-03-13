@@ -746,7 +746,8 @@ export function leaveGroupPrompt(groupId) {
     modalStore
         .confirm({
             description: t('confirm.leave_group'),
-            title: t('confirm.title')
+            title: t('confirm.title'),
+            destructive: true
         })
         .then(({ ok }) => {
             if (!ok) return;

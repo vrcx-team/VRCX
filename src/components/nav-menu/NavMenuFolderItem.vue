@@ -94,11 +94,11 @@
                                             </ContextMenuTrigger>
                                             <ContextMenuContent>
                                                 <ContextMenuItem
-                                                    :disabled="!hasNotifications"
+                                                    v-if="hasNotifications"
                                                     @click="emit('clear-notifications')">
                                                     {{ t('nav_menu.mark_all_read') }}
                                                 </ContextMenuItem>
-                                                <ContextMenuSeparator />
+                                                <ContextMenuSeparator v-if="hasNotifications" />
                                                 <template v-if="isDashboardItem(entry)">
                                                     <ContextMenuItem @click="emit('edit-dashboard', entry)">
                                                         {{ t('nav_menu.edit_dashboard') }}
@@ -126,10 +126,10 @@
                 </div>
             </ContextMenuTrigger>
             <ContextMenuContent>
-                <ContextMenuItem :disabled="!hasNotifications" @click="emit('clear-notifications')">
+                <ContextMenuItem v-if="hasNotifications" @click="emit('clear-notifications')">
                     {{ t('nav_menu.mark_all_read') }}
                 </ContextMenuItem>
-                <ContextMenuSeparator />
+                <ContextMenuSeparator v-if="hasNotifications" />
                 <ContextMenuItem @click="emit('create-dashboard')">
                     {{ t('dashboard.new_dashboard') }}
                 </ContextMenuItem>

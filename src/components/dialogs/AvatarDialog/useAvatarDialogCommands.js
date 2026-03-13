@@ -287,7 +287,8 @@ export function useAvatarDialogCommands(
                     title: t('confirm.title'),
                     description: t('confirm.command_question', {
                         command: t('dialog.avatar.actions.block')
-                    })
+                    }),
+                    destructive: true
                 }),
                 handler: (id) => {
                     avatarModerationRequest
@@ -369,7 +370,8 @@ export function useAvatarDialogCommands(
                     title: t('confirm.title'),
                     description: t('confirm.command_question', {
                         command: t('dialog.avatar.actions.delete')
-                    })
+                    }),
+                    destructive: true
                 }),
                 handler: (id) => {
                     avatarRequest
@@ -399,7 +401,8 @@ export function useAvatarDialogCommands(
                     title: t('confirm.title'),
                     description: t('confirm.command_question', {
                         command: t('dialog.avatar.actions.delete_impostor')
-                    })
+                    }),
+                    destructive: true
                 }),
                 handler: (id) => {
                     avatarRequest
@@ -432,7 +435,8 @@ export function useAvatarDialogCommands(
                     title: t('confirm.title'),
                     description: t('confirm.command_question', {
                         command: t('dialog.avatar.actions.regenerate_impostor')
-                    })
+                    }),
+                    destructive: true
                 }),
                 handler: (id) => {
                     avatarRequest

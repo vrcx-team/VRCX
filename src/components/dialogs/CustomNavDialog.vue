@@ -770,7 +770,8 @@
         const dashboardId = String(dashboardKey || '').replace(DASHBOARD_NAV_KEY_PREFIX, '');
         const { ok } = await modalStore.confirm({
             title: t('dashboard.confirmations.delete_title'),
-            description: t('dashboard.confirmations.delete_description')
+            description: t('dashboard.confirmations.delete_description'),
+            destructive: true
         });
         if (!ok) {
             return;

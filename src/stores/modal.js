@@ -15,6 +15,7 @@ import { useI18n } from 'vue-i18n';
  * @property {string=} confirmText
  * @property {string=} cancelText
  * @property {boolean=} dismissible  // true: allow esc/outside, false: block
+ * @property {boolean=} destructive  // true: use destructive variant for confirm button
  */
 
 /**
@@ -23,6 +24,7 @@ import { useI18n } from 'vue-i18n';
  * @property {string} description
  * @property {string=} confirmText
  * @property {boolean=} dismissible
+ * @property {boolean=} destructive  // true: use destructive variant for confirm button
  */
 
 /**
@@ -65,6 +67,7 @@ export const useModalStore = defineStore('Modal', () => {
     const alertOkText = ref('');
     const alertCancelText = ref('');
     const alertDismissible = ref(true);
+    const alertDestructive = ref(false);
 
     const promptOpen = ref(false);
     const promptTitle = ref('');
@@ -155,6 +158,7 @@ export const useModalStore = defineStore('Modal', () => {
         alertTitle.value = options.title;
         alertDescription.value = options.description;
         alertDismissible.value = options.dismissible !== false;
+        alertDestructive.value = options.destructive === true;
 
         if (mode === 'alert') {
             alertOkText.value =
@@ -381,6 +385,7 @@ export const useModalStore = defineStore('Modal', () => {
         alertOkText,
         alertCancelText,
         alertDismissible,
+        alertDestructive,
         promptOpen,
         promptTitle,
         promptDescription,
