@@ -81,6 +81,7 @@
 <script setup>
     import { computed, ref, watch } from 'vue';
     import { Plus } from 'lucide-vue-next';
+    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
     import { useRouter } from 'vue-router';
 
@@ -179,11 +180,19 @@
     };
 
     const handleSave = async () => {
+        const isFirstSave =
+            dashboardStore.dashboards.length === 1 &&
+            (!dashboard.value?.rows || dashboard.value.rows.length === 0);
+
         await dashboardStore.updateDashboard(props.id, {
             name: editName.value.trim() || dashboard.value?.name || 'Dashboard',
             rows: editRows.value
         });
         isEditing.value = false;
+
+        if (isFirstSave) {
+            toast(t('dashboard.first_save_tip'), { duration: 6000 });
+        }
     };
 
     const handleCancelEdit = () => {

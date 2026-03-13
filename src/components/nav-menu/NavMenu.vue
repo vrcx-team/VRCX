@@ -1,6 +1,6 @@
 <template>
     <Sidebar side="left" variant="sidebar" collapsible="icon">
-        <SidebarHeader class="px-2 py-2">
+        <SidebarHeader v-if="!hasDashboards" class="px-2 py-2">
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton
@@ -264,6 +264,7 @@
     const collapsedDropdownOpenId = ref(null);
     const customNavDialogVisible = ref(false);
 
+    const hasDashboards = computed(() => dashboards.value.length > 0);
     const hasNotifications = computed(() => notifiedMenus.value.length > 0);
     const version = computed(() => appVersion.value?.split('VRCX ')?.[1] || '-');
     const vrcxLogo = new URL('../../../images/VRCX.png', import.meta.url).href;

@@ -131,6 +131,7 @@
             "instance_not_in_game": "Not in game",
             "time_ago": "{time} ago"
         },
+        "first_save_tip": "You can create more dashboards. Right-click the Navigation Menu or use the Customize Navigation dialog to add new ones.",
         "confirmations": {
             "delete_title": "Delete Dashboard",
             "delete_description": "Are you sure you want to delete this dashboard? This action cannot be undone."

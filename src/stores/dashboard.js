@@ -138,8 +138,23 @@ export const useDashboardStore = defineStore('dashboard', () => {
         return `dashboard-${Date.now()}-${Math.random().toString().slice(2, 8)}`;
     }
 
-    async function createDashboard(name = 'Dashboard') {
+    function generateNextDashboardName(baseName = 'Dashboard') {
+        const existingNames = new Set(
+            dashboards.value.map((d) => d.name)
+        );
+        if (!existingNames.has(baseName)) {
+            return baseName;
+        }
+        let n = 1;
+        while (existingNames.has(`${baseName} ${n}`)) {
+            n++;
+        }
+        return `${baseName} ${n}`;
+    }
+
+    async function createDashboard(baseName = 'Dashboard') {
         const id = generateDashboardId();
+        const name = generateNextDashboardName(baseName);
         const dashboard = {
             id,
             name,
