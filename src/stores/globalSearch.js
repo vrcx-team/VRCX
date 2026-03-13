@@ -1,4 +1,4 @@
-import { ref, watch, computed } from 'vue';
+import { computed, effectScope, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { useAvatarStore } from './avatar';
 import { useFavoriteStore } from './favorite';
@@ -27,6 +27,7 @@ export const useGlobalSearchStore = defineStore('GlobalSearch', () => {
     // Worker instance (lazy)
     let worker = null;
     let indexUpdateTimer = null;
+    let indexWatchScope = null;
 
     function getWorker() {
         if (!worker) {
@@ -34,6 +35,12 @@ export const useGlobalSearchStore = defineStore('GlobalSearch', () => {
             worker.onmessage = handleWorkerMessage;
         }
         return worker;
+    }
+
+    function disposeWorker() {
+        if (!worker) return;
+        worker.terminate();
+        worker = null;
     }
 
     // Search results (updated from worker messages)
@@ -58,18 +65,13 @@ export const useGlobalSearchStore = defineStore('GlobalSearch', () => {
 
     const currentUserId = computed(() => userStore.currentUser?.id);
 
-    watch(isOpen, (open) => {
-        if (!open) {
-            query.value = '';
-            clearResults();
-        }
-    });
-
     // Send index update to worker when data changes
     function scheduleIndexUpdate() {
+        if (!isOpen.value) return;
         if (indexUpdateTimer) clearTimeout(indexUpdateTimer);
         indexUpdateTimer = setTimeout(() => {
             indexUpdateTimer = null;
+            if (!isOpen.value) return;
             sendIndexUpdate();
         }, 200);
     }
@@ -148,41 +150,59 @@ export const useGlobalSearchStore = defineStore('GlobalSearch', () => {
         });
     }
 
-    watch(
-        () => friendStore.friends,
-        () => scheduleIndexUpdate(),
-        { deep: true }
-    );
+    function stopIndexWatchers() {
+        if (indexUpdateTimer) {
+            clearTimeout(indexUpdateTimer);
+            indexUpdateTimer = null;
+        }
+        if (indexWatchScope) {
+            indexWatchScope.stop();
+            indexWatchScope = null;
+        }
+    }
 
-    watch(
-        () => avatarStore.cachedAvatars,
-        () => scheduleIndexUpdate(),
-        { deep: true }
-    );
+    function startIndexWatchers() {
+        if (indexWatchScope) return;
 
-    watch(
-        () => worldStore.cachedWorlds,
-        () => scheduleIndexUpdate(),
-        { deep: true }
-    );
+        indexWatchScope = effectScope();
+        indexWatchScope.run(() => {
+            watch(
+                () => friendStore.friends,
+                () => scheduleIndexUpdate(),
+                { deep: true }
+            );
 
-    watch(
-        () => groupStore.currentUserGroups,
-        () => scheduleIndexUpdate(),
-        { deep: true }
-    );
+            watch(
+                () => avatarStore.cachedAvatars,
+                () => scheduleIndexUpdate(),
+                { deep: true }
+            );
 
-    watch(
-        () => favoriteStore.favoriteAvatars,
-        () => scheduleIndexUpdate(),
-        { deep: true }
-    );
+            watch(
+                () => worldStore.cachedWorlds,
+                () => scheduleIndexUpdate(),
+                { deep: true }
+            );
 
-    watch(
-        () => favoriteStore.favoriteWorlds,
-        () => scheduleIndexUpdate(),
-        { deep: true }
-    );
+            watch(
+                () => groupStore.currentUserGroups,
+                () => scheduleIndexUpdate(),
+                { deep: true }
+            );
+
+            watch(
+                () => favoriteStore.favoriteAvatars,
+                () => scheduleIndexUpdate(),
+                { deep: true }
+            );
+
+            watch(
+                () => favoriteStore.favoriteWorlds,
+                () => scheduleIndexUpdate(),
+                { deep: true }
+            );
+        });
+    }
 
     let searchSeq = 0;
 
@@ -208,7 +228,25 @@ export const useGlobalSearchStore = defineStore('GlobalSearch', () => {
 
     watch(query, dispatchSearch);
     watch(currentUserId, () => {
-        if (query.value && query.value.length >= 2) dispatchSearch();
+        if (query.value && query.value.length >= 2) {
+            dispatchSearch();
+        }
+    });
+
+    watch(isOpen, (open) => {
+        if (open) {
+            startIndexWatchers();
+            sendIndexUpdate();
+            if (query.value && query.value.length >= 2) {
+                dispatchSearch();
+            }
+            return;
+        }
+
+        query.value = '';
+        clearResults();
+        stopIndexWatchers();
+        disposeWorker();
     });
 
     function handleWorkerMessage(event) {
@@ -242,7 +280,6 @@ export const useGlobalSearchStore = defineStore('GlobalSearch', () => {
     }
 
     function open() {
-        sendIndexUpdate();
         isOpen.value = true;
     }
 
