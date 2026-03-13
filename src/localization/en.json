@@ -96,7 +96,6 @@
             "delete": "Delete"
         },
         "toolbar": {
-            "editing": "Editing Dashboard",
             "name_placeholder": "Dashboard Name",
             "icon_placeholder": "Icon Class (Optional)"
         },

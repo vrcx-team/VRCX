@@ -1,9 +1,8 @@
 <template>
     <div class="flex items-center gap-2 rounded-md border bg-card px-3 py-2">
-        <span class="text-sm font-medium text-muted-foreground">{{ t('dashboard.toolbar.editing') }}</span>
         <Input
             :model-value="name"
-            :placeholder="t('dashboard.name_placeholder')"
+            :placeholder="t('dashboard.toolbar.name_placeholder')"
             class="mx-2 h-7 max-w-[200px] text-sm"
             @update:model-value="emit('update:name', $event)" />
         <div class="flex gap-2">

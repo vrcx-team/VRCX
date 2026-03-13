@@ -1,6 +1,14 @@
 <template>
     <div class="relative flex min-h-0 flex-1 overflow-hidden rounded-md border bg-card">
         <template v-if="isEditing">
+            <Button
+                v-if="showRemove"
+                variant="ghost"
+                size="icon-sm"
+                class="absolute right-1 top-1 z-20"
+                @click="emit('remove')">
+                <X class="size-4" />
+            </Button>
             <div class="flex w-full min-h-0 flex-col gap-2 p-3">
                 <div class="flex flex-1 items-center justify-center gap-2 text-xs text-muted-foreground">
                     <i v-if="panelIcon" :class="panelIcon" class="text-base" />
@@ -13,7 +21,7 @@
         </template>
 
         <template v-else-if="panelKey && panelComponent">
-            <div class="h-full w-full overflow-y-auto">
+            <div class="dashboard-panel h-full w-full overflow-y-auto">
                 <component :is="panelComponent" />
             </div>
         </template>
@@ -32,6 +40,7 @@
 
 <script setup>
     import { computed, ref } from 'vue';
+    import { X } from 'lucide-vue-next';
     import { useI18n } from 'vue-i18n';
 
     import { Button } from '@/components/ui/button';
@@ -48,10 +57,14 @@
         isEditing: {
             type: Boolean,
             default: false
+        },
+        showRemove: {
+            type: Boolean,
+            default: false
         }
     });
 
-    const emit = defineEmits(['select']);
+    const emit = defineEmits(['select', 'remove']);
     const { t } = useI18n();
     const selectorOpen = ref(false);
 
@@ -87,3 +100,13 @@
         selectorOpen.value = false;
     };
 </script>
+
+<style scoped>
+    .dashboard-panel :deep(.x-container) {
+        height: 100%;
+        margin: 0;
+        border: none;
+        border-radius: 0;
+        background: transparent;
+    }
+</style>

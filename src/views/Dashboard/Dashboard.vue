@@ -28,7 +28,7 @@
                     :dashboard-id="id"
                     :is-editing="true"
                     @update-panel="handleUpdatePanel"
-                    @remove-row="handleRemoveRow" />
+                    @remove-panel="handleRemovePanel" />
 
                 <div
                     class="mt-auto flex min-h-[80px] flex-1 items-center justify-center rounded-md border-2 border-dashed border-muted-foreground/20 text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/5"
@@ -161,8 +161,14 @@
         showAddRowOptions.value = false;
     };
 
-    const handleRemoveRow = (rowIndex) => {
-        editRows.value.splice(rowIndex, 1);
+    const handleRemovePanel = (rowIndex, panelIndex) => {
+        const row = editRows.value[rowIndex];
+        if (!row) return;
+        if (row.panels.length <= 1) {
+            editRows.value.splice(rowIndex, 1);
+        } else {
+            row.panels.splice(panelIndex, 1);
+        }
     };
 
     const handleUpdatePanel = (rowIndex, panelIndex, panelKey) => {

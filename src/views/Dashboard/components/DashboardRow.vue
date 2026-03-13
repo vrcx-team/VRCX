@@ -9,16 +9,10 @@
                 :key="panelIndex"
                 :panel-key="panelKey"
                 :is-editing="true"
+                :show-remove="true"
                 :class="panelEditClass"
-                @select="(key) => emit('update-panel', rowIndex, panelIndex, key)" />
-
-            <Button
-                variant="ghost"
-                size="icon-sm"
-                class="absolute right-1 top-2 z-20 bg-background/80"
-                @click="emit('remove-row', rowIndex)">
-                <X class="size-4" />
-            </Button>
+                @select="(key) => emit('update-panel', rowIndex, panelIndex, key)"
+                @remove="emit('remove-panel', rowIndex, panelIndex)" />
         </div>
 
         <ResizablePanelGroup
@@ -43,9 +37,7 @@
 
 <script setup>
     import { computed } from 'vue';
-    import { X } from 'lucide-vue-next';
 
-    import { Button } from '@/components/ui/button';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 
     import DashboardPanel from './DashboardPanel.vue';
@@ -69,7 +61,7 @@
         }
     });
 
-    const emit = defineEmits(['update-panel', 'remove-row']);
+    const emit = defineEmits(['update-panel', 'remove-panel']);
 
     const isVertical = computed(() => props.row.direction === 'vertical');
 
