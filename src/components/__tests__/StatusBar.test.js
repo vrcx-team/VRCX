@@ -189,6 +189,8 @@ function mountStatusBar(storeOverrides = {}) {
                         Game: {
                             isGameRunning: false,
                             isSteamVRRunning: false,
+                            lastSessionDurationMs: 0,
+                            lastOfflineAt: 0,
                             ...storeOverrides.Game
                         },
                         Vrcx: {
@@ -201,6 +203,12 @@ function mountStatusBar(storeOverrides = {}) {
                             lastStatusTime: null,
                             lastStatusSummary: '',
                             ...storeOverrides.VrcStatus
+                        },
+                        User: {
+                            currentUser: {
+                                $online_for: Date.now()
+                            },
+                            ...storeOverrides.User
                         },
                         GeneralSettings: {
                             ...storeOverrides.GeneralSettings
@@ -268,5 +276,18 @@ describe('StatusBar.vue - Servers indicator', () => {
     test('shows SteamVR indicator', () => {
         const wrapper = mountStatusBar({ Game: { isSteamVRRunning: true } });
         expect(wrapper.text()).toContain('SteamVR');
+    });
+
+    test('shows last game session details when game is offline and there is session data', () => {
+        const wrapper = mountStatusBar({
+            Game: {
+                isGameRunning: false,
+                lastSessionDurationMs: 3_600_000,
+                lastOfflineAt: new Date('2026-03-13T14:30:00Z').getTime()
+            }
+        });
+
+        expect(wrapper.text()).toContain('Last Session');
+        expect(wrapper.text()).toContain('Offline Since');
     });
 });
