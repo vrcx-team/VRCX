@@ -52,8 +52,7 @@ const defaultAssetName = '[hash][extname]';
 
 /**
  *
- * @param root0
- * @param root0.name
+ * @param {import('rolldown').PreRenderedAsset} assetInfo
  */
 function getAssetFilename({ name }) {
     const language = getAssetLanguage(name);
@@ -110,7 +109,6 @@ export default defineConfig(({ mode }) => {
             transformer: 'lightningcss',
             lightningcss: {
                 drafts: {
-                    nesting: true,
                     customMedia: true
                 },
                 errorRecovery: true,
@@ -152,7 +150,7 @@ export default defineConfig(({ mode }) => {
             chunkSizeWarningLimit: 5000,
             sourcemap: buildAndUploadSourceMaps,
             assetsInlineLimit: 0,
-            rollupOptions: {
+            rolldownOptions: {
                 preserveEntrySignatures: false,
                 input: {
                     index: resolve(import.meta.dirname, './index.html'),
