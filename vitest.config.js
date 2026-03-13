@@ -3,9 +3,10 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vitest/config';
 
 import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
 
 export default defineConfig({
-    plugins: [vue()],
+    plugins: [vue(),vueJsx()],
     define: {
         NIGHTLY: JSON.stringify(false),
         WINDOWS: JSON.stringify(true),

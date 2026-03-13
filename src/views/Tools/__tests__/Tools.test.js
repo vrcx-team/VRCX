@@ -12,14 +12,18 @@ const setString = vi.fn();
 const friends = ref([]);
 let routeName = 'not-tools';
 
-vi.mock('vue-router', () => ({
-    useRouter: () => ({ push }),
-    useRoute: () => ({
-        get name() {
-            return routeName;
-        }
-    })
-}));
+vi.mock('vue-router', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        useRouter: () => ({ push }),
+        useRoute: () => ({
+            get name() {
+                return routeName;
+            }
+        })
+    };
+});
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({ t: (key) => key })
