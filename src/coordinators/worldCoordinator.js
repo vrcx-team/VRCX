@@ -118,6 +118,18 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
             if (D.id === args.ref.id) {
                 D.ref = args.ref;
                 uiStore.setDialogCrumbLabel('world', D.id, D.ref?.name || D.id);
+                if (args.ref.instances) {
+                    for (const instance of args.ref.instances) {
+                        const instanceId = instance[0];
+                        const tag = `${D.id}:${instanceId}`;
+                        if (isRealInstance(tag)) {
+                            instanceRequest.getInstance({
+                                worldId: D.id,
+                                instanceId
+                            });
+                        }
+                    }
+                }
                 D.visible = true;
                 D.loading = false;
                 D.isFavorite = favoriteStore.getCachedFavoritesByObjectId(D.id);
