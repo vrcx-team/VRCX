@@ -32,6 +32,24 @@
                                 {{ filterType }}
                             </label>
                         </div>
+                        <div class="mt-2">
+                            <label
+                                v-if="widgetType === 'game-log'"
+                                class="flex items-center gap-1 text-xs cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    :checked="panelConfig.showDetail || false"
+                                    @change="toggleBooleanConfig('showDetail')" />
+                                Show Detail
+                            </label>
+                            <label v-if="widgetType === 'feed'" class="flex items-center gap-1 text-xs cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    :checked="panelConfig.showType || false"
+                                    @change="toggleBooleanConfig('showType')" />
+                                Show Type
+                            </label>
+                        </div>
                     </template>
 
                     <!-- Instance: column visibility -->
@@ -89,7 +107,15 @@
     import { panelComponentMap } from './panelRegistry';
 
     const FEED_TYPES = ['GPS', 'Online', 'Offline', 'Status', 'Avatar', 'Bio'];
-    const GAMELOG_TYPES = ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'VideoPlay', 'PortalSpawn', 'Event', 'External'];
+    const GAMELOG_TYPES = [
+        'Location',
+        'OnPlayerJoined',
+        'OnPlayerLeft',
+        'VideoPlay',
+        'PortalSpawn',
+        'Event',
+        'External'
+    ];
     const INSTANCE_COLUMNS = ['icon', 'displayName', 'rank', 'timer', 'platform', 'language', 'status'];
 
     const props = defineProps({
@@ -189,19 +215,19 @@
         emitConfigUpdate({ ...panelConfig.value, filters });
     }
 
-        const availableColumns = computed(() => INSTANCE_COLUMNS);
+    const availableColumns = computed(() => INSTANCE_COLUMNS);
 
     function isColumnActive(col) {
         const columns = panelConfig.value.columns;
         if (!columns || !Array.isArray(columns) || columns.length === 0) {
-            return ['icon', 'displayName', 'rank', 'timer'].includes(col);
+            return ['icon', 'displayName', 'timer'].includes(col);
         }
         return columns.includes(col);
     }
 
     function toggleColumn(col) {
         if (col === 'displayName') return; // Always visible
-        const currentColumns = panelConfig.value.columns || ['icon', 'displayName', 'rank', 'timer'];
+        const currentColumns = panelConfig.value.columns || ['icon', 'displayName', 'timer'];
         let columns;
         if (currentColumns.includes(col)) {
             columns = currentColumns.filter((c) => c !== col);
@@ -209,6 +235,10 @@
             columns = [...currentColumns, col];
         }
         emitConfigUpdate({ ...panelConfig.value, columns });
+    }
+
+    function toggleBooleanConfig(key) {
+        emitConfigUpdate({ ...panelConfig.value, [key]: !panelConfig.value[key] });
     }
 
     function emitConfigUpdate(newConfig) {

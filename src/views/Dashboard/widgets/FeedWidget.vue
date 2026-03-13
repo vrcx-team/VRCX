@@ -1,9 +1,6 @@
 <template>
     <div class="flex h-full min-h-0 flex-col">
-        <WidgetHeader
-            :title="t('dashboard.widget.feed')"
-            icon="ri-rss-line"
-            route-name="feed" />
+        <WidgetHeader :title="t('dashboard.widget.feed')" icon="ri-rss-line" route-name="feed" />
 
         <div class="min-h-0 flex-1 overflow-y-auto" ref="listRef">
             <Table v-if="filteredData.length" class="is-compact-table">
@@ -13,15 +10,22 @@
                         :key="`${item.type}-${item.created_at}-${index}`"
                         class="cursor-default"
                         :class="{ 'border-l-2 border-l-chart-4': item.isFavorite }">
-                        <TableCell class="w-14 text-[11px] tabular-nums text-muted-foreground">
+                        <TableCell class="w-28 text-[11px] tabular-nums text-muted-foreground">
                             <TooltipWrapper :content="formatExactTime(item.created_at)" side="top">
-                                <span>{{ timeAgo(item.created_at) }}</span>
+                                <span>{{ formatTime(item.created_at) }}</span>
                             </TooltipWrapper>
+                        </TableCell>
+                        <TableCell v-if="showType" class="w-16 text-[11px] text-muted-foreground">
+                            {{ item.type }}
                         </TableCell>
                         <TableCell class="truncate">
                             <template v-if="item.type === 'GPS'">
                                 <MapPin class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                                <span class="cursor-pointer font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                <span
+                                    class="cursor-pointer font-medium hover:underline"
+                                    @click="openUser(item.userId)"
+                                    >{{ item.displayName }}</span
+                                >
                                 <span class="text-muted-foreground"> → </span>
                                 <Location
                                     class="inline [&>div]:inline-flex"
@@ -32,7 +36,11 @@
                             </template>
                             <template v-else-if="item.type === 'Online'">
                                 <i class="x-user-status online mr-1"></i>
-                                <span class="cursor-pointer font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                <span
+                                    class="cursor-pointer font-medium hover:underline"
+                                    @click="openUser(item.userId)"
+                                    >{{ item.displayName }}</span
+                                >
                                 <template v-if="item.location">
                                     <span class="text-muted-foreground"> → </span>
                                     <Location
@@ -45,25 +53,45 @@
                             </template>
                             <template v-else-if="item.type === 'Offline'">
                                 <i class="x-user-status mr-1"></i>
-                                <span class="cursor-pointer font-medium text-muted-foreground/70 hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                <span
+                                    class="cursor-pointer font-medium text-muted-foreground/70 hover:underline"
+                                    @click="openUser(item.userId)"
+                                    >{{ item.displayName }}</span
+                                >
                             </template>
                             <template v-else-if="item.type === 'Status'">
                                 <i class="x-user-status mr-1" :class="statusClass(item.status)"></i>
-                                <span class="cursor-pointer font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                <span
+                                    class="cursor-pointer font-medium hover:underline"
+                                    @click="openUser(item.userId)"
+                                    >{{ item.displayName }}</span
+                                >
                                 <span class="text-muted-foreground"> {{ item.statusDescription }}</span>
                             </template>
                             <template v-else-if="item.type === 'Avatar'">
                                 <Box class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                                <span class="cursor-pointer font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                <span
+                                    class="cursor-pointer font-medium hover:underline"
+                                    @click="openUser(item.userId)"
+                                    >{{ item.displayName }}</span
+                                >
                                 <span class="text-muted-foreground"> → {{ item.avatarName }}</span>
                             </template>
                             <template v-else-if="item.type === 'Bio'">
                                 <Pencil class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                                <span class="cursor-pointer font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                <span
+                                    class="cursor-pointer font-medium hover:underline"
+                                    @click="openUser(item.userId)"
+                                    >{{ item.displayName }}</span
+                                >
                                 <span class="ml-1 text-muted-foreground">{{ t('dashboard.widget.feed_bio') }}</span>
                             </template>
                             <template v-else>
-                                <span class="cursor-pointer font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                <span
+                                    class="cursor-pointer font-medium hover:underline"
+                                    @click="openUser(item.userId)"
+                                    >{{ item.displayName }}</span
+                                >
                                 <span class="text-muted-foreground"> {{ item.type }}</span>
                             </template>
                         </TableCell>
@@ -83,7 +111,7 @@
     import { Box, MapPin, Pencil } from 'lucide-vue-next';
 
     import { statusClass } from '@/shared/utils/user';
-    import { timeToText, formatDateFilter } from '@/shared/utils';
+    import { formatDateFilter } from '@/shared/utils';
     import { showUserDialog } from '@/coordinators/userCoordinator';
     import { useFeedStore } from '@/stores';
 
@@ -112,20 +140,17 @@
         return FEED_TYPES;
     });
 
+    const showType = computed(() => {
+        return props.config.showType || false;
+    });
+
     const filteredData = computed(() => {
         const filters = activeFilters.value;
         return feedStore.feedTableData.filter((item) => filters.includes(item.type)).slice(0, 100);
     });
 
-    function timeAgo(dateStr) {
-        if (!dateStr) return '';
-        let diff = Date.now() - new Date(dateStr).getTime();
-        if (diff < 0) return 'now';
-        // Over 1 hour: drop minutes
-        if (diff >= 3600000) {
-            diff = Math.floor(diff / 3600000) * 3600000;
-        }
-        return t('dashboard.widget.time_ago', { time: timeToText(diff) });
+    function formatTime(dateStr) {
+        return formatDateFilter(dateStr, 'short');
     }
 
     function formatExactTime(dateStr) {

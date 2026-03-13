@@ -1,9 +1,6 @@
 <template>
     <div class="flex h-full min-h-0 flex-col">
-        <WidgetHeader
-            :title="t('dashboard.widget.instance')"
-            icon="ri-group-3-line"
-            route-name="player-list" />
+        <WidgetHeader :title="t('dashboard.widget.instance')" icon="ri-group-3-line" route-name="player-list" />
 
         <template v-if="hasPlayers">
             <!-- Info bar -->
@@ -28,20 +25,32 @@
                                 <span v-if="player.isFriend">💚</span>
                                 <span v-if="player.isBlocked" class="text-destructive">⛔</span>
                                 <span v-if="player.isMuted" class="text-muted-foreground">🔇</span>
+                                <IdCard
+                                    v-if="player.ageVerified"
+                                    class="inline-block h-3.5 w-3.5 x-tag-age-verification" />
                             </TableCell>
 
                             <TableCell class="truncate font-medium" :class="player.ref?.$trustClass">
                                 {{ player.displayName }}
                             </TableCell>
 
-                            <TableCell v-if="isColumnVisible('rank')" class="w-24 truncate text-[11px]" :class="player.ref?.$trustClass">
+                            <TableCell
+                                v-if="isColumnVisible('rank')"
+                                class="w-24 truncate text-[11px]"
+                                :class="player.ref?.$trustClass">
                                 {{ player.ref?.$trustLevel || '' }}
                             </TableCell>
 
                             <TableCell v-if="isColumnVisible('platform')" class="w-10 text-center">
-                                <Monitor v-if="player.ref?.$platform === 'standalonewindows'" class="inline-block h-3 w-3 x-tag-platform-pc" />
-                                <Smartphone v-else-if="player.ref?.$platform === 'android'" class="inline-block h-3 w-3 x-tag-platform-quest" />
-                                <Apple v-else-if="player.ref?.$platform === 'ios'" class="inline-block h-3 w-3 x-tag-platform-ios" />
+                                <Monitor
+                                    v-if="player.ref?.$platform === 'standalonewindows'"
+                                    class="inline-block h-3 w-3 x-tag-platform-pc" />
+                                <Smartphone
+                                    v-else-if="player.ref?.$platform === 'android'"
+                                    class="inline-block h-3 w-3 x-tag-platform-quest" />
+                                <Apple
+                                    v-else-if="player.ref?.$platform === 'ios'"
+                                    class="inline-block h-3 w-3 x-tag-platform-ios" />
                             </TableCell>
 
                             <TableCell v-if="isColumnVisible('language')" class="w-14 text-center">
@@ -53,10 +62,14 @@
                             </TableCell>
 
                             <TableCell v-if="isColumnVisible('status')" class="w-10 text-center">
-                                <i class="x-user-status" :class="player.ref?.status ? statusClass(player.ref.status) : ''"></i>
+                                <i
+                                    class="x-user-status"
+                                    :class="player.ref?.status ? statusClass(player.ref.status) : ''"></i>
                             </TableCell>
 
-                            <TableCell v-if="isColumnVisible('timer')" class="w-20 text-right text-[11px] tabular-nums text-muted-foreground">
+                            <TableCell
+                                v-if="isColumnVisible('timer')"
+                                class="w-20 text-right text-[11px] tabular-nums text-muted-foreground">
                                 <Timer v-if="player.timer" :epoch="player.timer" />
                             </TableCell>
                         </TableRow>
@@ -72,7 +85,7 @@
 
 <script setup>
     import { computed, onActivated, onMounted } from 'vue';
-    import { Apple, Monitor, Smartphone } from 'lucide-vue-next';
+    import { Apple, IdCard, Monitor, Smartphone } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -86,7 +99,7 @@
     import { Table, TableBody, TableRow, TableCell } from '@/components/ui/table';
 
     const ALL_COLUMNS = ['icon', 'displayName', 'rank', 'timer', 'platform', 'language', 'status'];
-    const DEFAULT_COLUMNS = ['icon', 'displayName', 'rank', 'timer'];
+    const DEFAULT_COLUMNS = ['icon', 'displayName', 'timer'];
 
     const props = defineProps({
         config: {

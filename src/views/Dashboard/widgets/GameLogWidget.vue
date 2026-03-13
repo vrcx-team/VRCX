@@ -1,9 +1,6 @@
 <template>
     <div class="flex h-full min-h-0 flex-col">
-        <WidgetHeader
-            :title="t('dashboard.widget.game_log')"
-            icon="ri-history-line"
-            route-name="game-log" />
+        <WidgetHeader :title="t('dashboard.widget.game_log')" icon="ri-history-line" route-name="game-log" />
 
         <div class="min-h-0 flex-1 overflow-y-auto">
             <Table v-if="filteredData.length" class="is-compact-table">
@@ -13,14 +10,14 @@
                         :key="`${item.type}-${item.created_at}-${index}`"
                         class="cursor-default"
                         :class="{ 'border-l-2 border-l-chart-4': item.isFavorite }">
-                        <TableCell class="w-14 text-[11px] tabular-nums text-muted-foreground">
+                        <TableCell class="w-28 text-[11px] tabular-nums text-muted-foreground">
                             <TooltipWrapper :content="formatExactTime(item.created_at)" side="top">
-                                <span>{{ timeAgo(item.created_at) }}</span>
+                                <span>{{ formatTime(item.created_at) }}</span>
                             </TooltipWrapper>
                         </TableCell>
                         <TableCell class="truncate">
                             <template v-if="item.type === 'Location'">
-                                <Globe class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <MapPin class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 <Location
                                     class="inline [&>div]:inline-flex"
                                     :location="item.location"
@@ -28,18 +25,22 @@
                                     disable-tooltip />
                             </template>
                             <template v-else-if="item.type === 'OnPlayerJoined'">
-                                <i class="x-user-status online mr-1"></i>
+                                <LogIn class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 <span
                                     class="cursor-pointer font-medium hover:underline"
                                     :style="item.tagColour ? { color: item.tagColour } : null"
-                                    @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                    @click="openUser(item.userId)"
+                                    >{{ item.displayName }}</span
+                                >
                             </template>
                             <template v-else-if="item.type === 'OnPlayerLeft'">
-                                <i class="x-user-status mr-1"></i>
+                                <LogOut class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 <span
                                     class="cursor-pointer font-medium text-muted-foreground/70 hover:underline"
                                     :style="item.tagColour ? { color: item.tagColour } : null"
-                                    @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                    @click="openUser(item.userId)"
+                                    >{{ item.displayName }}</span
+                                >
                             </template>
                             <template v-else-if="item.type === 'VideoPlay'">
                                 <Video class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
@@ -47,7 +48,11 @@
                             </template>
                             <template v-else-if="item.type === 'PortalSpawn'">
                                 <Waypoints class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                                <span class="cursor-pointer font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                <span
+                                    class="cursor-pointer font-medium hover:underline"
+                                    @click="openUser(item.userId)"
+                                    >{{ item.displayName }}</span
+                                >
                                 <span class="text-muted-foreground"> → </span>
                                 <Location
                                     v-if="item.location"
@@ -58,8 +63,22 @@
                                 <span v-else class="text-muted-foreground">{{ item.worldName || '' }}</span>
                             </template>
                             <template v-else>
-                                <span class="font-medium">{{ item.displayName }}</span>
-                                <span class="text-muted-foreground"> {{ item.type }}</span>
+                                <TooltipWrapper
+                                    v-if="!showDetail"
+                                    :content="item.data || item.message || ''"
+                                    side="top">
+                                    <span>
+                                        <span class="font-medium">{{ item.displayName }}</span>
+                                        <span class="text-muted-foreground"> {{ item.type }}</span>
+                                    </span>
+                                </TooltipWrapper>
+                                <template v-else>
+                                    <span class="font-medium">{{ item.displayName }}</span>
+                                    <span class="text-muted-foreground"> {{ item.type }}</span>
+                                    <span v-if="item.data || item.message" class="ml-1 text-muted-foreground"
+                                        >— {{ item.data || item.message }}</span
+                                    >
+                                </template>
                             </template>
                         </TableCell>
                     </TableRow>
@@ -75,12 +94,12 @@
 <script setup>
     import { computed, onMounted, shallowRef, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import { Globe, Video, Waypoints } from 'lucide-vue-next';
+    import { LogIn, LogOut, MapPin, Video, Waypoints } from 'lucide-vue-next';
 
     import { database } from '@/services/database';
     import { showUserDialog } from '@/coordinators/userCoordinator';
     import { useFriendStore, useGameLogStore } from '@/stores';
-    import { timeToText, formatDateFilter } from '@/shared/utils';
+    import { formatDateFilter } from '@/shared/utils';
     import { watchState } from '@/services/watchState';
 
     import Location from '@/components/Location.vue';
@@ -88,7 +107,15 @@
     import WidgetHeader from './WidgetHeader.vue';
     import { Table, TableBody, TableRow, TableCell } from '@/components/ui/table';
 
-    const GAMELOG_TYPES = ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'VideoPlay', 'PortalSpawn', 'Event', 'External'];
+    const GAMELOG_TYPES = [
+        'Location',
+        'OnPlayerJoined',
+        'OnPlayerLeft',
+        'VideoPlay',
+        'PortalSpawn',
+        'Event',
+        'External'
+    ];
 
     const props = defineProps({
         config: {
@@ -109,6 +136,10 @@
             return props.config.filters;
         }
         return GAMELOG_TYPES;
+    });
+
+    const showDetail = computed(() => {
+        return props.config.showDetail || false;
     });
 
     const filteredData = computed(() => {
@@ -161,15 +192,8 @@
         }
     });
 
-    function timeAgo(dateStr) {
-        if (!dateStr) return '';
-        let diff = Date.now() - new Date(dateStr).getTime();
-        if (diff < 0) return 'now';
-        // Over 1 hour: drop minutes
-        if (diff >= 3600000) {
-            diff = Math.floor(diff / 3600000) * 3600000;
-        }
-        return t('dashboard.widget.time_ago', { time: timeToText(diff) });
+    function formatTime(dateStr) {
+        return formatDateFilter(dateStr, 'short');
     }
 
     function formatExactTime(dateStr) {
