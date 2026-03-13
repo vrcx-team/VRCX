@@ -1,18 +1,21 @@
 <template>
     <div class="relative h-full min-h-[180px]">
-        <div v-if="isEditing" class="flex h-full gap-2">
+        <div
+            v-if="isEditing"
+            class="flex h-full gap-2"
+            :class="isVertical ? 'flex-col' : 'flex-row'">
             <DashboardPanel
                 v-for="(panelKey, panelIndex) in row.panels"
                 :key="panelIndex"
                 :panel-key="panelKey"
                 :is-editing="true"
-                :class="row.panels.length === 1 ? 'w-full' : 'w-1/2'"
+                :class="panelEditClass"
                 @select="(key) => emit('update-panel', rowIndex, panelIndex, key)" />
 
             <Button
                 variant="ghost"
                 size="icon-sm"
-                class="absolute -right-1 top-2 z-20 bg-background/80"
+                class="absolute right-1 top-2 z-20 bg-background/80"
                 @click="emit('remove-row', rowIndex)">
                 <X class="size-4" />
             </Button>
@@ -20,7 +23,7 @@
 
         <ResizablePanelGroup
             v-else-if="row.panels.length === 2"
-            direction="horizontal"
+            :direction="isVertical ? 'vertical' : 'horizontal'"
             :auto-save-id="`dashboard-${dashboardId}-row-${rowIndex}`"
             class="h-full min-h-[180px]">
             <ResizablePanel :default-size="50" :min-size="20">
@@ -39,6 +42,7 @@
 </template>
 
 <script setup>
+    import { computed } from 'vue';
     import { X } from 'lucide-vue-next';
 
     import { Button } from '@/components/ui/button';
@@ -46,7 +50,7 @@
 
     import DashboardPanel from './DashboardPanel.vue';
 
-    defineProps({
+    const props = defineProps({
         row: {
             type: Object,
             required: true
@@ -66,4 +70,13 @@
     });
 
     const emit = defineEmits(['update-panel', 'remove-row']);
+
+    const isVertical = computed(() => props.row.direction === 'vertical');
+
+    const panelEditClass = computed(() => {
+        if (props.row.panels.length === 1) {
+            return 'w-full';
+        }
+        return isVertical.value ? 'h-1/2' : 'w-1/2';
+    });
 </script>

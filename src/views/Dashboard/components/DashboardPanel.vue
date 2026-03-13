@@ -2,7 +2,7 @@
     <div class="relative flex min-h-0 flex-1 overflow-hidden rounded-md border bg-card">
         <template v-if="isEditing">
             <div class="flex w-full min-h-0 flex-col gap-2 p-3">
-                <div class="flex items-center gap-2 text-xs text-muted-foreground">
+                <div class="flex flex-1 items-center justify-center gap-2 text-xs text-muted-foreground">
                     <i v-if="panelIcon" :class="panelIcon" class="text-base" />
                     <span>{{ panelLabel || t('dashboard.panel.not_selected') }}</span>
                 </div>

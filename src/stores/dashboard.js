@@ -24,7 +24,9 @@ function cloneRows(rows) {
             if (!panels.length) {
                 return null;
             }
-            return { panels };
+            const direction =
+                row?.direction === 'vertical' ? 'vertical' : 'horizontal';
+            return { panels, direction };
         })
         .filter(Boolean);
 }

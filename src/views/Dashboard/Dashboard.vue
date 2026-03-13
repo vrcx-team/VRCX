@@ -39,15 +39,27 @@
                         <button
                             type="button"
                             class="flex h-10 w-16 items-center justify-center rounded-md border-2 border-dashed border-muted-foreground/30 transition-colors hover:border-primary/50 hover:bg-primary/5"
+                            :title="t('dashboard.actions.add_full_row')"
                             @click.stop="handleAddRow(1)">
                             <div class="h-6 w-12 rounded bg-muted-foreground/20" />
                         </button>
                         <button
                             type="button"
                             class="flex h-10 w-16 items-center justify-center gap-1 rounded-md border-2 border-dashed border-muted-foreground/30 transition-colors hover:border-primary/50 hover:bg-primary/5"
+                            :title="t('dashboard.actions.add_split_row')"
                             @click.stop="handleAddRow(2)">
                             <div class="h-6 w-5 rounded bg-muted-foreground/20" />
                             <div class="h-6 w-5 rounded bg-muted-foreground/20" />
+                        </button>
+                        <button
+                            type="button"
+                            class="flex h-10 w-16 items-center justify-center gap-1 rounded-md border-2 border-dashed border-muted-foreground/30 transition-colors hover:border-primary/50 hover:bg-primary/5"
+                            :title="t('dashboard.actions.add_vertical_row')"
+                            @click.stop="handleAddRow(2, 'vertical')">
+                            <div class="flex flex-col gap-0.5">
+                                <div class="h-2.5 w-10 rounded bg-muted-foreground/20" />
+                                <div class="h-2.5 w-10 rounded bg-muted-foreground/20" />
+                            </div>
                         </button>
                     </div>
                     <Plus v-else class="size-6 opacity-50" />
@@ -143,9 +155,9 @@
         showAddRowOptions.value = !showAddRowOptions.value;
     };
 
-    const handleAddRow = (panelCount) => {
+    const handleAddRow = (panelCount, direction = 'horizontal') => {
         const panels = Array(panelCount).fill(null);
-        editRows.value.push({ panels });
+        editRows.value.push({ panels, direction });
         showAddRowOptions.value = false;
     };
 

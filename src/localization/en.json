@@ -90,6 +90,7 @@
             "add_row": "Add Row",
             "add_full_row": "Add Full Row",
             "add_split_row": "Add Split Row",
+            "add_vertical_row": "Add Vertical Row",
             "cancel": "Cancel",
             "save": "Save",
             "delete": "Delete"
