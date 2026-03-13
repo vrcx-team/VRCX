@@ -226,7 +226,7 @@
     const ExportDiscordNamesDialog = defineAsyncComponent(() => import('./dialogs/ExportDiscordNamesDialog.vue'));
     const ExportFriendsListDialog = defineAsyncComponent(() => import('./dialogs/ExportFriendsListDialog.vue'));
     const ExportAvatarsListDialog = defineAsyncComponent(() => import('./dialogs/ExportAvatarsListDialog.vue'));
-    const RegistryBackupDialog = defineAsyncComponent(() => import('./dialogs/RegistryBackupDialog.vue'));
+    import RegistryBackupDialog from './dialogs/RegistryBackupDialog.vue';
 
     const { t } = useI18n();
     const router = useRouter();

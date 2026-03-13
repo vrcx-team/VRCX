@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 
 import { hasGroupPermission, replaceBioSymbols } from '../shared/utils';
 import { groupRequest, queryRequest } from '../api';
+import { initUserGroups } from '../coordinators/groupCoordinator';
 import { watchState } from '../services/watchState';
 
 export const useGroupStore = defineStore('Group', () => {
@@ -93,10 +94,7 @@ export const useGroupStore = defineStore('Group', () => {
             cachedGroups.clear();
             currentUserGroups.clear();
             if (isLoggedIn) {
-                // initUserGroups is called from groupCoordinator via this watcher or externally
-                import('../coordinators/groupCoordinator').then((mod) => {
-                    mod.initUserGroups();
-                });
+                initUserGroups();
             }
         },
         { flush: 'sync' }

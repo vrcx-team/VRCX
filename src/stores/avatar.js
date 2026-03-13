@@ -2,6 +2,8 @@ import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 
 import { checkVRChatCache } from '../shared/utils';
+import { queryRequest } from '../api';
+import { getAvatarHistory, preloadOwnAvatars } from '../coordinators/avatarCoordinator';
 import { database } from '../services/database';
 import { watchState } from '../services/watchState';
 
@@ -48,12 +50,8 @@ export const useAvatarStore = defineStore('Avatar', () => {
             cachedAvatarModerations.clear();
             avatarHistory.value = [];
             if (isLoggedIn) {
-                import('../coordinators/avatarCoordinator').then(
-                    ({ getAvatarHistory, preloadOwnAvatars }) => {
-                        getAvatarHistory();
-                        preloadOwnAvatars();
-                    }
-                );
+                getAvatarHistory();
+                preloadOwnAvatars();
             }
         },
         { flush: 'sync' }
@@ -86,7 +84,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
      * @returns {Promise<string[]>}
      */
     async function getAvatarGallery(avatarId) {
-        const { queryRequest } = await import('../api');
+
         const D = avatarDialog.value;
         const args = await queryRequest
             .fetch('avatarGallery', { avatarId })

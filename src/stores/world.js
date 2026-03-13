@@ -2,6 +2,7 @@ import { reactive, shallowReactive, watch } from 'vue';
 import { defineStore } from 'pinia';
 
 import { checkVRChatCache } from '../shared/utils';
+import { preloadOwnWorlds } from '../coordinators/worldCoordinator';
 import { watchState } from '../services/watchState';
 
 export const useWorldStore = defineStore('World', () => {
@@ -40,9 +41,7 @@ export const useWorldStore = defineStore('World', () => {
             worldDialog.visible = false;
             cachedWorlds.clear();
             if (isLoggedIn) {
-                import('../coordinators/worldCoordinator').then(
-                    ({ preloadOwnWorlds }) => preloadOwnWorlds()
-                );
+                preloadOwnWorlds();
             }
         },
         { flush: 'sync' }
