@@ -193,5 +193,10 @@
     "engines": {
         "node": ">=24.10.0",
         "npm": ">=11.5.0"
+    },
+    "overrides": {
+        "@tailwindcss/vite": {
+            "vite": "$vite"
+        }
     }
 }
