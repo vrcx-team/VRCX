@@ -45,10 +45,17 @@ function getManualChunk(moduleId) {
     const language = getAssetLanguage(moduleId);
     if (!language) return;
 
-    return `languages/${language}`;
+    return `i18n/${language}`;
 }
 
 const defaultAssetName = '[hash][extname]';
+
+/**
+ * @param {string} name
+ */
+function isFont(name) {
+    return /\.(woff2?|ttf|otf|eot)$/.test(name);
+}
 
 /**
  *
@@ -58,7 +65,8 @@ function getAssetFilename({ name }) {
     const language = getAssetLanguage(name);
     if (!language) return `assets/${defaultAssetName}`;
 
-    return 'assets/languages/[name][extname]';
+    if (isFont(name)) return 'assets/fonts/[name][extname]';
+    return 'assets/i18n/[name][extname]';
 }
 
 export default defineConfig(({ mode }) => {
