@@ -368,7 +368,7 @@ export function runDeleteFriendshipFlow(
                     userId: id,
                     displayName: ctx.displayName || id
                 };
-                friendLogTable.data.push(friendLogHistory);
+                friendLogTable.value.data.push(friendLogHistory);
                 database.addFriendLogHistory(friendLogHistory);
                 notificationStore.queueFriendLogNoty(friendLogHistory);
                 sharedFeedStore.addEntry(friendLogHistory);
