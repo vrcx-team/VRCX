@@ -5,13 +5,13 @@
             class="flex h-full gap-2"
             :class="isVertical ? 'flex-col' : 'flex-row'">
             <DashboardPanel
-                v-for="(panelKey, panelIndex) in row.panels"
+                v-for="(panelItem, panelIndex) in row.panels"
                 :key="panelIndex"
-                :panel-key="panelKey"
+                :panel-data="panelItem"
                 :is-editing="true"
                 :show-remove="true"
                 :class="panelEditClass"
-                @select="(key) => emit('update-panel', rowIndex, panelIndex, key)"
+                @select="(value) => emit('update-panel', rowIndex, panelIndex, value)"
                 @remove="emit('remove-panel', rowIndex, panelIndex)" />
         </div>
 
@@ -21,16 +21,16 @@
             :auto-save-id="`dashboard-${dashboardId}-row-${rowIndex}`"
             class="h-full min-h-[180px]">
             <ResizablePanel :default-size="50" :min-size="20">
-                <DashboardPanel :panel-key="row.panels[0]" class="h-full" />
+                <DashboardPanel :panel-data="row.panels[0]" class="h-full" />
             </ResizablePanel>
             <ResizableHandle />
             <ResizablePanel :default-size="50" :min-size="20">
-                <DashboardPanel :panel-key="row.panels[1]" class="h-full" />
+                <DashboardPanel :panel-data="row.panels[1]" class="h-full" />
             </ResizablePanel>
         </ResizablePanelGroup>
 
         <div v-else class="h-full">
-            <DashboardPanel :panel-key="row.panels[0]" class="h-full" />
+            <DashboardPanel :panel-data="row.panels[0]" class="h-full" />
         </div>
     </div>
 </template>

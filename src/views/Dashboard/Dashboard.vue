@@ -171,11 +171,11 @@
         }
     };
 
-    const handleUpdatePanel = (rowIndex, panelIndex, panelKey) => {
+    const handleUpdatePanel = (rowIndex, panelIndex, panelValue) => {
         if (!editRows.value[rowIndex]?.panels) {
             return;
         }
-        editRows.value[rowIndex].panels[panelIndex] = panelKey;
+        editRows.value[rowIndex].panels[panelIndex] = panelValue;
     };
 
     const handleSave = async () => {

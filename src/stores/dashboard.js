@@ -8,6 +8,21 @@ import {
     DEFAULT_DASHBOARD_ICON
 } from '../shared/constants/dashboard';
 
+function clonePanel(panel) {
+    if (typeof panel === 'string' && panel) {
+        return panel;
+    }
+    if (panel && typeof panel === 'object' && typeof panel.key === 'string' && panel.key) {
+        return {
+            key: panel.key,
+            config: panel.config && typeof panel.config === 'object'
+                ? JSON.parse(JSON.stringify(panel.config))
+                : {}
+        };
+    }
+    return null;
+}
+
 function cloneRows(rows) {
     if (!Array.isArray(rows)) {
         return [];
@@ -15,11 +30,7 @@ function cloneRows(rows) {
     return rows
         .map((row) => {
             const panels = Array.isArray(row?.panels)
-                ? row.panels
-                      .slice(0, 2)
-                      .map((panel) =>
-                          typeof panel === 'string' && panel ? panel : null
-                      )
+                ? row.panels.slice(0, 2).map(clonePanel)
                 : [];
             if (!panels.length) {
                 return null;

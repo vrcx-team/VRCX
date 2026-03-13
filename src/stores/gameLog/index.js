@@ -67,6 +67,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     const lastResourceloadUrl = ref('');
 
+    // Latest entry ref for GameLog Widget to watch
+    const latestGameLogEntry = ref(null);
+
     watch(
         () => watchState.isLoggedIn,
         () => {
@@ -355,6 +358,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         entry.isFriend = gameLogIsFriend(entry);
         entry.isFavorite = gameLogIsFavorite(entry);
 
+        // Update ref for GameLog Widget (independent data stream)
+        latestGameLogEntry.value = entry;
+
         // If the VIP friend filter is enabled, logs from other friends will be ignored.
         if (
             gameLogTable.value.vip &&
@@ -461,6 +467,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         gameLogTableData,
         lastVideoUrl,
         lastResourceloadUrl,
+        latestGameLogEntry,
 
         clearNowPlaying,
         resetLastMediaUrls,

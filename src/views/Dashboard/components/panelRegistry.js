@@ -1,3 +1,5 @@
+import { defineAsyncComponent } from 'vue';
+
 import Feed from '../../Feed/Feed.vue';
 import FavoritesAvatar from '../../Favorites/FavoritesAvatar.vue';
 import FavoritesFriend from '../../Favorites/FavoritesFriend.vue';
@@ -27,7 +29,10 @@ export const panelComponentMap = {
     moderation: Moderation,
     notification: Notification,
     'my-avatars': MyAvatars,
-    'charts-instance': () => import('../../Charts/components/InstanceActivity.vue'),
-    'charts-mutual': () => import('../../Charts/components/MutualFriends.vue'),
-    tools: Tools
+    'charts-instance': defineAsyncComponent(() => import('../../Charts/components/InstanceActivity.vue')),
+    'charts-mutual': defineAsyncComponent(() => import('../../Charts/components/MutualFriends.vue')),
+    tools: Tools,
+    'widget:feed': defineAsyncComponent(() => import('../widgets/FeedWidget.vue')),
+    'widget:game-log': defineAsyncComponent(() => import('../widgets/GameLogWidget.vue')),
+    'widget:instance': defineAsyncComponent(() => import('../widgets/InstanceWidget.vue'))
 };

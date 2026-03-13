@@ -107,7 +107,25 @@
         },
         "selector": {
             "title": "Select Panel Content",
-            "clear": "Clear Panel"
+            "clear": "Clear Panel",
+            "widgets": "Widgets",
+            "pages": "Full Pages"
+        },
+        "widget": {
+            "feed": "Feed Widget",
+            "game_log": "Game Log Widget",
+            "instance": "Instance Widget",
+            "config": {
+                "filters": "Event Types",
+                "columns": "Columns"
+            },
+            "no_data": "No data",
+            "unknown_world": "Unknown World",
+            "feed_online": "online",
+            "feed_offline": "offline",
+            "feed_avatar": "→",
+            "feed_bio": "updated bio",
+            "instance_not_in_game": "Not in game"
         },
         "confirmations": {
             "delete_title": "Delete Dashboard",
