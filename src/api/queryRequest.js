@@ -111,6 +111,11 @@ const registry = Object.freeze({
         policy: entityQueryPolicies.groupCollection,
         queryFn: (params) => groupRequest.getGroupMember(params)
     },
+    groupMembers: {
+        key: (params) => queryKeys.groupMembers(params),
+        policy: entityQueryPolicies.groupCollection,
+        queryFn: (params) => groupRequest.getGroupMembers(params)
+    },
     groupGallery: {
         key: (params) => queryKeys.groupGallery(params),
         policy: entityQueryPolicies.groupCollection,
