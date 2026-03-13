@@ -25,7 +25,9 @@ describe('SimpleSwitch.vue', () => {
             },
             global: {
                 stubs: {
-                    TooltipWrapper: { template: '<span data-testid="tooltip"><slot /></span>' }
+                    TooltipWrapper: {
+                        template: '<span data-testid="tooltip"><slot /></span>'
+                    }
                 }
             }
         });
@@ -45,13 +47,19 @@ describe('SimpleSwitch.vue', () => {
             },
             global: {
                 stubs: {
-                    TooltipWrapper: { template: '<span data-testid="tooltip"><slot /></span>' }
+                    TooltipWrapper: {
+                        template: '<span data-testid="tooltip"><slot /></span>'
+                    }
                 }
             }
         });
 
-        expect(wrapper.get('.name').attributes('style')).toContain('width: 300px');
+        expect(wrapper.get('.name').attributes('style')).toContain(
+            'width: 300px'
+        );
         expect(wrapper.find('[data-testid="tooltip"]').exists()).toBe(true);
-        expect(wrapper.get('[data-testid="switch"]').attributes('data-disabled')).toBe('true');
+        expect(
+            wrapper.get('[data-testid="switch"]').attributes('data-disabled')
+        ).toBe('true');
     });
 });

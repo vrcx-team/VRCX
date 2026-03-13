@@ -16,7 +16,9 @@ describe('useFavoritesLocalGroups', () => {
         await Promise.resolve();
 
         expect(createGroup).toHaveBeenCalledWith('Local A');
-        expect(selectGroup).toHaveBeenCalledWith('local', 'Local A', { userInitiated: true });
+        expect(selectGroup).toHaveBeenCalledWith('local', 'Local A', {
+            userInitiated: true
+        });
         expect(api.isCreatingLocalGroup.value).toBe(false);
     });
 

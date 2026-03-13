@@ -46,7 +46,8 @@ vi.mock('@/components/ui/popover', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template: '<button data-testid="button" @click="$emit(\'click\')"><slot /></button>'
+        template:
+            '<button data-testid="button" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -124,7 +125,9 @@ describe('ManageTagsDialog.vue', () => {
 
         const cancelButton = wrapper
             .findAll('[data-testid="button"]')
-            .find((node) => node.text().includes('prompt.rename_avatar.cancel'));
+            .find((node) =>
+                node.text().includes('prompt.rename_avatar.cancel')
+            );
 
         expect(cancelButton).toBeTruthy();
         await cancelButton.trigger('click');

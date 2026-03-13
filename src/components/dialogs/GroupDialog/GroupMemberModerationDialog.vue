@@ -122,11 +122,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAppearanceSettingsStore, useGalleryStore, useGroupStore, useUserStore } from '../../../stores';
-    import {
-        applyGroupMember,
-        handleGroupMember,
-        handleGroupMemberProps
-    } from '../../../coordinators/groupCoordinator';
+    import { applyGroupMember, handleGroupMember, handleGroupMemberProps } from '../../../coordinators/groupCoordinator';
     import { hasGroupPermission } from '../../../shared/utils';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';

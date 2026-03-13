@@ -319,68 +319,92 @@ describe('User Utils', () => {
                 }
             ];
             for (const { status, location, state, expected } of cases) {
-                const result = userStatusClass({
-                    id: 'usr_friend',
-                    isFriend: true,
-                    status,
-                    location,
-                    state
-                }, false, currentUser);
+                const result = userStatusClass(
+                    {
+                        id: 'usr_friend',
+                        isFriend: true,
+                        status,
+                        location,
+                        state
+                    },
+                    false,
+                    currentUser
+                );
                 expect(result[expected]).toBe(true);
             }
         });
 
         test('returns offline style for location offline', () => {
-            const result = userStatusClass({
-                id: 'usr_f',
-                isFriend: true,
-                status: 'active',
-                location: 'offline',
-                state: ''
-            }, false, currentUser);
+            const result = userStatusClass(
+                {
+                    id: 'usr_f',
+                    isFriend: true,
+                    status: 'active',
+                    location: 'offline',
+                    state: ''
+                },
+                false,
+                currentUser
+            );
             expect(result.offline).toBe(true);
         });
 
         test('returns active style for state active', () => {
-            const result = userStatusClass({
-                id: 'usr_f',
-                isFriend: true,
-                status: 'busy',
-                location: 'private',
-                state: 'active'
-            }, false, currentUser);
+            const result = userStatusClass(
+                {
+                    id: 'usr_f',
+                    isFriend: true,
+                    status: 'busy',
+                    location: 'private',
+                    state: 'active'
+                },
+                false,
+                currentUser
+            );
             expect(result.active).toBe(true);
         });
 
         test('sets mobile flag for non-PC platform friend', () => {
-            const result = userStatusClass({
-                id: 'usr_f',
-                isFriend: true,
-                status: 'active',
-                location: 'wrld_1',
-                state: 'online',
-                $platform: 'android'
-            }, false, currentUser);
+            const result = userStatusClass(
+                {
+                    id: 'usr_f',
+                    isFriend: true,
+                    status: 'active',
+                    location: 'wrld_1',
+                    state: 'online',
+                    $platform: 'android'
+                },
+                false,
+                currentUser
+            );
             expect(result.mobile).toBe(true);
         });
 
         test('no mobile flag for standalonewindows platform', () => {
-            const result = userStatusClass({
-                id: 'usr_f',
-                isFriend: true,
-                status: 'active',
-                location: 'wrld_1',
-                state: 'online',
-                $platform: 'standalonewindows'
-            }, false, currentUser);
+            const result = userStatusClass(
+                {
+                    id: 'usr_f',
+                    isFriend: true,
+                    status: 'active',
+                    location: 'wrld_1',
+                    state: 'online',
+                    $platform: 'standalonewindows'
+                },
+                false,
+                currentUser
+            );
             expect(result.mobile).toBeUndefined();
         });
 
         test('uses userId as fallback when id is not present', () => {
-            const result = userStatusClass({
-                userId: 'usr_me',
-                status: 'busy'
-            }, false, currentUser);
+            const result = userStatusClass(
+                {
+                    userId: 'usr_me',
+                    status: 'busy'
+                },
+                false,
+                currentUser
+            );
             expect(result).toMatchObject({
                 'status-icon': true,
                 busy: true,
@@ -390,26 +414,34 @@ describe('User Utils', () => {
 
         test('handles private location with empty state (temp fix branch)', () => {
             currentUser.activeFriends = ['usr_f'];
-            const result = userStatusClass({
-                id: 'usr_f',
-                isFriend: true,
-                status: 'busy',
-                location: 'private',
-                state: ''
-            }, false, currentUser);
+            const result = userStatusClass(
+                {
+                    id: 'usr_f',
+                    isFriend: true,
+                    status: 'busy',
+                    location: 'private',
+                    state: ''
+                },
+                false,
+                currentUser
+            );
             // activeFriends includes usr_f → active
             expect(result.active).toBe(true);
         });
 
         test('handles private location temp fix → offline branch', () => {
             currentUser.activeFriends = [];
-            const result = userStatusClass({
-                id: 'usr_f',
-                isFriend: true,
-                status: 'busy',
-                location: 'private',
-                state: ''
-            }, false, currentUser);
+            const result = userStatusClass(
+                {
+                    id: 'usr_f',
+                    isFriend: true,
+                    status: 'busy',
+                    location: 'private',
+                    state: ''
+                },
+                false,
+                currentUser
+            );
             expect(result.offline).toBe(true);
         });
     });
@@ -423,7 +455,9 @@ describe('User Utils', () => {
                 false,
                 false
             );
-            expect(storeMocks.useAppearanceSettingsStore).not.toHaveBeenCalled();
+            expect(
+                storeMocks.useAppearanceSettingsStore
+            ).not.toHaveBeenCalled();
         });
 
         test('returns empty string for falsy user', () => {
@@ -539,7 +573,9 @@ describe('User Utils', () => {
                 { currentAvatarImageUrl: 'https://img.com/avatar' },
                 false
             );
-            expect(storeMocks.useAppearanceSettingsStore).not.toHaveBeenCalled();
+            expect(
+                storeMocks.useAppearanceSettingsStore
+            ).not.toHaveBeenCalled();
         });
 
         test('returns empty string for falsy user', () => {

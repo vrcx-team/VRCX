@@ -511,9 +511,7 @@
     }
 
     function handleSelectCustomFont() {
-        const cssVarValue = getComputedStyle(document.documentElement)
-            .getPropertyValue('--font-western-primary')
-            .trim();
+        const cssVarValue = getComputedStyle(document.documentElement).getPropertyValue('--font-western-primary').trim();
         const currentKey = String(appFontFamily.value || APP_FONT_DEFAULT_KEY)
             .trim()
             .toLowerCase();

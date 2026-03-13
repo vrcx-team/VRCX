@@ -249,13 +249,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import {
-        formatDateFilter,
-        languageClass,
-        openDiscordProfile,
-        userImage,
-        userStatusClass
-    } from '../../../shared/utils';
+    import { formatDateFilter, languageClass, openDiscordProfile, userImage, userStatusClass } from '../../../shared/utils';
     import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover';
     import { useGalleryStore, useUserStore } from '../../../stores';
     import { Badge } from '../../ui/badge';

@@ -403,11 +403,7 @@
     const edgeCurvatureModel = computed({
         get: () => [layoutSettings.edgeCurvature],
         set: (value) => {
-            const next = clampNumber(
-                value?.[0] ?? layoutSettings.edgeCurvature,
-                EDGE_CURVATURE_MIN,
-                EDGE_CURVATURE_MAX
-            );
+            const next = clampNumber(value?.[0] ?? layoutSettings.edgeCurvature, EDGE_CURVATURE_MIN, EDGE_CURVATURE_MAX);
             layoutSettings.edgeCurvature = Number(next.toFixed(2));
         }
     });
@@ -468,11 +464,7 @@
         layoutSettings.layoutIterations = clampNumber(iterations, LAYOUT_ITERATIONS_MIN, LAYOUT_ITERATIONS_MAX);
         layoutSettings.layoutSpacing = clampNumber(spacing, LAYOUT_SPACING_MIN, LAYOUT_SPACING_MAX);
         layoutSettings.edgeCurvature = clampNumber(curvature, EDGE_CURVATURE_MIN, EDGE_CURVATURE_MAX);
-        layoutSettings.communitySeparation = clampNumber(
-            separation,
-            COMMUNITY_SEPARATION_MIN,
-            COMMUNITY_SEPARATION_MAX
-        );
+        layoutSettings.communitySeparation = clampNumber(separation, COMMUNITY_SEPARATION_MIN, COMMUNITY_SEPARATION_MAX);
         lastLayoutSpacing = layoutSettings.layoutSpacing;
     }
 

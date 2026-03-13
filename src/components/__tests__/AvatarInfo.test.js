@@ -216,7 +216,9 @@ describe('AvatarInfo.vue', () => {
         test('does not call showAvatarAuthorDialog when no imageurl', async () => {
             const wrapper = mountAvatarInfo({});
             await wrapper.trigger('click');
-            expect(avatarCoordinatorModule.showAvatarAuthorDialog).not.toHaveBeenCalled();
+            expect(
+                avatarCoordinatorModule.showAvatarAuthorDialog
+            ).not.toHaveBeenCalled();
         });
     });
 });

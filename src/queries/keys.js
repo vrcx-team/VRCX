@@ -13,7 +13,13 @@ export const queryKeys = Object.freeze({
         'member',
         userId
     ],
-    groupMembers: ({ groupId, n = 100, offset = 0, sort = '', roleId = '' } = {}) => [
+    groupMembers: ({
+        groupId,
+        n = 100,
+        offset = 0,
+        sort = '',
+        roleId = ''
+    } = {}) => [
         'group',
         groupId,
         'members',

@@ -43,12 +43,7 @@
         resolveRegion,
         translateAccessType
     } from '../shared/utils';
-    import {
-        useAppearanceSettingsStore,
-        useInstanceStore,
-        useSearchStore,
-        useWorldStore
-    } from '../stores';
+    import { useAppearanceSettingsStore, useInstanceStore, useSearchStore, useWorldStore } from '../stores';
     import { showGroupDialog } from '../coordinators/groupCoordinator';
     import { showWorldDialog } from '../coordinators/worldCoordinator';
     import { Spinner } from './ui/spinner';
@@ -104,9 +99,7 @@
         }
     ]);
     const tooltipContent = computed(() => `${t('dialog.new_instance.instance_id')}: #${instanceName.value}`);
-    const tooltipDisabled = computed(
-        () => props.disableTooltip || !instanceName.value || showInstanceIdInLocation.value
-    );
+    const tooltipDisabled = computed(() => props.disableTooltip || !instanceName.value || showInstanceIdInLocation.value);
     const closedTooltip = computed(() => t('dialog.user.info.instance_closed'));
 
     let isDisposed = false;

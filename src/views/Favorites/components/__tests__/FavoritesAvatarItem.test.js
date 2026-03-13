@@ -35,11 +35,13 @@ vi.mock('../../../../stores', () => ({
 
 vi.mock('../../../../coordinators/avatarCoordinator', () => ({
     showAvatarDialog: (...args) => mocks.showAvatarDialog(...args),
-    selectAvatarWithConfirmation: (...args) => mocks.selectAvatarWithConfirmation(...args)
+    selectAvatarWithConfirmation: (...args) =>
+        mocks.selectAvatarWithConfirmation(...args)
 }));
 
 vi.mock('../../../../coordinators/favoriteCoordinator', () => ({
-    removeLocalAvatarFavorite: (...args) => mocks.removeLocalAvatarFavorite(...args)
+    removeLocalAvatarFavorite: (...args) =>
+        mocks.removeLocalAvatarFavorite(...args)
 }));
 
 vi.mock('../../../../api', () => ({
@@ -51,7 +53,8 @@ vi.mock('../../../../api', () => ({
 vi.mock('@/components/ui/item', () => ({
     Item: {
         emits: ['click'],
-        template: '<div data-testid="item" @click="$emit(\'click\', $event)"><slot /></div>'
+        template:
+            '<div data-testid="item" @click="$emit(\'click\', $event)"><slot /></div>'
     },
     ItemActions: { template: '<div><slot /></div>' },
     ItemMedia: { template: '<div><slot /></div>' },
@@ -64,15 +67,20 @@ vi.mock('@/components/ui/avatar', () => ({
     Avatar: { template: '<div data-testid="avatar"><slot /></div>' },
     AvatarImage: {
         props: ['src'],
-        template: '<img data-testid="avatar-image" :src="src" :class="$attrs.class" />'
+        template:
+            '<img data-testid="avatar-image" :src="src" :class="$attrs.class" />'
     },
-    AvatarFallback: { template: '<span data-testid="avatar-fallback" :class="$attrs.class"><slot /></span>' }
+    AvatarFallback: {
+        template:
+            '<span data-testid="avatar-fallback" :class="$attrs.class"><slot /></span>'
+    }
 }));
 
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template: '<button data-testid="button" @click="$emit(\'click\', $event)"><slot /></button>'
+        template:
+            '<button data-testid="button" @click="$emit(\'click\', $event)"><slot /></button>'
     }
 }));
 
@@ -92,7 +100,8 @@ vi.mock('@/components/ui/context-menu', () => ({
     ContextMenuSeparator: { template: '<hr />' },
     ContextMenuItem: {
         emits: ['click'],
-        template: '<button data-testid="ctx-item" @click="$emit(\'click\')"><slot /></button>'
+        template:
+            '<button data-testid="ctx-item" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -103,7 +112,8 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
     DropdownMenuSeparator: { template: '<hr />' },
     DropdownMenuItem: {
         emits: ['click'],
-        template: '<button data-testid="dd-item" @click="$emit(\'click\')"><slot /></button>'
+        template:
+            '<button data-testid="dd-item" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -175,16 +185,26 @@ describe('FavoritesAvatarItem.vue', () => {
         const wrapper = mountItem();
 
         expect(wrapper.get('[data-testid="item"]').classes()).toEqual(
-            expect.arrayContaining(['favorites-item', 'hover:bg-muted', 'x-hover-list'])
+            expect.arrayContaining([
+                'favorites-item',
+                'hover:bg-muted',
+                'x-hover-list'
+            ])
         );
     });
 
     it('uses rounded avatar shell and 128 thumbnail image', () => {
         const wrapper = mountItem();
 
-        expect(wrapper.get('[data-testid="avatar"]').classes()).toEqual(expect.arrayContaining(['rounded-sm', 'size-full']));
-        expect(wrapper.get('[data-testid="avatar-image"]').attributes('src')).toContain('avatar_128.png');
-        expect(wrapper.get('[data-testid="avatar-fallback"]').classes()).toContain('rounded-sm');
+        expect(wrapper.get('[data-testid="avatar"]').classes()).toEqual(
+            expect.arrayContaining(['rounded-sm', 'size-full'])
+        );
+        expect(
+            wrapper.get('[data-testid="avatar-image"]').attributes('src')
+        ).toContain('avatar_128.png');
+        expect(
+            wrapper.get('[data-testid="avatar-fallback"]').classes()
+        ).toContain('rounded-sm');
     });
 
     it('shows fallback text when thumbnail is missing', () => {
@@ -200,8 +220,12 @@ describe('FavoritesAvatarItem.vue', () => {
             }
         });
 
-        expect(wrapper.find('[data-testid="avatar-image"]').exists()).toBe(false);
-        expect(wrapper.get('[data-testid="avatar-fallback"]').text()).toContain('B');
+        expect(wrapper.find('[data-testid="avatar-image"]').exists()).toBe(
+            false
+        );
+        expect(wrapper.get('[data-testid="avatar-fallback"]').text()).toContain(
+            'B'
+        );
     });
 
     it('uses local delete flow for local favorites', async () => {
@@ -217,7 +241,10 @@ describe('FavoritesAvatarItem.vue', () => {
 
         await clickMenuItem(wrapper, 'view.favorite.delete_tooltip');
 
-        expect(mocks.removeLocalAvatarFavorite).toHaveBeenCalledWith('avtr_local', 'LocalGroup');
+        expect(mocks.removeLocalAvatarFavorite).toHaveBeenCalledWith(
+            'avtr_local',
+            'LocalGroup'
+        );
         expect(mocks.deleteFavorite).not.toHaveBeenCalled();
     });
 
@@ -226,7 +253,9 @@ describe('FavoritesAvatarItem.vue', () => {
 
         await clickMenuItem(wrapper, 'view.favorite.unfavorite_tooltip');
 
-        expect(mocks.deleteFavorite).toHaveBeenCalledWith({ objectId: 'avtr_1' });
+        expect(mocks.deleteFavorite).toHaveBeenCalledWith({
+            objectId: 'avtr_1'
+        });
         expect(mocks.removeLocalAvatarFavorite).not.toHaveBeenCalled();
     });
 });

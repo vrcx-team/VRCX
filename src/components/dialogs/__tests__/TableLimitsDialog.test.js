@@ -4,7 +4,9 @@ import { mount } from '@vue/test-utils';
 const mocks = vi.hoisted(() => ({
     close: vi.fn(),
     save: vi.fn(),
-    dialog: { value: { visible: true, maxTableSize: '1000', searchLimit: '100' } }
+    dialog: {
+        value: { visible: true, maxTableSize: '1000', searchLimit: '100' }
+    }
 }));
 
 vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
@@ -20,10 +22,30 @@ vi.mock('../../../stores', () => ({
         SEARCH_LIMIT_MAX: 1000
     })
 }));
-vi.mock('@/components/ui/dialog', () => ({ Dialog: { template: '<div><slot /></div>' }, DialogContent: { template: '<div><slot /></div>' }, DialogHeader: { template: '<div><slot /></div>' }, DialogTitle: { template: '<div><slot /></div>' }, DialogDescription: { template: '<div><slot /></div>' }, DialogFooter: { template: '<div><slot /></div>' } }));
-vi.mock('@/components/ui/field', () => ({ Field: { template: '<div><slot /></div>' }, FieldGroup: { template: '<div><slot /></div>' }, FieldLabel: { template: '<div><slot /></div>' }, FieldContent: { template: '<div><slot /></div>' } }));
-vi.mock('@/components/ui/button', () => ({ Button: { emits: ['click'], template: '<button data-testid="btn" :disabled="$attrs.disabled" @click="$emit(\'click\')"><slot /></button>' } }));
-vi.mock('@/components/ui/input-group', () => ({ InputGroupField: { template: '<input />' } }));
+vi.mock('@/components/ui/dialog', () => ({
+    Dialog: { template: '<div><slot /></div>' },
+    DialogContent: { template: '<div><slot /></div>' },
+    DialogHeader: { template: '<div><slot /></div>' },
+    DialogTitle: { template: '<div><slot /></div>' },
+    DialogDescription: { template: '<div><slot /></div>' },
+    DialogFooter: { template: '<div><slot /></div>' }
+}));
+vi.mock('@/components/ui/field', () => ({
+    Field: { template: '<div><slot /></div>' },
+    FieldGroup: { template: '<div><slot /></div>' },
+    FieldLabel: { template: '<div><slot /></div>' },
+    FieldContent: { template: '<div><slot /></div>' }
+}));
+vi.mock('@/components/ui/button', () => ({
+    Button: {
+        emits: ['click'],
+        template:
+            '<button data-testid="btn" :disabled="$attrs.disabled" @click="$emit(\'click\')"><slot /></button>'
+    }
+}));
+vi.mock('@/components/ui/input-group', () => ({
+    InputGroupField: { template: '<input />' }
+}));
 
 import TableLimitsDialog from '../TableLimitsDialog.vue';
 

@@ -122,7 +122,9 @@ vi.mock('../../../services/confusables', () => ({
 
 vi.mock('../../../shared/utils', () => ({
     localeIncludes: (source, query) =>
-        String(source ?? '').toLowerCase().includes(String(query ?? '').toLowerCase())
+        String(source ?? '')
+            .toLowerCase()
+            .includes(String(query ?? '').toLowerCase())
 }));
 
 vi.mock('../../../composables/useDataTableScrollHeight', () => ({
@@ -141,7 +143,8 @@ vi.mock('../../../lib/table/useVrcxVueTable', () => ({
             getColumn: (id) =>
                 id === 'bulkSelect'
                     ? {
-                          toggleVisibility: (...args) => mocks.toggleBulkColumnVisibility(...args)
+                          toggleVisibility: (...args) =>
+                              mocks.toggleBulkColumnVisibility(...args)
                       }
                     : null
         },
@@ -260,7 +263,9 @@ function makeFriendCtx({ id, displayName, memo = '', dateJoined = null }) {
 }
 
 function clickButtonByText(wrapper, text) {
-    const button = wrapper.findAll('button').find((node) => node.text().trim() === text);
+    const button = wrapper
+        .findAll('button')
+        .find((node) => node.text().trim() === text);
     if (!button) {
         throw new Error(`Cannot find button with text: ${text}`);
     }
@@ -312,7 +317,9 @@ describe('FriendList.vue', () => {
         wrapper.vm.friendsListSearchChange();
         await nextTick();
 
-        expect(wrapper.vm.friendsListDisplayData.map((item) => item.id)).toEqual(['usr_1']);
+        expect(
+            wrapper.vm.friendsListDisplayData.map((item) => item.id)
+        ).toEqual(['usr_1']);
         expect(mocks.getAllUserStats).toHaveBeenCalled();
         expect(mocks.getAllUserMutualCount).toHaveBeenCalled();
     });
@@ -320,15 +327,32 @@ describe('FriendList.vue', () => {
     test('opens charts tab from toolbar button', async () => {
         const wrapper = mount(FriendList);
 
-        await clickButtonByText(wrapper, 'view.friend_list.load_mutual_friends');
+        await clickButtonByText(
+            wrapper,
+            'view.friend_list.load_mutual_friends'
+        );
 
         expect(mocks.routerPush).toHaveBeenCalledWith({ name: 'charts' });
     });
 
     test('loads missing user profiles and shows completion toast', async () => {
         mocks.friends.value = new Map([
-            ['usr_1', makeFriendCtx({ id: 'usr_1', displayName: 'Alice', dateJoined: null })],
-            ['usr_2', makeFriendCtx({ id: 'usr_2', displayName: 'Bob', dateJoined: '2020-01-01' })]
+            [
+                'usr_1',
+                makeFriendCtx({
+                    id: 'usr_1',
+                    displayName: 'Alice',
+                    dateJoined: null
+                })
+            ],
+            [
+                'usr_2',
+                makeFriendCtx({
+                    id: 'usr_2',
+                    displayName: 'Bob',
+                    dateJoined: '2020-01-01'
+                })
+            ]
         ]);
         const wrapper = mount(FriendList);
         await flushAsync();
@@ -338,7 +362,9 @@ describe('FriendList.vue', () => {
 
         expect(mocks.userGetUser).toHaveBeenCalledTimes(1);
         expect(mocks.userGetUser).toHaveBeenCalledWith({ userId: 'usr_1' });
-        expect(mocks.toastSuccess).toHaveBeenCalledWith('view.friend_list.load_complete');
+        expect(mocks.toastSuccess).toHaveBeenCalledWith(
+            'view.friend_list.load_complete'
+        );
     });
 
     test('select row emits lookup-user for id-less value and opens user dialog for id', () => {
@@ -347,7 +373,9 @@ describe('FriendList.vue', () => {
         wrapper.vm.selectFriendsListRow({ displayName: 'Unknown' });
         wrapper.vm.selectFriendsListRow({ id: 'usr_99', displayName: 'Known' });
 
-        expect(wrapper.emitted('lookup-user')?.[0]?.[0]).toEqual({ displayName: 'Unknown' });
+        expect(wrapper.emitted('lookup-user')?.[0]?.[0]).toEqual({
+            displayName: 'Unknown'
+        });
         expect(mocks.showUserDialog).toHaveBeenCalledWith('usr_99');
     });
 

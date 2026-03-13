@@ -126,7 +126,9 @@
                             <Spinner class="text-2xl" />
                         </div>
                         <template v-else-if="searchWorldResults.length > 0">
-                            <ItemGroup class="grid gap-3" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr))">
+                            <ItemGroup
+                                class="grid gap-3"
+                                style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr))">
                                 <Item
                                     v-for="world in searchWorldResults"
                                     :key="world.id"
@@ -200,7 +202,9 @@
                             <Spinner class="text-2xl" />
                         </div>
                         <template v-else-if="searchAvatarPage.length > 0">
-                            <ItemGroup class="grid gap-3" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr))">
+                            <ItemGroup
+                                class="grid gap-3"
+                                style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr))">
                                 <Item
                                     v-for="avatar in searchAvatarPage"
                                     :key="avatar.id"
@@ -300,15 +304,7 @@
     import { Spinner } from '@/components/ui/spinner';
     import AvatarProviderDialog from '../Settings/dialogs/AvatarProviderDialog.vue';
     import SearchPagination from './components/SearchPagination.vue';
-    import {
-        Item,
-        ItemContent,
-        ItemDescription,
-        ItemGroup,
-        ItemHeader,
-        ItemMedia,
-        ItemTitle
-    } from '@/components/ui/item';
+    import { Item, ItemContent, ItemDescription, ItemGroup, ItemHeader, ItemMedia, ItemTitle } from '@/components/ui/item';
 
     import { computed, onUnmounted, ref } from 'vue';
     import { useMagicKeys, whenever } from '@vueuse/core';
@@ -408,14 +404,8 @@
         clearWorldSearch
     } = useSearchWorld();
 
-    const {
-        searchGroupParams,
-        searchGroupResults,
-        isSearchGroupLoading,
-        searchGroup,
-        moreSearchGroup,
-        clearGroupSearch
-    } = useSearchGroup();
+    const { searchGroupParams, searchGroupResults, isSearchGroupLoading, searchGroup, moreSearchGroup, clearGroupSearch } =
+        useSearchGroup();
 
     const paginationConfig = computed(() => {
         switch (activeSearchTab.value) {

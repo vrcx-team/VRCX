@@ -22,7 +22,11 @@ describe('useNavTheme', () => {
         const setTableDensity = vi.fn();
         const toggleThemeMode = vi.fn();
 
-        const { handleThemeSelect, handleTableDensitySelect, handleThemeToggle } = useNavTheme({
+        const {
+            handleThemeSelect,
+            handleTableDensitySelect,
+            handleThemeToggle
+        } = useNavTheme({
             t: (key) => key,
             appearanceSettingsStore: {
                 setThemeMode,

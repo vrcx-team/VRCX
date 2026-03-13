@@ -27,8 +27,13 @@ vi.mock('../../shared/utils', () => ({
 
 vi.mock('../ui/avatar', () => ({
     Avatar: { template: '<div data-testid="avatar"><slot /></div>' },
-    AvatarImage: { props: ['src'], template: '<img data-testid="avatar-image" :src="src" />' },
-    AvatarFallback: { template: '<span data-testid="avatar-fallback"><slot /></span>' }
+    AvatarImage: {
+        props: ['src'],
+        template: '<img data-testid="avatar-image" :src="src" />'
+    },
+    AvatarFallback: {
+        template: '<span data-testid="avatar-fallback"><slot /></span>'
+    }
 }));
 
 vi.mock('lucide-vue-next', () => ({
@@ -87,8 +92,12 @@ describe('Emoji.vue', () => {
 
         expect(mocks.getCachedEmoji).toHaveBeenCalledWith('file_1');
         expect(wrapper.find('[data-testid="avatar"]').exists()).toBe(true);
-        expect(wrapper.find('[data-testid="avatar-image"]').attributes('src')).toBe('https://example.com/file_2.png');
-        expect(wrapper.find('[data-testid="avatar-fallback"]').exists()).toBe(true);
+        expect(
+            wrapper.find('[data-testid="avatar-image"]').attributes('src')
+        ).toBe('https://example.com/file_2.png');
+        expect(wrapper.find('[data-testid="avatar-fallback"]').exists()).toBe(
+            true
+        );
     });
 
     it('updates when imageUrl changes', async () => {

@@ -31,10 +31,9 @@ vi.mock('pinia', async (importOriginal) => {
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
-    ,
-            locale: require('vue').ref('en')
-        })
+        t: (key) => key,
+        locale: require('vue').ref('en')
+    })
 }));
 
 vi.mock('../../../stores', () => ({
@@ -44,7 +43,8 @@ vi.mock('../../../stores', () => ({
     usePhotonStore: () => ({
         photonLoggingEnabled: mocks.photonLoggingEnabled,
         chatboxUserBlacklist: mocks.chatboxUserBlacklist,
-        saveChatboxUserBlacklist: (...args) => mocks.saveChatboxUserBlacklist(...args)
+        saveChatboxUserBlacklist: (...args) =>
+            mocks.saveChatboxUserBlacklist(...args)
     }),
     useUserStore: () => ({
         currentUser: mocks.currentUser
@@ -59,10 +59,12 @@ vi.mock('../../../stores', () => ({
         currentInstanceLocation: mocks.currentInstanceLocation,
         currentInstanceWorld: mocks.currentInstanceWorld,
         currentInstanceUsersData: mocks.currentInstanceUsersData,
-        getCurrentInstanceUserList: (...args) => mocks.getCurrentInstanceUserList(...args)
+        getCurrentInstanceUserList: (...args) =>
+            mocks.getCurrentInstanceUserList(...args)
     }),
     useGalleryStore: () => ({
-        showFullscreenImageDialog: (...args) => mocks.showFullscreenImageDialog(...args)
+        showFullscreenImageDialog: (...args) =>
+            mocks.showFullscreenImageDialog(...args)
     })
 }));
 
@@ -78,7 +80,8 @@ vi.mock('../../../lib/table/useVrcxVueTable', () => ({
             getColumn: (id) =>
                 id === 'photonId'
                     ? {
-                          toggleVisibility: (...args) => mocks.photonColumnToggleVisibility(...args)
+                          toggleVisibility: (...args) =>
+                              mocks.photonColumnToggleVisibility(...args)
                       }
                     : null,
             getRowModel: () => ({ rows: mocks.currentInstanceUsersData.value })
@@ -152,7 +155,9 @@ describe('PlayerList.vue', () => {
     beforeEach(() => {
         mocks.randomUserColours = ref(false);
         mocks.photonLoggingEnabled = ref(false);
-        mocks.chatboxUserBlacklist = ref(new Map([['usr_blocked', 'Blocked User']]));
+        mocks.chatboxUserBlacklist = ref(
+            new Map([['usr_blocked', 'Blocked User']])
+        );
         mocks.lastLocation = ref({
             playerList: new Set(),
             friendList: new Set(),
@@ -219,7 +224,9 @@ describe('PlayerList.vue', () => {
         });
 
         await wrapper.get('[data-testid="row-click-with-id"]').trigger('click');
-        await wrapper.get('[data-testid="row-click-without-id"]').trigger('click');
+        await wrapper
+            .get('[data-testid="row-click-without-id"]')
+            .trigger('click');
 
         expect(mocks.showUserDialog).toHaveBeenCalledWith('usr_1');
         expect(mocks.lookupUser).toHaveBeenCalledWith({ displayName: 'Bob' });
@@ -252,11 +259,19 @@ describe('PlayerList.vue', () => {
             }
         });
 
-        expect(wrapper.get('[data-testid="chatbox-dialog"]').attributes('data-visible')).toBe('false');
+        expect(
+            wrapper
+                .get('[data-testid="chatbox-dialog"]')
+                .attributes('data-visible')
+        ).toBe('false');
         wrapper.vm.showChatboxBlacklistDialog();
         await nextTick();
 
-        expect(wrapper.get('[data-testid="chatbox-dialog"]').attributes('data-visible')).toBe('true');
+        expect(
+            wrapper
+                .get('[data-testid="chatbox-dialog"]')
+                .attributes('data-visible')
+        ).toBe('true');
     });
 
     test('deletes chatbox blacklist user and refreshes list', async () => {
@@ -269,7 +284,9 @@ describe('PlayerList.vue', () => {
             }
         });
 
-        await wrapper.get('[data-testid="emit-delete-chatbox"]').trigger('click');
+        await wrapper
+            .get('[data-testid="emit-delete-chatbox"]')
+            .trigger('click');
 
         expect(mocks.chatboxUserBlacklist.value.has('usr_blocked')).toBe(false);
         expect(mocks.saveChatboxUserBlacklist).toHaveBeenCalledTimes(1);

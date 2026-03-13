@@ -258,7 +258,8 @@ export const useInstanceStore = defineStore('Instance', () => {
             emptyDefault: { id: '', name: '' },
             idAlias: 'worldId',
             nameKey: 'name',
-            fetchFn: (id) => queryRequest.fetch('world.location', { worldId: id })
+            fetchFn: (id) =>
+                queryRequest.fetch('world.location', { worldId: id })
         });
     }
 

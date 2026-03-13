@@ -24,7 +24,9 @@ describe('CountdownTimer.vue', () => {
         mocks.setInterval.mockClear();
         mocks.clearInterval.mockClear();
         mocks.timeToText.mockClear();
-        vi.spyOn(Date, 'now').mockReturnValue(new Date('2026-01-01T00:00:00.000Z').getTime());
+        vi.spyOn(Date, 'now').mockReturnValue(
+            new Date('2026-01-01T00:00:00.000Z').getTime()
+        );
     });
 
     afterEach(() => {
@@ -55,7 +57,10 @@ describe('CountdownTimer.vue', () => {
 
         expect(wrapper.text()).toBe('-');
 
-        await wrapper.setProps({ datetime: '2025-12-31T23:59:30.000Z', hours: 0 });
+        await wrapper.setProps({
+            datetime: '2025-12-31T23:59:30.000Z',
+            hours: 0
+        });
         await nextTick();
         expect(wrapper.text()).toBe('-');
     });

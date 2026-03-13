@@ -119,9 +119,7 @@ describe('notyGetImage', () => {
 
     test('returns empty string when user lookup fails', async () => {
         deps.getUserIdFromNoty.mockReturnValue('usr_abc');
-        deps.queryRequest.fetch.mockRejectedValue(
-            new Error('Network error')
-        );
+        deps.queryRequest.fetch.mockRejectedValue(new Error('Network error'));
         dispatch = createOverlayDispatch(deps);
 
         const result = await dispatch.notyGetImage({});

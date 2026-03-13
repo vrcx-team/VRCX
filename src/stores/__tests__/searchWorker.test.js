@@ -30,7 +30,12 @@ describe('searchWorker message protocol', () => {
 
         harness.dispatch({
             type: 'search',
-            payload: { seq: 7, query: 'a', currentUserId: 'usr_me', language: 'en-US' }
+            payload: {
+                seq: 7,
+                query: 'a',
+                currentUserId: 'usr_me',
+                language: 'en-US'
+            }
         });
 
         expect(harness.sent).toHaveLength(1);
@@ -57,17 +62,45 @@ describe('searchWorker message protocol', () => {
             type: 'updateIndex',
             payload: {
                 friends: [],
-                avatars: [{ id: 'avtr_1', name: 'Alpha Avatar', authorId: 'usr_me', imageUrl: '' }],
-                worlds: [{ id: 'wrld_1', name: 'Alpha World', authorId: 'usr_me', imageUrl: '' }],
-                groups: [{ id: 'grp_1', name: 'Alpha Group', ownerId: 'usr_me', imageUrl: '' }],
-                favAvatars: [{ id: 'avtr_1', name: 'Alpha Avatar', imageUrl: '' }],
+                avatars: [
+                    {
+                        id: 'avtr_1',
+                        name: 'Alpha Avatar',
+                        authorId: 'usr_me',
+                        imageUrl: ''
+                    }
+                ],
+                worlds: [
+                    {
+                        id: 'wrld_1',
+                        name: 'Alpha World',
+                        authorId: 'usr_me',
+                        imageUrl: ''
+                    }
+                ],
+                groups: [
+                    {
+                        id: 'grp_1',
+                        name: 'Alpha Group',
+                        ownerId: 'usr_me',
+                        imageUrl: ''
+                    }
+                ],
+                favAvatars: [
+                    { id: 'avtr_1', name: 'Alpha Avatar', imageUrl: '' }
+                ],
                 favWorlds: [{ id: 'wrld_1', name: 'Alpha World', imageUrl: '' }]
             }
         });
 
         harness.dispatch({
             type: 'search',
-            payload: { seq: 8, query: 'Alpha', currentUserId: 'usr_me', language: 'en-US' }
+            payload: {
+                seq: 8,
+                query: 'Alpha',
+                currentUserId: 'usr_me',
+                language: 'en-US'
+            }
         });
 
         const result = harness.sent.at(-1);

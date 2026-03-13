@@ -497,7 +497,7 @@
         useInstanceStore,
         useLocationStore,
         useModalStore,
-        useUserStore,
+        useUserStore
     } from '../../../stores';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { queryRequest, userRequest } from '../../../api';
@@ -505,7 +505,6 @@
     import InstanceActionBar from '../../InstanceActionBar.vue';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
     import { showGroupDialog } from '../../../coordinators/groupCoordinator';
-
 
     const EditNoteAndMemoDialog = defineAsyncComponent(() => import('./EditNoteAndMemoDialog.vue'));
 

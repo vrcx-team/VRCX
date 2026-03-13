@@ -43,10 +43,9 @@ vi.mock('../../../../shared/utils', () => ({
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
-    ,
-            locale: require('vue').ref('en')
-        })
+        t: (key) => key,
+        locale: require('vue').ref('en')
+    })
 }));
 
 vi.mock('@/components/ui/avatar', () => ({
@@ -175,9 +174,7 @@ describe('FriendItem.vue', () => {
         expect(wrapper.text()).toContain('Ghost');
         const button = wrapper.get('[data-testid="delete-button"]');
         await button.trigger('click');
-        expect(mocks.confirmDeleteFriend).toHaveBeenCalledWith(
-            'usr_orphan'
-        );
+        expect(mocks.confirmDeleteFriend).toHaveBeenCalledWith('usr_orphan');
         expect(mocks.showUserDialog).not.toHaveBeenCalled();
     });
 });

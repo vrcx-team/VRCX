@@ -61,12 +61,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import {
-        compareByDisplayName,
-        compareByFriendOrder,
-        compareByLastActiveRef,
-        userImage
-    } from '../../../shared/utils';
+    import { compareByDisplayName, compareByFriendOrder, compareByLastActiveRef, userImage } from '../../../shared/utils';
     import { database } from '../../../services/database';
     import { processBulk } from '../../../services/request';
     import { useOptionKeySelect } from '../../../composables/useOptionKeySelect';

@@ -31,13 +31,7 @@
         as: { type: null, required: false },
         class: { type: null, required: false }
     });
-    const emits = defineEmits([
-        'escapeKeyDown',
-        'pointerDownOutside',
-        'focusOutside',
-        'interactOutside',
-        'closeAutoFocus'
-    ]);
+    const emits = defineEmits(['escapeKeyDown', 'pointerDownOutside', 'focusOutside', 'interactOutside', 'closeAutoFocus']);
 
     const delegatedProps = reactiveOmit(props, 'class');
 

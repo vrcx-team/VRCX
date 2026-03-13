@@ -47,7 +47,9 @@ describe('appActions utils', () => {
     let consoleErrorSpy;
 
     beforeEach(() => {
-        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        consoleErrorSpy = vi
+            .spyOn(console, 'error')
+            .mockImplementation(() => {});
         vi.clearAllMocks();
         mocks.searchStore.directAccessParse.mockReturnValue(false);
         mocks.modalStore.confirm.mockResolvedValue({ ok: false });
@@ -131,7 +133,9 @@ describe('appActions utils', () => {
 
     test('openDiscordProfile validates empty discord id', () => {
         openDiscordProfile('');
-        expect(mocks.toast.error).toHaveBeenCalledWith('No Discord ID provided!');
+        expect(mocks.toast.error).toHaveBeenCalledWith(
+            'No Discord ID provided!'
+        );
     });
 
     test('openDiscordProfile shows error toast when api fails', async () => {

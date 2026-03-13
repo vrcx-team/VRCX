@@ -21,7 +21,8 @@ const mocks = vi.hoisted(() => ({
             }
         ]
     },
-    sortGroupInstancesByInGame: (a, b) => a[0].group.name.localeCompare(b[0].group.name),
+    sortGroupInstancesByInGame: (a, b) =>
+        a[0].group.name.localeCompare(b[0].group.name),
     showLaunchDialog: vi.fn(),
     checkCanInviteSelf: vi.fn(() => true),
     selfInvite: vi.fn().mockResolvedValue({}),
@@ -56,11 +57,15 @@ vi.mock('../../../../stores', () => ({
         sortGroupInstancesByInGame: mocks.sortGroupInstancesByInGame,
         groupInstances: mocks.groupInstances
     }),
-    useLaunchStore: () => ({ showLaunchDialog: (...a) => mocks.showLaunchDialog(...a) })
+    useLaunchStore: () => ({
+        showLaunchDialog: (...a) => mocks.showLaunchDialog(...a)
+    })
 }));
 
 vi.mock('../../../../composables/useInviteChecks', () => ({
-    useInviteChecks: () => ({ checkCanInviteSelf: (...a) => mocks.checkCanInviteSelf(...a) })
+    useInviteChecks: () => ({
+        checkCanInviteSelf: (...a) => mocks.checkCanInviteSelf(...a)
+    })
 }));
 
 vi.mock('../../../../shared/utils', () => ({
@@ -105,7 +110,10 @@ vi.mock('../../../../components/BackToTop.vue', () => ({
 }));
 
 vi.mock('../../../../components/Location.vue', () => ({
-    default: { props: ['location'], template: '<span data-testid="location">{{ location }}</span>' }
+    default: {
+        props: ['location'],
+        template: '<span data-testid="location">{{ location }}</span>'
+    }
 }));
 
 vi.mock('lucide-vue-next', () => ({
@@ -140,6 +148,8 @@ describe('GroupsSidebar.vue', () => {
             worldId: 'wrld_1',
             instanceId: '123'
         });
-        expect(mocks.toastSuccess).toHaveBeenCalledWith('message.invite.self_sent');
+        expect(mocks.toastSuccess).toHaveBeenCalledWith(
+            'message.invite.self_sent'
+        );
     });
 });

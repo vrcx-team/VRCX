@@ -41,7 +41,8 @@ vi.mock('@/components/ui/context-menu', () => ({
     },
     ContextMenuItem: {
         emits: ['click'],
-        template: '<button data-testid="ctx-item" @click="$emit(\'click\')"><slot /></button>'
+        template:
+            '<button data-testid="ctx-item" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -60,14 +61,16 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
     },
     DropdownMenuItem: {
         emits: ['click'],
-        template: '<button data-testid="dd-item" @click="$emit(\'click\')"><slot /></button>'
+        template:
+            '<button data-testid="dd-item" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
 vi.mock('@/components/ui/item', () => ({
     Item: {
         emits: ['click'],
-        template: '<div data-testid="item" @click="$emit(\'click\', $event)"><slot /></div>'
+        template:
+            '<div data-testid="item" @click="$emit(\'click\', $event)"><slot /></div>'
     },
     ItemActions: { template: '<div><slot /></div>' },
     ItemMedia: { template: '<div><slot /></div>' },
@@ -82,13 +85,16 @@ vi.mock('@/components/ui/avatar', () => ({
         props: ['src'],
         template: '<img data-testid="avatar-image" :src="src" />'
     },
-    AvatarFallback: { template: '<span data-testid="avatar-fallback"><slot /></span>' }
+    AvatarFallback: {
+        template: '<span data-testid="avatar-fallback"><slot /></span>'
+    }
 }));
 
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template: '<button data-testid="btn" @click="$emit(\'click\', $event)"><slot /></button>'
+        template:
+            '<button data-testid="btn" @click="$emit(\'click\', $event)"><slot /></button>'
     }
 }));
 
@@ -126,7 +132,8 @@ vi.mock('../../../../api', () => ({
 }));
 
 vi.mock('../../../../coordinators/inviteCoordinator', () => ({
-    runNewInstanceSelfInviteFlow: (...args) => mocks.newInstanceSelfInvite(...args)
+    runNewInstanceSelfInviteFlow: (...args) =>
+        mocks.newInstanceSelfInvite(...args)
 }));
 
 vi.mock('../../../../coordinators/worldCoordinator', () => ({
@@ -134,7 +141,8 @@ vi.mock('../../../../coordinators/worldCoordinator', () => ({
 }));
 
 vi.mock('../../../../coordinators/favoriteCoordinator', () => ({
-    removeLocalWorldFavorite: (...args) => mocks.removeLocalWorldFavorite(...args)
+    removeLocalWorldFavorite: (...args) =>
+        mocks.removeLocalWorldFavorite(...args)
 }));
 
 import FavoritesWorldItem from '../FavoritesWorldItem.vue';
@@ -201,7 +209,9 @@ describe('FavoritesWorldItem.vue', () => {
 
         expect(text).toContain('common.actions.view_details');
         expect(text).toContain('dialog.world.actions.new_instance');
-        expect(text).toContain('dialog.world.actions.new_instance_and_self_invite');
+        expect(text).toContain(
+            'dialog.world.actions.new_instance_and_self_invite'
+        );
         expect(text).toContain('view.favorite.edit_favorite_tooltip');
         expect(text).toContain('view.favorite.unfavorite_tooltip');
     });
@@ -219,7 +229,10 @@ describe('FavoritesWorldItem.vue', () => {
 
         await clickMenuItem(wrapper, 'view.favorite.edit_favorite_tooltip');
 
-        expect(mocks.showFavoriteDialog).toHaveBeenCalledWith('world', 'wrld_default');
+        expect(mocks.showFavoriteDialog).toHaveBeenCalledWith(
+            'world',
+            'wrld_default'
+        );
     });
 
     it('emits toggle-select in edit mode for remote favorites', async () => {
@@ -258,7 +271,11 @@ describe('FavoritesWorldItem.vue', () => {
         const wrapper = mountItem();
 
         expect(wrapper.get('[data-testid="item"]').classes()).toEqual(
-            expect.arrayContaining(['favorites-item', 'hover:bg-muted', 'x-hover-list'])
+            expect.arrayContaining([
+                'favorites-item',
+                'hover:bg-muted',
+                'x-hover-list'
+            ])
         );
     });
 
@@ -275,9 +292,15 @@ describe('FavoritesWorldItem.vue', () => {
             }
         });
 
-        expect(wrapper.find('[data-testid="avatar-image"]').exists()).toBe(false);
-        expect(wrapper.get('[data-testid="avatar"]').classes()).toEqual(expect.arrayContaining(['rounded-sm', 'size-full']));
-        expect(wrapper.get('[data-testid="avatar-fallback"]').classes()).toContain('rounded-sm');
+        expect(wrapper.find('[data-testid="avatar-image"]').exists()).toBe(
+            false
+        );
+        expect(wrapper.get('[data-testid="avatar"]').classes()).toEqual(
+            expect.arrayContaining(['rounded-sm', 'size-full'])
+        );
+        expect(
+            wrapper.get('[data-testid="avatar-fallback"]').classes()
+        ).toContain('rounded-sm');
     });
 
     it('deletes local favorite via coordinator', async () => {
@@ -292,7 +315,10 @@ describe('FavoritesWorldItem.vue', () => {
 
         await clickMenuItem(wrapper, 'view.favorite.delete_tooltip');
 
-        expect(mocks.removeLocalWorldFavorite).toHaveBeenCalledWith('wrld_local_1', 'LocalGroup');
+        expect(mocks.removeLocalWorldFavorite).toHaveBeenCalledWith(
+            'wrld_local_1',
+            'LocalGroup'
+        );
         expect(mocks.deleteFavorite).not.toHaveBeenCalled();
     });
 
@@ -301,7 +327,9 @@ describe('FavoritesWorldItem.vue', () => {
 
         await clickMenuItem(wrapper, 'view.favorite.unfavorite_tooltip');
 
-        expect(mocks.deleteFavorite).toHaveBeenCalledWith({ objectId: 'wrld_default' });
+        expect(mocks.deleteFavorite).toHaveBeenCalledWith({
+            objectId: 'wrld_default'
+        });
         expect(mocks.removeLocalWorldFavorite).not.toHaveBeenCalled();
     });
 
@@ -309,9 +337,14 @@ describe('FavoritesWorldItem.vue', () => {
         const wrapper = mountItem();
 
         await clickMenuItem(wrapper, 'dialog.world.actions.new_instance');
-        await clickMenuItem(wrapper, 'dialog.world.actions.new_instance_and_self_invite');
+        await clickMenuItem(
+            wrapper,
+            'dialog.world.actions.new_instance_and_self_invite'
+        );
 
         expect(mocks.createNewInstance).toHaveBeenCalledWith('wrld_default');
-        expect(mocks.newInstanceSelfInvite).toHaveBeenCalledWith('wrld_default');
+        expect(mocks.newInstanceSelfInvite).toHaveBeenCalledWith(
+            'wrld_default'
+        );
     });
 });

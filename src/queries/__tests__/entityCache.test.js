@@ -48,8 +48,16 @@ describe('entity query cache helpers', () => {
             };
         });
 
-        const first = await fetchWithEntityPolicy({ queryKey, policy, queryFn });
-        const second = await fetchWithEntityPolicy({ queryKey, policy, queryFn });
+        const first = await fetchWithEntityPolicy({
+            queryKey,
+            policy,
+            queryFn
+        });
+        const second = await fetchWithEntityPolicy({
+            queryKey,
+            policy,
+            queryFn
+        });
 
         expect(first.cache).toBe(false);
         expect(second.cache).toBe(true);

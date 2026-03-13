@@ -80,9 +80,19 @@ describe('graphLayoutWorker message protocol', () => {
 
         harness.dispatch({
             requestId: 11,
-            nodes: [{ id: 'n1', attributes: { x: 0, y: 0 } }, { id: 'n2', attributes: { x: 2, y: 2 } }],
-            edges: [{ key: 'n1__n2', source: 'n1', target: 'n2', attributes: {} }],
-            settings: { layoutIterations: 300, layoutSpacing: 60, deltaSpacing: 0, reinitialize: false }
+            nodes: [
+                { id: 'n1', attributes: { x: 0, y: 0 } },
+                { id: 'n2', attributes: { x: 2, y: 2 } }
+            ],
+            edges: [
+                { key: 'n1__n2', source: 'n1', target: 'n2', attributes: {} }
+            ],
+            settings: {
+                layoutIterations: 300,
+                layoutSpacing: 60,
+                deltaSpacing: 0,
+                reinitialize: false
+            }
         });
 
         expect(harness.sent).toHaveLength(1);
@@ -98,8 +108,15 @@ describe('graphLayoutWorker message protocol', () => {
         harness.dispatch({
             requestId: 12,
             nodes: [{ id: 'n1', attributes: { x: 0, y: 0 } }],
-            edges: [{ key: 'n1__n2', source: 'n1', target: 'n2', attributes: {} }],
-            settings: { layoutIterations: 300, layoutSpacing: 60, deltaSpacing: 0, reinitialize: false }
+            edges: [
+                { key: 'n1__n2', source: 'n1', target: 'n2', attributes: {} }
+            ],
+            settings: {
+                layoutIterations: 300,
+                layoutSpacing: 60,
+                deltaSpacing: 0,
+                reinitialize: false
+            }
         });
 
         expect(harness.sent).toHaveLength(1);

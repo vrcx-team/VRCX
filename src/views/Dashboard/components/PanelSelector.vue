@@ -17,7 +17,11 @@
                             :key="option.key"
                             type="button"
                             class="flex items-center gap-2 rounded-md border p-2 text-left text-sm hover:bg-accent"
-                            :class="option.key === currentPanelKey ? 'border-primary bg-primary/5 ring-1 ring-primary/40' : 'border-primary/20'"
+                            :class="
+                                option.key === currentPanelKey
+                                    ? 'border-primary bg-primary/5 ring-1 ring-primary/40'
+                                    : 'border-primary/20'
+                            "
                             @click="handleSelectWidget(option)">
                             <i :class="option.icon" class="text-base"></i>
                             <span>{{ t(option.labelKey) }}</span>
@@ -36,7 +40,11 @@
                             :key="option.key"
                             type="button"
                             class="flex items-center gap-2 rounded-md border p-2 text-left text-sm hover:bg-accent"
-                            :class="option.key === currentPanelKey ? 'border-primary bg-primary/5 ring-1 ring-primary/40' : ''"
+                            :class="
+                                option.key === currentPanelKey
+                                    ? 'border-primary bg-primary/5 ring-1 ring-primary/40'
+                                    : ''
+                            "
                             @click="emit('select', option.key)">
                             <i :class="option.icon" class="text-base"></i>
                             <span>{{ t(option.labelKey) }}</span>

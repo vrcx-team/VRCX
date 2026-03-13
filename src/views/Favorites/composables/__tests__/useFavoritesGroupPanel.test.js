@@ -38,7 +38,9 @@ function createPanel(options = {}) {
 
 describe('useFavoritesGroupPanel', () => {
     it('selects remote placeholder by default when remote groups are unresolved', () => {
-        const placeholders = [{ key: 'avatar:avatars1', displayName: 'Group 1' }];
+        const placeholders = [
+            { key: 'avatar:avatars1', displayName: 'Group 1' }
+        ];
         const { panel, clearSelection } = createPanel({ placeholders });
 
         panel.ensureSelectedGroup();

@@ -13,12 +13,15 @@ vi.mock('lucide-vue-next', () => ({
 
 vi.mock('@/components/ui/sidebar', () => ({
     SidebarMenuItem: { template: '<div><slot /></div>' },
-    SidebarMenuButton: { template: '<button data-testid="folder-btn"><slot /></button>' },
+    SidebarMenuButton: {
+        template: '<button data-testid="folder-btn"><slot /></button>'
+    },
     SidebarMenuSub: { template: '<div><slot /></div>' },
     SidebarMenuSubItem: { template: '<div><slot /></div>' },
     SidebarMenuSubButton: {
         emits: ['click'],
-        template: '<button data-testid="submenu-btn" @click="$emit(\'click\')"><slot /></button>'
+        template:
+            '<button data-testid="submenu-btn" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -32,18 +35,25 @@ vi.mock('@/components/ui/context-menu', () => ({
     ContextMenu: { template: '<div><slot /></div>' },
     ContextMenuTrigger: { template: '<div><slot /></div>' },
     ContextMenuContent: { template: '<div><slot /></div>' },
-    ContextMenuItem: { emits: ['click'], template: '<button @click="$emit(\'click\')"><slot /></button>' },
+    ContextMenuItem: {
+        emits: ['click'],
+        template: '<button @click="$emit(\'click\')"><slot /></button>'
+    },
     ContextMenuSeparator: { template: '<div />' }
 }));
 
 vi.mock('@/components/ui/dropdown-menu', () => ({
     DropdownMenu: {
         emits: ['update:open'],
-        template: '<div><button data-testid="dropdown-open" @click="$emit(\'update:open\', true)" /><slot /></div>'
+        template:
+            '<div><button data-testid="dropdown-open" @click="$emit(\'update:open\', true)" /><slot /></div>'
     },
     DropdownMenuTrigger: { template: '<div><slot /></div>' },
     DropdownMenuContent: { template: '<div><slot /></div>' },
-    DropdownMenuItem: { emits: ['select'], template: '<button @click="$emit(\'select\', $event)"><slot /></button>' }
+    DropdownMenuItem: {
+        emits: ['select'],
+        template: '<button @click="$emit(\'select\', $event)"><slot /></button>'
+    }
 }));
 
 import NavMenuFolderItem from '../NavMenuFolderItem.vue';
@@ -53,7 +63,14 @@ const folderItem = {
     icon: 'ri-folder-line',
     title: 'Folder',
     titleIsCustom: true,
-    children: [{ index: 'feed', label: 'nav_tooltip.feed', icon: 'ri-rss-line', titleIsCustom: false }]
+    children: [
+        {
+            index: 'feed',
+            label: 'nav_tooltip.feed',
+            icon: 'ri-rss-line',
+            titleIsCustom: false
+        }
+    ]
 };
 
 describe('NavMenuFolderItem', () => {

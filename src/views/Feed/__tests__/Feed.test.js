@@ -164,7 +164,9 @@ vi.mock('lucide-vue-next', () => ({
 import Feed from '../Feed.vue';
 
 function clickButtonByText(wrapper, text) {
-    const button = wrapper.findAll('button').find((node) => node.text().includes(text));
+    const button = wrapper
+        .findAll('button')
+        .find((node) => node.text().includes(text));
     if (!button) {
         throw new Error(`Cannot find button with text: ${text}`);
     }
@@ -255,6 +257,8 @@ describe('Feed.vue', () => {
             message: 'hello'
         });
 
-        expect(key).toBe('Online:2026-03-01T00:00:00.000Z:usr_123:wrld_abc:hello');
+        expect(key).toBe(
+            'Online:2026-03-01T00:00:00.000Z:usr_123:wrld_abc:hello'
+        );
     });
 });

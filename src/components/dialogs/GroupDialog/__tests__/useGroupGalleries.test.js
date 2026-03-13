@@ -233,9 +233,7 @@ describe('useGroupGalleries', () => {
                 .spyOn(console, 'error')
                 .mockImplementation(() => {});
 
-            queryRequest.fetch.mockRejectedValueOnce(
-                new Error('API Error')
-            );
+            queryRequest.fetch.mockRejectedValueOnce(new Error('API Error'));
 
             await expect(
                 getGroupGallery('grp_1', 'g1')

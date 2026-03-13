@@ -19,13 +19,36 @@ vi.mock('../../composables/useImageCropper', () => ({
         getCroppedBlob: (...a) => mocks.getCroppedBlob(...a)
     })
 }));
-vi.mock('@/components/ui/dialog', () => ({ Dialog: { template: '<div><slot /></div>' }, DialogContent: { template: '<div><slot /></div>' }, DialogHeader: { template: '<div><slot /></div>' }, DialogTitle: { template: '<div><slot /></div>' }, DialogFooter: { template: '<div><slot /></div>' } }));
-vi.mock('@/components/ui/button', () => ({ Button: { emits: ['click'], template: '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>' } }));
-vi.mock('@/components/ui/slider', () => ({ Slider: { emits: ['value-commit'], template: '<div />' } }));
-vi.mock('@/components/ui/spinner', () => ({ Spinner: { template: '<div />' } }));
-vi.mock('@/components/ui/tooltip/TooltipWrapper.vue', () => ({ default: { template: '<div><slot /></div>' } }));
-vi.mock('vue-advanced-cropper', () => ({ Cropper: { emits: ['change'], template: '<div />' } }));
-vi.mock('lucide-vue-next', () => new Proxy({}, { get: () => ({ template: '<i />' }) }));
+vi.mock('@/components/ui/dialog', () => ({
+    Dialog: { template: '<div><slot /></div>' },
+    DialogContent: { template: '<div><slot /></div>' },
+    DialogHeader: { template: '<div><slot /></div>' },
+    DialogTitle: { template: '<div><slot /></div>' },
+    DialogFooter: { template: '<div><slot /></div>' }
+}));
+vi.mock('@/components/ui/button', () => ({
+    Button: {
+        emits: ['click'],
+        template:
+            '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
+    }
+}));
+vi.mock('@/components/ui/slider', () => ({
+    Slider: { emits: ['value-commit'], template: '<div />' }
+}));
+vi.mock('@/components/ui/spinner', () => ({
+    Spinner: { template: '<div />' }
+}));
+vi.mock('@/components/ui/tooltip/TooltipWrapper.vue', () => ({
+    default: { template: '<div><slot /></div>' }
+}));
+vi.mock('vue-advanced-cropper', () => ({
+    Cropper: { emits: ['change'], template: '<div />' }
+}));
+vi.mock(
+    'lucide-vue-next',
+    () => new Proxy({}, { get: () => ({ template: '<i />' }) })
+);
 
 import ImageCropDialog from '../ImageCropDialog.vue';
 

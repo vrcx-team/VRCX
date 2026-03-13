@@ -135,8 +135,7 @@
             if (!query) return true;
 
             return (
-                localeIncludes(row?.displayName ?? '', query, comparer) ||
-                localeIncludes(row?.text ?? '', query, comparer)
+                localeIncludes(row?.displayName ?? '', query, comparer) || localeIncludes(row?.text ?? '', query, comparer)
             );
         });
     };

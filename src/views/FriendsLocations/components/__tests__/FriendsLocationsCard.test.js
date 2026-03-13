@@ -487,10 +487,18 @@ describe('FriendsLocationsCard.vue', () => {
                     ref: { location: 'wrld_12345:67890~region(us)' }
                 })
             });
-            const launchInviteItem = getMenuItemByText(wrapper, 'Launch/Invite');
-            const inviteYourselfItem = getMenuItemByText(wrapper, 'Invite Yourself');
+            const launchInviteItem = getMenuItemByText(
+                wrapper,
+                'Launch/Invite'
+            );
+            const inviteYourselfItem = getMenuItemByText(
+                wrapper,
+                'Invite Yourself'
+            );
             expect(launchInviteItem?.attributes('data-disabled')).toBe('true');
-            expect(inviteYourselfItem?.attributes('data-disabled')).toBe('true');
+            expect(inviteYourselfItem?.attributes('data-disabled')).toBe(
+                'true'
+            );
         });
     });
 
@@ -523,7 +531,10 @@ describe('FriendsLocationsCard.vue', () => {
             const wrapper = mountCard({
                 friend: makeFriend({ state: 'online' })
             });
-            const requestInviteItem = getMenuItemByText(wrapper, 'Request Invite');
+            const requestInviteItem = getMenuItemByText(
+                wrapper,
+                'Request Invite'
+            );
             await requestInviteItem.trigger('click');
             expect(mockSendRequestInvite).toHaveBeenCalledWith(
                 { platform: 'standalonewindows' },
@@ -560,7 +571,10 @@ describe('FriendsLocationsCard.vue', () => {
                     ref: { location: 'wrld_12345:67890~region(us)' }
                 })
             });
-            const selfInviteItem = getMenuItemByText(wrapper, 'Invite Yourself');
+            const selfInviteItem = getMenuItemByText(
+                wrapper,
+                'Invite Yourself'
+            );
             await selfInviteItem.trigger('click');
             expect(mockSelfInvite).toHaveBeenCalledWith({
                 instanceId: '67890~region(us)',
@@ -583,9 +597,9 @@ describe('FriendsLocationsCard.vue', () => {
                 active: false
             });
             const wrapper = mountCard();
-            expect(wrapper.find('.friend-card__status-dot').classes()).toContain(
-                'friend-card__status-dot--join'
-            );
+            expect(
+                wrapper.find('.friend-card__status-dot').classes()
+            ).toContain('friend-card__status-dot--join');
         });
 
         test('shows active busy status class when active + busy', () => {
@@ -597,9 +611,9 @@ describe('FriendsLocationsCard.vue', () => {
             const wrapper = mountCard({
                 friend: makeFriend({ status: 'busy' })
             });
-            expect(wrapper.find('.friend-card__status-dot').classes()).toContain(
-                'friend-card__status-dot--active-busy'
-            );
+            expect(
+                wrapper.find('.friend-card__status-dot').classes()
+            ).toContain('friend-card__status-dot--active-busy');
         });
     });
 });

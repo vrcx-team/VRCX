@@ -5,8 +5,8 @@ const mocks = vi.hoisted(() => ({
     sharedFeedFilters: {
         __v_isRef: true,
         value: {
-        noty: { status: 'all' },
-        wrist: { status: 'none' }
+            noty: { status: 'all' },
+            wrist: { status: 'none' }
         }
     },
     photonLoggingEnabled: { __v_isRef: true, value: false },
@@ -18,9 +18,15 @@ vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
 vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
 
 vi.mock('../../../../stores', () => ({
-    usePhotonStore: () => ({ photonLoggingEnabled: mocks.photonLoggingEnabled }),
-    useNotificationsSettingsStore: () => ({ sharedFeedFilters: mocks.sharedFeedFilters }),
-    useSharedFeedStore: () => ({ loadSharedFeed: (...a) => mocks.loadSharedFeed(...a) })
+    usePhotonStore: () => ({
+        photonLoggingEnabled: mocks.photonLoggingEnabled
+    }),
+    useNotificationsSettingsStore: () => ({
+        sharedFeedFilters: mocks.sharedFeedFilters
+    }),
+    useSharedFeedStore: () => ({
+        loadSharedFeed: (...a) => mocks.loadSharedFeed(...a)
+    })
 }));
 
 vi.mock('../../../../services/config', () => ({
@@ -68,7 +74,8 @@ vi.mock('@/components/ui/dialog', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template: '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
+        template:
+            '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -110,7 +117,9 @@ describe('FeedFiltersDialog.vue', () => {
             }
         });
 
-        expect(wrapper.get('[data-testid="dialog-title"]').text()).toBe('dialog.shared_feed_filters.wrist');
+        expect(wrapper.get('[data-testid="dialog-title"]').text()).toBe(
+            'dialog.shared_feed_filters.wrist'
+        );
 
         await wrapper.get('[data-testid="toggle-update"]').trigger('click');
         expect(mocks.sharedFeedFilters.value.wrist.status).toBe('all');
@@ -135,7 +144,9 @@ describe('FeedFiltersDialog.vue', () => {
         const resetButton = wrapper.findAll('[data-testid="btn"]')[0];
         await resetButton.trigger('click');
 
-        expect(mocks.sharedFeedFilters.value.noty).toEqual({ status: 'default-noty' });
+        expect(mocks.sharedFeedFilters.value.noty).toEqual({
+            status: 'default-noty'
+        });
         expect(mocks.setString).toHaveBeenCalled();
     });
 });

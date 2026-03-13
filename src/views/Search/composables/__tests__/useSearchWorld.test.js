@@ -49,7 +49,9 @@ describe('useSearchWorld', () => {
         mocks.searchText.value = 'home world';
         mocks.replaceBioSymbols.mockReturnValue('home world');
         mocks.cachedWorlds.set('wrld_1', { id: 'wrld_1', name: 'World One' });
-        mocks.getWorlds.mockResolvedValue({ json: [{ id: 'wrld_1' }, { id: 'wrld_missing' }] });
+        mocks.getWorlds.mockResolvedValue({
+            json: [{ id: 'wrld_1' }, { id: 'wrld_missing' }]
+        });
 
         const api = useSearchWorld();
         api.searchWorld({});
@@ -72,7 +74,14 @@ describe('useSearchWorld', () => {
 
     it('selects category row and uses row sort settings', async () => {
         mocks.cachedConfig.value = {
-            dynamicWorldRows: [{ index: 2, sortHeading: 'featured', sortOrder: 'ascending', tag: 'party' }]
+            dynamicWorldRows: [
+                {
+                    index: 2,
+                    sortHeading: 'featured',
+                    sortOrder: 'ascending',
+                    tag: 'party'
+                }
+            ]
         };
         mocks.getWorlds.mockResolvedValue({ json: [] });
 

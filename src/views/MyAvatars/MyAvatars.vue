@@ -319,11 +319,7 @@
     import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
     import { Field, FieldContent, FieldLabel } from '../../components/ui/field';
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
-    import {
-        applyAvatar,
-        selectAvatarWithoutConfirmation,
-        showAvatarDialog
-    } from '../../coordinators/avatarCoordinator';
+    import { applyAvatar, selectAvatarWithoutConfirmation, showAvatarDialog } from '../../coordinators/avatarCoordinator';
     import {
         handleImageUploadInput,
         resizeImageToFitLimits,
@@ -459,8 +455,7 @@
         if (searchText.value) {
             const query = searchText.value.toLowerCase();
             list = list.filter(
-                (a) =>
-                    a.name?.toLowerCase().includes(query) || a.$tags?.some((t) => t.tag.toLowerCase().includes(query))
+                (a) => a.name?.toLowerCase().includes(query) || a.$tags?.some((t) => t.tag.toLowerCase().includes(query))
             );
         }
 

@@ -46,7 +46,9 @@ describe('useFavoritesCardScaling', () => {
 
         expect(style['--favorites-card-scale']).toBe('0.80');
         expect(style['--favorites-card-spacing-scale']).toBe('1.20');
-        expect(Number(style['--favorites-grid-columns'])).toBeGreaterThanOrEqual(1);
+        expect(
+            Number(style['--favorites-grid-columns'])
+        ).toBeGreaterThanOrEqual(1);
         expect(mocks.setString).toHaveBeenCalledWith('scale-key', '0.8');
         expect(mocks.setString).toHaveBeenCalledWith('spacing-key', '1.2');
     });

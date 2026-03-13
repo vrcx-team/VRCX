@@ -167,9 +167,7 @@
 
     const tableStyle = { maxHeight: '400px' };
 
-    const rows = computed(() =>
-        Array.isArray(friendImportTable.value?.data) ? friendImportTable.value.data.slice() : []
-    );
+    const rows = computed(() => (Array.isArray(friendImportTable.value?.data) ? friendImportTable.value.data.slice() : []));
 
     const columns = computed(() =>
         createColumns({
@@ -207,8 +205,7 @@
             if (value) {
                 clearFriendImportTable();
                 resetFriendImport();
-                friendImportFavoriteGroupSelection.value =
-                    friendImportDialog.value.friendImportFavoriteGroup?.name ?? '';
+                friendImportFavoriteGroupSelection.value = friendImportDialog.value.friendImportFavoriteGroup?.name ?? '';
                 if (friendImportDialogInput.value) {
                     friendImportDialog.value.input = friendImportDialogInput.value;
                     processFriendImportList();

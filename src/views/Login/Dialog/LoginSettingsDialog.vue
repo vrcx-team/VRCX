@@ -62,14 +62,7 @@
 </template>
 
 <script setup>
-    import {
-        Dialog,
-        DialogContent,
-        DialogFooter,
-        DialogHeader,
-        DialogTitle,
-        DialogTrigger
-    } from '@/components/ui/dialog';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';

@@ -195,16 +195,7 @@
 </template>
 
 <script setup>
-    import {
-        CalendarDays,
-        Camera,
-        ChevronDown,
-        Folder,
-        FolderInput,
-        Images,
-        Settings,
-        SquarePen
-    } from 'lucide-vue-next';
+    import { CalendarDays, Camera, ChevronDown, Folder, FolderInput, Images, Settings, SquarePen } from 'lucide-vue-next';
     import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import ToolItem from './components/ToolItem.vue';

@@ -12,12 +12,18 @@ function clonePanel(panel) {
     if (typeof panel === 'string' && panel) {
         return panel;
     }
-    if (panel && typeof panel === 'object' && typeof panel.key === 'string' && panel.key) {
+    if (
+        panel &&
+        typeof panel === 'object' &&
+        typeof panel.key === 'string' &&
+        panel.key
+    ) {
         return {
             key: panel.key,
-            config: panel.config && typeof panel.config === 'object'
-                ? JSON.parse(JSON.stringify(panel.config))
-                : {}
+            config:
+                panel.config && typeof panel.config === 'object'
+                    ? JSON.parse(JSON.stringify(panel.config))
+                    : {}
         };
     }
     return null;
@@ -139,9 +145,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     }
 
     function generateNextDashboardName(baseName = 'Dashboard') {
-        const existingNames = new Set(
-            dashboards.value.map((d) => d.name)
-        );
+        const existingNames = new Set(dashboards.value.map((d) => d.name));
         if (!existingNames.has(baseName)) {
             return baseName;
         }

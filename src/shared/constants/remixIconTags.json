@@ -518,7 +518,7 @@
         "ram": "memory,electronics,ddr,storage,dram,ddr4,ddr5,内存条,记忆卡,存储器,内存,DDR,DRAM,内存模块",
         "ram-2": "memory,electronics,ddr,storage,dram,ddr4,ddr5,内存条,记忆卡,存储器,内存,DDR,DRAM,内存模块"
     },
-     "Document": {
+    "Document": {
         "file": "doc,paper,new,create,record,文档,文件,新建,创建,档案,文稿",
         "file-ai": "artificial intelligence,smart document,ai file,automated,assistant,生成式,文件,文档,人工智能,智能文档,AI文件,自动化,助手",
         "file-2": "doc,paper,new,create,record,文档,文件,新建,创建,档案,文稿",

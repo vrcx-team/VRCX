@@ -56,7 +56,8 @@ vi.mock('@/components/ui/badge', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template: '<button data-testid="button" @click="$emit(\'click\')"><slot /></button>'
+        template:
+            '<button data-testid="button" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -127,7 +128,9 @@ describe('MyAvatarCard.vue', () => {
         const wrapper = mountCard();
         const detailsItem = wrapper
             .findAll('[data-testid="ctx-item"]')
-            .find((node) => node.text().includes('dialog.avatar.actions.view_details'));
+            .find((node) =>
+                node.text().includes('dialog.avatar.actions.view_details')
+            );
 
         expect(detailsItem).toBeTruthy();
         await detailsItem.trigger('click');
@@ -143,7 +146,9 @@ describe('MyAvatarCard.vue', () => {
         const wrapper = mountCard({ currentAvatarId: 'avtr_1' });
         const wearItem = wrapper
             .findAll('[data-testid="ctx-item"]')
-            .find((node) => node.text().includes('view.favorite.select_avatar_tooltip'));
+            .find((node) =>
+                node.text().includes('view.favorite.select_avatar_tooltip')
+            );
 
         expect(wearItem.attributes('disabled')).toBeDefined();
     });

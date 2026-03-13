@@ -43,7 +43,9 @@ describe('Invite Utils', () => {
         });
 
         test('returns true for public instance', () => {
-            expect(checkCanInvite('wrld_123:instance', defaultInviteDeps)).toBe(true);
+            expect(checkCanInvite('wrld_123:instance', defaultInviteDeps)).toBe(
+                true
+            );
         });
 
         test('returns true for group instance', () => {
@@ -56,45 +58,61 @@ describe('Invite Utils', () => {
         });
 
         test('returns true for own instance', () => {
-            expect(checkCanInvite('wrld_123:instance~private(usr_me)', defaultInviteDeps)).toBe(
-                true
-            );
+            expect(
+                checkCanInvite(
+                    'wrld_123:instance~private(usr_me)',
+                    defaultInviteDeps
+                )
+            ).toBe(true);
         });
 
         test('returns false for invite-only instance owned by another', () => {
-            expect(checkCanInvite('wrld_123:instance~private(usr_other)', defaultInviteDeps)).toBe(
-                false
-            );
+            expect(
+                checkCanInvite(
+                    'wrld_123:instance~private(usr_other)',
+                    defaultInviteDeps
+                )
+            ).toBe(false);
         });
 
         test('returns false for friends-only instance', () => {
-            expect(checkCanInvite('wrld_123:instance~friends(usr_other)', defaultInviteDeps)).toBe(
-                false
-            );
+            expect(
+                checkCanInvite(
+                    'wrld_123:instance~friends(usr_other)',
+                    defaultInviteDeps
+                )
+            ).toBe(false);
         });
 
         test('returns true for friends+ instance if current location matches', () => {
             const location = 'wrld_123:instance~hidden(usr_other)';
-            expect(checkCanInvite(location, {
-                ...defaultInviteDeps,
-                lastLocationStr: location
-            })).toBe(true);
+            expect(
+                checkCanInvite(location, {
+                    ...defaultInviteDeps,
+                    lastLocationStr: location
+                })
+            ).toBe(true);
         });
 
         test('returns false for friends+ instance if not in that location', () => {
-            expect(checkCanInvite('wrld_123:instance~hidden(usr_other)', defaultInviteDeps)).toBe(
-                false
-            );
+            expect(
+                checkCanInvite(
+                    'wrld_123:instance~hidden(usr_other)',
+                    defaultInviteDeps
+                )
+            ).toBe(false);
         });
 
         test('returns false for closed instance', () => {
             const location = 'wrld_123:instance';
-            expect(checkCanInvite(location, {
-                ...defaultInviteDeps,
-                cachedInstances: new Map([
-                    [location, { closedAt: '2024-01-01' }]
-                ])
-            })).toBe(false);
+            expect(
+                checkCanInvite(location, {
+                    ...defaultInviteDeps,
+                    cachedInstances: new Map([
+                        [location, { closedAt: '2024-01-01' }]
+                    ])
+                })
+            ).toBe(false);
         });
     });
 
@@ -113,12 +131,17 @@ describe('Invite Utils', () => {
 
         test('returns true for own instance', () => {
             expect(
-                checkCanInviteSelf('wrld_123:instance~private(usr_me)', defaultSelfDeps)
+                checkCanInviteSelf(
+                    'wrld_123:instance~private(usr_me)',
+                    defaultSelfDeps
+                )
             ).toBe(true);
         });
 
         test('returns true for public instance', () => {
-            expect(checkCanInviteSelf('wrld_123:instance', defaultSelfDeps)).toBe(true);
+            expect(
+                checkCanInviteSelf('wrld_123:instance', defaultSelfDeps)
+            ).toBe(true);
         });
 
         test('returns true for friends-only instance if user is a friend', () => {
@@ -132,23 +155,31 @@ describe('Invite Utils', () => {
 
         test('returns false for friends-only instance if user is not a friend', () => {
             expect(
-                checkCanInviteSelf('wrld_123:instance~friends(usr_other)', defaultSelfDeps)
+                checkCanInviteSelf(
+                    'wrld_123:instance~friends(usr_other)',
+                    defaultSelfDeps
+                )
             ).toBe(false);
         });
 
         test('returns false for closed instance', () => {
             const location = 'wrld_123:instance';
-            expect(checkCanInviteSelf(location, {
-                ...defaultSelfDeps,
-                cachedInstances: new Map([
-                    [location, { closedAt: '2024-01-01' }]
-                ])
-            })).toBe(false);
+            expect(
+                checkCanInviteSelf(location, {
+                    ...defaultSelfDeps,
+                    cachedInstances: new Map([
+                        [location, { closedAt: '2024-01-01' }]
+                    ])
+                })
+            ).toBe(false);
         });
 
         test('returns true for invite instance (not owned, not closed)', () => {
             expect(
-                checkCanInviteSelf('wrld_123:instance~private(usr_other)', defaultSelfDeps)
+                checkCanInviteSelf(
+                    'wrld_123:instance~private(usr_other)',
+                    defaultSelfDeps
+                )
             ).toBe(true);
         });
     });

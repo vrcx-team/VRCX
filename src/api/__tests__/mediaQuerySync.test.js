@@ -24,7 +24,12 @@ vi.mock('../../queries', () => ({
         prints: (params) => ['gallery', 'prints', params],
         print: (printId) => ['gallery', 'print', printId],
         inventoryItems: (params) => ['inventory', 'items', params],
-        userInventoryItem: (params) => ['inventory', 'item', params.userId, params.inventoryId],
+        userInventoryItem: (params) => [
+            'inventory',
+            'item',
+            params.userId,
+            params.inventoryId
+        ],
         file: (fileId) => ['file', fileId]
     }
 }));

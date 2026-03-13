@@ -3,7 +3,10 @@ import { defineStore } from 'pinia';
 
 import { checkVRChatCache } from '../shared/utils';
 import { queryRequest } from '../api';
-import { getAvatarHistory, preloadOwnAvatars } from '../coordinators/avatarCoordinator';
+import {
+    getAvatarHistory,
+    preloadOwnAvatars
+} from '../coordinators/avatarCoordinator';
 import { database } from '../services/database';
 import { watchState } from '../services/watchState';
 
@@ -84,7 +87,6 @@ export const useAvatarStore = defineStore('Avatar', () => {
      * @returns {Promise<string[]>}
      */
     async function getAvatarGallery(avatarId) {
-
         const D = avatarDialog.value;
         const args = await queryRequest
             .fetch('avatarGallery', { avatarId })

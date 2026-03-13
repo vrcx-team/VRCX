@@ -27,7 +27,9 @@ vi.mock('../../../shared/utils', () => ({
 
 vi.mock('../../../components/Timer.vue', () => ({ default: 'Timer' }));
 vi.mock('../../../components/ui/button', () => ({ Button: 'Button' }));
-vi.mock('../../../components/ui/tooltip', () => ({ TooltipWrapper: 'TooltipWrapper' }));
+vi.mock('../../../components/ui/tooltip', () => ({
+    TooltipWrapper: 'TooltipWrapper'
+}));
 vi.mock('lucide-vue-next', () => ({
     ArrowUpDown: 'ArrowUpDown',
     Monitor: 'Monitor',
@@ -131,10 +133,14 @@ describe('views/PlayerList/columns.jsx', () => {
         });
         const photonCol = cols.find((c) => c.id === 'photonId');
         const blockCell = photonCol.cell({ row });
-        findNode(blockCell, (n) => n.type === 'button').props.onClick({ stopPropagation: vi.fn() });
+        findNode(blockCell, (n) => n.type === 'button').props.onClick({
+            stopPropagation: vi.fn()
+        });
         expect(mocks.onBlockChatbox).toHaveBeenCalledWith(row.original.ref);
 
-        const blockedMap = new Map([[row.original.ref.id, row.original.ref.displayName]]);
+        const blockedMap = new Map([
+            [row.original.ref.id, row.original.ref.displayName]
+        ]);
         const colsBlocked = createColumns({
             randomUserColours: { value: false, __v_isRef: true },
             chatboxUserBlacklist: { value: blockedMap, __v_isRef: true },
@@ -144,7 +150,9 @@ describe('views/PlayerList/columns.jsx', () => {
         });
         const photonBlocked = colsBlocked.find((c) => c.id === 'photonId');
         const unblockCell = photonBlocked.cell({ row });
-        findNode(unblockCell, (n) => n.type === 'button').props.onClick({ stopPropagation: vi.fn() });
+        findNode(unblockCell, (n) => n.type === 'button').props.onClick({
+            stopPropagation: vi.fn()
+        });
         expect(mocks.onUnblockChatbox).toHaveBeenCalledWith('usr_1');
     });
 
@@ -180,8 +188,12 @@ describe('views/PlayerList/columns.jsx', () => {
         });
         const bioLinkCol = cols.find((c) => c.id === 'bioLink');
         const cell = bioLinkCol.cell({ row });
-        findNode(cell, (n) => n.type === 'img').props.onClick({ stopPropagation: vi.fn() });
+        findNode(cell, (n) => n.type === 'img').props.onClick({
+            stopPropagation: vi.fn()
+        });
 
-        expect(mocks.openExternalLink).toHaveBeenCalledWith('https://example.com');
+        expect(mocks.openExternalLink).toHaveBeenCalledWith(
+            'https://example.com'
+        );
     });
 });

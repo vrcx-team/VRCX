@@ -11,7 +11,8 @@ vi.mock('@/components/ui/tooltip', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template: '<button data-testid="back-btn" @click="$emit(\'click\', $event)"><slot /></button>'
+        template:
+            '<button data-testid="back-btn" @click="$emit(\'click\', $event)"><slot /></button>'
     }
 }));
 
@@ -58,7 +59,10 @@ describe('BackToTop.vue', () => {
 
         await btn.trigger('click');
 
-        expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
+        expect(window.scrollTo).toHaveBeenCalledWith({
+            top: 0,
+            behavior: 'smooth'
+        });
     });
 
     it('uses virtualizer scrollToIndex when provided', async () => {
@@ -78,7 +82,10 @@ describe('BackToTop.vue', () => {
         const btn = wrapper.get('[data-testid="back-btn"]');
         await btn.trigger('click');
 
-        expect(scrollToIndex).toHaveBeenCalledWith(0, { align: 'start', behavior: 'auto' });
+        expect(scrollToIndex).toHaveBeenCalledWith(0, {
+            align: 'start',
+            behavior: 'auto'
+        });
         expect(window.scrollTo).not.toHaveBeenCalled();
     });
 
@@ -103,6 +110,9 @@ describe('BackToTop.vue', () => {
         const btn = wrapper.get('[data-testid="back-btn"]');
         await btn.trigger('click');
 
-        expect(target.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'auto' });
+        expect(target.scrollTo).toHaveBeenCalledWith({
+            top: 0,
+            behavior: 'auto'
+        });
     });
 });

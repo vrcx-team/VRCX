@@ -221,9 +221,7 @@ describe('useSearchStore', () => {
         });
 
         test('parses vrchat.com group URL', () => {
-            store.directAccessParse(
-                'https://vrchat.com/home/group/grp_abc123'
-            );
+            store.directAccessParse('https://vrchat.com/home/group/grp_abc123');
             expect(mockShowGroupDialog).toHaveBeenCalledWith('grp_abc123');
         });
 
@@ -248,9 +246,9 @@ describe('useSearchStore', () => {
         });
 
         test('returns false for short vrchat URL with insufficient path segments', () => {
-            expect(
-                store.directAccessParse('https://vrchat.com/home')
-            ).toBe(false);
+            expect(store.directAccessParse('https://vrchat.com/home')).toBe(
+                false
+            );
         });
     });
 

@@ -1,7 +1,6 @@
 import { defineConfig } from 'eslint/config';
 import { jsdoc } from 'eslint-plugin-jsdoc';
 
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
 import js from '@eslint/js';
 import pluginVue from 'eslint-plugin-vue';
@@ -108,7 +107,7 @@ export default defineConfig([
             'jsdoc/require-returns-description': 'off',
             'jsdoc/reject-function-type': 'off'
         }
-    }),
+    })
     // {
     //     ignores: [
     //         '**/__tests__/**',
@@ -127,12 +126,4 @@ export default defineConfig([
     //         'pretty-import/sort-import-names': 'warn'
     //     }
     // },
-    {
-        ...eslintPluginPrettierRecommended,
-        ignores: [
-            '**/__tests__/**',
-            '**/*.spec.{js,mjs,cjs,vue}',
-            '**/*.test.{js,mjs,cjs,vue}'
-        ]
-    }
 ]);

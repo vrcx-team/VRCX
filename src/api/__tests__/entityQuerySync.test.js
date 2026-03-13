@@ -3,7 +3,10 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 const mockRequest = vi.fn();
 const mockPatchAndRefetchActiveQuery = vi.fn(() => Promise.resolve());
 
-const mockApplyCurrentUser = vi.fn((json) => ({ id: json.id || 'usr_me', ...json }));
+const mockApplyCurrentUser = vi.fn((json) => ({
+    id: json.id || 'usr_me',
+    ...json
+}));
 const mockApplyUser = vi.fn((json) => ({ ...json }));
 const mockApplyWorld = vi.fn((json) => ({ ...json }));
 
@@ -91,5 +94,4 @@ describe('entity mutation query sync', () => {
             })
         );
     });
-
 });

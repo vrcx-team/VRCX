@@ -44,10 +44,19 @@ describe('useSearchUser', () => {
 
     it('passes page direction into handleMoreSearchUser', async () => {
         const api = useSearchUser();
-        api.searchUserParams.value = { n: 10, offset: 10, search: 'Alice', customFields: 'displayName', sort: 'relevance' };
+        api.searchUserParams.value = {
+            n: 10,
+            offset: 10,
+            search: 'Alice',
+            customFields: 'displayName',
+            sort: 'relevance'
+        };
 
         await api.handleMoreSearchUser(-1);
 
-        expect(mocks.moreSearchUser).toHaveBeenCalledWith(-1, api.searchUserParams.value);
+        expect(mocks.moreSearchUser).toHaveBeenCalledWith(
+            -1,
+            api.searchUserParams.value
+        );
     });
 });

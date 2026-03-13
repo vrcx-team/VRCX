@@ -326,9 +326,7 @@
         const dashboard = await dashboardStore.createDashboard(t('dashboard.default_name'));
         const dashboardKey = `${DASHBOARD_NAV_KEY_PREFIX}${dashboard.id}`;
         const currentLayout = [...navLayout.value];
-        const directAccessIdx = currentLayout.findIndex(
-            (entry) => entry.type === 'item' && entry.key === 'direct-access'
-        );
+        const directAccessIdx = currentLayout.findIndex((entry) => entry.type === 'item' && entry.key === 'direct-access');
         const newEntry = { type: 'item', key: dashboardKey };
         if (directAccessIdx !== -1) {
             currentLayout.splice(directAccessIdx, 0, newEntry);

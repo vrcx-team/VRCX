@@ -88,13 +88,8 @@
 
     const { t } = useI18n();
 
-    const {
-        favoriteWorlds,
-        favoriteWorldGroups,
-        localWorldFavorites,
-        localWorldFavoritesList,
-        localWorldFavoriteGroups
-    } = storeToRefs(useFavoriteStore());
+    const { favoriteWorlds, favoriteWorldGroups, localWorldFavorites, localWorldFavoritesList, localWorldFavoriteGroups } =
+        storeToRefs(useFavoriteStore());
     const { localWorldFavGroupLength } = useFavoriteStore();
     const { cachedWorlds } = useWorldStore();
 

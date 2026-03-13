@@ -19,8 +19,7 @@ vi.mock('../../stores', () => ({
 vi.mock('../../coordinators/favoriteCoordinator', () => ({
     handleFavoriteAdd: (...args) => mockHandleFavoriteAdd(...args),
     handleFavoriteDelete: (...args) => mockHandleFavoriteDelete(...args),
-    handleFavoriteGroupClear: (...args) =>
-        mockHandleFavoriteGroupClear(...args)
+    handleFavoriteGroupClear: (...args) => mockHandleFavoriteGroupClear(...args)
 }));
 
 vi.mock('../../queries', () => ({
@@ -39,7 +38,10 @@ describe('favorite query sync', () => {
     test('favorite mutations invalidate active favorite queries', async () => {
         mockRequest.mockResolvedValue({ ok: true });
 
-        await favoriteRequest.addFavorite({ type: 'world', favoriteId: 'wrld_1' });
+        await favoriteRequest.addFavorite({
+            type: 'world',
+            favoriteId: 'wrld_1'
+        });
         await favoriteRequest.deleteFavorite({ objectId: 'fav_1' });
         await favoriteRequest.saveFavoriteGroup({
             type: 'world',

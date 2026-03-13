@@ -24,8 +24,10 @@ vi.mock('vue-i18n', () => ({
 
 vi.mock('../../../../stores', () => ({
     useAvatarProviderStore: () => ({
-        avatarRemoteDatabaseProviderList: mocks.avatarRemoteDatabaseProviderList,
-        saveAvatarProviderList: (...args) => mocks.saveAvatarProviderList(...args),
+        avatarRemoteDatabaseProviderList:
+            mocks.avatarRemoteDatabaseProviderList,
+        saveAvatarProviderList: (...args) =>
+            mocks.saveAvatarProviderList(...args),
         removeAvatarProvider: (...args) => mocks.removeAvatarProvider(...args)
     })
 }));
@@ -48,7 +50,8 @@ vi.mock('@/components/ui/dialog', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template: '<button data-testid="add-provider" @click="$emit(\'click\')"><slot /></button>'
+        template:
+            '<button data-testid="add-provider" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -67,7 +70,8 @@ vi.mock('@/components/ui/input-group', () => ({
 vi.mock('lucide-vue-next', () => ({
     Trash2: {
         emits: ['click'],
-        template: '<button data-testid="trash" @click="$emit(\'click\')">trash</button>'
+        template:
+            '<button data-testid="trash" @click="$emit(\'click\')">trash</button>'
     }
 }));
 
@@ -84,7 +88,10 @@ function mountComponent(props = {}) {
 
 describe('AvatarProviderDialog.vue', () => {
     beforeEach(() => {
-        mocks.avatarRemoteDatabaseProviderList.value = ['https://a.example', 'https://b.example'];
+        mocks.avatarRemoteDatabaseProviderList.value = [
+            'https://a.example',
+            'https://b.example'
+        ];
         mocks.saveAvatarProviderList.mockReset();
         mocks.removeAvatarProvider.mockReset();
     });
@@ -101,7 +108,9 @@ describe('AvatarProviderDialog.vue', () => {
 
         await wrapper.get('[data-testid="close-dialog"]').trigger('click');
 
-        expect(wrapper.emitted('update:isAvatarProviderDialogVisible')).toEqual([[false]]);
+        expect(wrapper.emitted('update:isAvatarProviderDialogVisible')).toEqual(
+            [[false]]
+        );
     });
 
     test('adds empty provider entry when add button clicked', async () => {
@@ -122,7 +131,9 @@ describe('AvatarProviderDialog.vue', () => {
         const input = wrapper.findAll('[data-testid="provider-input"]')[0];
         await input.setValue('https://updated.example');
 
-        expect(mocks.avatarRemoteDatabaseProviderList.value[0]).toBe('https://updated.example');
+        expect(mocks.avatarRemoteDatabaseProviderList.value[0]).toBe(
+            'https://updated.example'
+        );
         expect(mocks.saveAvatarProviderList).toHaveBeenCalledTimes(1);
     });
 
@@ -131,6 +142,8 @@ describe('AvatarProviderDialog.vue', () => {
 
         await wrapper.findAll('[data-testid="trash"]')[1].trigger('click');
 
-        expect(mocks.removeAvatarProvider).toHaveBeenCalledWith('https://b.example');
+        expect(mocks.removeAvatarProvider).toHaveBeenCalledWith(
+            'https://b.example'
+        );
     });
 });

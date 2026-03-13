@@ -28,7 +28,9 @@ vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
 vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
 vi.mock('../../../../../stores', () => ({
     useDiscordPresenceSettingsStore: () => mocks.discordStore,
-    useAdvancedSettingsStore: () => ({ showVRChatConfig: (...a) => mocks.showVRChatConfig(...a) })
+    useAdvancedSettingsStore: () => ({
+        showVRChatConfig: (...a) => mocks.showVRChatConfig(...a)
+    })
 }));
 
 vi.mock('../../SimpleSwitch.vue', () => ({
@@ -56,7 +58,13 @@ describe('DiscordPresenceTab.vue', () => {
 
         const tooltipRow = wrapper
             .findAll('div.options-container-item')
-            .find((node) => node.text().includes('view.settings.discord_presence.discord_presence.enable_tooltip'));
+            .find((node) =>
+                node
+                    .text()
+                    .includes(
+                        'view.settings.discord_presence.discord_presence.enable_tooltip'
+                    )
+            );
         await tooltipRow.trigger('click');
 
         expect(mocks.showVRChatConfig).toHaveBeenCalledTimes(1);

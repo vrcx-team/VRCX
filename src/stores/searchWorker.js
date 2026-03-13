@@ -124,12 +124,12 @@ function isPrefixMatch(name, query, comparer) {
 
 // ── Index data (updated from main thread) ───────────────────────────
 
-let indexedFriends = [];    // { id, name, memo, note, imageUrl }
-let indexedAvatars = [];    // { id, name, authorId, imageUrl }
-let indexedWorlds = [];     // { id, name, authorId, imageUrl }
-let indexedGroups = [];     // { id, name, ownerId, imageUrl }
+let indexedFriends = []; // { id, name, memo, note, imageUrl }
+let indexedAvatars = []; // { id, name, authorId, imageUrl }
+let indexedWorlds = []; // { id, name, authorId, imageUrl }
+let indexedGroups = []; // { id, name, ownerId, imageUrl }
 let indexedFavAvatars = []; // { id, name, imageUrl }
-let indexedFavWorlds = [];  // { id, name, imageUrl }
+let indexedFavWorlds = []; // { id, name, imageUrl }
 
 /**
  * Update the search index with fresh data snapshots.
@@ -181,7 +181,15 @@ function searchFriends(query, comparer, limit = 10) {
     return results;
 }
 
-function searchItems(query, items, type, comparer, ownerKey, ownerId, limit = 10) {
+function searchItems(
+    query,
+    items,
+    type,
+    comparer,
+    ownerKey,
+    ownerId,
+    limit = 10
+) {
     const results = [];
     for (const ref of items) {
         if (!ref || !ref.name) continue;
@@ -226,18 +234,60 @@ function handleSearch(payload) {
         return;
     }
 
-    const comparer = new Intl.Collator(
-        (language || 'en').replace('_', '-'),
-        { usage: 'search', sensitivity: 'base' }
-    );
+    const comparer = new Intl.Collator((language || 'en').replace('_', '-'), {
+        usage: 'search',
+        sensitivity: 'base'
+    });
 
     const friends = searchFriends(query, comparer);
-    const ownAvatars = searchItems(query, indexedAvatars, 'avatar', comparer, 'authorId', currentUserId);
-    const favAvatars = searchItems(query, indexedFavAvatars, 'avatar', comparer, null, null);
-    const ownWorlds = searchItems(query, indexedWorlds, 'world', comparer, 'authorId', currentUserId);
-    const favWorlds = searchItems(query, indexedFavWorlds, 'world', comparer, null, null);
-    const ownGroups = searchItems(query, indexedGroups, 'group', comparer, 'ownerId', currentUserId);
-    const joinedGroups = searchItems(query, indexedGroups, 'group', comparer, null, null);
+    const ownAvatars = searchItems(
+        query,
+        indexedAvatars,
+        'avatar',
+        comparer,
+        'authorId',
+        currentUserId
+    );
+    const favAvatars = searchItems(
+        query,
+        indexedFavAvatars,
+        'avatar',
+        comparer,
+        null,
+        null
+    );
+    const ownWorlds = searchItems(
+        query,
+        indexedWorlds,
+        'world',
+        comparer,
+        'authorId',
+        currentUserId
+    );
+    const favWorlds = searchItems(
+        query,
+        indexedFavWorlds,
+        'world',
+        comparer,
+        null,
+        null
+    );
+    const ownGroups = searchItems(
+        query,
+        indexedGroups,
+        'group',
+        comparer,
+        'ownerId',
+        currentUserId
+    );
+    const joinedGroups = searchItems(
+        query,
+        indexedGroups,
+        'group',
+        comparer,
+        null,
+        null
+    );
 
     // Deduplicate favorites against own
     const ownAvatarIds = new Set(ownAvatars.map((r) => r.id));
@@ -245,7 +295,9 @@ function handleSearch(payload) {
     const ownWorldIds = new Set(ownWorlds.map((r) => r.id));
     const dedupedFavWorlds = favWorlds.filter((r) => !ownWorldIds.has(r.id));
     const ownGroupIds = new Set(ownGroups.map((r) => r.id));
-    const dedupedJoinedGroups = joinedGroups.filter((r) => !ownGroupIds.has(r.id));
+    const dedupedJoinedGroups = joinedGroups.filter(
+        (r) => !ownGroupIds.has(r.id)
+    );
 
     self.postMessage({
         type: 'searchResult',

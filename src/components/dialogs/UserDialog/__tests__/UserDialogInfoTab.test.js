@@ -6,7 +6,8 @@ vi.mock('vue-i18n', () => ({
     useI18n: () => {
         const { ref } = require('vue');
         return {
-            t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
+            t: (key, params) =>
+                params ? `${key}:${JSON.stringify(params)}` : key,
             locale: ref('en')
         };
     },
@@ -242,7 +243,9 @@ describe('UserDialogInfoTab.vue', () => {
         test('renders imported InstanceActionBar and Spinner components when conditions are met', () => {
             const wrapper = mountComponent();
 
-            expect(wrapper.find('instance-action-bar-stub').exists()).toBe(true);
+            expect(wrapper.find('instance-action-bar-stub').exists()).toBe(
+                true
+            );
             expect(wrapper.find('spinner-stub').exists()).toBe(true);
         });
     });

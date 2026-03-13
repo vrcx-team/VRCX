@@ -50,10 +50,18 @@ const showAvatarDialog = vi.fn();
 const showWorldDialog = vi.fn();
 const showGroupDialog = vi.fn();
 
-vi.mock('../../coordinators/userCoordinator', () => ({ showUserDialog: (...args) => showUserDialog(...args) }));
-vi.mock('../../coordinators/avatarCoordinator', () => ({ showAvatarDialog: (...args) => showAvatarDialog(...args) }));
-vi.mock('../../coordinators/worldCoordinator', () => ({ showWorldDialog: (...args) => showWorldDialog(...args) }));
-vi.mock('../../coordinators/groupCoordinator', () => ({ showGroupDialog: (...args) => showGroupDialog(...args) }));
+vi.mock('../../coordinators/userCoordinator', () => ({
+    showUserDialog: (...args) => showUserDialog(...args)
+}));
+vi.mock('../../coordinators/avatarCoordinator', () => ({
+    showAvatarDialog: (...args) => showAvatarDialog(...args)
+}));
+vi.mock('../../coordinators/worldCoordinator', () => ({
+    showWorldDialog: (...args) => showWorldDialog(...args)
+}));
+vi.mock('../../coordinators/groupCoordinator', () => ({
+    showGroupDialog: (...args) => showGroupDialog(...args)
+}));
 
 import { useGlobalSearchStore } from '../globalSearch';
 
@@ -104,7 +112,10 @@ describe('useGlobalSearchStore', () => {
         });
         expect(store.friendResults).toEqual([]);
 
-        mocks.friendStore.friends.set('usr_new', { id: 'usr_new', ref: { id: 'usr_new' } });
+        mocks.friendStore.friends.set('usr_new', {
+            id: 'usr_new',
+            ref: { id: 'usr_new' }
+        });
         worker.emit({
             type: 'searchResult',
             payload: {

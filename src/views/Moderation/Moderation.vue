@@ -124,9 +124,7 @@
         const data = playerModerationTable.value.data;
         const typeFilter = playerModerationTable.value.filters?.[0]?.value ?? [];
         const searchFilter = playerModerationTable.value.filters?.[1]?.value ?? '';
-        const typeSet = Array.isArray(typeFilter)
-            ? new Set(typeFilter.map((value) => String(value).toLowerCase()))
-            : null;
+        const typeSet = Array.isArray(typeFilter) ? new Set(typeFilter.map((value) => String(value).toLowerCase())) : null;
         const searchValue = String(searchFilter).trim().toLowerCase();
 
         return data.filter((row) => {

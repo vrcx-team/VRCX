@@ -241,7 +241,6 @@ export const useGlobalSearchStore = defineStore('GlobalSearch', () => {
         joinedGroupResults.value = [];
     }
 
-
     function open() {
         sendIndexUpdate();
         isOpen.value = true;

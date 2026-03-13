@@ -553,9 +553,7 @@
         if (!activeRemoteGroup.value || !currentFriendFavorites.value.length) {
             return false;
         }
-        return currentFriendFavorites.value
-            .map((fav) => fav.id)
-            .every((id) => selectedFavoriteFriends.value.includes(id));
+        return currentFriendFavorites.value.map((fav) => fav.id).every((id) => selectedFavoriteFriends.value.includes(id));
     });
 
     watch(

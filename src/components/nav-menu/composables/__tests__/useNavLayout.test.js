@@ -71,7 +71,10 @@ describe('useNavLayout', () => {
 
         triggerNavAction({ routeName: 'dashboard', routeParams: { id: '1' } });
 
-        expect(deps.push).toHaveBeenCalledWith({ name: 'dashboard', params: { id: '1' } });
+        expect(deps.push).toHaveBeenCalledWith({
+            name: 'dashboard',
+            params: { id: '1' }
+        });
     });
 
     it('applies custom layout and persists', async () => {

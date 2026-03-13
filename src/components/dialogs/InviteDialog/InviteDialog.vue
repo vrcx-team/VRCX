@@ -174,11 +174,7 @@
             });
         };
 
-        addFriendGroup(
-            'friendsInInstance',
-            t('dialog.invite.friends_in_instance'),
-            props.inviteDialog?.friendsInInstance
-        );
+        addFriendGroup('friendsInInstance', t('dialog.invite.friends_in_instance'), props.inviteDialog?.friendsInInstance);
         addFriendGroup('vip', t('side_panel.favorite'), vipFriends.value);
         addFriendGroup('online', t('side_panel.online'), onlineFriends.value);
         addFriendGroup('active', t('side_panel.active'), activeFriends.value);

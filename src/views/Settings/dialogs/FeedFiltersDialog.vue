@@ -111,9 +111,7 @@
     });
 
     const currentSharedFeedFilters = computed(() => {
-        return props.feedFiltersDialogMode === 'noty'
-            ? sharedFeedFilters.value['noty']
-            : sharedFeedFilters.value['wrist'];
+        return props.feedFiltersDialogMode === 'noty' ? sharedFeedFilters.value['noty'] : sharedFeedFilters.value['wrist'];
     });
 
     const dialogTitle = computed(() => {

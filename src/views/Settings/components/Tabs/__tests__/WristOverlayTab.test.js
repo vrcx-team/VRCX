@@ -12,7 +12,8 @@ vi.mock('../../WristOverlaySettings.vue', () => ({
 vi.mock('../../../dialogs/FeedFiltersDialog.vue', () => ({
     default: {
         props: ['feedFiltersDialogMode'],
-        template: '<div data-testid="feed-dialog" :data-mode="feedFiltersDialogMode" />'
+        template:
+            '<div data-testid="feed-dialog" :data-mode="feedFiltersDialogMode" />'
     }
 }));
 
@@ -22,10 +23,14 @@ describe('WristOverlayTab.vue', () => {
     it('sets feed dialog mode to wrist when child emits open-feed-filters', async () => {
         const wrapper = mount(WristOverlayTab);
 
-        expect(wrapper.get('[data-testid="feed-dialog"]').attributes('data-mode')).toBe('');
+        expect(
+            wrapper.get('[data-testid="feed-dialog"]').attributes('data-mode')
+        ).toBe('');
 
         await wrapper.get('[data-testid="open-filters"]').trigger('click');
 
-        expect(wrapper.get('[data-testid="feed-dialog"]').attributes('data-mode')).toBe('wrist');
+        expect(
+            wrapper.get('[data-testid="feed-dialog"]').attributes('data-mode')
+        ).toBe('wrist');
     });
 });

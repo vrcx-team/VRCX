@@ -39,7 +39,9 @@ vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
 vi.mock('../../../../stores', () => ({
     useNotificationsSettingsStore: () => mocks.notificationsStore,
     useWristOverlaySettingsStore: () => mocks.wristStore,
-    useVrStore: () => ({ saveOpenVROption: (...a) => mocks.saveOpenVROption(...a) })
+    useVrStore: () => ({
+        saveOpenVROption: (...a) => mocks.saveOpenVROption(...a)
+    })
 }));
 
 vi.mock('@/components/ui/button', () => ({

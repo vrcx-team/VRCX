@@ -41,7 +41,9 @@ describe('useFavoritesSplitter', () => {
 
     it('persists layout size while dragging', () => {
         const api = mountComposable();
-        api.splitterGroupRef.value = { getBoundingClientRect: () => ({ width: 1200 }) };
+        api.splitterGroupRef.value = {
+            getBoundingClientRect: () => ({ width: 1200 })
+        };
 
         api.setDragging(true);
         api.handleLayout([25, 75]);
@@ -52,7 +54,9 @@ describe('useFavoritesSplitter', () => {
 
     it('ignores layout updates when not dragging', () => {
         const api = mountComposable();
-        api.splitterGroupRef.value = { getBoundingClientRect: () => ({ width: 1200 }) };
+        api.splitterGroupRef.value = {
+            getBoundingClientRect: () => ({ width: 1200 })
+        };
 
         api.handleLayout([20, 80]);
 

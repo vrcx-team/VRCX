@@ -7,7 +7,11 @@ const mocks = vi.hoisted(() => ({
     showLaunchDialog: vi.fn(),
     showGroupDialog: vi.fn(),
     getGroupName: vi.fn(() => Promise.resolve('Fetched Group')),
-    parseLocation: vi.fn(() => ({ isRealInstance: true, tag: 'wrld_1:inst_1', groupId: 'grp_1' }))
+    parseLocation: vi.fn(() => ({
+        isRealInstance: true,
+        tag: 'wrld_1:inst_1',
+        groupId: 'grp_1'
+    }))
 }));
 
 vi.mock('pinia', async (importOriginal) => {
@@ -102,13 +106,19 @@ describe('LocationWorld.vue', () => {
         mocks.showGroupDialog.mockClear();
         mocks.getGroupName.mockClear();
         mocks.parseLocation.mockClear();
-        mocks.parseLocation.mockImplementation(() => ({ isRealInstance: true, tag: 'wrld_1:inst_1', groupId: 'grp_1' }));
+        mocks.parseLocation.mockImplementation(() => ({
+            isRealInstance: true,
+            tag: 'wrld_1:inst_1',
+            groupId: 'grp_1'
+        }));
     });
 
     it('renders translated access type and instance name', () => {
         const wrapper = mountComponent();
 
-        expect(wrapper.text()).toContain('dialog.world.instance.friends #Instance Name');
+        expect(wrapper.text()).toContain(
+            'dialog.world.instance.friends #Instance Name'
+        );
         expect(wrapper.find('.flags.eu').exists()).toBe(true);
     });
 
@@ -119,7 +129,10 @@ describe('LocationWorld.vue', () => {
 
         await wrapper.findAll('.cursor-pointer')[0].trigger('click');
 
-        expect(mocks.showLaunchDialog).toHaveBeenCalledWith('wrld_1:inst_1', 'short-1');
+        expect(mocks.showLaunchDialog).toHaveBeenCalledWith(
+            'wrld_1:inst_1',
+            'short-1'
+        );
     });
 
     it('shows group hint and opens group dialog', async () => {

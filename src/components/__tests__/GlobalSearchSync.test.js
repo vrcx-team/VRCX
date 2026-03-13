@@ -12,7 +12,10 @@ const mocks = vi.hoisted(() => ({
         }
     },
     filterState: null,
-    allItemsEntries: [['a', {}], ['b', {}]],
+    allItemsEntries: [
+        ['a', {}],
+        ['b', {}]
+    ],
     allGroupsEntries: [['g1', {}]]
 }));
 

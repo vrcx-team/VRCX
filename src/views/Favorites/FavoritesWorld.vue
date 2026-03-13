@@ -694,9 +694,7 @@
         if (!activeRemoteGroup.value || !currentRemoteFavorites.value.length) {
             return false;
         }
-        return currentRemoteFavorites.value
-            .map((fav) => fav.id)
-            .every((id) => selectedFavoriteWorlds.value.includes(id));
+        return currentRemoteFavorites.value.map((fav) => fav.id).every((id) => selectedFavoriteWorlds.value.includes(id));
     });
 
     watch(
@@ -838,7 +836,7 @@
         modalStore
             .confirm({
                 description: `Are you sure you want to unfavorite ${total} favorites?
-            This action cannot be undone.`,
+                This action cannot be undone.`,
                 title: `Delete ${total} favorites?`
             })
             .then(({ ok }) => {

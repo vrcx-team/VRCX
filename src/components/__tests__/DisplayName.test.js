@@ -2,7 +2,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 
 const mocks = vi.hoisted(() => ({
-    fetch: vi.fn(() => Promise.resolve({ json: { displayName: 'Fetched User' } })),
+    fetch: vi.fn(() =>
+        Promise.resolve({ json: { displayName: 'Fetched User' } })
+    ),
     showUserDialog: vi.fn()
 }));
 
@@ -52,7 +54,9 @@ describe('DisplayName.vue', () => {
 
         await flush();
 
-        expect(mocks.fetch).toHaveBeenCalledWith('user.dialog', { userId: 'usr_2' });
+        expect(mocks.fetch).toHaveBeenCalledWith('user.dialog', {
+            userId: 'usr_2'
+        });
         expect(wrapper.text()).toBe('Fetched User');
     });
 

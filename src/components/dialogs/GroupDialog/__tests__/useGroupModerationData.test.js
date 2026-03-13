@@ -4,12 +4,11 @@ import { describe, expect, test, vi, beforeEach } from 'vitest';
 vi.mock('vue-sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
-    ,
-            locale: require('vue').ref('en')
-        }),
+        t: (key) => key,
+        locale: require('vue').ref('en')
+    }),
     createI18n: () => ({
-        global: { t: (key) => key , locale: require('vue').ref('en') },
+        global: { t: (key) => key, locale: require('vue').ref('en') },
         install: vi.fn()
     })
 }));
@@ -95,11 +94,19 @@ import { queryRequest } from '../../../../api';
 function createTables() {
     return {
         members: reactive({ data: [], pageSize: 15 }),
-        bans: reactive({ data: [], filters: [{ prop: ['$displayName'], value: '' }], pageSize: 15 }),
+        bans: reactive({
+            data: [],
+            filters: [{ prop: ['$displayName'], value: '' }],
+            pageSize: 15
+        }),
         invites: reactive({ data: [], pageSize: 15 }),
         joinRequests: reactive({ data: [], pageSize: 15 }),
         blocked: reactive({ data: [], pageSize: 15 }),
-        logs: reactive({ data: [], filters: [{ prop: ['description'], value: '' }], pageSize: 15 })
+        logs: reactive({
+            data: [],
+            filters: [{ prop: ['description'], value: '' }],
+            pageSize: 15
+        })
     };
 }
 
@@ -167,11 +174,19 @@ describe('useGroupModerationData', () => {
                 userId: `usr_${i}`,
                 user: { displayName: `User${i}` }
             }));
-            const page2 = [{ userId: 'usr_100', user: { displayName: 'User100' } }];
+            const page2 = [
+                { userId: 'usr_100', user: { displayName: 'User100' } }
+            ];
 
             deps.groupRequest.getGroupBans
-                .mockResolvedValueOnce({ json: page1, params: { groupId: 'grp_test' } })
-                .mockResolvedValueOnce({ json: page2, params: { groupId: 'grp_test' } });
+                .mockResolvedValueOnce({
+                    json: page1,
+                    params: { groupId: 'grp_test' }
+                })
+                .mockResolvedValueOnce({
+                    json: page2,
+                    params: { groupId: 'grp_test' }
+                });
 
             const { getAllGroupBans } = useGroupModerationData(deps);
             await getAllGroupBans('grp_test');
@@ -198,12 +213,17 @@ describe('useGroupModerationData', () => {
         test('handles API error gracefully', async () => {
             const { toast } = await import('vue-sonner');
             const deps = createDeps();
-            deps.groupRequest.getGroupBans.mockRejectedValue(new Error('Network error'));
+            deps.groupRequest.getGroupBans.mockRejectedValue(
+                new Error('Network error')
+            );
 
-            const { getAllGroupBans, isGroupMembersLoading } = useGroupModerationData(deps);
+            const { getAllGroupBans, isGroupMembersLoading } =
+                useGroupModerationData(deps);
             await getAllGroupBans('grp_test');
 
-            expect(toast.error).toHaveBeenCalledWith('Failed to get group bans');
+            expect(toast.error).toHaveBeenCalledWith(
+                'Failed to get group bans'
+            );
             expect(isGroupMembersLoading.value).toBe(false);
         });
 
@@ -213,10 +233,16 @@ describe('useGroupModerationData', () => {
                 userId: `usr_${i}`
             }));
             deps.groupRequest.getGroupBans
-                .mockResolvedValueOnce({ json: page1, params: { groupId: 'grp_test' } })
+                .mockResolvedValueOnce({
+                    json: page1,
+                    params: { groupId: 'grp_test' }
+                })
                 .mockImplementation(() => {
                     deps.groupMemberModeration.value.visible = false;
-                    return Promise.resolve({ json: [{ userId: 'usr_extra' }], params: { groupId: 'grp_test' } });
+                    return Promise.resolve({
+                        json: [{ userId: 'usr_extra' }],
+                        params: { groupId: 'grp_test' }
+                    });
                 });
 
             const { getAllGroupBans } = useGroupModerationData(deps);
@@ -254,7 +280,10 @@ describe('useGroupModerationData', () => {
             });
 
             const { getAllGroupLogs } = useGroupModerationData(deps);
-            await getAllGroupLogs('grp_test', ['group.member.ban', 'group.member.kick']);
+            await getAllGroupLogs('grp_test', [
+                'group.member.ban',
+                'group.member.kick'
+            ]);
 
             expect(deps.groupRequest.getGroupLogs).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -281,7 +310,8 @@ describe('useGroupModerationData', () => {
                     params: { groupId: 'grp_test' }
                 });
 
-            const { getAllGroupInvitesAndJoinRequests } = useGroupModerationData(deps);
+            const { getAllGroupInvitesAndJoinRequests } =
+                useGroupModerationData(deps);
             await getAllGroupInvitesAndJoinRequests('grp_test');
 
             expect(deps.tables.invites.data).toHaveLength(1);
@@ -294,7 +324,10 @@ describe('useGroupModerationData', () => {
         test('parses multiple user IDs from input', async () => {
             const deps = createDeps();
             deps.groupRequest.getGroupMember.mockResolvedValue({
-                json: { userId: 'usr_aaaa1111-2222-3333-4444-555566667777', user: { displayName: 'A' } },
+                json: {
+                    userId: 'usr_aaaa1111-2222-3333-4444-555566667777',
+                    user: { displayName: 'A' }
+                },
                 params: {}
             });
 
@@ -344,7 +377,10 @@ describe('useGroupModerationData', () => {
             const { addGroupMemberToSelection } = useGroupModerationData(deps);
             await addGroupMemberToSelection('usr_1');
 
-            expect(deps.selection.setSelectedUsers).toHaveBeenCalledWith('usr_1', member);
+            expect(deps.selection.setSelectedUsers).toHaveBeenCalledWith(
+                'usr_1',
+                member
+            );
             expect(queryRequest.fetch).not.toHaveBeenCalled();
         });
 
@@ -362,11 +398,16 @@ describe('useGroupModerationData', () => {
             const { addGroupMemberToSelection } = useGroupModerationData(deps);
             await addGroupMemberToSelection('usr_1');
 
-            expect(queryRequest.fetch).toHaveBeenCalledWith('user.dialog', { userId: 'usr_1' });
-            expect(deps.selection.setSelectedUsers).toHaveBeenCalledWith('usr_1', expect.objectContaining({
-                userId: 'usr_1',
-                displayName: 'Alice'
-            }));
+            expect(queryRequest.fetch).toHaveBeenCalledWith('user.dialog', {
+                userId: 'usr_1'
+            });
+            expect(deps.selection.setSelectedUsers).toHaveBeenCalledWith(
+                'usr_1',
+                expect.objectContaining({
+                    userId: 'usr_1',
+                    displayName: 'Alice'
+                })
+            );
         });
     });
 
@@ -395,7 +436,8 @@ describe('useGroupModerationData', () => {
             const deps = createDeps();
             deps.tables.members.data = [{ userId: 'usr_1' }];
 
-            const { groupMembersSearch, memberSearch, isGroupMembersLoading } = useGroupModerationData(deps);
+            const { groupMembersSearch, memberSearch, isGroupMembersLoading } =
+                useGroupModerationData(deps);
             memberSearch.value = 'ab';
             groupMembersSearch();
 
@@ -405,9 +447,13 @@ describe('useGroupModerationData', () => {
 
         test('setGroupMemberSortOrder does nothing when sort is the same', async () => {
             const deps = createDeps();
-            deps.groupRequest.getGroupMember.mockResolvedValue({ json: null, params: {} });
+            deps.groupRequest.getGroupMember.mockResolvedValue({
+                json: null,
+                params: {}
+            });
 
-            const { setGroupMemberSortOrder, memberSortOrder } = useGroupModerationData(deps);
+            const { setGroupMemberSortOrder, memberSortOrder } =
+                useGroupModerationData(deps);
             const currentSort = memberSortOrder.value;
             await setGroupMemberSortOrder(currentSort);
 
@@ -418,7 +464,8 @@ describe('useGroupModerationData', () => {
         test('setGroupMemberFilter does nothing when filter is the same', async () => {
             const deps = createDeps();
 
-            const { setGroupMemberFilter, memberFilter } = useGroupModerationData(deps);
+            const { setGroupMemberFilter, memberFilter } =
+                useGroupModerationData(deps);
             const currentFilter = memberFilter.value;
             await setGroupMemberFilter(currentFilter);
 
@@ -429,7 +476,8 @@ describe('useGroupModerationData', () => {
     describe('loadAllGroupMembers', () => {
         test('does nothing when already loading', async () => {
             const deps = createDeps();
-            const { loadAllGroupMembers, isGroupMembersLoading } = useGroupModerationData(deps);
+            const { loadAllGroupMembers, isGroupMembersLoading } =
+                useGroupModerationData(deps);
             isGroupMembersLoading.value = true;
 
             await loadAllGroupMembers();
