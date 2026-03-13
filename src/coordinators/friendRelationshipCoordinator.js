@@ -141,7 +141,7 @@ export function addFriendship(id) {
                     displayName: ref.displayName,
                     friendNumber: ref.$friendNumber
                 };
-                friendLogTable.value.data.push(friendLogHistory);
+                friendLogTable.data.push(friendLogHistory);
                 database.addFriendLogHistory(friendLogHistory);
                 notificationStore.queueFriendLogNoty(friendLogHistory);
                 sharedFeedStore.addEntry(friendLogHistory);
@@ -202,7 +202,7 @@ export function updateFriendship(ref) {
                 previousDisplayName: ctx.displayName,
                 friendNumber: ref.$friendNumber
             };
-            friendLogTable.value.data.push(friendLogHistoryDisplayName);
+            friendLogTable.data.push(friendLogHistoryDisplayName);
             database.addFriendLogHistory(friendLogHistoryDisplayName);
             notificationStore.queueFriendLogNoty(friendLogHistoryDisplayName);
             sharedFeedStore.addEntry(friendLogHistoryDisplayName);
@@ -248,7 +248,7 @@ export function updateFriendship(ref) {
             previousTrustLevel: ctx.trustLevel,
             friendNumber: ref.$friendNumber
         };
-        friendLogTable.value.data.push(friendLogHistoryTrustLevel);
+        friendLogTable.data.push(friendLogHistoryTrustLevel);
         database.addFriendLogHistory(friendLogHistoryTrustLevel);
         notificationStore.queueFriendLogNoty(friendLogHistoryTrustLevel);
         sharedFeedStore.addEntry(friendLogHistoryTrustLevel);
@@ -368,7 +368,7 @@ export function runDeleteFriendshipFlow(
                     userId: id,
                     displayName: ctx.displayName || id
                 };
-                friendLogTable.value.data.push(friendLogHistory);
+                friendLogTable.data.push(friendLogHistory);
                 database.addFriendLogHistory(friendLogHistory);
                 notificationStore.queueFriendLogNoty(friendLogHistory);
                 sharedFeedStore.addEntry(friendLogHistory);
