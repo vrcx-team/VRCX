@@ -6,46 +6,70 @@
             route-name="feed" />
 
         <div class="min-h-0 flex-1 overflow-y-auto" ref="listRef">
-            <template v-if="filteredData.length">
-                <div
-                    v-for="(item, index) in filteredData"
-                    :key="`${item.type}-${item.created_at}-${index}`"
-                    class="flex items-center gap-1.5 border-b border-border/30 px-2.5 py-0.75 text-[13px] leading-snug hover:bg-accent/50"
-                    :class="{ 'border-l-2 border-l-chart-4': item.isFavorite }">
-                    <span class="shrink-0 text-[11px] tabular-nums text-muted-foreground">{{ formatTime(item.created_at) }}</span>
-
-                    <template v-if="item.type === 'GPS'">
-                        <span class="shrink-0 max-w-[140px] cursor-pointer truncate font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
-                        <span class="truncate text-muted-foreground">→ {{ item.worldName || t('dashboard.widget.unknown_world') }}</span>
-                    </template>
-                    <template v-else-if="item.type === 'Online'">
-                        <span class="shrink-0 max-w-[140px] cursor-pointer truncate font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
-                        <span class="truncate text-chart-2">{{ t('dashboard.widget.feed_online') }}</span>
-                        <span v-if="item.worldName" class="truncate text-muted-foreground">→ {{ item.worldName }}</span>
-                    </template>
-                    <template v-else-if="item.type === 'Offline'">
-                        <span class="shrink-0 max-w-[140px] cursor-pointer truncate font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
-                        <span class="truncate text-muted-foreground/60">{{ t('dashboard.widget.feed_offline') }}</span>
-                    </template>
-                    <template v-else-if="item.type === 'Status'">
-                        <span class="shrink-0 max-w-[140px] cursor-pointer truncate font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
-                        <i class="x-user-status" :class="statusClass(item.status)"></i>
-                        <span class="truncate text-muted-foreground">{{ item.statusDescription }}</span>
-                    </template>
-                    <template v-else-if="item.type === 'Avatar'">
-                        <span class="shrink-0 max-w-[140px] cursor-pointer truncate font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
-                        <span class="truncate text-muted-foreground">{{ t('dashboard.widget.feed_avatar') }} {{ item.avatarName }}</span>
-                    </template>
-                    <template v-else-if="item.type === 'Bio'">
-                        <span class="shrink-0 max-w-[140px] cursor-pointer truncate font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
-                        <span class="truncate text-muted-foreground">{{ t('dashboard.widget.feed_bio') }}</span>
-                    </template>
-                    <template v-else>
-                        <span class="shrink-0 max-w-[140px] cursor-pointer truncate font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
-                        <span class="truncate text-muted-foreground">{{ item.type }}</span>
-                    </template>
-                </div>
-            </template>
+            <Table v-if="filteredData.length" class="is-compact-table">
+                <TableBody>
+                    <TableRow
+                        v-for="(item, index) in filteredData"
+                        :key="`${item.type}-${item.created_at}-${index}`"
+                        class="cursor-default"
+                        :class="{ 'border-l-2 border-l-chart-4': item.isFavorite }">
+                        <TableCell class="w-14 text-[11px] tabular-nums text-muted-foreground">
+                            <TooltipWrapper :content="formatExactTime(item.created_at)" side="top">
+                                <span>{{ timeAgo(item.created_at) }}</span>
+                            </TooltipWrapper>
+                        </TableCell>
+                        <TableCell class="truncate">
+                            <template v-if="item.type === 'GPS'">
+                                <MapPin class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <span class="cursor-pointer font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                <span class="text-muted-foreground"> → </span>
+                                <Location
+                                    class="inline [&>div]:inline-flex"
+                                    :location="item.location"
+                                    :hint="item.worldName"
+                                    :grouphint="item.groupName"
+                                    disable-tooltip />
+                            </template>
+                            <template v-else-if="item.type === 'Online'">
+                                <i class="x-user-status online mr-1"></i>
+                                <span class="cursor-pointer font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                <template v-if="item.location">
+                                    <span class="text-muted-foreground"> → </span>
+                                    <Location
+                                        class="inline [&>div]:inline-flex"
+                                        :location="item.location"
+                                        :hint="item.worldName"
+                                        :grouphint="item.groupName"
+                                        disable-tooltip />
+                                </template>
+                            </template>
+                            <template v-else-if="item.type === 'Offline'">
+                                <i class="x-user-status mr-1"></i>
+                                <span class="cursor-pointer font-medium text-muted-foreground/70 hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                            </template>
+                            <template v-else-if="item.type === 'Status'">
+                                <i class="x-user-status mr-1" :class="statusClass(item.status)"></i>
+                                <span class="cursor-pointer font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                <span class="text-muted-foreground"> {{ item.statusDescription }}</span>
+                            </template>
+                            <template v-else-if="item.type === 'Avatar'">
+                                <Box class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <span class="cursor-pointer font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                <span class="text-muted-foreground"> → {{ item.avatarName }}</span>
+                            </template>
+                            <template v-else-if="item.type === 'Bio'">
+                                <Pencil class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <span class="cursor-pointer font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                <span class="ml-1 text-muted-foreground">{{ t('dashboard.widget.feed_bio') }}</span>
+                            </template>
+                            <template v-else>
+                                <span class="cursor-pointer font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                <span class="text-muted-foreground"> {{ item.type }}</span>
+                            </template>
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
             <div v-else class="flex h-full items-center justify-center text-[13px] text-muted-foreground">
                 {{ t('dashboard.widget.no_data') }}
             </div>
@@ -56,12 +80,17 @@
 <script setup>
     import { computed, ref } from 'vue';
     import { useI18n } from 'vue-i18n';
+    import { Box, MapPin, Pencil } from 'lucide-vue-next';
 
     import { statusClass } from '@/shared/utils/user';
+    import { timeToText, formatDateFilter } from '@/shared/utils';
     import { showUserDialog } from '@/coordinators/userCoordinator';
     import { useFeedStore } from '@/stores';
 
+    import Location from '@/components/Location.vue';
+    import { TooltipWrapper } from '@/components/ui/tooltip';
     import WidgetHeader from './WidgetHeader.vue';
+    import { Table, TableBody, TableRow, TableCell } from '@/components/ui/table';
 
     const FEED_TYPES = ['GPS', 'Online', 'Offline', 'Status', 'Avatar', 'Bio'];
 
@@ -85,15 +114,22 @@
 
     const filteredData = computed(() => {
         const filters = activeFilters.value;
-        return feedStore.feedTableData.filter((item) => filters.includes(item.type));
+        return feedStore.feedTableData.filter((item) => filters.includes(item.type)).slice(0, 100);
     });
 
-    function formatTime(dateStr) {
+    function timeAgo(dateStr) {
         if (!dateStr) return '';
-        const date = new Date(dateStr);
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        return `${hours}:${minutes}`;
+        let diff = Date.now() - new Date(dateStr).getTime();
+        if (diff < 0) return 'now';
+        // Over 1 hour: drop minutes
+        if (diff >= 3600000) {
+            diff = Math.floor(diff / 3600000) * 3600000;
+        }
+        return t('dashboard.widget.time_ago', { time: timeToText(diff) });
+    }
+
+    function formatExactTime(dateStr) {
+        return formatDateFilter(dateStr, 'long');
     }
 
     function openUser(userId) {

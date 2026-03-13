@@ -6,44 +6,65 @@
             route-name="game-log" />
 
         <div class="min-h-0 flex-1 overflow-y-auto">
-            <template v-if="filteredData.length">
-                <div
-                    v-for="(item, index) in filteredData"
-                    :key="`${item.type}-${item.created_at}-${index}`"
-                    class="flex items-center gap-1.5 border-b border-border/30 px-2.5 py-0.75 text-[13px] leading-snug hover:bg-accent/50"
-                    :class="{ 'border-l-2 border-l-chart-4': item.isFavorite }">
-                    <span class="shrink-0 text-[11px] tabular-nums text-muted-foreground">{{ formatTime(item.created_at) }}</span>
-
-                    <template v-if="item.type === 'Location'">
-                        <span class="truncate font-medium text-foreground">🌍 {{ item.worldName || item.location }}</span>
-                    </template>
-                    <template v-else-if="item.type === 'OnPlayerJoined'">
-                        <span class="shrink-0 font-semibold text-chart-2">→</span>
-                        <span
-                            class="shrink-0 max-w-[140px] cursor-pointer truncate font-medium hover:underline"
-                            :style="item.tagColour ? { color: item.tagColour } : null"
-                            @click="openUser(item.userId)">{{ item.displayName }}</span>
-                    </template>
-                    <template v-else-if="item.type === 'OnPlayerLeft'">
-                        <span class="shrink-0 font-semibold text-muted-foreground/60">←</span>
-                        <span
-                            class="shrink-0 max-w-[140px] cursor-pointer truncate font-medium hover:underline"
-                            :style="item.tagColour ? { color: item.tagColour } : null"
-                            @click="openUser(item.userId)">{{ item.displayName }}</span>
-                    </template>
-                    <template v-else-if="item.type === 'VideoPlay'">
-                        <span class="truncate text-muted-foreground">🎬 {{ item.videoName || item.videoUrl }}</span>
-                    </template>
-                    <template v-else-if="item.type === 'PortalSpawn'">
-                        <span class="shrink-0 max-w-[140px] cursor-pointer truncate font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
-                        <span class="truncate text-muted-foreground">🌀 {{ item.worldName || '' }}</span>
-                    </template>
-                    <template v-else>
-                        <span class="shrink-0 max-w-[140px] truncate font-medium">{{ item.displayName }}</span>
-                        <span class="truncate text-muted-foreground">{{ item.type }}</span>
-                    </template>
-                </div>
-            </template>
+            <Table v-if="filteredData.length" class="is-compact-table">
+                <TableBody>
+                    <TableRow
+                        v-for="(item, index) in filteredData"
+                        :key="`${item.type}-${item.created_at}-${index}`"
+                        class="cursor-default"
+                        :class="{ 'border-l-2 border-l-chart-4': item.isFavorite }">
+                        <TableCell class="w-14 text-[11px] tabular-nums text-muted-foreground">
+                            <TooltipWrapper :content="formatExactTime(item.created_at)" side="top">
+                                <span>{{ timeAgo(item.created_at) }}</span>
+                            </TooltipWrapper>
+                        </TableCell>
+                        <TableCell class="truncate">
+                            <template v-if="item.type === 'Location'">
+                                <Globe class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <Location
+                                    class="inline [&>div]:inline-flex"
+                                    :location="item.location"
+                                    :hint="item.worldName"
+                                    disable-tooltip />
+                            </template>
+                            <template v-else-if="item.type === 'OnPlayerJoined'">
+                                <i class="x-user-status online mr-1"></i>
+                                <span
+                                    class="cursor-pointer font-medium hover:underline"
+                                    :style="item.tagColour ? { color: item.tagColour } : null"
+                                    @click="openUser(item.userId)">{{ item.displayName }}</span>
+                            </template>
+                            <template v-else-if="item.type === 'OnPlayerLeft'">
+                                <i class="x-user-status mr-1"></i>
+                                <span
+                                    class="cursor-pointer font-medium text-muted-foreground/70 hover:underline"
+                                    :style="item.tagColour ? { color: item.tagColour } : null"
+                                    @click="openUser(item.userId)">{{ item.displayName }}</span>
+                            </template>
+                            <template v-else-if="item.type === 'VideoPlay'">
+                                <Video class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <span class="text-muted-foreground">{{ item.videoName || item.videoUrl }}</span>
+                            </template>
+                            <template v-else-if="item.type === 'PortalSpawn'">
+                                <Waypoints class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <span class="cursor-pointer font-medium hover:underline" @click="openUser(item.userId)">{{ item.displayName }}</span>
+                                <span class="text-muted-foreground"> → </span>
+                                <Location
+                                    v-if="item.location"
+                                    class="inline [&>div]:inline-flex"
+                                    :location="item.location"
+                                    :hint="item.worldName"
+                                    disable-tooltip />
+                                <span v-else class="text-muted-foreground">{{ item.worldName || '' }}</span>
+                            </template>
+                            <template v-else>
+                                <span class="font-medium">{{ item.displayName }}</span>
+                                <span class="text-muted-foreground"> {{ item.type }}</span>
+                            </template>
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
             <div v-else class="flex h-full items-center justify-center text-[13px] text-muted-foreground">
                 {{ t('dashboard.widget.no_data') }}
             </div>
@@ -54,13 +75,18 @@
 <script setup>
     import { computed, onMounted, shallowRef, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
+    import { Globe, Video, Waypoints } from 'lucide-vue-next';
 
     import { database } from '@/services/database';
     import { showUserDialog } from '@/coordinators/userCoordinator';
     import { useFriendStore, useGameLogStore } from '@/stores';
+    import { timeToText, formatDateFilter } from '@/shared/utils';
     import { watchState } from '@/services/watchState';
 
+    import Location from '@/components/Location.vue';
+    import { TooltipWrapper } from '@/components/ui/tooltip';
     import WidgetHeader from './WidgetHeader.vue';
+    import { Table, TableBody, TableRow, TableCell } from '@/components/ui/table';
 
     const GAMELOG_TYPES = ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'VideoPlay', 'PortalSpawn', 'Event', 'External'];
 
@@ -76,7 +102,7 @@
     const gameLogStore = useGameLogStore();
 
     const widgetData = shallowRef([]);
-    const maxEntries = 100;
+    const maxEntries = 200;
 
     const activeFilters = computed(() => {
         if (props.config.filters && Array.isArray(props.config.filters) && props.config.filters.length > 0) {
@@ -87,7 +113,7 @@
 
     const filteredData = computed(() => {
         const filters = activeFilters.value;
-        return widgetData.value.filter((item) => filters.includes(item.type));
+        return widgetData.value.filter((item) => filters.includes(item.type)).slice(0, maxEntries);
     });
 
     async function loadInitialData() {
@@ -135,12 +161,19 @@
         }
     });
 
-    function formatTime(dateStr) {
+    function timeAgo(dateStr) {
         if (!dateStr) return '';
-        const date = new Date(dateStr);
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        return `${hours}:${minutes}`;
+        let diff = Date.now() - new Date(dateStr).getTime();
+        if (diff < 0) return 'now';
+        // Over 1 hour: drop minutes
+        if (diff >= 3600000) {
+            diff = Math.floor(diff / 3600000) * 3600000;
+        }
+        return t('dashboard.widget.time_ago', { time: timeToText(diff) });
+    }
+
+    function formatExactTime(dateStr) {
+        return formatDateFilter(dateStr, 'long');
     }
 
     function openUser(userId) {

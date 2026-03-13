@@ -125,7 +125,9 @@
             "feed_offline": "offline",
             "feed_avatar": "→",
             "feed_bio": "updated bio",
-            "instance_not_in_game": "Not in game"
+            "instance_players": "players",
+            "instance_not_in_game": "Not in game",
+            "time_ago": "{time} ago"
         },
         "confirmations": {
             "delete_title": "Delete Dashboard",
