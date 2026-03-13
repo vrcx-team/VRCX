@@ -1,11 +1,14 @@
 <template>
-    <div class="flex shrink-0 items-center justify-between border-b px-2.5 py-1.5">
+    <div class="group/header flex shrink-0 items-center justify-between border-b px-2.5 py-1.5">
         <div
-            class="group flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
+            class="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
             @click="navigateToPage">
             <i :class="icon" class="text-sm"></i>
             <span>{{ title }}</span>
-            <ExternalLink class="size-3 opacity-0 transition-opacity group-hover:opacity-100" />
+            <ExternalLink class="size-3 opacity-0 transition-opacity group-hover/header:opacity-100" />
+        </div>
+        <div class="opacity-0 transition-opacity group-hover/header:opacity-100">
+            <slot />
         </div>
     </div>
 </template>

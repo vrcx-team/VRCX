@@ -1,6 +1,25 @@
 <template>
     <div class="flex h-full min-h-0 flex-col">
-        <WidgetHeader :title="t('dashboard.widget.instance')" icon="ri-group-3-line" route-name="player-list" />
+        <WidgetHeader :title="t('dashboard.widget.instance')" icon="ri-group-3-line" route-name="player-list">
+            <DropdownMenu v-if="configUpdater">
+                <DropdownMenuTrigger as-child>
+                    <Button variant="ghost" size="icon-sm">
+                        <Settings class="size-3.5" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" class="w-48">
+                    <DropdownMenuCheckboxItem
+                        v-for="col in ALL_COLUMNS"
+                        :key="col"
+                        :model-value="isColumnVisible(col)"
+                        :disabled="col === 'displayName'"
+                        @select.prevent
+                        @update:modelValue="toggleColumn(col)">
+                        {{ t(`table.playerList.${col}`) }}
+                    </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </WidgetHeader>
 
         <template v-if="hasPlayers">
             <!-- Info bar -->
@@ -85,7 +104,7 @@
 
 <script setup>
     import { computed, onActivated, onMounted } from 'vue';
-    import { Apple, IdCard, Monitor, Smartphone } from 'lucide-vue-next';
+    import { Apple, IdCard, Monitor, Settings, Smartphone } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -94,6 +113,13 @@
     import { showUserDialog, lookupUser } from '@/coordinators/userCoordinator';
     import { displayLocation } from '@/shared/utils/locationParser';
 
+    import { Button } from '@/components/ui/button';
+    import {
+        DropdownMenu,
+        DropdownMenuCheckboxItem,
+        DropdownMenuContent,
+        DropdownMenuTrigger
+    } from '@/components/ui/dropdown-menu';
     import Timer from '@/components/Timer.vue';
     import WidgetHeader from './WidgetHeader.vue';
     import { Table, TableBody, TableRow, TableCell } from '@/components/ui/table';
@@ -105,6 +131,10 @@
         config: {
             type: Object,
             default: () => ({})
+        },
+        configUpdater: {
+            type: Function,
+            default: null
         }
     });
 
@@ -122,6 +152,18 @@
 
     function isColumnVisible(col) {
         return activeColumns.value.includes(col);
+    }
+
+    function toggleColumn(col) {
+        if (!props.configUpdater || col === 'displayName') return;
+        const currentColumns = props.config.columns || DEFAULT_COLUMNS;
+        let columns;
+        if (currentColumns.includes(col)) {
+            columns = currentColumns.filter((c) => c !== col);
+        } else {
+            columns = [...currentColumns, col];
+        }
+        props.configUpdater({ ...props.config, columns });
     }
 
     const hasPlayers = computed(() => {

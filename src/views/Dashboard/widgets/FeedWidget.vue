@@ -1,6 +1,31 @@
 <template>
     <div class="flex h-full min-h-0 flex-col">
-        <WidgetHeader :title="t('dashboard.widget.feed')" icon="ri-rss-line" route-name="feed" />
+        <WidgetHeader :title="t('dashboard.widget.feed')" icon="ri-rss-line" route-name="feed">
+            <DropdownMenu v-if="configUpdater">
+                <DropdownMenuTrigger as-child>
+                    <Button variant="ghost" size="icon-sm">
+                        <Settings class="size-3.5" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" class="w-48">
+                    <DropdownMenuCheckboxItem
+                        v-for="filterType in FEED_TYPES"
+                        :key="filterType"
+                        :model-value="isFilterActive(filterType)"
+                        @select.prevent
+                        @update:modelValue="toggleFilter(filterType)">
+                        {{ t(`view.feed.filters.${filterType}`) }}
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuCheckboxItem
+                        :model-value="config.showType || false"
+                        @select.prevent
+                        @update:modelValue="toggleBooleanConfig('showType')">
+                        {{ t('dashboard.widget.config.show_type') }}
+                    </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </WidgetHeader>
 
         <div class="min-h-0 flex-1 overflow-y-auto" ref="listRef">
             <Table v-if="filteredData.length" class="is-compact-table">
@@ -21,11 +46,9 @@
                         <TableCell class="truncate">
                             <template v-if="item.type === 'GPS'">
                                 <MapPin class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                                <span
-                                    class="cursor-pointer font-medium hover:underline"
-                                    @click="openUser(item.userId)"
-                                    >{{ item.displayName }}</span
-                                >
+                                <span class="cursor-pointer" @click="openUser(item.userId)">{{
+                                    item.displayName
+                                }}</span>
                                 <span class="text-muted-foreground"> → </span>
                                 <Location
                                     class="inline [&>div]:inline-flex"
@@ -36,11 +59,9 @@
                             </template>
                             <template v-else-if="item.type === 'Online'">
                                 <i class="x-user-status online mr-1"></i>
-                                <span
-                                    class="cursor-pointer font-medium hover:underline"
-                                    @click="openUser(item.userId)"
-                                    >{{ item.displayName }}</span
-                                >
+                                <span class="cursor-pointer" @click="openUser(item.userId)">{{
+                                    item.displayName
+                                }}</span>
                                 <template v-if="item.location">
                                     <span class="text-muted-foreground"> → </span>
                                     <Location
@@ -53,45 +74,35 @@
                             </template>
                             <template v-else-if="item.type === 'Offline'">
                                 <i class="x-user-status mr-1"></i>
-                                <span
-                                    class="cursor-pointer font-medium text-muted-foreground/70 hover:underline"
-                                    @click="openUser(item.userId)"
-                                    >{{ item.displayName }}</span
-                                >
+                                <span class="cursor-pointer" @click="openUser(item.userId)">{{
+                                    item.displayName
+                                }}</span>
                             </template>
                             <template v-else-if="item.type === 'Status'">
                                 <i class="x-user-status mr-1" :class="statusClass(item.status)"></i>
-                                <span
-                                    class="cursor-pointer font-medium hover:underline"
-                                    @click="openUser(item.userId)"
-                                    >{{ item.displayName }}</span
-                                >
+                                <span class="cursor-pointer" @click="openUser(item.userId)">{{
+                                    item.displayName
+                                }}</span>
                                 <span class="text-muted-foreground"> {{ item.statusDescription }}</span>
                             </template>
                             <template v-else-if="item.type === 'Avatar'">
                                 <Box class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                                <span
-                                    class="cursor-pointer font-medium hover:underline"
-                                    @click="openUser(item.userId)"
-                                    >{{ item.displayName }}</span
-                                >
+                                <span class="cursor-pointer" @click="openUser(item.userId)">{{
+                                    item.displayName
+                                }}</span>
                                 <span class="text-muted-foreground"> → {{ item.avatarName }}</span>
                             </template>
                             <template v-else-if="item.type === 'Bio'">
                                 <Pencil class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                                <span
-                                    class="cursor-pointer font-medium hover:underline"
-                                    @click="openUser(item.userId)"
-                                    >{{ item.displayName }}</span
-                                >
+                                <span class="cursor-pointer" @click="openUser(item.userId)">{{
+                                    item.displayName
+                                }}</span>
                                 <span class="ml-1 text-muted-foreground">{{ t('dashboard.widget.feed_bio') }}</span>
                             </template>
                             <template v-else>
-                                <span
-                                    class="cursor-pointer font-medium hover:underline"
-                                    @click="openUser(item.userId)"
-                                    >{{ item.displayName }}</span
-                                >
+                                <span class="cursor-pointer" @click="openUser(item.userId)">{{
+                                    item.displayName
+                                }}</span>
                                 <span class="text-muted-foreground"> {{ item.type }}</span>
                             </template>
                         </TableCell>
@@ -108,13 +119,21 @@
 <script setup>
     import { computed, ref } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import { Box, MapPin, Pencil } from 'lucide-vue-next';
+    import { Box, MapPin, Pencil, Settings } from 'lucide-vue-next';
 
     import { statusClass } from '@/shared/utils/user';
     import { formatDateFilter } from '@/shared/utils';
     import { showUserDialog } from '@/coordinators/userCoordinator';
     import { useFeedStore } from '@/stores';
 
+    import { Button } from '@/components/ui/button';
+    import {
+        DropdownMenu,
+        DropdownMenuCheckboxItem,
+        DropdownMenuContent,
+        DropdownMenuSeparator,
+        DropdownMenuTrigger
+    } from '@/components/ui/dropdown-menu';
     import Location from '@/components/Location.vue';
     import { TooltipWrapper } from '@/components/ui/tooltip';
     import WidgetHeader from './WidgetHeader.vue';
@@ -126,6 +145,10 @@
         config: {
             type: Object,
             default: () => ({})
+        },
+        configUpdater: {
+            type: Function,
+            default: null
         }
     });
 
@@ -139,6 +162,33 @@
         }
         return FEED_TYPES;
     });
+
+    function isFilterActive(filterType) {
+        const filters = props.config.filters;
+        if (!filters || !Array.isArray(filters) || filters.length === 0) return true;
+        return filters.includes(filterType);
+    }
+
+    function toggleFilter(filterType) {
+        if (!props.configUpdater) return;
+        const currentFilters = props.config.filters;
+        let filters;
+        if (!currentFilters || !Array.isArray(currentFilters) || currentFilters.length === 0) {
+            filters = FEED_TYPES.filter((f) => f !== filterType);
+        } else if (currentFilters.includes(filterType)) {
+            filters = currentFilters.filter((f) => f !== filterType);
+            if (filters.length === 0) filters = [];
+        } else {
+            filters = [...currentFilters, filterType];
+            if (filters.length === FEED_TYPES.length) filters = [];
+        }
+        props.configUpdater({ ...props.config, filters });
+    }
+
+    function toggleBooleanConfig(key) {
+        if (!props.configUpdater) return;
+        props.configUpdater({ ...props.config, [key]: !props.config[key] });
+    }
 
     const showType = computed(() => {
         return props.config.showType || false;

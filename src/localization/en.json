@@ -101,7 +101,6 @@
         },
         "panel": {
             "not_selected": "No Panel Selected",
-            "replace": "Replace Panel",
             "select": "Select Panel",
             "not_configured": "Panel Not Configured"
         },
@@ -118,7 +117,7 @@
             "config": {
                 "filters": "Event Types",
                 "columns": "Columns",
-                "show_detail": "Show Detail",
+                "detail": "Detail",
                 "show_type": "Show Type"
             },
             "no_data": "No data",

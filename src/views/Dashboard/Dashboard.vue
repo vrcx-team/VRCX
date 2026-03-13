@@ -12,7 +12,11 @@
                 <ResizablePanelGroup direction="vertical" :auto-save-id="`dashboard-${id}`" class="flex-1 min-h-0">
                     <template v-for="(row, rowIndex) in displayRows" :key="rowIndex">
                         <ResizablePanel :default-size="100 / displayRows.length" :min-size="10">
-                            <DashboardRow :row="row" :row-index="rowIndex" :dashboard-id="id" />
+                            <DashboardRow
+                                :row="row"
+                                :row-index="rowIndex"
+                                :dashboard-id="id"
+                                @update-panel="handleLiveUpdatePanel" />
                         </ResizablePanel>
                         <ResizableHandle v-if="rowIndex < displayRows.length - 1" />
                     </template>
@@ -179,10 +183,16 @@
         editRows.value[rowIndex].panels[panelIndex] = panelValue;
     };
 
+    const handleLiveUpdatePanel = async (rowIndex, panelIndex, panelValue) => {
+        if (!dashboard.value?.rows?.[rowIndex]?.panels) return;
+        const rows = JSON.parse(JSON.stringify(dashboard.value.rows));
+        rows[rowIndex].panels[panelIndex] = panelValue;
+        await dashboardStore.updateDashboard(props.id, { rows });
+    };
+
     const handleSave = async () => {
         const isFirstSave =
-            dashboardStore.dashboards.length === 1 &&
-            (!dashboard.value?.rows || dashboard.value.rows.length === 0);
+            dashboardStore.dashboards.length === 1 && (!dashboard.value?.rows || dashboard.value.rows.length === 0);
 
         await dashboardStore.updateDashboard(props.id, {
             name: editName.value.trim() || dashboard.value?.name || 'Dashboard',
