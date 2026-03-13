@@ -22,16 +22,8 @@ body {
     margin: 0;
 }
 
+/* Font variables are shared from ../styles/fonts.css */
 :root {
-    --font-western:
-        'ellipsis-font', -apple-system, 'Inter Variable', 'Segoe UI', 'Roboto',
-        'Ubuntu', 'Cantarell', 'DejaVu Sans', sans-serif;
-    --font-symbol: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-    --font-fallback-cjk: sans-serif;
-    --font-primary-cjk:
-        'Noto Sans JP Variable', 'Noto Sans SC Variable',
-        'Noto Sans KR Variable', 'Noto Sans TC Variable';
-
     /* VRChat Status Colors (duplicated from globals.css for VR panel independence) */
     --status-online: #67c23a;
     --status-joinme: #00b8ff;
@@ -45,26 +37,6 @@ body {
     --platform-pc: #0078d4;
     --platform-quest: #3ddc84;
     --platform-ios: #8e8e93;
-}
-:root[lang='zh-CN'] {
-    --font-primary-cjk:
-        'Noto Sans SC Variable', 'Noto Sans JP Variable',
-        'Noto Sans KR Variable', 'Noto Sans TC Variable';
-}
-:root[lang='ja'] {
-    --font-primary-cjk:
-        'Noto Sans JP Variable', 'Noto Sans KR Variable',
-        'Noto Sans TC Variable', 'Noto Sans SC Variable';
-}
-:root[lang='ko'] {
-    --font-primary-cjk:
-        'Noto Sans KR Variable', 'Noto Sans JP Variable',
-        'Noto Sans TC Variable', 'Noto Sans SC Variable';
-}
-:root[lang='zh-TW'] {
-    --font-primary-cjk:
-        'Noto Sans TC Variable', 'Noto Sans JP Variable',
-        'Noto Sans KR Variable', 'Noto Sans SC Variable';
 }
 body {
     font-family:
@@ -230,9 +202,8 @@ textarea,
 select,
 button {
     font-family:
-        'ellipsis-font', 'Noto Sans JP Variable', 'Noto Sans KR Variable',
-        'Noto Sans TC Variable', 'Noto Sans SC Variable', 'Meiryo UI',
-        'Malgun Gothic', 'Segoe UI', sans-serif;
+        var(--font-western), var(--font-symbol), var(--font-primary-cjk),
+        var(--font-fallback-cjk);
     line-height: normal;
     text-shadow:
         #000 0px 0px 3px,

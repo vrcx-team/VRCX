@@ -19,32 +19,61 @@
             </div>
 
             <div class="options-container-item">
-                <span class="name flex! items-center!">
+                <span class="name">
                     {{ t('view.settings.appearance.appearance.font_family') }}
-
-                    <TooltipWrapper
-                        class="ml-1.5"
-                        side="top"
-                        :content="t('view.settings.appearance.appearance.font_family_tooltip')">
-                        <Info />
-                    </TooltipWrapper>
                 </span>
-                <Select :model-value="appFontFamily" @update:modelValue="setAppFontFamily">
-                    <SelectTrigger size="sm">
-                        <SelectValue
-                            :placeholder="t(`view.settings.appearance.appearance.font_family_${appFontFamily}`)" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <template v-for="option in appFontFamilyOptions" :key="option.key">
-                                <SelectSeparator v-if="option.type === 'separator'" />
-                                <SelectItem v-else :value="option.key">
-                                    {{ t(`view.settings.appearance.appearance.font_family_${option.key}`) }}
-                                </SelectItem>
-                            </template>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
+                <DropdownMenu>
+                    <DropdownMenuTrigger as-child>
+                        <Button variant="outline" size="sm" class="min-w-[180px] justify-between font-normal">
+                            <span class="truncate">{{ fontDropdownDisplayText }}</span>
+                            <ChevronDown class="ml-2 size-4 shrink-0 opacity-50" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuCheckboxItem
+                            v-for="option in westernFontItems"
+                            :key="option.key"
+                            :model-value="appFontFamily === option.key"
+                            @select="handleSelectWesternFont(option.key)">
+                            {{ option.label }}
+                        </DropdownMenuCheckboxItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuCheckboxItem
+                            v-for="option in cjkFontItems"
+                            :key="option.key"
+                            :model-value="appCjkFontPack === option.key && appFontFamily !== 'custom'"
+                            @select="handleSelectCjkFont(option.key)">
+                            {{ option.label }}
+                        </DropdownMenuCheckboxItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuCheckboxItem
+                            :model-value="appFontFamily === 'custom'"
+                            @select="handleSelectCustomFont">
+                            {{ t('view.settings.appearance.appearance.font_family_custom') }}
+                        </DropdownMenuCheckboxItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+                <Dialog v-model:open="customFontDialogOpen">
+                    <DialogContent class="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle>{{
+                                t('view.settings.appearance.appearance.font_family_custom_dialog_title')
+                            }}</DialogTitle>
+                            <DialogDescription>{{
+                                t('view.settings.appearance.appearance.font_family_custom_dialog_description')
+                            }}</DialogDescription>
+                        </DialogHeader>
+                        <Input v-model="customFontInput" placeholder="'My Font', Arial, sans-serif" />
+                        <DialogFooter>
+                            <Button variant="outline" @click="customFontDialogOpen = false">
+                                {{ t('dialog.alertdialog.cancel') }}
+                            </Button>
+                            <Button @click="saveCustomFont">
+                                {{ t('dialog.alertdialog.ok') }}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
             <div v-if="!isLinux" class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.zoom') }}</span>
@@ -332,6 +361,13 @@
         SelectTrigger,
         SelectValue
     } from '@/components/ui/select';
+    import {
+        DropdownMenu,
+        DropdownMenuCheckboxItem,
+        DropdownMenuContent,
+        DropdownMenuSeparator,
+        DropdownMenuTrigger
+    } from '@/components/ui/dropdown-menu';
     import { ListboxContent, ListboxFilter, ListboxItem, ListboxItemIndicator, ListboxRoot, useFilter } from 'reka-ui';
     import {
         NumberField,
@@ -347,13 +383,22 @@
         TagsInputItemDelete,
         TagsInputItemText
     } from '@/components/ui/tags-input';
+    import {
+        Dialog,
+        DialogContent,
+        DialogDescription,
+        DialogFooter,
+        DialogHeader,
+        DialogTitle
+    } from '@/components/ui/dialog';
+    import { Input } from '@/components/ui/input';
     import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { computed, onBeforeUnmount, ref, watch } from 'vue';
-    import { CheckIcon, ChevronDown, Info } from 'lucide-vue-next';
+    import { CheckIcon, ChevronDown } from 'lucide-vue-next';
     import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '@/stores';
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
     import { getLanguageName, languageCodes } from '@/localization';
-    import { APP_FONT_FAMILIES } from '@/shared/constants';
+    import { APP_CJK_FONT_PACKS, APP_FONT_CONFIG, APP_FONT_DEFAULT_KEY, APP_FONT_FAMILIES } from '@/shared/constants';
     import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -374,6 +419,8 @@
         appLanguage,
         displayVRCPlusIconsAsAvatar,
         appFontFamily,
+        customFontFamily,
+        appCjkFontPack,
         hideNicknames,
         showInstanceIdInLocation,
         isAgeGatedInstancesVisible,
@@ -412,17 +459,79 @@
         setTablePageSizes,
         toggleStripedDataTable,
         togglePointerOnHover,
-        setAppFontFamily
+        setAppFontFamily,
+        setCustomFontFamily,
+        setAppCjkFontPack
     } = appearanceSettingsStore;
 
-    const appFontFamilyOptions = computed(() => {
-        const fontKeys = APP_FONT_FAMILIES.filter((key) => key !== 'system_ui');
-        return [
-            ...fontKeys.map((key) => ({ type: 'item', key })),
-            { type: 'separator', key: 'separator-system-ui' },
-            { type: 'item', key: 'system_ui' }
-        ];
+    const fontDropdownDisplayText = computed(() => {
+        if (appFontFamily.value === 'custom') {
+            return t('view.settings.appearance.appearance.font_family_custom');
+        }
+        const western = t(`view.settings.appearance.appearance.font_family_${appFontFamily.value}`);
+        const cjk =
+            appCjkFontPack.value === 'system'
+                ? t('view.settings.appearance.appearance.font_family_system_ui')
+                : t(`view.settings.appearance.appearance.cjk_font_pack_${appCjkFontPack.value}`);
+        return `${western} / ${cjk}`;
     });
+
+    const westernFontItems = computed(() => {
+        return APP_FONT_FAMILIES.filter((key) => key !== 'custom' && key !== 'system_ui').map((key) => ({
+            key,
+            label: t(`view.settings.appearance.appearance.font_family_${key}`)
+        }));
+    });
+
+    const cjkFontItems = computed(() => {
+        return APP_CJK_FONT_PACKS.map((key) => ({
+            key,
+            label:
+                key === 'system'
+                    ? t('view.settings.appearance.appearance.font_family_system_ui')
+                    : t(`view.settings.appearance.appearance.cjk_font_pack_${key}`)
+        }));
+    });
+
+    const FONT_FAMILY_REGEX =
+        /^\s*(([-_\p{L}][\p{L}\p{N}_\s-]*)|'[^']+'|"[^"]+")\s*(,\s*(([-_\p{L}][\p{L}\p{N}_\s-]*)|'[^']+'|"[^"]+")\s*)*$/u;
+
+    const customFontDialogOpen = ref(false);
+    const customFontInput = ref('');
+
+    function handleSelectWesternFont(key) {
+        setAppFontFamily(key);
+    }
+
+    function handleSelectCjkFont(key) {
+        if (appFontFamily.value === 'custom') {
+            setAppFontFamily(APP_FONT_DEFAULT_KEY);
+        }
+        setAppCjkFontPack(key);
+    }
+
+    function handleSelectCustomFont() {
+        const cssVarValue = getComputedStyle(document.documentElement)
+            .getPropertyValue('--font-western-primary')
+            .trim();
+        const currentKey = String(appFontFamily.value || APP_FONT_DEFAULT_KEY)
+            .trim()
+            .toLowerCase();
+        const fallbackFont = APP_FONT_CONFIG[currentKey]?.cssName || APP_FONT_CONFIG[APP_FONT_DEFAULT_KEY].cssName;
+        customFontInput.value = customFontFamily.value?.trim() || cssVarValue || fallbackFont;
+        customFontDialogOpen.value = true;
+    }
+
+    function saveCustomFont() {
+        const trimmed = customFontInput.value.trim();
+        if (!trimmed || !FONT_FAMILY_REGEX.test(trimmed)) {
+            toast.error(t('view.settings.appearance.appearance.font_family_custom_invalid'));
+            return;
+        }
+        setCustomFontFamily(trimmed);
+        setAppFontFamily('custom');
+        customFontDialogOpen.value = false;
+    }
 
     const zoomLevel = ref(100);
     const isLinux = computed(() => LINUX);

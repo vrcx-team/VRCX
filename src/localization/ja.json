@@ -564,7 +564,6 @@
                     "bio_language": "翻訳先の言語",
                     "theme_mode": "テーマ",
                     "font_family": "フォント",
-                    "font_family_tooltip": "システムフォントのみがCJK文字に影響します",
                     "font_family_inter": "Inter",
                     "font_family_noto_sans": "Noto Sans",
                     "font_family_source_sans_3": "Source Sans 3",

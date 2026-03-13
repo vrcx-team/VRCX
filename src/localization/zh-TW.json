@@ -559,7 +559,6 @@
                     "bio_language": "目標語言",
                     "theme_mode": "主題",
                     "font_family": "字型",
-                    "font_family_tooltip": "只有系統字型會影響 CJK（中日韓）字元顯示",
                     "font_family_inter": "Inter",
                     "font_family_noto_sans": "Noto Sans",
                     "font_family_source_sans_3": "Source Sans 3",

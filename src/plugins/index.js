@@ -1,7 +1,7 @@
 import { initDayjs } from './dayjs';
 import { initInteropApi } from './interopApi';
 import { initNoty } from './noty';
-import { initUi } from './ui';
+import { initUi, initUiForVrOverlay } from './ui';
 
 /**
  * @param {boolean} isVrOverlay
@@ -11,6 +11,8 @@ export async function initPlugins(isVrOverlay = false) {
     await initInteropApi(isVrOverlay);
     if (!isVrOverlay) {
         await initUi();
+    } else {
+        await initUiForVrOverlay();
     }
     initDayjs();
     if (isVrOverlay) {
