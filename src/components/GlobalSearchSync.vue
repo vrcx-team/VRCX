@@ -1,3 +1,9 @@
+<script>
+    export default {
+        render: () => null
+    };
+</script>
+
 <script setup>
     /**
      * Renderless bridge component — must live inside the Command context.
