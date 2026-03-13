@@ -10,7 +10,7 @@
                 <X class="size-4" />
             </Button>
             <div class="flex w-full min-h-0 flex-col gap-2 p-3">
-                <div class="flex flex-1 items-center justify-center gap-2 text-xs text-muted-foreground">
+                <div class="flex flex-1 items-center justify-center gap-2 text-base text-muted-foreground">
                     <i v-if="panelIcon" :class="panelIcon" class="text-base" />
                     <span>{{ panelLabel || t('dashboard.panel.not_selected') }}</span>
                 </div>
@@ -40,14 +40,14 @@
                                     type="checkbox"
                                     :checked="panelConfig.showDetail || false"
                                     @change="toggleBooleanConfig('showDetail')" />
-                                Show Detail
+                                {{ t('dashboard.widget.config.show_detail') }}
                             </label>
                             <label v-if="widgetType === 'feed'" class="flex items-center gap-1 text-xs cursor-pointer">
                                 <input
                                     type="checkbox"
                                     :checked="panelConfig.showType || false"
                                     @change="toggleBooleanConfig('showType')" />
-                                Show Type
+                                {{ t('dashboard.widget.config.show_type') }}
                             </label>
                         </div>
                     </template>

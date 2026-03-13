@@ -117,7 +117,9 @@
             "instance": "Instance Widget",
             "config": {
                 "filters": "Event Types",
-                "columns": "Columns"
+                "columns": "Columns",
+                "show_detail": "Show Detail",
+                "show_type": "Show Type"
             },
             "no_data": "No data",
             "unknown_world": "Unknown World",
