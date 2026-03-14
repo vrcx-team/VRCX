@@ -22,16 +22,22 @@ internal static class ImageCache
         "assets.vrchat.com"
     ];
 
-    static ImageCache()
+  static ImageCache()
+{
+    cacheLocation = Path.Join(Program.AppDataDirectory, "ImageCache");
+    var httpClientHandler = new HttpClientHandler();
+    if (WebApi.ProxySet)
     {
-        cacheLocation = Path.Join(Program.AppDataDirectory, "ImageCache");
-        var httpClientHandler = new HttpClientHandler();
-        if (WebApi.ProxySet)
-            httpClientHandler.Proxy = WebApi.Proxy;
-            
-        httpClient = new HttpClient(httpClientHandler);
-        httpClient.DefaultRequestHeaders.Add("User-Agent", Program.Version);
+        httpClientHandler.Proxy = WebApi.Proxy;
     }
+    else
+    {
+        httpClientHandler.UseProxy = false;
+        httpClientHandler.Proxy = null;
+    }
+    httpClient = new HttpClient(httpClientHandler);
+    httpClient.DefaultRequestHeaders.Add("User-Agent", Program.Version);
+}
     
     public static void PopulateImageHosts(List<string> hosts)
     {
