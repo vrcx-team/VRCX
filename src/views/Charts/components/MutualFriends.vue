@@ -265,7 +265,7 @@
     import Sigma from 'sigma';
     import louvain from 'graphology-communities-louvain';
 
-    import GraphLayoutWorker from '../graphLayoutWorker.js?worker';
+    import GraphLayoutWorker from '../graphLayoutWorker.js?worker&inline';
 
     import {
         useAppearanceSettingsStore,

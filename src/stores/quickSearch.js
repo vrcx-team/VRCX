@@ -8,7 +8,7 @@ import { showWorldDialog } from '../coordinators/worldCoordinator';
 import { showAvatarDialog } from '../coordinators/avatarCoordinator';
 import { showUserDialog } from '../coordinators/userCoordinator';
 
-import QuickSearchWorker from './quickSearchWorker.js?worker';
+import QuickSearchWorker from './quickSearchWorker.js?worker&inline';
 
 export const useQuickSearchStore = defineStore('QuickSearch', () => {
     const friendStore = useFriendStore();
