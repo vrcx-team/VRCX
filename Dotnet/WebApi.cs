@@ -75,27 +75,31 @@ namespace VRCX
             _timer.Change(1000, 1000);
         }
 
-        private void InitializeHttpClient()
-        {
-            _httpHandler = new SocketsHttpHandler
-            {
-                CookieContainer = CookieContainer,
-                UseCookies = true,
-                AutomaticDecompression = DecompressionMethods.All,
-                PooledConnectionLifetime = TimeSpan.FromMinutes(5),
-                MaxConnectionsPerServer = 10
-            };
+private void InitializeHttpClient()
+{
+    _httpHandler = new SocketsHttpHandler
+    {
+        CookieContainer = CookieContainer,
+        UseCookies = true,
+        AutomaticDecompression = DecompressionMethods.All,
+        PooledConnectionLifetime = TimeSpan.FromMinutes(5),
+        MaxConnectionsPerServer = 10
+    };
 
-            if (ProxySet)
-            {
-                _httpHandler.Proxy = Proxy;
-                _httpHandler.UseProxy = true;
-            }
+    if (ProxySet)
+    {
+        _httpHandler.Proxy = Proxy;
+        _httpHandler.UseProxy = true;
+    }
+    else
+    {
+        _httpHandler.UseProxy = false;
+        _httpHandler.Proxy = null;
+    }
 
-            _httpClient = new HttpClient(_httpHandler);
-            _httpClient.DefaultRequestHeaders.Add("User-Agent", Program.Version);
-        }
-
+    _httpClient = new HttpClient(_httpHandler);
+    _httpClient.DefaultRequestHeaders.Add("User-Agent", Program.Version);
+}
         private void SetProxy()
         {
             if (!string.IsNullOrEmpty(StartupArgs.LaunchArguments.ProxyUrl))
