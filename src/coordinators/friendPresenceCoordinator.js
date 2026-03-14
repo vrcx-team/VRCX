@@ -121,6 +121,7 @@ export async function runUpdateFriendDelayedCheckFlow(
         syncFriendSearchIndex(ctx);
     }
     ctx.isVIP = isVIP;
+    friendStore.reindexSortedFriend(ctx);
 }
 
 /**
@@ -209,6 +210,7 @@ export async function runUpdateFriendFlow(
             ctx.name = ref.displayName;
             syncFriendSearchIndex(ctx);
         }
+        friendStore.reindexSortedFriend(ctx);
         return;
     }
     if (
@@ -248,6 +250,7 @@ export async function runUpdateFriendFlow(
             previousLocationAt: $location_at
         });
         ctx.pendingOffline = true;
+        friendStore.reindexSortedFriend(ctx);
         return;
     }
     ctx.ref = ref;
@@ -262,6 +265,8 @@ export async function runUpdateFriendFlow(
             $location_at,
             { now, nowIso }
         );
+    } else {
+        friendStore.reindexSortedFriend(ctx);
     }
 }
 
@@ -309,4 +314,3 @@ export async function runPendingOfflineTickFlow({
         }
     }
 }
-

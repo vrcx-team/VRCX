@@ -184,6 +184,7 @@ export function applyUser(json) {
         friendCtx.ref = ref;
         friendCtx.name = ref.displayName;
         syncFriendSearchIndex(friendCtx);
+        friendStore.reindexSortedFriend(friendCtx);
     }
     if (ref.id === currentUser.id) {
         if (ref.status) {

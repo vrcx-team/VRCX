@@ -371,10 +371,16 @@
         return ids;
     });
 
-    const vipFriendsByGroupStatus = computed(() => {
+    const visibleFavoriteOnlineFriends = computed(() => {
         const selectedGroups = sidebarFavoriteGroups.value;
-        if (selectedGroups.length === 0) return allFavoriteOnlineFriends.value;
-        return allFavoriteOnlineFriends.value.filter((f) => displayedVipIds.value.has(f.id));
+        if (selectedGroups.length === 0) {
+            return allFavoriteOnlineFriends.value;
+        }
+        return allFavoriteOnlineFriends.value.filter((friend) => displayedVipIds.value.has(friend.id));
+    });
+
+    const vipFriendsByGroupStatus = computed(() => {
+        return visibleFavoriteOnlineFriends.value;
     });
 
     const onlineFriendsByGroupStatus = computed(() => {
@@ -382,10 +388,11 @@
         if (selectedGroups.length === 0) {
             return onlineFriends.value.filter((f) => !allFavoriteFriendIds.value.has(f.id));
         }
-        const nonFavOnline = onlineFriends.value.filter((f) => !displayedVipIds.value.has(f.id));
+        const selectedIds = displayedVipIds.value;
+        const nonFavOnline = onlineFriends.value.filter((f) => !selectedIds.has(f.id));
         const existingIds = new Set(nonFavOnline.map((f) => f.id));
         const unselectedGroupFriends = allFavoriteOnlineFriends.value.filter(
-            (f) => !displayedVipIds.value.has(f.id) && !existingIds.has(f.id)
+            (f) => !selectedIds.has(f.id) && !existingIds.has(f.id)
         );
         return [...nonFavOnline, ...unselectedGroupFriends].sort(getFriendsSortFunction(sidebarSortMethods.value));
     });
@@ -415,7 +422,7 @@
 
         const result = [];
         for (const { key, groupName, memberIds } of groups) {
-            const filteredFriends = allFavoriteOnlineFriends.value.filter((friend) => memberIds.has(friend.id));
+            const filteredFriends = visibleFavoriteOnlineFriends.value.filter((friend) => memberIds.has(friend.id));
             if (filteredFriends.length > 0) {
                 result.push({ key, groupName, friends: filteredFriends });
             }
@@ -432,6 +439,15 @@
         });
     });
 
+    const searchableEntries = computed(() =>
+        uniqueEntries([
+            ...toEntries(allFavoriteOnlineFriends.value),
+            ...toEntries(onlineFriends.value),
+            ...toEntries(activeFriends.value),
+            ...toEntries(offlineFriends.value)
+        ])
+    );
+
     /**
      *
      * @param groupKey
@@ -446,14 +462,7 @@
 
     const filteredFriends = computed(() => {
         if (normalizedSearchTerm.value) {
-            const pools = [
-                ...toEntries(allFavoriteOnlineFriends.value),
-                ...toEntries(onlineFriends.value),
-                ...toEntries(activeFriends.value),
-                ...toEntries(offlineFriends.value)
-            ];
-
-            return uniqueEntries(pools).filter(({ friend }) => {
+            return searchableEntries.value.filter(({ friend }) => {
                 const haystack =
                     `${friend.displayName ?? friend.name ?? ''} ${friend.signature ?? ''} ${friend.worldName ?? ''}`.toLowerCase();
                 return haystack.includes(normalizedSearchTerm.value);

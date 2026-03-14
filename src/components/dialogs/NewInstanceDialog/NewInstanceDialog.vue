@@ -675,12 +675,36 @@
         return names.slice(0, 3).join(', ') + (names.length > 3 ? ` +${names.length - 3}` : '');
     });
 
+    const friendSections = computed(() => [
+        {
+            key: 'vip',
+            label: t('side_panel.favorite'),
+            friends: vipFriends.value
+        },
+        {
+            key: 'online',
+            label: t('side_panel.online'),
+            friends: onlineFriends.value
+        },
+        {
+            key: 'active',
+            label: t('side_panel.active'),
+            friends: activeFriends.value
+        },
+        {
+            key: 'offline',
+            label: t('side_panel.offline'),
+            friends: offlineFriends.value
+        }
+    ]);
+
     const friendById = computed(() => {
         const map = new Map();
-        for (const friend of vipFriends.value) map.set(friend.id, friend);
-        for (const friend of onlineFriends.value) map.set(friend.id, friend);
-        for (const friend of activeFriends.value) map.set(friend.id, friend);
-        for (const friend of offlineFriends.value) map.set(friend.id, friend);
+        for (const section of friendSections.value) {
+            for (const friend of section.friends ?? []) {
+                map.set(friend.id, friend);
+            }
+        }
         return map;
     });
 
@@ -714,7 +738,7 @@
             });
         }
 
-        const addFriendGroup = (key, label, friends) => {
+        const addFriendGroup = ({ key, label, friends }) => {
             if (!friends?.length) return;
             groups.push({
                 key,
@@ -732,10 +756,7 @@
             });
         };
 
-        addFriendGroup('vip', t('side_panel.favorite'), vipFriends.value);
-        addFriendGroup('online', t('side_panel.online'), onlineFriends.value);
-        addFriendGroup('active', t('side_panel.active'), activeFriends.value);
-        addFriendGroup('offline', t('side_panel.offline'), offlineFriends.value);
+        friendSections.value.forEach(addFriendGroup);
 
         return groups;
     });
