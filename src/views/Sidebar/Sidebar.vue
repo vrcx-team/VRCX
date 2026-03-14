@@ -5,7 +5,7 @@
                 <button
                     type="button"
                     class="border-input dark:bg-input/30 flex h-9 w-full items-center gap-2 rounded-md border bg-transparent px-3 shadow-xs transition-[color,box-shadow] hover:border-ring cursor-pointer overflow-hidden"
-                    @click="openGlobalSearch">
+                    @click="openQuickSearch">
                     <Search class="size-4 shrink-0 opacity-50" />
                     <span class="search-text flex-1 min-w-0 text-left text-sm text-muted-foreground truncate">{{
                         t('side_panel.search_placeholder')
@@ -240,7 +240,7 @@
         </TabsUnderline>
         <NotificationCenterSheet />
         <GroupOrderSheet v-model:open="isGroupOrderSheetOpen" />
-        <GlobalSearchDialog />
+        <QuickSearchDialog />
     </div>
 </template>
 
@@ -279,10 +279,10 @@
     } from '../../stores';
     import { runRefreshFriendsListFlow } from '../../coordinators/friendSyncCoordinator';
     import { normalizeFavoriteGroupsChange, resolveFavoriteGroups } from './sidebarSettingsUtils';
-    import { useGlobalSearchStore } from '../../stores/globalSearch';
+    import { useQuickSearchStore } from '../../stores/quickSearch';
 
     import FriendsSidebar from './components/FriendsSidebar.vue';
-    import GlobalSearchDialog from '../../components/GlobalSearchDialog.vue';
+    import QuickSearchDialog from '../../components/QuickSearchDialog.vue';
     import GroupOrderSheet from './components/GroupOrderSheet.vue';
     import GroupsSidebar from './components/GroupsSidebar.vue';
     import NotificationCenterSheet from './components/NotificationCenterSheet.vue';
@@ -291,21 +291,21 @@
     const { groupInstances } = storeToRefs(useGroupStore());
     const notificationStore = useNotificationStore();
     const { isNotificationCenterOpen, hasUnseenNotifications } = storeToRefs(notificationStore);
-    const globalSearchStore = useGlobalSearchStore();
+    const quickSearchStore = useQuickSearchStore();
     const { t } = useI18n();
 
     const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
     // Keyboard shortcut: Ctrl+K (Windows) / ⌘K (Mac)
     const keys = useMagicKeys();
-    whenever(keys['Meta+k'], () => openGlobalSearch());
-    whenever(keys['Ctrl+k'], () => openGlobalSearch());
+    whenever(keys['Meta+k'], () => openQuickSearch());
+    whenever(keys['Ctrl+k'], () => openQuickSearch());
 
     /**
      *
      */
-    function openGlobalSearch() {
-        globalSearchStore.open();
+    function openQuickSearch() {
+        quickSearchStore.open();
     }
 
     /**

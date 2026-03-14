@@ -19,14 +19,14 @@ function setupWorkerHarness() {
     };
 }
 
-describe('searchWorker message protocol', () => {
+describe('quickSearchWorker message protocol', () => {
     beforeEach(() => {
         vi.resetModules();
     });
 
     test('returns empty search result for short query', async () => {
         const harness = setupWorkerHarness();
-        await import('../searchWorker.js');
+        await import('../quickSearchWorker.js');
 
         harness.dispatch({
             type: 'search',
@@ -56,7 +56,7 @@ describe('searchWorker message protocol', () => {
 
     test('deduplicates favorites and joined groups against own results', async () => {
         const harness = setupWorkerHarness();
-        await import('../searchWorker.js');
+        await import('../quickSearchWorker.js');
 
         harness.dispatch({
             type: 'updateIndex',

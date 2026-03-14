@@ -15,15 +15,15 @@
     import { nextTick, watch } from 'vue';
     import { useCommand } from '@/components/ui/command';
 
-    import { useGlobalSearchStore } from '../stores/globalSearch';
+    import { useQuickSearchStore } from '../stores/quickSearch';
 
     const { filterState, allItems, allGroups } = useCommand();
-    const globalSearchStore = useGlobalSearchStore();
+    const quickSearchStore = useQuickSearchStore();
 
     watch(
         () => filterState.search,
         async (value) => {
-            globalSearchStore.setQuery(value);
+            quickSearchStore.setQuery(value);
 
             // When query < 2 chars, override the built-in filter
             // so all items (hint categories) stay visible

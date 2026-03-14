@@ -7,7 +7,7 @@ import {
     searchFriends,
     searchGroups,
     searchWorlds
-} from '../globalSearchUtils';
+} from '../quickSearchUtils';
 
 const comparer = new Intl.Collator(undefined, {
     usage: 'search',

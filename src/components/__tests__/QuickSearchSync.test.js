@@ -34,17 +34,17 @@ vi.mock('@/components/ui/command', async () => {
     };
 });
 
-vi.mock('../../stores/globalSearch', () => ({
-    useGlobalSearchStore: () => ({
+vi.mock('../../stores/quickSearch', () => ({
+    useQuickSearchStore: () => ({
         setQuery: (...args) => mocks.setQuery(...args)
     })
 }));
 
-import GlobalSearchSync from '../GlobalSearchSync.vue';
+import QuickSearchSync from '../QuickSearchSync.vue';
 
-describe('GlobalSearchSync.vue', () => {
+describe('QuickSearchSync.vue', () => {
     it('syncs query and keeps hint groups/items visible when query length < 2', async () => {
-        mount(GlobalSearchSync);
+        mount(QuickSearchSync);
 
         mocks.filterState.search = 'a';
         await Promise.resolve();

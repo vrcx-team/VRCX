@@ -9,7 +9,7 @@ const mocks = vi.hoisted(() => ({
     userStore: null
 }));
 
-vi.mock('../searchWorker.js?worker', () => ({
+vi.mock('../quickSearchWorker.js?worker', () => ({
     default: class MockSearchWorker {
         constructor() {
             this.onmessage = null;
@@ -51,7 +51,7 @@ vi.mock('../../coordinators/groupCoordinator', () => ({
     showGroupDialog: (...args) => showGroupDialog(...args)
 }));
 
-import { useGlobalSearchStore } from '../globalSearch';
+import { useQuickSearchStore } from '../quickSearch';
 
 function setupStores() {
     mocks.friendStore = reactive({ friends: new Map() });
@@ -82,7 +82,7 @@ function setupStores() {
     mocks.userStore = reactive({ currentUser: { id: 'usr_me' } });
 }
 
-describe('useGlobalSearchStore', () => {
+describe('useQuickSearchStore', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         mocks.workerInstances.length = 0;
@@ -91,7 +91,7 @@ describe('useGlobalSearchStore', () => {
     });
 
     test('discards stale worker results and applies the latest seq only', async () => {
-        const store = useGlobalSearchStore();
+        const store = useQuickSearchStore();
         store.setQuery('ab');
         await nextTick();
 
@@ -143,7 +143,7 @@ describe('useGlobalSearchStore', () => {
     });
 
     test('short query clears results and blocks stale refill', async () => {
-        const store = useGlobalSearchStore();
+        const store = useQuickSearchStore();
         store.setQuery('ab');
         await nextTick();
 
@@ -172,7 +172,7 @@ describe('useGlobalSearchStore', () => {
     });
 
     test('re-dispatches search when currentUserId changes and query is active', async () => {
-        const store = useGlobalSearchStore();
+        const store = useQuickSearchStore();
         store.setQuery('ab');
         await nextTick();
 
@@ -192,7 +192,7 @@ describe('useGlobalSearchStore', () => {
 
     test('re-dispatches search after index update when query is active', async () => {
         vi.useFakeTimers();
-        const store = useGlobalSearchStore();
+        const store = useQuickSearchStore();
         store.isOpen = true;
         await nextTick();
 

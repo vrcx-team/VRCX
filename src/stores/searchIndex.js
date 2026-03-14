@@ -252,7 +252,7 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
 
     /**
      * Build a snapshot from the internal index maps.
-     * Used by globalSearch to send data to the Worker.
+     * Used by quickSearch to send data to the Worker.
      * @returns {object} Plain object arrays ready for postMessage.
      */
     function getSnapshot() {

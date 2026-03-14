@@ -18,8 +18,8 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
 vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
-vi.mock('../../stores/globalSearch', () => ({
-    useGlobalSearchStore: () => ({
+vi.mock('../../stores/quickSearch', () => ({
+    useQuickSearchStore: () => ({
         isOpen: mocks.isOpen,
         query: mocks.query,
         friendResults: mocks.friendResults,
@@ -36,7 +36,7 @@ vi.mock('../../stores/globalSearch', () => ({
 vi.mock('../../composables/useUserDisplay', () => ({
     useUserDisplay: () => ({ userImage: (...a) => mocks.userImage(...a) })
 }));
-vi.mock('../GlobalSearchSync.vue', () => ({
+vi.mock('../QuickSearchSync.vue', () => ({
     default: { template: '<div data-testid="sync" />' }
 }));
 vi.mock('@/components/ui/dialog', () => ({
@@ -63,9 +63,9 @@ vi.mock('lucide-vue-next', () => ({
     Users: { template: '<i />' }
 }));
 
-import GlobalSearchDialog from '../GlobalSearchDialog.vue';
+import QuickSearchDialog from '../QuickSearchDialog.vue';
 
-describe('GlobalSearchDialog.vue', () => {
+describe('QuickSearchDialog.vue', () => {
     beforeEach(() => {
         mocks.selectResult.mockClear();
         mocks.query.value = '';
@@ -74,7 +74,7 @@ describe('GlobalSearchDialog.vue', () => {
     });
 
     it('renders search dialog structure', () => {
-        const wrapper = mount(GlobalSearchDialog);
+        const wrapper = mount(QuickSearchDialog);
         expect(wrapper.text()).toContain('side_panel.search_placeholder');
         expect(wrapper.find('[data-testid="sync"]').exists()).toBe(true);
     });

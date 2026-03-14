@@ -53,8 +53,8 @@ vi.mock('../../../stores', () => ({
         localFriendFavoriteGroups: ref([])
     })
 }));
-vi.mock('../../../stores/globalSearch', () => ({
-    useGlobalSearchStore: () => ({ open: (...a) => mocks.openSearch(...a) })
+vi.mock('../../../stores/quickSearch', () => ({
+    useQuickSearchStore: () => ({ open: (...a) => mocks.openSearch(...a) })
 }));
 vi.mock('../../../coordinators/friendSyncCoordinator', () => ({
     runRefreshFriendsListFlow: (...a) => mocks.refreshFriends(...a)
@@ -135,7 +135,7 @@ vi.mock('../components/GroupOrderSheet.vue', () => ({
 vi.mock('../components/NotificationCenterSheet.vue', () => ({
     default: { template: '<div />' }
 }));
-vi.mock('../../../components/GlobalSearchDialog.vue', () => ({
+vi.mock('../../../components/QuickSearchDialog.vue', () => ({
     default: { template: '<div />' }
 }));
 
@@ -147,7 +147,7 @@ describe('Sidebar.vue', () => {
         mocks.markAllAsSeen.mockClear();
     });
 
-    it('opens global search and marks notifications read', async () => {
+    it('opens quick search and marks notifications read', async () => {
         const wrapper = mount(Sidebar);
         const buttons = wrapper.findAll('button');
         for (const button of buttons) {

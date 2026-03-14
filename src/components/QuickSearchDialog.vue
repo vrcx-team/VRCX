@@ -5,13 +5,13 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useGlobalSearchStore } from '../stores/globalSearch';
+    import { useQuickSearchStore } from '../stores/quickSearch';
     import { useUserDisplay } from '../composables/useUserDisplay';
 
-    import GlobalSearchSync from './GlobalSearchSync.vue';
+    import QuickSearchSync from './QuickSearchSync.vue';
 
     const { userImage } = useUserDisplay();
-    const globalSearchStore = useGlobalSearchStore();
+    const quickSearchStore = useQuickSearchStore();
     const {
         isOpen,
         query,
@@ -23,8 +23,8 @@
         ownGroupResults,
         joinedGroupResults,
         hasResults
-    } = storeToRefs(globalSearchStore);
-    const { selectResult } = globalSearchStore;
+    } = storeToRefs(quickSearchStore);
+    const { selectResult } = quickSearchStore;
     const { t } = useI18n();
 
     /**
@@ -44,7 +44,7 @@
             </DialogHeader>
             <Command>
                 <!-- Sync filterState.search → store.query -->
-                <GlobalSearchSync />
+                <QuickSearchSync />
                 <CommandInput :placeholder="t('side_panel.search_placeholder')" />
                 <CommandList class="max-h-[min(400px,50vh)] overflow-y-auto overflow-x-hidden">
                     <template v-if="!query || query.length < 2">
