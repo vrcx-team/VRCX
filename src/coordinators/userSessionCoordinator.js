@@ -51,7 +51,7 @@ export function runFirstLoginFlow(ref, { now = Date.now } = {}) {
     if (gameStore.isGameRunning) {
         ref.$previousAvatarSwapTime = now();
     }
-    userStore.cachedUsers.clear(); // clear before running applyUser
+    userStore.clearCachedUsers(); // clear before running applyUser
     userStore.setCurrentUser(ref);
     authStore.loginComplete();
 }

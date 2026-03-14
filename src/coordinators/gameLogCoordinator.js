@@ -88,7 +88,8 @@ export async function tryLoadPlayerList() {
                     ctx.userId =
                         findUserByDisplayName(
                             userStore.cachedUsers,
-                            ctx.displayName
+                            ctx.displayName,
+                            userStore.cachedUserIdsByDisplayName
                         )?.id ?? '';
                 }
                 const userMap = {
@@ -159,8 +160,11 @@ export function addGameLogEntry(gameLog, location) {
     let userId = String(gameLog.userId || '');
     if (!userId && gameLog.displayName) {
         userId =
-            findUserByDisplayName(userStore.cachedUsers, gameLog.displayName)
-                ?.id ?? '';
+            findUserByDisplayName(
+                userStore.cachedUsers,
+                gameLog.displayName,
+                userStore.cachedUserIdsByDisplayName
+            )?.id ?? '';
     }
     switch (gameLog.type) {
         case 'location-destination':
@@ -408,7 +412,8 @@ export function addGameLogEntry(gameLog, location) {
             if (typeof ref2 === 'undefined') {
                 const foundUser = findUserByDisplayName(
                     userStore.cachedUsers,
-                    gameLog.displayName
+                    gameLog.displayName,
+                    userStore.cachedUserIdsByDisplayName
                 );
                 if (foundUser) {
                     photonStore.photonLobby.set(photonId, foundUser);

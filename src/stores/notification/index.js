@@ -1018,8 +1018,11 @@ export const useNotificationStore = defineStore('Notification', () => {
         if (id) return id;
         if (noty.displayName) {
             return (
-                findUserByDisplayName(userStore.cachedUsers, noty.displayName)
-                    ?.id ?? ''
+                findUserByDisplayName(
+                    userStore.cachedUsers,
+                    noty.displayName,
+                    userStore.cachedUserIdsByDisplayName
+                )?.id ?? ''
             );
         }
         return '';
@@ -1086,7 +1089,8 @@ export const useNotificationStore = defineStore('Notification', () => {
         } else if (noty.displayName) {
             const ref = findUserByDisplayName(
                 userStore.cachedUsers,
-                noty.displayName
+                noty.displayName,
+                userStore.cachedUserIdsByDisplayName
             );
             if (ref) {
                 noty.isFriend = friendStore.friends.has(ref.id);

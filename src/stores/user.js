@@ -271,6 +271,78 @@ export const useUserStore = defineStore('User', () => {
     });
 
     const cachedUsers = shallowReactive(new Map());
+    const cachedUserIdsByDisplayName = shallowReactive(new Map());
+
+    function addCachedUserDisplayNameEntry(displayName, userId) {
+        if (!displayName || !userId) {
+            return;
+        }
+        let userIds = cachedUserIdsByDisplayName.get(displayName);
+        if (!userIds) {
+            userIds = new Set();
+            cachedUserIdsByDisplayName.set(displayName, userIds);
+        }
+        userIds.add(userId);
+    }
+
+    function removeCachedUserDisplayNameEntry(displayName, userId) {
+        if (!displayName || !userId) {
+            return;
+        }
+        const userIds = cachedUserIdsByDisplayName.get(displayName);
+        if (!userIds) {
+            return;
+        }
+        userIds.delete(userId);
+        if (userIds.size === 0) {
+            cachedUserIdsByDisplayName.delete(displayName);
+        }
+    }
+
+    function syncCachedUserDisplayName(ref, previousDisplayName = '') {
+        if (!ref?.id) {
+            return;
+        }
+        if (previousDisplayName && previousDisplayName !== ref.displayName) {
+            removeCachedUserDisplayNameEntry(previousDisplayName, ref.id);
+        }
+        addCachedUserDisplayNameEntry(ref.displayName, ref.id);
+    }
+
+    function setCachedUser(
+        ref,
+        previousDisplayName = '',
+        { skipIndex = false } = {}
+    ) {
+        if (!ref?.id) {
+            return;
+        }
+        cachedUsers.set(ref.id, ref);
+        if (!skipIndex) {
+            syncCachedUserDisplayName(ref, previousDisplayName);
+        }
+    }
+
+    function deleteCachedUser(userId) {
+        const ref = cachedUsers.get(userId);
+        if (!ref) {
+            return false;
+        }
+        removeCachedUserDisplayNameEntry(ref.displayName, userId);
+        return cachedUsers.delete(userId);
+    }
+
+    function clearCachedUsers() {
+        cachedUsers.clear();
+        cachedUserIdsByDisplayName.clear();
+    }
+
+    function rebuildCachedUserDisplayNameIndex() {
+        cachedUserIdsByDisplayName.clear();
+        for (const ref of cachedUsers.values()) {
+            addCachedUserDisplayNameEntry(ref.displayName, ref.id);
+        }
+    }
 
     const isLocalUserVrcPlusSupporter = computed(
         () => currentUser.value.$isVRCPlus || AppDebug.debugVrcPlus
@@ -730,10 +802,16 @@ export const useUserStore = defineStore('User', () => {
         showUserDialogHistory,
         customUserTags,
         cachedUsers,
+        cachedUserIdsByDisplayName,
         isLocalUserVrcPlusSupporter,
         applyUserLanguage,
         applyPresenceLocation,
         applyUserDialogLocation,
+        setCachedUser,
+        syncCachedUserDisplayName,
+        deleteCachedUser,
+        clearCachedUsers,
+        rebuildCachedUserDisplayNameIndex,
         sortUserDialogAvatars,
         initUserNotes,
         showSendBoopDialog,

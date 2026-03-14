@@ -193,7 +193,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 ctx.userId =
                     findUserByDisplayName(
                         userStore.cachedUsers,
-                        ctx.displayName
+                        ctx.displayName,
+                        userStore.cachedUserIdsByDisplayName
                     )?.id ?? '';
             }
             notificationStore.queueGameLogNoty(ctx);

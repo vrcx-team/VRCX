@@ -275,9 +275,23 @@ function userOnlineFor(ref) {
  * Find a user object from cachedUsers by displayName.
  * @param {Map} cachedUsers
  * @param {string} displayName
+ * @param {Map<string, Set<string>>} [cachedUserIdsByDisplayName]
  * @returns {object|undefined}
  */
-function findUserByDisplayName(cachedUsers, displayName) {
+function findUserByDisplayName(
+    cachedUsers,
+    displayName,
+    cachedUserIdsByDisplayName
+) {
+    const indexedUserIds = cachedUserIdsByDisplayName?.get(displayName);
+    if (indexedUserIds) {
+        for (const userId of indexedUserIds) {
+            const ref = cachedUsers.get(userId);
+            if (ref?.displayName === displayName) {
+                return ref;
+            }
+        }
+    }
     for (const ref of cachedUsers.values()) {
         if (ref.displayName === displayName) {
             return ref;

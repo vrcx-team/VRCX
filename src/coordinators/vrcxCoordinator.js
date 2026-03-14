@@ -35,7 +35,7 @@ export function clearVRCXCache() {
             !locationStore.lastLocation.playerList.has(ref.id) &&
             id !== userStore.currentUser.id
         ) {
-            userStore.cachedUsers.delete(id);
+            userStore.deleteCachedUser(id);
         }
     });
     worldStore.cachedWorlds.forEach((ref, id) => {

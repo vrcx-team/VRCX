@@ -139,8 +139,11 @@ export function createMediaParsers({
         let userId = '';
         if (displayName) {
             userId =
-                findUserByDisplayName(userStore.cachedUsers, displayName)?.id ??
-                '';
+                findUserByDisplayName(
+                    userStore.cachedUsers,
+                    displayName,
+                    userStore.cachedUserIdsByDisplayName
+                )?.id ?? '';
         }
         if (videoId === 'YouTube') {
             const entry1 = {
@@ -207,8 +210,11 @@ export function createMediaParsers({
         let userId = '';
         if (displayName) {
             userId =
-                findUserByDisplayName(userStore.cachedUsers, displayName)?.id ??
-                '';
+                findUserByDisplayName(
+                    userStore.cachedUsers,
+                    displayName,
+                    userStore.cachedUserIdsByDisplayName
+                )?.id ?? '';
         }
         if (videoId === 'YouTube') {
             const entry1 = {
@@ -270,8 +276,11 @@ export function createMediaParsers({
         let userId = '';
         if (displayName) {
             userId =
-                findUserByDisplayName(userStore.cachedUsers, displayName)?.id ??
-                '';
+                findUserByDisplayName(
+                    userStore.cachedUsers,
+                    displayName,
+                    userStore.cachedUserIdsByDisplayName
+                )?.id ?? '';
         }
         if (videoId === 'YouTube') {
             const entry1 = {
@@ -327,8 +336,11 @@ export function createMediaParsers({
         let userId = '';
         if (displayName) {
             userId =
-                findUserByDisplayName(userStore.cachedUsers, displayName)?.id ??
-                '';
+                findUserByDisplayName(
+                    userStore.cachedUsers,
+                    displayName,
+                    userStore.cachedUserIdsByDisplayName
+                )?.id ?? '';
         }
         const entry1 = {
             created_at: gameLog.dt,
@@ -384,8 +396,11 @@ export function createMediaParsers({
         let userId = '';
         if (displayName) {
             userId =
-                findUserByDisplayName(userStore.cachedUsers, displayName)?.id ??
-                '';
+                findUserByDisplayName(
+                    userStore.cachedUsers,
+                    displayName,
+                    userStore.cachedUserIdsByDisplayName
+                )?.id ?? '';
         }
         const entry1 = {
             created_at: gameLog.dt,
