@@ -26,15 +26,22 @@ namespace VRCX
         private static string AppImagePath = string.Empty;
         private static string AppImagePathOld = string.Empty;
 
-        static Update()
-        {
-            var httpClientHandler = new HttpClientHandler();
-            if (WebApi.ProxySet)
-                httpClientHandler.Proxy = WebApi.Proxy;
-
-            httpClient = new HttpClient(httpClientHandler);
-            httpClient.DefaultRequestHeaders.Add("User-Agent", Program.Version);
-        }
+static Update()
+{
+    var httpClientHandler = new HttpClientHandler();
+    
+    if (WebApi.ProxySet)
+    {
+        httpClientHandler.Proxy = WebApi.Proxy;
+    }
+    else
+    {
+        httpClientHandler.UseProxy = false;
+        httpClientHandler.Proxy = null;
+    }
+    httpClient = new HttpClient(httpClientHandler);
+    httpClient.DefaultRequestHeaders.Add("User-Agent", Program.Version);
+}
 
         public void Init(string appImagePath = "")
         {
