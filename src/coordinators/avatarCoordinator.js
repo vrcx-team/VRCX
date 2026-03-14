@@ -24,6 +24,7 @@ import { useAvatarProviderStore } from '../stores/avatarProvider';
 import { useAvatarStore } from '../stores/avatar';
 import { useFavoriteStore } from '../stores/favorite';
 import { useModalStore } from '../stores/modal';
+import { syncAvatarSearchIndex, removeAvatarSearchIndex } from './searchIndexCoordinator';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
 import { useVRCXUpdaterStore } from '../stores/vrcxUpdater';
@@ -67,6 +68,7 @@ export function applyAvatar(json) {
         database.addAvatarToCache(avatarRef);
     }
     patchAvatarFromEvent(ref);
+    syncAvatarSearchIndex(ref);
     return ref;
 }
 
@@ -631,4 +633,13 @@ export async function preloadOwnAvatars() {
             }
         }
     });
+}
+
+/**
+ * @param {string} id
+ */
+export function removeAvatarFromCache(id) {
+    const avatarStore = useAvatarStore();
+    avatarStore.cachedAvatars.delete(id);
+    removeAvatarSearchIndex(id);
 }

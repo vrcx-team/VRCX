@@ -53,6 +53,8 @@ import { useModerationStore } from '../stores/moderation';
 import { useNotificationStore } from '../stores/notification';
 import { usePhotonStore } from '../stores/photon';
 import { useSearchStore } from '../stores/search';
+import { syncFriendSearchIndex } from './searchIndexCoordinator';
+import { removeAvatarFromCache } from './avatarCoordinator';
 import { useSharedFeedStore } from '../stores/sharedFeed';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
@@ -181,6 +183,7 @@ export function applyUser(json) {
     if (friendCtx) {
         friendCtx.ref = ref;
         friendCtx.name = ref.displayName;
+        syncFriendSearchIndex(friendCtx);
     }
     if (ref.id === currentUser.id) {
         if (ref.status) {
@@ -306,6 +309,7 @@ export function showUserDialog(userId) {
                 } else {
                     ref.$nickName = '';
                 }
+                syncFriendSearchIndex(ref);
             }
         }
     });
@@ -583,7 +587,7 @@ export async function refreshUserDialogAvatars(fileId) {
     };
     for (const ref of avatarStore.cachedAvatars.values()) {
         if (ref.authorId === D.id) {
-            avatarStore.cachedAvatars.delete(ref.id);
+            removeAvatarFromCache(ref.id);
         }
     }
     const map = new Map();

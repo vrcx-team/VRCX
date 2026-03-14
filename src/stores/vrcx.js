@@ -44,6 +44,7 @@ import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
 import { useVrcStatusStore } from './vrcStatus';
 import { clearVRCXCache } from '../coordinators/vrcxCoordinator';
+import { resetSearchIndexOnLogin } from '../coordinators/searchIndexCoordinator';
 import { watchState } from '../services/watchState';
 
 import configRepository from '../services/config';
@@ -177,6 +178,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         refreshCustomScript();
     }
 
+    resetSearchIndexOnLogin();
     init();
 
     /**

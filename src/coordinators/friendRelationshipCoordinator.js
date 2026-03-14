@@ -11,6 +11,10 @@ import { useNotificationStore } from '../stores/notification';
 import { useSharedFeedStore } from '../stores/sharedFeed';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
+import {
+    removeFriendSearchIndex,
+    syncFriendSearchIndex
+} from './searchIndexCoordinator';
 import { watchState } from '../services/watchState';
 
 import configRepository from '../services/config';
@@ -44,6 +48,7 @@ export function handleFriendDelete(args) {
     D.isFriend = false;
     runDeleteFriendshipFlow(args.params.userId);
     friendStore.deleteFriend(args.params.userId);
+    removeFriendSearchIndex(args.params.userId);
 }
 
 /**
@@ -53,6 +58,10 @@ export function handleFriendAdd(args) {
     const friendStore = useFriendStore();
     addFriendship(args.params.userId);
     friendStore.addFriend(args.params.userId);
+    const ctx = friendStore.friends.get(args.params.userId);
+    if (ctx) {
+        syncFriendSearchIndex(ctx);
+    }
 }
 
 /**
@@ -136,6 +145,10 @@ export function addFriendship(id) {
                     state.friendNumber
                 );
                 friendStore.addFriend(id, ref.state);
+                const friendCtx = friendStore.friends.get(id);
+                if (friendCtx) {
+                    syncFriendSearchIndex(friendCtx);
+                }
                 const friendLogHistory = {
                     created_at: new Date().toJSON(),
                     type: 'Friend',
@@ -316,7 +329,16 @@ export function updateUserCurrentStatus(ref) {
     const appearanceSettingsStore = useAppearanceSettingsStore();
 
     if (watchState.isFriendsLoaded) {
-        friendStore.refreshFriendsStatus(ref);
+        const { added, removed } = friendStore.refreshFriendsStatus(ref);
+        for (const id of added) {
+            const ctx = friendStore.friends.get(id);
+            if (ctx) {
+                syncFriendSearchIndex(ctx);
+            }
+        }
+        for (const id of removed) {
+            removeFriendSearchIndex(id);
+        }
     }
     friendStore.updateOnlineFriendCounter();
 
@@ -383,6 +405,7 @@ export function runDeleteFriendshipFlow(
                     uiStore.notifyMenu('friend-log');
                 }
                 friendStore.deleteFriend(id);
+                removeFriendSearchIndex(id);
             }
         });
 }

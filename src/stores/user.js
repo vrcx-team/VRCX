@@ -21,6 +21,7 @@ import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFriendStore } from './friend';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
+import { syncFriendSearchIndex } from '../coordinators/searchIndexCoordinator';
 import { useUiStore } from './ui';
 import { watchState } from '../services/watchState';
 
@@ -499,6 +500,10 @@ export const useUserStore = defineStore('User', () => {
                 const user = users.get(note.userId);
                 if (user) {
                     user.note = note.note;
+                    const friendCtx = friendStore.friends.get(note.userId);
+                    if (friendCtx) {
+                        syncFriendSearchIndex(friendCtx);
+                    }
                 }
                 if (
                     !state.lastDbNoteDate ||
@@ -568,6 +573,10 @@ export const useUserStore = defineStore('User', () => {
             const user = users.get(note.targetUserId);
             if (user) {
                 user.note = note.note;
+                const friendCtx = friendStore.friends.get(note.targetUserId);
+                if (friendCtx) {
+                    syncFriendSearchIndex(friendCtx);
+                }
             }
         }
     }

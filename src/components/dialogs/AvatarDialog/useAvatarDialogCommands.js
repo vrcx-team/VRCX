@@ -5,6 +5,7 @@ import {
     avatarRequest,
     favoriteRequest
 } from '../../../api';
+import { removeAvatarFromCache } from '../../../coordinators/avatarCoordinator';
 import {
     copyToClipboard,
     openExternalLink,
@@ -378,7 +379,7 @@ export function useAvatarDialogCommands(
                         .deleteAvatar({ avatarId: id })
                         .then((args) => {
                             const { json } = args;
-                            cachedAvatars.delete(json._id);
+                            removeAvatarFromCache(json._id);
                             if (userDialog.value.id === json.authorId) {
                                 const map = new Map();
                                 for (const ref of cachedAvatars.values()) {

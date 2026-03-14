@@ -18,13 +18,13 @@ import { useNotificationStore } from '../stores/notification';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
 import { useGroupStore } from '../stores/group';
+import { syncGroupSearchIndex, removeGroupSearchIndex, clearGroupSearchIndex } from './searchIndexCoordinator';
 import { watchState } from '../services/watchState';
 
 import configRepository from '../services/config';
 
 import * as workerTimers from 'worker-timers';
 
-// ─── Internal helpers (not exported) ─────────────────────────────────────────
 
 /**
  * @param ref
@@ -48,7 +48,6 @@ function applyGroupLanguage(ref) {
     }
 }
 
-// ─── Core entity application ─────────────────────────────────────────────────
 
 /**
  *
@@ -132,6 +131,9 @@ export function applyGroup(json) {
         D.ref = ref;
     }
     patchGroupFromEvent(ref);
+    if (groupStore.currentUserGroups.has(ref.id)) {
+        syncGroupSearchIndex(ref);
+    }
     return ref;
 }
 
@@ -178,7 +180,6 @@ export function applyGroupMember(json) {
     return json;
 }
 
-// ─── Group change notifications ──────────────────────────────────────────────
 
 /**
  *
@@ -274,7 +275,6 @@ function groupRoleChange(ref, oldRoles, newRoles, oldRoleIds, newRoleIds) {
     }
 }
 
-// ─── Dialog flows ────────────────────────────────────────────────────────────
 
 /**
  *
@@ -461,7 +461,6 @@ export function getGroupDialogGroup(groupId, existingRef) {
         });
 }
 
-// ─── Group lifecycle flows ───────────────────────────────────────────────────
 
 /**
  *
@@ -508,6 +507,7 @@ export function onGroupJoined(groupId) {
             name: '',
             iconUrl: ''
         });
+        syncGroupSearchIndex({ id: groupId, name: '', ownerId: '', iconUrl: '' });
         groupRequest.getGroup({ groupId, includeRoles: true }).then((args) => {
             applyGroup(args.json);
             saveCurrentUserGroups();
@@ -539,6 +539,7 @@ export async function onGroupLeft(groupId) {
     }
     if (groupStore.currentUserGroups.has(groupId)) {
         groupStore.currentUserGroups.delete(groupId);
+        removeGroupSearchIndex(groupId);
         groupChange(ref, 'Left group');
 
         // delay to wait for json to be assigned to ref
@@ -546,7 +547,6 @@ export async function onGroupLeft(groupId) {
     }
 }
 
-// ─── User group management ───────────────────────────────────────────────────
 
 /**
  *
@@ -589,6 +589,7 @@ export async function loadCurrentUserGroups(userId, groups) {
     );
     groupStore.cachedGroups.clear();
     groupStore.currentUserGroups.clear();
+    clearGroupSearchIndex();
     for (const group of savedGroups) {
         const json = {
             id: group.id,
@@ -602,6 +603,7 @@ export async function loadCurrentUserGroups(userId, groups) {
         };
         const ref = applyGroup(json);
         groupStore.currentUserGroups.set(group.id, ref);
+        syncGroupSearchIndex(ref);
     }
 
     if (groups) {
@@ -620,6 +622,7 @@ export async function loadCurrentUserGroups(userId, groups) {
                 });
                 const ref = applyGroup(args.json);
                 groupStore.currentUserGroups.set(groupId, ref);
+                syncGroupSearchIndex(ref);
             } catch (err) {
                 console.error(err);
             }
@@ -643,10 +646,12 @@ export async function getCurrentUserGroups() {
     });
     handleGroupList(args);
     groupStore.currentUserGroups.clear();
+    clearGroupSearchIndex();
     for (const group of args.json) {
         const ref = applyGroup(group);
         if (!groupStore.currentUserGroups.has(group.id)) {
             groupStore.currentUserGroups.set(group.id, ref);
+            syncGroupSearchIndex(ref);
         }
     }
     const args1 = await groupRequest.getGroupPermissions({
@@ -704,7 +709,6 @@ export async function updateInGameGroupOrder() {
     }
 }
 
-// ─── Group actions ───────────────────────────────────────────────────────────
 
 /**
  *

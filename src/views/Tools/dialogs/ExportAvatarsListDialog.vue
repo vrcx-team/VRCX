@@ -22,6 +22,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAvatarStore, useUserStore } from '../../../stores';
+    import { removeAvatarFromCache } from '../../../coordinators/avatarCoordinator';
     import { avatarRequest } from '../../../api';
     import { processBulk } from '../../../services/request';
 
@@ -64,7 +65,7 @@
         loading.value = true;
         for (const ref of cachedAvatars.values()) {
             if (ref.authorId === currentUser.value.id) {
-                cachedAvatars.delete(ref.id);
+                removeAvatarFromCache(ref.id);
             }
         }
         const params = {

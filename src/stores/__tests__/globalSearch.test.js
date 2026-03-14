@@ -5,10 +5,7 @@ import { nextTick, reactive } from 'vue';
 const mocks = vi.hoisted(() => ({
     workerInstances: [],
     friendStore: null,
-    favoriteStore: null,
-    avatarStore: null,
-    worldStore: null,
-    groupStore: null,
+    searchIndexStore: null,
     userStore: null
 }));
 
@@ -29,17 +26,8 @@ vi.mock('../searchWorker.js?worker', () => ({
 vi.mock('../friend', () => ({
     useFriendStore: () => mocks.friendStore
 }));
-vi.mock('../favorite', () => ({
-    useFavoriteStore: () => mocks.favoriteStore
-}));
-vi.mock('../avatar', () => ({
-    useAvatarStore: () => mocks.avatarStore
-}));
-vi.mock('../world', () => ({
-    useWorldStore: () => mocks.worldStore
-}));
-vi.mock('../group', () => ({
-    useGroupStore: () => mocks.groupStore
+vi.mock('../searchIndex', () => ({
+    useSearchIndexStore: () => mocks.searchIndexStore
 }));
 vi.mock('../user', () => ({
     useUserStore: () => mocks.userStore
@@ -67,10 +55,30 @@ import { useGlobalSearchStore } from '../globalSearch';
 
 function setupStores() {
     mocks.friendStore = reactive({ friends: new Map() });
-    mocks.favoriteStore = reactive({ favoriteAvatars: [], favoriteWorlds: [] });
-    mocks.avatarStore = reactive({ cachedAvatars: new Map() });
-    mocks.worldStore = reactive({ cachedWorlds: new Map() });
-    mocks.groupStore = reactive({ currentUserGroups: new Map() });
+    mocks.searchIndexStore = reactive({
+        version: 0,
+        getSnapshot() {
+            const friendsList = [];
+            for (const ctx of (mocks.friendStore?.friends || new Map()).values()) {
+                if (typeof ctx.ref === 'undefined') continue;
+                friendsList.push({
+                    id: ctx.id,
+                    name: ctx.name,
+                    memo: ctx.memo || '',
+                    note: ctx.ref?.note || '',
+                    imageUrl: ctx.ref?.currentAvatarThumbnailImageUrl || ''
+                });
+            }
+            return {
+                friends: friendsList,
+                avatars: [],
+                worlds: [],
+                groups: [],
+                favAvatars: [],
+                favWorlds: []
+            };
+        }
+    });
     mocks.userStore = reactive({ currentUser: { id: 'usr_me' } });
 }
 
@@ -180,5 +188,38 @@ describe('useGlobalSearchStore', () => {
         const lastMessage = worker.postMessage.mock.calls.at(-1)[0];
         expect(lastMessage.type).toBe('search');
         expect(lastMessage.payload.currentUserId).toBe('usr_other');
+    });
+
+    test('re-dispatches search after index update when query is active', async () => {
+        vi.useFakeTimers();
+        const store = useGlobalSearchStore();
+        store.isOpen = true;
+        await nextTick();
+
+        store.setQuery('ab');
+        await nextTick();
+
+        const worker = mocks.workerInstances[0];
+        const callsBefore = worker.postMessage.mock.calls.length;
+
+        // Simulate searchIndex version bump (as if data arrived)
+        mocks.searchIndexStore.version++;
+        await nextTick();
+
+        // Fast-forward the 200ms debounce
+        vi.advanceTimersByTime(200);
+        await nextTick();
+
+        const newCalls = worker.postMessage.mock.calls.slice(callsBefore);
+        const types = newCalls.map((c) => c[0].type);
+        expect(types).toContain('updateIndex');
+        expect(types).toContain('search');
+
+        // updateIndex should come before search
+        const updateIdx = types.indexOf('updateIndex');
+        const searchIdx = types.lastIndexOf('search');
+        expect(updateIdx).toBeLessThan(searchIdx);
+
+        vi.useRealTimers();
     });
 });

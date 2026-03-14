@@ -17,6 +17,7 @@ import {
     runPendingOfflineTickFlow,
     runUpdateFriendFlow
 } from '../coordinators/friendPresenceCoordinator';
+import { syncFriendSearchIndex } from '../coordinators/searchIndexCoordinator';
 import {
     updateFriendship,
     runUpdateFriendshipsFlow
@@ -340,19 +341,24 @@ export const useFriendStore = defineStore('Friend', () => {
         for (id of ref.onlineFriends) {
             map.set(id, 'online');
         }
+        const added = [];
+        const removed = [];
         for (const friend of map) {
             const [id, state_input] = friend;
             if (friends.has(id)) {
                 runUpdateFriendFlow(id, state_input);
             } else {
                 addFriend(id, state_input);
+                added.push(id);
             }
         }
         for (id of friends.keys()) {
             if (map.has(id) === false) {
                 deleteFriend(id);
+                removed.push(id);
             }
         }
+        return { added, removed };
     }
 
     /**
@@ -389,6 +395,7 @@ export const useFriendStore = defineStore('Friend', () => {
                         const array = memo.memo.split('\n');
                         ctx.$nickName = array[0];
                     }
+                    syncFriendSearchIndex(ctx);
                 }
             });
         }

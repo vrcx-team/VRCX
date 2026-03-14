@@ -7,6 +7,7 @@ import { useFriendStore } from '../stores/friend';
 import { useGeneralSettingsStore } from '../stores/settings/general';
 import { useUserStore } from '../stores/user';
 import { useWorldStore } from '../stores/world';
+import { rebuildFavoriteSearchIndex } from './searchIndexCoordinator';
 import { applyWorld } from './worldCoordinator';
 import { runUpdateFriendFlow } from './friendPresenceCoordinator';
 import { avatarRequest, favoriteRequest, queryRequest } from '../api';
@@ -134,6 +135,7 @@ export function handleFavoriteAtDelete(ref) {
         avatarStore.setAvatarDialogIsFavorite(false);
     }
     favoriteStore.countFavoriteGroups();
+    rebuildFavoriteSearchIndex();
 }
 
 /**
@@ -374,6 +376,7 @@ export async function applyFavorite(type, objectId) {
             }
         }
     }
+    rebuildFavoriteSearchIndex();
 }
 
 // --- Refresh flows ---
@@ -1284,5 +1287,8 @@ export function onLoginStateChanged(isLoggedIn) {
     friendStore.localFavoriteFriends.clear();
     if (isLoggedIn) {
         initFavorites();
+    } else {
+        rebuildFavoriteSearchIndex();
     }
 }
+

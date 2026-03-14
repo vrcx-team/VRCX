@@ -2,6 +2,7 @@ import { toast } from 'vue-sonner';
 
 import { AppDebug } from '../services/appConfig';
 import { migrateMemos } from './memoCoordinator';
+import { syncFriendSearchIndex } from './searchIndexCoordinator';
 import { reconnectWebSocket } from '../services/websocket';
 import { useAuthStore } from '../stores/auth';
 import { useFriendStore } from '../stores/friend';
@@ -54,6 +55,11 @@ export async function runInitFriendsListFlow(t) {
             authStore.handleLogoutEvent();
             throw err;
         }
+    }
+
+    // bulk sync friends to search index after initial load
+    for (const ctx of friendStore.friends.values()) {
+        syncFriendSearchIndex(ctx);
     }
 
     friendStore.tryApplyFriendOrder(); // once again

@@ -20,6 +20,7 @@ import { applyFavorite } from './favoriteCoordinator';
 import { useFavoriteStore } from '../stores/favorite';
 import { useInstanceStore } from '../stores/instance';
 import { useLocationStore } from '../stores/location';
+import { syncWorldSearchIndex, removeWorldSearchIndex } from './searchIndexCoordinator';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
 import { useWorldStore } from '../stores/world';
@@ -221,6 +222,7 @@ export function applyWorld(json) {
         database.addWorldToCache(ref);
     }
     patchWorldFromEvent(ref);
+    syncWorldSearchIndex(ref);
     return ref;
 }
 
@@ -246,4 +248,13 @@ export async function preloadOwnWorlds() {
             }
         }
     });
+}
+
+/**
+ * @param {string} id
+ */
+export function removeWorldFromCache(id) {
+    const worldStore = useWorldStore();
+    worldStore.cachedWorlds.delete(id);
+    removeWorldSearchIndex(id);
 }

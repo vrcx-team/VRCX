@@ -4,6 +4,7 @@ import { database } from '../services/database';
 import { useFeedStore } from '../stores/feed';
 import { useFriendStore } from '../stores/friend';
 import { useNotificationStore } from '../stores/notification';
+import { syncFriendSearchIndex } from './searchIndexCoordinator';
 import { useSharedFeedStore } from '../stores/sharedFeed';
 import { useUserStore } from '../stores/user';
 import { userRequest } from '../api';
@@ -117,6 +118,7 @@ export async function runUpdateFriendDelayedCheckFlow(
     }
     if (ref?.displayName) {
         ctx.name = ref.displayName;
+        syncFriendSearchIndex(ctx);
     }
     ctx.isVIP = isVIP;
 }
@@ -205,6 +207,7 @@ export async function runUpdateFriendFlow(
         }
         if (typeof ref !== 'undefined' && ctx.name !== ref.displayName) {
             ctx.name = ref.displayName;
+            syncFriendSearchIndex(ctx);
         }
         return;
     }
@@ -216,6 +219,7 @@ export async function runUpdateFriendFlow(
         ctx.isVIP = isVIP;
         if (typeof ref !== 'undefined') {
             ctx.name = ref.displayName;
+            syncFriendSearchIndex(ctx);
         }
         if (!watchState.isFriendsLoaded) {
             await runUpdateFriendDelayedCheckFlow(
@@ -250,6 +254,7 @@ export async function runUpdateFriendFlow(
     ctx.isVIP = isVIP;
     if (typeof ref !== 'undefined') {
         ctx.name = ref.displayName;
+        syncFriendSearchIndex(ctx);
         await runUpdateFriendDelayedCheckFlow(
             ctx,
             ctx.ref.state,
@@ -304,3 +309,4 @@ export async function runPendingOfflineTickFlow({
         }
     }
 }
+
