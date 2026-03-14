@@ -4,8 +4,15 @@
     "common": {
         "no_data": "无数据",
         "no_matching_records": "无匹配记录",
+        "feature_relocated": {
+            "title": "弃用通知",
+            "description": "此功能将在未来更新中被移除。请改用 {feature} 选项卡。"
+        },
         "actions": {
-            "open": "打开"
+            "open": "打开",
+            "confirm": "确认",
+            "clear": "清除",
+            "reset": "重置"
         },
         "time_units": {
             "y": "年",
@@ -19,12 +26,13 @@
         "friends_locations": "好友位置",
         "feed": "好友动态",
         "game_log": "游戏日志",
-        "player_list": "房间玩家列表",
+        "player_list": "房内玩家",
         "search": "搜索",
-        "favorites": "收藏&星标",
-        "favorite_friends": "星标好友",
+        "favorites": "收藏&分组",
+        "favorite_friends": "好友分组",
         "favorite_worlds": "世界收藏",
         "favorite_avatars": "模型收藏",
+        "my_avatars": "我的模型",
         "social": "社交",
         "friend_log": "好友日志",
         "moderation": "玩家管理",
@@ -48,41 +56,78 @@
         "whats_new": "更新日志",
         "update_available": "有新版本可用",
         "update": "更新",
+        "mark_all_read": "全部标为已读",
         "custom_nav": {
             "header": "自定义导航栏",
             "dialog_title": "自定义导航栏",
-            "add_folder": "添加文件夹",
+            "new_folder": "添加文件夹",
             "folder_name_placeholder": "输入文件夹名称",
             "folder_icon_placeholder": "文件夹图标（例如“ri-menu-fold-line”）",
             "edit_folder": "编辑文件夹",
-            "folder_available": "可用项目",
-            "folder_selected": "已选项目",
-            "folder_selected_empty": "未选择任何项目",
-            "delete_folder": "删除此文件夹",
-            "remove_from_folder": "移除",
-            "folder_empty": "此文件夹为空",
-            "invalid_folder": "文件夹要有名称，且其内应至少有两个项目",
+            "delete_folder": "删除文件夹",
+            "folder_empty": "文件夹为空",
+            "folder_drop_here": "将项目拖拽至此处",
+            "hide": "隐藏",
+            "show": "显示",
+            "hidden_items": "隐藏项目",
+            "confirm": "确认",
+            "cancel": "取消",
             "restore_default": "恢复默认",
-            "restore_default_confirm": "确定要恢复默认吗？所有的自定义设置都将被删除",
-            "save": "保存",
-            "cancel": "取消"
+            "restore_default_confirm": "确定要恢复默认吗？所有的自定义设置都将被删除"
         }
     },
     "side_panel": {
         "search_placeholder": "搜索",
+        "search_no_results": "未找到结果",
+        "search_min_chars": "请输入至少 2 个字符",
+        "search_categories": "搜点什么...",
+        "search_scope_all": "以及你给他们的备注",
+        "search_scope_own": "看看有什么好玩的东西",
+        "search_scope_joined": "找不到组织了吗？",
+        "search_friends": "好友",
+        "search_avatars": "模型",
+        "search_own_avatars": "属于我的模型",
+        "search_fav_avatars": "我收藏的模型",
+        "search_worlds": "世界",
+        "search_own_worlds": "我上传的世界",
+        "search_fav_worlds": "我收藏的世界",
+        "search_groups": "群组",
+        "search_own_groups": "我创建的群组",
+        "search_joined_groups": "我加入的群组",
         "search_result_active": "活跃",
         "search_result_offline": "离线",
-        "search_result_more": "搜索更多：",
+        "search_result_more": "更多：",
         "refresh_tooltip": "刷新好友列表",
         "groups": "群组房间",
         "friends": "好友",
         "me": "我",
-        "favorite": "星标好友",
+        "favorite": "已分组的好友",
         "same_instance": "同一房间",
         "online": "在线",
         "active": "活跃中（仅登录网页端）",
         "offline": "离线",
-        "pending_offline": "可能离线"
+        "pending_offline": "可能离线",
+        "settings": {
+            "group_by_instance": "按房间分组",
+            "split_favorite_friends": "按分组显示好友",
+            "hide_friends_in_same_instance": "隐藏同一房间中的好友",
+            "sort_primary": "主要排序方式",
+            "sort_secondary": "次要排序方式",
+            "sort_tertiary": "第三排序方式",
+            "favorite_groups": "收藏分组",
+            "favorite_groups_placeholder": "所有群组",
+            "edit_group_order": "编辑分组顺序"
+        },
+        "notifications": "通知",
+        "notification_center": {
+            "title": "通知中心",
+            "view_more": "查看更多",
+            "tab_friend": "好友",
+            "tab_group": "群组",
+            "tab_other": "其他",
+            "past_notifications": "最近 24 小时内的通知",
+            "no_new_notifications": "最近 24 小时内没有新通知"
+        }
     },
     "view": {
         "login": {
@@ -92,6 +137,8 @@
             "forgotPassword": "忘记密码？",
             "updater": "检查更新",
             "proxy_settings": "代理设置",
+            "settings": "设置",
+            "language": "语言",
             "field": {
                 "username": "用户名或邮箱地址",
                 "password": "密码",
@@ -102,7 +149,7 @@
             }
         },
         "feed": {
-            "favorites_only_tooltip": "仅显示星标好友",
+            "favorites_only_tooltip": "仅显示被分组的好友",
             "search_placeholder": "搜索",
             "filters": {
                 "GPS": "位置变动",
@@ -111,11 +158,12 @@
                 "Status": "状态变动",
                 "Avatar": "模型变动",
                 "Bio": "简介变更"
-            }
+            },
+            "photon_event_logging": "Photon 事件日志"
         },
         "friends_locations": {
             "online": "在线",
-            "favorite": "星标好友",
+            "favorite": "具有分组的好友",
             "same_instance": "同一房间",
             "active": "活跃中（仅登录网页端）",
             "offline": "离线",
@@ -149,6 +197,12 @@
                 "status_tooltip": "VRCX Companion 状态"
             }
         },
+        "my_avatars": {
+            "filter": "筛选",
+            "clear_filters": "清除所有筛选条件",
+            "table_view": "表格视图",
+            "grid_view": "卡片视图"
+        },
         "search": {
             "search_placeholder": "搜索",
             "clear_results_tooltip": "清除搜索结果",
@@ -168,6 +222,7 @@
                 "refresh_tooltip": "刷新搜索结果",
                 "result_count": "{count} 个搜索结果",
                 "all": "所有",
+                "all_tags": "所有标签",
                 "public": "公开",
                 "private": "私人",
                 "local": "本地",
@@ -185,15 +240,15 @@
         "favorite": {
             "worlds": {
                 "search": "搜索",
-                "vrchat_favorites": "VRChat 上的收藏",
-                "local_favorites": "本地收藏",
+                "vrchat_favorites": "在线收藏夹",
+                "local_favorites": "本地收藏夹",
                 "new_group": "创建新的收藏夹",
                 "cancel_refresh": "清除缓存"
             },
             "avatars": {
                 "search": "搜索",
-                "vrchat_favorites": "VRChat 上的收藏",
-                "local_favorites": "本地收藏（需要 VRC+）",
+                "vrchat_favorites": "在线收藏夹",
+                "local_favorites": "本地收藏夹（需要 VRC+）",
                 "new_group": "创建新的收藏夹",
                 "cancel_refresh": "清除缓存",
                 "check_invalid": "检测这个分组的失效模型",
@@ -209,7 +264,11 @@
                 "confirm_delete_description": "发现 {count} 个失效模型，是否要删除它们？",
                 "delete_summary": "已成功删除 {removed} 个失效模型",
                 "no_invalid_found": "未发现失效模型",
-                "delete_cancelled": "已取消删除操作"
+                "delete_cancelled": "已取消删除操作",
+                "local_history": "本地历史记录",
+                "no_group_selected": "未选择分组",
+                "styles": "样式",
+                "almost_nuisance": "几乎是劣迹玩家"
             },
             "edit_mode": "编辑模式",
             "copy": "复制",
@@ -217,7 +276,7 @@
             "select_all": "全选",
             "deselect_all": "取消全选",
             "bulk_unfavorite": "批量取消收藏",
-            "refresh_favorites_tooltip": "刷新所有收藏",
+            "refresh_favorites_tooltip": "刷新所有收藏夹/分组",
             "export": "导出",
             "import": "导入",
             "move_tooltip": "移动",
@@ -296,7 +355,7 @@
                     "transfer": "转让",
                     "queueReady": "队列准备就绪",
                     "event": {
-                        "created": "群组活动已创建"
+                        "created": "群组活动"
                     }
                 },
                 "moderation": {
@@ -305,7 +364,8 @@
                     },
                     "report": {
                         "closed": "举报完成"
-                    }
+                    },
+                    "contentrestriction": "内容限制"
                 },
                 "instance": {
                     "closed": "房间关闭"
@@ -320,7 +380,8 @@
                 "economy": {
                     "received": {
                         "gift": "礼物已接收"
-                    }
+                    },
+                    "alert": "创作者经济警告"
                 }
             }
         },
@@ -332,7 +393,7 @@
             "load_dialog_message": "正在获取好友的缺失资料字段。",
             "load_cancel": "取消",
             "load_complete": "缺失条目已加载",
-            "favorites_only_tooltip": "仅显示星标好友",
+            "favorites_only_tooltip": "仅显示具有分组的好友",
             "search_placeholder": "搜索好友",
             "filter_placeholder": "筛选好友",
             "load_mutual_friends": "查看关系网"
@@ -363,7 +424,8 @@
                     "start_fetch": "开始拉取",
                     "fetch_again": "再次拉取",
                     "stop": "停止",
-                    "stop_fetching": "停止拉取"
+                    "stop_fetching": "停止拉取",
+                    "go_to_friend": "选择好友"
                 },
                 "status": {
                     "no_friends_to_process": "目前没有好友需要处理",
@@ -401,7 +463,13 @@
                     "layout_spacing": "节点间距",
                     "layout_spacing_help": "好友节点的分布范围。数值越高，关系网内的节点距离越远。",
                     "edge_curvature": "连接线曲率",
-                    "edge_curvature_help": "连接线的弯曲程度。数值越高，密集区域的线条越平滑。"
+                    "edge_curvature_help": "连接线的弯曲程度。数值越高，密集区域的线条越平滑。",
+                    "community_separation": "圈子间间距",
+                    "community_separation_help": "不同圈子间的间隔。数值越高，由圈子形成的集群就越清晰与独立",
+                    "reset_defaults": "重置为默认值",
+                    "exclude_friends": "排除好友",
+                    "exclude_friends_placeholder": "选择好友",
+                    "exclude_friends_help": "选中的好友将从关系网中隐藏。"
                 }
             }
         },
@@ -519,7 +587,8 @@
                     "startup_linux": "向 VRCX.desktop 启动文件添加 “--startup” 参数，以便在系统启动时将 VRCX 以最小化窗口的方式启动。"
                 },
                 "favorites": {
-                    "header": "星标好友筛选",
+                    "header": "筛选好友分组",
+                    "header_tooltip": "选择在各种功能（动态、游戏日志、通知和叠加界面）中显示的分组",
                     "group_placeholder": "选择分组"
                 },
                 "logging": {
@@ -531,19 +600,26 @@
                 },
                 "automation": {
                     "auto_change_status": "自动化状态切换",
+                    "auto_change_status_switch": "自动切换状态",
                     "auto_state_change_tooltip": "当房间中有其他人时自动切换状态。如果你不知道这是什么，保持默认关闭即可",
+                    "auto_state_change_switch_tooltip": "当房间中有其他符合条件的人时自动切换状态（独自一人 / 有其它人时）",
                     "alone_condition": "判断为“独自一人”的条件",
                     "alone": "房间内只有自己时",
                     "no_friends": "房间内没有好友时",
-                    "alone_status": "“独自一人”时",
+                    "alone_status": "“独自一人”时使用的社交状态",
                     "company_status": "有其他符合条件的人时",
                     "allowed_instance_types": "允许生效的房间类型",
-                    "instance_type_placeholder": "所有类型的房间",
+                    "instance_type_placeholder": "所有类型都生效",
                     "auto_invite_request_accept": "自动同意加入申请",
-                    "auto_invite_request_accept_tooltip": "自动同意来自星标好友的加入申请",
-                    "auto_invite_request_accept_off": "关闭",
-                    "auto_invite_request_accept_favs": "星标好友",
-                    "auto_invite_request_accept_selected_favs": "选定的星标好友"
+                    "auto_invite_request_accept_tooltip": "自动同意指定分组好友的加入申请",
+                    "auto_invite_request_accept_favs": "所有具有分组的好友",
+                    "auto_invite_request_accept_selected_favs": "仅指定分组的好友",
+                    "change_status_description": "覆盖当前的状态描述",
+                    "status_description_placeholder": "要使用的状态描述（最多 32 个字符）",
+                    "auto_change_status_groups": "仅统计来自以下分组的好友",
+                    "auto_change_status_groups_placeholder": "选择分组",
+                    "auto_accept_invite_groups": "指定分组",
+                    "auto_accept_invite_groups_placeholder": "选择分组"
                 },
                 "legal_notice": {
                     "header": "法律声明",
@@ -586,6 +662,7 @@
                     "zoom": "界面缩放",
                     "vrcplus_profile_icons": "VRC+ 个人资料图标",
                     "show_instance_id": "显示房间 ID（及其自定义名称）",
+                    "show_status_bar": "显示底部状态栏",
                     "age_gated_instances": "显示具有年龄限制的房间",
                     "nicknames": "显示本地好友备注",
                     "sort_favorite_by": "收藏夹排序规则",
@@ -604,6 +681,12 @@
                     "table_density_comfortable": "舒适",
                     "table_density_compact": "紧凑",
                     "table_entries_settings": "条目读取设置"
+                },
+                "display": {
+                    "header": "显示设置"
+                },
+                "sorting_tables": {
+                    "header": "排序与表格设置"
                 },
                 "timedate": {
                     "header": "时间 / 日期",
@@ -624,7 +707,6 @@
                     "yellow": "咸蛋黄"
                 },
                 "side_panel": {
-                    "header": "侧边栏",
                     "sorting": {
                         "header": "排序设置",
                         "alphabetical": "名称",
@@ -635,13 +717,7 @@
                         "last_seen": "最后见面时间",
                         "time_in_instance": "在房间的时长",
                         "placeholder": "排序依据"
-                    },
-                    "group_by_instance": "将好友按所在房间进行分类排序",
-                    "group_by_instance_tooltip": "如果启用，将会在有多名好友在同一房间时，按所在房间对好友进行分类排序。",
-                    "hide_friends_in_same_instance": "合并处于同一房间的好友",
-                    "hide_friends_in_same_instance_tooltip": "当多名好友处于同一房间时，在列表中合并他们以避免重复显示",
-                    "split_favorite_friends": "将星标好友按照分组显示",
-                    "split_favorite_friends_tooltip": "如果启用，将会显示星标好友时按照其所在的好友分组显示。"
+                    }
                 },
                 "user_dialog": {
                     "header": "玩家信息",
@@ -766,6 +842,12 @@
                 "advanced": {
                     "launch_options": "启动选项",
                     "vrc_registry_backup": "VRC 设置数据备份工具",
+                    "vrchat_settings": {
+                        "header": "VRChat"
+                    },
+                    "vrcx_settings": {
+                        "header": "VRCX"
+                    },
                     "primary_password": {
                         "header": "独立密码",
                         "description": "使用独立密码加密 VRCX 数据（将停用自动登录）"
@@ -955,7 +1037,9 @@
                 "vrchat_team": "VRChat 团队成员",
                 "age_verified": "已完成年龄验证",
                 "trust_level": "信誉等级",
-                "mutual_friends": "共同好友"
+                "mutual_friends": "共同好友",
+                "open_in_discord": "在 Discord 中打开",
+                "discord": "Discord"
             },
             "badges": {
                 "assigned": "获得于",
@@ -963,8 +1047,7 @@
                 "showcased": "显示在个人资料上"
             },
             "actions": {
-                "favorite_tooltip": "星标此好友",
-                "unfavorite_tooltip": "取消星标此好友",
+                "favorites_tooltip": "为此好友设置分组",
                 "refresh": "刷新",
                 "share": "分享",
                 "invite": "发送邀请",
@@ -1000,7 +1083,8 @@
                 "unfriend": "删除好友",
                 "unfriend_success_msg": "已成功删除好友",
                 "logout": "退出登录",
-                "edit_note_memo": "编辑备注"
+                "edit_note_memo": "编辑备注",
+                "reset_home": "重置出生点"
             },
             "info": {
                 "header": "信息",
@@ -1022,6 +1106,7 @@
                 "memo_placeholder": "点此添加备注",
                 "avatar_info": "正在使用的模型",
                 "avatar_info_last_seen": "正在使用的模型",
+                "unknown_avatar": "未知模型",
                 "represented_group": "展示群组",
                 "bio": "个人简介",
                 "last_seen": "最后见面时间",
@@ -1232,15 +1317,21 @@
                 "rename": "重命名",
                 "change_description": "更改描述",
                 "change_content_tags": "更改内容标签",
+                "change_styles_author_tags": "更改样式",
                 "change_image": "更改封面",
                 "download_package": "下载 Unity Package",
                 "delete": "删除",
                 "delete_impostor": "删除模型替身",
                 "regenerate_impostor": "重新创建模型替身",
-                "create_impostor": "创建模型替身"
+                "create_impostor": "创建模型替身",
+                "manage_tags": "管理标签",
+                "manage_tags_placeholder": "添加标签...",
+                "manage_tags_hint": "点击标签以更改其颜色",
+                "view_details": "查看详细信息"
             },
             "info": {
                 "header": "信息",
+                "name": "名称",
                 "id": "模型 ID",
                 "id_tooltip": "复制到剪贴板",
                 "copy_id": "复制 ID",
@@ -1249,7 +1340,12 @@
                 "last_updated": "最后更新时间",
                 "version": "版本",
                 "platform": "支持的平台",
-                "time_spent": "模型使用时长",
+                "pc_performance": "PC 性能评级",
+                "android_performance": "Android 性能评级",
+                "ios_performance": "iOS 性能评级",
+                "time_spent": "使用时长",
+                "visibility": "模型可见性",
+                "tags": "标签",
                 "memo": "备注",
                 "memo_placeholder": "点此添加备注",
                 "listings": "列表",
@@ -1269,7 +1365,7 @@
                 "invite": "仅允许邀请加入",
                 "closed": "不允许任何人加入",
                 "joined": "已加入",
-                "banned": "你已被群组封禁",
+                "banned": "被屏蔽/封禁",
                 "visible": "可见性：所有人",
                 "friends": "可见性：好友",
                 "hidden": "可见性：隐藏",
@@ -1363,10 +1459,10 @@
             }
         },
         "favorite": {
-            "header": "选择收藏夹",
-            "vrchat_favorites": "VRChat 上的收藏",
-            "local_favorites": "本地收藏",
-            "local_avatar_favorites": "模型收藏（需要 VRC+）"
+            "header": "选择收藏夹（分组）",
+            "vrchat_favorites": "在线收藏夹",
+            "local_favorites": "本地收藏夹",
+            "local_avatar_favorites": "模型收藏夹（本地，需要 VRC+）"
         },
         "social_status": {
             "header": "社交状态",
@@ -1567,7 +1663,7 @@
             "clear_errors": "清除错误信息"
         },
         "friend_export": {
-            "header": "导出收藏（星标）好友"
+            "header": "导出好友分组"
         },
         "friend_import": {
             "header": "导入好友",
@@ -1637,7 +1733,19 @@
             "drone_skin": "无人机皮肤",
             "emoji": "Emoji（表情）",
             "redeem": "兑换码兑换",
-            "create_animated_emoji": "动画表情生成器"
+            "create_animated_emoji": "动画表情生成器",
+            "crop_image": "确认上传"
+        },
+        "image_crop": {
+            "rotate_left": "向左旋转",
+            "rotate_right": "向右旋转",
+            "flip_h": "水平翻转",
+            "flip_v": "垂直翻转",
+            "zoom_in": "放大",
+            "zoom_out": "缩小",
+            "mode_fit": "切换到适应模式",
+            "mode_free": "切换到自由模式",
+            "reset": "重置"
         },
         "gallery_select": {
             "header": "选择图片",
@@ -1650,7 +1758,9 @@
             "avatar": "更改模型封面",
             "world": "更改世界封面",
             "description": "推荐图片尺寸：1200 像素 x 900 像素 (4:3)",
-            "upload": "上传图片"
+            "upload": "上传图片",
+            "confirm": "确认裁剪",
+            "cancel": "取消"
         },
         "screenshot_metadata": {
             "header": "截图管理",
@@ -1677,7 +1787,7 @@
             "avatar_scaling_disabled": "关闭模型缩放功能",
             "focus_view_disabled": "禁用焦点视图",
             "enable_debugging": "为其他人启用世界调试菜单",
-            "author_tags": "作者添加的标签（以逗号分隔）",
+            "author_tags": "自定义标签（以逗号分隔）",
             "content_tags": "内容警告标签（以逗号分隔）",
             "content_horror": "恐怖",
             "content_gore": "血腥",
@@ -1827,7 +1937,7 @@
             "data": "数据",
             "note": "备注",
             "roles": "身份组",
-            "user_id": "输入用户名 / 玩家 ID",
+            "user_id": "用户名 / 玩家 ID",
             "user_id_placeholder": "用户名 / 玩家 ID",
             "select_user": "选择玩家",
             "selected_users": "已选择的玩家",
@@ -1838,7 +1948,14 @@
             "selected_roles": "已选择的身份组",
             "remove_roles": "移除身份组",
             "add_roles": "添加身份组",
-            "export_logs": "导出日志"
+            "export_logs": "导出日志",
+            "export_bans": "导出封禁列表",
+            "import_bans": "导入封禁列表",
+            "import_bans_description": "在下方粘贴 CSV 格式的文本或玩家 ID。程序会自动从中解析出玩家 ID 并将其添加到封禁列表中。",
+            "import_bans_warning": "不要一次性导入太多，API 有速率限制，太多可能会导致操作失败甚至是账号限制，使用此功能说明你已经了解这些风险。",
+            "import_bans_placeholder": "在下方粘贴 CSV 或玩家 ID (每行一个)\nusr_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "import_bans_start": "导入并封禁",
+            "import_bans_clear_errors": "清除错误信息"
         },
         "group_post_edit": {
             "header": "创建/编辑帖子",
@@ -1881,6 +1998,7 @@
         "boop_dialog": {
             "header": "戳一戳",
             "emoji_manager": "表情管理",
+            "select_default_emoji": "选择默认表情",
             "default_emojis": "默认表情",
             "cancel": "取消",
             "send": "发送"
@@ -1958,6 +2076,19 @@
         "decline_type": "确定要拒绝{type}吗？",
         "delete_type": "确定要删除{type}吗？",
         "command_question": "继续？{command}",
+        "clear_group": "确定要清空群组吗？",
+        "delete_group": "确定要删除群组 {name} 吗？",
+        "delete_post": "确定要删除这个公告吗？",
+        "block_group": "确定要屏蔽这个群组吗？",
+        "unblock_group": "确定要取消屏蔽这个群组吗？",
+        "leave_group": "确定要离开这个群组吗？",
+        "disable_gamelog": "确定要禁用游戏日志吗？",
+        "restore_backup": "确定要恢复设置数据的备份吗？",
+        "delete_vrc_registry": "确定要删除 VRC 的设置数据吗？",
+        "clear_cache": "确定要清除所有 VRChat 缓存吗？",
+        "close_instance": "确定要关闭这个房间吗？关闭后任何人都将无法进入",
+        "bulk_unfavorite": "确定要取消收藏 {count} 个收藏项吗？\n此操作无法撤销。",
+        "bulk_unfavorite_title": "取消收藏 {count} 个收藏项？",
         "restart_required_title": "需要重启",
         "restart_now": "立即重启",
         "restart_later": "稍后重启"
@@ -2121,6 +2252,11 @@
                 "error": "已存在名称为 {name} 的收藏夹"
             }
         },
+        "backup_name": {
+            "header": "备份名称",
+            "description": "输入备份名称",
+            "input_error": "请输入备份名称"
+        },
         "auto_login_delay": {
             "header": "自动登录延迟",
             "description": "输入延迟时间（秒）（0 表示禁用，最大值为 10）。",
@@ -2155,6 +2291,18 @@
     },
     "message": {
         "auto_login_delay_countdown": "将在 {seconds} 秒后自动登录...",
+        "auth": {
+            "login_greeting": "你好，{name}！祝你拥有美好的一天！",
+            "logout_greeting": "下次再见，{name}！",
+            "email_2fa_resent": "已重发验证码邮件",
+            "email_2fa_no_credentials": "由于登录数据无效，无法重新发送验证码邮件，请重新登录。",
+            "incorrect_primary_password": "独立密码错误",
+            "saved_credentials_invalid": "保存的账号信息不再有效。",
+            "account_removed": "已移除账号。",
+            "auto_login_success": "自动登录成功。",
+            "auto_login_failed": "自动登录失败。",
+            "offline": "你现在处于离线状态。"
+        },
         "vrcx_updater": {
             "failed": "无法检查更新，{message}",
             "failed_install": "无法安装更新",
@@ -2173,7 +2321,15 @@
             "create_failed": "房间创建失败"
         },
         "avatar": {
-            "change_moderation_failed": "无法更新模型状态"
+            "change_moderation_failed": "无法更新模型状态",
+            "fallback_changed": "更改备用模型成功",
+            "blocked": "模型屏蔽成功",
+            "updated_public": "已将模型可见性设为公开",
+            "updated_private": "已将模型可见性设为私人",
+            "deleted": "模型删除成功",
+            "impostor_deleted": "模型替身删除成功",
+            "impostor_queued": "模型替身已加入创建队列",
+            "impostor_regenerated": "模型替身删除成功，新替身已进入创建队列，正在等待创建"
         },
         "avatar_lookup": {
             "not_found": "在模型数据库中未能找到模型",
@@ -2182,7 +2338,9 @@
             "loading": "正在从指定的模型数据库中查找模型"
         },
         "database": {
-            "upgrade_complete": "数据库升级完成"
+            "upgrade_complete": "数据库升级完成",
+            "disk_space": "请释放一些磁盘空间。",
+            "disk_error": "请检查你的磁盘是否有错误。"
         },
         "file": {
             "not_image": "文件不是有效的图片格式",
@@ -2190,12 +2348,19 @@
             "folder_missing": "文件夹不存在"
         },
         "group": {
-            "load_failed": "加载群组失败"
+            "load_failed": "加载群组信息失败",
+            "joined": "加入群组成功",
+            "join_request_sent": "已发送加入申请",
+            "visibility_updated": "群组可见性已更新",
+            "subscription_updated": "群组通知订阅状态已更新"
         },
         "invite": {
             "self_sent": "已发送自我邀请",
             "sent": "已发送邀请",
-            "message_update_failed": "VRChat API 未能更新消息，请重试"
+            "message_update_failed": "VRChat API 未能更新消息，请重试",
+            "message_updated": "邀请消息已更新",
+            "response_sent": "已发送邀请回复消息",
+            "response_photo_sent": "已发送回复消息"
         },
         "launch": {
             "invalid_path": "无效路径，你必须输入 VRChat 文件夹所在的路径或 “launch.exe” 所在的路径"
@@ -2210,7 +2375,16 @@
             "error": "上传失败"
         },
         "world": {
-            "load_failed": "加载世界信息失败"
+            "load_failed": "加载世界信息失败",
+            "home_updated": "更新出生点信息成功",
+            "home_reset": "重置出生点成功",
+            "published": "已成功发布世界",
+            "unpublished": "取消发布世界成功",
+            "persistent_data_deleted": "世界存档数据清除成功",
+            "deleted": "世界删除成功",
+            "id_copied": "世界 ID 已复制到剪贴板",
+            "url_copied": "世界 URL 已复制到剪贴板",
+            "name_copied": "世界名称已复制到剪贴板"
         },
         "user": {
             "moderated": "已更新玩家状态",
@@ -2228,7 +2402,27 @@
         },
         "crash": {
             "vrcx_reload": "为保证稳定性，VRCX 已重新加载"
-        }
+        },
+        "image": {
+            "downloading": "正在下载图片...",
+            "copied_to_clipboard": "图片已复制到剪贴板"
+        },
+        "registry": {
+            "restored": "VRC 设置数据已恢复",
+            "deleted": "VRC 设置数据已删除",
+            "restore_failed": "无法恢复 VRC 设置数据，请检查控制台以获取完整错误信息: {error}",
+            "invalid_json": "无效的 JSON 数据"
+        },
+        "cache": {
+            "deleted": "已清除所有缓存",
+            "delete_error": "清除缓存失败: {error}",
+            "invalid_config": "config.json 中包含无效的 JSON 数据"
+        },
+        "gamelog": {
+            "vrchat_must_be_closed": "必须关闭 VRChat 客户端后才能修改日志设置"
+        },
+        "copy_failed": "复制失败",
+        "error": "错误"
     },
     "status": {
         "title": "VRChat 状态"
@@ -2239,6 +2433,10 @@
         "traveling": "正在传送"
     },
     "table": {
+        "header_menu": {
+            "reset_all": "重置所有列",
+            "lock_column_order": "锁定列排序"
+        },
         "pagination": {
             "rows_per_page": "每页显示行数",
             "first": "第一页",
@@ -2439,5 +2637,35 @@
                 "unavailable": "服务可能由于 VRChat 内部问题而不可用"
             }
         }
+    },
+    "accessibility": {
+        "toggle_sidebar": "切换侧边栏",
+        "back_to_top": "返回顶部",
+        "toggle_password": "切换密码可见性",
+        "clear_input": "清除输入"
+    },
+    "status_bar": {
+        "game": "游戏状态",
+        "game_running": "VRChat 目前正在运行",
+        "game_stopped": "VRChat 目前没有运行",
+        "servers": "服务器状态",
+        "servers_ok": "VRChat 服务目前一切正常",
+        "servers_issue": "VRChat 服务目前存在降级",
+        "steamvr": "SteamVR",
+        "steamvr_running": "SteamVR 目前正在运行",
+        "steamvr_stopped": "SteamVR 目前没有运行",
+        "proxy": "代理服务器",
+        "ws_connected": "已连接",
+        "ws_disconnected": "已断开",
+        "ws_avg_per_minute": "平均 {count} 次/分钟",
+        "zoom": "界面缩放",
+        "zoom_tooltip": "点击以调整界面缩放",
+        "app_uptime": "应用运行时长",
+        "app_uptime_short": "运行时长",
+        "clocks": "时钟",
+        "clock": "时钟",
+        "clocks_label": "时钟",
+        "clocks_none": "无",
+        "timezone": "时区"
     }
 }
