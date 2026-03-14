@@ -526,66 +526,52 @@ namespace VRCX
                 return null;
             }
 
-            string? testLibraryPath = null;
-            string? libraryPath = null;
+            var libraryFolders = new List<string>();
             foreach (var line in File.ReadLines(libraryFoldersVdfPath))
             {
-                if (line.Contains("\"path\""))
-                {
-                    var parts = line.Split("\t");
-                    if (parts.Length < 4)
-                        continue;
+                if (!line.Contains("\"path\""))
+                    continue;
 
-                    var basePath = parts[4].Replace("\"", "").Replace(@"\\", @"\");
-                    var path = Path.Join(basePath, @"steamapps");
-                    if (Directory.Exists(path))
-                        testLibraryPath = path;
-                }
+                var parts = line.Split("\t");
+                if (parts.Length < 4)
+                    continue;
 
-                if (line.Contains($"\"{appId}\""))
-                {
-                    libraryPath = testLibraryPath;
-                    break;
-                }
+                var basePath = parts[4].Replace("\"", "").Replace(@"\\", @"\");
+                var path = Path.Join(basePath, @"steamapps");
+                if (Directory.Exists(path))
+                    libraryFolders.Add(path);
             }
-            if (libraryPath == null)
+
+            foreach (var libraryPath in libraryFolders)
             {
-                logger.Error("Could not find Steam library containing appid {0}", appId);
-                return null;
-            }
-
-            string? installDir = null;
-            var appManifestFiles = Directory.GetFiles(libraryPath, "appmanifest_*.acf");
-            foreach (var file in appManifestFiles)
-            {
-                try
+                var appManifestFiles = Directory.GetFiles(libraryPath, "appmanifest_*.acf");
+                foreach (var file in appManifestFiles)
                 {
-                    var acf = File.ReadAllText(file);
-                    var idMatch = Regex.Match(acf, @"""appid""\s+""(\d+)""");
-                    var dirMatch = Regex.Match(acf, @"""installdir""\s+""([^""]+)""");
-                    if (!idMatch.Success || !dirMatch.Success)
-                        continue;
+                    try
+                    {
+                        var acf = File.ReadAllText(file);
+                        var idMatch = Regex.Match(acf, @"""appid""\s+""(\d+)""");
+                        var dirMatch = Regex.Match(acf, @"""installdir""\s+""([^""]+)""");
+                        if (!idMatch.Success || !dirMatch.Success)
+                            continue;
 
-                    var foundAppId = idMatch.Groups[1].Value;
-                    if (foundAppId != appId)
-                        continue;
+                        var foundAppId = idMatch.Groups[1].Value;
+                        if (foundAppId != appId)
+                            continue;
 
-                    var fullPath = Path.Join(libraryPath, "common", dirMatch.Groups[1].Value);
-                    if (Directory.Exists(fullPath))
-                        installDir = fullPath;
-                }
-                catch
-                {
-                    // ignore
+                        var fullPath = Path.Join(libraryPath, "common", dirMatch.Groups[1].Value);
+                        if (Directory.Exists(fullPath))
+                            return fullPath;
+                    }
+                    catch
+                    {
+                        // ignore
+                    }
                 }
             }
-            if (installDir == null)
-            {
-                logger.Error("Could not find install dir for appid {0}", appId);
-                return null;
-            }
 
-            return installDir;
+            logger.Error("Could not find install dir for appid {0}", appId);
+            return null;
         }
     }
 }
