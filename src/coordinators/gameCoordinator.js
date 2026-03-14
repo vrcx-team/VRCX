@@ -98,6 +98,19 @@ export async function runUpdateIsGameRunningFlow(
 }
 
 /**
+ * Orchestrates the HMD AFK state update from IPC.
+ * @param {boolean} isHmdAfkArg HMD AFK flag from VR polling.
+ */
+export function runUpdateIsHmdAfkFlow(isHmdAfkArg) {
+    const gameStore = useGameStore();
+
+    if (isHmdAfkArg !== gameStore.isHmdAfk) {
+        gameStore.setIsHmdAfk(isHmdAfkArg);
+        console.log('isHmdAfk', isHmdAfkArg);
+    }
+}
+
+/**
  * Runs auto cache management if enabled.
  */
 function runAutoVRChatCacheManagementFlow() {

@@ -23,7 +23,7 @@
     import { computed, onBeforeMount, onMounted } from 'vue';
 
     import { addGameLogEvent, getGameLogTable } from './coordinators/gameLogCoordinator';
-    import { runCheckVRChatDebugLoggingFlow, runUpdateIsGameRunningFlow } from './coordinators/gameCoordinator';
+    import { runCheckVRChatDebugLoggingFlow, runUpdateIsGameRunningFlow, runUpdateIsHmdAfkFlow } from './coordinators/gameCoordinator';
     import { Toaster } from './components/ui/sonner';
     import { TooltipProvider } from './components/ui/tooltip';
     import { createGlobalStores } from './stores';
@@ -53,6 +53,7 @@
         window.$pinia = store;
         // Bridge: attach coordinator functions to store for C# IPC callbacks
         store.game.updateIsGameRunning = runUpdateIsGameRunningFlow;
+        store.game.updateIsHmdAfk = runUpdateIsHmdAfkFlow;
         store.gameLog.addGameLogEvent = addGameLogEvent;
     }
 
