@@ -6,7 +6,7 @@
                     <div class="avatar-card-wrapper rounded-lg" @click="$emit('click')">
                         <Card
                             class="avatar-card x-hover-card flex flex-col gap-0 p-0 cursor-pointer overflow-hidden rounded-lg relative hover:bg-accent hover:shadow-sm"
-                            :class="isActive ? 'border-2 border-primary' : 'border border-border/50'">
+                            :class="isActive ? 'ring-[3px] ring-ring border-ring' : 'border border-border/50'">
                             <div class="w-full aspect-5/2 overflow-hidden bg-muted relative">
                                 <img
                                     v-if="avatar.thumbnailImageUrl && !imageLoadError"
