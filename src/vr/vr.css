@@ -22,9 +22,7 @@ body {
     margin: 0;
 }
 
-/* Font variables are shared from ../styles/fonts.css */
 :root {
-    /* VRChat Status Colors (duplicated from globals.css for VR panel independence) */
     --status-online: #67c23a;
     --status-joinme: #00b8ff;
     --status-askme: #ff9500;
@@ -33,10 +31,26 @@ body {
     --status-offline: #909399;
     --status-offline-alt: #808080;
 
-    /* Platform Colors */
     --platform-pc: #0078d4;
     --platform-quest: #3ddc84;
     --platform-ios: #8e8e93;
+
+    --vr-bg: #18181b;
+    --vr-bg-surface: #27272a;
+    --vr-text: #e4e4e7;
+    --vr-text-secondary: #a1a1aa;
+    --vr-text-muted: #71717a;
+    --vr-text-name: #d4d4d8;
+    --vr-text-friend: #fafafa;
+    --vr-text-favorite: #fbbf24;
+    --vr-border: rgba(255, 255, 255, 0.06);
+    --vr-border-strong: rgba(255, 255, 255, 0.12);
+    --vr-radius: 8px;
+
+    --vr-font-xs: 14px;
+    --vr-font-sm: 16px;
+    --vr-font-base: 18px;
+    --vr-font-lg: 20px;
 }
 body {
     font-family:
@@ -242,6 +256,9 @@ button {
     z-index: 20;
     display: flex;
     flex-direction: column;
+    border-radius: var(--vr-radius);
+    border: 1px solid var(--vr-border-strong);
+    overflow: hidden;
 }
 
 .hmd {
@@ -254,22 +271,27 @@ button {
 }
 
 .background {
-    background: #1f1f1f;
+    background: var(--vr-bg);
     text-shadow: none;
 }
 
 .x-container {
     position: relative;
     flex: none;
-    padding: 2px 10px 0 10px;
+    padding: 6px 10px 2px 10px;
     overflow: hidden;
 }
 
 .x-containerbottom {
-    padding: 0px 10px;
+    padding: 3px 10px 3px;
     overflow: hidden;
-    font-size: 20px;
+    font-size: var(--vr-font-base);
     white-space: nowrap;
+    border-top: 1px solid var(--vr-border-strong);
+    color: var(--vr-text-secondary);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1.4;
 }
 
 .x-containerbottom span {
@@ -277,10 +299,21 @@ button {
     overflow: hidden;
 }
 
+.x-containerbottom .vue-marquee-text-component {
+    font-weight: 500;
+    color: var(--vr-text);
+}
+
+.x-containerbottom > br ~ span {
+    font-size: var(--vr-font-sm);
+    color: var(--vr-text-muted);
+}
+
 .np-progress-bar {
     width: 0%;
-    height: 2px;
-    background-color: white;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0.9));
+    border-radius: 2px;
 }
 
 .np-progress-circle {
@@ -302,27 +335,40 @@ button {
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    font-size: 18px;
+    font-size: var(--vr-font-base);
+    color: var(--vr-text);
+    font-weight: 400;
+    line-height: 1.25;
+}
+
+.x-friend-item:nth-child(even) {
+    background: rgba(255, 255, 255, 0.015);
 }
 
 .x-friend-item .time {
-    margin-right: 5px;
+    margin-right: 6px;
+    color: var(--vr-text-muted);
+    font-size: var(--vr-font-xs);
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.9;
+    flex-shrink: 0;
 }
 
 .x-friend-item .name {
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .item .name {
-    color: #c5c5c5;
+    color: var(--vr-text-name);
 }
 
 .friend .name {
-    color: #fff;
+    color: var(--vr-text-friend);
 }
 
 .favorite .name {
-    color: #ff0;
+    color: var(--vr-text-favorite);
 }
 
 .x-friend-item > .avatar {
@@ -361,11 +407,12 @@ button {
 }
 
 .x-friend-item > .detail > .name {
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .x-friend-item > .detail > .extra {
-    font-weight: normal;
+    font-weight: 400;
+    color: var(--vr-text-secondary);
 }
 
 i.x-user-status {
@@ -435,7 +482,7 @@ i.x-user-status.busy {
 }
 
 .hud-feed .combo {
-    color: #aaa;
+    color: var(--vr-text-muted);
 }
 
 .hud-timeout .item {
@@ -461,19 +508,6 @@ i.x-user-status.busy {
     bottom: 0;
 }
 
-.tracker-container {
-    flex: 1 1 auto;
-    text-align: center;
-    line-height: 18px;
-    width: 55px;
-}
-
-.tracker-device img {
-    display: inline-block;
-    height: 32px;
-    transition: all 0.25s linear;
-}
-
 .tracker-warning {
     color: #fcfb00;
 }
@@ -488,4 +522,88 @@ i.x-user-status.busy {
 
 .tracker-error img {
     filter: saturate(160%) brightness(88%) hue-rotate(161deg);
+}
+
+.vr-bottom-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.vr-bottom-row > span {
+    display: inline-block;
+}
+
+.vr-bottom-right {
+    margin-left: auto;
+}
+
+.vr-text-muted {
+    color: var(--vr-text-muted);
+}
+
+.vr-mx {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.x-containerbottom:first-of-type {
+    border-top: 1px solid var(--vr-border);
+    padding: 6px 10px 4px;
+    background: rgba(255, 255, 255, 0.01);
+}
+
+.x-friend-item .lucide {
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px;
+    color: var(--vr-text-muted);
+    flex-shrink: 0;
+    margin-right: 6px !important;
+    margin-left: 0 !important;
+    position: relative;
+    top: 1px;
+    opacity: 0.8;
+}
+
+.x-friend-item .lucide + .lucide {
+    margin-left: -2px !important;
+}
+
+.x-friend-item .lucide.mx-1 {
+    margin-left: 2px !important;
+    margin-right: 2px !important;
+    opacity: 0.5;
+}
+
+.tracker-container {
+    flex: 1 1 auto;
+    text-align: center;
+    line-height: 16px;
+    width: 48px;
+    font-size: 13px;
+    color: var(--vr-text-secondary);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    padding: 1px 0;
+}
+
+.tracker-device {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+}
+
+.tracker-device img {
+    display: inline-block;
+    height: 20px;
+    transition: all 0.25s linear;
+    opacity: 0.8;
+}
+
+.tracker-device span {
+    font-size: 13px;
+    letter-spacing: 0.02em;
 }

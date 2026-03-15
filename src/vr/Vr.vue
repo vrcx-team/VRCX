@@ -2,7 +2,7 @@
     <div id="x-app" class="flex w-screen h-screen overflow-hidden cursor-default x-app-type">
         <div class="wrist" :class="{ background: config && config.backgroundEnabled }">
             <div class="x-container" style="flex: 1">
-                <div class="x-friend-list" ref="list" style="color: #aaa">
+                <div class="x-friend-list" ref="list" style="color: var(--vr-text-secondary)">
                     <template v-if="config && config.minimalFeed">
                         <template
                             v-for="(feed, index) in wristFeed"
@@ -637,7 +637,7 @@
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <span class="name" v-text="feed.displayName"></span>
-                                        <span style="margin-left: 5px; margin-right: 5px">has logged in</span>
+                                        <span class="vr-mx">has logged in</span>
                                         <template v-if="feed.worldName">
                                             to
                                             <VrLocation
@@ -736,7 +736,7 @@
                                             class="name"
                                             v-text="feed.displayName"
                                             :style="{ color: feed.tagColour }"></span>
-                                        <span style="margin-left: 5px; margin-right: 5px">changed video to</span>
+                                        <span class="vr-mx">changed video to</span>
                                         <template v-if="feed.videoName">
                                             <span v-text="feed.videoName"></span>
                                         </template>
@@ -991,7 +991,7 @@
                                             class="name"
                                             v-text="feed.displayName"
                                             :style="{ color: feed.tagColour }"></span>
-                                        <span style="margin-left: 5px; margin-right: 5px">changed into avatar</span>
+                                        <span class="vr-mx">changed into avatar</span>
                                         <template v-if="feed.releaseStatus === 'public'">
                                             <i class="x-user-status online"></i>
                                         </template>
@@ -1149,7 +1149,7 @@
                     </template>
                 </div>
             </div>
-            <div class="x-containerbottom">
+            <div v-if="devices.length" class="x-containerbottom">
                 <div style="display: flex; flex-direction: row; flex-wrap: wrap">
                     <div
                         class="tracker-container"
@@ -1298,8 +1298,8 @@
                         <span v-if="feed.isMaster">👑</span><span v-if="feed.isModerator">⚔️</span
                         ><strong class="name" v-text="feed.displayName" :style="{ color: feed.colour }"></strong>
                         <template v-if="feed.type === 'ChangeAvatar'">
-                            <span style="margin-left: 10px; color: #a3a3a3">ChangeAvatar</span>
-                            <span v-if="!feed.inCache" style="color: #aaa; margin-left: 10px"
+                            <span style="margin-left: 10px; color: var(--vr-text-secondary)">ChangeAvatar</span>
+                            <span v-if="!feed.inCache" style="color: var(--vr-text-muted); margin-left: 10px"
                                 ><Loader2 class="is-loading inline-block h-4 w-4" />
                             </span>
                             <span v-text="feed.avatar.name" style="margin-left: 10px"></span>
@@ -1310,12 +1310,12 @@
                             >
                             <span
                                 v-else-if="feed.avatar.releaseStatus === 'private'"
-                                style="margin-left: 10px; color: #e6a23c"
+                                style="margin-left: 10px; color: var(--status-askme)"
                                 >(Private)</span
                             >
                         </template>
                         <template v-else-if="feed.type === 'ChangeStatus'">
-                            <span style="margin-left: 10px; color: #a3a3a3">ChangeStatus</span>
+                            <span style="margin-left: 10px; color: var(--vr-text-secondary)">ChangeStatus</span>
                             <span v-if="feed.status !== feed.previousStatus">
                                 <i
                                     class="x-user-status"
@@ -1335,15 +1335,15 @@
                                 style="margin-left: 10px"></span>
                         </template>
                         <template v-else-if="feed.type === 'ChangeGroup'">
-                            <span style="margin-left: 10px; color: #a3a3a3">ChangeGroup</span>
+                            <span style="margin-left: 10px; color: var(--vr-text-secondary)">ChangeGroup</span>
                             <span v-text="feed.groupName" style="margin-left: 10px"></span>
                         </template>
                         <template v-else-if="feed.type === 'ChatBoxMessage'">
-                            <span style="margin-left: 10px; color: #a3a3a3">ChatBox</span>
+                            <span style="margin-left: 10px; color: var(--vr-text-secondary)">ChatBox</span>
                             <span v-text="feed.text" style="margin-left: 10px; white-space: normal"></span>
                         </template>
                         <template v-else-if="feed.type === 'PortalSpawn'">
-                            <span style="margin-left: 10px; color: #a3a3a3">PortalSpawn</span>
+                            <span style="margin-left: 10px; color: var(--vr-text-secondary)">PortalSpawn</span>
                             <VrLocation
                                 :location="feed.location"
                                 :hint="feed.worldName"
@@ -1352,7 +1352,7 @@
                                 style="margin-left: 10px"></VrLocation>
                         </template>
                         <template v-else-if="feed.type === 'OnPlayerJoined'">
-                            <span style="margin-left: 10px; color: #a3a3a3">has joined</span>
+                            <span style="margin-left: 10px; color: var(--vr-text-secondary)">has joined</span>
                             <span
                                 v-if="feed.platform === 'Desktop'"
                                 style="color: var(--status-joinme); margin-left: 10px"
@@ -1368,23 +1368,23 @@
                                 style="color: var(--platform-quest); margin-left: 10px"
                                 >Android</span
                             >
-                            <span v-else-if="feed.platform === 'iOS'" style="color: #c7c7ce; margin-left: 10px"
+                            <span v-else-if="feed.platform === 'iOS'" style="color: var(--platform-ios); margin-left: 10px"
                                 >iOS</span
                             >
-                            <span v-if="!feed.inCache" style="color: #aaa; margin-left: 10px"
+                            <span v-if="!feed.inCache" style="color: var(--vr-text-muted); margin-left: 10px"
                                 ><Download class="inline-block h-4 w-4" />
                             </span>
                             <span v-text="feed.avatar.name" style="margin-left: 10px"></span>
                         </template>
                         <template v-else-if="feed.type === 'SpawnEmoji'">
-                            <span style="margin-left: 10px; color: #a3a3a3">SpawnEmoji</span>
+                            <span style="margin-left: 10px; color: var(--vr-text-secondary)">SpawnEmoji</span>
                             <span v-text="feed.text" style="margin-left: 10px"></span>
                         </template>
                         <span
                             v-else-if="feed.color === 'yellow'"
                             v-text="feed.text"
                             style="color: yellow; margin-left: 10px"></span>
-                        <span v-else style="margin-left: 10px; color: #a3a3a3" v-text="feed.text"></span>
+                        <span v-else style="margin-left: 10px; color: var(--vr-text-secondary)" v-text="feed.text"></span>
                         <template v-if="feed.combo > 1">
                             <span class="combo" style="margin-left: 10px">x{{ feed.combo }}</span>
                         </template>
@@ -1690,7 +1690,7 @@
         if (vrState.wristFeed.length === 0) {
             return;
         }
-        let length = 16;
+        let length = 19;
         if (!vrState.config.hideDevicesFromFeed) {
             length -= 2;
             if (vrState.deviceCount > 8) {
