@@ -244,6 +244,7 @@
 <script setup>
     defineOptions({ name: 'ChartsMutual' });
 
+    import { useLocalStorage } from '@vueuse/core';
     import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
     import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
@@ -516,24 +517,9 @@
     const selectedFriendId = ref(null);
 
     const EXCLUDED_FRIENDS_KEY = 'VRCX_MutualGraphExcludedFriends';
-    const excludedFriendIds = ref(loadExcludedFriends());
-
-    function loadExcludedFriends() {
-        try {
-            const stored = localStorage.getItem(EXCLUDED_FRIENDS_KEY);
-            if (stored) return JSON.parse(stored);
-        } catch {
-            /* ignore */
-        }
-        return [];
-    }
-
-    function saveExcludedFriends() {
-        localStorage.setItem(EXCLUDED_FRIENDS_KEY, JSON.stringify(excludedFriendIds.value));
-    }
+    const excludedFriendIds = useLocalStorage(EXCLUDED_FRIENDS_KEY, []);
 
     watch(excludedFriendIds, async () => {
-        saveExcludedFriends();
         if (lastMutualMap) {
             try {
                 await applyGraph(lastMutualMap);

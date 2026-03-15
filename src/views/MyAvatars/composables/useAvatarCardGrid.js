@@ -2,10 +2,10 @@ import {
     computed,
     nextTick,
     onBeforeMount,
-    onBeforeUnmount,
     ref,
     watch
 } from 'vue';
+import { useResizeObserver } from '@vueuse/core';
 
 import configRepository from '../../../services/config.js';
 
@@ -47,9 +47,6 @@ export function useAvatarCardGrid(options = {}) {
     const gridContainerRef = ref(null);
     const containerWidth = ref(0);
 
-    let resizeObserver;
-    let cleanupResize;
-
     const updateContainerWidth = (el) => {
         const element = el ?? gridContainerRef.value;
         if (!element) {
@@ -60,17 +57,6 @@ export function useAvatarCardGrid(options = {}) {
             element.clientWidth ?? element.offsetWidth ?? 0,
             0
         );
-    };
-
-    const disconnectResize = () => {
-        if (resizeObserver) {
-            resizeObserver.disconnect();
-            resizeObserver = undefined;
-        }
-        if (cleanupResize) {
-            cleanupResize();
-            cleanupResize = undefined;
-        }
     };
 
     const cardScale = computed({
@@ -207,39 +193,22 @@ export function useAvatarCardGrid(options = {}) {
     watch(
         gridContainerRef,
         (element) => {
-            disconnectResize();
             if (!element) {
                 containerWidth.value = 0;
                 return;
             }
             nextTick(() => updateContainerWidth(element));
-
-            if (typeof ResizeObserver !== 'undefined') {
-                resizeObserver = new ResizeObserver((entries) => {
-                    if (!entries?.length) return;
-                    const [entry] = entries;
-                    containerWidth.value = Math.max(
-                        entry.contentRect?.width ?? element.clientWidth ?? 0,
-                        0
-                    );
-                });
-                resizeObserver.observe(element);
-                return;
-            }
-
-            if (typeof window !== 'undefined') {
-                const handleResize = () => updateContainerWidth(element);
-                window.addEventListener('resize', handleResize, {
-                    passive: true
-                });
-                cleanupResize = () =>
-                    window.removeEventListener('resize', handleResize);
-            }
         },
         { immediate: true }
     );
 
-    onBeforeUnmount(() => disconnectResize());
+    useResizeObserver(gridContainerRef, (entries) => {
+        const [entry] = entries;
+        containerWidth.value = Math.max(
+            entry?.contentRect?.width ?? gridContainerRef.value?.clientWidth ?? 0,
+            0
+        );
+    });
 
     onBeforeMount(async () => {
         try {

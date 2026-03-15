@@ -1,4 +1,5 @@
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { useEventListener } from '@vueuse/core';
+import { computed, ref, watch } from 'vue';
 
 import configRepository from '../../../services/config';
 import {
@@ -312,25 +313,11 @@ export function useNavLayout({
         await loadNavMenuConfig();
     };
 
-    onMounted(() => {
-        if (typeof window === 'undefined') {
-            return;
-        }
-        window.addEventListener(
-            NAV_LAYOUT_UPDATED_EVENT,
-            handleExternalNavLayoutUpdate
-        );
-    });
-
-    onUnmounted(() => {
-        if (typeof window === 'undefined') {
-            return;
-        }
-        window.removeEventListener(
-            NAV_LAYOUT_UPDATED_EVENT,
-            handleExternalNavLayoutUpdate
-        );
-    });
+    useEventListener(
+        typeof window !== 'undefined' ? window : undefined,
+        NAV_LAYOUT_UPDATED_EVENT,
+        handleExternalNavLayoutUpdate
+    );
 
     return {
         navLayout,

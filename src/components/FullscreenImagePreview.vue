@@ -97,7 +97,8 @@
 
 <script setup>
     import { Copy, Download, RefreshCcw, RotateCcw, RotateCw, X, ZoomIn, ZoomOut } from 'lucide-vue-next';
-    import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+    import { useEventListener } from '@vueuse/core';
+    import { computed, onBeforeUnmount, ref, watch } from 'vue';
     import { DialogContent as RekaDialogContent, DialogOverlay as RekaDialogOverlay, DialogPortal } from 'reka-ui';
     import { Button } from '@/components/ui/button';
     import { Dialog } from '@/components/ui/dialog';
@@ -285,8 +286,7 @@
         else if (e.key.toLowerCase() === 'r') rotateCW();
         else if (e.key === '0') resetTransform();
     }
-    onMounted(() => window.addEventListener('keydown', onKeydown));
-    onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
+    useEventListener(window, 'keydown', onKeydown);
 
     async function copyImageToClipboard(url) {
         if (!url) return;

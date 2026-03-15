@@ -138,7 +138,8 @@
 </template>
 
 <script setup>
-    import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+    import { useResizeObserver } from '@vueuse/core';
+    import { computed, nextTick, onBeforeMount, onMounted, reactive, ref, watch } from 'vue';
     import { ChevronDown, Loader2, Settings } from 'lucide-vue-next';
     import { Field, FieldContent, FieldLabel } from '@/components/ui/field';
     import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -262,8 +263,6 @@
     const gridWidth = ref(0);
     let measureScheduled = false;
     let pendingGridWidthUpdate = false;
-    let resizeObserver;
-    let cleanupResize;
 
     const updateGridWidth = () => {
         const wrap = scrollbarRef.value;
@@ -275,44 +274,18 @@
     };
 
     const setupResizeHandling = () => {
-        if (cleanupResize) {
-            cleanupResize();
-            cleanupResize = undefined;
-        }
-
         const wrap = scrollbarRef.value;
         if (!wrap) {
             return;
         }
 
         updateGridWidth();
-
-        if (typeof ResizeObserver !== 'undefined') {
-            resizeObserver = new ResizeObserver((entries) => {
-                if (!entries || entries.length === 0) {
-                    return;
-                }
-                const [entry] = entries;
-                gridWidth.value = entry.contentRect?.width ?? wrap.clientWidth ?? 0;
-            });
-            resizeObserver.observe(wrap);
-            cleanupResize = () => {
-                resizeObserver?.disconnect();
-                resizeObserver = undefined;
-            };
-            return;
-        }
-
-        if (typeof window !== 'undefined') {
-            const handleResize = () => {
-                updateGridWidth();
-            };
-            window.addEventListener('resize', handleResize, { passive: true });
-            cleanupResize = () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        }
     };
+
+    useResizeObserver(scrollbarRef, (entries) => {
+        const [entry] = entries;
+        gridWidth.value = entry?.contentRect?.width ?? scrollbarRef.value?.clientWidth ?? 0;
+    });
 
     const normalizedSearchTerm = computed(() => searchTerm.value.trim().toLowerCase());
 
@@ -903,13 +876,6 @@
             setupResizeHandling();
             scheduleVirtualMeasure({ updateGridWidth: true });
         });
-    });
-
-    onBeforeUnmount(() => {
-        if (cleanupResize) {
-            cleanupResize();
-            cleanupResize = undefined;
-        }
     });
 
     /**

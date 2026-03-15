@@ -2,10 +2,10 @@ import {
     computed,
     nextTick,
     onBeforeMount,
-    onBeforeUnmount,
     ref,
     watch
 } from 'vue';
+import { useResizeObserver } from '@vueuse/core';
 
 import configRepository from '../../../services/config.js';
 
@@ -58,9 +58,6 @@ export function useFavoritesCardScaling(options = {}) {
     const containerRef = ref(null);
     const containerWidth = ref(0);
 
-    let resizeObserver;
-    let cleanupWindowResize;
-
     const updateContainerWidth = (el = containerRef.value) => {
         const element = el ?? containerRef.value;
         if (!element) {
@@ -71,17 +68,6 @@ export function useFavoritesCardScaling(options = {}) {
             element.clientWidth ?? element.offsetWidth ?? 0,
             0
         );
-    };
-
-    const disconnectResizeObserver = () => {
-        if (resizeObserver) {
-            resizeObserver.disconnect();
-            resizeObserver = undefined;
-        }
-        if (cleanupWindowResize) {
-            cleanupWindowResize();
-            cleanupWindowResize = undefined;
-        }
     };
 
     const cardScale = computed({
@@ -212,46 +198,21 @@ export function useFavoritesCardScaling(options = {}) {
     watch(
         containerRef,
         (element) => {
-            disconnectResizeObserver();
             if (!element) {
                 containerWidth.value = 0;
                 return;
             }
 
             nextTick(() => updateContainerWidth(element));
-
-            if (typeof ResizeObserver !== 'undefined') {
-                const observedElement = element;
-                resizeObserver = new ResizeObserver((entries) => {
-                    if (!entries?.length) {
-                        return;
-                    }
-                    const [entry] = entries;
-                    const width =
-                        entry.contentRect?.width ??
-                        observedElement?.clientWidth ??
-                        0;
-                    containerWidth.value = Math.max(width, 0);
-                });
-                resizeObserver.observe(element);
-                return;
-            }
-
-            if (typeof window !== 'undefined') {
-                const handleResize = () => updateContainerWidth(element);
-                window.addEventListener('resize', handleResize, {
-                    passive: true
-                });
-                cleanupWindowResize = () => {
-                    window.removeEventListener('resize', handleResize);
-                };
-            }
         },
         { immediate: true }
     );
 
-    onBeforeUnmount(() => {
-        disconnectResizeObserver();
+    useResizeObserver(containerRef, (entries) => {
+        const [entry] = entries;
+        const width =
+            entry?.contentRect?.width ?? containerRef.value?.clientWidth ?? 0;
+        containerWidth.value = Math.max(width, 0);
     });
 
     onBeforeMount(async () => {

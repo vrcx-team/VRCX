@@ -1,4 +1,5 @@
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { useEventListener } from '@vueuse/core';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { toast } from 'vue-sonner';
 
@@ -243,22 +244,11 @@ export function useToolNavPinning() {
         dispatchNavLayoutUpdated();
     };
 
-    onMounted(() => {
-        if (typeof window === 'undefined') {
-            return;
-        }
-        window.addEventListener(NAV_LAYOUT_UPDATED_EVENT, refreshPinnedState);
-    });
-
-    onUnmounted(() => {
-        if (typeof window === 'undefined') {
-            return;
-        }
-        window.removeEventListener(
-            NAV_LAYOUT_UPDATED_EVENT,
-            refreshPinnedState
-        );
-    });
+    useEventListener(
+        typeof window !== 'undefined' ? window : undefined,
+        NAV_LAYOUT_UPDATED_EVENT,
+        refreshPinnedState
+    );
 
     return {
         pinnedToolKeys: computed(() => pinnedToolKeysRef.value),
