@@ -11,6 +11,7 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
     const vrcStatusApiUrl = 'https://status.vrchat.com/api/v2';
 
     const lastStatus = ref('');
+    const lastStatusIndicator = ref('');
     const lastStatusTime = ref(null);
     const lastStatusSummary = ref('');
     const lastTimeFetched = ref(0);
@@ -24,6 +25,8 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
     });
 
     const hasIssue = computed(() => !!lastStatus.value);
+
+    const isMajor = computed(() => lastStatusIndicator.value === 'major');
 
     /**
      * @returns {void}
@@ -54,10 +57,12 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
         lastStatusTime.value = new Date(data.page.updated_at);
         if (data.status.description === 'All Systems Operational') {
             lastStatus.value = '';
+            lastStatusIndicator.value = '';
             pollingInterval.value = 15 * 60 * 1000; // 15 minutes
             return;
         }
         lastStatus.value = data.status.description;
+        lastStatusIndicator.value = data.status.indicator || '';
         pollingInterval.value = 2 * 60 * 1000; // 2 minutes
         getVrcStatusSummary();
     }
@@ -116,10 +121,12 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
 
     return {
         lastStatus,
+        lastStatusIndicator,
         lastStatusTime,
         lastStatusSummary,
         statusText,
         hasIssue,
+        isMajor,
         openStatusPage,
         onBrowserFocus,
         getVrcStatus

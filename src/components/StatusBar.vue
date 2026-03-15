@@ -116,7 +116,9 @@
                                     v-else
                                     class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border cursor-pointer hover:bg-accent"
                                     @click="vrcStatusStore.openStatusPage()">
-                                    <span class="inline-block size-2 rounded-full shrink-0 bg-[#e6a23c]" />
+                                    <span
+                                        class="inline-block size-2 rounded-full shrink-0"
+                                        :class="vrcStatusStore.isMajor ? 'bg-destructive' : 'bg-status-askme'" />
                                     <span class="text-foreground text-[11px]">{{ t('status_bar.servers') }}</span>
                                 </div>
                             </HoverCardTrigger>
@@ -127,7 +129,9 @@
                                 align="start"
                                 :side-offset="4">
                                 <div class="flex items-center gap-1.5 mb-1.5">
-                                    <span class="inline-block size-2 rounded-full shrink-0 bg-[#e6a23c]" />
+                                    <span
+                                        class="inline-block size-2 rounded-full shrink-0"
+                                        :class="vrcStatusStore.isMajor ? 'bg-destructive' : 'bg-status-askme'" />
                                     <span class="font-semibold text-xs text-foreground">{{
                                         t('status_bar.servers_issue')
                                     }}</span>
