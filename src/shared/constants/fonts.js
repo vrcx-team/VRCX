@@ -11,30 +11,25 @@ const APP_FONT_CONFIG = Object.freeze({
         cssImport:
             "@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');"
     },
-    source_sans_3: {
-        cssName: "'Source Sans 3'",
+    geist: {
+        cssName: "'Geist'",
         cssImport:
-            "@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');"
+            "@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');"
+    },
+    nunito_sans: {
+        cssName: "'Nunito Sans'",
+        cssImport:
+            "@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');"
     },
     ibm_plex_sans: {
         cssName: "'IBM Plex Sans'",
         cssImport:
             "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap');"
     },
-    harmonyos_sans: {
-        cssName: "'HarmonyOS Sans'",
-        cssImport:
-            "@import url('https://fonts.cdnfonts.com/css/harmonyos-sans');"
-    },
     jetbrains_mono: {
         cssName: "'JetBrains Mono'",
         cssImport:
             "@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');"
-    },
-    roboto: {
-        cssName: "'Roboto'",
-        cssImport:
-            "@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');"
     },
     fantasque_sans_mono: {
         cssName: "'Fantasque Sans Mono'",

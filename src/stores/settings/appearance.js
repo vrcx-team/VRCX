@@ -273,12 +273,20 @@ export const useAppearanceSettingsStore = defineStore(
                 lastDarkThemeConfig,
                 fallbackDarkTheme
             );
-            appFontFamily.value = normalizeAppFontFamily(appFontFamilyConfig);
+            const normalizedAppFontFamily =
+                normalizeAppFontFamily(appFontFamilyConfig);
+            appFontFamily.value = normalizedAppFontFamily;
             customFontFamily.value = customFontFamilyConfig || '';
             appCjkFontPack.value =
                 normalizeAppCjkFontPack(appCjkFontPackConfig);
             applyAppFontFamily(appFontFamily.value, customFontFamily.value);
             applyAppCjkFontPack(appCjkFontPack.value);
+            if (normalizedAppFontFamily !== appFontFamilyConfig) {
+                configRepository.setString(
+                    'VRCX_fontFamily',
+                    normalizedAppFontFamily
+                );
+            }
 
             displayVRCPlusIconsAsAvatar.value =
                 displayVRCPlusIconsAsAvatarConfig;
