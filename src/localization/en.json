@@ -574,10 +574,10 @@
                     "steam_screenshots_description": "Opens your Steam screenshots folder"
                 },
                 "header": "Pictures",
-                "screenshot": "Screenshot Management",
-                "screenshot_description": "Manage screenshots and view metadata",
-                "inventory": "VRC+ Images & Inventory Management",
-                "inventory_description": "Manage VRC+ Images & Inventory"
+                "screenshot": "Screenshot Manager",
+                "screenshot_description": "View and manage screenshot metadata",
+                "gallery": "Image Manager",
+                "gallery_description": "Manage images and inventory"
             },
             "shortcuts": {
                 "header": "Shortcuts",

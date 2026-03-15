@@ -23,8 +23,8 @@ const toolDefinitions = [
         category: 'image',
         iconKey: 'image',
         navIcon: 'ri-image-line',
-        titleKey: 'view.tools.pictures.inventory',
-        descriptionKey: 'view.tools.pictures.inventory_description',
+        titleKey: 'view.tools.pictures.gallery',
+        descriptionKey: 'view.tools.pictures.gallery_description',
         navEligible: true,
         action: { type: 'route', routeName: 'gallery' }
     },

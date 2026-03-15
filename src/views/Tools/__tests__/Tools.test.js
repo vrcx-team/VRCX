@@ -101,17 +101,17 @@ describe('Tools.vue', () => {
         expect(push).toHaveBeenCalledWith({ name: 'screenshot-metadata' });
     });
 
-    test('clicking inventory tool calls showGalleryPage', async () => {
+    test('clicking gallery tool calls showGalleryPage', async () => {
         const wrapper = mount(Tools);
         await flushPromises();
 
-        const inventoryItem = findToolItemByTitle(
+        const galleryItem = findToolItemByTitle(
             wrapper,
-            'view.tools.pictures.inventory'
+            'view.tools.pictures.gallery'
         );
 
-        expect(inventoryItem).toBeTruthy();
-        await inventoryItem.trigger('click');
+        expect(galleryItem).toBeTruthy();
+        await galleryItem.trigger('click');
 
         expect(showGalleryPage).toHaveBeenCalled();
     });
