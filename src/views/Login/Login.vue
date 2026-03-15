@@ -34,7 +34,7 @@
                         <FieldGroup class="gap-3">
                             <VeeField v-slot="{ field, errors }" name="username">
                                 <Field :data-invalid="!!errors.length">
-                                    <FieldLabel for="login-form-username">
+                                    <FieldLabel for="login-form-username" class="text-foreground">
                                         {{ t('view.login.field.username') }}
                                     </FieldLabel>
                                     <FieldContent>
@@ -45,16 +45,15 @@
                                             name="username"
                                             :placeholder="t('view.login.field.username')"
                                             :aria-invalid="!!errors.length"
-                                            clearable
                                             @update:modelValue="field.onChange"
                                             @blur="field.onBlur" />
                                         <FieldError v-if="errors.length" :errors="errors" />
                                     </FieldContent>
                                 </Field>
                             </VeeField>
-                            <VeeField v-slot="{ field, errors }" name="password">
+                            <VeeField v-slot="{ field, errors, handleChange }" name="password">
                                 <Field :data-invalid="!!errors.length">
-                                    <FieldLabel for="login-form-password">
+                                    <FieldLabel for="login-form-password" class="text-foreground">
                                         {{ t('view.login.field.password') }}
                                     </FieldLabel>
                                     <FieldContent>
@@ -66,8 +65,8 @@
                                             name="password"
                                             :placeholder="t('view.login.field.password')"
                                             :aria-invalid="!!errors.length"
-                                            clearable
                                             show-password
+                                            @keydown.delete="handleChange('', false)"
                                             @update:modelValue="field.onChange"
                                             @blur="field.onBlur" />
                                         <FieldError v-if="errors.length" :errors="errors" />
@@ -240,7 +239,11 @@
      * @param user
      */
     async function clickSavedLogin(user) {
-        await relogin(user);
+        try {
+            await relogin(user);
+        } catch {
+            // relogin already handles user-facing error display (toast)
+        }
         await updateSavedCredentials();
     }
 
