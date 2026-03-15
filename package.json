@@ -47,6 +47,7 @@
         "@sigma/edge-curve": "^3.1.0",
         "@sigma/node-border": "^3.0.0",
         "@tailwindcss/vite": "^4.2.1",
+        "@tanstack/vue-query": "^5.92.9",
         "@tanstack/vue-table": "^8.21.3",
         "@tanstack/vue-virtual": "^3.13.22",
         "@types/node": "^24.12.0",
@@ -184,7 +185,6 @@
         }
     },
     "dependencies": {
-        "@tanstack/vue-query": "^5.92.9",
         "hazardous": "^0.3.0",
         "node-api-dotnet": "^0.9.19"
     },

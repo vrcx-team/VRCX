@@ -30,10 +30,12 @@
                         <div
                             class="relative inline-block flex-none size-9 mr-2.5"
                             :class="userStatusClass(userDialog.$location.user)">
-                            <img
-                                class="size-full rounded-full object-cover"
-                                :src="userImage(userDialog.$location.user, true)"
-                                loading="lazy" />
+                            <Avatar class="size-9">
+                                <AvatarImage :src="userImage(userDialog.$location.user, true)" class="object-cover" />
+                                <AvatarFallback>
+                                    <User class="size-4 text-muted-foreground" />
+                                </AvatarFallback>
+                            </Avatar>
                         </div>
                         <div class="flex-1 overflow-hidden">
                             <span
@@ -51,7 +53,12 @@
                     class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                     @click="showUserDialog(user.id)">
                     <div class="relative inline-block flex-none size-9 mr-2.5" :class="userStatusClass(user)">
-                        <img class="size-full rounded-full object-cover" :src="userImage(user, true)" loading="lazy" />
+                        <Avatar class="size-9">
+                            <AvatarImage :src="userImage(user, true)" class="object-cover" />
+                            <AvatarFallback>
+                                <User class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
                     </div>
                     <div class="flex-1 overflow-hidden">
                         <span
@@ -145,7 +152,9 @@
                                 :src="userDialog.representedGroup.$thumbnailUrl"
                                 @load="userDialog.isRepresentedGroupLoading = false"
                                 @error="userDialog.isRepresentedGroupLoading = false" />
-                            <AvatarFallback class="rounded-lg!" />
+                            <AvatarFallback class="rounded-lg!">
+                                <Image class="size-5 text-muted-foreground" />
+                            </AvatarFallback>
                         </Avatar>
                     </div>
                     <span
@@ -461,7 +470,7 @@
 </template>
 
 <script setup>
-    import { Copy, Info, Languages, MoreHorizontal, Pencil, Trash2 } from 'lucide-vue-next';
+    import { Copy, Image, Info, Languages, MoreHorizontal, Pencil, Trash2, User } from 'lucide-vue-next';
     import {
         DropdownMenu,
         DropdownMenuContent,

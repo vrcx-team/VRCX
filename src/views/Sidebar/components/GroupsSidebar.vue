@@ -37,10 +37,12 @@
                                             @click="showGroupDialog(item.row.ownerId)">
                                             <template v-if="item.row.isVisible">
                                                 <div class="relative inline-block flex-none size-9 mr-2.5">
-                                                    <img
-                                                        class="size-full rounded-full object-cover"
-                                                        :src="getSmallGroupIconUrl(item.row.iconUrl)"
-                                                        loading="lazy" />
+                                                    <Avatar class="size-9">
+                                                        <AvatarImage :src="getSmallGroupIconUrl(item.row.iconUrl)" class="object-cover" />
+                                                        <AvatarFallback>
+                                                            <Users class="size-4 text-muted-foreground" />
+                                                        </AvatarFallback>
+                                                    </Avatar>
                                                 </div>
                                                 <div class="flex-1 overflow-hidden">
                                                     <span class="block truncate font-medium leading-[18px]">
@@ -82,7 +84,8 @@
 
 <script setup>
     import { computed, nextTick, onMounted, ref, watch } from 'vue';
-    import { ChevronDown } from 'lucide-vue-next';
+    import { ChevronDown, Users } from 'lucide-vue-next';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';

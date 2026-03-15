@@ -15,7 +15,9 @@
                             decoding="async"
                             fetchpriority="low"
                             class="rounded-sm object-cover" />
-                        <AvatarFallback class="rounded-sm">{{ avatarFallback }}</AvatarFallback>
+                        <AvatarFallback class="rounded-sm">
+                            <Image class="size-4 text-muted-foreground" />
+                        </AvatarFallback>
                     </Avatar>
                 </ItemMedia>
                 <ItemContent class="min-w-0">
@@ -77,7 +79,7 @@
 </template>
 
 <script setup>
-    import { AlertTriangle, Lock, MoreHorizontal } from 'lucide-vue-next';
+    import { AlertTriangle, Image, Lock, MoreHorizontal } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import {
@@ -128,8 +130,6 @@
     const localFavRef = computed(() => (props.isLocalFavorite ? props.favorite : props.favorite?.ref));
 
     const displayName = computed(() => localFavRef.value?.name || props.favorite?.name || props.favorite?.id);
-
-    const avatarFallback = computed(() => displayName.value?.charAt(0)?.toUpperCase() || '?');
 
     const showUnavailable = computed(() => !props.isLocalFavorite && props.favorite?.deleted);
 

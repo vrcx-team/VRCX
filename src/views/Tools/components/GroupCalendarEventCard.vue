@@ -6,7 +6,10 @@
                 :class="cardClass"
                 @mouseenter="openEventPopover"
                 @mouseleave="scheduleCloseEventPopover">
-                <img :src="bannerUrl" @click="showFullscreenImageDialog(bannerUrl)" class="banner" />
+                <img v-if="!bannerError" :src="bannerUrl" @click="showFullscreenImageDialog(bannerUrl)" @error="bannerError = true" class="banner" />
+                <div v-else class="banner flex items-center justify-center bg-muted">
+                    <Image class="size-6 text-muted-foreground" />
+                </div>
                 <div class="event-content">
                     <div class="event-title">
                         <div v-if="showGroupName" class="event-group-name" @click="onGroupClick">
@@ -106,7 +109,7 @@
 </template>
 
 <script setup>
-    import { Calendar, Download, Share2, Star } from 'lucide-vue-next';
+    import { Calendar, Download, Image, Share2, Star } from 'lucide-vue-next';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
@@ -161,6 +164,8 @@
             return cachedGroups.get(props.event.ownerId)?.bannerUrl || '';
         }
     });
+
+    const bannerError = ref(false);
 
     const groupName = computed(() => {
         if (!props.event) return '';

@@ -17,7 +17,7 @@ import {
     Ban,
     BellOff,
     Check,
-    ImageOff,
+    Image,
     Link,
     MessageCircle,
     Reply,
@@ -439,7 +439,7 @@ export const createColumns = ({
                                 class="object-cover"
                             />
                             <AvatarFallback class="rounded">
-                                <ImageOff class="size-4 text-muted-foreground" />
+                                <Image class="size-4 text-muted-foreground" />
                             </AvatarFallback>
                         </Avatar>
                     );
@@ -456,7 +456,7 @@ export const createColumns = ({
                         >
                             <AvatarImage src={imgUrl} class="object-cover" />
                             <AvatarFallback class="rounded">
-                                <ImageOff class="size-4 text-muted-foreground" />
+                                <Image class="size-4 text-muted-foreground" />
                             </AvatarFallback>
                         </Avatar>
                     );

@@ -10,11 +10,19 @@
             <div class="flex">
                 <div style="flex: none; width: 160px; height: 120px">
                     <img
+                        v-if="!imageError"
                         :src="avatarDialog.ref.thumbnailImageUrl"
                         class="cursor-pointer"
                         @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)"
                         style="width: 160px; height: 120px; border-radius: var(--radius-xl); object-fit: cover"
+                        @error="imageError = true"
                         loading="lazy" />
+                    <div
+                        v-else
+                        class="flex items-center justify-center bg-muted"
+                        style="width: 160px; height: 120px; border-radius: var(--radius-xl)">
+                        <Image class="size-8 text-muted-foreground" />
+                    </div>
                 </div>
                 <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
                     <div style="flex: 1">
@@ -346,7 +354,16 @@
                                                     :src="imageUrl"
                                                     style="width: 100%; height: 100%; object-fit: contain"
                                                     @click="showFullscreenImageDialog(imageUrl)"
+                                                    @error="
+                                                        $event.target.style.display = 'none';
+                                                        $event.target.nextElementSibling.style.display = 'flex';
+                                                    "
                                                     loading="lazy" />
+                                                <div
+                                                    class="absolute inset-0 items-center justify-center bg-muted"
+                                                    style="display: none">
+                                                    <Image class="size-8 text-muted-foreground" />
+                                                </div>
                                             </div>
                                         </CarouselItem>
                                     </CarouselContent>
@@ -663,6 +680,14 @@
 
     const treeData = ref({});
     const memo = ref('');
+    const imageError = ref(false);
+
+    watch(
+        () => avatarDialog.value.id,
+        () => {
+            imageError.value = false;
+        }
+    );
     const setAvatarTagsDialog = ref({
         visible: false,
         loading: false,

@@ -9,7 +9,9 @@
                     <div>
                         <Avatar :style="{ width: `${avatarSize}px`, height: `${avatarSize}px` }">
                             <AvatarImage :src="userImage(friend.ref, true)" />
-                            <AvatarFallback>{{ avatarFallback }}</AvatarFallback>
+                            <AvatarFallback>
+                                <User class="text-muted-foreground" :size="Math.max(16, 20 * cardScale)" />
+                            </AvatarFallback>
                         </Avatar>
                     </div>
                     <span
@@ -79,7 +81,7 @@
     } from '@/components/ui/context-menu';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Card } from '@/components/ui/card';
-    import { Pencil } from 'lucide-vue-next';
+    import { Pencil, User } from 'lucide-vue-next';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -132,7 +134,6 @@
         paddingBottom: `${36 * props.cardScale * props.cardSpacing}px !important`
     }));
 
-    const avatarFallback = computed(() => props.friend?.name?.charAt(0) ?? '?');
 
     const statusDotClass = computed(() => {
         const status = userStatusClass(props.friend.ref, props.friend.pendingOffline);

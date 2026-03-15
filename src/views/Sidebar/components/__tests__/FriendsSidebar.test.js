@@ -206,7 +206,8 @@ vi.mock('../FriendItem.vue', () => ({
 }));
 
 vi.mock('lucide-vue-next', () => ({
-    ChevronDown: { template: '<span data-testid="chevron" />' }
+    ChevronDown: { template: '<span data-testid="chevron" />' },
+    User: { template: '<i />' }
 }));
 
 import FriendsSidebar from '../FriendsSidebar.vue';

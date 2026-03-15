@@ -15,7 +15,9 @@
                             decoding="async"
                             fetchpriority="low"
                             class="rounded-sm object-cover" />
-                        <AvatarFallback class="rounded-sm">{{ avatarFallback }}</AvatarFallback>
+                        <AvatarFallback class="rounded-sm">
+                            <Image class="size-4 text-muted-foreground" />
+                        </AvatarFallback>
                     </Avatar>
                 </ItemMedia>
                 <ItemContent class="min-w-0">
@@ -65,7 +67,7 @@
 </template>
 
 <script setup>
-    import { MoreHorizontal } from 'lucide-vue-next';
+    import { Image, MoreHorizontal } from 'lucide-vue-next';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Button } from '@/components/ui/button';
     import {
@@ -101,8 +103,6 @@
             required: true
         }
     });
-
-    const avatarFallback = computed(() => props.favorite.name?.charAt(0)?.toUpperCase() || '?');
 
     const itemStyle = computed(() => ({
         padding: 'var(--favorites-card-padding-y, 8px) var(--favorites-card-padding-x, 10px)',

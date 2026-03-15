@@ -4,20 +4,29 @@
             <img
                 v-if="
                     !userDialog.loading &&
+                    !profileImageError &&
                     (userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride)
                 "
                 class="cursor-pointer"
                 :src="userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride"
                 style="height: 120px; width: 213.33px; border-radius: var(--radius-xl); object-fit: cover"
                 @click="showFullscreenImageDialog(userDialog.ref.profilePicOverride)"
+                @error="profileImageError = true"
                 loading="lazy" />
             <img
-                v-else-if="!userDialog.loading"
+                v-else-if="!userDialog.loading && !profileImageError && userDialog.ref.currentAvatarThumbnailImageUrl"
                 class="cursor-pointer"
                 :src="userDialog.ref.currentAvatarThumbnailImageUrl"
                 style="height: 120px; width: 160px; border-radius: var(--radius-xl); object-fit: cover"
                 @click="showFullscreenImageDialog(userDialog.ref.currentAvatarImageUrl)"
+                @error="profileImageError = true"
                 loading="lazy" />
+            <div
+                v-else-if="!userDialog.loading"
+                class="flex items-center justify-center bg-muted"
+                style="height: 120px; width: 160px; border-radius: var(--radius-xl)">
+                <Image class="size-8 text-muted-foreground" />
+            </div>
         </div>
         <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
             <div style="flex: 1">
@@ -232,11 +241,19 @@
 
             <div v-if="userDialog.ref.userIcon" style="flex: none; margin-right: 8px">
                 <img
+                    v-if="!userIconError"
                     class="cursor-pointer"
                     :src="userImage(userDialog.ref, true, '256', true)"
                     style="flex: none; width: 120px; height: 120px; border-radius: var(--radius-xl); object-fit: cover"
                     @click="showFullscreenImageDialog(userDialog.ref.userIcon)"
+                    @error="userIconError = true"
                     loading="lazy" />
+                <div
+                    v-else
+                    class="flex items-center justify-center bg-muted"
+                    style="width: 120px; height: 120px; border-radius: var(--radius-xl)">
+                    <Image class="size-8 text-muted-foreground" />
+                </div>
             </div>
 
             <UserActionDropdown class="ml-2 mt-12" :user-dialog-command="userDialogCommand" />
@@ -245,7 +262,8 @@
 </template>
 
 <script setup>
-    import { Apple, ChevronDown, IdCard, Monitor, Shield, Smartphone, UserPlus, Users } from 'lucide-vue-next';
+    import { Apple, ChevronDown, IdCard, Image, Monitor, Shield, Smartphone, UserPlus, Users } from 'lucide-vue-next';
+    import { ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -286,6 +304,17 @@
     const { userDialog, currentUser } = storeToRefs(useUserStore());
 
     const { showFullscreenImageDialog } = useGalleryStore();
+
+    const profileImageError = ref(false);
+    const userIconError = ref(false);
+
+    watch(
+        () => userDialog.value.id,
+        () => {
+            profileImageError.value = false;
+            userIconError.value = false;
+        }
+    );
 
     const getUserStateText = props.getUserStateText;
     const copyUserDisplayName = props.copyUserDisplayName;

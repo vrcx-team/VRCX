@@ -36,10 +36,12 @@
                                             <div
                                                 class="relative inline-block flex-none size-9 mr-2.5"
                                                 :class="userStatusClass(currentUser)">
-                                                <img
-                                                    class="size-full rounded-full object-cover"
-                                                    :src="userImage(currentUser)"
-                                                    loading="lazy" />
+                                                <Avatar class="size-full rounded-full">
+                                                    <AvatarImage :src="userImage(currentUser)" class="object-cover" />
+                                                    <AvatarFallback>
+                                                        <User class="size-5 text-muted-foreground" />
+                                                    </AvatarFallback>
+                                                </Avatar>
                                             </div>
                                             <div class="flex-1 overflow-hidden h-9 flex flex-col justify-between">
                                                 <span
@@ -176,7 +178,7 @@
 
 <script setup>
     import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
-    import { ChevronDown } from 'lucide-vue-next';
+    import { ChevronDown, User } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -193,6 +195,7 @@
         ContextMenuSubTrigger,
         ContextMenuTrigger
     } from '../../../components/ui/context-menu';
+    import { Avatar, AvatarFallback, AvatarImage } from '../../../components/ui/avatar';
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,

@@ -37,7 +37,7 @@ vi.mock('../ui/avatar', () => ({
 }));
 
 vi.mock('lucide-vue-next', () => ({
-    ImageOff: { template: '<i data-testid="image-off" />' }
+    Image: { template: '<i data-testid="image" />' }
 }));
 
 import Emoji from '../Emoji.vue';

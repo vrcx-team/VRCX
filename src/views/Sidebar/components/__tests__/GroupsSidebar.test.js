@@ -117,7 +117,8 @@ vi.mock('../../../../components/Location.vue', () => ({
 }));
 
 vi.mock('lucide-vue-next', () => ({
-    ChevronDown: { template: '<i />' }
+    ChevronDown: { template: '<i />' },
+    Users: { template: '<i />' }
 }));
 
 import GroupsSidebar from '../GroupsSidebar.vue';

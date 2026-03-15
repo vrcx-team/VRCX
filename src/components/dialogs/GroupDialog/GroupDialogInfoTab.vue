@@ -1,12 +1,19 @@
 <template>
     <div>
         <img
-            v-if="!groupDialog.loading"
+            v-if="!groupDialog.loading && !bannerError"
             :src="groupDialog.ref.bannerUrl"
             class="cursor-pointer"
             style="flex: none; width: 100%; aspect-ratio: 6/1; object-fit: cover; border-radius: var(--radius-md)"
             @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)"
+            @error="bannerError = true"
             loading="lazy" />
+        <div
+            v-else-if="!groupDialog.loading"
+            class="flex items-center justify-center bg-muted"
+            style="width: 100%; aspect-ratio: 6/1; border-radius: var(--radius-md)">
+            <Image class="size-8 text-muted-foreground" />
+        </div>
     </div>
     <div class="flex flex-wrap items-start px-2.5" style="max-height: none">
         <span v-if="groupDialog.instances.length" class="text-xs font-bold" style="margin: 6px">
@@ -34,7 +41,12 @@
                     class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                     @click="showUserDialog(user.id)">
                     <div class="relative inline-block flex-none size-9 mr-2.5" :class="userStatusClass(user)">
-                        <img class="size-full rounded-full object-cover" :src="userImage(user)" loading="lazy" />
+                        <Avatar class="size-9">
+                            <AvatarImage :src="userImage(user)" class="object-cover" />
+                            <AvatarFallback>
+                                <User class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
                     </div>
                     <div class="flex-1 overflow-hidden">
                         <span
@@ -58,6 +70,7 @@
                 <span style="display: block" v-text="groupDialog.announcement.title" />
                 <div v-if="groupDialog.announcement.imageUrl" style="display: inline-block; margin-right: 6px">
                     <img
+                        v-if="!announcementPhotoError"
                         :src="groupDialog.announcement.imageUrl"
                         class="cursor-pointer"
                         style="
@@ -68,7 +81,14 @@
                             object-fit: cover;
                         "
                         @click="showFullscreenImageDialog(groupDialog.announcement.imageUrl)"
+                        @error="announcementPhotoError = true"
                         loading="lazy" />
+                    <div
+                        v-else
+                        class="flex items-center justify-center bg-muted"
+                        style="width: 60px; height: 60px; border-radius: var(--radius-md)">
+                        <Image class="size-5 text-muted-foreground" />
+                    </div>
                 </div>
                 <pre
                     class="text-xs font-[inherit]"
@@ -340,9 +360,11 @@
 </template>
 
 <script setup>
-    import { Copy, Eye, MoreHorizontal } from 'lucide-vue-next';
+    import { Copy, Eye, Image, MoreHorizontal, User } from 'lucide-vue-next';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Button } from '@/components/ui/button';
     import { Spinner } from '@/components/ui/spinner';
+    import { ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -356,14 +378,14 @@
         userStatusClass
     } from '../../../shared/utils';
     import { refreshInstancePlayerCount } from '../../../coordinators/instanceCoordinator';
-    import { useGalleryStore, useGroupStore, useInstanceStore, useLocationStore, useUserStore } from '../../../stores';
+    import { useGalleryStore, useGroupStore, useInstanceStore, useLocationStore } from '../../../stores';
     import { useGroupCalendarEvents } from './useGroupCalendarEvents';
 
     import GroupCalendarEventCard from '../../../views/Tools/components/GroupCalendarEventCard.vue';
     import InstanceActionBar from '../../InstanceActionBar.vue';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
 
-    const props = defineProps({
+    defineProps({
         showGroupPostEditDialog: {
             type: Function,
             required: true
@@ -382,6 +404,17 @@
     const instanceStore = useInstanceStore();
 
     const { pastCalenderEvents, upcomingCalenderEvents, updateFollowingCalendarData } = useGroupCalendarEvents(groupDialog);
+
+    const bannerError = ref(false);
+    const announcementPhotoError = ref(false);
+
+    watch(
+        () => groupDialog.value.id,
+        () => {
+            bannerError.value = false;
+            announcementPhotoError.value = false;
+        }
+    );
 
     /**
      *

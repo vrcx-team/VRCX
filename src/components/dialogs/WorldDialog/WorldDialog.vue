@@ -10,12 +10,19 @@
             <div style="display: flex">
                 <div style="flex: none; width: 160px; height: 120px">
                     <img
-                        v-if="!worldDialog.loading"
+                        v-if="!worldDialog.loading && !imageError"
                         :src="worldDialog.ref.thumbnailImageUrl"
                         class="cursor-pointer"
                         style="width: 160px; height: 120px; border-radius: var(--radius-xl)"
                         @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)"
+                        @error="imageError = true"
                         loading="lazy" />
+                    <div
+                        v-else-if="!worldDialog.loading"
+                        class="flex items-center justify-center bg-muted"
+                        style="width: 160px; height: 120px; border-radius: var(--radius-xl)">
+                        <Image class="size-8 text-muted-foreground" />
+                    </div>
                 </div>
                 <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
                     <div style="flex: 1">
@@ -480,6 +487,14 @@
     const treeData = ref({});
     const translatedDescription = ref('');
     const isTranslating = ref(false);
+    const imageError = ref(false);
+
+    watch(
+        () => worldDialog.value.id,
+        () => {
+            imageError.value = false;
+        }
+    );
 
     const isDialogVisible = computed({
         get() {

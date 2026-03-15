@@ -82,7 +82,12 @@
                 class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                 @click="showUserDialog(user.userId)">
                 <div class="relative inline-block flex-none size-9 mr-2.5">
-                    <img class="size-full rounded-full object-cover" :src="userImage(user.user)" loading="lazy" />
+                    <Avatar class="size-9">
+                        <AvatarImage :src="userImage(user.user)" class="object-cover" />
+                        <AvatarFallback>
+                            <User class="size-4 text-muted-foreground" />
+                        </AvatarFallback>
+                    </Avatar>
                 </div>
                 <div class="flex-1 overflow-hidden">
                     <span
@@ -139,7 +144,12 @@
                 class="infinite-list-item box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                 @click="showUserDialog(user.userId)">
                 <div class="relative inline-block flex-none size-9 mr-2.5">
-                    <img class="size-full rounded-full object-cover" :src="userImage(user.user)" loading="lazy" />
+                    <Avatar class="size-9">
+                        <AvatarImage :src="userImage(user.user)" class="object-cover" />
+                        <AvatarFallback>
+                            <User class="size-4 text-muted-foreground" />
+                        </AvatarFallback>
+                    </Avatar>
                 </div>
                 <div class="flex-1 overflow-hidden">
                     <span
@@ -201,7 +211,8 @@
 </template>
 
 <script setup>
-    import { Download, Eye, MessageSquare, Pencil, RefreshCcw, Tag } from 'lucide-vue-next';
+    import { Download, Eye, MessageSquare, Pencil, RefreshCcw, Tag, User } from 'lucide-vue-next';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Button } from '@/components/ui/button';
     import { InputGroupField } from '@/components/ui/input-group';

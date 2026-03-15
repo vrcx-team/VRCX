@@ -10,7 +10,9 @@
                     <ItemMedia variant="image">
                         <Avatar>
                             <AvatarImage :src="userImage(favorite.ref, true)" loading="lazy" />
-                            <AvatarFallback>{{ avatarFallback }}</AvatarFallback>
+                            <AvatarFallback>
+                                <User class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
                         </Avatar>
                     </ItemMedia>
                     <ItemContent class="min-w-0">
@@ -114,7 +116,9 @@
         <Item variant="outline" class="favorites-item hover:bg-muted x-hover-list" :style="itemStyle">
             <ItemMedia variant="image">
                 <Avatar>
-                    <AvatarFallback>{{ avatarFallback }}</AvatarFallback>
+                    <AvatarFallback>
+                        <User class="size-4 text-muted-foreground" />
+                    </AvatarFallback>
                 </Avatar>
             </ItemMedia>
             <ItemContent class="min-w-0">
@@ -135,7 +139,7 @@
 </template>
 
 <script setup>
-    import { MoreHorizontal, Trash2 } from 'lucide-vue-next';
+    import { MoreHorizontal, Trash2, User } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import {
@@ -194,8 +198,6 @@
     });
 
     const displayName = computed(() => props.favorite?.ref?.displayName || props.favorite?.name || props.favorite?.id);
-
-    const avatarFallback = computed(() => displayName.value?.charAt(0)?.toUpperCase() || '?');
 
     const displayNameStyle = computed(() => {
         if (props.favorite?.ref?.$userColour) {

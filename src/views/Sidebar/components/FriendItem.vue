@@ -76,7 +76,7 @@
     import Location from '@/components/Location.vue';
     import Timer from '@/components/Timer.vue';
 
-    import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
+    import { useAppearanceSettingsStore, useFriendStore } from '../../../stores';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
 
     import '@/styles/status-icon.css';

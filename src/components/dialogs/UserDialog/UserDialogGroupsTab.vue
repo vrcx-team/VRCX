@@ -142,7 +142,12 @@
                         </Button>
                     </div>
                     <div class="relative inline-block flex-none size-9 mr-2.5">
-                        <img class="size-full rounded-full object-cover" :src="group.iconUrl" loading="lazy" />
+                        <Avatar class="size-9">
+                            <AvatarImage :src="group.iconUrl" class="object-cover" />
+                            <AvatarFallback>
+                                <Users class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
                     </div>
                     <div class="flex-1 overflow-hidden">
                         <span class="block truncate font-medium leading-[18px]" v-text="group.name"></span>
@@ -247,7 +252,12 @@
                         class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                         @click="showGroupDialog(group.id)">
                         <div class="relative inline-block flex-none size-9 mr-2.5">
-                            <img class="size-full rounded-full object-cover" :src="group.iconUrl" loading="lazy" />
+                            <Avatar class="size-9">
+                                <AvatarImage :src="group.iconUrl" class="object-cover" />
+                            <AvatarFallback>
+                                <Users class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                            </Avatar>
                         </div>
                         <div class="flex-1 overflow-hidden">
                             <span class="block truncate font-medium leading-[18px]" v-text="group.name"></span>
@@ -283,7 +293,12 @@
                         class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                         @click="showGroupDialog(group.id)">
                         <div class="relative inline-block flex-none size-9 mr-2.5">
-                            <img class="size-full rounded-full object-cover" :src="group.iconUrl" loading="lazy" />
+                            <Avatar class="size-9">
+                                <AvatarImage :src="group.iconUrl" class="object-cover" />
+                            <AvatarFallback>
+                                <Users class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                            </Avatar>
                         </div>
                         <div class="flex-1 overflow-hidden">
                             <span class="block truncate font-medium leading-[18px]" v-text="group.name"></span>
@@ -330,7 +345,12 @@
                         class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                         @click="showGroupDialog(group.id)">
                         <div class="relative inline-block flex-none size-9 mr-2.5">
-                            <img class="size-full rounded-full object-cover" :src="group.iconUrl" loading="lazy" />
+                            <Avatar class="size-9">
+                                <AvatarImage :src="group.iconUrl" class="object-cover" />
+                            <AvatarFallback>
+                                <Users class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                            </Avatar>
                         </div>
                         <div class="flex-1 overflow-hidden">
                             <span class="block truncate font-medium leading-[18px]" v-text="group.name"></span>
@@ -361,7 +381,8 @@
 </template>
 
 <script setup>
-    import { ArrowDown, ArrowUp, DownloadIcon, Eye, LogOut, RefreshCw, Tag } from 'lucide-vue-next';
+    import { ArrowDown, ArrowUp, DownloadIcon, Eye, LogOut, RefreshCw, Tag, Users } from 'lucide-vue-next';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { nextTick, ref } from 'vue';
     import { Button } from '@/components/ui/button';

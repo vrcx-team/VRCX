@@ -92,13 +92,26 @@ export function getColumns({
             cell: ({ row }) => {
                 const ref = row.original;
                 return (
-                    <img
-                        src={ref.thumbnailImageUrl}
-                        class="avatar-table-thumbnail cursor-pointer rounded-sm object-cover"
-                        style="width: 34px; height: 22px;"
-                        loading="lazy"
-                        onClick={() => onShowAvatarDialog(ref.id)}
-                    />
+                    <div class="flex items-center">
+                        <img
+                            src={ref.thumbnailImageUrl}
+                            class="avatar-table-thumbnail cursor-pointer rounded-sm object-cover"
+                            style="width: 34px; height: 22px;"
+                            loading="lazy"
+                            onClick={() => onShowAvatarDialog(ref.id)}
+                            onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.nextElementSibling.style.display = '';
+                            }}
+                        />
+                        <div
+                            class="rounded-sm bg-muted flex items-center justify-center cursor-pointer"
+                            style="width: 34px; height: 22px; display: none"
+                            onClick={() => onShowAvatarDialog(ref.id)}
+                        >
+                            <Image class="h-3 w-3 text-muted-foreground" />
+                        </div>
+                    </div>
                 );
             }
         },

@@ -53,10 +53,12 @@
                                 <div
                                     class="relative inline-block flex-none size-9 mr-2.5"
                                     :class="userStatusClass(room.$location.user)">
-                                    <img
-                                        class="size-full rounded-full object-cover"
-                                        :src="userImage(room.$location.user, true)"
-                                        loading="lazy" />
+                                    <Avatar class="size-9">
+                                        <AvatarImage :src="userImage(room.$location.user, true)" class="object-cover" />
+                                        <AvatarFallback>
+                                            <User class="size-4 text-muted-foreground" />
+                                        </AvatarFallback>
+                                    </Avatar>
                                 </div>
                                 <div class="flex-1 overflow-hidden">
                                     <span
@@ -76,10 +78,12 @@
                             class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                             @click="showUserDialog(user.id)">
                             <div class="relative inline-block flex-none size-9 mr-2.5" :class="userStatusClass(user)">
-                                <img
-                                    class="size-full rounded-full object-cover"
-                                    :src="userImage(user, true)"
-                                    loading="lazy" />
+                                <Avatar class="size-9">
+                                    <AvatarImage :src="userImage(user, true)" class="object-cover" />
+                                    <AvatarFallback>
+                                        <User class="size-4 text-muted-foreground" />
+                                    </AvatarFallback>
+                                </Avatar>
                             </div>
                             <div class="flex-1 overflow-hidden">
                                 <span
@@ -104,6 +108,7 @@
 
 <script setup>
     import { Check, User } from 'lucide-vue-next';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

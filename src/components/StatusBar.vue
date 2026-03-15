@@ -278,18 +278,26 @@
                 <ContextMenuSub>
                     <ContextMenuSubTrigger>{{ t('status_bar.clocks') }}</ContextMenuSubTrigger>
                     <ContextMenuSubContent>
-                        <ContextMenuRadioGroup :model-value="String(clockCount)" @update:modelValue="setClockCount">
-                            <ContextMenuRadioItem value="0">
-                                {{ t('status_bar.clocks_none') }}
-                            </ContextMenuRadioItem>
-                            <ContextMenuRadioItem value="1"> 1 {{ t('status_bar.clock') }} </ContextMenuRadioItem>
-                            <ContextMenuRadioItem value="2">
-                                2 {{ t('status_bar.clocks_label') }}
-                            </ContextMenuRadioItem>
-                            <ContextMenuRadioItem value="3">
-                                3 {{ t('status_bar.clocks_label') }}
-                            </ContextMenuRadioItem>
-                        </ContextMenuRadioGroup>
+                        <ContextMenuCheckboxItem
+                            :model-value="clockCount === 0"
+                            @update:model-value="setClockCount('0')">
+                            {{ t('status_bar.clocks_none') }}
+                        </ContextMenuCheckboxItem>
+                        <ContextMenuCheckboxItem
+                            :model-value="clockCount === 1"
+                            @update:model-value="setClockCount('1')">
+                            1 {{ t('status_bar.clock') }}
+                        </ContextMenuCheckboxItem>
+                        <ContextMenuCheckboxItem
+                            :model-value="clockCount === 2"
+                            @update:model-value="setClockCount('2')">
+                            2 {{ t('status_bar.clocks_label') }}
+                        </ContextMenuCheckboxItem>
+                        <ContextMenuCheckboxItem
+                            :model-value="clockCount === 3"
+                            @update:model-value="setClockCount('3')">
+                            3 {{ t('status_bar.clocks_label') }}
+                        </ContextMenuCheckboxItem>
                     </ContextMenuSubContent>
                 </ContextMenuSub>
             </ContextMenuContent>
@@ -302,8 +310,6 @@
         ContextMenu,
         ContextMenuCheckboxItem,
         ContextMenuContent,
-        ContextMenuRadioGroup,
-        ContextMenuRadioItem,
         ContextMenuSeparator,
         ContextMenuSub,
         ContextMenuSubContent,

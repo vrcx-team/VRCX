@@ -45,10 +45,12 @@
                         class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                         @click="showWorldDialog(world.id)">
                         <div class="relative inline-block flex-none size-9 mr-2.5">
-                            <img
-                                class="size-full rounded-full object-cover"
-                                :src="world.thumbnailImageUrl"
-                                loading="lazy" />
+                            <Avatar class="size-9">
+                                <AvatarImage :src="world.thumbnailImageUrl" class="object-cover" />
+                                <AvatarFallback>
+                                    <Image class="size-4 text-muted-foreground" />
+                                </AvatarFallback>
+                            </Avatar>
                         </div>
                         <div class="flex-1 overflow-hidden">
                             <span class="block truncate font-medium leading-[18px]" v-text="world.name"></span>
@@ -68,6 +70,8 @@
 
 <script setup>
     import { computed, ref } from 'vue';
+    import { Image } from 'lucide-vue-next';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
@@ -75,7 +79,7 @@
 
     import DeprecationAlert from '@/components/DeprecationAlert.vue';
 
-    import { useFavoriteStore, useUserStore, useWorldStore } from '../../../stores';
+    import { useFavoriteStore, useUserStore } from '../../../stores';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { handleFavoriteWorldList } from '../../../coordinators/favoriteCoordinator';
     import { favoriteRequest } from '../../../api';

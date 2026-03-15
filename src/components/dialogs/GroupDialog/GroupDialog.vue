@@ -10,12 +10,19 @@
             <div style="display: flex">
                 <div style="flex: none; width: 120px; height: 120px">
                     <img
-                        v-if="!groupDialog.loading"
+                        v-if="!groupDialog.loading && !imageError"
                         :src="groupDialog.ref.iconUrl"
                         style="width: 120px; height: 120px; border-radius: var(--radius-xl)"
                         class="cursor-pointer"
                         @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)"
+                        @error="imageError = true"
                         loading="lazy" />
+                    <div
+                        v-else-if="!groupDialog.loading"
+                        class="flex items-center justify-center bg-muted"
+                        style="width: 120px; height: 120px; border-radius: var(--radius-xl)">
+                        <Image class="size-8 text-muted-foreground" />
+                    </div>
                 </div>
                 <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
                     <div class="group-header" style="flex: 1">
@@ -374,6 +381,7 @@
         Check,
         CheckCircle,
         Eye,
+        Image,
         MessageSquare,
         MoreHorizontal,
         RefreshCw,
@@ -469,6 +477,14 @@
 
     const groupDialogTabCurrentName = ref('0');
     const treeData = ref({});
+    const imageError = ref(false);
+
+    watch(
+        () => groupDialog.value.id,
+        () => {
+            imageError.value = false;
+        }
+    );
     const membersTabRef = ref(null);
     const photosTabRef = ref(null);
 

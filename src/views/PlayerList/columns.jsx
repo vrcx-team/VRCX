@@ -5,6 +5,7 @@ import {
     Apple,
     ArrowUpDown,
     IdCard,
+    User,
     Monitor,
     Smartphone
 } from 'lucide-vue-next';
@@ -84,7 +85,17 @@ export const createColumns = ({
                             src={src}
                             class="h-4 w-4 rounded-sm object-cover"
                             loading="lazy"
+                            onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.nextElementSibling.style.display = '';
+                            }}
                         />
+                        <div
+                            class="h-4 w-4 rounded-sm bg-muted flex items-center justify-center"
+                            style="display: none"
+                        >
+                            <User class="h-3 w-3 text-muted-foreground" />
+                        </div>
                     </div>
                 );
             }

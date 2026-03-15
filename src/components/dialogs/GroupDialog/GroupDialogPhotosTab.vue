@@ -41,11 +41,21 @@
                     v-for="image in groupDialog.galleries[gallery.id]"
                     :key="image.id"
                     class="p-0 overflow-hidden transition-shadow hover:shadow-md">
-                    <img
-                        :src="image.imageUrl"
-                        :class="[' cursor-pointer', 'max-w-full', 'max-h-full']"
-                        @click="showFullscreenImageDialog(image.imageUrl)"
-                        loading="lazy" />
+                    <div class="cursor-pointer" @click="showFullscreenImageDialog(image.imageUrl)">
+                        <img
+                            :src="image.imageUrl"
+                            :class="['max-w-full', 'max-h-full']"
+                            @error="
+                                $event.target.style.display = 'none';
+                                $event.target.nextElementSibling.style.display = 'flex';
+                            "
+                            loading="lazy" />
+                        <div
+                            class="hidden h-[200px] w-full items-center justify-center bg-muted"
+                            style="display: none">
+                            <Image class="size-8 text-muted-foreground" />
+                        </div>
+                    </div>
                 </Card>
             </div>
         </template>
@@ -55,7 +65,7 @@
 <script setup>
     import { Button } from '@/components/ui/button';
     import { Card } from '@/components/ui/card';
-    import { RefreshCw } from 'lucide-vue-next';
+    import { Image, RefreshCw } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
