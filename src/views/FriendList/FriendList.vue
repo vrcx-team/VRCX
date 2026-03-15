@@ -134,9 +134,7 @@
         useAppearanceSettingsStore,
         useFriendStore,
         useModalStore,
-        useSearchStore,
-        useUserStore,
-        useVrcxStore
+        useSearchStore
     } from '../../stores';
     import { friendRequest, userRequest } from '../../api';
     import { DataTableLayout } from '../../components/ui/data-table';
@@ -261,6 +259,7 @@
     watch(
         () => route.path,
         () => {
+            refreshFriendStats();
             nextTick(() => friendsListSearchChange());
         },
         { immediate: true }
@@ -269,9 +268,15 @@
     watch(
         () => friends.value.size,
         () => {
+            refreshFriendStats();
             friendsListSearchChange();
         }
     );
+
+    function refreshFriendStats() {
+        getAllUserStats();
+        getAllUserMutualCount();
+    }
 
     /**
      *
@@ -319,8 +324,6 @@
             results.push(ctx.ref);
         }
         friendsListDisplayData.value = results;
-        getAllUserStats();
-        getAllUserMutualCount();
         table.setPageIndex(0);
         table.setSorting([...defaultSorting]);
         sorting.value = [...defaultSorting];

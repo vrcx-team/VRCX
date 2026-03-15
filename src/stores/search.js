@@ -2,37 +2,26 @@ import { computed, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
 
-import { compareByName, localeIncludes } from '../shared/utils';
 import { instanceRequest, userRequest } from '../api';
 import { groupRequest } from '../api/';
-import removeConfusables, { removeWhitespace } from '../services/confusables';
 import { useAppearanceSettingsStore } from './settings/appearance';
-import { useFriendStore } from './friend';
 import { showGroupDialog } from '../coordinators/groupCoordinator';
 import { showWorldDialog } from '../coordinators/worldCoordinator';
 import { showAvatarDialog } from '../coordinators/avatarCoordinator';
-import {
-    applyUser,
-    showUserDialog,
-    lookupUser
-} from '../coordinators/userCoordinator';
+import { applyUser, showUserDialog } from '../coordinators/userCoordinator';
 import { useModalStore } from './modal';
 import { useUserStore } from './user';
 import { watchState } from '../services/watchState';
 
 export const useSearchStore = defineStore('Search', () => {
     const userStore = useUserStore();
-    const router = useRouter();
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const friendStore = useFriendStore();
     const modalStore = useModalStore();
     const { t } = useI18n();
 
     const searchText = ref('');
     const searchUserResults = ref([]);
-    const quickSearchItems = ref([]);
     const friendsListSearch = ref('');
 
     const directAccessPrompt = ref(null);
@@ -63,13 +52,6 @@ export const useSearchStore = defineStore('Search', () => {
      */
     function setSearchText(value) {
         searchText.value = value;
-    }
-
-    /**
-     * @param {Array} value
-     */
-    function setQuickSearchItems(value) {
-        quickSearchItems.value = value;
     }
 
     async function searchUserByDisplayName(displayName) {
@@ -108,133 +90,6 @@ export const useSearchStore = defineStore('Search', () => {
             searchUserResults.value = Array.from(map.values());
             return args;
         });
-    }
-
-    function quickSearchRemoteMethod(query) {
-        if (!query) {
-            quickSearchItems.value = quickSearchUserHistory();
-            return;
-        }
-
-        if (query.length < 2) {
-            quickSearchItems.value = quickSearchUserHistory();
-            return;
-        }
-
-        const results = [];
-        const cleanQuery = removeWhitespace(query);
-        if (!cleanQuery) {
-            quickSearchItems.value = quickSearchUserHistory();
-            return;
-        }
-
-        for (const ctx of friendStore.friends.values()) {
-            if (typeof ctx.ref === 'undefined') {
-                continue;
-            }
-
-            const cleanName = removeConfusables(ctx.name);
-            let match = localeIncludes(
-                cleanName,
-                cleanQuery,
-                stringComparer.value
-            );
-            if (!match) {
-                // Also check regular name in case search is with special characters
-                match = localeIncludes(
-                    ctx.name,
-                    cleanQuery,
-                    stringComparer.value
-                );
-            }
-            // Use query with whitespace for notes and memos as people are more
-            // likely to include spaces in memos and notes
-            if (!match && ctx.memo) {
-                match = localeIncludes(ctx.memo, query, stringComparer.value);
-            }
-            if (!match && ctx.ref.note) {
-                match = localeIncludes(
-                    ctx.ref.note,
-                    query,
-                    stringComparer.value
-                );
-            }
-
-            if (match) {
-                results.push({
-                    value: ctx.id,
-                    label: ctx.name,
-                    ref: ctx.ref,
-                    name: ctx.name
-                });
-            }
-        }
-
-        results.sort(function (a, b) {
-            const A =
-                stringComparer.value.compare(
-                    a.name.substring(0, cleanQuery.length),
-                    cleanQuery
-                ) === 0;
-            const B =
-                stringComparer.value.compare(
-                    b.name.substring(0, cleanQuery.length),
-                    cleanQuery
-                ) === 0;
-            if (A && !B) {
-                return -1;
-            } else if (B && !A) {
-                return 1;
-            }
-            return compareByName(a, b);
-        });
-        if (results.length > 4) {
-            results.length = 4;
-        }
-        results.push({
-            value: `search:${query}`,
-            label: query
-        });
-
-        quickSearchItems.value = results;
-    }
-
-    function quickSearchChange(value) {
-        if (!value) {
-            return;
-        }
-
-        if (value.startsWith('search:')) {
-            const searchTerm = value.slice(7);
-            if (quickSearchItems.value.length > 1 && searchTerm.length) {
-                friendsListSearch.value = searchTerm;
-                router.push({ name: 'friend-list' });
-            } else {
-                router.push({ name: 'search' });
-                searchText.value = searchTerm;
-                lookupUser({ displayName: searchTerm });
-            }
-        } else {
-            showUserDialog(value);
-        }
-    }
-
-    function quickSearchUserHistory() {
-        const userHistory = Array.from(userStore.showUserDialogHistory.values())
-            .reverse()
-            .slice(0, 5);
-        const results = [];
-        userHistory.forEach((userId) => {
-            const ref = userStore.cachedUsers.get(userId);
-            if (typeof ref !== 'undefined') {
-                results.push({
-                    value: ref.id,
-                    label: ref.name,
-                    ref
-                });
-            }
-        });
-        return results;
     }
 
     async function directAccessPaste() {
@@ -430,20 +285,15 @@ export const useSearchStore = defineStore('Search', () => {
         searchText,
         searchUserResults,
         stringComparer,
-        quickSearchItems,
         friendsListSearch,
 
         clearSearch,
         searchUserByDisplayName,
         moreSearchUser,
-        quickSearchUserHistory,
-        quickSearchRemoteMethod,
-        quickSearchChange,
         directAccessParse,
         directAccessPaste,
         directAccessWorld,
         verifyShortName,
-        setSearchText,
-        setQuickSearchItems
+        setSearchText
     };
 });

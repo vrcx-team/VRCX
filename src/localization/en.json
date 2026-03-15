@@ -235,6 +235,7 @@
             "same_instance": "Same instance",
             "active": "Active",
             "offline": "Offline",
+            "search_placeholder": "Search friends",
             "spacing": "Spacing",
             "scale": "Scale",
             "separate_same_instance_friends": "Separate Same Instance Friends",

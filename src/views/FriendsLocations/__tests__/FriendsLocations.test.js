@@ -94,6 +94,13 @@ vi.mock('../../../shared/utils/location.js', () => ({
 }));
 
 vi.mock('../../../shared/utils', () => ({
+    debounce: (fn, delay) => {
+        let timer = null;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn(...args), delay);
+        };
+    },
     getFriendsSortFunction: () => (a, b) =>
         String(a?.displayName ?? '').localeCompare(String(b?.displayName ?? ''))
 }));
@@ -295,13 +302,17 @@ describe('FriendsLocations.vue', () => {
     });
 
     test('persists card scale and same-instance preferences', async () => {
+        vi.useFakeTimers();
         const wrapper = mount(FriendsLocations);
         await flushSettings();
+        mocks.configSetString.mockClear();
+        mocks.configSetBool.mockClear();
 
         await wrapper.get('[data-testid="set-scale"]').trigger('click');
         await wrapper
             .get('[data-testid="toggle-same-instance"]')
             .trigger('click');
+        vi.advanceTimersByTime(200);
 
         expect(mocks.configSetString).toHaveBeenCalledWith(
             'VRCX_FriendLocationCardScale',
@@ -311,6 +322,20 @@ describe('FriendsLocations.vue', () => {
             'VRCX_FriendLocationShowSameInstance',
             true
         );
+        vi.useRealTimers();
+    });
+
+    test('coalesces repeated virtualizer measure requests in the same tick', async () => {
+        const wrapper = mount(FriendsLocations);
+        await flushSettings();
+        mocks.virtualMeasure.mockClear();
+
+        wrapper.vm.searchTerm = 'alice';
+        wrapper.vm.activeSegment = 'offline';
+        await nextTick();
+        await nextTick();
+
+        expect(mocks.virtualMeasure).toHaveBeenCalledTimes(1);
     });
 
     test('renders empty state when no rows match', async () => {

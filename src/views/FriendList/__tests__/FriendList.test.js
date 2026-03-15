@@ -312,6 +312,8 @@ describe('FriendList.vue', () => {
 
         const wrapper = mount(FriendList);
         await flushAsync();
+        expect(mocks.getAllUserStats).toHaveBeenCalledTimes(1);
+        expect(mocks.getAllUserMutualCount).toHaveBeenCalledTimes(1);
 
         wrapper.vm.friendsListSearchFilterVIP = true;
         wrapper.vm.friendsListSearchChange();
@@ -320,8 +322,8 @@ describe('FriendList.vue', () => {
         expect(
             wrapper.vm.friendsListDisplayData.map((item) => item.id)
         ).toEqual(['usr_1']);
-        expect(mocks.getAllUserStats).toHaveBeenCalled();
-        expect(mocks.getAllUserMutualCount).toHaveBeenCalled();
+        expect(mocks.getAllUserStats).toHaveBeenCalledTimes(1);
+        expect(mocks.getAllUserMutualCount).toHaveBeenCalledTimes(1);
     });
 
     test('opens charts tab from toolbar button', async () => {
