@@ -1,7 +1,6 @@
 import { createPinia } from 'pinia';
 
 import { getSentry, isSentryOptedIn } from '../plugins';
-import { createPiniaActionTrailPlugin } from '../plugins/piniaActionTrail';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAuthStore } from './auth';
@@ -42,11 +41,6 @@ import { useWorldStore } from './world';
 import { useWristOverlaySettingsStore } from './settings/wristOverlay';
 
 export const pinia = createPinia();
-
-function registerPiniaActionTrailPlugin() {
-    if (!NIGHTLY) return;
-    pinia.use(createPiniaActionTrailPlugin({ maxEntries: 200 }));
-}
 
 async function registerSentryPiniaPlugin() {
     if (!NIGHTLY) return;
@@ -125,9 +119,6 @@ async function registerSentryPiniaPlugin() {
 
 export async function initPiniaPlugins() {
     await registerSentryPiniaPlugin();
-    setTimeout(() => {
-        registerPiniaActionTrailPlugin();
-    }, 60000);
 }
 
 export function createGlobalStores() {

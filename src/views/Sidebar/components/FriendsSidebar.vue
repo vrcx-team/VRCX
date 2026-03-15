@@ -278,9 +278,11 @@
 
     const shouldHideSameInstance = computed(() => isSidebarGroupByInstance.value && isHideFriendsInSameInstance.value);
 
+    const selectedFavoriteGroupKeys = computed(() => new Set(sidebarFavoriteGroups.value));
+
     const selectedFavoriteGroupIds = computed(() => {
-        const selectedGroups = sidebarFavoriteGroups.value;
-        const hasFilter = selectedGroups.length > 0;
+        const selectedGroups = selectedFavoriteGroupKeys.value;
+        const hasFilter = selectedGroups.size > 0;
         if (!hasFilter) {
             return allFavoriteFriendIds.value;
         }
@@ -337,22 +339,18 @@
         );
     });
 
-    const vipFriendsByGroupStatus = computed(() => {
-        return visibleFavoriteOnlineFriends.value;
-    });
-
     // VIP friends divide by group
     const vipFriendsDivideByGroup = computed(() => {
         const remoteFriendsByGroup = groupedByGroupKeyFavoriteFriends.value;
-        const selectedGroups = sidebarFavoriteGroups.value;
-        const hasFilter = selectedGroups.length > 0;
+        const selectedGroups = selectedFavoriteGroupKeys.value;
+        const hasFilter = selectedGroups.size > 0;
 
         // Build a normalized list of { key, groupName, memberIds }
         const groups = [];
 
         for (const key in remoteFriendsByGroup) {
             if (Object.hasOwn(remoteFriendsByGroup, key)) {
-                if (hasFilter && !selectedGroups.includes(key)) continue;
+                if (hasFilter && !selectedGroups.has(key)) continue;
                 const groupName = favoriteFriendGroups.value.find((g) => g.key === key)?.displayName || '';
                 const memberIds = new Set(remoteFriendsByGroup[key].map((f) => f.id));
                 groups.push({ key, groupName, memberIds });
@@ -361,7 +359,7 @@
 
         for (const groupName in localFriendFavorites.value) {
             const selectedKey = `local:${groupName}`;
-            if (hasFilter && !selectedGroups.includes(selectedKey)) continue;
+            if (hasFilter && !selectedGroups.has(selectedKey)) continue;
             const userIds = localFriendFavorites.value[groupName];
             if (userIds?.length) {
                 groups.push({ key: selectedKey, groupName, memberIds: new Set(userIds) });
@@ -407,7 +405,7 @@
 
         const vipFriendCount = isSidebarDivideByFriendGroup.value
             ? vipFriendsDivideByGroup.value.reduce((sum, group) => sum + group.length, 0)
-            : vipFriendsByGroupStatus.value.length;
+            : visibleFavoriteOnlineFriends.value.length;
 
         if (vipFriendCount) {
             rows.push(
@@ -456,7 +454,7 @@
                     }
                 });
             } else {
-                vipFriendsByGroupStatus.value.forEach((friend, idx) => {
+                visibleFavoriteOnlineFriends.value.forEach((friend, idx) => {
                     rows.push(buildFriendRow(friend, `vip:${friend?.id ?? idx}`));
                 });
             }

@@ -10,10 +10,6 @@ import {
     SEARCH_LIMIT_MIN
 } from '../shared/constants';
 import { avatarRequest, queryRequest } from '../api';
-import {
-    clearPiniaActionTrail,
-    getPiniaActionTrail
-} from '../plugins/piniaActionTrail';
 import { debounce, parseLocation } from '../shared/utils';
 import { AppDebug } from '../services/appConfig';
 import { database } from '../services/database';
@@ -556,29 +552,16 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             if (advancedSettingsStore.sentryErrorReporting) {
                 try {
                     import('@sentry/vue').then((Sentry) => {
-                        const trail = getPiniaActionTrail()
-                            .filter((entry) => {
-                                if (!entry) return false;
-                                return (
-                                    typeof entry.t === 'string' &&
-                                    typeof entry.a === 'string'
-                                );
-                            })
-                            .reverse();
-                        const trailText = JSON.stringify(trail);
                         Sentry.withScope((scope) => {
                             scope.setLevel('fatal');
                             scope.setTag('reason', 'crash-recovery');
-                            scope.setContext('pinia_actions', {
-                                trailText,
+                            scope.setContext('session', {
                                 sessionTime: performance.now() / 1000 / 60
                             });
                             Sentry.captureMessage(
                                 `crash message: ${crashMessage}`
                             );
                         });
-
-                        clearPiniaActionTrail();
                     });
                 } catch (error) {
                     console.error('Error setting up Sentry feedback:', error);

@@ -1,5 +1,5 @@
 import { router } from './router';
-import { startRendererMemoryThresholdReport } from './piniaActionTrail';
+import { startRendererMemoryThresholdReport } from './rendererMemoryReport';
 
 import configRepository from '../services/config';
 

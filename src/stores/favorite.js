@@ -90,23 +90,23 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     const favoriteFriends = computed(() => {
         if (appearanceSettingsStore.sortFavorites) {
-            return state.favoriteFriends_.sort(compareByFavoriteSortOrder);
+            return state.favoriteFriends_.toSorted(compareByFavoriteSortOrder);
         }
-        return state.favoriteFriends_.sort(compareByName);
+        return state.favoriteFriends_.toSorted(compareByName);
     });
 
     const favoriteWorlds = computed(() => {
         if (appearanceSettingsStore.sortFavorites) {
-            return state.favoriteWorlds_.sort(compareByFavoriteSortOrder);
+            return state.favoriteWorlds_.toSorted(compareByFavoriteSortOrder);
         }
-        return state.favoriteWorlds_.sort(compareByName);
+        return state.favoriteWorlds_.toSorted(compareByName);
     });
 
     const favoriteAvatars = computed(() => {
         if (appearanceSettingsStore.sortFavorites) {
-            return state.favoriteAvatars_.sort(compareByFavoriteSortOrder);
+            return state.favoriteAvatars_.toSorted(compareByFavoriteSortOrder);
         }
-        return state.favoriteAvatars_.sort(compareByName);
+        return state.favoriteAvatars_.toSorted(compareByName);
     });
 
     watch(
