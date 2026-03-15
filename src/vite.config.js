@@ -157,7 +157,7 @@ export default defineConfig(({ mode }) => {
             reportCompressedSize: false,
             chunkSizeWarningLimit: 5000,
             sourcemap: buildAndUploadSourceMaps,
-            assetsInlineLimit: 0,
+            assetsInlineLimit: 40960,
             rolldownOptions: {
                 preserveEntrySignatures: false,
                 input: {
