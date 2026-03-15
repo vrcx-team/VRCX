@@ -110,9 +110,12 @@
                                                     </ContextMenuItem>
                                                     <ContextMenuSeparator />
                                                 </template>
-                                                <ContextMenuItem @click="emit('create-dashboard')">
-                                                    {{ t('dashboard.new_dashboard') }}
+                                                <ContextMenuItem
+                                                    v-if="isToolItem(entry)"
+                                                    @click="emit('unpin-tool', entry)">
+                                                    {{ t('nav_menu.custom_nav.unpin_from_nav') }}
                                                 </ContextMenuItem>
+                                                <ContextMenuSeparator v-if="isToolItem(entry)" />
                                                 <ContextMenuItem @click="emit('open-custom-nav')">
                                                     {{ t('nav_menu.custom_nav.header') }}
                                                 </ContextMenuItem>
@@ -130,9 +133,6 @@
                     {{ t('nav_menu.mark_all_read') }}
                 </ContextMenuItem>
                 <ContextMenuSeparator v-if="hasNotifications" />
-                <ContextMenuItem @click="emit('create-dashboard')">
-                    {{ t('dashboard.new_dashboard') }}
-                </ContextMenuItem>
                 <ContextMenuItem @click="emit('open-custom-nav')">
                     {{ t('nav_menu.custom_nav.header') }}
                 </ContextMenuItem>
@@ -199,6 +199,10 @@
         isDashboardItem: {
             type: Function,
             required: true
+        },
+        isToolItem: {
+            type: Function,
+            required: true
         }
     });
 
@@ -209,7 +213,7 @@
         'clear-notifications',
         'edit-dashboard',
         'delete-dashboard',
-        'create-dashboard',
+        'unpin-tool',
         'open-custom-nav'
     ]);
     const { t } = useI18n();

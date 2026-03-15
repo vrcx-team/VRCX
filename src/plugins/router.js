@@ -114,13 +114,13 @@ const routes = [
                 path: 'tools/gallery',
                 name: 'gallery',
                 component: Gallery,
-                meta: { navKey: 'tools' }
+                meta: { navKeys: ['tool-gallery', 'tools'] }
             },
             {
                 path: 'tools/screenshot-metadata',
                 name: 'screenshot-metadata',
                 component: ScreenshotMetadata,
-                meta: { navKey: 'tools' }
+                meta: { navKeys: ['tool-screenshot-metadata', 'tools'] }
             },
             { path: 'settings', name: 'settings', component: Settings }
         ]

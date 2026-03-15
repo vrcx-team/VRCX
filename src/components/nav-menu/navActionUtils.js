@@ -40,6 +40,10 @@ export function triggerNavEntryAction(entry, { router, directAccessPaste }) {
         return;
     }
 
+    if (entry.action && typeof entry.action === 'object') {
+        return entry.action;
+    }
+
     if (entry.routeName) {
         navigateToRoute(router, entry.routeName, entry.routeParams);
         return;

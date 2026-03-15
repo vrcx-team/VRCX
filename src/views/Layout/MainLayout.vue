@@ -84,6 +84,8 @@
         <SendBoopDialog></SendBoopDialog>
 
         <ChangelogDialog></ChangelogDialog>
+
+        <GlobalToolsDialogs></GlobalToolsDialogs>
     </template>
 </template>
 
@@ -103,6 +105,7 @@
     import ChooseFavoriteGroupDialog from '../../components/dialogs/ChooseFavoriteGroupDialog.vue';
     import FriendImportDialog from '../Favorites/dialogs/FriendImportDialog.vue';
     import FullscreenImagePreview from '../../components/FullscreenImagePreview.vue';
+    import GlobalToolsDialogs from '../Tools/components/GlobalToolsDialogs.vue';
     import GroupMemberModerationDialog from '../../components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
     import InviteGroupDialog from '../../components/dialogs/InviteGroupDialog.vue';
     import LaunchDialog from '../../components/dialogs/LaunchDialog.vue';

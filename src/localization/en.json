@@ -12,6 +12,8 @@
             "open": "Open",
             "confirm": "Confirm",
             "clear": "Clear",
+            "delete": "Delete",
+            "remove": "Remove",
             "reset": "Reset",
             "view_details": "View Details"
         },
@@ -75,6 +77,10 @@
             "hide": "Hide",
             "show": "Show",
             "hidden_items": "Hidden",
+            "pin_to_nav": "Pin to Navigation",
+            "unpin_from_nav": "Unpin",
+            "pinned": "Added to navigation",
+            "unpinned": "Removed from navigation",
             "confirm": "Confirm",
             "cancel": "Cancel",
             "restore_default": "Restore Default",
@@ -2417,6 +2423,7 @@
         "file": {
             "not_image": "File isn't an image",
             "too_large": "File size too large",
+            "folder_opened": "Folder opened",
             "folder_missing": "Folder doesn't exist"
         },
         "group": {

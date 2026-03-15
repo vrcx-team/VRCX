@@ -30,6 +30,9 @@
     const isDashboard = computed(() => {
         return !isFolder.value && nodeValue.value?.key?.startsWith('dashboard-');
     });
+    const isTool = computed(() => {
+        return !isFolder.value && nodeValue.value?.key?.startsWith('tool-');
+    });
     const hasChildren = computed(() => props.item.hasChildren);
     const level = computed(() => nodeValue.value?.level ?? 0);
     const nodeId = computed(() => (isFolder.value ? nodeValue.value?.id : nodeValue.value?.key));
@@ -127,7 +130,11 @@
                     </template>
                     <template v-else>
                         <DropdownMenuItem @click="emit('hide', nodeValue.key)">
-                            {{ t('nav_menu.custom_nav.hide') }}
+                            {{
+                                isTool
+                                    ? t('common.actions.delete')
+                                    : t('nav_menu.custom_nav.hide')
+                            }}
                         </DropdownMenuItem>
                     </template>
                 </DropdownMenuContent>

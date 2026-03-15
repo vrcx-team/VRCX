@@ -1,3 +1,5 @@
+import { toolNavDefinitions } from './tools';
+
 const navDefinitions = [
     {
         key: 'feed',
@@ -117,7 +119,8 @@ const navDefinitions = [
         tooltip: 'prompt.direct_access_omni.header',
         labelKey: 'prompt.direct_access_omni.header',
         action: 'direct-access'
-    }
+    },
+    ...toolNavDefinitions
 ];
 
 export { navDefinitions };

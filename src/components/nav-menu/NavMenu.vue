@@ -66,9 +66,12 @@
                                                     </ContextMenuItem>
                                                     <ContextMenuSeparator />
                                                 </template>
-                                                <ContextMenuItem @click="handleQuickCreateDashboard">
-                                                    {{ t('dashboard.new_dashboard') }}
+                                                <ContextMenuItem
+                                                    v-if="isToolItem(item)"
+                                                    @click="handleUnpinToolItem(item)">
+                                                    {{ t('nav_menu.custom_nav.unpin_from_nav') }}
                                                 </ContextMenuItem>
+                                                <ContextMenuSeparator v-if="isToolItem(item)" />
                                                 <ContextMenuItem @click="handleOpenCustomNavDialog">
                                                     {{ t('nav_menu.custom_nav.header') }}
                                                 </ContextMenuItem>
@@ -86,13 +89,14 @@
                                         :is-entry-notified="isEntryNotified"
                                         :is-nav-item-notified="isNavItemNotified"
                                         :is-dashboard-item="isDashboardItem"
+                                        :is-tool-item="isToolItem"
                                         @collapsed-dropdown-open-change="handleCollapsedDropdownOpenChange"
                                         @collapsed-submenu-select="handleCollapsedSubmenuSelect"
                                         @submenu-click="handleSubmenuClick"
                                         @clear-notifications="clearAllNotifications"
                                         @edit-dashboard="handleEditDashboard"
                                         @delete-dashboard="handleDeleteDashboard"
-                                        @create-dashboard="handleQuickCreateDashboard"
+                                        @unpin-tool="handleUnpinToolItem"
                                         @open-custom-nav="handleOpenCustomNavDialog" />
                                 </template>
                             </SidebarMenu>
@@ -147,6 +151,7 @@
         v-model:visible="customNavDialogVisible"
         :layout="navLayout"
         :hidden-keys="navHiddenKeys"
+        :default-hidden-keys="defaultHiddenKeys"
         :default-layout="defaultNavLayout"
         :definitions="allNavDefinitions"
         @save="handleCustomNavSave"
@@ -163,6 +168,8 @@
 
     import { useNavLayout } from './composables/useNavLayout';
     import { useNavTheme } from './composables/useNavTheme';
+    import { useToolActions } from '../../composables/useToolActions';
+    import { useToolNavPinning } from '../../composables/useToolNavPinning';
     import { Kbd } from '@/components/ui/kbd';
     import {
         ContextMenu,
@@ -216,6 +223,8 @@
     const { clearAllNotifications } = uiStore;
 
     const { directAccessPaste } = useSearchStore();
+    const { triggerTool } = useToolActions();
+    const { unpinToolFromNav } = useToolNavPinning();
     const { logout } = useAuthStore();
     const modalStore = useModalStore();
 
@@ -243,6 +252,7 @@
         navLayout,
         navLayoutReady,
         navHiddenKeys,
+        defaultHiddenKeys,
         menuItems,
         activeMenuIndex,
         allNavDefinitions,
@@ -258,7 +268,8 @@
         router,
         dashboardStore,
         dashboards,
-        directAccessPaste
+        directAccessPaste,
+        triggerTool
     });
 
     const collapsedDropdownOpenId = ref(null);
@@ -321,6 +332,14 @@
     };
 
     const isDashboardItem = (item) => item?.index?.startsWith(DASHBOARD_NAV_KEY_PREFIX);
+    const isToolItem = (item) => item?.index?.startsWith('tool-');
+
+    const handleUnpinToolItem = async (item) => {
+        if (!isToolItem(item)) {
+            return;
+        }
+        await unpinToolFromNav(item.index.replace(/^tool-/, ''));
+    };
 
     const handleQuickCreateDashboard = async () => {
         const dashboard = await dashboardStore.createDashboard(t('dashboard.default_name'));

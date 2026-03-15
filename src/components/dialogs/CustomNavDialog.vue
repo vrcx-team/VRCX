@@ -1,6 +1,6 @@
 <template>
     <Dialog :open="visible" @update:open="(open) => (open ? null : handleClose())">
-        <DialogContent class="sm:min-w-140">
+        <DialogContent class="sm:min-w-180">
             <DialogHeader>
                 <DialogTitle>{{ t('nav_menu.custom_nav.dialog_title') }}</DialogTitle>
             </DialogHeader>
@@ -169,6 +169,7 @@
     import { InputGroupButton, InputGroupField } from '../ui/input-group';
     import { Separator } from '../ui/separator';
     import { Tree } from '../ui/tree';
+    import { isToolNavKey } from '../../shared/constants';
     import { navDefinitions } from '../../shared/constants/ui.js';
     import { DASHBOARD_NAV_KEY_PREFIX, DEFAULT_DASHBOARD_ICON } from '../../shared/constants/dashboard';
     import { useDashboardStore, useModalStore } from '../../stores';
@@ -185,6 +186,10 @@
             default: () => []
         },
         hiddenKeys: {
+            type: Array,
+            default: () => []
+        },
+        defaultHiddenKeys: {
             type: Array,
             default: () => []
         },
@@ -305,7 +310,10 @@
 
     const hiddenItems = computed(() =>
         (props.definitions?.length ? props.definitions : navDefinitions)
-            .filter((def) => hiddenKeySet.value.has(def.key))
+            .filter(
+                (def) =>
+                    hiddenKeySet.value.has(def.key) && !isToolNavKey(def.key)
+            )
             .map((def) => ({
                 key: def.key,
                 icon: def.icon,
@@ -322,6 +330,11 @@
     };
 
     const handleHideItem = (key) => {
+        if (isToolNavKey(key)) {
+            removeFromLayout(key);
+            return;
+        }
+
         let placement = null;
         for (let i = 0; i < localLayout.value.length; i++) {
             const entry = localLayout.value[i];
@@ -789,7 +802,7 @@
 
     const handleReset = () => {
         localLayout.value = cloneLayout(props.defaultLayout || []);
-        hiddenKeySet.value = new Set();
+        hiddenKeySet.value = new Set(props.defaultHiddenKeys || []);
         hiddenPlacement.value = new Map();
         expandedKeys.value = localLayout.value.filter((e) => e.type === 'folder').map((e) => e.id);
     };

@@ -115,6 +115,20 @@ vi.mock('../../../stores', () => ({
     useAuthStore: () => ({
         logout: (...args) => mocks.logout(...args)
     }),
+    useToolsStore: () => ({
+        openDialog: vi.fn(),
+        closeDialog: vi.fn(),
+        closeAllDialogs: vi.fn()
+    }),
+    useAdvancedSettingsStore: () => ({
+        showVRChatConfig: vi.fn()
+    }),
+    useLaunchStore: () => ({
+        showLaunchOptions: vi.fn()
+    }),
+    useVrcxStore: () => ({
+        showRegistryBackupDialog: vi.fn()
+    }),
     useAppearanceSettingsStore: () => ({
         themeMode: mocks.themeMode,
         tableDensity: mocks.tableDensity,
@@ -148,11 +162,13 @@ vi.mock('../../../services/config', () => ({
 
 vi.mock('../../../shared/constants', () => ({
     DASHBOARD_NAV_KEY_PREFIX: 'dashboard-',
+    defaultHiddenToolNavKeys: [],
     THEME_CONFIG: {
         system: { name: 'System' },
         light: { name: 'Light' },
         dark: { name: 'Dark' }
     },
+    isToolNavKey: (key) => typeof key === 'string' && key.startsWith('tool-'),
     links: {
         github: 'https://github.com/vrcx-team/VRCX'
     },
@@ -171,7 +187,9 @@ vi.mock('../../../shared/constants', () => ({
             tooltip: 'nav_tooltip.direct_access',
             icon: 'ri-door-open-line'
         }
-    ]
+    ],
+    toolDefinitionMap: new Map(),
+    toolDefinitions: []
 }));
 
 vi.mock('../navMenuUtils', () => ({
