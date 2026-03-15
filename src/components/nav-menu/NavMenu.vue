@@ -159,7 +159,7 @@
 </template>
 
 <script setup>
-    import { computed, defineAsyncComponent, h, onMounted, ref, watch } from 'vue';
+    import { computed, h, onMounted, ref, watch } from 'vue';
 
     import { storeToRefs } from 'pinia';
     import { Plus } from 'lucide-vue-next';
@@ -205,7 +205,7 @@
     import NavMenuFolderItem from './NavMenuFolderItem.vue';
     import NavMenuFooter from './NavMenuFooter.vue';
 
-    const CustomNavDialog = defineAsyncComponent(() => import('../dialogs/CustomNavDialog.vue'));
+    import CustomNavDialog from '../dialogs/CustomNavDialog.vue';
 
     const { t, locale } = useI18n();
     const router = useRouter();

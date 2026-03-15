@@ -381,7 +381,7 @@
         Upload,
         Wand2
     } from 'lucide-vue-next';
-    import { computed, defineAsyncComponent, ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { Spinner } from '@/components/ui/spinner';
@@ -422,9 +422,9 @@
     import WorldDialogInstancesTab from './WorldDialogInstancesTab.vue';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
 
-    const SetWorldTagsDialog = defineAsyncComponent(() => import('./SetWorldTagsDialog.vue'));
-    const WorldAllowedDomainsDialog = defineAsyncComponent(() => import('./WorldAllowedDomainsDialog.vue'));
-    const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog/NewInstanceDialog.vue'));
+    import NewInstanceDialog from '../NewInstanceDialog/NewInstanceDialog.vue';
+    import SetWorldTagsDialog from './SetWorldTagsDialog.vue';
+    import WorldAllowedDomainsDialog from './WorldAllowedDomainsDialog.vue';
 
     const { currentUser, userDialog } = storeToRefs(useUserStore());
     const { worldDialog } = storeToRefs(useWorldStore());

@@ -478,7 +478,7 @@
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-    import { defineAsyncComponent, ref, watch } from 'vue';
+    import { ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
@@ -515,7 +515,7 @@
     import { showUserDialog } from '../../../coordinators/userCoordinator';
     import { showGroupDialog } from '../../../coordinators/groupCoordinator';
 
-    const EditNoteAndMemoDialog = defineAsyncComponent(() => import('./EditNoteAndMemoDialog.vue'));
+    import EditNoteAndMemoDialog from './EditNoteAndMemoDialog.vue';
 
     defineEmits(['showBioDialog']);
 

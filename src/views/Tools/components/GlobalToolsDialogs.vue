@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-    import { defineAsyncComponent } from 'vue';
+
     import { storeToRefs } from 'pinia';
 
     import { useFriendStore, useToolsStore } from '../../../stores';
@@ -31,24 +31,12 @@
     import AutoChangeStatusDialog from '../dialogs/AutoChangeStatusDialog.vue';
     import RegistryBackupDialog from '../dialogs/RegistryBackupDialog.vue';
 
-    const GroupCalendarDialog = defineAsyncComponent(
-        () => import('../dialogs/GroupCalendarDialog.vue')
-    );
-    const NoteExportDialog = defineAsyncComponent(
-        () => import('../dialogs/NoteExportDialog.vue')
-    );
-    const EditInviteMessageDialog = defineAsyncComponent(
-        () => import('../dialogs/EditInviteMessagesDialog.vue')
-    );
-    const ExportDiscordNamesDialog = defineAsyncComponent(
-        () => import('../dialogs/ExportDiscordNamesDialog.vue')
-    );
-    const ExportFriendsListDialog = defineAsyncComponent(
-        () => import('../dialogs/ExportFriendsListDialog.vue')
-    );
-    const ExportAvatarsListDialog = defineAsyncComponent(
-        () => import('../dialogs/ExportAvatarsListDialog.vue')
-    );
+    import EditInviteMessageDialog from '../dialogs/EditInviteMessagesDialog.vue';
+    import ExportAvatarsListDialog from '../dialogs/ExportAvatarsListDialog.vue';
+    import ExportDiscordNamesDialog from '../dialogs/ExportDiscordNamesDialog.vue';
+    import ExportFriendsListDialog from '../dialogs/ExportFriendsListDialog.vue';
+    import GroupCalendarDialog from '../dialogs/GroupCalendarDialog.vue';
+    import NoteExportDialog from '../dialogs/NoteExportDialog.vue';
 
     const { friends } = storeToRefs(useFriendStore());
     const toolsStore = useToolsStore();

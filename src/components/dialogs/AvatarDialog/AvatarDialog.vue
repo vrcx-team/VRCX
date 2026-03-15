@@ -575,7 +575,7 @@
         XCircle
     } from 'lucide-vue-next';
     import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-    import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
+    import { computed, nextTick, ref, watch } from 'vue';
     import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
@@ -584,10 +584,8 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import VueJsonPretty from 'vue-json-pretty';
 
     import {
-        useAppearanceSettingsStore,
         useAuthStore,
         useAvatarStore,
         useFavoriteStore,
@@ -601,7 +599,6 @@
         commaNumber,
         compareUnityVersion,
         copyToClipboard,
-        downloadAndSaveJson,
         formatDateFilter,
         openFolderGeneric,
         timeToText
@@ -630,8 +627,8 @@
     import ImageCropDialog from '../ImageCropDialog.vue';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
 
-    const SetAvatarStylesDialog = defineAsyncComponent(() => import('./SetAvatarStylesDialog.vue'));
-    const SetAvatarTagsDialog = defineAsyncComponent(() => import('./SetAvatarTagsDialog.vue'));
+    import SetAvatarStylesDialog from './SetAvatarStylesDialog.vue';
+    import SetAvatarTagsDialog from './SetAvatarTagsDialog.vue';
 
     const { sortUserDialogAvatars } = useUserStore();
     const { userDialog, currentUser } = storeToRefs(useUserStore());
@@ -642,7 +639,6 @@
     const { showFavoriteDialog } = useFavoriteStore();
     const { isGameRunning } = storeToRefs(useGameStore());
     const { showFullscreenImageDialog } = useGalleryStore();
-    const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
     const authStore = useAuthStore();
     const modalStore = useModalStore();
     const uiStore = useUiStore();
@@ -652,7 +648,6 @@
     const {
         cropDialogOpen,
         cropDialogFile,
-        changeAvatarImageLoading,
         avatarDialogCommand,
         onFileChangeAvatarImage,
         onCropConfirmAvatar,

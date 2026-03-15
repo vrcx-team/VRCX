@@ -181,7 +181,7 @@
 </template>
 
 <script setup>
-    import { computed, defineAsyncComponent, onActivated, onMounted, ref, watch } from 'vue';
+    import { computed, onActivated, onMounted, ref, watch } from 'vue';
     import { Apple, Home, Image, Monitor, Smartphone } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -206,7 +206,7 @@
     import { showUserDialog, lookupUser } from '../../coordinators/userCoordinator';
     import { showWorldDialog } from '../../coordinators/worldCoordinator';
 
-    const PhotonEventTable = defineAsyncComponent(() => import('./components/PhotonEventTable.vue'));
+    import PhotonEventTable from './components/PhotonEventTable.vue';
 
     const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const photonStore = usePhotonStore();

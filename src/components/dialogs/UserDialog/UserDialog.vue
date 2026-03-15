@@ -70,7 +70,7 @@
 </template>
 
 <script setup>
-    import { computed, defineAsyncComponent, ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
@@ -78,7 +78,6 @@
     import { useI18n } from 'vue-i18n';
 
     import {
-        useAvatarStore,
         useFavoriteStore,
         useFriendStore,
         useGalleryStore,
@@ -91,7 +90,6 @@
         useNotificationStore,
         useUserStore
     } from '../../../stores';
-    import { showGroupDialog } from '../../../coordinators/groupCoordinator';
     import { copyToClipboard } from '../../../shared/utils';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
     import { miscRequest } from '../../../api';
@@ -107,12 +105,12 @@
     import UserDialogWorldsTab from './UserDialogWorldsTab.vue';
     import UserSummaryHeader from './UserSummaryHeader.vue';
 
-    const BioDialog = defineAsyncComponent(() => import('./BioDialog.vue'));
-    const LanguageDialog = defineAsyncComponent(() => import('./LanguageDialog.vue'));
-    const PronounsDialog = defineAsyncComponent(() => import('./PronounsDialog.vue'));
-    const SendInviteRequestDialog = defineAsyncComponent(() => import('./SendInviteRequestDialog.vue'));
-    const SocialStatusDialog = defineAsyncComponent(() => import('./SocialStatusDialog.vue'));
-    const ModerateGroupDialog = defineAsyncComponent(() => import('../ModerateGroupDialog.vue'));
+    import BioDialog from './BioDialog.vue';
+    import LanguageDialog from './LanguageDialog.vue';
+    import ModerateGroupDialog from '../ModerateGroupDialog.vue';
+    import PronounsDialog from './PronounsDialog.vue';
+    import SendInviteRequestDialog from './SendInviteRequestDialog.vue';
+    import SocialStatusDialog from './SocialStatusDialog.vue';
 
     const { t } = useI18n();
     const userDialogTabs = computed(() => {
@@ -139,7 +137,7 @@
     const modalStore = useModalStore();
     const instanceStore = useInstanceStore();
 
-    const { userDialog, languageDialog, currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
+    const { userDialog, languageDialog, currentUser } = storeToRefs(useUserStore());
     const { cachedUsers, showSendBoopDialog } = useUserStore();
     const { showFavoriteDialog } = useFavoriteStore();
     import { showAvatarDialog, showAvatarAuthorDialog } from '../../../coordinators/avatarCoordinator';
