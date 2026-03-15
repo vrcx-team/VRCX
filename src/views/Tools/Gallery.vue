@@ -87,7 +87,7 @@
                             variant="outline"
                             size="sm"
                             class="p-0 x-hover-card hover:bg-accent hover:shadow-sm"
-                            :class="compareCurrentProfilePic(image.id) ? 'ring-[3px] ring-ring border-ring' : ''"
+                            :class="compareCurrentProfilePic(image.id) ? 'x-highlight-ring' : ''"
                             as-child>
                             <div
                                 v-if="image.versions && image.versions.length > 0 && image.versions[image.versions.length - 1].file.url"
@@ -159,7 +159,7 @@
                             variant="outline"
                             size="sm"
                             class="p-0 x-hover-card hover:bg-accent hover:shadow-sm"
-                            :class="compareCurrentVRCPlusIcon(image.id) ? 'ring-[3px] ring-ring border-ring' : ''"
+                            :class="compareCurrentVRCPlusIcon(image.id) ? 'x-highlight-ring' : ''"
                             as-child>
                             <div
                                 v-if="image.versions && image.versions.length > 0 && image.versions[image.versions.length - 1].file.url"

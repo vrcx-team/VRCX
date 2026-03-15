@@ -257,6 +257,14 @@ body {
  * Use them when building new components.
  * ==========================================================================*/
 
+/* Active / Selected Highlight Ring
+ * Prominent focus ring for cards and items in an "active" or "selected" state.
+ * Use on gallery items, avatar cards, and similar selectable surfaces.
+ */
+.x-highlight-ring {
+    @apply ring-[3px] ring-ring border-ring;
+}
+
 /* Hover Transitions
  * Smooth hover state changes to avoid harsh flickering.
  *   x-hover-card — Cards & panels (0.2s, bg + shadow)
