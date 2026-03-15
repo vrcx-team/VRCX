@@ -7,9 +7,14 @@ import {
     DASHBOARD_NAV_KEY_PREFIX,
     navDefinitions
 } from '../../../shared/constants';
+import { triggerNavEntryAction } from '../navActionUtils';
+import {
+    buildMenuItems,
+    collectLayoutKeys,
+    findFirstNavEntry,
+    findFirstNavKey
+} from '../navLayoutHelpers';
 import { normalizeHiddenKeys, sanitizeLayout } from '../navMenuUtils';
-
-const DEFAULT_FOLDER_ICON = 'ri-folder-line';
 
 export function useNavLayout({
     t,
@@ -72,82 +77,16 @@ export function useNavLayout({
         { type: 'item', key: 'direct-access' }
     ];
 
-    const menuItems = computed(() => {
-        const items = [];
-        navLayout.value.forEach((entry) => {
-            if (entry.type === 'item') {
-                const definition = navDefinitionMap.value.get(entry.key);
-                if (!definition) {
-                    return;
-                }
-                items.push({
-                    ...definition,
-                    index: definition.key,
-                    title: definition.tooltip || definition.labelKey,
-                    titleIsCustom: Boolean(definition.isDashboard)
-                });
-                return;
-            }
-
-            if (entry.type === 'folder') {
-                const folderDefinitions = (entry.items || [])
-                    .map((key) => navDefinitionMap.value.get(key))
-                    .filter(Boolean);
-                if (folderDefinitions.length === 0) {
-                    return;
-                }
-
-                const folderEntries = folderDefinitions.map((definition) => ({
-                    label: definition.labelKey,
-                    routeName: definition.routeName,
-                    routeParams: definition.routeParams,
-                    index: definition.key,
-                    icon: definition.icon,
-                    action: definition.action,
-                    titleIsCustom: Boolean(definition.isDashboard)
-                }));
-
-                items.push({
-                    index: entry.id,
-                    icon: entry.icon || DEFAULT_FOLDER_ICON,
-                    title:
-                        entry.name?.trim() ||
-                        t('nav_menu.custom_nav.folder_name_placeholder'),
-                    titleIsCustom: true,
-                    children: folderEntries
-                });
-            }
-        });
-        return items;
-    });
+    const menuItems = computed(() =>
+        buildMenuItems(navLayout.value, navDefinitionMap.value, t)
+    );
 
     const getFirstNavEntryLocal = (layout) => {
-        for (const entry of layout) {
-            if (entry.type === 'item') {
-                const definition = navDefinitionMap.value.get(entry.key);
-                if (
-                    definition?.routeName ||
-                    definition?.action ||
-                    definition?.path
-                ) {
-                    return definition;
-                }
-            }
-            if (entry.type === 'folder' && entry.items?.length) {
-                const definition = entry.items
-                    .map((key) => navDefinitionMap.value.get(key))
-                    .find((def) => def?.routeName || def?.action || def?.path);
-                if (definition) {
-                    return definition;
-                }
-            }
-        }
-        return null;
+        return findFirstNavEntry(layout, navDefinitionMap.value);
     };
 
     const getFirstNavKeyLocal = (layout) => {
-        const entry = getFirstNavEntryLocal(layout);
-        return entry?.key || null;
+        return findFirstNavKey(layout, navDefinitionMap.value);
     };
 
     const activeMenuIndex = computed(() => {
@@ -180,27 +119,6 @@ export function useNavLayout({
             return `nav-folder-${crypto.randomUUID()}`;
         }
         return `nav-folder-${dayjs().toISOString()}-${Math.random().toString().slice(2, 4)}`;
-    };
-
-    const collectLayoutKeys = (layout) => {
-        const keys = new Set();
-        if (!Array.isArray(layout)) {
-            return keys;
-        }
-        layout.forEach((entry) => {
-            if (entry?.type === 'item' && entry.key) {
-                keys.add(entry.key);
-                return;
-            }
-            if (entry?.type === 'folder' && Array.isArray(entry.items)) {
-                entry.items.forEach((key) => {
-                    if (key) {
-                        keys.add(key);
-                    }
-                });
-            }
-        });
-        return keys;
     };
 
     const getAppendDefinitions = (layout, hiddenKeys = []) => {
@@ -246,35 +164,8 @@ export function useNavLayout({
         return sanitizeLayoutLocal(base, []);
     });
 
-    const handleRouteChange = (routeName, routeParams = undefined) => {
-        if (!routeName) {
-            return;
-        }
-        if (routeParams) {
-            router.push({ name: routeName, params: routeParams });
-            return;
-        }
-        router.push({ name: routeName });
-    };
-
     const triggerNavAction = (entry) => {
-        if (!entry) {
-            return;
-        }
-
-        if (entry.action === 'direct-access') {
-            directAccessPaste();
-            return;
-        }
-
-        if (entry.routeName) {
-            handleRouteChange(entry.routeName, entry.routeParams);
-            return;
-        }
-
-        if (entry.path) {
-            router.push(entry.path);
-        }
+        triggerNavEntryAction(entry, { router, directAccessPaste });
     };
 
     const saveNavLayout = async (layout, hiddenKeys = []) => {
