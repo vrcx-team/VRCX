@@ -1858,7 +1858,18 @@
                 "world_id": "World ID"
             },
             "no_results": "No results found",
-            "invalid_file": "Invalid file selected. Please select a valid VRChat screenshot."
+            "invalid_file": "Invalid file selected. Please select a valid VRChat screenshot.",
+            "section_location": "Location",
+            "section_players": "Players",
+            "section_file_info": "File Info",
+            "section_note": "Note",
+            "section_actions": "Actions",
+            "col_date": "Date",
+            "col_world": "World",
+            "col_players": "Players",
+            "col_resolution": "Resolution",
+            "back_to_results": "Back to {count} results",
+            "result_count": "{count} results"
         },
         "set_world_tags": {
             "header": "Set World Tags",
