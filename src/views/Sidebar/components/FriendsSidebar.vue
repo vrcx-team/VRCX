@@ -253,6 +253,7 @@
     const {
         isSidebarGroupByInstance,
         isHideFriendsInSameInstance,
+        isSameInstanceAboveFavorites,
         isSidebarDivideByFriendGroup,
         sidebarFavoriteGroups,
         sidebarFavoriteGroupOrder,
@@ -403,23 +404,7 @@
         });
     });
 
-    const virtualRows = computed(() => {
-        const rows = [];
-
-        rows.push(
-            buildToggleRow({
-                key: 'me-header',
-                label: t('side_panel.me'),
-                expanded: isFriendsGroupMe.value,
-                headerPadding: '0 0 5px',
-                onClick: toggleFriendsGroupMe
-            })
-        );
-
-        if (isFriendsGroupMe.value) {
-            rows.push({ type: 'me-item', key: `me:${currentUser.value?.id ?? 'me'}` });
-        }
-
+    function buildFavoriteRows(rows) {
         const vipFriendCount = isSidebarDivideByFriendGroup.value
             ? vipFriendsDivideByGroup.value.reduce((sum, group) => sum + group.length, 0)
             : visibleFavoriteOnlineFriends.value.length;
@@ -476,7 +461,9 @@
                 });
             }
         }
+    }
 
+    function buildSameInstanceRows(rows) {
         if (isSidebarGroupByInstance.value && friendsInSameInstance.value.length) {
             rows.push(
                 buildToggleRow({
@@ -511,6 +498,32 @@
                     });
                 });
             }
+        }
+    }
+
+    const virtualRows = computed(() => {
+        const rows = [];
+
+        rows.push(
+            buildToggleRow({
+                key: 'me-header',
+                label: t('side_panel.me'),
+                expanded: isFriendsGroupMe.value,
+                headerPadding: '0 0 5px',
+                onClick: toggleFriendsGroupMe
+            })
+        );
+
+        if (isFriendsGroupMe.value) {
+            rows.push({ type: 'me-item', key: `me:${currentUser.value?.id ?? 'me'}` });
+        }
+
+        if (isSameInstanceAboveFavorites.value) {
+            buildSameInstanceRows(rows);
+            buildFavoriteRows(rows);
+        } else {
+            buildFavoriteRows(rows);
+            buildSameInstanceRows(rows);
         }
 
         if (onlineFriendsByGroupStatus.value.length) {

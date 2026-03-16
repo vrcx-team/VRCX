@@ -76,6 +76,12 @@
                                     :model-value="isHideFriendsInSameInstance"
                                     @update:modelValue="setIsHideFriendsInSameInstance" />
                             </Field>
+                            <Field v-if="isSidebarGroupByInstance" orientation="horizontal">
+                                <FieldLabel>{{ t('side_panel.settings.same_instance_above_favorites') }}</FieldLabel>
+                                <Switch
+                                    :model-value="isSameInstanceAboveFavorites"
+                                    @update:modelValue="setIsSameInstanceAboveFavorites" />
+                            </Field>
                             <Field orientation="horizontal">
                                 <FieldLabel>{{ t('side_panel.settings.split_favorite_friends') }}</FieldLabel>
                                 <Switch
@@ -322,6 +328,7 @@
         sidebarSortMethod3,
         isSidebarGroupByInstance,
         isHideFriendsInSameInstance,
+        isSameInstanceAboveFavorites,
         isSidebarDivideByFriendGroup,
         sidebarFavoriteGroups
     } = storeToRefs(appearanceSettingsStore);
@@ -331,6 +338,7 @@
         setSidebarSortMethod3,
         setIsSidebarGroupByInstance,
         setIsHideFriendsInSameInstance,
+        setIsSameInstanceAboveFavorites,
         setIsSidebarDivideByFriendGroup,
         setSidebarFavoriteGroups
     } = appearanceSettingsStore;

@@ -178,6 +178,7 @@
             "group_by_instance": "Group by Instance",
             "split_favorite_friends": "Show Favorite Groups",
             "hide_friends_in_same_instance": "Hide Grouped Friends",
+            "same_instance_above_favorites": "Prioritize Same Instance",
             "sort_primary": "Sort by",
             "sort_secondary": "Then by",
             "sort_tertiary": "Then by",

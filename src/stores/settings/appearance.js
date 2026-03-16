@@ -81,6 +81,7 @@ export const useAppearanceSettingsStore = defineStore(
         const navWidth = ref(240);
         const isSidebarGroupByInstance = ref(true);
         const isHideFriendsInSameInstance = ref(false);
+        const isSameInstanceAboveFavorites = ref(false);
         const isSidebarDivideByFriendGroup = ref(false);
         const sidebarFavoriteGroups = ref([]);
         const sidebarFavoriteGroupOrder = ref([]);
@@ -158,6 +159,7 @@ export const useAppearanceSettingsStore = defineStore(
                 navWidthConfig,
                 isSidebarGroupByInstanceConfig,
                 isHideFriendsInSameInstanceConfig,
+                isSameInstanceAboveFavoritesConfig,
                 isSidebarDivideByFriendGroupConfig,
                 sidebarFavoriteGroupsConfig,
                 sidebarFavoriteGroupOrderConfig,
@@ -212,6 +214,10 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getBool('VRCX_sidebarGroupByInstance', true),
                 configRepository.getBool(
                     'VRCX_hideFriendsInSameInstance',
+                    false
+                ),
+                configRepository.getBool(
+                    'VRCX_sameInstanceAboveFavorites',
                     false
                 ),
                 configRepository.getBool(
@@ -326,6 +332,8 @@ export const useAppearanceSettingsStore = defineStore(
             isSidebarGroupByInstance.value = isSidebarGroupByInstanceConfig;
             isHideFriendsInSameInstance.value =
                 isHideFriendsInSameInstanceConfig;
+            isSameInstanceAboveFavorites.value =
+                isSameInstanceAboveFavoritesConfig;
             isSidebarDivideByFriendGroup.value =
                 isSidebarDivideByFriendGroupConfig;
             sidebarFavoriteGroups.value = JSON.parse(
@@ -795,6 +803,17 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          *
          */
+        function setIsSameInstanceAboveFavorites() {
+            isSameInstanceAboveFavorites.value =
+                !isSameInstanceAboveFavorites.value;
+            configRepository.setBool(
+                'VRCX_sameInstanceAboveFavorites',
+                isSameInstanceAboveFavorites.value
+            );
+        }
+        /**
+         *
+         */
         function setIsSidebarDivideByFriendGroup() {
             isSidebarDivideByFriendGroup.value =
                 !isSidebarDivideByFriendGroup.value;
@@ -1134,6 +1153,7 @@ export const useAppearanceSettingsStore = defineStore(
             navWidth,
             isSidebarGroupByInstance,
             isHideFriendsInSameInstance,
+            isSameInstanceAboveFavorites,
             isSidebarDivideByFriendGroup,
             sidebarFavoriteGroups,
             sidebarFavoriteGroupOrder,
@@ -1173,6 +1193,7 @@ export const useAppearanceSettingsStore = defineStore(
             setNavWidth,
             setIsSidebarGroupByInstance,
             setIsHideFriendsInSameInstance,
+            setIsSameInstanceAboveFavorites,
             setIsSidebarDivideByFriendGroup,
             setSidebarFavoriteGroups,
             setSidebarFavoriteGroupOrder,
