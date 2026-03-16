@@ -10,9 +10,10 @@
                 <Spinner v-if="userDialog.isMutualFriendsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span style="margin-left: 6px">{{
-                t('dialog.user.groups.total_count', { count: userDialog.mutualFriends.length })
-            }}</span>
+            <span class="inline-flex items-center gap-1 ml-1.5">
+                <Users class="size-3.5 text-muted-foreground" />
+                {{ t('dialog.user.groups.total_count', { count: userDialog.mutualFriends.length }) }}
+            </span>
         </div>
         <div style="display: flex; align-items: center">
             <Input v-model="searchQuery" class="h-8 w-40 mr-2" placeholder="Search friends" @click.stop />
@@ -63,7 +64,7 @@
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Button } from '@/components/ui/button';
-    import { RefreshCw, User } from 'lucide-vue-next';
+    import { RefreshCw, User, Users } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
     import { Input } from '@/components/ui/input';
     import { computed, ref, watch } from 'vue';

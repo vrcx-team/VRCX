@@ -49,7 +49,7 @@
         "@tailwindcss/vite": "^4.2.1",
         "@tanstack/vue-query": "^5.92.9",
         "@tanstack/vue-table": "^8.21.3",
-        "@tanstack/vue-virtual": "^3.13.22",
+        "@tanstack/vue-virtual": "^3.13.23",
         "@types/node": "^24.12.0",
         "@vee-validate/zod": "^4.15.1",
         "@vitejs/plugin-vue": "^6.0.5",
