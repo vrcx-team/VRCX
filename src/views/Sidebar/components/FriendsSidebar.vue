@@ -108,6 +108,21 @@
                                                 </ContextMenuCheckboxItem>
                                             </ContextMenuSubContent>
                                         </ContextMenuSub>
+                                        <ContextMenuSub v-if="statusPresets.length">
+                                            <ContextMenuSubTrigger>
+                                                {{ t('dialog.social_status.presets') }}
+                                            </ContextMenuSubTrigger>
+                                            <ContextMenuSubContent>
+                                                <ContextMenuItem
+                                                    v-for="(preset, idx) in statusPresets"
+                                                    :key="idx"
+                                                    class="gap-2"
+                                                    @click="applyStatusPreset(preset)">
+                                                    <i class="x-user-status" :class="presetStatusClass(preset.status)"></i>
+                                                    <span class="truncate max-w-[180px]">{{ getPresetDisplayText(preset) }}</span>
+                                                </ContextMenuItem>
+                                            </ContextMenuSubContent>
+                                        </ContextMenuSub>
                                     </ContextMenuContent>
                                 </ContextMenu>
                             </template>
@@ -218,6 +233,7 @@
     import FriendItem from './FriendItem.vue';
     import Location from '../../../components/Location.vue';
     import configRepository from '../../../services/config';
+    import { useStatusPresets } from '../../../components/dialogs/UserDialog/composables/useStatusPresets';
 
     import '@/styles/status-icon.css';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
@@ -252,6 +268,7 @@
     const { currentUser } = storeToRefs(useUserStore());
     const { checkCanInvite, checkCanInviteSelf } = useInviteChecks();
     const { userImage, userStatusClass } = useUserDisplay();
+    const { presets: statusPresets, getStatusClass: presetStatusClass } = useStatusPresets();
 
     const isFriendsGroupMe = ref(true);
     const isVIPFriends = ref(true);
@@ -718,6 +735,23 @@
         userRequest.saveCurrentUser({ statusDescription: status }).then(() => {
             toast.success('Status updated');
         });
+    }
+
+    function getPresetDisplayText(preset) {
+        if (preset.statusDescription) return preset.statusDescription;
+        const option = statusOptions.value.find((o) => o.value === preset.status);
+        return option?.label || preset.status;
+    }
+
+    function applyStatusPreset(preset) {
+        userRequest
+            .saveCurrentUser({
+                status: preset.status,
+                statusDescription: preset.statusDescription
+            })
+            .then(() => {
+                toast.success('Status updated');
+            });
     }
 
     const canInviteToMyLocation = computed(() => checkCanInvite(lastLocation.value.location));

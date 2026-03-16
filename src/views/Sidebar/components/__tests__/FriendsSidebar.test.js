@@ -60,7 +60,9 @@ const mocks = vi.hoisted(() => ({
     },
     configRepository: {
         getBool: vi.fn(),
-        setBool: vi.fn()
+        setBool: vi.fn(),
+        getArray: vi.fn(),
+        setArray: vi.fn()
     },
     notificationRequest: {
         sendRequestInvite: vi.fn().mockResolvedValue({}),
@@ -251,6 +253,8 @@ describe('FriendsSidebar.vue', () => {
             (_key, defaultValue) => Promise.resolve(defaultValue ?? false)
         );
         mocks.configRepository.setBool.mockResolvedValue(undefined);
+        mocks.configRepository.getArray.mockResolvedValue([]);
+        mocks.configRepository.setArray.mockResolvedValue(undefined);
         vi.clearAllMocks();
     });
 

@@ -1544,7 +1544,12 @@
             "header": "Social Status",
             "history": "History",
             "status_placeholder": "Status",
-            "update": "Update"
+            "update": "Update",
+            "presets": "Presets",
+            "save_preset": "Save as Preset",
+            "preset_saved": "Preset saved",
+            "preset_exists": "Preset already exists",
+            "preset_limit": "Maximum {max} presets"
         },
         "language": {
             "header": "Language",
