@@ -2,7 +2,8 @@
     <div class="x-container">
         <div class="flex flex-col h-full min-h-0 pb-0">
             <FavoritesToolbar
-                :sort-favorites="sortFavorites"
+                :sort-value="worldSortValue"
+                :extra-sort-options="worldExtraSortOptions"
                 v-model:search-query="worldFavoriteSearch"
                 :search-placeholder="t('view.favorite.worlds.search')"
                 v-model:toolbar-menu-open="worldToolbarMenuOpen"
@@ -12,7 +13,7 @@
                 v-model:card-spacing-value="worldCardSpacingValue"
                 :card-spacing-percent="worldCardSpacingPercent"
                 :card-spacing-slider="worldCardSpacingSlider"
-                @update:sort-favorites="handleSortFavoritesChange"
+                @update:sort-value="handleSortValueChange"
                 @search="searchWorldFavorites"
                 @import="handleWorldImportClick"
                 @export="handleWorldExportClick" />
@@ -500,6 +501,16 @@
     const refreshCancelToken = ref(null);
     const worldEditMode = ref(false);
     const worldToolbarMenuOpen = ref(false);
+    const worldSortMode = ref('none');
+
+    const worldExtraSortOptions = computed(() => [
+        { value: 'players', label: t('view.settings.appearance.appearance.sort_favorite_by_players') }
+    ]);
+
+    const worldSortValue = computed(() => {
+        if (worldSortMode.value === 'players') return 'players';
+        return sortFavorites.value ? 'date' : 'name';
+    });
 
     const {
         activeGroupMenu,
@@ -589,14 +600,22 @@
         if (!activeRemoteGroup.value) {
             return [];
         }
-        return groupedWorldFavorites.value[activeRemoteGroup.value.key] || [];
+        const list = groupedWorldFavorites.value[activeRemoteGroup.value.key] || [];
+        if (worldSortMode.value === 'players') {
+            return list.toSorted((a, b) => (b.ref?.occupants ?? 0) - (a.ref?.occupants ?? 0));
+        }
+        return list;
     });
 
     const currentLocalFavorites = computed(() => {
         if (!activeLocalGroupName.value) {
             return [];
         }
-        return localWorldFavorites.value[activeLocalGroupName.value] || [];
+        const list = localWorldFavorites.value[activeLocalGroupName.value] || [];
+        if (worldSortMode.value === 'players') {
+            return list.toSorted((a, b) => (b.occupants ?? 0) - (a.occupants ?? 0));
+        }
+        return list;
     });
 
     const localFavoritesViewportRef = ref(null);
@@ -683,8 +702,13 @@
      *
      * @param value
      */
-    function handleSortFavoritesChange(value) {
-        const next = Boolean(value);
+    function handleSortValueChange(value) {
+        if (value === 'players') {
+            worldSortMode.value = 'players';
+            return;
+        }
+        worldSortMode.value = 'none';
+        const next = value === 'date';
         if (next !== sortFavorites.value) {
             setSortFavorites();
         }

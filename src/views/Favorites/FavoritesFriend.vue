@@ -2,7 +2,7 @@
     <div class="x-container">
         <div class="flex flex-col h-full min-h-0 pb-0">
             <FavoritesToolbar
-                :sort-favorites="sortFavorites"
+                :sort-value="sortFavorites ? 'date' : 'name'"
                 v-model:search-query="friendFavoriteSearch"
                 :search-placeholder="t('view.favorite.worlds.search')"
                 v-model:toolbar-menu-open="friendToolbarMenuOpen"
@@ -12,7 +12,7 @@
                 v-model:card-spacing-value="friendCardSpacingValue"
                 :card-spacing-percent="friendCardSpacingPercent"
                 :card-spacing-slider="friendCardSpacingSlider"
-                @update:sort-favorites="handleSortFavoritesChange"
+                @update:sort-value="handleSortFavoritesChange"
                 @search="searchFriendFavorites"
                 @import="handleFriendImportClick"
                 @export="handleFriendExportClick" />
@@ -490,7 +490,7 @@
      * @param value
      */
     function handleSortFavoritesChange(value) {
-        const next = Boolean(value);
+        const next = value === 'date';
         if (next !== sortFavorites.value) {
             setSortFavorites();
         }

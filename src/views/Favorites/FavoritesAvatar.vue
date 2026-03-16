@@ -2,7 +2,7 @@
     <div class="x-container">
         <div class="flex flex-col h-full min-h-0 pb-0">
             <FavoritesToolbar
-                :sort-favorites="sortFavorites"
+                :sort-value="sortFavorites ? 'date' : 'name'"
                 v-model:search-query="avatarFavoriteSearch"
                 :search-placeholder="t('view.favorite.avatars.search')"
                 v-model:toolbar-menu-open="avatarToolbarMenuOpen"
@@ -12,7 +12,7 @@
                 v-model:card-spacing-value="avatarCardSpacingValue"
                 :card-spacing-percent="avatarCardSpacingPercent"
                 :card-spacing-slider="avatarCardSpacingSlider"
-                @update:sort-favorites="handleSortFavoritesChange"
+                @update:sort-value="handleSortFavoritesChange"
                 @search="searchAvatarFavorites"
                 @import="handleAvatarImportClick"
                 @export="handleAvatarExportClick" />
@@ -606,7 +606,7 @@
      * @param value
      */
     function handleSortFavoritesChange(value) {
-        const next = Boolean(value);
+        const next = value === 'date';
         if (next !== sortFavorites.value) {
             setSortFavorites();
         }
