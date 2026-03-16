@@ -114,9 +114,7 @@
             },
             "group": {
                 "header": "Группа"
-            },
-            "prev_page": "Назад",
-            "next_page": "Вперед"
+            }
         },
         "favorite": {
             "worlds": {

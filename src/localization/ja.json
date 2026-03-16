@@ -178,9 +178,7 @@
             },
             "group": {
                 "header": "グループ"
-            },
-            "prev_page": "前",
-            "next_page": "次"
+            }
         },
         "favorite": {
             "worlds": {

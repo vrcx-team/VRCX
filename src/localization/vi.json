@@ -90,9 +90,7 @@
             },
             "group": {
                 "header": "Nhóm"
-            },
-            "prev_page": "Trước",
-            "next_page": "Sau"
+            }
         },
         "favorite": {
             "worlds": {

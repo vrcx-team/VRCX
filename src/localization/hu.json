@@ -90,9 +90,7 @@
             },
             "group": {
                 "header": "Csoport"
-            },
-            "prev_page": "Előző",
-            "next_page": "Következő"
+            }
         },
         "favorite": {
             "worlds": {

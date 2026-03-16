@@ -90,9 +90,7 @@
             },
             "group": {
                 "header": "Skupina"
-            },
-            "prev_page": "Předchozí",
-            "next_page": "Další"
+            }
         },
         "favorite": {
             "worlds": {

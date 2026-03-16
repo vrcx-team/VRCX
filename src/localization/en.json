@@ -305,9 +305,7 @@
             },
             "group": {
                 "header": "Group"
-            },
-            "prev_page": "Prev",
-            "next_page": "Next"
+            }
         },
         "favorite": {
             "worlds": {
@@ -1868,6 +1866,8 @@
             "col_world": "World",
             "col_players": "Players",
             "col_resolution": "Resolution",
+            "col_match": "Match",
+            "col_author": "Author",
             "back_to_results": "Back to {count} results",
             "result_count": "{count} results"
         },

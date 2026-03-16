@@ -64,6 +64,14 @@
                             {{ t('dialog.screenshot_metadata.col_world') }}
                             <span v-if="searchSort.key === 'world'" class="ml-1 text-[10px]">{{ searchSort.asc ? '↑' : '↓' }}</span>
                         </th>
+                        <th v-if="searchHasMatchColumn" class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground" @click="toggleSearchSort('match')">
+                            {{ t('dialog.screenshot_metadata.col_match') }}
+                            <span v-if="searchSort.key === 'match'" class="ml-1 text-[10px]">{{ searchSort.asc ? '↑' : '↓' }}</span>
+                        </th>
+                        <th class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground" @click="toggleSearchSort('author')">
+                            {{ t('dialog.screenshot_metadata.col_author') }}
+                            <span v-if="searchSort.key === 'author'" class="ml-1 text-[10px]">{{ searchSort.asc ? '↑' : '↓' }}</span>
+                        </th>
                         <th class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground w-20" @click="toggleSearchSort('players')">
                             {{ t('dialog.screenshot_metadata.col_players') }}
                             <span v-if="searchSort.key === 'players'" class="ml-1 text-[10px]">{{ searchSort.asc ? '↑' : '↓' }}</span>
@@ -81,6 +89,8 @@
                         @click="selectSearchResult(idx)">
                         <td class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis" :class="row.filePath === selectedSearchFilePath ? 'pl-[9px]' : ''">{{ row.dateFormatted }}</td>
                         <td class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis">{{ row.world || '—' }}</td>
+                        <td v-if="searchHasMatchColumn" class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis text-primary">{{ row.match || '—' }}</td>
+                        <td class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis text-muted-foreground">{{ row.author || '—' }}</td>
                         <td class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis">
                             <span class="inline-flex items-center gap-1">
                                 <Users class="size-3 text-muted-foreground" />
@@ -300,6 +310,11 @@
     const selectedSearchFilePath = ref(null);
     const searchSort = reactive({ key: 'dateTime', asc: false });
 
+    const searchHasMatchColumn = computed(() => {
+        const type = screenshotMetadataDialog.searchType;
+        return type === 'Player Name' || type === 'Player ID';
+    });
+
     const sortedSearchResults = computed(() => {
         const data = [...searchResultsData.value];
         const { key, asc } = searchSort;
@@ -333,8 +348,9 @@
         getAndDisplayScreenshot(row.filePath, false);
     }
 
-    async function loadSearchResultsMetadata(filePaths) {
+    async function loadSearchResultsMetadata(filePaths, query, searchType) {
         const results = [];
+        const lowerQuery = String(query).toLowerCase();
         const promises = filePaths.map(async (filePath) => {
             try {
                 const metaJson = await AppApi.GetScreenshotMetadata(filePath);
@@ -353,6 +369,15 @@
                     dateFormatted = formatDateFilter(dateTime, 'short');
                 }
 
+                let match = '';
+                if (searchType === 0) {
+                    const matched = meta.players?.filter((p) => p.displayName?.toLowerCase().includes(lowerQuery)) || [];
+                    match = matched.map((p) => p.displayName).join(', ');
+                } else if (searchType === 1) {
+                    const matched = meta.players?.find((p) => p.id === query);
+                    match = matched?.displayName || '';
+                }
+
                 results.push({
                     filePath,
                     dateTime,
@@ -360,7 +385,9 @@
                     world: meta.world?.name || '',
                     playerCount: meta.players?.length || 0,
                     players: meta.players?.length || 0,
-                    resolution: extra.fileResolution || ''
+                    resolution: extra.fileResolution || '',
+                    match,
+                    author: meta.author?.displayName || ''
                 });
             } catch (e) {
                 console.error('Error loading metadata for', filePath, e);
@@ -622,7 +649,7 @@
                     D.searchIndex = 0;
                     D.searchResults = results;
 
-                    const enriched = await loadSearchResultsMetadata(results);
+                    const enriched = await loadSearchResultsMetadata(results, D.search, searchType);
                     searchResultsData.value = enriched;
                     searchViewMode.value = 'table';
                 })

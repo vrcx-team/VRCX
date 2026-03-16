@@ -113,9 +113,7 @@
             },
             "group": {
                 "header": "Grupo"
-            },
-            "prev_page": "Anterior",
-            "next_page": "Siguiente"
+            }
         },
         "favorite": {
             "worlds": {

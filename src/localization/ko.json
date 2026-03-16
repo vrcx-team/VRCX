@@ -90,9 +90,7 @@
             },
             "group": {
                 "header": "그룹"
-            },
-            "prev_page": "이전",
-            "next_page": "다음"
+            }
         },
         "favorite": {
             "worlds": {
