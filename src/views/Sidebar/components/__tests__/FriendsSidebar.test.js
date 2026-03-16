@@ -180,6 +180,7 @@ vi.mock('../../../../components/ui/context-menu', () => ({
             '<button :disabled="disabled" @click="$emit(\'click\')"><slot /></button>'
     },
     ContextMenuSeparator: { template: '<hr />' },
+    ContextMenuShortcut: { template: '<span><slot /></span>' },
     ContextMenuSub: { template: '<div><slot /></div>' },
     ContextMenuSubContent: { template: '<div><slot /></div>' },
     ContextMenuSubTrigger: { template: '<div><slot /></div>' },
@@ -210,7 +211,13 @@ vi.mock('../FriendItem.vue', () => ({
 
 vi.mock('lucide-vue-next', () => ({
     ChevronDown: { template: '<span data-testid="chevron" />' },
+    Clock: { template: '<span data-testid="clock" />' },
     User: { template: '<i />' }
+}));
+
+vi.mock('../../../../composables/useRecentActions', () => ({
+    isActionRecent: vi.fn(() => false),
+    recordRecentAction: vi.fn()
 }));
 
 import FriendsSidebar from '../FriendsSidebar.vue';
