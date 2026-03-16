@@ -264,6 +264,31 @@
             <SettingsItem :label="t('view.settings.appearance.user_dialog.vrcx_memos')">
                 <Switch :model-value="!hideUserMemos" @update:modelValue="setHideUserMemos" />
             </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.appearance.user_dialog.recent_action_cooldown')"
+                :description="t('view.settings.appearance.user_dialog.recent_action_cooldown_description')">
+                <Switch :model-value="recentActionCooldownEnabled" @update:modelValue="setRecentActionCooldownEnabled" />
+            </SettingsItem>
+
+            <SettingsItem
+                v-if="recentActionCooldownEnabled"
+                :label="t('view.settings.appearance.user_dialog.recent_action_cooldown_minutes')">
+                <NumberField
+                    :model-value="recentActionCooldownMinutes"
+                    :min="1"
+                    :max="1440"
+                    :step="1"
+                    :format-options="{ maximumFractionDigits: 0 }"
+                    class="w-32"
+                    @update:modelValue="setRecentActionCooldownMinutes">
+                    <NumberFieldContent>
+                        <NumberFieldDecrement />
+                        <NumberFieldInput />
+                        <NumberFieldIncrement />
+                    </NumberFieldContent>
+                </NumberField>
+            </SettingsItem>
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.appearance.friend_log.header')">
@@ -335,7 +360,7 @@
     import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { computed, onBeforeUnmount, ref, watch } from 'vue';
     import { CheckIcon, ChevronDown } from 'lucide-vue-next';
-    import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '@/stores';
+    import { useAppearanceSettingsStore, useFavoriteStore, useGeneralSettingsStore, useVrStore } from '@/stores';
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
     import { Switch } from '@/components/ui/switch';
     import { getLanguageName, languageCodes } from '@/localization';
@@ -355,6 +380,7 @@
     const { t } = useI18n();
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
+    const generalSettingsStore = useGeneralSettingsStore();
     const { saveOpenVROption, updateVRConfigVars } = useVrStore();
 
     const {
@@ -405,6 +431,16 @@
         setCustomFontFamily,
         setAppCjkFontPack
     } = appearanceSettingsStore;
+
+    const {
+        recentActionCooldownEnabled,
+        recentActionCooldownMinutes
+    } = storeToRefs(generalSettingsStore);
+
+    const {
+        setRecentActionCooldownEnabled,
+        setRecentActionCooldownMinutes
+    } = generalSettingsStore;
 
     const trustColorEntries = [
         {

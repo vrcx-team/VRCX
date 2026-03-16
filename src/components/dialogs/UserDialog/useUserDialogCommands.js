@@ -10,6 +10,7 @@ import {
 } from '../../../api';
 import { copyToClipboard, parseLocation } from '../../../shared/utils';
 import { database } from '../../../services/database';
+import { recordRecentAction } from '../../../composables/useRecentActions';
 
 /**
  * Composable for UserDialog command dispatch.
@@ -254,6 +255,7 @@ export function useUserDialogCommands(
                     )
                     .then((args) => {
                         toast('Request invite sent');
+                        recordRecentAction(D().id, 'Request Invite');
                         return args;
                     });
             },
@@ -272,6 +274,7 @@ export function useUserDialogCommands(
                             },
                             D().id
                         );
+                        recordRecentAction(D().id, 'Invite Message');
                     });
             },
             'Request Invite Message': () => {
@@ -281,6 +284,7 @@ export function useUserDialogCommands(
                     },
                     D().id
                 );
+                recordRecentAction(D().id, 'Request Invite Message');
             },
             Invite: () => {
                 let currentLocation = lastLocation.value.location;
@@ -304,6 +308,7 @@ export function useUserDialogCommands(
                             )
                             .then((_args) => {
                                 toast(t('message.invite.sent'));
+                                recordRecentAction(D().id, 'Invite');
                                 return _args;
                             });
                     });
@@ -463,6 +468,7 @@ export function useUserDialogCommands(
                         userId
                     });
                     handleSendFriendRequest(args);
+                    recordRecentAction(userId, 'Send Friend Request');
                 }
             },
             'Moderation Unblock': {

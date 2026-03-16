@@ -798,7 +798,10 @@
                 "user_dialog": {
                     "header": "User Dialog",
                     "vrchat_notes": "VRChat Notes",
-                    "vrcx_memos": "VRCX Memos"
+                    "vrcx_memos": "VRCX Memos",
+                    "recent_action_cooldown": "Recent Action Indicator",
+                    "recent_action_cooldown_description": "Show a clock icon on invite/request actions that were recently performed",
+                    "recent_action_cooldown_minutes": "Cooldown (minutes)"
                 },
                 "user_colors": {
                     "header": "User Colors",
