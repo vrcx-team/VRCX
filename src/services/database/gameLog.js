@@ -1306,6 +1306,32 @@ const gameLog = {
         return players;
     },
 
+    /**
+     * @param {string} location
+     * @returns {Promise<Array<{created_at: string, display_name: string, user_id: string, time: number}>>}
+     */
+    async getPlayerDetailFromInstance(location) {
+        const entries = [];
+        await sqliteService.execute(
+            (dbRow) => {
+                entries.push({
+                    created_at: dbRow[0],
+                    display_name: dbRow[1],
+                    user_id: dbRow[2],
+                    time: dbRow[3] || 0
+                });
+            },
+            `SELECT created_at, display_name, user_id, time
+             FROM gamelog_join_leave
+             WHERE location = @location AND type = 'OnPlayerLeft'
+             ORDER BY created_at ASC`,
+            {
+                '@location': location
+            }
+        );
+        return entries;
+    },
+
     async getPreviousDisplayNamesByUserId(ref) {
         var data = new Map();
         await sqliteService.execute(

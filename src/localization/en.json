@@ -2024,7 +2024,9 @@
         "previous_instances": {
             "header": "Previous Instances",
             "info": "Previous Instance Info",
-            "search_placeholder": "Search"
+            "search_placeholder": "Search",
+            "table_view": "Table View",
+            "chart_view": "Chart View"
         },
         "group_member_moderation": {
             "header": "Group Member Moderation",
