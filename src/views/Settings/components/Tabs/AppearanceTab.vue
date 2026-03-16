@@ -1,9 +1,7 @@
 <template>
-    <div>
-        <div class="options-container mt-0">
-            <span class="header">{{ t('view.settings.appearance.appearance.header') }}</span>
-            <div class="options-container-item">
-                <span class="name">{{ t('view.settings.appearance.appearance.language') }}</span>
+    <div class="flex flex-col gap-10 py-2">
+        <SettingsGroup :title="t('view.settings.appearance.appearance.header')">
+            <SettingsItem :label="t('view.settings.appearance.appearance.language')">
                 <Select :model-value="appLanguage" @update:modelValue="changeAppLanguage">
                     <SelectTrigger size="sm">
                         <SelectValue :placeholder="appLanguageDisplayName" />
@@ -16,12 +14,9 @@
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-            </div>
+            </SettingsItem>
 
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.appearance.appearance.font_family') }}
-                </span>
+            <SettingsItem :label="t('view.settings.appearance.appearance.font_family')">
                 <DropdownMenu>
                     <DropdownMenuTrigger as-child>
                         <Button variant="outline" size="sm" class="min-w-[180px] justify-between font-normal">
@@ -74,9 +69,9 @@
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
-            </div>
-            <div v-if="!isLinux" class="options-container-item">
-                <span class="name">{{ t('view.settings.appearance.appearance.zoom') }}</span>
+            </SettingsItem>
+
+            <SettingsItem v-if="!isLinux" :label="t('view.settings.appearance.appearance.zoom')">
                 <NumberField
                     v-model="zoomLevel"
                     :step="1"
@@ -89,56 +84,61 @@
                         <NumberFieldIncrement />
                     </NumberFieldContent>
                 </NumberField>
-            </div>
-            <simple-switch
-                :label="t('view.settings.appearance.appearance.show_notification_icon_dot')"
-                :value="notificationIconDot"
-                @change="
-                    setNotificationIconDot();
-                    saveOpenVROption();
-                " />
-            <simple-switch
-                :label="t('view.settings.appearance.appearance.vrcplus_profile_icons')"
-                :value="displayVRCPlusIconsAsAvatar"
-                @change="
-                    setDisplayVRCPlusIconsAsAvatar();
-                    saveOpenVROption();
-                " />
-        </div>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.appearance.display.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.appearance.appearance.show_instance_id')"
-                :value="showInstanceIdInLocation"
-                @change="setShowInstanceIdInLocation" />
-            <simple-switch
-                :label="t('view.settings.appearance.appearance.nicknames')"
-                :value="!hideNicknames"
-                @change="
-                    setHideNicknames();
-                    saveOpenVROption();
-                " />
-            <simple-switch
-                :label="t('view.settings.appearance.appearance.age_gated_instances')"
-                :value="isAgeGatedInstancesVisible"
-                @change="setIsAgeGatedInstancesVisible" />
-            <simple-switch
-                :label="t('view.settings.appearance.appearance.striped_data_table_mode')"
-                :value="isDataTableStriped"
-                @change="toggleStripedDataTable" />
-            <simple-switch
-                :label="t('view.settings.appearance.appearance.toggle_pointer_on_hover')"
-                :value="showPointerOnHover"
-                @change="togglePointerOnHover" />
-        </div>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.appearance.sorting_tables.header') }}</span>
-            <div class="options-container-item">
-                <span class="name">{{ t('view.settings.appearance.appearance.sort_favorite_by') }}</span>
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.appearance.appearance.show_notification_icon_dot')">
+                <Switch
+                    :model-value="notificationIconDot"
+                    @update:modelValue="
+                        setNotificationIconDot();
+                        saveOpenVROption();
+                    " />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.appearance.appearance.vrcplus_profile_icons')">
+                <Switch
+                    :model-value="displayVRCPlusIconsAsAvatar"
+                    @update:modelValue="
+                        setDisplayVRCPlusIconsAsAvatar();
+                        saveOpenVROption();
+                    " />
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.appearance.display.header')">
+            <SettingsItem :label="t('view.settings.appearance.appearance.show_instance_id')">
+                <Switch :model-value="showInstanceIdInLocation" @update:modelValue="setShowInstanceIdInLocation" />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.appearance.appearance.nicknames')">
+                <Switch
+                    :model-value="!hideNicknames"
+                    @update:modelValue="
+                        setHideNicknames();
+                        saveOpenVROption();
+                    " />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.appearance.appearance.age_gated_instances')">
+                <Switch
+                    :model-value="isAgeGatedInstancesVisible"
+                    @update:modelValue="setIsAgeGatedInstancesVisible" />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.appearance.appearance.striped_data_table_mode')">
+                <Switch :model-value="isDataTableStriped" @update:modelValue="toggleStripedDataTable" />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.appearance.appearance.toggle_pointer_on_hover')">
+                <Switch :model-value="showPointerOnHover" @update:modelValue="togglePointerOnHover" />
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.appearance.sorting_tables.header')">
+            <SettingsItem :label="t('view.settings.appearance.appearance.sort_favorite_by')">
                 <RadioGroup
                     :model-value="sortFavorites ? 'true' : 'false'"
                     class="gap-2 flex"
-                    style="margin-top: 8px"
                     @update:modelValue="handleSortFavoritesRadio">
                     <div class="flex items-center space-x-2">
                         <RadioGroupItem id="sortFavorites-false" value="false" />
@@ -153,13 +153,12 @@
                         </label>
                     </div>
                 </RadioGroup>
-            </div>
-            <div class="options-container-item">
-                <span class="name">{{ t('view.settings.appearance.appearance.sort_instance_users_by') }}</span>
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.appearance.appearance.sort_instance_users_by')">
                 <RadioGroup
                     :model-value="instanceUsersSortAlphabetical ? 'true' : 'false'"
                     class="gap-2 flex"
-                    style="margin-top: 8px"
                     @update:modelValue="handleInstanceUsersSortAlphabeticalRadio">
                     <div class="flex items-center space-x-2">
                         <RadioGroupItem id="instanceUsersSortAlphabetical-false" value="false" />
@@ -174,10 +173,9 @@
                         </label>
                     </div>
                 </RadioGroup>
-            </div>
+            </SettingsItem>
 
-            <div class="options-container-item">
-                <span class="name">{{ t('view.settings.appearance.appearance.table_page_sizes') }}</span>
+            <SettingsItem :label="t('view.settings.appearance.appearance.table_page_sizes')">
                 <Popover v-model:open="tablePageSizesOpen">
                     <ListboxRoot v-model="tablePageSizesModel" highlight-on-hover multiple>
                         <PopoverAnchor class="inline-flex w-75">
@@ -222,23 +220,21 @@
                         </PopoverContent>
                     </ListboxRoot>
                 </Popover>
-            </div>
+            </SettingsItem>
 
-            <div class="options-container-item">
+            <SettingsItem :label="t('view.settings.appearance.appearance.table_entries_settings')">
                 <Button size="sm" variant="outline" @click="showTableLimitsDialog">{{
                     t('view.settings.appearance.appearance.table_entries_settings')
                 }}</Button>
-            </div>
-        </div>
+            </SettingsItem>
+        </SettingsGroup>
         <TableLimitsDialog />
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.appearance.timedate.header') }}</span>
-            <div class="options-container-item">
-                <span class="name">{{ t('view.settings.appearance.timedate.time_format') }}</span>
+
+        <SettingsGroup :title="t('view.settings.appearance.timedate.header')">
+            <SettingsItem :label="t('view.settings.appearance.timedate.time_format')">
                 <RadioGroup
                     :model-value="dtHour12 ? 'true' : 'false'"
                     class="gap-2 flex"
-                    style="margin-top: 8px"
                     @update:modelValue="handleDtHour12Radio">
                     <div class="flex items-center space-x-2">
                         <RadioGroupItem id="dtHour12-true" value="true" />
@@ -253,101 +249,45 @@
                         </label>
                     </div>
                 </RadioGroup>
-            </div>
-            <simple-switch
-                :label="t('view.settings.appearance.timedate.force_iso_date_format')"
-                :value="dtIsoFormat"
-                @change="setDtIsoFormat" />
-        </div>
+            </SettingsItem>
 
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.appearance.user_dialog.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.appearance.user_dialog.vrchat_notes')"
-                :value="!hideUserNotes"
-                @change="setHideUserNotes" />
-            <simple-switch
-                :label="t('view.settings.appearance.user_dialog.vrcx_memos')"
-                :value="!hideUserMemos"
-                @change="setHideUserMemos" />
-        </div>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.appearance.friend_log.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.appearance.friend_log.hide_unfriends')"
-                :value="hideUnfriends"
-                @change="setHideUnfriends"></simple-switch>
-        </div>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.appearance.user_colors.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.appearance.user_colors.random_colors_from_user_id')"
-                :value="randomUserColours"
-                @change="updateTrustColor('', '', true)"></simple-switch>
-            <div class="flex flex-col gap-1">
-                <div>
-                    <span class="x-tag-untrusted">{{
-                        t('view.settings.appearance.user_colors.trust_levels.visitor')
-                    }}</span>
-                    <PresetColorPicker
-                        :model-value="trustColor.untrusted"
-                        :presets="['#CCCCCC']"
-                        @change="updateTrustColor('untrusted', $event)" />
-                </div>
-                <div>
-                    <span class="x-tag-basic">{{
-                        t('view.settings.appearance.user_colors.trust_levels.new_user')
-                    }}</span>
-                    <PresetColorPicker
-                        :model-value="trustColor.basic"
-                        :presets="['#1778ff']"
-                        @change="updateTrustColor('basic', $event)" />
-                </div>
-                <div>
-                    <span class="x-tag-known">{{ t('view.settings.appearance.user_colors.trust_levels.user') }}</span>
-                    <PresetColorPicker
-                        :model-value="trustColor.known"
-                        :presets="['#2bcf5c']"
-                        @change="updateTrustColor('known', $event)" />
-                </div>
-                <div>
-                    <span class="x-tag-trusted">{{
-                        t('view.settings.appearance.user_colors.trust_levels.known_user')
-                    }}</span>
-                    <PresetColorPicker
-                        :model-value="trustColor.trusted"
-                        :presets="['#ff7b42']"
-                        @change="updateTrustColor('trusted', $event)" />
-                </div>
-                <div>
-                    <span class="x-tag-veteran">{{
-                        t('view.settings.appearance.user_colors.trust_levels.trusted_user')
-                    }}</span>
-                    <PresetColorPicker
-                        :model-value="trustColor.veteran"
-                        :presets="['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']"
-                        @change="updateTrustColor('veteran', $event)" />
-                </div>
-                <div>
-                    <span class="x-tag-vip">{{
-                        t('view.settings.appearance.user_colors.trust_levels.vrchat_team')
-                    }}</span>
-                    <PresetColorPicker
-                        :model-value="trustColor.vip"
-                        :presets="['#ff2626']"
-                        @change="updateTrustColor('vip', $event)" />
-                </div>
-                <div>
-                    <span class="x-tag-troll">{{
-                        t('view.settings.appearance.user_colors.trust_levels.nuisance')
-                    }}</span>
-                    <PresetColorPicker
-                        :model-value="trustColor.troll"
-                        :presets="['#782f2f']"
-                        @change="updateTrustColor('troll', $event)" />
+            <SettingsItem :label="t('view.settings.appearance.timedate.force_iso_date_format')">
+                <Switch :model-value="dtIsoFormat" @update:modelValue="setDtIsoFormat" />
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.appearance.user_dialog.header')">
+            <SettingsItem :label="t('view.settings.appearance.user_dialog.vrchat_notes')">
+                <Switch :model-value="!hideUserNotes" @update:modelValue="setHideUserNotes" />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.appearance.user_dialog.vrcx_memos')">
+                <Switch :model-value="!hideUserMemos" @update:modelValue="setHideUserMemos" />
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.appearance.friend_log.header')">
+            <SettingsItem :label="t('view.settings.appearance.friend_log.hide_unfriends')">
+                <Switch :model-value="hideUnfriends" @update:modelValue="setHideUnfriends" />
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.appearance.user_colors.header')">
+            <SettingsItem :label="t('view.settings.appearance.user_colors.random_colors_from_user_id')">
+                <Switch :model-value="randomUserColours" @update:modelValue="updateTrustColor('', '', true)" />
+            </SettingsItem>
+            <div class="settings-item">
+                <div class="flex flex-col gap-2 py-2">
+                    <div v-for="colorEntry in trustColorEntries" :key="colorEntry.key" class="flex items-center gap-3">
+                        <span :class="colorEntry.tagClass">{{ t(colorEntry.labelKey) }}</span>
+                        <PresetColorPicker
+                            :model-value="trustColor[colorEntry.key]"
+                            :presets="colorEntry.presets"
+                            @change="updateTrustColor(colorEntry.key, $event)" />
+                    </div>
                 </div>
             </div>
-        </div>
+        </SettingsGroup>
     </div>
 </template>
 
@@ -397,6 +337,7 @@
     import { CheckIcon, ChevronDown } from 'lucide-vue-next';
     import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '@/stores';
     import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+    import { Switch } from '@/components/ui/switch';
     import { getLanguageName, languageCodes } from '@/localization';
     import { APP_CJK_FONT_PACKS, APP_FONT_CONFIG, APP_FONT_DEFAULT_KEY, APP_FONT_FAMILIES } from '@/shared/constants';
     import { Button } from '@/components/ui/button';
@@ -408,7 +349,8 @@
     import TableLimitsDialog from '@/components/dialogs/TableLimitsDialog.vue';
     import { saveSortFavoritesOption } from '@/coordinators/favoriteCoordinator';
 
-    import SimpleSwitch from '../SimpleSwitch.vue';
+    import SettingsGroup from '../SettingsGroup.vue';
+    import SettingsItem from '../SettingsItem.vue';
 
     const { t } = useI18n();
 
@@ -463,6 +405,51 @@
         setCustomFontFamily,
         setAppCjkFontPack
     } = appearanceSettingsStore;
+
+    const trustColorEntries = [
+        {
+            key: 'untrusted',
+            tagClass: 'x-tag-untrusted',
+            labelKey: 'view.settings.appearance.user_colors.trust_levels.visitor',
+            presets: ['#CCCCCC']
+        },
+        {
+            key: 'basic',
+            tagClass: 'x-tag-basic',
+            labelKey: 'view.settings.appearance.user_colors.trust_levels.new_user',
+            presets: ['#1778ff']
+        },
+        {
+            key: 'known',
+            tagClass: 'x-tag-known',
+            labelKey: 'view.settings.appearance.user_colors.trust_levels.user',
+            presets: ['#2bcf5c']
+        },
+        {
+            key: 'trusted',
+            tagClass: 'x-tag-trusted',
+            labelKey: 'view.settings.appearance.user_colors.trust_levels.known_user',
+            presets: ['#ff7b42']
+        },
+        {
+            key: 'veteran',
+            tagClass: 'x-tag-veteran',
+            labelKey: 'view.settings.appearance.user_colors.trust_levels.trusted_user',
+            presets: ['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']
+        },
+        {
+            key: 'vip',
+            tagClass: 'x-tag-vip',
+            labelKey: 'view.settings.appearance.user_colors.trust_levels.vrchat_team',
+            presets: ['#ff2626']
+        },
+        {
+            key: 'troll',
+            tagClass: 'x-tag-troll',
+            labelKey: 'view.settings.appearance.user_colors.trust_levels.nuisance',
+            presets: ['#782f2f']
+        }
+    ];
 
     const fontDropdownDisplayText = computed(() => {
         if (appFontFamily.value === 'custom') {
