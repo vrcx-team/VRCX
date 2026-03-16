@@ -42,6 +42,10 @@
                 <UserDialogAvatarsTab ref="avatarsTabRef" />
             </template>
 
+            <template v-if="userDialog.id !== currentUser.id" #Activity>
+                <UserDialogActivityTab ref="activityTabRef" />
+            </template>
+
             <template #JSON>
                 <DialogJsonTab
                     :tree-data="treeData"
@@ -97,6 +101,7 @@
 
     import DialogJsonTab from '../DialogJsonTab.vue';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
+    import UserDialogActivityTab from './UserDialogActivityTab.vue';
     import UserDialogAvatarsTab from './UserDialogAvatarsTab.vue';
     import UserDialogFavoriteWorldsTab from './UserDialogFavoriteWorldsTab.vue';
     import UserDialogGroupsTab from './UserDialogGroupsTab.vue';
@@ -125,9 +130,15 @@
         if (userDialog.value.id !== currentUser.value.id && !currentUser.value.hasSharedConnectionsOptOut) {
             tabs.splice(1, 0, { value: 'mutual', label: t('dialog.user.mutual_friends.header') });
         }
+        if (userDialog.value.id !== currentUser.value.id) {
+            // Insert Activity before JSON
+            const jsonIdx = tabs.findIndex((tab) => tab.value === 'JSON');
+            tabs.splice(jsonIdx, 0, { value: 'Activity', label: t('dialog.user.activity.header') });
+        }
         return tabs;
     });
     const infoTabRef = ref(null);
+    const activityTabRef = ref(null);
     const favoriteWorldsTabRef = ref(null);
     const mutualFriendsTabRef = ref(null);
     const worldsTabRef = ref(null);
@@ -326,6 +337,8 @@
                 userDialogLastFavoriteWorld.value = userId;
                 favoriteWorldsTabRef.value?.getUserFavoriteWorlds(userId);
             }
+        } else if (tabName === 'Activity') {
+            activityTabRef.value?.loadOnlineFrequency(userId);
         } else if (tabName === 'JSON') {
             refreshUserDialogTreeData();
         }
@@ -335,7 +348,14 @@
      *
      */
     function loadLastActiveTab() {
-        handleUserDialogTab(userDialog.value.lastActiveTab);
+        let tab = userDialog.value.lastActiveTab;
+        // Activity tab is not available for own profile; fall back to Info
+        if (tab === 'Activity' && userDialog.value.id === currentUser.value.id) {
+            tab = 'Info';
+            userDialog.value.lastActiveTab = 'Info';
+            userDialog.value.activeTab = 'Info';
+        }
+        handleUserDialogTab(tab);
     }
 
     /**

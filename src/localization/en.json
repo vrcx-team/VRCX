@@ -1280,6 +1280,23 @@
                     "friend_order": "Friend Order"
                 }
             },
+            "activity": {
+                "header": "Activity",
+                "total_events": "{count} online events",
+                "times_online": "times online",
+                "most_active_day": "Most active day:",
+                "most_active_time": "Peak hours:",
+                "days": {
+                    "mon": "Mon",
+                    "tue": "Tue",
+                    "wed": "Wed",
+                    "thu": "Thu",
+                    "fri": "Fri",
+                    "sat": "Sat",
+                    "sun": "Sun"
+                },
+                "easter_egg": "Did you farm your green squares today?"
+            },
             "note_memo": {
                 "header": "Edit Note And Memo",
                 "cancel": "Cancel",
