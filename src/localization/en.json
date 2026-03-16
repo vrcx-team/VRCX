@@ -1286,6 +1286,13 @@
                 "times_online": "times online",
                 "most_active_day": "Most active day:",
                 "most_active_time": "Peak hours:",
+                "period": "Period:",
+                "period_all": "All Time",
+                "period_365": "Last Year",
+                "period_180": "Last 6 Months",
+                "period_90": "Last 90 Days",
+                "period_30": "Last 30 Days",
+                "no_data_in_period": "No activity data in selected period",
                 "days": {
                     "mon": "Mon",
                     "tue": "Tue",

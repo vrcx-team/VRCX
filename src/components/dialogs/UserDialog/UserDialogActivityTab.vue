@@ -15,6 +15,21 @@
                     {{ t('dialog.user.activity.total_events', { count: totalOnlineEvents }) }}
                 </span>
             </div>
+            <div v-if="totalOnlineEvents > 0" style="display: flex; align-items: center">
+                <span style="margin-right: 6px" class="text-muted-foreground text-xs">{{ t('dialog.user.activity.period') }}</span>
+                <Select v-model="selectedPeriod" :disabled="isLoading">
+                    <SelectTrigger size="sm" class="w-[130px]" @click.stop>
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">{{ t('dialog.user.activity.period_all') }}</SelectItem>
+                        <SelectItem value="365">{{ t('dialog.user.activity.period_365') }}</SelectItem>
+                        <SelectItem value="180">{{ t('dialog.user.activity.period_180') }}</SelectItem>
+                        <SelectItem value="90">{{ t('dialog.user.activity.period_90') }}</SelectItem>
+                        <SelectItem value="30">{{ t('dialog.user.activity.period_30') }}</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
         </div>
         <div v-if="peakDayText || peakTimeText" class="mt-2 mb-1 text-sm flex gap-4">
             <div v-if="peakDayText">
@@ -29,8 +44,11 @@
         <div v-if="!isLoading && totalOnlineEvents === 0" class="flex items-center justify-center flex-1 mt-8">
             <DataTableEmpty type="nodata" />
         </div>
+        <div v-if="!isLoading && totalOnlineEvents > 0 && filteredEventCount === 0" class="flex items-center justify-center flex-1 mt-8">
+            <span class="text-muted-foreground text-sm">{{ t('dialog.user.activity.no_data_in_period') }}</span>
+        </div>
         <div
-            v-show="totalOnlineEvents > 0"
+            v-show="filteredEventCount > 0"
             ref="chartRef"
             style="width: 100%; height: 240px"
             @contextmenu.prevent="onChartRightClick">
@@ -42,6 +60,7 @@
     import { computed, h, nextTick, onBeforeUnmount, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { DataTableEmpty } from '@/components/ui/data-table';
+    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { RefreshCw, Tractor } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
@@ -63,6 +82,8 @@
     const totalOnlineEvents = ref(0);
     const peakDayText = ref('');
     const peakTimeText = ref('');
+    const selectedPeriod = ref('all');
+    const filteredEventCount = ref(0);
 
     let echartsInstance = null;
     let resizeObserver = null;
@@ -110,6 +131,11 @@
 
     watch(() => isDarkMode.value, rebuildChart);
     watch(locale, rebuildChart);
+    watch(selectedPeriod, () => {
+        if (cachedTimestamps.length > 0 && echartsInstance) {
+            initChart();
+        }
+    });
 
     onBeforeUnmount(() => {
         disposeChart();
@@ -125,6 +151,14 @@
             echartsInstance = null;
         }
     }
+
+    function getFilteredTimestamps() {
+        if (selectedPeriod.value === 'all') return cachedTimestamps;
+        const days = parseInt(selectedPeriod.value, 10);
+        const cutoff = dayjs().subtract(days, 'day');
+        return cachedTimestamps.filter((ts) => dayjs(ts).isAfter(cutoff));
+    }
+
 
     /**
      * @param {string[]} timestamps
@@ -210,7 +244,15 @@
     function initChart() {
         if (!chartRef.value || !echartsInstance) return;
 
-        const { data, maxVal, peakDayResult, peakTimeResult } = aggregateHeatmapData(cachedTimestamps);
+        const filtered = getFilteredTimestamps();
+        filteredEventCount.value = filtered.length;
+
+        if (filtered.length === 0) {
+            peakDayText.value = '';
+            peakTimeText.value = '';
+            return;
+        }
+        const { data, maxVal, peakDayResult, peakTimeResult } = aggregateHeatmapData(filtered);
         peakDayText.value = peakDayResult;
         peakTimeText.value = peakTimeResult;
 
@@ -301,6 +343,10 @@
         const userId = userDialog.value.id;
         if (!userId) return;
 
+        if (userId !== lastLoadedUserId) {
+            selectedPeriod.value = 'all';
+        }
+
         const requestId = ++activeRequestId;
         isLoading.value = true;
         try {
@@ -314,6 +360,11 @@
             await nextTick();
 
             if (timestamps.length > 0) {
+                const filtered = getFilteredTimestamps();
+                filteredEventCount.value = filtered.length;
+
+                await nextTick();
+
                 if (!echartsInstance && chartRef.value) {
                     echartsInstance = echarts.init(
                         chartRef.value,
@@ -335,6 +386,7 @@
             } else {
                 peakDayText.value = '';
                 peakTimeText.value = '';
+                filteredEventCount.value = 0;
             }
         } catch (error) {
             console.error('Error loading online frequency data:', error);
