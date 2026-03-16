@@ -108,7 +108,7 @@
             :value="it.value"
             :class="[
                 'pt-4 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background',
-                fill ? 'min-h-0 flex-1' : ''
+                fill ? 'min-h-0 flex-1 overflow-y-auto' : ''
             ]">
             <slot :name="it.value" />
         </TabsContent>

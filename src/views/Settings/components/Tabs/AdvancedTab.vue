@@ -1,193 +1,183 @@
 <template>
-    <div>
-        <div class="options-container mt-2!">
-            <div class="header">{{ t('view.settings.advanced.advanced.vrchat_settings.header') }}</div>
-            <span class="sub-header">{{ t('view.settings.advanced.advanced.relaunch_vrchat.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.advanced.advanced.relaunch_vrchat.description')"
-                :value="relaunchVRChatAfterCrash"
-                :long-label="true"
-                @change="setRelaunchVRChatAfterCrash" />
+    <div class="flex flex-col gap-10 py-2">
+        <SettingsGroup :title="t('view.settings.advanced.advanced.vrchat_settings.header')">
+            <SettingsItem :label="t('view.settings.advanced.advanced.relaunch_vrchat.header')"
+                :description="t('view.settings.advanced.advanced.relaunch_vrchat.description')">
+                <Switch :model-value="relaunchVRChatAfterCrash" @update:modelValue="setRelaunchVRChatAfterCrash" />
+            </SettingsItem>
 
-            <span class="sub-header">{{ t('view.settings.advanced.advanced.vrchat_quit_fix.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.advanced.advanced.vrchat_quit_fix.description')"
-                :value="vrcQuitFix"
-                :long-label="true"
-                @change="setVrcQuitFix" />
+            <SettingsItem :label="t('view.settings.advanced.advanced.vrchat_quit_fix.header')"
+                :description="t('view.settings.advanced.advanced.vrchat_quit_fix.description')">
+                <Switch :model-value="vrcQuitFix" @update:modelValue="setVrcQuitFix" />
+            </SettingsItem>
 
-            <span class="sub-header">{{ t('view.settings.advanced.advanced.auto_cache_management.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.advanced.advanced.auto_cache_management.description')"
-                :value="autoSweepVRChatCache"
-                :long-label="true"
-                @change="setAutoSweepVRChatCache" />
+            <SettingsItem :label="t('view.settings.advanced.advanced.auto_cache_management.header')"
+                :description="t('view.settings.advanced.advanced.auto_cache_management.description')">
+                <Switch :model-value="autoSweepVRChatCache" @update:modelValue="setAutoSweepVRChatCache" />
+            </SettingsItem>
 
-            <span class="sub-header">{{ t('view.settings.advanced.advanced.self_invite.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.advanced.advanced.self_invite.description')"
-                :value="selfInviteOverride"
-                :long-label="true"
-                @change="setSelfInviteOverride" />
-        </div>
-        <div class="options-container">
-            <div class="header">{{ t('view.settings.advanced.advanced.vrcx_settings.header') }}</div>
-            <span class="sub-header">{{ t('view.settings.advanced.advanced.primary_password.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.advanced.advanced.primary_password.description')"
-                :value="enablePrimaryPassword"
-                :disabled="!enablePrimaryPassword"
-                :long-label="true"
-                @change="enablePrimaryPasswordChange" />
+            <SettingsItem :label="t('view.settings.advanced.advanced.self_invite.header')"
+                :description="t('view.settings.advanced.advanced.self_invite.description')">
+                <Switch :model-value="selfInviteOverride" @update:modelValue="setSelfInviteOverride" />
+            </SettingsItem>
+        </SettingsGroup>
 
-            <div v-if="branch === 'Nightly'">
-                <span class="sub-header">{{
-                    t('view.settings.advanced.advanced.anonymous_error_reporting.header')
-                }}</span>
-                <simple-switch
-                    :label="t('view.settings.advanced.advanced.anonymous_error_reporting.description')"
-                    :value="sentryErrorReporting"
-                    :long-label="true"
-                    @change="setSentryErrorReporting()" />
-            </div>
+        <SettingsGroup :title="t('view.settings.advanced.advanced.vrcx_settings.header')">
+            <SettingsItem :label="t('view.settings.advanced.advanced.primary_password.header')"
+                :description="t('view.settings.advanced.advanced.primary_password.description')">
+                <Switch
+                    :model-value="enablePrimaryPassword"
+                    :disabled="!enablePrimaryPassword"
+                    @update:modelValue="enablePrimaryPasswordChange" />
+            </SettingsItem>
 
-            <span class="sub-header">{{ t('view.settings.general.logging.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.advanced.advanced.cache_debug.udon_exception_logging')"
-                :value="udonExceptionLogging"
-                @change="setUdonExceptionLogging" />
-            <simple-switch
-                :label="t('view.settings.general.logging.resource_load')"
-                :value="logResourceLoad"
-                @change="setLogResourceLoad" />
-            <simple-switch
-                :label="t('view.settings.general.logging.empty_avatar')"
-                :value="logEmptyAvatars"
-                @change="setLogEmptyAvatars" />
-            <simple-switch
-                :label="t('view.settings.general.logging.auto_login_delay')"
-                :value="autoLoginDelayEnabled"
-                @change="setAutoLoginDelayEnabled" />
-            <div v-if="autoLoginDelayEnabled" class="options-container-item">
+            <template v-if="branch === 'Nightly'">
+                <SettingsItem :label="t('view.settings.advanced.advanced.anonymous_error_reporting.header')"
+                    :description="t('view.settings.advanced.advanced.anonymous_error_reporting.description')">
+                    <Switch :model-value="sentryErrorReporting" @update:modelValue="setSentryErrorReporting()" />
+                </SettingsItem>
+            </template>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.general.logging.header')">
+            <SettingsItem :label="t('view.settings.advanced.advanced.cache_debug.udon_exception_logging')">
+                <Switch :model-value="udonExceptionLogging" @update:modelValue="setUdonExceptionLogging" />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.general.logging.resource_load')">
+                <Switch :model-value="logResourceLoad" @update:modelValue="setLogResourceLoad" />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.general.logging.empty_avatar')">
+                <Switch :model-value="logEmptyAvatars" @update:modelValue="setLogEmptyAvatars" />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.general.logging.auto_login_delay')">
+                <Switch :model-value="autoLoginDelayEnabled" @update:modelValue="setAutoLoginDelayEnabled" />
+            </SettingsItem>
+
+            <SettingsItem v-if="autoLoginDelayEnabled"
+                :label="t('view.settings.general.logging.auto_login_delay_button')">
                 <Button size="sm" variant="outline" @click="promptAutoLoginDelaySeconds">
                     {{ t('view.settings.general.logging.auto_login_delay_button') }}
                 </Button>
-            </div>
-        </div>
-        <div class="options-container">
-            <span class="header">{{ t('view.profile.game_info.header') }}</span>
-            <div class="px-2.5 overflow-y-auto overflow-x-hidden mt-2">
-                <div class="box-border flex items-center p-1.5 text-[13px] cursor-pointer">
-                    <div class="flex-1 overflow-hidden" @click="getVisits">
-                        <span class="block truncate font-medium leading-[18px]">{{
-                            t('view.profile.game_info.online_users')
-                        }}</span>
-                        <span v-if="visits" class="block truncate text-xs">{{
-                            t('view.profile.game_info.user_online', { count: visits })
-                        }}</span>
-                        <span v-else class="block truncate text-xs">{{ t('view.profile.game_info.refresh') }}</span>
-                    </div>
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.profile.game_info.header')">
+            <div class="px-1 py-1">
+                <div class="flex-1 cursor-pointer" @click="getVisits">
+                    <span class="block truncate font-medium text-sm leading-[18px]">{{
+                        t('view.profile.game_info.online_users')
+                    }}</span>
+                    <span v-if="visits" class="block truncate text-xs text-muted-foreground">{{
+                        t('view.profile.game_info.user_online', { count: visits })
+                    }}</span>
+                    <span v-else class="block truncate text-xs text-muted-foreground">{{
+                        t('view.profile.game_info.refresh')
+                    }}</span>
                 </div>
             </div>
-        </div>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.advanced.advanced.remote_database.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.advanced.advanced.remote_database.enable')"
-                :value="avatarRemoteDatabase"
-                :long-label="true"
-                @change="setAvatarRemoteDatabase(!avatarRemoteDatabase)" />
-            <div class="options-container-item">
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.advanced.advanced.remote_database.header')">
+            <SettingsItem :label="t('view.settings.advanced.advanced.remote_database.enable')">
+                <Switch
+                    :model-value="avatarRemoteDatabase"
+                    @update:modelValue="setAvatarRemoteDatabase(!avatarRemoteDatabase)" />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.advanced.advanced.remote_database.avatar_database_provider')">
                 <Button size="sm" variant="outline" @click="showAvatarProviderDialog">{{
                     t('view.settings.advanced.advanced.remote_database.avatar_database_provider')
                 }}</Button>
-            </div>
-        </div>
+            </SettingsItem>
+        </SettingsGroup>
+
         <template v-if="!isLinux">
-            <div class="options-container">
-                <span class="header">{{ t('view.settings.advanced.advanced.app_launcher.header') }}</span>
-                <br />
-                <Button class="mt-1.5" size="sm" variant="outline" @click="openShortcutFolder()">{{
-                    t('view.settings.advanced.advanced.app_launcher.folder')
-                }}</Button>
-                <simple-switch
-                    :label="t('view.settings.advanced.advanced.remote_database.enable')"
-                    :value="enableAppLauncher"
-                    :tooltip="t('view.settings.advanced.advanced.app_launcher.folder_tooltip')"
-                    :long-label="true"
-                    @change="setEnableAppLauncher" />
-                <simple-switch
-                    :label="t('view.settings.advanced.advanced.app_launcher.auto_close')"
-                    :value="enableAppLauncherAutoClose"
-                    :long-label="true"
-                    @change="setEnableAppLauncherAutoClose" />
-                <simple-switch
-                    :label="t('view.settings.advanced.advanced.app_launcher.run_process_once')"
-                    :value="enableAppLauncherRunProcessOnce"
-                    :long-label="true"
-                    @change="setEnableAppLauncherRunProcessOnce" />
-            </div>
+            <SettingsGroup :title="t('view.settings.advanced.advanced.app_launcher.header')">
+                <SettingsItem :label="t('view.settings.advanced.advanced.app_launcher.folder')">
+                    <Button size="sm" variant="outline" @click="openShortcutFolder()">{{
+                        t('view.settings.advanced.advanced.app_launcher.folder')
+                    }}</Button>
+                </SettingsItem>
+
+                <SettingsItem :label="t('view.settings.advanced.advanced.remote_database.enable')"
+                    :description="t('view.settings.advanced.advanced.app_launcher.folder_tooltip')">
+                    <Switch :model-value="enableAppLauncher" @update:modelValue="setEnableAppLauncher" />
+                </SettingsItem>
+
+                <SettingsItem :label="t('view.settings.advanced.advanced.app_launcher.auto_close')">
+                    <Switch
+                        :model-value="enableAppLauncherAutoClose"
+                        @update:modelValue="setEnableAppLauncherAutoClose" />
+                </SettingsItem>
+
+                <SettingsItem :label="t('view.settings.advanced.advanced.app_launcher.run_process_once')">
+                    <Switch
+                        :model-value="enableAppLauncherRunProcessOnce"
+                        @update:modelValue="setEnableAppLauncherRunProcessOnce" />
+                </SettingsItem>
+            </SettingsGroup>
         </template>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.advanced.advanced.youtube_api.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.advanced.advanced.youtube_api.enable')"
-                :value="youTubeApi"
-                :tooltip="t('view.settings.advanced.advanced.youtube_api.enable_tooltip')"
-                :long-label="true"
-                @change="changeYouTubeApi('VRCX_youtubeAPI')" />
-            <div class="options-container-item">
+
+        <SettingsGroup :title="t('view.settings.advanced.advanced.youtube_api.header')">
+            <SettingsItem :label="t('view.settings.advanced.advanced.youtube_api.enable')"
+                :description="t('view.settings.advanced.advanced.youtube_api.enable_tooltip')">
+                <Switch :model-value="youTubeApi" @update:modelValue="changeYouTubeApi('VRCX_youtubeAPI')" />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.advanced.advanced.youtube_api.youtube_api_key')">
                 <Button size="sm" variant="outline" @click="showYouTubeApiDialog">{{
                     t('view.settings.advanced.advanced.youtube_api.youtube_api_key')
                 }}</Button>
-            </div>
-        </div>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.advanced.advanced.translation_api.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.advanced.advanced.translation_api.enable')"
-                :value="translationApi"
-                :tooltip="t('view.settings.advanced.advanced.translation_api.enable_tooltip')"
-                :long-label="true"
-                @change="changeTranslationAPI('VRCX_translationAPI')" />
-            <div class="options-container-item">
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.advanced.advanced.translation_api.header')">
+            <SettingsItem :label="t('view.settings.advanced.advanced.translation_api.enable')"
+                :description="t('view.settings.advanced.advanced.translation_api.enable_tooltip')">
+                <Switch :model-value="translationApi" @update:modelValue="changeTranslationAPI('VRCX_translationAPI')" />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.advanced.advanced.translation_api.translation_api_key')">
                 <Button size="sm" variant="outline" @click="showTranslationApiDialog">
-                    <Languages class="h-4 w-4" style="margin-right: 6px" />
+                    <Languages class="h-4 w-4 mr-1.5" />
                     {{ t('view.settings.advanced.advanced.translation_api.translation_api_key') }}
                 </Button>
-            </div>
-        </div>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.advanced.advanced.video_progress_pie.header') }}</span>
-            <simple-switch
-                :label="t('view.settings.advanced.advanced.video_progress_pie.enable')"
-                :value="progressPie"
-                :disabled="!openVR"
-                :tooltip="t('view.settings.advanced.advanced.video_progress_pie.enable_tooltip')"
-                :long-label="true"
-                @change="changeYouTubeApi('VRCX_progressPie')" />
-            <simple-switch
-                :label="t('view.settings.advanced.advanced.video_progress_pie.dance_world_only')"
-                :value="progressPieFilter"
-                :disabled="!openVR"
-                :long-label="true"
-                @change="changeYouTubeApi('VRCX_progressPieFilter')" />
-        </div>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.advanced.advanced.launch_commands.header') }}</span>
-            <simple-switch
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.advanced.advanced.video_progress_pie.header')">
+            <SettingsItem :label="t('view.settings.advanced.advanced.video_progress_pie.enable')"
+                :description="t('view.settings.advanced.advanced.video_progress_pie.enable_tooltip')">
+                <Switch
+                    :model-value="progressPie"
+                    :disabled="!openVR"
+                    @update:modelValue="changeYouTubeApi('VRCX_progressPie')" />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.advanced.advanced.video_progress_pie.dance_world_only')">
+                <Switch
+                    :model-value="progressPieFilter"
+                    :disabled="!openVR"
+                    @update:modelValue="changeYouTubeApi('VRCX_progressPieFilter')" />
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.advanced.advanced.launch_commands.header')">
+            <SettingsItem
                 :label="t('view.settings.advanced.advanced.launch_commands.show_confirmation_on_switch_avatar_enable')"
-                :value="showConfirmationOnSwitchAvatar"
-                :tooltip="
-                    t('view.settings.advanced.advanced.launch_commands.show_confirmation_on_switch_avatar_tooltip')
-                "
-                :long-label="true"
-                @change="setShowConfirmationOnSwitchAvatar" />
-            <div class="options-container-item">
+                :description="t('view.settings.advanced.advanced.launch_commands.show_confirmation_on_switch_avatar_tooltip')">
+                <Switch
+                    :model-value="showConfirmationOnSwitchAvatar"
+                    @update:modelValue="setShowConfirmationOnSwitchAvatar" />
+            </SettingsItem>
+
+            <div class="flex gap-2">
                 <Button
                     size="sm"
                     variant="outline"
-                    class="mr-2"
                     @click="openExternalLink('https://github.com/vrcx-team/VRCX/wiki/Launch-parameters-&-VRCX.json')"
                     >{{ t('view.settings.advanced.advanced.launch_commands.docs') }}</Button
                 >
@@ -198,15 +188,14 @@
                     >{{ t('view.settings.advanced.advanced.launch_commands.website_userscript') }}</Button
                 >
             </div>
-        </div>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.advanced.advanced.cache_debug.header') }}</span>
-            <br />
-            <div class="options-container-item">
-                <Button size="sm" variant="outline" class="mr-2" @click="clearVRCXCache">{{
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.advanced.advanced.cache_debug.header')">
+            <div class="flex gap-2 flex-wrap">
+                <Button size="sm" variant="outline" @click="clearVRCXCache">{{
                     t('view.settings.advanced.advanced.cache_debug.clear_cache')
                 }}</Button>
-                <Button size="sm" variant="outline" class="mr-2" @click="promptAutoClearVRCXCacheFrequency">{{
+                <Button size="sm" variant="outline" @click="promptAutoClearVRCXCacheFrequency">{{
                     t('view.settings.advanced.advanced.cache_debug.auto_clear_cache')
                 }}</Button>
                 <Button size="sm" variant="outline" @click="refreshCacheSize">{{
@@ -214,146 +203,61 @@
                 }}</Button>
             </div>
 
-            <simple-switch
-                :label="`${t('view.settings.advanced.advanced.cache_debug.disable_gamelog')} ${t('view.settings.advanced.advanced.cache_debug.disable_gamelog_notice')}`"
-                :value="gameLogDisabled"
-                :long-label="true"
-                @change="disableGameLogDialog()" />
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.cache_debug.user_cache') }}
-                    <span v-text="cacheSize.cachedUsers"></span>
-                </span>
+            <SettingsItem
+                :label="`${t('view.settings.advanced.advanced.cache_debug.disable_gamelog')} ${t('view.settings.advanced.advanced.cache_debug.disable_gamelog_notice')}`">
+                <Switch :model-value="gameLogDisabled" @update:modelValue="disableGameLogDialog()" />
+            </SettingsItem>
+
+            <div class="flex flex-col gap-1 text-sm">
+                <span>{{ t('view.settings.advanced.advanced.cache_debug.user_cache') }} <span v-text="cacheSize.cachedUsers"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.cache_debug.world_cache') }} <span v-text="cacheSize.cachedWorlds"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.cache_debug.avatar_cache') }} <span v-text="cacheSize.cachedAvatars"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.cache_debug.group_cache') }} <span v-text="cacheSize.cachedGroups"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.cache_debug.avatar_name_cache') }} <span v-text="cacheSize.cachedAvatarNames"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.cache_debug.instance_cache') }} <span v-text="cacheSize.cachedInstances"></span></span>
             </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.cache_debug.world_cache') }}
-                    <span v-text="cacheSize.cachedWorlds"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.cache_debug.avatar_cache') }}
-                    <span v-text="cacheSize.cachedAvatars"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.cache_debug.group_cache') }}
-                    <span v-text="cacheSize.cachedGroups"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.cache_debug.avatar_name_cache') }}
-                    <span v-text="cacheSize.cachedAvatarNames"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.cache_debug.instance_cache') }}
-                    <span v-text="cacheSize.cachedInstances"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
+
+            <SettingsItem :label="t('view.settings.advanced.advanced.cache_debug.show_console')">
                 <Button size="sm" variant="outline" @click="showConsole">{{
                     t('view.settings.advanced.advanced.cache_debug.show_console')
                 }}</Button>
-            </div>
-        </div>
-        <div class="options-container">
-            <span class="sub-header">{{ t('view.settings.advanced.advanced.sqlite_table_size.header') }}</span>
-            <div class="options-container-item">
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.advanced.advanced.sqlite_table_size.header')">
+            <SettingsItem :label="t('view.settings.advanced.advanced.sqlite_table_size.refresh')">
                 <Button size="sm" variant="outline" @click="getSqliteTableSizes">{{
                     t('view.settings.advanced.advanced.sqlite_table_size.refresh')
                 }}</Button>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.sqlite_table_size.gps') }}
-                    <span v-text="sqliteTableSizes.gps"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.sqlite_table_size.status') }}
-                    <span v-text="sqliteTableSizes.status"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.sqlite_table_size.bio') }}
-                    <span v-text="sqliteTableSizes.bio"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.sqlite_table_size.avatar') }}
-                    <span v-text="sqliteTableSizes.avatar"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.sqlite_table_size.online_offline') }}
-                    <span v-text="sqliteTableSizes.onlineOffline"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.sqlite_table_size.friend_log_history') }}
-                    <span v-text="sqliteTableSizes.friendLogHistory"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.sqlite_table_size.notification') }}
-                    <span v-text="sqliteTableSizes.notification"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.sqlite_table_size.location') }}
-                    <span v-text="sqliteTableSizes.location"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.sqlite_table_size.join_leave') }}
-                    <span v-text="sqliteTableSizes.joinLeave"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.sqlite_table_size.portal_spawn') }}
-                    <span v-text="sqliteTableSizes.portalSpawn"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.sqlite_table_size.video_play') }}
-                    <span v-text="sqliteTableSizes.videoPlay"></span>
-                </span>
-            </div>
-            <div class="options-container-item">
-                <span class="name">
-                    {{ t('view.settings.advanced.advanced.sqlite_table_size.event') }}
-                    <span v-text="sqliteTableSizes.event"></span>
-                </span>
-            </div>
-        </div>
+            </SettingsItem>
 
-        <div class="options-container">
-            <div class="header-bar">
-                <span class="header">{{ t('view.profile.config_json') }}</span>
+            <div class="flex flex-col gap-1 text-sm">
+                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.gps') }} <span v-text="sqliteTableSizes.gps"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.status') }} <span v-text="sqliteTableSizes.status"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.bio') }} <span v-text="sqliteTableSizes.bio"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.avatar') }} <span v-text="sqliteTableSizes.avatar"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.online_offline') }} <span v-text="sqliteTableSizes.onlineOffline"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.friend_log_history') }} <span v-text="sqliteTableSizes.friendLogHistory"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.notification') }} <span v-text="sqliteTableSizes.notification"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.location') }} <span v-text="sqliteTableSizes.location"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.join_leave') }} <span v-text="sqliteTableSizes.joinLeave"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.portal_spawn') }} <span v-text="sqliteTableSizes.portalSpawn"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.video_play') }} <span v-text="sqliteTableSizes.videoPlay"></span></span>
+                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.event') }} <span v-text="sqliteTableSizes.event"></span></span>
+            </div>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.profile.config_json')">
+            <div class="flex items-center gap-2">
                 <TooltipWrapper side="top" :content="t('view.profile.refresh_tooltip')">
-                    <Button class="rounded-full mr-2" size="icon-sm" variant="outline" @click="refreshConfigTreeData()">
+                    <Button class="rounded-full" size="icon-sm" variant="outline" @click="refreshConfigTreeData()">
                         <RefreshCcw />
                     </Button>
                 </TooltipWrapper>
                 <TooltipWrapper side="top" :content="t('view.profile.clear_results_tooltip')">
                     <Button class="rounded-full" size="icon-sm" variant="outline" @click="configTreeData = {}">
-                        <Trash2
-                    /></Button>
+                        <Trash2 />
+                    </Button>
                 </TooltipWrapper>
             </div>
             <vue-json-pretty
@@ -365,7 +269,7 @@
                 :dynamic-height="false"
                 virtual
                 show-icon />
-        </div>
+        </SettingsGroup>
 
         <RegistryBackupDialog />
         <YouTubeApiDialog v-model:isYouTubeApiDialogVisible="isYouTubeApiDialogVisible" />
@@ -379,6 +283,7 @@
     import { Languages, RefreshCcw, Trash2 } from 'lucide-vue-next';
     import { computed, reactive, ref } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { Switch } from '@/components/ui/switch';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -400,18 +305,19 @@
         useVRCXUpdaterStore,
         useVrStore,
         useWorldStore
-    } from '../../../../stores';
-    import { authRequest, queryRequest } from '../../../../api';
-    import { disableGameLogDialog } from '../../../../coordinators/gameLogCoordinator';
-    import { clearVRCXCache } from '../../../../coordinators/vrcxCoordinator';
-    import { openExternalLink } from '../../../../shared/utils';
+    } from '@/stores';
+    import { authRequest, queryRequest } from '@/api';
+    import { disableGameLogDialog } from '@/coordinators/gameLogCoordinator';
+    import { clearVRCXCache } from '@/coordinators/vrcxCoordinator';
+    import { openExternalLink } from '@/shared/utils';
 
     import AvatarProviderDialog from '../../dialogs/AvatarProviderDialog.vue';
     import PhotonSettings from '../PhotonSettings.vue';
     import RegistryBackupDialog from '../../../Tools/dialogs/RegistryBackupDialog.vue';
-    import SimpleSwitch from '../SimpleSwitch.vue';
     import TranslationApiDialog from '../../dialogs/TranslationApiDialog.vue';
     import YouTubeApiDialog from '../../dialogs/YouTubeApiDialog.vue';
+    import SettingsGroup from '../SettingsGroup.vue';
+    import SettingsItem from '../SettingsItem.vue';
 
     const { t } = useI18n();
 

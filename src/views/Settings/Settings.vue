@@ -1,13 +1,13 @@
 <template>
-    <div class="x-container">
-        <div class="options-container mt-0 p-1.5">
-            <span class="header">{{ t('view.settings.header') }}</span>
+    <div class="x-container flex flex-col overflow-hidden!">
+        <div class="shrink-0 p-1.5">
+            <span class="text-lg font-semibold text-foreground">{{ t('view.settings.header') }}</span>
         </div>
         <TabsUnderline
             default-value="general"
             :items="settingsTabs"
             :unmount-on-hide="false"
-            style="height: calc(100% - 51px)">
+            fill>
             <template #general>
                 <GeneralTab />
             </template>

@@ -1,117 +1,110 @@
 <template>
     <!--//- Pictures | Screenshot Helper-->
-    <div class="options-container mt-0">
-        <span class="header">{{ t('view.settings.advanced.advanced.screenshot_helper.header') }}</span>
-        <div class="options-container-item">
-            <span class="name">{{ t('view.settings.advanced.advanced.screenshot_helper.description') }}</span>
-        </div>
-        <simple-switch
-            :label="t('view.settings.advanced.advanced.screenshot_helper.enable')"
-            :value="screenshotHelper"
-            @change="setScreenshotHelper()"
-            :tooltip="t('view.settings.advanced.advanced.screenshot_helper.description_tooltip')"
-            :long-label="true" />
-        <simple-switch
-            :label="t('view.settings.advanced.advanced.screenshot_helper.modify_filename')"
-            :value="screenshotHelperModifyFilename"
-            @change="setScreenshotHelperModifyFilename()"
-            :disabled="!screenshotHelper"
-            :tooltip="t('view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip')"
-            :long-label="true" />
-        <simple-switch
-            :label="t('view.settings.advanced.advanced.screenshot_helper.copy_to_clipboard')"
-            :value="screenshotHelperCopyToClipboard"
-            @change="setScreenshotHelperCopyToClipboard()"
-            :long-label="true" />
-        <Button size="sm" variant="outline" class="mt-2" @click="askDeleteAllScreenshotMetadata()">{{
-            t('view.settings.advanced.advanced.delete_all_screenshot_metadata.button')
-        }}</Button>
-    </div>
+    <div class="flex flex-col gap-10 py-2">
+        <SettingsGroup :title="t('view.settings.advanced.advanced.screenshot_helper.header')">
+            <template #description>
+                {{ t('view.settings.advanced.advanced.screenshot_helper.description') }}
+            </template>
 
-    <div class="options-container">
-        <span class="header">{{ t('view.settings.pictures.pictures.auto_delete_old_prints') }}</span>
-        <simple-switch
-            :label="t('view.settings.pictures.pictures.auto_delete_prints_from_vrc')"
-            :value="autoDeleteOldPrints"
-            @change="setAutoDeleteOldPrints()"
-            :long-label="true" />
-    </div>
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.screenshot_helper.enable')"
+                :description="t('view.settings.advanced.advanced.screenshot_helper.description_tooltip')">
+                <Switch :model-value="screenshotHelper" @update:modelValue="setScreenshotHelper()" />
+            </SettingsItem>
 
-    <!-- //- Pictures | User Generated Content -->
-    <div class="options-container">
-        <span class="header">{{ t('view.settings.advanced.advanced.user_generated_content.header') }}</span>
-        <br />
-        <div class="options-container-item mb-1.5">
-            <span class="name" style="min-width: 300px">{{
-                t('view.settings.advanced.advanced.user_generated_content.description')
-            }}</span>
-        </div>
-        <div class="flex gap-2 mt-2">
-            <Button size="sm" variant="outline" @click="openUGCFolder()">{{
-                t('view.settings.advanced.advanced.user_generated_content.folder')
-            }}</Button>
-            <Button size="sm" variant="outline" @click="openUGCFolderSelector()">{{
-                t('view.settings.advanced.advanced.user_generated_content.set_folder')
-            }}</Button>
-            <Button size="sm" variant="outline" @click="resetUGCFolder()" v-if="ugcFolderPath">{{
-                t('view.settings.advanced.advanced.user_generated_content.reset_override')
-            }}</Button>
-        </div>
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.screenshot_helper.modify_filename')"
+                :description="t('view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip')">
+                <Switch
+                    :model-value="screenshotHelperModifyFilename"
+                    :disabled="!screenshotHelper"
+                    @update:modelValue="setScreenshotHelperModifyFilename()" />
+            </SettingsItem>
 
-        <br />
-        <br />
-        <br />
-        <span class="sub-header mr-1.5">{{
-            t('view.settings.advanced.advanced.save_instance_prints_to_file.header')
-        }}</span>
-        <TooltipWrapper
-            side="top"
-            :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
-            <Info class="inline-block" />
-        </TooltipWrapper>
-        <simple-switch
-            :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')"
-            :value="saveInstancePrints"
-            @change="setSaveInstancePrints()"
-            :long-label="true" />
-        <simple-switch
-            :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.crop')"
-            :value="cropInstancePrints"
-            @change="setCropInstancePrints()"
-            :long-label="true" />
-        <br />
-        <span class="sub-header">{{ t('view.settings.advanced.advanced.save_instance_stickers_to_file.header') }}</span>
-        <simple-switch
-            :label="t('view.settings.advanced.advanced.save_instance_stickers_to_file.description')"
-            :value="saveInstanceStickers"
-            @change="setSaveInstanceStickers()"
-            :long-label="true" />
-        <br />
-        <span class="sub-header mr-1.5"
-            >{{ t('view.settings.advanced.advanced.save_instance_emoji_to_file.header') }}
-        </span>
-        <TooltipWrapper
-            side="top"
-            :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
-            <Info class="inline-block" />
-        </TooltipWrapper>
-        <simple-switch
-            :label="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')"
-            :value="saveInstanceEmoji"
-            @change="setSaveInstanceEmoji()"
-            :long-label="true" />
+            <SettingsItem :label="t('view.settings.advanced.advanced.screenshot_helper.copy_to_clipboard')">
+                <Switch
+                    :model-value="screenshotHelperCopyToClipboard"
+                    @update:modelValue="setScreenshotHelperCopyToClipboard()" />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.advanced.advanced.delete_all_screenshot_metadata.button')">
+                <Button size="sm" variant="outline" @click="askDeleteAllScreenshotMetadata()">{{
+                    t('view.settings.advanced.advanced.delete_all_screenshot_metadata.button')
+                }}</Button>
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.pictures.pictures.auto_delete_old_prints')">
+            <SettingsItem :label="t('view.settings.pictures.pictures.auto_delete_prints_from_vrc')">
+                <Switch :model-value="autoDeleteOldPrints" @update:modelValue="setAutoDeleteOldPrints()" />
+            </SettingsItem>
+        </SettingsGroup>
+
+        <!-- //- Pictures | User Generated Content -->
+        <SettingsGroup :title="t('view.settings.advanced.advanced.user_generated_content.header')">
+            <template #description>
+                {{ t('view.settings.advanced.advanced.user_generated_content.description') }}
+            </template>
+
+            <div class="flex gap-2">
+                <Button size="sm" variant="outline" @click="openUGCFolder()">{{
+                    t('view.settings.advanced.advanced.user_generated_content.folder')
+                }}</Button>
+                <Button size="sm" variant="outline" @click="openUGCFolderSelector()">{{
+                    t('view.settings.advanced.advanced.user_generated_content.set_folder')
+                }}</Button>
+                <Button v-if="ugcFolderPath" size="sm" variant="outline" @click="resetUGCFolder()">{{
+                    t('view.settings.advanced.advanced.user_generated_content.reset_override')
+                }}</Button>
+            </div>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.advanced.advanced.save_instance_prints_to_file.header')">
+            <template #description>
+                {{ t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip') }}
+            </template>
+
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')">
+                <Switch :model-value="saveInstancePrints" @update:modelValue="setSaveInstancePrints()" />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.crop')">
+                <Switch :model-value="cropInstancePrints" @update:modelValue="setCropInstancePrints()" />
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup
+            :title="t('view.settings.advanced.advanced.save_instance_stickers_to_file.header')">
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.save_instance_stickers_to_file.description')">
+                <Switch :model-value="saveInstanceStickers" @update:modelValue="setSaveInstanceStickers()" />
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.advanced.advanced.save_instance_emoji_to_file.header')">
+            <template #description>
+                {{ t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip') }}
+            </template>
+
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')">
+                <Switch :model-value="saveInstanceEmoji" @update:modelValue="setSaveInstanceEmoji()" />
+            </SettingsItem>
+        </SettingsGroup>
     </div>
 </template>
 
 <script setup>
     import { Button } from '@/components/ui/button';
-    import { Info } from 'lucide-vue-next';
+    import { Switch } from '@/components/ui/switch';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useAdvancedSettingsStore } from '../../../../stores';
+    import { useAdvancedSettingsStore } from '@/stores';
 
-    import SimpleSwitch from '../SimpleSwitch.vue';
+    import SettingsGroup from '../SettingsGroup.vue';
+    import SettingsItem from '../SettingsItem.vue';
 
     const { t } = useI18n();
 

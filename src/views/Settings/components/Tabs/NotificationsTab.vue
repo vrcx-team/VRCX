@@ -1,29 +1,23 @@
 <template>
-    <div>
-        <div class="options-container mt-0">
-            <span class="header">{{ t('view.settings.notifications.notifications.header') }}</span>
-            <div class="options-container-item">
+    <div class="flex flex-col gap-10 py-2">
+        <SettingsGroup :title="t('view.settings.notifications.notifications.header')">
+            <SettingsItem :label="t('view.settings.notifications.notifications.notification_filter')">
                 <Button size="sm" variant="outline" @click="showNotyFeedFiltersDialog">{{
                     t('view.settings.notifications.notifications.notification_filter')
                 }}</Button>
-            </div>
-            <div class="options-container-item">
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.notifications.notifications.test_notification')">
                 <Button size="sm" variant="outline" @click="testNotification"
                     ><Play />{{ t('view.settings.notifications.notifications.test_notification') }}</Button
                 >
-            </div>
-        </div>
-        <div class="options-container">
-            <span class="sub-header">{{
-                t('view.settings.notifications.notifications.steamvr_notifications.header')
-            }}</span>
-            <div class="options-container-item">
-                <span class="name">{{
-                    t('view.settings.notifications.notifications.desktop_notifications.when_to_display')
-                }}</span>
-                <br />
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.notifications.notifications.steamvr_notifications.header')">
+            <SettingsItem
+                :label="t('view.settings.notifications.notifications.desktop_notifications.when_to_display')">
                 <ToggleGroup
-                    class="mt-1.5"
                     type="single"
                     required
                     variant="outline"
@@ -52,24 +46,36 @@
                         t('view.settings.notifications.notifications.conditions.always')
                     }}</ToggleGroupItem>
                 </ToggleGroup>
-            </div>
-            <simple-switch
-                :label="t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')"
-                :value="openVR"
-                @change="
-                    setOpenVR();
-                    saveOpenVROption();
-                " />
-            <template v-if="openVR">
-                <simple-switch
-                    :label="t('view.settings.notifications.notifications.steamvr_notifications.overlay_notifications')"
-                    :value="overlayNotifications"
-                    :disabled="!openVR"
-                    @change="
-                        setOverlayNotifications();
+            </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')">
+                <Switch
+                    :model-value="openVR"
+                    @update:modelValue="
+                        setOpenVR();
                         saveOpenVROption();
                     " />
-                <div class="options-container-item">
+            </SettingsItem>
+
+            <template v-if="openVR">
+                <SettingsItem
+                    :label="
+                        t('view.settings.notifications.notifications.steamvr_notifications.overlay_notifications')
+                    ">
+                    <Switch
+                        :model-value="overlayNotifications"
+                        :disabled="!openVR"
+                        @update:modelValue="
+                            setOverlayNotifications();
+                            saveOpenVROption();
+                        " />
+                </SettingsItem>
+
+                <SettingsItem
+                    :label="
+                        t('view.settings.notifications.notifications.steamvr_notifications.notification_position')
+                    ">
                     <Button
                         size="sm"
                         variant="outline"
@@ -79,17 +85,22 @@
                             t('view.settings.notifications.notifications.steamvr_notifications.notification_position')
                         }}</Button
                     >
-                </div>
+                </SettingsItem>
             </template>
-            <div class="options-container-item">
-                <span class="name" style="vertical-align: top; padding-top: 8px">{{
+
+            <SettingsItem
+                :label="
                     t('view.settings.notifications.notifications.steamvr_notifications.notification_opacity')
-                }}</span>
-                <div style="flex: 0 0 300px; width: 300px; max-width: 100%; padding-top: 16px">
+                ">
+                <div class="w-75 max-w-full pt-1">
                     <Slider v-model="notificationOpacityValue" :min="0" :max="100" />
                 </div>
-            </div>
-            <div class="options-container-item">
+            </SettingsItem>
+
+            <SettingsItem
+                :label="
+                    t('view.settings.notifications.notifications.steamvr_notifications.notification_timeout')
+                ">
                 <Button
                     size="sm"
                     variant="outline"
@@ -99,75 +110,85 @@
                         t('view.settings.notifications.notifications.steamvr_notifications.notification_timeout')
                     }}</Button
                 >
-            </div>
-            <simple-switch
-                :label="t('view.settings.notifications.notifications.steamvr_notifications.user_images')"
-                :value="imageNotifications"
-                @change="
-                    setImageNotifications();
-                    saveOpenVROption();
-                " />
+            </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.notifications.notifications.steamvr_notifications.user_images')">
+                <Switch
+                    :model-value="imageNotifications"
+                    @update:modelValue="
+                        setImageNotifications();
+                        saveOpenVROption();
+                    " />
+            </SettingsItem>
+
             <template v-if="!isLinux">
-                <simple-switch
+                <SettingsItem
                     :label="
                         t('view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications')
-                    "
-                    :value="xsNotifications"
-                    @change="
-                        setXsNotifications();
-                        saveOpenVROption();
-                    " />
+                    ">
+                    <Switch
+                        :model-value="xsNotifications"
+                        @update:modelValue="
+                            setXsNotifications();
+                            saveOpenVROption();
+                        " />
+                </SettingsItem>
             </template>
             <template v-else>
-                <simple-switch
-                    :label="t('view.settings.notifications.notifications.steamvr_notifications.wayvr_notifications')"
-                    :value="xsNotifications"
-                    @change="
-                        setXsNotifications();
-                        saveOpenVROption();
-                    " />
+                <SettingsItem
+                    :label="
+                        t('view.settings.notifications.notifications.steamvr_notifications.wayvr_notifications')
+                    ">
+                    <Switch
+                        :model-value="xsNotifications"
+                        @update:modelValue="
+                            setXsNotifications();
+                            saveOpenVROption();
+                        " />
+                </SettingsItem>
             </template>
+
             <template v-if="!isLinux">
-                <simple-switch
+                <SettingsItem
                     :label="
                         t(
                             'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications'
                         )
-                    "
-                    :value="ovrtHudNotifications"
-                    @change="
-                        setOvrtHudNotifications();
-                        saveOpenVROption();
-                    " />
-                <simple-switch
+                    ">
+                    <Switch
+                        :model-value="ovrtHudNotifications"
+                        @update:modelValue="
+                            setOvrtHudNotifications();
+                            saveOpenVROption();
+                        " />
+                </SettingsItem>
+
+                <SettingsItem
                     :label="
                         t(
                             'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications'
                         )
-                    "
-                    :value="ovrtWristNotifications"
-                    @change="
-                        setOvrtWristNotifications();
-                        saveOpenVROption();
-                    " />
+                    ">
+                    <Switch
+                        :model-value="ovrtWristNotifications"
+                        @update:modelValue="
+                            setOvrtWristNotifications();
+                            saveOpenVROption();
+                        " />
+                </SettingsItem>
             </template>
-        </div>
-        <div class="options-container">
-            <span class="sub-header">{{
-                t('view.settings.notifications.notifications.desktop_notifications.header')
-            }}</span>
-            <div class="options-container-item">
-                <span class="name">{{
-                    t('view.settings.notifications.notifications.desktop_notifications.when_to_display')
-                }}</span>
-                <br />
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.notifications.notifications.desktop_notifications.header')">
+            <SettingsItem
+                :label="t('view.settings.notifications.notifications.desktop_notifications.when_to_display')">
                 <ToggleGroup
                     type="single"
                     required
                     variant="outline"
                     size="sm"
                     :model-value="desktopToast"
-                    style="margin-top: 6px"
                     @update:model-value="setDesktopToast(String($event))">
                     <ToggleGroupItem value="Never">{{
                         t('view.settings.notifications.notifications.conditions.never')
@@ -191,28 +212,25 @@
                         t('view.settings.notifications.notifications.conditions.always')
                     }}</ToggleGroupItem>
                 </ToggleGroup>
-            </div>
-            <simple-switch
+            </SettingsItem>
+
+            <SettingsItem
                 :label="
                     t('view.settings.notifications.notifications.desktop_notifications.desktop_notification_while_afk')
-                "
-                :value="afkDesktopToast"
-                @change="setAfkDesktopToast" />
-        </div>
-        <div class="options-container">
-            <span class="sub-header">{{ t('view.settings.notifications.notifications.text_to_speech.header') }}</span>
-            <div class="options-container-item">
-                <span class="name">{{
-                    t('view.settings.notifications.notifications.text_to_speech.when_to_play')
-                }}</span>
-                <br />
+                ">
+                <Switch :model-value="afkDesktopToast" @update:modelValue="setAfkDesktopToast" />
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.notifications.notifications.text_to_speech.header')">
+            <SettingsItem
+                :label="t('view.settings.notifications.notifications.text_to_speech.when_to_play')">
                 <ToggleGroup
                     type="single"
                     required
                     variant="outline"
                     size="sm"
                     :model-value="notificationTTS"
-                    style="margin-top: 6px"
                     @update:model-value="saveNotificationTTS">
                     <ToggleGroupItem value="Never">{{
                         t('view.settings.notifications.notifications.conditions.never')
@@ -230,9 +248,9 @@
                         t('view.settings.notifications.notifications.conditions.always')
                     }}</ToggleGroupItem>
                 </ToggleGroup>
-            </div>
-            <div class="options-container-item">
-                <span class="name">{{ t('view.settings.notifications.notifications.text_to_speech.tts_voice') }}</span>
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.notifications.notifications.text_to_speech.tts_voice')">
                 <Select
                     :model-value="ttsVoiceIndex"
                     :disabled="notificationTTS === 'Never'"
@@ -248,28 +266,34 @@
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-            </div>
-            <simple-switch
-                :label="t('view.settings.notifications.notifications.text_to_speech.use_memo_nicknames')"
-                :value="notificationTTSNickName"
-                :disabled="notificationTTS === 'Never'"
-                @change="setNotificationTTSNickName" />
-            <simple-switch
-                :label="t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')"
-                :value="isTestTTSVisible"
-                @change="isTestTTSVisible = !isTestTTSVisible" />
-            <div v-if="isTestTTSVisible" style="margin-top: 6px">
+            </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.notifications.notifications.text_to_speech.use_memo_nicknames')">
+                <Switch
+                    :model-value="notificationTTSNickName"
+                    :disabled="notificationTTS === 'Never'"
+                    @update:modelValue="setNotificationTTSNickName" />
+            </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')">
+                <Switch :model-value="isTestTTSVisible" @update:modelValue="isTestTTSVisible = !isTestTTSVisible" />
+            </SettingsItem>
+
+            <div v-if="isTestTTSVisible" class="flex items-center gap-2 mt-1">
                 <InputGroupTextareaField
                     v-model="notificationTTSTest"
                     :placeholder="t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')"
                     :rows="1"
-                    style="width: 175px; display: inline-block"
+                    class="w-44"
                     input-class="resize-none min-h-0" />
                 <Button size="sm" variant="outline" @click="testNotificationTTS">{{
                     t('view.settings.notifications.notifications.text_to_speech.play')
                 }}</Button>
             </div>
-        </div>
+        </SettingsGroup>
+
         <NotificationPositionDialog v-model:isNotificationPositionDialogVisible="isNotificationPositionDialogVisible" />
         <FeedFiltersDialog v-model:feedFiltersDialogMode="feedFiltersDialogMode" />
     </div>
@@ -277,6 +301,9 @@
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+    import { Switch } from '@/components/ui/switch';
+    import { Slider } from '@/components/ui/slider';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
@@ -289,13 +316,12 @@
         useNotificationStore,
         useNotificationsSettingsStore,
         useVrStore
-    } from '../../../../stores';
-    import { ToggleGroup, ToggleGroupItem } from '../../../../components/ui/toggle-group';
-    import { Slider } from '../../../../components/ui/slider';
+    } from '@/stores';
 
     import FeedFiltersDialog from '../../dialogs/FeedFiltersDialog.vue';
     import NotificationPositionDialog from '../../dialogs/NotificationPositionDialog.vue';
-    import SimpleSwitch from '../SimpleSwitch.vue';
+    import SettingsGroup from '../SettingsGroup.vue';
+    import SettingsItem from '../SettingsItem.vue';
 
     const { t } = useI18n();
 

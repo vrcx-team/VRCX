@@ -1,138 +1,141 @@
 <template>
-    <div>
-        <div class="options-container mt-0">
-            <span class="header">{{ t('view.settings.general.general.header') }}</span>
-            <div class="px-2.5 overflow-y-auto overflow-x-hidden mt-2">
-                <div class="box-border flex items-center p-1.5 text-[13px] cursor-default">
-                    <div class="flex-1 overflow-hidden">
-                        <span class="block truncate font-medium leading-[18px]">{{
-                            t('view.settings.general.general.version')
-                        }}</span>
-                        <span class="block truncate text-xs" v-text="appVersion"></span>
-                    </div>
-                </div>
-                <div class="box-border flex items-center p-1.5 text-[13px] cursor-pointer" @click="checkForVRCXUpdate">
-                    <div class="flex-1 overflow-hidden">
-                        <span class="block truncate font-medium leading-[18px]">{{
-                            t('view.settings.general.general.latest_app_version')
-                        }}</span>
-                        <span v-if="latestAppVersion" class="block truncate text-xs" v-text="latestAppVersion"></span>
-                        <span v-else class="block truncate text-xs">{{
-                            t('view.settings.general.general.latest_app_version_refresh')
-                        }}</span>
-                    </div>
-                </div>
-                <div
-                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer"
-                    @click="openExternalLink(links.github)">
-                    <div class="flex-1 overflow-hidden">
-                        <span class="block truncate font-medium leading-[18px]">{{
-                            t('view.settings.general.general.repository_url')
-                        }}</span>
-                        <span v-once class="block truncate text-xs">{{ links.github }}</span>
-                    </div>
-                </div>
-                <div
-                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer"
-                    @click="openExternalLink(links.discord)">
-                    <div class="flex-1 overflow-hidden">
-                        <span class="block truncate font-medium leading-[18px]">{{
-                            t('view.settings.general.general.support')
-                        }}</span>
-                        <span v-once class="block truncate text-xs">{{ links.discord }}</span>
-                    </div>
+    <div class="flex flex-col gap-10 py-2">
+        <SettingsGroup :title="t('view.settings.general.general.header')">
+            <div class="flex flex-col gap-0.5 px-1 py-1">
+                <div class="flex-1">
+                    <span class="block truncate font-medium text-sm leading-[18px]">{{
+                        t('view.settings.general.general.version')
+                    }}</span>
+                    <span class="block truncate text-xs text-muted-foreground" v-text="appVersion"></span>
                 </div>
             </div>
-        </div>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.general.vrcx_updater.header') }}</span>
-            <div class="options-container-item">
-                <Button size="sm" variant="outline" class="mr-2" @click="showChangeLogDialog">{{
+
+            <div class="flex flex-col gap-0.5 px-1 py-1 cursor-pointer" @click="checkForVRCXUpdate">
+                <div class="flex-1">
+                    <span class="block truncate font-medium text-sm leading-[18px]">{{
+                        t('view.settings.general.general.latest_app_version')
+                    }}</span>
+                    <span v-if="latestAppVersion" class="block truncate text-xs text-muted-foreground" v-text="latestAppVersion"></span>
+                    <span v-else class="block truncate text-xs text-muted-foreground">{{
+                        t('view.settings.general.general.latest_app_version_refresh')
+                    }}</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-0.5 px-1 py-1 cursor-pointer" @click="openExternalLink(links.github)">
+                <div class="flex-1">
+                    <span class="block truncate font-medium text-sm leading-[18px]">{{
+                        t('view.settings.general.general.repository_url')
+                    }}</span>
+                    <span v-once class="block truncate text-xs text-muted-foreground">{{ links.github }}</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-0.5 px-1 py-1 cursor-pointer" @click="openExternalLink(links.discord)">
+                <div class="flex-1">
+                    <span class="block truncate font-medium text-sm leading-[18px]">{{
+                        t('view.settings.general.general.support')
+                    }}</span>
+                    <span v-once class="block truncate text-xs text-muted-foreground">{{ links.discord }}</span>
+                </div>
+            </div>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.general.vrcx_updater.header')">
+            <div class="flex gap-2">
+                <Button size="sm" variant="outline" @click="showChangeLogDialog">{{
                     t('view.settings.general.vrcx_updater.change_log')
                 }}</Button>
-                <Button size="sm" variant="outline" v-if="!noUpdater" @click="showVRCXUpdateDialog()">{{
+                <Button v-if="!noUpdater" size="sm" variant="outline" @click="showVRCXUpdateDialog()">{{
                     t('view.settings.general.vrcx_updater.change_build')
                 }}</Button>
             </div>
-            <div v-if="!noUpdater" class="text-sm mt-2 flex flex-col align-baseline">
-                <span class="name">{{ t('view.settings.general.vrcx_updater.update_action') }}</span>
-                <ToggleGroup
-                    class="mt-1.5"
-                    type="single"
-                    required
-                    variant="outline"
-                    size="sm"
-                    :model-value="autoUpdateVRCX"
-                    @update:model-value="setAutoUpdateVRCX">
-                    <ToggleGroupItem value="Off">{{
-                        t('view.settings.general.vrcx_updater.auto_update_off')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Notify">{{
-                        t('view.settings.general.vrcx_updater.auto_update_notify')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Auto Download">{{
-                        t('view.settings.general.vrcx_updater.auto_update_download')
-                    }}</ToggleGroupItem>
-                </ToggleGroup>
+
+            <template v-if="!noUpdater">
+                <SettingsItem :label="t('view.settings.general.vrcx_updater.update_action')">
+                    <ToggleGroup
+                        type="single"
+                        required
+                        variant="outline"
+                        size="sm"
+                        :model-value="autoUpdateVRCX"
+                        @update:model-value="setAutoUpdateVRCX">
+                        <ToggleGroupItem value="Off">{{
+                            t('view.settings.general.vrcx_updater.auto_update_off')
+                        }}</ToggleGroupItem>
+                        <ToggleGroupItem value="Notify">{{
+                            t('view.settings.general.vrcx_updater.auto_update_notify')
+                        }}</ToggleGroupItem>
+                        <ToggleGroupItem value="Auto Download">{{
+                            t('view.settings.general.vrcx_updater.auto_update_download')
+                        }}</ToggleGroupItem>
+                    </ToggleGroup>
+                </SettingsItem>
+            </template>
+            <div v-else class="text-sm text-muted-foreground">
+                {{ t('view.settings.general.vrcx_updater.updater_disabled') }}
             </div>
-            <div v-else class="options-container-item">
-                <span>{{ t('view.settings.general.vrcx_updater.updater_disabled') }}</span>
-            </div>
-        </div>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.general.application.header') }}</span>
-            <simple-switch
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.general.application.header')">
+            <SettingsItem v-if="!isLinux" :label="t('view.settings.general.application.startup')">
+                <Switch :model-value="isStartAtWindowsStartup" @update:modelValue="setIsStartAtWindowsStartup" />
+            </SettingsItem>
+
+            <SettingsItem
                 v-if="!isLinux"
-                :label="t('view.settings.general.application.startup')"
-                :value="isStartAtWindowsStartup"
-                @change="setIsStartAtWindowsStartup" />
-            <simple-switch
-                v-if="!isLinux"
-                :label="t('view.settings.general.application.minimized')"
-                :value="isStartAsMinimizedState"
-                @change="setIsStartAsMinimizedState" />
-            <simple-switch
+                :label="t('view.settings.general.application.minimized')">
+                <Switch :model-value="isStartAsMinimizedState" @update:modelValue="setIsStartAsMinimizedState" />
+            </SettingsItem>
+            <SettingsItem
                 v-else
                 :label="t('view.settings.general.application.minimized')"
-                :value="isStartAsMinimizedState"
-                :tooltip="t('view.settings.general.application.startup_linux')"
-                @change="setIsStartAsMinimizedState" />
-            <simple-switch
-                v-if="!isMacOS"
-                :label="t('view.settings.general.application.tray')"
-                :value="isCloseToTray"
-                @change="setIsCloseToTray" />
-            <simple-switch
+                :description="t('view.settings.general.application.startup_linux')">
+                <Switch :model-value="isStartAsMinimizedState" @update:modelValue="setIsStartAsMinimizedState" />
+            </SettingsItem>
+
+            <SettingsItem v-if="!isMacOS" :label="t('view.settings.general.application.tray')">
+                <Switch :model-value="isCloseToTray" @update:modelValue="setIsCloseToTray" />
+            </SettingsItem>
+
+            <SettingsItem
                 v-if="!isLinux"
                 :label="t('view.settings.general.application.disable_gpu_acceleration')"
-                :value="disableGpuAcceleration"
-                :tooltip="t('view.settings.general.application.disable_gpu_acceleration_tooltip')"
-                @change="setDisableGpuAcceleration" />
-            <simple-switch
+                :description="t('view.settings.general.application.disable_gpu_acceleration_tooltip')">
+                <Switch :model-value="disableGpuAcceleration" @update:modelValue="setDisableGpuAcceleration" />
+            </SettingsItem>
+
+            <SettingsItem
                 v-if="!isLinux"
                 :label="t('view.settings.general.application.disable_vr_overlay_gpu_acceleration')"
-                :value="disableVrOverlayGpuAcceleration"
-                :tooltip="t('view.settings.general.application.disable_gpu_acceleration_tooltip')"
-                @change="setDisableVrOverlayGpuAcceleration" />
-            <div class="options-container-item">
+                :description="t('view.settings.general.application.disable_gpu_acceleration_tooltip')">
+                <Switch
+                    :model-value="disableVrOverlayGpuAcceleration"
+                    @update:modelValue="setDisableVrOverlayGpuAcceleration" />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.general.application.proxy')">
                 <Button size="sm" variant="outline" @click="promptProxySettings">{{
                     t('view.settings.general.application.proxy')
                 }}</Button>
-            </div>
-        </div>
-        <div class="options-container">
-            <span class="header inline-flex items-center"
-                >{{ t('view.settings.general.favorites.header') }}
-                <TooltipWrapper side="top" :content="t('view.settings.general.favorites.header_tooltip')">
-                    <Info class="ml-1" style="width: 12px; height: 12px; vertical-align: middle; cursor: help" />
-                </TooltipWrapper>
-            </span>
-            <br />
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup>
+            <template #description>
+                <div class="flex items-center gap-1.5">
+                    <span class="text-base font-semibold text-foreground">{{ t('view.settings.general.favorites.header') }}</span>
+                    <TooltipWrapper side="top" :content="t('view.settings.general.favorites.header_tooltip')">
+                        <Info class="size-3 text-muted-foreground cursor-help" />
+                    </TooltipWrapper>
+                </div>
+            </template>
+
             <Select
                 :model-value="localFavoriteFriendsGroups"
                 multiple
                 @update:modelValue="setLocalFavoriteFriendsGroups">
-                <SelectTrigger class="mt-2">
+                <SelectTrigger>
                     <SelectValue :placeholder="t('view.settings.general.favorites.group_placeholder')" />
                 </SelectTrigger>
                 <SelectContent>
@@ -154,37 +157,39 @@
                     </template>
                 </SelectContent>
             </Select>
-        </div>
-        <div class="options-container">
-            <span class="header">{{ t('view.settings.general.contributors.header') }}</span>
-            <div class="options-container-item">
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.general.contributors.header')">
+            <div>
                 <img
                     src="https://contrib.rocks/image?repo=vrcx-team/VRCX"
                     alt="Contributors"
-                    style="cursor: pointer"
+                    class="cursor-pointer"
                     @click="openExternalLink('https://github.com/vrcx-team/VRCX/graphs/contributors')" />
             </div>
-        </div>
-        <div class="options-container border-t border-border" style="margin-top: 45px; padding-top: 30px">
-            <span class="header">{{ t('view.settings.general.legal_notice.header') }}</span>
-            <div class="options-container-item" style="display: block">
-                <p>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.general.legal_notice.header')">
+            <div class="flex flex-col gap-2 text-sm text-muted-foreground">
+                <p class="m-0">
                     &copy; 2019-2026
                     <a class="cursor-pointer" @click="openExternalLink('https://github.com/pypy-vrc')">pypy</a> &amp;
                     <a class="cursor-pointer" @click="openExternalLink('https://github.com/Natsumi-sama')">Natsumi</a>
                     &amp;
                     <a class="cursor-pointer" @click="openExternalLink('https://github.com/Map1en')">Map1en</a>
                 </p>
-                <p>{{ t('view.settings.general.legal_notice.info') }}</p>
-                <p>{{ t('view.settings.general.legal_notice.disclaimer1') }}</p>
-                <p>{{ t('view.settings.general.legal_notice.disclaimer2') }}</p>
+                <p class="m-0">{{ t('view.settings.general.legal_notice.info') }}</p>
+                <p class="m-0">{{ t('view.settings.general.legal_notice.disclaimer1') }}</p>
+                <p class="m-0">{{ t('view.settings.general.legal_notice.disclaimer2') }}</p>
             </div>
-            <div class="options-container-item">
+
+            <SettingsItem :label="t('view.settings.general.legal_notice.open_source_software_notice')">
                 <Button size="sm" variant="outline" @click="openOSSDialog">{{
                     t('view.settings.general.legal_notice.open_source_software_notice')
                 }}</Button>
-            </div>
-        </div>
+            </SettingsItem>
+        </SettingsGroup>
+
         <OpenSourceSoftwareNoticeDialog v-if="ossDialog" v-model:ossDialog="ossDialog" />
     </div>
 </template>
@@ -192,6 +197,7 @@
 <script setup>
     import { computed, defineAsyncComponent, ref } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { Switch } from '@/components/ui/switch';
     import { Info } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -204,14 +210,14 @@
         SelectSeparator,
         SelectTrigger,
         SelectValue
-    } from '../../../../components/ui/select';
-    import { useFavoriteStore, useGeneralSettingsStore, useVRCXUpdaterStore } from '../../../../stores';
-    import { ToggleGroup, ToggleGroupItem } from '../../../../components/ui/toggle-group';
-    import { links } from '../../../../shared/constants';
-    import { openExternalLink } from '../../../../shared/utils';
+    } from '@/components/ui/select';
+    import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+    import { useFavoriteStore, useGeneralSettingsStore, useVRCXUpdaterStore } from '@/stores';
+    import { links } from '@/shared/constants';
+    import { openExternalLink } from '@/shared/utils';
 
-    import SimpleSwitch from '../SimpleSwitch.vue';
-    import TooltipWrapper from '../../../../components/ui/tooltip/TooltipWrapper.vue';
+    import SettingsGroup from '../SettingsGroup.vue';
+    import SettingsItem from '../SettingsItem.vue';
 
     const { t } = useI18n();
 
