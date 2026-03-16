@@ -27,6 +27,17 @@
             </DropdownMenu>
         </div>
         <div class="x-login">
+            <Alert
+                v-if="vrcStatusStore.hasIssue"
+                :variant="vrcStatusStore.isMajor ? 'destructive' : 'warning'"
+                class="cursor-pointer mb-3 hover:opacity-80 transition-opacity"
+                @click="vrcStatusStore.openStatusPage()">
+                <TriangleAlert class="size-4" />
+                <AlertTitle class="truncate">{{ t('status_bar.servers_issue') }}</AlertTitle>
+                <AlertDescription class="truncate">
+                    {{ vrcStatusStore.statusText }}
+                </AlertDescription>
+            </Alert>
             <div class="x-login-form-container">
                 <div>
                     <h2 class="m-0" style="font-weight: bold; text-align: center">{{ t('view.login.login') }}</h2>
@@ -164,6 +175,7 @@
 </template>
 
 <script setup>
+    import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
     import { Field, FieldContent, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
     import {
         DropdownMenu,
@@ -174,7 +186,7 @@
     import { onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
-    import { ArrowBigDownDash, Languages, Trash2, User } from 'lucide-vue-next';
+    import { ArrowBigDownDash, Languages, Trash2, TriangleAlert, User } from 'lucide-vue-next';
     import { Field as VeeField, useForm } from 'vee-validate';
     import { useRoute, useRouter } from 'vue-router';
     import { Button } from '@/components/ui/button';
@@ -185,7 +197,7 @@
     import { useI18n } from 'vue-i18n';
     import { z } from 'zod';
 
-    import { useAppearanceSettingsStore, useAuthStore, useVRCXUpdaterStore } from '../../stores';
+    import { useAppearanceSettingsStore, useAuthStore, useVrcStatusStore, useVRCXUpdaterStore } from '../../stores';
     import { getLanguageName, languageCodes } from '../../localization';
     import { openExternalLink } from '../../shared/utils';
     import { useUserDisplay } from '../../composables/useUserDisplay';
@@ -204,6 +216,8 @@
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { appLanguage } = storeToRefs(appearanceSettingsStore);
     const { changeAppLanguage } = appearanceSettingsStore;
+
+    const vrcStatusStore = useVrcStatusStore();
 
     const { t } = useI18n();
 
