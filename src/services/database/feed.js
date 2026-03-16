@@ -67,6 +67,26 @@ const feed = {
         );
     },
 
+    /**
+     * Purges avatar feed data from the database.
+     * !!!!
+     * @param {string|null} cutoffDate - ISO date string. Deletes records older than this date. If null, deletes all records.
+     */
+    async purgeAvatarFeedData(cutoffDate) {
+        if (cutoffDate) {
+            await sqliteService.executeNonQuery(
+                `DELETE FROM ${dbVars.userPrefix}_feed_avatar WHERE created_at < @cutoff`,
+                {
+                    '@cutoff': cutoffDate
+                }
+            );
+        } else {
+            await sqliteService.executeNonQuery(
+                `DELETE FROM ${dbVars.userPrefix}_feed_avatar`
+            );
+        }
+    },
+
     addOnlineOfflineToDatabase(entry) {
         sqliteService.executeNonQuery(
             `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_online_offline (created_at, user_id, display_name, type, location, world_name, time, group_name) VALUES (@created_at, @user_id, @display_name, @type, @location, @world_name, @time, @group_name)`,

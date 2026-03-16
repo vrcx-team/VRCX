@@ -247,7 +247,81 @@
             </div>
         </SettingsGroup>
 
+        <SettingsGroup :title="t('view.settings.advanced.advanced.database_cleanup.header')">
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.database_cleanup.auto_cleanup')"
+                :description="t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_description')">
+                <Select :model-value="avatarAutoCleanup" @update:modelValue="setAvatarAutoCleanup">
+                    <SelectTrigger class="w-36">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem value="Off">{{ t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_off') }}</SelectItem>
+                            <SelectItem value="30">{{ t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_30') }}</SelectItem>
+                            <SelectItem value="90">{{ t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_90') }}</SelectItem>
+                            <SelectItem value="180">{{ t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_180') }}</SelectItem>
+                            <SelectItem value="365">{{ t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_365') }}</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.advanced.advanced.database_cleanup.purge_button')">
+                <Button size="sm" variant="outline" @click="isPurgeDialogVisible = true">
+                    <Trash2 class="h-4 w-4 mr-1" />
+                    {{ t('view.settings.advanced.advanced.database_cleanup.purge') }}
+                </Button>
+            </SettingsItem>
+        </SettingsGroup>
+
+        <Dialog :open="isPurgeDialogVisible" @update:open="(open) => { if (!open) isPurgeDialogVisible = false; }">
+            <DialogContent class="x-dialog sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle>{{ t('view.settings.advanced.advanced.database_cleanup.purge_confirm_title') }}</DialogTitle>
+                </DialogHeader>
+
+                <Alert variant="warning" class="mb-3">
+                    <TriangleAlert />
+                    <AlertDescription>
+                        {{ t('view.settings.advanced.advanced.database_cleanup.purge_confirm_description') }}
+                    </AlertDescription>
+                </Alert>
+
+                <SettingsItem :label="t('view.settings.advanced.advanced.database_cleanup.purge_older_than')">
+                    <Select v-model="selectedPurgePeriod">
+                        <SelectTrigger class="w-36">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="180">{{ t('view.settings.advanced.advanced.database_cleanup.purge_option_180') }}</SelectItem>
+                                <SelectItem value="365">{{ t('view.settings.advanced.advanced.database_cleanup.purge_option_365') }}</SelectItem>
+                                <SelectItem value="730">{{ t('view.settings.advanced.advanced.database_cleanup.purge_option_730') }}</SelectItem>
+                                <SelectItem value="all">{{ t('view.settings.advanced.advanced.database_cleanup.purge_option_all') }}</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </SettingsItem>
+
+                <DialogFooter>
+                    <Button variant="outline" size="sm" @click="isPurgeDialogVisible = false">
+                        {{ t('confirm.cancel_button') }}
+                    </Button>
+                    <Button
+                        size="sm"
+                        variant="destructive"
+                        :disabled="purgeInProgress"
+                        @click="handlePurge">
+                        <Trash2 class="h-4 w-4 mr-1" />
+                        {{ t('view.settings.advanced.advanced.database_cleanup.purge_confirm_button') }}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
         <SettingsGroup :title="t('view.profile.config_json')">
+
             <div class="flex items-center gap-2">
                 <TooltipWrapper side="top" :content="t('view.profile.refresh_tooltip')">
                     <Button class="rounded-full" size="icon-sm" variant="outline" @click="refreshConfigTreeData()">
@@ -280,10 +354,13 @@
 </template>
 
 <script setup>
-    import { Languages, RefreshCcw, Trash2 } from 'lucide-vue-next';
+    import { Languages, RefreshCcw, Trash2, TriangleAlert } from 'lucide-vue-next';
     import { computed, reactive, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Switch } from '@/components/ui/switch';
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { Alert, AlertDescription } from '@/components/ui/alert';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -368,6 +445,8 @@
         showConfirmationOnSwitchAvatar,
         gameLogDisabled,
         sqliteTableSizes,
+        avatarAutoCleanup,
+        purgeInProgress,
         sentryErrorReporting
     } = storeToRefs(advancedSettingsStore);
 
@@ -382,6 +461,8 @@
         setEnableAppLauncherRunProcessOnce,
         setShowConfirmationOnSwitchAvatar,
         getSqliteTableSizes,
+        setAvatarAutoCleanup,
+        purgeAvatarFeedData,
         showVRChatConfig,
         promptAutoClearVRCXCacheFrequency,
         setSentryErrorReporting
@@ -394,6 +475,8 @@
     const isTranslationApiDialogVisible = ref(false);
     const configTreeData = ref({});
     const visits = ref(0);
+    const selectedPurgePeriod = ref('180');
+    const isPurgeDialogVisible = ref(false);
 
     const cacheSize = reactive({
         cachedUsers: 0,
@@ -405,6 +488,14 @@
     });
 
     const isLinux = computed(() => LINUX);
+
+    function handlePurge() {
+        const days =
+            selectedPurgePeriod.value === 'all'
+                ? null
+                : parseInt(selectedPurgePeriod.value, 10);
+        purgeAvatarFeedData(days);
+    }
 
     /**
      *
