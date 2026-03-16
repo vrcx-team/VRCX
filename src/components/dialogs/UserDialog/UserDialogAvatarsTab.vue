@@ -27,8 +27,8 @@
             }}</span>
         </div>
         <div class="flex items-center">
+            <Input v-model="avatarSearchQuery" class="h-8 w-40 mr-2" placeholder="Search avatars" @click.stop />
             <template v-if="userDialog.ref.id === currentUser.id">
-                <Input v-model="avatarSearchQuery" class="h-8 w-40 mr-2" placeholder="Search avatars" @click.stop />
                 <span class="mr-1">{{ t('dialog.user.avatars.sort_by') }}</span>
                 <Select
                     :model-value="userDialog.avatarSorting"
@@ -136,9 +136,6 @@
     const avatarSearchQuery = ref('');
     const filteredUserDialogAvatars = computed(() => {
         const avatars = userDialogAvatars.value;
-        if (userDialog.value.ref?.id !== currentUser.value.id) {
-            return avatars;
-        }
         const query = avatarSearchQuery.value.trim().toLowerCase();
         if (!query) {
             return avatars;

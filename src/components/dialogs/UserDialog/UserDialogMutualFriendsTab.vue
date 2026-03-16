@@ -15,6 +15,7 @@
             }}</span>
         </div>
         <div style="display: flex; align-items: center">
+            <Input v-model="searchQuery" class="h-8 w-40 mr-2" placeholder="Search friends" @click.stop />
             <span style="margin-right: 6px">{{ t('dialog.user.groups.sort_by') }}</span>
             <Select
                 :model-value="userDialogMutualFriendSortingKey"
@@ -36,7 +37,7 @@
     </div>
     <ul class="flex flex-wrap items-start" style="margin-top: 8px; overflow: auto; max-height: 250px; min-width: 130px">
         <li
-            v-for="user in userDialog.mutualFriends"
+            v-for="user in filteredMutualFriends"
             :key="user.id"
             class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
             @click="showUserDialog(user.id)">
@@ -64,6 +65,8 @@
     import { Button } from '@/components/ui/button';
     import { RefreshCw, User } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
+    import { Input } from '@/components/ui/input';
+    import { computed, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -88,6 +91,15 @@
             () => userDialog.value.mutualFriendSorting,
             setUserDialogMutualFriendSorting
         );
+
+    const searchQuery = ref('');
+    const filteredMutualFriends = computed(() => {
+        const friends = userDialog.value.mutualFriends;
+        const query = searchQuery.value.trim().toLowerCase();
+        if (!query) return friends;
+        return friends.filter((u) => (u.displayName || '').toLowerCase().includes(query));
+    });
+    watch(() => userDialog.value.id, () => { searchQuery.value = ''; });
 
     /**
      *

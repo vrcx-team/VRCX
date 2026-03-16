@@ -19,6 +19,7 @@
         </div>
         <div style="display: flex; align-items: center">
             <template v-if="!userDialogGroupEditMode">
+                <Input v-model="groupSearchQuery" class="h-8 w-40 mr-2" placeholder="Search groups" @click.stop />
                 <span style="margin-right: 6px">{{ t('dialog.user.groups.sort_by') }}</span>
                 <Select
                     :model-value="userDialogGroupSortingKey"
@@ -236,6 +237,36 @@
                 </div>
             </div>
         </template>
+        <template v-else-if="groupSearchActive">
+            <div class="flex flex-wrap items-start" style="margin-top: 8px; min-height: 60px">
+                <div
+                    v-for="group in allFilteredGroups"
+                    :key="group.id"
+                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
+                    @click="showGroupDialog(group.id)">
+                    <div class="relative inline-block flex-none size-9 mr-2.5">
+                        <Avatar class="size-9">
+                            <AvatarImage :src="group.iconUrl" class="object-cover" />
+                            <AvatarFallback>
+                                <Users class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
+                    </div>
+                    <div class="flex-1 overflow-hidden">
+                        <span class="block truncate font-medium leading-[18px]" v-text="group.name"></span>
+                        <div class="block truncate text-xs inline-flex! items-center">
+                            <TooltipWrapper
+                                v-if="group.isRepresenting"
+                                side="top"
+                                :content="t('dialog.group.members.representing')">
+                                <Tag style="margin-right: 6px" />
+                            </TooltipWrapper>
+                            <span>({{ group.memberCount }})</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
         <template v-else>
             <template v-if="userDialog.userGroups.ownGroups.length > 0">
                 <span class="text-base font-bold">{{ t('dialog.user.groups.own_groups') }}</span>
@@ -384,9 +415,10 @@
     import { ArrowDown, ArrowUp, DownloadIcon, Eye, LogOut, RefreshCw, Tag, Users } from 'lucide-vue-next';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { nextTick, ref } from 'vue';
+    import { computed, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
+    import { Input } from '@/components/ui/input';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -425,6 +457,15 @@
         () => userDialog.value.groupSorting,
         setUserDialogGroupSorting
     );
+
+    const groupSearchQuery = ref('');
+    const groupSearchActive = computed(() => groupSearchQuery.value.trim().length > 0);
+    const allFilteredGroups = computed(() => {
+        const query = groupSearchQuery.value.trim().toLowerCase();
+        if (!query) return [];
+        return userDialog.value.userGroups.groups.filter((g) => (g.name || '').toLowerCase().includes(query));
+    });
+    watch(() => userDialog.value.id, () => { groupSearchQuery.value = ''; });
 
     /**
      *
