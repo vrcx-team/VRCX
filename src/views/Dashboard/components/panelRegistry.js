@@ -35,6 +35,9 @@ export const panelComponentMap = {
     'charts-mutual': defineAsyncComponent(
         () => import('../../Charts/components/MutualFriends.vue')
     ),
+    'charts-hot-worlds': defineAsyncComponent(
+        () => import('../../Charts/components/HotWorlds.vue')
+    ),
     tools: Tools,
     'widget:feed': defineAsyncComponent(
         () => import('../widgets/FeedWidget.vue')

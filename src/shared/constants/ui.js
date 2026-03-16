@@ -107,6 +107,13 @@ const navDefinitions = [
         routeName: 'charts-mutual'
     },
     {
+        key: 'charts-hot-worlds',
+        icon: 'ri-fire-line',
+        tooltip: 'view.charts.hot_worlds.tab_label',
+        labelKey: 'view.charts.hot_worlds.tab_label',
+        routeName: 'charts-hot-worlds'
+    },
+    {
         key: 'tools',
         icon: 'ri-tools-line',
         tooltip: 'nav_tooltip.tools',

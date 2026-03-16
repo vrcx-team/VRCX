@@ -604,6 +604,133 @@ const feed = {
             { '@userId': userId }
         );
         return data;
+    },
+
+    /**
+     * @param {number} days - Number of days to look back
+     * @param {number} limit - Max number of worlds to return
+     * @returns {Promise<Array>} Ranked list of hot worlds
+     */
+    async getHotWorlds(days = 30, limit = 30) {
+        const halfDays = Math.floor(days / 2);
+        const results = [];
+        await sqliteService.execute(
+            (dbRow) => {
+                results.push({
+                    worldId: dbRow[0],
+                    worldName: dbRow[1],
+                    visitCount: dbRow[2],
+                    uniqueFriends: dbRow[3],
+                    lastVisited: dbRow[4]
+                });
+            },
+            `SELECT
+                SUBSTR(location, 1, INSTR(location, ':') - 1) AS world_id,
+                world_name,
+                COUNT(*) AS visit_count,
+                COUNT(DISTINCT user_id) AS unique_friends,
+                MAX(created_at) AS last_visited
+            FROM ${dbVars.userPrefix}_feed_gps
+            WHERE created_at >= datetime('now', @daysOffset)
+                AND location LIKE 'wrld_%'
+                AND INSTR(location, ':') > 0
+                AND world_name IS NOT NULL AND world_name != ''
+            GROUP BY world_id
+            ORDER BY unique_friends DESC, visit_count DESC
+            LIMIT @limit`,
+            {
+                '@daysOffset': `-${days} days`,
+                '@limit': limit
+            }
+        );
+
+        const trendMap = new Map();
+        await sqliteService.execute(
+            (dbRow) => {
+                trendMap.set(dbRow[0], dbRow[1]);
+            },
+            `SELECT
+                SUBSTR(location, 1, INSTR(location, ':') - 1) AS world_id,
+                COUNT(DISTINCT user_id) AS unique_friends
+            FROM ${dbVars.userPrefix}_feed_gps
+            WHERE created_at >= datetime('now', @daysOffset)
+                AND created_at < datetime('now', @halfOffset)
+                AND location LIKE 'wrld_%'
+                AND INSTR(location, ':') > 0
+                AND world_name IS NOT NULL AND world_name != ''
+            GROUP BY world_id`,
+            {
+                '@daysOffset': `-${days} days`,
+                '@halfOffset': `-${halfDays} days`
+            }
+        );
+
+        const recentMap = new Map();
+        await sqliteService.execute(
+            (dbRow) => {
+                recentMap.set(dbRow[0], dbRow[1]);
+            },
+            `SELECT
+                SUBSTR(location, 1, INSTR(location, ':') - 1) AS world_id,
+                COUNT(DISTINCT user_id) AS unique_friends
+            FROM ${dbVars.userPrefix}_feed_gps
+            WHERE created_at >= datetime('now', @halfOffset)
+                AND location LIKE 'wrld_%'
+                AND INSTR(location, ':') > 0
+                AND world_name IS NOT NULL AND world_name != ''
+            GROUP BY world_id`,
+            {
+                '@halfOffset': `-${halfDays} days`
+            }
+        );
+
+        for (const world of results) {
+            const oldFriends = trendMap.get(world.worldId) || 0;
+            const newFriends = recentMap.get(world.worldId) || 0;
+            if (newFriends > oldFriends) {
+                world.trend = 'rising';
+            } else if (newFriends < oldFriends) {
+                world.trend = 'cooling';
+            } else {
+                world.trend = 'stable';
+            }
+        }
+
+        return results;
+    },
+
+    /**
+     * @param {string} worldId - The world ID (e.g. wrld_xxx)
+     * @param {number} days - Number of days to look back
+     * @returns {Promise<Array>} List of friends who visited
+     */
+    async getHotWorldFriendDetail(worldId, days = 30) {
+        const results = [];
+        await sqliteService.execute(
+            (dbRow) => {
+                results.push({
+                    userId: dbRow[0],
+                    displayName: dbRow[1],
+                    visitCount: dbRow[2],
+                    lastVisit: dbRow[3]
+                });
+            },
+            `SELECT
+                user_id,
+                display_name,
+                COUNT(*) AS visit_count,
+                MAX(created_at) AS last_visit
+            FROM ${dbVars.userPrefix}_feed_gps
+            WHERE SUBSTR(location, 1, INSTR(location, ':') - 1) = @worldId
+                AND created_at >= datetime('now', @daysOffset)
+            GROUP BY user_id
+            ORDER BY visit_count DESC`,
+            {
+                '@worldId': worldId,
+                '@daysOffset': `-${days} days`
+            }
+        );
+        return results;
     }
 };
 

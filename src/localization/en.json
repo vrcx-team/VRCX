@@ -542,6 +542,39 @@
                     "exclude_friends_placeholder": "Select friends to exclude",
                     "exclude_friends_help": "Selected friends will be hidden from the graph."
                 }
+            },
+            "hot_worlds": {
+                "tab_label": "Hot Worlds",
+                "header": "Hot Worlds",
+                "refresh": "Refresh",
+                "sorted_by": "Sorted by unique friends",
+                "tips": {
+                    "description": "Shows which worlds your friends have been visiting the most. Ranked by the number of unique friends who visited. Trend compares the first half vs second half of the selected period."
+                },
+                "period": {
+                    "days_7": "Last 7d",
+                    "days_30": "Last 30d",
+                    "days_90": "Last 90d"
+                },
+                "trend": {
+                    "rising": "Rising",
+                    "cooling": "Cooling"
+                },
+                "stats_line": {
+                    "friends": "{count} friends",
+                    "visits": "{count} visits"
+                },
+                "stats": {
+                    "top_friends": "top friends",
+                    "total_visits": "total visits",
+                    "rising": "rising",
+                    "cooling": "cooling"
+                },
+                "sheet": {
+                    "friends_who_visited": "Friends who visited"
+                },
+                "no_friend_data": "No friend visit data",
+                "friend_visits": "{count} visits"
             }
         },
         "tools": {
