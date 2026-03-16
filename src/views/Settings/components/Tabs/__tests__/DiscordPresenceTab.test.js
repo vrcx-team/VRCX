@@ -33,12 +33,23 @@ vi.mock('../../../../../stores', () => ({
     })
 }));
 
-vi.mock('../../SimpleSwitch.vue', () => ({
-    default: {
-        props: ['label', 'disabled'],
-        emits: ['change'],
+vi.mock('@/components/ui/switch', () => ({
+    Switch: {
+        props: ['modelValue', 'disabled'],
+        emits: ['update:modelValue'],
         template:
-            '<div data-testid="simple-switch" :data-label="label" :data-disabled="disabled"><button class="emit-change" @click="$emit(\'change\', true)" /></div>'
+            '<button data-testid="switch" :data-disabled="disabled || undefined" @click="$emit(\'update:modelValue\', !modelValue)"><slot /></button>'
+    }
+}));
+
+vi.mock('../../SettingsGroup.vue', () => ({
+    default: { template: '<div><slot /><slot name="description" /></div>' }
+}));
+
+vi.mock('../../SettingsItem.vue', () => ({
+    default: {
+        props: ['label', 'description'],
+        template: '<div :data-label="label"><slot /></div>'
     }
 }));
 
@@ -57,7 +68,7 @@ describe('DiscordPresenceTab.vue', () => {
         const wrapper = mount(DiscordPresenceTab);
 
         const tooltipRow = wrapper
-            .findAll('div.options-container-item')
+            .findAll('p')
             .find((node) =>
                 node
                     .text()
@@ -65,11 +76,13 @@ describe('DiscordPresenceTab.vue', () => {
                         'view.settings.discord_presence.discord_presence.enable_tooltip'
                     )
             );
+        expect(tooltipRow).toBeTruthy();
         await tooltipRow.trigger('click');
 
         expect(mocks.showVRChatConfig).toHaveBeenCalledTimes(1);
 
-        await wrapper.findAll('.emit-change')[0].trigger('click');
+        const switches = wrapper.findAll('[data-testid="switch"]');
+        await switches[0].trigger('click');
         expect(mocks.discordStore.setDiscordActive).toHaveBeenCalledTimes(1);
         expect(mocks.discordStore.saveDiscordOption).toHaveBeenCalled();
     });
@@ -78,12 +91,9 @@ describe('DiscordPresenceTab.vue', () => {
         mocks.discordStore.discordActive.value = false;
         const wrapper = mount(DiscordPresenceTab);
 
-        const worldIntegration = wrapper
-            .findAll('[data-testid="simple-switch"]')
-            .find((node) =>
-                node.attributes('data-label')?.includes('world_integration')
-            );
+        const switches = wrapper.findAll('[data-testid="switch"]');
+        const worldIntegrationSwitch = switches[1];
 
-        expect(worldIntegration?.attributes('data-disabled')).toBe('true');
+        expect(worldIntegrationSwitch?.attributes('data-disabled')).toBe('true');
     });
 });

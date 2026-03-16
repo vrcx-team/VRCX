@@ -39,6 +39,13 @@ vi.mock('../../../../services/database', () => ({
     }
 }));
 
+vi.mock('../../../../composables/useRecentActions', () => ({
+    recordRecentAction: vi.fn(),
+    useRecentActions: () => ({
+        isRecentAction: vi.fn(() => false)
+    })
+}));
+
 // Import mocks after vi.mock
 const { copyToClipboard } = await import('../../../../shared/utils');
 const {

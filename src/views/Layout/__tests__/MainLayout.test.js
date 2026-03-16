@@ -9,9 +9,13 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
-vi.mock('vue-router', () => ({
-    useRouter: () => ({ replace: (...a) => mocks.replace(...a) })
-}));
+vi.mock('vue-router', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        useRouter: () => ({ replace: (...a) => mocks.replace(...a) })
+    };
+});
 vi.mock('../../../services/watchState', () => ({
     watchState: { isLoggedIn: false }
 }));

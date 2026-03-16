@@ -44,7 +44,14 @@ vi.mock('../../../stores', () => ({
         photonLoggingEnabled: mocks.photonLoggingEnabled,
         chatboxUserBlacklist: mocks.chatboxUserBlacklist,
         saveChatboxUserBlacklist: (...args) =>
-            mocks.saveChatboxUserBlacklist(...args)
+            mocks.saveChatboxUserBlacklist(...args),
+        photonEventTable: ref({ data: [], pageSize: 10 }),
+        photonEventTablePrevious: ref({ data: [], pageSize: 10 }),
+        photonEventTableTypeFilter: ref([]),
+        photonEventTableFilter: ref(''),
+        photonEventIcon: ref(false),
+        photonEventTableFilterChange: vi.fn(),
+        showUserFromPhotonId: vi.fn()
     }),
     useUserStore: () => ({
         currentUser: mocks.currentUser
@@ -65,6 +72,18 @@ vi.mock('../../../stores', () => ({
     useGalleryStore: () => ({
         showFullscreenImageDialog: (...args) =>
             mocks.showFullscreenImageDialog(...args)
+    }),
+    useSearchStore: () => ({
+        stringComparer: { value: (a, b) => a.localeCompare(b) }
+    }),
+    useAvatarStore: () => ({
+        showAvatarDialog: vi.fn()
+    }),
+    useGroupStore: () => ({
+        showGroupDialog: vi.fn()
+    }),
+    useVrcxStore: () => ({
+        ipcEnabled: ref(false)
     })
 }));
 
@@ -142,12 +161,14 @@ vi.mock('../dialogs/ChatboxBlacklistDialog.vue', () => ({
     }
 }));
 
-vi.mock('lucide-vue-next', () => ({
-    Apple: { template: '<span />' },
-    Home: { template: '<span />' },
-    Monitor: { template: '<span />' },
-    Smartphone: { template: '<span />' }
-}));
+vi.mock('lucide-vue-next', async (importOriginal) => {
+    const actual = await importOriginal();
+    const stubs = {};
+    for (const key of Object.keys(actual)) {
+        stubs[key] = { template: '<span />' };
+    }
+    return stubs;
+});
 
 import PlayerList from '../PlayerList.vue';
 

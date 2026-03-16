@@ -39,19 +39,20 @@ vi.mock('pinia', async (importOriginal) => {
 
 vi.mock('../../../stores', () => ({
     useFriendStore: () => ({ friends }),
-    useGalleryStore: () => ({ showGalleryPage })
-}));
-
-vi.mock('../../../stores/settings/advanced', () => ({
-    useAdvancedSettingsStore: () => ({ showVRChatConfig })
-}));
-
-vi.mock('../../../stores/launch', () => ({
-    useLaunchStore: () => ({ showLaunchOptions })
-}));
-
-vi.mock('../../../stores/vrcx', () => ({
+    useGalleryStore: () => ({ showGalleryPage }),
+    useToolsStore: () => ({ openDialog: vi.fn() }),
+    useAdvancedSettingsStore: () => ({ showVRChatConfig }),
+    useLaunchStore: () => ({ showLaunchOptions }),
     useVrcxStore: () => ({ showRegistryBackupDialog })
+}));
+
+vi.mock('../../../composables/useToolNavPinning', () => ({
+    useToolNavPinning: () => ({
+        pinToolToNav: vi.fn(),
+        pinnedToolKeys: new Set(),
+        refreshPinnedState: vi.fn().mockResolvedValue(undefined),
+        unpinToolFromNav: vi.fn()
+    })
 }));
 
 vi.mock('../../../services/config.js', () => ({
@@ -63,6 +64,13 @@ vi.mock('../../../services/config.js', () => ({
 
 vi.mock('../dialogs/AutoChangeStatusDialog.vue', () => ({
     default: { template: '<div />' }
+}));
+
+vi.mock('../../../components/ui/tooltip', () => ({
+    TooltipWrapper: {
+        template: '<div><slot /></div>',
+        props: ['content', 'disabled', 'side']
+    }
 }));
 
 import Tools from '../Tools.vue';
@@ -113,7 +121,7 @@ describe('Tools.vue', () => {
         expect(galleryItem).toBeTruthy();
         await galleryItem.trigger('click');
 
-        expect(showGalleryPage).toHaveBeenCalled();
+        expect(push).toHaveBeenCalledWith({ name: 'gallery' });
     });
 
     test('toggle category persists collapsed state', async () => {

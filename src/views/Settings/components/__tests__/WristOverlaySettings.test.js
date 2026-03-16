@@ -53,6 +53,15 @@ vi.mock('@/components/ui/button', () => ({
     }
 }));
 
+vi.mock('@/components/ui/switch', () => ({
+    Switch: {
+        props: ['modelValue', 'disabled'],
+        emits: ['update:modelValue'],
+        template:
+            '<button data-testid="switch" :data-disabled="disabled || undefined" @click="$emit(\'update:modelValue\', !modelValue)"><slot /></button>'
+    }
+}));
+
 vi.mock('../../../../components/ui/radio-group', () => ({
     RadioGroup: {
         props: ['modelValue', 'disabled'],
@@ -72,13 +81,12 @@ vi.mock('../../../../components/ui/toggle-group', () => ({
     ToggleGroupItem: { template: '<div><slot /></div>' }
 }));
 
-vi.mock('../SimpleSwitch.vue', () => ({
-    default: {
-        props: ['label'],
-        emits: ['change'],
-        template:
-            '<div data-testid="simple-switch" :data-label="label"><button class="emit-change" @click="$emit(\'change\', true)" /></div>'
-    }
+vi.mock('../SettingsGroup.vue', () => ({
+    default: { template: '<div><slot /><slot name="description" /></div>' }
+}));
+
+vi.mock('../SettingsItem.vue', () => ({
+    default: { template: '<div><slot /></div>' }
 }));
 
 import WristOverlaySettings from '../WristOverlaySettings.vue';
@@ -102,7 +110,8 @@ describe('WristOverlaySettings.vue', () => {
         await wrapper.get('[data-testid="filters-btn"]').trigger('click');
         expect(wrapper.emitted('open-feed-filters')).toBeTruthy();
 
-        await wrapper.findAll('.emit-change')[0].trigger('click');
+        const switches = wrapper.findAll('[data-testid="switch"]');
+        await switches[0].trigger('click');
         expect(mocks.notificationsStore.setOpenVR).toHaveBeenCalledTimes(1);
         expect(mocks.saveOpenVROption).toHaveBeenCalled();
 

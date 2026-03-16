@@ -223,13 +223,13 @@ describe('UserDialogAvatarsTab.vue', () => {
             expect(input.exists()).toBe(true);
         });
 
-        test('does not render search input for other users', () => {
+        test('renders search input for other users too', () => {
             const wrapper = mountComponent({
                 id: 'usr_other',
                 ref: { id: 'usr_other' }
             });
             const input = wrapper.find('input');
-            expect(input.exists()).toBe(false);
+            expect(input.exists()).toBe(true);
         });
 
         test('filters avatars by search query', async () => {

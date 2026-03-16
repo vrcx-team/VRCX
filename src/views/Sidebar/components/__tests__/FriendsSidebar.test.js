@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
     appearanceStore: {
         isSidebarGroupByInstance: { value: false },
         isHideFriendsInSameInstance: { value: false },
+        isSameInstanceAboveFavorites: { value: false },
         isSidebarDivideByFriendGroup: { value: false },
         sidebarFavoriteGroups: { value: [] },
         sidebarFavoriteGroupOrder: { value: [] },

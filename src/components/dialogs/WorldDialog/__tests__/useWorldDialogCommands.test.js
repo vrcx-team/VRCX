@@ -36,6 +36,10 @@ vi.mock('../../../../coordinators/imageUploadCoordinator', () => ({
     uploadImageLegacy: vi.fn()
 }));
 
+vi.mock('../../../../coordinators/worldCoordinator', () => ({
+    removeWorldFromCache: vi.fn()
+}));
+
 const { favoriteRequest, miscRequest, userRequest, worldRequest } =
     await import('../../../../api');
 const { openExternalLink } = await import('../../../../shared/utils');

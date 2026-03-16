@@ -109,6 +109,7 @@ vi.mock('@/components/ui/checkbox', () => ({
 
 vi.mock('lucide-vue-next', () => ({
     AlertTriangle: { template: '<i />' },
+    Image: { template: '<i />' },
     Lock: { template: '<i />' },
     MoreHorizontal: { template: '<i />' }
 }));

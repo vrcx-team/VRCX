@@ -38,6 +38,10 @@ vi.mock('../../../../coordinators/imageUploadCoordinator', () => ({
     uploadImageLegacy: vi.fn()
 }));
 
+vi.mock('../../../../coordinators/avatarCoordinator', () => ({
+    removeAvatarFromCache: vi.fn()
+}));
+
 const { copyToClipboard, openExternalLink } =
     await import('../../../../shared/utils');
 const { favoriteRequest, avatarRequest, avatarModerationRequest } =

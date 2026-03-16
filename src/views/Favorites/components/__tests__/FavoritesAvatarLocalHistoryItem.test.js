@@ -96,6 +96,7 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
 }));
 
 vi.mock('lucide-vue-next', () => ({
+    Image: { template: '<i />' },
     MoreHorizontal: { template: '<i />' }
 }));
 
@@ -173,7 +174,7 @@ describe('FavoritesAvatarLocalHistoryItem.vue', () => {
         ).toContain('rounded-sm');
     });
 
-    it('shows fallback text when thumbnail is missing', () => {
+    it('shows fallback icon when thumbnail is missing', () => {
         const wrapper = mountItem({
             favorite: {
                 id: 'avtr_hist_no_thumb',
@@ -185,9 +186,9 @@ describe('FavoritesAvatarLocalHistoryItem.vue', () => {
         expect(wrapper.find('[data-testid="avatar-image"]').exists()).toBe(
             false
         );
-        expect(wrapper.get('[data-testid="avatar-fallback"]').text()).toContain(
-            'C'
-        );
+        expect(
+            wrapper.get('[data-testid="avatar-fallback"]').find('i').exists()
+        ).toBe(true);
     });
 
     it('runs select-avatar action from menu', async () => {
