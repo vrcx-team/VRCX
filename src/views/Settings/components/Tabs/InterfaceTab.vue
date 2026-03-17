@@ -133,8 +133,16 @@
                 <Switch :model-value="showPointerOnHover" @update:modelValue="togglePointerOnHover" />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.appearance.appearance.accessible_status_indicators')">
+            <SettingsItem
+                :label="t('view.settings.appearance.appearance.accessible_status_indicators')"
+                :description="t('view.settings.appearance.appearance.accessible_status_indicators_description')">
                 <Switch :model-value="accessibleStatusIndicators" @update:modelValue="toggleAccessibleStatusIndicators" />
+            </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.appearance.appearance.use_official_status_colors')"
+                :description="t('view.settings.appearance.appearance.use_official_status_colors_description')">
+                <Switch :model-value="useOfficialStatusColors" @update:modelValue="toggleOfficialStatusColors" />
             </SettingsItem>
         </SettingsGroup>
 
@@ -390,6 +398,7 @@
         isDataTableStriped,
         showPointerOnHover,
         accessibleStatusIndicators,
+        useOfficialStatusColors,
         showNewDashboardButton
     } = storeToRefs(appearanceSettingsStore);
 
@@ -414,6 +423,7 @@
         toggleStripedDataTable,
         togglePointerOnHover,
         toggleAccessibleStatusIndicators,
+        toggleOfficialStatusColors,
         setShowNewDashboardButton,
         setAppFontFamily,
         setCustomFontFamily,
