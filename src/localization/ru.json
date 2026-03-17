@@ -46,6 +46,10 @@
                 "devEndpoint": "Разработчик",
                 "endpoint": "Endpoint",
                 "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "Обнаружен язык",
+                "description": "Язык вашей системы — {language}. Хотите переключиться на него?"
             }
         },
         "feed": {

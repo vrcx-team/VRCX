@@ -79,6 +79,10 @@
                 "devEndpoint": "Tryb deweloperski",
                 "endpoint": "Endpoint",
                 "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "Wykryto język",
+                "description": "Język systemu to {language}. Czy chcesz na niego przełączyć?"
             }
         },
         "feed": {

@@ -99,6 +99,10 @@
                 "devEndpoint": "開發介面",
                 "endpoint": "Endpoint",
                 "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "偵測到語言",
+                "description": "您的系統語言似乎是 {language}。是否切換到該語言？"
             }
         },
         "feed": {

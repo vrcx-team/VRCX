@@ -43,6 +43,10 @@
                 "devEndpoint": "Fejlesztői végpont",
                 "endpoint": "Végpont",
                 "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "Nyelv észlelve",
+                "description": "A rendszernyelv úgy tűnik, hogy {language}. Szeretne átváltani rá?"
             }
         },
         "feed": {

@@ -25,7 +25,7 @@ import {
 } from '../../shared/utils/base/ui';
 import { computeTrustLevel, getNameColour } from '../../shared/utils';
 import { database } from '../../services/database';
-import { languageCodes } from '../../localization';
+
 import { loadLocalizedStrings } from '../../plugins';
 import { useFeedStore } from '../feed';
 import { useGameLogStore } from '../gameLog';
@@ -262,19 +262,15 @@ export const useAppearanceSettingsStore = defineStore(
                 )
             ]);
 
-            if (!appLanguageConfig) {
-                const result = await AppApi.CurrentLanguage();
-
-                const lang = result.split('-')[0];
-
-                for (const ref of languageCodes) {
-                    const refLang = ref.split('_')[0];
-                    if (refLang === lang) {
-                        await changeAppLanguage(ref);
-                    }
-                }
-            } else {
+            if (appLanguageConfig) {
                 await changeAppLanguage(appLanguageConfig);
+            } else {
+                // First launch: load en in-memory only, do NOT persist.
+                // Login.vue detectAndPromptLanguage() will handle first-time language selection.
+                await loadLocalizedStrings('en');
+                appLanguage.value = 'en';
+                locale.value = 'en';
+                changeHtmlLangAttribute('en');
             }
 
             themeMode.value = initThemeMode;

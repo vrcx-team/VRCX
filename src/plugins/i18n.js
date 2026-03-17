@@ -28,4 +28,17 @@ async function updateLocalizedStrings() {
     await loadLocalizedStrings(i18n.global.locale.value);
 }
 
-export { i18n, loadLocalizedStrings, updateLocalizedStrings };
+/**
+ * Translate a single key using a specific locale without switching global UI language.
+ *
+ * @param {string} locale
+ * @param {string} key
+ * @param {import('vue-i18n').NamedValue=} params
+ * @returns {Promise<string>}
+ */
+async function tForLocale(locale, key, params = {}) {
+    await loadLocalizedStrings(locale);
+    return i18n.global.t(key, params, { locale });
+}
+
+export { i18n, loadLocalizedStrings, tForLocale, updateLocalizedStrings };

@@ -215,6 +215,10 @@
                 "devEndpoint": "Dev Endpoint",
                 "endpoint": "Endpoint",
                 "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "Language Detected",
+                "description": "Your system language appears to be {language}. Would you like to switch to it?"
             }
         },
         "feed": {
@@ -2680,7 +2684,7 @@
     "table": {
         "header_menu": {
             "reset_all": "Reset All",
-            "lock_column_order": "Lock Column Order"
+            "lock_column_order": "Lock Column"
         },
         "pagination": {
             "rows_per_page": "Rows per page",

@@ -99,6 +99,10 @@
                 "devEndpoint": "開発者用エンドポイント",
                 "endpoint": "エンドポイント",
                 "websocket": "ウェブソケット"
+            },
+            "language_detect": {
+                "title": "言語を検出しました",
+                "description": "システム言語は {language} のようです。切り替えますか？"
             }
         },
         "feed": {

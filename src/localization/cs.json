@@ -43,6 +43,10 @@
                 "devEndpoint": "Dev Endpoint",
                 "endpoint": "Endpoint",
                 "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "Detekován jazyk",
+                "description": "Váš systémový jazyk je {language}. Chcete na něj přepnout?"
             }
         },
         "feed": {
