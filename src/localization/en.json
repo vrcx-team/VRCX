@@ -2570,7 +2570,13 @@
         },
         "user": {
             "moderated": "User moderated",
-            "load_failed": "Failed to load user"
+            "load_failed": "Failed to load user",
+            "id_copied": "User ID copied to clipboard",
+            "url_copied": "User URL copied to clipboard",
+            "display_name_copied": "User DisplayName copied to clipboard",
+            "home_reset": "Home world has been reset",
+            "request_invite_sent": "Request invite sent",
+            "no_fallback_avatar": "No fallback avatar set"
         },
         "friend": {
             "load_failed": "Failed to load friends list, logging out"

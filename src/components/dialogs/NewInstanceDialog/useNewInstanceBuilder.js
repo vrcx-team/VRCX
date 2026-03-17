@@ -327,6 +327,7 @@ export function useNewInstanceBuilder(locationTagRef) {
 
     return {
         newInstanceDialog,
+        isLocalUserVrcPlusSupporter,
         buildInstance,
         buildLegacyInstance,
         updateNewInstanceDialog,
