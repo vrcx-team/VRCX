@@ -22,7 +22,7 @@
             </SettingsItem>
         </SettingsGroup>
 
-        <SettingsGroup :title="t('view.settings.advanced.advanced.vrcx_settings.header')">
+        <SettingsGroup :title="t('view.settings.advanced_groups.security.header')">
             <SettingsItem :label="t('view.settings.advanced.advanced.primary_password.header')"
                 :description="t('view.settings.advanced.advanced.primary_password.description')">
                 <Switch
@@ -30,13 +30,6 @@
                     :disabled="!enablePrimaryPassword"
                     @update:modelValue="enablePrimaryPasswordChange" />
             </SettingsItem>
-
-            <template v-if="branch === 'Nightly'">
-                <SettingsItem :label="t('view.settings.advanced.advanced.anonymous_error_reporting.header')"
-                    :description="t('view.settings.advanced.advanced.anonymous_error_reporting.description')">
-                    <Switch :model-value="sentryErrorReporting" @update:modelValue="setSentryErrorReporting()" />
-                </SettingsItem>
-            </template>
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.general.logging.header')">
@@ -61,36 +54,6 @@
                 <Button size="sm" variant="outline" @click="promptAutoLoginDelaySeconds">
                     {{ t('view.settings.general.logging.auto_login_delay_button') }}
                 </Button>
-            </SettingsItem>
-        </SettingsGroup>
-
-        <SettingsGroup :title="t('view.profile.game_info.header')">
-            <div class="px-1 py-1">
-                <div class="flex-1 cursor-pointer" @click="getVisits">
-                    <span class="block truncate font-medium text-sm leading-[18px]">{{
-                        t('view.profile.game_info.online_users')
-                    }}</span>
-                    <span v-if="visits" class="block truncate text-xs text-muted-foreground">{{
-                        t('view.profile.game_info.user_online', { count: visits })
-                    }}</span>
-                    <span v-else class="block truncate text-xs text-muted-foreground">{{
-                        t('view.profile.game_info.refresh')
-                    }}</span>
-                </div>
-            </div>
-        </SettingsGroup>
-
-        <SettingsGroup :title="t('view.settings.advanced.advanced.remote_database.header')">
-            <SettingsItem :label="t('view.settings.advanced.advanced.remote_database.enable')">
-                <Switch
-                    :model-value="avatarRemoteDatabase"
-                    @update:modelValue="setAvatarRemoteDatabase(!avatarRemoteDatabase)" />
-            </SettingsItem>
-
-            <SettingsItem :label="t('view.settings.advanced.advanced.remote_database.avatar_database_provider')">
-                <Button size="sm" variant="outline" @click="showAvatarProviderDialog">{{
-                    t('view.settings.advanced.advanced.remote_database.avatar_database_provider')
-                }}</Button>
             </SettingsItem>
         </SettingsGroup>
 
@@ -120,50 +83,6 @@
                 </SettingsItem>
             </SettingsGroup>
         </template>
-
-        <SettingsGroup :title="t('view.settings.advanced.advanced.youtube_api.header')">
-            <SettingsItem :label="t('view.settings.advanced.advanced.youtube_api.enable')"
-                :description="t('view.settings.advanced.advanced.youtube_api.enable_tooltip')">
-                <Switch :model-value="youTubeApi" @update:modelValue="changeYouTubeApi('VRCX_youtubeAPI')" />
-            </SettingsItem>
-
-            <SettingsItem :label="t('view.settings.advanced.advanced.youtube_api.youtube_api_key')">
-                <Button size="sm" variant="outline" @click="showYouTubeApiDialog">{{
-                    t('view.settings.advanced.advanced.youtube_api.youtube_api_key')
-                }}</Button>
-            </SettingsItem>
-        </SettingsGroup>
-
-        <SettingsGroup :title="t('view.settings.advanced.advanced.translation_api.header')">
-            <SettingsItem :label="t('view.settings.advanced.advanced.translation_api.enable')"
-                :description="t('view.settings.advanced.advanced.translation_api.enable_tooltip')">
-                <Switch :model-value="translationApi" @update:modelValue="changeTranslationAPI('VRCX_translationAPI')" />
-            </SettingsItem>
-
-            <SettingsItem :label="t('view.settings.advanced.advanced.translation_api.translation_api_key')">
-                <Button size="sm" variant="outline" @click="showTranslationApiDialog">
-                    <Languages class="h-4 w-4 mr-1.5" />
-                    {{ t('view.settings.advanced.advanced.translation_api.translation_api_key') }}
-                </Button>
-            </SettingsItem>
-        </SettingsGroup>
-
-        <SettingsGroup :title="t('view.settings.advanced.advanced.video_progress_pie.header')">
-            <SettingsItem :label="t('view.settings.advanced.advanced.video_progress_pie.enable')"
-                :description="t('view.settings.advanced.advanced.video_progress_pie.enable_tooltip')">
-                <Switch
-                    :model-value="progressPie"
-                    :disabled="!openVR"
-                    @update:modelValue="changeYouTubeApi('VRCX_progressPie')" />
-            </SettingsItem>
-
-            <SettingsItem :label="t('view.settings.advanced.advanced.video_progress_pie.dance_world_only')">
-                <Switch
-                    :model-value="progressPieFilter"
-                    :disabled="!openVR"
-                    @update:modelValue="changeYouTubeApi('VRCX_progressPieFilter')" />
-            </SettingsItem>
-        </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.advanced.advanced.launch_commands.header')">
             <SettingsItem
@@ -224,7 +143,7 @@
             </SettingsItem>
         </SettingsGroup>
 
-        <SettingsGroup :title="t('view.settings.advanced.advanced.sqlite_table_size.header')">
+        <SettingsGroup :title="t('view.settings.advanced_groups.database.header')">
             <SettingsItem :label="t('view.settings.advanced.advanced.sqlite_table_size.refresh')">
                 <Button size="sm" variant="outline" @click="getSqliteTableSizes">{{
                     t('view.settings.advanced.advanced.sqlite_table_size.refresh')
@@ -245,9 +164,7 @@
                 <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.video_play') }} <span v-text="sqliteTableSizes.videoPlay"></span></span>
                 <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.event') }} <span v-text="sqliteTableSizes.event"></span></span>
             </div>
-        </SettingsGroup>
 
-        <SettingsGroup :title="t('view.settings.advanced.advanced.database_cleanup.header')">
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.database_cleanup.auto_cleanup')"
                 :description="t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_description')">
@@ -320,41 +237,64 @@
             </DialogContent>
         </Dialog>
 
-        <SettingsGroup :title="t('view.profile.config_json')">
+        <SettingsGroup :title="t('view.settings.advanced_groups.diagnostics.header')">
+            <SettingsGroup :title="t('view.profile.game_info.header')">
+                <div class="px-1 py-1">
+                    <div class="flex-1 cursor-pointer" @click="getVisits">
+                        <span class="block truncate font-medium text-sm leading-[18px]">{{
+                            t('view.profile.game_info.online_users')
+                        }}</span>
+                        <span v-if="visits" class="block truncate text-xs text-muted-foreground">{{
+                            t('view.profile.game_info.user_online', { count: visits })
+                        }}</span>
+                        <span v-else class="block truncate text-xs text-muted-foreground">{{
+                            t('view.profile.game_info.refresh')
+                        }}</span>
+                    </div>
+                </div>
+            </SettingsGroup>
 
-            <div class="flex items-center gap-2">
-                <TooltipWrapper side="top" :content="t('view.profile.refresh_tooltip')">
-                    <Button class="rounded-full" size="icon-sm" variant="outline" @click="refreshConfigTreeData()">
-                        <RefreshCcw />
-                    </Button>
-                </TooltipWrapper>
-                <TooltipWrapper side="top" :content="t('view.profile.clear_results_tooltip')">
-                    <Button class="rounded-full" size="icon-sm" variant="outline" @click="configTreeData = {}">
-                        <Trash2 />
-                    </Button>
-                </TooltipWrapper>
-            </div>
-            <vue-json-pretty
-                v-if="Object.keys(configTreeData).length > 0"
-                :data="configTreeData"
-                :deep="2"
-                :theme="isDarkMode ? 'dark' : 'light'"
-                :height="800"
-                :dynamic-height="false"
-                virtual
-                show-icon />
+            <SettingsGroup :title="t('view.profile.config_json')">
+                <div class="flex items-center gap-2">
+                    <TooltipWrapper side="top" :content="t('view.profile.refresh_tooltip')">
+                        <Button class="rounded-full" size="icon-sm" variant="outline" @click="refreshConfigTreeData()">
+                            <RefreshCcw />
+                        </Button>
+                    </TooltipWrapper>
+                    <TooltipWrapper side="top" :content="t('view.profile.clear_results_tooltip')">
+                        <Button class="rounded-full" size="icon-sm" variant="outline" @click="configTreeData = {}">
+                            <Trash2 />
+                        </Button>
+                    </TooltipWrapper>
+                </div>
+                <vue-json-pretty
+                    v-if="Object.keys(configTreeData).length > 0"
+                    :data="configTreeData"
+                    :deep="2"
+                    :theme="isDarkMode ? 'dark' : 'light'"
+                    :height="800"
+                    :dynamic-height="false"
+                    virtual
+                    show-icon />
+            </SettingsGroup>
         </SettingsGroup>
 
+        <template v-if="branch === 'Nightly'">
+            <SettingsGroup :title="t('view.settings.advanced_groups.nightly.header')">
+                <SettingsItem :label="t('view.settings.advanced.advanced.anonymous_error_reporting.header')"
+                    :description="t('view.settings.advanced.advanced.anonymous_error_reporting.description')">
+                    <Switch :model-value="sentryErrorReporting" @update:modelValue="setSentryErrorReporting()" />
+                </SettingsItem>
+            </SettingsGroup>
+        </template>
+
         <RegistryBackupDialog />
-        <YouTubeApiDialog v-model:isYouTubeApiDialogVisible="isYouTubeApiDialogVisible" />
-        <TranslationApiDialog v-model:isTranslationApiDialogVisible="isTranslationApiDialogVisible" />
-        <AvatarProviderDialog v-model:isAvatarProviderDialogVisible="isAvatarProviderDialogVisible" />
         <PhotonSettings v-if="photonLoggingEnabled" />
     </div>
 </template>
 
 <script setup>
-    import { Languages, RefreshCcw, Trash2, TriangleAlert } from 'lucide-vue-next';
+    import { RefreshCcw, Trash2, TriangleAlert } from 'lucide-vue-next';
     import { computed, reactive, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Switch } from '@/components/ui/switch';
@@ -370,17 +310,14 @@
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
         useAuthStore,
-        useAvatarProviderStore,
         useAvatarStore,
         useGeneralSettingsStore,
         useGroupStore,
         useInstanceStore,
-        useNotificationsSettingsStore,
         usePhotonStore,
         useUiStore,
         useUserStore,
         useVRCXUpdaterStore,
-        useVrStore,
         useWorldStore
     } from '@/stores';
     import { authRequest, queryRequest } from '@/api';
@@ -388,19 +325,15 @@
     import { clearVRCXCache } from '@/coordinators/vrcxCoordinator';
     import { openExternalLink } from '@/shared/utils';
 
-    import AvatarProviderDialog from '../../dialogs/AvatarProviderDialog.vue';
     import PhotonSettings from '../PhotonSettings.vue';
     import RegistryBackupDialog from '../../../Tools/dialogs/RegistryBackupDialog.vue';
-    import TranslationApiDialog from '../../dialogs/TranslationApiDialog.vue';
-    import YouTubeApiDialog from '../../dialogs/YouTubeApiDialog.vue';
     import SettingsGroup from '../SettingsGroup.vue';
     import SettingsItem from '../SettingsItem.vue';
+    import { TooltipWrapper } from '@/components/ui/tooltip';
 
     const { t } = useI18n();
 
     const advancedSettingsStore = useAdvancedSettingsStore();
-    const notificationsSettingsStore = useNotificationsSettingsStore();
-    const { updateVRLastLocation, updateOpenVR } = useVrStore();
     const { enablePrimaryPasswordChange } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
     const { showConsole } = useUiStore();
@@ -424,7 +357,6 @@
 
     const { photonLoggingEnabled } = storeToRefs(usePhotonStore());
     const { branch } = storeToRefs(useVRCXUpdaterStore());
-    const { openVR } = storeToRefs(notificationsSettingsStore);
 
     const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
 
@@ -434,14 +366,9 @@
         vrcQuitFix,
         autoSweepVRChatCache,
         selfInviteOverride,
-        avatarRemoteDatabase,
         enableAppLauncher,
         enableAppLauncherAutoClose,
         enableAppLauncherRunProcessOnce,
-        youTubeApi,
-        translationApi,
-        progressPie,
-        progressPieFilter,
         showConfirmationOnSwitchAvatar,
         gameLogDisabled,
         sqliteTableSizes,
@@ -455,7 +382,6 @@
         setVrcQuitFix,
         setAutoSweepVRChatCache,
         setSelfInviteOverride,
-        setAvatarRemoteDatabase,
         setEnableAppLauncher,
         setEnableAppLauncherAutoClose,
         setEnableAppLauncherRunProcessOnce,
@@ -463,16 +389,10 @@
         getSqliteTableSizes,
         setAvatarAutoCleanup,
         purgeAvatarFeedData,
-        showVRChatConfig,
         promptAutoClearVRCXCacheFrequency,
         setSentryErrorReporting
     } = advancedSettingsStore;
 
-    const { isAvatarProviderDialogVisible } = storeToRefs(useAvatarProviderStore());
-    const { showAvatarProviderDialog } = useAvatarProviderStore();
-
-    const isYouTubeApiDialogVisible = ref(false);
-    const isTranslationApiDialogVisible = ref(false);
     const configTreeData = ref({});
     const visits = ref(0);
     const selectedPurgePeriod = ref('180');
@@ -508,20 +428,6 @@
     /**
      *
      */
-    function showYouTubeApiDialog() {
-        isYouTubeApiDialogVisible.value = true;
-    }
-
-    /**
-     *
-     */
-    function showTranslationApiDialog() {
-        isTranslationApiDialogVisible.value = true;
-    }
-
-    /**
-     *
-     */
     function refreshCacheSize() {
         cacheSize.cachedUsers = cachedUsers.size;
         cacheSize.cachedWorlds = cachedWorlds.size;
@@ -529,32 +435,6 @@
         cacheSize.cachedGroups = cachedGroups.size;
         cacheSize.cachedAvatarNames = cachedAvatarNames.size;
         cacheSize.cachedInstances = cachedInstances.size;
-    }
-
-    /**
-     *
-     * @param configKey
-     */
-    async function changeYouTubeApi(configKey = '') {
-        if (configKey === 'VRCX_youtubeAPI') {
-            advancedSettingsStore.setYouTubeApi();
-        } else if (configKey === 'VRCX_progressPie') {
-            advancedSettingsStore.setProgressPie();
-        } else if (configKey === 'VRCX_progressPieFilter') {
-            advancedSettingsStore.setProgressPieFilter();
-        }
-        updateVRLastLocation();
-        updateOpenVR();
-    }
-
-    /**
-     *
-     * @param configKey
-     */
-    async function changeTranslationAPI(configKey = '') {
-        if (configKey === 'VRCX_translationAPI') {
-            advancedSettingsStore.setTranslationApi();
-        }
     }
 
     /**

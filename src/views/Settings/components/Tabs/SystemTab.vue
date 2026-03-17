@@ -121,44 +121,6 @@
             </SettingsItem>
         </SettingsGroup>
 
-        <SettingsGroup>
-            <template #description>
-                <div class="flex items-center gap-1.5">
-                    <span class="text-base font-semibold text-foreground">{{ t('view.settings.general.favorites.header') }}</span>
-                    <TooltipWrapper side="top" :content="t('view.settings.general.favorites.header_tooltip')">
-                        <Info class="size-3 text-muted-foreground cursor-help" />
-                    </TooltipWrapper>
-                </div>
-            </template>
-
-            <Select
-                :model-value="localFavoriteFriendsGroups"
-                multiple
-                @update:modelValue="setLocalFavoriteFriendsGroups">
-                <SelectTrigger>
-                    <SelectValue :placeholder="t('view.settings.general.favorites.group_placeholder')" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectItem v-for="group in favoriteFriendGroups" :key="group.key" :value="group.key">
-                            {{ group.displayName }}
-                        </SelectItem>
-                    </SelectGroup>
-                    <template v-if="localFriendFavoriteGroups.length">
-                        <SelectSeparator />
-                        <SelectGroup>
-                            <SelectItem
-                                v-for="group in localFriendFavoriteGroups"
-                                :key="'local:' + group"
-                                :value="'local:' + group">
-                                {{ group }}
-                            </SelectItem>
-                        </SelectGroup>
-                    </template>
-                </SelectContent>
-            </Select>
-        </SettingsGroup>
-
         <SettingsGroup :title="t('view.settings.general.contributors.header')">
             <div>
                 <img
@@ -198,21 +160,11 @@
     import { computed, defineAsyncComponent, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Switch } from '@/components/ui/switch';
-    import { Info } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import {
-        Select,
-        SelectContent,
-        SelectGroup,
-        SelectItem,
-        SelectSeparator,
-        SelectTrigger,
-        SelectValue
-    } from '@/components/ui/select';
     import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-    import { useFavoriteStore, useGeneralSettingsStore, useVRCXUpdaterStore } from '@/stores';
+    import { useGeneralSettingsStore, useVRCXUpdaterStore } from '@/stores';
     import { links } from '@/shared/constants';
     import { openExternalLink } from '@/shared/utils';
 
@@ -223,15 +175,13 @@
 
     const generalSettingsStore = useGeneralSettingsStore();
     const vrcxUpdaterStore = useVRCXUpdaterStore();
-    const favoriteStore = useFavoriteStore();
 
     const {
         isStartAtWindowsStartup,
         isStartAsMinimizedState,
         isCloseToTray,
         disableGpuAcceleration,
-        disableVrOverlayGpuAcceleration,
-        localFavoriteFriendsGroups
+        disableVrOverlayGpuAcceleration
     } = storeToRefs(generalSettingsStore);
 
     const {
@@ -240,11 +190,8 @@
         setIsCloseToTray,
         setDisableGpuAcceleration,
         setDisableVrOverlayGpuAcceleration,
-        setLocalFavoriteFriendsGroups,
         promptProxySettings
     } = generalSettingsStore;
-
-    const { favoriteFriendGroups, localFriendFavoriteGroups } = storeToRefs(favoriteStore);
 
     const { appVersion, autoUpdateVRCX, latestAppVersion, noUpdater } = storeToRefs(vrcxUpdaterStore);
     const { setAutoUpdateVRCX, checkForVRCXUpdate, showVRCXUpdateDialog, showChangeLogDialog } = vrcxUpdaterStore;

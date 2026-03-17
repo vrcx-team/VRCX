@@ -658,7 +658,60 @@
                 "wrist_overlay": "Wrist Overlay",
                 "discord_presence": "Discord Presence",
                 "pictures": "Pictures",
-                "advanced": "Advanced"
+                "advanced": "Advanced",
+                "system": "System",
+                "interface": "Interface",
+                "social": "Social",
+                "vr": "VR",
+                "media": "Media",
+                "integrations": "Integrations"
+            },
+            "social": {
+                "interaction": {
+                    "header": "Interaction"
+                },
+                "favorites": {
+                    "header": "Favorites"
+                }
+            },
+            "vr": {
+                "vr_core": {
+                    "header": "VR Core"
+                },
+                "vr_notifications": {
+                    "header": "VR Notifications"
+                },
+                "wrist_overlay": {
+                    "header": "Wrist Overlay"
+                },
+                "vr_extras": {
+                    "header": "VR Extras"
+                }
+            },
+            "interface": {
+                "lists_tables": {
+                    "header": "Lists & Tables"
+                }
+            },
+            "integrations": {
+                "header": "Integrations"
+            },
+            "advanced_groups": {
+                "system": {
+                    "header": "System"
+                },
+                "security": {
+                    "header": "Security"
+                },
+                "diagnostics": {
+                    "header": "Diagnostics"
+                },
+                "database": {
+                    "header": "Database"
+                },
+                "nightly": {
+                    "header": "Nightly"
+                }
             },
             "general": {
                 "general": {

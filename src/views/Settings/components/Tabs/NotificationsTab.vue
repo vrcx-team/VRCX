@@ -14,172 +14,6 @@
             </SettingsItem>
         </SettingsGroup>
 
-        <SettingsGroup :title="t('view.settings.notifications.notifications.steamvr_notifications.header')">
-            <SettingsItem
-                :label="t('view.settings.notifications.notifications.desktop_notifications.when_to_display')">
-                <ToggleGroup
-                    type="single"
-                    required
-                    variant="outline"
-                    size="sm"
-                    :model-value="overlayToast"
-                    :disabled="
-                        (!overlayNotifications || !openVR) &&
-                        !xsNotifications &&
-                        !ovrtHudNotifications &&
-                        !ovrtWristNotifications
-                    "
-                    @update:model-value="
-                        setOverlayToast($event);
-                        saveOpenVROption();
-                    ">
-                    <ToggleGroupItem value="Never">{{
-                        t('view.settings.notifications.notifications.conditions.never')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Game Running">{{
-                        t('view.settings.notifications.notifications.conditions.inside_vrchat')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Game Closed">{{
-                        t('view.settings.notifications.notifications.conditions.outside_vrchat')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Always">{{
-                        t('view.settings.notifications.notifications.conditions.always')
-                    }}</ToggleGroupItem>
-                </ToggleGroup>
-            </SettingsItem>
-
-            <SettingsItem
-                :label="t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')">
-                <Switch
-                    :model-value="openVR"
-                    @update:modelValue="
-                        setOpenVR();
-                        saveOpenVROption();
-                    " />
-            </SettingsItem>
-
-            <template v-if="openVR">
-                <SettingsItem
-                    :label="
-                        t('view.settings.notifications.notifications.steamvr_notifications.overlay_notifications')
-                    ">
-                    <Switch
-                        :model-value="overlayNotifications"
-                        :disabled="!openVR"
-                        @update:modelValue="
-                            setOverlayNotifications();
-                            saveOpenVROption();
-                        " />
-                </SettingsItem>
-
-                <SettingsItem
-                    :label="
-                        t('view.settings.notifications.notifications.steamvr_notifications.notification_position')
-                    ">
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        :disabled="!overlayNotifications || !openVR"
-                        @click="showNotificationPositionDialog"
-                        >{{
-                            t('view.settings.notifications.notifications.steamvr_notifications.notification_position')
-                        }}</Button
-                    >
-                </SettingsItem>
-            </template>
-
-            <SettingsItem
-                :label="
-                    t('view.settings.notifications.notifications.steamvr_notifications.notification_opacity')
-                ">
-                <div class="w-75 max-w-full pt-1">
-                    <Slider v-model="notificationOpacityValue" :min="0" :max="100" />
-                </div>
-            </SettingsItem>
-
-            <SettingsItem
-                :label="
-                    t('view.settings.notifications.notifications.steamvr_notifications.notification_timeout')
-                ">
-                <Button
-                    size="sm"
-                    variant="outline"
-                    :disabled="(!overlayNotifications || !openVR) && !xsNotifications"
-                    @click="promptNotificationTimeout"
-                    >{{
-                        t('view.settings.notifications.notifications.steamvr_notifications.notification_timeout')
-                    }}</Button
-                >
-            </SettingsItem>
-
-            <SettingsItem
-                :label="t('view.settings.notifications.notifications.steamvr_notifications.user_images')">
-                <Switch
-                    :model-value="imageNotifications"
-                    @update:modelValue="
-                        setImageNotifications();
-                        saveOpenVROption();
-                    " />
-            </SettingsItem>
-
-            <template v-if="!isLinux">
-                <SettingsItem
-                    :label="
-                        t('view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications')
-                    ">
-                    <Switch
-                        :model-value="xsNotifications"
-                        @update:modelValue="
-                            setXsNotifications();
-                            saveOpenVROption();
-                        " />
-                </SettingsItem>
-            </template>
-            <template v-else>
-                <SettingsItem
-                    :label="
-                        t('view.settings.notifications.notifications.steamvr_notifications.wayvr_notifications')
-                    ">
-                    <Switch
-                        :model-value="xsNotifications"
-                        @update:modelValue="
-                            setXsNotifications();
-                            saveOpenVROption();
-                        " />
-                </SettingsItem>
-            </template>
-
-            <template v-if="!isLinux">
-                <SettingsItem
-                    :label="
-                        t(
-                            'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications'
-                        )
-                    ">
-                    <Switch
-                        :model-value="ovrtHudNotifications"
-                        @update:modelValue="
-                            setOvrtHudNotifications();
-                            saveOpenVROption();
-                        " />
-                </SettingsItem>
-
-                <SettingsItem
-                    :label="
-                        t(
-                            'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications'
-                        )
-                    ">
-                    <Switch
-                        :model-value="ovrtWristNotifications"
-                        @update:modelValue="
-                            setOvrtWristNotifications();
-                            saveOpenVROption();
-                        " />
-                </SettingsItem>
-            </template>
-        </SettingsGroup>
-
         <SettingsGroup :title="t('view.settings.notifications.notifications.desktop_notifications.header')">
             <SettingsItem
                 :label="t('view.settings.notifications.notifications.desktop_notifications.when_to_display')">
@@ -294,7 +128,6 @@
             </div>
         </SettingsGroup>
 
-        <NotificationPositionDialog v-model:isNotificationPositionDialogVisible="isNotificationPositionDialogVisible" />
         <FeedFiltersDialog v-model:feedFiltersDialogMode="feedFiltersDialogMode" />
     </div>
 </template>
@@ -303,7 +136,6 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
     import { Switch } from '@/components/ui/switch';
-    import { Slider } from '@/components/ui/slider';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
@@ -312,31 +144,19 @@
     import { useI18n } from 'vue-i18n';
 
     import {
-        useAdvancedSettingsStore,
         useNotificationStore,
-        useNotificationsSettingsStore,
-        useVrStore
+        useNotificationsSettingsStore
     } from '@/stores';
 
     import FeedFiltersDialog from '../../dialogs/FeedFiltersDialog.vue';
-    import NotificationPositionDialog from '../../dialogs/NotificationPositionDialog.vue';
     import SettingsGroup from '../SettingsGroup.vue';
     import SettingsItem from '../SettingsItem.vue';
 
     const { t } = useI18n();
 
     const notificationsSettingsStore = useNotificationsSettingsStore();
-    const advancedSettingsStore = useAdvancedSettingsStore();
-    const { saveOpenVROption } = useVrStore();
 
     const {
-        overlayToast,
-        openVR,
-        overlayNotifications,
-        xsNotifications,
-        ovrtHudNotifications,
-        ovrtWristNotifications,
-        imageNotifications,
         desktopToast,
         afkDesktopToast,
         notificationTTS,
@@ -346,42 +166,19 @@
         TTSvoices
     } = storeToRefs(notificationsSettingsStore);
 
-    const { notificationOpacity } = storeToRefs(advancedSettingsStore);
-
     const {
-        setOverlayToast,
-        setOpenVR,
-        setOverlayNotifications,
-        setXsNotifications,
-        setOvrtHudNotifications,
-        setOvrtWristNotifications,
-        setImageNotifications,
         setDesktopToast,
         setAfkDesktopToast,
         setNotificationTTSNickName,
         getTTSVoiceName,
         changeTTSVoice,
         saveNotificationTTS,
-        testNotificationTTS,
-        promptNotificationTimeout
+        testNotificationTTS
     } = notificationsSettingsStore;
 
     const { testNotification } = useNotificationStore();
 
-    const { setNotificationOpacity } = advancedSettingsStore;
-
     const feedFiltersDialogMode = ref('');
-    const isNotificationPositionDialogVisible = ref(false);
-    const isLinux = computed(() => LINUX);
-    const notificationOpacityValue = computed({
-        get: () => [notificationOpacity.value],
-        set: (value) => {
-            const next = value?.[0];
-            if (typeof next === 'number') {
-                setNotificationOpacity(next);
-            }
-        }
-    });
 
     const ttsVoiceIndex = computed({
         get: () => {
@@ -401,12 +198,5 @@
      */
     function showNotyFeedFiltersDialog() {
         feedFiltersDialogMode.value = 'noty';
-    }
-
-    /**
-     *
-     */
-    function showNotificationPositionDialog() {
-        isNotificationPositionDialogVisible.value = true;
     }
 </script>
