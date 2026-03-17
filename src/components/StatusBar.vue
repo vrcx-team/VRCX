@@ -246,36 +246,42 @@
                 <ContextMenuCheckboxItem
                     v-if="!isMacOS"
                     :model-value="visibility.vrchat"
+                    @select.prevent
                     @update:model-value="toggleVisibility('vrchat')">
                     {{ t('status_bar.game') }}
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     :model-value="visibility.servers"
+                    @select.prevent
                     @update:model-value="toggleVisibility('servers')">
                     {{ t('status_bar.servers') }}
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     v-if="!isMacOS"
                     :model-value="visibility.steamvr"
+                    @select.prevent
                     @update:model-value="toggleVisibility('steamvr')">
                     {{ t('status_bar.steamvr') }}
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     :model-value="visibility.proxy"
+                    @select.prevent
                     @update:model-value="toggleVisibility('proxy')">
                     {{ t('status_bar.proxy') }}
                 </ContextMenuCheckboxItem>
-                <ContextMenuCheckboxItem :model-value="visibility.ws" @update:model-value="toggleVisibility('ws')">
+                <ContextMenuCheckboxItem :model-value="visibility.ws" @select.prevent @update:model-value="toggleVisibility('ws')">
                     WebSocket
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     :model-value="visibility.uptime"
+                    @select.prevent
                     @update:model-value="toggleVisibility('uptime')">
                     {{ t('status_bar.app_uptime_short') }}
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     v-if="!isMacOS"
                     :model-value="visibility.zoom"
+                    @select.prevent
                     @update:model-value="toggleVisibility('zoom')">
                     {{ t('status_bar.zoom') }}
                 </ContextMenuCheckboxItem>
@@ -285,21 +291,25 @@
                     <ContextMenuSubContent>
                         <ContextMenuCheckboxItem
                             :model-value="clockCount === 0"
+                            @select.prevent
                             @update:model-value="setClockCount('0')">
                             {{ t('status_bar.clocks_none') }}
                         </ContextMenuCheckboxItem>
                         <ContextMenuCheckboxItem
                             :model-value="clockCount === 1"
+                            @select.prevent
                             @update:model-value="setClockCount('1')">
                             1 {{ t('status_bar.clock') }}
                         </ContextMenuCheckboxItem>
                         <ContextMenuCheckboxItem
                             :model-value="clockCount === 2"
+                            @select.prevent
                             @update:model-value="setClockCount('2')">
                             2 {{ t('status_bar.clocks_label') }}
                         </ContextMenuCheckboxItem>
                         <ContextMenuCheckboxItem
                             :model-value="clockCount === 3"
+                            @select.prevent
                             @update:model-value="setClockCount('3')">
                             3 {{ t('status_bar.clocks_label') }}
                         </ContextMenuCheckboxItem>

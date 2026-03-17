@@ -73,6 +73,7 @@
                                 v-for="col in toggleableColumns"
                                 :key="col.id"
                                 :model-value="col.getIsVisible()"
+                                @select.prevent
                                 @update:model-value="col.toggleVisibility(!!$event)">
                                 {{ resolveHeaderLabel(col) }}
                             </ContextMenuCheckboxItem>
@@ -80,6 +81,7 @@
                                 <ContextMenuSeparator />
                                 <ContextMenuCheckboxItem
                                     :model-value="tcColumnOrderLocked"
+                                    @select.prevent
                                     @update:model-value="table.options.meta.columnOrderLocked.value = $event">
                                     {{ t('table.header_menu.lock_column_order') }}
                                 </ContextMenuCheckboxItem>
@@ -154,6 +156,7 @@
                             <template v-if="tcColumnOrderLocked != null">
                                 <ContextMenuCheckboxItem
                                     :model-value="tcColumnOrderLocked"
+                                    @select.prevent
                                     @update:model-value="table.options.meta.columnOrderLocked.value = $event">
                                     {{ t('table.header_menu.lock_column_order') }}
                                 </ContextMenuCheckboxItem>
