@@ -97,7 +97,7 @@
         "vue-router": "^4.6.4",
         "vue-showdown": "^4.2.0",
         "vue-sonner": "^2.0.9",
-        "worker-timers": "^8.0.30",
+        "worker-timers": "^8.0.31",
         "yargs": "^18.0.0",
         "zod": "^3.25.76"
     },
