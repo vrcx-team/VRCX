@@ -134,6 +134,12 @@
             </SettingsItem>
         </SettingsGroup>
 
+        <SettingsGroup :title="t('view.settings.interface.navigation.header')">
+            <SettingsItem :label="t('view.settings.interface.navigation.show_new_dashboard_button')">
+                <Switch :model-value="showNewDashboardButton" @update:modelValue="setShowNewDashboardButton" />
+            </SettingsItem>
+        </SettingsGroup>
+
         <SettingsGroup :title="t('view.settings.interface.lists_tables.header')">
             <SettingsItem :label="t('view.settings.appearance.appearance.sort_favorite_by')">
                 <RadioGroup
@@ -378,7 +384,8 @@
         notificationIconDot,
         tablePageSizes,
         isDataTableStriped,
-        showPointerOnHover
+        showPointerOnHover,
+        showNewDashboardButton
     } = storeToRefs(appearanceSettingsStore);
 
     const appLanguageDisplayName = computed(() => getLanguageName(String(appLanguage.value)));
@@ -401,6 +408,7 @@
         setTablePageSizes,
         toggleStripedDataTable,
         togglePointerOnHover,
+        setShowNewDashboardButton,
         setAppFontFamily,
         setCustomFontFamily,
         setAppCjkFontPack

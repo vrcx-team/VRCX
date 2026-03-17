@@ -1,6 +1,6 @@
 <template>
     <Sidebar side="left" variant="sidebar" collapsible="icon">
-        <SidebarHeader v-if="!hasDashboards" class="px-2 py-2">
+        <SidebarHeader v-if="showNewDashboardButton && !hasDashboards" class="px-2 py-2">
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton
@@ -229,7 +229,7 @@
     const modalStore = useModalStore();
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const { themeMode, tableDensity, isDarkMode, isNavCollapsed: isCollapsed } = storeToRefs(appearanceSettingsStore);
+    const { themeMode, tableDensity, isDarkMode, isNavCollapsed: isCollapsed, showNewDashboardButton } = storeToRefs(appearanceSettingsStore);
 
     const {
         themes,

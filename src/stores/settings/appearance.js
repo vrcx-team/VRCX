@@ -116,6 +116,7 @@ export const useAppearanceSettingsStore = defineStore(
 
         const isDataTableStriped = ref(false);
         const showPointerOnHover = ref(false);
+        const showNewDashboardButton = ref(true);
         const tableLimitsDialog = ref({
             visible: false,
             maxTableSize: 500,
@@ -175,6 +176,7 @@ export const useAppearanceSettingsStore = defineStore(
                 navIsCollapsedConfig,
                 dataTableStripedConfig,
                 showPointerOnHoverConfig,
+                showNewDashboardButtonConfig,
                 appFontFamilyConfig,
                 customFontFamilyConfig,
                 appCjkFontPackConfig,
@@ -244,6 +246,7 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getBool('VRCX_navIsCollapsed', false),
                 configRepository.getBool('VRCX_dataTableStriped', false),
                 configRepository.getBool('VRCX_showPointerOnHover', false),
+                configRepository.getBool('VRCX_showNewDashboardButton', true),
                 configRepository.getString(
                     'VRCX_fontFamily',
                     APP_FONT_DEFAULT_KEY
@@ -363,6 +366,7 @@ export const useAppearanceSettingsStore = defineStore(
             isNavCollapsed.value = navIsCollapsedConfig;
             isDataTableStriped.value = dataTableStripedConfig;
             showPointerOnHover.value = showPointerOnHoverConfig;
+            showNewDashboardButton.value = showNewDashboardButtonConfig;
 
             applyPointerHoverClass();
 
@@ -937,6 +941,17 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         /**
+         *
+         */
+        function setShowNewDashboardButton() {
+            showNewDashboardButton.value = !showNewDashboardButton.value;
+            configRepository.setBool(
+                'VRCX_showNewDashboardButton',
+                showNewDashboardButton.value
+            );
+        }
+
+        /**
          * @param {object} color
          */
         function setTrustColor(color) {
@@ -1170,6 +1185,7 @@ export const useAppearanceSettingsStore = defineStore(
             isNavCollapsed,
             isDataTableStriped,
             showPointerOnHover,
+            showNewDashboardButton,
             tableLimitsDialog,
             TABLE_MAX_SIZE_MIN,
             TABLE_MAX_SIZE_MAX,
@@ -1204,6 +1220,7 @@ export const useAppearanceSettingsStore = defineStore(
             setRandomUserColours,
             toggleStripedDataTable,
             togglePointerOnHover,
+            setShowNewDashboardButton,
             setTableDensity,
             setTrustColor,
             tryInitUserColours,

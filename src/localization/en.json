@@ -689,6 +689,10 @@
                 }
             },
             "interface": {
+                "navigation": {
+                    "header": "Navigation",
+                    "show_new_dashboard_button": "Show \"New Dashboard\" Button"
+                },
                 "lists_tables": {
                     "header": "Lists & Tables"
                 }
