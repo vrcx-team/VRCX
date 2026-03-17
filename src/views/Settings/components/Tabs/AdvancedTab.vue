@@ -494,6 +494,7 @@
             selectedPurgePeriod.value === 'all'
                 ? null
                 : parseInt(selectedPurgePeriod.value, 10);
+        isPurgeDialogVisible.value = false;
         purgeAvatarFeedData(days);
     }
 
