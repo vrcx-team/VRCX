@@ -848,6 +848,7 @@
                     "show_notification_icon_dot": "Show Tray Notification Dot",
                     "striped_data_table_mode": "Striped Table Mode",
                     "toggle_pointer_on_hover": "Force pointer on hover",
+                    "accessible_status_indicators": "Accessible Status Indicators",
                     "table_density": "Table Density",
                     "table_density_standard": "Standard",
                     "table_density_comfortable": "Comfortable",

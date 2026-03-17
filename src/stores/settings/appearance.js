@@ -116,6 +116,7 @@ export const useAppearanceSettingsStore = defineStore(
 
         const isDataTableStriped = ref(false);
         const showPointerOnHover = ref(false);
+        const accessibleStatusIndicators = ref(false);
         const showNewDashboardButton = ref(true);
         const tableLimitsDialog = ref({
             visible: false,
@@ -176,6 +177,7 @@ export const useAppearanceSettingsStore = defineStore(
                 navIsCollapsedConfig,
                 dataTableStripedConfig,
                 showPointerOnHoverConfig,
+                accessibleStatusIndicatorsConfig,
                 showNewDashboardButtonConfig,
                 appFontFamilyConfig,
                 customFontFamilyConfig,
@@ -246,6 +248,7 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getBool('VRCX_navIsCollapsed', false),
                 configRepository.getBool('VRCX_dataTableStriped', false),
                 configRepository.getBool('VRCX_showPointerOnHover', false),
+                configRepository.getBool('VRCX_accessibleStatusIndicators', false),
                 configRepository.getBool('VRCX_showNewDashboardButton', true),
                 configRepository.getString(
                     'VRCX_fontFamily',
@@ -362,9 +365,11 @@ export const useAppearanceSettingsStore = defineStore(
             isNavCollapsed.value = navIsCollapsedConfig;
             isDataTableStriped.value = dataTableStripedConfig;
             showPointerOnHover.value = showPointerOnHoverConfig;
+            accessibleStatusIndicators.value = accessibleStatusIndicatorsConfig;
             showNewDashboardButton.value = showNewDashboardButtonConfig;
 
             applyPointerHoverClass();
+            applyAccessibleStatusClass();
 
             await configRepository.remove('VRCX_navWidth');
 
@@ -939,6 +944,30 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          *
          */
+        function applyAccessibleStatusClass() {
+            const classList = document.documentElement.classList;
+            classList.remove('accessible-status-indicators');
+
+            if (accessibleStatusIndicators.value) {
+                classList.add('accessible-status-indicators');
+            }
+        }
+
+        /**
+         *
+         */
+        function toggleAccessibleStatusIndicators() {
+            accessibleStatusIndicators.value = !accessibleStatusIndicators.value;
+            configRepository.setBool(
+                'VRCX_accessibleStatusIndicators',
+                accessibleStatusIndicators.value
+            );
+            applyAccessibleStatusClass();
+        }
+
+        /**
+         *
+         */
         function setShowNewDashboardButton() {
             showNewDashboardButton.value = !showNewDashboardButton.value;
             configRepository.setBool(
@@ -1181,6 +1210,7 @@ export const useAppearanceSettingsStore = defineStore(
             isNavCollapsed,
             isDataTableStriped,
             showPointerOnHover,
+            accessibleStatusIndicators,
             showNewDashboardButton,
             tableLimitsDialog,
             TABLE_MAX_SIZE_MIN,
@@ -1216,6 +1246,7 @@ export const useAppearanceSettingsStore = defineStore(
             setRandomUserColours,
             toggleStripedDataTable,
             togglePointerOnHover,
+            toggleAccessibleStatusIndicators,
             setShowNewDashboardButton,
             setTableDensity,
             setTrustColor,

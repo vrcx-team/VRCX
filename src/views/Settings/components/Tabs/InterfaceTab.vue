@@ -132,6 +132,10 @@
             <SettingsItem :label="t('view.settings.appearance.appearance.toggle_pointer_on_hover')">
                 <Switch :model-value="showPointerOnHover" @update:modelValue="togglePointerOnHover" />
             </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.appearance.appearance.accessible_status_indicators')">
+                <Switch :model-value="accessibleStatusIndicators" @update:modelValue="toggleAccessibleStatusIndicators" />
+            </SettingsItem>
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.interface.navigation.header')">
@@ -385,6 +389,7 @@
         tablePageSizes,
         isDataTableStriped,
         showPointerOnHover,
+        accessibleStatusIndicators,
         showNewDashboardButton
     } = storeToRefs(appearanceSettingsStore);
 
@@ -408,6 +413,7 @@
         setTablePageSizes,
         toggleStripedDataTable,
         togglePointerOnHover,
+        toggleAccessibleStatusIndicators,
         setShowNewDashboardButton,
         setAppFontFamily,
         setCustomFontFamily,
