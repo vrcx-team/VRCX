@@ -3,9 +3,14 @@
         <div class="m-1.5" style="position: absolute; top: 0; left: 0">
             <LoginSettingsDialog />
             <TooltipWrapper v-if="!noUpdater" side="top" :content="t('view.login.updater')">
-                <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost" @click="showVRCXUpdateDialog"
-                    ><ArrowBigDownDash
-                /></Button>
+                <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost" @click="showVRCXUpdateDialog">
+                    <span class="relative inline-flex items-center justify-center">
+                        <ArrowBigDownDash />
+                        <span
+                            v-if="pendingVRCXUpdate"
+                            class="absolute -top-0.5 -right-1 h-1.5 w-1.5 rounded-full bg-red-500"></span>
+                    </span>
+                </Button>
             </TooltipWrapper>
             <DropdownMenu>
                 <DropdownMenuTrigger as-child>
@@ -211,7 +216,7 @@
     const route = useRoute();
     const { loginForm } = storeToRefs(useAuthStore());
     const { relogin, deleteSavedLogin, login, getAllSavedCredentials } = useAuthStore();
-    const { noUpdater } = storeToRefs(useVRCXUpdaterStore());
+    const { noUpdater, pendingVRCXUpdate } = storeToRefs(useVRCXUpdaterStore());
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { appLanguage } = storeToRefs(appearanceSettingsStore);
