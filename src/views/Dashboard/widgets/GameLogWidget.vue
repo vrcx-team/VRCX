@@ -27,8 +27,8 @@
             </DropdownMenu>
         </WidgetHeader>
 
-        <div class="min-h-0 flex-1 overflow-y-auto">
-            <Table v-if="filteredData.length" class="is-compact-table">
+        <div class="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+            <Table v-if="filteredData.length" class="is-compact-table table-fixed">
                 <TableBody>
                     <TableRow
                         v-for="(item, index) in filteredData"
@@ -40,7 +40,7 @@
                                 <span>{{ formatTime(item.created_at) }}</span>
                             </TooltipWrapper>
                         </TableCell>
-                        <TableCell class="truncate">
+                        <TableCell class="max-w-0 truncate">
                             <template v-if="item.type === 'Location'">
                                 <MapPin class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 <Location

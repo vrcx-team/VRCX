@@ -1,5 +1,5 @@
 <template>
-    <div class="group/header flex shrink-0 items-center justify-between border-b px-2.5 py-1.5">
+    <div class="group/header flex shrink-0 items-center justify-between border-b px-2.5 py-0">
         <div
             class="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
             @click="navigateToPage">
