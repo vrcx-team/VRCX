@@ -832,7 +832,7 @@
                     "theme_mode_material3": "Material 3",
                     "zoom": "Zoom",
                     "vrcplus_profile_icons": "VRCPlus Profile Icons",
-                    "show_instance_id": "Show Instance Name",
+                    "show_instance_id": "Show Instance ID",
                     "show_status_bar": "Show Status Bar",
                     "age_gated_instances": "Age Gated Instances",
                     "nicknames": "Memo Nicknames",
@@ -856,7 +856,8 @@
                     "table_density_standard": "Standard",
                     "table_density_comfortable": "Comfortable",
                     "table_density_compact": "Compact",
-                    "table_entries_settings": "Table Entries Settings"
+                    "table_entries_settings": "Table Entries Settings",
+                    "table_entries_settings_description": "Adjust how many entries are loaded and displayed in large lists"
                 },
                 "display": {
                     "header": "Display"
@@ -898,7 +899,9 @@
                 "user_dialog": {
                     "header": "User Dialog",
                     "vrchat_notes": "VRChat Notes",
+                    "vrchat_notes_description": "Shows notes stored in VRChat",
                     "vrcx_memos": "VRCX Memos",
+                    "vrcx_memos_description": "Shows notes saved locally in VRCX",
                     "recent_action_cooldown": "Recent Action Indicator",
                     "recent_action_cooldown_description": "Show a clock icon on invite/request actions that were recently performed",
                     "recent_action_cooldown_minutes": "Cooldown (minutes)"
@@ -1082,6 +1085,7 @@
                     "remote_database": {
                         "header": "Remote Avatar Database",
                         "enable": "Enable",
+                        "enable_description": "Enables fetching avatar data from a remote database",
                         "avatar_database_provider": "Avatar Database Provider"
                     },
                     "youtube_api": {

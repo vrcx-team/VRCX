@@ -240,7 +240,9 @@
                 </Popover>
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.appearance.appearance.table_entries_settings')">
+            <SettingsItem
+                :label="t('view.settings.appearance.appearance.table_entries_settings')"
+                :description="t('view.settings.appearance.appearance.table_entries_settings_description')">
                 <Button size="sm" variant="outline" @click="showTableLimitsDialog">{{
                     t('view.settings.appearance.appearance.table_entries_settings')
                 }}</Button>
@@ -275,11 +277,15 @@
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.appearance.user_dialog.header')">
-            <SettingsItem :label="t('view.settings.appearance.user_dialog.vrchat_notes')">
+            <SettingsItem
+                :label="t('view.settings.appearance.user_dialog.vrchat_notes')"
+                :description="t('view.settings.appearance.user_dialog.vrchat_notes_description')">
                 <Switch :model-value="!hideUserNotes" @update:modelValue="setHideUserNotes" />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.appearance.user_dialog.vrcx_memos')">
+            <SettingsItem
+                :label="t('view.settings.appearance.user_dialog.vrcx_memos')"
+                :description="t('view.settings.appearance.user_dialog.vrcx_memos_description')">
                 <Switch :model-value="!hideUserMemos" @update:modelValue="setHideUserMemos" />
             </SettingsItem>
         </SettingsGroup>

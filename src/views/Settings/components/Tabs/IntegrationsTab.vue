@@ -127,7 +127,9 @@
 
         <!-- Remote Database -->
         <SettingsGroup :title="t('view.settings.advanced.advanced.remote_database.header')">
-            <SettingsItem :label="t('view.settings.advanced.advanced.remote_database.enable')">
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.remote_database.enable')"
+                :description="t('view.settings.advanced.advanced.remote_database.enable_description')">
                 <Switch
                     :model-value="avatarRemoteDatabase"
                     @update:modelValue="setAvatarRemoteDatabase(!avatarRemoteDatabase)" />
