@@ -206,7 +206,7 @@ describe('FriendLog.vue', () => {
             mocks.friendLogTable.value.data,
             row
         );
-        expect(mocks.deleteFriendLogHistory).toHaveBeenCalledWith(55);
+        expect(mocks.deleteFriendLogHistory).toHaveBeenCalledWith(row);
     });
 
     test('resets page index when page size changes', async () => {

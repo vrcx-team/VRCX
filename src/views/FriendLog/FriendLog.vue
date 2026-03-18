@@ -161,7 +161,7 @@
      */
     function deleteFriendLog(row) {
         removeFromArray(friendLogTable.value.data, row);
-        database.deleteFriendLogHistory(row.rowId);
+        database.deleteFriendLogHistory(row);
     }
 
     const columns = createColumns({
