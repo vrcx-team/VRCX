@@ -11,40 +11,44 @@
     content: '';
     background: var(--status-offline);
     border-radius: 50%;
-    box-shadow: 0 0 0 1px var(--background);
+    box-shadow: 0 0 0 2px var(--background);
 }
 
 .status-icon.active::after {
     background: var(--status-active);
-    box-shadow: 0 0 0 1px var(--background);
+    box-shadow: 0 0 0 2px var(--background);
 }
 
 .status-icon.online::after {
     background: var(--status-online);
     box-shadow:
-        0 0 0 1px var(--background),
+        0 0 0 2px var(--background),
         0 0 4px color-mix(in oklch, var(--status-online) 50%, transparent);
 }
 
 .status-icon.joinme::after {
     background: var(--status-joinme);
     box-shadow:
-        0 0 0 1px var(--background),
+        0 0 0 2px var(--background),
         0 0 4px color-mix(in oklch, var(--status-joinme) 50%, transparent);
 }
 
 .status-icon.askme::after {
     background: var(--status-askme);
     box-shadow:
-        0 0 0 1px var(--background),
+        0 0 0 2px var(--background),
         0 0 4px color-mix(in oklch, var(--status-askme) 50%, transparent);
 }
 
 .status-icon.busy::after {
     background: var(--status-busy);
     box-shadow:
-        0 0 0 1px var(--background),
+        0 0 0 2px var(--background),
         0 0 4px color-mix(in oklch, var(--status-busy) 50%, transparent);
+}
+
+.accessible-status-indicators .status-icon::after {
+    box-shadow: none;
 }
 
 .accessible-status-indicators .status-icon.joinme::after {

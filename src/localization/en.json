@@ -838,6 +838,7 @@
                     "show_instance_id": "Show Instance ID",
                     "show_status_bar": "Show Status Bar",
                     "age_gated_instances": "Age Gated Instances",
+                    "age_gated_instances_description": "Hide age-restricted instances. Friends in these instances will be shown as restricted.",
                     "nicknames": "Memo Nicknames",
                     "sort_favorite_by": "Sort Favorites by",
                     "sort_favorite_by_name": "Name",

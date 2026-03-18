@@ -119,7 +119,8 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.appearance.appearance.age_gated_instances')">
+            <SettingsItem :label="t('view.settings.appearance.appearance.age_gated_instances')"
+                :description="t('view.settings.appearance.appearance.age_gated_instances_description')">
                 <Switch
                     :model-value="isAgeGatedInstancesVisible"
                     @update:modelValue="setIsAgeGatedInstancesVisible" />
