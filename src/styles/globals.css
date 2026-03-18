@@ -197,6 +197,12 @@ html {
     border: 1px solid var(--border);
 }
 
+.x-container--auto-height {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
 .aside-collapsed .x-container {
     margin-right: 8px;
 }

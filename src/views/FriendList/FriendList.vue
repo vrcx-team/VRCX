@@ -1,11 +1,11 @@
 <template>
-    <div class="x-container" ref="friendsListRef">
-        <div>
+    <div class="x-container x-container--auto-height" ref="friendsListRef">
+        <div class="flex-1 min-h-0 flex flex-col">
             <DataTableLayout
                 class="min-w-0 w-full"
                 :table="table"
                 :loading="friendsListLoading"
-                :table-style="tableHeightStyle"
+                auto-height
                 :page-sizes="pageSizes"
                 :total-items="totalItems"
                 table-class="min-w-max w-max [&_tbody_tr]:cursor-pointer"
@@ -144,7 +144,6 @@
     import { localeIncludes } from '../../shared/utils';
     import removeConfusables, { removeWhitespace } from '../../services/confusables';
     import { router } from '../../plugins/router';
-    import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
     import { showUserDialog } from '../../coordinators/userCoordinator';
     import { confirmDeleteFriend, handleFriendDelete } from '../../coordinators/friendRelationshipCoordinator';
@@ -184,11 +183,6 @@
     });
 
     const friendsListRef = ref(null);
-    const { tableStyle: tableHeightStyle } = useDataTableScrollHeight(friendsListRef, {
-        offset: 30,
-        toolbarHeight: 54,
-        paginationHeight: 52
-    });
 
     const friendsListColumns = computed(() =>
         createColumns({

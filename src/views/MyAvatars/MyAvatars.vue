@@ -167,7 +167,7 @@
         <DataTableLayout
             v-if="viewMode === 'table'"
             :table="table"
-            :table-style="tableHeightStyle"
+            auto-height
             :page-sizes="pageSizes"
             :total-items="filteredAvatars.length"
             :loading="isLoading"
@@ -340,7 +340,6 @@
     import { getTagColor } from '../../shared/constants';
     import { processBulk } from '../../services/request';
     import { useAvatarCardGrid } from './composables/useAvatarCardGrid';
-    import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     import ImageCropDialog from '../../components/dialogs/ImageCropDialog.vue';
@@ -375,11 +374,7 @@
     const manageTagsOpen = ref(false);
     const manageTagsAvatar = ref(null);
 
-    const { tableStyle: tableHeightStyle } = useDataTableScrollHeight(containerRef, {
-        offset: 30,
-        toolbarHeight: 54,
-        paginationHeight: 52
-    });
+
 
     const allTags = computed(() => {
         const tagSet = new Set();

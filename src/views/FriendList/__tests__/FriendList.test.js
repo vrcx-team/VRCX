@@ -127,12 +127,6 @@ vi.mock('../../../shared/utils', () => ({
             .includes(String(query ?? '').toLowerCase())
 }));
 
-vi.mock('../../../composables/useDataTableScrollHeight', () => ({
-    useDataTableScrollHeight: () => ({
-        tableStyle: {}
-    })
-}));
-
 vi.mock('../../../lib/table/useVrcxVueTable', () => ({
     useVrcxVueTable: (options) => ({
         table: {

@@ -55,12 +55,6 @@ vi.mock('../../../stores', () => ({
     })
 }));
 
-vi.mock('../../../composables/useDataTableScrollHeight', () => ({
-    useDataTableScrollHeight: () => ({
-        tableStyle: {}
-    })
-}));
-
 vi.mock('../../../lib/table/useVrcxVueTable', () => ({
     useVrcxVueTable: (options) => ({
         table: {

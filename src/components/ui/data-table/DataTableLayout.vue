@@ -1,11 +1,11 @@
 <template>
-    <div class="flex flex-col min-w-0 data-table">
+    <div :class="['flex flex-col min-w-0 data-table', autoHeight && 'flex-1 min-h-0 overflow-hidden']">
         <div v-if="$slots.toolbar" class="mb-2">
             <slot name="toolbar"></slot>
         </div>
 
-        <div class="rounded-md border">
-            <div ref="tableScrollRef" class="max-w-full overflow-auto relative" :style="tableStyle">
+        <div :class="['rounded-md border', autoHeight && 'flex-1 min-h-0 flex flex-col overflow-hidden']">
+            <div ref="tableScrollRef" :class="['max-w-full overflow-auto relative', autoHeight && 'flex-1 min-h-0']" :style="tableStyle">
                 <Table :class="tableClassValue" :style="tableElementStyle">
                     <colgroup>
                         <col v-for="col in table.getVisibleLeafColumns()" :key="col.id" :style="getColStyle(col)" />
@@ -259,7 +259,7 @@
             </div>
         </div>
 
-        <div v-if="showPagination" class="mt-4 flex w-full items-center gap-3">
+        <div v-if="showPagination" class="mt-4 flex w-full items-center gap-3 mb-1">
             <div v-if="pageSizes.length" class="inline-flex items-center flex-1 justify-end gap-2">
                 <span class="text-xs text-muted-foreground truncate">{{ t('table.pagination.rows_per_page') }}</span>
                 <Select v-model="pageSizeValue">
@@ -399,6 +399,10 @@
         enableColumnVisibility: {
             type: Boolean,
             default: true
+        },
+        autoHeight: {
+            type: Boolean,
+            default: false
         }
     });
 

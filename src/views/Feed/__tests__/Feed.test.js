@@ -67,12 +67,6 @@ vi.mock('../../../lib/table/useVrcxVueTable', () => ({
     })
 }));
 
-vi.mock('../../../composables/useDataTableScrollHeight', () => ({
-    useDataTableScrollHeight: () => ({
-        tableStyle: {}
-    })
-}));
-
 vi.mock('../columns.jsx', () => ({
     columns: []
 }));

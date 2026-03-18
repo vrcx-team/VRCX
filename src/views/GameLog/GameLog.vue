@@ -1,9 +1,9 @@
 <template>
-    <div class="x-container" ref="gameLogRef">
+    <div class="x-container x-container--auto-height" ref="gameLogRef">
         <DataTableLayout
             :table="table"
             :loading="gameLogTable.loading"
-            :table-style="tableHeightStyle"
+            auto-height
             :page-sizes="pageSizes"
             :total-items="totalItems"
             :on-page-size-change="handlePageSizeChange">
@@ -82,7 +82,6 @@
     import { createColumns } from './columns.jsx';
     import { database } from '../../services/database';
     import { removeFromArray } from '../../shared/utils';
-    import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     const { gameLogTableLookup } = useGameLogStore();
@@ -111,11 +110,6 @@
     const { t } = useI18n();
 
     const gameLogRef = ref(null);
-    const { tableStyle: tableHeightStyle } = useDataTableScrollHeight(gameLogRef, {
-        offset: 30,
-        toolbarHeight: 54,
-        paginationHeight: 52
-    });
 
     /**
      *
