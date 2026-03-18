@@ -3,9 +3,6 @@ name: VRCX
 on:
     - workflow_dispatch
 
-env:
-    FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 concurrency:
     group: ${{ github.ref }}
     cancel-in-progress: true
@@ -38,13 +35,13 @@ jobs:
             - uses: actions/checkout@v5
             - name: Set version
               run: echo "${{ needs.set_version.outputs.version }}" > Version
-            - uses: actions/setup-node@v4
+            - uses: actions/setup-node@v6
               with:
                   node-version: lts/*
             - name: Get npm cache directory
               id: npm-cache-dir
               run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
-            - uses: actions/cache@v4
+            - uses: actions/cache@v5
               with:
                   path: ${{ steps.npm-cache-dir.outputs.dir }}
                   key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -56,7 +53,7 @@ jobs:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SentryAuthToken }}
               run: npm run prod
             - name: Upload Cef-html artifacts
-              uses: actions/upload-artifact@v5
+              uses: actions/upload-artifact@v7
               with:
                   name: Cef-html
                   path: build/html
@@ -70,13 +67,13 @@ jobs:
             - uses: actions/checkout@v5
             - name: Set version
               run: echo "${{ needs.set_version.outputs.version }}" > Version
-            - uses: actions/setup-node@v4
+            - uses: actions/setup-node@v6
               with:
                   node-version: lts/*
             - name: Get npm cache directory
               id: npm-cache-dir
               run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
-            - uses: actions/cache@v4
+            - uses: actions/cache@v5
               with:
                   path: ${{ steps.npm-cache-dir.outputs.dir }}
                   key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -88,7 +85,7 @@ jobs:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SentryAuthToken }}
               run: npm run prod-linux
             - name: Upload Electron-html artifacts
-              uses: actions/upload-artifact@v5
+              uses: actions/upload-artifact@v7
               with:
                   name: Electron-html
                   path: build/html
@@ -110,7 +107,7 @@ jobs:
                   echo "${{ needs.set_version.outputs.version }}" > Version
                   echo "!define PRODUCT_VERSION_FROM_FILE \"${{ needs.set_version.outputs.date }}.0\"" > Installer/version_define.nsh
                   cat Version
-            - uses: actions/cache@v4
+            - uses: actions/cache@v5
               with:
                   path: ~/.nuget/packages
                   key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Cef.csproj') }}
@@ -157,7 +154,7 @@ jobs:
                       ${{ github.workspace }}\build\Cef\VRCX.exe
 
             - name: Download Cef-html artifacts
-              uses: actions/download-artifact@v6
+              uses: actions/download-artifact@v8
               with:
                   name: Cef-html
                   path: build/Cef/html
@@ -190,12 +187,12 @@ jobs:
                       ${{ github.workspace }}\VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
 
             - name: Upload Cef dotnet artifacts
-              uses: actions/upload-artifact@v5
+              uses: actions/upload-artifact@v7
               with:
                   name: Cef-Release
                   path: build/Cef
             - name: Upload setup artifact
-              uses: actions/upload-artifact@v5
+              uses: actions/upload-artifact@v7
               with:
                   name: Cef-Setup
                   path: VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
@@ -221,7 +218,7 @@ jobs:
                   dotnet-version: '9.0.x'
             - name: Set version
               run: echo "${{ needs.set_version.outputs.version }}" > Version
-            - uses: actions/cache@v4
+            - uses: actions/cache@v5
               with:
                   path: ~/.nuget/packages
                   key: ${{ runner.os }}-nuget-${{ matrix.arch }}-${{ hashFiles(format('**/Dotnet/{0}', matrix.project)) }}
@@ -229,7 +226,7 @@ jobs:
             - name: Build Electron ${{ matrix.arch }} .NET Application
               run: dotnet build 'Dotnet/${{ matrix.project }}' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=${{ matrix.arch }} -p:PlatformTarget=${{ matrix.arch }} -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a ${{ matrix.arch }}
             - name: Upload Electron ${{ matrix.arch }} dotnet artifacts
-              uses: actions/upload-artifact@v5
+              uses: actions/upload-artifact@v7
               with:
                   name: ${{ matrix.artifact }}
                   path: build/Electron
@@ -255,7 +252,7 @@ jobs:
                   dotnet-version: '9.0.x'
             - name: Set version
               run: echo "${{ needs.set_version.outputs.version }}" > Version
-            - uses: actions/cache@v4
+            - uses: actions/cache@v5
               with:
                   path: ~/.nuget/packages
                   key: ${{ runner.os }}-nuget-${{ matrix.arch }}-${{ hashFiles(format('**/Dotnet/{0}', matrix.project)) }}
@@ -263,7 +260,7 @@ jobs:
             - name: Build Electron ${{ matrix.arch }} .NET Application
               run: dotnet build 'Dotnet/${{ matrix.project }}' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=${{ matrix.arch }} -p:PlatformTarget=${{ matrix.arch }} -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a ${{ matrix.arch }}
             - name: Upload Electron ${{ matrix.arch }} dotnet artifacts
-              uses: actions/upload-artifact@v5
+              uses: actions/upload-artifact@v7
               with:
                   name: ${{ matrix.artifact }}
                   path: build/Electron
@@ -277,13 +274,13 @@ jobs:
             - uses: actions/checkout@v5
             - name: Set version
               run: echo "${{ needs.set_version.outputs.version }}" > Version
-            - uses: actions/setup-node@v4
+            - uses: actions/setup-node@v6
               with:
                   node-version: lts/*
             - name: Get npm cache directory
               id: npm-cache-dir
               run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
-            - uses: actions/cache@v4
+            - uses: actions/cache@v5
               with:
                   path: ${{ steps.npm-cache-dir.outputs.dir }}
                   key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -291,31 +288,31 @@ jobs:
             - name: Restore dependencies
               run: npm ci
             - name: Download Electron html artifacts
-              uses: actions/download-artifact@v6
+              uses: actions/download-artifact@v8
               with:
                   name: Electron-html
                   path: build/html
             - name: Download Electron x64 dotnet artifacts
-              uses: actions/download-artifact@v6
+              uses: actions/download-artifact@v8
               with:
                   name: Electron-Release-Linux-x64
                   path: build/Electron
             - name: Build x64 AppImage
               run: npm run build-electron
             - name: Upload Electron x64 AppImage artifacts
-              uses: actions/upload-artifact@v5
+              uses: actions/upload-artifact@v7
               with:
                   name: Electron-AppImage-x64
                   path: 'build/VRCX_${{ needs.set_version.outputs.version }}_x64.AppImage'
             - name: Download Electron arm64 dotnet artifacts
-              uses: actions/download-artifact@v6
+              uses: actions/download-artifact@v8
               with:
                   name: Electron-Release-Linux-arm64
                   path: build/Electron
             - name: Build arm64 AppImage
               run: npm run build-electron-arm64
             - name: Upload Electron arm64 AppImage artifacts
-              uses: actions/upload-artifact@v5
+              uses: actions/upload-artifact@v7
               with:
                   name: Electron-AppImage-arm64
                   path: 'build/VRCX_${{ needs.set_version.outputs.version }}_arm64.AppImage'
@@ -328,13 +325,13 @@ jobs:
             - uses: actions/checkout@v5
             - name: Set version
               run: echo "${{ needs.set_version.outputs.version }}" > Version
-            - uses: actions/setup-node@v4
+            - uses: actions/setup-node@v6
               with:
                   node-version: lts/*
             - name: Get npm cache directory
               id: npm-cache-dir
               run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
-            - uses: actions/cache@v4
+            - uses: actions/cache@v5
               with:
                   path: ${{ steps.npm-cache-dir.outputs.dir }}
                   key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -342,33 +339,33 @@ jobs:
             - name: Restore dependencies
               run: npm ci
             - name: Download Electron html artifacts
-              uses: actions/download-artifact@v6
+              uses: actions/download-artifact@v8
               with:
                   name: Electron-html
                   path: build/html
             - name: Download x64 Electron dotnet artifacts
-              uses: actions/download-artifact@v6
+              uses: actions/download-artifact@v8
               with:
                   name: Electron-Release-macOS-x64
                   path: build/Electron
             - name: Build x64 macOS .dmg
               run: npm run build-electron
             - name: Upload x64 Electron macOS artifacts
-              uses: actions/upload-artifact@v5
+              uses: actions/upload-artifact@v7
               with:
                   name: Electron-MacDmg-x64
                   path: 'build/VRCX_${{ needs.set_version.outputs.version }}_x64.dmg'
             - name: Cleanup
               run: rm -R build/Electron
             - name: Download arm64 Electron dotnet artifacts
-              uses: actions/download-artifact@v6
+              uses: actions/download-artifact@v8
               with:
                   name: Electron-Release-macOS-arm64
                   path: build/Electron
             - name: Build arm64 macOS .dmg
               run: npm run build-electron-arm64
             - name: Upload arm64 Electron macOS artifacts
-              uses: actions/upload-artifact@v5
+              uses: actions/upload-artifact@v7
               with:
                   name: Electron-MacDmg-arm64
                   path: 'build/VRCX_${{ needs.set_version.outputs.version }}_arm64.dmg'
@@ -384,16 +381,16 @@ jobs:
             ]
         steps:
             - name: Download Cef-Setup artifacts
-              uses: actions/download-artifact@v6
+              uses: actions/download-artifact@v8
               with:
                   name: Cef-Setup
             - name: Download Cef dotnet artifacts
-              uses: actions/download-artifact@v6
+              uses: actions/download-artifact@v8
               with:
                   name: Cef-Release
                   path: build/Cef
             - name: Download Cef-html artifacts
-              uses: actions/download-artifact@v6
+              uses: actions/download-artifact@v8
               with:
                   name: Cef-html
                   path: build/Cef/html
@@ -406,7 +403,7 @@ jobs:
                   mv ${file_name} ../../${file_name}
                   echo "Zip FileName: ${file_name}"
             - name: Upload Zip artifact
-              uses: actions/upload-artifact@v5
+              uses: actions/upload-artifact@v7
               with:
                   name: VRCX-Zip
                   path: 'VRCX_${{ needs.set_version.outputs.version }}.zip'
