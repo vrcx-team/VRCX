@@ -165,7 +165,6 @@
                 <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.event') }} <span v-text="sqliteTableSizes.event"></span></span>
             </div>
 
-            <!-- [Disabled] Avatar DB log cleanup UI - auto cleanup select & purge button & dialog
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.database_cleanup.auto_cleanup')"
                 :description="t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_description')">
@@ -191,10 +190,9 @@
                     {{ t('view.settings.advanced.advanced.database_cleanup.purge') }}
                 </Button>
             </SettingsItem>
-            -->
+           
         </SettingsGroup>
 
-        <!-- [Disabled] Avatar DB log cleanup - purge dialog
         <Dialog :open="isPurgeDialogVisible" @update:open="(open) => { if (!open) isPurgeDialogVisible = false; }">
             <DialogContent class="x-dialog sm:max-w-md">
                 <DialogHeader>
@@ -239,7 +237,7 @@
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-        -->
+       
 
         <SettingsGroup :title="t('view.settings.advanced_groups.diagnostics.header')">
             <SettingsGroup :title="t('view.profile.game_info.header')">
@@ -298,16 +296,13 @@
 </template>
 
 <script setup>
-    import { RefreshCcw, Trash2 } from 'lucide-vue-next';
-    // [Disabled] Avatar DB log cleanup - unused imports
-    // import { TriangleAlert } from 'lucide-vue-next';
+    import { RefreshCcw, Trash2,TriangleAlert } from 'lucide-vue-next';
     import { computed, reactive, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Switch } from '@/components/ui/switch';
-    // [Disabled] Avatar DB log cleanup - unused imports
-    // import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    // import { Alert, AlertDescription } from '@/components/ui/alert';
-    // import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { Alert, AlertDescription } from '@/components/ui/alert';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -379,9 +374,8 @@
         showConfirmationOnSwitchAvatar,
         gameLogDisabled,
         sqliteTableSizes,
-        // [Disabled] Avatar DB log cleanup
-        // avatarAutoCleanup,
-        // purgeInProgress,
+        avatarAutoCleanup,
+        purgeInProgress,
         sentryErrorReporting
     } = storeToRefs(advancedSettingsStore);
 
@@ -395,18 +389,16 @@
         setEnableAppLauncherRunProcessOnce,
         setShowConfirmationOnSwitchAvatar,
         getSqliteTableSizes,
-        // [Disabled] Avatar DB log cleanup
-        // setAvatarAutoCleanup,
-        // purgeAvatarFeedData,
+        setAvatarAutoCleanup,
+        purgeAvatarFeedData,
         promptAutoClearVRCXCacheFrequency,
         setSentryErrorReporting
     } = advancedSettingsStore;
 
     const configTreeData = ref({});
     const visits = ref(0);
-    // [Disabled] Avatar DB log cleanup
-    // const selectedPurgePeriod = ref('180');
-    // const isPurgeDialogVisible = ref(false);
+    const selectedPurgePeriod = ref('180');
+    const isPurgeDialogVisible = ref(false);
 
     const cacheSize = reactive({
         cachedUsers: 0,
@@ -419,15 +411,14 @@
 
     const isLinux = computed(() => LINUX);
 
-    // [Disabled] Avatar DB log cleanup - handlePurge
-    // function handlePurge() {
-    //     const days =
-    //         selectedPurgePeriod.value === 'all'
-    //             ? null
-    //             : parseInt(selectedPurgePeriod.value, 10);
-    //     isPurgeDialogVisible.value = false;
-    //     purgeAvatarFeedData(days);
-    // }
+    function handlePurge() {
+        const days =
+            selectedPurgePeriod.value === 'all'
+                ? null
+                : parseInt(selectedPurgePeriod.value, 10);
+        isPurgeDialogVisible.value = false;
+        purgeAvatarFeedData(days);
+    }
 
     /**
      *
