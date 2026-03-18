@@ -258,36 +258,17 @@
                         <div ref="worldFavoritesContainerRef" class="flex-1 min-h-0">
                             <template v-if="isSearchActive">
                                 <div class="h-full pr-2 overflow-auto">
-                                    <div
-                                        v-if="worldFavoriteSearchResults.length"
-                                        class="favorites-search-grid"
-                                        :style="worldFavoritesGridStyle(worldFavoriteSearchResults.length)">
+                                    <template v-if="worldFavoriteSearchResults.length">
                                         <div
-                                            v-for="favorite in worldFavoriteSearchResults"
-                                            :key="favorite.id"
-                                            class="favorites-search-card x-hover-card hover:shadow-sm"
-                                            @click="showWorldDialog(favorite.id)">
-                                            <div class="favorites-search-card__content">
-                                                <div
-                                                    class="favorites-search-card__avatar"
-                                                    :class="{ 'is-empty': !favorite.thumbnailImageUrl }">
-                                                    <img
-                                                        v-if="favorite.thumbnailImageUrl"
-                                                        :src="favorite.thumbnailImageUrl"
-                                                        loading="lazy" />
-                                                </div>
-                                                <div class="favorites-search-card__detail">
-                                                    <span class="name">{{ favorite.name || favorite.id }}</span>
-                                                    <span class="text-xs">
-                                                        {{ favorite.authorName }}
-                                                        <template v-if="favorite.occupants">
-                                                            ({{ favorite.occupants }})
-                                                        </template>
-                                                    </span>
-                                                </div>
-                                            </div>
+                                            class="favorites-card-list"
+                                            :style="worldFavoritesGridStyle(worldFavoriteSearchResults.length)">
+                                            <FavoritesWorldItem
+                                                v-for="favorite in worldFavoriteSearchResults"
+                                                :key="favorite.id"
+                                                :favorite="favorite"
+                                                is-local-favorite />
                                         </div>
-                                    </div>
+                                    </template>
                                     <div v-else class="flex items-center justify-center text-[13px] h-full">
                                         <DataTableEmpty type="nomatch" />
                                     </div>
@@ -387,8 +368,7 @@
         DropdownMenuSubTrigger,
         DropdownMenuTrigger
     } from '../../components/ui/dropdown-menu';
-    import { useAppearanceSettingsStore, useFavoriteStore, useModalStore, useWorldStore } from '../../stores';
-    import { showWorldDialog } from '../../coordinators/worldCoordinator';
+    import { useAppearanceSettingsStore, useFavoriteStore, useModalStore } from '../../stores';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { favoriteRequest, worldRequest } from '../../api';
     import { debounce } from '../../shared/utils';
