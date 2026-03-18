@@ -5,7 +5,9 @@
                 :sort-value="worldSortValue"
                 :extra-sort-options="worldExtraSortOptions"
                 v-model:search-query="worldFavoriteSearch"
-                :search-placeholder="t('view.favorite.worlds.search')"
+                :search-placeholder="worldSearchPlaceholder"
+                v-model:search-mode="worldSearchMode"
+                :search-mode-visible="true"
                 v-model:toolbar-menu-open="worldToolbarMenuOpen"
                 v-model:card-scale-value="worldCardScaleValue"
                 :card-scale-percent="worldCardScalePercent"
@@ -502,6 +504,13 @@
     const worldEditMode = ref(false);
     const worldToolbarMenuOpen = ref(false);
     const worldSortMode = ref('none');
+    const worldSearchMode = ref('name');
+
+    const worldSearchPlaceholder = computed(() =>
+        worldSearchMode.value === 'tag'
+            ? t('view.favorite.worlds.search_by_tag')
+            : t('view.favorite.worlds.search')
+    );
 
     const worldExtraSortOptions = computed(() => [
         { value: 'players', label: t('view.settings.appearance.appearance.sort_favorite_by_players') }
@@ -742,6 +751,12 @@
     watch(isSearchActive, (active) => {
         if (active && worldEditMode.value) {
             worldEditMode.value = false;
+        }
+    });
+
+    watch(worldSearchMode, () => {
+        if (isSearchActive.value) {
+            doSearchWorldFavorites();
         }
     });
 
@@ -1000,14 +1015,23 @@
      *
      * @param worldFavoriteSearch
      */
-    function doSearchWorldFavorites(worldFavoriteSearch) {
-        const search = worldFavoriteSearch.trim().toLowerCase();
+    function doSearchWorldFavorites(searchInput) {
+        const search = (searchInput ?? worldFavoriteSearch.value).trim().toLowerCase();
         if (search.length < 3) {
             worldFavoriteSearchResults.value = [];
             return;
         }
+        const isTagMode = worldSearchMode.value === 'tag';
         const filtered = searchableWorldEntries.value.filter((ref) => {
             if (!ref || typeof ref.id === 'undefined' || typeof ref.name === 'undefined') {
+                return false;
+            }
+            if (isTagMode) {
+                if (Array.isArray(ref.tags)) {
+                    return ref.tags.some(
+                        (tag) => tag.startsWith('author_tag_') && tag.substring(11).toLowerCase().includes(search)
+                    );
+                }
                 return false;
             }
             const authorName = ref.authorName || '';

@@ -315,6 +315,9 @@
         "favorite": {
             "worlds": {
                 "search": "Search",
+                "search_by_tag": "Search by Tag",
+                "search_mode_name": "Name",
+                "search_mode_tag": "Tag",
                 "vrchat_favorites": "VRChat Favorites",
                 "local_favorites": "Local Favorites",
                 "new_group": "New Group",
