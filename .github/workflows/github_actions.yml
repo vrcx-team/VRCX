@@ -1,4 +1,4 @@
-name: VRCX
+name: VRCX Build All
 
 on:
     - workflow_dispatch
