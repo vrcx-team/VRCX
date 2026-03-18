@@ -1342,6 +1342,8 @@
                 "vrcplus_hides_avatar": "When a VRC+ profile photo is set, avatar info is hidden. This also hides avatar changes in the feed",
                 "instance_full": "full",
                 "instance_closed": "Instance closed",
+                "instance_age_restricted": "Restricted",
+                "instance_age_restricted_tooltip": "In an age-restricted instance",
                 "close_instance": "Close Instance",
                 "instance_age_gated": "Age Gated",
                 "open_previous_instance": "Open Previous Instances",
