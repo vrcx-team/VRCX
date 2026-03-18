@@ -3,6 +3,9 @@ name: VRCX
 on:
     - workflow_dispatch
 
+env:
+    FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 concurrency:
     group: ${{ github.ref }}
     cancel-in-progress: true
@@ -26,12 +29,76 @@ jobs:
                   echo "version=${FILENAME}" >> $GITHUB_OUTPUT
                   echo "date=${DATE}" >> $GITHUB_OUTPUT
 
+    # Builds CEF (Windows) frontend HTML — no dotnet dependency, starts immediately.
+    # build_dotnet_windows only needs to wait for this, not the Linux dotnet build.
+    build_cef_html:
+        runs-on: ubuntu-latest
+        needs: set_version
+        steps:
+            - uses: actions/checkout@v5
+            - name: Set version
+              run: echo "${{ needs.set_version.outputs.version }}" > Version
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: lts/*
+            - name: Get npm cache directory
+              id: npm-cache-dir
+              run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+            - uses: actions/cache@v4
+              with:
+                  path: ${{ steps.npm-cache-dir.outputs.dir }}
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: ${{ runner.os }}-node-
+            - name: Restore dependencies
+              run: npm ci
+            - name: Build Cef html
+              env:
+                  SENTRY_AUTH_TOKEN: ${{ secrets.SentryAuthToken }}
+              run: npm run prod
+            - name: Upload Cef-html artifacts
+              uses: actions/upload-artifact@v5
+              with:
+                  name: Cef-html
+                  path: build/html
+
+    # Builds Electron (Linux/macOS) frontend HTML — shared between build_electron_linux
+    # and build_electron_macos, avoiding the duplicate build that existed in build_macos.
+    build_electron_html:
+        runs-on: ubuntu-latest
+        needs: set_version
+        steps:
+            - uses: actions/checkout@v5
+            - name: Set version
+              run: echo "${{ needs.set_version.outputs.version }}" > Version
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: lts/*
+            - name: Get npm cache directory
+              id: npm-cache-dir
+              run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+            - uses: actions/cache@v4
+              with:
+                  path: ${{ steps.npm-cache-dir.outputs.dir }}
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: ${{ runner.os }}-node-
+            - name: Restore dependencies
+              run: npm ci
+            - name: Build Electron html
+              env:
+                  SENTRY_AUTH_TOKEN: ${{ secrets.SentryAuthToken }}
+              run: npm run prod-linux
+            - name: Upload Electron-html artifacts
+              uses: actions/upload-artifact@v5
+              with:
+                  name: Electron-html
+                  path: build/html
+
     build_dotnet_windows:
         runs-on: windows-latest
         defaults:
             run:
                 shell: bash
-        needs: [set_version, build_node]
+        needs: [set_version, build_cef_html]
         steps:
             - uses: actions/checkout@v5
             - name: Setup .NET 10
@@ -47,8 +114,7 @@ jobs:
               with:
                   path: ~/.nuget/packages
                   key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Cef.csproj') }}
-                  restore-keys: |
-                      ${{ runner.os }}-nuget-
+                  restore-keys: ${{ runner.os }}-nuget-
             - name: Build Cef .NET Application
               run: dotnet build Dotnet/VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
             - name: Check if we want to sign
@@ -134,9 +200,19 @@ jobs:
                   name: Cef-Setup
                   path: VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
 
+    # Matrix runs x64 and arm64 in parallel instead of sequentially.
     build_dotnet_linux:
         runs-on: ubuntu-latest
         needs: set_version
+        strategy:
+            matrix:
+                include:
+                    - arch: x64
+                      project: VRCX-Electron.csproj
+                      artifact: Electron-Release-Linux-x64
+                    - arch: arm64
+                      project: VRCX-Electron-arm64.csproj
+                      artifact: Electron-Release-Linux-arm64
         steps:
             - uses: actions/checkout@v5
             - name: Setup .NET 9
@@ -144,38 +220,33 @@ jobs:
               with:
                   dotnet-version: '9.0.x'
             - name: Set version
-              run: |
-                  echo "${{ needs.set_version.outputs.version }}" > Version
-                  cat Version
+              run: echo "${{ needs.set_version.outputs.version }}" > Version
             - uses: actions/cache@v4
               with:
                   path: ~/.nuget/packages
-                  key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Electron.csproj') }}-${{ hashFiles('**/Dotnet/VRCX-Electron-arm64.csproj') }}
-                  restore-keys: |
-                      ${{ runner.os }}-nuget-
-            - name: Build Electron x64 .NET Application
-              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64
-            - name: Upload Electron x64 dotnet artifacts
+                  key: ${{ runner.os }}-nuget-${{ matrix.arch }}-${{ hashFiles(format('**/Dotnet/{0}', matrix.project)) }}
+                  restore-keys: ${{ runner.os }}-nuget-
+            - name: Build Electron ${{ matrix.arch }} .NET Application
+              run: dotnet build 'Dotnet/${{ matrix.project }}' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=${{ matrix.arch }} -p:PlatformTarget=${{ matrix.arch }} -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a ${{ matrix.arch }}
+            - name: Upload Electron ${{ matrix.arch }} dotnet artifacts
               uses: actions/upload-artifact@v5
               with:
-                  name: Electron-Release-Linux-x64
+                  name: ${{ matrix.artifact }}
                   path: build/Electron
 
-            - name: Cleanup
-              run: |
-                  rm -R build/Electron
-
-            - name: Build Electron arm64 .NET Application
-              run: dotnet build 'Dotnet/VRCX-Electron-arm64.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64
-            - name: Upload Electron arm64 dotnet artifacts
-              uses: actions/upload-artifact@v5
-              with:
-                  name: Electron-Release-Linux-arm64
-                  path: build/Electron
-
+    # Matrix runs x64 and arm64 in parallel instead of sequentially.
     build_dotnet_macos:
         runs-on: macos-latest
         needs: set_version
+        strategy:
+            matrix:
+                include:
+                    - arch: x64
+                      project: VRCX-Electron.csproj
+                      artifact: Electron-Release-macOS-x64
+                    - arch: arm64
+                      project: VRCX-Electron-arm64.csproj
+                      artifact: Electron-Release-macOS-arm64
         steps:
             - uses: actions/checkout@v5
             - name: Setup .NET 9
@@ -183,75 +254,47 @@ jobs:
               with:
                   dotnet-version: '9.0.x'
             - name: Set version
-              run: |
-                  echo "${{ needs.set_version.outputs.version }}" > Version
-                  cat Version
+              run: echo "${{ needs.set_version.outputs.version }}" > Version
             - uses: actions/cache@v4
               with:
                   path: ~/.nuget/packages
-                  key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Electron.csproj') }}-${{ hashFiles('**/Dotnet/VRCX-Electron-arm64.csproj') }}
-                  restore-keys: |
-                      ${{ runner.os }}-nuget-
-            - name: Build Electron x64 .NET Application
-              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64
-            - name: Upload Electron x64 .NET artifacts
+                  key: ${{ runner.os }}-nuget-${{ matrix.arch }}-${{ hashFiles(format('**/Dotnet/{0}', matrix.project)) }}
+                  restore-keys: ${{ runner.os }}-nuget-
+            - name: Build Electron ${{ matrix.arch }} .NET Application
+              run: dotnet build 'Dotnet/${{ matrix.project }}' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=${{ matrix.arch }} -p:PlatformTarget=${{ matrix.arch }} -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a ${{ matrix.arch }}
+            - name: Upload Electron ${{ matrix.arch }} dotnet artifacts
               uses: actions/upload-artifact@v5
               with:
-                  name: Electron-Release-macOS-x64
+                  name: ${{ matrix.artifact }}
                   path: build/Electron
 
-            - name: Cleanup
-              run: |
-                  rm -R build/Electron
-
-            - name: Build Electron arm64 .NET Application
-              run: dotnet build 'Dotnet/VRCX-Electron-arm64.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64
-            - name: Upload Electron arm64 dotnet artifacts
-              uses: actions/upload-artifact@v5
-              with:
-                  name: Electron-Release-macOS-arm64
-                  path: build/Electron
-
-    build_node:
+    # Replaces the AppImage portion of the old build_node job.
+    # Downloads shared Electron-html instead of rebuilding it.
+    build_electron_linux:
         runs-on: ubuntu-latest
-        needs: [set_version, build_dotnet_linux]
+        needs: [set_version, build_dotnet_linux, build_electron_html]
         steps:
             - uses: actions/checkout@v5
             - name: Set version
-              run: |
-                  echo "${{ needs.set_version.outputs.version }}" > Version
-                  cat Version
-            - name: Node.js
-              uses: actions/setup-node@v4
+              run: echo "${{ needs.set_version.outputs.version }}" > Version
+            - uses: actions/setup-node@v4
               with:
                   node-version: lts/*
             - name: Get npm cache directory
               id: npm-cache-dir
-              shell: bash
               run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
             - uses: actions/cache@v4
-              id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
               with:
                   path: ${{ steps.npm-cache-dir.outputs.dir }}
                   key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-                  restore-keys: |
-                      ${{ runner.os }}-node-
+                  restore-keys: ${{ runner.os }}-node-
             - name: Restore dependencies
               run: npm ci
-            - name: Build Cef-html
-              env:
-                  SENTRY_AUTH_TOKEN: ${{ secrets.SentryAuthToken }}
-              run: npm run prod
-            - name: Upload Cef-html artifacts
-              uses: actions/upload-artifact@v5
+            - name: Download Electron html artifacts
+              uses: actions/download-artifact@v6
               with:
-                  name: Cef-html
+                  name: Electron-html
                   path: build/html
-
-            - name: Build Electron-html
-              env:
-                  SENTRY_AUTH_TOKEN: ${{ secrets.SentryAuthToken }}
-              run: npm run prod-linux
             - name: Download Electron x64 dotnet artifacts
               uses: actions/download-artifact@v6
               with:
@@ -264,7 +307,6 @@ jobs:
               with:
                   name: Electron-AppImage-x64
                   path: 'build/VRCX_${{ needs.set_version.outputs.version }}_x64.AppImage'
-
             - name: Download Electron arm64 dotnet artifacts
               uses: actions/download-artifact@v6
               with:
@@ -278,35 +320,32 @@ jobs:
                   name: Electron-AppImage-arm64
                   path: 'build/VRCX_${{ needs.set_version.outputs.version }}_arm64.AppImage'
 
-    build_macos:
+    # Replaces build_macos. Downloads shared Electron-html instead of building it twice.
+    build_electron_macos:
         runs-on: macos-latest
-        needs: [set_version, build_dotnet_macos]
+        needs: [set_version, build_dotnet_macos, build_electron_html]
         steps:
             - uses: actions/checkout@v5
             - name: Set version
-              run: |
-                  echo "${{ needs.set_version.outputs.version }}" > Version
-                  cat Version
-            - name: Use Node.js
-              uses: actions/setup-node@v4
+              run: echo "${{ needs.set_version.outputs.version }}" > Version
+            - uses: actions/setup-node@v4
               with:
                   node-version: lts/*
             - name: Get npm cache directory
               id: npm-cache-dir
-              shell: bash
               run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
             - uses: actions/cache@v4
-              id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
               with:
                   path: ${{ steps.npm-cache-dir.outputs.dir }}
                   key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-                  restore-keys: |
-                      ${{ runner.os }}-node-
+                  restore-keys: ${{ runner.os }}-node-
             - name: Restore dependencies
               run: npm ci
-            - name: Build Electron-html
-              run: npm run prod-linux --arch=x64
-
+            - name: Download Electron html artifacts
+              uses: actions/download-artifact@v6
+              with:
+                  name: Electron-html
+                  path: build/html
             - name: Download x64 Electron dotnet artifacts
               uses: actions/download-artifact@v6
               with:
@@ -319,14 +358,8 @@ jobs:
               with:
                   name: Electron-MacDmg-x64
                   path: 'build/VRCX_${{ needs.set_version.outputs.version }}_x64.dmg'
-
             - name: Cleanup
-              run: |
-                  rm -R build/Electron
-
-            - name: Build Electron-html
-              run: npm run prod-linux --arch=arm64
-
+              run: rm -R build/Electron
             - name: Download arm64 Electron dotnet artifacts
               uses: actions/download-artifact@v6
               with:
@@ -346,10 +379,8 @@ jobs:
             [
                 set_version,
                 build_dotnet_windows,
-                build_dotnet_linux,
-                build_dotnet_macos,
-                build_node,
-                build_macos
+                build_electron_linux,
+                build_electron_macos,
             ]
         steps:
             - name: Download Cef-Setup artifacts
