@@ -255,9 +255,13 @@ export function applyUser(json) {
     }
     if (hasPropChanged) {
         if (changedProps.location && changedProps.location[0] !== 'traveling') {
-            const ts = Date.now();
-            changedProps.location.push(ts - ref.$location_at);
-            ref.$location_at = ts;
+            if (playerListRef) {
+                ref.$location_at = playerListRef.joinTime;
+            } else {
+                const ts = Date.now();
+                changedProps.location.push(ts - ref.$location_at);
+                ref.$location_at = ts;
+            }
         }
         handleUserUpdate(ref, changedProps);
         if (AppDebug.debugUserDiff) {
