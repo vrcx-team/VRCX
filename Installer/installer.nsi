@@ -86,6 +86,7 @@
     !define MUI_PAGE_CUSTOMFUNCTION_PRE SkipIfNotFreshInstall
     !insertmacro MUI_PAGE_DIRECTORY
 
+    !define MUI_PAGE_CUSTOMFUNCTION_PRE CheckVRCXNotRunning
     !insertmacro MUI_PAGE_INSTFILES
 
     ;------------------------------
@@ -128,6 +129,26 @@ Function SkipIfNotFreshInstall
     StrCmp $upgradeInstallation 0 noSkip
         Abort
     noSkip:
+FunctionEnd
+
+; Called just before the instfiles page — gives the user a chance to close VRCX
+; themselves rather than being forced to kill it before they've chosen an action.
+Function CheckVRCXNotRunning
+    loop:
+    StrCpy $1 "VRCX.exe"
+    nsProcess::_FindProcess "$1"
+    Pop $R1
+    ${If} $R1 = 0
+        MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
+            "VRCX is still running.$\n$\nPlease close VRCX and click OK to continue, or Cancel to go back." \
+            /SD IDOK IDCANCEL goBack
+        nsExec::ExecToStack "taskkill /IM VRCX.exe"
+        Sleep 1000
+        Goto loop
+    ${EndIf}
+    Return
+    goBack:
+        Abort
 FunctionEnd
 
 ; Skip finish page only for "update" action (it auto-launches instead)
@@ -383,25 +404,6 @@ Function .onInit
         ${EndIf}
     ${EndIf}
 
-    ; If VRCX is running, offer to kill it before proceeding
-    loop:
-    StrCpy $1 "VRCX.exe"
-    nsProcess::_FindProcess "$1"
-    Pop $R1
-    ${If} $R1 = 0
-        MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
-            "VRCX is still running.$\n$\nClick OK to kill the process or Cancel to abort." \
-            /SD IDOK IDCANCEL cancel
-        nsExec::ExecToStack "taskkill /IM VRCX.exe"
-    ${Else}
-        Goto done
-    ${EndIf}
-    Sleep 1000
-    Goto loop
-
-    cancel:
-        Abort
-    done:
 FunctionEnd
 
 Function .onInstSuccess
