@@ -62,7 +62,7 @@ namespace VRCX
 
         private static void InstallUpdate()
         {
-            var setupArguments = string.Empty;
+            var setupArguments = "/UPDATE";
 
             try
             {

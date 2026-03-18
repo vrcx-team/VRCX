@@ -308,6 +308,12 @@ Function .onInit
     ClearErrors
     ${GetParameters} $R0
 
+    ${GetOptions} $R0 /UPDATE $R1
+    ${IfNot} ${Errors}
+        StrCpy $MaintenanceAction "update"
+    ${EndIf}
+    ClearErrors
+
     ${GetOptions} $R0 /CHANGE $R1
     ${IfNot} ${Errors}
         StrCpy $MaintenanceAction "change"
