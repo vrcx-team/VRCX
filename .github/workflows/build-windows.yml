@@ -1,4 +1,4 @@
-name: Build Windows
+name: VRCX Build Windows
 
 on:
     workflow_dispatch:
