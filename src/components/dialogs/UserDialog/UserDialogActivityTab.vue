@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col px-2" style="min-height: 200px">
+    <div class="flex flex-col" style="min-height: 200px">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="display: flex; align-items: center">
                 <Button
@@ -11,14 +11,14 @@
                     <Spinner v-if="isLoading" />
                     <RefreshCw v-else />
                 </Button>
-                <span v-if="totalOnlineEvents > 0" style="margin-left: 6px" class="text-muted-foreground text-xs">
-                    {{ t('dialog.user.activity.total_events', { count: totalOnlineEvents }) }}
+                <span v-if="filteredEventCount > 0" class="text-accent-foreground ml-1">
+                    {{ t('dialog.user.activity.total_events', { count: filteredEventCount }) }}
                 </span>
             </div>
-            <div v-if="totalOnlineEvents > 0" style="display: flex; align-items: center">
-                <span style="margin-right: 6px" class="text-muted-foreground text-xs">{{ t('dialog.user.activity.period') }}</span>
+            <div v-if="hasAnyData" class="flex items-center gap-2">
+                <span class="text-muted-foreground text-sm">{{ t('dialog.user.activity.period') }}</span>
                 <Select v-model="selectedPeriod" :disabled="isLoading">
-                    <SelectTrigger size="sm" class="w-[130px]" @click.stop>
+                    <SelectTrigger size="sm" class="w-40" @click.stop>
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -41,10 +41,10 @@
                 <span class="font-medium ml-1">{{ peakTimeText }}</span>
             </div>
         </div>
-        <div v-if="!isLoading && totalOnlineEvents === 0" class="flex items-center justify-center flex-1 mt-8">
+        <div v-if="!isLoading && !hasAnyData" class="flex items-center justify-center flex-1 mt-8">
             <DataTableEmpty type="nodata" />
         </div>
-        <div v-if="!isLoading && totalOnlineEvents > 0 && filteredEventCount === 0" class="flex items-center justify-center flex-1 mt-8">
+        <div v-if="!isLoading && hasAnyData && filteredEventCount === 0" class="flex items-center justify-center flex-1 mt-8">
             <span class="text-muted-foreground text-sm">{{ t('dialog.user.activity.no_data_in_period') }}</span>
         </div>
         <div
@@ -80,6 +80,7 @@
     const chartRef = ref(null);
     const isLoading = ref(false);
     const totalOnlineEvents = ref(0);
+    const hasAnyData = ref(false);
     const peakDayText = ref('');
     const peakTimeText = ref('');
     const selectedPeriod = ref('all');
@@ -116,7 +117,7 @@
         if (echartsInstance) {
             echartsInstance.dispose();
             echartsInstance = null;
-            if (totalOnlineEvents.value > 0 && chartRef.value) {
+            if (hasAnyData.value && chartRef.value) {
                 nextTick(() => {
                     echartsInstance = echarts.init(
                         chartRef.value,
@@ -246,6 +247,7 @@
 
         const filtered = getFilteredTimestamps();
         filteredEventCount.value = filtered.length;
+        totalOnlineEvents.value = filtered.length;
 
         if (filtered.length === 0) {
             peakDayText.value = '';
@@ -354,6 +356,7 @@
             if (requestId !== activeRequestId) return;
             if (userDialog.value.id !== userId) return;
             cachedTimestamps = timestamps;
+            hasAnyData.value = timestamps.length > 0;
             totalOnlineEvents.value = timestamps.length;
             lastLoadedUserId = userId;
 
@@ -386,6 +389,7 @@
             } else {
                 peakDayText.value = '';
                 peakTimeText.value = '';
+                hasAnyData.value = false;
                 filteredEventCount.value = 0;
             }
         } catch (error) {
@@ -401,7 +405,7 @@
      * @param {string} userId
      */
     function loadOnlineFrequency(userId) {
-        if (lastLoadedUserId === userId && totalOnlineEvents.value > 0) {
+        if (lastLoadedUserId === userId && hasAnyData.value) {
             return;
         }
         loadData();
