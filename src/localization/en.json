@@ -2901,6 +2901,36 @@
         "toggle_password": "Toggle password visibility",
         "clear_input": "Clear input"
     },
+    "onboarding": {
+        "welcome": {
+            "title": "Welcome to VRCX",
+            "subtitle": "Here are a few things you might not discover on your own.",
+            "features": {
+                "user_profiles": {
+                    "title": "User Profiles",
+                    "description": "Click any user to see mutual friends, activity heatmaps, and session logs with join/leave details"
+                },
+                "right_click": {
+                    "title": "Context Menus",
+                    "description": "Right-click on key elements for quick actions and additional options"
+                },
+                "dashboard": {
+                    "title": "Custom Dashboards",
+                    "description": "Compose your own workspace by combining panels that suit your needs"
+                },
+                "quick_search": {
+                    "title": "Quick Search",
+                    "description": "Press Ctrl+K (⌘+K on Mac) to instantly search for users, worlds, and avatars"
+                }
+            },
+            "cta": "Get Started"
+        },
+        "whatsnew": {
+            "title": "What's New in VRCX",
+            "subtitle": "Here's what changed in this update.",
+            "cta": "Got It"
+        }
+    },
     "status_bar": {
         "game": "Game",
         "game_running": "VRChat is running",
