@@ -259,8 +259,8 @@
             </div>
         </div>
 
-        <div v-if="showPagination" class="mt-4 flex w-full items-center gap-3 mb-1">
-            <div v-if="pageSizes.length" class="inline-flex items-center flex-1 justify-end gap-2">
+        <div v-if="showPagination" class="dt-pagination mt-4 flex w-full items-center gap-3 mb-1">
+            <div v-if="pageSizes.length" class="dt-pagination-sizes inline-flex items-center flex-1 justify-end gap-2">
                 <span class="text-xs text-muted-foreground truncate">{{ t('table.pagination.rows_per_page') }}</span>
                 <Select v-model="pageSizeValue">
                     <SelectTrigger size="sm">
@@ -296,7 +296,7 @@
                     <PaginationNext />
                 </PaginationContent>
             </Pagination>
-            <div class="flex-1"></div>
+            <div class="dt-pagination-spacer flex-1"></div>
         </div>
     </div>
 </template>

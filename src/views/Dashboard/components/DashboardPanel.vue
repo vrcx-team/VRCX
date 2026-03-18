@@ -29,7 +29,7 @@
         </template>
 
         <template v-else-if="panelKey && panelComponent">
-            <div class="dashboard-panel h-full w-full overflow-y-auto">
+            <div class="dashboard-panel is-compact-table h-full w-full overflow-y-auto">
                 <component :is="panelComponent" v-bind="widgetProps" />
             </div>
         </template>
@@ -149,5 +149,46 @@
         border: none;
         border-radius: 0;
         background: transparent;
+    }
+
+    /* Compact pagination for dashboard panels */
+    .dashboard-panel :deep(.dt-pagination) {
+        margin-top: 0.25rem;
+        margin-bottom: 0;
+        gap: 0.25rem;
+        justify-content: center;
+    }
+
+    /* Hide page-size selector + spacer in dashboard */
+    .dashboard-panel :deep(.dt-pagination-sizes),
+    .dashboard-panel :deep(.dt-pagination-spacer) {
+        display: none;
+    }
+
+    /* Hide prev/next text, keep icon only */
+    .dashboard-panel :deep([data-slot="pagination-previous"] span),
+    .dashboard-panel :deep([data-slot="pagination-next"] span) {
+        display: none;
+    }
+
+    /* Shrink prev/next buttons */
+    .dashboard-panel :deep([data-slot="pagination-previous"]),
+    .dashboard-panel :deep([data-slot="pagination-next"]) {
+        padding-inline: 0.25rem;
+        min-width: 1.75rem;
+        height: 1.75rem;
+    }
+
+    /* Shrink page number buttons */
+    .dashboard-panel :deep([data-slot="pagination-item"]) {
+        min-width: 1.75rem;
+        height: 1.75rem;
+        font-size: 0.75rem;
+    }
+
+    /* Shrink ellipsis */
+    .dashboard-panel :deep([data-slot="pagination-ellipsis"]) {
+        width: 1.75rem;
+        height: 1.75rem;
     }
 </style>
