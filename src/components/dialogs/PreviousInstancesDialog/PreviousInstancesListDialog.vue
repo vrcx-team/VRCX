@@ -251,6 +251,7 @@
             const D = previousInstancesListDialog.value;
             if (currentId.value !== D.lastId) {
                 table.setPageIndex(0);
+                pageIndex.value = 0;
                 D.lastId = currentId.value;
             }
             if (props.variant === 'user') {

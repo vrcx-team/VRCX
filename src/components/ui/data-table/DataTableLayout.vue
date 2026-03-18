@@ -629,6 +629,19 @@
         }
     });
 
+    // When the total page count shrinks below the current page
+    // jump to the last available page
+    watch(
+        () => props.table.getPageCount?.(),
+        (pageCount) => {
+            if (pageCount == null || pageCount <= 0) return;
+            const pageIndex = props.table.getState?.().pagination?.pageIndex ?? 0;
+            if (pageIndex >= pageCount) {
+                props.table.setPageIndex(pageCount - 1);
+            }
+        }
+    );
+
     watch([currentPage, pageSizeProxy], async () => {
         await nextTick();
         if (tableScrollRef.value) {
