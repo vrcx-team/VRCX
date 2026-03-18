@@ -289,6 +289,14 @@ Function InstallLocationPageLeave
         StrCpy $InstallMode "programfiles"
         StrCpy $INSTDIR "$PROGRAMFILES64\VRCX"
 
+        ; Block if the user picked the same location they're already installed to
+        ${If} $MaintenanceAction == "change"
+        ${AndIf} $OldInstMode == "programfiles"
+            MessageBox MB_OK|MB_ICONEXCLAMATION \
+                "VRCX is already installed to Program Files.$\nPlease choose a different location."
+            Abort
+        ${EndIf}
+
         UserInfo::GetAccountType
         Pop $0
         ${If} $0 != "Admin"
@@ -312,6 +320,14 @@ Function InstallLocationPageLeave
     ${Else}
         StrCpy $InstallMode "appdata"
         StrCpy $INSTDIR "$LOCALAPPDATA\VRCX"
+
+        ; Block if the user picked the same location they're already installed to
+        ${If} $MaintenanceAction == "change"
+        ${AndIf} $OldInstMode == "appdata"
+            MessageBox MB_OK|MB_ICONEXCLAMATION \
+                "VRCX is already installed to AppData.$\nPlease choose a different location."
+            Abort
+        ${EndIf}
     ${EndIf}
 FunctionEnd
 
