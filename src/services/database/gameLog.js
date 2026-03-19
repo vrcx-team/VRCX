@@ -1387,6 +1387,23 @@ const gameLog = {
     },
 
     /**
+     * Get current user's online sessions after a given timestamp (incremental).
+     * @param {string} afterCreatedAt - Only return rows created after this timestamp
+     * @returns {Promise<Array<{created_at: string, time: number}>>}
+     */
+    async getCurrentUserOnlineSessionsAfter(afterCreatedAt) {
+        const data = [];
+        await sqliteService.execute(
+            (dbRow) => {
+                data.push({ created_at: dbRow[0], time: dbRow[1] || 0 });
+            },
+            `SELECT created_at, time FROM gamelog_location WHERE created_at > @after ORDER BY created_at`,
+            { '@after': afterCreatedAt }
+        );
+        return data;
+    },
+
+    /**
      * Get current user's top visited worlds from gamelog_location.
      * Groups by world_id and aggregates visit count and total time.
      * @param {number} [days] - Number of days to look back. Omit or 0 for all time.

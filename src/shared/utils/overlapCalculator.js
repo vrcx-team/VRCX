@@ -1,3 +1,5 @@
+export const ONLINE_SESSION_MERGE_GAP_MS = 5 * 60 * 1000;
+
 /**
  * Builds online sessions from Online/Offline events.
  * @param {Array<{created_at: string, type: string}>} events - Sorted by created_at
@@ -32,7 +34,10 @@ export function buildSessionsFromEvents(events) {
  * @param {number} [mergeGapMs] - Merge gap threshold (default 5 min)
  * @returns {Array<{start: number, end: number}>}
  */
-export function buildSessionsFromGamelog(rows, mergeGapMs = 5 * 60 * 1000) {
+export function buildSessionsFromGamelog(
+    rows,
+    mergeGapMs = ONLINE_SESSION_MERGE_GAP_MS
+) {
     if (rows.length === 0) return [];
 
     const rawSessions = [];

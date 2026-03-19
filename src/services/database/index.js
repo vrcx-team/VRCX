@@ -1,3 +1,4 @@
+import { activityCache } from './activityCache.js';
 import { avatarFavorites } from './avatarFavorites.js';
 import { avatarTags } from './avatarTags.js';
 import { feed } from './feed.js';
@@ -25,6 +26,7 @@ const dbVars = {
 
 const database = {
     ...feed,
+    ...activityCache,
     ...gameLog,
     ...notifications,
     ...moderation,
@@ -69,6 +71,15 @@ const database = {
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_feed_online_offline (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, type TEXT, location TEXT, world_name TEXT, time INTEGER, group_name TEXT)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_activity_cache_meta (user_id TEXT PRIMARY KEY, updated_at TEXT, is_self INTEGER DEFAULT 0, source_last_created_at TEXT, pending_session_start_at INTEGER)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_activity_cache_sessions (user_id TEXT NOT NULL, start_at INTEGER NOT NULL, end_at INTEGER NOT NULL, PRIMARY KEY (user_id, start_at, end_at))`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE INDEX IF NOT EXISTS ${dbVars.userPrefix}_activity_cache_sessions_user_start_idx ON ${dbVars.userPrefix}_activity_cache_sessions (user_id, start_at)`
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_friend_log_current (user_id TEXT PRIMARY KEY, display_name TEXT, trust_level TEXT, friend_number INTEGER)`

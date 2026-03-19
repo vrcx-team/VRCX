@@ -12,6 +12,7 @@
             <AlertDialogModal></AlertDialogModal>
             <PromptDialogModal></PromptDialogModal>
             <OtpDialogModal></OtpDialogModal>
+            <DatabaseUpgradeDialog></DatabaseUpgradeDialog>
 
             <VRCXUpdateDialog></VRCXUpdateDialog>
         </div>
@@ -30,6 +31,7 @@
     import { initNoty } from './plugins/noty';
 
     import AlertDialogModal from './components/ui/alert-dialog/AlertDialogModal.vue';
+    import DatabaseUpgradeDialog from './components/dialogs/DatabaseUpgradeDialog.vue';
     import MacOSTitleBar from './components/MacOSTitleBar.vue';
     import OtpDialogModal from './components/ui/dialog/OtpDialogModal.vue';
     import PromptDialogModal from './components/ui/dialog/PromptDialogModal.vue';

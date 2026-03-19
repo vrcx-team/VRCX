@@ -1427,6 +1427,11 @@
             },
             "activity": {
                 "header": "Activity",
+                "load": "Load Activity",
+                "load_hint": "Load activity data from the local database when needed.",
+                "refresh_hint": "Rebuild activity cache",
+                "refresh_started": "Rebuilding activity data. Please wait...",
+                "refresh_complete": "Activity refresh complete",
                 "total_events": "{count} online events",
                 "times_online": "times online",
                 "most_active_day": "Most active day:",
@@ -1458,7 +1463,10 @@
                 },
                 "most_visited_worlds": {
                     "header": "Most Visited Worlds"
-                }
+                },
+                "preparing_data": "Preparing activity data...",
+                "preparing_data_hint": "This may take a moment on first load. You'll be notified when ready.",
+                "data_ready": "Activity data is ready"
             },
             "note_memo": {
                 "header": "Edit Note And Memo",
@@ -2631,6 +2639,12 @@
         },
         "database": {
             "upgrade_complete": "Database upgrade complete",
+            "upgrade_in_progress_title": "Database upgrade in progress",
+            "upgrade_in_progress_description": "Updating database from version {from} to {to}. Please do not close VRCX.",
+            "upgrade_in_progress_initializing": "Initializing database upgrade. Please do not close VRCX.",
+            "upgrade_in_progress_wait": "User actions are temporarily blocked until the upgrade finishes.",
+            "upgrade_failed_title": "Database upgrade failed",
+            "upgrade_failed_description": "Database upgrade failed. Check the console for details.",
             "disk_space": "Please free up some disk space.",
             "disk_error": "Please check your disk for errors."
         },
