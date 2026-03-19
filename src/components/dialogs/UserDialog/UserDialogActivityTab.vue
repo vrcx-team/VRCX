@@ -2,12 +2,7 @@
     <div class="flex flex-col" style="min-height: 200px">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="display: flex; align-items: center">
-                <Button
-                    class="rounded-full"
-                    variant="ghost"
-                    size="icon-sm"
-                    :disabled="isLoading"
-                    @click="loadData">
+                <Button class="rounded-full" variant="ghost" size="icon-sm" :disabled="isLoading" @click="loadData">
                     <Spinner v-if="isLoading" />
                     <RefreshCw v-else />
                 </Button>
@@ -44,15 +39,16 @@
         <div v-if="!isLoading && !hasAnyData" class="flex items-center justify-center flex-1 mt-8">
             <DataTableEmpty type="nodata" />
         </div>
-        <div v-if="!isLoading && hasAnyData && filteredEventCount === 0" class="flex items-center justify-center flex-1 mt-8">
+        <div
+            v-if="!isLoading && hasAnyData && filteredEventCount === 0"
+            class="flex items-center justify-center flex-1 mt-8">
             <span class="text-muted-foreground text-sm">{{ t('dialog.user.activity.no_data_in_period') }}</span>
         </div>
         <div
             v-show="filteredEventCount > 0"
             ref="chartRef"
             style="width: 100%; height: 240px"
-            @contextmenu.prevent="onChartRightClick">
-        </div>
+            @contextmenu.prevent="onChartRightClick"></div>
 
         <!-- Online Overlap Section -->
         <div v-if="hasAnyData" class="mt-4 border-t border-border pt-3">
@@ -62,16 +58,12 @@
                     <Spinner v-if="isOverlapLoading" class="h-3.5 w-3.5" />
                 </div>
                 <div v-if="hasOverlapData" class="flex items-center gap-1.5 flex-shrink-0">
-                    <Switch
-                        :model-value="excludeHoursEnabled"
-                        class="scale-75"
-                        @update:model-value="onExcludeToggle" />
-                    <span class="text-sm text-muted-foreground whitespace-nowrap">{{ t('dialog.user.activity.overlap.exclude_hours') }}</span>
+                    <Switch :model-value="excludeHoursEnabled" class="scale-75" @update:model-value="onExcludeToggle" />
+                    <span class="text-sm text-muted-foreground whitespace-nowrap">{{
+                        t('dialog.user.activity.overlap.exclude_hours')
+                    }}</span>
                     <Select v-model="excludeStartHour" @update:model-value="onExcludeRangeChange">
-                        <SelectTrigger
-                            size="sm"
-                            class="w-[78px] h-6 text-xs px-2"
-                            @click.stop>
+                        <SelectTrigger size="sm" class="w-[78px] h-6 text-xs px-2" @click.stop>
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -82,10 +74,7 @@
                     </Select>
                     <span class="text-xs text-muted-foreground">–</span>
                     <Select v-model="excludeEndHour" @update:model-value="onExcludeRangeChange">
-                        <SelectTrigger
-                            size="sm"
-                            class="w-[78px] h-6 text-xs px-2"
-                            @click.stop>
+                        <SelectTrigger size="sm" class="w-[78px] h-6 text-xs px-2" @click.stop>
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -99,7 +88,9 @@
 
             <div v-if="!isOverlapLoading && hasOverlapData" class="flex flex-col gap-1 mb-2">
                 <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium" :class="overlapPercent > 0 ? 'text-accent-foreground' : 'text-muted-foreground'">
+                    <span
+                        class="text-sm font-medium"
+                        :class="overlapPercent > 0 ? 'text-accent-foreground' : 'text-muted-foreground'">
                         {{ overlapPercent }}%
                     </span>
                     <div class="flex-1 h-2 rounded-full bg-muted overflow-hidden">
@@ -207,7 +198,7 @@
         dayLabels.value[4], // Thu
         dayLabels.value[5], // Fri
         dayLabels.value[6], // Sat
-        dayLabels.value[0]  // Sun
+        dayLabels.value[0] // Sun
     ]);
 
     const hourLabels = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`);
@@ -218,11 +209,7 @@
             echartsInstance = null;
             if (hasAnyData.value && chartRef.value) {
                 nextTick(() => {
-                    echartsInstance = echarts.init(
-                        chartRef.value,
-                        isDarkMode.value ? 'dark' : null,
-                        { height: 240 }
-                    );
+                    echartsInstance = echarts.init(chartRef.value, isDarkMode.value ? 'dark' : null, { height: 240 });
                     initChart();
                 });
             }
@@ -232,11 +219,9 @@
             overlapEchartsInstance = null;
             if (hasOverlapData.value && overlapChartRef.value) {
                 nextTick(() => {
-                    overlapEchartsInstance = echarts.init(
-                        overlapChartRef.value,
-                        isDarkMode.value ? 'dark' : null,
-                        { height: 240 }
-                    );
+                    overlapEchartsInstance = echarts.init(overlapChartRef.value, isDarkMode.value ? 'dark' : null, {
+                        height: 240
+                    });
                     updateOverlapChart();
                 });
             }
@@ -495,11 +480,7 @@
                 await nextTick();
 
                 if (!echartsInstance && chartRef.value) {
-                    echartsInstance = echarts.init(
-                        chartRef.value,
-                        isDarkMode.value ? 'dark' : null,
-                        { height: 240 }
-                    );
+                    echartsInstance = echarts.init(chartRef.value, isDarkMode.value ? 'dark' : null, { height: 240 });
                     resizeObserver = new ResizeObserver((entries) => {
                         for (const entry of entries) {
                             if (echartsInstance) {
@@ -561,10 +542,9 @@
 
     function onOverlapChartRightClick() {
         if (easterEggTimer) {
-            toast('You can\'t farm this.', { position: 'bottom-center', icon: h(Sprout) });
+            toast(t('dialog.user.activity.easter_egg_reply'), { position: 'bottom-center', icon: h(Sprout) });
         }
     }
-
 
     async function loadOverlapData(userId) {
         if (!userId) return;
@@ -590,11 +570,9 @@
             await nextTick();
 
             if (!overlapEchartsInstance && overlapChartRef.value) {
-                overlapEchartsInstance = echarts.init(
-                    overlapChartRef.value,
-                    isDarkMode.value ? 'dark' : null,
-                    { height: 240 }
-                );
+                overlapEchartsInstance = echarts.init(overlapChartRef.value, isDarkMode.value ? 'dark' : null, {
+                    height: 240
+                });
                 overlapResizeObserver = new ResizeObserver((entries) => {
                     for (const entry of entries) {
                         if (overlapEchartsInstance) {
