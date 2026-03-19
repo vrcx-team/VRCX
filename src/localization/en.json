@@ -1434,6 +1434,7 @@
                     "sun": "Sun"
                 },
                 "easter_egg": "Did you farm your green squares today?",
+                "easter_egg_reply": "You can't farm this.",
                 "overlap": {
                     "header": "Online Overlap",
                     "peak_overlap": "Peak overlap:",

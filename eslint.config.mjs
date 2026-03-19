@@ -1,13 +1,13 @@
 import { defineConfig } from 'eslint/config';
-import { jsdoc } from 'eslint-plugin-jsdoc';
-import oxlint from 'eslint-plugin-oxlint';
-
 import globals from 'globals';
 import js from '@eslint/js';
 import pluginVue from 'eslint-plugin-vue';
-import prettyImport from '@kamiya4047/eslint-plugin-pretty-import';
+import oxlint from 'eslint-plugin-oxlint';
 
 export default defineConfig([
+    {
+        ignores: ['build/**', 'node_modules/**']
+    },
     {
         files: ['**/*.{js,mjs,cjs,vue}'],
         plugins: { js },
@@ -57,7 +57,8 @@ export default defineConfig([
         files: [
             '**/__tests__/**/*.{js,mjs,cjs,vue}',
             '**/*.spec.{js,mjs,cjs,vue}',
-            '**/*.test.{js,mjs,cjs,vue}'
+            '**/*.test.{js,mjs,cjs,vue}',
+            'vitest.setup.js'
         ],
         languageOptions: {
             globals: {
