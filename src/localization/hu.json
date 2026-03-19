@@ -63,34 +63,436 @@
         "status_tooltip": "Vrcx companion állapot"
       }
     },
-    "search": {
-      "search_placeholder": "Keresés",
-      "clear_results_tooltip": "Keresési eredmények törlése",
-      "user": {
-        "header": "Felhasználó"
-      },
-      "world": {
-        "header": "Világ",
-        "category": "Keresés kategória szerint",
-        "community_lab": "Tartalmazza a közösségi laborokat"
-      },
-      "avatar": {
-        "header": "Avatar",
-        "search_provider": "Keresőszolgáltató",
-        "refresh_tooltip": "Saját avatarok frissítése",
-        "result_count": "{count} eredmény",
-        "all": "Összes",
-        "public": "Nyilvános",
-        "private": "Privát",
-        "local": "Helyi",
-        "remote": "Távoli",
-        "sort_name": "Rendezés név szerint",
-        "sort_update": "Rendezés legutolsó frissítés szerint",
-        "sort_created": "Rendezés létrehozás szerint"
-      },
-      "group": {
-        "header": "Csoport"
-      }
+    "view": {
+        "login": {
+            "savedAccounts": "Mentett fiókok",
+            "login": "Login",
+            "register": "Regisztráció",
+            "forgotPassword": "Elfelejtett jelszó?",
+            "updater": "Frissítő",
+            "proxy_settings": "Proxy beállítások",
+            "field": {
+                "username": "Felhasználónév vagy e-mail cím",
+                "password": "Jelszó",
+                "saveCredentials": "Hitelesítési adatok mentése",
+                "devEndpoint": "Fejlesztői végpont",
+                "endpoint": "Végpont",
+                "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "Nyelv észlelve",
+                "description": "A rendszernyelv úgy tűnik, hogy {language}. Szeretne átváltani rá?"
+            }
+        },
+        "feed": {
+            "favorites_only_tooltip": "Csak a kedvencek szűrése",
+            "search_placeholder": "Keresés"
+        },
+        "game_log": {
+            "filter_placeholder": "Szűrés",
+            "search_placeholder": "Keresés"
+        },
+        "player_list": {
+            "photon": {
+                "current": "Jelenlegi",
+                "previous": "Előző",
+                "search_placeholder": "Keresés",
+                "filter_placeholder": "Szűrés",
+                "chatbox_blacklist": "Chatbox feketelista",
+                "status_tooltip": "VRCX Companion állapot"
+            }
+        },
+        "search": {
+            "search_placeholder": "Keresés",
+            "clear_results_tooltip": "Keresési eredmények törlése",
+            "user": {
+                "header": "Felhasználó"
+            },
+            "world": {
+                "header": "World",
+                "category": "Keresés kategória szerint",
+                "community_lab": "Tartalmazza a közösségi laborokat"
+            },
+            "avatar": {
+                "header": "Avatar",
+                "search_provider": "Keresőszolgáltató",
+                "refresh_tooltip": "Saját avatarok frissítése",
+                "result_count": "{count} eredmény",
+                "all": "Összes",
+                "public": "Nyilvános",
+                "private": "Privát",
+                "local": "Helyi",
+                "remote": "Távoli",
+                "sort_name": "Rendezés név szerint",
+                "sort_update": "Rendezés legutolsó frissítés szerint",
+                "sort_created": "Rendezés létrehozás szerint"
+            },
+            "group": {
+                "header": "Csoport"
+            }
+        },
+        "favorite": {
+            "worlds": {
+                "search": "Keresés",
+                "vrchat_favorites": "VRChat-es kedvencek",
+                "local_favorites": "Helyi kedvencek",
+                "new_group": "Új csoport"
+            },
+            "avatars": {
+                "search": "Keresés",
+                "vrchat_favorites": "VRChat-es kedvencek",
+                "local_favorites": "Helyi kedvencek (VRC+ szükséges)",
+                "new_group": "Új csoport"
+            },
+            "export": "Exportálás",
+            "import": "Importálás",
+            "move_tooltip": "Mozgatás",
+            "unfavorite_tooltip": "Törlés kedvencekből",
+            "visibility_tooltip": "Láthatóság módosítása",
+            "rename_tooltip": "Átnevezés",
+            "clear_tooltip": "Törlés",
+            "delete_tooltip": "Törlés",
+            "unavailable_tooltip": "Nem elérhető",
+            "private": "Privát",
+            "select_avatar_tooltip": "Select Avatar"
+        },
+        "friend_log": {
+            "filter_placeholder": "Szűrés",
+            "search_placeholder": "Keresés"
+        },
+        "moderation": {
+            "filter_placeholder": "Szűrés",
+            "search_placeholder": "Keresés",
+            "refresh_tooltip": "Frissítés"
+        },
+        "notification": {
+            "filter_placeholder": "Szűrés",
+            "search_placeholder": "Keresés",
+            "refresh_tooltip": "Frissítés"
+        },
+        "friend_list": {
+            "bulk_unfriend": "Tömeges barát-eltávolítás mód",
+            "bulk_unfriend_selection": "Tömeges barát-eltávolítás kijelölés",
+            "load": "Hiányzó bejegyzések betöltése",
+            "favorites_only_tooltip": "Csak a kedvencek szűrése",
+            "search_placeholder": "Keresés",
+            "filter_placeholder": "Szűrés"
+        },
+        "tools": {
+            "export": {
+                "discord_names": "Discord nevek",
+                "export_friend_list": "Barátlista exportálása",
+                "export_own_avatars": "Saját avatarok exportálása"
+            }
+        },
+        "profile": {
+            "profile": {
+                "vrchat_credits": "VRChat-kreditek",
+                "refresh": "Kattints ide a frissítéshez"
+            },
+            "game_info": {
+                "header": "Játékinformáció",
+                "online_users": "Online felhasználók",
+                "user_online": "{count} online felhasználó.",
+                "refresh": "Kattints ide a frissítéshez"
+            },
+            "config_json": "Config JSON",
+            "refresh_tooltip": "Frissítés",
+            "clear_results_tooltip": "Eredmények törlése"
+        },
+        "settings": {
+            "header": "Beállítások",
+            "category": {
+                "general": "Általános",
+                "appearance": "Megjelenés",
+                "notifications": "Értesítések",
+                "wrist_overlay": "Csukló átfedés",
+                "discord_presence": "Discord Presence",
+                "advanced": "Haladó"
+            },
+            "general": {
+                "general": {
+                    "header": "Általános",
+                    "version": "Verzió",
+                    "latest_app_version": "A legújabb verzió",
+                    "latest_app_version_refresh": "Kattints ide a frissítéshez",
+                    "repository_url": "Repository URL",
+                    "support": "Támogatás"
+                },
+                "vrcx_updater": {
+                    "header": "VRCX frissítő",
+                    "change_build": "Build váltása",
+                    "auto_update_off": "Kikapcsolva",
+                    "auto_update_notify": "Értesítsen",
+                    "auto_update_download": "Automatikus letöltés",
+                    "change_log": "Változásnapló"
+                },
+                "application": {
+                    "header": "Alkalmazás",
+                    "startup": "Start at Windows startup",
+                    "minimized": "Start as minimized state",
+                    "tray": "Close to tray",
+                    "proxy": "Proxy beállítások"
+                },
+                "favorites": {
+                    "header": "VRChat-es kedvenc barátok",
+                    "group_placeholder": "Choose Groups"
+                },
+                "logging": {
+                    "header": "Naplózás",
+                    "resource_load": "Log Udon string/image load",
+                    "empty_avatar": "Log avatars in feed without names"
+                },
+                "automation": {
+                    "auto_state_change_tooltip": "Automatically change status when there are other people in the instance (Alone / Company)",
+                    "auto_invite_request_accept": "Auto Accept Invite Requests",
+                    "auto_invite_request_accept_tooltip": "Automatically accept invite requests from favorite friends",
+                    "auto_invite_request_accept_off": "Kikapcsolva",
+                    "auto_invite_request_accept_favs": "All Favorites",
+                    "auto_invite_request_accept_selected_favs": "VRCX Favorites"
+                },
+                "legal_notice": {
+                    "header": "Legal Notice",
+                    "info": "A VRCX egy asszistens alkalmazás a VRChat-hez, mely adatokat szolgáltat barátságokól, illetve lehetővé teszi azok kezelését. Ez az alkalmazás kihasználja a nem hivatalos VRChat API SDK-t.",
+                    "disclaimer1": "A VRCX-et nem hagyta jóvá a VRChat és nem tükrözi a VRChat, vagy bárki, aki hivatalosan részt vesz a gyártásában vagy kezelésében, nézeteit vagy véleményét. A VRChat és az összes kapcsolódó tulajdon a VRChat Inc. védjegye vagy bejegyzett védjegye. VRChat © VRChat Inc.",
+                    "disclaimer2": "pypy és Natsumi nem vállal felelősséget bármilyen problémáért, amit a VRCX okoz. Használd saját felelősségre!",
+                    "open_source_software_notice": "Nyílt forráskódú szoftverre vonatkozó megjegyzés"
+                },
+                "contributors": {
+                    "header": "Közreműködők"
+                }
+            },
+            "appearance": {
+                "appearance": {
+                    "header": "Megjelenés",
+                    "language": "Nyelvezet",
+                    "theme_mode": "Téma mód",
+                    "theme_mode_system": "Rendszer",
+                    "theme_mode_light": "Világos",
+                    "theme_mode_dark": "Sötét",
+                    "theme_mode_darkvanillaold": "Dark Vanilla (old)",
+                    "theme_mode_darkvanilla": "Sötét Vanilla",
+                    "theme_mode_pink": "Rózsaszín",
+                    "theme_mode_material3": "Material 3",
+                    "zoom": "Nagyítás",
+                    "vrcplus_profile_icons": "VRCPlus profil ikonok",
+                    "nicknames": "Memo Nicknames",
+                    "sort_favorite_by": "Kedvencek rendezése",
+                    "sort_favorite_by_name": "név",
+                    "sort_favorite_by_date": "dátum",
+                    "sort_instance_users_by": "Sort Instance Users by",
+                    "sort_instance_users_by_time": "idő",
+                    "sort_instance_users_by_alphabet": "betűrend"
+                },
+                "timedate": {
+                    "header": "Idő/Dátum",
+                    "time_format": "Időformátum",
+                    "time_format_24": "24 óra",
+                    "time_format_12": "12 óra",
+                    "force_iso_date_format": "ISO-dátumformátum kényszerítése"
+                },
+                "side_panel": {
+                    "header": "Side Panel",
+                    "sorting": {
+                        "header": "Sorting"
+                    }
+                },
+                "user_dialog": {
+                    "header": "User Dialog",
+                    "vrchat_notes": "VRChat Notes",
+                    "vrcx_memos": "VRCX Memos"
+                },
+                "user_colors": {
+                    "header": "Felhasználói színek",
+                    "random_colors_from_user_id": "Random Colors from User ID"
+                },
+                "friend_log": {
+                    "header": "Friend Log",
+                    "hide_unfriends": "Hide Unfriends"
+                }
+            },
+            "notifications": {
+                "notifications": {
+                    "header": "Értesítések",
+                    "notification_filter": "Értesítés szűrő",
+                    "steamvr_notifications": {
+                        "header": "SteamVR értesítések",
+                        "steamvr_overlay": "SteamVR átfedés",
+                        "overlay_notifications": "Overlay Notifications",
+                        "notification_position": "Notification Position",
+                        "xsoverlay_notifications": "XSOverlay értesítések",
+                        "wayvr_notifications": "WayVR értesítések",
+                        "ovrtoolkit_hud_notifications": "OVR Toolkit HUD értesítések",
+                        "ovrtoolkit_wrist_notifications": "OVR Toolkit csukló értesítések",
+                        "user_images": "User Images (slower)",
+                        "notification_timeout": "Notification Timeout"
+                    },
+                    "conditions": {
+                        "never": "Never",
+                        "desktop": "Desktop Mode",
+                        "inside_vr": "Inside VR",
+                        "outside_vr": "Outside VR",
+                        "always": "Always"
+                    },
+                    "desktop_notifications": {
+                        "header": "Desktop Notifications",
+                        "when_to_display": "When to display",
+                        "desktop_notification_while_afk": "Desktop Notifications While AFK"
+                    },
+                    "text_to_speech": {
+                        "header": "Text-To-Speech",
+                        "when_to_play": "Notification TTS. When to play",
+                        "tts_voice": "TTS Voice"
+                    }
+                }
+            },
+            "wrist_overlay": {
+                "steamvr_wrist_overlay": {
+                    "header": "SteamVR Wrist Overlay",
+                    "description": "* Runs automatically while VRChat is running.",
+                    "grip": "Grip: Vive or Other Controllers Grab, Oculus X/A Buttons",
+                    "menu": "Menu: Vive Menu, Index B, Oculus Y/B Buttons",
+                    "steamvr_overlay": "SteamVR átfedés",
+                    "wrist_feed_overlay": "Wrist Feed Overlay",
+                    "hide_private_worlds": "Hide Private Worlds",
+                    "start_overlay_with": "Start Overlay With",
+                    "overlay_button": "Overlay Button",
+                    "overlay_button_grip": "Grip",
+                    "overlay_button_menu": "Menu",
+                    "display_overlay_on": "Display Overlay On",
+                    "display_overlay_on_left": "Left Hand",
+                    "display_overlay_on_right": "Right Hand",
+                    "display_overlay_on_both": "Both Hands",
+                    "grey_background": "Grey Background",
+                    "minimal_feed_icons": "Minimal Feed Icons",
+                    "show_vr_devices": "Show VR Devices",
+                    "show_cpu_usage": "Show CPU Usage",
+                    "show_game_uptime": "Show Game Uptime",
+                    "show_pc_uptime": "Show PC Uptime",
+                    "wrist_feed_filters": "Wrist Feed Filters"
+                }
+            },
+            "discord_presence": {
+                "discord_presence": {
+                    "header": "Discord Presence",
+                    "description": "* Only active while VRChat is running.",
+                    "enable": "Enable",
+                    "enable_tooltip": "Recommended to disable Rich Presence in VRChat config.json to stop it from conflicting",
+                    "instance_type_player_count": "Instance type/player count",
+                    "join_button": "Join button (public only)",
+                    "show_details_in_private": "Show world details in private",
+                    "show_images": "Show world images"
+                }
+            },
+            "advanced": {
+                "advanced": {
+                    "launch_options": "Launch Options",
+                    "vrc_registry_backup": "VRC Registry Backup",
+                    "primary_password": {
+                        "header": "Primary Password",
+                        "description": "Encrypt password (disables auto login)"
+                    },
+                    "relaunch_vrchat": {
+                        "header": "Relaunch VRChat after crashing",
+                        "description": "Rejoin last instance when VRChat crashes"
+                    },
+                    "vrchat_quit_fix": {
+                        "header": "VRChat Quit Fix",
+                        "description": "Kill VRChat after exiting game"
+                    },
+                    "auto_cache_management": {
+                        "header": "Automatically Manage Cache When Closing VRChat",
+                        "description": "Auto delete old versions from cache"
+                    },
+                    "remote_database": {
+                        "header": "Remote Avatar Database",
+                        "enable": "Enable",
+                        "avatar_database_provider": "Avatar Database Provider"
+                    },
+                    "youtube_api": {
+                        "header": "YouTube API",
+                        "enable": "Enable",
+                        "youtube_api_key": "YouTube API Key",
+                        "enable_tooltip": "Fetches video titles for use with gameLog and duration for overlay progress bar"
+                    },
+                    "video_progress_pie": {
+                        "header": "Progress pie overlay for videos",
+                        "enable": "Enable",
+                        "enable_tooltip": "Requires SteamVR overlay to be enabled",
+                        "dance_world_only": "Supported world only"
+                    },
+                    "screenshot_helper": {
+                        "header": "Screenshot Helper",
+                        "description": "Will store the world ID, world name and players in instance inside the file metadata of any pictures you take in-game.",
+                        "description_tooltip": "Unfortunately, windows doesn't support viewing PNG text chunks(few things do) natively, but you can view it using a command-line tool like exiftool, a png chunk inspector, or a hex editor.",
+                        "enable": "Enable",
+                        "modify_filename": "Modify Filename",
+                        "modify_filename_tooltip": "Will add the World ID to screenshot filename, in addition to file metadata.",
+                        "copy_to_clipboard": "Copy to Clipboard"
+                    },
+                    "app_launcher": {
+                        "header": "App Launcher",
+                        "folder": "Auto-Launch Folder",
+                        "folder_tooltip": "To auto-launch apps with VRChat, place shortcuts in this folder.",
+                        "auto_close": "Auto close apps"
+                    },
+                    "cache_debug": {
+                        "header": "VRCX Instance Cache/Debug",
+                        "udon_exception_logging": "Udon Exception Logging",
+                        "disable_gamelog": "Disable GameLog",
+                        "disable_gamelog_notice": "(will likely break things)",
+                        "user_cache": "User cache:",
+                        "world_cache": "World cache:",
+                        "avatar_cache": "Avatar cache:",
+                        "group_cache": "Group cache:",
+                        "avatar_name_cache": "Avatar Name cache:",
+                        "instance_cache": "Instance cache:",
+                        "clear_cache": "Clear Cache",
+                        "auto_clear_cache": "Auto Clear Cache",
+                        "show_console": "Show Console"
+                    },
+                    "sqlite_table_size": {
+                        "header": "SQLite Table Size",
+                        "refresh": "Frissítés",
+                        "gps": "GPS:",
+                        "status": "Status:",
+                        "bio": "Bio:",
+                        "avatar": "Avatar:",
+                        "online_offline": "Online/Offline:",
+                        "friend_log_history": "Friend Log History:",
+                        "notification": "Notifications:",
+                        "location": "Location:",
+                        "join_leave": "Join/Leave:",
+                        "portal_spawn": "Portal Spawn:",
+                        "video_play": "Video Play:",
+                        "event": "Event:"
+                    }
+                },
+                "photon": {
+                    "header": "Photon Logging Overlay",
+                    "event_hud": {
+                        "header": "Photon Event HUD",
+                        "enable": "Enable",
+                        "enable_tooltip": "Requires SteamVR overlay to be enabled",
+                        "filter": "Szűrés",
+                        "filter_favorites": "Kedvencek",
+                        "filter_friends": "Barátok",
+                        "filter_everyone": "Everyone",
+                        "message_timeout": "Message Timeout"
+                    },
+                    "timeout_hud": {
+                        "header": "User Timeout HUD",
+                        "enable": "Enable",
+                        "enable_tooltip": "Requires SteamVR overlay to be enabled",
+                        "filter": "Szűrés",
+                        "filter_favorites": "Kedvencek",
+                        "filter_friends": "Barátok",
+                        "filter_everyone": "Everyone",
+                        "timeout_threshold": "Timeout Threshold"
+                    }
+                }
+            }
+        }
     },
     "favorite": {
       "worlds": {

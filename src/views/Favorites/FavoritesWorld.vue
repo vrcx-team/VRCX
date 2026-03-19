@@ -5,7 +5,9 @@
                 :sort-value="worldSortValue"
                 :extra-sort-options="worldExtraSortOptions"
                 v-model:search-query="worldFavoriteSearch"
-                :search-placeholder="t('view.favorite.worlds.search')"
+                :search-placeholder="worldSearchPlaceholder"
+                v-model:search-mode="worldSearchMode"
+                :search-mode-visible="true"
                 v-model:toolbar-menu-open="worldToolbarMenuOpen"
                 v-model:card-scale-value="worldCardScaleValue"
                 :card-scale-percent="worldCardScalePercent"
@@ -256,36 +258,17 @@
                         <div ref="worldFavoritesContainerRef" class="flex-1 min-h-0">
                             <template v-if="isSearchActive">
                                 <div class="h-full pr-2 overflow-auto">
-                                    <div
-                                        v-if="worldFavoriteSearchResults.length"
-                                        class="favorites-search-grid"
-                                        :style="worldFavoritesGridStyle(worldFavoriteSearchResults.length)">
+                                    <template v-if="worldFavoriteSearchResults.length">
                                         <div
-                                            v-for="favorite in worldFavoriteSearchResults"
-                                            :key="favorite.id"
-                                            class="favorites-search-card x-hover-card hover:shadow-sm"
-                                            @click="showWorldDialog(favorite.id)">
-                                            <div class="favorites-search-card__content">
-                                                <div
-                                                    class="favorites-search-card__avatar"
-                                                    :class="{ 'is-empty': !favorite.thumbnailImageUrl }">
-                                                    <img
-                                                        v-if="favorite.thumbnailImageUrl"
-                                                        :src="favorite.thumbnailImageUrl"
-                                                        loading="lazy" />
-                                                </div>
-                                                <div class="favorites-search-card__detail">
-                                                    <span class="name">{{ favorite.name || favorite.id }}</span>
-                                                    <span class="text-xs">
-                                                        {{ favorite.authorName }}
-                                                        <template v-if="favorite.occupants">
-                                                            ({{ favorite.occupants }})
-                                                        </template>
-                                                    </span>
-                                                </div>
-                                            </div>
+                                            class="favorites-card-list"
+                                            :style="worldFavoritesGridStyle(worldFavoriteSearchResults.length)">
+                                            <FavoritesWorldItem
+                                                v-for="favorite in worldFavoriteSearchResults"
+                                                :key="favorite.id"
+                                                :favorite="favorite"
+                                                is-local-favorite />
                                         </div>
-                                    </div>
+                                    </template>
                                     <div v-else class="flex items-center justify-center text-[13px] h-full">
                                         <DataTableEmpty type="nomatch" />
                                     </div>
@@ -385,8 +368,7 @@
         DropdownMenuSubTrigger,
         DropdownMenuTrigger
     } from '../../components/ui/dropdown-menu';
-    import { useAppearanceSettingsStore, useFavoriteStore, useModalStore, useWorldStore } from '../../stores';
-    import { showWorldDialog } from '../../coordinators/worldCoordinator';
+    import { useAppearanceSettingsStore, useFavoriteStore, useModalStore } from '../../stores';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { favoriteRequest, worldRequest } from '../../api';
     import { debounce } from '../../shared/utils';
@@ -502,6 +484,13 @@
     const worldEditMode = ref(false);
     const worldToolbarMenuOpen = ref(false);
     const worldSortMode = ref('none');
+    const worldSearchMode = ref('name');
+
+    const worldSearchPlaceholder = computed(() =>
+        worldSearchMode.value === 'tag'
+            ? t('view.favorite.worlds.search_by_tag')
+            : t('view.favorite.worlds.search')
+    );
 
     const worldExtraSortOptions = computed(() => [
         { value: 'players', label: t('view.settings.appearance.appearance.sort_favorite_by_players') }
@@ -742,6 +731,12 @@
     watch(isSearchActive, (active) => {
         if (active && worldEditMode.value) {
             worldEditMode.value = false;
+        }
+    });
+
+    watch(worldSearchMode, () => {
+        if (isSearchActive.value) {
+            doSearchWorldFavorites();
         }
     });
 
@@ -1000,14 +995,23 @@
      *
      * @param worldFavoriteSearch
      */
-    function doSearchWorldFavorites(worldFavoriteSearch) {
-        const search = worldFavoriteSearch.trim().toLowerCase();
+    function doSearchWorldFavorites(searchInput) {
+        const search = (searchInput ?? worldFavoriteSearch.value).trim().toLowerCase();
         if (search.length < 3) {
             worldFavoriteSearchResults.value = [];
             return;
         }
+        const isTagMode = worldSearchMode.value === 'tag';
         const filtered = searchableWorldEntries.value.filter((ref) => {
             if (!ref || typeof ref.id === 'undefined' || typeof ref.name === 'undefined') {
+                return false;
+            }
+            if (isTagMode) {
+                if (Array.isArray(ref.tags)) {
+                    return ref.tags.some(
+                        (tag) => tag.startsWith('author_tag_') && tag.substring(11).toLowerCase().includes(search)
+                    );
+                }
                 return false;
             }
             const authorName = ref.authorName || '';

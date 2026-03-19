@@ -2,29 +2,39 @@
     <div class="cursor-pointer">
         <div v-if="!text" class="text-transparent">-</div>
         <div v-show="text" class="flex items-center">
-            <div v-if="region" :class="['flags', 'mr-1.5', 'shrink-0', region]"></div>
-            <TooltipWrapper :content="tooltipContent" :disabled="tooltipDisabled" :delay-duration="300" side="top">
-                <div
-                    :class="locationClasses"
-                    class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden truncate"
-                    @click="handleShowWorldDialog">
-                    <Spinner v-if="isTraveling" class="mr-1 shrink-0" />
-                    <span class="min-w-0 flex-1 truncate">
-                        <span>{{ text }}</span>
-                        <span v-if="showInstanceIdInLocation && instanceName" class="ml-1">{{
-                            ` · #${instanceName}`
-                        }}</span>
-                        <span v-if="groupName" class="ml-0.5 cursor-pointer" @click.stop="handleShowGroupDialog">
-                            ({{ groupName }})
+            <template v-if="isAgeRestricted">
+                <TooltipWrapper :content="t('dialog.user.info.instance_age_restricted_tooltip')" :delay-duration="300" side="top">
+                    <div class="inline-flex items-center gap-1 text-muted-foreground">
+                        <Lock class="size-3.5 shrink-0" />
+                        <span>{{ t('dialog.user.info.instance_age_restricted') }}</span>
+                    </div>
+                </TooltipWrapper>
+            </template>
+            <template v-else>
+                <div v-if="region" :class="['flags', 'mr-1.5', 'shrink-0', region]"></div>
+                <TooltipWrapper :content="tooltipContent" :disabled="tooltipDisabled" :delay-duration="300" side="top">
+                    <div
+                        :class="locationClasses"
+                        class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden truncate"
+                        @click="handleShowWorldDialog">
+                        <Spinner v-if="isTraveling" class="mr-1 shrink-0" />
+                        <span class="min-w-0 flex-1 truncate">
+                            <span>{{ text }}</span>
+                            <span v-if="showInstanceIdInLocation && instanceName" class="ml-1">{{
+                                ` · #${instanceName}`
+                            }}</span>
+                            <span v-if="groupName" class="ml-0.5 cursor-pointer" @click.stop="handleShowGroupDialog">
+                                ({{ groupName }})
+                            </span>
                         </span>
-                    </span>
-                </div>
-            </TooltipWrapper>
+                    </div>
+                </TooltipWrapper>
 
-            <TooltipWrapper v-if="isClosed" :content="closedTooltip" :disabled="disableTooltip">
-                <AlertTriangle class="inline-block ml-2 text-muted-foreground shrink-0" />
-            </TooltipWrapper>
-            <Lock v-if="strict" class="inline-block ml-2 text-muted-foreground shrink-0" />
+                <TooltipWrapper v-if="isClosed" :content="closedTooltip" :disabled="disableTooltip">
+                    <AlertTriangle class="inline-block ml-2 text-muted-foreground shrink-0" />
+                </TooltipWrapper>
+                <Lock v-if="strict" class="inline-block ml-2 text-muted-foreground shrink-0" />
+            </template>
         </div>
     </div>
 </template>
@@ -56,7 +66,7 @@
     const { verifyShortName } = useSearchStore();
     const { cachedInstances } = useInstanceStore();
     const { lastInstanceApplied } = storeToRefs(useInstanceStore());
-    const { showInstanceIdInLocation } = storeToRefs(useAppearanceSettingsStore());
+    const { showInstanceIdInLocation, isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
 
     const props = defineProps({
         location: String,
@@ -86,11 +96,13 @@
     const text = ref('');
     const region = ref('');
     const strict = ref(false);
+    const ageGate = ref(false);
     const isTraveling = ref(false);
     const groupName = ref('');
     const isClosed = ref(false);
     const instanceName = ref('');
 
+    const isAgeRestricted = computed(() => !isAgeGatedInstancesVisible.value && ageGate.value);
     const isLocationLink = computed(() => props.link && props.location !== 'private' && props.location !== 'offline');
     const locationClasses = computed(() => [
         'x-location',
@@ -135,6 +147,7 @@
         text.value = '';
         region.value = '';
         strict.value = false;
+        ageGate.value = false;
         isTraveling.value = false;
         groupName.value = '';
         isClosed.value = false;
@@ -166,6 +179,7 @@
         updateGroupName(L, instanceId);
         updateRegion(L);
         strict.value = L.strict;
+        ageGate.value = L.ageGate;
     }
 
     /**

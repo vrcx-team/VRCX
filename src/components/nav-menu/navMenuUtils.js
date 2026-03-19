@@ -44,6 +44,8 @@ export function sanitizeLayout(
     const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeys, definitionMap);
     const hiddenSet = new Set(normalizedHiddenKeys);
     const normalized = [];
+    // temporary disabled hot-worlds
+    // const chartsKeys = ['charts-instance', 'charts-mutual', 'charts-hot-worlds'];
     const chartsKeys = ['charts-instance', 'charts-mutual'];
 
     const appendItemEntry = (key, target = normalized) => {

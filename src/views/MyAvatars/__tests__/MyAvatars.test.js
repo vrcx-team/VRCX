@@ -154,12 +154,6 @@ vi.mock('../composables/useAvatarCardGrid.js', () => ({
     })
 }));
 
-vi.mock('../../../composables/useDataTableScrollHeight', () => ({
-    useDataTableScrollHeight: () => ({
-        tableStyle: {}
-    })
-}));
-
 vi.mock('../../../lib/table/useVrcxVueTable', () => ({
     useVrcxVueTable: () => ({
         table: {},

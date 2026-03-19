@@ -37,7 +37,24 @@
                 class="flex-1"
                 :placeholder="searchPlaceholder"
                 @update:modelValue="$emit('update:searchQuery', $event)"
-                @input="$emit('search')" />
+                @input="$emit('search')">
+                <template v-if="searchModeVisible" #trailing>
+                    <ToggleGroup
+                        type="single"
+                        :model-value="searchMode"
+                        variant="outline"
+                        size="xs"
+                        class="mr-0.5"
+                        @update:modelValue="$emit('update:searchMode', $event)">
+                        <ToggleGroupItem value="name" class="h-5! px-1.5! text-[11px]">
+                            {{ t('view.favorite.worlds.search_mode_name') }}
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="tag" class="h-5! px-1.5! text-[11px]">
+                            {{ t('view.favorite.worlds.search_mode_tag') }}
+                        </ToggleGroupItem>
+                    </ToggleGroup>
+                </template>
+            </InputGroupSearch>
             <DropdownMenu :open="toolbarMenuOpen" @update:open="$emit('update:toolbarMenuOpen', $event)">
                 <DropdownMenuTrigger as-child>
                     <Button class="rounded-full" size="icon-sm" variant="ghost"><Ellipsis /></Button>
@@ -91,6 +108,7 @@
         DropdownMenuSeparator,
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
+    import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
     import { ArrowUpDown, Ellipsis } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { InputGroupSearch } from '@/components/ui/input-group';
@@ -102,6 +120,8 @@
         extraSortOptions: { type: Array, default: () => [] },
         searchQuery: { type: String, default: '' },
         searchPlaceholder: { type: String, default: '' },
+        searchMode: { type: String, default: 'name' },
+        searchModeVisible: { type: Boolean, default: false },
         toolbarMenuOpen: { type: Boolean, default: false },
         cardScaleValue: { type: Array, default: () => [50] },
         cardScalePercent: { type: Number, default: 100 },
@@ -114,6 +134,7 @@
     defineEmits([
         'update:sortValue',
         'update:searchQuery',
+        'update:searchMode',
         'update:toolbarMenuOpen',
         'update:cardScaleValue',
         'update:cardSpacingValue',

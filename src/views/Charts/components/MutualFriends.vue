@@ -24,21 +24,29 @@
                     </div>
                     <VirtualCombobox
                         v-if="graphReady"
+                        class="min-w-60"
                         :model-value="selectedFriendId"
                         @update:modelValue="navigateToFriend"
-                        :groups="friendPickerGroups"
+                        :groups="excludePickerGroups"
                         :placeholder="t('view.charts.mutual_friend.actions.go_to_friend')"
                         :search-placeholder="t('view.charts.mutual_friend.actions.go_to_friend')"
                         :close-on-select="true"
                         :deselect-on-reselect="true">
                         <template #item="{ item, selected }">
-                            <div class="flex w-full items-center gap-2">
+                            <div class="flex w-full items-center p-1.5 text-[13px]">
                                 <template v-if="item.user">
-                                    <div :class="['avatar', userStatusClass(item.user)]">
-                                        <img :src="userImage(item.user)" loading="lazy" />
+                                    <div
+                                        class="relative inline-block flex-none size-9 mr-2.5"
+                                        :class="userStatusClass(item.user)">
+                                        <img
+                                            class="size-full rounded-full object-cover"
+                                            :src="userImage(item.user)"
+                                            loading="lazy" />
                                     </div>
-                                    <div class="detail">
-                                        <span class="name" :style="{ color: item.user.$userColour }">{{
+                                    <div class="flex-1 overflow-hidden">
+                                        <span
+                                            class="block truncate font-medium leading-[18px]"
+                                            :style="{ color: item.user.$userColour }">{{
                                             item.user.displayName
                                         }}</span>
                                     </div>
@@ -172,14 +180,19 @@
                                             :search-placeholder="t('view.charts.mutual_friend.actions.go_to_friend')"
                                             :multiple="true">
                                             <template #item="{ item, selected }">
-                                                <div class="flex w-full items-center gap-2">
+                                                <div class="flex w-full items-center p-1.5 text-[13px]">
                                                     <template v-if="item.user">
-                                                        <div :class="['avatar', userStatusClass(item.user)]">
-                                                            <img :src="userImage(item.user)" loading="lazy" />
+                                                        <div
+                                                            class="relative inline-block flex-none size-9 mr-2.5"
+                                                            :class="userStatusClass(item.user)">
+                                                            <img
+                                                                class="size-full rounded-full object-cover"
+                                                                :src="userImage(item.user)"
+                                                                loading="lazy" />
                                                         </div>
-                                                        <div class="detail">
+                                                        <div class="flex-1 overflow-hidden">
                                                             <span
-                                                                class="name"
+                                                                class="block truncate font-medium leading-[18px]"
                                                                 :style="{ color: item.user.$userColour }"
                                                                 >{{ item.user.displayName }}</span
                                                             >
@@ -552,24 +565,6 @@
         return [{ key: 'friends', label: t('side_panel.friends'), items }];
     });
 
-    const friendPickerGroups = computed(() => {
-        if (!currentGraph || !graphNodeCount.value) return [];
-        const currentUserId = currentUser.value?.id;
-        const items = [];
-        currentGraph.forEachNode((nodeId, attrs) => {
-            if (nodeId === currentUserId) return;
-            const cached = cachedUsers.get(nodeId);
-            const displayName = cached?.displayName || attrs.label || nodeId;
-            items.push({
-                value: nodeId,
-                label: displayName,
-                search: displayName,
-                user: cached || null
-            });
-        });
-        items.sort((a, b) => a.label.localeCompare(b.label));
-        return [{ key: 'friends', label: t('side_panel.friends'), items }];
-    });
 
     function navigateToFriend(friendId) {
         selectedFriendId.value = friendId;

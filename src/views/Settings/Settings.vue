@@ -4,27 +4,30 @@
             <span class="text-lg font-semibold text-foreground">{{ t('view.settings.header') }}</span>
         </div>
         <TabsUnderline
-            default-value="general"
+            default-value="system"
             :items="settingsTabs"
             :unmount-on-hide="false"
             fill>
-            <template #general>
-                <GeneralTab />
+            <template #system>
+                <SystemTab />
             </template>
-            <template #appearance>
-                <AppearanceTab />
+            <template #interface>
+                <InterfaceTab />
+            </template>
+            <template #social>
+                <SocialTab />
             </template>
             <template #notifications>
                 <NotificationsTab />
             </template>
-            <template #wrist-overlay>
-                <WristOverlayTab />
+            <template #vr>
+                <VrTab />
             </template>
-            <template #discord>
-                <DiscordPresenceTab />
+            <template #media>
+                <MediaTab />
             </template>
-            <template #pictures>
-                <PicturesTab />
+            <template #integrations>
+                <IntegrationsTab />
             </template>
             <template #advanced>
                 <AdvancedTab />
@@ -39,21 +42,23 @@
     import { useI18n } from 'vue-i18n';
 
     import AdvancedTab from './components/Tabs/AdvancedTab.vue';
-    import AppearanceTab from './components/Tabs/AppearanceTab.vue';
-    import DiscordPresenceTab from './components/Tabs/DiscordPresenceTab.vue';
-    import GeneralTab from './components/Tabs/GeneralTab.vue';
+    import InterfaceTab from './components/Tabs/InterfaceTab.vue';
+    import IntegrationsTab from './components/Tabs/IntegrationsTab.vue';
+    import MediaTab from './components/Tabs/MediaTab.vue';
     import NotificationsTab from './components/Tabs/NotificationsTab.vue';
-    import PicturesTab from './components/Tabs/PicturesTab.vue';
-    import WristOverlayTab from './components/Tabs/WristOverlayTab.vue';
+    import SocialTab from './components/Tabs/SocialTab.vue';
+    import SystemTab from './components/Tabs/SystemTab.vue';
+    import VrTab from './components/Tabs/VrTab.vue';
 
     const { t } = useI18n();
     const settingsTabs = computed(() => [
-        { value: 'general', label: t('view.settings.category.general') },
-        { value: 'appearance', label: t('view.settings.category.appearance') },
+        { value: 'system', label: t('view.settings.category.system') },
+        { value: 'interface', label: t('view.settings.category.interface') },
+        { value: 'social', label: t('view.settings.category.social') },
         { value: 'notifications', label: t('view.settings.category.notifications') },
-        { value: 'wrist-overlay', label: t('view.settings.category.wrist_overlay') },
-        { value: 'discord', label: t('view.settings.category.discord_presence') },
-        { value: 'pictures', label: t('view.settings.category.pictures') },
+        { value: 'vr', label: t('view.settings.category.vr') },
+        { value: 'media', label: t('view.settings.category.media') },
+        { value: 'integrations', label: t('view.settings.category.integrations') },
         { value: 'advanced', label: t('view.settings.category.advanced') }
     ]);
 

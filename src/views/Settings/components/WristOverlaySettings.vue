@@ -17,15 +17,6 @@
                 >
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.steamvr_overlay')">
-                <Switch
-                    :model-value="openVR"
-                    @update:modelValue="
-                        setOpenVR();
-                        saveOpenVROption();
-                    " />
-            </SettingsItem>
-
             <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_overlay')">
                 <Switch
                     :model-value="overlayWrist"
@@ -44,24 +35,6 @@
                         setHidePrivateFromFeed();
                         saveOpenVROption();
                     " />
-            </SettingsItem>
-
-            <SettingsItem
-                :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.start_overlay_with')">
-                <RadioGroup
-                    :model-value="openVRAlways ? 'true' : 'false'"
-                    :disabled="!openVR"
-                    class="gap-2 flex"
-                    @update:modelValue="handleOpenVRAlwaysRadio">
-                    <div class="flex items-center space-x-2">
-                        <RadioGroupItem id="openVRAlways-false" value="false" />
-                        <label for="openVRAlways-false">{{ 'VRChat' }}</label>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <RadioGroupItem id="openVRAlways-true" value="true" />
-                        <label for="openVRAlways-true">{{ 'SteamVR' }}</label>
-                    </div>
-                </RadioGroup>
             </SettingsItem>
 
             <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button')">
@@ -196,10 +169,10 @@
 
     const { openVR } = storeToRefs(notificationsSettingsStore);
 
+
     const {
         overlayWrist,
         hidePrivateFromFeed,
-        openVRAlways,
         overlaybutton,
         overlayHand,
         vrBackgroundEnabled,
@@ -210,12 +183,9 @@
         pcUptimeOnFeed
     } = storeToRefs(wristOverlaySettingsStore);
 
-    const { setOpenVR } = notificationsSettingsStore;
-
     const {
         setOverlayWrist,
         setHidePrivateFromFeed,
-        setOpenVRAlways,
         setOverlaybutton,
         setOverlayHand,
         setVrBackgroundEnabled,
@@ -227,18 +197,6 @@
     } = wristOverlaySettingsStore;
 
     const { saveOpenVROption } = useVrStore();
-
-    /**
-     *
-     * @param value
-     */
-    function handleOpenVRAlwaysRadio(value) {
-        const nextValue = value === 'true';
-        if (nextValue !== openVRAlways.value) {
-            setOpenVRAlways();
-            saveOpenVROption();
-        }
-    }
 
     /**
      *

@@ -1,5 +1,5 @@
 <template>
-    <div class="x-container" ref="playerListRef">
+    <div class="x-container x-container--auto-height" ref="playerListRef">
         <div class="flex h-full min-h-0 flex-col overflow-y-auto overflow-x-hidden">
             <div
                 v-if="currentInstanceWorld.ref.id"
@@ -168,7 +168,7 @@
                 <DataTableLayout
                     class="[&_th]:px-2.5! [&_th]:py-0.75! [&_td]:px-2.5! [&_td]:py-0.75! [&_tr]:h-7!"
                     :table="playerListTable"
-                    :table-style="playerListTableStyle"
+                    auto-height
                     :loading="false"
                     :show-pagination="false"
                     :on-row-click="handlePlayerListRowClick" />
@@ -198,7 +198,6 @@
     import { Badge } from '../../components/ui/badge';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { createColumns } from './columns.jsx';
-    import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     import ChatboxBlacklistDialog from './dialogs/ChatboxBlacklistDialog.vue';
@@ -231,12 +230,6 @@
     const playerListRef = ref(null);
     const playerListHeaderRef = ref(null);
     const playerListPhotonRef = ref(null);
-    const { tableStyle: playerListTableStyle } = useDataTableScrollHeight(playerListRef, {
-        offset: 30,
-        paginationHeight: 0,
-        subtractContainerPadding: true,
-        extraOffsetRefs: [playerListHeaderRef, playerListPhotonRef]
-    });
 
     const { t } = useI18n();
 

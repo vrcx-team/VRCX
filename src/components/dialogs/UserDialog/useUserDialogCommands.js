@@ -235,7 +235,7 @@ export function useUserDialogCommands(
             Share: () => {
                 copyToClipboard(
                     `https://vrchat.com/home/user/${D().id}`,
-                    'User URL copied to clipboard'
+                    t('message.user.url_copied')
                 );
             },
             'Add Favorite': () => {
@@ -254,7 +254,7 @@ export function useUserDialogCommands(
                         D().id
                     )
                     .then((args) => {
-                        toast('Request invite sent');
+                        toast(t('message.user.request_invite_sent'));
                         recordRecentAction(D().id, 'Request Invite');
                         return args;
                     });
@@ -326,7 +326,7 @@ export function useUserDialogCommands(
                 if (fallbackAvatar) {
                     showAvatarDialog(fallbackAvatar);
                 } else {
-                    toast.error('No fallback avatar set');
+                    toast.error(t('message.user.no_fallback_avatar'));
                 }
             },
             'Previous Instances': () => {

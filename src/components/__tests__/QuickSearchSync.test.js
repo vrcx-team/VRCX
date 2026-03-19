@@ -55,4 +55,18 @@ describe('QuickSearchSync.vue', () => {
         expect(mocks.filterState.filtered.items.get('a')).toBe(1);
         expect(mocks.filterState.filtered.groups.has('g1')).toBe(true);
     });
+
+    it('overrides Command filter for longer queries so Worker results are not hidden', async () => {
+        mount(QuickSearchSync);
+
+        mocks.filterState.search = 'rene';
+        await Promise.resolve();
+        await Promise.resolve();
+
+        expect(mocks.setQuery).toHaveBeenCalledWith('rene');
+        expect(mocks.filterState.filtered.count).toBe(2);
+        expect(mocks.filterState.filtered.items.get('a')).toBe(1);
+        expect(mocks.filterState.filtered.items.get('b')).toBe(1);
+        expect(mocks.filterState.filtered.groups.has('g1')).toBe(true);
+    });
 });

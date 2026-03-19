@@ -1,11 +1,11 @@
 <template>
-    <div class="flex flex-col min-w-0 data-table">
+    <div :class="['flex flex-col min-w-0 data-table', autoHeight && 'flex-1 min-h-0 overflow-hidden']">
         <div v-if="$slots.toolbar" class="mb-2">
             <slot name="toolbar"></slot>
         </div>
 
-        <div class="rounded-md border">
-            <div ref="tableScrollRef" class="max-w-full overflow-auto relative" :style="tableStyle">
+        <div :class="['rounded-md border', autoHeight && 'flex-1 min-h-0 flex flex-col overflow-hidden']">
+            <div ref="tableScrollRef" :class="['max-w-full overflow-auto relative', autoHeight && 'flex-1 min-h-0']" :style="tableStyle">
                 <Table :class="tableClassValue" :style="tableElementStyle">
                     <colgroup>
                         <col v-for="col in table.getVisibleLeafColumns()" :key="col.id" :style="getColStyle(col)" />
@@ -73,6 +73,7 @@
                                 v-for="col in toggleableColumns"
                                 :key="col.id"
                                 :model-value="col.getIsVisible()"
+                                @select.prevent
                                 @update:model-value="col.toggleVisibility(!!$event)">
                                 {{ resolveHeaderLabel(col) }}
                             </ContextMenuCheckboxItem>
@@ -80,6 +81,7 @@
                                 <ContextMenuSeparator />
                                 <ContextMenuCheckboxItem
                                     :model-value="tcColumnOrderLocked"
+                                    @select.prevent
                                     @update:model-value="table.options.meta.columnOrderLocked.value = $event">
                                     {{ t('table.header_menu.lock_column_order') }}
                                 </ContextMenuCheckboxItem>
@@ -154,6 +156,7 @@
                             <template v-if="tcColumnOrderLocked != null">
                                 <ContextMenuCheckboxItem
                                     :model-value="tcColumnOrderLocked"
+                                    @select.prevent
                                     @update:model-value="table.options.meta.columnOrderLocked.value = $event">
                                     {{ t('table.header_menu.lock_column_order') }}
                                 </ContextMenuCheckboxItem>
@@ -256,8 +259,8 @@
             </div>
         </div>
 
-        <div v-if="showPagination" class="mt-4 flex w-full items-center gap-3">
-            <div v-if="pageSizes.length" class="inline-flex items-center flex-1 justify-end gap-2">
+        <div v-if="showPagination" class="dt-pagination mt-4 flex w-full items-center gap-3 mb-1">
+            <div v-if="pageSizes.length" class="dt-pagination-sizes inline-flex items-center flex-1 justify-end gap-2">
                 <span class="text-xs text-muted-foreground truncate">{{ t('table.pagination.rows_per_page') }}</span>
                 <Select v-model="pageSizeValue">
                     <SelectTrigger size="sm">
@@ -293,7 +296,7 @@
                     <PaginationNext />
                 </PaginationContent>
             </Pagination>
-            <div class="flex-1"></div>
+            <div class="dt-pagination-spacer flex-1"></div>
         </div>
     </div>
 </template>
@@ -396,6 +399,10 @@
         enableColumnVisibility: {
             type: Boolean,
             default: true
+        },
+        autoHeight: {
+            type: Boolean,
+            default: false
         }
     });
 
@@ -621,6 +628,19 @@
             props.onSortChange(newSorting);
         }
     });
+
+    // When the total page count shrinks below the current page
+    // jump to the last available page
+    watch(
+        () => props.table.getPageCount?.(),
+        (pageCount) => {
+            if (pageCount == null || pageCount <= 0) return;
+            const pageIndex = props.table.getState?.().pagination?.pageIndex ?? 0;
+            if (pageIndex >= pageCount) {
+                props.table.setPageIndex(pageCount - 1);
+            }
+        }
+    );
 
     watch([currentPage, pageSizeProxy], async () => {
         await nextTick();

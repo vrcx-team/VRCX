@@ -9,7 +9,6 @@ const mocks = vi.hoisted(() => ({
     wristStore: {
         overlayWrist: { value: true },
         hidePrivateFromFeed: { value: false },
-        openVRAlways: { value: false },
         overlaybutton: { value: false },
         overlayHand: { value: '1' },
         vrBackgroundEnabled: { value: false },
@@ -20,7 +19,6 @@ const mocks = vi.hoisted(() => ({
         pcUptimeOnFeed: { value: false },
         setOverlayWrist: vi.fn(),
         setHidePrivateFromFeed: vi.fn(),
-        setOpenVRAlways: vi.fn(),
         setOverlaybutton: vi.fn(),
         setOverlayHand: vi.fn(),
         setVrBackgroundEnabled: vi.fn(),
@@ -95,10 +93,9 @@ describe('WristOverlaySettings.vue', () => {
     beforeEach(() => {
         mocks.notificationsStore.openVR.value = true;
         mocks.wristStore.overlayWrist.value = true;
-        mocks.wristStore.openVRAlways.value = false;
         mocks.wristStore.overlaybutton.value = false;
-        mocks.notificationsStore.setOpenVR.mockClear();
-        mocks.wristStore.setOpenVRAlways.mockClear();
+        mocks.wristStore.setOverlayWrist.mockClear();
+        mocks.wristStore.setHidePrivateFromFeed.mockClear();
         mocks.wristStore.setOverlaybutton.mockClear();
         mocks.wristStore.setOverlayHand.mockClear();
         mocks.saveOpenVROption.mockClear();
@@ -107,32 +104,33 @@ describe('WristOverlaySettings.vue', () => {
     it('emits open-feed-filters and handles switch/radio/toggle updates', async () => {
         const wrapper = mount(WristOverlaySettings);
 
+        // Feed filters button emits event
         await wrapper.get('[data-testid="filters-btn"]').trigger('click');
         expect(wrapper.emitted('open-feed-filters')).toBeTruthy();
 
+        // First switch is now overlayWrist (SteamVR Overlay moved to VrTab)
         const switches = wrapper.findAll('[data-testid="switch"]');
         await switches[0].trigger('click');
-        expect(mocks.notificationsStore.setOpenVR).toHaveBeenCalledTimes(1);
+        expect(mocks.wristStore.setOverlayWrist).toHaveBeenCalledTimes(1);
         expect(mocks.saveOpenVROption).toHaveBeenCalled();
 
+        // First (and only) radio group is now overlay button (Start Overlay With moved to VrTab)
         const radioGroups = wrapper.findAll('[data-testid="radio-group"]');
         await radioGroups[0].get('[data-testid="radio-true"]').trigger('click');
-        expect(mocks.wristStore.setOpenVRAlways).toHaveBeenCalledTimes(1);
-
-        await radioGroups[1].get('[data-testid="radio-true"]').trigger('click');
         expect(mocks.wristStore.setOverlaybutton).toHaveBeenCalledTimes(1);
 
+        // Toggle group for overlay hand
         await wrapper.get('[data-testid="toggle-right"]').trigger('click');
         expect(mocks.wristStore.setOverlayHand).toHaveBeenCalledWith('2');
     });
 
-    it('does not toggle openVRAlways when the value is unchanged', async () => {
-        mocks.wristStore.openVRAlways.value = true;
+    it('does not toggle overlaybutton when the value is unchanged', async () => {
+        mocks.wristStore.overlaybutton.value = true;
         const wrapper = mount(WristOverlaySettings);
 
         const firstRadio = wrapper.findAll('[data-testid="radio-group"]')[0];
         await firstRadio.get('[data-testid="radio-true"]').trigger('click');
 
-        expect(mocks.wristStore.setOpenVRAlways).not.toHaveBeenCalled();
+        expect(mocks.wristStore.setOverlaybutton).not.toHaveBeenCalled();
     });
 });

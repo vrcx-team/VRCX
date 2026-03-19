@@ -131,6 +131,7 @@
                                 :default-placeholder="defaultCalendarPlaceholder"
                                 :is-date-disabled="isCalendarDateDisabled"
                                 :prevent-deselect="true"
+                                :week-starts-on="weekStartsOn"
                                 initial-focus
                                 @update:modelValue="handleCalendarModelUpdate" />
                         </PopoverContent>
@@ -216,7 +217,7 @@
     const { friends, allFavoriteFriendIds } = storeToRefs(friendStore);
     const { currentUser } = storeToRefs(useUserStore());
     const { t } = useI18n();
-    const { isDarkMode, dtHour12 } = storeToRefs(appearanceSettingsStore);
+    const { isDarkMode, dtHour12, weekStartsOn } = storeToRefs(appearanceSettingsStore);
 
     const instanceActivityRef = ref(null);
 
@@ -596,15 +597,15 @@
             const location = parseLocation(instanceData.location);
 
             return `
-                            <div style="display: flex; align-items: center;">
-                                <div style="width: 10px; height: 55px; background-color: ${color}; margin-right: 6px;"></div>
-                                <div>
-                                    <div>${name} #${location.instanceName} ${location.accessTypeName}</div>
-                                    <div>${formattedJoinDateTime} - ${formattedLeftDateTime}</div>
-                                    <div>${timeString}</div>
+                                <div style="display: flex; align-items: center;">
+                                    <div style="width: 10px; height: 55px; background-color: ${color}; margin-right: 6px;"></div>
+                                    <div>
+                                        <div>${name} #${location.instanceName} ${location.accessTypeName}</div>
+                                        <div>${formattedJoinDateTime} - ${formattedLeftDateTime}</div>
+                                        <div>${timeString}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        `;
+                            `;
         };
 
         const format = dtHour12.value ? 'hh:mm A' : 'HH:mm';

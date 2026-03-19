@@ -14,6 +14,7 @@ const testDefinitions = [
     { key: 'tools', routeName: 'tools' },
     { key: 'charts-instance', routeName: 'charts-instance' },
     { key: 'charts-mutual', routeName: 'charts-mutual' },
+    { key: 'charts-hot-worlds', routeName: 'charts-hot-worlds' },
     { key: 'notification', routeName: 'notification' },
     { key: 'direct-access', action: 'direct-access' }
 ];
@@ -283,7 +284,8 @@ describe('sanitizeLayout', () => {
         expect(chartsFolder).toBeDefined();
         expect(chartsFolder.items).toEqual([
             'charts-instance',
-            'charts-mutual'
+            'charts-mutual',
+            'charts-hot-worlds'
         ]);
     });
 

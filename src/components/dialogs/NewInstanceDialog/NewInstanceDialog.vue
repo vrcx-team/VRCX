@@ -607,6 +607,7 @@
 
     const {
         newInstanceDialog,
+        isLocalUserVrcPlusSupporter,
         buildInstance,
         buildLegacyInstance,
         updateNewInstanceDialog,

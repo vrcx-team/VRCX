@@ -67,6 +67,8 @@
 
     import { Button } from '@/components/ui/button';
     import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { DASHBOARD_BLOCKED_PANEL_KEYS } from '@/shared/constants/dashboard';
+    import { isToolNavKey } from '@/shared/constants';
     import { navDefinitions } from '@/shared/constants/ui';
 
     const widgetDefinitions = [
@@ -112,7 +114,11 @@
 
     const widgetOptions = computed(() => widgetDefinitions);
 
-    const panelOptions = computed(() => navDefinitions.filter((def) => def.routeName));
+    const panelOptions = computed(() =>
+        navDefinitions.filter(
+            (def) => def.routeName && !DASHBOARD_BLOCKED_PANEL_KEYS.has(def.key) && !isToolNavKey(def.key)
+        )
+    );
 
     function handleSelectWidget(option) {
         emit('select', {

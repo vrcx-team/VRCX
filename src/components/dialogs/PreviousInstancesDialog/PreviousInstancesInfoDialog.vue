@@ -5,6 +5,7 @@
         </DialogHeader>
 
         <DataTableLayout
+            v-if="viewMode === 'table'"
             class="min-w-0 w-full"
             :table="table"
             :loading="loading"
@@ -16,7 +17,31 @@
             :on-sort-change="handleSortChange">
             <template #toolbar>
                 <div style="display: flex; align-items: center; justify-content: space-between">
-                    <Location :location="location.tag" class="text-sm" />
+                    <div class="flex items-center gap-2 px-1 py-2">
+                        <ToggleGroup
+                            type="single"
+                            :model-value="viewMode"
+                            variant="outline"
+                            @update:model-value="handleViewModeChange">
+                            <TooltipWrapper :content="t('dialog.previous_instances.table_view')" side="bottom" :delay-duration="300">
+                                <ToggleGroupItem
+                                    value="table"
+                                    class="px-2"
+                                    :class="viewMode === 'table' && 'bg-accent text-accent-foreground'">
+                                    <List class="size-4" />
+                                </ToggleGroupItem>
+                            </TooltipWrapper>
+                            <TooltipWrapper :content="t('dialog.previous_instances.chart_view')" side="bottom" :delay-duration="300">
+                                <ToggleGroupItem
+                                    value="chart"
+                                    class="px-2"
+                                    :class="viewMode === 'chart' && 'bg-accent text-accent-foreground'">
+                                    <BarChart3 class="size-4" />
+                                </ToggleGroupItem>
+                            </TooltipWrapper>
+                        </ToggleGroup>
+                        <Location :location="location.tag" class="text-sm" />
+                    </div>
                     <InputGroupField
                         v-model="search"
                         :placeholder="t('dialog.previous_instances.search_placeholder')"
@@ -25,6 +50,44 @@
                 </div>
             </template>
         </DataTableLayout>
+
+        <div v-else-if="viewMode === 'chart'" class="flex flex-col min-w-0 w-full h-full">
+            <div class="flex items-center justify-between px-1 py-2">
+                <div class="flex items-center gap-2">
+                    <ToggleGroup
+                        type="single"
+                        :model-value="viewMode"
+                        variant="outline"
+                        @update:model-value="handleViewModeChange">
+                        <TooltipWrapper :content="t('dialog.previous_instances.table_view')" side="bottom" :delay-duration="300">
+                            <ToggleGroupItem
+                                value="table"
+                                class="px-2"
+                                :class="viewMode === 'table' && 'bg-accent text-accent-foreground'">
+                                <List class="size-4" />
+                            </ToggleGroupItem>
+                        </TooltipWrapper>
+                        <TooltipWrapper :content="t('dialog.previous_instances.chart_view')" side="bottom" :delay-duration="300">
+                            <ToggleGroupItem
+                                value="chart"
+                                class="px-2"
+                                :class="viewMode === 'chart' && 'bg-accent text-accent-foreground'">
+                                <BarChart3 class="size-4" />
+                            </ToggleGroupItem>
+                        </TooltipWrapper>
+                    </ToggleGroup>
+                    <Location :location="location.tag" class="text-sm" />
+                </div>
+            </div>
+            <div class="flex-1 overflow-auto min-h-0">
+                <div v-if="chartLoading" class="flex items-center justify-center" style="min-height: 200px">
+                    <span class="text-muted-foreground text-sm">{{ t('view.friends_locations.loading_more') }}</span>
+                </div>
+                <PreviousInstancesInfoChart
+                    v-else
+                    :chart-data="chartData" />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -35,15 +98,20 @@
     import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+    import { BarChart3, List } from 'lucide-vue-next';
 
-    import { useGameLogStore, useInstanceStore, useSearchStore, useUserStore, useVrcxStore } from '../../../stores';
+    import { useGameLogStore, useInstanceStore, useSearchStore, useVrcxStore } from '../../../stores';
     import { compareByCreatedAt, localeIncludes, parseLocation, timeToText } from '../../../shared/utils';
     import { DataTableLayout } from '../../ui/data-table';
     import { InputGroupField } from '../../../components/ui/input-group';
+    import { ToggleGroup, ToggleGroupItem } from '../../../components/ui/toggle-group';
+    import { TooltipWrapper } from '../../../components/ui/tooltip';
     import { createColumns } from './previousInstancesInfoColumns.jsx';
     import { database } from '../../../services/database';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
     import { lookupUser } from '../../../coordinators/userCoordinator';
+
+    import PreviousInstancesInfoChart from './PreviousInstancesInfoChart.vue';
 
     const { previousInstancesInfoDialog, previousInstancesInfoState } = storeToRefs(useInstanceStore());
     const { gameLogIsFriend, gameLogIsFavorite } = useGameLogStore();
@@ -107,7 +175,10 @@
     });
 
     const { stringComparer } = storeToRefs(useSearchStore());
-    const vrcxStore = useVrcxStore();
+
+    const viewMode = ref('table');
+    const chartData = ref([]);
+    const chartLoading = ref(false);
 
     const displayRows = computed(() => {
         const q = String(search.value ?? '')
@@ -168,6 +239,28 @@
         sortBy.value = sorting;
     };
 
+    function handleViewModeChange(value) {
+        if (value) {
+            viewMode.value = value;
+            if (value === 'chart' && chartData.value.length === 0) {
+                loadChartData();
+            }
+        }
+    }
+
+    async function loadChartData() {
+        chartLoading.value = true;
+        try {
+            const data = await database.getPlayerDetailFromInstance(location.value.tag);
+            chartData.value = data;
+        } catch (error) {
+            console.error('Failed to load chart data:', error);
+            chartData.value = [];
+        } finally {
+            chartLoading.value = false;
+        }
+    }
+
     watch(
         () => previousInstancesInfoDialog.value.visible,
         (value) => {
@@ -176,6 +269,9 @@
                     init();
                     refreshPreviousInstancesInfoTable();
                 });
+            } else {
+                viewMode.value = 'table';
+                chartData.value = [];
             }
         },
         { immediate: true }

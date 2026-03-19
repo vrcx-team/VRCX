@@ -45,6 +45,10 @@
                 "devEndpoint": "Dev Endpoint",
                 "endpoint": "Endpoint",
                 "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "ตรวจพบภาษา",
+                "description": "ภาษาของระบบของคุณดูเหมือนจะเป็น {language} คุณต้องการเปลี่ยนไปใช้หรือไม่?"
             }
         },
         "feed": {

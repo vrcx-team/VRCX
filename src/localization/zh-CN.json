@@ -99,6 +99,10 @@
                 "devEndpoint": "自定义 API 接口",
                 "endpoint": "接口地址",
                 "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "检测到语言",
+                "description": "您的系统语言似乎是 {language}。是否切换到该语言？"
             }
         },
         "feed": {

@@ -161,7 +161,7 @@ describe('useUserDialogCommands', () => {
             userDialogCommand('Share');
             expect(copyToClipboard).toHaveBeenCalledWith(
                 'https://vrchat.com/home/user/usr_test123',
-                'User URL copied to clipboard'
+                'message.user.url_copied'
             );
         });
 
@@ -207,7 +207,7 @@ describe('useUserDialogCommands', () => {
             );
             userDialogCommand('Show Fallback Avatar Details');
             expect(deps.toast.error).toHaveBeenCalledWith(
-                'No fallback avatar set'
+                'message.user.no_fallback_avatar'
             );
         });
 

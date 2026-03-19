@@ -1306,6 +1306,32 @@ const gameLog = {
         return players;
     },
 
+    /**
+     * @param {string} location
+     * @returns {Promise<Array<{created_at: string, display_name: string, user_id: string, time: number}>>}
+     */
+    async getPlayerDetailFromInstance(location) {
+        const entries = [];
+        await sqliteService.execute(
+            (dbRow) => {
+                entries.push({
+                    created_at: dbRow[0],
+                    display_name: dbRow[1],
+                    user_id: dbRow[2],
+                    time: dbRow[3] || 0
+                });
+            },
+            `SELECT created_at, display_name, user_id, time
+             FROM gamelog_join_leave
+             WHERE location = @location AND type = 'OnPlayerLeft'
+             ORDER BY created_at ASC`,
+            {
+                '@location': location
+            }
+        );
+        return entries;
+    },
+
     async getPreviousDisplayNamesByUserId(ref) {
         var data = new Map();
         await sqliteService.execute(
@@ -1344,6 +1370,62 @@ const gameLog = {
             instances.set(location, time);
         }, 'SELECT location, time FROM gamelog_location');
         return instances;
+    },
+
+    /**
+     * Get current user's online sessions from gamelog_location
+     * Each row has created_at (leave time) and time (duration in ms)
+     * Session start = created_at - time, Session end = created_at
+     * @returns {Promise<Array<{created_at: string, time: number}>>}
+     */
+    async getCurrentUserOnlineSessions() {
+        const data = [];
+        await sqliteService.execute((dbRow) => {
+            data.push({ created_at: dbRow[0], time: dbRow[1] || 0 });
+        }, `SELECT created_at, time FROM gamelog_location ORDER BY created_at`);
+        return data;
+    },
+
+    /**
+     * Get current user's top visited worlds from gamelog_location.
+     * Groups by world_id and aggregates visit count and total time.
+     * @param {number} [days] - Number of days to look back. Omit or 0 for all time.
+     * @param {number} [limit=5] - Maximum number of worlds to return.
+     * @returns {Promise<Array<{worldId: string, worldName: string, visitCount: number, totalTime: number}>>}
+     */
+    async getMyTopWorlds(days = 0, limit = 5) {
+        const results = [];
+        const whereClause =
+            days > 0 ? `AND created_at >= datetime('now', @daysOffset)` : '';
+        const params = { '@limit': limit };
+        if (days > 0) {
+            params['@daysOffset'] = `-${days} days`;
+        }
+        await sqliteService.execute(
+            (dbRow) => {
+                results.push({
+                    worldId: dbRow[0],
+                    worldName: dbRow[1] || dbRow[0],
+                    visitCount: dbRow[2],
+                    totalTime: dbRow[3] || 0
+                });
+            },
+            `SELECT
+                world_id,
+                world_name,
+                COUNT(*) AS visit_count,
+                SUM(time) AS total_time
+            FROM gamelog_location
+            WHERE world_id IS NOT NULL
+                AND world_id != ''
+                AND world_id LIKE 'wrld_%'
+                ${whereClause}
+            GROUP BY world_id
+            ORDER BY total_time DESC
+            LIMIT @limit`,
+            params
+        );
+        return results;
     },
 
     async getUserIdFromDisplayName(displayName) {

@@ -3,9 +3,14 @@
         <div class="m-1.5" style="position: absolute; top: 0; left: 0">
             <LoginSettingsDialog />
             <TooltipWrapper v-if="!noUpdater" side="top" :content="t('view.login.updater')">
-                <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost" @click="showVRCXUpdateDialog"
-                    ><ArrowBigDownDash
-                /></Button>
+                <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost" @click="showVRCXUpdateDialog">
+                    <span class="relative inline-flex items-center justify-center">
+                        <ArrowBigDownDash />
+                        <span
+                            v-if="pendingVRCXUpdate"
+                            class="absolute -top-0.5 -right-1 h-1.5 w-1.5 rounded-full bg-red-500"></span>
+                    </span>
+                </Button>
             </TooltipWrapper>
             <DropdownMenu>
                 <DropdownMenuTrigger as-child>
@@ -197,9 +202,12 @@
     import { useI18n } from 'vue-i18n';
     import { z } from 'zod';
 
-    import { useAppearanceSettingsStore, useAuthStore, useVrcStatusStore, useVRCXUpdaterStore } from '../../stores';
-    import { getLanguageName, languageCodes } from '../../localization';
+    import { useAppearanceSettingsStore, useAuthStore, useModalStore, useVrcStatusStore, useVRCXUpdaterStore } from '../../stores';
+    import { getLanguageName, languageCodes, resolveSystemLanguage } from '../../localization';
+    import { tForLocale } from '../../plugins';
     import { openExternalLink } from '../../shared/utils';
+
+    import configRepository from '../../services/config';
     import { useUserDisplay } from '../../composables/useUserDisplay';
     import { watchState } from '../../services/watchState';
 
@@ -211,11 +219,12 @@
     const route = useRoute();
     const { loginForm } = storeToRefs(useAuthStore());
     const { relogin, deleteSavedLogin, login, getAllSavedCredentials } = useAuthStore();
-    const { noUpdater } = storeToRefs(useVRCXUpdaterStore());
+    const { noUpdater, pendingVRCXUpdate } = storeToRefs(useVRCXUpdaterStore());
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { appLanguage } = storeToRefs(appearanceSettingsStore);
     const { changeAppLanguage } = appearanceSettingsStore;
+    const modalStore = useModalStore();
 
     const vrcStatusStore = useVrcStatusStore();
 
@@ -306,12 +315,80 @@
             }
         }
     );
+    let isActive = true;
+    let isLanguagePromptOpen = false;
+
+    async function detectAndPromptLanguage() {
+        try {
+            const savedLanguage = await configRepository.getString('VRCX_appLanguage');
+            if (savedLanguage || !isActive) return;
+
+            const systemLanguage = await AppApi.CurrentLanguage();
+            if (!systemLanguage || !isActive) return;
+
+            const matchedCode = resolveSystemLanguage(systemLanguage, languageCodes);
+
+            if (!matchedCode || matchedCode === 'en') {
+                if (isActive) await changeAppLanguage('en');
+                return;
+            }
+
+            const languageName = getLanguageName(matchedCode);
+            const [
+                promptTitle,
+                promptDescription,
+                promptConfirmText,
+                promptCancelText
+            ] = await Promise.all([
+                tForLocale(matchedCode, 'view.login.language_detect.title'),
+                tForLocale(
+                    matchedCode,
+                    'view.login.language_detect.description',
+                    {
+                        language: languageName
+                    }
+                ),
+                tForLocale(matchedCode, 'dialog.alertdialog.confirm'),
+                tForLocale(matchedCode, 'dialog.alertdialog.cancel')
+            ]);
+
+            isLanguagePromptOpen = true;
+            const { ok } = await modalStore.confirm({
+                title: promptTitle,
+                description: promptDescription,
+                confirmText: promptConfirmText,
+                cancelText: promptCancelText
+            });
+            isLanguagePromptOpen = false;
+
+            if (!isActive) return;
+
+            // Re-check: user may have manually switched language while the dialog was open
+            const currentLanguage = await configRepository.getString('VRCX_appLanguage');
+            if (currentLanguage || !isActive) return;
+
+            if (ok) {
+                await changeAppLanguage(matchedCode);
+            } else {
+                await changeAppLanguage('en');
+            }
+        } catch (error) {
+            isLanguagePromptOpen = false;
+            console.error('Language detection failed:', error);
+        }
+    }
 
     onBeforeMount(async () => {
         updateSavedCredentials();
+        detectAndPromptLanguage();
     });
 
     onBeforeUnmount(() => {
+        isActive = false;
+        if (isLanguagePromptOpen) {
+            modalStore.handleCancel();
+            isLanguagePromptOpen = false;
+        }
         resetForm({
             values: {
                 username: '',

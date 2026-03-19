@@ -1,9 +1,9 @@
 <template>
-    <div class="x-container" ref="friendLogRef">
+    <div class="x-container x-container--auto-height" ref="friendLogRef">
         <DataTableLayout
             :table="table"
             :loading="friendLogTable.loading"
-            :table-style="tableHeightStyle"
+            auto-height
             :page-sizes="pageSizes"
             :total-items="totalItems"
             :on-page-size-change="handlePageSizeChange">
@@ -61,7 +61,6 @@
     import { createColumns } from './columns.jsx';
     import { database } from '../../services/database';
     import { removeFromArray } from '../../shared/utils';
-    import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     import configRepository from '../../services/config';
@@ -73,11 +72,6 @@
     const { friendLogTable } = storeToRefs(useFriendStore());
 
     const friendLogRef = ref(null);
-    const { tableStyle: tableHeightStyle } = useDataTableScrollHeight(friendLogRef, {
-        offset: 30,
-        toolbarHeight: 54,
-        paginationHeight: 52
-    });
 
     const friendLogDisplayData = computed(() => {
         const data = friendLogTable.value.data;
@@ -167,7 +161,7 @@
      */
     function deleteFriendLog(row) {
         removeFromArray(friendLogTable.value.data, row);
-        database.deleteFriendLogHistory(row.rowId);
+        database.deleteFriendLogHistory(row);
     }
 
     const columns = createColumns({

@@ -1,9 +1,9 @@
 <template>
-    <div class="x-container" ref="notificationsRef">
+    <div class="x-container x-container--auto-height" ref="notificationsRef">
         <DataTableLayout
             :table="table"
             :loading="isNotificationsLoading"
-            :table-style="tableHeightStyle"
+            auto-height
             :page-sizes="pageSizes"
             :total-items="totalItems"
             :on-page-size-change="handlePageSizeChange">
@@ -104,7 +104,6 @@
     import { DataTableLayout } from '../../components/ui/data-table';
     import { convertFileUrlToImageUrl } from '../../shared/utils';
     import { createColumns } from './columns.jsx';
-    import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     import SendInviteRequestResponseDialog from './dialogs/SendInviteRequestResponseDialog.vue';
@@ -132,11 +131,6 @@
     const { t } = useI18n();
 
     const notificationsRef = ref(null);
-    const { tableStyle: tableHeightStyle } = useDataTableScrollHeight(notificationsRef, {
-        offset: 30,
-        toolbarHeight: 54,
-        paginationHeight: 52
-    });
 
     /**
      *
