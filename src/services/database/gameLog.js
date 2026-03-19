@@ -1380,13 +1380,52 @@ const gameLog = {
      */
     async getCurrentUserOnlineSessions() {
         const data = [];
+        await sqliteService.execute((dbRow) => {
+            data.push({ created_at: dbRow[0], time: dbRow[1] || 0 });
+        }, `SELECT created_at, time FROM gamelog_location ORDER BY created_at`);
+        return data;
+    },
+
+    /**
+     * Get current user's top visited worlds from gamelog_location.
+     * Groups by world_id and aggregates visit count and total time.
+     * @param {number} [days] - Number of days to look back. Omit or 0 for all time.
+     * @param {number} [limit=5] - Maximum number of worlds to return.
+     * @returns {Promise<Array<{worldId: string, worldName: string, visitCount: number, totalTime: number}>>}
+     */
+    async getMyTopWorlds(days = 0, limit = 5) {
+        const results = [];
+        const whereClause =
+            days > 0 ? `AND created_at >= datetime('now', @daysOffset)` : '';
+        const params = { '@limit': limit };
+        if (days > 0) {
+            params['@daysOffset'] = `-${days} days`;
+        }
         await sqliteService.execute(
             (dbRow) => {
-                data.push({ created_at: dbRow[0], time: dbRow[1] || 0 });
+                results.push({
+                    worldId: dbRow[0],
+                    worldName: dbRow[1] || dbRow[0],
+                    visitCount: dbRow[2],
+                    totalTime: dbRow[3] || 0
+                });
             },
-            `SELECT created_at, time FROM gamelog_location ORDER BY created_at`
+            `SELECT
+                world_id,
+                world_name,
+                COUNT(*) AS visit_count,
+                SUM(time) AS total_time
+            FROM gamelog_location
+            WHERE world_id IS NOT NULL
+                AND world_id != ''
+                AND world_id LIKE 'wrld_%'
+                ${whereClause}
+            GROUP BY world_id
+            ORDER BY total_time DESC
+            LIMIT @limit`,
+            params
         );
-        return data;
+        return results;
     },
 
     async getUserIdFromDisplayName(displayName) {

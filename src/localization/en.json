@@ -1455,6 +1455,9 @@
                     "exclude_hours": "Exclude hours",
                     "no_data": "Not enough data to calculate overlap",
                     "times_overlap": "times overlapping"
+                },
+                "most_visited_worlds": {
+                    "header": "Most Visited Worlds"
                 }
             },
             "note_memo": {

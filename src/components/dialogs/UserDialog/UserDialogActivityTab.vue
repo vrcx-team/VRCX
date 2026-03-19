@@ -50,14 +50,14 @@
             style="width: 100%; height: 240px"
             @contextmenu.prevent="onChartRightClick"></div>
 
-        <!-- Online Overlap Section -->
-        <div v-if="hasAnyData" class="mt-4 border-t border-border pt-3">
+        <!-- Online Overlap Section (friends only) -->
+        <div v-if="hasAnyData && !isSelf" class="mt-4 border-t border-border pt-3">
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                     <span class="text-sm font-medium">{{ t('dialog.user.activity.overlap.header') }}</span>
                     <Spinner v-if="isOverlapLoading" class="h-3.5 w-3.5" />
                 </div>
-                <div v-if="hasOverlapData" class="flex items-center gap-1.5 flex-shrink-0">
+                <div v-if="hasOverlapData" class="flex items-center gap-1.5 shrink-0">
                     <Switch :model-value="excludeHoursEnabled" class="scale-75" @update:model-value="onExcludeToggle" />
                     <span class="text-sm text-muted-foreground whitespace-nowrap">{{
                         t('dialog.user.activity.overlap.exclude_hours')
@@ -118,16 +118,69 @@
                 {{ t('dialog.user.activity.overlap.no_data') }}
             </div>
         </div>
+
+        <!-- Top Worlds Section (self only) -->
+        <div v-if="isSelf && hasAnyData" class="mt-4 border-t border-border pt-3">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium">{{ t('dialog.user.activity.most_visited_worlds.header') }}</span>
+            </div>
+            <div v-if="topWorlds.length === 0 && !isLoading" class="text-sm text-muted-foreground py-2">
+                {{ t('dialog.user.activity.no_data_in_period') }}
+            </div>
+            <div v-else class="flex flex-col gap-0.5">
+                <button
+                    v-for="(world, index) in topWorlds"
+                    :key="world.worldId"
+                    type="button"
+                    class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent"
+                    :class="index === 0 ? 'bg-primary/4' : ''"
+                    @click="openWorldDialog(world.worldId)">
+                    <span
+                        class="mt-1 w-5 shrink-0 text-right font-mono text-xs font-bold"
+                        :class="index === 0 ? 'text-primary' : 'text-muted-foreground'">
+                        #{{ index + 1 }}
+                    </span>
+                    <Avatar class="rounded-sm size-8 mt-0.5 shrink-0">
+                        <AvatarImage
+                            v-if="getWorldThumbnail(world.worldId)"
+                            :src="getWorldThumbnail(world.worldId)"
+                            loading="lazy"
+                            decoding="async"
+                            class="rounded-sm object-cover" />
+                        <AvatarFallback class="rounded-sm">
+                            <ImageIcon class="size-3.5 text-muted-foreground" />
+                        </AvatarFallback>
+                    </Avatar>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-baseline justify-between gap-2">
+                            <span class="truncate text-sm font-medium">{{ world.worldName }}</span>
+                            <span class="shrink-0 text-xs tabular-nums text-muted-foreground">
+                                {{ formatWorldTime(world.totalTime) }}
+                            </span>
+                        </div>
+                        <div
+                            class="mt-1 h-1.5 w-full overflow-hidden rounded-full"
+                            :class="isDarkMode ? 'bg-white/8' : 'bg-black/6'">
+                            <div
+                                class="h-full rounded-full transition-all duration-500"
+                                :class="isDarkMode ? 'bg-white/45' : 'bg-black/25'"
+                                :style="{ width: getTopWorldBarWidth(world.totalTime) }" />
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup>
-    import { computed, h, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+    import { computed, h, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Button } from '@/components/ui/button';
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Switch } from '@/components/ui/switch';
-    import { RefreshCw, Tractor, Sprout } from 'lucide-vue-next';
+    import { Image as ImageIcon, RefreshCw, Tractor, Sprout } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -138,7 +191,11 @@
 
     import { database } from '../../../services/database';
     import configRepository from '../../../services/config';
+    import { worldRequest } from '../../../api';
     import { useAppearanceSettingsStore, useUserStore } from '../../../stores';
+    import { useWorldStore } from '../../../stores/world';
+    import { showWorldDialog } from '../../../coordinators/worldCoordinator';
+    import { timeToText } from '../../../shared/utils';
     import {
         buildSessionsFromEvents,
         buildSessionsFromGamelog,
@@ -149,8 +206,9 @@
     } from '../../../shared/utils/overlapCalculator';
 
     const { t, locale } = useI18n();
-    const { userDialog } = storeToRefs(useUserStore());
+    const { userDialog, currentUser } = storeToRefs(useUserStore());
     const { isDarkMode, weekStartsOn } = storeToRefs(useAppearanceSettingsStore());
+    const worldStore = useWorldStore();
 
     const chartRef = ref(null);
     const isLoading = ref(false);
@@ -160,6 +218,9 @@
     const peakTimeText = ref('');
     const selectedPeriod = ref('all');
     const filteredEventCount = ref(0);
+
+    const isSelf = computed(() => userDialog.value.id === currentUser.value.id);
+    const topWorlds = ref([]);
 
     const overlapChartRef = ref(null);
     const isOverlapLoading = ref(false);
@@ -179,6 +240,7 @@
     let overlapResizeObserver = null;
     let cachedTargetSessions = [];
     let cachedCurrentSessions = [];
+    const pendingWorldThumbnailFetches = new Set();
 
     const dayLabels = computed(() => [
         t('dialog.user.activity.days.sun'),
@@ -229,14 +291,53 @@
         if (cachedTargetSessions.length > 0 && echartsInstance) {
             initChart();
         }
-        updateOverlapChart();
+        if (!isSelf.value) {
+            updateOverlapChart();
+        } else {
+            loadTopWorlds();
+        }
     });
+
+    // Resize echarts when dialog becomes visible again (e.g. breadcrumb return)
+    watch(
+        () => userDialog.value.visible,
+        (visible) => {
+            if (visible) {
+                nextTick(() => {
+                    if (echartsInstance && chartRef.value) {
+                        echartsInstance.resize();
+                    }
+                    if (overlapEchartsInstance && overlapChartRef.value) {
+                        overlapEchartsInstance.resize();
+                    }
+                });
+                if (userDialog.value.activeTab === 'Activity') {
+                    loadOnlineFrequency(userDialog.value.id, 'visible-watch');
+                }
+            }
+        }
+    );
+
+    watch(
+        () => userDialog.value.activeTab,
+        (activeTab) => {
+            if (activeTab === 'Activity' && userDialog.value.visible) {
+                loadOnlineFrequency(userDialog.value.id, 'active-tab-watch');
+            }
+        }
+    );
 
     (async () => {
         excludeHoursEnabled.value = await configRepository.getBool('VRCX_overlapExcludeEnabled', false);
         excludeStartHour.value = await configRepository.getString('VRCX_overlapExcludeStart', '1');
         excludeEndHour.value = await configRepository.getString('VRCX_overlapExcludeEnd', '6');
     })();
+
+    onMounted(() => {
+        if (userDialog.value.visible && userDialog.value.activeTab === 'Activity') {
+            loadOnlineFrequency(userDialog.value.id, 'mounted');
+        }
+    });
 
     onBeforeUnmount(() => {
         disposeChart();
@@ -454,22 +555,34 @@
         const requestId = ++activeRequestId;
         isLoading.value = true;
         try {
-            const [timestamps, events] = await Promise.all([
-                database.getOnlineFrequencyData(userId),
-                database.getOnlineOfflineSessions(userId)
-            ]);
-            if (requestId !== activeRequestId) return;
-            if (userDialog.value.id !== userId) return;
+            if (isSelf.value) {
+                // Self: use gamelog_location for heatmap
+                const rows = await database.getCurrentUserOnlineSessions();
+                if (requestId !== activeRequestId) return;
+                if (userDialog.value.id !== userId) return;
 
-            cachedTimestamps = timestamps;
-            cachedTargetSessions = buildSessionsFromEvents(events);
-            hasAnyData.value = timestamps.length > 0;
-            totalOnlineEvents.value = timestamps.length;
+                cachedTimestamps = rows.map((r) => r.created_at);
+                cachedTargetSessions = buildSessionsFromGamelog(rows);
+            } else {
+                // Friend: use feed_online_offline
+                const [timestamps, events] = await Promise.all([
+                    database.getOnlineFrequencyData(userId),
+                    database.getOnlineOfflineSessions(userId)
+                ]);
+                if (requestId !== activeRequestId) return;
+                if (userDialog.value.id !== userId) return;
+
+                cachedTimestamps = timestamps;
+                cachedTargetSessions = buildSessionsFromEvents(events);
+            }
+
+            hasAnyData.value = cachedTimestamps.length > 0;
+            totalOnlineEvents.value = cachedTimestamps.length;
             lastLoadedUserId = userId;
 
             await nextTick();
 
-            if (timestamps.length > 0) {
+            if (cachedTimestamps.length > 0) {
                 const filteredTs = getFilteredTimestamps();
                 filteredEventCount.value = filteredTs.length;
 
@@ -503,9 +616,11 @@
             }
         }
 
-        // Load overlap data after main data (target sessions already cached)
-        if (hasAnyData.value) {
+        if (hasAnyData.value && !isSelf.value) {
             loadOverlapData(userId);
+        }
+        if (hasAnyData.value && isSelf.value) {
+            loadTopWorlds();
         }
     }
 
@@ -768,6 +883,86 @@
         };
 
         overlapEchartsInstance.setOption(option, { notMerge: true });
+    }
+
+    async function loadTopWorlds() {
+        const days = selectedPeriod.value === 'all' ? 0 : parseInt(selectedPeriod.value, 10);
+        try {
+            topWorlds.value = await database.getMyTopWorlds(days, 5);
+            void fetchMissingTopWorldThumbnails(topWorlds.value);
+        } catch (error) {
+            console.error('Error loading top worlds:', error);
+            topWorlds.value = [];
+        }
+    }
+
+    /**
+     * @param {Array<{worldId: string}>} worlds
+     */
+    async function fetchMissingTopWorldThumbnails(worlds) {
+        const missingWorldIds = worlds
+            .map((world) => world.worldId)
+            .filter((worldId) => {
+                if (!worldId || pendingWorldThumbnailFetches.has(worldId)) {
+                    return false;
+                }
+                return !worldStore.cachedWorlds.get(worldId)?.thumbnailImageUrl;
+            });
+
+        if (missingWorldIds.length === 0) {
+            return;
+        }
+
+        const fetches = missingWorldIds.map(async (worldId) => {
+            pendingWorldThumbnailFetches.add(worldId);
+            try {
+                await worldRequest.getWorld({ worldId });
+            } catch (error) {
+                console.error(`Error fetching missing top world thumbnail for ${worldId}:`, error);
+            } finally {
+                pendingWorldThumbnailFetches.delete(worldId);
+            }
+        });
+
+        await Promise.allSettled(fetches);
+        topWorlds.value = [...topWorlds.value];
+    }
+
+    /**
+     * @param {string} worldId
+     * @returns {string|null}
+     */
+    function getWorldThumbnail(worldId) {
+        const cached = worldStore.cachedWorlds.get(worldId);
+        if (!cached?.thumbnailImageUrl) return null;
+        return cached.thumbnailImageUrl.replace('256', '128');
+    }
+
+    /**
+     * @param {string} worldId
+     */
+    function openWorldDialog(worldId) {
+        showWorldDialog(worldId);
+    }
+
+    /**
+     * @param {number} ms
+     * @returns {string}
+     */
+    function formatWorldTime(ms) {
+        if (!ms || ms <= 0) return '0m';
+        return timeToText(ms);
+    }
+
+    /**
+     * @param {number} totalTime
+     * @returns {string}
+     */
+    function getTopWorldBarWidth(totalTime) {
+        if (topWorlds.value.length === 0) return '0%';
+        const maxTime = topWorlds.value[0].totalTime;
+        if (maxTime <= 0) return '0%';
+        return `${Math.round((totalTime / maxTime) * 100)}%`;
     }
 
     defineExpose({ loadOnlineFrequency });

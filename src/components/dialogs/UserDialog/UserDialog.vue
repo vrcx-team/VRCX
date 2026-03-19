@@ -42,7 +42,7 @@
                 <UserDialogAvatarsTab ref="avatarsTabRef" />
             </template>
 
-            <template v-if="userDialog.id !== currentUser.id" #Activity>
+            <template #Activity>
                 <UserDialogActivityTab ref="activityTabRef" />
             </template>
 
@@ -74,7 +74,7 @@
 </template>
 
 <script setup>
-    import { computed, ref, watch } from 'vue';
+    import { computed, onMounted, ref, watch } from 'vue';
     import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
@@ -130,11 +130,9 @@
         if (userDialog.value.id !== currentUser.value.id && !currentUser.value.hasSharedConnectionsOptOut) {
             tabs.splice(1, 0, { value: 'mutual', label: t('dialog.user.mutual_friends.header') });
         }
-        if (userDialog.value.id !== currentUser.value.id) {
-            // Insert Activity before JSON
-            const jsonIdx = tabs.findIndex((tab) => tab.value === 'JSON');
-            tabs.splice(jsonIdx, 0, { value: 'Activity', label: t('dialog.user.activity.header') });
-        }
+        // Insert Activity before JSON
+        const jsonIdx = tabs.findIndex((tab) => tab.value === 'JSON');
+        tabs.splice(jsonIdx, 0, { value: 'Activity', label: t('dialog.user.activity.header') });
         return tabs;
     });
     const infoTabRef = ref(null);
@@ -205,6 +203,30 @@
             }
         }
     );
+
+    watch(
+        () => userDialog.value.visible,
+        (visible) => {
+            if (visible && !userDialog.value.loading) {
+                loadLastActiveTab();
+            }
+        }
+    );
+
+    watch(
+        () => userDialog.value.activeTab,
+        (activeTab) => {
+            if (activeTab === 'Activity' && userDialog.value.visible && !userDialog.value.loading) {
+                activityTabRef.value?.loadOnlineFrequency(userDialog.value.id);
+            }
+        }
+    );
+
+    onMounted(() => {
+        if (userDialog.value.visible && !userDialog.value.loading) {
+            loadLastActiveTab();
+        }
+    });
 
     const userDialogLastMutualFriends = ref('');
     const userDialogLastGroup = ref('');
@@ -348,13 +370,7 @@
      *
      */
     function loadLastActiveTab() {
-        let tab = userDialog.value.lastActiveTab;
-        // Activity tab is not available for own profile; fall back to Info
-        if (tab === 'Activity' && userDialog.value.id === currentUser.value.id) {
-            tab = 'Info';
-            userDialog.value.lastActiveTab = 'Info';
-            userDialog.value.activeTab = 'Info';
-        }
+        const tab = userDialog.value.lastActiveTab;
         handleUserDialogTab(tab);
     }
 
