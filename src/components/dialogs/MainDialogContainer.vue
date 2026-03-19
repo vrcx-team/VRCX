@@ -109,11 +109,11 @@
     const dialogClass = computed(() => {
         switch (activeType.value) {
             case 'world':
-                return 'x-dialog x-world-dialog translate-y-0 sm:max-w-235';
+                return 'x-dialog translate-y-0 sm:max-w-235 overflow-hidden flex flex-col';
             case 'avatar':
-                return 'x-dialog x-avatar-dialog sm:max-w-235 translate-y-0';
+                return 'x-dialog sm:max-w-235 translate-y-0 overflow-hidden flex flex-col';
             case 'group':
-                return 'x-dialog x-group-dialog group-body translate-y-0 sm:max-w-235';
+                return 'x-dialog translate-y-0 sm:max-w-235 overflow-hidden flex flex-col';
             case 'previous-instances-info':
             case 'previous-instances-user':
             case 'previous-instances-world':
@@ -121,7 +121,7 @@
                 return 'x-dialog translate-y-0 sm:max-w-250';
             case 'user':
             default:
-                return 'x-dialog x-user-dialog sm:max-w-235 translate-y-0';
+                return 'x-dialog sm:max-w-235 translate-y-0 overflow-hidden flex flex-col';
         }
     });
 
@@ -149,7 +149,7 @@
 <template>
     <Dialog v-if="isOpen" v-model:open="isOpen">
         <DialogContent :class="dialogClass" style="top: 10vh" :show-close-button="false">
-            <Breadcrumb v-if="shouldShowBreadcrumbs" class="mb-2">
+            <Breadcrumb v-if="shouldShowBreadcrumbs" class="mb-2 flex-shrink-0">
                 <BreadcrumbList>
                     <TooltipWrapper :content="backCrumbLabel" :disabled="!backCrumbLabel" :delayDuration="500">
                         <Button variant="ghost" size="icon-sm" @click="handleBreadcrumbClick(dialogCrumbs.length - 2)">
