@@ -607,6 +607,23 @@ const feed = {
     },
 
     /**
+     * Get Online and Offline events for a user to build sessions
+     * @param {string} userId
+     * @returns {Promise<Array<{created_at: string, type: string}>>}
+     */
+    async getOnlineOfflineSessions(userId) {
+        const data = [];
+        await sqliteService.execute(
+            (dbRow) => {
+                data.push({ created_at: dbRow[0], type: dbRow[1] });
+            },
+            `SELECT created_at, type FROM ${dbVars.userPrefix}_feed_online_offline WHERE user_id = @userId AND (type = 'Online' OR type = 'Offline') ORDER BY created_at`,
+            { '@userId': userId }
+        );
+        return data;
+    },
+
+    /**
      * @param {number} days - Number of days to look back
      * @param {number} limit - Max number of worlds to return
      * @returns {Promise<Array>} Ranked list of hot worlds

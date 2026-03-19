@@ -1372,6 +1372,23 @@ const gameLog = {
         return instances;
     },
 
+    /**
+     * Get current user's online sessions from gamelog_location
+     * Each row has created_at (leave time) and time (duration in ms)
+     * Session start = created_at - time, Session end = created_at
+     * @returns {Promise<Array<{created_at: string, time: number}>>}
+     */
+    async getCurrentUserOnlineSessions() {
+        const data = [];
+        await sqliteService.execute(
+            (dbRow) => {
+                data.push({ created_at: dbRow[0], time: dbRow[1] || 0 });
+            },
+            `SELECT created_at, time FROM gamelog_location ORDER BY created_at`
+        );
+        return data;
+    },
+
     async getUserIdFromDisplayName(displayName) {
         var userId = '';
         await sqliteService.execute(

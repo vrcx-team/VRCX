@@ -1433,7 +1433,14 @@
                     "sat": "Sat",
                     "sun": "Sun"
                 },
-                "easter_egg": "Did you farm your green squares today?"
+                "easter_egg": "Did you farm your green squares today?",
+                "overlap": {
+                    "header": "Online Overlap",
+                    "peak_overlap": "Peak overlap:",
+                    "exclude_hours": "Exclude hours",
+                    "no_data": "Not enough data to calculate overlap",
+                    "times_overlap": "times overlapping"
+                }
             },
             "note_memo": {
                 "header": "Edit Note And Memo",
