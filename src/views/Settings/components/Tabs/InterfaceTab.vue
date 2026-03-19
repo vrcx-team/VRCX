@@ -119,11 +119,10 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.appearance.appearance.age_gated_instances')"
+            <SettingsItem
+                :label="t('view.settings.appearance.appearance.age_gated_instances')"
                 :description="t('view.settings.appearance.appearance.age_gated_instances_description')">
-                <Switch
-                    :model-value="isAgeGatedInstancesVisible"
-                    @update:modelValue="setIsAgeGatedInstancesVisible" />
+                <Switch :model-value="isAgeGatedInstancesVisible" @update:modelValue="setIsAgeGatedInstancesVisible" />
             </SettingsItem>
 
             <SettingsItem :label="t('view.settings.appearance.appearance.striped_data_table_mode')">
@@ -137,7 +136,9 @@
             <SettingsItem
                 :label="t('view.settings.appearance.appearance.accessible_status_indicators')"
                 :description="t('view.settings.appearance.appearance.accessible_status_indicators_description')">
-                <Switch :model-value="accessibleStatusIndicators" @update:modelValue="toggleAccessibleStatusIndicators" />
+                <Switch
+                    :model-value="accessibleStatusIndicators"
+                    @update:modelValue="toggleAccessibleStatusIndicators" />
             </SettingsItem>
 
             <SettingsItem
@@ -275,6 +276,21 @@
             <SettingsItem :label="t('view.settings.appearance.timedate.force_iso_date_format')">
                 <Switch :model-value="dtIsoFormat" @update:modelValue="setDtIsoFormat" />
             </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.appearance.timedate.week_starts_on')"
+                :description="t('view.settings.appearance.timedate.week_starts_on_description')">
+                <Select :model-value="String(weekStartsOn)" @update:modelValue="handleWeekStartsOnChange">
+                    <SelectTrigger size="sm">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="1">{{ t('common.days.monday') }}</SelectItem>
+                        <SelectItem value="0">{{ t('common.days.sunday') }}</SelectItem>
+                        <SelectItem value="6">{{ t('common.days.saturday') }}</SelectItem>
+                    </SelectContent>
+                </Select>
+            </SettingsItem>
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.appearance.user_dialog.header')">
@@ -395,6 +411,7 @@
         instanceUsersSortAlphabetical,
         dtHour12,
         dtIsoFormat,
+        weekStartsOn,
         hideUserNotes,
         hideUserMemos,
         hideUnfriends,
@@ -419,6 +436,7 @@
         setInstanceUsersSortAlphabetical,
         setDtHour12,
         setDtIsoFormat,
+        setWeekStartsOn,
         setHideUserNotes,
         setHideUserMemos,
         setHideUnfriends,
@@ -436,8 +454,6 @@
         setCustomFontFamily,
         setAppCjkFontPack
     } = appearanceSettingsStore;
-
-
 
     const trustColorEntries = [
         {
@@ -595,6 +611,14 @@
             setDtHour12();
             updateVRConfigVars();
         }
+    }
+
+    /**
+     *
+     * @param value
+     */
+    function handleWeekStartsOnChange(value) {
+        setWeekStartsOn(Number(value));
     }
 
     const tablePageSizesModel = computed({

@@ -70,6 +70,7 @@ export const useAppearanceSettingsStore = defineStore(
         const tablePageSizes = ref([...DEFAULT_TABLE_PAGE_SIZES]);
         const dtHour12 = ref(false);
         const dtIsoFormat = ref(false);
+        const weekStartsOn = ref(1);
         const sidebarSortMethod1 = ref('Sort Private to Bottom');
         const sidebarSortMethod2 = ref('Sort by Time in Instance');
         const sidebarSortMethod3 = ref('Sort by Last Active');
@@ -159,6 +160,7 @@ export const useAppearanceSettingsStore = defineStore(
                 tablePageSizesConfig,
                 dtHour12Config,
                 dtIsoFormatConfig,
+                weekStartsOnConfig,
                 sidebarSortMethodsConfig,
                 navWidthConfig,
                 isSidebarGroupByInstanceConfig,
@@ -209,6 +211,7 @@ export const useAppearanceSettingsStore = defineStore(
                 ),
                 configRepository.getBool('VRCX_dtHour12', false),
                 configRepository.getBool('VRCX_dtIsoFormat', false),
+                configRepository.getInt('VRCX_weekStartsOn', 1),
                 configRepository.getString(
                     'VRCX_sidebarSortMethods',
                     JSON.stringify([
@@ -250,7 +253,10 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getBool('VRCX_navIsCollapsed', false),
                 configRepository.getBool('VRCX_dataTableStriped', false),
                 configRepository.getBool('VRCX_showPointerOnHover', false),
-                configRepository.getBool('VRCX_accessibleStatusIndicators', false),
+                configRepository.getBool(
+                    'VRCX_accessibleStatusIndicators',
+                    false
+                ),
                 configRepository.getBool('VRCX_useOfficialStatusColors', true),
                 configRepository.getBool('VRCX_showNewDashboardButton', true),
                 configRepository.getString(
@@ -317,6 +323,9 @@ export const useAppearanceSettingsStore = defineStore(
 
             dtHour12.value = dtHour12Config;
             dtIsoFormat.value = dtIsoFormatConfig;
+            weekStartsOn.value = [0, 1, 6].includes(weekStartsOnConfig)
+                ? weekStartsOnConfig
+                : 1;
 
             currentCulture.value = await AppApi.CurrentCulture();
 
@@ -725,6 +734,14 @@ export const useAppearanceSettingsStore = defineStore(
             configRepository.setBool('VRCX_dtIsoFormat', dtIsoFormat.value);
         }
         /**
+         * @param {number} value - 0 (Sunday), 1 (Monday), or 6 (Saturday)
+         */
+        function setWeekStartsOn(value) {
+            const v = [0, 1, 6].includes(value) ? value : 1;
+            weekStartsOn.value = v;
+            configRepository.setInt('VRCX_weekStartsOn', v);
+        }
+        /**
          * @param {string} method
          */
         function setSidebarSortMethod1(method) {
@@ -962,7 +979,8 @@ export const useAppearanceSettingsStore = defineStore(
          *
          */
         function toggleAccessibleStatusIndicators() {
-            accessibleStatusIndicators.value = !accessibleStatusIndicators.value;
+            accessibleStatusIndicators.value =
+                !accessibleStatusIndicators.value;
             configRepository.setBool(
                 'VRCX_accessibleStatusIndicators',
                 accessibleStatusIndicators.value
@@ -1216,6 +1234,7 @@ export const useAppearanceSettingsStore = defineStore(
             tablePageSizes,
             dtHour12,
             dtIsoFormat,
+            weekStartsOn,
             sidebarSortMethod1,
             sidebarSortMethod2,
             sidebarSortMethod3,
@@ -1259,6 +1278,7 @@ export const useAppearanceSettingsStore = defineStore(
             setTablePageSizes,
             setDtHour12,
             setDtIsoFormat,
+            setWeekStartsOn,
             setSidebarSortMethod1,
             setSidebarSortMethod2,
             setSidebarSortMethod3,

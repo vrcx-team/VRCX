@@ -150,7 +150,7 @@
 
     const { t, locale } = useI18n();
     const { userDialog } = storeToRefs(useUserStore());
-    const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
+    const { isDarkMode, weekStartsOn } = storeToRefs(useAppearanceSettingsStore());
 
     const chartRef = ref(null);
     const isLoading = ref(false);
@@ -190,16 +190,10 @@
         t('dialog.user.activity.days.sat')
     ]);
 
-    // Reorder: Mon-Sun for display (row 0=Mon at top, row 6=Sun at bottom)
-    const displayDayLabels = computed(() => [
-        dayLabels.value[1], // Mon
-        dayLabels.value[2], // Tue
-        dayLabels.value[3], // Wed
-        dayLabels.value[4], // Thu
-        dayLabels.value[5], // Fri
-        dayLabels.value[6], // Sat
-        dayLabels.value[0] // Sun
-    ]);
+    const displayDayLabels = computed(() => {
+        const start = weekStartsOn.value;
+        return Array.from({ length: 7 }, (_, i) => dayLabels.value[(start + i) % 7]);
+    });
 
     const hourLabels = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`);
 
@@ -230,6 +224,7 @@
 
     watch(() => isDarkMode.value, rebuildChart);
     watch(locale, rebuildChart);
+    watch(weekStartsOn, rebuildChart);
     watch(selectedPeriod, () => {
         if (cachedTargetSessions.length > 0 && echartsInstance) {
             initChart();
@@ -356,10 +351,11 @@
         peakTimeText.value = peakTimeResult;
 
         const data = [];
+        const wso = weekStartsOn.value;
         for (let day = 0; day < 7; day++) {
             for (let hour = 0; hour < 24; hour++) {
                 const count = grid[day][hour];
-                const displayDay = day === 0 ? 6 : day - 1;
+                const displayDay = (day - wso + 7) % 7;
                 data.push([hour, displayDay, count]);
             }
         }
@@ -685,10 +681,11 @@
         if (!overlapEchartsInstance) return;
 
         const data = [];
+        const wso = weekStartsOn.value;
         for (let day = 0; day < 7; day++) {
             for (let hour = 0; hour < 24; hour++) {
                 const count = result.grid[day][hour];
-                const displayDay = day === 0 ? 6 : day - 1;
+                const displayDay = (day - wso + 7) % 7;
                 data.push([hour, displayDay, count]);
             }
         }

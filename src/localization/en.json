@@ -23,6 +23,15 @@
             "h": "h",
             "m": "m",
             "s": "s"
+        },
+        "days": {
+            "sunday": "Sunday",
+            "monday": "Monday",
+            "tuesday": "Tuesday",
+            "wednesday": "Wednesday",
+            "thursday": "Thursday",
+            "friday": "Friday",
+            "saturday": "Saturday"
         }
     },
     "nav_tooltip": {
@@ -874,7 +883,9 @@
                     "time_format": "Time Format",
                     "time_format_24": "24 Hour",
                     "time_format_12": "12 Hour",
-                    "force_iso_date_format": "Force ISO Date Format"
+                    "force_iso_date_format": "Force ISO Date Format",
+                    "week_starts_on": "Week Starts On",
+                    "week_starts_on_description": "Choose the first day of the week. Affects calendars, charts, and activity views."
                 },
                 "theme_color": {
                     "header": "Theme Color",

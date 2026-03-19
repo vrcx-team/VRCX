@@ -16,8 +16,11 @@
     import { fromDate, getLocalTimeZone } from '@internationalized/date';
     import { CalendarRoot } from 'reka-ui';
     import { toDate } from 'reka-ui/date';
+    import { storeToRefs } from 'pinia';
 
     import dayjs from 'dayjs';
+
+    import { useAppearanceSettingsStore } from '../../../stores';
 
     const props = defineProps({
         modelValue: {
@@ -40,6 +43,7 @@
 
     const emit = defineEmits(['update:modelValue']);
 
+    const { weekStartsOn } = storeToRefs(useAppearanceSettingsStore());
     const timeZone = getLocalTimeZone();
 
     const internalValue = ref(fromDate(props.modelValue ?? new Date(), timeZone));
@@ -123,6 +127,7 @@
             :placeholder="placeholder"
             @update:placeholder="onUpdatePlaceholder"
             :prevent-deselect="true"
+            :week-starts-on="weekStartsOn"
             class="p-4">
             <CalendarHeader class="pt-0">
                 <nav class="flex items-center gap-1 absolute top-0 inset-x-0 justify-between">
