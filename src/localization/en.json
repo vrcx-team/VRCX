@@ -2312,7 +2312,18 @@
         },
         "open_source": {
             "header": "Open Source Software Notice",
-            "description": "VRCX is based on open source software. It was possible because of their contribution."
+            "description": "VRCX is based on open source software. It was possible because of their contribution.",
+            "loading": "Loading generated third-party notices...",
+            "unavailable": "No generated third-party notice manifest is available in this build. Run a production build to regenerate it.",
+            "search_placeholder": "Search packages, versions, or licenses",
+            "notice_location_prefix": "Full notices file location in the app directory:",
+            "open_project": "Open Project",
+            "open_license_url": "Open License URL",
+            "notice_unavailable": "No local license text was generated for this entry. Open the full notice file and review this component before release.",
+            "select_package": "Select a package to view details.",
+            "review_required": "Review required",
+            "no_results": "No matching packages found.",
+            "no_version": "No version metadata"
         },
         "primary_password": {
             "header": "Primary Password Required",

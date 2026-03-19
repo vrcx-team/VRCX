@@ -1,7 +1,20 @@
 {
     "name": "VRCX",
-    "description": "Friendship management tool for VRChat",
     "private": true,
+    "description": "Friendship management tool for VRChat",
+    "keywords": [
+        "vrchat"
+    ],
+    "homepage": "https://github.com/vrcx-team/VRCX#readme",
+    "bugs": {
+        "url": "https://github.com/vrcx-team/VRCX/issues"
+    },
+    "license": "MIT",
+    "author": "VRCX Team",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/vrcx-team/VRCX.git"
+    },
     "main": "src-electron/main.js",
     "scripts": {
         "dev": "cross-env PLATFORM=windows vite serve src",
@@ -13,27 +26,19 @@
         "typecheck:js": "tsc -p tsconfig.checkjs.json --pretty false",
         "test": "vitest run",
         "test:coverage": "vitest run --coverage",
-        "prod": "cross-env PLATFORM=windows vite build src",
-        "prod-linux": "cross-env PLATFORM=linux vite build src",
+        "build:licenses": "node ./build-scripts/generate-third-party-licenses.js",
+        "prod": "cross-env PLATFORM=windows vite build src && npm run build:licenses",
+        "prod-linux": "cross-env PLATFORM=linux vite build src && npm run build:licenses",
         "build-electron": "node ./src-electron/download-dotnet-runtime.js --arch=x64 && node ./src-electron/patch-package-version.js && electron-builder --x64 --publish never",
         "build-electron-arm64": "node ./src-electron/download-dotnet-runtime.js --arch=arm64 && node ./src-electron/patch-package-version.js && electron-builder --arm64 --publish never",
         "postbuild-electron": "node ./src-electron/patch-node-api-dotnet.js --arch=x64 && node ./src-electron/rename-builds.js --arch=x64",
         "postbuild-electron-arm64": "node ./src-electron/patch-node-api-dotnet.js --arch=arm64 && node ./src-electron/rename-builds.js --arch=arm64",
         "start-electron": "electron . --hot-reload"
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/vrcx-team/VRCX.git"
+    "dependencies": {
+        "hazardous": "^0.3.0",
+        "node-api-dotnet": "^0.9.19"
     },
-    "keywords": [
-        "vrchat"
-    ],
-    "author": "VRCX Team",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/vrcx-team/VRCX/issues"
-    },
-    "homepage": "https://github.com/vrcx-team/VRCX#readme",
     "devDependencies": {
         "@dnd-kit/vue": "^0.3.2",
         "@electron/rebuild": "^4.0.3",
@@ -105,6 +110,10 @@
         "worker-timers": "^8.0.31",
         "yargs": "^18.0.0",
         "zod": "^3.25.76"
+    },
+    "engines": {
+        "node": ">=24.10.0",
+        "npm": ">=11.5.0"
     },
     "build": {
         "appId": "app.vrcx",
@@ -188,13 +197,5 @@
             "category": "public.app-category.utilities",
             "executableName": "VRCX"
         }
-    },
-    "dependencies": {
-        "hazardous": "^0.3.0",
-        "node-api-dotnet": "^0.9.19"
-    },
-    "engines": {
-        "node": ">=24.10.0",
-        "npm": ">=11.5.0"
     }
 }
