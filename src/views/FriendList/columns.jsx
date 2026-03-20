@@ -384,7 +384,15 @@ export const createColumns = ({
                     label: () => t('table.friendList.mutualFriends')
                 }),
             size: 120,
-            sortingFn: sortByNumber((row) => row?.$mutualsEnabled === 'disabled' ? -2 : row?.$mutualsEnabled === 'maybe' ? -1 : row?.$mutualCount ?? 0),
+            sortingFn: sortByNumber((row) => {
+                if (row?.$mutualsEnabled === 'disabled') {
+                    return -2;
+                }
+                if (row?.$mutualsEnabled === 'maybe' && !row?.$mutualCount) {
+                    return -1;
+                }
+                return row?.$mutualCount ?? 0;
+            }),
             meta: {
                 class: 'text-right',
                 label: () => t('table.friendList.mutualFriends')
@@ -401,7 +409,7 @@ export const createColumns = ({
                             <Ban class="h-4 w-4 text-muted-foreground inline-block" />
                         </TooltipWrapper>
                     );
-                } else if (enabled === 'maybe') {
+                } else if (enabled === 'maybe' && !count) {
                     return (
                         <span>
                             {count !== null ? count : null}
