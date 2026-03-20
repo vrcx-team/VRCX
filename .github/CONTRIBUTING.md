@@ -10,9 +10,7 @@ Thank you for your interest in contributing to VRCX! Here are a few guidelines t
 
 ## Important Considerations
 
-### International User Base
-
-VRCX is used by a diverse, international community with users from many different countries and cultures. Before submitting a PR, please consider:
+VRCX is used by a diverse, international community with users from many different countries and cultures. Because of this, we need to ensure that contributions are broadly applicable. Before submitting a PR, please consider:
 
 - **Is this feature broadly useful and valuable?** Niche or low-value features increase maintenance burden without proportional benefits and may not be accepted.
 - **Could it negatively impact other features?** Changes that interfere with or degrade existing functionality will not be merged.
