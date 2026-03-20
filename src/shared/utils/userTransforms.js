@@ -234,6 +234,7 @@ export function createDefaultUserRef(json) {
         $timeSpent: 0,
         $lastSeen: '',
         $mutualCount: 0,
+        $mutualsEnabled: 'enabled',
         $nickName: '',
         $previousLocation: '',
         $customTag: '',

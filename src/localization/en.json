@@ -1419,6 +1419,8 @@
             },
             "mutual_friends": {
                 "header": "Mutual Friends",
+                "no_mutual_friends": "No mutual friends found",
+                "mutuals_disabled": "They have their mutual friends hidden",
                 "sorting": {
                     "alphabetical": "Alphabetical",
                     "last_active": "Last Active",
@@ -2801,7 +2803,9 @@
             "lastLogin": "Last Login",
             "dateJoined": "Date Joined",
             "unfriend": "Unfriend",
-            "mutualFriends": "Mutual Friends"
+            "mutualFriends": "Mutual Friends",
+            "mutualFriendsMaybe": "You don't share any groups so we can't tell if they have mutual friends enabled",
+            "mutualFriendsDisabled": "This user has mutual friends hidden"
         },
         "profile": {
             "invite_messages": {

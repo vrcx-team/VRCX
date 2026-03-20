@@ -2,6 +2,12 @@ import { dbVars } from '../database';
 
 import sqliteService from '../sqlite.js';
 
+const mutualMapping = {
+    0: 'disabled',
+    1: 'enabled',
+    2: 'maybe'
+}
+
 const mutualGraph = {
     async getMutualGraphSnapshot() {
         const snapshot = new Map();
@@ -32,7 +38,7 @@ const mutualGraph = {
         return snapshot;
     },
 
-    async saveMutualGraphSnapshot(entries) {
+    async saveMutualGraphSnapshot(entries, mutualsStatusMap) {
         if (!dbVars.userPrefix) {
             return;
         }
@@ -54,7 +60,9 @@ const mutualGraph = {
                     return;
                 }
                 const safeFriendId = friendId.replace(/'/g, "''");
-                friendValues += `('${safeFriendId}'),`;
+                const mutualStatus = mutualsStatusMap.get(friendId) || 'enabled';
+                const mutualStatusValue = Object.keys(mutualMapping).find(key => mutualMapping[key] === mutualStatus) || 1;
+                friendValues += `('${safeFriendId}', ${mutualStatusValue}),`;
                 let collection = [];
                 if (Array.isArray(mutualIds)) {
                     collection = mutualIds;
@@ -72,7 +80,7 @@ const mutualGraph = {
             if (friendValues) {
                 friendValues = friendValues.slice(0, -1);
                 await sqliteService.executeNonQuery(
-                    `INSERT OR REPLACE INTO ${friendTable} (friend_id) VALUES ${friendValues}`
+                    `INSERT OR REPLACE INTO ${friendTable} (friend_id, mutuals_enabled) VALUES ${friendValues}`
                 );
             }
             if (edgeValues) {
@@ -88,15 +96,16 @@ const mutualGraph = {
         }
     },
 
-    async updateMutualsForFriend(friendId, mutualIds) {
+    async updateMutualsForFriend(friendId, mutualIds, mutualsStatus) {
         if (!dbVars.userPrefix || !friendId) {
             return;
         }
         const friendTable = `${dbVars.userPrefix}_mutual_graph_friends`;
         const linkTable = `${dbVars.userPrefix}_mutual_graph_links`;
         const safeFriendId = friendId.replace(/'/g, "''");
+        const mutualStatusValue = Object.keys(mutualMapping).find(key => mutualMapping[key] === mutualsStatus) || 1;
         await sqliteService.executeNonQuery(
-            `INSERT OR REPLACE INTO ${friendTable} (friend_id) VALUES ('${safeFriendId}')`
+            `INSERT OR REPLACE INTO ${friendTable} (friend_id, mutuals_enabled) VALUES ('${safeFriendId}', ${mutualStatusValue})`
         );
         await sqliteService.executeNonQuery(
             `DELETE FROM ${linkTable} WHERE friend_id='${safeFriendId}'`
@@ -131,7 +140,23 @@ const mutualGraph = {
             }
         }, `SELECT mutual_id, COUNT(*) FROM ${linkTable} GROUP BY mutual_id`);
         return mutualCountMap;
-    }
+    },
+
+    async getMutualStatusForAllUsers() {
+        const mutualStatusMap = new Map();
+        if (!dbVars.userPrefix) {
+            return mutualStatusMap;
+        }
+        const friendTable = `${dbVars.userPrefix}_mutual_graph_friends`;
+        await sqliteService.execute((dbRow) => {
+            const friendId = dbRow[0];
+            const mutualsEnabled = dbRow[1];
+            if (friendId) {
+                mutualStatusMap.set(friendId, mutualMapping[mutualsEnabled]);
+            }
+        }, `SELECT friend_id, mutuals_enabled FROM ${friendTable}`);
+        return mutualStatusMap;
+    },
 };
 
 export { mutualGraph };

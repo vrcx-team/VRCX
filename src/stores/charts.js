@@ -8,7 +8,7 @@ import { createRateLimiter, executeWithBackoff } from '../shared/utils';
 import { database } from '../services/database';
 import { useFriendStore } from './friend';
 import { useUserStore } from './user';
-import { userRequest } from '../api';
+import { groupRequest, userRequest } from '../api';
 
 function createDefaultFetchState() {
     return {
@@ -159,7 +159,60 @@ export const useChartsStore = defineStore('Charts', () => {
 
         const fetchMutualFriends = async (userId) => {
             const collected = [];
+            let mutualsStatus = 'enabled';
             let offset = 0;
+
+            const mutualCounts = await executeWithBackoff(
+                () => {
+                    if (isCancelled()) throw new Error('cancelled');
+                    return userRequest.getMutualCounts({
+                        userId,
+                        offset,
+                        n: 100
+                    });
+                },
+                {
+                    maxRetries: 4,
+                    baseDelay: 500,
+                    shouldRetry: (err) =>
+                        err?.status === 429 ||
+                        (err?.message || '').includes('429')
+                }
+            ).catch((err) => {
+                if ((err?.message || '') === 'cancelled') return null;
+                throw err;
+            });
+
+            if (!mutualCounts || isCancelled()) return [collected, mutualsStatus];
+
+            if (mutualCounts.json.friends === 0 && mutualCounts.json.groups === 0) {
+                // Check if there are actually no mutuals or if mutuals are just disabled
+                // We do this by checking if the mutual group count is 0 while there are mutual groups, which indicates that mutuals are disabled
+                const mutualGroups = await executeWithBackoff(
+                    () => {
+                        if (isCancelled()) throw new Error('cancelled');
+                        return groupRequest.getGroups({ userId }).then((args) => args.json.filter((g) => g.mutualGroup));
+                    },
+                    {
+                        maxRetries: 4,
+                        baseDelay: 500,
+                        shouldRetry: (err) =>
+                            err?.status === 429 ||
+                            (err?.message || '').includes('429')
+                    }
+                ).catch((err) => {
+                    if ((err?.message || '') === 'cancelled') return null;
+                    throw err;
+                });
+
+                if (mutualGroups && mutualGroups.length > 0) {
+                    mutualsStatus = 'disabled';
+                } else {
+                    mutualsStatus = 'maybe';
+                }
+            }
+
+            if (mutualCounts.json.friends === 0) return [collected, mutualsStatus];
 
             while (true) {
                 if (isCancelled()) break;
@@ -199,7 +252,7 @@ export const useChartsStore = defineStore('Charts', () => {
                 offset += args.json.length;
             }
 
-            return collected;
+            return [collected, mutualsStatus];
         };
 
         mutualGraphStatus.isFetching = true;
@@ -225,12 +278,12 @@ export const useChartsStore = defineStore('Charts', () => {
                 }
 
                 try {
-                    const mutuals = await fetchMutualFriends(friend.id);
+                    const [mutuals, mutualsStatus] = await fetchMutualFriends(friend.id);
                     if (isCancelled()) {
                         cancelled = true;
                         break;
                     }
-                    mutualMap.set(friend.id, { friend, mutuals });
+                    mutualMap.set(friend.id, { friend, mutuals, mutualsStatus });
                 } catch (err) {
                     if ((err?.message || '') === 'cancelled' || isCancelled()) {
                         cancelled = true;
@@ -267,6 +320,7 @@ export const useChartsStore = defineStore('Charts', () => {
 
             try {
                 const entries = new Map();
+                const mutualsStatus = new Map();
                 mutualMap.forEach((value, friendId) => {
                     if (!friendId) return;
                     const normalizedFriendId = String(friendId);
@@ -274,6 +328,7 @@ export const useChartsStore = defineStore('Charts', () => {
                         ? value.mutuals
                         : [];
                     const ids = [];
+                    mutualsStatus.set(normalizedFriendId, value?.mutualsStatus || 'enabled');
 
                     for (const entry of collection) {
                         const identifier = normalizeIdentifier(entry?.id);
@@ -283,7 +338,7 @@ export const useChartsStore = defineStore('Charts', () => {
 
                     entries.set(normalizedFriendId, ids);
                 });
-                await database.saveMutualGraphSnapshot(entries);
+                await database.saveMutualGraphSnapshot(entries, mutualsStatus);
             } catch (persistErr) {
                 console.error(
                     '[MutualNetworkGraph] Failed to cache data',

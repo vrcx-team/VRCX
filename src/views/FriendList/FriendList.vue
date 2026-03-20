@@ -154,7 +154,7 @@
 
     const { friends, allFavoriteFriendIds } = storeToRefs(useFriendStore());
     const modalStore = useModalStore();
-    const { getAllUserStats, getAllUserMutualCount } = useFriendStore();
+    const { getAllUserStats, getAllUserMutualCount, getAllUserMutualStatus } = useFriendStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { randomUserColours } = storeToRefs(appearanceSettingsStore);
 
@@ -270,6 +270,7 @@
     function refreshFriendStats() {
         getAllUserStats();
         getAllUserMutualCount();
+        getAllUserMutualStatus();
     }
 
     /**

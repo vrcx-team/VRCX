@@ -13,6 +13,7 @@ const mocks = vi.hoisted(() => ({
     friendsListSearch: null,
     getAllUserStats: vi.fn(),
     getAllUserMutualCount: vi.fn(),
+    getAllUserMutualStatus: vi.fn(),
     confirmDeleteFriend: vi.fn(),
     handleFriendDelete: vi.fn(),
     showUserDialog: vi.fn(),
@@ -70,7 +71,8 @@ vi.mock('../../../stores', () => ({
         friends: mocks.friends,
         allFavoriteFriendIds: mocks.allFavoriteFriendIds,
         getAllUserStats: mocks.getAllUserStats,
-        getAllUserMutualCount: mocks.getAllUserMutualCount
+        getAllUserMutualCount: mocks.getAllUserMutualCount,
+        getAllUserMutualStatus: mocks.getAllUserMutualStatus
     }),
     useModalStore: () => ({
         confirm: (...args) => mocks.modalConfirm(...args),
@@ -284,6 +286,7 @@ describe('FriendList.vue', () => {
         mocks.routerPush.mockReset();
         mocks.getAllUserStats.mockReset();
         mocks.getAllUserMutualCount.mockReset();
+        mocks.getAllUserMutualStatus.mockReset();
         mocks.showUserDialog.mockReset();
         mocks.modalConfirm.mockClear();
         mocks.modalAlert.mockReset();
@@ -308,6 +311,7 @@ describe('FriendList.vue', () => {
         await flushAsync();
         expect(mocks.getAllUserStats).toHaveBeenCalledTimes(1);
         expect(mocks.getAllUserMutualCount).toHaveBeenCalledTimes(1);
+        expect(mocks.getAllUserMutualStatus).toHaveBeenCalledTimes(1);
 
         wrapper.vm.friendsListSearchFilterVIP = true;
         wrapper.vm.friendsListSearchChange();
@@ -318,6 +322,7 @@ describe('FriendList.vue', () => {
         ).toEqual(['usr_1']);
         expect(mocks.getAllUserStats).toHaveBeenCalledTimes(1);
         expect(mocks.getAllUserMutualCount).toHaveBeenCalledTimes(1);
+        expect(mocks.getAllUserMutualStatus).toHaveBeenCalledTimes(1);
     });
 
     test('opens charts tab from toolbar button', async () => {

@@ -245,6 +245,7 @@ export const useUserStore = defineStore('User', () => {
         mutualFriendCount: 0,
         mutualGroupCount: 0,
         mutualFriends: [],
+        mutualsStatus: 'enabled',
         isMutualFriendsLoading: false
     });
 
