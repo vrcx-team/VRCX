@@ -187,7 +187,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
      */
     async function updateDatabaseVersion() {
         // requires dbVars.userPrefix to be already set
-        const databaseVersion = 14;
+        const databaseVersion = 15;
         if (state.databaseVersion < databaseVersion) {
             databaseUpgradeState.value = {
                 visible: state.databaseVersion > 0,
@@ -208,6 +208,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 await database.fixCancelFriendRequestTypo(); // fix CancelFriendRequst typo
                 await database.fixBrokenGameLogDisplayNames(); // fix gameLog display names "DisplayName (userId)"
                 await database.upgradeDatabaseVersion(); // update database version
+                if (state.databaseVersion < 15) {
+                    await database.updateActivityTabDatabaseVersion(); // improve activity tab performance, ver 15
+                }
                 await database.vacuum(); // succ
                 await database.optimize();
                 await configRepository.setInt(
@@ -222,7 +225,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 databaseUpgradeState.value.visible = false;
                 await modalStore.alert({
                     title: t('message.database.upgrade_failed_title'),
-                    description: t('message.database.upgrade_failed_description'),
+                    description: t(
+                        'message.database.upgrade_failed_description'
+                    ),
                     dismissible: false
                 });
                 AppApi.ShowDevTools();

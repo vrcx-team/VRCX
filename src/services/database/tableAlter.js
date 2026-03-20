@@ -15,6 +15,11 @@ const tableAlter = {
         // await sqliteService.executeNonQuery('PRAGMA user_version = 1');
     },
 
+    async updateActivityTabDatabaseVersion() {
+        await this.ensureActivityCacheTables();
+        await this.ensureFeedOnlineOfflineIndexes();
+    },
+
     async updateTableForGroupNames() {
         var tables = [];
         await sqliteService.execute((dbRow) => {
@@ -98,6 +103,18 @@ const tableAlter = {
             );
             await sqliteService.executeNonQuery(
                 `CREATE INDEX IF NOT EXISTS ${userPrefix}_activity_cache_sessions_user_start_idx ON ${userPrefix}_activity_cache_sessions (user_id, start_at)`
+            );
+        }
+    },
+
+    async ensureFeedOnlineOfflineIndexes() {
+        const tables = [];
+        await sqliteService.execute((dbRow) => {
+            tables.push(dbRow[0]);
+        }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_feed_online_offline'`);
+        for (const tableName of tables) {
+            await sqliteService.executeNonQuery(
+                `CREATE INDEX IF NOT EXISTS ${tableName}_user_created_idx ON ${tableName} (user_id, created_at)`
             );
         }
     }

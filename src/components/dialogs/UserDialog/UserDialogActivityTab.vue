@@ -7,12 +7,12 @@
                     variant="ghost"
                     size="icon-sm"
                     :disabled="isLoading"
-                    :title="hasRequestedLoad ? t('dialog.user.activity.refresh_hint') : t('dialog.user.activity.load')"
+                    :title="t('dialog.user.activity.refresh_hint')"
                     @click="loadData">
                     <Spinner v-if="isLoading" />
                     <RefreshCw v-else />
                 </Button>
-                <span v-if="hasRequestedLoad && !isLoading" class="ml-2 text-xs text-muted-foreground">
+                <span v-if="hasAnyData && !isLoading" class="ml-2 text-xs text-muted-foreground">
                     {{ t('dialog.user.activity.refresh_hint') }}
                 </span>
                 <span v-if="filteredEventCount > 0" class="text-accent-foreground ml-1">
@@ -45,28 +45,18 @@
                 <span class="font-medium ml-1">{{ peakTimeText }}</span>
             </div>
         </div>
-        <div
-            v-if="!hasRequestedLoad && !isLoading && !isSessionCacheLoading"
-            class="flex flex-col items-center justify-center flex-1 mt-8 gap-3">
-            <Button variant="outline" @click="loadData">
-                {{ t('dialog.user.activity.load') }}
-            </Button>
-            <span class="text-xs text-muted-foreground text-center">
-                {{ t('dialog.user.activity.load_hint') }}
-            </span>
-        </div>
-        <div
-            v-else-if="!isLoading && !isSessionCacheLoading && !hasAnyData"
-            class="flex items-center justify-center flex-1 mt-8">
-            <DataTableEmpty type="nodata" />
-        </div>
-        <div v-if="isSessionCacheLoading" class="flex flex-col items-center justify-center flex-1 mt-8 gap-2">
+        <div v-if="isLoading && !hasAnyData" class="flex flex-col items-center justify-center flex-1 mt-8 gap-2">
             <Spinner class="h-5 w-5" />
             <span class="text-sm text-muted-foreground">{{ t('dialog.user.activity.preparing_data') }}</span>
             <span class="text-xs text-muted-foreground">{{ t('dialog.user.activity.preparing_data_hint') }}</span>
         </div>
         <div
-            v-if="!isLoading && !isSessionCacheLoading && hasAnyData && filteredEventCount === 0"
+            v-else-if="!isLoading && !hasAnyData"
+            class="flex items-center justify-center flex-1 mt-8">
+            <DataTableEmpty type="nodata" />
+        </div>
+        <div
+            v-if="!isLoading && hasAnyData && filteredEventCount === 0"
             class="flex items-center justify-center flex-1 mt-8">
             <span class="text-muted-foreground text-sm">{{ t('dialog.user.activity.no_data_in_period') }}</span>
         </div>
@@ -224,6 +214,7 @@
     import { timeToText } from '../../../shared/utils';
     import { useCurrentUserSessions } from '../../../composables/useCurrentUserSessions';
     import {
+        buildSessionsFromGamelog,
         calculateOverlapGrid,
         filterSessionsByPeriod,
         findBestOverlapTime,
@@ -244,8 +235,6 @@
     const peakTimeText = ref('');
     const selectedPeriod = ref('all');
     const filteredEventCount = ref(0);
-    const isSessionCacheLoading = ref(false);
-    const hasRequestedLoad = ref(false);
 
     const isSelf = computed(() => userDialog.value.id === currentUser.value.id);
     const topWorlds = ref([]);
@@ -579,8 +568,6 @@
         const userId = userDialog.value.id;
         if (!userId) return;
 
-        hasRequestedLoad.value = true;
-
         if (userId !== lastLoadedUserId) {
             selectedPeriod.value = 'all';
         }
@@ -588,10 +575,17 @@
         const requestId = ++activeRequestId;
         isLoading.value = true;
         try {
-            const entry = await activityStore.refreshActivityCache(userId, isSelf.value, {
-                notifyStart: hasAnyData.value,
-                notifyComplete: true
-            });
+            if (isSelf.value) {
+                const rows = await database.getCurrentUserOnlineSessions();
+                if (requestId !== activeRequestId) return;
+                if (userDialog.value.id !== userId) return;
+
+                cachedTargetSessions = buildSessionsFromGamelog(rows);
+                await finishLoadData(userId);
+                return;
+            }
+
+            const entry = await activityStore.refreshActivityCache(userId);
             if (requestId !== activeRequestId) return;
             if (userDialog.value.id !== userId) return;
             hydrateFromCacheEntry(entry);
@@ -652,9 +646,7 @@
     }
 
     function resetActivityState() {
-        hasRequestedLoad.value = false;
         isLoading.value = false;
-        isSessionCacheLoading.value = false;
         hasAnyData.value = false;
         peakDayText.value = '';
         peakTimeText.value = '';
@@ -673,13 +665,11 @@
 
     function hydrateFromCacheEntry(entry) {
         cachedTargetSessions = Array.isArray(entry?.sessions) ? entry.sessions : [];
-        hasRequestedLoad.value = Boolean(entry);
     }
 
     async function loadCachedActivity(userId) {
         const entry = await activityStore.getCache(userId);
         if (!entry) {
-            hasRequestedLoad.value = false;
             return null;
         }
 
@@ -689,24 +679,6 @@
         hydrateFromCacheEntry(entry);
         await finishLoadData(userId);
         return entry;
-    }
-
-    async function scheduleAutoRefresh(userId) {
-        isLoading.value = true;
-        try {
-            const entry = await activityStore.refreshActivityCache(userId, isSelf.value, {
-                notifyComplete: true
-            });
-            if (userDialog.value.id !== userId) return;
-            hydrateFromCacheEntry(entry);
-            await finishLoadData(userId);
-        } catch (error) {
-            console.error('Error auto-refreshing activity data:', error);
-        } finally {
-            if (userDialog.value.id === userId) {
-                isLoading.value = false;
-            }
-        }
     }
 
     function getFilteredEventCount() {
@@ -726,31 +698,22 @@
         if (!userId) {
             return;
         }
+        if (isSelf.value) {
+            if (lastLoadedUserId === userId && (hasAnyData.value || isLoading.value)) {
+                return;
+            }
+            void loadData();
+            return;
+        }
         void (async () => {
             const cacheEntry = await loadCachedActivity(userId);
-            if (!cacheEntry) {
-                if (activityStore.isRefreshing(userId)) {
-                    hasRequestedLoad.value = true;
-                    isSessionCacheLoading.value = true;
-                    try {
-                        const entry = await activityStore.refreshActivityCache(userId, isSelf.value, {
-                            notifyComplete: true
-                        });
-                        if (userDialog.value.id !== userId) return;
-                        hydrateFromCacheEntry(entry);
-                        await finishLoadData(userId);
-                    } finally {
-                        if (userDialog.value.id === userId) {
-                            isSessionCacheLoading.value = false;
-                        }
-                    }
+            if (cacheEntry || activityStore.isRefreshing(userId)) {
+                if (!cacheEntry && !isLoading.value) {
+                    void loadData();
                 }
                 return;
             }
-
-            if (activityStore.isExpired(cacheEntry)) {
-                void scheduleAutoRefresh(userId);
-            }
+            void loadData();
         })();
     }
 

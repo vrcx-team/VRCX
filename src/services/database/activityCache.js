@@ -195,16 +195,23 @@ async function upsertMeta(entry) {
 }
 
 async function upsertSessions(userId, sessions = []) {
-    for (const session of sessions) {
+    const chunkSize = 250;
+    for (let chunkStart = 0; chunkStart < sessions.length; chunkStart += chunkSize) {
+        const chunk = sessions.slice(chunkStart, chunkStart + chunkSize);
+        const args = {};
+        const values = chunk.map((session, index) => {
+            const suffix = `${chunkStart + index}`;
+            args[`@user_id_${suffix}`] = userId;
+            args[`@start_at_${suffix}`] = session.start;
+            args[`@end_at_${suffix}`] = session.end;
+            return `(@user_id_${suffix}, @start_at_${suffix}, @end_at_${suffix})`;
+        });
+
         await sqliteService.executeNonQuery(
             `INSERT OR REPLACE INTO ${dbVars.userPrefix}_activity_cache_sessions
              (user_id, start_at, end_at)
-             VALUES (@user_id, @start_at, @end_at)`,
-            {
-                '@user_id': userId,
-                '@start_at': session.start,
-                '@end_at': session.end
-            }
+             VALUES ${values.join(', ')}`,
+            args
         );
     }
 }
