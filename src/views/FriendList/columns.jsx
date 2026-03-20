@@ -1,4 +1,4 @@
-import { ArrowUpDown, User, UserMinus } from 'lucide-vue-next';
+import { ArrowUpDown, Ban, CircleQuestionMark, User, UserMinus } from 'lucide-vue-next';
 import {
     Avatar,
     AvatarFallback,
@@ -384,14 +384,45 @@ export const createColumns = ({
                     label: () => t('table.friendList.mutualFriends')
                 }),
             size: 120,
-            sortingFn: sortByNumber((row) => row?.$mutualCount ?? 0),
+            sortingFn: sortByNumber((row) => {
+                if (row?.$mutualsEnabled === 'disabled') {
+                    return -2;
+                }
+                if (row?.$mutualsEnabled === 'maybe' && !row?.$mutualCount) {
+                    return -1;
+                }
+                return row?.$mutualCount ?? 0;
+            }),
             meta: {
                 class: 'text-right',
                 label: () => t('table.friendList.mutualFriends')
             },
             cell: ({ row }) => {
                 const count = row.original?.$mutualCount;
-                return count ? <span>{count}</span> : null;
+                const enabled = row.original?.$mutualsEnabled;
+
+                if (enabled === 'disabled') {
+                    return (
+                        <TooltipWrapper
+                            content={t('table.friendList.mutualFriendsDisabled')}
+                        >
+                            <Ban class="h-4 w-4 text-muted-foreground inline-block" />
+                        </TooltipWrapper>
+                    );
+                } else if (enabled === 'maybe' && !count) {
+                    return (
+                        <span>
+                            {count !== null ? count : null}
+                            <TooltipWrapper
+                                content={t('table.friendList.mutualFriendsMaybe')}
+                            >
+                                <CircleQuestionMark class="ml-1 h-4 w-4 text-muted-foreground inline-block" />
+                            </TooltipWrapper>
+                        </span>
+                    );
+                }
+
+                return count !== null ? <span>{count}</span> : null;
             }
         },
         {

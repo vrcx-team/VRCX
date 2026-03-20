@@ -898,6 +898,22 @@ export const useFriendStore = defineStore('Friend', () => {
     }
 
     /**
+     * 
+     */
+    async function getAllUserMutualStatus() {
+        const mutualStatusMap = await database.getMutualStatusForAllUsers();
+        runInSortedFriendsBatch(() => {
+            for (const [userId, mutualStatus] of mutualStatusMap.entries()) {
+                const ref = friends.get(userId);
+                if (ref?.ref) {
+                    ref.ref.$mutualsEnabled = mutualStatus;
+                    reindexSortedFriend(ref);
+                }
+            }
+        });
+    }
+
+    /**
      *
      * @param {string} id
      */
@@ -1381,6 +1397,7 @@ export const useFriendStore = defineStore('Friend', () => {
         updateOnlineFriendCounter,
         getAllUserStats,
         getAllUserMutualCount,
+        getAllUserMutualStatus,
         initFriendLog,
         migrateFriendLog,
         getFriendLog,

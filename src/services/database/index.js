@@ -103,8 +103,21 @@ const database = {
             `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_notes (user_id TEXT PRIMARY KEY, display_name TEXT, note TEXT, created_at TEXT)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_mutual_graph_friends (friend_id TEXT PRIMARY KEY)`
+            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_mutual_graph_friends (friend_id TEXT PRIMARY KEY, mutuals_enabled INTEGER DEFAULT 0)`
         );
+        // Make sure mutuals_enabled column exists for older versions
+        let mutualsEnabledColumnExists = false;
+        await sqliteService.execute(async (dbRow) => {
+            if (dbRow[1] === "mutuals_enabled") {
+                mutualsEnabledColumnExists = true;
+            }
+        }, `PRAGMA table_info(${dbVars.userPrefix}_mutual_graph_friends)`);
+        if (!mutualsEnabledColumnExists) {
+            await sqliteService.executeNonQuery(
+                `ALTER TABLE ${dbVars.userPrefix}_mutual_graph_friends ADD COLUMN mutuals_enabled INTEGER DEFAULT 0`
+            );
+        }
+
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_mutual_graph_links (friend_id TEXT NOT NULL, mutual_id TEXT NOT NULL, PRIMARY KEY(friend_id, mutual_id))`
         );

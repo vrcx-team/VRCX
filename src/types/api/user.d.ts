@@ -35,6 +35,8 @@ export type AddUserTags = (params: string[]) => Promise<{
     params: string[];
 }>;
 
+type MutualsEnabledStatus = 'enabled' | 'maybe' | 'disabled';
+
 // Exported interfaces
 export interface VrcxUser extends GetUserResponse {
     $location: {};
@@ -56,6 +58,7 @@ export interface VrcxUser extends GetUserResponse {
     $timeSpent: number;
     $lastSeen: string;
     $mutualCount: number;
+    $mutualsEnabled: MutualsEnabledStatus;
     $nickName: string;
     $previousLocation: string;
     $customTag: string;

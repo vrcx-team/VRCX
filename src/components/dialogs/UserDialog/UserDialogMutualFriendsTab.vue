@@ -58,6 +58,10 @@
             </div>
         </li>
     </ul>
+    <div v-if="!userDialog.isMutualFriendsLoading && filteredMutualFriends.length === 0" class="flex flex-col items-center gap-2 mt-6">
+        <Users class="size-6 text-muted-foreground" />
+        <span class="text-sm text-muted-foreground">{{ t('dialog.user.mutual_friends.no_mutual_friends') }} {{ userDialog.mutualsStatus === 'disabled' ? ` (${t('dialog.user.mutual_friends.mutuals_disabled')})` : '' }}</span>
+    </div>
 </template>
 
 <script setup>
@@ -77,7 +81,7 @@
     import { useOptionKeySelect } from '../../../composables/useOptionKeySelect';
     import { useUserStore } from '../../../stores';
     import { userDialogMutualFriendSortingOptions } from '../../../shared/constants';
-    import { userRequest } from '../../../api';
+    import { groupRequest, userRequest } from '../../../api';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { t } = useI18n();
@@ -128,6 +132,7 @@
      */
     async function getUserMutualFriends(userId) {
         userDialog.value.mutualFriends = [];
+        userDialog.value.mutualsStatus = 'enabled';
         if (currentUser.value.hasSharedConnectionsOptOut) {
             return;
         }
@@ -155,11 +160,24 @@
                 }
                 setUserDialogMutualFriendSorting(userDialog.value.mutualFriendSorting);
             },
-            done: (success) => {
+            done: async (success) => {
+                if (userDialog.value.mutualFriends.length === 0) {
+                    const ActualMutualGroups = 
+                        (userDialog.value.userGroups?.mutualGroups.length > 0)
+                            ? userDialog.value.userGroups.mutualGroups
+                            : (await groupRequest.getGroups({ userId })).json.filter((g) => g.mutualGroup);
+
+                    if (ActualMutualGroups.length !== 0 && userDialog.value.mutualGroupCount === 0) {
+                        userDialog.value.mutualsStatus = 'disabled';
+                    } else if (ActualMutualGroups.length === 0) {
+                        userDialog.value.mutualsStatus = 'maybe';
+                    }
+                }
+
                 userDialog.value.isMutualFriendsLoading = false;
                 if (success) {
                     const mutualIds = userDialog.value.mutualFriends.map((u) => u.id);
-                    database.updateMutualsForFriend(userId, mutualIds);
+                    database.updateMutualsForFriend(userId, mutualIds, userDialog.value.mutualsStatus);
                 }
             }
         });
