@@ -15,7 +15,8 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     const avatarRemoteDatabaseProvider = ref('');
 
     const avatarRemoteDatabaseProviderList = ref([
-        'https://api.avtrdb.com/v3/avatar/search/vrcx'
+        'https://api.avtrdb.com/v3/avatar/search/vrcx', 
+        'https://avtr.icu/search'
     ]);
     watch(
         () => watchState.isLoggedIn,
@@ -29,7 +30,7 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
         avatarRemoteDatabaseProviderList.value = JSON.parse(
             await configRepository.getString(
                 'VRCX_avatarRemoteDatabaseProviderList',
-                '[ "https://api.avtrdb.com/v3/avatar/search/vrcx" ]'
+                '[ "https://api.avtrdb.com/v3/avatar/search/vrcx", "https://avtr.icu/search" ]'
             )
         );
         const deprecated = 'https://avtr.just-h.party/vrcx_search.php';
