@@ -651,7 +651,8 @@
         avatarDialogCommand,
         onFileChangeAvatarImage,
         onCropConfirmAvatar,
-        registerCallbacks
+        registerCallbacks,
+        copyAvatarUrl
     } = useAvatarDialogCommands(avatarDialog, {
         t,
         toast,
