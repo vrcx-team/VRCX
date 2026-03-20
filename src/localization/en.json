@@ -1429,7 +1429,6 @@
                 "header": "Activity",
                 "load": "Load Activity",
                 "load_hint": "Load activity data from the local database when needed.",
-                "refresh_hint": "Rebuild activity cache",
                 "total_events": "{count} online events",
                 "times_online": "times online",
                 "most_active_day": "Most active day:",

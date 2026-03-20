@@ -12,9 +12,6 @@
                     <Spinner v-if="isLoading" />
                     <RefreshCw v-else />
                 </Button>
-                <span v-if="hasAnyData && !isLoading" class="ml-2 text-xs text-muted-foreground">
-                    {{ t('dialog.user.activity.refresh_hint') }}
-                </span>
                 <span v-if="filteredEventCount > 0" class="text-accent-foreground ml-1">
                     {{ t('dialog.user.activity.total_events', { count: filteredEventCount }) }}
                 </span>
@@ -50,9 +47,7 @@
             <span class="text-sm text-muted-foreground">{{ t('dialog.user.activity.preparing_data') }}</span>
             <span class="text-xs text-muted-foreground">{{ t('dialog.user.activity.preparing_data_hint') }}</span>
         </div>
-        <div
-            v-else-if="!isLoading && !hasAnyData"
-            class="flex items-center justify-center flex-1 mt-8">
+        <div v-else-if="!isLoading && !hasAnyData" class="flex items-center justify-center flex-1 mt-8">
             <DataTableEmpty type="nodata" />
         </div>
         <div
@@ -510,6 +505,7 @@
             yAxis: {
                 type: 'category',
                 data: displayDayLabels.value,
+                inverse: true,
                 splitArea: { show: false },
                 axisLabel: {
                     fontSize: 11
@@ -698,10 +694,10 @@
         if (!userId) {
             return;
         }
+        if (lastLoadedUserId === userId && (hasAnyData.value || isLoading.value)) {
+            return;
+        }
         if (isSelf.value) {
-            if (lastLoadedUserId === userId && (hasAnyData.value || isLoading.value)) {
-                return;
-            }
             void loadData();
             return;
         }
@@ -822,8 +818,7 @@
             const currentMs = getIncludedSessionDurationMs(currentSessions, start, end);
             const targetMs = getIncludedSessionDurationMs(targetSessions, start, end);
             const minOnlineMs = Math.min(currentMs, targetMs);
-            result.overlapPercent =
-                minOnlineMs > 0 ? Math.round((overlapMs / minOnlineMs) * 100) : 0;
+            result.overlapPercent = minOnlineMs > 0 ? Math.round((overlapMs / minOnlineMs) * 100) : 0;
             if (overlapMs === 0) {
                 overlapPercent.value = 0;
                 bestOverlapTime.value = '';
@@ -970,6 +965,7 @@
             yAxis: {
                 type: 'category',
                 data: displayDayLabels.value,
+                inverse: true,
                 splitArea: { show: false },
                 axisLabel: {
                     fontSize: 11
