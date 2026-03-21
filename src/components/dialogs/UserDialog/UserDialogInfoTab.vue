@@ -493,11 +493,10 @@
         isRealInstance,
         openExternalLink,
         timeToText,
-        userImage,
         userOnlineFor,
-        userOnlineForTimestamp,
-        userStatusClass
+        userOnlineForTimestamp
     } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { refreshInstancePlayerCount } from '../../../coordinators/instanceCoordinator';
     import {
         useAdvancedSettingsStore,
@@ -532,6 +531,7 @@
 
     const { lastLocation } = storeToRefs(useLocationStore());
     const { showFullscreenImageDialog } = useGalleryStore();
+    const { userImage, userStatusClass } = useUserDisplay();
 
     const bioCache = ref({
         userId: null,

@@ -71,7 +71,8 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { compareByDisplayName, compareByFriendOrder, compareByLastActiveRef, userImage } from '../../../shared/utils';
+    import { compareByDisplayName, compareByFriendOrder, compareByLastActiveRef } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { database } from '../../../services/database';
     import { processBulk } from '../../../services/request';
     import { useOptionKeySelect } from '../../../composables/useOptionKeySelect';
@@ -81,6 +82,7 @@
     import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { t } = useI18n();
+    const { userImage } = useUserDisplay();
 
     const userStore = useUserStore();
     const { userDialog, currentUser } = storeToRefs(userStore);
