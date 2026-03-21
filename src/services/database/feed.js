@@ -594,59 +594,6 @@ const feed = {
         return feedDatabase;
     },
 
-    async getOnlineFrequencyData(userId) {
-        const data = [];
-        await sqliteService.execute(
-            (dbRow) => {
-                data.push(dbRow[0]);
-            },
-            `SELECT created_at FROM ${dbVars.userPrefix}_feed_online_offline WHERE type = 'Online' AND user_id = @userId ORDER BY created_at`,
-            { '@userId': userId }
-        );
-        return data;
-    },
-
-    /**
-     * Get Online and Offline events for a user to build sessions
-     * @param {string} userId
-     * @returns {Promise<Array<{created_at: string, type: string}>>}
-     */
-    async getOnlineOfflineSessions(userId) {
-        const data = [];
-        await sqliteService.execute(
-            (dbRow) => {
-                data.push({ created_at: dbRow[0], type: dbRow[1] });
-            },
-            `SELECT created_at, type FROM ${dbVars.userPrefix}_feed_online_offline WHERE user_id = @userId AND (type = 'Online' OR type = 'Offline') ORDER BY created_at`,
-            { '@userId': userId }
-        );
-        return data;
-    },
-
-    /**
-     * @param {string} userId
-     * @param {string} afterCreatedAt
-     * @returns {Promise<Array<{created_at: string, type: string}>>}
-     */
-    async getOnlineOfflineSessionsAfter(userId, afterCreatedAt) {
-        const data = [];
-        await sqliteService.execute(
-            (dbRow) => {
-                data.push({ created_at: dbRow[0], type: dbRow[1] });
-            },
-            `SELECT created_at, type FROM ${dbVars.userPrefix}_feed_online_offline
-             WHERE user_id = @userId
-               AND (type = 'Online' OR type = 'Offline')
-               AND created_at > @afterCreatedAt
-             ORDER BY created_at`,
-            {
-                '@userId': userId,
-                '@afterCreatedAt': afterCreatedAt
-            }
-        );
-        return data;
-    },
-
     /**
      * @param {number} days - Number of days to look back
      * @param {number} limit - Max number of worlds to return

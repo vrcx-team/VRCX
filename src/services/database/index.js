@@ -1,4 +1,4 @@
-import { activityCache } from './activityCache.js';
+import { activityV2 } from './activityV2.js';
 import { avatarFavorites } from './avatarFavorites.js';
 import { avatarTags } from './avatarTags.js';
 import { feed } from './feed.js';
@@ -26,7 +26,7 @@ const dbVars = {
 
 const database = {
     ...feed,
-    ...activityCache,
+    ...activityV2,
     ...gameLog,
     ...notifications,
     ...moderation,
@@ -76,13 +76,71 @@ const database = {
             `CREATE INDEX IF NOT EXISTS ${dbVars.userPrefix}_feed_online_offline_user_created_idx ON ${dbVars.userPrefix}_feed_online_offline (user_id, created_at)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_activity_cache_meta (user_id TEXT PRIMARY KEY, updated_at TEXT, is_self INTEGER DEFAULT 0, source_last_created_at TEXT, pending_session_start_at INTEGER)`
+            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_activity_sync_state_v2 (
+                user_id TEXT PRIMARY KEY,
+                updated_at TEXT NOT NULL DEFAULT '',
+                is_self INTEGER NOT NULL DEFAULT 0,
+                source_last_created_at TEXT NOT NULL DEFAULT '',
+                pending_session_start_at INTEGER,
+                cached_range_days INTEGER NOT NULL DEFAULT 0
+            )`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_activity_cache_sessions (user_id TEXT NOT NULL, start_at INTEGER NOT NULL, end_at INTEGER NOT NULL, PRIMARY KEY (user_id, start_at, end_at))`
+            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_activity_sessions_v2 (
+                session_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id TEXT NOT NULL,
+                start_at INTEGER NOT NULL,
+                end_at INTEGER NOT NULL,
+                is_open_tail INTEGER NOT NULL DEFAULT 0,
+                source_revision TEXT NOT NULL DEFAULT ''
+            )`
         );
         await sqliteService.executeNonQuery(
-            `CREATE INDEX IF NOT EXISTS ${dbVars.userPrefix}_activity_cache_sessions_user_start_idx ON ${dbVars.userPrefix}_activity_cache_sessions (user_id, start_at)`
+            `CREATE INDEX IF NOT EXISTS ${dbVars.userPrefix}_activity_sessions_v2_user_start_idx ON ${dbVars.userPrefix}_activity_sessions_v2 (user_id, start_at)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE INDEX IF NOT EXISTS ${dbVars.userPrefix}_activity_sessions_v2_user_end_idx ON ${dbVars.userPrefix}_activity_sessions_v2 (user_id, end_at)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_activity_range_cache_v2 (
+                user_id TEXT NOT NULL,
+                range_days INTEGER NOT NULL,
+                cache_kind INTEGER NOT NULL,
+                is_complete INTEGER NOT NULL DEFAULT 0,
+                built_from_cursor TEXT NOT NULL DEFAULT '',
+                built_at TEXT NOT NULL DEFAULT '',
+                PRIMARY KEY (user_id, range_days, cache_kind)
+            )`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_activity_bucket_cache_v2 (
+                user_id TEXT NOT NULL,
+                target_user_id TEXT NOT NULL DEFAULT '',
+                range_days INTEGER NOT NULL,
+                view_kind TEXT NOT NULL,
+                exclude_key TEXT NOT NULL DEFAULT '',
+                bucket_version INTEGER NOT NULL DEFAULT 1,
+                raw_buckets_json TEXT NOT NULL DEFAULT '[]',
+                normalized_buckets_json TEXT NOT NULL DEFAULT '[]',
+                built_from_cursor TEXT NOT NULL DEFAULT '',
+                summary_json TEXT NOT NULL DEFAULT '{}',
+                built_at TEXT NOT NULL DEFAULT '',
+                PRIMARY KEY (user_id, target_user_id, range_days, view_kind, exclude_key)
+            )`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_activity_top_worlds_cache_v2 (
+                user_id TEXT NOT NULL,
+                range_days INTEGER NOT NULL,
+                rank_index INTEGER NOT NULL,
+                world_id TEXT NOT NULL,
+                world_name TEXT NOT NULL,
+                visit_count INTEGER NOT NULL DEFAULT 0,
+                total_time INTEGER NOT NULL DEFAULT 0,
+                built_from_cursor TEXT NOT NULL DEFAULT '',
+                built_at TEXT NOT NULL DEFAULT '',
+                PRIMARY KEY (user_id, range_days, rank_index)
+            )`
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_friend_log_current (user_id TEXT PRIMARY KEY, display_name TEXT, trust_level TEXT, friend_number INTEGER)`
@@ -116,6 +174,9 @@ const database = {
     async initTables() {
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS gamelog_location (id INTEGER PRIMARY KEY, created_at TEXT, location TEXT, world_id TEXT, world_name TEXT, time INTEGER, group_name TEXT, UNIQUE(created_at, location))`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE INDEX IF NOT EXISTS gamelog_location_created_at_idx ON gamelog_location (created_at)`
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS gamelog_join_leave (id INTEGER PRIMARY KEY, created_at TEXT, type TEXT, display_name TEXT, location TEXT, user_id TEXT, time INTEGER, UNIQUE(created_at, type, display_name))`

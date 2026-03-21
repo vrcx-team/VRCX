@@ -1429,16 +1429,16 @@
                 "header": "Activity",
                 "load": "Load Activity",
                 "load_hint": "Load activity data from the local database when needed.",
+                "refresh_hint": "Refresh activity data",
                 "total_events": "{count} online events",
                 "times_online": "times online",
                 "most_active_day": "Most active day:",
                 "most_active_time": "Peak hours:",
                 "period": "Period:",
-                "period_all": "All Time",
-                "period_365": "Last Year",
-                "period_180": "Last 6 Months",
                 "period_90": "Last 90 Days",
                 "period_30": "Last 30 Days",
+                "period_7": "Last 7 Days",
+                "minutes_online": "min online",
                 "no_data_in_period": "No activity data in selected period",
                 "days": {
                     "mon": "Mon",
@@ -1456,13 +1456,14 @@
                     "peak_overlap": "Peak overlap:",
                     "exclude_hours": "Exclude hours",
                     "no_data": "Not enough data to calculate overlap",
-                    "times_overlap": "times overlapping"
+                    "times_overlap": "times overlapping",
+                    "minutes_overlap": "min overlap"
                 },
                 "most_visited_worlds": {
                     "header": "Most Visited Worlds"
                 },
                 "preparing_data": "Preparing activity data...",
-                "preparing_data_hint": "This may take a moment on first load. You'll be notified when ready.",
+                "preparing_data_hint": "This may take a moment on first load.",
                 "data_ready": "Activity data is ready"
             },
             "note_memo": {

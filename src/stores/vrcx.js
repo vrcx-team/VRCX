@@ -208,9 +208,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 await database.fixCancelFriendRequestTypo(); // fix CancelFriendRequst typo
                 await database.fixBrokenGameLogDisplayNames(); // fix gameLog display names "DisplayName (userId)"
                 await database.upgradeDatabaseVersion(); // update database version
-                if (state.databaseVersion < 15) {
-                    await database.updateActivityTabDatabaseVersion(); // improve activity tab performance, ver 15
-                }
                 await database.vacuum(); // succ
                 await database.optimize();
                 await configRepository.setInt(

@@ -348,9 +348,12 @@ const gameLog = {
                 };
                 data.set(row.location, row);
             },
-            `SELECT created_at, location, time, world_name, group_name FROM gamelog_location WHERE location LIKE '%${groupId}%' ORDER BY id DESC`,
+            `SELECT created_at, location, time, world_name, group_name
+             FROM gamelog_location
+             WHERE location LIKE @groupId
+             ORDER BY id DESC`,
             {
-                '@groupId': groupId
+                '@groupId': `%${groupId}%`
             }
         );
         return data;
@@ -828,7 +831,7 @@ const gameLog = {
                 checkString = `AND resource_type != 'StringLoad'`;
             }
             if (!resourceload_image) {
-                checkString = `AND resource_type != 'ImageLoad'`;
+                checkImage = `AND resource_type != 'ImageLoad'`;
             }
             selects.push(
                 `SELECT * FROM (SELECT id, created_at, resource_type AS type, NULL AS display_name, location, NULL AS user_id, NULL AS time, NULL AS world_id, NULL AS world_name, NULL AS group_name, NULL AS instance_id, NULL AS video_url, NULL AS video_name, NULL AS video_id, resource_url, resource_type, NULL AS data, NULL AS message FROM gamelog_resource_load WHERE 1=1 ${checkString} ${checkImage} ORDER BY id DESC LIMIT @perTable)`
@@ -1048,7 +1051,7 @@ const gameLog = {
                 checkString = `AND resource_type != 'StringLoad'`;
             }
             if (!resourceload_image) {
-                checkString = `AND resource_type != 'ImageLoad'`;
+                checkImage = `AND resource_type != 'ImageLoad'`;
             }
             selects.push(
                 `SELECT * FROM (SELECT id, created_at, resource_type AS type, NULL AS display_name, location, NULL AS user_id, NULL AS time, NULL AS world_id, NULL AS world_name, NULL AS group_name, NULL AS instance_id, NULL AS video_url, NULL AS video_name, NULL AS video_id, resource_url, resource_type, NULL AS data, NULL AS message FROM gamelog_resource_load WHERE resource_url LIKE @searchLike ${checkString} ${checkImage} ORDER BY id DESC LIMIT @perTable)`
@@ -1376,28 +1379,60 @@ const gameLog = {
      * Get current user's online sessions from gamelog_location
      * Each row has created_at (leave time) and time (duration in ms)
      * Session start = created_at - time, Session end = created_at
+     * @param {number} [fromDays=0] - How many days back to start (0 = all time)
+     * @param {number} [toDays=0] - How many days back to stop (0 = now)
      * @returns {Promise<Array<{created_at: string, time: number}>>}
      */
-    async getCurrentUserOnlineSessions() {
+    async getCurrentUserOnlineSessions(fromDays = 0, toDays = 0) {
         const data = [];
-        await sqliteService.execute((dbRow) => {
-            data.push({ created_at: dbRow[0], time: dbRow[1] || 0 });
-        }, `SELECT created_at, time FROM gamelog_location ORDER BY created_at`);
+        const now = new Date();
+        const params = {};
+        const where = [];
+
+        if (fromDays > 0) {
+            const fromDate = new Date(now.getTime() - fromDays * 86400000).toISOString();
+            params['@fromDate'] = fromDate;
+            where.push('created_at >= @fromDate');
+
+            await sqliteService.execute(
+                (dbRow) => {
+                    data.push({ created_at: dbRow[0], time: dbRow[1] || 0 });
+                },
+                'SELECT created_at, time FROM gamelog_location WHERE created_at < @fromDate ORDER BY created_at DESC LIMIT 1',
+                { '@fromDate': fromDate }
+            );
+        }
+        if (toDays > 0) {
+            const toDate = new Date(now.getTime() - toDays * 86400000).toISOString();
+            params['@toDate'] = toDate;
+            where.push('created_at < @toDate');
+        }
+
+        const dateClause = where.length > 0 ? `WHERE ${where.join(' AND ')}` : '';
+        await sqliteService.execute(
+            (dbRow) => {
+                data.push({ created_at: dbRow[0], time: dbRow[1] || 0 });
+            },
+            `SELECT created_at, time FROM gamelog_location ${dateClause} ORDER BY created_at`,
+            params
+        );
         return data;
     },
 
     /**
      * Get current user's online sessions after a given timestamp (incremental).
      * @param {string} afterCreatedAt - Only return rows created after this timestamp
+     * @param {boolean} [inclusive=false] - If true, use >= instead of > to re-read the last record
      * @returns {Promise<Array<{created_at: string, time: number}>>}
      */
-    async getCurrentUserOnlineSessionsAfter(afterCreatedAt) {
+    async getCurrentUserOnlineSessionsAfter(afterCreatedAt, inclusive = false) {
         const data = [];
+        const op = inclusive ? '>=' : '>';
         await sqliteService.execute(
             (dbRow) => {
                 data.push({ created_at: dbRow[0], time: dbRow[1] || 0 });
             },
-            `SELECT created_at, time FROM gamelog_location WHERE created_at > @after ORDER BY created_at`,
+            `SELECT created_at, time FROM gamelog_location WHERE created_at ${op} @after ORDER BY created_at`,
             { '@after': afterCreatedAt }
         );
         return data;
