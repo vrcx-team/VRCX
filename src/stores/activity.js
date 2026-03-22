@@ -571,33 +571,37 @@ function pickActivityNormalizeConfig(isSelf, rangeDays) {
     const role = isSelf ? 'self' : 'friend';
     return {
         self: {
-            7: { thresholdMinutes: 0, capPercentile: 95, mode: 'sqrt' },
-            30: { thresholdMinutes: 10, capPercentile: 95, mode: 'sqrt' },
-            90: { thresholdMinutes: 20, capPercentile: 90, mode: 'log' },
-            180: { thresholdMinutes: 30, capPercentile: 85, mode: 'log' }
+            7: { floorPercentile: 10, capPercentile: 80, rankWeight: 0.15, targetCoverage: 0.12, targetVolume: 40 },
+            30: { floorPercentile: 15, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.25, targetVolume: 60 },
+            90: { floorPercentile: 15, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.30, targetVolume: 50 },
+            180: { floorPercentile: 20, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.35, targetVolume: 40 }
         },
         friend: {
-            7: { thresholdMinutes: 0, capPercentile: 95, mode: 'sqrt' },
-            30: { thresholdMinutes: 10, capPercentile: 95, mode: 'sqrt' },
-            90: { thresholdMinutes: 20, capPercentile: 90, mode: 'log' },
-            180: { thresholdMinutes: 30, capPercentile: 85, mode: 'log' }
+            7: { floorPercentile: 10, capPercentile: 80, rankWeight: 0.15, targetCoverage: 0.12, targetVolume: 40 },
+            30: { floorPercentile: 15, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.25, targetVolume: 60 },
+            90: { floorPercentile: 15, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.30, targetVolume: 50 },
+            180: { floorPercentile: 20, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.35, targetVolume: 40 }
         }
     }[role][rangeDays] || {
-        thresholdMinutes: 10,
-        capPercentile: 95,
-        mode: 'sqrt'
+        floorPercentile: 15,
+        capPercentile: 85,
+        rankWeight: 0.20,
+        targetCoverage: 0.25,
+        targetVolume: 60
     };
 }
 
 function pickOverlapNormalizeConfig(rangeDays) {
     return {
-        7: { thresholdMinutes: 0, capPercentile: 95, mode: 'sqrt' },
-        30: { thresholdMinutes: 5, capPercentile: 95, mode: 'sqrt' },
-        90: { thresholdMinutes: 10, capPercentile: 90, mode: 'log' },
-        180: { thresholdMinutes: 15, capPercentile: 85, mode: 'log' }
+        7: { floorPercentile: 10, capPercentile: 80, rankWeight: 0.15, targetCoverage: 0.08, targetVolume: 15 },
+        30: { floorPercentile: 15, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.15, targetVolume: 25 },
+        90: { floorPercentile: 15, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.18, targetVolume: 20 },
+        180: { floorPercentile: 20, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.20, targetVolume: 15 }
     }[rangeDays] || {
-        thresholdMinutes: 5,
-        capPercentile: 95,
-        mode: 'sqrt'
+        floorPercentile: 15,
+        capPercentile: 85,
+        rankWeight: 0.20,
+        targetCoverage: 0.15,
+        targetVolume: 25
     };
 }

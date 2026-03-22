@@ -152,22 +152,64 @@ export function buildOverlapBuckets(
     return buildHeatmapBuckets(intersections, windowStartMs, nowMs, maxSessionMs);
 }
 
-export function normalizeBuckets(buckets, thresholdMinutes, capPercentile, mode) {
-    const thresholded = buckets.map((value) => (value >= thresholdMinutes ? value : 0));
-    const positiveValues = thresholded.filter((value) => value > 0).sort((a, b) => a - b);
-    const cap = positiveValues.length > 0 ? percentile(positiveValues, capPercentile) : 1;
-    const normalized = new Float64Array(168);
+export function normalizeBuckets(buckets, config) {
+    const {
+        floorPercentile = 15,
+        capPercentile = 85,
+        rankWeight = 0.2,
+        targetCoverage = 0.25,
+        targetVolume = 60,
+        rangeDays = 30
+    } = config;
 
-    for (let index = 0; index < 168; index++) {
-        const value = thresholded[index];
-        if (value <= 0) {
-            normalized[index] = 0;
-            continue;
+    const positiveEntries = [];
+    for (let i = 0; i < 168; i++) {
+        if (buckets[i] > 0) {
+            positiveEntries.push({ value: buckets[i], index: i });
         }
-        const scaled = mode === 'log'
-            ? Math.log1p(value) / Math.log1p(cap)
-            : Math.sqrt(value / cap);
-        normalized[index] = Math.min(Math.max(scaled, 0), 1);
+    }
+
+    if (positiveEntries.length === 0) {
+        return Array.from({ length: 168 }, () => 0);
+    }
+
+    const sortedValues = positiveEntries.map((e) => e.value).sort((a, b) => a - b);
+    const floor = percentile(sortedValues, floorPercentile);
+    const cap = percentile(sortedValues, capPercentile);
+    const logFloor = Math.log1p(floor);
+    const logCap = Math.log1p(cap);
+    const logRange = logCap - logFloor;
+
+    const gated = positiveEntries.filter((e) => e.value >= floor);
+    if (gated.length === 0) {
+        return Array.from({ length: 168 }, () => 0);
+    }
+
+    gated.sort((a, b) => a.value - b.value);
+    const count = gated.length;
+    const ampWeight = 1 - rankWeight;
+    const normalized = new Float64Array(168);
+    const tiedRanks = computeTiedRankScores(gated);
+
+    for (let rank = 0; rank < count; rank++) {
+        const { value, index } = gated[rank];
+        const base = logRange > 1e-9
+            ? Math.max((Math.log1p(value) - logFloor) / logRange, 0)
+            : 0.5;
+        const clampedBase = Math.min(base, 1);
+        normalized[index] = clampedBase * ampWeight + tiedRanks[rank] * rankWeight;
+    }
+
+    const coverage = count / 168;
+    const gatedMinutes = gated.reduce((sum, e) => sum + e.value, 0);
+    const volume = gatedMinutes / rangeDays;
+    const confidence = Math.min(
+        Math.max(Math.min(coverage / targetCoverage, volume / targetVolume), 0),
+        1
+    );
+
+    for (let i = 0; i < 168; i++) {
+        normalized[i] = Math.min(normalized[i] * confidence, 1);
     }
 
     return Array.from(normalized);
@@ -255,12 +297,7 @@ export function computeActivityView({
     const windowStartMs = nowMs - rangeDays * 86400000;
     const clippedSessions = clipSessionsToRange(sessions, windowStartMs, nowMs);
     const rawBuckets = buildHeatmapBuckets(clippedSessions, windowStartMs, nowMs, maxSessionMs);
-    const normalizedBuckets = normalizeBuckets(
-        rawBuckets,
-        normalizeConfig.thresholdMinutes,
-        normalizeConfig.capPercentile,
-        normalizeConfig.mode
-    );
+    const normalizedBuckets = normalizeBuckets(rawBuckets, { ...normalizeConfig, rangeDays });
     const { peakDay, peakTime } = computePeaksFromBuckets(rawBuckets, dayLabels);
     return {
         rangeDays,
@@ -298,12 +335,7 @@ export function computeOverlapView({
     const targetMinutes = sum(targetBuckets);
     const denominator = Math.min(selfMinutes, targetMinutes);
     const overlapPercent = denominator > 0 ? Math.round((overlapMinutes / denominator) * 100) : 0;
-    const normalizedBuckets = normalizeBuckets(
-        rawBuckets,
-        normalizeConfig.thresholdMinutes,
-        normalizeConfig.capPercentile,
-        normalizeConfig.mode
-    );
+    const normalizedBuckets = normalizeBuckets(rawBuckets, { ...normalizeConfig, rangeDays });
     const bestOverlapTime = overlapMinutes > 0
         ? findBestOverlapTimeFromBuckets(rawBuckets, dayLabels)
         : '';
@@ -370,4 +402,23 @@ function zeroHourRange(day, startHour, endHour, rawBuckets, selfBuckets, targetB
 
 function sum(values) {
     return values.reduce((total, value) => total + value, 0);
+}
+
+function computeTiedRankScores(sortedEntries) {
+    const count = sortedEntries.length;
+    const scores = new Float64Array(count);
+    let i = 0;
+    while (i < count) {
+        let j = i;
+        while (j < count && sortedEntries[j].value === sortedEntries[i].value) {
+            j++;
+        }
+        const avgRank = (i + 1 + j) / 2;
+        const score = avgRank / count;
+        for (let k = i; k < j; k++) {
+            scores[k] = score;
+        }
+        i = j;
+    }
+    return scores;
 }

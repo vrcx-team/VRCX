@@ -517,7 +517,7 @@
             isDarkMode: isDarkMode.value,
             emptyColor: isDarkMode.value ? 'hsl(220, 15%, 12%)' : 'hsl(210, 30%, 95%)',
             scaleColors: isDarkMode.value
-                ? ['hsl(160, 35%, 18%)', 'hsl(150, 45%, 25%)', 'hsl(142, 55%, 32%)', 'hsl(142, 65%, 42%)', 'hsl(142, 80%, 55%)']
+                ? ['hsl(160, 40%, 24%)', 'hsl(150, 48%, 32%)', 'hsl(142, 55%, 38%)', 'hsl(142, 65%, 46%)', 'hsl(142, 80%, 55%)']
                 : ['hsl(160, 40%, 82%)', 'hsl(155, 45%, 68%)', 'hsl(142, 55%, 55%)', 'hsl(142, 65%, 40%)', 'hsl(142, 76%, 30%)'],
             unitLabel: t('dialog.user.activity.minutes_online')
         }), { notMerge: true });
@@ -540,7 +540,7 @@
             isDarkMode: isDarkMode.value,
             emptyColor: isDarkMode.value ? 'hsl(220, 15%, 12%)' : 'hsl(210, 30%, 95%)',
             scaleColors: isDarkMode.value
-                ? ['hsl(260, 25%, 20%)', 'hsl(260, 40%, 30%)', 'hsl(260, 50%, 42%)', 'hsl(260, 60%, 52%)', 'hsl(260, 70%, 62%)']
+                ? ['hsl(260, 30%, 26%)', 'hsl(260, 42%, 36%)', 'hsl(260, 50%, 45%)', 'hsl(260, 60%, 54%)', 'hsl(260, 70%, 62%)']
                 : ['hsl(260, 35%, 85%)', 'hsl(260, 42%, 70%)', 'hsl(260, 48%, 58%)', 'hsl(260, 55%, 48%)', 'hsl(260, 60%, 38%)'],
             unitLabel: t('dialog.user.activity.overlap.minutes_overlap')
         }), { notMerge: true });

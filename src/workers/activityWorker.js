@@ -57,12 +57,13 @@ self.addEventListener('message', (event) => {
                 };
                 break;
             case 'normalizeHeatmapBuckets':
+                if ('thresholdMinutes' in payload || 'mode' in payload) {
+                    console.warn('[activityWorker] normalizeHeatmapBuckets received legacy payload fields (thresholdMinutes/mode). Use payload.config instead.');
+                }
                 result = {
                     normalized: normalizeBuckets(
                         payload.buckets || [],
-                        payload.thresholdMinutes,
-                        payload.capPercentile,
-                        payload.mode
+                        payload.config || {}
                     )
                 };
                 break;
