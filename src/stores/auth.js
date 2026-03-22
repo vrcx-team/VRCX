@@ -22,6 +22,7 @@ import { useGeneralSettingsStore } from './settings/general';
 import { useModalStore } from './modal';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
+import { useVrcxStore } from './vrcx';
 import { watchState } from '../services/watchState';
 
 import configRepository from '../services/config';
@@ -36,6 +37,7 @@ export const useAuthStore = defineStore('Auth', () => {
     const userStore = useUserStore();
     const updateLoopStore = useUpdateLoopStore();
     const modalStore = useModalStore();
+    const vrcxStore = useVrcxStore();
 
     const { t } = useI18n();
     const state = reactive({
@@ -177,6 +179,13 @@ export const useAuthStore = defineStore('Auth', () => {
      * @returns {Promise<void>}
      */
     async function autoLoginAfterMounted() {
+        const canAutoLogin = await vrcxStore.waitForDatabaseInit();
+        if (!canAutoLogin) {
+            console.warn(
+                'Skipping auto-login after mount because database initialization did not complete successfully.'
+            );
+            return;
+        }
         if (
             !advancedSettingsStore.enablePrimaryPassword &&
             (await configRepository.getString('lastUserLoggedIn')) !== null
@@ -800,6 +809,13 @@ export const useAuthStore = defineStore('Auth', () => {
      *
      */
     async function handleAutoLogin() {
+        const canAutoLogin = await vrcxStore.waitForDatabaseInit();
+        if (!canAutoLogin) {
+            console.warn(
+                'Skipping auto-login because database initialization did not complete successfully.'
+            );
+            return;
+        }
         await runHandleAutoLoginFlow();
     }
 
