@@ -2986,28 +2986,28 @@
             "cta": "Got It",
             "common": {
                 "got_it": "Got It",
-                "view_details": "View detailed changelog",
+                "view_changelog": "View changelog",
                 "support": "Support VRCX"
             },
             "releases": {
-                "v2026_04_a": {
+                "2026_04_05": {
                     "title": "What's New in VRCX",
                     "items": {
                         "quick_search": {
                             "title": "Quick Search",
-                            "description": "Find friends, worlds, avatars, and groups from one search."
+                            "description": "Find users, worlds, and avatars in seconds."
                         },
                         "dashboard": {
                             "title": "Dashboard",
-                            "description": "Build a workspace with widgets that fit how you work."
+                            "description": "Build a workspace that fits how you use VRCX."
                         },
                         "activity_insights": {
                             "title": "Activity Insights",
-                            "description": "See activity heatmaps, overlap, and the worlds you visit most."
+                            "description": "See shared online time, top worlds, and activity trends."
                         },
                         "my_avatars": {
                             "title": "My Avatars",
-                            "description": "Browse, manage, and edit your avatars in one place."
+                            "description": "Browse and manage your avatars with less friction."
                         }
                     }
                 }

@@ -1,66 +1,67 @@
-const whatsNewReleases = {
-    v2026_04_a: {
-        titleKey: 'onboarding.whatsnew.releases.v2026_04_a.title',
-        releaseLabel: '2026.04',
+const whatsNewReleases = Object.freeze({
+    '2026.04.05': {
         items: [
             {
                 key: 'quick_search',
-                icon: 'search',
-                titleKey:
-                    'onboarding.whatsnew.releases.v2026_04_a.items.quick_search.title',
-                descriptionKey:
-                    'onboarding.whatsnew.releases.v2026_04_a.items.quick_search.description'
+                icon: 'search'
             },
             {
                 key: 'dashboard',
-                icon: 'layout-dashboard',
-                titleKey:
-                    'onboarding.whatsnew.releases.v2026_04_a.items.dashboard.title',
-                descriptionKey:
-                    'onboarding.whatsnew.releases.v2026_04_a.items.dashboard.description'
+                icon: 'layout-dashboard'
             },
             {
                 key: 'activity_insights',
-                icon: 'activity',
-                titleKey:
-                    'onboarding.whatsnew.releases.v2026_04_a.items.activity_insights.title',
-                descriptionKey:
-                    'onboarding.whatsnew.releases.v2026_04_a.items.activity_insights.description'
+                icon: 'activity'
             },
             {
                 key: 'my_avatars',
-                icon: 'images',
-                titleKey:
-                    'onboarding.whatsnew.releases.v2026_04_a.items.my_avatars.title',
-                descriptionKey:
-                    'onboarding.whatsnew.releases.v2026_04_a.items.my_avatars.description'
+                icon: 'images'
             }
         ]
     }
-};
+});
 
 /**
  * @param {string} version
  * @returns {string}
  */
-function getWhatsNewReleaseKey(version) {
-    const match = String(version || '').match(/(\d{4})\.(\d{2})(?:\.\d{2})?/);
-    if (!match) {
-        return '';
-    }
-    return `v${match[1]}_${match[2]}_a`;
+function normalizeReleaseVersion(version) {
+    const normalizedVersion = String(version || '')
+        .replace(/^VRCX\s+/, '')
+        .trim();
+    return /^\d{4}\.\d{2}\.\d{2}$/.test(normalizedVersion)
+        ? normalizedVersion
+        : '';
 }
 
 /**
  * @param {string} version
- * @returns {{titleKey: string, releaseLabel?: string, items: Array<{key: string, icon: string, titleKey: string, descriptionKey: string}>} | null}
+ * @returns {{titleKey: string, items: Array<{key: string, icon: string, titleKey: string, descriptionKey: string}>} | null}
  */
 function getWhatsNewRelease(version) {
-    const releaseKey = String(version || '');
-    if (!releaseKey) {
+    const normalizedVersion = normalizeReleaseVersion(version);
+    if (!normalizedVersion) {
         return null;
     }
-    return whatsNewReleases[releaseKey] ?? null;
+    const release = whatsNewReleases[normalizedVersion];
+    if (!release) {
+        return null;
+    }
+
+    const i18nKey = normalizedVersion.replaceAll('.', '_');
+    const baseKey = `onboarding.whatsnew.releases.${i18nKey}`;
+    return {
+        titleKey: `${baseKey}.title`,
+        items: release.items.map((item) => ({
+            ...item,
+            titleKey: `${baseKey}.items.${item.key}.title`,
+            descriptionKey: `${baseKey}.items.${item.key}.description`
+        }))
+    };
 }
 
-export { getWhatsNewRelease, getWhatsNewReleaseKey, whatsNewReleases };
+export {
+    getWhatsNewRelease,
+    normalizeReleaseVersion,
+    whatsNewReleases
+};
