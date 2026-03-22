@@ -1435,6 +1435,7 @@
                 "most_active_day": "Most active day:",
                 "most_active_time": "Peak hours:",
                 "period": "Period:",
+                "period_180": "Last 180 Days",
                 "period_90": "Last 90 Days",
                 "period_30": "Last 30 Days",
                 "period_7": "Last 7 Days",

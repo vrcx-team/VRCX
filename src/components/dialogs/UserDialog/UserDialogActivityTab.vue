@@ -23,6 +23,7 @@
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                        <SelectItem value="180">{{ t('dialog.user.activity.period_180') }}</SelectItem>
                         <SelectItem value="90">{{ t('dialog.user.activity.period_90') }}</SelectItem>
                         <SelectItem value="30">{{ t('dialog.user.activity.period_30') }}</SelectItem>
                         <SelectItem value="7">{{ t('dialog.user.activity.period_7') }}</SelectItem>

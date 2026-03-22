@@ -573,12 +573,14 @@ function pickActivityNormalizeConfig(isSelf, rangeDays) {
         self: {
             7: { thresholdMinutes: 0, capPercentile: 95, mode: 'sqrt' },
             30: { thresholdMinutes: 10, capPercentile: 95, mode: 'sqrt' },
-            90: { thresholdMinutes: 20, capPercentile: 90, mode: 'log' }
+            90: { thresholdMinutes: 20, capPercentile: 90, mode: 'log' },
+            180: { thresholdMinutes: 30, capPercentile: 85, mode: 'log' }
         },
         friend: {
             7: { thresholdMinutes: 0, capPercentile: 95, mode: 'sqrt' },
             30: { thresholdMinutes: 10, capPercentile: 95, mode: 'sqrt' },
-            90: { thresholdMinutes: 20, capPercentile: 90, mode: 'log' }
+            90: { thresholdMinutes: 20, capPercentile: 90, mode: 'log' },
+            180: { thresholdMinutes: 30, capPercentile: 85, mode: 'log' }
         }
     }[role][rangeDays] || {
         thresholdMinutes: 10,
@@ -591,7 +593,8 @@ function pickOverlapNormalizeConfig(rangeDays) {
     return {
         7: { thresholdMinutes: 0, capPercentile: 95, mode: 'sqrt' },
         30: { thresholdMinutes: 5, capPercentile: 95, mode: 'sqrt' },
-        90: { thresholdMinutes: 10, capPercentile: 90, mode: 'log' }
+        90: { thresholdMinutes: 10, capPercentile: 90, mode: 'log' },
+        180: { thresholdMinutes: 15, capPercentile: 85, mode: 'log' }
     }[rangeDays] || {
         thresholdMinutes: 5,
         capPercentile: 95,
