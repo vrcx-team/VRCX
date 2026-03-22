@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col" style="min-height: 200px">
+    <div class="flex min-w-0 flex-col overflow-x-hidden" style="min-height: 200px">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="display: flex; align-items: center">
                 <Button
@@ -62,6 +62,7 @@
         <div
             v-show="filteredEventCount > 0"
             ref="activityChartRef"
+            class="min-w-0 overflow-hidden"
             style="width: 100%; height: 240px"
             @contextmenu.prevent="onChartRightClick" />
 
@@ -125,6 +126,7 @@
             <div
                 v-show="hasOverlapData"
                 ref="overlapChartRef"
+                class="min-w-0 overflow-hidden"
                 style="width: 100%; height: 240px"
                 @contextmenu.prevent="onOverlapChartRightClick" />
 

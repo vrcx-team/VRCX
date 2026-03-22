@@ -11,6 +11,7 @@ export function buildHeatmapOption({
 }) {
     return {
         tooltip: {
+            confine: true,
             position: 'top',
             formatter: (params) => {
                 const [hour, dayIndex] = params.data;
@@ -68,8 +69,9 @@ export function buildHeatmapOption({
                 data,
                 emphasis: {
                     itemStyle: {
-                        shadowBlur: 6,
-                        shadowColor: 'rgba(0, 0, 0, 0.3)'
+                        borderColor: isDarkMode ? 'hsl(220, 15%, 18%)' : 'hsl(210, 18%, 78%)',
+                        borderWidth: 1.5,
+                        opacity: 0.92
                     }
                 },
                 itemStyle: {
