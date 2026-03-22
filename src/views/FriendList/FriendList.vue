@@ -147,6 +147,7 @@
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
     import { showUserDialog } from '../../coordinators/userCoordinator';
     import { confirmDeleteFriend, handleFriendDelete } from '../../coordinators/friendRelationshipCoordinator';
+    import { useUserDisplay } from '../../composables/useUserDisplay';
 
     const { t } = useI18n();
 
@@ -157,6 +158,7 @@
     const { getAllUserStats, getAllUserMutualCount } = useFriendStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { randomUserColours } = storeToRefs(appearanceSettingsStore);
+    const { userImage } = useUserDisplay();
 
     const { stringComparer, friendsListSearch } = storeToRefs(useSearchStore());
 
@@ -189,7 +191,8 @@
             randomUserColours,
             selectedFriends,
             onToggleFriendSelection: toggleFriendSelection,
-            onConfirmDeleteFriend: confirmDeleteFriend
+            onConfirmDeleteFriend: confirmDeleteFriend,
+            userImage
         })
     );
 

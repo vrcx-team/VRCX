@@ -16,8 +16,7 @@ import {
     openExternalLink,
     sortStatus,
     statusClass,
-    timeToText,
-    userImage
+    timeToText
 } from '../../shared/utils';
 
 const { t } = i18n.global;
@@ -101,7 +100,8 @@ export const createColumns = ({
     randomUserColours,
     selectedFriends,
     onToggleFriendSelection,
-    onConfirmDeleteFriend
+    onConfirmDeleteFriend,
+    userImage
 }) => {
     const cols = [];
 
