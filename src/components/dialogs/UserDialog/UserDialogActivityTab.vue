@@ -122,7 +122,7 @@
             </div>
 
             <div
-                v-if="hasOverlapData"
+                v-show="hasOverlapData"
                 ref="overlapChartRef"
                 style="width: 100%; height: 240px"
                 @contextmenu.prevent="onOverlapChartRightClick" />
