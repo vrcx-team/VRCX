@@ -187,6 +187,11 @@
         "offline": "OFFLINE",
         "pending_offline": "Pending Offline",
         "settings": {
+            "display": "Display",
+            "sort": "Sort",
+            "advanced": "Advanced",
+            "sorting": "Sorting",
+            "favorites_section": "Favorites",
             "group_by_instance": "Group by Instance",
             "split_favorite_friends": "Show Favorite Groups",
             "hide_friends_in_same_instance": "Hide Grouped Friends",

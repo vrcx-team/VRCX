@@ -63,6 +63,10 @@
                     </PopoverTrigger>
                     <PopoverContent side="bottom" align="end" class="w-64 p-3" @open-auto-focus.prevent>
                         <div class="flex flex-col gap-2.5 text-xs">
+                            <!-- Display Section -->
+                            <span class="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
+                                {{ t('side_panel.settings.display') }}
+                            </span>
                             <Field orientation="horizontal">
                                 <FieldLabel>{{ t('side_panel.settings.group_by_instance') }}</FieldLabel>
                                 <Switch
@@ -87,64 +91,14 @@
                                     :model-value="isSidebarDivideByFriendGroup"
                                     @update:modelValue="setIsSidebarDivideByFriendGroup" />
                             </Field>
-                            <Button
-                                v-if="isSidebarDivideByFriendGroup"
-                                variant="outline"
-                                size="sm"
-                                class="w-full text-sm"
-                                @click="
-                                    isSettingsPopoverOpen = false;
-                                    isGroupOrderDialogOpen = true;
-                                ">
-                                {{ t('side_panel.settings.edit_group_order') }}
-                            </Button>
-                            <Field>
-                                <FieldLabel>{{ t('side_panel.settings.favorite_groups') }}</FieldLabel>
-                                <FieldContent>
-                                    <Select
-                                        :model-value="resolvedSidebarFavoriteGroups"
-                                        multiple
-                                        @update:modelValue="handleFavoriteGroupsChange">
-                                        <SelectTrigger size="sm" class="w-full overflow-hidden">
-                                            <SelectValue
-                                                :placeholder="t('side_panel.settings.favorite_groups_placeholder')">
-                                                <template v-if="resolvedSidebarFavoriteGroups.length">
-                                                    <span class="truncate">{{ selectedFavGroupLabel }}</span>
-                                                    <span
-                                                        v-if="resolvedSidebarFavoriteGroups.length > 1"
-                                                        class="bg-primary text-primary-foreground shrink-0 rounded px-1 text-xs">
-                                                        +{{ resolvedSidebarFavoriteGroups.length - 1 }}
-                                                    </span>
-                                                </template>
-                                            </SelectValue>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectItem
-                                                    v-for="group in favoriteFriendGroups"
-                                                    :key="group.key"
-                                                    :value="group.key">
-                                                    {{ group.displayName }}
-                                                </SelectItem>
-                                            </SelectGroup>
-                                            <template v-if="localFriendFavoriteGroups.length">
-                                                <SelectSeparator />
-                                                <SelectGroup>
-                                                    <SelectItem
-                                                        v-for="group in localFriendFavoriteGroups"
-                                                        :key="'local:' + group"
-                                                        :value="'local:' + group">
-                                                        {{ group }}
-                                                    </SelectItem>
-                                                </SelectGroup>
-                                            </template>
-                                        </SelectContent>
-                                    </Select>
-                                </FieldContent>
-                            </Field>
+
                             <Separator />
+
+                            <!-- Sort Section -->
+                            <span class="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
+                                {{ t('side_panel.settings.sort') }}
+                            </span>
                             <Field>
-                                <FieldLabel>{{ t('side_panel.settings.sort_primary') }}</FieldLabel>
                                 <FieldContent>
                                     <Select
                                         :model-value="sidebarSortMethod1"
@@ -163,54 +117,160 @@
                                     </Select>
                                 </FieldContent>
                             </Field>
-                            <Field>
-                                <FieldLabel>{{ t('side_panel.settings.sort_secondary') }}</FieldLabel>
-                                <FieldContent>
-                                    <Select
-                                        :model-value="sidebarSortMethod2"
-                                        :disabled="!sidebarSortMethod1"
-                                        @update:modelValue="(v) => setSidebarSortMethod2(v === CLEAR_VALUE ? '' : v)">
-                                        <SelectTrigger size="sm">
-                                            <SelectValue
-                                                :placeholder="
-                                                    t('view.settings.appearance.side_panel.sorting.placeholder')
-                                                " />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem :value="CLEAR_VALUE">{{
-                                                t('dialog.gallery_select.none')
-                                            }}</SelectItem>
-                                            <SelectItem v-for="opt in sortOptions" :key="opt.value" :value="opt.value">
-                                                {{ opt.label }}
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </FieldContent>
-                            </Field>
-                            <Field>
-                                <FieldLabel>{{ t('side_panel.settings.sort_tertiary') }}</FieldLabel>
-                                <FieldContent>
-                                    <Select
-                                        :model-value="sidebarSortMethod3"
-                                        :disabled="!sidebarSortMethod2"
-                                        @update:modelValue="(v) => setSidebarSortMethod3(v === CLEAR_VALUE ? '' : v)">
-                                        <SelectTrigger size="sm">
-                                            <SelectValue
-                                                :placeholder="
-                                                    t('view.settings.appearance.side_panel.sorting.placeholder')
-                                                " />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem :value="CLEAR_VALUE">{{
-                                                t('dialog.gallery_select.none')
-                                            }}</SelectItem>
-                                            <SelectItem v-for="opt in sortOptions" :key="opt.value" :value="opt.value">
-                                                {{ opt.label }}
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </FieldContent>
-                            </Field>
+
+                            <Separator />
+
+                            <!-- Advanced Section (Collapsible) -->
+                            <Collapsible v-model:open="isAdvancedOpen">
+                                <CollapsibleTrigger as-child>
+                                    <button
+                                        type="button"
+                                        class="flex w-full items-center justify-between py-0.5 text-[11px] font-medium text-muted-foreground uppercase tracking-wide cursor-pointer hover:text-foreground transition-colors">
+                                        {{ t('side_panel.settings.advanced') }}
+                                        <ChevronDown
+                                            class="size-3.5 transition-transform duration-200"
+                                            :class="{ 'rotate-180': isAdvancedOpen }" />
+                                    </button>
+                                </CollapsibleTrigger>
+                                <CollapsibleContent>
+                                    <div class="flex flex-col gap-2.5 pt-2.5">
+                                        <!-- Sorting Sub-section -->
+                                        <span
+                                            class="text-[10px] font-medium text-muted-foreground/70 uppercase tracking-wide">
+                                            {{ t('side_panel.settings.sorting') }}
+                                        </span>
+                                        <Field>
+                                            <FieldLabel>{{ t('side_panel.settings.sort_secondary') }}</FieldLabel>
+                                            <FieldContent>
+                                                <Select
+                                                    :model-value="sidebarSortMethod2"
+                                                    :disabled="!sidebarSortMethod1"
+                                                    @update:modelValue="
+                                                        (v) => setSidebarSortMethod2(v === CLEAR_VALUE ? '' : v)
+                                                    ">
+                                                    <SelectTrigger size="sm">
+                                                        <SelectValue
+                                                            :placeholder="
+                                                                t(
+                                                                    'view.settings.appearance.side_panel.sorting.placeholder'
+                                                                )
+                                                            " />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem :value="CLEAR_VALUE">{{
+                                                            t('dialog.gallery_select.none')
+                                                        }}</SelectItem>
+                                                        <SelectItem
+                                                            v-for="opt in sortOptions"
+                                                            :key="opt.value"
+                                                            :value="opt.value">
+                                                            {{ opt.label }}
+                                                        </SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </FieldContent>
+                                        </Field>
+                                        <Field>
+                                            <FieldLabel>{{ t('side_panel.settings.sort_tertiary') }}</FieldLabel>
+                                            <FieldContent>
+                                                <Select
+                                                    :model-value="sidebarSortMethod3"
+                                                    :disabled="!sidebarSortMethod2"
+                                                    @update:modelValue="
+                                                        (v) => setSidebarSortMethod3(v === CLEAR_VALUE ? '' : v)
+                                                    ">
+                                                    <SelectTrigger size="sm">
+                                                        <SelectValue
+                                                            :placeholder="
+                                                                t(
+                                                                    'view.settings.appearance.side_panel.sorting.placeholder'
+                                                                )
+                                                            " />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem :value="CLEAR_VALUE">{{
+                                                            t('dialog.gallery_select.none')
+                                                        }}</SelectItem>
+                                                        <SelectItem
+                                                            v-for="opt in sortOptions"
+                                                            :key="opt.value"
+                                                            :value="opt.value">
+                                                            {{ opt.label }}
+                                                        </SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </FieldContent>
+                                        </Field>
+
+                                        <Separator />
+
+                                        <!-- Favorites Sub-section -->
+                                        <span
+                                            class="text-[10px] font-medium text-muted-foreground/70 uppercase tracking-wide">
+                                            {{ t('side_panel.settings.favorites_section') }}
+                                        </span>
+                                        <Field>
+                                            <FieldLabel>{{ t('side_panel.settings.favorite_groups') }}</FieldLabel>
+                                            <FieldContent>
+                                                <Select
+                                                    :model-value="resolvedSidebarFavoriteGroups"
+                                                    multiple
+                                                    @update:modelValue="handleFavoriteGroupsChange">
+                                                    <SelectTrigger size="sm" class="w-full overflow-hidden">
+                                                        <SelectValue
+                                                            :placeholder="
+                                                                t('side_panel.settings.favorite_groups_placeholder')
+                                                            ">
+                                                            <template v-if="resolvedSidebarFavoriteGroups.length">
+                                                                <span class="truncate">{{
+                                                                    selectedFavGroupLabel
+                                                                }}</span>
+                                                                <span
+                                                                    v-if="resolvedSidebarFavoriteGroups.length > 1"
+                                                                    class="bg-primary text-primary-foreground shrink-0 rounded px-1 text-xs">
+                                                                    +{{ resolvedSidebarFavoriteGroups.length - 1 }}
+                                                                </span>
+                                                            </template>
+                                                        </SelectValue>
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectGroup>
+                                                            <SelectItem
+                                                                v-for="group in favoriteFriendGroups"
+                                                                :key="group.key"
+                                                                :value="group.key">
+                                                                {{ group.displayName }}
+                                                            </SelectItem>
+                                                        </SelectGroup>
+                                                        <template v-if="localFriendFavoriteGroups.length">
+                                                            <SelectSeparator />
+                                                            <SelectGroup>
+                                                                <SelectItem
+                                                                    v-for="group in localFriendFavoriteGroups"
+                                                                    :key="'local:' + group"
+                                                                    :value="'local:' + group">
+                                                                    {{ group }}
+                                                                </SelectItem>
+                                                            </SelectGroup>
+                                                        </template>
+                                                    </SelectContent>
+                                                </Select>
+                                            </FieldContent>
+                                        </Field>
+                                        <Button
+                                            v-if="isSidebarDivideByFriendGroup"
+                                            variant="outline"
+                                            size="sm"
+                                            class="w-full text-sm"
+                                            @click="
+                                                isSettingsPopoverOpen = false;
+                                                isGroupOrderDialogOpen = true;
+                                            ">
+                                            {{ t('side_panel.settings.edit_group_order') }}
+                                        </Button>
+                                    </div>
+                                </CollapsibleContent>
+                            </Collapsible>
                         </div>
                     </PopoverContent>
                 </Popover>
@@ -259,7 +319,7 @@
         SelectTrigger,
         SelectValue
     } from '@/components/ui/select';
-    import { Bell, RefreshCw, Search, Settings } from 'lucide-vue-next';
+    import { Bell, ChevronDown, RefreshCw, Search, Settings } from 'lucide-vue-next';
     import { toast } from 'vue-sonner';
     import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
     import { Field, FieldContent, FieldLabel } from '@/components/ui/field';
@@ -267,6 +327,7 @@
     import { computed, ref } from 'vue';
     import { useMagicKeys, whenever } from '@vueuse/core';
     import { Button } from '@/components/ui/button';
+    import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
     import { Kbd } from '@/components/ui/kbd';
     import { Separator } from '@/components/ui/separator';
     import { Spinner } from '@/components/ui/spinner';
@@ -375,6 +436,7 @@
     const CLEAR_VALUE = '__clear__';
     const isGroupOrderDialogOpen = ref(false);
     const isSettingsPopoverOpen = ref(false);
+    const isAdvancedOpen = ref(false);
 
     const sortOptions = computed(() => [
         { value: 'Sort Alphabetically', label: t('view.settings.appearance.side_panel.sorting.alphabetical') },
