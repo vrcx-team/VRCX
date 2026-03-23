@@ -295,6 +295,7 @@
         rawBuckets: [],
         normalizedBuckets: []
     });
+    const isRestoringSettings = ref(false);
 
     let activeRequestId = 0;
     let activeOverlapRequestId = 0;
@@ -331,11 +332,31 @@
         return Array.from({ length: 7 }, (_, index) => dayLabels.value[(start + index) % 7]);
     });
     const hourLabels = Array.from({ length: 24 }, (_, index) => `${String(index).padStart(2, '0')}:00`);
+    const ACTIVITY_SELF_PERIOD_KEY = 'VRCX_activitySelfPeriodDays';
+    const ACTIVITY_FRIEND_PERIOD_KEY = 'VRCX_activityFriendPeriodDays';
+    const ACTIVITY_SELF_TOP_WORLDS_SORT_KEY = 'VRCX_activitySelfTopWorldsSortBy';
+    const ACTIVITY_SELF_EXCLUDE_HOME_WORLD_KEY = 'VRCX_activitySelfExcludeHomeWorld';
 
-    async function initializeSettings() {
-        excludeHoursEnabled.value = await configRepository.getBool('VRCX_overlapExcludeEnabled', false);
-        excludeStartHour.value = await configRepository.getString('VRCX_overlapExcludeStart', '1');
-        excludeEndHour.value = await configRepository.getString('VRCX_overlapExcludeEnd', '6');
+    async function applySettingsForCurrentContext() {
+        isRestoringSettings.value = true;
+        const periodKey = isSelf.value ? ACTIVITY_SELF_PERIOD_KEY : ACTIVITY_FRIEND_PERIOD_KEY;
+        const [period, sortBy, excludeHomeWorld, overlapExcludeEnabled, overlapExcludeStart, overlapExcludeEnd] =
+            await Promise.all([
+                configRepository.getString(periodKey, '30'),
+                configRepository.getString(ACTIVITY_SELF_TOP_WORLDS_SORT_KEY, 'time'),
+                configRepository.getBool(ACTIVITY_SELF_EXCLUDE_HOME_WORLD_KEY, false),
+                configRepository.getBool('VRCX_overlapExcludeEnabled', false),
+                configRepository.getString('VRCX_overlapExcludeStart', '1'),
+                configRepository.getString('VRCX_overlapExcludeEnd', '6')
+            ]);
+        selectedPeriod.value = ['7', '30', '90'].includes(period) ? period : '30';
+        topWorldsSortBy.value = ['time', 'count'].includes(sortBy) ? sortBy : 'time';
+        excludeHomeWorldEnabled.value = excludeHomeWorld;
+        excludeHoursEnabled.value = overlapExcludeEnabled;
+        excludeStartHour.value = String(overlapExcludeStart);
+        excludeEndHour.value = String(overlapExcludeEnd);
+        await nextTick();
+        isRestoringSettings.value = false;
     }
 
     function resetActivityState() {
@@ -351,7 +372,6 @@
         topWorldsLoading.value = false;
         topWorldsLoadingVisible.value = false;
         topWorlds.value = [];
-        excludeHomeWorldEnabled.value = false;
         isOverlapLoading.value = false;
         isOverlapLoadingVisible.value = false;
         mainHeatmapView.value = { rawBuckets: [], normalizedBuckets: [] };
@@ -580,6 +600,10 @@
     }
 
     async function onPeriodChange() {
+        await configRepository.setString(
+            isSelf.value ? ACTIVITY_SELF_PERIOD_KEY : ACTIVITY_FRIEND_PERIOD_KEY,
+            selectedPeriod.value
+        );
         await refreshData();
     }
 
@@ -629,6 +653,7 @@
 
     async function onExcludeHomeWorldToggle(value) {
         excludeHomeWorldEnabled.value = value;
+        await configRepository.setBool(ACTIVITY_SELF_EXCLUDE_HOME_WORLD_KEY, value);
         await refreshTopWorldsOnly();
     }
 
@@ -843,9 +868,10 @@
 
     watch(
         () => userDialog.value.id,
-        () => {
+        async () => {
             resetActivityState();
             rebuildCharts();
+            await applySettingsForCurrentContext();
             if (userDialog.value.visible && userDialog.value.activeTab === 'Activity') {
                 void nextTick(() => loadForVisibleTab());
             }
@@ -855,6 +881,9 @@
     watch(
         () => selectedPeriod.value,
         () => {
+            if (isRestoringSettings.value) {
+                return;
+            }
             if (userDialog.value.visible && userDialog.value.activeTab === 'Activity') {
                 void onPeriodChange();
             }
@@ -863,6 +892,10 @@
     watch(
         () => topWorldsSortBy.value,
         () => {
+            if (isRestoringSettings.value) {
+                return;
+            }
+            void configRepository.setString(ACTIVITY_SELF_TOP_WORLDS_SORT_KEY, topWorldsSortBy.value);
             void refreshTopWorldsOnly();
         }
     );
@@ -911,7 +944,7 @@
     );
 
     onMounted(async () => {
-        await initializeSettings();
+        await applySettingsForCurrentContext();
         if (userDialog.value.visible && userDialog.value.activeTab === 'Activity') {
             await loadForVisibleTab();
         }
