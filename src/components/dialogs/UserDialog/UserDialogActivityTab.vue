@@ -69,7 +69,7 @@
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                     <span class="text-sm font-medium">{{ t('dialog.user.activity.overlap.header') }}</span>
-                    <Spinner v-if="isOverlapLoading" class="h-3.5 w-3.5" />
+                    <Spinner v-if="isOverlapLoadingVisible" class="h-3.5 w-3.5" />
                 </div>
                 <div v-if="hasOverlapData" class="flex items-center gap-1.5 shrink-0">
                     <Switch :model-value="excludeHoursEnabled" class="scale-75" @update:model-value="onExcludeToggle" />
@@ -77,7 +77,7 @@
                         {{ t('dialog.user.activity.overlap.exclude_hours') }}
                     </span>
                     <Select v-model="excludeStartHour" @update:model-value="onExcludeRangeChange">
-                        <SelectTrigger size="sm" class="w-[78px] h-6 text-xs px-2" @click.stop>
+                        <SelectTrigger size="sm" class="w-[78px] h-6 text-sm px-2" @click.stop>
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -88,7 +88,7 @@
                     </Select>
                     <span class="text-xs text-muted-foreground">–</span>
                     <Select v-model="excludeEndHour" @update:model-value="onExcludeRangeChange">
-                        <SelectTrigger size="sm" class="w-[78px] h-6 text-xs px-2" @click.stop>
+                        <SelectTrigger size="sm" class="w-[78px] h-6 text-sm px-2" @click.stop>
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -100,7 +100,7 @@
                 </div>
             </div>
 
-            <div v-if="!isOverlapLoading && hasOverlapData" class="flex flex-col gap-1 mb-2">
+            <div v-if="!isOverlapLoadingVisible && hasOverlapData" class="flex flex-col gap-1 mb-2">
                 <div class="flex items-center gap-2">
                     <span
                         class="text-sm font-medium"
@@ -123,7 +123,7 @@
             </div>
 
             <div
-                v-show="hasOverlapData"
+                v-show="hasOverlapData || isOverlapLoadingVisible"
                 ref="overlapChartRef"
                 class="min-w-0 overflow-hidden"
                 style="width: 100%; height: 240px"
@@ -140,7 +140,7 @@
                     <span class="text-sm font-medium">
                         {{ t('dialog.user.activity.most_visited_worlds.header') }}
                     </span>
-                    <Spinner v-if="topWorldsLoading" class="h-3.5 w-3.5" />
+                    <Spinner v-if="topWorldsLoadingVisible" class="h-3.5 w-3.5" />
                 </div>
                 <div v-if="topWorlds.length > 0" class="flex items-center gap-2">
                     <span class="text-muted-foreground text-sm">{{ t('common.sort_by') }}</span>
@@ -160,13 +160,13 @@
                 </div>
             </div>
             <div
-                v-if="topWorldsLoading && topWorlds.length === 0"
+                v-if="topWorldsLoadingVisible && topWorlds.length === 0"
                 class="flex items-center gap-2 text-sm text-muted-foreground py-2">
                 <Spinner class="h-4 w-4" />
                 <span>{{ t('dialog.user.activity.most_visited_worlds.loading') }}</span>
             </div>
             <div
-                v-else-if="topWorlds.length === 0 && !isLoading"
+                v-else-if="topWorlds.length === 0 && !isLoading && !topWorldsLoading"
                 class="text-sm text-muted-foreground py-2">
                 {{ t('dialog.user.activity.no_data_in_period') }}
             </div>
@@ -262,10 +262,12 @@
     const peakDayText = ref('');
     const peakTimeText = ref('');
     const isOverlapLoading = ref(false);
+    const isOverlapLoadingVisible = ref(false);
     const hasOverlapData = ref(false);
     const overlapPercent = ref(0);
     const bestOverlapTime = ref('');
     const topWorldsLoading = ref(false);
+    const topWorldsLoadingVisible = ref(false);
     const topWorlds = ref([]);
     const topWorldsSortBy = ref('time');
     const excludeHoursEnabled = ref(false);
@@ -284,7 +286,13 @@
     let activeOverlapRequestId = 0;
     let activeTopWorldsRequestId = 0;
     let lastLoadedUserId = '';
+    let topWorldsLoadingTimer = null;
+    let overlapLoadingTimer = null;
+    let overlapRenderTimer = null;
     const pendingWorldThumbnailFetches = new Set();
+    const TOP_WORLDS_LOADING_DELAY = 150;
+    const OVERLAP_LOADING_DELAY = 120;
+    const OVERLAP_RENDER_DELAY = 80;
 
     const isSelf = computed(() => userDialog.value.id === currentUser.value.id);
     const sortedTopWorlds = computed(() => topWorlds.value);
@@ -316,23 +324,103 @@
         peakDayText.value = '';
         peakTimeText.value = '';
         selectedPeriod.value = '30';
-        isOverlapLoading.value = false;
         hasOverlapData.value = false;
         overlapPercent.value = 0;
         bestOverlapTime.value = '';
         topWorldsLoading.value = false;
+        topWorldsLoadingVisible.value = false;
         topWorlds.value = [];
+        isOverlapLoading.value = false;
+        isOverlapLoadingVisible.value = false;
         mainHeatmapView.value = { rawBuckets: [], normalizedBuckets: [] };
         overlapHeatmapView.value = { rawBuckets: [], normalizedBuckets: [] };
+        clearOverlapLoadingTimer();
+        clearOverlapRenderTimer();
         activeRequestId++;
         activeOverlapRequestId++;
         activeTopWorldsRequestId++;
         lastLoadedUserId = '';
+        clearTimeout(topWorldsLoadingTimer);
+        topWorldsLoadingTimer = null;
+    }
+
+    function clearOverlapLoadingTimer() {
+        if (overlapLoadingTimer !== null) {
+            clearTimeout(overlapLoadingTimer);
+            overlapLoadingTimer = null;
+        }
+    }
+
+    function clearOverlapRenderTimer() {
+        if (overlapRenderTimer !== null) {
+            clearTimeout(overlapRenderTimer);
+            overlapRenderTimer = null;
+        }
+    }
+
+    function beginOverlapLoading(requestId) {
+        isOverlapLoading.value = true;
+        isOverlapLoadingVisible.value = false;
+        clearOverlapLoadingTimer();
+        overlapLoadingTimer = setTimeout(() => {
+            overlapLoadingTimer = null;
+            if (requestId === activeOverlapRequestId && isOverlapLoading.value) {
+                isOverlapLoadingVisible.value = true;
+            }
+        }, OVERLAP_LOADING_DELAY);
+    }
+
+    function finishOverlapLoading(requestId) {
+        if (requestId !== activeOverlapRequestId) {
+            return;
+        }
+        clearOverlapLoadingTimer();
+        isOverlapLoading.value = false;
+        isOverlapLoadingVisible.value = false;
+    }
+
+    function scheduleOverlapChartRender() {
+        clearOverlapRenderTimer();
+        overlapRenderTimer = setTimeout(() => {
+            overlapRenderTimer = null;
+            renderOverlapChart();
+        }, OVERLAP_RENDER_DELAY);
+    }
+
+    function applyOverlapView(overlapView) {
+        overlapHeatmapView.value = {
+            rawBuckets: overlapView.rawBuckets,
+            normalizedBuckets: overlapView.normalizedBuckets
+        };
+        hasOverlapData.value = overlapView.hasOverlapData;
+        overlapPercent.value = overlapView.overlapPercent;
+        bestOverlapTime.value = overlapView.bestOverlapTime;
+    }
+
+    function scheduleTopWorldsLoading(requestId) {
+        clearTimeout(topWorldsLoadingTimer);
+        topWorldsLoadingTimer = setTimeout(() => {
+            topWorldsLoadingTimer = null;
+            if (requestId === activeTopWorldsRequestId) {
+                topWorldsLoadingVisible.value = true;
+            }
+        }, TOP_WORLDS_LOADING_DELAY);
+    }
+
+    function finishTopWorldsLoading(requestId) {
+        if (requestId !== activeTopWorldsRequestId) {
+            return;
+        }
+        clearTimeout(topWorldsLoadingTimer);
+        topWorldsLoadingTimer = null;
+        topWorldsLoadingVisible.value = false;
+        topWorldsLoading.value = false;
     }
 
     async function loadTopWorldsSection({ userId, rangeDays, sortBy, period }) {
         const requestId = ++activeTopWorldsRequestId;
         topWorldsLoading.value = true;
+        scheduleTopWorldsLoading(requestId);
 
         try {
             const result = await activityStore.loadTopWorldsView({
@@ -353,9 +441,7 @@
             topWorlds.value = result;
             void fetchMissingTopWorldThumbnails(topWorlds.value);
         } finally {
-            if (requestId === activeTopWorldsRequestId) {
-                topWorldsLoading.value = false;
-            }
+            finishTopWorldsLoading(requestId);
         }
     }
 
@@ -366,7 +452,7 @@
         }
 
         const requestId = ++activeRequestId;
-        ++activeOverlapRequestId;
+        const overlapRequestId = ++activeOverlapRequestId;
         if (!silent) {
             isLoading.value = true;
         }
@@ -415,7 +501,7 @@
                 return;
             }
 
-            isOverlapLoading.value = true;
+            beginOverlapLoading(overlapRequestId);
             const overlapView = await activityStore.loadOverlapView({
                 currentUserId: currentUser.value.id,
                 targetUserId: userId,
@@ -431,18 +517,12 @@
             if (requestId !== activeRequestId || userDialog.value.id !== userId) {
                 return;
             }
-            overlapHeatmapView.value = {
-                rawBuckets: overlapView.rawBuckets,
-                normalizedBuckets: overlapView.normalizedBuckets
-            };
-            hasOverlapData.value = overlapView.hasOverlapData;
-            overlapPercent.value = overlapView.overlapPercent;
-            bestOverlapTime.value = overlapView.bestOverlapTime;
+            applyOverlapView(overlapView);
         } finally {
             if (requestId === activeRequestId) {
                 isLoading.value = false;
-                isOverlapLoading.value = false;
             }
+            finishOverlapLoading(overlapRequestId);
         }
     }
 
@@ -472,7 +552,7 @@
         }
 
         const requestId = ++activeOverlapRequestId;
-        isOverlapLoading.value = true;
+        beginOverlapLoading(requestId);
 
         try {
             const rangeDays = parseInt(selectedPeriod.value, 10) || 30;
@@ -491,17 +571,9 @@
             if (requestId !== activeOverlapRequestId || userDialog.value.id !== userId) {
                 return;
             }
-            overlapHeatmapView.value = {
-                rawBuckets: overlapView.rawBuckets,
-                normalizedBuckets: overlapView.normalizedBuckets
-            };
-            hasOverlapData.value = overlapView.hasOverlapData;
-            overlapPercent.value = overlapView.overlapPercent;
-            bestOverlapTime.value = overlapView.bestOverlapTime;
+            applyOverlapView(overlapView);
         } finally {
-            if (requestId === activeOverlapRequestId) {
-                isOverlapLoading.value = false;
-            }
+            finishOverlapLoading(requestId);
         }
     }
 
@@ -658,7 +730,9 @@
 
     function renderOverlapChart() {
         if (!hasOverlapData.value || overlapHeatmapView.value.normalizedBuckets.length === 0) {
-            overlapChart?.clear();
+            if (!isOverlapLoading.value) {
+                overlapChart?.clear();
+            }
             return;
         }
         ensureOverlapChart();
@@ -696,6 +770,7 @@
 
     function rebuildCharts() {
         disposeCharts();
+        clearOverlapRenderTimer();
         nextTick(() => {
             renderActivityChart();
             renderOverlapChart();
@@ -772,7 +847,7 @@
     watch(
         () => overlapHeatmapView.value,
         () => {
-            nextTick(() => renderOverlapChart());
+            scheduleOverlapChartRender();
         },
         { deep: true }
     );
@@ -807,6 +882,9 @@
 
     onBeforeUnmount(() => {
         clearTimeout(easterEggTimer);
+        clearTimeout(topWorldsLoadingTimer);
+        clearOverlapLoadingTimer();
+        clearOverlapRenderTimer();
         disposeCharts();
     });
 
