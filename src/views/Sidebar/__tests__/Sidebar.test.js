@@ -129,7 +129,7 @@ vi.mock('../components/FriendsSidebar.vue', () => ({
 vi.mock('../components/GroupsSidebar.vue', () => ({
     default: { template: '<div />' }
 }));
-vi.mock('../components/GroupOrderSheet.vue', () => ({
+vi.mock('../components/FavoriteFriendGroupOrderDialog.vue', () => ({
     default: { template: '<div />' }
 }));
 vi.mock('../components/NotificationCenterSheet.vue', () => ({

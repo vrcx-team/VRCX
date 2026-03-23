@@ -35,8 +35,7 @@
                                 size="icon-sm"
                                 @click="isNotificationCenterOpen = !isNotificationCenterOpen">
                                 <Bell />
-                                <span
-                                    class="absolute top-1 right-1.25 size-1.5 rounded-full bg-red-500" />
+                                <span class="absolute top-1 right-1.25 size-1.5 rounded-full bg-red-500" />
                             </Button>
                         </TooltipWrapper>
                     </ContextMenuTrigger>
@@ -95,7 +94,7 @@
                                 class="w-full text-sm"
                                 @click="
                                     isSettingsPopoverOpen = false;
-                                    isGroupOrderSheetOpen = true;
+                                    isGroupOrderDialogOpen = true;
                                 ">
                                 {{ t('side_panel.settings.edit_group_order') }}
                             </Button>
@@ -245,7 +244,7 @@
             </template>
         </TabsUnderline>
         <NotificationCenterSheet />
-        <GroupOrderSheet v-model:open="isGroupOrderSheetOpen" />
+        <FavoriteFriendGroupOrderDialog v-model:open="isGroupOrderDialogOpen" />
         <QuickSearchDialog />
     </div>
 </template>
@@ -289,7 +288,7 @@
 
     import FriendsSidebar from './components/FriendsSidebar.vue';
     import QuickSearchDialog from '../../components/QuickSearchDialog.vue';
-    import GroupOrderSheet from './components/GroupOrderSheet.vue';
+    import FavoriteFriendGroupOrderDialog from './components/FavoriteFriendGroupOrderDialog.vue';
     import GroupsSidebar from './components/GroupsSidebar.vue';
     import NotificationCenterSheet from './components/NotificationCenterSheet.vue';
 
@@ -374,7 +373,7 @@
     });
 
     const CLEAR_VALUE = '__clear__';
-    const isGroupOrderSheetOpen = ref(false);
+    const isGroupOrderDialogOpen = ref(false);
     const isSettingsPopoverOpen = ref(false);
 
     const sortOptions = computed(() => [
