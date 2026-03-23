@@ -1,6 +1,6 @@
 <template>
     <Sidebar side="left" variant="sidebar" collapsible="icon">
-        <SidebarHeader v-if="showNewDashboardButton && !hasDashboards" class="px-2 py-2">
+        <SidebarHeader v-if="showNewDashboardButton" class="px-2 py-2">
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton
@@ -49,9 +49,7 @@
                                                 </SidebarMenuButton>
                                             </ContextMenuTrigger>
                                             <ContextMenuContent>
-                                                <ContextMenuItem
-                                                    v-if="hasNotifications"
-                                                    @click="clearAllNotifications">
+                                                <ContextMenuItem v-if="hasNotifications" @click="clearAllNotifications">
                                                     {{ t('nav_menu.mark_all_read') }}
                                                 </ContextMenuItem>
                                                 <ContextMenuSeparator v-if="hasNotifications" />
@@ -133,7 +131,7 @@
             :is-applying-theme-color="isApplyingThemeColor"
             :theme-display-name="themeDisplayName"
             :theme-color-display-name="themeColorDisplayName"
-            @show-change-log="showChangeLogDialog"
+            @show-whats-new="handleShowWhatsNew"
             @support-link="handleSupportLink"
             @toggle-theme="handleThemeToggle"
             @show-vrcx-update-dialog="showVRCXUpdateDialog"
@@ -213,7 +211,7 @@
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
     const { pendingVRCXUpdate, pendingVRCXInstall, appVersion } = storeToRefs(VRCXUpdaterStore);
-    const { showVRCXUpdateDialog, showChangeLogDialog } = VRCXUpdaterStore;
+    const { showVRCXUpdateDialog, showChangeLogDialog, showLatestWhatsNewDialog } = VRCXUpdaterStore;
 
     const dashboardStore = useDashboardStore();
     const { dashboards } = storeToRefs(dashboardStore);
@@ -229,7 +227,13 @@
     const modalStore = useModalStore();
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const { themeMode, tableDensity, isDarkMode, isNavCollapsed: isCollapsed, showNewDashboardButton } = storeToRefs(appearanceSettingsStore);
+    const {
+        themeMode,
+        tableDensity,
+        isDarkMode,
+        isNavCollapsed: isCollapsed,
+        showNewDashboardButton
+    } = storeToRefs(appearanceSettingsStore);
 
     const {
         themes,
@@ -275,7 +279,6 @@
     const collapsedDropdownOpenId = ref(null);
     const customNavDialogVisible = ref(false);
 
-    const hasDashboards = computed(() => dashboards.value.length > 0);
     const hasNotifications = computed(() => notifiedMenus.value.length > 0);
     const version = computed(() => appVersion.value?.split('VRCX ')?.[1] || '-');
     const vrcxLogo = new URL('../../../images/VRCX.png', import.meta.url).href;
@@ -306,6 +309,13 @@
             return item.children.some((entry) => isEntryNotified(entry));
         }
         return false;
+    };
+
+    const handleShowWhatsNew = async () => {
+        const shown = showLatestWhatsNewDialog();
+        if (!shown) {
+            showChangeLogDialog();
+        }
     };
 
     const handleSettingsClick = () => {

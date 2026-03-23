@@ -53,6 +53,18 @@ const avatarFavorites = {
         return ref;
     },
 
+    async getAllAvatarTimeSpent() {
+        const map = new Map();
+        await sqliteService.execute(
+            (row) => {
+                map.set(row[0], row[1] || 0);
+            },
+            `SELECT avatar_id, time FROM ${dbVars.userPrefix}_avatar_history`
+        );
+
+        return map;
+    },
+
     addAvatarTimeSpent(avatarId, timeSpent) {
         sqliteService.executeNonQuery(
             `UPDATE ${dbVars.userPrefix}_avatar_history SET time = time + @timeSpent WHERE avatar_id = @avatarId`,

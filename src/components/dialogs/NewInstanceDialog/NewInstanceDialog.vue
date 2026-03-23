@@ -565,9 +565,7 @@
         getLaunchURL,
         hasGroupPermission,
         isRealInstance,
-        parseLocation,
-        userImage,
-        userStatusClass
+        parseLocation
     } from '../../../shared/utils';
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
     import {
@@ -584,6 +582,9 @@
     import { useNewInstanceBuilder } from './useNewInstanceBuilder';
 
     import InviteDialog from '../InviteDialog/InviteDialog.vue';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
+
+    const { userImage, userStatusClass } = useUserDisplay();
 
     const props = defineProps({
         newInstanceDialogLocationTag: {

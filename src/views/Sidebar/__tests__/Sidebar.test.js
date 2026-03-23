@@ -38,6 +38,7 @@ vi.mock('../../../stores', () => ({
         sidebarSortMethod3: ref(''),
         isSidebarGroupByInstance: ref(false),
         isHideFriendsInSameInstance: ref(false),
+        isSameInstanceAboveFavorites: ref(false),
         isSidebarDivideByFriendGroup: ref(false),
         sidebarFavoriteGroups: ref([]),
         setSidebarSortMethod1: vi.fn(),
@@ -45,6 +46,7 @@ vi.mock('../../../stores', () => ({
         setSidebarSortMethod3: vi.fn(),
         setIsSidebarGroupByInstance: vi.fn(),
         setIsHideFriendsInSameInstance: vi.fn(),
+        setIsSameInstanceAboveFavorites: vi.fn(),
         setIsSidebarDivideByFriendGroup: vi.fn(),
         setSidebarFavoriteGroups: vi.fn()
     }),
@@ -117,8 +119,14 @@ vi.mock('@/components/ui/kbd', () => ({
 vi.mock('@/components/ui/separator', () => ({
     Separator: { template: '<hr />' }
 }));
+vi.mock('@/components/ui/collapsible', () => ({
+    Collapsible: { template: '<div><slot /></div>' },
+    CollapsibleTrigger: { template: '<div><slot /></div>' },
+    CollapsibleContent: { template: '<div><slot /></div>' }
+}));
 vi.mock('lucide-vue-next', () => ({
     Bell: { template: '<i />' },
+    ChevronDown: { template: '<i />' },
     RefreshCw: { template: '<i />' },
     Search: { template: '<i />' },
     Settings: { template: '<i />' }
@@ -129,7 +137,7 @@ vi.mock('../components/FriendsSidebar.vue', () => ({
 vi.mock('../components/GroupsSidebar.vue', () => ({
     default: { template: '<div />' }
 }));
-vi.mock('../components/GroupOrderSheet.vue', () => ({
+vi.mock('../components/FavoriteFriendGroupOrderDialog.vue', () => ({
     default: { template: '<div />' }
 }));
 vi.mock('../components/NotificationCenterSheet.vue', () => ({

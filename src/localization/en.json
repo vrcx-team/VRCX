@@ -15,8 +15,11 @@
             "delete": "Delete",
             "remove": "Remove",
             "reset": "Reset",
-            "view_details": "View Details"
+            "view_details": "View Details",
+            "configure": "Configure",
+            "refresh": "Refresh"
         },
+        "sort_by": "Sort by:",
         "time_units": {
             "y": "y",
             "d": "d",
@@ -145,7 +148,7 @@
             "instance_not_in_game": "Not in game",
             "time_ago": "{time} ago"
         },
-        "first_save_tip": "You can create more dashboards. Right-click the Navigation Menu or use the Customize Navigation dialog to add new ones.",
+        "first_save_tip": "You can hide the New Dashboard button in Settings > Interface > Navigation.",
         "confirmations": {
             "delete_title": "Delete Dashboard",
             "delete_description": "Are you sure you want to delete this dashboard? This action cannot be undone."
@@ -184,6 +187,11 @@
         "offline": "OFFLINE",
         "pending_offline": "Pending Offline",
         "settings": {
+            "display": "Display",
+            "sort": "Sort",
+            "advanced": "Advanced",
+            "sorting": "Sorting",
+            "favorites_section": "Favorites",
             "group_by_instance": "Group by Instance",
             "split_favorite_friends": "Show Favorite Groups",
             "hide_friends_in_same_instance": "Hide Grouped Friends",
@@ -727,7 +735,7 @@
             "interface": {
                 "navigation": {
                     "header": "Navigation",
-                    "show_new_dashboard_button": "Show \"New Dashboard\" Button"
+                    "show_new_dashboard_button": "Show New Dashboard Button"
                 },
                 "lists_tables": {
                     "header": "Lists & Tables"
@@ -939,7 +947,7 @@
                     "vrcx_memos_description": "Shows notes saved locally in VRCX",
                     "recent_action_cooldown": "Recent Action Indicator",
                     "recent_action_cooldown_description": "Show a clock icon on invite/request actions that were recently performed",
-                    "recent_action_cooldown_minutes": "Cooldown (minutes)"
+                    "recent_action_cooldown_minutes": "Cooldown (Minutes)"
                 },
                 "user_colors": {
                     "header": "User Colors",
@@ -993,7 +1001,7 @@
                     },
                     "text_to_speech": {
                         "header": "Text-To-Speech",
-                        "when_to_play": "Notification TTS. When to Play",
+                        "when_to_play": "Notification TTS",
                         "tts_voice": "TTS Voice",
                         "use_memo_nicknames": "Use Memo Nicknames",
                         "play": "Play",
@@ -1449,16 +1457,16 @@
                 "header": "Activity",
                 "load": "Load Activity",
                 "load_hint": "Load activity data from the local database when needed.",
+                "refresh_hint": "Refresh activity data",
                 "total_events": "{count} online events",
                 "times_online": "times online",
                 "most_active_day": "Most active day:",
                 "most_active_time": "Peak hours:",
                 "period": "Period:",
-                "period_all": "All Time",
-                "period_365": "Last Year",
-                "period_180": "Last 6 Months",
                 "period_90": "Last 90 Days",
                 "period_30": "Last 30 Days",
+                "period_7": "Last 7 Days",
+                "minutes_online": "min online",
                 "no_data_in_period": "No activity data in selected period",
                 "days": {
                     "mon": "Mon",
@@ -1469,20 +1477,26 @@
                     "sat": "Sat",
                     "sun": "Sun"
                 },
-                "easter_egg": "Did you farm your green squares today?",
-                "easter_egg_reply": "You can't farm this.",
+                "chart_hint": "Did you farm your green squares today?",
+                "chart_hint_reply": "You can't farm this.",
                 "overlap": {
                     "header": "Online Overlap",
                     "peak_overlap": "Peak overlap:",
                     "exclude_hours": "Exclude hours",
                     "no_data": "Not enough data to calculate overlap",
-                    "times_overlap": "times overlapping"
+                    "times_overlap": "times overlapping",
+                    "minutes_overlap": "min overlap"
                 },
                 "most_visited_worlds": {
-                    "header": "Most Visited Worlds"
+                    "header": "Most Visited Worlds",
+                    "loading": "Loading most visited worlds...",
+                    "exclude_home_world": "Exclude home world",
+                    "sort_by_time": "By Time",
+                    "sort_by_count": "By Visits",
+                    "visit_count_label": "{count} visits"
                 },
                 "preparing_data": "Preparing activity data...",
-                "preparing_data_hint": "This may take a moment on first load. You'll be notified when ready.",
+                "preparing_data_hint": "This may take a moment on first load.",
                 "data_ready": "Activity data is ready"
             },
             "note_memo": {
@@ -2618,7 +2632,9 @@
             "account_removed": "Account removed.",
             "auto_login_success": "Automatically logged in.",
             "auto_login_failed": "Failed to login automatically.",
-            "offline": "You're offline."
+            "offline": "You're offline.",
+            "login_network_issue_hint_title": "Having trouble signing in?",
+            "login_network_issue_hint_description": "Several recent sign-in attempts failed. If your credentials are correct, this may be caused by a network, proxy, VPN, or regional access issue."
         },
         "vrcx_updater": {
             "failed": "Failed to check for update, {message}",
@@ -3001,7 +3017,35 @@
         "whatsnew": {
             "title": "What's New in VRCX",
             "subtitle": "Here's what changed in this update.",
-            "cta": "Got It"
+            "cta": "Got It",
+            "common": {
+                "got_it": "Got It",
+                "view_changelog": "View changelog",
+                "support": "Support VRCX"
+            },
+            "releases": {
+                "2026_04_05": {
+                    "title": "What's New in VRCX",
+                    "items": {
+                        "quick_search": {
+                            "title": "Quick Search",
+                            "description": "Find users, worlds, and avatars in seconds."
+                        },
+                        "dashboard": {
+                            "title": "Dashboard",
+                            "description": "Build a workspace that fits how you use VRCX."
+                        },
+                        "activity_insights": {
+                            "title": "Activity Insights",
+                            "description": "See shared online time, Most Visited Worlds, and activity trends."
+                        },
+                        "my_avatars": {
+                            "title": "My Avatars",
+                            "description": "Browse and manage your avatars with less friction."
+                        }
+                    }
+                }
+            }
         }
     },
     "status_bar": {
