@@ -121,6 +121,13 @@ const navDefinitions = [
         routeName: 'charts-hot-worlds'
     },
     {
+        key: 'charts-timeline',
+        icon: 'ri-time-line',
+        tooltip: 'view.charts.relationship_timeline.header',
+        labelKey: 'view.charts.relationship_timeline.header',
+        routeName: 'charts-timeline'
+    },
+    {
         key: 'tools',
         icon: 'ri-tools-line',
         tooltip: 'nav_tooltip.tools',

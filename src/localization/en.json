@@ -619,6 +619,21 @@
                 "self_not_present": "I was absent",
                 "instance_creator": "Creator",
                 "max_player_count": "Peak players"
+            },
+            "relationship_timeline": {
+                "header": "Relationship Timeline",
+                "refresh": "Refresh",
+                "top_n_friends": "Top {n} friends",
+                "others": "Others",
+                "days_per_unit": "days/unit",
+                "tips": {
+                    "description": "Shows how your relationships with friends have evolved over time as a 100% stacked area chart. Each band represents a friend's share of your total social activity. Use the scale slider (bottom-right) to adjust time granularity, and drag the bottom bar to scroll through time."
+                },
+                "settings": {
+                    "header": "Settings",
+                    "top_friends": "Top friends",
+                    "show_others": "Show Others"
+                }
             }
         },
         "tools": {
