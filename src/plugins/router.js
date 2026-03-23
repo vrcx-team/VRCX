@@ -121,6 +121,12 @@ const routes = [
                 component: () =>
                     import('./../views/Charts/components/TwoPersonRelationship.vue')
             },
+            {
+                path: 'charts/timeline',
+                name: 'charts-timeline',
+                component: () =>
+                    import('./../views/Charts/components/RelationshipTimeline.vue')
+            },
             { path: 'tools', name: 'tools', component: Tools },
             {
                 path: 'tools/gallery',
