@@ -7,21 +7,12 @@ const ACTIVITY_VIEW_KIND = {
     OVERLAP: 'overlap'
 };
 
-const ACTIVITY_RANGE_CACHE_KIND = {
-    SESSIONS: 0,
-    TOP_WORLDS: 1
-};
-
 function syncStateTable() {
     return `${dbVars.userPrefix}_activity_sync_state_v2`;
 }
 
 function sessionsTable() {
     return `${dbVars.userPrefix}_activity_sessions_v2`;
-}
-
-function rangeCacheTable() {
-    return `${dbVars.userPrefix}_activity_range_cache_v2`;
 }
 
 function bucketCacheTable() {
@@ -45,7 +36,6 @@ function parseJson(value, fallback) {
  */
 const activityV2 = {
     ACTIVITY_VIEW_KIND,
-    ACTIVITY_RANGE_CACHE_KIND,
 
     async getActivitySourceSliceV2({ userId, isSelf, fromDays, toDays = 0 }) {
         const fromDateIso = new Date(
@@ -309,47 +299,6 @@ const activityV2 = {
             await sqliteService.executeNonQuery('ROLLBACK');
             throw error;
         }
-    },
-
-    async getActivityRangeCacheV2(userId, rangeDays, cacheKind) {
-        let row = null;
-        await sqliteService.execute(
-            (dbRow) => {
-                row = {
-                    userId: dbRow[0],
-                    rangeDays: dbRow[1],
-                    cacheKind: dbRow[2],
-                    isComplete: Boolean(dbRow[3]),
-                    builtFromCursor: dbRow[4] || '',
-                    builtAt: dbRow[5] || ''
-                };
-            },
-            `SELECT user_id, range_days, cache_kind, is_complete, built_from_cursor, built_at
-             FROM ${rangeCacheTable()}
-             WHERE user_id = @userId AND range_days = @rangeDays AND cache_kind = @cacheKind`,
-            {
-                '@userId': userId,
-                '@rangeDays': rangeDays,
-                '@cacheKind': cacheKind
-            }
-        );
-        return row;
-    },
-
-    async upsertActivityRangeCacheV2(entry) {
-        await sqliteService.executeNonQuery(
-            `INSERT OR REPLACE INTO ${rangeCacheTable()}
-             (user_id, range_days, cache_kind, is_complete, built_from_cursor, built_at)
-             VALUES (@userId, @rangeDays, @cacheKind, @isComplete, @builtFromCursor, @builtAt)`,
-            {
-                '@userId': entry.userId,
-                '@rangeDays': entry.rangeDays,
-                '@cacheKind': entry.cacheKind,
-                '@isComplete': entry.isComplete ? 1 : 0,
-                '@builtFromCursor': entry.builtFromCursor || '',
-                '@builtAt': entry.builtAt || ''
-            }
-        );
     },
 
     async getActivityBucketCacheV2({

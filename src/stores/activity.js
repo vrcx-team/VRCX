@@ -492,16 +492,6 @@ async function fullRefresh(snapshot, rangeDays) {
         database.replaceActivitySessionsV2(snapshot.userId, snapshot.sessions)
     );
     deferWrite(() => database.upsertActivitySyncStateV2(snapshot.sync));
-    deferWrite(() =>
-        database.upsertActivityRangeCacheV2({
-            userId: snapshot.userId,
-            rangeDays,
-            cacheKind: database.ACTIVITY_RANGE_CACHE_KIND.SESSIONS,
-            isComplete: true,
-            builtFromCursor: snapshot.sync.sourceLastCreatedAt,
-            builtAt: snapshot.sync.updatedAt
-        })
-    );
 }
 
 async function incrementalRefresh(snapshot) {
@@ -598,16 +588,6 @@ async function expandRange(snapshot, rangeDays) {
     clearDerivedViews(snapshot);
 
     deferWrite(() => database.upsertActivitySyncStateV2(snapshot.sync));
-    deferWrite(() =>
-        database.upsertActivityRangeCacheV2({
-            userId: snapshot.userId,
-            rangeDays,
-            cacheKind: database.ACTIVITY_RANGE_CACHE_KIND.SESSIONS,
-            isComplete: true,
-            builtFromCursor: snapshot.sync.sourceLastCreatedAt,
-            builtAt: snapshot.sync.updatedAt
-        })
-    );
 }
 
 function pickActivityNormalizeConfig(isSelf, rangeDays) {

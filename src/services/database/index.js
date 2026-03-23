@@ -102,17 +102,6 @@ const database = {
             `CREATE INDEX IF NOT EXISTS ${dbVars.userPrefix}_activity_sessions_v2_user_end_idx ON ${dbVars.userPrefix}_activity_sessions_v2 (user_id, end_at)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_activity_range_cache_v2 (
-                user_id TEXT NOT NULL,
-                range_days INTEGER NOT NULL,
-                cache_kind INTEGER NOT NULL,
-                is_complete INTEGER NOT NULL DEFAULT 0,
-                built_from_cursor TEXT NOT NULL DEFAULT '',
-                built_at TEXT NOT NULL DEFAULT '',
-                PRIMARY KEY (user_id, range_days, cache_kind)
-            )`
-        );
-        await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_activity_bucket_cache_v2 (
                 user_id TEXT NOT NULL,
                 target_user_id TEXT NOT NULL DEFAULT '',
