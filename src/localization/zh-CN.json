@@ -405,6 +405,18 @@
                     "edge_curvature": "连接线曲率",
                     "edge_curvature_help": "连接线的弯曲程度。数值越高，密集区域的线条越平滑。"
                 }
+            },
+            "two_person_relationship": {
+                "header": "双人关系",
+                "select_friend": "选择好友",
+                "search_friend": "搜索好友...",
+                "total_coexistence_time": "共存总时长",
+                "shared_instances": "共同在场的房间",
+                "no_data": "没有共同在场的记录",
+                "no_friend_selected": "请选择一位好友以查看双人关系",
+                "coexistence_time": "共存时长",
+                "instance_count": "共同在场次数",
+                "meet_count": "{count} 次共存"
             }
         },
         "tools": {

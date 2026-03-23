@@ -591,6 +591,18 @@
                 },
                 "no_friend_data": "No friend visit data",
                 "friend_visits": "{count} visits"
+            },
+            "two_person_relationship": {
+                "header": "Duo Relationship",
+                "select_friend": "Select a friend",
+                "search_friend": "Search friends...",
+                "total_coexistence_time": "Total co-presence time",
+                "shared_instances": "Shared instances",
+                "no_data": "No shared instance records found",
+                "no_friend_selected": "Select a friend to view the duo relationship",
+                "coexistence_time": "Co-presence time",
+                "instance_count": "Shared instance count",
+                "meet_count": "{count} encounters"
             }
         },
         "tools": {

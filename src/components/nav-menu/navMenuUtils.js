@@ -46,7 +46,7 @@ export function sanitizeLayout(
     const normalized = [];
     // temporary disabled hot-worlds
     // const chartsKeys = ['charts-instance', 'charts-mutual', 'charts-hot-worlds'];
-    const chartsKeys = ['charts-instance', 'charts-mutual'];
+    const chartsKeys = ['charts-instance', 'charts-mutual', 'charts-two-person'];
 
     const appendItemEntry = (key, target = normalized) => {
         if (!key || usedKeys.has(key) || !definitionMap.has(key)) {

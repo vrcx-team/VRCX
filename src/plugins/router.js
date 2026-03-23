@@ -115,6 +115,12 @@ const routes = [
                 component: () =>
                     import('./../views/Charts/components/HotWorlds.vue')
             },
+            {
+                path: 'charts/two-person',
+                name: 'charts-two-person',
+                component: () =>
+                    import('./../views/Charts/components/TwoPersonRelationship.vue')
+            },
             { path: 'tools', name: 'tools', component: Tools },
             {
                 path: 'tools/gallery',

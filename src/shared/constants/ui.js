@@ -106,6 +106,13 @@ const navDefinitions = [
         labelKey: 'view.charts.mutual_friend.tab_label',
         routeName: 'charts-mutual'
     },
+    {
+        key: 'charts-two-person',
+        icon: 'ri-user-heart-line',
+        tooltip: 'view.charts.two_person_relationship.header',
+        labelKey: 'view.charts.two_person_relationship.header',
+        routeName: 'charts-two-person'
+    },
     // temporary disabled hot-worlds
     // {
     //     key: 'charts-hot-worlds',

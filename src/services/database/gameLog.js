@@ -1535,6 +1535,47 @@ const gameLog = {
         return result;
     },
 
+    /**
+     * Get shared instance history between the current user and a friend
+     * @param {string} friendUserId - The friend's user ID
+     * @returns {Promise<Array<{location: string, userLeave: string, userTime: number, friendLeave: string, friendTime: number}>>}
+     */
+    async getCoInstanceHistory(friendUserId) {
+        const results = [];
+        await sqliteService.execute(
+            (row) => {
+                results.push({
+                    location: row[0],
+                    userLeave: row[1],
+                    userTime: row[2],
+                    friendLeave: row[3],
+                    friendTime: row[4]
+                });
+            },
+            `SELECT
+                u1.location,
+                u1.created_at AS user_leave,
+                u1.time AS user_time,
+                u2.created_at AS friend_leave,
+                u2.time AS friend_time
+            FROM gamelog_join_leave u1
+            INNER JOIN gamelog_join_leave u2
+                ON u1.location = u2.location
+            WHERE u1.type = 'OnPlayerLeft'
+                AND u2.type = 'OnPlayerLeft'
+                AND u1.user_id = @currentUserId
+                AND u2.user_id = @friendUserId
+                AND u1.location NOT IN ('', 'traveling')
+                AND u2.location NOT IN ('', 'traveling')
+            ORDER BY u1.created_at DESC`,
+            {
+                '@currentUserId': dbVars.userId,
+                '@friendUserId': friendUserId
+            }
+        );
+        return results;
+    },
+
     async getInstanceJoinHistory() {
         var oneWeekAgo = new Date(Date.now() - 604800000).toJSON();
         var instances = new Map();

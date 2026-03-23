@@ -33,7 +33,7 @@ export function createBaseDefaultNavLayout(t) {
             icon: 'ri-pie-chart-line',
             // temporary disabled hot-worlds
             // items: ['charts-instance', 'charts-mutual', 'charts-hot-worlds']
-            items: ['charts-instance', 'charts-mutual']
+            items: ['charts-instance', 'charts-mutual', 'charts-two-person']
         },
         { type: 'item', key: 'tools' },
         { type: 'item', key: 'direct-access' }
