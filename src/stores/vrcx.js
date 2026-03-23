@@ -98,17 +98,22 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         try {
             if (LINUX) {
                 try {
-                    window.electron.ipcRenderer.on('launch-command', (command) => {
-                        if (command) {
-                            eventLaunchCommand(command);
+                    window.electron.ipcRenderer.on(
+                        'launch-command',
+                        (command) => {
+                            if (command) {
+                                eventLaunchCommand(command);
+                            }
                         }
-                    });
+                    );
 
-                    window.electron.onWindowPositionChanged((event, position) => {
-                        state.locationX = position.x;
-                        state.locationY = position.y;
-                        debounce(saveVRCXWindowOption, 300)();
-                    });
+                    window.electron.onWindowPositionChanged(
+                        (event, position) => {
+                            state.locationX = position.x;
+                            state.locationY = position.y;
+                            debounce(saveVRCXWindowOption, 300)();
+                        }
+                    );
 
                     window.electron.onWindowSizeChanged((event, size) => {
                         state.sizeWidth = size.width;
@@ -156,11 +161,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 await VRCXStorage.Set('VRCX_DisableGpuAcceleration', 'false');
             }
             if (
-                (
-                    await VRCXStorage.Get(
-                        'VRCX_DisableVrOverlayGpuAcceleration'
-                    )
-                ) === ''
+                (await VRCXStorage.Get(
+                    'VRCX_DisableVrOverlayGpuAcceleration'
+                )) === ''
             ) {
                 await VRCXStorage.Set(
                     'VRCX_DisableVrOverlayGpuAcceleration',
@@ -219,7 +222,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
      */
     async function updateDatabaseVersion() {
         // requires dbVars.userPrefix to be already set
-        const databaseVersion = 15;
+        const databaseVersion = 16;
         if (state.databaseVersion < databaseVersion) {
             databaseUpgradeState.value = {
                 visible: state.databaseVersion > 0,

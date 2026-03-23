@@ -109,12 +109,12 @@ const routes = [
                 component: () =>
                     import('./../views/Charts/components/MutualFriends.vue')
             },
-            {
-                path: 'charts/hot-worlds',
-                name: 'charts-hot-worlds',
-                component: () =>
-                    import('./../views/Charts/components/HotWorlds.vue')
-            },
+            // {
+            //     path: 'charts/hot-worlds',
+            //     name: 'charts-hot-worlds',
+            //     component: () =>
+            //         import('./../views/Charts/components/HotWorlds.vue')
+            // },
             { path: 'tools', name: 'tools', component: Tools },
             {
                 path: 'tools/gallery',
