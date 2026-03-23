@@ -1390,7 +1390,9 @@ const gameLog = {
         const where = [];
 
         if (fromDays > 0) {
-            const fromDate = new Date(now.getTime() - fromDays * 86400000).toISOString();
+            const fromDate = new Date(
+                now.getTime() - fromDays * 86400000
+            ).toISOString();
             params['@fromDate'] = fromDate;
             where.push('created_at >= @fromDate');
 
@@ -1403,12 +1405,15 @@ const gameLog = {
             );
         }
         if (toDays > 0) {
-            const toDate = new Date(now.getTime() - toDays * 86400000).toISOString();
+            const toDate = new Date(
+                now.getTime() - toDays * 86400000
+            ).toISOString();
             params['@toDate'] = toDate;
             where.push('created_at < @toDate');
         }
 
-        const dateClause = where.length > 0 ? `WHERE ${where.join(' AND ')}` : '';
+        const dateClause =
+            where.length > 0 ? `WHERE ${where.join(' AND ')}` : '';
         await sqliteService.execute(
             (dbRow) => {
                 data.push({ created_at: dbRow[0], time: dbRow[1] || 0 });
@@ -1443,12 +1448,15 @@ const gameLog = {
      * Groups by world_id and aggregates visit count and total time.
      * @param {number} [days] - Number of days to look back. Omit or 0 for all time.
      * @param {number} [limit=5] - Maximum number of worlds to return.
+     * @param {'time'|'count'} [sortBy='time'] - Sort by total time or visit count.
      * @returns {Promise<Array<{worldId: string, worldName: string, visitCount: number, totalTime: number}>>}
      */
-    async getMyTopWorlds(days = 0, limit = 5) {
+    async getMyTopWorlds(days = 0, limit = 5, sortBy = 'time') {
         const results = [];
         const whereClause =
             days > 0 ? `AND created_at >= datetime('now', @daysOffset)` : '';
+        const orderBy =
+            sortBy === 'count' ? 'visit_count DESC' : 'total_time DESC';
         const params = { '@limit': limit };
         if (days > 0) {
             params['@daysOffset'] = `-${days} days`;
@@ -1473,7 +1481,7 @@ const gameLog = {
                 AND world_id LIKE 'wrld_%'
                 ${whereClause}
             GROUP BY world_id
-            ORDER BY total_time DESC
+            ORDER BY ${orderBy}
             LIMIT @limit`,
             params
         );

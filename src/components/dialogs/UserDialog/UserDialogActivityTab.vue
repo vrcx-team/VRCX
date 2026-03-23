@@ -136,14 +136,43 @@
 
         <div v-if="isSelf && hasAnyData" class="mt-4 border-t border-border pt-3">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium">{{ t('dialog.user.activity.most_visited_worlds.header') }}</span>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm font-medium">
+                        {{ t('dialog.user.activity.most_visited_worlds.header') }}
+                    </span>
+                    <Spinner v-if="topWorldsLoading" class="h-3.5 w-3.5" />
+                </div>
+                <div v-if="topWorlds.length > 0" class="flex items-center gap-2">
+                    <span class="text-muted-foreground text-sm">{{ t('common.sort_by') }}</span>
+                    <Select v-model="topWorldsSortBy" :disabled="topWorldsLoading">
+                        <SelectTrigger size="sm" class="w-32" @click.stop>
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="time">{{
+                                t('dialog.user.activity.most_visited_worlds.sort_by_time')
+                            }}</SelectItem>
+                            <SelectItem value="count">{{
+                                t('dialog.user.activity.most_visited_worlds.sort_by_count')
+                            }}</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
-            <div v-if="topWorlds.length === 0 && !isLoading" class="text-sm text-muted-foreground py-2">
+            <div
+                v-if="topWorldsLoading && topWorlds.length === 0"
+                class="flex items-center gap-2 text-sm text-muted-foreground py-2">
+                <Spinner class="h-4 w-4" />
+                <span>{{ t('dialog.user.activity.most_visited_worlds.loading') }}</span>
+            </div>
+            <div
+                v-else-if="topWorlds.length === 0 && !isLoading"
+                class="text-sm text-muted-foreground py-2">
                 {{ t('dialog.user.activity.no_data_in_period') }}
             </div>
             <div v-else class="flex flex-col gap-0.5">
                 <button
-                    v-for="(world, index) in topWorlds"
+                    v-for="(world, index) in sortedTopWorlds"
                     :key="world.worldId"
                     type="button"
                     class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent"
@@ -169,7 +198,13 @@
                         <div class="flex items-baseline justify-between gap-2">
                             <span class="truncate text-sm font-medium">{{ world.worldName }}</span>
                             <span class="shrink-0 text-xs tabular-nums text-muted-foreground">
-                                {{ formatWorldTime(world.totalTime) }}
+                                {{
+                                    topWorldsSortBy === 'time'
+                                        ? formatWorldTime(world.totalTime)
+                                        : t('dialog.user.activity.most_visited_worlds.visit_count_label', {
+                                              count: world.visitCount
+                                          })
+                                }}
                             </span>
                         </div>
                         <div
@@ -178,7 +213,11 @@
                             <div
                                 class="h-full rounded-full transition-all duration-500"
                                 :class="isDarkMode ? 'bg-white/45' : 'bg-black/25'"
-                                :style="{ width: getTopWorldBarWidth(world.totalTime) }" />
+                                :style="{
+                                    width: getTopWorldBarWidth(
+                                        topWorldsSortBy === 'time' ? world.totalTime : world.visitCount
+                                    )
+                                }" />
                         </div>
                     </div>
                 </button>
@@ -226,7 +265,9 @@
     const hasOverlapData = ref(false);
     const overlapPercent = ref(0);
     const bestOverlapTime = ref('');
+    const topWorldsLoading = ref(false);
     const topWorlds = ref([]);
+    const topWorldsSortBy = ref('time');
     const excludeHoursEnabled = ref(false);
     const excludeStartHour = ref('1');
     const excludeEndHour = ref('6');
@@ -241,10 +282,12 @@
 
     let activeRequestId = 0;
     let activeOverlapRequestId = 0;
+    let activeTopWorldsRequestId = 0;
     let lastLoadedUserId = '';
     const pendingWorldThumbnailFetches = new Set();
 
     const isSelf = computed(() => userDialog.value.id === currentUser.value.id);
+    const sortedTopWorlds = computed(() => topWorlds.value);
     const dayLabels = computed(() => [
         t('dialog.user.activity.days.sun'),
         t('dialog.user.activity.days.mon'),
@@ -277,12 +320,43 @@
         hasOverlapData.value = false;
         overlapPercent.value = 0;
         bestOverlapTime.value = '';
+        topWorldsLoading.value = false;
         topWorlds.value = [];
         mainHeatmapView.value = { rawBuckets: [], normalizedBuckets: [] };
         overlapHeatmapView.value = { rawBuckets: [], normalizedBuckets: [] };
         activeRequestId++;
         activeOverlapRequestId++;
+        activeTopWorldsRequestId++;
         lastLoadedUserId = '';
+    }
+
+    async function loadTopWorldsSection({ userId, rangeDays, sortBy, period }) {
+        const requestId = ++activeTopWorldsRequestId;
+        topWorldsLoading.value = true;
+
+        try {
+            const result = await activityStore.loadTopWorldsView({
+                userId,
+                rangeDays,
+                limit: 5,
+                sortBy
+            });
+            if (
+                requestId !== activeTopWorldsRequestId ||
+                userDialog.value.id !== userId ||
+                topWorldsSortBy.value !== sortBy ||
+                selectedPeriod.value !== period
+            ) {
+                return;
+            }
+
+            topWorlds.value = result;
+            void fetchMissingTopWorldThumbnails(topWorlds.value);
+        } finally {
+            if (requestId === activeTopWorldsRequestId) {
+                topWorldsLoading.value = false;
+            }
+        }
     }
 
     async function refreshData({ silent = false, forceRefresh = false } = {}) {
@@ -323,17 +397,20 @@
             if (!hasAnyData.value) {
                 hasOverlapData.value = false;
                 topWorlds.value = [];
+                topWorldsLoading.value = false;
                 return;
             }
 
             if (isSelf.value) {
-                topWorlds.value = await activityStore.loadTopWorldsView({
+                await loadTopWorldsSection({
                     userId,
                     rangeDays,
-                    limit: 5,
-                    forceRefresh
+                    sortBy: topWorldsSortBy.value,
+                    period: selectedPeriod.value
                 });
-                void fetchMissingTopWorldThumbnails(topWorlds.value);
+                if (requestId !== activeRequestId || userDialog.value.id !== userId) {
+                    return;
+                }
                 hasOverlapData.value = false;
                 return;
             }
@@ -486,15 +563,16 @@
         return timeToText(ms);
     }
 
-    function getTopWorldBarWidth(totalTime) {
-        if (topWorlds.value.length === 0) {
+    function getTopWorldBarWidth(value) {
+        if (sortedTopWorlds.value.length === 0) {
             return '0%';
         }
-        const maxTime = Math.max(...topWorlds.value.map((world) => world.totalTime || 0), 0);
-        if (maxTime <= 0) {
+        const key = topWorldsSortBy.value === 'count' ? 'visitCount' : 'totalTime';
+        const maxVal = Math.max(...sortedTopWorlds.value.map((world) => world[key] || 0), 0);
+        if (maxVal <= 0) {
             return '0%';
         }
-        return `${Math.max((totalTime / maxTime) * 100, 8)}%`;
+        return `${Math.max((value / maxVal) * 100, 8)}%`;
     }
 
     const activityChartRef = ref(null);
@@ -662,6 +740,26 @@
             if (userDialog.value.visible && userDialog.value.activeTab === 'Activity') {
                 void onPeriodChange();
             }
+        }
+    );
+    watch(
+        () => topWorldsSortBy.value,
+        async (newSortBy) => {
+            if (!isSelf.value || !hasAnyData.value) {
+                return;
+            }
+            const userId = userDialog.value.id;
+            if (!userId) {
+                return;
+            }
+            const period = selectedPeriod.value;
+            const rangeDays = parseInt(period, 10) || 30;
+            await loadTopWorldsSection({
+                userId,
+                rangeDays,
+                sortBy: newSortBy,
+                period
+            });
         }
     );
     watch(

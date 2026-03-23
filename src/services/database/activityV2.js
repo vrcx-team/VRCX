@@ -28,10 +28,6 @@ function bucketCacheTable() {
     return `${dbVars.userPrefix}_activity_bucket_cache_v2`;
 }
 
-function topWorldsCacheTable() {
-    return `${dbVars.userPrefix}_activity_top_worlds_cache_v2`;
-}
-
 function parseJson(value, fallback) {
     if (!value) {
         return fallback;
@@ -52,16 +48,24 @@ const activityV2 = {
     ACTIVITY_RANGE_CACHE_KIND,
 
     async getActivitySourceSliceV2({ userId, isSelf, fromDays, toDays = 0 }) {
-        const fromDateIso = new Date(Date.now() - fromDays * 86400000).toISOString();
-        const toDateIso = toDays > 0
-            ? new Date(Date.now() - toDays * 86400000).toISOString()
-            : '';
+        const fromDateIso = new Date(
+            Date.now() - fromDays * 86400000
+        ).toISOString();
+        const toDateIso =
+            toDays > 0
+                ? new Date(Date.now() - toDays * 86400000).toISOString()
+                : '';
         return isSelf
             ? this.getCurrentUserLocationSliceV2(fromDateIso, toDateIso)
             : this.getFriendPresenceSliceV2(userId, fromDateIso, toDateIso);
     },
 
-    async getActivitySourceAfterV2({ userId, isSelf, afterCreatedAt, inclusive = false }) {
+    async getActivitySourceAfterV2({
+        userId,
+        isSelf,
+        afterCreatedAt,
+        inclusive = false
+    }) {
         return isSelf
             ? this.getCurrentUserLocationAfterV2(afterCreatedAt, inclusive)
             : this.getFriendPresenceAfterV2(userId, afterCreatedAt);
@@ -122,7 +126,9 @@ const activityV2 = {
             );
         }
 
-        return rows.sort((left, right) => left.created_at.localeCompare(right.created_at));
+        return rows.sort((left, right) =>
+            left.created_at.localeCompare(right.created_at)
+        );
     },
 
     async getFriendPresenceAfterV2(userId, afterCreatedAt) {
@@ -167,8 +173,9 @@ const activityV2 = {
                     FROM gamelog_location
                     WHERE created_at >= @fromDateIso
                       ${toDateIso ? 'AND created_at < @toDateIso' : ''}
-                    ${toDateIso
-                        ? `UNION ALL
+                    ${
+                        toDateIso
+                            ? `UNION ALL
                     SELECT created_at, time, 2 AS sort_group
                     FROM (
                         SELECT created_at, time
@@ -177,7 +184,8 @@ const activityV2 = {
                         ORDER BY created_at
                         LIMIT 1
                     )`
-                        : ''}
+                            : ''
+                    }
                 )
                 ORDER BY created_at ASC, sort_group ASC
             `,
@@ -214,7 +222,8 @@ const activityV2 = {
                     updatedAt: dbRow[1] || '',
                     isSelf: Boolean(dbRow[2]),
                     sourceLastCreatedAt: dbRow[3] || '',
-                    pendingSessionStartAt: typeof dbRow[4] === 'number' ? dbRow[4] : null,
+                    pendingSessionStartAt:
+                        typeof dbRow[4] === 'number' ? dbRow[4] : null,
                     cachedRangeDays: dbRow[5] || 0
                 };
             },
@@ -277,7 +286,11 @@ const activityV2 = {
         }
     },
 
-    async appendActivitySessionsV2({ userId, sessions = [], replaceFromStartAt = null }) {
+    async appendActivitySessionsV2({
+        userId,
+        sessions = [],
+        replaceFromStartAt = null
+    }) {
         await sqliteService.executeNonQuery('BEGIN');
         try {
             if (replaceFromStartAt !== null) {
@@ -391,86 +404,15 @@ const activityV2 = {
                 '@bucketVersion': entry.bucketVersion || 1,
                 '@builtFromCursor': entry.builtFromCursor || '',
                 '@rawBucketsJson': JSON.stringify(entry.rawBuckets || []),
-                '@normalizedBucketsJson': JSON.stringify(entry.normalizedBuckets || []),
+                '@normalizedBucketsJson': JSON.stringify(
+                    entry.normalizedBuckets || []
+                ),
                 '@summaryJson': JSON.stringify(entry.summary || {}),
                 '@builtAt': entry.builtAt || ''
             }
         );
     },
 
-    async getActivityTopWorldsCacheV2(userId, rangeDays) {
-        const worlds = [];
-        let builtFromCursor = '';
-        let builtAt = '';
-        await sqliteService.execute(
-            (dbRow) => {
-                builtFromCursor = dbRow[0] || builtFromCursor;
-                builtAt = dbRow[1] || builtAt;
-                worlds.push({
-                    worldId: dbRow[3],
-                    worldName: dbRow[4],
-                    visitCount: dbRow[5] || 0,
-                    totalTime: dbRow[6] || 0
-                });
-            },
-            `SELECT built_from_cursor, built_at, rank_index, world_id, world_name, visit_count, total_time
-             FROM ${topWorldsCacheTable()}
-             WHERE user_id = @userId AND range_days = @rangeDays
-             ORDER BY rank_index`,
-            {
-                '@userId': userId,
-                '@rangeDays': rangeDays
-            }
-        );
-        if (worlds.length === 0) {
-            return null;
-        }
-        return {
-            userId,
-            rangeDays,
-            builtFromCursor,
-            builtAt,
-            worlds
-        };
-    },
-
-    async replaceActivityTopWorldsCacheV2(entry) {
-        await sqliteService.executeNonQuery('BEGIN');
-        try {
-            await sqliteService.executeNonQuery(
-                `DELETE FROM ${topWorldsCacheTable()} WHERE user_id = @userId AND range_days = @rangeDays`,
-                {
-                    '@userId': entry.userId,
-                    '@rangeDays': entry.rangeDays
-                }
-            );
-
-            for (let index = 0; index < entry.worlds.length; index++) {
-                const world = entry.worlds[index];
-                await sqliteService.executeNonQuery(
-                    `INSERT OR REPLACE INTO ${topWorldsCacheTable()}
-                     (user_id, range_days, rank_index, world_id, world_name, visit_count, total_time, built_from_cursor, built_at)
-                     VALUES (@userId, @rangeDays, @rankIndex, @worldId, @worldName, @visitCount, @totalTime, @builtFromCursor, @builtAt)`,
-                    {
-                        '@userId': entry.userId,
-                        '@rangeDays': entry.rangeDays,
-                        '@rankIndex': index,
-                        '@worldId': world.worldId,
-                        '@worldName': world.worldName || world.worldId,
-                        '@visitCount': world.visitCount || 0,
-                        '@totalTime': world.totalTime || 0,
-                        '@builtFromCursor': entry.builtFromCursor || '',
-                        '@builtAt': entry.builtAt || ''
-                    }
-                );
-            }
-
-            await sqliteService.executeNonQuery('COMMIT');
-        } catch (error) {
-            await sqliteService.executeNonQuery('ROLLBACK');
-            throw error;
-        }
-    }
 };
 
 async function insertSessions(userId, sessions = []) {
@@ -479,7 +421,11 @@ async function insertSessions(userId, sessions = []) {
     }
 
     const chunkSize = 250;
-    for (let chunkStart = 0; chunkStart < sessions.length; chunkStart += chunkSize) {
+    for (
+        let chunkStart = 0;
+        chunkStart < sessions.length;
+        chunkStart += chunkSize
+    ) {
         const chunk = sessions.slice(chunkStart, chunkStart + chunkSize);
         const args = {};
         const values = chunk.map((session, index) => {

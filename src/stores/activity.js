@@ -41,8 +41,7 @@ function createSnapshot(userId, isSelf) {
         },
         sessions: [],
         activityViews: new Map(),
-        overlapViews: new Map(),
-        topWorldsViews: new Map()
+        overlapViews: new Map()
     };
 }
 
@@ -93,7 +92,6 @@ function isUserInFlight(userId) {
 function clearDerivedViews(snapshot) {
     snapshot.activityViews.clear();
     snapshot.overlapViews.clear();
-    snapshot.topWorldsViews.clear();
 }
 
 function overlapExcludeKey(excludeHours) {
@@ -298,53 +296,10 @@ export const useActivityStore = defineStore('Activity', () => {
 
     async function loadTopWorlds(
         userId,
-        { rangeDays = 30, limit = 5, isSelf = true, forceRefresh = false }
+        { rangeDays = 30, limit = 5, sortBy = 'time' }
     ) {
-        const snapshot = await ensureSnapshot(userId, {
-            isSelf,
-            rangeDays,
-            forceRefresh
-        });
-        const cacheKey = `${rangeDays}:${limit}`;
-        const currentCursor = snapshot.sync.sourceLastCreatedAt || '';
-
-        let cached = snapshot.topWorldsViews.get(cacheKey);
-        if (!forceRefresh && cached?.builtFromCursor === currentCursor) {
-            return cached.worlds;
-        }
-
-        if (!forceRefresh) {
-            const persisted = await database.getActivityTopWorldsCacheV2(
-                userId,
-                rangeDays
-            );
-            if (persisted?.builtFromCursor === currentCursor) {
-                snapshot.topWorldsViews.set(cacheKey, persisted);
-                return persisted.worlds;
-            }
-        }
-
-        const worlds = await database.getMyTopWorlds(rangeDays, limit);
-        const entry = {
-            userId,
-            rangeDays,
-            worlds,
-            builtFromCursor: currentCursor,
-            builtAt: new Date().toISOString()
-        };
-        snapshot.topWorldsViews.set(cacheKey, entry);
-        deferWrite(() => database.replaceActivityTopWorldsCacheV2(entry));
-        deferWrite(() =>
-            database.upsertActivityRangeCacheV2({
-                userId,
-                rangeDays,
-                cacheKind: database.ACTIVITY_RANGE_CACHE_KIND.TOP_WORLDS,
-                isComplete: true,
-                builtFromCursor: currentCursor,
-                builtAt: entry.builtAt
-            })
-        );
-        return worlds;
+        void userId;
+        return database.getMyTopWorlds(rangeDays, limit, sortBy);
     }
 
     async function refreshActivity(userId, options) {
@@ -403,13 +358,13 @@ export const useActivityStore = defineStore('Activity', () => {
         userId,
         rangeDays = 30,
         limit = 5,
-        forceRefresh = false
+        sortBy = 'time'
     }) {
         return loadTopWorlds(userId, {
             rangeDays,
             limit,
-            isSelf: true,
-            forceRefresh
+            sortBy,
+            isSelf: true
         });
     }
 

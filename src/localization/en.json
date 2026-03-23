@@ -17,6 +17,7 @@
             "reset": "Reset",
             "view_details": "View Details"
         },
+        "sort_by": "Sort by:",
         "time_units": {
             "y": "y",
             "d": "d",
@@ -1460,7 +1461,11 @@
                     "minutes_overlap": "min overlap"
                 },
                 "most_visited_worlds": {
-                    "header": "Most Visited Worlds"
+                    "header": "Most Visited Worlds",
+                    "loading": "Loading most visited worlds...",
+                    "sort_by_time": "By Time",
+                    "sort_by_count": "By Visits",
+                    "visit_count_label": "{count} visits"
                 },
                 "preparing_data": "Preparing activity data...",
                 "preparing_data_hint": "This may take a moment on first load.",

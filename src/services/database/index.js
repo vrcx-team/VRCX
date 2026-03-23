@@ -129,20 +129,6 @@ const database = {
             )`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_activity_top_worlds_cache_v2 (
-                user_id TEXT NOT NULL,
-                range_days INTEGER NOT NULL,
-                rank_index INTEGER NOT NULL,
-                world_id TEXT NOT NULL,
-                world_name TEXT NOT NULL,
-                visit_count INTEGER NOT NULL DEFAULT 0,
-                total_time INTEGER NOT NULL DEFAULT 0,
-                built_from_cursor TEXT NOT NULL DEFAULT '',
-                built_at TEXT NOT NULL DEFAULT '',
-                PRIMARY KEY (user_id, range_days, rank_index)
-            )`
-        );
-        await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_friend_log_current (user_id TEXT PRIMARY KEY, display_name TEXT, trust_level TEXT, friend_number INTEGER)`
         );
         await sqliteService.executeNonQuery(
