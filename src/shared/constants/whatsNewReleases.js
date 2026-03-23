@@ -60,7 +60,20 @@ function getWhatsNewRelease(version) {
     };
 }
 
+/**
+ * @returns {{titleKey: string, items: Array<{key: string, icon: string, titleKey: string, descriptionKey: string}>} | null}
+ */
+function getLatestWhatsNewRelease() {
+    const versions = Object.keys(whatsNewReleases);
+    if (versions.length === 0) {
+        return null;
+    }
+    const latestVersion = versions.sort().at(-1);
+    return getWhatsNewRelease(latestVersion);
+}
+
 export {
+    getLatestWhatsNewRelease,
     getWhatsNewRelease,
     normalizeReleaseVersion,
     whatsNewReleases

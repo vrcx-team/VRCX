@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n';
 import { logWebRequest } from '../services/appConfig';
 import { branches } from '../shared/constants';
 import {
+    getLatestWhatsNewRelease,
     getWhatsNewRelease,
     normalizeReleaseVersion
 } from '../shared/constants/whatsNewReleases';
@@ -192,6 +193,25 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
 
         if (!release) {
             whatsNewDialog.value = emptyWhatsNewDialog();
+            return false;
+        }
+
+        whatsNewDialog.value = {
+            visible: true,
+            titleKey: release.titleKey,
+            items: release.items.map((item) => ({ ...item }))
+        };
+
+        return true;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    function showLatestWhatsNewDialog() {
+        const release = getLatestWhatsNewRelease();
+
+        if (!release) {
             return false;
         }
 
@@ -533,6 +553,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         setBranch,
 
         showWhatsNewDialog,
+        showLatestWhatsNewDialog,
         closeWhatsNewDialog,
         openChangeLogDialogOnly,
         checkForVRCXUpdate,

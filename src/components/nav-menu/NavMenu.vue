@@ -49,9 +49,7 @@
                                                 </SidebarMenuButton>
                                             </ContextMenuTrigger>
                                             <ContextMenuContent>
-                                                <ContextMenuItem
-                                                    v-if="hasNotifications"
-                                                    @click="clearAllNotifications">
+                                                <ContextMenuItem v-if="hasNotifications" @click="clearAllNotifications">
                                                     {{ t('nav_menu.mark_all_read') }}
                                                 </ContextMenuItem>
                                                 <ContextMenuSeparator v-if="hasNotifications" />
@@ -133,7 +131,7 @@
             :is-applying-theme-color="isApplyingThemeColor"
             :theme-display-name="themeDisplayName"
             :theme-color-display-name="themeColorDisplayName"
-            @show-change-log="showChangeLogDialog"
+            @show-whats-new="handleShowWhatsNew"
             @support-link="handleSupportLink"
             @toggle-theme="handleThemeToggle"
             @show-vrcx-update-dialog="showVRCXUpdateDialog"
@@ -213,7 +211,7 @@
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
     const { pendingVRCXUpdate, pendingVRCXInstall, appVersion } = storeToRefs(VRCXUpdaterStore);
-    const { showVRCXUpdateDialog, showChangeLogDialog } = VRCXUpdaterStore;
+    const { showVRCXUpdateDialog, showChangeLogDialog, showLatestWhatsNewDialog } = VRCXUpdaterStore;
 
     const dashboardStore = useDashboardStore();
     const { dashboards } = storeToRefs(dashboardStore);
@@ -229,7 +227,13 @@
     const modalStore = useModalStore();
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const { themeMode, tableDensity, isDarkMode, isNavCollapsed: isCollapsed, showNewDashboardButton } = storeToRefs(appearanceSettingsStore);
+    const {
+        themeMode,
+        tableDensity,
+        isDarkMode,
+        isNavCollapsed: isCollapsed,
+        showNewDashboardButton
+    } = storeToRefs(appearanceSettingsStore);
 
     const {
         themes,
@@ -306,6 +310,13 @@
             return item.children.some((entry) => isEntryNotified(entry));
         }
         return false;
+    };
+
+    const handleShowWhatsNew = async () => {
+        const shown = showLatestWhatsNewDialog();
+        if (!shown) {
+            showChangeLogDialog();
+        }
     };
 
     const handleSettingsClick = () => {
