@@ -13,6 +13,28 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 import { languageCodes } from './localization/locales';
 
 /**
+ * Vite plugin to remove legacy remixicon font files (eot, woff, ttf, svg)
+ * from the build output, keeping only woff2. Saves ~4.5 MB.
+ *
+ * Chrome 144 picks woff2 from the multi-format @font-face src list and
+ * never requests the other formats, so deleting them is safe.
+ *
+ * @returns {import('vite').Plugin}
+ */
+function remixiconWoff2Only() {
+    return {
+        name: 'remixicon-woff2-only',
+        generateBundle(_, bundle) {
+            for (const key of Object.keys(bundle)) {
+                if (/remixicon\.(eot|ttf|svg|woff)$/.test(key)) {
+                    delete bundle[key];
+                }
+            }
+        }
+    };
+}
+
+/**
  *
  * @param assetId
  */
@@ -48,7 +70,7 @@ function getManualChunk(moduleId) {
     return `i18n/${language}`;
 }
 
-const defaultAssetName = '[hash][extname]';
+const defaultAssetName = '[name][extname]';
 
 /**
  * @param {string} name
@@ -88,6 +110,7 @@ export default defineConfig(({ mode }) => {
     return {
         base: '',
         plugins: [
+            remixiconWoff2Only(),
             vue(),
             vueJsx({
                 tsTransform: 'built-in'
@@ -157,7 +180,10 @@ export default defineConfig(({ mode }) => {
             reportCompressedSize: false,
             chunkSizeWarningLimit: 5000,
             sourcemap: buildAndUploadSourceMaps,
-            assetsInlineLimit: 40960,
+            assetsInlineLimit(filePath) {
+                if (isFont(filePath)) return 0;
+                return 40960;
+            },
             rolldownOptions: {
                 preserveEntrySignatures: false,
                 input: {
