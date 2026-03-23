@@ -3,13 +3,13 @@
         <div ref="containerRef" class="pt-4">
             <BackToTop :target="containerRef" :right="30" :bottom="30" :teleport="false" />
 
-            <!-- Header bar -->
-            <div class="options-container mt-0 flex flex-wrap items-center justify-between gap-2">
-                <div class="flex items-center gap-2">
+            <!-- Header bar (consistent with InstanceActivity) -->
+            <div class="options-container mt-0 flex items-center justify-between">
+                <div class="flex items-center gap-2 mb-4">
                     <span class="shrink-0">{{ t('view.charts.relationship_timeline.header') }}</span>
                     <HoverCard>
                         <HoverCardTrigger as-child>
-                            <Info class="ml-1 size-4 cursor-pointer opacity-60 hover:opacity-100" />
+                            <Info class="ml-1 text-xs opacity-70" />
                         </HoverCardTrigger>
                         <HoverCardContent side="bottom" align="start" class="w-80">
                             <div class="text-xs">
@@ -19,23 +19,11 @@
                     </HoverCard>
                 </div>
 
-                <!-- Controls: friend count + refresh -->
-                <div class="flex flex-wrap items-center gap-3">
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs text-muted-foreground">
-                            {{ t('view.charts.relationship_timeline.top_n_friends', { n: friendCount }) }}
-                        </span>
-                        <input
-                            type="range"
-                            v-model.number="friendCount"
-                            min="1"
-                            max="10"
-                            step="1"
-                            class="w-24 accent-primary"
-                            @change="rebuildChart" />
-                    </div>
+                <div class="flex items-center gap-2">
+                    <!-- Refresh button -->
                     <TooltipWrapper :content="t('view.charts.relationship_timeline.refresh')" side="top">
                         <Button
+                            class="rounded-full mr-1.5"
                             size="icon"
                             variant="ghost"
                             :disabled="isLoading"
@@ -43,6 +31,52 @@
                             <RefreshCcw :class="['size-4', isLoading ? 'animate-spin' : '']" />
                         </Button>
                     </TooltipWrapper>
+
+                    <!-- Settings popover -->
+                    <Popover>
+                        <PopoverTrigger as-child>
+                            <div>
+                                <TooltipWrapper
+                                    :content="t('view.charts.relationship_timeline.settings.header')"
+                                    side="top">
+                                    <Button class="rounded-full mr-1.5" size="icon" variant="ghost">
+                                        <Settings />
+                                    </Button>
+                                </TooltipWrapper>
+                            </div>
+                        </PopoverTrigger>
+                        <PopoverContent side="bottom" align="end" class="w-64">
+                            <div class="flex flex-col gap-1">
+                                <!-- Top-N friends slider -->
+                                <div class="flex items-center justify-between px-0.5 h-[30px]">
+                                    <span class="shrink-0 text-sm">
+                                        {{ t('view.charts.relationship_timeline.settings.top_friends') }}
+                                    </span>
+                                    <div class="flex items-center gap-2 ml-3">
+                                        <Slider
+                                            v-model="friendCountModel"
+                                            :max="10"
+                                            :min="1"
+                                            :step="1"
+                                            class="w-24"
+                                            @valueCommit="debouncedRebuildChart" />
+                                        <span class="w-4 text-right text-xs tabular-nums text-muted-foreground">
+                                            {{ friendCount }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <!-- Show others toggle -->
+                                <div class="flex items-center justify-between px-0.5 h-[30px]">
+                                    <span class="shrink-0 text-sm">
+                                        {{ t('view.charts.relationship_timeline.settings.show_others') }}
+                                    </span>
+                                    <Switch
+                                        v-model="showOthers"
+                                        @update:modelValue="debouncedRebuildChart" />
+                                </div>
+                            </div>
+                        </PopoverContent>
+                    </Popover>
                 </div>
             </div>
 
@@ -63,7 +97,7 @@
                 <!-- ECharts canvas -->
                 <div ref="chartDomRef" class="w-full" :style="{ height: chartHeight + 'px' }"></div>
 
-                <!-- Bottom-right scale control (non-linear granularity) -->
+                <!-- Bottom-right: non-linear granularity scale control -->
                 <div class="flex items-center justify-end gap-2 px-4 py-1">
                     <ZoomOut class="size-3.5 shrink-0 text-muted-foreground" />
                     <input
@@ -73,9 +107,9 @@
                         max="100"
                         step="1"
                         class="w-28 accent-primary"
-                        @input="handleScaleChange" />
+                        @change="debouncedRebuildChart" />
                     <ZoomIn class="size-3.5 shrink-0 text-muted-foreground" />
-                    <span class="w-20 text-right text-xs text-muted-foreground">
+                    <span class="w-20 text-right text-xs tabular-nums text-muted-foreground">
                         {{ bucketDays }}
                         {{ t('view.charts.relationship_timeline.days_per_unit') }}
                     </span>
@@ -88,8 +122,8 @@
 <script setup>
     defineOptions({ name: 'ChartsRelationshipTimeline' });
 
-    import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-    import { Info, RefreshCcw, ZoomIn, ZoomOut } from 'lucide-vue-next';
+    import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+    import { Info, RefreshCcw, Settings, ZoomIn, ZoomOut } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import * as echarts from 'echarts';
@@ -98,9 +132,13 @@
     import { Button } from '@/components/ui/button';
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+    import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+    import { Slider } from '@/components/ui/slider';
+    import { Switch } from '@/components/ui/switch';
     import TooltipWrapper from '@/components/ui/tooltip/TooltipWrapper.vue';
 
     import { database } from '../../../services/database';
+    import { debounce } from '../../../shared/utils';
     import { useAppearanceSettingsStore, useFriendStore } from '../../../stores';
 
     // ─── i18n ──────────────────────────────────────────────────────────────────
@@ -122,6 +160,13 @@
     // ─── Settings ──────────────────────────────────────────────────────────────
     /** Number of top friends to show (rest go into "Others") */
     const friendCount = ref(5);
+    /** Slider model: Reka UI Slider uses an array */
+    const friendCountModel = computed({
+        get: () => [friendCount.value],
+        set: (v) => { friendCount.value = v[0]; }
+    });
+    /** Whether to include the "Others" band in the chart */
+    const showOthers = ref(true);
     /**
      * Non-linear scale slider (0-100).
      * Mapped to bucketDays = round(90 ^ (slider/100)).
@@ -158,17 +203,42 @@
         return friend?.displayName || fallbackName || userId;
     }
 
+    // ─── Performance: pre-process rawRows into per-friend per-day structure ────
+    /**
+     * Map<userId, { displayName: string, days: Map<epochDay, { totalTime: number, joinCount: number }> }>
+     * Re-computed only when rawRows changes (not on every slider move).
+     */
+    const perFriendDays = ref(new Map());
+
+    watch(
+        rawRows,
+        (rows) => {
+            const map = new Map();
+            for (const row of rows) {
+                // Parse date string to epoch day (integer) once here, not on every rebuild
+                const epochDay = Math.floor(
+                    new Date(row.day + 'T00:00:00Z').getTime() / 86400000
+                );
+                let entry = map.get(row.userId);
+                if (!entry) {
+                    entry = { displayName: row.displayName, days: new Map() };
+                    map.set(row.userId, entry);
+                }
+                const prev = entry.days.get(epochDay) || { totalTime: 0, joinCount: 0 };
+                entry.days.set(epochDay, {
+                    totalTime: prev.totalTime + row.totalTime,
+                    joinCount: prev.joinCount + row.joinCount
+                });
+            }
+            perFriendDays.value = map;
+        },
+        { immediate: true }
+    );
+
     // ─── Bucket helpers ────────────────────────────────────────────────────────
 
     /**
-     * Convert a YYYY-MM-DD string to epoch days (integer).
-     */
-    function dateToDays(dateStr) {
-        return Math.floor(new Date(dateStr + 'T00:00:00Z').getTime() / 86400000);
-    }
-
-    /**
-     * Snap an epoch-day value to a bucket number (0-based from the first data day).
+     * Snap an epoch-day value to a bucket index (0-based from firstDay).
      */
     function dayToBucket(day, firstDay, bDays) {
         return Math.floor((day - firstDay) / bDays);
@@ -200,44 +270,51 @@
     }
 
     /**
-     * Build ECharts series data from rawRows with the current settings.
+     * Build ECharts series data from the pre-processed perFriendDays cache.
      *
      * Algorithm:
-     *  1. Group rows into time buckets of `bucketDays` days.
-     *  2. Per bucket, sum scores per friend.
-     *  3. Compute global total score per friend across all buckets.
-     *  4. Take top-N friends; remaining → "Others".
-     *  5. Sort top-N by total score (descending) for a stable, non-crossing order.
-     *  6. Compute per-bucket percentage share for each slot (100% stacked area).
+     *  1. Aggregate per-day data into time buckets of `bucketDays` days.
+     *  2. Compute global total score per friend across all buckets.
+     *  3. Take top-N friends; remaining → "Others" (if showOthers is true).
+     *  4. Sort top-N by total score (descending) for a stable, non-crossing order.
+     *  5. Compute per-bucket percentage share for each slot (100% stacked area).
      */
     function buildChartData() {
-        const rows = rawRows.value;
-        if (!rows.length) return null;
+        const friendDaysMap = perFriendDays.value;
+        if (!friendDaysMap.size) return null;
 
-        // Find the range of days
-        const days = rows.map((r) => dateToDays(r.day));
-        const firstDay = Math.min(...days);
-        const lastDay = Math.max(...days);
         const bDays = bucketDays.value;
+
+        // Collect all epoch days to find the data range
+        let firstDay = Infinity;
+        let lastDay = -Infinity;
+        for (const entry of friendDaysMap.values()) {
+            for (const d of entry.days.keys()) {
+                if (d < firstDay) firstDay = d;
+                if (d > lastDay) lastDay = d;
+            }
+        }
+        if (!isFinite(firstDay)) return null;
+
         const bucketCount = dayToBucket(lastDay, firstDay, bDays) + 1;
 
-        // Map<userId, Map<bucketIdx, {totalTime, joinCount}>>
+        // Aggregate per-friend per-day data into buckets
+        // Map<userId, { displayName, buckets: Map<bucketIdx, {totalTime, joinCount}> }>
         const perFriendBuckets = new Map();
-        for (const row of rows) {
-            const d = dateToDays(row.day);
-            const b = dayToBucket(d, firstDay, bDays);
-            if (!perFriendBuckets.has(row.userId)) {
-                perFriendBuckets.set(row.userId, { displayName: row.displayName, buckets: new Map() });
+        for (const [userId, entry] of friendDaysMap.entries()) {
+            const bucketMap = new Map();
+            for (const [d, val] of entry.days.entries()) {
+                const b = dayToBucket(d, firstDay, bDays);
+                const prev = bucketMap.get(b) || { totalTime: 0, joinCount: 0 };
+                bucketMap.set(b, {
+                    totalTime: prev.totalTime + val.totalTime,
+                    joinCount: prev.joinCount + val.joinCount
+                });
             }
-            const entry = perFriendBuckets.get(row.userId);
-            const prev = entry.buckets.get(b) || { totalTime: 0, joinCount: 0 };
-            entry.buckets.set(b, {
-                totalTime: prev.totalTime + row.totalTime,
-                joinCount: prev.joinCount + row.joinCount
-            });
+            perFriendBuckets.set(userId, { displayName: entry.displayName, buckets: bucketMap });
         }
 
-        // Compute global score per friend
+        // Compute global score per friend (sum across all buckets)
         const friendScores = [];
         for (const [userId, entry] of perFriendBuckets.entries()) {
             let total = 0;
@@ -247,19 +324,19 @@
             friendScores.push({ userId, displayName: entry.displayName, totalScore: total });
         }
 
-        // Sort descending by total score
+        // Sort descending by total score (stable ordering = minimize crossings)
         friendScores.sort((a, b) => b.totalScore - a.totalScore);
 
         const n = Math.min(friendCount.value, friendScores.length);
         const topFriends = friendScores.slice(0, n);
         const otherFriends = friendScores.slice(n);
 
-        // Build bucket arrays for each slot
+        // x-axis labels
         const xLabels = Array.from({ length: bucketCount }, (_, i) =>
             bucketLabel(i, firstDay, bDays)
         );
 
-        // Compute per-bucket score for each top friend + others aggregate
+        // Per-bucket score arrays for top friends
         const slotsData = topFriends.map(({ userId }) => {
             const entry = perFriendBuckets.get(userId);
             return Array.from({ length: bucketCount }, (_, b) => {
@@ -268,7 +345,7 @@
             });
         });
 
-        // Others: sum of all other friends' scores per bucket
+        // Others: sum of all remaining friends' scores per bucket
         const othersData = Array.from({ length: bucketCount }, (_, b) => {
             let sum = 0;
             for (const { userId } of otherFriends) {
@@ -278,13 +355,13 @@
             return sum;
         });
 
-        const showOthers = otherFriends.length > 0;
+        const includeOthers = showOthers.value && otherFriends.length > 0;
 
-        // Normalize to percentages per bucket (100% stacked)
+        // Normalize to percentages per bucket
         const totalsPerBucket = Array.from({ length: bucketCount }, (_, b) => {
             let total = 0;
             for (const slot of slotsData) total += slot[b];
-            if (showOthers) total += othersData[b];
+            if (includeOthers) total += othersData[b];
             return total;
         });
 
@@ -297,22 +374,26 @@
         const percentSlotsData = slotsData.map((slot) => slot.map((v, b) => toPercent(v, b)));
         const percentOthersData = othersData.map((v, b) => toPercent(v, b));
 
-        // Build series - stable order: others at bottom, then friends (lowest score first = bottom)
-        // reversed so highest score friend is on top visually
+        // Build series — stable order: others at bottom, friends ordered lowest→highest score
+        // (reversed so the highest-ranked friend ends up on top visually)
         const series = [];
 
-        // Others (at the very bottom of the stack)
-        if (showOthers) {
+        // Others band at the very bottom
+        if (includeOthers) {
             series.push({
                 name: t('view.charts.relationship_timeline.others'),
                 type: 'line',
                 stack: 'total',
-                areaStyle: { opacity: 0.85 },
+                areaStyle: { opacity: 0.7 },
                 lineStyle: { width: 0 },
                 smooth: true,
                 symbol: 'none',
                 color: '#aaaaaa',
-                emphasis: { focus: 'series' },
+                emphasis: {
+                    focus: 'series',
+                    areaStyle: { opacity: 0.95 }
+                },
+                blur: { areaStyle: { opacity: 0.3 } },
                 data: percentOthersData
             });
         }
@@ -326,17 +407,21 @@
                 name: displayName,
                 type: 'line',
                 stack: 'total',
-                areaStyle: { opacity: 0.85 },
+                areaStyle: { opacity: 0.7 },
                 lineStyle: { width: 0 },
                 smooth: true,
                 symbol: 'none',
                 color: COLOR_PALETTE[colorIdx],
-                emphasis: { focus: 'series' },
+                emphasis: {
+                    focus: 'series',
+                    areaStyle: { opacity: 0.95 }
+                },
+                blur: { areaStyle: { opacity: 0.3 } },
                 data: percentSlotsData[i]
             });
         }
 
-        return { xLabels, series, bucketCount };
+        return { xLabels, series };
     }
 
     // ─── ECharts instance management ──────────────────────────────────────────
@@ -362,19 +447,25 @@
             backgroundColor: 'transparent',
             tooltip: {
                 trigger: 'axis',
-                axisPointer: { type: 'cross' },
+                axisPointer: {
+                    type: 'line',
+                    lineStyle: { color: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)' }
+                },
                 formatter(params) {
-                    const header = `<div style="margin-bottom:4px;font-weight:600">${params[0]?.axisValue}</div>`;
-                    const rows = params
+                    const header = `<div style="margin-bottom:6px;font-weight:600;font-size:12px">${params[0]?.axisValue}</div>`;
+                    // Sort descending by value, skip zero entries
+                    const items = params
                         .filter((p) => p.value > 0)
-                        .sort((a, b) => b.value - a.value)
+                        .sort((a, b) => b.value - a.value);
+                    if (!items.length) return '';
+                    const rows = items
                         .map(
                             (p) =>
-                                `<div style="display:flex;align-items:center;gap:6px">
-                                    <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p.color}"></span>
-                                    <span>${p.seriesName}</span>
-                                    <span style="margin-left:auto;font-weight:600">${p.value.toFixed(1)}%</span>
-                                </div>`
+                                `<div style="display:flex;align-items:center;gap:6px;padding:1px 0">` +
+                                `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p.color};flex-shrink:0"></span>` +
+                                `<span style="flex:1;font-size:12px">${p.seriesName}</span>` +
+                                `<span style="font-size:12px;font-weight:600;tabular-nums">${p.value.toFixed(1)}%</span>` +
+                                `</div>`
                         )
                         .join('');
                     return header + rows;
@@ -383,7 +474,7 @@
             legend: {
                 top: 0,
                 type: 'scroll',
-                textStyle: { color: isDark ? '#ccc' : '#333' }
+                textStyle: { color: isDark ? '#ccc' : '#333', fontSize: 11 }
             },
             grid: {
                 left: '3%',
@@ -400,14 +491,16 @@
                     rotate: 30,
                     fontSize: 10,
                     color: isDark ? '#bbb' : '#555'
-                }
+                },
+                axisLine: { lineStyle: { color: isDark ? '#444' : '#ddd' } }
             },
             yAxis: {
                 type: 'value',
                 max: 100,
                 axisLabel: {
                     formatter: '{value}%',
-                    color: isDark ? '#bbb' : '#555'
+                    color: isDark ? '#bbb' : '#555',
+                    fontSize: 11
                 },
                 splitLine: {
                     lineStyle: { color: isDark ? '#333' : '#eee' }
@@ -440,6 +533,12 @@
         echartsInstance.setOption(buildEChartsOption(chartData), { notMerge: true });
     }
 
+    /**
+     * Debounced version of rebuildChart — waits 1 second after the last
+     * settings change before performing the potentially expensive rebuild.
+     */
+    const debouncedRebuildChart = debounce(rebuildChart, 1000);
+
     function initChart() {
         if (!chartDomRef.value) return;
         disposeChart();
@@ -466,19 +565,14 @@
     // ─── Data loading ─────────────────────────────────────────────────────────
     async function loadData() {
         isLoading.value = true;
+        rawRows.value = [];
         try {
             rawRows.value = await database.getRelationshipTimelineData();
         } catch (err) {
             console.error('[RelationshipTimeline] Failed to load data', err);
-            rawRows.value = [];
         } finally {
             isLoading.value = false;
         }
-    }
-
-    // ─── Scale change handler ─────────────────────────────────────────────────
-    function handleScaleChange() {
-        rebuildChart();
     }
 
     // ─── Watchers ─────────────────────────────────────────────────────────────
@@ -491,8 +585,8 @@
 
     watch(hasData, (val) => {
         if (val) {
-            // Wait for DOM update then init chart
-            setTimeout(initChart, 0);
+            // Use nextTick so Vue renders the chart DOM before initializing
+            nextTick(() => initChart());
         }
     });
 
