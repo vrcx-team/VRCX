@@ -604,7 +604,13 @@
                 "no_friend_selected": "Select two friends to view their shared instances",
                 "coexistence_time": "Co-presence time",
                 "instance_count": "Shared instance count",
-                "meet_count": "{count} encounters"
+                "meet_count": "{count} encounters",
+                "settings": "Settings",
+                "show_self_presence": "Show my presence indicator",
+                "self_present": "I was present",
+                "self_not_present": "I was absent",
+                "instance_creator": "Creator",
+                "max_player_count": "Peak players"
             }
         },
         "tools": {

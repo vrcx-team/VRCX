@@ -104,6 +104,28 @@
                             <RefreshCcw />
                         </Button>
                     </TooltipWrapper>
+
+                    <Popover>
+                        <PopoverTrigger as-child>
+                            <div>
+                                <TooltipWrapper
+                                    :content="t('view.charts.two_person_relationship.settings')"
+                                    side="top">
+                                    <Button class="rounded-full" size="icon" variant="ghost">
+                                        <Settings class="size-4" />
+                                    </Button>
+                                </TooltipWrapper>
+                            </div>
+                        </PopoverTrigger>
+                        <PopoverContent side="bottom" align="end" class="w-60">
+                            <div class="flex items-center justify-between px-0.5 h-[30px]">
+                                <span class="shrink-0 text-sm">
+                                    {{ t('view.charts.two_person_relationship.show_self_presence') }}
+                                </span>
+                                <Switch v-model="showSelfPresence" />
+                            </div>
+                        </PopoverContent>
+                    </Popover>
                 </div>
             </div>
 
@@ -158,7 +180,42 @@
 
                         <div class="min-w-0 flex-1">
                             <Location :location="item.location" />
+                            <div class="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                                <TooltipWrapper
+                                    v-if="item.instanceCreatorName"
+                                    :content="t('view.charts.two_person_relationship.instance_creator')"
+                                    side="top">
+                                    <span class="flex items-center gap-1 text-xs text-muted-foreground">
+                                        <Crown class="size-3 shrink-0" />
+                                        <span class="truncate max-w-[120px]">{{ item.instanceCreatorName }}</span>
+                                    </span>
+                                </TooltipWrapper>
+                                <TooltipWrapper
+                                    v-if="item.maxPlayerCount != null"
+                                    :content="t('view.charts.two_person_relationship.max_player_count')"
+                                    side="top">
+                                    <span class="flex items-center gap-1 text-xs text-muted-foreground">
+                                        <Users class="size-3 shrink-0" />
+                                        <span class="tabular-nums">{{ item.maxPlayerCount }}</span>
+                                    </span>
+                                </TooltipWrapper>
+                            </div>
                         </div>
+
+                        <span
+                            v-if="showSelfPresence"
+                            :class="[
+                                'shrink-0 rounded px-1.5 py-0.5 text-xs font-medium',
+                                item.selfPresent
+                                    ? 'bg-green-500/15 text-green-600 dark:text-green-400'
+                                    : 'bg-red-500/15 text-red-600 dark:text-red-400'
+                            ]">
+                            {{
+                                item.selfPresent
+                                    ? t('view.charts.two_person_relationship.self_present')
+                                    : t('view.charts.two_person_relationship.self_not_present')
+                            }}
+                        </span>
 
                         <div class="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
                             <Clock class="size-3 shrink-0" />
@@ -175,18 +232,30 @@
     defineOptions({ name: 'ChartsTwoPerson' });
 
     import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-    import { ArrowLeftRight, Check as CheckIcon, Clock, Hash, RefreshCcw, Users } from 'lucide-vue-next';
+    import {
+        ArrowLeftRight,
+        Check as CheckIcon,
+        Clock,
+        Crown,
+        Hash,
+        RefreshCcw,
+        Settings,
+        Users
+    } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import BackToTop from '@/components/BackToTop.vue';
     import { Button } from '@/components/ui/button';
     import { DataTableEmpty } from '@/components/ui/data-table';
+    import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+    import { Switch } from '@/components/ui/switch';
     import { VirtualCombobox } from '@/components/ui/virtual-combobox';
 
     import dayjs from 'dayjs';
 
     import { database } from '../../../services/database';
+    import { parseLocation } from '../../../shared/utils/locationParser';
     import { timeToText } from '../../../shared/utils';
     import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
@@ -198,6 +267,9 @@
     const selectedFriendBId = ref(null);
     const isLoading = ref(false);
     const rawResults = ref([]);
+    const selfPresenceMap = ref(new Map());
+    const maxPlayerCountMap = ref(new Map());
+    const showSelfPresence = ref(false);
 
     const { dtHour12 } = storeToRefs(useAppearanceSettingsStore());
     const friendStore = useFriendStore();
@@ -256,6 +328,34 @@
         }
     ]);
 
+    /**
+     * Resolve a user ID to a display name via the cached users map.
+     * Falls back to the raw user ID if not found.
+     */
+    function resolveDisplayName(userId) {
+        if (!userId) return null;
+        const cached = cachedUsers.get(userId);
+        return cached?.displayName || userId;
+    }
+
+    /**
+     * Determine whether the current user was present during the A-B overlap window.
+     * Checks all self-presence sessions for this location.
+     */
+    function computeSelfPresent(location, overlapStart, overlapEnd) {
+        const sessions = selfPresenceMap.value.get(location);
+        if (!sessions || sessions.length === 0) return false;
+        for (const session of sessions) {
+            const selfLeaveMs = dayjs(session.selfLeave).valueOf();
+            const selfJoinMs = selfLeaveMs - Math.max(0, session.selfTime);
+            // Overlap: self's session intersects with the A-B co-presence window
+            if (selfJoinMs < overlapEnd && selfLeaveMs > overlapStart) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     const sharedInstances = computed(() => {
         const dateFormat = dtHour12.value ? 'YYYY-MM-DD hh:mm A' : 'YYYY-MM-DD HH:mm';
         return rawResults.value
@@ -269,11 +369,26 @@
                 const overlapStart = Math.max(friendAJoin, friendBJoin);
                 const overlapEnd = Math.min(friendALeaveMs, friendBLeaveMs);
                 const coexistenceTime = Math.max(0, overlapEnd - overlapStart);
+
+                // Instance creator from location string
+                const parsedLoc = parseLocation(row.location);
+                const instanceCreatorId = parsedLoc.userId || null;
+                const instanceCreatorName = resolveDisplayName(instanceCreatorId);
+
+                // Max concurrent player count
+                const maxPlayerCount = maxPlayerCountMap.value.get(row.location) ?? null;
+
+                // Self presence during overlap
+                const selfPresent = computeSelfPresent(row.location, overlapStart, overlapEnd);
+
                 return {
                     location: row.location,
                     friendALeave: friendALeaveMs,
                     coexistenceTime,
-                    formattedDate: dayjs(friendALeaveMs).format(dateFormat)
+                    formattedDate: dayjs(friendALeaveMs).format(dateFormat),
+                    instanceCreatorName,
+                    maxPlayerCount,
+                    selfPresent
                 };
             })
             .filter((item) => item.coexistenceTime > 0)
@@ -288,13 +403,29 @@
         if (!selectedFriendAId.value || !selectedFriendBId.value) return;
         isLoading.value = true;
         try {
-            rawResults.value = await database.getCoInstanceHistoryBetweenFriends(
+            const results = await database.getCoInstanceHistoryBetweenFriends(
                 selectedFriendAId.value,
                 selectedFriendBId.value
             );
+            rawResults.value = results;
+
+            // Collect unique locations for auxiliary queries
+            const locations = [...new Set(results.map((r) => r.location))];
+
+            const [selfMap, maxMap] = await Promise.all([
+                currentUser.value?.id
+                    ? database.getSelfPresenceForLocations(currentUser.value.id, locations)
+                    : Promise.resolve(new Map()),
+                database.getMaxPlayerCountForLocations(locations)
+            ]);
+
+            selfPresenceMap.value = selfMap;
+            maxPlayerCountMap.value = maxMap;
         } catch (error) {
             console.error('Error loading co-instance history:', error);
             rawResults.value = [];
+            selfPresenceMap.value = new Map();
+            maxPlayerCountMap.value = new Map();
         } finally {
             isLoading.value = false;
         }
@@ -303,6 +434,8 @@
     function handleFriendASelect(friendId) {
         selectedFriendAId.value = friendId || null;
         rawResults.value = [];
+        selfPresenceMap.value = new Map();
+        maxPlayerCountMap.value = new Map();
         if (friendId && selectedFriendBId.value) {
             loadData();
         }
@@ -311,6 +444,8 @@
     function handleFriendBSelect(friendId) {
         selectedFriendBId.value = friendId || null;
         rawResults.value = [];
+        selfPresenceMap.value = new Map();
+        maxPlayerCountMap.value = new Map();
         if (friendId && selectedFriendAId.value) {
             loadData();
         }
@@ -321,6 +456,8 @@
         selectedFriendAId.value = selectedFriendBId.value;
         selectedFriendBId.value = tmp;
         rawResults.value = [];
+        selfPresenceMap.value = new Map();
+        maxPlayerCountMap.value = new Map();
         if (selectedFriendAId.value && selectedFriendBId.value) {
             loadData();
         }

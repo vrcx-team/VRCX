@@ -418,7 +418,13 @@
                 "no_friend_selected": "请选择两位好友以查看共同在场记录",
                 "coexistence_time": "共存时长",
                 "instance_count": "共同在场次数",
-                "meet_count": "{count} 次共存"
+                "meet_count": "{count} 次共存",
+                "settings": "设置",
+                "show_self_presence": "显示自己是否在场",
+                "self_present": "我在场",
+                "self_not_present": "我未在场",
+                "instance_creator": "房间创建者",
+                "max_player_count": "最高同时在场人数"
             }
         },
         "tools": {
