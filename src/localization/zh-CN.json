@@ -406,6 +406,39 @@
                     "edge_curvature_help": "连接线的弯曲程度。数值越高，密集区域的线条越平滑。"
                 }
             },
+            "hot_worlds": {
+                "tab_label": "最常去世界",
+                "header": "最常去世界",
+                "refresh": "刷新",
+                "sorted_by": "按独立访客数排序",
+                "tips": {
+                    "description": "显示你的好友最近访问最多的世界。按访问过该世界的独立好友数排名。趋势图对比了所选时段的前半段与后半段。"
+                },
+                "period": {
+                    "days_7": "最近 7天",
+                    "days_30": "最近 30天",
+                    "days_90": "最近 90天"
+                },
+                "trend": {
+                    "rising": "上升",
+                    "cooling": "下降"
+                },
+                "stats_line": {
+                    "friends": "{count} 位好友",
+                    "visits": "{count} 次访问"
+                },
+                "stats": {
+                    "top_friends": "位好友访问过",
+                    "total_visits": "总访问次数",
+                    "rising": "上升",
+                    "cooling": "下降"
+                },
+                "sheet": {
+                    "friends_who_visited": "访问过的好友"
+                },
+                "no_friend_data": "没有好友访问数据",
+                "friend_visits": "{count} 次访问"
+            },
             "two_person_relationship": {
                 "header": "双人关系",
                 "select_friend_a": "选择好友 A",
