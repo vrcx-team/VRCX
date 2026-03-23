@@ -286,6 +286,7 @@ describe('sanitizeLayout', () => {
         expect(chartsFolder.items).toEqual([
             'charts-instance',
             'charts-mutual',
+            'charts-hot-worlds',
             'charts-two-person'
         ]);
     });

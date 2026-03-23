@@ -113,14 +113,13 @@ const navDefinitions = [
         labelKey: 'view.charts.two_person_relationship.header',
         routeName: 'charts-two-person'
     },
-    // temporary disabled hot-worlds
-    // {
-    //     key: 'charts-hot-worlds',
-    //     icon: 'ri-fire-line',
-    //     tooltip: 'view.charts.hot_worlds.tab_label',
-    //     labelKey: 'view.charts.hot_worlds.tab_label',
-    //     routeName: 'charts-hot-worlds'
-    // },
+    {
+        key: 'charts-hot-worlds',
+        icon: 'ri-fire-line',
+        tooltip: 'view.charts.hot_worlds.tab_label',
+        labelKey: 'view.charts.hot_worlds.tab_label',
+        routeName: 'charts-hot-worlds'
+    },
     {
         key: 'tools',
         icon: 'ri-tools-line',
