@@ -16,6 +16,7 @@ const testDefinitions = [
     { key: 'charts-mutual', routeName: 'charts-mutual' },
     { key: 'charts-hot-worlds', routeName: 'charts-hot-worlds' },
     { key: 'charts-two-person', routeName: 'charts-two-person' },
+    { key: 'charts-timeline', routeName: 'charts-timeline' },
     { key: 'notification', routeName: 'notification' },
     { key: 'direct-access', action: 'direct-access' }
 ];
@@ -287,7 +288,8 @@ describe('sanitizeLayout', () => {
             'charts-instance',
             'charts-mutual',
             'charts-hot-worlds',
-            'charts-two-person'
+            'charts-two-person',
+            'charts-timeline'
         ]);
     });
 

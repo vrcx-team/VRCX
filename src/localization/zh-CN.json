@@ -419,6 +419,16 @@
                 "coexistence_time": "共存时长",
                 "instance_count": "共同在场次数",
                 "meet_count": "{count} 次共存"
+            },
+            "relationship_timeline": {
+                "header": "关系时间轴",
+                "refresh": "刷新",
+                "top_n_friends": "显示前 {n} 位好友",
+                "others": "其他",
+                "days_per_unit": "天/单位",
+                "tips": {
+                    "description": "以百分比堆叠面积图的形式展示你与好友的关系随时间的变化。每个色带代表一位好友在你整体社交活动中的占比。使用右下角的尺度滑块调整时间颗粒度，拖动底部滑条可在时间轴上左右滚动。"
+                }
             }
         },
         "tools": {

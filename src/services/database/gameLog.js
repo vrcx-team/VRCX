@@ -1679,6 +1679,45 @@ const gameLog = {
                 '@location': input.location
             }
         );
+    },
+
+    /**
+     * Get per-friend per-day relationship data for the relationship timeline chart.
+     * Returns rows of (userId, displayName, day, totalTimeMs, joinCount) for all friends
+     * the current user has co-existed with in any logged instance.
+     * @returns {Promise<Array<{userId: string, displayName: string, day: string, totalTime: number, joinCount: number}>>}
+     */
+    async getRelationshipTimelineData() {
+        const results = [];
+        await sqliteService.execute(
+            (row) => {
+                results.push({
+                    userId: row[0],
+                    displayName: row[1],
+                    day: row[2],
+                    totalTime: row[3],
+                    joinCount: row[4]
+                });
+            },
+            `SELECT
+                user_id,
+                display_name,
+                date(created_at) AS day,
+                SUM(time) AS total_time,
+                COUNT(DISTINCT location) AS joinCount
+            FROM gamelog_join_leave
+            WHERE type = 'OnPlayerLeft'
+                AND user_id != ''
+                AND user_id != @currentUserId
+                AND time > 0
+                AND location NOT IN ('', 'traveling')
+            GROUP BY user_id, day
+            ORDER BY day ASC`,
+            {
+                '@currentUserId': dbVars.userId
+            }
+        );
+        return results;
     }
 };
 
