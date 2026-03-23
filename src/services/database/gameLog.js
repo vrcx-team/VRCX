@@ -473,6 +473,9 @@ const gameLog = {
     },
 
     async getAllUserStats(userIds, displayNames) {
+        if (!userIds.length && !displayNames.length) {
+            return [];
+        }
         var data = [];
         // this makes me most sad
         var userIdsString = '';
@@ -485,6 +488,13 @@ const gameLog = {
             displayNamesString += `'${displayName.replaceAll("'", "''")}', `;
         }
         displayNamesString = displayNamesString.slice(0, -2);
+        var whereClauses = [];
+        if (userIdsString) {
+            whereClauses.push(`g.user_id IN (${userIdsString})`);
+        }
+        if (displayNamesString) {
+            whereClauses.push(`g.display_name IN (${displayNamesString})`);
+        }
 
         await sqliteService.execute(
             (dbRow) => {
@@ -507,8 +517,7 @@ const gameLog = {
             FROM
                 gamelog_join_leave g
             WHERE
-                g.user_id IN (${userIdsString})
-                OR g.display_name IN (${displayNamesString})
+                ${whereClauses.join('\n                OR ')}
             GROUP BY
                 g.user_id,
                 g.display_name
