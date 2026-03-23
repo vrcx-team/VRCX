@@ -1535,6 +1535,52 @@ const gameLog = {
         return result;
     },
 
+    /**
+     * Get shared instance history between two friends
+     * @param {string} friendAUserId - The first friend's user ID
+     * @param {string} friendBUserId - The second friend's user ID
+     * @returns {Promise<Array<{location: string, friendALeave: string, friendATime: number, friendBLeave: string, friendBTime: number}>>}
+     */
+    async getCoInstanceHistoryBetweenFriends(friendAUserId, friendBUserId) {
+        const results = [];
+        await sqliteService.execute(
+            (row) => {
+                results.push({
+                    location: row[0],
+                    friendALeave: row[1],
+                    friendATime: row[2],
+                    friendBLeave: row[3],
+                    friendBTime: row[4]
+                });
+            },
+            `SELECT
+                a.location,
+                a.created_at AS friend_a_leave,
+                a.time AS friend_a_time,
+                b.created_at AS friend_b_leave,
+                b.time AS friend_b_time
+            FROM gamelog_join_leave a
+            INNER JOIN gamelog_join_leave b
+                ON a.location = b.location
+            WHERE a.type = 'OnPlayerLeft'
+                AND b.type = 'OnPlayerLeft'
+                AND a.user_id = @friendAUserId
+                AND b.user_id = @friendBUserId
+                AND a.location NOT IN ('', 'traveling')
+                AND b.location NOT IN ('', 'traveling')
+                AND a.time > 0
+                AND b.time > 0
+                AND strftime('%Y-%m-%dT%H:%M:%SZ', a.created_at, '-' || (a.time * 1.0 / 1000) || ' seconds') < b.created_at
+                AND strftime('%Y-%m-%dT%H:%M:%SZ', b.created_at, '-' || (b.time * 1.0 / 1000) || ' seconds') < a.created_at
+            ORDER BY a.created_at DESC`,
+            {
+                '@friendAUserId': friendAUserId,
+                '@friendBUserId': friendBUserId
+            }
+        );
+        return results;
+    },
+
     async getInstanceJoinHistory() {
         var oneWeekAgo = new Date(Date.now() - 604800000).toJSON();
         var instances = new Map();
