@@ -15,7 +15,9 @@
             "delete": "Delete",
             "remove": "Remove",
             "reset": "Reset",
-            "view_details": "View Details"
+            "view_details": "View Details",
+            "configure": "Configure",
+            "refresh": "Refresh"
         },
         "sort_by": "Sort by:",
         "time_units": {
@@ -920,7 +922,7 @@
                     "vrcx_memos_description": "Shows notes saved locally in VRCX",
                     "recent_action_cooldown": "Recent Action Indicator",
                     "recent_action_cooldown_description": "Show a clock icon on invite/request actions that were recently performed",
-                    "recent_action_cooldown_minutes": "Cooldown (minutes)"
+                    "recent_action_cooldown_minutes": "Cooldown (Minutes)"
                 },
                 "user_colors": {
                     "header": "User Colors",
@@ -974,7 +976,7 @@
                     },
                     "text_to_speech": {
                         "header": "Text-To-Speech",
-                        "when_to_play": "Notification TTS. When to Play",
+                        "when_to_play": "Notification TTS",
                         "tts_voice": "TTS Voice",
                         "use_memo_nicknames": "Use Memo Nicknames",
                         "play": "Play",

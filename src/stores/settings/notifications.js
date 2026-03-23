@@ -410,6 +410,20 @@ export const useNotificationsSettingsStore = defineStore(
             speechSynthesis.speak(tts);
         }
 
+        /**
+         * @param {number} seconds - timeout in seconds
+         */
+        function setNotificationTimeout(seconds) {
+            const ms = Math.trunc(Number(seconds) * 1000);
+            if (isNaN(ms) || ms < 0) return;
+            notificationTimeout.value = ms;
+            configRepository.setString(
+                'VRCX_notificationTimeout',
+                ms.toString()
+            );
+            vrStore.updateVRConfigVars();
+        }
+
         function promptNotificationTimeout() {
             modalStore
                 .prompt({
@@ -474,6 +488,7 @@ export const useNotificationsSettingsStore = defineStore(
             testNotificationTTS,
             speak,
             changeNotificationPosition,
+            setNotificationTimeout,
             promptNotificationTimeout
         };
     }
