@@ -1536,45 +1536,46 @@ const gameLog = {
     },
 
     /**
-     * Get shared instance history between the current user and a friend
-     * @param {string} friendUserId - The friend's user ID
-     * @returns {Promise<Array<{location: string, userLeave: string, userTime: number, friendLeave: string, friendTime: number}>>}
+     * Get shared instance history between two friends
+     * @param {string} friendAUserId - The first friend's user ID
+     * @param {string} friendBUserId - The second friend's user ID
+     * @returns {Promise<Array<{location: string, friendALeave: string, friendATime: number, friendBLeave: string, friendBTime: number}>>}
      */
-    async getCoInstanceHistory(friendUserId) {
+    async getCoInstanceHistoryBetweenFriends(friendAUserId, friendBUserId) {
         const results = [];
         await sqliteService.execute(
             (row) => {
                 results.push({
                     location: row[0],
-                    userLeave: row[1],
-                    userTime: row[2],
-                    friendLeave: row[3],
-                    friendTime: row[4]
+                    friendALeave: row[1],
+                    friendATime: row[2],
+                    friendBLeave: row[3],
+                    friendBTime: row[4]
                 });
             },
             `SELECT
-                u1.location,
-                u1.created_at AS user_leave,
-                u1.time AS user_time,
-                u2.created_at AS friend_leave,
-                u2.time AS friend_time
-            FROM gamelog_join_leave u1
-            INNER JOIN gamelog_join_leave u2
-                ON u1.location = u2.location
-            WHERE u1.type = 'OnPlayerLeft'
-                AND u2.type = 'OnPlayerLeft'
-                AND u1.user_id = @currentUserId
-                AND u2.user_id = @friendUserId
-                AND u1.location NOT IN ('', 'traveling')
-                AND u2.location NOT IN ('', 'traveling')
-                AND u1.time > 0
-                AND u2.time > 0
-                AND strftime('%Y-%m-%dT%H:%M:%SZ', u1.created_at, '-' || (u1.time * 1.0 / 1000) || ' seconds') < u2.created_at
-                AND strftime('%Y-%m-%dT%H:%M:%SZ', u2.created_at, '-' || (u2.time * 1.0 / 1000) || ' seconds') < u1.created_at
-            ORDER BY u1.created_at DESC`,
+                a.location,
+                a.created_at AS friend_a_leave,
+                a.time AS friend_a_time,
+                b.created_at AS friend_b_leave,
+                b.time AS friend_b_time
+            FROM gamelog_join_leave a
+            INNER JOIN gamelog_join_leave b
+                ON a.location = b.location
+            WHERE a.type = 'OnPlayerLeft'
+                AND b.type = 'OnPlayerLeft'
+                AND a.user_id = @friendAUserId
+                AND b.user_id = @friendBUserId
+                AND a.location NOT IN ('', 'traveling')
+                AND b.location NOT IN ('', 'traveling')
+                AND a.time > 0
+                AND b.time > 0
+                AND strftime('%Y-%m-%dT%H:%M:%SZ', a.created_at, '-' || (a.time * 1.0 / 1000) || ' seconds') < b.created_at
+                AND strftime('%Y-%m-%dT%H:%M:%SZ', b.created_at, '-' || (b.time * 1.0 / 1000) || ' seconds') < a.created_at
+            ORDER BY a.created_at DESC`,
             {
-                '@currentUserId': dbVars.userId,
-                '@friendUserId': friendUserId
+                '@friendAUserId': friendAUserId,
+                '@friendBUserId': friendBUserId
             }
         );
         return results;

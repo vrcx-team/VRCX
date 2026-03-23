@@ -408,12 +408,14 @@
             },
             "two_person_relationship": {
                 "header": "双人关系",
-                "select_friend": "选择好友",
+                "select_friend_a": "选择好友 A",
+                "select_friend_b": "选择好友 B",
                 "search_friend": "搜索好友...",
+                "swap_friends": "交换好友",
                 "total_coexistence_time": "共存总时长",
                 "shared_instances": "共同在场的房间",
                 "no_data": "没有共同在场的记录",
-                "no_friend_selected": "请选择一位好友以查看双人关系",
+                "no_friend_selected": "请选择两位好友以查看共同在场记录",
                 "coexistence_time": "共存时长",
                 "instance_count": "共同在场次数",
                 "meet_count": "{count} 次共存"

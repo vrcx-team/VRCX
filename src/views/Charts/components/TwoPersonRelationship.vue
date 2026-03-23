@@ -3,18 +3,66 @@
         <div ref="twoPersonRef" class="pt-4">
             <BackToTop :target="twoPersonRef" :right="30" :bottom="30" :teleport="false" />
 
-            <div class="options-container mt-0 flex items-center justify-between">
-                <div class="flex items-center gap-2 mb-4">
+            <div class="options-container mt-0 flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
                     <span class="shrink-0">{{ t('view.charts.two_person_relationship.header') }}</span>
                 </div>
 
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                     <VirtualCombobox
-                        class="w-64"
-                        :model-value="selectedFriendId"
-                        @update:modelValue="handleFriendSelect"
-                        :groups="friendPickerGroups"
-                        :placeholder="t('view.charts.two_person_relationship.select_friend')"
+                        class="w-56"
+                        :model-value="selectedFriendAId"
+                        @update:modelValue="handleFriendASelect"
+                        :groups="friendPickerGroupsA"
+                        :placeholder="t('view.charts.two_person_relationship.select_friend_a')"
+                        :search-placeholder="t('view.charts.two_person_relationship.search_friend')"
+                        :close-on-select="true"
+                        :deselect-on-reselect="true">
+                        <template #item="{ item, selected }">
+                            <div class="flex w-full items-center p-1.5 text-[13px]">
+                                <template v-if="item.user">
+                                    <div
+                                        class="relative mr-2.5 inline-block size-9 flex-none"
+                                        :class="userStatusClass(item.user)">
+                                        <img
+                                            class="size-full rounded-full object-cover"
+                                            :src="userImage(item.user)"
+                                            loading="lazy" />
+                                    </div>
+                                    <div class="flex-1 overflow-hidden">
+                                        <span
+                                            class="block truncate font-medium leading-[18px]"
+                                            :style="{ color: item.user.$userColour }">
+                                            {{ item.user.displayName }}
+                                        </span>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <span>{{ item.label }}</span>
+                                </template>
+                                <CheckIcon
+                                    :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                            </div>
+                        </template>
+                    </VirtualCombobox>
+
+                    <TooltipWrapper :content="t('view.charts.two_person_relationship.swap_friends')" side="top">
+                        <Button
+                            class="rounded-full"
+                            size="icon"
+                            variant="ghost"
+                            :disabled="!selectedFriendAId && !selectedFriendBId"
+                            @click="swapFriends">
+                            <ArrowLeftRight class="size-4" />
+                        </Button>
+                    </TooltipWrapper>
+
+                    <VirtualCombobox
+                        class="w-56"
+                        :model-value="selectedFriendBId"
+                        @update:modelValue="handleFriendBSelect"
+                        :groups="friendPickerGroupsB"
+                        :placeholder="t('view.charts.two_person_relationship.select_friend_b')"
                         :search-placeholder="t('view.charts.two_person_relationship.search_friend')"
                         :close-on-select="true"
                         :deselect-on-reselect="true">
@@ -51,7 +99,7 @@
                             class="rounded-full"
                             size="icon"
                             variant="ghost"
-                            :disabled="!selectedFriendId || isLoading"
+                            :disabled="!selectedFriendAId || !selectedFriendBId || isLoading"
                             @click="loadData">
                             <RefreshCcw />
                         </Button>
@@ -60,7 +108,7 @@
             </div>
 
             <div
-                v-if="!selectedFriendId"
+                v-if="!selectedFriendAId || !selectedFriendBId"
                 class="mt-[100px] flex flex-col items-center justify-center gap-2 text-muted-foreground">
                 <Users class="size-8 opacity-40" />
                 <span class="text-sm">{{ t('view.charts.two_person_relationship.no_friend_selected') }}</span>
@@ -97,7 +145,7 @@
                 <div class="mx-auto mt-3 max-w-[900px]">
                     <button
                         v-for="(item, index) in sharedInstances"
-                        :key="item.location + '_' + item.userLeave"
+                        :key="item.location + '_' + item.friendALeave"
                         type="button"
                         class="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent">
                         <span class="w-6 shrink-0 text-right font-mono text-sm font-bold text-muted-foreground">
@@ -127,7 +175,7 @@
     defineOptions({ name: 'ChartsTwoPerson' });
 
     import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-    import { Check as CheckIcon, Clock, Hash, RefreshCcw, Users } from 'lucide-vue-next';
+    import { ArrowLeftRight, Check as CheckIcon, Clock, Hash, RefreshCcw, Users } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -146,7 +194,8 @@
     const { t } = useI18n();
 
     const twoPersonRef = ref(null);
-    const selectedFriendId = ref(null);
+    const selectedFriendAId = ref(null);
+    const selectedFriendBId = ref(null);
     const isLoading = ref(false);
     const rawResults = ref([]);
 
@@ -171,10 +220,11 @@
         }
     }
 
-    const friendPickerGroups = computed(() => {
+    function buildFriendItems(excludeId) {
         const items = [];
         for (const [friendId, friend] of friends.value.entries()) {
             if (friendId === currentUser.value?.id) continue;
+            if (friendId === excludeId) continue;
             const cached = cachedUsers.get(friendId);
             const displayName = friend.displayName || cached?.displayName || friendId;
             items.push({
@@ -186,30 +236,33 @@
         }
         items.sort((a, b) => a.label.localeCompare(b.label));
         return [{ key: 'friends', label: t('side_panel.friends'), items }];
-    });
+    }
+
+    const friendPickerGroupsA = computed(() => buildFriendItems(selectedFriendBId.value));
+    const friendPickerGroupsB = computed(() => buildFriendItems(selectedFriendAId.value));
 
     const sharedInstances = computed(() => {
         const dateFormat = dtHour12.value ? 'YYYY-MM-DD hh:mm A' : 'YYYY-MM-DD HH:mm';
         return rawResults.value
             .map((row) => {
-                const userTime = Math.max(0, row.userTime);
-                const friendTime = Math.max(0, row.friendTime);
-                const userLeaveMs = dayjs(row.userLeave).valueOf();
-                const userJoin = userLeaveMs - userTime;
-                const friendLeaveMs = dayjs(row.friendLeave).valueOf();
-                const friendJoin = friendLeaveMs - friendTime;
-                const overlapStart = Math.max(userJoin, friendJoin);
-                const overlapEnd = Math.min(userLeaveMs, friendLeaveMs);
+                const friendATime = Math.max(0, row.friendATime);
+                const friendBTime = Math.max(0, row.friendBTime);
+                const friendALeaveMs = dayjs(row.friendALeave).valueOf();
+                const friendAJoin = friendALeaveMs - friendATime;
+                const friendBLeaveMs = dayjs(row.friendBLeave).valueOf();
+                const friendBJoin = friendBLeaveMs - friendBTime;
+                const overlapStart = Math.max(friendAJoin, friendBJoin);
+                const overlapEnd = Math.min(friendALeaveMs, friendBLeaveMs);
                 const coexistenceTime = Math.max(0, overlapEnd - overlapStart);
                 return {
                     location: row.location,
-                    userLeave: userLeaveMs,
+                    friendALeave: friendALeaveMs,
                     coexistenceTime,
-                    formattedDate: dayjs(userLeaveMs).format(dateFormat)
+                    formattedDate: dayjs(friendALeaveMs).format(dateFormat)
                 };
             })
             .filter((item) => item.coexistenceTime > 0)
-            .sort((a, b) => b.userLeave - a.userLeave);
+            .sort((a, b) => b.friendALeave - a.friendALeave);
     });
 
     const totalCoexistenceTime = computed(() => {
@@ -217,10 +270,13 @@
     });
 
     async function loadData() {
-        if (!selectedFriendId.value) return;
+        if (!selectedFriendAId.value || !selectedFriendBId.value) return;
         isLoading.value = true;
         try {
-            rawResults.value = await database.getCoInstanceHistory(selectedFriendId.value);
+            rawResults.value = await database.getCoInstanceHistoryBetweenFriends(
+                selectedFriendAId.value,
+                selectedFriendBId.value
+            );
         } catch (error) {
             console.error('Error loading co-instance history:', error);
             rawResults.value = [];
@@ -229,10 +285,28 @@
         }
     }
 
-    function handleFriendSelect(friendId) {
-        selectedFriendId.value = friendId || null;
+    function handleFriendASelect(friendId) {
+        selectedFriendAId.value = friendId || null;
         rawResults.value = [];
-        if (friendId) {
+        if (friendId && selectedFriendBId.value) {
+            loadData();
+        }
+    }
+
+    function handleFriendBSelect(friendId) {
+        selectedFriendBId.value = friendId || null;
+        rawResults.value = [];
+        if (friendId && selectedFriendAId.value) {
+            loadData();
+        }
+    }
+
+    function swapFriends() {
+        const tmp = selectedFriendAId.value;
+        selectedFriendAId.value = selectedFriendBId.value;
+        selectedFriendBId.value = tmp;
+        rawResults.value = [];
+        if (selectedFriendAId.value && selectedFriendBId.value) {
             loadData();
         }
     }
