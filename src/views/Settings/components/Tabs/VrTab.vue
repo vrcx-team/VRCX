@@ -2,8 +2,7 @@
     <div class="flex flex-col gap-10 py-2">
         <!-- VR Core -->
         <SettingsGroup :title="t('view.settings.vr.vr_core.header')">
-            <SettingsItem
-                :label="t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')">
+            <SettingsItem :label="t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')">
                 <Switch
                     :model-value="openVR"
                     @update:modelValue="
@@ -12,22 +11,19 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem
-                :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.start_overlay_with')">
-                <RadioGroup
+            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.start_overlay_with')">
+                <Select
                     :model-value="openVRAlways ? 'true' : 'false'"
                     :disabled="!openVR"
-                    class="gap-2 flex"
                     @update:modelValue="handleOpenVRAlwaysRadio">
-                    <div class="flex items-center space-x-2">
-                        <RadioGroupItem id="openVRAlways-false" value="false" />
-                        <label for="openVRAlways-false">{{ 'VRChat' }}</label>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <RadioGroupItem id="openVRAlways-true" value="true" />
-                        <label for="openVRAlways-true">{{ 'SteamVR' }}</label>
-                    </div>
-                </RadioGroup>
+                    <SelectTrigger size="sm">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="false">{{ 'VRChat' }}</SelectItem>
+                        <SelectItem value="true">{{ 'SteamVR' }}</SelectItem>
+                    </SelectContent>
+                </Select>
             </SettingsItem>
 
             <template v-if="!isLinux">
@@ -45,9 +41,7 @@
             </template>
             <template v-else>
                 <SettingsItem
-                    :label="
-                        t('view.settings.notifications.notifications.steamvr_notifications.wayvr_notifications')
-                    ">
+                    :label="t('view.settings.notifications.notifications.steamvr_notifications.wayvr_notifications')">
                     <Switch
                         :model-value="xsNotifications"
                         @update:modelValue="
@@ -90,8 +84,7 @@
 
         <!-- VR Notifications -->
         <SettingsGroup :title="t('view.settings.vr.vr_notifications.header')">
-            <SettingsItem
-                :label="t('view.settings.notifications.notifications.desktop_notifications.when_to_display')">
+            <SettingsItem :label="t('view.settings.notifications.notifications.desktop_notifications.when_to_display')">
                 <ToggleGroup
                     type="single"
                     required
@@ -124,9 +117,7 @@
             </SettingsItem>
 
             <SettingsItem
-                :label="
-                    t('view.settings.notifications.notifications.steamvr_notifications.overlay_notifications')
-                ">
+                :label="t('view.settings.notifications.notifications.steamvr_notifications.overlay_notifications')">
                 <Switch
                     :model-value="overlayNotifications"
                     :disabled="!openVR"
@@ -137,9 +128,7 @@
             </SettingsItem>
 
             <SettingsItem
-                :label="
-                    t('view.settings.notifications.notifications.steamvr_notifications.notification_position')
-                ">
+                :label="t('view.settings.notifications.notifications.steamvr_notifications.notification_position')">
                 <Button
                     size="sm"
                     variant="outline"
@@ -152,31 +141,31 @@
             </SettingsItem>
 
             <SettingsItem
-                :label="
-                    t('view.settings.notifications.notifications.steamvr_notifications.notification_opacity')
-                ">
+                :label="t('view.settings.notifications.notifications.steamvr_notifications.notification_opacity')">
                 <div class="w-75 max-w-full pt-1">
                     <Slider v-model="notificationOpacityValue" :min="0" :max="100" />
                 </div>
             </SettingsItem>
 
             <SettingsItem
-                :label="
-                    t('view.settings.notifications.notifications.steamvr_notifications.notification_timeout')
-                ">
-                <Button
-                    size="sm"
-                    variant="outline"
+                :label="t('view.settings.notifications.notifications.steamvr_notifications.notification_timeout')">
+                <NumberField
+                    :model-value="notificationTimeoutSeconds"
+                    :min="0"
+                    :step="1"
+                    :format-options="{ maximumFractionDigits: 0 }"
                     :disabled="(!overlayNotifications || !openVR) && !xsNotifications"
-                    @click="promptNotificationTimeout"
-                    >{{
-                        t('view.settings.notifications.notifications.steamvr_notifications.notification_timeout')
-                    }}</Button
-                >
+                    class="w-32"
+                    @update:modelValue="setNotificationTimeout">
+                    <NumberFieldContent>
+                        <NumberFieldDecrement />
+                        <NumberFieldInput />
+                        <NumberFieldIncrement />
+                    </NumberFieldContent>
+                </NumberField>
             </SettingsItem>
 
-            <SettingsItem
-                :label="t('view.settings.notifications.notifications.steamvr_notifications.user_images')">
+            <SettingsItem :label="t('view.settings.notifications.notifications.steamvr_notifications.user_images')">
                 <Switch
                     :model-value="imageNotifications"
                     @update:modelValue="
@@ -191,7 +180,8 @@
 
         <!-- VR Extras -->
         <SettingsGroup :title="t('view.settings.vr.vr_extras.header')">
-            <SettingsItem :label="t('view.settings.advanced.advanced.video_progress_pie.header')"
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.video_progress_pie.header')"
                 :description="t('view.settings.advanced.advanced.video_progress_pie.enable_tooltip')">
                 <Switch
                     :model-value="progressPie"
@@ -214,10 +204,17 @@
 
 <script setup>
     import { computed, ref } from 'vue';
+    import {
+        NumberField,
+        NumberFieldContent,
+        NumberFieldDecrement,
+        NumberFieldIncrement,
+        NumberFieldInput
+    } from '@/components/ui/number-field';
     import { Button } from '@/components/ui/button';
     import { Switch } from '@/components/ui/switch';
     import { Slider } from '@/components/ui/slider';
-    import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -250,7 +247,8 @@
         xsNotifications,
         ovrtHudNotifications,
         ovrtWristNotifications,
-        imageNotifications
+        imageNotifications,
+        notificationTimeout
     } = storeToRefs(notificationsSettingsStore);
 
     const { notificationOpacity } = storeToRefs(advancedSettingsStore);
@@ -258,10 +256,7 @@
     const { openVRAlways } = storeToRefs(wristOverlaySettingsStore);
     const { setOpenVRAlways } = wristOverlaySettingsStore;
 
-    const {
-        progressPie,
-        progressPieFilter
-    } = storeToRefs(advancedSettingsStore);
+    const { progressPie, progressPieFilter } = storeToRefs(advancedSettingsStore);
 
     const {
         setOverlayToast,
@@ -271,8 +266,10 @@
         setOvrtHudNotifications,
         setOvrtWristNotifications,
         setImageNotifications,
-        promptNotificationTimeout
+        setNotificationTimeout
     } = notificationsSettingsStore;
+
+    const notificationTimeoutSeconds = computed(() => notificationTimeout.value / 1000);
 
     const { setNotificationOpacity } = advancedSettingsStore;
 

@@ -156,97 +156,120 @@
 
         <SettingsGroup :title="t('view.settings.interface.lists_tables.header')">
             <SettingsItem :label="t('view.settings.appearance.appearance.sort_favorite_by')">
-                <RadioGroup
+                <ToggleGroup
+                    type="single"
+                    required
+                    variant="outline"
+                    size="sm"
                     :model-value="sortFavorites ? 'true' : 'false'"
-                    class="gap-2 flex"
-                    @update:modelValue="handleSortFavoritesRadio">
-                    <div class="flex items-center space-x-2">
-                        <RadioGroupItem id="sortFavorites-false" value="false" />
-                        <label for="sortFavorites-false">
-                            {{ t('view.settings.appearance.appearance.sort_favorite_by_name') }}
-                        </label>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <RadioGroupItem id="sortFavorites-true" value="true" />
-                        <label for="sortFavorites-true">
-                            {{ t('view.settings.appearance.appearance.sort_favorite_by_date') }}
-                        </label>
-                    </div>
-                </RadioGroup>
+                    @update:model-value="handleSortFavoritesRadio">
+                    <ToggleGroupItem value="false">{{
+                        t('view.settings.appearance.appearance.sort_favorite_by_name')
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="true">{{
+                        t('view.settings.appearance.appearance.sort_favorite_by_date')
+                    }}</ToggleGroupItem>
+                </ToggleGroup>
             </SettingsItem>
 
             <SettingsItem :label="t('view.settings.appearance.appearance.sort_instance_users_by')">
-                <RadioGroup
+                <ToggleGroup
+                    type="single"
+                    required
+                    variant="outline"
+                    size="sm"
                     :model-value="instanceUsersSortAlphabetical ? 'true' : 'false'"
-                    class="gap-2 flex"
-                    @update:modelValue="handleInstanceUsersSortAlphabeticalRadio">
-                    <div class="flex items-center space-x-2">
-                        <RadioGroupItem id="instanceUsersSortAlphabetical-false" value="false" />
-                        <label for="instanceUsersSortAlphabetical-false">
-                            {{ t('view.settings.appearance.appearance.sort_instance_users_by_time') }}
-                        </label>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <RadioGroupItem id="instanceUsersSortAlphabetical-true" value="true" />
-                        <label for="instanceUsersSortAlphabetical-true">
-                            {{ t('view.settings.appearance.appearance.sort_instance_users_by_alphabet') }}
-                        </label>
-                    </div>
-                </RadioGroup>
+                    @update:model-value="handleInstanceUsersSortAlphabeticalRadio">
+                    <ToggleGroupItem value="false">{{
+                        t('view.settings.appearance.appearance.sort_instance_users_by_time')
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="true">{{
+                        t('view.settings.appearance.appearance.sort_instance_users_by_alphabet')
+                    }}</ToggleGroupItem>
+                </ToggleGroup>
             </SettingsItem>
 
             <SettingsItem :label="t('view.settings.appearance.appearance.table_page_sizes')">
-                <Popover v-model:open="tablePageSizesOpen">
-                    <ListboxRoot v-model="tablePageSizesModel" highlight-on-hover multiple>
-                        <PopoverAnchor class="inline-flex w-75">
-                            <TagsInput v-slot="{ modelValue: tags }" v-model="tablePageSizesModel" class="w-full">
-                                <TagsInputItem v-for="item in tags" :key="item.toString()" :value="item.toString()">
-                                    <TagsInputItemText />
-                                    <TagsInputItemDelete />
-                                </TagsInputItem>
+                <Button size="sm" variant="outline" @click="tablePageSizesDialogOpen = true">{{
+                    t('common.actions.configure')
+                }}</Button>
 
-                                <ListboxFilter v-model="tablePageSizesSearchTerm" as-child>
-                                    <TagsInputInput
-                                        :placeholder="t('view.settings.appearance.appearance.table_page_sizes')"
-                                        @keydown.enter.prevent="addTablePageSizeFromInput"
-                                        @keydown.down="tablePageSizesOpen = true" />
-                                </ListboxFilter>
+                <Dialog v-model:open="tablePageSizesDialogOpen">
+                    <DialogContent class="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle>{{ t('view.settings.appearance.appearance.table_page_sizes') }}</DialogTitle>
+                        </DialogHeader>
 
-                                <PopoverTrigger as-child>
-                                    <Button size="icon-sm" variant="ghost" class="order-last self-start ml-auto">
-                                        <ChevronDown class="size-3.5" />
-                                    </Button>
-                                </PopoverTrigger>
-                            </TagsInput>
-                        </PopoverAnchor>
+                        <Popover v-model:open="tablePageSizesOpen">
+                            <ListboxRoot v-model="tablePageSizesModel" highlight-on-hover multiple>
+                                <PopoverAnchor class="inline-flex w-full">
+                                    <TagsInput
+                                        v-slot="{ modelValue: tags }"
+                                        v-model="tablePageSizesModel"
+                                        class="w-full">
+                                        <TagsInputItem
+                                            v-for="item in tags"
+                                            :key="item.toString()"
+                                            :value="item.toString()">
+                                            <TagsInputItemText />
+                                            <TagsInputItemDelete />
+                                        </TagsInputItem>
 
-                        <PopoverContent class="p-1" @open-auto-focus.prevent>
-                            <ListboxContent
-                                class="max-h-75 scroll-py-1 overflow-x-hidden overflow-y-auto empty:after:content-['No_options'] empty:p-1 empty:after:block"
-                                tabindex="0">
-                                <ListboxItem
-                                    v-for="size in filteredTablePageSizeOptions"
-                                    :key="size"
-                                    class="data-highlighted:bg-accent data-highlighted:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
-                                    :value="size"
-                                    @select="tablePageSizesSearchTerm = ''">
-                                    <span>{{ size }}</span>
+                                        <ListboxFilter v-model="tablePageSizesSearchTerm" as-child>
+                                            <TagsInputInput
+                                                :placeholder="t('view.settings.appearance.appearance.table_page_sizes')"
+                                                @keydown.down="tablePageSizesOpen = true" />
+                                        </ListboxFilter>
 
-                                    <ListboxItemIndicator class="ml-auto inline-flex items-center justify-center">
-                                        <CheckIcon />
-                                    </ListboxItemIndicator>
-                                </ListboxItem>
-                            </ListboxContent>
-                        </PopoverContent>
-                    </ListboxRoot>
-                </Popover>
+                                        <PopoverTrigger as-child>
+                                            <Button
+                                                size="icon-sm"
+                                                variant="ghost"
+                                                class="order-last ml-auto self-start">
+                                                <ChevronDown class="size-3.5" />
+                                            </Button>
+                                        </PopoverTrigger>
+                                    </TagsInput>
+                                </PopoverAnchor>
+
+                                <PopoverContent
+                                    class="w-[var(--reka-popover-trigger-width)] p-1"
+                                    @open-auto-focus.prevent>
+                                    <ListboxContent
+                                        class="max-h-75 scroll-py-1 overflow-x-hidden overflow-y-auto empty:after:block empty:after:content-['No_options'] empty:p-1"
+                                        tabindex="0">
+                                        <ListboxItem
+                                            v-for="size in filteredTablePageSizeOptions"
+                                            :key="size"
+                                            class="data-highlighted:bg-accent data-highlighted:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+                                            :value="size"
+                                            @select="tablePageSizesSearchTerm = ''">
+                                            <span>{{ size }}</span>
+
+                                            <ListboxItemIndicator
+                                                class="ml-auto inline-flex items-center justify-center">
+                                                <CheckIcon />
+                                            </ListboxItemIndicator>
+                                        </ListboxItem>
+                                    </ListboxContent>
+                                </PopoverContent>
+                            </ListboxRoot>
+                        </Popover>
+
+                        <DialogFooter>
+                            <Button variant="outline" @click="tablePageSizesDialogOpen = false">{{
+                                t('dialog.alertdialog.ok')
+                            }}</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </SettingsItem>
 
             <SettingsItem
                 :label="t('view.settings.appearance.appearance.table_entries_settings')"
                 :description="t('view.settings.appearance.appearance.table_entries_settings_description')">
                 <Button size="sm" variant="outline" @click="showTableLimitsDialog">{{
-                    t('view.settings.appearance.appearance.table_entries_settings')
+                    t('common.actions.configure')
                 }}</Button>
             </SettingsItem>
         </SettingsGroup>
@@ -254,23 +277,20 @@
 
         <SettingsGroup :title="t('view.settings.appearance.timedate.header')">
             <SettingsItem :label="t('view.settings.appearance.timedate.time_format')">
-                <RadioGroup
+                <ToggleGroup
+                    type="single"
+                    required
+                    variant="outline"
+                    size="sm"
                     :model-value="dtHour12 ? 'true' : 'false'"
-                    class="gap-2 flex"
-                    @update:modelValue="handleDtHour12Radio">
-                    <div class="flex items-center space-x-2">
-                        <RadioGroupItem id="dtHour12-true" value="true" />
-                        <label for="dtHour12-true">
-                            {{ t('view.settings.appearance.timedate.time_format_12') }}
-                        </label>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <RadioGroupItem id="dtHour12-false" value="false" />
-                        <label for="dtHour12-false">
-                            {{ t('view.settings.appearance.timedate.time_format_24') }}
-                        </label>
-                    </div>
-                </RadioGroup>
+                    @update:model-value="handleDtHour12Radio">
+                    <ToggleGroupItem value="true">{{
+                        t('view.settings.appearance.timedate.time_format_12')
+                    }}</ToggleGroupItem>
+                    <ToggleGroupItem value="false">{{
+                        t('view.settings.appearance.timedate.time_format_24')
+                    }}</ToggleGroupItem>
+                </ToggleGroup>
             </SettingsItem>
 
             <SettingsItem :label="t('view.settings.appearance.timedate.force_iso_date_format')">
@@ -333,15 +353,7 @@
 </template>
 
 <script setup>
-    import {
-        Select,
-        SelectContent,
-        SelectGroup,
-        SelectItem,
-        SelectSeparator,
-        SelectTrigger,
-        SelectValue
-    } from '@/components/ui/select';
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import {
         DropdownMenu,
         DropdownMenuCheckboxItem,
@@ -374,11 +386,13 @@
     } from '@/components/ui/dialog';
     import { Input } from '@/components/ui/input';
     import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+
     import { computed, onBeforeUnmount, ref, watch } from 'vue';
     import { CheckIcon, ChevronDown } from 'lucide-vue-next';
-    import { useAppearanceSettingsStore, useFavoriteStore, useVrStore } from '@/stores';
-    import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+    import { useAppearanceSettingsStore, useVrStore } from '@/stores';
+
     import { Switch } from '@/components/ui/switch';
+    import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
     import { getLanguageName, languageCodes } from '@/localization';
     import { APP_CJK_FONT_PACKS, APP_FONT_CONFIG, APP_FONT_DEFAULT_KEY, APP_FONT_FAMILIES } from '@/shared/constants';
     import { Button } from '@/components/ui/button';
@@ -634,6 +648,7 @@
 
     const TABLE_PAGE_SIZE_SUGGESTIONS = Object.freeze([5, 10, 15, 20, 25, 30, 50, 75, 100, 150, 200, 250, 500, 1000]);
 
+    const tablePageSizesDialogOpen = ref(false);
     const tablePageSizesOpen = ref(false);
     const tablePageSizesSearchTerm = ref('');
 
@@ -657,22 +672,6 @@
             tablePageSizesOpen.value = true;
         }
     });
-
-    /**
-     *
-     */
-    function addTablePageSizeFromInput() {
-        const raw = String(tablePageSizesSearchTerm.value ?? '').trim();
-        if (!raw) {
-            return;
-        }
-        if (!Array.isArray(tablePageSizesModel.value)) {
-            tablePageSizesModel.value = [raw];
-        } else if (!tablePageSizesModel.value.includes(raw)) {
-            tablePageSizesModel.value = [...tablePageSizesModel.value, raw];
-        }
-        tablePageSizesSearchTerm.value = '';
-    }
 
     /**
      *

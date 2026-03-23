@@ -267,7 +267,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { formatDateFilter, languageClass, openDiscordProfile, userImage } from '../../../shared/utils';
+    import { formatDateFilter, languageClass, openDiscordProfile } from '../../../shared/utils';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover';
     import { useGalleryStore, useUserStore } from '../../../stores';
@@ -305,7 +305,7 @@
     const { userDialog, currentUser } = storeToRefs(useUserStore());
 
     const { showFullscreenImageDialog } = useGalleryStore();
-    const { userStatusClass } = useUserDisplay();
+    const { userImage, userStatusClass } = useUserDisplay();
 
     const profileImageError = ref(false);
     const userIconError = ref(false);

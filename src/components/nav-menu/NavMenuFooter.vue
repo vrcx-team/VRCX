@@ -10,7 +10,7 @@
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side="right" align="start" class="w-56">
-                        <DropdownMenuItem @click="emit('show-change-log')">
+                        <DropdownMenuItem @click="emit('show-whats-new')">
                             <span>{{ t('nav_menu.whats_new') }}</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
@@ -253,7 +253,7 @@
     });
 
     const emit = defineEmits([
-        'show-change-log',
+        'show-whats-new',
         'support-link',
         'toggle-theme',
         'show-vrcx-update-dialog',

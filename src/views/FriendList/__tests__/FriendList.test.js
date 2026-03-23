@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 
@@ -121,6 +121,7 @@ vi.mock('../../../services/confusables', () => ({
 }));
 
 vi.mock('../../../shared/utils', () => ({
+    debounce: (fn) => fn,
     localeIncludes: (source, query) =>
         String(source ?? '')
             .toLowerCase()
@@ -174,9 +175,9 @@ vi.mock('@/components/ui/button', () => ({
 vi.mock('@/components/ui/input-group', () => ({
     InputGroupField: {
         props: ['modelValue'],
-        emits: ['update:modelValue', 'change'],
+        emits: ['update:modelValue', 'input', 'change'],
         template:
-            '<input data-testid="friend-search" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" @change="$emit(\'change\')" />'
+            '<input data-testid="friend-search" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value); $emit(\'input\', $event.target.value)" @change="$emit(\'change\')" />'
     }
 }));
 
@@ -274,6 +275,7 @@ async function flushAsync() {
 
 describe('FriendList.vue', () => {
     beforeEach(() => {
+        vi.useFakeTimers();
         mocks.route.path = '/friend-list';
         mocks.friends.value = new Map();
         mocks.allFavoriteFriendIds.value = new Set();
@@ -294,6 +296,11 @@ describe('FriendList.vue', () => {
         mocks.setPageIndex.mockReset();
         mocks.setSorting.mockReset();
         mocks.toggleBulkColumnVisibility.mockReset();
+    });
+
+    afterEach(() => {
+        vi.runOnlyPendingTimers();
+        vi.useRealTimers();
     });
 
     test('filters friend list by search text and VIP toggle', async () => {
@@ -318,6 +325,77 @@ describe('FriendList.vue', () => {
         ).toEqual(['usr_1']);
         expect(mocks.getAllUserStats).toHaveBeenCalledTimes(1);
         expect(mocks.getAllUserMutualCount).toHaveBeenCalledTimes(1);
+    });
+
+    test('debounces search input and applies immediately on change', async () => {
+        mocks.friends.value = new Map([
+            ['usr_1', makeFriendCtx({ id: 'usr_1', displayName: 'Alice' })],
+            ['usr_2', makeFriendCtx({ id: 'usr_2', displayName: 'Bob' })]
+        ]);
+
+        const wrapper = mount(FriendList);
+        await flushAsync();
+
+        const searchInput = wrapper.get('[data-testid="friend-search"]');
+        searchInput.element.value = 'bob';
+        await searchInput.trigger('input');
+        await nextTick();
+
+        expect(
+            wrapper.vm.friendsListDisplayData.map((item) => item.id)
+        ).toEqual(['usr_1', 'usr_2']);
+
+        vi.advanceTimersByTime(150);
+        await flushAsync();
+
+        expect(
+            wrapper.vm.friendsListDisplayData.map((item) => item.id)
+        ).toEqual(['usr_2']);
+
+        mocks.friendsListSearch.value = 'alice';
+        await searchInput.trigger('change');
+        await flushAsync();
+
+        expect(
+            wrapper.vm.friendsListDisplayData.map((item) => item.id)
+        ).toEqual(['usr_1']);
+    });
+
+    test('refreshFriendStats retries immediately after a failed stats request', async () => {
+        mocks.friends.value = new Map([
+            ['usr_1', makeFriendCtx({ id: 'usr_1', displayName: 'Alice' })]
+        ]);
+        mocks.getAllUserStats.mockRejectedValueOnce(new Error('stats failed'));
+
+        const wrapper = mount(FriendList);
+        await flushAsync();
+
+        expect(mocks.getAllUserStats).toHaveBeenCalledTimes(1);
+
+        await wrapper.vm.refreshFriendStats();
+
+        expect(mocks.getAllUserStats).toHaveBeenCalledTimes(2);
+        expect(mocks.getAllUserMutualCount).toHaveBeenCalledTimes(2);
+    });
+
+    test('refreshFriendStats refreshes again when friend roster changes with same size', async () => {
+        mocks.friends.value = new Map([
+            ['usr_1', makeFriendCtx({ id: 'usr_1', displayName: 'Alice' })]
+        ]);
+
+        const wrapper = mount(FriendList);
+        await flushAsync();
+
+        expect(mocks.getAllUserStats).toHaveBeenCalledTimes(1);
+
+        mocks.friends.value = new Map([
+            ['usr_2', makeFriendCtx({ id: 'usr_2', displayName: 'Bob' })]
+        ]);
+
+        await wrapper.vm.refreshFriendStats();
+
+        expect(mocks.getAllUserStats).toHaveBeenCalledTimes(2);
+        expect(mocks.getAllUserMutualCount).toHaveBeenCalledTimes(2);
     });
 
     test('opens charts tab from toolbar button', async () => {

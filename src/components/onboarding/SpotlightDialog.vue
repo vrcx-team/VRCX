@@ -1,7 +1,7 @@
 <template>
     <Dialog v-model:open="isOpen">
         <DialogContent
-            class="border-none! bg-background/85 shadow-[0_0_0_1px_hsl(from_var(--border)_h_s_l/0.5),0_24px_48px_hsl(from_var(--background)_h_s_l/0.4)] backdrop-blur-xl backdrop-saturate-[1.4] sm:max-w-xl"
+            class="border border-border bg-background/85 shadow-lg backdrop-blur-xl backdrop-saturate-[1.4] sm:max-w-xl"
             :show-close-button="false"
             @escape-key-down="handleDismiss"
             @pointer-down-outside="handleDismiss"
@@ -14,11 +14,11 @@
                 <p class="mt-1.5 text-sm text-muted-foreground">{{ t('onboarding.welcome.subtitle') }}</p>
             </div>
 
-            <div class="my-4 grid grid-cols-4 gap-2.5">
+            <div class="my-4 grid auto-rows-fr grid-cols-4 gap-2.5">
                 <div
                     v-for="(feature, index) in features"
                     :key="feature.key"
-                    class="flex animate-[featureAppear_0.4s_ease-out_both] cursor-default flex-col items-center rounded-[10px] border border-transparent bg-muted/50 px-2 py-3.5 pb-3 text-center transition-all duration-250 hover:-translate-y-0.5 hover:border-primary/25 hover:bg-muted/80 hover:shadow-[0_4px_16px_hsl(from_var(--primary)_h_s_l/0.08)]"
+                    class="flex h-full animate-[featureAppear_0.4s_ease-out_both] cursor-default flex-col items-center rounded-[10px] border border-transparent bg-muted/50 px-2 py-3.5 pb-3 text-center transition-all duration-250 hover:-translate-y-0.5 hover:border-primary/25 hover:bg-muted/80 hover:shadow-[0_4px_16px_hsl(from_var(--primary)_h_s_l/0.08)]"
                     :style="{ animationDelay: `${0.1 + index * 0.1}s` }">
                     <div
                         class="mb-2.5 flex size-10 items-center justify-center rounded-[10px] transition-all duration-250"
@@ -28,10 +28,10 @@
                         }">
                         <component :is="feature.icon" class="size-5" />
                     </div>
-                    <div class="mb-1 text-[13px] font-semibold">
+                    <div class="mb-1 w-full text-[13px] font-semibold leading-snug">
                         {{ t(`onboarding.welcome.features.${feature.key}.title`) }}
                     </div>
-                    <div class="text-[11.5px] leading-snug text-muted-foreground">
+                    <div class="w-full text-[11.5px] leading-snug text-muted-foreground">
                         {{ t(`onboarding.welcome.features.${feature.key}.description`) }}
                     </div>
                 </div>
@@ -39,7 +39,6 @@
 
             <div class="flex flex-col items-center">
                 <Button class="w-full text-sm font-semibold" size="lg" @click="handleDismiss">
-                    <Sparkles class="mr-1.5 size-4" />
                     {{ t('onboarding.welcome.cta') }}
                 </Button>
             </div>

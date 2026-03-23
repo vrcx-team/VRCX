@@ -318,13 +318,13 @@
     import { useI18n } from 'vue-i18n';
 
     import {
-        useAdvancedSettingsStore,
         useAppearanceSettingsStore,
         useAuthStore,
         useAvatarProviderStore,
         useSearchStore
     } from '../../stores';
-    import { convertFileUrlToImageUrl, languageClass, userImage } from '../../shared/utils';
+    import { convertFileUrlToImageUrl, languageClass } from '../../shared/utils';
+    import { useUserDisplay } from '../../composables/useUserDisplay';
     import { showAvatarDialog } from '../../coordinators/avatarCoordinator';
     import { showGroupDialog } from '../../coordinators/groupCoordinator';
     import { showUserDialog } from '../../coordinators/userCoordinator';
@@ -338,13 +338,13 @@
     const { avatarRemoteDatabaseProviderList, avatarRemoteDatabaseProvider, isAvatarProviderDialogVisible } =
         storeToRefs(useAvatarProviderStore());
     const { setAvatarProvider } = useAvatarProviderStore();
-    const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
 
     const { searchText, searchUserResults } = storeToRefs(useSearchStore());
     const { clearSearch } = useSearchStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
 
     const { t } = useI18n();
+    const { userImage } = useUserDisplay();
 
     const activeSearchTab = ref('user');
 

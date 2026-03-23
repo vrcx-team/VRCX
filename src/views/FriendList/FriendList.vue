@@ -61,6 +61,7 @@
                                 :placeholder="t('view.friend_list.search_placeholder')"
                                 clearable
                                 class="w-[250px]"
+                                @input="scheduleFriendsListSearchChange"
                                 @change="friendsListSearchChange" />
                         </div>
                         <div class="flex items-center">
@@ -120,7 +121,7 @@
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-    import { computed, nextTick, ref, watch } from 'vue';
+    import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupField } from '@/components/ui/input-group';
     import { Progress } from '@/components/ui/progress';
@@ -147,6 +148,7 @@
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
     import { showUserDialog } from '../../coordinators/userCoordinator';
     import { confirmDeleteFriend, handleFriendDelete } from '../../coordinators/friendRelationshipCoordinator';
+    import { useUserDisplay } from '../../composables/useUserDisplay';
 
     const { t } = useI18n();
 
@@ -157,6 +159,7 @@
     const { getAllUserStats, getAllUserMutualCount } = useFriendStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { randomUserColours } = storeToRefs(appearanceSettingsStore);
+    const { userImage } = useUserDisplay();
 
     const { stringComparer, friendsListSearch } = storeToRefs(useSearchStore());
 
@@ -183,13 +186,21 @@
     });
 
     const friendsListRef = ref(null);
+    const friendSearchCache = new Map();
+    const FRIEND_LIST_SEARCH_DEBOUNCE_MS = 150;
+    const FRIEND_STATS_REFRESH_INTERVAL_MS = 30000;
+    let friendsListSearchTimer = 0;
+    let friendStatsRefreshInFlight = null;
+    let lastFriendStatsRefreshAt = 0;
+    let lastFriendStatsRefreshKey = '';
 
     const friendsListColumns = computed(() =>
         createColumns({
             randomUserColours,
             selectedFriends,
             onToggleFriendSelection: toggleFriendSelection,
-            onConfirmDeleteFriend: confirmDeleteFriend
+            onConfirmDeleteFriend: confirmDeleteFriend,
+            userImage
         })
     );
 
@@ -254,7 +265,7 @@
         () => route.path,
         () => {
             refreshFriendStats();
-            nextTick(() => friendsListSearchChange());
+            nextTick(() => applyFriendsListSearchChange());
         },
         { immediate: true }
     );
@@ -262,23 +273,116 @@
     watch(
         () => friends.value.size,
         () => {
-            refreshFriendStats();
-            friendsListSearchChange();
+            friendSearchCache.clear();
+            refreshFriendStats({ force: true });
+            applyFriendsListSearchChange();
         }
     );
 
-    function refreshFriendStats() {
-        getAllUserStats();
-        getAllUserMutualCount();
+    onBeforeUnmount(() => {
+        if (friendsListSearchTimer) {
+            clearTimeout(friendsListSearchTimer);
+        }
+    });
+
+    function getFriendStatsRefreshKey() {
+        return Array.from(friends.value.keys()).sort().join('\u0000');
+    }
+
+    async function refreshFriendStats({ force = false } = {}) {
+        const friendStatsRefreshKey = getFriendStatsRefreshKey();
+        if (!friendStatsRefreshKey) {
+            return;
+        }
+        const now = Date.now();
+        const isStillFresh =
+            friendStatsRefreshKey === lastFriendStatsRefreshKey &&
+            now - lastFriendStatsRefreshAt < FRIEND_STATS_REFRESH_INTERVAL_MS;
+        if (!force && (friendStatsRefreshInFlight || isStillFresh)) {
+            return friendStatsRefreshInFlight;
+        }
+        friendStatsRefreshInFlight = Promise.allSettled([
+            getAllUserStats(),
+            getAllUserMutualCount()
+        ]).then((results) => {
+            if (results.every((result) => result.status === 'fulfilled')) {
+                lastFriendStatsRefreshAt = Date.now();
+                lastFriendStatsRefreshKey = friendStatsRefreshKey;
+            }
+            return results;
+        }).finally(() => {
+            friendStatsRefreshInFlight = null;
+        });
+        return friendStatsRefreshInFlight;
+    }
+
+    /**
+     *
+     */
+    function scheduleFriendsListSearchChange() {
+        if (friendsListSearchTimer) {
+            clearTimeout(friendsListSearchTimer);
+        }
+        friendsListSearchTimer = setTimeout(() => {
+            friendsListSearchTimer = 0;
+            applyFriendsListSearchChange();
+        }, FRIEND_LIST_SEARCH_DEBOUNCE_MS);
     }
 
     /**
      *
      */
     function friendsListSearchChange() {
+        if (friendsListSearchTimer) {
+            clearTimeout(friendsListSearchTimer);
+            friendsListSearchTimer = 0;
+        }
+        applyFriendsListSearchChange();
+    }
+
+    /**
+     *
+     * @param {object} ctx
+     * @returns {object | null}
+     */
+    function getFriendSearchEntry(ctx) {
+        if (!ctx?.ref?.id) {
+            return null;
+        }
+        const signature = [
+            ctx.memo ?? '',
+            ctx.ref.displayName ?? '',
+            ctx.ref.note ?? '',
+            ctx.ref.bio ?? '',
+            ctx.ref.statusDescription ?? '',
+            ctx.ref.$trustLevel ?? ''
+        ].join('\u0000');
+        const cached = friendSearchCache.get(ctx.id);
+        if (cached?.signature === signature) {
+            return cached;
+        }
+        const entry = {
+            signature,
+            bio: ctx.ref.bio ?? '',
+            displayName: ctx.ref.displayName ?? '',
+            memo: ctx.memo ?? '',
+            normalizedDisplayName: removeConfusables(ctx.ref.displayName ?? ''),
+            note: ctx.ref.note ?? '',
+            rank: String(ctx.ref.$trustLevel ?? '').toUpperCase(),
+            status: ctx.ref.statusDescription ?? ''
+        };
+        friendSearchCache.set(ctx.id, entry);
+        return entry;
+    }
+
+    /**
+     *
+     */
+    function applyFriendsListSearchChange() {
         friendsListLoading.value = true;
         let query = '';
         let cleanedQuery = '';
+        let upperQuery = '';
         friendsListDisplayData.value = [];
         let filters = friendsListSearchFilters.value.length
             ? [...friendsListSearchFilters.value]
@@ -287,31 +391,34 @@
         if (friendsListSearch.value) {
             query = friendsListSearch.value;
             cleanedQuery = removeWhitespace(query);
+            upperQuery = query.toUpperCase();
         }
         for (const ctx of friends.value.values()) {
             if (!ctx.ref) continue;
             if (friendsListSearchFilterVIP.value && !allFavoriteFriendIds.value.has(ctx.id)) continue;
             if (query) {
                 let match = false;
-                if (!match && filters.includes('Display Name') && ctx.ref.displayName) {
+                const searchEntry = getFriendSearchEntry(ctx);
+                if (!searchEntry) continue;
+                if (!match && filters.includes('Display Name') && searchEntry.displayName) {
                     match =
-                        localeIncludes(ctx.ref.displayName, cleanedQuery, stringComparer.value) ||
-                        localeIncludes(removeConfusables(ctx.ref.displayName), cleanedQuery, stringComparer.value);
+                        localeIncludes(searchEntry.displayName, cleanedQuery, stringComparer.value) ||
+                        localeIncludes(searchEntry.normalizedDisplayName, cleanedQuery, stringComparer.value);
                 }
-                if (!match && filters.includes('Memo') && ctx.memo) {
-                    match = localeIncludes(ctx.memo, query, stringComparer.value);
+                if (!match && filters.includes('Memo') && searchEntry.memo) {
+                    match = localeIncludes(searchEntry.memo, query, stringComparer.value);
                 }
-                if (!match && filters.includes('Note') && ctx.ref.note) {
-                    match = localeIncludes(ctx.ref.note, query, stringComparer.value);
+                if (!match && filters.includes('Note') && searchEntry.note) {
+                    match = localeIncludes(searchEntry.note, query, stringComparer.value);
                 }
-                if (!match && filters.includes('Bio') && ctx.ref.bio) {
-                    match = localeIncludes(ctx.ref.bio, query, stringComparer.value);
+                if (!match && filters.includes('Bio') && searchEntry.bio) {
+                    match = localeIncludes(searchEntry.bio, query, stringComparer.value);
                 }
-                if (!match && filters.includes('Status') && ctx.ref.statusDescription) {
-                    match = localeIncludes(ctx.ref.statusDescription, query, stringComparer.value);
+                if (!match && filters.includes('Status') && searchEntry.status) {
+                    match = localeIncludes(searchEntry.status, query, stringComparer.value);
                 }
                 if (!match && filters.includes('Rank')) {
-                    match = String(ctx.ref.$trustLevel).toUpperCase().includes(query.toUpperCase());
+                    match = searchEntry.rank.includes(upperQuery);
                 }
                 if (!match) continue;
             }
