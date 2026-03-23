@@ -2614,7 +2614,7 @@
             "auto_login_failed": "Failed to login automatically.",
             "offline": "You're offline.",
             "login_network_issue_hint_title": "Having trouble signing in?",
-            "login_network_issue_hint_description": "Several recent sign-in attempts failed. If your credentials are correct, this may be caused by a network, proxy, VPN, or regional access issue."
+            "login_network_issue_hint_description": "Several recent sign-in attempts failed. Click Open for the troubleshooting guide."
         },
         "vrcx_updater": {
             "failed": "Failed to check for update, {message}",
