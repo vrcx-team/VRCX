@@ -122,7 +122,7 @@
 <script setup>
     defineOptions({ name: 'ChartsTwoPerson' });
 
-    import { computed, onMounted, ref } from 'vue';
+    import { computed, ref } from 'vue';
     import { Check as CheckIcon, RefreshCcw, Users } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
