@@ -221,10 +221,13 @@
     }
 
     function buildFriendItems(excludeId) {
+        return allFriendItems.value.filter((item) => item.value !== excludeId);
+    }
+
+    const allFriendItems = computed(() => {
         const items = [];
         for (const [friendId, friend] of friends.value.entries()) {
             if (friendId === currentUser.value?.id) continue;
-            if (friendId === excludeId) continue;
             const cached = cachedUsers.get(friendId);
             const displayName = friend.displayName || cached?.displayName || friendId;
             items.push({
@@ -235,11 +238,23 @@
             });
         }
         items.sort((a, b) => a.label.localeCompare(b.label));
-        return [{ key: 'friends', label: t('side_panel.friends'), items }];
-    }
+        return items;
+    });
 
-    const friendPickerGroupsA = computed(() => buildFriendItems(selectedFriendBId.value));
-    const friendPickerGroupsB = computed(() => buildFriendItems(selectedFriendAId.value));
+    const friendPickerGroupsA = computed(() => [
+        {
+            key: 'friends',
+            label: t('side_panel.friends'),
+            items: selectedFriendBId.value ? buildFriendItems(selectedFriendBId.value) : allFriendItems.value
+        }
+    ]);
+    const friendPickerGroupsB = computed(() => [
+        {
+            key: 'friends',
+            label: t('side_panel.friends'),
+            items: selectedFriendAId.value ? buildFriendItems(selectedFriendAId.value) : allFriendItems.value
+        }
+    ]);
 
     const sharedInstances = computed(() => {
         const dateFormat = dtHour12.value ? 'YYYY-MM-DD hh:mm A' : 'YYYY-MM-DD HH:mm';
