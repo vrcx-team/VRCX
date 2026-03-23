@@ -4,7 +4,9 @@
             <BackToTop :target="twoPersonRef" :right="30" :bottom="30" :teleport="false" />
 
             <div class="options-container mt-0 flex items-center justify-between">
-                <span class="shrink-0">{{ t('view.charts.two_person_relationship.header') }}</span>
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="shrink-0">{{ t('view.charts.two_person_relationship.header') }}</span>
+                </div>
 
                 <div class="flex items-center gap-2">
                     <VirtualCombobox
@@ -75,44 +77,46 @@
             </div>
 
             <template v-else>
-                <div class="mt-4 flex justify-center text-center">
-                    <div class="flex items-center gap-8">
-                        <div class="text-center">
-                            <div class="text-sm text-muted-foreground">
-                                {{ t('view.charts.two_person_relationship.total_coexistence_time') }}
-                            </div>
-                            <div class="text-2xl font-semibold">
-                                {{ timeToText(totalCoexistenceTime, true) }}
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-sm text-muted-foreground">
-                                {{ t('view.charts.two_person_relationship.instance_count') }}
-                            </div>
-                            <div class="text-2xl font-semibold">
-                                {{ sharedInstances.length }}
-                            </div>
-                        </div>
+                <div class="mx-auto mt-3 flex max-w-[900px] items-center gap-3">
+                    <div class="flex items-center gap-2 rounded-lg border px-3 py-2">
+                        <Clock class="size-3.5 text-muted-foreground" />
+                        <span class="text-sm font-medium">{{ timeToText(totalCoexistenceTime, true) }}</span>
+                        <span class="text-xs text-muted-foreground">
+                            {{ t('view.charts.two_person_relationship.total_coexistence_time') }}
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-2 rounded-lg border px-3 py-2">
+                        <Hash class="size-3.5 text-muted-foreground" />
+                        <span class="text-sm font-medium">{{ sharedInstances.length }}</span>
+                        <span class="text-xs text-muted-foreground">
+                            {{ t('view.charts.two_person_relationship.instance_count') }}
+                        </span>
                     </div>
                 </div>
 
-                <div class="mx-auto mt-4 max-w-[900px]">
-                    <div
+                <div class="mx-auto mt-3 max-w-[900px]">
+                    <button
                         v-for="(item, index) in sharedInstances"
-                        :key="index"
-                        class="mb-2 flex items-center gap-3 rounded-lg border px-4 py-3">
-                        <div class="w-36 shrink-0 text-xs text-muted-foreground">
-                            {{ dayjs(item.userLeave).format('YYYY-MM-DD HH:mm') }}
+                        :key="item.location + '_' + item.userLeave"
+                        type="button"
+                        class="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent">
+                        <span class="w-6 shrink-0 text-right font-mono text-sm font-bold text-muted-foreground">
+                            #{{ index + 1 }}
+                        </span>
+
+                        <div class="w-32 shrink-0 text-xs text-muted-foreground tabular-nums">
+                            {{ item.formattedDate }}
                         </div>
 
                         <div class="min-w-0 flex-1">
                             <Location :location="item.location" />
                         </div>
 
-                        <div class="shrink-0 text-sm font-medium">
-                            {{ timeToText(item.coexistenceTime, true) }}
+                        <div class="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
+                            <Clock class="size-3 shrink-0" />
+                            <span class="font-medium tabular-nums">{{ timeToText(item.coexistenceTime, true) }}</span>
                         </div>
-                    </div>
+                    </button>
                 </div>
             </template>
         </div>
@@ -122,8 +126,8 @@
 <script setup>
     defineOptions({ name: 'ChartsTwoPerson' });
 
-    import { computed, ref } from 'vue';
-    import { Check as CheckIcon, RefreshCcw, Users } from 'lucide-vue-next';
+    import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+    import { Check as CheckIcon, Clock, Hash, RefreshCcw, Users } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -136,7 +140,7 @@
 
     import { database } from '../../../services/database';
     import { timeToText } from '../../../shared/utils';
-    import { useFriendStore, useUserStore } from '../../../stores';
+    import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
 
     const { t } = useI18n();
@@ -146,6 +150,7 @@
     const isLoading = ref(false);
     const rawResults = ref([]);
 
+    const { dtHour12 } = storeToRefs(useAppearanceSettingsStore());
     const friendStore = useFriendStore();
     const userStore = useUserStore();
     const { friends } = storeToRefs(friendStore);
@@ -153,6 +158,18 @@
     const cachedUsers = userStore.cachedUsers;
 
     const { userImage, userStatusClass } = useUserDisplay();
+
+    const containerResizeObserver = new ResizeObserver(() => {
+        setContainerHeight();
+    });
+
+    function setContainerHeight() {
+        if (twoPersonRef.value) {
+            const availableHeight = window.innerHeight - 110;
+            twoPersonRef.value.style.height = `${availableHeight}px`;
+            twoPersonRef.value.style.overflowY = 'auto';
+        }
+    }
 
     const friendPickerGroups = computed(() => {
         const items = [];
@@ -172,18 +189,24 @@
     });
 
     const sharedInstances = computed(() => {
+        const dateFormat = dtHour12.value ? 'YYYY-MM-DD hh:mm A' : 'YYYY-MM-DD HH:mm';
         return rawResults.value
             .map((row) => {
                 const userTime = Math.max(0, row.userTime);
                 const friendTime = Math.max(0, row.friendTime);
-                const userLeave = dayjs(row.userLeave).valueOf();
-                const userJoin = userLeave - userTime;
-                const friendLeave = dayjs(row.friendLeave).valueOf();
-                const friendJoin = friendLeave - friendTime;
+                const userLeaveMs = dayjs(row.userLeave).valueOf();
+                const userJoin = userLeaveMs - userTime;
+                const friendLeaveMs = dayjs(row.friendLeave).valueOf();
+                const friendJoin = friendLeaveMs - friendTime;
                 const overlapStart = Math.max(userJoin, friendJoin);
-                const overlapEnd = Math.min(userLeave, friendLeave);
+                const overlapEnd = Math.min(userLeaveMs, friendLeaveMs);
                 const coexistenceTime = Math.max(0, overlapEnd - overlapStart);
-                return { ...row, userLeave, coexistenceTime };
+                return {
+                    location: row.location,
+                    userLeave: userLeaveMs,
+                    coexistenceTime,
+                    formattedDate: dayjs(userLeaveMs).format(dateFormat)
+                };
             })
             .filter((item) => item.coexistenceTime > 0)
             .sort((a, b) => b.userLeave - a.userLeave);
@@ -198,6 +221,9 @@
         isLoading.value = true;
         try {
             rawResults.value = await database.getCoInstanceHistory(selectedFriendId.value);
+        } catch (error) {
+            console.error('Error loading co-instance history:', error);
+            rawResults.value = [];
         } finally {
             isLoading.value = false;
         }
@@ -210,4 +236,15 @@
             loadData();
         }
     }
+
+    onMounted(() => {
+        if (twoPersonRef.value) {
+            containerResizeObserver.observe(twoPersonRef.value);
+        }
+        setContainerHeight();
+    });
+
+    onBeforeUnmount(() => {
+        containerResizeObserver.disconnect();
+    });
 </script>
