@@ -1449,17 +1449,22 @@ const gameLog = {
      * @param {number} [days] - Number of days to look back. Omit or 0 for all time.
      * @param {number} [limit=5] - Maximum number of worlds to return.
      * @param {'time'|'count'} [sortBy='time'] - Sort by total time or visit count.
+     * @param {string} [excludeWorldId=''] - Optional world ID to exclude from results.
      * @returns {Promise<Array<{worldId: string, worldName: string, visitCount: number, totalTime: number}>>}
      */
-    async getMyTopWorlds(days = 0, limit = 5, sortBy = 'time') {
+    async getMyTopWorlds(days = 0, limit = 5, sortBy = 'time', excludeWorldId = '') {
         const results = [];
         const whereClause =
             days > 0 ? `AND created_at >= datetime('now', @daysOffset)` : '';
+        const excludeClause = excludeWorldId ? 'AND world_id != @excludeWorldId' : '';
         const orderBy =
             sortBy === 'count' ? 'visit_count DESC' : 'total_time DESC';
         const params = { '@limit': limit };
         if (days > 0) {
             params['@daysOffset'] = `-${days} days`;
+        }
+        if (excludeWorldId) {
+            params['@excludeWorldId'] = excludeWorldId;
         }
         await sqliteService.execute(
             (dbRow) => {
@@ -1480,6 +1485,7 @@ const gameLog = {
                 AND world_id != ''
                 AND world_id LIKE 'wrld_%'
                 ${whereClause}
+                ${excludeClause}
             GROUP BY world_id
             ORDER BY ${orderBy}
             LIMIT @limit`,

@@ -142,21 +142,34 @@
                     </span>
                     <Spinner v-if="topWorldsLoadingVisible" class="h-3.5 w-3.5" />
                 </div>
-                <div v-if="topWorlds.length > 0" class="flex items-center gap-2">
-                    <span class="text-muted-foreground text-sm">{{ t('common.sort_by') }}</span>
-                    <Select v-model="topWorldsSortBy" :disabled="topWorldsLoading">
-                        <SelectTrigger size="sm" class="w-32" @click.stop>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="time">{{
-                                t('dialog.user.activity.most_visited_worlds.sort_by_time')
-                            }}</SelectItem>
-                            <SelectItem value="count">{{
-                                t('dialog.user.activity.most_visited_worlds.sort_by_count')
-                            }}</SelectItem>
-                        </SelectContent>
-                    </Select>
+                <div class="flex items-center gap-4">
+                    <div
+                        v-if="isSelf && currentHomeWorldId"
+                        class="flex items-center gap-1.5 text-sm text-muted-foreground">
+                        <Switch
+                            :model-value="excludeHomeWorldEnabled"
+                            class="scale-75"
+                            @update:model-value="onExcludeHomeWorldToggle" />
+                        <span class="whitespace-nowrap">
+                            {{ t('dialog.user.activity.most_visited_worlds.exclude_home_world') }}
+                        </span>
+                    </div>
+                    <div v-if="topWorlds.length > 0" class="flex items-center gap-2">
+                        <span class="text-muted-foreground text-sm">{{ t('common.sort_by') }}</span>
+                        <Select v-model="topWorldsSortBy" :disabled="topWorldsLoading">
+                            <SelectTrigger size="sm" class="w-32" @click.stop>
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="time">{{
+                                    t('dialog.user.activity.most_visited_worlds.sort_by_time')
+                                }}</SelectItem>
+                                <SelectItem value="count">{{
+                                    t('dialog.user.activity.most_visited_worlds.sort_by_count')
+                                }}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
             </div>
             <div
@@ -244,7 +257,7 @@
     import configRepository from '../../../services/config';
     import { worldRequest } from '../../../api';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
-    import { timeToText } from '../../../shared/utils';
+    import { parseLocation, timeToText } from '../../../shared/utils';
     import { useActivityStore, useAppearanceSettingsStore, useUserStore } from '../../../stores';
     import { useWorldStore } from '../../../stores/world';
     import { buildHeatmapOption, toHeatmapSeriesData } from './activity/buildHeatmapOption';
@@ -270,6 +283,7 @@
     const topWorldsLoadingVisible = ref(false);
     const topWorlds = ref([]);
     const topWorldsSortBy = ref('time');
+    const excludeHomeWorldEnabled = ref(false);
     const excludeHoursEnabled = ref(false);
     const excludeStartHour = ref('1');
     const excludeEndHour = ref('6');
@@ -295,6 +309,13 @@
     const OVERLAP_RENDER_DELAY = 80;
 
     const isSelf = computed(() => userDialog.value.id === currentUser.value.id);
+    const currentHomeWorldId = computed(() => {
+        const homeLocation = currentUser.value.homeLocation;
+        if (!homeLocation) {
+            return '';
+        }
+        return parseLocation(homeLocation).worldId || homeLocation;
+    });
     const sortedTopWorlds = computed(() => topWorlds.value);
     const dayLabels = computed(() => [
         t('dialog.user.activity.days.sun'),
@@ -330,6 +351,7 @@
         topWorldsLoading.value = false;
         topWorldsLoadingVisible.value = false;
         topWorlds.value = [];
+        excludeHomeWorldEnabled.value = false;
         isOverlapLoading.value = false;
         isOverlapLoadingVisible.value = false;
         mainHeatmapView.value = { rawBuckets: [], normalizedBuckets: [] };
@@ -427,7 +449,8 @@
                 userId,
                 rangeDays,
                 limit: 5,
-                sortBy
+                sortBy,
+                excludeWorldId: excludeHomeWorldEnabled.value ? currentHomeWorldId.value : ''
             });
             if (
                 requestId !== activeTopWorldsRequestId ||
@@ -443,6 +466,21 @@
         } finally {
             finishTopWorldsLoading(requestId);
         }
+    }
+
+    async function refreshTopWorldsOnly() {
+        const userId = userDialog.value.id;
+        if (!isSelf.value || !hasAnyData.value || !userId) {
+            return;
+        }
+
+        const rangeDays = parseInt(selectedPeriod.value, 10) || 30;
+        await loadTopWorldsSection({
+            userId,
+            rangeDays,
+            sortBy: topWorldsSortBy.value,
+            period: selectedPeriod.value
+        });
     }
 
     async function refreshData({ silent = false, forceRefresh = false } = {}) {
@@ -587,6 +625,11 @@
         await configRepository.setString('VRCX_overlapExcludeStart', excludeStartHour.value);
         await configRepository.setString('VRCX_overlapExcludeEnd', excludeEndHour.value);
         await refreshOverlapOnly();
+    }
+
+    async function onExcludeHomeWorldToggle(value) {
+        excludeHomeWorldEnabled.value = value;
+        await refreshTopWorldsOnly();
     }
 
     async function fetchMissingTopWorldThumbnails(worlds) {
@@ -819,22 +862,16 @@
     );
     watch(
         () => topWorldsSortBy.value,
-        async (newSortBy) => {
-            if (!isSelf.value || !hasAnyData.value) {
-                return;
+        () => {
+            void refreshTopWorldsOnly();
+        }
+    );
+    watch(
+        () => currentUser.value.homeLocation,
+        () => {
+            if (excludeHomeWorldEnabled.value) {
+                void refreshTopWorldsOnly();
             }
-            const userId = userDialog.value.id;
-            if (!userId) {
-                return;
-            }
-            const period = selectedPeriod.value;
-            const rangeDays = parseInt(period, 10) || 30;
-            await loadTopWorldsSection({
-                userId,
-                rangeDays,
-                sortBy: newSortBy,
-                period
-            });
         }
     );
     watch(

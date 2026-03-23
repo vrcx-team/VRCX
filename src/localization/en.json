@@ -1463,6 +1463,7 @@
                 "most_visited_worlds": {
                     "header": "Most Visited Worlds",
                     "loading": "Loading most visited worlds...",
+                    "exclude_home_world": "Exclude home world",
                     "sort_by_time": "By Time",
                     "sort_by_count": "By Visits",
                     "visit_count_label": "{count} visits"

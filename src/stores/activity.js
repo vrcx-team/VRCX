@@ -296,10 +296,10 @@ export const useActivityStore = defineStore('Activity', () => {
 
     async function loadTopWorlds(
         userId,
-        { rangeDays = 30, limit = 5, sortBy = 'time' }
+        { rangeDays = 30, limit = 5, sortBy = 'time', excludeWorldId = '' }
     ) {
         void userId;
-        return database.getMyTopWorlds(rangeDays, limit, sortBy);
+        return database.getMyTopWorlds(rangeDays, limit, sortBy, excludeWorldId);
     }
 
     async function refreshActivity(userId, options) {
@@ -358,12 +358,14 @@ export const useActivityStore = defineStore('Activity', () => {
         userId,
         rangeDays = 30,
         limit = 5,
-        sortBy = 'time'
+        sortBy = 'time',
+        excludeWorldId = ''
     }) {
         return loadTopWorlds(userId, {
             rangeDays,
             limit,
             sortBy,
+            excludeWorldId,
             isSelf: true
         });
     }
