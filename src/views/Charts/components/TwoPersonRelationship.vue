@@ -174,8 +174,8 @@
     const sharedInstances = computed(() => {
         return rawResults.value
             .map((row) => {
-                const userTime = Math.max(0, row.userTime || 0);
-                const friendTime = Math.max(0, row.friendTime || 0);
+                const userTime = Math.max(0, row.userTime);
+                const friendTime = Math.max(0, row.friendTime);
                 const userLeave = dayjs(row.userLeave).valueOf();
                 const userJoin = userLeave - userTime;
                 const friendLeave = dayjs(row.friendLeave).valueOf();

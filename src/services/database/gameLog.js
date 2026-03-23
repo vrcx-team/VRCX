@@ -1567,6 +1567,10 @@ const gameLog = {
                 AND u2.user_id = @friendUserId
                 AND u1.location NOT IN ('', 'traveling')
                 AND u2.location NOT IN ('', 'traveling')
+                AND u1.time > 0
+                AND u2.time > 0
+                AND strftime('%Y-%m-%dT%H:%M:%SZ', u1.created_at, '-' || (u1.time * 1.0 / 1000) || ' seconds') < u2.created_at
+                AND strftime('%Y-%m-%dT%H:%M:%SZ', u2.created_at, '-' || (u2.time * 1.0 / 1000) || ' seconds') < u1.created_at
             ORDER BY u1.created_at DESC`,
             {
                 '@currentUserId': dbVars.userId,
