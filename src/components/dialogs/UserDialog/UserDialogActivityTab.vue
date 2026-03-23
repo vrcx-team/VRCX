@@ -23,7 +23,6 @@
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="180">{{ t('dialog.user.activity.period_180') }}</SelectItem>
                         <SelectItem value="90">{{ t('dialog.user.activity.period_90') }}</SelectItem>
                         <SelectItem value="30">{{ t('dialog.user.activity.period_30') }}</SelectItem>
                         <SelectItem value="7">{{ t('dialog.user.activity.period_7') }}</SelectItem>
@@ -241,6 +240,7 @@
     });
 
     let activeRequestId = 0;
+    let activeOverlapRequestId = 0;
     let lastLoadedUserId = '';
     const pendingWorldThumbnailFetches = new Set();
 
@@ -281,6 +281,7 @@
         mainHeatmapView.value = { rawBuckets: [], normalizedBuckets: [] };
         overlapHeatmapView.value = { rawBuckets: [], normalizedBuckets: [] };
         activeRequestId++;
+        activeOverlapRequestId++;
         lastLoadedUserId = '';
     }
 
@@ -291,6 +292,7 @@
         }
 
         const requestId = ++activeRequestId;
+        ++activeOverlapRequestId;
         if (!silent) {
             isLoading.value = true;
         }
@@ -386,20 +388,56 @@
         await refreshData();
     }
 
+    async function refreshOverlapOnly() {
+        const userId = userDialog.value.id;
+        if (!userId || isSelf.value || !hasAnyData.value) {
+            return;
+        }
+
+        const requestId = ++activeOverlapRequestId;
+        isOverlapLoading.value = true;
+
+        try {
+            const rangeDays = parseInt(selectedPeriod.value, 10) || 30;
+            const overlapView = await activityStore.loadOverlapView({
+                currentUserId: currentUser.value.id,
+                targetUserId: userId,
+                rangeDays,
+                dayLabels: dayLabels.value,
+                forceRefresh: false,
+                excludeHours: {
+                    enabled: excludeHoursEnabled.value,
+                    startHour: parseInt(excludeStartHour.value, 10),
+                    endHour: parseInt(excludeEndHour.value, 10)
+                }
+            });
+            if (requestId !== activeOverlapRequestId || userDialog.value.id !== userId) {
+                return;
+            }
+            overlapHeatmapView.value = {
+                rawBuckets: overlapView.rawBuckets,
+                normalizedBuckets: overlapView.normalizedBuckets
+            };
+            hasOverlapData.value = overlapView.hasOverlapData;
+            overlapPercent.value = overlapView.overlapPercent;
+            bestOverlapTime.value = overlapView.bestOverlapTime;
+        } finally {
+            if (requestId === activeOverlapRequestId) {
+                isOverlapLoading.value = false;
+            }
+        }
+    }
+
     async function onExcludeToggle(value) {
         excludeHoursEnabled.value = value;
         await configRepository.setBool('VRCX_overlapExcludeEnabled', value);
-        if (!isSelf.value && hasAnyData.value) {
-            await refreshData({ silent: true });
-        }
+        await refreshOverlapOnly();
     }
 
     async function onExcludeRangeChange() {
         await configRepository.setString('VRCX_overlapExcludeStart', excludeStartHour.value);
         await configRepository.setString('VRCX_overlapExcludeEnd', excludeEndHour.value);
-        if (!isSelf.value && hasAnyData.value) {
-            await refreshData({ silent: true });
-        }
+        await refreshOverlapOnly();
     }
 
     async function fetchMissingTopWorldThumbnails(worlds) {
@@ -510,19 +548,34 @@
         ensureActivityChart();
         if (!activityChart) return;
 
-        activityChart.setOption(buildHeatmapOption({
-            data: toHeatmapSeriesData(mainHeatmapView.value.normalizedBuckets, weekStartsOn.value),
-            rawBuckets: mainHeatmapView.value.rawBuckets,
-            dayLabels: displayDayLabels.value,
-            hourLabels,
-            weekStartsOn: weekStartsOn.value,
-            isDarkMode: isDarkMode.value,
-            emptyColor: isDarkMode.value ? 'hsl(220, 15%, 12%)' : 'hsl(210, 30%, 95%)',
-            scaleColors: isDarkMode.value
-                ? ['hsl(160, 40%, 24%)', 'hsl(150, 48%, 32%)', 'hsl(142, 55%, 38%)', 'hsl(142, 65%, 46%)', 'hsl(142, 80%, 55%)']
-                : ['hsl(160, 40%, 82%)', 'hsl(155, 45%, 68%)', 'hsl(142, 55%, 55%)', 'hsl(142, 65%, 40%)', 'hsl(142, 76%, 30%)'],
-            unitLabel: t('dialog.user.activity.minutes_online')
-        }), { notMerge: true });
+        activityChart.setOption(
+            buildHeatmapOption({
+                data: toHeatmapSeriesData(mainHeatmapView.value.normalizedBuckets, weekStartsOn.value),
+                rawBuckets: mainHeatmapView.value.rawBuckets,
+                dayLabels: displayDayLabels.value,
+                hourLabels,
+                weekStartsOn: weekStartsOn.value,
+                isDarkMode: isDarkMode.value,
+                emptyColor: isDarkMode.value ? 'hsl(220, 15%, 12%)' : 'hsl(210, 30%, 95%)',
+                scaleColors: isDarkMode.value
+                    ? [
+                          'hsl(160, 40%, 24%)',
+                          'hsl(150, 48%, 32%)',
+                          'hsl(142, 55%, 38%)',
+                          'hsl(142, 65%, 46%)',
+                          'hsl(142, 80%, 55%)'
+                      ]
+                    : [
+                          'hsl(160, 40%, 82%)',
+                          'hsl(155, 45%, 68%)',
+                          'hsl(142, 55%, 55%)',
+                          'hsl(142, 65%, 40%)',
+                          'hsl(142, 76%, 30%)'
+                      ],
+                unitLabel: t('dialog.user.activity.minutes_online')
+            }),
+            { replaceMerge: ['series'] }
+        );
     }
 
     function renderOverlapChart() {
@@ -533,19 +586,34 @@
         ensureOverlapChart();
         if (!overlapChart) return;
 
-        overlapChart.setOption(buildHeatmapOption({
-            data: toHeatmapSeriesData(overlapHeatmapView.value.normalizedBuckets, weekStartsOn.value),
-            rawBuckets: overlapHeatmapView.value.rawBuckets,
-            dayLabels: displayDayLabels.value,
-            hourLabels,
-            weekStartsOn: weekStartsOn.value,
-            isDarkMode: isDarkMode.value,
-            emptyColor: isDarkMode.value ? 'hsl(220, 15%, 12%)' : 'hsl(210, 30%, 95%)',
-            scaleColors: isDarkMode.value
-                ? ['hsl(260, 30%, 26%)', 'hsl(260, 42%, 36%)', 'hsl(260, 50%, 45%)', 'hsl(260, 60%, 54%)', 'hsl(260, 70%, 62%)']
-                : ['hsl(260, 35%, 85%)', 'hsl(260, 42%, 70%)', 'hsl(260, 48%, 58%)', 'hsl(260, 55%, 48%)', 'hsl(260, 60%, 38%)'],
-            unitLabel: t('dialog.user.activity.overlap.minutes_overlap')
-        }), { notMerge: true });
+        overlapChart.setOption(
+            buildHeatmapOption({
+                data: toHeatmapSeriesData(overlapHeatmapView.value.normalizedBuckets, weekStartsOn.value),
+                rawBuckets: overlapHeatmapView.value.rawBuckets,
+                dayLabels: displayDayLabels.value,
+                hourLabels,
+                weekStartsOn: weekStartsOn.value,
+                isDarkMode: isDarkMode.value,
+                emptyColor: isDarkMode.value ? 'hsl(220, 15%, 12%)' : 'hsl(210, 30%, 95%)',
+                scaleColors: isDarkMode.value
+                    ? [
+                          'hsl(260, 30%, 26%)',
+                          'hsl(260, 42%, 36%)',
+                          'hsl(260, 50%, 45%)',
+                          'hsl(260, 60%, 54%)',
+                          'hsl(260, 70%, 62%)'
+                      ]
+                    : [
+                          'hsl(260, 35%, 85%)',
+                          'hsl(260, 42%, 70%)',
+                          'hsl(260, 48%, 58%)',
+                          'hsl(260, 55%, 48%)',
+                          'hsl(260, 60%, 38%)'
+                      ],
+                unitLabel: t('dialog.user.activity.overlap.minutes_overlap')
+            }),
+            { replaceMerge: ['series'] }
+        );
     }
 
     function rebuildCharts() {
@@ -557,7 +625,7 @@
     }
 
     function onChartRightClick() {
-        toast(t('dialog.user.activity.easter_egg'), { position: 'bottom-center', icon: h(Tractor) });
+        toast(t('dialog.user.activity.chart_hint'), { position: 'bottom-center', icon: h(Tractor) });
         clearTimeout(easterEggTimer);
         easterEggTimer = setTimeout(() => {
             easterEggTimer = null;
@@ -566,7 +634,7 @@
 
     function onOverlapChartRightClick() {
         if (easterEggTimer) {
-            toast(t('dialog.user.activity.easter_egg_reply'), { position: 'bottom-center', icon: h(Sprout) });
+            toast(t('dialog.user.activity.chart_hint_reply'), { position: 'bottom-center', icon: h(Sprout) });
         }
     }
 
@@ -577,40 +645,60 @@
         void loadForVisibleTab();
     }
 
-    watch(() => userDialog.value.id, () => {
-        resetActivityState();
-        rebuildCharts();
-        if (userDialog.value.visible && userDialog.value.activeTab === 'Activity') {
-            void nextTick(() => loadForVisibleTab());
+    watch(
+        () => userDialog.value.id,
+        () => {
+            resetActivityState();
+            rebuildCharts();
+            if (userDialog.value.visible && userDialog.value.activeTab === 'Activity') {
+                void nextTick(() => loadForVisibleTab());
+            }
         }
-    });
+    );
     watch([locale, isDarkMode, weekStartsOn], rebuildCharts);
-    watch(() => selectedPeriod.value, () => {
-        if (userDialog.value.visible && userDialog.value.activeTab === 'Activity') {
-            void onPeriodChange();
+    watch(
+        () => selectedPeriod.value,
+        () => {
+            if (userDialog.value.visible && userDialog.value.activeTab === 'Activity') {
+                void onPeriodChange();
+            }
         }
-    });
-    watch(() => mainHeatmapView.value, () => {
-        nextTick(() => renderActivityChart());
-    }, { deep: true });
-    watch(() => overlapHeatmapView.value, () => {
-        nextTick(() => renderOverlapChart());
-    }, { deep: true });
-    watch(() => userDialog.value.visible, (visible) => {
-        if (!visible) return;
-        nextTick(() => {
-            activityChart?.resize();
-            overlapChart?.resize();
-        });
-        if (userDialog.value.activeTab === 'Activity') {
-            void loadForVisibleTab();
+    );
+    watch(
+        () => mainHeatmapView.value,
+        () => {
+            nextTick(() => renderActivityChart());
+        },
+        { deep: true }
+    );
+    watch(
+        () => overlapHeatmapView.value,
+        () => {
+            nextTick(() => renderOverlapChart());
+        },
+        { deep: true }
+    );
+    watch(
+        () => userDialog.value.visible,
+        (visible) => {
+            if (!visible) return;
+            nextTick(() => {
+                activityChart?.resize();
+                overlapChart?.resize();
+            });
+            if (userDialog.value.activeTab === 'Activity') {
+                void loadForVisibleTab();
+            }
         }
-    });
-    watch(() => userDialog.value.activeTab, (activeTab) => {
-        if (activeTab === 'Activity' && userDialog.value.visible) {
-            void loadForVisibleTab();
+    );
+    watch(
+        () => userDialog.value.activeTab,
+        (activeTab) => {
+            if (activeTab === 'Activity' && userDialog.value.visible) {
+                void loadForVisibleTab();
+            }
         }
-    });
+    );
 
     onMounted(async () => {
         await initializeSettings();

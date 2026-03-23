@@ -134,8 +134,21 @@ export const useActivityStore = defineStore('Activity', () => {
         return false;
     }
 
-    async function loadActivity(userId, { isSelf = false, rangeDays = 30, normalizeConfig, dayLabels, forceRefresh = false }) {
-        const snapshot = await ensureSnapshot(userId, { isSelf, rangeDays, forceRefresh });
+    async function loadActivity(
+        userId,
+        {
+            isSelf = false,
+            rangeDays = 30,
+            normalizeConfig,
+            dayLabels,
+            forceRefresh = false
+        }
+    ) {
+        const snapshot = await ensureSnapshot(userId, {
+            isSelf,
+            rangeDays,
+            forceRefresh
+        });
         const cacheKey = String(rangeDays);
         const currentCursor = snapshot.sync.sourceLastCreatedAt || '';
 
@@ -175,38 +188,55 @@ export const useActivityStore = defineStore('Activity', () => {
             builtAt: new Date().toISOString()
         };
         snapshot.activityViews.set(cacheKey, view);
-        deferWrite(() => database.upsertActivityBucketCacheV2({
-            ownerUserId: userId,
-            rangeDays,
-            viewKind: database.ACTIVITY_VIEW_KIND.ACTIVITY,
-            builtFromCursor: currentCursor,
-            rawBuckets: view.rawBuckets,
-            normalizedBuckets: view.normalizedBuckets,
-            summary: {
-                peakDay: view.peakDay,
-                peakTime: view.peakTime,
-                filteredEventCount: view.filteredEventCount
-            },
-            builtAt: view.builtAt
-        }));
+        deferWrite(() =>
+            database.upsertActivityBucketCacheV2({
+                ownerUserId: userId,
+                rangeDays,
+                viewKind: database.ACTIVITY_VIEW_KIND.ACTIVITY,
+                builtFromCursor: currentCursor,
+                rawBuckets: view.rawBuckets,
+                normalizedBuckets: view.normalizedBuckets,
+                summary: {
+                    peakDay: view.peakDay,
+                    peakTime: view.peakTime,
+                    filteredEventCount: view.filteredEventCount
+                },
+                builtAt: view.builtAt
+            })
+        );
         return buildActivityResponse(snapshot, view);
     }
 
-    async function loadOverlap(currentUserId, targetUserId, {
-        rangeDays = 30,
-        dayLabels,
-        normalizeConfig,
-        excludeHours,
-        forceRefresh = false
-    }) {
+    async function loadOverlap(
+        currentUserId,
+        targetUserId,
+        {
+            rangeDays = 30,
+            dayLabels,
+            normalizeConfig,
+            excludeHours,
+            forceRefresh = false
+        }
+    ) {
         const [selfSnapshot, targetSnapshot] = await Promise.all([
-            ensureSnapshot(currentUserId, { isSelf: true, rangeDays, forceRefresh }),
-            ensureSnapshot(targetUserId, { isSelf: false, rangeDays, forceRefresh })
+            ensureSnapshot(currentUserId, {
+                isSelf: true,
+                rangeDays,
+                forceRefresh
+            }),
+            ensureSnapshot(targetUserId, {
+                isSelf: false,
+                rangeDays,
+                forceRefresh
+            })
         ]);
 
         const excludeKey = overlapExcludeKey(excludeHours);
         const cacheKey = `${targetUserId}:${rangeDays}:${excludeKey}`;
-        const cursor = pairCursor(selfSnapshot.sync.sourceLastCreatedAt, targetSnapshot.sync.sourceLastCreatedAt);
+        const cursor = pairCursor(
+            selfSnapshot.sync.sourceLastCreatedAt,
+            targetSnapshot.sync.sourceLastCreatedAt
+        );
 
         let view = targetSnapshot.overlapViews.get(cacheKey);
         if (view?.builtFromCursor === cursor) {
@@ -246,26 +276,35 @@ export const useActivityStore = defineStore('Activity', () => {
             builtAt: new Date().toISOString()
         };
         targetSnapshot.overlapViews.set(cacheKey, view);
-        deferWrite(() => database.upsertActivityBucketCacheV2({
-            ownerUserId: currentUserId,
-            targetUserId,
-            rangeDays,
-            viewKind: database.ACTIVITY_VIEW_KIND.OVERLAP,
-            excludeKey,
-            builtFromCursor: cursor,
-            rawBuckets: view.rawBuckets,
-            normalizedBuckets: view.normalizedBuckets,
-            summary: {
-                overlapPercent: view.overlapPercent,
-                bestOverlapTime: view.bestOverlapTime
-            },
-            builtAt: view.builtAt
-        }));
+        deferWrite(() =>
+            database.upsertActivityBucketCacheV2({
+                ownerUserId: currentUserId,
+                targetUserId,
+                rangeDays,
+                viewKind: database.ACTIVITY_VIEW_KIND.OVERLAP,
+                excludeKey,
+                builtFromCursor: cursor,
+                rawBuckets: view.rawBuckets,
+                normalizedBuckets: view.normalizedBuckets,
+                summary: {
+                    overlapPercent: view.overlapPercent,
+                    bestOverlapTime: view.bestOverlapTime
+                },
+                builtAt: view.builtAt
+            })
+        );
         return view;
     }
 
-    async function loadTopWorlds(userId, { rangeDays = 30, limit = 5, isSelf = true, forceRefresh = false }) {
-        const snapshot = await ensureSnapshot(userId, { isSelf, rangeDays, forceRefresh });
+    async function loadTopWorlds(
+        userId,
+        { rangeDays = 30, limit = 5, isSelf = true, forceRefresh = false }
+    ) {
+        const snapshot = await ensureSnapshot(userId, {
+            isSelf,
+            rangeDays,
+            forceRefresh
+        });
         const cacheKey = `${rangeDays}:${limit}`;
         const currentCursor = snapshot.sync.sourceLastCreatedAt || '';
 
@@ -275,7 +314,10 @@ export const useActivityStore = defineStore('Activity', () => {
         }
 
         if (!forceRefresh) {
-            const persisted = await database.getActivityTopWorldsCacheV2(userId, rangeDays);
+            const persisted = await database.getActivityTopWorldsCacheV2(
+                userId,
+                rangeDays
+            );
             if (persisted?.builtFromCursor === currentCursor) {
                 snapshot.topWorldsViews.set(cacheKey, persisted);
                 return persisted.worlds;
@@ -292,14 +334,16 @@ export const useActivityStore = defineStore('Activity', () => {
         };
         snapshot.topWorldsViews.set(cacheKey, entry);
         deferWrite(() => database.replaceActivityTopWorldsCacheV2(entry));
-        deferWrite(() => database.upsertActivityRangeCacheV2({
-            userId,
-            rangeDays,
-            cacheKind: database.ACTIVITY_RANGE_CACHE_KIND.TOP_WORLDS,
-            isComplete: true,
-            builtFromCursor: currentCursor,
-            builtAt: entry.builtAt
-        }));
+        deferWrite(() =>
+            database.upsertActivityRangeCacheV2({
+                userId,
+                rangeDays,
+                cacheKind: database.ACTIVITY_RANGE_CACHE_KIND.TOP_WORLDS,
+                isComplete: true,
+                builtFromCursor: currentCursor,
+                builtAt: entry.builtAt
+            })
+        );
         return worlds;
     }
 
@@ -307,7 +351,13 @@ export const useActivityStore = defineStore('Activity', () => {
         return loadActivity(userId, { ...options, forceRefresh: true });
     }
 
-    async function loadActivityView({ userId, isSelf = false, rangeDays = 30, dayLabels, forceRefresh = false }) {
+    async function loadActivityView({
+        userId,
+        isSelf = false,
+        rangeDays = 30,
+        dayLabels,
+        forceRefresh = false
+    }) {
         const response = await loadActivity(userId, {
             isSelf,
             rangeDays,
@@ -325,7 +375,14 @@ export const useActivityStore = defineStore('Activity', () => {
         };
     }
 
-    async function loadOverlapView({ currentUserId, targetUserId, rangeDays = 30, dayLabels, excludeHours, forceRefresh = false }) {
+    async function loadOverlapView({
+        currentUserId,
+        targetUserId,
+        rangeDays = 30,
+        dayLabels,
+        excludeHours,
+        forceRefresh = false
+    }) {
         const response = await loadOverlap(currentUserId, targetUserId, {
             rangeDays,
             dayLabels,
@@ -342,7 +399,12 @@ export const useActivityStore = defineStore('Activity', () => {
         };
     }
 
-    async function loadTopWorldsView({ userId, rangeDays = 30, limit = 5, forceRefresh = false }) {
+    async function loadTopWorldsView({
+        userId,
+        rangeDays = 30,
+        limit = 5,
+        forceRefresh = false
+    }) {
         return loadTopWorlds(userId, {
             rangeDays,
             limit,
@@ -399,7 +461,10 @@ async function hydrateSnapshot(userId, isSelf) {
         snapshot.sync = {
             ...snapshot.sync,
             ...syncState,
-            isSelf: typeof syncState.isSelf === 'boolean' ? syncState.isSelf : snapshot.isSelf
+            isSelf:
+                typeof syncState.isSelf === 'boolean'
+                    ? syncState.isSelf
+                    : snapshot.isSelf
         };
     }
     if (sessions.length > 0) {
@@ -408,7 +473,10 @@ async function hydrateSnapshot(userId, isSelf) {
     return snapshot;
 }
 
-async function ensureSnapshot(userId, { isSelf, rangeDays, forceRefresh = false }) {
+async function ensureSnapshot(
+    userId,
+    { isSelf, rangeDays, forceRefresh = false }
+) {
     const jobKey = `${userId}:${isSelf}:${rangeDays}:${forceRefresh ? 'force' : 'normal'}`;
     const existingJob = inFlightJobs.get(jobKey);
     if (existingJob) {
@@ -440,7 +508,10 @@ async function fullRefresh(snapshot, rangeDays) {
         isSelf: snapshot.isSelf,
         fromDays: rangeDays
     });
-    const sourceLastCreatedAt = sourceItems.length > 0 ? sourceItems[sourceItems.length - 1].created_at : '';
+    const sourceLastCreatedAt =
+        sourceItems.length > 0
+            ? sourceItems[sourceItems.length - 1].created_at
+            : '';
     const result = await workerCall('computeSessionsSnapshot', {
         sourceType: snapshot.isSelf ? 'self_gamelog' : 'friend_presence',
         rows: snapshot.isSelf ? sourceItems : undefined,
@@ -462,16 +533,20 @@ async function fullRefresh(snapshot, rangeDays) {
     };
     clearDerivedViews(snapshot);
 
-    deferWrite(() => database.replaceActivitySessionsV2(snapshot.userId, snapshot.sessions));
+    deferWrite(() =>
+        database.replaceActivitySessionsV2(snapshot.userId, snapshot.sessions)
+    );
     deferWrite(() => database.upsertActivitySyncStateV2(snapshot.sync));
-    deferWrite(() => database.upsertActivityRangeCacheV2({
-        userId: snapshot.userId,
-        rangeDays,
-        cacheKind: database.ACTIVITY_RANGE_CACHE_KIND.SESSIONS,
-        isComplete: true,
-        builtFromCursor: snapshot.sync.sourceLastCreatedAt,
-        builtAt: snapshot.sync.updatedAt
-    }));
+    deferWrite(() =>
+        database.upsertActivityRangeCacheV2({
+            userId: snapshot.userId,
+            rangeDays,
+            cacheKind: database.ACTIVITY_RANGE_CACHE_KIND.SESSIONS,
+            isComplete: true,
+            builtFromCursor: snapshot.sync.sourceLastCreatedAt,
+            builtAt: snapshot.sync.updatedAt
+        })
+    );
 }
 
 async function incrementalRefresh(snapshot) {
@@ -496,15 +571,18 @@ async function incrementalRefresh(snapshot) {
         sourceType: snapshot.isSelf ? 'self_gamelog' : 'friend_presence',
         rows: snapshot.isSelf ? sourceItems : undefined,
         events: snapshot.isSelf ? undefined : sourceItems,
-        initialStart: snapshot.isSelf ? null : snapshot.sync.pendingSessionStartAt,
+        initialStart: snapshot.isSelf
+            ? null
+            : snapshot.sync.pendingSessionStartAt,
         nowMs: Date.now(),
         mayHaveOpenTail: snapshot.isSelf,
         sourceRevision: sourceLastCreatedAt
     });
 
-    const replaceFromStartAt = snapshot.sessions.length > 0
-        ? snapshot.sessions[Math.max(snapshot.sessions.length - 1, 0)].start
-        : null;
+    const replaceFromStartAt =
+        snapshot.sessions.length > 0
+            ? snapshot.sessions[Math.max(snapshot.sessions.length - 1, 0)].start
+            : null;
     const merged = mergeSessions(snapshot.sessions, result.sessions);
     snapshot.sessions = merged;
     snapshot.sync = {
@@ -515,14 +593,17 @@ async function incrementalRefresh(snapshot) {
     };
     clearDerivedViews(snapshot);
 
-    const tailSessions = replaceFromStartAt === null
-        ? merged
-        : merged.filter((session) => session.start >= replaceFromStartAt);
-    deferWrite(() => database.appendActivitySessionsV2({
-        userId: snapshot.userId,
-        sessions: tailSessions,
-        replaceFromStartAt
-    }));
+    const tailSessions =
+        replaceFromStartAt === null
+            ? merged
+            : merged.filter((session) => session.start >= replaceFromStartAt);
+    deferWrite(() =>
+        database.appendActivitySessionsV2({
+            userId: snapshot.userId,
+            sessions: tailSessions,
+            replaceFromStartAt
+        })
+    );
     deferWrite(() => database.upsertActivitySyncStateV2(snapshot.sync));
 }
 
@@ -550,58 +631,120 @@ async function expandRange(snapshot, rangeDays) {
 
     if (result.sessions.length > 0) {
         snapshot.sessions = mergeSessions(result.sessions, snapshot.sessions);
-        deferWrite(() => database.replaceActivitySessionsV2(snapshot.userId, snapshot.sessions));
+        deferWrite(() =>
+            database.replaceActivitySessionsV2(
+                snapshot.userId,
+                snapshot.sessions
+            )
+        );
     }
     snapshot.sync.cachedRangeDays = rangeDays;
     snapshot.sync.updatedAt = new Date().toISOString();
     clearDerivedViews(snapshot);
 
     deferWrite(() => database.upsertActivitySyncStateV2(snapshot.sync));
-    deferWrite(() => database.upsertActivityRangeCacheV2({
-        userId: snapshot.userId,
-        rangeDays,
-        cacheKind: database.ACTIVITY_RANGE_CACHE_KIND.SESSIONS,
-        isComplete: true,
-        builtFromCursor: snapshot.sync.sourceLastCreatedAt,
-        builtAt: snapshot.sync.updatedAt
-    }));
+    deferWrite(() =>
+        database.upsertActivityRangeCacheV2({
+            userId: snapshot.userId,
+            rangeDays,
+            cacheKind: database.ACTIVITY_RANGE_CACHE_KIND.SESSIONS,
+            isComplete: true,
+            builtFromCursor: snapshot.sync.sourceLastCreatedAt,
+            builtAt: snapshot.sync.updatedAt
+        })
+    );
 }
 
 function pickActivityNormalizeConfig(isSelf, rangeDays) {
     const role = isSelf ? 'self' : 'friend';
-    return {
-        self: {
-            7: { floorPercentile: 10, capPercentile: 80, rankWeight: 0.15, targetCoverage: 0.12, targetVolume: 40 },
-            30: { floorPercentile: 15, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.25, targetVolume: 60 },
-            90: { floorPercentile: 15, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.30, targetVolume: 50 },
-            180: { floorPercentile: 20, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.35, targetVolume: 40 }
-        },
-        friend: {
-            7: { floorPercentile: 10, capPercentile: 80, rankWeight: 0.15, targetCoverage: 0.12, targetVolume: 40 },
-            30: { floorPercentile: 15, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.25, targetVolume: 60 },
-            90: { floorPercentile: 15, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.30, targetVolume: 50 },
-            180: { floorPercentile: 20, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.35, targetVolume: 40 }
+    return (
+        {
+            self: {
+                7: {
+                    floorPercentile: 10,
+                    capPercentile: 80,
+                    rankWeight: 0.15,
+                    targetCoverage: 0.12,
+                    targetVolume: 40
+                },
+                30: {
+                    floorPercentile: 15,
+                    capPercentile: 85,
+                    rankWeight: 0.2,
+                    targetCoverage: 0.25,
+                    targetVolume: 60
+                },
+                90: {
+                    floorPercentile: 15,
+                    capPercentile: 85,
+                    rankWeight: 0.2,
+                    targetCoverage: 0.3,
+                    targetVolume: 50
+                }
+            },
+            friend: {
+                7: {
+                    floorPercentile: 10,
+                    capPercentile: 80,
+                    rankWeight: 0.15,
+                    targetCoverage: 0.12,
+                    targetVolume: 40
+                },
+                30: {
+                    floorPercentile: 15,
+                    capPercentile: 85,
+                    rankWeight: 0.2,
+                    targetCoverage: 0.25,
+                    targetVolume: 60
+                },
+                90: {
+                    floorPercentile: 15,
+                    capPercentile: 85,
+                    rankWeight: 0.2,
+                    targetCoverage: 0.3,
+                    targetVolume: 50
+                }
+            }
+        }[role][rangeDays] || {
+            floorPercentile: 15,
+            capPercentile: 85,
+            rankWeight: 0.2,
+            targetCoverage: 0.25,
+            targetVolume: 60
         }
-    }[role][rangeDays] || {
-        floorPercentile: 15,
-        capPercentile: 85,
-        rankWeight: 0.20,
-        targetCoverage: 0.25,
-        targetVolume: 60
-    };
+    );
 }
 
 function pickOverlapNormalizeConfig(rangeDays) {
-    return {
-        7: { floorPercentile: 10, capPercentile: 80, rankWeight: 0.15, targetCoverage: 0.08, targetVolume: 15 },
-        30: { floorPercentile: 15, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.15, targetVolume: 25 },
-        90: { floorPercentile: 15, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.18, targetVolume: 20 },
-        180: { floorPercentile: 20, capPercentile: 85, rankWeight: 0.20, targetCoverage: 0.20, targetVolume: 15 }
-    }[rangeDays] || {
-        floorPercentile: 15,
-        capPercentile: 85,
-        rankWeight: 0.20,
-        targetCoverage: 0.15,
-        targetVolume: 25
-    };
+    return (
+        {
+            7: {
+                floorPercentile: 10,
+                capPercentile: 80,
+                rankWeight: 0.15,
+                targetCoverage: 0.08,
+                targetVolume: 15
+            },
+            30: {
+                floorPercentile: 15,
+                capPercentile: 85,
+                rankWeight: 0.2,
+                targetCoverage: 0.15,
+                targetVolume: 25
+            },
+            90: {
+                floorPercentile: 15,
+                capPercentile: 85,
+                rankWeight: 0.2,
+                targetCoverage: 0.18,
+                targetVolume: 20
+            }
+        }[rangeDays] || {
+            floorPercentile: 15,
+            capPercentile: 85,
+            rankWeight: 0.2,
+            targetCoverage: 0.15,
+            targetVolume: 25
+        }
+    );
 }
