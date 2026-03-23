@@ -1581,6 +1581,95 @@ const gameLog = {
         return results;
     },
 
+    /**
+     * Get self (current user) presence records for a list of locations.
+     * Returns a map from location → array of { selfLeave: string, selfTime: number }.
+     * @param {string} userId - The current user's ID
+     * @param {string[]} locations - Array of location strings
+     * @returns {Promise<Map<string, Array<{selfLeave: string, selfTime: number}>>>}
+     */
+    async getSelfPresenceForLocations(userId, locations) {
+        if (!locations || locations.length === 0) return new Map();
+        const result = new Map();
+        const params = { '@userId': userId };
+        const placeholders = locations.map((loc, i) => {
+            params[`@loc${i}`] = loc;
+            return `@loc${i}`;
+        });
+        await sqliteService.execute(
+            (row) => {
+                const loc = row[0];
+                if (!result.has(loc)) result.set(loc, []);
+                result.get(loc).push({ selfLeave: row[1], selfTime: row[2] || 0 });
+            },
+            `SELECT location, created_at, time
+             FROM gamelog_join_leave
+             WHERE user_id = @userId
+               AND location IN (${placeholders.join(', ')})
+               AND type = 'OnPlayerLeft'`,
+            params
+        );
+        return result;
+    },
+
+    /**
+     * Get maximum concurrent player count for a list of locations using
+     * a sweep-line algorithm over all OnPlayerLeft records.
+     * @param {string[]} locations - Array of location strings
+     * @returns {Promise<Map<string, number>>}
+     */
+    async getMaxPlayerCountForLocations(locations) {
+        if (!locations || locations.length === 0) return new Map();
+        const entries = [];
+        const params = {};
+        const placeholders = locations.map((loc, i) => {
+            params[`@loc${i}`] = loc;
+            return `@loc${i}`;
+        });
+        await sqliteService.execute(
+            (row) => {
+                entries.push({ location: row[0], createdAt: row[1], time: row[2] || 0 });
+            },
+            `SELECT location, created_at, time
+             FROM gamelog_join_leave
+             WHERE location IN (${placeholders.join(', ')})
+               AND type = 'OnPlayerLeft'
+               AND time > 0
+             ORDER BY location`,
+            params
+        );
+
+        // Group by location
+        const byLocation = new Map();
+        for (const entry of entries) {
+            if (!byLocation.has(entry.location)) byLocation.set(entry.location, []);
+            byLocation.get(entry.location).push(entry);
+        }
+
+        // Sweep-line: find peak concurrent count per location
+        const result = new Map();
+        for (const [location, playerEntries] of byLocation.entries()) {
+            const events = [];
+            for (const entry of playerEntries) {
+                const leaveMs = new Date(entry.createdAt).getTime();
+                const joinMs = leaveMs - entry.time;
+                events.push([joinMs, 1]);   // player joins
+                events.push([leaveMs, -1]); // player leaves
+            }
+            // Sort by time ascending; ties: joins (+1) before leaves (-1) so that
+            // a player arriving at the exact moment another departs still counts.
+            events.sort((a, b) => a[0] - b[0] || b[1] - a[1]);
+            let current = 0;
+            let max = 0;
+            for (const [, delta] of events) {
+                current += delta;
+                if (current > max) max = current;
+            }
+            result.set(location, max);
+        }
+        return result;
+    },
+
     async getInstanceJoinHistory() {
         var oneWeekAgo = new Date(Date.now() - 604800000).toJSON();
         var instances = new Map();
