@@ -1664,7 +1664,8 @@ const gameLog = {
              FROM gamelog_join_leave
              WHERE user_id = @userId
                AND location IN (${placeholders.join(', ')})
-               AND type = 'OnPlayerLeft'`,
+               AND type = 'OnPlayerLeft'
+               AND time > 0`,
             params
         );
         return result;
