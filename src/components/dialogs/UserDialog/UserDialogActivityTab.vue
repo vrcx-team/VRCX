@@ -12,7 +12,7 @@
                     <Spinner v-if="isLoading" />
                     <RefreshCw v-else />
                 </Button>
-                <span v-if="filteredEventCount > 0" class="text-accent-foreground ml-1">
+                <span v-if="filteredEventCount > 0" class="text-accent-foreground ml-1 text-sm">
                     {{ t('dialog.user.activity.total_events', { count: filteredEventCount }) }}
                 </span>
             </div>

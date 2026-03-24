@@ -10,7 +10,7 @@
                 <Spinner v-if="userDialog.isMutualFriendsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span class="inline-flex items-center gap-1 ml-1.5">
+            <span class="inline-flex items-center gap-1 ml-1.5 text-sm">
                 <Users class="size-3.5 text-muted-foreground" />
                 {{ t('dialog.user.groups.total_count', { count: userDialog.mutualFriends.length }) }}
             </span>

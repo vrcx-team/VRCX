@@ -10,11 +10,11 @@
                 <Spinner v-if="userDialog.isGroupsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span style="margin-left: 6px">{{
+            <span class="ml-1.5 text-sm">{{
                 t('dialog.user.groups.total_count', { count: userDialog.userGroups.groups.length })
             }}</span>
             <template v-if="userDialogGroupEditMode">
-                <span class="text-[10px]" style="margin-left: 8px">{{ t('dialog.user.groups.hold_shift') }}</span>
+                <span class="text-[10px] ml-2">{{ t('dialog.user.groups.hold_shift') }}</span>
             </template>
         </div>
         <div style="display: flex; align-items: center">
