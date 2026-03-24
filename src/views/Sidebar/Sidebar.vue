@@ -94,32 +94,6 @@
 
                             <Separator />
 
-                            <!-- Sort Section -->
-                            <span class="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
-                                {{ t('side_panel.settings.sort') }}
-                            </span>
-                            <Field>
-                                <FieldContent>
-                                    <Select
-                                        :model-value="sidebarSortMethod1"
-                                        @update:modelValue="setSidebarSortMethod1">
-                                        <SelectTrigger size="sm">
-                                            <SelectValue
-                                                :placeholder="
-                                                    t('view.settings.appearance.side_panel.sorting.placeholder')
-                                                " />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem v-for="opt in sortOptions" :key="opt.value" :value="opt.value">
-                                                {{ opt.label }}
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </FieldContent>
-                            </Field>
-
-                            <Separator />
-
                             <!-- Advanced Section (Collapsible) -->
                             <Collapsible v-model:open="isAdvancedOpen">
                                 <CollapsibleTrigger as-child>
@@ -139,6 +113,25 @@
                                             class="text-[10px] font-medium text-muted-foreground/70 uppercase tracking-wide">
                                             {{ t('side_panel.settings.sorting') }}
                                         </span>
+                                        <Field>
+                                            <FieldContent>
+                                                <Select
+                                                    :model-value="sidebarSortMethod1"
+                                                    @update:modelValue="setSidebarSortMethod1">
+                                                    <SelectTrigger size="sm">
+                                                        <SelectValue
+                                                            :placeholder="
+                                                                t('view.settings.appearance.side_panel.sorting.placeholder')
+                                                            " />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem v-for="opt in sortOptions" :key="opt.value" :value="opt.value">
+                                                            {{ opt.label }}
+                                                        </SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </FieldContent>
+                                        </Field>
                                         <Field>
                                             <FieldLabel>{{ t('side_panel.settings.sort_secondary') }}</FieldLabel>
                                             <FieldContent>
