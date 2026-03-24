@@ -10,8 +10,8 @@
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side="right" align="start" class="w-56">
-                        <DropdownMenuItem @click="emit('show-whats-new')">
-                            <span>{{ t('nav_menu.whats_new') }}</span>
+                        <DropdownMenuItem @click="emit('show-changelog')">
+                            <span>{{ t('nav_menu.changelog') }}</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuLabel>{{ t('nav_menu.resources') }}</DropdownMenuLabel>
@@ -253,7 +253,7 @@
     });
 
     const emit = defineEmits([
-        'show-whats-new',
+        'show-changelog',
         'support-link',
         'toggle-theme',
         'show-vrcx-update-dialog',

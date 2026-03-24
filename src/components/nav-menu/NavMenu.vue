@@ -133,7 +133,7 @@
             :is-applying-theme-color="isApplyingThemeColor"
             :theme-display-name="themeDisplayName"
             :theme-color-display-name="themeColorDisplayName"
-            @show-whats-new="handleShowWhatsNew"
+            @show-changelog="showChangeLogDialog"
             @support-link="handleSupportLink"
             @toggle-theme="handleThemeToggle"
             @show-vrcx-update-dialog="showVRCXUpdateDialog"
@@ -213,7 +213,7 @@
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
     const { pendingVRCXUpdate, pendingVRCXInstall, appVersion } = storeToRefs(VRCXUpdaterStore);
-    const { showVRCXUpdateDialog, showChangeLogDialog, showLatestWhatsNewDialog } = VRCXUpdaterStore;
+    const { showVRCXUpdateDialog, showChangeLogDialog } = VRCXUpdaterStore;
 
     const dashboardStore = useDashboardStore();
     const { dashboards } = storeToRefs(dashboardStore);
@@ -311,13 +311,6 @@
             return item.children.some((entry) => isEntryNotified(entry));
         }
         return false;
-    };
-
-    const handleShowWhatsNew = async () => {
-        const shown = showLatestWhatsNewDialog();
-        if (!shown) {
-            showChangeLogDialog();
-        }
     };
 
     const handleSettingsClick = () => {
