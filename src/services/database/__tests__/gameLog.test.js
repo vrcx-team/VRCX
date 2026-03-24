@@ -48,6 +48,87 @@ describe('gameLog.getSelfPresenceForLocations', () => {
     });
 });
 
+describe('gameLog.getCoInstanceHistoryBetweenFriends', () => {
+    beforeEach(() => {
+        mocks.execute.mockReset();
+    });
+
+    test('includes inferred co-instance sessions from feed GPS/offline history', async () => {
+        mocks.execute.mockImplementation(async (callback, sql, params) => {
+            if (sql.includes('FROM gamelog_join_leave a')) {
+                callback([
+                    'wrld_logged:123~region(us)',
+                    '2025-01-01T12:00:00Z',
+                    3600000,
+                    '2025-01-01T12:30:00Z',
+                    3600000
+                ]);
+                return undefined;
+            }
+            if (sql.includes('FROM _feed_gps') || sql.includes('FROM _feed_online_offline')) {
+                if (params['@userId'] === 'usr_a') {
+                    callback(['wrld_inferred:55~region(us)', '2025-01-01T10:00:00Z', 3600000]);
+                } else if (params['@userId'] === 'usr_b') {
+                    callback(['wrld_inferred:55~region(us)', '2025-01-01T10:20:00Z', 3600000]);
+                }
+            }
+            return undefined;
+        });
+
+        const result = await gameLog.getCoInstanceHistoryBetweenFriends(
+            'usr_a',
+            'usr_b'
+        );
+
+        expect(result).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    location: 'wrld_logged:123~region(us)'
+                }),
+                expect.objectContaining({
+                    location: 'wrld_inferred:55~region(us)'
+                })
+            ])
+        );
+    });
+
+    test('deduplicates duplicate rows coming from multiple sources', async () => {
+        mocks.execute.mockImplementation(async (callback, sql, params) => {
+            if (sql.includes('FROM gamelog_join_leave a')) {
+                callback([
+                    'wrld_same:1~region(us)',
+                    '2025-01-01T10:00:00Z',
+                    3600000,
+                    '2025-01-01T10:20:00Z',
+                    3600000
+                ]);
+                return undefined;
+            }
+            if (sql.includes('FROM _feed_gps') || sql.includes('FROM _feed_online_offline')) {
+                if (params['@userId'] === 'usr_a') {
+                    callback(['wrld_same:1~region(us)', '2025-01-01T10:00:00Z', 3600000]);
+                } else if (params['@userId'] === 'usr_b') {
+                    callback(['wrld_same:1~region(us)', '2025-01-01T10:20:00Z', 3600000]);
+                }
+            }
+            return undefined;
+        });
+
+        const result = await gameLog.getCoInstanceHistoryBetweenFriends(
+            'usr_a',
+            'usr_b'
+        );
+
+        const duplicates = result.filter(
+            (item) =>
+                item.location === 'wrld_same:1~region(us)' &&
+                item.friendALeave === '2025-01-01T10:00:00Z' &&
+                item.friendBLeave === '2025-01-01T10:20:00Z'
+        );
+        expect(duplicates).toHaveLength(1);
+    });
+});
+
 describe('gameLog.getMyTopWorlds', () => {
     beforeEach(() => {
         mocks.execute.mockReset();
