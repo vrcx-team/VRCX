@@ -3,6 +3,8 @@ function clampPercent(value) {
 }
 
 function relationshipScore(totalTime, joinCount) {
+    // Keep this aligned with the chart tooltip/description logic:
+    // each shared join is weighted as an additional 1 minute of relationship time.
     return totalTime + joinCount * 60000;
 }
 
@@ -19,7 +21,7 @@ function bucketLabel(bucketIdx, firstDay, bucketDays) {
     return `${start}~${end}`;
 }
 
-function computeZoomRange(bucketCount, persistedRange = null, defaultUnits = 10) {
+function computeZoomRange(bucketCount, persistedRange = null, defaultUnits) {
     if (
         persistedRange &&
         Number.isFinite(persistedRange.start) &&

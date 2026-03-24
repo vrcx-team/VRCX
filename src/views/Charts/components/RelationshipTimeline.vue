@@ -31,6 +31,7 @@
                                 :min="1"
                                 :step="1"
                                 class="w-24"
+                                aria-label="Top friends count"
                                 @valueCommit="debouncedRebuildChart" />
                             <span class="w-4 text-right text-xs tabular-nums text-muted-foreground">
                                 {{ friendCount }}
@@ -74,7 +75,11 @@
             <!-- Chart area -->
             <div v-else class="relative mt-2 flex min-h-0 flex-1 flex-col">
                 <!-- ECharts canvas -->
-                <div ref="chartDomRef" class="w-full min-h-0 flex-1"></div>
+                <div
+                    ref="chartDomRef"
+                    class="w-full min-h-0 flex-1"
+                    role="img"
+                    aria-label="Relationship timeline stacked area chart"></div>
 
                 <!-- Bottom-right: non-linear granularity scale control -->
                 <div class="flex items-center justify-end gap-2 px-4 py-1">
@@ -179,6 +184,7 @@
         '#ea7ccc',
         '#17c0ac'
     ];
+    const DEFAULT_VISIBLE_BUCKETS = 10;
 
     // ─── Friend display-name lookup ────────────────────────────────────────────
     function getFriendDisplayName(userId, fallbackName) {
@@ -249,7 +255,11 @@
     function buildEChartsOption(chartData) {
         const { xLabels, series, bucketCount } = chartData;
         const isDark = isDarkMode.value;
-        const zoomRange = computeZoomRange(bucketCount, dataZoomRange.value, 10);
+        const zoomRange = computeZoomRange(
+            bucketCount,
+            dataZoomRange.value,
+            DEFAULT_VISIBLE_BUCKETS
+        );
 
         return {
             backgroundColor: 'transparent',
