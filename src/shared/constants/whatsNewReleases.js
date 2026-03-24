@@ -6,16 +6,16 @@ const whatsNewReleases = Object.freeze({
                 icon: 'search'
             },
             {
-                key: 'dashboard',
-                icon: 'layout-dashboard'
+                key: 'local_favorite_groups',
+                icon: 'folder-heart'
             },
             {
-                key: 'activity_insights',
-                icon: 'activity'
+                key: 'auto_status',
+                icon: 'refresh-cw'
             },
             {
-                key: 'my_avatars',
-                icon: 'images'
+                key: 'right_click_menus',
+                icon: 'mouse-pointer-click'
             }
         ]
     }
@@ -36,7 +36,7 @@ function normalizeReleaseVersion(version) {
 
 /**
  * @param {string} version
- * @returns {{titleKey: string, items: Array<{key: string, icon: string, titleKey: string, descriptionKey: string}>} | null}
+ * @returns {{titleKey: string, subtitleKey: string, items: Array<{key: string, icon: string, titleKey: string, descriptionKey: string}>} | null}
  */
 function getWhatsNewRelease(version) {
     const normalizedVersion = normalizeReleaseVersion(version);
@@ -52,6 +52,7 @@ function getWhatsNewRelease(version) {
     const baseKey = `onboarding.whatsnew.releases.${i18nKey}`;
     return {
         titleKey: `${baseKey}.title`,
+        subtitleKey: `${baseKey}.subtitle`,
         items: release.items.map((item) => ({
             ...item,
             titleKey: `${baseKey}.items.${item.key}.title`,
@@ -61,7 +62,7 @@ function getWhatsNewRelease(version) {
 }
 
 /**
- * @returns {{titleKey: string, items: Array<{key: string, icon: string, titleKey: string, descriptionKey: string}>} | null}
+ * @returns {{titleKey: string, subtitleKey: string, items: Array<{key: string, icon: string, titleKey: string, descriptionKey: string}>} | null}
  */
 function getLatestWhatsNewRelease() {
     const versions = Object.keys(whatsNewReleases);

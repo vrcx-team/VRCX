@@ -19,6 +19,7 @@ import * as workerTimers from 'worker-timers';
 const emptyWhatsNewDialog = () => ({
     visible: false,
     titleKey: '',
+    subtitleKey: '',
     items: []
 });
 
@@ -199,6 +200,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         whatsNewDialog.value = {
             visible: true,
             titleKey: release.titleKey,
+            subtitleKey: release.subtitleKey,
             items: release.items.map((item) => ({ ...item }))
         };
 
@@ -218,6 +220,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         whatsNewDialog.value = {
             visible: true,
             titleKey: release.titleKey,
+            subtitleKey: release.subtitleKey,
             items: release.items.map((item) => ({ ...item }))
         };
 

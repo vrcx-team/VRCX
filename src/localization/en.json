@@ -3000,28 +3000,29 @@
             "cta": "Got It",
             "common": {
                 "got_it": "Got It",
-                "view_changelog": "View changelog",
+                "view_changelog": "View All Changes",
                 "support": "Support VRCX"
             },
             "releases": {
                 "2026_04_05": {
-                    "title": "What's New in VRCX",
+                    "title": "Explore New Features",
+                    "subtitle": "A few useful features you might not notice.",
                     "items": {
                         "quick_search": {
                             "title": "Quick Search",
-                            "description": "Find users, worlds, and avatars in seconds."
+                            "description": "Press Ctrl+K (⌘K) to find users, worlds, groups, and avatars."
                         },
-                        "dashboard": {
-                            "title": "Dashboard",
-                            "description": "Build a workspace that fits how you use VRCX."
+                        "local_favorite_groups": {
+                            "title": "Local Favorites",
+                            "description": "Create unlimited custom friend groups beyond VRChat's limits."
                         },
-                        "activity_insights": {
-                            "title": "Activity Insights",
-                            "description": "See shared online time, Most Visited Worlds, and activity trends."
+                        "auto_status": {
+                            "title": "Auto Status",
+                            "description": "Auto-switch status based on friend presence, filtered by group."
                         },
-                        "my_avatars": {
-                            "title": "My Avatars",
-                            "description": "Browse and manage your avatars with less friction."
+                        "right_click_menus": {
+                            "title": "Context Menus",
+                            "description": "Right-click on friends, tables, and headers for quick actions."
                         }
                     }
                 }

@@ -15,6 +15,12 @@
                 <h2 class="m-0 text-[23px] font-bold tracking-tight">
                     {{ t(whatsNewDialog.titleKey || 'onboarding.whatsnew.title') }}
                 </h2>
+
+                <p
+                    v-if="whatsNewDialog.subtitleKey"
+                    class="mt-1 text-[13px] text-muted-foreground">
+                    {{ t(whatsNewDialog.subtitleKey) }}
+                </p>
             </div>
 
             <!-- Feature Cards -->
@@ -88,7 +94,7 @@
 
 <script setup>
     import { markRaw } from 'vue';
-    import { LayoutDashboard, Search, Activity, Images } from 'lucide-vue-next';
+    import { Search, FolderHeart, RefreshCw, MousePointerClick } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -122,16 +128,16 @@
 
     const iconMap = {
         search: markRaw(Search),
-        'layout-dashboard': markRaw(LayoutDashboard),
-        activity: markRaw(Activity),
-        images: markRaw(Images)
+        'folder-heart': markRaw(FolderHeart),
+        'refresh-cw': markRaw(RefreshCw),
+        'mouse-pointer-click': markRaw(MousePointerClick)
     };
 
     const hueMap = {
         search: '142',
-        'layout-dashboard': '45',
-        activity: '200',
-        images: '280'
+        'folder-heart': '340',
+        'refresh-cw': '200',
+        'mouse-pointer-click': '45'
     };
 
     function resolveIcon(iconName) {
