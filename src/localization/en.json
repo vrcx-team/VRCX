@@ -3009,7 +3009,7 @@
             "releases": {
                 "2026_04_05": {
                     "title": "Explore New Features",
-                    "subtitle": "A few useful features you might not notice.",
+                    "subtitle": "A few useful features you might not notice",
                     "items": {
                         "quick_search": {
                             "title": "Quick Search",

@@ -1,6 +1,8 @@
 <template>
-    <ContextMenu>
-        <ContextMenuTrigger as-child>
+    <UserContextMenu
+        :user-id="friend.id"
+        :state="friend.state"
+        :location="friend.ref?.location">
             <Card
                 class="friend-card x-hover-card hover:bg-muted relative"
                 :style="cardStyle"
@@ -43,66 +45,21 @@
                     </div>
                 </div>
             </Card>
-        </ContextMenuTrigger>
-        <ContextMenuContent>
-            <ContextMenuItem v-if="friend.state === 'online'" @click="friendRequestInvite">
-                {{ t('dialog.user.actions.request_invite') }}
-            </ContextMenuItem>
-            <ContextMenuItem v-if="isGameRunning" :disabled="!canInviteToMyLocation" @click="friendInvite">
-                {{ t('dialog.user.actions.invite') }}
-            </ContextMenuItem>
-            <ContextMenuItem :disabled="!currentUser?.isBoopingEnabled" @click="friendSendBoop">
-                {{ t('dialog.user.actions.send_boop') }}
-            </ContextMenuItem>
-            <ContextMenuSeparator v-if="friend.state === 'online' && hasFriendLocation" />
-            <ContextMenuItem
-                v-if="friend.state === 'online' && hasFriendLocation"
-                :disabled="!canJoinFriend"
-                @click="friendJoin">
-                {{ t('dialog.user.info.launch_invite_tooltip') }}
-            </ContextMenuItem>
-            <ContextMenuItem
-                v-if="friend.state === 'online' && hasFriendLocation"
-                :disabled="!canJoinFriend"
-                @click="friendInviteSelf">
-                {{ t('dialog.user.info.self_invite_tooltip') }}
-            </ContextMenuItem>
-        </ContextMenuContent>
-    </ContextMenu>
+    </UserContextMenu>
 </template>
 
 <script setup>
-    import {
-        ContextMenu,
-        ContextMenuContent,
-        ContextMenuItem,
-        ContextMenuSeparator,
-        ContextMenuTrigger
-    } from '@/components/ui/context-menu';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Card } from '@/components/ui/card';
     import { Pencil, User } from 'lucide-vue-next';
     import { computed } from 'vue';
-    import { storeToRefs } from 'pinia';
-    import { toast } from 'vue-sonner';
-    import { useI18n } from 'vue-i18n';
 
-    import { isRealInstance, parseLocation } from '../../../shared/utils';
-    import { useGameStore, useLaunchStore, useLocationStore, useUserStore } from '../../../stores';
-    import { instanceRequest, notificationRequest, queryRequest } from '../../../api';
-    import { useInviteChecks } from '../../../composables/useInviteChecks';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
 
     import Location from '../../../components/Location.vue';
+    import UserContextMenu from '../../../components/UserContextMenu.vue';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
 
-    const { t } = useI18n();
-    const { showSendBoopDialog } = useUserStore();
-    const launchStore = useLaunchStore();
-    const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
-    const { isGameRunning } = storeToRefs(useGameStore());
-    const { currentUser } = storeToRefs(useUserStore());
-    const { checkCanInvite, checkCanInviteSelf } = useInviteChecks();
     const { userImage, userStatusClass } = useUserDisplay();
 
     const props = defineProps({
@@ -170,86 +127,6 @@
 
         return 'friend-card__status-dot--hidden';
     });
-
-    const canInviteToMyLocation = computed(() => checkCanInvite(lastLocation.value.location));
-
-    const hasFriendLocation = computed(() => {
-        const loc = props.friend.ref?.location;
-        return !!loc && isRealInstance(loc);
-    });
-
-    const canJoinFriend = computed(() => {
-        const loc = props.friend.ref?.location;
-        if (!loc || !isRealInstance(loc)) return false;
-        return checkCanInviteSelf(loc);
-    });
-
-    /**
-     *
-     */
-    function friendRequestInvite() {
-        notificationRequest.sendRequestInvite({ platform: 'standalonewindows' }, props.friend.id).then(() => {
-            toast.success('Request invite sent');
-        });
-    }
-
-    /**
-     *
-     */
-    function friendInvite() {
-        let currentLocation = lastLocation.value.location;
-        if (currentLocation === 'traveling') {
-            currentLocation = lastLocationDestination.value;
-        }
-        const L = parseLocation(currentLocation);
-        queryRequest.fetch('world.location', { worldId: L.worldId }).then((args) => {
-            notificationRequest
-                .sendInvite(
-                    {
-                        instanceId: L.tag,
-                        worldId: L.tag,
-                        worldName: args.ref.name
-                    },
-                    props.friend.id
-                )
-                .then(() => {
-                    toast.success(t('message.invite.sent'));
-                });
-        });
-    }
-
-    /**
-     *
-     */
-    function friendSendBoop() {
-        showSendBoopDialog(props.friend.id);
-    }
-
-    /**
-     *
-     */
-    function friendJoin() {
-        const loc = props.friend.ref?.location;
-        if (!loc) return;
-        launchStore.showLaunchDialog(loc);
-    }
-
-    /**
-     *
-     */
-    function friendInviteSelf() {
-        const loc = props.friend.ref?.location;
-        if (!loc) return;
-        const L = parseLocation(loc);
-        instanceRequest
-            .selfInvite({
-                instanceId: L.instanceId,
-                worldId: L.worldId
-            })
-            .then(() => {
-                toast.success(t('message.invite.self_sent'));
-            });
-    }
 </script>
 
 <style scoped>
