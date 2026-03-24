@@ -1877,6 +1877,7 @@
         },
         "invite_request_message": {
             "header": "Send Invite Request Message",
+            "confirmation": "Are you sure you want to send?",
             "cancel": "Cancel",
             "refresh": "Refresh"
         },
