@@ -1652,8 +1652,11 @@ const gameLog = {
                 (row) => {
                     sessions.push({
                         location: row[0],
+                        // feed rows only store the end timestamp and duration
+                        // (ms), so created_at is treated as leaveAt.
                         leaveAt: row[1],
-                        time: row[2] || 0
+                        // `time` in feed rows is duration in milliseconds.
+                        time: row[2]
                     });
                 },
                 `SELECT location, created_at, time
@@ -1717,7 +1720,11 @@ const gameLog = {
             }
         }
 
-        results.sort((a, b) => (a.friendALeave < b.friendALeave ? 1 : -1));
+        results.sort((a, b) => {
+            if (a.friendALeave < b.friendALeave) return 1;
+            if (a.friendALeave > b.friendALeave) return -1;
+            return 0;
+        });
         return results;
     },
 
