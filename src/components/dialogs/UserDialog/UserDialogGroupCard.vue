@@ -28,85 +28,17 @@
                 <span>({{ group.memberCount }})</span>
             </span>
         </div>
-        <DropdownMenu>
-            <DropdownMenuTrigger as-child>
-                <Button class="rounded-full ml-1 shrink-0" size="icon-sm" variant="ghost" @click.stop>
-                    <MoreHorizontal class="size-4" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" class="w-52">
-                <DropdownMenuItem @click="handleViewDetails">
-                    <ExternalLink class="size-4" />
-                    {{ t('common.actions.view_details') }}
-                </DropdownMenuItem>
-                <template v-if="canManage && canManageVisibility">
-                    <DropdownMenuSeparator />
-                    <DropdownMenuSub>
-                        <DropdownMenuSubTrigger>
-                            <Eye class="size-4" />
-                            {{ t('dialog.group.members.visibility') }}
-                        </DropdownMenuSubTrigger>
-                        <DropdownMenuPortal>
-                            <DropdownMenuSubContent side="right" align="start" class="w-52">
-                                <DropdownMenuItem @click="setVisibility('visible')">
-                                    <Eye class="size-4" />
-                                    <Check v-if="memberVisibility === 'visible'" class="size-4" />
-                                    {{ t('dialog.group.actions.visibility_everyone') }}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem @click="setVisibility('friends')">
-                                    <Eye class="size-4" />
-                                    <Check v-if="memberVisibility === 'friends'" class="size-4" />
-                                    {{ t('dialog.group.actions.visibility_friends') }}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem @click="setVisibility('hidden')">
-                                    <Eye class="size-4" />
-                                    <Check v-if="memberVisibility === 'hidden'" class="size-4" />
-                                    {{ t('dialog.group.actions.visibility_hidden') }}
-                                </DropdownMenuItem>
-                            </DropdownMenuSubContent>
-                        </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                </template>
-                <template v-if="canManage">
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem variant="destructive" @click="handleLeaveGroup">
-                        <Trash2 class="size-4" />
-                        {{ t('dialog.group.actions.leave') }}
-                    </DropdownMenuItem>
-                </template>
-            </DropdownMenuContent>
-        </DropdownMenu>
     </div>
 </template>
 
 <script setup>
-    import {
-        Check,
-        ExternalLink,
-        Eye,
-        MoreHorizontal,
-        Tag,
-        Trash2,
-        Users
-    } from 'lucide-vue-next';
+    import { Eye, Tag, Users } from 'lucide-vue-next';
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
 
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-    import { Button } from '@/components/ui/button';
-    import {
-        DropdownMenu,
-        DropdownMenuContent,
-        DropdownMenuItem,
-        DropdownMenuPortal,
-        DropdownMenuSeparator,
-        DropdownMenuSub,
-        DropdownMenuSubContent,
-        DropdownMenuSubTrigger,
-        DropdownMenuTrigger
-    } from '@/components/ui/dropdown-menu';
 
-    import { leaveGroupPrompt, setGroupVisibility, showGroupDialog } from '../../../coordinators/groupCoordinator';
+    import { showGroupDialog } from '../../../coordinators/groupCoordinator';
 
     const { t } = useI18n();
 
@@ -114,10 +46,6 @@
         group: {
             type: Object,
             required: true
-        },
-        canManage: {
-            type: Boolean,
-            default: false
         }
     });
 
@@ -125,19 +53,7 @@
         () => props.group?.memberVisibility || props.group?.myMember?.visibility || 'visible'
     );
 
-    const canManageVisibility = computed(
-        () => props.group?.privacy === 'default'
-    );
-
     function handleViewDetails() {
         showGroupDialog(props.group.id);
-    }
-
-    function setVisibility(value) {
-        setGroupVisibility(props.group.id, value);
-    }
-
-    function handleLeaveGroup() {
-        leaveGroupPrompt(props.group.id);
     }
 </script>
