@@ -42,6 +42,7 @@ const expandedRow = ({ row }) => {
                         <Location
                             location={original.previousLocation}
                             class="inline-block"
+                            enableContextMenu
                         />
                         <Badge variant="secondary" class="ml-1 w-fit">
                             {timeToText(original.time)}
@@ -57,6 +58,7 @@ const expandedRow = ({ row }) => {
                         location={original.location}
                         hint={original.worldName}
                         grouphint={original.groupName}
+                        enableContextMenu
                     />
                 ) : null}
             </div>
@@ -70,6 +72,7 @@ const expandedRow = ({ row }) => {
                     location={original.location}
                     hint={original.worldName}
                     grouphint={original.groupName}
+                    enableContextMenu
                 />
                 <Badge variant="secondary" class="ml-1 w-fit">
                     {timeToText(original.time)}
@@ -85,6 +88,7 @@ const expandedRow = ({ row }) => {
                     location={original.location}
                     hint={original.worldName}
                     grouphint={original.groupName}
+                    enableContextMenu
                 />
             </div>
         ) : null;
@@ -323,6 +327,7 @@ export const columns = [
                             location={original.location}
                             hint={original.worldName}
                             grouphint={original.groupName}
+                            enableContextMenu
                             disableTooltip
                         />
                     </div>
@@ -336,6 +341,7 @@ export const columns = [
                             location={original.location}
                             hint={original.worldName}
                             grouphint={original.groupName}
+                            enableContextMenu
                             disableTooltip
                         />
                     </div>

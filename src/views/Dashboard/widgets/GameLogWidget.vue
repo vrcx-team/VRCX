@@ -48,6 +48,7 @@
                                     :location="item.location"
                                     :hint="item.worldName"
                                     :grouphint="item.groupName"
+                                    enable-context-menu
                                     disable-tooltip />
                             </template>
                             <template v-else-if="item.type === 'OnPlayerJoined'">
@@ -104,6 +105,7 @@
                                     class="inline [&>div]:inline-flex"
                                     :location="item.location"
                                     :hint="item.worldName"
+                                    enable-context-menu
                                     disable-tooltip />
                                 <span v-else class="text-muted-foreground">{{ item.worldName || '' }}</span>
                             </template>

@@ -1,6 +1,6 @@
 <template>
-    <ContextMenu>
-        <ContextMenuTrigger as-child>
+    <component :is="enableContextMenu ? ContextMenu : Passthrough">
+        <component :is="enableContextMenu ? ContextMenuTrigger : Passthrough" as-child>
             <div class="cursor-pointer">
                 <div v-if="!text" class="text-transparent">-</div>
                 <div v-show="text" class="flex items-center">
@@ -39,8 +39,8 @@
                     </template>
                 </div>
             </div>
-        </ContextMenuTrigger>
-        <ContextMenuContent v-if="parsedLocation.isRealInstance && parsedLocation.worldId">
+        </component>
+        <ContextMenuContent v-if="enableContextMenu && parsedLocation.isRealInstance && parsedLocation.worldId">
             <WorldActionMenuItems
                 :can-open-instance-in-game="canOpenInstanceInGame"
                 :show-share="true"
@@ -51,7 +51,7 @@
                 @self-invite="handleNewInstanceSelfInvite"
                 @show-previous-instances="handleShowPreviousInstances" />
         </ContextMenuContent>
-    </ContextMenu>
+    </component>
 </template>
 
 <script setup>
@@ -83,6 +83,8 @@
     import WorldActionMenuItems from './WorldActionMenuItems.vue';
     import { accessTypeLocaleKeyMap } from '../shared/constants';
 
+    const Passthrough = (_, { slots }) => slots.default?.();
+
     const { t } = useI18n();
 
     const { cachedWorlds } = useWorldStore();
@@ -113,6 +115,10 @@
             default: false
         },
         isOpenPreviousInstanceInfoDialog: {
+            type: Boolean,
+            default: false
+        },
+        enableContextMenu: {
             type: Boolean,
             default: false
         }

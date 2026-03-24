@@ -57,6 +57,7 @@
                                     :location="item.location"
                                     :hint="item.worldName"
                                     :grouphint="item.groupName"
+                                    enable-context-menu
                                     disable-tooltip />
                             </template>
                             <template v-else-if="item.type === 'Online'">
@@ -73,6 +74,7 @@
                                         :location="item.location"
                                         :hint="item.worldName"
                                         :grouphint="item.groupName"
+                                        enable-context-menu
                                         disable-tooltip />
                                 </template>
                             </template>

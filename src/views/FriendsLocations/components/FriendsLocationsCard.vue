@@ -41,6 +41,7 @@
                             class="friend-card__location flex w-full overflow-hidden leading-[1.3] wrap-break-word text-center"
                             :location="friend.ref?.location"
                             :traveling="friend.ref?.travelingToLocation"
+                            enable-context-menu
                             link />
                     </div>
                 </div>
