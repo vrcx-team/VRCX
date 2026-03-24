@@ -7,8 +7,10 @@
                         :tooltip="t('dashboard.new_dashboard')"
                         class="border border-dashed border-primary/40 text-primary hover:bg-primary/10"
                         @click="handleQuickCreateDashboard">
-                        <Plus class="size-4" />
-                        <span v-show="!isCollapsed">{{ t('dashboard.new_dashboard') }}</span>
+                        <div class="flex items-center gap-3 pl-1 group-data-[collapsible=icon]:pl-0">
+                            <Plus class="size-4" />
+                            <span v-show="!isCollapsed">{{ t('dashboard.new_dashboard') }}</span>
+                        </div>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>
