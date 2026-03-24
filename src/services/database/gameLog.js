@@ -1601,9 +1601,18 @@ const gameLog = {
      */
     async getCoInstanceHistoryBetweenFriends(friendAUserId, friendBUserId) {
         const results = [];
+        const dedupeKeys = new Set();
+        const appendResult = (row) => {
+            const key = `${row.location}|${row.friendALeave}|${row.friendATime}|${row.friendBLeave}|${row.friendBTime}`;
+            if (dedupeKeys.has(key)) {
+                return;
+            }
+            dedupeKeys.add(key);
+            results.push(row);
+        };
         await sqliteService.execute(
             (row) => {
-                results.push({
+                appendResult({
                     location: row[0],
                     friendALeave: row[1],
                     friendATime: row[2],
@@ -1636,6 +1645,79 @@ const gameLog = {
                 '@friendBUserId': friendBUserId
             }
         );
+
+        const getInferredLocationSessions = async (userId) => {
+            const sessions = [];
+            await sqliteService.execute(
+                (row) => {
+                    sessions.push({
+                        location: row[0],
+                        leaveAt: row[1],
+                        time: row[2] || 0
+                    });
+                },
+                `SELECT location, created_at, time
+                 FROM (
+                     SELECT previous_location AS location, created_at, time
+                     FROM ${dbVars.userPrefix}_feed_gps
+                     WHERE user_id = @userId
+                       AND previous_location NOT IN ('', 'offline', 'traveling')
+                       AND time > 0
+                     UNION ALL
+                     SELECT location, created_at, time
+                     FROM ${dbVars.userPrefix}_feed_online_offline
+                     WHERE user_id = @userId
+                       AND type = 'Offline'
+                       AND location NOT IN ('', 'offline', 'traveling')
+                       AND time > 0
+                 )
+                 ORDER BY created_at DESC`,
+                {
+                    '@userId': userId
+                }
+            );
+            return sessions;
+        };
+
+        const [friendASessions, friendBSessions] = await Promise.all([
+            getInferredLocationSessions(friendAUserId),
+            getInferredLocationSessions(friendBUserId)
+        ]);
+
+        const sessionsBByLocation = new Map();
+        for (const session of friendBSessions) {
+            if (!sessionsBByLocation.has(session.location)) {
+                sessionsBByLocation.set(session.location, []);
+            }
+            sessionsBByLocation.get(session.location).push(session);
+        }
+
+        for (const sessionA of friendASessions) {
+            const sessionBList = sessionsBByLocation.get(sessionA.location);
+            if (!sessionBList || sessionBList.length === 0) {
+                continue;
+            }
+            const sessionALeaveMs = new Date(sessionA.leaveAt).getTime();
+            const sessionAJoinMs = sessionALeaveMs - sessionA.time;
+            for (const sessionB of sessionBList) {
+                const sessionBLeaveMs = new Date(sessionB.leaveAt).getTime();
+                const sessionBJoinMs = sessionBLeaveMs - sessionB.time;
+                if (
+                    sessionAJoinMs < sessionBLeaveMs &&
+                    sessionBJoinMs < sessionALeaveMs
+                ) {
+                    appendResult({
+                        location: sessionA.location,
+                        friendALeave: sessionA.leaveAt,
+                        friendATime: sessionA.time,
+                        friendBLeave: sessionB.leaveAt,
+                        friendBTime: sessionB.time
+                    });
+                }
+            }
+        }
+
+        results.sort((a, b) => (a.friendALeave < b.friendALeave ? 1 : -1));
         return results;
     },
 
