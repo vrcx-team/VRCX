@@ -26,35 +26,37 @@
                         <RefreshCw v-else />
                     </Button>
                 </TooltipWrapper>
-                <ContextMenu v-if="hasUnseenNotifications">
-                    <ContextMenuTrigger as-child>
-                        <TooltipWrapper side="bottom" :content="t('side_panel.notification_center.title')">
-                            <Button
-                                class="rounded-full relative"
-                                variant="ghost"
-                                size="icon-sm"
-                                @click="isNotificationCenterOpen = !isNotificationCenterOpen">
-                                <Bell />
-                                <span class="absolute top-1 right-1.25 size-1.5 rounded-full bg-red-500" />
-                            </Button>
-                        </TooltipWrapper>
-                    </ContextMenuTrigger>
-                    <ContextMenuContent>
-                        <ContextMenuItem @click="markNotificationsRead">
-                            {{ t('nav_menu.mark_all_read') }}
-                        </ContextMenuItem>
-                    </ContextMenuContent>
-                </ContextMenu>
-                <TooltipWrapper v-else side="bottom" :content="t('side_panel.notification_center.title')">
-                    <Button
-                        class="rounded-full relative"
-                        variant="ghost"
-                        size="icon-sm"
-                        @click="isNotificationCenterOpen = !isNotificationCenterOpen"
-                        @contextmenu.prevent="toast.info(t('side_panel.notification_center.no_unseen_notifications'))">
-                        <Bell />
-                    </Button>
-                </TooltipWrapper>
+                <template v-if="notificationLayout !== 'table'">
+                    <ContextMenu v-if="hasUnseenNotifications">
+                        <ContextMenuTrigger as-child>
+                            <TooltipWrapper side="bottom" :content="t('side_panel.notification_center.title')">
+                                <Button
+                                    class="rounded-full relative"
+                                    variant="ghost"
+                                    size="icon-sm"
+                                    @click="isNotificationCenterOpen = !isNotificationCenterOpen">
+                                    <Bell />
+                                    <span class="absolute top-1 right-1.25 size-1.5 rounded-full bg-red-500" />
+                                </Button>
+                            </TooltipWrapper>
+                        </ContextMenuTrigger>
+                        <ContextMenuContent>
+                            <ContextMenuItem @click="markNotificationsRead">
+                                {{ t('nav_menu.mark_all_read') }}
+                            </ContextMenuItem>
+                        </ContextMenuContent>
+                    </ContextMenu>
+                    <TooltipWrapper v-else side="bottom" :content="t('side_panel.notification_center.title')">
+                        <Button
+                            class="rounded-full relative"
+                            variant="ghost"
+                            size="icon-sm"
+                            @click="isNotificationCenterOpen = !isNotificationCenterOpen"
+                            @contextmenu.prevent="toast.info(t('side_panel.notification_center.no_unseen_notifications'))">
+                            <Bell />
+                        </Button>
+                    </TooltipWrapper>
+                </template>
                 <Popover v-model:open="isSettingsPopoverOpen">
                     <PopoverTrigger as-child>
                         <Button class="rounded-full" variant="ghost" size="icon-sm">
@@ -334,7 +336,8 @@
         useFavoriteStore,
         useFriendStore,
         useGroupStore,
-        useNotificationStore
+        useNotificationStore,
+        useNotificationsSettingsStore
     } from '../../stores';
     import { runRefreshFriendsListFlow } from '../../coordinators/friendSyncCoordinator';
     import { normalizeFavoriteGroupsChange, resolveFavoriteGroups } from './sidebarSettingsUtils';
@@ -350,6 +353,7 @@
     const { groupInstances } = storeToRefs(useGroupStore());
     const notificationStore = useNotificationStore();
     const { isNotificationCenterOpen, hasUnseenNotifications } = storeToRefs(notificationStore);
+    const { notificationLayout } = storeToRefs(useNotificationsSettingsStore());
     const quickSearchStore = useQuickSearchStore();
     const { t } = useI18n();
 

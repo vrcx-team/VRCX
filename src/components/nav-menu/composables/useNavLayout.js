@@ -30,6 +30,8 @@ import {
 } from '../navConfigUtils';
 import { normalizeHiddenKeys, sanitizeLayout } from '../navMenuUtils';
 
+import { useNotificationsSettingsStore } from '../../../stores/settings/notifications';
+
 export function useNavLayout({
     t,
     locale,
@@ -42,15 +44,17 @@ export function useNavLayout({
     const navLayout = ref([]);
     const navLayoutReady = ref(false);
     const navHiddenKeys = ref([]);
+    const notificationsSettingsStore = useNotificationsSettingsStore();
 
     const allNavDefinitions = computed(() => [
         ...navDefinitions,
         ...dashboardStore.getDashboardNavDefinitions()
     ]);
 
-    const navDefinitionMap = computed(() =>
-        createNavDefinitionMap(allNavDefinitions.value)
-    );
+    const navDefinitionMap = computed(() => {
+        const map = createNavDefinitionMap(allNavDefinitions.value);
+        return map;
+    });
 
     // Tool nav items are add/remove only; they no longer participate in hidden state.
     const getDefaultHiddenKeys = (layout = []) => {
@@ -60,9 +64,24 @@ export function useNavLayout({
 
     const createDefaultNavLayout = () => createBaseDefaultNavLayout(t);
 
-    const menuItems = computed(() =>
-        buildMenuItems(navLayout.value, navDefinitionMap.value, t)
-    );
+    const menuItems = computed(() => {
+        const items = buildMenuItems(navLayout.value, navDefinitionMap.value, t);
+        if (notificationsSettingsStore.notificationLayout === 'notification-center') {
+            return items.filter((item) => {
+                if (item.index === 'notification') {
+                    return false;
+                }
+                if (item.children) {
+                    item.children = item.children.filter(
+                        (child) => child.index !== 'notification'
+                    );
+                    return item.children.length > 0;
+                }
+                return true;
+            });
+        }
+        return items;
+    });
 
     const getFirstNavEntryLocal = (layout) => {
         return findFirstNavEntry(layout, navDefinitionMap.value);

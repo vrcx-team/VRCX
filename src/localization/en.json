@@ -950,6 +950,9 @@
             "notifications": {
                 "notifications": {
                     "header": "Notifications",
+                    "layout": "Notification Layout",
+                    "layout_notification_center": "Notification Center",
+                    "layout_table": "Table",
                     "notification_filter": "Notification Filter",
                     "test_notification": "Test Notification",
                     "steamvr_notifications": {

@@ -119,6 +119,7 @@ export const useNotificationsSettingsStore = defineStore(
         const notificationTTSTest = ref('');
         const notificationPosition = ref('topCenter');
         const notificationTimeout = ref(3000);
+        const notificationLayout = ref('notification-center');
 
         async function initNotificationsSettings() {
             const [
@@ -136,7 +137,8 @@ export const useNotificationsSettingsStore = defineStore(
                 sharedFeedFiltersConfig,
                 notificationTTSVoiceConfig,
                 notificationPositionConfig,
-                notificationTimeoutConfig
+                notificationTimeoutConfig,
+                notificationLayoutConfig
             ] = await Promise.all([
                 configRepository.getString('VRCX_overlayToast', 'Game Running'),
                 configRepository.getBool('VRCX_overlayNotifications', true),
@@ -158,7 +160,11 @@ export const useNotificationsSettingsStore = defineStore(
                     'VRCX_notificationPosition',
                     'topCenter'
                 ),
-                configRepository.getString('VRCX_notificationTimeout', '3000')
+                configRepository.getString('VRCX_notificationTimeout', '3000'),
+                configRepository.getString(
+                    'VRCX_notificationLayout',
+                    'notification-center'
+                )
             ]);
 
             overlayToast.value = overlayToastConfig;
@@ -177,6 +183,7 @@ export const useNotificationsSettingsStore = defineStore(
             TTSvoices.value = speechSynthesis.getVoices();
             notificationPosition.value = notificationPositionConfig;
             notificationTimeout.value = Number(notificationTimeoutConfig);
+            notificationLayout.value = notificationLayoutConfig;
 
             initSharedFeedFilters();
 
@@ -424,6 +431,14 @@ export const useNotificationsSettingsStore = defineStore(
             vrStore.updateVRConfigVars();
         }
 
+        /**
+         * @param {string} value
+         */
+        function setNotificationLayout(value) {
+            notificationLayout.value = value;
+            configRepository.setString('VRCX_notificationLayout', value);
+        }
+
         function promptNotificationTimeout() {
             modalStore
                 .prompt({
@@ -470,6 +485,7 @@ export const useNotificationsSettingsStore = defineStore(
             notificationTTSTest,
             notificationPosition,
             notificationTimeout,
+            notificationLayout,
 
             setOverlayToast,
             setOpenVR,
@@ -488,6 +504,7 @@ export const useNotificationsSettingsStore = defineStore(
             testNotificationTTS,
             speak,
             changeNotificationPosition,
+            setNotificationLayout,
             setNotificationTimeout,
             promptNotificationTimeout
         };
