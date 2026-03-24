@@ -19,7 +19,7 @@
                     </template>
                 </InputGroupAction>
 
-                <Button size="sm" style="margin-top: 6px" @click="avatarRemoteDatabaseProviderList.push('')">
+                <Button size="sm" style="margin-top: 6px" @click="addProvider">
                     {{ t('dialog.avatar_database_provider.add_provider') }}
                 </Button>
             </div>
@@ -58,5 +58,12 @@
      */
     function closeDialog() {
         emit('update:isAvatarProviderDialogVisible', false);
+    }
+
+    /**
+     *
+     */
+    function addProvider() {
+        avatarRemoteDatabaseProviderList.value.push('');
     }
 </script>

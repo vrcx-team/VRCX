@@ -135,9 +135,9 @@
             <span v-if="instance?.queueSize" class="ml-1">
                 {{ t('dialog.user.info.instance_queue') }} {{ instance.queueSize }}
             </span>
-            <span v-if="instanceInfoState.isAgeGated" class="ml-1">
+            <Badge v-if="instanceInfoState.isAgeGated" variant="outline" class="ml-1">
                 {{ t('dialog.user.info.instance_age_gated') }}
-            </span>
+            </Badge>
         </div>
     </div>
 </template>
@@ -145,6 +145,7 @@
 <script setup>
     import { History, Loader2, LogIn, Mail, MapPin, RefreshCw, UsersRound } from 'lucide-vue-next';
     import { computed, reactive, ref, watch } from 'vue';
+    import { Badge } from '@/components/ui/badge';
     import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -159,8 +160,10 @@
         useModalStore,
         useUserStore
     } from '../stores';
-    import { checkCanInviteSelf, formatDateFilter, hasGroupPermission, parseLocation } from '../shared/utils';
+    import { formatDateFilter, hasGroupPermission, parseLocation } from '../shared/utils';
+    import { useInviteChecks } from '../composables/useInviteChecks';
     import { instanceRequest, miscRequest } from '../api';
+    import { showUserDialog } from '../coordinators/userCoordinator';
 
     defineOptions({
         inheritAttrs: false
@@ -179,6 +182,7 @@
     const { instanceJoinHistory } = storeToRefs(instanceStore);
     const { canOpenInstanceInGame } = storeToRefs(inviteStore);
     const { isOpeningInstance } = storeToRefs(launchStore);
+    const { checkCanInviteSelf } = useInviteChecks();
 
     const props = defineProps({
         location: {
@@ -350,10 +354,6 @@
         if (props.instance.$disabledContentSettings?.length) {
             instanceInfoState.disabledContentSettings = props.instance.$disabledContentSettings.join(', ');
         }
-    };
-
-    const showUserDialog = (userId) => {
-        userStore.showUserDialog(userId);
     };
 
     const closeInstance = (location) => {

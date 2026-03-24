@@ -1,6 +1,6 @@
 import { nextTick, ref } from 'vue';
 
-import configRepository from '../../../service/config';
+import configRepository from '../../../services/config';
 
 export function useInstanceActivitySettings() {
     const barWidth = ref(25);

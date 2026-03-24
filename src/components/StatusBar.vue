@@ -1,12 +1,18 @@
 <template>
     <div
-        class="shrink-0 h-[22px] flex items-center bg-sidebar border-t border-border font-mono text-xs select-none overflow-hidden"
+        class="shrink-0 h-[22px] flex items-center bg-sidebar border-t border-border text-xs select-none overflow-hidden"
+        style="font-family: var(--font-mono-cjk)"
         @contextmenu.prevent>
         <ContextMenu>
             <ContextMenuTrigger as-child>
                 <div class="flex items-center w-full h-full px-2">
                     <!-- Left section -->
-                    <div class="flex items-center flex-1 min-w-0 [&>*:first-child]:pl-0.5">
+                    <div
+                        class="flex items-center flex-1 min-w-0 overflow-hidden [&>*:first-child]:pl-0.5"
+                        style="
+                            mask-image: linear-gradient(to right, black calc(100% - 20px), transparent 100%);
+                            -webkit-mask-image: linear-gradient(to right, black calc(100% - 20px), transparent 100%);
+                        ">
                         <TooltipWrapper
                             v-if="visibility.proxy"
                             :content="
@@ -45,19 +51,68 @@
                             </div>
                         </TooltipWrapper>
 
-                        <TooltipWrapper
+                        <HoverCard
                             v-if="!isMacOS && visibility.vrchat"
-                            :content="
-                                gameStore.isGameRunning ? t('status_bar.game_running') : t('status_bar.game_stopped')
-                            "
-                            side="top">
-                            <div class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
-                                <span
-                                    class="inline-block size-2 rounded-full shrink-0"
-                                    :class="gameStore.isGameRunning ? 'bg-status-online' : 'bg-status-offline-alt'" />
-                                <span class="text-foreground text-[11px]">{{ t('status_bar.game') }}</span>
-                            </div>
-                        </TooltipWrapper>
+                            v-model:open="gameHoverOpen"
+                            :open-delay="50"
+                            :close-delay="50">
+                            <HoverCardTrigger as-child>
+                                <div
+                                    class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
+                                    <span
+                                        class="inline-block size-2 rounded-full shrink-0"
+                                        :class="
+                                            gameStore.isGameRunning ? 'bg-status-online' : 'bg-status-offline-alt'
+                                        " />
+                                    <span class="text-foreground text-[11px]">{{ t('status_bar.game') }}</span>
+                                    <span v-if="gameStore.isGameRunning" class="text-[10px] text-foreground">{{
+                                        gameSessionText
+                                    }}</span>
+                                </div>
+                            </HoverCardTrigger>
+                            <HoverCardContent
+                                v-if="gameStore.isGameRunning && userStore.currentUser.$online_for"
+                                class="w-auto min-w-[160px] px-3 py-2"
+                                side="top"
+                                align="start"
+                                :side-offset="4">
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center justify-between gap-3">
+                                        <span class="text-[11px] text-muted-foreground">{{
+                                            t('status_bar.game_started_at')
+                                        }}</span>
+                                        <span class="text-[11px] text-foreground">{{ gameStartedAtText }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between gap-3">
+                                        <span class="text-[11px] text-muted-foreground">{{
+                                            t('status_bar.game_session_duration')
+                                        }}</span>
+                                        <span class="text-[11px] text-foreground">{{ gameSessionDetailText }}</span>
+                                    </div>
+                                </div>
+                            </HoverCardContent>
+                            <HoverCardContent
+                                v-else-if="!gameStore.isGameRunning && gameStore.lastSessionDurationMs > 0"
+                                class="w-auto min-w-[160px] px-3 py-2"
+                                side="top"
+                                align="start"
+                                :side-offset="4">
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center justify-between gap-3">
+                                        <span class="text-[11px] text-muted-foreground">{{
+                                            t('status_bar.game_last_session')
+                                        }}</span>
+                                        <span class="text-[11px] text-foreground">{{ lastSessionText }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between gap-3">
+                                        <span class="text-[11px] text-muted-foreground">{{
+                                            t('status_bar.game_last_offline')
+                                        }}</span>
+                                        <span class="text-[11px] text-foreground">{{ lastOfflineTimeText }}</span>
+                                    </div>
+                                </div>
+                            </HoverCardContent>
+                        </HoverCard>
 
                         <HoverCard v-if="visibility.servers" v-model:open="serversHoverOpen">
                             <HoverCardTrigger as-child>
@@ -74,8 +129,11 @@
                                 </TooltipWrapper>
                                 <div
                                     v-else
-                                    class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
-                                    <span class="inline-block size-2 rounded-full shrink-0 bg-[#e6a23c]" />
+                                    class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border cursor-pointer hover:bg-accent"
+                                    @click="vrcStatusStore.openStatusPage()">
+                                    <span
+                                        class="inline-block size-2 rounded-full shrink-0"
+                                        :class="vrcStatusStore.isMajor ? 'bg-destructive' : 'bg-status-askme'" />
                                     <span class="text-foreground text-[11px]">{{ t('status_bar.servers') }}</span>
                                 </div>
                             </HoverCardTrigger>
@@ -86,7 +144,9 @@
                                 align="start"
                                 :side-offset="4">
                                 <div class="flex items-center gap-1.5 mb-1.5">
-                                    <span class="inline-block size-2 rounded-full shrink-0 bg-[#e6a23c]" />
+                                    <span
+                                        class="inline-block size-2 rounded-full shrink-0"
+                                        :class="vrcStatusStore.isMajor ? 'bg-destructive' : 'bg-status-askme'" />
                                     <span class="font-semibold text-xs text-foreground">{{
                                         t('status_bar.servers_issue')
                                     }}</span>
@@ -112,7 +172,7 @@
                     </div>
 
                     <!-- Right section -->
-                    <div class="flex items-center ml-auto [&>*:last-child]:border-r-0 [&>*:last-child]:pr-0.5">
+                    <div class="flex items-center shrink-0 ml-auto [&>*:last-child]:border-r-0 [&>*:last-child]:pr-0.5">
                         <template v-if="visibility.clocks">
                             <Popover
                                 v-for="(clock, idx) in visibleClocks"
@@ -166,6 +226,7 @@
                                         :step="1"
                                         :format-options="{ maximumFractionDigits: 0 }"
                                         class="w-20"
+                                        @click.stop
                                         @update:modelValue="setZoomLevel">
                                         <NumberFieldContent>
                                             <NumberFieldDecrement />
@@ -200,36 +261,45 @@
                 <ContextMenuCheckboxItem
                     v-if="!isMacOS"
                     :model-value="visibility.vrchat"
+                    @select.prevent
                     @update:model-value="toggleVisibility('vrchat')">
                     {{ t('status_bar.game') }}
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     :model-value="visibility.servers"
+                    @select.prevent
                     @update:model-value="toggleVisibility('servers')">
                     {{ t('status_bar.servers') }}
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     v-if="!isMacOS"
                     :model-value="visibility.steamvr"
+                    @select.prevent
                     @update:model-value="toggleVisibility('steamvr')">
                     {{ t('status_bar.steamvr') }}
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     :model-value="visibility.proxy"
+                    @select.prevent
                     @update:model-value="toggleVisibility('proxy')">
                     {{ t('status_bar.proxy') }}
                 </ContextMenuCheckboxItem>
-                <ContextMenuCheckboxItem :model-value="visibility.ws" @update:model-value="toggleVisibility('ws')">
+                <ContextMenuCheckboxItem
+                    :model-value="visibility.ws"
+                    @select.prevent
+                    @update:model-value="toggleVisibility('ws')">
                     WebSocket
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     :model-value="visibility.uptime"
+                    @select.prevent
                     @update:model-value="toggleVisibility('uptime')">
                     {{ t('status_bar.app_uptime_short') }}
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     v-if="!isMacOS"
                     :model-value="visibility.zoom"
+                    @select.prevent
                     @update:model-value="toggleVisibility('zoom')">
                     {{ t('status_bar.zoom') }}
                 </ContextMenuCheckboxItem>
@@ -237,18 +307,30 @@
                 <ContextMenuSub>
                     <ContextMenuSubTrigger>{{ t('status_bar.clocks') }}</ContextMenuSubTrigger>
                     <ContextMenuSubContent>
-                        <ContextMenuRadioGroup :model-value="String(clockCount)" @update:modelValue="setClockCount">
-                            <ContextMenuRadioItem value="0">
-                                {{ t('status_bar.clocks_none') }}
-                            </ContextMenuRadioItem>
-                            <ContextMenuRadioItem value="1"> 1 {{ t('status_bar.clock') }} </ContextMenuRadioItem>
-                            <ContextMenuRadioItem value="2">
-                                2 {{ t('status_bar.clocks_label') }}
-                            </ContextMenuRadioItem>
-                            <ContextMenuRadioItem value="3">
-                                3 {{ t('status_bar.clocks_label') }}
-                            </ContextMenuRadioItem>
-                        </ContextMenuRadioGroup>
+                        <ContextMenuCheckboxItem
+                            :model-value="clockCount === 0"
+                            @select.prevent
+                            @update:model-value="setClockCount('0')">
+                            {{ t('status_bar.clocks_none') }}
+                        </ContextMenuCheckboxItem>
+                        <ContextMenuCheckboxItem
+                            :model-value="clockCount === 1"
+                            @select.prevent
+                            @update:model-value="setClockCount('1')">
+                            1 {{ t('status_bar.clock') }}
+                        </ContextMenuCheckboxItem>
+                        <ContextMenuCheckboxItem
+                            :model-value="clockCount === 2"
+                            @select.prevent
+                            @update:model-value="setClockCount('2')">
+                            2 {{ t('status_bar.clocks_label') }}
+                        </ContextMenuCheckboxItem>
+                        <ContextMenuCheckboxItem
+                            :model-value="clockCount === 3"
+                            @select.prevent
+                            @update:model-value="setClockCount('3')">
+                            3 {{ t('status_bar.clocks_label') }}
+                        </ContextMenuCheckboxItem>
                     </ContextMenuSubContent>
                 </ContextMenuSub>
             </ContextMenuContent>
@@ -261,8 +343,6 @@
         ContextMenu,
         ContextMenuCheckboxItem,
         ContextMenuContent,
-        ContextMenuRadioGroup,
-        ContextMenuRadioItem,
         ContextMenuSeparator,
         ContextMenuSub,
         ContextMenuSubContent,
@@ -278,13 +358,14 @@
         NumberFieldIncrement,
         NumberFieldInput
     } from '@/components/ui/number-field';
-    import { useGameStore, useGeneralSettingsStore, useVrcStatusStore, useVrcxStore } from '@/stores';
+    import { useGameStore, useGeneralSettingsStore, useUserStore, useVrcStatusStore, useVrcxStore } from '@/stores';
     import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+    import { timeToText } from '@/shared/utils';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { useIntervalFn, useNow } from '@vueuse/core';
     import { TooltipWrapper } from '@/components/ui/tooltip';
     import { useI18n } from 'vue-i18n';
-    import { wsState } from '@/service/websocket';
+    import { wsState } from '@/services/websocket';
 
     import dayjs from 'dayjs';
     import timezone from 'dayjs/plugin/timezone';
@@ -299,7 +380,7 @@
         parseClockOffset
     } from './statusBarUtils';
 
-    import configRepository from '../service/config';
+    import configRepository from '../services/config';
 
     dayjs.extend(utc);
     dayjs.extend(timezone);
@@ -309,9 +390,40 @@
     const isMacOS = computed(() => navigator.platform.includes('Mac'));
 
     const gameStore = useGameStore();
+    const userStore = useUserStore();
     const vrcxStore = useVrcxStore();
     const vrcStatusStore = useVrcStatusStore();
     const generalSettingsStore = useGeneralSettingsStore();
+
+    // --- Game session timer ---
+    const gameHoverOpen = ref(false);
+
+    const gameSessionText = computed(() => {
+        if (!gameStore.isGameRunning || !userStore.currentUser.$online_for) return '';
+        const elapsed = now.value - userStore.currentUser.$online_for;
+        return elapsed > 0 ? timeToText(elapsed) : '';
+    });
+
+    const gameStartedAtText = computed(() => {
+        if (!userStore.currentUser.$online_for) return '-';
+        return dayjs(userStore.currentUser.$online_for).format('MM/DD HH:mm');
+    });
+
+    const gameSessionDetailText = computed(() => {
+        if (!gameStore.isGameRunning || !userStore.currentUser.$online_for) return '-';
+        const elapsed = now.value - userStore.currentUser.$online_for;
+        return elapsed > 0 ? timeToText(elapsed, true) : '-';
+    });
+
+    const lastSessionText = computed(() => {
+        if (gameStore.lastSessionDurationMs <= 0) return '-';
+        return timeToText(gameStore.lastSessionDurationMs);
+    });
+
+    const lastOfflineTimeText = computed(() => {
+        if (gameStore.lastOfflineAt <= 0) return '-';
+        return dayjs(gameStore.lastOfflineAt).format('MM/DD HH:mm');
+    });
 
     // --- Servers status HoverCard ---
     const serversHoverOpen = ref(false);
@@ -344,9 +456,6 @@
     function toggleVisibility(key) {
         visibility[key] = !visibility[key];
         configRepository.setString(VISIBILITY_KEY, JSON.stringify(visibility));
-        if (key === 'servers') {
-            vrcStatusStore.setStatusBarServersVisible(visibility.servers);
-        }
     }
 
     // --- WebSocket message rate + sparkline ---
@@ -451,7 +560,7 @@
     const defaultClocks = [{ offset: localOffset }, { offset: 0 }, { offset: localOffset < 0 ? 9 : -5 }];
 
     const clocks = ref(defaultClocks.map((c) => ({ ...c })));
-    const clockCount = ref(3);
+    const clockCount = ref(2);
     const clockPopoverOpen = reactive([false, false, false]);
 
     const visibleClocks = computed(() => clocks.value.slice(0, clockCount.value));
@@ -538,12 +647,10 @@
         }
 
         drawSparkline();
-        vrcStatusStore.setStatusBarServersVisible(visibility.servers);
     });
 
     onBeforeUnmount(() => {
         clearTimeout(serversHoverTimer);
-        vrcStatusStore.setStatusBarServersVisible(false);
     });
 
     watch(

@@ -1,372 +1,136 @@
 <template>
     <div id="chart" class="x-container">
-        <div class="options-container mt-0">
+        <div class="options-container">
             <span class="header">{{ t('view.tools.header') }}</span>
 
-            <div class="tool-categories">
-                <div class="tool-category">
-                    <div class="category-header text-2xl" @click="toggleCategory('image')">
-                        <ChevronDown
-                            class="rotation-transition"
-                            :class="{ 'is-rotated': categoryCollapsed['image'] }" />
-                        <span class="category-title">{{ t('view.tools.pictures.header') }}</span>
-                    </div>
-                    <div class="tools-grid" v-show="!categoryCollapsed['image']">
-                        <Card class="tool-card x-hover-card p-0 gap-0 hover:bg-accent hover:shadow-sm">
-                            <div class="tool-content text-2xl" @click="showScreenshotMetadataPage">
-                                <div class="tool-icon">
-                                    <Camera />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.pictures.screenshot') }}</div>
-                                    <div class="tool-description">
-                                        {{ t('view.tools.pictures.screenshot_description') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="showGalleryPage">
-                                <div class="tool-icon text-2xl">
-                                    <Images />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.pictures.inventory') }}</div>
-                                    <div class="tool-description">
-                                        {{ t('view.tools.pictures.inventory_description') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                    </div>
-                </div>
-
-                <div class="tool-category">
-                    <div class="category-header" @click="toggleCategory('shortcuts')">
-                        <ChevronDown
-                            class="rotation-transition"
-                            :class="{ 'is-rotated': categoryCollapsed['shortcuts'] }" />
-                        <span class="category-title">{{ t('view.tools.shortcuts.header') }}</span>
-                    </div>
-                    <div class="tools-grid" v-show="!categoryCollapsed['shortcuts']">
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="openVrcPhotosFolder">
-                                <div class="tool-icon text-2xl">
-                                    <Folder />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.pictures.pictures.vrc_photos') }}</div>
-                                    <div class="tool-description">
-                                        {{ t('view.tools.pictures.pictures.vrc_photos_description') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="openVrcScreenshotsFolder">
-                                <div class="tool-icon text-2xl">
-                                    <Folder />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">
-                                        {{ t('view.tools.pictures.pictures.steam_screenshots') }}
-                                    </div>
-                                    <div class="tool-description">
-                                        {{ t('view.tools.pictures.pictures.steam_screenshots_description') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="openVrcxAppDataFolder">
-                                <div class="tool-icon text-2xl">
-                                    <Folder />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.shortcuts.vrcx_data') }}</div>
-                                    <div class="tool-description">
-                                        {{ t('view.tools.shortcuts.vrcx_data_description') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="openVrcAppDataFolder">
-                                <div class="tool-icon text-2xl">
-                                    <Folder />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.shortcuts.vrchat_data') }}</div>
-                                    <div class="tool-description">
-                                        {{ t('view.tools.shortcuts.vrchat_data_description') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="openCrashVrcCrashDumps">
-                                <div class="tool-icon text-2xl">
-                                    <Folder />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.shortcuts.crash_dumps') }}</div>
-                                    <div class="tool-description">
-                                        {{ t('view.tools.shortcuts.crash_dumps_description') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                    </div>
-                </div>
-
-                <div class="tool-category">
-                    <div class="category-header" @click="toggleCategory('system')">
-                        <ChevronDown
-                            class="rotation-transition"
-                            :class="{ 'is-rotated': categoryCollapsed['system'] }" />
-                        <span class="category-title">{{ t('view.tools.system_tools.header') }}</span>
-                    </div>
-                    <div class="tools-grid" v-show="!categoryCollapsed['system']">
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="showVRChatConfig">
-                                <div class="tool-icon text-2xl">
-                                    <Settings />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.system_tools.vrchat_config') }}</div>
-                                    <div class="tool-description">
-                                        {{ t('view.tools.system_tools.vrchat_config_description') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="showLaunchOptions">
-                                <div class="tool-icon text-2xl">
-                                    <Settings />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">
-                                        {{ t('view.settings.advanced.advanced.launch_options') }}
-                                    </div>
-                                    <div class="tool-description">
-                                        {{ t('view.tools.system_tools.launch_options_description') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="showRegistryBackupDialog">
-                                <div class="tool-icon text-2xl">
-                                    <Settings />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">
-                                        {{ t('view.settings.advanced.advanced.vrc_registry_backup') }}
-                                    </div>
-                                    <div class="tool-description">
-                                        {{ t('view.tools.system_tools.registry_backup_description') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="showAutoChangeStatusDialog">
-                                <div class="tool-icon text-2xl">
-                                    <Settings />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">
-                                        {{ t('view.settings.general.automation.auto_change_status') }}
-                                    </div>
-                                    <div class="tool-description">
-                                        {{ t('view.settings.general.automation.auto_state_change_tooltip') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                    </div>
-                </div>
-
-                <div class="tool-category">
-                    <div class="category-header" @click="toggleCategory('group')">
-                        <ChevronDown
-                            class="rotation-transition"
-                            :class="{ 'is-rotated': categoryCollapsed['group'] }" />
-                        <span class="category-title">{{ t('view.tools.group.header') }}</span>
-                    </div>
-                    <div class="tools-grid" v-show="!categoryCollapsed['group']">
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="showGroupCalendarDialog">
-                                <div class="tool-icon text-2xl">
-                                    <CalendarDays />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.group.calendar') }}</div>
-                                    <div class="tool-description">{{ t('view.tools.group.calendar_description') }}</div>
-                                </div>
-                            </div>
-                        </Card>
-                    </div>
-                </div>
-
-                <div class="tool-category">
-                    <div class="category-header text-2xl" @click="toggleCategory('user')">
-                        <ChevronDown class="rotation-transition" :class="{ 'is-rotated': categoryCollapsed['user'] }" />
-                        <span class="category-title">{{ t('view.tools.export.header') }}</span>
+            <div class="mt-5 px-5">
+                <div
+                    v-for="category in categories"
+                    :key="category.key"
+                    class="mb-6">
+                    <div
+                        class="cursor-pointer flex items-center p-2 px-3 rounded-lg mb-3 transition-all duration-200 ease-in-out"
+                        @click="toggleCategory(category.key)">
+                        <i
+                            class="ri-arrow-down-s-line mr-2 text-sm transition-transform duration-300"
+                            :class="{ '-rotate-90': categoryCollapsed[category.key] }" />
+                        <span class="ml-1.5 text-base font-semibold">
+                            {{ t(category.labelKey) }}
+                        </span>
                     </div>
 
-                    <div class="tools-grid" v-show="!categoryCollapsed['user']">
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="showExportDiscordNamesDialog">
-                                <div class="tool-icon text-2xl">
-                                    <FolderInput />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.export.discord_names') }}</div>
-                                    <div class="tool-description">
-                                        {{ t('view.tools.user.discord_names_description') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="showNoteExportDialog">
-                                <div class="tool-icon text-2xl">
-                                    <FolderInput />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.export.export_notes') }}</div>
-                                    <div class="tool-description">
-                                        {{ t('view.tools.export.export_notes_description') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
+                    <div
+                        class="grid grid-cols-2 gap-4 ml-4"
+                        v-show="!categoryCollapsed[category.key]">
+                        <ToolItem
+                            v-for="tool in category.tools"
+                            :key="tool.key"
+                            :icon="tool.navIcon"
+                            :title="t(tool.titleKey)"
+                            :description="t(tool.descriptionKey)"
+                            @click="triggerTool(tool)">
+                            <template #actions>
+                                <TooltipWrapper
+                                    v-if="
+                                        tool.navEligible &&
+                                        pinnedToolKeys.has(tool.key)
+                                    "
+                                    side="top"
+                                    :content="
+                                        t('nav_menu.custom_nav.unpin_from_nav')
+                                    ">
+                                    <Button
+                                        size="icon-xs"
+                                        variant="secondary"
+                                        class="opacity-0 transition-opacity group-hover:opacity-100"
+                                        :title="
+                                            t(
+                                                'nav_menu.custom_nav.unpin_from_nav'
+                                            )
+                                        "
+                                        :aria-label="
+                                            t(
+                                                'nav_menu.custom_nav.unpin_from_nav'
+                                            )
+                                        "
+                                        @click.stop="unpinToolFromNav(tool.key)">
+                                        <span class="relative inline-flex size-4">
+                                            <i
+                                                class="ri-side-bar-line inline-flex size-4 items-center justify-center text-base" />
+                                            <span
+                                                class="absolute -right-1 -top-1 grid size-2.5 place-items-center rounded-full bg-background shadow-sm">
+                                                <i
+                                                    class="ri-subtract-line inline-flex size-2 items-center justify-center text-[10px]" />
+                                            </span>
+                                        </span>
+                                    </Button>
+                                </TooltipWrapper>
 
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="showExportFriendsListDialog">
-                                <div class="tool-icon text-2xl">
-                                    <FolderInput />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.export.export_friend_list') }}</div>
-                                    <div class="tool-description">
-                                        {{ t('view.tools.user.export_friend_list_description') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="showExportAvatarsListDialog">
-                                <div class="tool-icon text-2xl">
-                                    <FolderInput />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.export.export_own_avatars') }}</div>
-                                    <div class="tool-description">
-                                        {{ t('view.tools.user.export_own_avatars_description') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                    </div>
-                </div>
-
-                <div class="tool-category">
-                    <div class="category-header" @click="toggleCategory('other')">
-                        <ChevronDown
-                            class="rotation-transition"
-                            :class="{ 'is-rotated': categoryCollapsed['other'] }" />
-                        <span class="category-title">{{ t('view.tools.other.header') }}</span>
-                    </div>
-                    <div class="tools-grid" v-show="!categoryCollapsed['other']">
-                        <Card class="tool-card p-0 gap-0">
-                            <div class="tool-content" @click="showEditInviteMessageDialog">
-                                <div class="tool-icon text-2xl">
-                                    <SquarePen />
-                                </div>
-                                <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.other.edit_invite_message') }}</div>
-                                    <div class="tool-description">
-                                        {{ t('view.tools.other.edit_invite_message_description') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
+                                <TooltipWrapper
+                                    v-else-if="tool.navEligible"
+                                    side="top"
+                                    :content="t('nav_menu.custom_nav.pin_to_nav')">
+                                    <Button
+                                        size="icon-xs"
+                                        variant="ghost"
+                                        class="opacity-0 transition-opacity group-hover:opacity-100"
+                                        :title="
+                                            t('nav_menu.custom_nav.pin_to_nav')
+                                        "
+                                        :aria-label="
+                                            t('nav_menu.custom_nav.pin_to_nav')
+                                        "
+                                        @click.stop="pinToolToNav(tool.key)">
+                                        <span class="relative inline-flex size-4">
+                                            <i
+                                                class="ri-side-bar-line inline-flex size-4 items-center justify-center text-base" />
+                                            <span
+                                                class="absolute -right-1 -top-1 grid size-2.5 place-items-center rounded-full bg-background shadow-sm">
+                                                <i
+                                                    class="ri-add-line inline-flex size-2 items-center justify-center text-[10px]" />
+                                            </span>
+                                        </span>
+                                    </Button>
+                                </TooltipWrapper>
+                            </template>
+                        </ToolItem>
                     </div>
                 </div>
             </div>
         </div>
-        <template v-if="isToolsTabVisible">
-            <GroupCalendarDialog
-                :visible="isGroupCalendarDialogVisible"
-                @close="isGroupCalendarDialogVisible = false" />
-            <NoteExportDialog
-                :isNoteExportDialogVisible="isNoteExportDialogVisible"
-                @close="isNoteExportDialogVisible = false" />
-            <ExportDiscordNamesDialog
-                v-model:discordNamesDialogVisible="isExportDiscordNamesDialogVisible"
-                :friends="friends" />
-            <ExportFriendsListDialog
-                v-model:isExportFriendsListDialogVisible="isExportFriendsListDialogVisible"
-                :friends="friends" />
-            <ExportAvatarsListDialog v-model:isExportAvatarsListDialogVisible="isExportAvatarsListDialogVisible" />
-            <EditInviteMessageDialog
-                v-model:isEditInviteMessagesDialogVisible="isEditInviteMessagesDialogVisible"
-                @close="isEditInviteMessagesDialogVisible = false" />
-            <RegistryBackupDialog />
-            <AutoChangeStatusDialog
-                :isAutoChangeStatusDialogVisible="isAutoChangeStatusDialogVisible"
-                @close="isAutoChangeStatusDialogVisible = false" />
-        </template>
     </div>
 </template>
 
 <script setup>
-    import {
-        CalendarDays,
-        Camera,
-        ChevronDown,
-        Folder,
-        FolderInput,
-        Images,
-        Settings,
-        SquarePen
-    } from 'lucide-vue-next';
-    import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
-    import { useRoute, useRouter } from 'vue-router';
-    import { Card } from '@/components/ui/card';
-    import { storeToRefs } from 'pinia';
-    import { toast } from 'vue-sonner';
+    import { onMounted, ref } from 'vue';
     import { useI18n } from 'vue-i18n';
 
-    import { useFriendStore, useGalleryStore } from '../../stores';
-    import { useAdvancedSettingsStore } from '../../stores/settings/advanced';
-    import { useLaunchStore } from '../../stores/launch';
-    import { useVrcxStore } from '../../stores/vrcx';
-
-    import AutoChangeStatusDialog from './dialogs/AutoChangeStatusDialog.vue';
-    import configRepository from '../../service/config.js';
-
-    const GroupCalendarDialog = defineAsyncComponent(() => import('./dialogs/GroupCalendarDialog.vue'));
-    const NoteExportDialog = defineAsyncComponent(() => import('./dialogs/NoteExportDialog.vue'));
-    const EditInviteMessageDialog = defineAsyncComponent(() => import('./dialogs/EditInviteMessagesDialog.vue'));
-    const ExportDiscordNamesDialog = defineAsyncComponent(() => import('./dialogs/ExportDiscordNamesDialog.vue'));
-    const ExportFriendsListDialog = defineAsyncComponent(() => import('./dialogs/ExportFriendsListDialog.vue'));
-    const ExportAvatarsListDialog = defineAsyncComponent(() => import('./dialogs/ExportAvatarsListDialog.vue'));
-    const RegistryBackupDialog = defineAsyncComponent(() => import('./dialogs/RegistryBackupDialog.vue'));
+    import { Button } from '@/components/ui/button';
+    import { TooltipWrapper } from '@/components/ui/tooltip';
+    import ToolItem from './components/ToolItem.vue';
+    import { useToolActions } from '../../composables/useToolActions';
+    import { useToolNavPinning } from '../../composables/useToolNavPinning';
+    import {
+        getToolsByCategory,
+        toolCategories
+    } from '../../shared/constants';
+    import configRepository from '../../services/config.js';
 
     const { t } = useI18n();
-    const router = useRouter();
-    const route = useRoute();
-
-    const { showGalleryPage } = useGalleryStore();
-    const { friends } = storeToRefs(useFriendStore());
-    const { showVRChatConfig } = useAdvancedSettingsStore();
-    const { showLaunchOptions } = useLaunchStore();
-    const { showRegistryBackupDialog } = useVrcxStore();
+    const { triggerTool } = useToolActions();
+    const {
+        pinToolToNav,
+        pinnedToolKeys,
+        refreshPinnedState,
+        unpinToolFromNav
+    } =
+        useToolNavPinning();
     const toolsCategoryCollapsedConfigKey = 'VRCX_toolsCategoryCollapsed';
+
+    const categories = toolCategories.map((category) => ({
+        ...category,
+        tools: getToolsByCategory(category.key)
+    }));
 
     const categoryCollapsed = ref({
         group: false,
@@ -377,34 +141,20 @@
         other: false
     });
 
-    const isGroupCalendarDialogVisible = ref(false);
-    const isNoteExportDialogVisible = ref(false);
-    const isExportDiscordNamesDialogVisible = ref(false);
-    const isExportFriendsListDialogVisible = ref(false);
-    const isExportAvatarsListDialogVisible = ref(false);
-    const isEditInviteMessagesDialogVisible = ref(false);
-    const isAutoChangeStatusDialogVisible = ref(false);
-    const isToolsTabVisible = computed(() => route.name === 'tools');
-
-    const showGroupCalendarDialog = () => {
-        isGroupCalendarDialogVisible.value = true;
-    };
-
-    const showScreenshotMetadataPage = () => {
-        router.push({ name: 'screenshot-metadata' });
-    };
-
-    const showNoteExportDialog = () => {
-        isNoteExportDialogVisible.value = true;
-    };
-
     const toggleCategory = (category) => {
         categoryCollapsed.value[category] = !categoryCollapsed.value[category];
-        configRepository.setString(toolsCategoryCollapsedConfigKey, JSON.stringify(categoryCollapsed.value));
+        configRepository.setString(
+            toolsCategoryCollapsedConfigKey,
+            JSON.stringify(categoryCollapsed.value)
+        );
     };
 
     onMounted(async () => {
-        const storedValue = await configRepository.getString(toolsCategoryCollapsedConfigKey, '{}');
+        await refreshPinnedState();
+        const storedValue = await configRepository.getString(
+            toolsCategoryCollapsedConfigKey,
+            '{}'
+        );
         try {
             const parsed = JSON.parse(storedValue);
             categoryCollapsed.value = {
@@ -415,192 +165,4 @@
             // ignore invalid stored value and keep defaults
         }
     });
-
-    const showEditInviteMessageDialog = () => {
-        isEditInviteMessagesDialogVisible.value = true;
-    };
-
-    const showAutoChangeStatusDialog = () => {
-        isAutoChangeStatusDialogVisible.value = true;
-    };
-
-    /**
-     *
-     */
-    function showExportDiscordNamesDialog() {
-        isExportDiscordNamesDialogVisible.value = true;
-    }
-
-    /**
-     *
-     */
-    function showExportFriendsListDialog() {
-        isExportFriendsListDialogVisible.value = true;
-    }
-
-    /**
-     *
-     */
-    function showExportAvatarsListDialog() {
-        isExportAvatarsListDialogVisible.value = true;
-    }
-
-    /**
-     *
-     */
-    function openVrcPhotosFolder() {
-        AppApi.OpenVrcPhotosFolder().then((result) => {
-            if (result) {
-                toast.success('Folder opened');
-            } else {
-                toast.error(t('message.file.folder_missing'));
-            }
-        });
-    }
-
-    /**
-     *
-     */
-    function openVrcScreenshotsFolder() {
-        AppApi.OpenVrcScreenshotsFolder().then((result) => {
-            if (result) {
-                toast.success('Folder opened');
-            } else {
-                toast.error(t('message.file.folder_missing'));
-            }
-        });
-    }
-
-    /**
-     *
-     */
-    function openVrcxAppDataFolder() {
-        AppApi.OpenVrcxAppDataFolder().then((result) => {
-            if (result) {
-                toast.success('Folder opened');
-            } else {
-                toast.error(t('message.file.folder_missing'));
-            }
-        });
-    }
-
-    /**
-     *
-     */
-    function openVrcAppDataFolder() {
-        AppApi.OpenVrcAppDataFolder().then((result) => {
-            if (result) {
-                toast.success('Folder opened');
-            } else {
-                toast.error(t('message.file.folder_missing'));
-            }
-        });
-    }
-
-    /**
-     *
-     */
-    function openCrashVrcCrashDumps() {
-        AppApi.OpenCrashVrcCrashDumps().then((result) => {
-            if (result) {
-                toast.success('Folder opened');
-            } else {
-                toast.error(t('message.file.folder_missing'));
-            }
-        });
-    }
 </script>
-
-<style scoped>
-    .tool-categories {
-        margin-top: 20px;
-        padding: 0 20px;
-    }
-
-    .tool-category {
-        margin-bottom: 24px;
-
-        .category-header {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            padding: 8px 12px;
-            border-radius: var(--radius-lg);
-            margin-bottom: 12px;
-            transition: all 0.2s ease;
-
-            &:hover {
-            }
-
-            .rotation-transition {
-                font-size: 14px;
-                margin-right: 8px;
-                transition: transform 0.3s;
-            }
-
-            .category-title {
-                margin-left: 6px;
-                font-size: 16px;
-                font-weight: 600;
-            }
-        }
-    }
-
-    .tools-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-        margin-left: 16px;
-    }
-
-    .tool-card {
-        position: relative;
-        overflow: visible;
-        border-radius: var(--radius-lg);
-        cursor: pointer;
-        width: 100%;
-
-        .tool-content {
-            display: flex;
-            align-items: center;
-            padding: 20px 16px;
-
-            .tool-icon {
-                width: 56px;
-                height: 56px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: var(--radius-xl);
-                margin-right: 20px;
-
-                i {
-                    font-size: 28px;
-                }
-            }
-
-            .tool-info {
-                flex: 1;
-
-                .tool-name {
-                    font-size: 18px;
-                    font-weight: 600;
-                    margin-bottom: 4px;
-                }
-
-                .tool-description {
-                    font-size: 14px;
-                    opacity: 0.8;
-                }
-            }
-        }
-    }
-
-    .is-rotated {
-        transform: rotate(-90deg);
-    }
-
-    .rotation-transition {
-        transition: transform 0.2s ease-in-out;
-    }
-</style>

@@ -1,6 +1,7 @@
-import { useGroupStore, useUserStore } from '../stores';
+import { useUserStore } from '../stores';
+import { applyGroup } from '../coordinators/groupCoordinator';
 import { queryClient } from '../queries';
-import { request } from '../service/request';
+import { request } from '../services/request';
 
 /**
  *
@@ -89,12 +90,11 @@ const groupReq = {
                 includeRoles: params.includeRoles || false
             }
         }).then((json) => {
-            const groupStore = useGroupStore();
             const args = {
                 json,
                 params
             };
-            args.ref = groupStore.applyGroup(json);
+            args.ref = applyGroup(json);
             return args;
         });
     },

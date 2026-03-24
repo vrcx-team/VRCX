@@ -22,13 +22,13 @@
                 <Spinner v-if="userDialog.isAvatarsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span style="margin-left: 6px">{{
+            <span class="ml-1.5 text-sm">{{
                 t('dialog.user.avatars.total_count', { count: userDialogAvatars.length })
             }}</span>
         </div>
         <div class="flex items-center">
+            <Input v-model="avatarSearchQuery" class="h-8 w-40 mr-2" placeholder="Search avatars" @click.stop />
             <template v-if="userDialog.ref.id === currentUser.id">
-                <Input v-model="avatarSearchQuery" class="h-8 w-40 mr-2" placeholder="Search avatars" @click.stop />
                 <span class="mr-1">{{ t('dialog.user.avatars.sort_by') }}</span>
                 <Select
                     :model-value="userDialog.avatarSorting"
@@ -68,11 +68,15 @@
                 class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                 @click="showAvatarDialog(avatar.id)">
                 <div class="relative inline-block flex-none size-9 mr-2.5">
-                    <img
-                        v-if="avatar.thumbnailImageUrl"
-                        class="size-full rounded-full object-cover"
-                        :src="avatar.thumbnailImageUrl"
-                        loading="lazy" />
+                    <Avatar class="size-9">
+                        <AvatarImage
+                            v-if="avatar.thumbnailImageUrl"
+                            :src="avatar.thumbnailImageUrl"
+                            class="object-cover" />
+                        <AvatarFallback>
+                            <Image class="size-4 text-muted-foreground" />
+                        </AvatarFallback>
+                    </Avatar>
                 </div>
                 <div class="flex-1 overflow-hidden">
                     <span class="block truncate font-medium leading-[18px]" v-text="avatar.name"></span>
@@ -103,13 +107,15 @@
     import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
 
-    import { RefreshCw } from 'lucide-vue-next';
+    import { Image, RefreshCw } from 'lucide-vue-next';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Button } from '@/components/ui/button';
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { Input } from '@/components/ui/input';
     import { Spinner } from '@/components/ui/spinner';
     import DeprecationAlert from '@/components/DeprecationAlert.vue';
+    import { refreshUserDialogAvatars } from '@/coordinators/userCoordinator';
 
     import { useAdvancedSettingsStore, useAvatarStore, useUserStore } from '../../../stores';
 
@@ -117,9 +123,9 @@
 
     const userStore = useUserStore();
     const { userDialog, currentUser } = storeToRefs(userStore);
-    const { sortUserDialogAvatars, refreshUserDialogAvatars } = userStore;
+    const { sortUserDialogAvatars } = userStore;
 
-    const { showAvatarDialog, lookupAvatars } = useAvatarStore();
+    import { showAvatarDialog, lookupAvatars } from '../../../coordinators/avatarCoordinator';
     const { cachedAvatars } = useAvatarStore();
 
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
@@ -134,9 +140,6 @@
     const avatarSearchQuery = ref('');
     const filteredUserDialogAvatars = computed(() => {
         const avatars = userDialogAvatars.value;
-        if (userDialog.value.ref?.id !== currentUser.value.id) {
-            return avatars;
-        }
         const query = avatarSearchQuery.value.trim().toLowerCase();
         if (!query) {
             return avatars;

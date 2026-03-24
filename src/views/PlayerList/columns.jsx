@@ -5,6 +5,7 @@ import {
     Apple,
     ArrowUpDown,
     IdCard,
+    User,
     Monitor,
     Smartphone
 } from 'lucide-vue-next';
@@ -13,10 +14,9 @@ import {
     getFaviconUrl,
     languageClass,
     openExternalLink,
-    statusClass,
-    userImage
+    statusClass
 } from '../../shared/utils';
-import { i18n } from '../../plugin';
+import { i18n } from '../../plugins';
 
 const { t } = i18n.global;
 
@@ -64,7 +64,8 @@ export const createColumns = ({
     chatboxUserBlacklist,
     onBlockChatbox,
     onUnblockChatbox,
-    sortAlphabetically
+    sortAlphabetically,
+    userImage
 }) => {
     const cols = [
         {
@@ -84,7 +85,17 @@ export const createColumns = ({
                             src={src}
                             class="h-4 w-4 rounded-sm object-cover"
                             loading="lazy"
+                            onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.nextElementSibling.style.display = '';
+                            }}
                         />
+                        <div
+                            class="h-4 w-4 rounded-sm bg-muted flex items-center justify-center"
+                            style="display: none"
+                        >
+                            <User class="h-3 w-3 text-muted-foreground" />
+                        </div>
                     </div>
                 );
             }
@@ -189,7 +200,8 @@ export const createColumns = ({
             enableHiding: true,
             meta: {
                 label: () => t('table.playerList.photonId'),
-                disableVisibilityToggle: true
+                disableVisibilityToggle: true,
+                defaultHidden: true
             },
             sortingFn: (rowA, rowB) =>
                 (rowA.original?.photonId ?? 0) - (rowB.original?.photonId ?? 0),

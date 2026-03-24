@@ -25,10 +25,9 @@ vi.mock('vue-router', () => ({
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
-    ,
-            locale: require('vue').ref('en')
-        })
+        t: (key) => key,
+        locale: require('vue').ref('en')
+    })
 }));
 
 vi.mock('../../../../stores', () => ({
@@ -136,9 +135,9 @@ describe('NotificationCenterSheet.vue', () => {
         mocks.notificationStore.isNotificationCenterOpen.value = true;
         await wrapper.vm.$nextTick();
 
-        expect(wrapper.get('[data-testid="tabs"]').attributes('data-model-value')).toBe(
-            'group'
-        );
+        expect(
+            wrapper.get('[data-testid="tabs"]').attributes('data-model-value')
+        ).toBe('group');
     });
 
     test('navigate-to-table closes center and routes to notification page', async () => {
@@ -150,7 +149,9 @@ describe('NotificationCenterSheet.vue', () => {
         expect(mocks.notificationStore.isNotificationCenterOpen.value).toBe(
             false
         );
-        expect(mocks.router.push).toHaveBeenCalledWith({ name: 'notification' });
+        expect(mocks.router.push).toHaveBeenCalledWith({
+            name: 'notification'
+        });
     });
 
     test('show invite response/request dialogs trigger side effects', async () => {
@@ -160,21 +161,23 @@ describe('NotificationCenterSheet.vue', () => {
             .get('[data-testid="emit-show-invite-response"]')
             .trigger('click');
 
-        expect(mocks.inviteStore.refreshInviteMessageTableData).toHaveBeenCalledWith(
-            'response'
-        );
+        expect(
+            mocks.inviteStore.refreshInviteMessageTableData
+        ).toHaveBeenCalledWith('response');
         expect(mocks.galleryStore.clearInviteImageUpload).toHaveBeenCalled();
         expect(
-            wrapper.get('[data-testid="dialog-response"]').attributes('data-visible')
+            wrapper
+                .get('[data-testid="dialog-response"]')
+                .attributes('data-visible')
         ).toBe('true');
 
         await wrapper
             .get('[data-testid="emit-show-invite-request-response"]')
             .trigger('click');
 
-        expect(mocks.inviteStore.refreshInviteMessageTableData).toHaveBeenCalledWith(
-            'requestResponse'
-        );
+        expect(
+            mocks.inviteStore.refreshInviteMessageTableData
+        ).toHaveBeenCalledWith('requestResponse');
         expect(
             wrapper
                 .get('[data-testid="dialog-request-response"]')

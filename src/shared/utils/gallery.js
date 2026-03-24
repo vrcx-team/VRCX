@@ -59,6 +59,7 @@ function getEmojiFileName(emoji) {
  * @param {number} fps
  * @param {number} frameCount
  * @param {string} loopStyle
+ * @param size
  */
 function generateEmojiStyle(url, fps, frameCount, loopStyle, size) {
     let framesPerLine = 2;

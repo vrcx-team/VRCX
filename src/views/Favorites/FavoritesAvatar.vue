@@ -2,7 +2,7 @@
     <div class="x-container">
         <div class="flex flex-col h-full min-h-0 pb-0">
             <FavoritesToolbar
-                :sort-favorites="sortFavorites"
+                :sort-value="sortFavorites ? 'date' : 'name'"
                 v-model:search-query="avatarFavoriteSearch"
                 :search-placeholder="t('view.favorite.avatars.search')"
                 v-model:toolbar-menu-open="avatarToolbarMenuOpen"
@@ -12,7 +12,7 @@
                 v-model:card-spacing-value="avatarCardSpacingValue"
                 :card-spacing-percent="avatarCardSpacingPercent"
                 :card-spacing-slider="avatarCardSpacingSlider"
-                @update:sort-favorites="handleSortFavoritesChange"
+                @update:sort-value="handleSortFavoritesChange"
                 @search="searchAvatarFavorites"
                 @import="handleAvatarImportClick"
                 @export="handleAvatarExportClick" />
@@ -352,8 +352,7 @@
                                                 :group="activeRemoteGroup"
                                                 :selected="selectedFavoriteAvatars.includes(favorite.id)"
                                                 :edit-mode="avatarEditMode"
-                                                @toggle-select="toggleAvatarSelection(favorite.id, $event)"
-                                                @click="showAvatarDialog(favorite.id)" />
+                                                @toggle-select="toggleAvatarSelection(favorite.id, $event)" />
                                         </div>
                                     </template>
                                     <div v-else class="flex items-center justify-center text-[13px] h-full">
@@ -385,8 +384,7 @@
                                                 :favorite="favorite"
                                                 :group="activeLocalGroupName"
                                                 is-local-favorite
-                                                :edit-mode="avatarEditMode"
-                                                @click="showAvatarDialog(favorite.id)" />
+                                                :edit-mode="avatarEditMode" />
                                         </div>
                                     </template>
                                     <div v-else class="flex items-center justify-center text-[13px] h-full">
@@ -403,8 +401,7 @@
                                             <FavoritesAvatarLocalHistoryItem
                                                 v-for="favorite in avatarHistory"
                                                 :key="favorite.id"
-                                                :favorite="favorite"
-                                                @click="showAvatarDialog(favorite.id)" />
+                                                :favorite="favorite" />
                                         </div>
                                     </template>
                                     <div v-else class="flex items-center justify-center text-[13px] h-full">
@@ -463,6 +460,15 @@
     import { useFavoritesGroupPanel } from './composables/useFavoritesGroupPanel.js';
     import { useFavoritesLocalGroups } from './composables/useFavoritesLocalGroups.js';
     import { useFavoritesSplitter } from './composables/useFavoritesSplitter.js';
+    import {
+        deleteLocalAvatarFavoriteGroup,
+        renameLocalAvatarFavoriteGroup,
+        newLocalAvatarFavoriteGroup,
+        refreshFavorites,
+        getLocalAvatarFavorites,
+        checkInvalidLocalAvatars,
+        removeInvalidLocalAvatars
+    } from '../../coordinators/favoriteCoordinator';
 
     import AvatarExportDialog from './dialogs/AvatarExportDialog.vue';
     import FavoritesAvatarItem from './components/FavoritesAvatarItem.vue';
@@ -503,21 +509,10 @@
         localAvatarFavoriteGroups,
         avatarImportDialogInput
     } = storeToRefs(favoriteStore);
-    const {
-        showAvatarImportDialog,
-        localAvatarFavGroupLength,
-        deleteLocalAvatarFavoriteGroup,
-        renameLocalAvatarFavoriteGroup,
-        newLocalAvatarFavoriteGroup,
-        localAvatarFavoritesList,
-        refreshFavorites,
-        getLocalAvatarFavorites,
-        handleFavoriteGroup,
-        checkInvalidLocalAvatars,
-        removeInvalidLocalAvatars
-    } = favoriteStore;
+    const { showAvatarImportDialog, localAvatarFavGroupLength, localAvatarFavoritesList, handleFavoriteGroup } =
+        favoriteStore;
     const { avatarHistory } = storeToRefs(useAvatarStore());
-    const { promptClearAvatarHistory, showAvatarDialog, applyAvatar } = useAvatarStore();
+    import { promptClearAvatarHistory, showAvatarDialog, applyAvatar } from '../../coordinators/avatarCoordinator';
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { t } = useI18n();
 
@@ -611,7 +606,7 @@
      * @param value
      */
     function handleSortFavoritesChange(value) {
-        const next = Boolean(value);
+        const next = value === 'date';
         if (next !== sortFavorites.value) {
             setSortFavorites();
         }
@@ -673,9 +668,7 @@
         if (!activeRemoteGroup.value || !currentRemoteFavorites.value.length) {
             return false;
         }
-        return currentRemoteFavorites.value
-            .map((fav) => fav.id)
-            .every((id) => selectedFavoriteAvatars.value.includes(id));
+        return currentRemoteFavorites.value.map((fav) => fav.id).every((id) => selectedFavoriteAvatars.value.includes(id));
     });
 
     watch(
@@ -887,7 +880,8 @@
                     invalidIdsText,
                 title: t('view.favorite.avatars.confirm_delete_invalid'),
                 confirmText: t('confirm.confirm_button'),
-                cancelText: t('view.favorite.avatars.copy_removed_ids')
+                cancelText: t('view.favorite.avatars.copy_removed_ids'),
+                destructive: true
             });
 
             if (!confirmDeleteResult.ok) {
@@ -1007,7 +1001,8 @@
         modalStore
             .confirm({
                 description: t('confirm.clear_group'),
-                title: t('confirm.title')
+                title: t('confirm.title'),
+                destructive: true
             })
             .then(({ ok }) => {
                 if (ok) {
@@ -1057,7 +1052,8 @@
         modalStore
             .confirm({
                 description: t('confirm.delete_group', { name: group }),
-                title: t('confirm.title')
+                title: t('confirm.title'),
+                destructive: true
             })
             .then(({ ok }) => {
                 if (ok) {
@@ -1230,9 +1226,9 @@
         const total = selectedFavoriteAvatars.value.length;
         modalStore
             .confirm({
-                description: `Are you sure you want to unfavorite ${total} favorites?
-            This action cannot be undone.`,
-                title: `Delete ${total} favorites?`
+                description: t('confirm.bulk_unfavorite', { count: total }),
+                title: t('confirm.bulk_unfavorite_title', { count: total }),
+                destructive: true
             })
             .then(({ ok }) => {
                 if (ok) {

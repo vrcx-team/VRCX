@@ -1,4 +1,3 @@
-/* eslint-disable  pretty-import/sort-import-groups */
 
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
@@ -10,7 +9,7 @@ vi.mock('../../views/Feed/Feed.vue', () => ({
     default: { template: '<div />' }
 }));
 vi.mock('../../views/Feed/columns.jsx', () => ({ columns: [] }));
-vi.mock('../../plugin/router', () => ({
+vi.mock('../../plugins/router', () => ({
     router: {
         beforeEach: vi.fn(),
         push: vi.fn(),
@@ -31,8 +30,8 @@ vi.mock('vue-router', async (importOriginal) => {
         }))
     };
 });
-vi.mock('../../plugin/interopApi', () => ({ initInteropApi: vi.fn() }));
-vi.mock('../../service/database', () => ({
+vi.mock('../../plugins/interopApi', () => ({ initInteropApi: vi.fn() }));
+vi.mock('../../services/database', () => ({
     database: new Proxy(
         {},
         {
@@ -43,7 +42,7 @@ vi.mock('../../service/database', () => ({
         }
     )
 }));
-vi.mock('../../service/config', () => ({
+vi.mock('../../services/config', () => ({
     default: {
         init: vi.fn(),
         getString: vi.fn().mockResolvedValue('{}'),
@@ -61,8 +60,8 @@ vi.mock('../../service/config', () => ({
         remove: vi.fn()
     }
 }));
-vi.mock('../../service/jsonStorage', () => ({ default: vi.fn() }));
-vi.mock('../../service/watchState', () => ({
+vi.mock('../../services/jsonStorage', () => ({ default: vi.fn() }));
+vi.mock('../../services/watchState', () => ({
     watchState: { isLoggedIn: false }
 }));
 vi.mock('vue-i18n', async (importOriginal) => {
@@ -90,29 +89,21 @@ const mockGroupStrictsearch = vi.fn();
 
 vi.mock('../user', () => ({
     useUserStore: () => ({
-        showUserDialog: mockShowUserDialog,
         cachedUsers: new Map(),
         showUserDialogHistory: new Set(),
-        currentUser: ref({ id: 'usr_me', homeLocation: '' }),
-        lookupUser: vi.fn(),
-        applyUser: vi.fn()
+        currentUser: ref({ id: 'usr_me', homeLocation: '' })
     })
 }));
 vi.mock('../avatar', () => ({
-    useAvatarStore: () => ({
-        showAvatarDialog: mockShowAvatarDialog
-    })
+    useAvatarStore: () => ({})
 }));
 vi.mock('../group', () => ({
-    useGroupStore: () => ({
-        showGroupDialog: mockShowGroupDialog
-    })
+    useGroupStore: () => ({})
 }));
 vi.mock('../world', () => ({
-    useWorldStore: () => ({
-        showWorldDialog: mockShowWorldDialog
-    })
+    useWorldStore: () => ({})
 }));
+
 vi.mock('../friend', () => ({
     useFriendStore: () => ({
         friends: new Map()
@@ -141,11 +132,28 @@ function makeApiMock() {
         groupRequest: {
             groupStrictsearch: (...args) => mockGroupStrictsearch(...args)
         },
+        queryRequest: {},
         miscRequest: {}
     };
 }
 vi.mock('../../api', () => makeApiMock());
 vi.mock('../../api/', () => makeApiMock());
+
+vi.mock('../../coordinators/userCoordinator', () => ({
+    showUserDialog: (...args) => mockShowUserDialog(...args),
+    lookupUser: vi.fn(),
+    applyUser: vi.fn()
+}));
+vi.mock('../../coordinators/avatarCoordinator', () => ({
+    showAvatarDialog: (...args) => mockShowAvatarDialog(...args),
+    getAvatarName: vi.fn()
+}));
+vi.mock('../../coordinators/groupCoordinator', () => ({
+    showGroupDialog: (...args) => mockShowGroupDialog(...args)
+}));
+vi.mock('../../coordinators/worldCoordinator', () => ({
+    showWorldDialog: (...args) => mockShowWorldDialog(...args)
+}));
 
 vi.mock('vue-sonner', () => ({
     toast: {
@@ -212,9 +220,7 @@ describe('useSearchStore', () => {
         });
 
         test('parses vrchat.com group URL', () => {
-            store.directAccessParse(
-                'https://vrchat.com/home/group/grp_abc123'
-            );
+            store.directAccessParse('https://vrchat.com/home/group/grp_abc123');
             expect(mockShowGroupDialog).toHaveBeenCalledWith('grp_abc123');
         });
 
@@ -239,9 +245,9 @@ describe('useSearchStore', () => {
         });
 
         test('returns false for short vrchat URL with insufficient path segments', () => {
-            expect(
-                store.directAccessParse('https://vrchat.com/home')
-            ).toBe(false);
+            expect(store.directAccessParse('https://vrchat.com/home')).toBe(
+                false
+            );
         });
     });
 

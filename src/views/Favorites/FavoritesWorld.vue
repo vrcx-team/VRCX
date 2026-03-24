@@ -2,9 +2,12 @@
     <div class="x-container">
         <div class="flex flex-col h-full min-h-0 pb-0">
             <FavoritesToolbar
-                :sort-favorites="sortFavorites"
+                :sort-value="worldSortValue"
+                :extra-sort-options="worldExtraSortOptions"
                 v-model:search-query="worldFavoriteSearch"
-                :search-placeholder="t('view.favorite.worlds.search')"
+                :search-placeholder="worldSearchPlaceholder"
+                v-model:search-mode="worldSearchMode"
+                :search-mode-visible="true"
                 v-model:toolbar-menu-open="worldToolbarMenuOpen"
                 v-model:card-scale-value="worldCardScaleValue"
                 :card-scale-percent="worldCardScalePercent"
@@ -12,7 +15,7 @@
                 v-model:card-spacing-value="worldCardSpacingValue"
                 :card-spacing-percent="worldCardSpacingPercent"
                 :card-spacing-slider="worldCardSpacingSlider"
-                @update:sort-favorites="handleSortFavoritesChange"
+                @update:sort-value="handleSortValueChange"
                 @search="searchWorldFavorites"
                 @import="handleWorldImportClick"
                 @export="handleWorldExportClick" />
@@ -255,36 +258,17 @@
                         <div ref="worldFavoritesContainerRef" class="flex-1 min-h-0">
                             <template v-if="isSearchActive">
                                 <div class="h-full pr-2 overflow-auto">
-                                    <div
-                                        v-if="worldFavoriteSearchResults.length"
-                                        class="favorites-search-grid"
-                                        :style="worldFavoritesGridStyle(worldFavoriteSearchResults.length)">
+                                    <template v-if="worldFavoriteSearchResults.length">
                                         <div
-                                            v-for="favorite in worldFavoriteSearchResults"
-                                            :key="favorite.id"
-                                            class="favorites-search-card x-hover-card hover:shadow-sm"
-                                            @click="showWorldDialog(favorite.id)">
-                                            <div class="favorites-search-card__content">
-                                                <div
-                                                    class="favorites-search-card__avatar"
-                                                    :class="{ 'is-empty': !favorite.thumbnailImageUrl }">
-                                                    <img
-                                                        v-if="favorite.thumbnailImageUrl"
-                                                        :src="favorite.thumbnailImageUrl"
-                                                        loading="lazy" />
-                                                </div>
-                                                <div class="favorites-search-card__detail">
-                                                    <span class="name">{{ favorite.name || favorite.id }}</span>
-                                                    <span class="text-xs">
-                                                        {{ favorite.authorName }}
-                                                        <template v-if="favorite.occupants">
-                                                            ({{ favorite.occupants }})
-                                                        </template>
-                                                    </span>
-                                                </div>
-                                            </div>
+                                            class="favorites-card-list"
+                                            :style="worldFavoritesGridStyle(worldFavoriteSearchResults.length)">
+                                            <FavoritesWorldItem
+                                                v-for="favorite in worldFavoriteSearchResults"
+                                                :key="favorite.id"
+                                                :favorite="favorite"
+                                                is-local-favorite />
                                         </div>
-                                    </div>
+                                    </template>
                                     <div v-else class="flex items-center justify-center text-[13px] h-full">
                                         <DataTableEmpty type="nomatch" />
                                     </div>
@@ -305,8 +289,7 @@
                                                 :favorite="favorite"
                                                 :edit-mode="worldEditMode"
                                                 :selected="selectedFavoriteWorlds.includes(favorite.id)"
-                                                @toggle-select="toggleWorldSelection(favorite.id, $event)"
-                                                @click="showWorldDialog(favorite.id)" />
+                                                @toggle-select="toggleWorldSelection(favorite.id, $event)" />
                                         </div>
                                     </template>
                                     <div v-else class="flex items-center justify-center text-[13px] h-full">
@@ -339,9 +322,7 @@
                                                             :group="activeLocalGroupName"
                                                             :favorite="favorite.favorite"
                                                             :edit-mode="worldEditMode"
-                                                            is-local-favorite
-                                                            @remove-local-world-favorite="removeLocalWorldFavorite"
-                                                            @click="showWorldDialog(favorite.favorite.id)" />
+                                                            is-local-favorite />
                                                     </div>
                                                 </div>
                                             </template>
@@ -387,7 +368,7 @@
         DropdownMenuSubTrigger,
         DropdownMenuTrigger
     } from '../../components/ui/dropdown-menu';
-    import { useAppearanceSettingsStore, useFavoriteStore, useModalStore, useWorldStore } from '../../stores';
+    import { useAppearanceSettingsStore, useFavoriteStore, useModalStore } from '../../stores';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { favoriteRequest, worldRequest } from '../../api';
     import { debounce } from '../../shared/utils';
@@ -395,6 +376,13 @@
     import { useFavoritesGroupPanel } from './composables/useFavoritesGroupPanel.js';
     import { useFavoritesLocalGroups } from './composables/useFavoritesLocalGroups.js';
     import { useFavoritesSplitter } from './composables/useFavoritesSplitter.js';
+    import {
+        renameLocalWorldFavoriteGroup,
+        removeLocalWorldFavorite,
+        newLocalWorldFavoriteGroup,
+        refreshFavorites,
+        getLocalWorldFavorites
+    } from '../../coordinators/favoriteCoordinator';
 
     import FavoritesContentHeader from './components/FavoritesContentHeader.vue';
     import FavoritesToolbar from './components/FavoritesToolbar.vue';
@@ -426,15 +414,9 @@
         showWorldImportDialog,
         localWorldFavGroupLength,
         deleteLocalWorldFavoriteGroup,
-        renameLocalWorldFavoriteGroup,
-        removeLocalWorldFavorite,
-        newLocalWorldFavoriteGroup,
         handleFavoriteGroup,
-        localWorldFavoritesList,
-        refreshFavorites,
-        getLocalWorldFavorites
+        localWorldFavoritesList
     } = favoriteStore;
-    const { showWorldDialog } = useWorldStore();
 
     const {
         cardScale: worldCardScale,
@@ -501,6 +483,23 @@
     const refreshCancelToken = ref(null);
     const worldEditMode = ref(false);
     const worldToolbarMenuOpen = ref(false);
+    const worldSortMode = ref('none');
+    const worldSearchMode = ref('name');
+
+    const worldSearchPlaceholder = computed(() =>
+        worldSearchMode.value === 'tag'
+            ? t('view.favorite.worlds.search_by_tag')
+            : t('view.favorite.worlds.search')
+    );
+
+    const worldExtraSortOptions = computed(() => [
+        { value: 'players', label: t('view.settings.appearance.appearance.sort_favorite_by_players') }
+    ]);
+
+    const worldSortValue = computed(() => {
+        if (worldSortMode.value === 'players') return 'players';
+        return sortFavorites.value ? 'date' : 'name';
+    });
 
     const {
         activeGroupMenu,
@@ -590,14 +589,22 @@
         if (!activeRemoteGroup.value) {
             return [];
         }
-        return groupedWorldFavorites.value[activeRemoteGroup.value.key] || [];
+        const list = groupedWorldFavorites.value[activeRemoteGroup.value.key] || [];
+        if (worldSortMode.value === 'players') {
+            return list.toSorted((a, b) => (b.ref?.occupants ?? 0) - (a.ref?.occupants ?? 0));
+        }
+        return list;
     });
 
     const currentLocalFavorites = computed(() => {
         if (!activeLocalGroupName.value) {
             return [];
         }
-        return localWorldFavorites.value[activeLocalGroupName.value] || [];
+        const list = localWorldFavorites.value[activeLocalGroupName.value] || [];
+        if (worldSortMode.value === 'players') {
+            return list.toSorted((a, b) => (b.occupants ?? 0) - (a.occupants ?? 0));
+        }
+        return list;
     });
 
     const localFavoritesViewportRef = ref(null);
@@ -684,8 +691,13 @@
      *
      * @param value
      */
-    function handleSortFavoritesChange(value) {
-        const next = Boolean(value);
+    function handleSortValueChange(value) {
+        if (value === 'players') {
+            worldSortMode.value = 'players';
+            return;
+        }
+        worldSortMode.value = 'none';
+        const next = value === 'date';
         if (next !== sortFavorites.value) {
             setSortFavorites();
         }
@@ -695,9 +707,7 @@
         if (!activeRemoteGroup.value || !currentRemoteFavorites.value.length) {
             return false;
         }
-        return currentRemoteFavorites.value
-            .map((fav) => fav.id)
-            .every((id) => selectedFavoriteWorlds.value.includes(id));
+        return currentRemoteFavorites.value.map((fav) => fav.id).every((id) => selectedFavoriteWorlds.value.includes(id));
     });
 
     watch(
@@ -721,6 +731,12 @@
     watch(isSearchActive, (active) => {
         if (active && worldEditMode.value) {
             worldEditMode.value = false;
+        }
+    });
+
+    watch(worldSearchMode, () => {
+        if (isSearchActive.value) {
+            doSearchWorldFavorites();
         }
     });
 
@@ -839,7 +855,7 @@
         modalStore
             .confirm({
                 description: `Are you sure you want to unfavorite ${total} favorites?
-            This action cannot be undone.`,
+                This action cannot be undone.`,
                 title: `Delete ${total} favorites?`
             })
             .then(({ ok }) => {
@@ -979,14 +995,23 @@
      *
      * @param worldFavoriteSearch
      */
-    function doSearchWorldFavorites(worldFavoriteSearch) {
-        const search = worldFavoriteSearch.trim().toLowerCase();
+    function doSearchWorldFavorites(searchInput) {
+        const search = (searchInput ?? worldFavoriteSearch.value).trim().toLowerCase();
         if (search.length < 3) {
             worldFavoriteSearchResults.value = [];
             return;
         }
+        const isTagMode = worldSearchMode.value === 'tag';
         const filtered = searchableWorldEntries.value.filter((ref) => {
             if (!ref || typeof ref.id === 'undefined' || typeof ref.name === 'undefined') {
+                return false;
+            }
+            if (isTagMode) {
+                if (Array.isArray(ref.tags)) {
+                    return ref.tags.some(
+                        (tag) => tag.startsWith('author_tag_') && tag.substring(11).toLowerCase().includes(search)
+                    );
+                }
                 return false;
             }
             const authorName = ref.authorName || '';

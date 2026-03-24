@@ -53,7 +53,7 @@
         "get_help": "请求帮助",
         "github": "GitHub 仓库",
         "discord": "加入 Discord",
-        "whats_new": "更新日志",
+        "changelog": "更新日志",
         "update_available": "有新版本可用",
         "update": "更新",
         "mark_all_read": "全部标为已读",
@@ -146,6 +146,10 @@
                 "devEndpoint": "自定义 API 接口",
                 "endpoint": "接口地址",
                 "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "检测到语言",
+                "description": "您的系统语言似乎是 {language}。是否切换到该语言？"
             }
         },
         "feed": {
@@ -233,9 +237,7 @@
             },
             "group": {
                 "header": "群组"
-            },
-            "prev_page": "上一页",
-            "next_page": "下一页"
+            }
         },
         "favorite": {
             "worlds": {
@@ -639,14 +641,12 @@
                     "bio_language": "目标语言",
                     "theme_mode": "主题",
                     "font_family": "字体",
-                    "font_family_tooltip": "只有系统字体会影响 CJK （也就是中/日/韩文）字符。此外，由于部分字体使用了 fonts.gstatic.com 源，所以在网络受限地区可能需要魔法",
                     "font_family_inter": "Inter",
                     "font_family_noto_sans": "Noto Sans",
-                    "font_family_source_sans_3": "Source Sans 3",
+                    "font_family_geist": "Geist",
+                    "font_family_nunito_sans": "Nunito Sans",
                     "font_family_ibm_plex_sans": "IBM Plex Sans",
-                    "font_family_harmonyos_sans": "HarmonyOS Sans",
                     "font_family_jetbrains_mono": "JetBrains Mono",
-                    "font_family_roboto": "Roboto",
                     "font_family_fantasque_sans_mono": "Fantasque Sans Mono",
                     "font_family_system_ui": "跟随系统字体",
                     "theme_mode_system": "跟随系统",

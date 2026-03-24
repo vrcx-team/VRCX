@@ -1,6 +1,7 @@
 import { patchAndRefetchActiveQuery, queryKeys } from '../queries';
-import { request } from '../service/request';
+import { request } from '../services/request';
 import { useUserStore } from '../stores';
+import { applyUser, applyCurrentUser } from '../coordinators/userCoordinator';
 
 /**
  * @returns {string}
@@ -16,7 +17,6 @@ const userReq = {
      * @type {import('../types/api/user').GetUser}
      */
     getUser(params) {
-        const userStore = useUserStore();
         return request(`users/${params.userId}`, {
             method: 'GET'
         }).then((json) => {
@@ -29,7 +29,7 @@ const userReq = {
             const args = {
                 json,
                 params,
-                ref: userStore.applyUser(json)
+                ref: applyUser(json)
             };
             return args;
         });
@@ -56,7 +56,6 @@ const userReq = {
      * @returns {Promise<{json: any, params: {tags: string[]}}>}
      */
     addUserTags(params) {
-        const userStore = useUserStore();
         return request(`users/${getCurrentUserId()}/addTags`, {
             method: 'POST',
             params
@@ -65,7 +64,7 @@ const userReq = {
                 json,
                 params
             };
-            userStore.applyCurrentUser(json);
+            applyCurrentUser(json);
             return args;
         });
     },
@@ -75,7 +74,6 @@ const userReq = {
      * @returns {Promise<{json: any, params: {tags: string[]}}>}
      */
     removeUserTags(params) {
-        const userStore = useUserStore();
         return request(`users/${getCurrentUserId()}/removeTags`, {
             method: 'POST',
             params
@@ -84,7 +82,7 @@ const userReq = {
                 json,
                 params
             };
-            userStore.applyCurrentUser(json);
+            applyCurrentUser(json);
             return args;
         });
     },
@@ -113,7 +111,6 @@ const userReq = {
      * @type {import('../types/api/user').GetCurrentUser}
      */
     saveCurrentUser(params) {
-        const userStore = useUserStore();
         return request(`users/${getCurrentUserId()}`, {
             method: 'PUT',
             params
@@ -121,7 +118,7 @@ const userReq = {
             const args = {
                 json,
                 params,
-                ref: userStore.applyCurrentUser(json)
+                ref: applyCurrentUser(json)
             };
             patchAndRefetchActiveQuery({
                 queryKey: queryKeys.user(args.ref.id),

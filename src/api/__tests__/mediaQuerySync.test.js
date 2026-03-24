@@ -4,7 +4,7 @@ const mockRequest = vi.fn();
 const mockInvalidateQueries = vi.fn().mockResolvedValue();
 const mockRemoveQueries = vi.fn();
 
-vi.mock('../../service/request', () => ({
+vi.mock('../../services/request', () => ({
     request: (...args) => mockRequest(...args)
 }));
 
@@ -24,7 +24,12 @@ vi.mock('../../queries', () => ({
         prints: (params) => ['gallery', 'prints', params],
         print: (printId) => ['gallery', 'print', printId],
         inventoryItems: (params) => ['inventory', 'items', params],
-        userInventoryItem: (params) => ['inventory', 'item', params.userId, params.inventoryId],
+        userInventoryItem: (params) => [
+            'inventory',
+            'item',
+            params.userId,
+            params.inventoryId
+        ],
         file: (fileId) => ['file', fileId]
     }
 }));

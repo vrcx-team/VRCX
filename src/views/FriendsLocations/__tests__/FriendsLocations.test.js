@@ -17,6 +17,7 @@ const mocks = vi.hoisted(() => ({
     favoriteFriendGroups: null,
     groupedByGroupKeyFavoriteFriends: null,
     localFriendFavorites: null,
+    lastLocation: null,
     configGetString: vi.fn(),
     configGetBool: vi.fn(),
     configSetString: vi.fn(),
@@ -37,6 +38,10 @@ mocks.sidebarSortMethods = mocks.makeRef('status');
 mocks.favoriteFriendGroups = mocks.makeRef([]);
 mocks.groupedByGroupKeyFavoriteFriends = mocks.makeRef({});
 mocks.localFriendFavorites = mocks.makeRef({});
+mocks.lastLocation = mocks.makeRef({
+    location: 'wrld_home:123',
+    friendList: new Map()
+});
 
 vi.mock('pinia', () => ({
     storeToRefs: (store) => store
@@ -66,12 +71,16 @@ vi.mock('../../../stores', () => ({
     }),
     useFavoriteStore: () => ({
         favoriteFriendGroups: mocks.favoriteFriendGroups,
-        groupedByGroupKeyFavoriteFriends: mocks.groupedByGroupKeyFavoriteFriends,
+        groupedByGroupKeyFavoriteFriends:
+            mocks.groupedByGroupKeyFavoriteFriends,
         localFriendFavorites: mocks.localFriendFavorites
+    }),
+    useLocationStore: () => ({
+        lastLocation: mocks.lastLocation
     })
 }));
 
-vi.mock('../../../service/config.js', () => ({
+vi.mock('../../../services/config.js', () => ({
     default: {
         getString: (...args) => mocks.configGetString(...args),
         getBool: (...args) => mocks.configGetBool(...args),
@@ -85,6 +94,13 @@ vi.mock('../../../shared/utils/location.js', () => ({
 }));
 
 vi.mock('../../../shared/utils', () => ({
+    debounce: (fn, delay) => {
+        let timer = null;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn(...args), delay);
+        };
+    },
     getFriendsSortFunction: () => (a, b) =>
         String(a?.displayName ?? '').localeCompare(String(b?.displayName ?? ''))
 }));
@@ -185,7 +201,8 @@ vi.mock('../../../components/ui/switch', () => ({
 vi.mock('../components/FriendsLocationsCard.vue', () => ({
     default: {
         props: ['friend'],
-        template: '<div data-testid="friend-card">{{ friend.displayName }}</div>'
+        template:
+            '<div data-testid="friend-card">{{ friend.displayName }}</div>'
     }
 }));
 
@@ -225,6 +242,10 @@ describe('FriendsLocations.vue', () => {
         mocks.favoriteFriendGroups.value = [];
         mocks.groupedByGroupKeyFavoriteFriends.value = {};
         mocks.localFriendFavorites.value = {};
+        mocks.lastLocation.value = {
+            location: 'wrld_home:123',
+            friendList: new Map()
+        };
 
         mocks.configGetString.mockReset();
         mocks.configGetBool.mockReset();
@@ -232,12 +253,17 @@ describe('FriendsLocations.vue', () => {
         mocks.configSetBool.mockReset();
         mocks.virtualMeasure.mockReset();
 
-        mocks.configGetString.mockImplementation((_key, defaultValue) => Promise.resolve(defaultValue ?? '1'));
+        mocks.configGetString.mockImplementation((_key, defaultValue) =>
+            Promise.resolve(defaultValue ?? '1')
+        );
         mocks.configGetBool.mockResolvedValue(false);
     });
 
     test('renders online friend cards after initial settings load', async () => {
-        mocks.onlineFriends.value = [makeFriend('usr_1', 'Alice'), makeFriend('usr_2', 'Bob')];
+        mocks.onlineFriends.value = [
+            makeFriend('usr_1', 'Alice'),
+            makeFriend('usr_2', 'Bob')
+        ];
         const wrapper = mount(FriendsLocations);
         await flushSettings();
 
@@ -246,11 +272,16 @@ describe('FriendsLocations.vue', () => {
     });
 
     test('filters cards by search text in DOM', async () => {
-        mocks.onlineFriends.value = [makeFriend('usr_1', 'Alice'), makeFriend('usr_2', 'Bob')];
+        mocks.onlineFriends.value = [
+            makeFriend('usr_1', 'Alice'),
+            makeFriend('usr_2', 'Bob')
+        ];
         const wrapper = mount(FriendsLocations);
         await flushSettings();
 
-        await wrapper.get('[data-testid="friend-locations-search"]').setValue('bob');
+        await wrapper
+            .get('[data-testid="friend-locations-search"]')
+            .setValue('bob');
         await flushSettings();
 
         const cards = wrapper.findAll('[data-testid="friend-card"]');
@@ -271,20 +302,48 @@ describe('FriendsLocations.vue', () => {
     });
 
     test('persists card scale and same-instance preferences', async () => {
+        vi.useFakeTimers();
         const wrapper = mount(FriendsLocations);
         await flushSettings();
+        mocks.configSetString.mockClear();
+        mocks.configSetBool.mockClear();
 
         await wrapper.get('[data-testid="set-scale"]').trigger('click');
-        await wrapper.get('[data-testid="toggle-same-instance"]').trigger('click');
+        await wrapper
+            .get('[data-testid="toggle-same-instance"]')
+            .trigger('click');
+        vi.advanceTimersByTime(200);
 
-        expect(mocks.configSetString).toHaveBeenCalledWith('VRCX_FriendLocationCardScale', '0.8');
-        expect(mocks.configSetBool).toHaveBeenCalledWith('VRCX_FriendLocationShowSameInstance', true);
+        expect(mocks.configSetString).toHaveBeenCalledWith(
+            'VRCX_FriendLocationCardScale',
+            '0.8'
+        );
+        expect(mocks.configSetBool).toHaveBeenCalledWith(
+            'VRCX_FriendLocationShowSameInstance',
+            true
+        );
+        vi.useRealTimers();
+    });
+
+    test('coalesces repeated virtualizer measure requests in the same tick', async () => {
+        const wrapper = mount(FriendsLocations);
+        await flushSettings();
+        mocks.virtualMeasure.mockClear();
+
+        wrapper.vm.searchTerm = 'alice';
+        wrapper.vm.activeSegment = 'offline';
+        await nextTick();
+        await nextTick();
+
+        expect(mocks.virtualMeasure).toHaveBeenCalledTimes(1);
     });
 
     test('renders empty state when no rows match', async () => {
         const wrapper = mount(FriendsLocations);
         await flushSettings();
 
-        expect(wrapper.get('[data-testid="empty-state"]').text()).toBe('nomatch');
+        expect(wrapper.get('[data-testid="empty-state"]').text()).toBe(
+            'nomatch'
+        );
     });
 });

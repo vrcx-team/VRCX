@@ -21,10 +21,9 @@
     import { useI18n } from 'vue-i18n';
 
     import { TooltipWrapper } from './ui/tooltip';
-    import { useAvatarStore } from '../stores';
+    import { getAvatarName, showAvatarAuthorDialog } from '../coordinators/avatarCoordinator';
 
     const { t } = useI18n();
-    const avatarStore = useAvatarStore();
 
     const props = defineProps({
         imageurl: String,
@@ -54,7 +53,7 @@
             ownerId = props.hintownerid;
         } else {
             try {
-                const info = await avatarStore.getAvatarName(props.imageurl);
+                const info = await getAvatarName(props.imageurl);
                 avatarName.value = info.avatarName;
                 ownerId = info.ownerId;
             } catch {
@@ -77,7 +76,7 @@
 
     const confirm = () => {
         if (!props.imageurl) return;
-        avatarStore.showAvatarAuthorDialog(props.userid, ownerId, props.imageurl);
+        showAvatarAuthorDialog(props.userid, ownerId, props.imageurl);
     };
 
     watch([() => props.imageurl, () => props.userid, () => props.avatartags], parse, { immediate: true });

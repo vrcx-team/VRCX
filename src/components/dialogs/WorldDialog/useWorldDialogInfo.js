@@ -5,18 +5,18 @@ import {
     formatDateFilter,
     timeToText
 } from '../../../shared/utils';
-import { database } from '../../../service/database';
+import { database } from '../../../services/database';
 
 /**
  * Composable for WorldDialogInfoTab computed properties and actions.
- *
  * @param {import('vue').Ref} worldDialog - reactive ref to the world dialog state
- * @param {Object} deps - external dependencies
+ * @param {object} deps - external dependencies
  * @param {Function} deps.t - i18n translation function
  * @param {Function} deps.toast - toast notification function
- * @returns {Object} info composable API
+ * @param deps.sdkUnityVersion
+ * @returns {object} info composable API
  */
-export function useWorldDialogInfo(worldDialog, { t, toast }) {
+export function useWorldDialogInfo(worldDialog, { t, toast, sdkUnityVersion }) {
     const memo = computed({
         get() {
             return worldDialog.value.memo;
@@ -71,7 +71,12 @@ export function useWorldDialogInfo(worldDialog, { t, toast }) {
         const platforms = [];
         if (ref.unityPackages) {
             for (const unityPackage of ref.unityPackages) {
-                if (!compareUnityVersion(unityPackage.unitySortNumber)) {
+                if (
+                    !compareUnityVersion(
+                        unityPackage.unitySortNumber,
+                        sdkUnityVersion
+                    )
+                ) {
                     continue;
                 }
                 let platform = 'PC';

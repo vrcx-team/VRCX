@@ -1,7 +1,7 @@
 import { Trash2 } from 'lucide-vue-next';
 
 import { Button } from '../../../components/ui/button';
-import { i18n } from '../../../plugin';
+import { i18n } from '../../../plugins';
 
 const { t } = i18n.global;
 

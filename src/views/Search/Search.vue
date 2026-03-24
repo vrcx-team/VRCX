@@ -1,87 +1,107 @@
 <template>
-    <div class="x-container">
-        <div class="mt-0 mx-0 mb-2" style="display: flex; align-items: center">
-            <InputGroupField
-                :model-value="searchText"
-                :placeholder="t('view.search.search_placeholder')"
-                style="flex: 1"
-                clearable
-                @input="updateSearchText"
-                @keyup.enter="search" />
-            <TooltipWrapper side="bottom" :content="t('view.search.clear_results_tooltip')">
-                <Button class="rounded-full ml-2" size="icon" variant="ghost" @click="handleClearSearch"
-                    ><Trash2
-                /></Button>
-            </TooltipWrapper>
-        </div>
-        <TabsUnderline
-            class="mt-4"
+    <div class="x-container flex flex-col overflow-hidden">
+        <Tabs
             v-model="activeSearchTab"
-            :items="searchTabs"
+            :unmount-on-hide="false"
             aria-label="Search tabs"
-            :unmount-on-hide="false">
-            <template #user>
-                <div style="min-height: 60px">
-                    <label class="inline-flex items-center gap-2 ml-2">
-                        <Checkbox v-model="searchUserByBio" />
-                        <span>{{ t('view.search.user.search_by_bio') }}</span>
-                    </label>
-                    <label class="inline-flex items-center gap-2 ml-2">
-                        <Checkbox v-model="searchUserSortByLastLoggedIn" />
-                        <span>{{ t('view.search.user.sort_by_last_logged_in') }}</span>
-                    </label>
-                    <div style="min-height: 500px">
-                        <div
-                            v-for="user in searchUserResults"
-                            :key="user.id"
-                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
-                            @click="showUserDialog(user.id)">
-                            <div class="relative inline-block flex-none size-9 mr-2.5">
-                                <img
-                                    class="size-full rounded-full object-cover"
-                                    :src="userImage(user, true)"
-                                    loading="lazy" />
-                            </div>
-                            <div class="flex-1 overflow-hidden">
-                                <span
-                                    class="block truncate font-medium leading-[18px]"
-                                    v-text="user.displayName"></span>
-                                <span
-                                    v-if="randomUserColours"
-                                    class="block truncate text-xs"
-                                    :class="user.$trustClass"
-                                    v-text="user.$trustLevel"></span>
-                                <span
-                                    v-else
-                                    class="block truncate text-xs"
-                                    :style="{ color: user.$userColour }"
-                                    v-text="user.$trustLevel"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <ButtonGroup class="mt-4" v-if="searchUserResults.length">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            :disabled="!searchUserParams.offset"
-                            @click="handleMoreSearchUser(-1)">
-                            <ArrowLeft />
-                            {{ t('view.search.prev_page') }}
+            class="flex flex-col min-h-0 flex-1">
+            <div class="mt-0 mx-0 mb-2 flex items-center gap-5">
+                <TabsList>
+                    <TabsTrigger value="user">{{ t('view.search.user.header') }}</TabsTrigger>
+                    <TabsTrigger value="world">{{ t('view.search.world.header') }}</TabsTrigger>
+                    <TabsTrigger value="avatar">{{ t('view.search.avatar.header') }}</TabsTrigger>
+                    <TabsTrigger value="group">{{ t('view.search.group.header') }}</TabsTrigger>
+                </TabsList>
+                <div class="flex min-w-0 flex-1 items-center">
+                    <InputGroupField
+                        :model-value="searchText"
+                        :placeholder="searchPlaceholder"
+                        style="flex: 1"
+                        clearable
+                        @input="updateSearchText"
+                        @keyup.enter="search" />
+                    <TooltipWrapper side="bottom" :content="t('view.search.clear_results_tooltip')">
+                        <Button class="rounded-full ml-2" size="icon" variant="ghost" @click="handleClearSearch">
+                            <Trash2 />
                         </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            :disabled="searchUserResults.length < 10"
-                            @click="handleMoreSearchUser(1)">
-                            <ArrowRight />
-                            {{ t('view.search.next_page') }}
-                        </Button>
-                    </ButtonGroup>
+                    </TooltipWrapper>
                 </div>
-            </template>
-            <template #world>
-                <div style="min-height: 60px">
-                    <div class="inline-flex justify-between mb-4 w-full">
+            </div>
+            <TabsContent value="user" class="flex flex-col min-h-0 flex-1">
+                <div class="flex flex-col min-h-0" style="flex: 9">
+                    <div class="shrink-0 mb-3 flex justify-end">
+                        <label class="inline-flex items-center gap-2 ml-2">
+                            <Checkbox v-model="searchUserByBio" />
+                            <span>{{ t('view.search.user.search_by_bio') }}</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2 ml-2">
+                            <Checkbox v-model="searchUserSortByLastLoggedIn" />
+                            <span>{{ t('view.search.user.sort_by_last_logged_in') }}</span>
+                        </label>
+                    </div>
+                    <div class="flex-1 overflow-y-auto min-h-0">
+                        <div v-if="isSearchUserLoading" class="flex items-center justify-center h-full">
+                            <Spinner class="text-2xl" />
+                        </div>
+                        <template v-else-if="searchUserResults.length > 0">
+                            <Item
+                                v-for="user in searchUserResults"
+                                :key="user.id"
+                                class="cursor-pointer hover:bg-muted x-hover-list rounded-none"
+                                @click="showUserDialog(user.id)">
+                                <ItemMedia variant="image">
+                                    <Avatar>
+                                        <AvatarImage :src="userImage(user, true)" loading="lazy" />
+                                        <AvatarFallback>
+                                            <User class="size-5 text-muted-foreground" />
+                                        </AvatarFallback>
+                                    </Avatar>
+                                </ItemMedia>
+                                <ItemContent class="min-w-0">
+                                    <ItemTitle class="flex items-center gap-1.5 max-w-full">
+                                        <span class="truncate">{{ user.displayName }}</span>
+                                        <span
+                                            v-if="randomUserColours"
+                                            class="shrink-0 text-xs font-normal"
+                                            :class="user.$trustClass">
+                                            {{ user.$trustLevel }}
+                                        </span>
+                                        <span
+                                            v-else
+                                            class="shrink-0 text-xs font-normal"
+                                            :style="{ color: user.$userColour }">
+                                            {{ user.$trustLevel }}
+                                        </span>
+                                        <span
+                                            v-for="item in user.$languages"
+                                            :key="item.key"
+                                            class="flags shrink-0"
+                                            :class="languageClass(item.key)"
+                                            :title="item.value" />
+                                    </ItemTitle>
+                                    <ItemDescription v-if="user.bio" class="line-clamp-1 text-xs!">
+                                        {{ user.bio }}
+                                    </ItemDescription>
+                                </ItemContent>
+                            </Item>
+                        </template>
+                        <DataTableEmpty v-else type="nodata" />
+                    </div>
+                </div>
+                <SearchPagination
+                    :show="paginationConfig.show"
+                    :prev-disabled="paginationConfig.prevDisabled"
+                    :next-disabled="paginationConfig.nextDisabled"
+                    @prev="paginationConfig.onPrev"
+                    @next="paginationConfig.onNext" />
+            </TabsContent>
+            <TabsContent value="world" class="flex flex-col min-h-0 flex-1">
+                <div class="flex flex-col min-h-0" style="flex: 9">
+                    <div class="inline-flex justify-end mb-4 w-full shrink-0 gap-2">
+                        <label class="inline-flex items-center gap-2">
+                            <Checkbox v-model="searchWorldLabs" />
+                            <span>{{ t('view.search.world.community_lab') }}</span>
+                        </label>
                         <Select
                             :model-value="searchWorldCategoryIndex"
                             @update:modelValue="handleSearchWorldCategorySelect"
@@ -100,389 +120,334 @@
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
-                        <label class="inline-flex items-center gap-2" style="margin-left: 8px">
-                            <Checkbox v-model="searchWorldLabs" />
-                            <span>{{ t('view.search.world.community_lab') }}</span>
-                        </label>
                     </div>
-                    <div style="min-height: 500px">
-                        <div
-                            v-for="world in searchWorldResults"
-                            :key="world.id"
-                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
-                            @click="showWorldDialog(world.id)">
-                            <div class="relative inline-block flex-none size-9 mr-2.5">
-                                <img
-                                    class="size-full rounded-full object-cover"
-                                    :src="world.thumbnailImageUrl"
-                                    loading="lazy" />
-                            </div>
-                            <div class="flex-1 overflow-hidden">
-                                <span class="block truncate font-medium leading-[18px]" v-text="world.name"></span>
-                                <span v-if="world.occupants" class="block truncate text-xs"
-                                    >{{ world.authorName }} ({{ world.occupants }})</span
-                                >
-                                <span v-else class="block truncate text-xs" v-text="world.authorName"></span>
-                            </div>
+                    <div class="flex-1 overflow-y-auto min-h-0">
+                        <div v-if="isSearchWorldLoading" class="flex items-center justify-center h-full">
+                            <Spinner class="text-2xl" />
                         </div>
+                        <template v-else-if="searchWorldResults.length > 0">
+                            <ItemGroup
+                                class="grid gap-3"
+                                style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr))">
+                                <Item
+                                    v-for="world in searchWorldResults"
+                                    :key="world.id"
+                                    variant="outline"
+                                    size="sm"
+                                    class="cursor-pointer p-3"
+                                    as-child>
+                                    <div class="overflow-hidden" @click="showWorldDialog(world.id)">
+                                        <ItemHeader>
+                                            <img
+                                                :src="world.thumbnailImageUrl"
+                                                :alt="world.name"
+                                                loading="lazy"
+                                                class="aspect-[16/10] w-full rounded-lg object-cover" />
+                                        </ItemHeader>
+                                        <ItemContent class="min-w-0">
+                                            <TooltipWrapper side="top" :content="world.name">
+                                                <ItemTitle class="truncate w-auto">{{ world.name }}</ItemTitle>
+                                            </TooltipWrapper>
+                                            <ItemDescription v-if="world.occupants" class="line-clamp-1 text-xs">
+                                                {{ world.authorName }} ({{ world.occupants }})
+                                            </ItemDescription>
+                                            <ItemDescription v-else class="line-clamp-1 text-xs">
+                                                {{ world.authorName }}
+                                            </ItemDescription>
+                                        </ItemContent>
+                                    </div>
+                                </Item>
+                            </ItemGroup>
+                        </template>
+                        <DataTableEmpty v-else type="nodata" />
                     </div>
-                    <ButtonGroup v-if="searchWorldResults.length" style="margin-top: 16px">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            :disabled="!searchWorldParams.offset"
-                            @click="moreSearchWorld(-1)">
-                            <ArrowLeft />
-                            {{ t('view.search.prev_page') }}
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            :disabled="searchWorldResults.length < 10"
-                            @click="moreSearchWorld(1)">
-                            <ArrowRight />
-                            {{ t('view.search.next_page') }}
-                        </Button>
-                    </ButtonGroup>
                 </div>
-            </template>
-            <template #avatar>
-                <div style="min-height: 60px">
-                    <div style="display: flex; align-items: center; justify-content: space-between">
-                        <div style="display: flex; align-items: center">
-                            <Select
-                                v-if="avatarRemoteDatabaseProviderList.length > 1"
-                                :model-value="avatarRemoteDatabaseProvider"
-                                @update:modelValue="setAvatarProvider"
-                                style="margin-right: 6px">
-                                <SelectTrigger size="sm">
-                                    <SelectValue :placeholder="t('view.search.avatar.search_provider')" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectItem
-                                            v-for="provider in avatarRemoteDatabaseProviderList"
-                                            :key="provider"
-                                            :value="provider">
-                                            {{ provider }}
-                                        </SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                            <TooltipWrapper side="bottom" :content="t('view.search.avatar.refresh_tooltip')">
-                                <Button
-                                    class="rounded-full ml-1"
-                                    variant="ghost"
-                                    size="icon-sm"
-                                    :disabled="userDialog.isAvatarsLoading"
-                                    @click="refreshUserDialogAvatars">
-                                    <Spinner v-if="userDialog.isAvatarsLoading" />
-                                    <RefreshCw v-else />
-                                </Button>
-                            </TooltipWrapper>
-                            <span class="text-sm mx-1.5">{{
-                                t('view.search.avatar.result_count', {
-                                    count: searchAvatarResults.length
-                                })
-                            }}</span>
-                        </div>
-                        <div style="display: flex; align-items: center">
-                            <RadioGroup
-                                :model-value="searchAvatarFilter"
-                                class="flex items-center gap-4"
-                                style="margin: 6px"
-                                @update:modelValue="handleSearchAvatarFilterChange">
-                                <div class="flex items-center space-x-2">
-                                    <RadioGroupItem id="searchAvatarFilter-all" value="all" />
-                                    <label for="searchAvatarFilter-all">{{ t('view.search.avatar.all') }}</label>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <RadioGroupItem id="searchAvatarFilter-public" value="public" />
-                                    <label for="searchAvatarFilter-public">{{ t('view.search.avatar.public') }}</label>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <RadioGroupItem id="searchAvatarFilter-private" value="private" />
-                                    <label for="searchAvatarFilter-private">{{
-                                        t('view.search.avatar.private')
-                                    }}</label>
-                                </div>
-                            </RadioGroup>
-                            <Separator orientation="vertical" class="mx-2 h-5" />
-                            <RadioGroup
-                                :model-value="searchAvatarFilterRemote"
-                                class="flex items-center gap-4"
-                                style="margin: 6px"
-                                @update:modelValue="handleSearchAvatarFilterRemoteChange">
-                                <div class="flex items-center space-x-2">
-                                    <RadioGroupItem id="searchAvatarFilterRemote-all" value="all" />
-                                    <label for="searchAvatarFilterRemote-all">{{ t('view.search.avatar.all') }}</label>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <RadioGroupItem id="searchAvatarFilterRemote-local" value="local" />
-                                    <label for="searchAvatarFilterRemote-local">{{
-                                        t('view.search.avatar.local')
-                                    }}</label>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <RadioGroupItem
-                                        id="searchAvatarFilterRemote-remote"
-                                        value="remote"
-                                        :disabled="!avatarRemoteDatabase" />
-                                    <label for="searchAvatarFilterRemote-remote">{{
-                                        t('view.search.avatar.remote')
-                                    }}</label>
-                                </div>
-                            </RadioGroup>
-                        </div>
-                    </div>
-                    <div style="display: flex; justify-content: end" class="mt-2">
+                <SearchPagination
+                    :show="paginationConfig.show"
+                    :prev-disabled="paginationConfig.prevDisabled"
+                    :next-disabled="paginationConfig.nextDisabled"
+                    @prev="paginationConfig.onPrev"
+                    @next="paginationConfig.onNext" />
+            </TabsContent>
+            <TabsContent value="avatar" class="flex flex-col min-h-0 flex-1">
+                <div class="flex flex-col min-h-0" style="flex: 9">
+                    <div class="shrink-0 mb-3 flex items-center justify-end gap-2">
                         <Select
-                            :model-value="searchAvatarSort"
-                            :disabled="searchAvatarFilterRemote !== 'local'"
-                            style="margin: 6px"
-                            @update:modelValue="handleSearchAvatarSortChange">
+                            v-if="avatarRemoteDatabaseProviderList.length > 0"
+                            :model-value="avatarRemoteDatabaseProvider"
+                            @update:modelValue="setAvatarProvider">
                             <SelectTrigger size="sm">
-                                <SelectValue :placeholder="t('view.search.avatar.sort_name')" />
+                                <SelectValue :placeholder="t('view.search.avatar.search_provider')" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectItem value="name">
-                                        {{ t('view.search.avatar.sort_name') }}
-                                    </SelectItem>
-                                    <SelectItem value="update">
-                                        {{ t('view.search.avatar.sort_update') }}
-                                    </SelectItem>
-                                    <SelectItem value="created">
-                                        {{ t('view.search.avatar.sort_created') }}
+                                    <SelectItem
+                                        v-for="provider in avatarRemoteDatabaseProviderList.filter(Boolean)"
+                                        :key="provider"
+                                        :value="provider">
+                                        {{ provider }}
                                     </SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
+                        <span v-else class="text-sm text-muted-foreground">
+                            {{ t('view.search.avatar.no_provider') }}
+                        </span>
+                        <Button size="sm" variant="outline" @click="isAvatarProviderDialogVisible = true">
+                            <Settings class="size-4" />
+                        </Button>
                     </div>
-                    <div style="margin-top: 20px; min-height: 500px">
-                        <div
-                            v-for="avatar in searchAvatarPage"
-                            :key="avatar.id"
-                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
-                            @click="showAvatarDialog(avatar.id)">
-                            <div class="relative inline-block flex-none size-9 mr-2.5">
-                                <img
-                                    v-if="avatar.thumbnailImageUrl"
-                                    class="size-full rounded-full object-cover"
-                                    :src="avatar.thumbnailImageUrl"
-                                    loading="lazy" />
-                                <img
-                                    v-else-if="avatar.imageUrl"
-                                    class="size-full rounded-full object-cover"
-                                    :src="avatar.imageUrl"
-                                    loading="lazy" />
-                            </div>
-                            <div class="flex-1 overflow-hidden">
-                                <span class="block truncate font-medium leading-[18px]" v-text="avatar.name"></span>
-                                <span
-                                    v-if="avatar.releaseStatus === 'public'"
-                                    class="block truncate text-xs"
-                                    v-text="avatar.releaseStatus"></span>
-                                <span
-                                    v-else-if="avatar.releaseStatus === 'private'"
-                                    class="block truncate text-xs"
-                                    v-text="avatar.releaseStatus"></span>
-                                <span v-else class="block truncate text-xs" v-text="avatar.releaseStatus"></span>
-                                <span class="block truncate text-xs" v-text="avatar.authorName"></span>
-                            </div>
+                    <div class="flex-1 overflow-y-auto min-h-0 mt-2">
+                        <div v-if="isSearchAvatarLoading" class="flex items-center justify-center h-full">
+                            <Spinner class="text-2xl" />
                         </div>
+                        <template v-else-if="searchAvatarPage.length > 0">
+                            <ItemGroup
+                                class="grid gap-3"
+                                style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr))">
+                                <Item
+                                    v-for="avatar in searchAvatarPage"
+                                    :key="avatar.id"
+                                    variant="outline"
+                                    size="sm"
+                                    class="cursor-pointer p-3"
+                                    as-child>
+                                    <div class="overflow-hidden" @click="showAvatarDialog(avatar.id)">
+                                        <ItemHeader>
+                                            <img
+                                                v-if="avatar.thumbnailImageUrl"
+                                                :src="avatar.thumbnailImageUrl"
+                                                :alt="avatar.name"
+                                                loading="lazy"
+                                                class="aspect-[16/10] w-full rounded-lg object-cover" />
+                                            <img
+                                                v-else-if="avatar.imageUrl"
+                                                :src="avatar.imageUrl"
+                                                :alt="avatar.name"
+                                                loading="lazy"
+                                                class="aspect-[16/10] w-full rounded-sm object-cover" />
+                                        </ItemHeader>
+                                        <ItemContent class="min-w-0">
+                                            <TooltipWrapper side="top" :content="avatar.name">
+                                                <ItemTitle class="truncate w-auto">{{ avatar.name }}</ItemTitle>
+                                            </TooltipWrapper>
+                                            <ItemDescription class="line-clamp-1 text-xs">
+                                                {{ avatar.authorName }}
+                                            </ItemDescription>
+                                        </ItemContent>
+                                    </div>
+                                </Item>
+                            </ItemGroup>
+                        </template>
+                        <DataTableEmpty v-else type="nodata" />
                     </div>
-                    <ButtonGroup v-if="searchAvatarPage.length" style="margin-top: 16px">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            :disabled="!searchAvatarPageNum"
-                            @click="moreSearchAvatar(-1)">
-                            <ArrowLeft />
-                            {{ t('view.search.prev_page') }}
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            :disabled="
-                                searchAvatarResults.length < 10 ||
-                                (searchAvatarPageNum + 1) * 10 >= searchAvatarResults.length
-                            "
-                            @click="moreSearchAvatar(1)">
-                            <ArrowRight />
-                            {{ t('view.search.next_page') }}
-                        </Button>
-                    </ButtonGroup>
                 </div>
-            </template>
-            <template #group>
-                <div style="min-height: 60px">
-                    <div style="min-height: 500px">
-                        <div
+                <SearchPagination
+                    :show="paginationConfig.show"
+                    :prev-disabled="paginationConfig.prevDisabled"
+                    :next-disabled="paginationConfig.nextDisabled"
+                    @prev="paginationConfig.onPrev"
+                    @next="paginationConfig.onNext" />
+            </TabsContent>
+            <TabsContent value="group" class="flex flex-col min-h-0 flex-1">
+                <div class="flex-1 overflow-y-auto min-h-0" style="flex: 9">
+                    <div v-if="isSearchGroupLoading" class="flex items-center justify-center h-full">
+                        <Spinner class="text-2xl" />
+                    </div>
+                    <template v-else-if="searchGroupResults.length > 0">
+                        <Item
                             v-for="group in searchGroupResults"
                             :key="group.id"
-                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
+                            class="cursor-pointer hover:bg-muted x-hover-list rounded-none"
                             @click="showGroupDialog(group.id)">
-                            <div class="relative inline-block flex-none size-9 mr-2.5">
-                                <img
-                                    class="size-full rounded-full object-cover"
-                                    :src="getSmallThumbnailUrl(group.iconUrl)"
-                                    loading="lazy" />
-                            </div>
-                            <div class="flex-1 overflow-hidden">
-                                <span class="block truncate font-medium leading-[18px]">
-                                    <span v-text="group.name"></span>
-                                    <span style="margin-left: 6px; font-weight: normal">({{ group.memberCount }})</span>
-                                    <span
-                                        class="text-muted-foreground font-mono text-xs"
-                                        style="margin-left: 6px; font-weight: normal"
-                                        >{{ group.shortCode }}.{{ group.discriminator }}</span
-                                    >
-                                </span>
-                                <span class="block truncate text-xs" v-text="group.description"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <ButtonGroup v-if="searchGroupResults.length" style="margin-top: 16px">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            :disabled="!searchGroupParams.offset"
-                            @click="moreSearchGroup(-1)">
-                            <ArrowLeft />
-                            {{ t('view.search.prev_page') }}
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            :disabled="searchGroupResults.length < 10"
-                            @click="moreSearchGroup(1)">
-                            <ArrowRight />
-                            {{ t('view.search.next_page') }}
-                        </Button>
-                    </ButtonGroup>
+                            <ItemMedia variant="image">
+                                <Avatar class="rounded-sm">
+                                    <AvatarImage :src="getSmallThumbnailUrl(group.iconUrl)" loading="lazy" />
+                                    <AvatarFallback>
+                                        <Users class="size-5 text-muted-foreground" />
+                                    </AvatarFallback>
+                                </Avatar>
+                            </ItemMedia>
+                            <ItemContent class="min-w-0">
+                                <ItemTitle class="truncate max-w-full">
+                                    {{ group.name }}
+                                    <span class="font-normal">({{ group.memberCount }})</span>
+                                    <span class="text-muted-foreground font-mono text-xs font-normal">
+                                        {{ group.shortCode }}.{{ group.discriminator }}
+                                    </span>
+                                </ItemTitle>
+                                <ItemDescription class="truncate text-xs!">
+                                    {{ group.description }}
+                                </ItemDescription>
+                            </ItemContent>
+                        </Item>
+                    </template>
+                    <DataTableEmpty v-else type="nodata" />
                 </div>
-            </template>
-        </TabsUnderline>
+                <SearchPagination
+                    :show="paginationConfig.show"
+                    :prev-disabled="paginationConfig.prevDisabled"
+                    :next-disabled="paginationConfig.nextDisabled"
+                    @prev="paginationConfig.onPrev"
+                    @next="paginationConfig.onNext" />
+            </TabsContent>
+        </Tabs>
+        <AvatarProviderDialog v-model:isAvatarProviderDialogVisible="isAvatarProviderDialogVisible" />
     </div>
 </template>
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { ArrowLeft, ArrowRight, RefreshCw, Trash2 } from 'lucide-vue-next';
-    import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-    import { computed, ref } from 'vue';
+    import { Settings, Trash2, User, Users } from 'lucide-vue-next';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+    import { DataTableEmpty } from '@/components/ui/data-table';
+    import { Spinner } from '@/components/ui/spinner';
+    import AvatarProviderDialog from '../Settings/dialogs/AvatarProviderDialog.vue';
+    import SearchPagination from './components/SearchPagination.vue';
+    import { Item, ItemContent, ItemDescription, ItemGroup, ItemHeader, ItemMedia, ItemTitle } from '@/components/ui/item';
+
+    import { computed, onUnmounted, ref } from 'vue';
+    import { useMagicKeys, whenever } from '@vueuse/core';
+    import { toast } from 'vue-sonner';
     import { Button } from '@/components/ui/button';
-    import { ButtonGroup } from '@/components/ui/button-group';
     import { Checkbox } from '@/components/ui/checkbox';
     import { InputGroupField } from '@/components/ui/input-group';
-    import { Separator } from '@/components/ui/separator';
-    import { Spinner } from '@/components/ui/spinner';
-    import { TabsUnderline } from '@/components/ui/tabs';
+
+    import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import {
-        useAdvancedSettingsStore,
         useAppearanceSettingsStore,
         useAuthStore,
         useAvatarProviderStore,
-        useAvatarStore,
-        useGroupStore,
-        useSearchStore,
-        useUserStore,
-        useWorldStore
+        useSearchStore
     } from '../../stores';
-    import {
-        compareByCreatedAt,
-        compareByName,
-        compareByUpdatedAt,
-        convertFileUrlToImageUrl,
-        replaceBioSymbols,
-        userImage
-    } from '../../shared/utils';
-    import { groupRequest, worldRequest } from '../../api';
+    import { convertFileUrlToImageUrl, languageClass } from '../../shared/utils';
+    import { useUserDisplay } from '../../composables/useUserDisplay';
+    import { showAvatarDialog } from '../../coordinators/avatarCoordinator';
+    import { showGroupDialog } from '../../coordinators/groupCoordinator';
+    import { showUserDialog } from '../../coordinators/userCoordinator';
+    import { showWorldDialog } from '../../coordinators/worldCoordinator';
+    import { useSearchAvatar } from './composables/useSearchAvatar';
+    import { useSearchWorld } from './composables/useSearchWorld';
+    import { useSearchUser } from './composables/useSearchUser';
+    import { useSearchGroup } from './composables/useSearchGroup';
 
     const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
-    const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
-    const { avatarRemoteDatabaseProviderList, avatarRemoteDatabaseProvider } = storeToRefs(useAvatarProviderStore());
+    const { avatarRemoteDatabaseProviderList, avatarRemoteDatabaseProvider, isAvatarProviderDialogVisible } =
+        storeToRefs(useAvatarProviderStore());
     const { setAvatarProvider } = useAvatarProviderStore();
-    const { userDialog } = storeToRefs(useUserStore());
-    const { showUserDialog, refreshUserDialogAvatars } = useUserStore();
-    const { showAvatarDialog, lookupAvatars, cachedAvatars } = useAvatarStore();
-    const { cachedWorlds, showWorldDialog } = useWorldStore();
-    const { showGroupDialog } = useGroupStore();
+
     const { searchText, searchUserResults } = storeToRefs(useSearchStore());
-    const { clearSearch, moreSearchUser } = useSearchStore();
+    const { clearSearch } = useSearchStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
 
     const { t } = useI18n();
+    const { userImage } = useUserDisplay();
 
     const activeSearchTab = ref('user');
-    const searchTabs = computed(() => [
-        { value: 'user', label: t('view.search.user.header') },
-        { value: 'world', label: t('view.search.world.header') },
-        { value: 'avatar', label: t('view.search.avatar.header') },
-        { value: 'group', label: t('view.search.group.header') }
-    ]);
 
-    const searchUserParams = ref({});
-    const searchUserByBio = ref(false);
-    const searchUserSortByLastLoggedIn = ref(false);
+    // Keyboard shortcuts: Alt+Left (prev page) / Alt+Right (next page)
+    const keys = useMagicKeys();
+    const stopPrevWatch = whenever(keys['Alt+ArrowLeft'], () => {
+        if (!paginationConfig.value.prevDisabled) {
+            paginationConfig.value.onPrev();
+        }
+    });
+    const stopNextWatch = whenever(keys['Alt+ArrowRight'], () => {
+        if (!paginationConfig.value.nextDisabled) {
+            paginationConfig.value.onNext();
+        }
+    });
+    onUnmounted(() => {
+        stopPrevWatch();
+        stopNextWatch();
+    });
 
-    const isSearchUserLoading = ref(false);
-    const isSearchWorldLoading = ref(false);
-    const isSearchAvatarLoading = ref(false);
-    const isSearchGroupLoading = ref(false);
+    const searchPlaceholder = computed(() => {
+        if (activeSearchTab.value === 'avatar') {
+            return t('view.search.avatar.search_placeholder_avatar');
+        }
+        return t('view.search.search_placeholder');
+    });
 
-    const searchWorldOption = ref('');
-    const searchWorldLabs = ref(false);
-    const searchWorldParams = ref({});
+    const {
+        searchUserParams,
+        searchUserByBio,
+        searchUserSortByLastLoggedIn,
+        isSearchUserLoading,
+        searchUser,
+        handleMoreSearchUser,
+        clearUserSearch
+    } = useSearchUser();
 
-    const searchWorldCategoryIndex = ref(null);
-    const searchWorldResults = ref([]);
+    const {
+        searchAvatarPageNum,
+        searchAvatarResults,
+        searchAvatarPage,
+        isSearchAvatarLoading,
+        searchAvatar,
+        moreSearchAvatar,
+        clearAvatarSearch
+    } = useSearchAvatar();
 
-    /**
-     *
-     * @param value
-     */
-    function handleSearchAvatarFilterChange(value) {
-        searchAvatarFilter.value = value;
-        searchAvatar();
-    }
+    const {
+        searchWorldLabs,
+        searchWorldParams,
+        searchWorldCategoryIndex,
+        searchWorldResults,
+        isSearchWorldLoading,
+        searchWorld,
+        moreSearchWorld,
+        handleSearchWorldCategorySelect,
+        clearWorldSearch
+    } = useSearchWorld();
 
-    /**
-     *
-     * @param value
-     */
-    function handleSearchAvatarFilterRemoteChange(value) {
-        searchAvatarFilterRemote.value = value;
-        searchAvatar();
-    }
+    const { searchGroupParams, searchGroupResults, isSearchGroupLoading, searchGroup, moreSearchGroup, clearGroupSearch } =
+        useSearchGroup();
 
-    /**
-     *
-     * @param value
-     */
-    function handleSearchAvatarSortChange(value) {
-        searchAvatarSort.value = value;
-        searchAvatar();
-    }
+    const paginationConfig = computed(() => {
+        switch (activeSearchTab.value) {
+            case 'user':
+                return {
+                    show: searchUserResults.value.length > 0 && !isSearchUserLoading.value,
+                    prevDisabled: !searchUserParams.value.offset,
+                    nextDisabled: searchUserResults.value.length < 10,
+                    onPrev: () => handleMoreSearchUser(-1),
+                    onNext: () => handleMoreSearchUser(1)
+                };
+            case 'world':
+                return {
+                    show: searchWorldResults.value.length > 0 && !isSearchWorldLoading.value,
+                    prevDisabled: !searchWorldParams.value.offset,
+                    nextDisabled: searchWorldResults.value.length < 10,
+                    onPrev: () => moreSearchWorld(-1),
+                    onNext: () => moreSearchWorld(1)
+                };
+            case 'avatar':
+                return {
+                    show: searchAvatarPage.value.length > 0 && !isSearchAvatarLoading.value,
+                    prevDisabled: !searchAvatarPageNum.value,
+                    nextDisabled:
+                        searchAvatarResults.value.length < 10 ||
+                        (searchAvatarPageNum.value + 1) * 10 >= searchAvatarResults.value.length,
+                    onPrev: () => moreSearchAvatar(-1),
+                    onNext: () => moreSearchAvatar(1)
+                };
+            case 'group':
+                return {
+                    show: searchGroupResults.value.length > 0 && !isSearchGroupLoading.value,
+                    prevDisabled: !searchGroupParams.value.offset,
+                    nextDisabled: searchGroupResults.value.length < 10,
+                    onPrev: () => moreSearchGroup(-1),
+                    onNext: () => moreSearchGroup(1)
+                };
+            default:
+                return { show: false, prevDisabled: true, nextDisabled: true, onPrev: () => {}, onNext: () => {} };
+        }
+    });
 
-    const searchAvatarFilter = ref('');
-    const searchAvatarSort = ref('');
-    const searchAvatarFilterRemote = ref('');
-    const searchAvatarPageNum = ref(0);
-    const searchAvatarResults = ref([]);
-    const searchAvatarPage = ref([]);
-
-    const searchGroupParams = ref({});
-    const searchGroupResults = ref([]);
-
-    /**
-     *
-     * @param url
-     */
     function getSmallThumbnailUrl(url) {
         return convertFileUrlToImageUrl(url);
     }
@@ -491,14 +456,10 @@
      *
      */
     function handleClearSearch() {
-        searchUserParams.value = {};
-        searchWorldParams.value = {};
-        searchWorldResults.value = [];
-        searchAvatarResults.value = [];
-        searchAvatarPage.value = [];
-        searchAvatarPageNum.value = 0;
-        searchGroupParams.value = {};
-        searchGroupResults.value = [];
+        clearUserSearch();
+        clearWorldSearch();
+        clearAvatarSearch();
+        clearGroupSearch();
         clearSearch();
     }
 
@@ -512,17 +473,12 @@
 
     /**
      *
-     * @param tabName
-     */
-    function handleSearchTabChange(tabName) {
-        searchText.value = '';
-        activeSearchTab.value = tabName;
-    }
-
-    /**
-     *
      */
     function search() {
+        if (activeSearchTab.value === 'avatar' && (!searchText.value || searchText.value.length < 3)) {
+            toast.warning(t('view.search.avatar.min_chars_warning'));
+            return;
+        }
         switch (activeSearchTab.value) {
             case 'user':
                 searchUser();
@@ -537,299 +493,5 @@
                 searchGroup();
                 break;
         }
-    }
-
-    /**
-     *
-     */
-    async function searchUser() {
-        searchUserParams.value = {
-            n: 10,
-            offset: 0,
-            search: searchText.value,
-            customFields: searchUserByBio.value ? 'bio' : 'displayName',
-            sort: searchUserSortByLastLoggedIn.value ? 'last_login' : 'relevance'
-        };
-        await handleMoreSearchUser();
-    }
-
-    /**
-     *
-     * @param go
-     */
-    async function handleMoreSearchUser(go = null) {
-        isSearchUserLoading.value = true;
-        await moreSearchUser(go, searchUserParams.value);
-        isSearchUserLoading.value = false;
-    }
-
-    /**
-     *
-     * @param ref
-     */
-    function searchWorld(ref) {
-        searchWorldOption.value = '';
-        searchWorldCategoryIndex.value = ref?.index ?? null;
-        const params = {
-            n: 10,
-            offset: 0
-        };
-        switch (ref.sortHeading) {
-            case 'featured':
-                params.sort = 'order';
-                params.featured = 'true';
-                break;
-            case 'trending':
-                params.sort = 'popularity';
-                params.featured = 'false';
-                break;
-            case 'updated':
-                params.sort = 'updated';
-                break;
-            case 'created':
-                params.sort = 'created';
-                break;
-            case 'publication':
-                params.sort = 'publicationDate';
-                break;
-            case 'shuffle':
-                params.sort = 'shuffle';
-                break;
-            case 'active':
-                searchWorldOption.value = 'active';
-                break;
-            case 'recent':
-                searchWorldOption.value = 'recent';
-                break;
-            case 'favorite':
-                searchWorldOption.value = 'favorites';
-                break;
-            case 'labs':
-                params.sort = 'labsPublicationDate';
-                break;
-            case 'heat':
-                params.sort = 'heat';
-                params.featured = 'false';
-                break;
-            default:
-                params.sort = 'relevance';
-                params.search = replaceBioSymbols(searchText.value);
-                break;
-        }
-        params.order = ref.sortOrder || 'descending';
-        if (ref.sortOwnership === 'mine') {
-            params.user = 'me';
-            params.releaseStatus = 'all';
-        }
-        if (ref.tag) {
-            params.tag = ref.tag;
-        }
-        if (!searchWorldLabs.value) {
-            if (params.tag) {
-                params.tag += ',system_approved';
-            } else {
-                params.tag = 'system_approved';
-            }
-        }
-        // TODO: option.platform
-        searchWorldParams.value = params;
-        moreSearchWorld();
-    }
-
-    /**
-     *
-     * @param index
-     */
-    function handleSearchWorldCategorySelect(index) {
-        searchWorldCategoryIndex.value = index;
-        const row = cachedConfig.value?.dynamicWorldRows?.find((r) => r.index === index);
-        searchWorld(row || {});
-    }
-
-    /**
-     *
-     * @param go
-     */
-    function moreSearchWorld(go) {
-        const params = searchWorldParams.value;
-        if (go) {
-            params.offset += params.n * go;
-            if (params.offset < 0) {
-                params.offset = 0;
-            }
-        }
-        isSearchWorldLoading.value = true;
-        worldRequest
-            .getWorlds(params, searchWorldOption.value)
-            .finally(() => {
-                isSearchWorldLoading.value = false;
-            })
-            .then((args) => {
-                const map = new Map();
-                for (const json of args.json) {
-                    const ref = cachedWorlds.get(json.id);
-                    if (typeof ref !== 'undefined') {
-                        map.set(ref.id, ref);
-                    }
-                }
-                searchWorldResults.value = Array.from(map.values());
-                return args;
-            });
-    }
-
-    /**
-     *
-     */
-    async function searchAvatar() {
-        let ref;
-        isSearchAvatarLoading.value = true;
-        if (!searchAvatarFilter.value) {
-            searchAvatarFilter.value = 'all';
-        }
-        if (!searchAvatarSort.value) {
-            searchAvatarSort.value = 'name';
-        }
-        if (!searchAvatarFilterRemote.value) {
-            searchAvatarFilterRemote.value = 'all';
-        }
-        if (searchAvatarFilterRemote.value !== 'local') {
-            searchAvatarSort.value = 'name';
-        }
-        const avatars = new Map();
-        const query = searchText.value;
-        const queryUpper = query.toUpperCase();
-        if (!query) {
-            for (ref of cachedAvatars.values()) {
-                switch (searchAvatarFilter.value) {
-                    case 'all':
-                        avatars.set(ref.id, ref);
-                        break;
-                    case 'public':
-                        if (ref.releaseStatus === 'public') {
-                            avatars.set(ref.id, ref);
-                        }
-                        break;
-                    case 'private':
-                        if (ref.releaseStatus === 'private') {
-                            avatars.set(ref.id, ref);
-                        }
-                        break;
-                }
-            }
-            isSearchAvatarLoading.value = false;
-        } else {
-            if (searchAvatarFilterRemote.value === 'all' || searchAvatarFilterRemote.value === 'local') {
-                for (ref of cachedAvatars.values()) {
-                    let match = ref.name.toUpperCase().includes(queryUpper);
-                    if (!match && ref.description) {
-                        match = ref.description.toUpperCase().includes(queryUpper);
-                    }
-                    if (!match && ref.authorName) {
-                        match = ref.authorName.toUpperCase().includes(queryUpper);
-                    }
-                    if (match) {
-                        switch (searchAvatarFilter.value) {
-                            case 'all':
-                                avatars.set(ref.id, ref);
-                                break;
-                            case 'public':
-                                if (ref.releaseStatus === 'public') {
-                                    avatars.set(ref.id, ref);
-                                }
-                                break;
-                            case 'private':
-                                if (ref.releaseStatus === 'private') {
-                                    avatars.set(ref.id, ref);
-                                }
-                                break;
-                        }
-                    }
-                }
-            }
-            if (
-                (searchAvatarFilterRemote.value === 'all' || searchAvatarFilterRemote.value === 'remote') &&
-                avatarRemoteDatabase.value &&
-                query.length >= 3
-            ) {
-                const data = await lookupAvatars('search', query);
-                if (data && typeof data === 'object') {
-                    data.forEach((avatar) => {
-                        avatars.set(avatar.id, avatar);
-                    });
-                }
-            }
-            isSearchAvatarLoading.value = false;
-        }
-        const avatarsArray = Array.from(avatars.values());
-        if (searchAvatarFilterRemote.value === 'local') {
-            switch (searchAvatarSort.value) {
-                case 'updated':
-                    avatarsArray.sort(compareByUpdatedAt);
-                    break;
-                case 'created':
-                    avatarsArray.sort(compareByCreatedAt);
-                    break;
-                case 'name':
-                    avatarsArray.sort(compareByName);
-                    break;
-            }
-        }
-        searchAvatarPageNum.value = 0;
-        searchAvatarResults.value = avatarsArray;
-        searchAvatarPage.value = avatarsArray.slice(0, 10);
-    }
-    /**
-     *
-     * @param n
-     */
-    function moreSearchAvatar(n) {
-        let offset;
-        if (n === -1) {
-            searchAvatarPageNum.value--;
-            offset = searchAvatarPageNum.value * 10;
-        }
-        if (n === 1) {
-            searchAvatarPageNum.value++;
-            offset = searchAvatarPageNum.value * 10;
-        }
-        searchAvatarPage.value = searchAvatarResults.value.slice(offset, offset + 10);
-    }
-    /**
-     *
-     */
-    async function searchGroup() {
-        searchGroupParams.value = {
-            n: 10,
-            offset: 0,
-            query: replaceBioSymbols(searchText.value)
-        };
-        await moreSearchGroup();
-    }
-    /**
-     *
-     * @param go
-     */
-    async function moreSearchGroup(go) {
-        const params = searchGroupParams.value;
-        if (go) {
-            params.offset += params.n * go;
-            if (params.offset < 0) {
-                params.offset = 0;
-            }
-        }
-        isSearchGroupLoading.value = true;
-        await groupRequest
-            .groupSearch(params)
-            .finally(() => {
-                isSearchGroupLoading.value = false;
-            })
-            .then((args) => {
-                const map = new Map();
-                for (const json of args.json) {
-                    map.set(json.id, json);
-                }
-                searchGroupResults.value = Array.from(map.values());
-                return args;
-            });
     }
 </script>

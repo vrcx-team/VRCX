@@ -1,9 +1,14 @@
-import { ArrowUpDown, UserMinus } from 'lucide-vue-next';
+import { ArrowUpDown, User, UserMinus } from 'lucide-vue-next';
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage
+} from '../../components/ui/avatar';
 
 import { Button } from '../../components/ui/button';
 import { Checkbox } from '../../components/ui/checkbox';
 import { TooltipWrapper } from '../../components/ui/tooltip';
-import { i18n } from '../../plugin';
+import { i18n } from '../../plugins';
 import {
     formatDateFilter,
     getFaviconUrl,
@@ -11,8 +16,7 @@ import {
     openExternalLink,
     sortStatus,
     statusClass,
-    timeToText,
-    userImage
+    timeToText
 } from '../../shared/utils';
 
 const { t } = i18n.global;
@@ -96,7 +100,8 @@ export const createColumns = ({
     randomUserColours,
     selectedFriends,
     onToggleFriendSelection,
-    onConfirmDeleteFriend
+    onConfirmDeleteFriend,
+    userImage
 }) => {
     const cols = [];
 
@@ -163,15 +168,20 @@ export const createColumns = ({
             meta: { label: () => t('table.friendList.avatar') },
             cell: ({ row }) => {
                 const src = userImage(row.original, true);
-                return src ? (
+                return (
                     <div class="flex items-center">
-                        <img
-                            src={src}
-                            class="friends-list-avatar object-cover w-6! h-6"
-                            loading="lazy"
-                        />
+                        <Avatar class="size-6 rounded-full">
+                            <AvatarImage
+                                src={src}
+                                class="friends-list-avatar object-cover"
+                                loading="lazy"
+                            />
+                            <AvatarFallback>
+                                <User class="size-3 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
                     </div>
-                ) : null;
+                );
             }
         },
         {

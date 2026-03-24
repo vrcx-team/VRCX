@@ -1,22 +1,14 @@
 import { computed, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
-import { toast } from 'vue-sonner';
-import { useI18n } from 'vue-i18n';
 
-import { instanceRequest, inviteMessagesRequest } from '../api';
-import { parseLocation } from '../shared/utils';
+import { inviteMessagesRequest } from '../api';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useGameStore } from './game';
-import { useInstanceStore } from './instance';
-import { useLaunchStore } from './launch';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
 export const useInviteStore = defineStore('Invite', () => {
-    const instanceStore = useInstanceStore();
     const gameStore = useGameStore();
-    const launchStore = useLaunchStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
-    const { t } = useI18n();
 
     const inviteMessageTable = ref({
         data: [],
@@ -93,43 +85,12 @@ export const useInviteStore = defineStore('Invite', () => {
             });
     }
 
-    function newInstanceSelfInvite(worldId) {
-        instanceStore.createNewInstance(worldId).then((args) => {
-            const location = args?.json?.location;
-            if (!location) {
-                toast.error(t('message.instance.create_failed'));
-                return;
-            }
-            // self invite
-            const L = parseLocation(location);
-            if (!L.isRealInstance) {
-                return;
-            }
-            if (canOpenInstanceInGame.value) {
-                const secureOrShortName =
-                    args.json.shortName || args.json.secureName;
-                launchStore.tryOpenInstanceInVrc(location, secureOrShortName);
-                return;
-            }
-            instanceRequest
-                .selfInvite({
-                    instanceId: L.instanceId,
-                    worldId: L.worldId
-                })
-                .then((args) => {
-                    toast.success(t('message.invite.self_sent'));
-                    return args;
-                });
-        });
-    }
-
     return {
         inviteMessageTable,
         inviteResponseMessageTable,
         inviteRequestMessageTable,
         inviteRequestResponseMessageTable,
         refreshInviteMessageTableData,
-        newInstanceSelfInvite,
         canOpenInstanceInGame
     };
 });

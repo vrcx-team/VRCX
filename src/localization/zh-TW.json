@@ -45,7 +45,7 @@
         "get_help": "取得協助",
         "github": "在 GitHub 上查看 VRCX",
         "discord": "加入我們的 Discord",
-        "whats_new": "最新更新",
+        "changelog": "最新更新",
         "update_available": "有可用更新",
         "update": "更新",
         "custom_nav": {
@@ -99,6 +99,10 @@
                 "devEndpoint": "開發介面",
                 "endpoint": "Endpoint",
                 "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "偵測到語言",
+                "description": "您的系統語言似乎是 {language}。是否切換到該語言？"
             }
         },
         "feed": {
@@ -178,9 +182,7 @@
             },
             "group": {
                 "header": "群組"
-            },
-            "prev_page": "上一頁",
-            "next_page": "下一頁"
+            }
         },
         "favorite": {
             "worlds": {
@@ -559,14 +561,12 @@
                     "bio_language": "目標語言",
                     "theme_mode": "主題",
                     "font_family": "字型",
-                    "font_family_tooltip": "只有系統字型會影響 CJK（中日韓）字元顯示",
                     "font_family_inter": "Inter",
                     "font_family_noto_sans": "Noto Sans",
-                    "font_family_source_sans_3": "Source Sans 3",
+                    "font_family_geist": "Geist",
+                    "font_family_nunito_sans": "Nunito Sans",
                     "font_family_ibm_plex_sans": "IBM Plex Sans",
-                    "font_family_harmonyos_sans": "HarmonyOS Sans",
                     "font_family_jetbrains_mono": "JetBrains Mono",
-                    "font_family_roboto": "Roboto",
                     "font_family_fantasque_sans_mono": "Fantasque Sans Mono",
                     "font_family_system_ui": "系統字型",
                     "theme_mode_system": "系統",

@@ -26,8 +26,8 @@ describe('query policy configuration', () => {
         });
 
         expect(entityQueryPolicies.group).toMatchObject({
-            staleTime: 60000,
-            gcTime: 300000,
+            staleTime: 300000,
+            gcTime: 1800000,
             retry: 1,
             refetchOnWindowFocus: false
         });
@@ -89,8 +89,8 @@ describe('query policy configuration', () => {
 
     test('file-related policies', () => {
         expect(entityQueryPolicies.fileAnalysis).toMatchObject({
-            staleTime: 120000,
-            gcTime: 600000,
+            staleTime: 3600000,
+            gcTime: 14400000,
             retry: 1,
             refetchOnWindowFocus: false
         });
@@ -105,8 +105,8 @@ describe('query policy configuration', () => {
 
     test('world persist data policy', () => {
         expect(entityQueryPolicies.worldPersistData).toMatchObject({
-            staleTime: 120000,
-            gcTime: 600000,
+            staleTime: 1800000,
+            gcTime: 7200000,
             retry: 1,
             refetchOnWindowFocus: false
         });
@@ -114,8 +114,8 @@ describe('query policy configuration', () => {
 
     test('user relation policies (mutualCounts, representedGroup)', () => {
         expect(entityQueryPolicies.mutualCounts).toMatchObject({
-            staleTime: 120000,
-            gcTime: 600000,
+            staleTime: 900000,
+            gcTime: 3600000,
             retry: 1,
             refetchOnWindowFocus: false
         });
@@ -130,8 +130,8 @@ describe('query policy configuration', () => {
 
     test('visits policy has longer staleTime for slow-changing data', () => {
         expect(entityQueryPolicies.visits).toMatchObject({
-            staleTime: 300000,
-            gcTime: 900000,
+            staleTime: 1800000,
+            gcTime: 7200000,
             retry: 1,
             refetchOnWindowFocus: false
         });
@@ -139,8 +139,8 @@ describe('query policy configuration', () => {
 
     test('avatarStyles policy has very long staleTime for static config data', () => {
         expect(entityQueryPolicies.avatarStyles).toMatchObject({
-            staleTime: 600000,
-            gcTime: 3600000,
+            staleTime: 3600000,
+            gcTime: 14400000,
             retry: 1,
             refetchOnWindowFocus: false
         });
@@ -164,8 +164,8 @@ describe('query policy configuration', () => {
         const options = toQueryOptions(entityQueryPolicies.group);
 
         expect(options).toEqual({
-            staleTime: 60000,
-            gcTime: 300000,
+            staleTime: 300000,
+            gcTime: 1800000,
             retry: 1,
             refetchOnWindowFocus: false
         });

@@ -9,7 +9,7 @@ import en from '../../localization/en.json';
 
 // --- Mocks ---
 
-vi.mock('../../service/config', () => ({
+vi.mock('../../services/config', () => ({
     default: {
         init: vi.fn(),
         getString: vi
@@ -36,14 +36,14 @@ vi.mock('../../service/config', () => ({
     }
 }));
 
-vi.mock('../../service/websocket', () => ({
+vi.mock('../../services/websocket', () => ({
     wsState: { connected: false, messageCount: 0, bytesReceived: 0 },
     initWebsocket: vi.fn(),
     closeWebSocket: vi.fn(),
     reconnectWebSocket: vi.fn()
 }));
 
-vi.mock('../../service/webapi', () => ({
+vi.mock('../../services/webapi', () => ({
     default: {
         execute: vi.fn().mockResolvedValue({
             status: 200,
@@ -62,13 +62,13 @@ vi.mock('worker-timers', () => ({
     clearTimeout: vi.fn()
 }));
 
-vi.mock('../../service/jsonStorage', () => ({
+vi.mock('../../services/jsonStorage', () => ({
     default: vi.fn()
 }));
-vi.mock('../../service/watchState', () => ({
+vi.mock('../../services/watchState', () => ({
     watchState: { isLoggedIn: false }
 }));
-vi.mock('../../service/database', () => ({
+vi.mock('../../services/database', () => ({
     database: new Proxy(
         {},
         {
@@ -79,7 +79,7 @@ vi.mock('../../service/database', () => ({
         }
     )
 }));
-vi.mock('../../plugin/router', () => ({
+vi.mock('../../plugins/router', () => ({
     router: {
         beforeEach: vi.fn(),
         push: vi.fn(),
@@ -100,7 +100,7 @@ vi.mock('vue-router', async (importOriginal) => {
         }))
     };
 });
-vi.mock('../../plugin/interopApi', () => ({
+vi.mock('../../plugins/interopApi', () => ({
     initInteropApi: vi.fn()
 }));
 
@@ -189,6 +189,8 @@ function mountStatusBar(storeOverrides = {}) {
                         Game: {
                             isGameRunning: false,
                             isSteamVRRunning: false,
+                            lastSessionDurationMs: 0,
+                            lastOfflineAt: 0,
                             ...storeOverrides.Game
                         },
                         Vrcx: {
@@ -201,6 +203,12 @@ function mountStatusBar(storeOverrides = {}) {
                             lastStatusTime: null,
                             lastStatusSummary: '',
                             ...storeOverrides.VrcStatus
+                        },
+                        User: {
+                            currentUser: {
+                                $online_for: Date.now()
+                            },
+                            ...storeOverrides.User
                         },
                         GeneralSettings: {
                             ...storeOverrides.GeneralSettings
@@ -228,7 +236,7 @@ describe('StatusBar.vue - Servers indicator', () => {
         expect(wrapper.text()).toContain('Servers');
         const serversDots = wrapper.findAll('.bg-status-online');
         expect(serversDots.length).toBeGreaterThan(0);
-        expect(wrapper.find('.bg-\\[\\#e6a23c\\]').exists()).toBe(false);
+        expect(wrapper.find('.bg-status-askme').exists()).toBe(false);
     });
 
     test('shows Servers indicator with yellow dot when there is an issue', () => {
@@ -238,7 +246,7 @@ describe('StatusBar.vue - Servers indicator', () => {
             }
         });
         expect(wrapper.text()).toContain('Servers');
-        expect(wrapper.find('.bg-\\[\\#e6a23c\\]').exists()).toBe(true);
+        expect(wrapper.find('.bg-status-askme').exists()).toBe(true);
     });
 
     test('shows HoverCard content with status text when there is an issue', () => {
@@ -268,5 +276,18 @@ describe('StatusBar.vue - Servers indicator', () => {
     test('shows SteamVR indicator', () => {
         const wrapper = mountStatusBar({ Game: { isSteamVRRunning: true } });
         expect(wrapper.text()).toContain('SteamVR');
+    });
+
+    test('shows last game session details when game is offline and there is session data', () => {
+        const wrapper = mountStatusBar({
+            Game: {
+                isGameRunning: false,
+                lastSessionDurationMs: 3_600_000,
+                lastOfflineAt: new Date('2026-03-13T14:30:00Z').getTime()
+            }
+        });
+
+        expect(wrapper.text()).toContain('Last Session');
+        expect(wrapper.text()).toContain('Offline Since');
     });
 });

@@ -10,3 +10,7 @@ Installer/version_define.nsh
 bun.lock
 
 .env.sentry-build-plugin
+AGENTS.md
+AI_GUIDE.md
+CLAUDE.md
+coverage/

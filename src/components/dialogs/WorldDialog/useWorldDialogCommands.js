@@ -1,19 +1,22 @@
 import { nextTick, ref } from 'vue';
 
 import {
-    handleImageUploadInput,
-    readFileAsBase64,
-    resizeImageToFitLimits,
-    uploadImageLegacy,
-    withUploadTimeout
-} from '../../../shared/utils/imageUpload';
-import {
     favoriteRequest,
     miscRequest,
     userRequest,
     worldRequest
 } from '../../../api';
+import {
+    handleImageUploadInput,
+    resizeImageToFitLimits,
+    uploadImageLegacy
+} from '../../../coordinators/imageUploadCoordinator';
 import { openExternalLink, replaceVrcPackageUrl } from '../../../shared/utils';
+import {
+    readFileAsBase64,
+    withUploadTimeout
+} from '../../../shared/utils/imageUpload';
+import { removeWorldFromCache } from '../../../coordinators/worldCoordinator';
 
 /**
  * Composable for WorldDialog commands, prompt functions, and image upload.
@@ -370,6 +373,9 @@ export function useWorldDialogCommands(
     // String commands: delegate to component callback
     // Confirmed commands: { confirm: () => ({title, description, ...}), handler: fn }
 
+    /**
+     *
+     */
     function buildCommandMap() {
         const D = () => worldDialog.value;
 
@@ -523,12 +529,13 @@ export function useWorldDialogCommands(
                     title: t('confirm.title'),
                     description: t('confirm.command_question', {
                         command: t('dialog.world.actions.delete')
-                    })
+                    }),
+                    destructive: true
                 }),
                 handler: (id) => {
                     worldRequest.deleteWorld({ worldId: id }).then((args) => {
                         const { json } = args;
-                        cachedWorlds.delete(json.id);
+                        removeWorldFromCache(json.id);
                         if (worldDialog.value.ref.authorId === json.authorId) {
                             const map = new Map();
                             for (const ref of cachedWorlds.values()) {

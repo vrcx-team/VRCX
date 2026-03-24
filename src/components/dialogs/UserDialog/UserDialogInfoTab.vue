@@ -30,10 +30,12 @@
                         <div
                             class="relative inline-block flex-none size-9 mr-2.5"
                             :class="userStatusClass(userDialog.$location.user)">
-                            <img
-                                class="size-full rounded-full object-cover"
-                                :src="userImage(userDialog.$location.user, true)"
-                                loading="lazy" />
+                            <Avatar class="size-9">
+                                <AvatarImage :src="userImage(userDialog.$location.user, true)" class="object-cover" />
+                                <AvatarFallback>
+                                    <User class="size-4 text-muted-foreground" />
+                                </AvatarFallback>
+                            </Avatar>
                         </div>
                         <div class="flex-1 overflow-hidden">
                             <span
@@ -51,7 +53,12 @@
                     class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                     @click="showUserDialog(user.id)">
                     <div class="relative inline-block flex-none size-9 mr-2.5" :class="userStatusClass(user)">
-                        <img class="size-full rounded-full object-cover" :src="userImage(user, true)" loading="lazy" />
+                        <Avatar class="size-9">
+                            <AvatarImage :src="userImage(user, true)" class="object-cover" />
+                            <AvatarFallback>
+                                <User class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
                     </div>
                     <div class="flex-1 overflow-hidden">
                         <span
@@ -145,7 +152,9 @@
                                 :src="userDialog.representedGroup.$thumbnailUrl"
                                 @load="userDialog.isRepresentedGroupLoading = false"
                                 @error="userDialog.isRepresentedGroupLoading = false" />
-                            <AvatarFallback class="rounded-lg!" />
+                            <AvatarFallback class="rounded-lg!">
+                                <Image class="size-5 text-muted-foreground" />
+                            </AvatarFallback>
                         </Avatar>
                     </div>
                     <span
@@ -461,7 +470,7 @@
 </template>
 
 <script setup>
-    import { Copy, Info, Languages, MoreHorizontal, Pencil, Trash2 } from 'lucide-vue-next';
+    import { Copy, Image, Info, Languages, MoreHorizontal, Pencil, Trash2, User } from 'lucide-vue-next';
     import {
         DropdownMenu,
         DropdownMenuContent,
@@ -469,7 +478,7 @@
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-    import { defineAsyncComponent, ref, watch } from 'vue';
+    import { ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
@@ -483,29 +492,29 @@
         isFriendOnline,
         isRealInstance,
         openExternalLink,
-        refreshInstancePlayerCount,
         timeToText,
-        userImage,
         userOnlineFor,
-        userOnlineForTimestamp,
-        userStatusClass
+        userOnlineForTimestamp
     } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
+    import { refreshInstancePlayerCount } from '../../../coordinators/instanceCoordinator';
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
         useGalleryStore,
-        useGroupStore,
         useInstanceStore,
         useLocationStore,
         useModalStore,
-        useUserStore,
-        useWorldStore
+        useUserStore
     } from '../../../stores';
+    import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { queryRequest, userRequest } from '../../../api';
 
     import InstanceActionBar from '../../InstanceActionBar.vue';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { showGroupDialog } from '../../../coordinators/groupCoordinator';
 
-    const EditNoteAndMemoDialog = defineAsyncComponent(() => import('./EditNoteAndMemoDialog.vue'));
+    import EditNoteAndMemoDialog from './EditNoteAndMemoDialog.vue';
 
     defineEmits(['showBioDialog']);
 
@@ -518,11 +527,11 @@
     const { bioLanguage, translationApi, translationApiType } = storeToRefs(useAdvancedSettingsStore());
     const { translateText } = useAdvancedSettingsStore();
     const { userDialog, currentUser } = storeToRefs(useUserStore());
-    const { showUserDialog, toggleSharedConnectionsOptOut, toggleDiscordFriendsOptOut } = useUserStore();
-    const { showWorldDialog } = useWorldStore();
-    const { showGroupDialog } = useGroupStore();
+    const { toggleSharedConnectionsOptOut, toggleDiscordFriendsOptOut } = useUserStore();
+
     const { lastLocation } = storeToRefs(useLocationStore());
     const { showFullscreenImageDialog } = useGalleryStore();
+    const { userImage, userStatusClass } = useUserDisplay();
 
     const bioCache = ref({
         userId: null,
@@ -551,7 +560,7 @@
      *
      */
     function onTabActivated() {
-        if (vrchatCredit.value === null) {
+        if (currentUser.value.id === userDialog.value.id && vrchatCredit.value === null) {
             getVRChatCredits();
         }
     }
@@ -647,7 +656,7 @@
                         homeLocation: ''
                     })
                     .then((args) => {
-                        toast.success('Home world has been reset');
+                        toast.success(t('message.user.home_reset'));
                         return args;
                     });
             })
@@ -659,7 +668,7 @@
      * @param userId
      */
     function copyUserId(userId) {
-        copyToClipboard(userId, 'User ID copied to clipboard');
+        copyToClipboard(userId, t('message.user.id_copied'));
     }
 
     /**
@@ -667,7 +676,7 @@
      * @param userId
      */
     function copyUserURL(userId) {
-        copyToClipboard(`https://vrchat.com/home/user/${userId}`, 'User URL copied to clipboard');
+        copyToClipboard(`https://vrchat.com/home/user/${userId}`, t('message.user.url_copied'));
     }
 
     /**
@@ -675,7 +684,7 @@
      * @param displayName
      */
     function copyUserDisplayName(displayName) {
-        copyToClipboard(displayName, 'User DisplayName copied to clipboard');
+        copyToClipboard(displayName, t('message.user.display_name_copied'));
     }
 
     /**

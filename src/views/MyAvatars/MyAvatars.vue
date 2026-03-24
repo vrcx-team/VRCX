@@ -167,7 +167,7 @@
         <DataTableLayout
             v-if="viewMode === 'table'"
             :table="table"
-            :table-style="tableHeightStyle"
+            auto-height
             :page-sizes="pageSizes"
             :total-items="filteredAvatars.length"
             :loading="isLoading"
@@ -314,45 +314,44 @@
     import { useI18n } from 'vue-i18n';
     import { useVirtualizer } from '@tanstack/vue-virtual';
 
-    import {
-        handleImageUploadInput,
-        readFileAsBase64,
-        resizeImageToFitLimits,
-        uploadImageLegacy,
-        withUploadTimeout
-    } from '../../shared/utils/imageUpload';
     import { useAppearanceSettingsStore, useAvatarStore, useModalStore, useUserStore } from '../../stores';
     import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from '../../components/ui/context-menu';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
     import { Field, FieldContent, FieldLabel } from '../../components/ui/field';
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
+    import { applyAvatar, selectAvatarWithoutConfirmation, showAvatarDialog } from '../../coordinators/avatarCoordinator';
+    import {
+        handleImageUploadInput,
+        resizeImageToFitLimits,
+        uploadImageLegacy
+    } from '../../coordinators/imageUploadCoordinator';
     import { DataTableEmpty, DataTableLayout } from '../../components/ui/data-table';
     import { ToggleGroup, ToggleGroupItem } from '../../components/ui/toggle-group';
+    import { readFileAsBase64, withUploadTimeout } from '../../shared/utils/imageUpload';
     import { Badge } from '../../components/ui/badge';
     import { Button } from '../../components/ui/button';
     import { Input } from '../../components/ui/input';
     import { Slider } from '../../components/ui/slider';
     import { TooltipWrapper } from '../../components/ui/tooltip';
     import { avatarRequest } from '../../api';
-    import { database } from '../../service/database';
+    import { database } from '../../services/database';
     import { getColumns } from './columns';
     import { getPlatformInfo } from '../../shared/utils/avatar';
     import { getTagColor } from '../../shared/constants';
-    import { processBulk } from '../../service/request';
+    import { processBulk } from '../../services/request';
     import { useAvatarCardGrid } from './composables/useAvatarCardGrid';
-    import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     import ImageCropDialog from '../../components/dialogs/ImageCropDialog.vue';
     import ManageTagsDialog from './ManageTagsDialog.vue';
     import MyAvatarCard from './components/MyAvatarCard.vue';
-    import configRepository from '../../service/config.js';
+    import configRepository from '../../services/config.js';
 
     const { t } = useI18n();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const avatarStore = useAvatarStore();
     const modalStore = useModalStore();
-    const { showAvatarDialog, selectAvatarWithoutConfirmation, applyAvatar } = avatarStore;
+
     const { currentUser } = storeToRefs(useUserStore());
 
     const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
@@ -375,11 +374,7 @@
     const manageTagsOpen = ref(false);
     const manageTagsAvatar = ref(null);
 
-    const { tableStyle: tableHeightStyle } = useDataTableScrollHeight(containerRef, {
-        offset: 30,
-        toolbarHeight: 54,
-        paginationHeight: 52
-    });
+
 
     const allTags = computed(() => {
         const tagSet = new Set();
@@ -455,8 +450,7 @@
         if (searchText.value) {
             const query = searchText.value.toLowerCase();
             list = list.filter(
-                (a) =>
-                    a.name?.toLowerCase().includes(query) || a.$tags?.some((t) => t.tag.toLowerCase().includes(query))
+                (a) => a.name?.toLowerCase().includes(query) || a.$tags?.some((t) => t.tag.toLowerCase().includes(query))
             );
         }
 
@@ -777,7 +771,7 @@
      * @param row
      */
     function handleRowClick(row) {
-        handleWearAvatar(row.original.id);
+        handleShowAvatarDialog(row.original.id);
     }
 
     /**
@@ -845,18 +839,18 @@
                 const list = Array.from(map.values());
                 const currentAvatarId = currentUser.value.currentAvatar;
                 const swapTime = currentUser.value.$previousAvatarSwapTime;
-                const tagsMap = await database.getAllAvatarTags();
+                const [tagsMap, avatarTimeSpentMap] = await Promise.all([
+                    database.getAllAvatarTags(),
+                    database.getAllAvatarTimeSpent()
+                ]);
                 avatarTagsMap.value = tagsMap;
-                await Promise.all(
-                    list.map(async (ref) => {
-                        const aviTime = await database.getAvatarTimeSpent(ref.id);
-                        ref.$timeSpent = aviTime.timeSpent;
-                        if (ref.id === currentAvatarId && swapTime) {
-                            ref.$timeSpent += Date.now() - swapTime;
-                        }
-                        ref.$tags = tagsMap.get(ref.id) || [];
-                    })
-                );
+                for (const ref of list) {
+                    ref.$timeSpent = avatarTimeSpentMap.get(ref.id) || 0;
+                    if (ref.id === currentAvatarId && swapTime) {
+                        ref.$timeSpent += Date.now() - swapTime;
+                    }
+                    ref.$tags = tagsMap.get(ref.id) || [];
+                }
                 avatars.value = list;
                 isLoading.value = false;
             }

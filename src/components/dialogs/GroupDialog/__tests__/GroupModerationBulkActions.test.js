@@ -3,12 +3,11 @@ import { mount } from '@vue/test-utils';
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
-    ,
-            locale: require('vue').ref('en')
-        }),
+        t: (key) => key,
+        locale: require('vue').ref('en')
+    }),
     createI18n: () => ({
-        global: { t: (key) => key , locale: require('vue').ref('en') },
+        global: { t: (key) => key, locale: require('vue').ref('en') },
         install: vi.fn()
     })
 }));
@@ -53,7 +52,8 @@ function mountComponent(props = {}) {
                 Trash2: { template: '<svg class="trash-icon" />' },
                 X: { template: '<svg class="x-icon" />' },
                 TooltipWrapper: {
-                    template: '<div class="tooltip-stub"><slot /><slot name="content" /></div>'
+                    template:
+                        '<div class="tooltip-stub"><slot /><slot name="content" /></div>'
                 }
             }
         }
@@ -68,24 +68,32 @@ describe('GroupModerationBulkActions.vue', () => {
     describe('rendering', () => {
         test('renders user ID input field', () => {
             const wrapper = mountComponent();
-            expect(wrapper.text()).toContain('dialog.group_member_moderation.user_id');
+            expect(wrapper.text()).toContain(
+                'dialog.group_member_moderation.user_id'
+            );
         });
 
         test('renders selected users section', () => {
             const wrapper = mountComponent();
-            expect(wrapper.text()).toContain('dialog.group_member_moderation.selected_users');
+            expect(wrapper.text()).toContain(
+                'dialog.group_member_moderation.selected_users'
+            );
         });
 
         test('renders roles dropdown with available roles', () => {
             const wrapper = mountComponent();
-            expect(wrapper.text()).toContain('dialog.group_member_moderation.selected_roles');
+            expect(wrapper.text()).toContain(
+                'dialog.group_member_moderation.selected_roles'
+            );
         });
 
         test('renders action buttons', () => {
             const wrapper = mountComponent();
             const text = wrapper.text();
             expect(text).toContain('dialog.group_member_moderation.add_roles');
-            expect(text).toContain('dialog.group_member_moderation.remove_roles');
+            expect(text).toContain(
+                'dialog.group_member_moderation.remove_roles'
+            );
             expect(text).toContain('dialog.group_member_moderation.save_note');
             expect(text).toContain('dialog.group_member_moderation.kick');
             expect(text).toContain('dialog.group_member_moderation.ban');
@@ -95,8 +103,18 @@ describe('GroupModerationBulkActions.vue', () => {
         test('renders selected user badges', () => {
             const wrapper = mountComponent({
                 selectedUsersArray: [
-                    { id: 'usr_1', userId: 'usr_1', membershipStatus: 'member', user: { displayName: 'Alice' } },
-                    { id: 'usr_2', userId: 'usr_2', membershipStatus: 'member', user: { displayName: 'Bob' } }
+                    {
+                        id: 'usr_1',
+                        userId: 'usr_1',
+                        membershipStatus: 'member',
+                        user: { displayName: 'Alice' }
+                    },
+                    {
+                        id: 'usr_2',
+                        userId: 'usr_2',
+                        membershipStatus: 'member',
+                        user: { displayName: 'Bob' }
+                    }
                 ]
             });
             expect(wrapper.text()).toContain('Alice');
@@ -106,54 +124,88 @@ describe('GroupModerationBulkActions.vue', () => {
         test('shows warning tooltip for non-member users', () => {
             const wrapper = mountComponent({
                 selectedUsersArray: [
-                    { id: 'usr_1', userId: 'usr_1', membershipStatus: 'banned', user: { displayName: 'Charlie' } }
+                    {
+                        id: 'usr_1',
+                        userId: 'usr_1',
+                        membershipStatus: 'banned',
+                        user: { displayName: 'Charlie' }
+                    }
                 ]
             });
-            expect(wrapper.text()).toContain('dialog.group_member_moderation.user_isnt_in_group');
+            expect(wrapper.text()).toContain(
+                'dialog.group_member_moderation.user_isnt_in_group'
+            );
         });
 
         test('does not show warning for member users', () => {
             const wrapper = mountComponent({
                 selectedUsersArray: [
-                    { id: 'usr_1', userId: 'usr_1', membershipStatus: 'member', user: { displayName: 'Alice' } }
+                    {
+                        id: 'usr_1',
+                        userId: 'usr_1',
+                        membershipStatus: 'member',
+                        user: { displayName: 'Alice' }
+                    }
                 ]
             });
-            expect(wrapper.text()).not.toContain('dialog.group_member_moderation.user_isnt_in_group');
+            expect(wrapper.text()).not.toContain(
+                'dialog.group_member_moderation.user_isnt_in_group'
+            );
         });
     });
 
     describe('progress indicator', () => {
         test('shows progress when progressCurrent > 0', () => {
-            const wrapper = mountComponent({ progressCurrent: 3, progressTotal: 10 });
-            expect(wrapper.text()).toContain('dialog.group_member_moderation.progress');
+            const wrapper = mountComponent({
+                progressCurrent: 3,
+                progressTotal: 10
+            });
+            expect(wrapper.text()).toContain(
+                'dialog.group_member_moderation.progress'
+            );
             expect(wrapper.text()).toContain('3/10');
         });
 
         test('shows cancel button during progress', () => {
-            const wrapper = mountComponent({ progressCurrent: 3, progressTotal: 10 });
-            expect(wrapper.text()).toContain('dialog.group_member_moderation.cancel');
+            const wrapper = mountComponent({
+                progressCurrent: 3,
+                progressTotal: 10
+            });
+            expect(wrapper.text()).toContain(
+                'dialog.group_member_moderation.cancel'
+            );
         });
 
         test('hides progress when not in progress', () => {
             const wrapper = mountComponent({ progressCurrent: 0 });
-            expect(wrapper.text()).not.toContain('dialog.group_member_moderation.progress');
+            expect(wrapper.text()).not.toContain(
+                'dialog.group_member_moderation.progress'
+            );
         });
     });
 
     describe('button disabled states', () => {
         test('add/remove roles disabled when no roles selected', () => {
             const wrapper = mountComponent({ selectedRoles: [] });
-            const addBtn = wrapper.findAll('button').find((b) =>
-                b.text().includes('dialog.group_member_moderation.add_roles')
-            );
+            const addBtn = wrapper
+                .findAll('button')
+                .find((b) =>
+                    b
+                        .text()
+                        .includes('dialog.group_member_moderation.add_roles')
+                );
             expect(addBtn.attributes('disabled')).toBeDefined();
         });
 
         test('add/remove roles enabled when roles are selected', () => {
             const wrapper = mountComponent({ selectedRoles: ['role_1'] });
-            const addBtn = wrapper.findAll('button').find((b) =>
-                b.text().includes('dialog.group_member_moderation.add_roles')
-            );
+            const addBtn = wrapper
+                .findAll('button')
+                .find((b) =>
+                    b
+                        .text()
+                        .includes('dialog.group_member_moderation.add_roles')
+                );
             expect(addBtn.attributes('disabled')).toBeUndefined();
         });
 
@@ -163,25 +215,35 @@ describe('GroupModerationBulkActions.vue', () => {
                 progressCurrent: 5,
                 progressTotal: 10
             });
-            const kickBtn = wrapper.findAll('button').find((b) =>
-                b.text().includes('dialog.group_member_moderation.kick')
-            );
+            const kickBtn = wrapper
+                .findAll('button')
+                .find((b) =>
+                    b.text().includes('dialog.group_member_moderation.kick')
+                );
             expect(kickBtn.attributes('disabled')).toBeDefined();
         });
 
         test('select user button disabled when no user ID entered', () => {
             const wrapper = mountComponent({ selectUserId: '' });
-            const selectBtn = wrapper.findAll('button').find((b) =>
-                b.text().includes('dialog.group_member_moderation.select_user')
-            );
+            const selectBtn = wrapper
+                .findAll('button')
+                .find((b) =>
+                    b
+                        .text()
+                        .includes('dialog.group_member_moderation.select_user')
+                );
             expect(selectBtn.attributes('disabled')).toBeDefined();
         });
 
         test('select user button enabled when user ID is entered', () => {
             const wrapper = mountComponent({ selectUserId: 'usr_test' });
-            const selectBtn = wrapper.findAll('button').find((b) =>
-                b.text().includes('dialog.group_member_moderation.select_user')
-            );
+            const selectBtn = wrapper
+                .findAll('button')
+                .find((b) =>
+                    b
+                        .text()
+                        .includes('dialog.group_member_moderation.select_user')
+                );
             expect(selectBtn.attributes('disabled')).toBeUndefined();
         });
     });
@@ -194,9 +256,11 @@ describe('GroupModerationBulkActions.vue', () => {
                     _mockPermissions: ['group-bans-manage']
                 }
             });
-            const kickBtn = wrapper.findAll('button').find((b) =>
-                b.text().includes('dialog.group_member_moderation.kick')
-            );
+            const kickBtn = wrapper
+                .findAll('button')
+                .find((b) =>
+                    b.text().includes('dialog.group_member_moderation.kick')
+                );
             expect(kickBtn.attributes('disabled')).toBeDefined();
         });
 
@@ -207,12 +271,16 @@ describe('GroupModerationBulkActions.vue', () => {
                     _mockPermissions: ['group-members-remove']
                 }
             });
-            const banBtn = wrapper.findAll('button').find((b) =>
-                b.text().includes('dialog.group_member_moderation.ban')
-            );
-            const unbanBtn = wrapper.findAll('button').find((b) =>
-                b.text().includes('dialog.group_member_moderation.unban')
-            );
+            const banBtn = wrapper
+                .findAll('button')
+                .find((b) =>
+                    b.text().includes('dialog.group_member_moderation.ban')
+                );
+            const unbanBtn = wrapper
+                .findAll('button')
+                .find((b) =>
+                    b.text().includes('dialog.group_member_moderation.unban')
+                );
             expect(banBtn.attributes('disabled')).toBeDefined();
             expect(unbanBtn.attributes('disabled')).toBeDefined();
         });
@@ -221,9 +289,13 @@ describe('GroupModerationBulkActions.vue', () => {
     describe('events', () => {
         test('emits select-user on select button click', async () => {
             const wrapper = mountComponent({ selectUserId: 'usr_test' });
-            const selectBtn = wrapper.findAll('button').find((b) =>
-                b.text().includes('dialog.group_member_moderation.select_user')
-            );
+            const selectBtn = wrapper
+                .findAll('button')
+                .find((b) =>
+                    b
+                        .text()
+                        .includes('dialog.group_member_moderation.select_user')
+                );
             await selectBtn.trigger('click');
             expect(wrapper.emitted('select-user')).toBeTruthy();
         });
@@ -241,7 +313,12 @@ describe('GroupModerationBulkActions.vue', () => {
         });
 
         test('emits delete-user when removing a selected user', async () => {
-            const user = { id: 'usr_1', userId: 'usr_1', membershipStatus: 'member', user: { displayName: 'Alice' } };
+            const user = {
+                id: 'usr_1',
+                userId: 'usr_1',
+                membershipStatus: 'member',
+                user: { displayName: 'Alice' }
+            };
             const wrapper = mountComponent({ selectedUsersArray: [user] });
             // The X button is a native <button type="button"> inside each Badge
             const deleteBtn = wrapper.find('button[type="button"]');
@@ -251,18 +328,25 @@ describe('GroupModerationBulkActions.vue', () => {
 
         test('emits ban on ban button click', async () => {
             const wrapper = mountComponent();
-            const banBtn = wrapper.findAll('button').find((b) =>
-                b.text().includes('dialog.group_member_moderation.ban')
-            );
+            const banBtn = wrapper
+                .findAll('button')
+                .find((b) =>
+                    b.text().includes('dialog.group_member_moderation.ban')
+                );
             await banBtn.trigger('click');
             expect(wrapper.emitted('ban')).toBeTruthy();
         });
 
         test('emits cancel-progress on cancel click', async () => {
-            const wrapper = mountComponent({ progressCurrent: 3, progressTotal: 10 });
-            const cancelBtn = wrapper.findAll('button').find((b) =>
-                b.text().includes('dialog.group_member_moderation.cancel')
-            );
+            const wrapper = mountComponent({
+                progressCurrent: 3,
+                progressTotal: 10
+            });
+            const cancelBtn = wrapper
+                .findAll('button')
+                .find((b) =>
+                    b.text().includes('dialog.group_member_moderation.cancel')
+                );
             await cancelBtn.trigger('click');
             expect(wrapper.emitted('cancel-progress')).toBeTruthy();
         });

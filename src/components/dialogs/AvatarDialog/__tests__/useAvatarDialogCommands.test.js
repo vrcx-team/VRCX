@@ -30,9 +30,16 @@ vi.mock('../../../../shared/utils', () => ({
 vi.mock('../../../../shared/utils/imageUpload', () => ({
     handleImageUploadInput: vi.fn(),
     readFileAsBase64: vi.fn(),
-    resizeImageToFitLimits: vi.fn(),
-    uploadImageLegacy: vi.fn(),
     withUploadTimeout: vi.fn()
+}));
+
+vi.mock('../../../../coordinators/imageUploadCoordinator', () => ({
+    resizeImageToFitLimits: vi.fn(),
+    uploadImageLegacy: vi.fn()
+}));
+
+vi.mock('../../../../coordinators/avatarCoordinator', () => ({
+    removeAvatarFromCache: vi.fn()
 }));
 
 const { copyToClipboard, openExternalLink } =

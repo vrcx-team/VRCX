@@ -1,6 +1,7 @@
 import { patchAndRefetchActiveQuery, queryKeys } from '../queries';
-import { request } from '../service/request';
+import { request } from '../services/request';
 import { useUserStore } from '../stores';
+import { applyCurrentUser } from '../coordinators/userCoordinator';
 
 const avatarReq = {
     /**
@@ -65,7 +66,6 @@ const avatarReq = {
      * @returns {Promise<{json: any, params}>}
      */
     selectAvatar(params) {
-        const userStore = useUserStore();
         return request(`avatars/${params.avatarId}/select`, {
             method: 'PUT',
             params
@@ -74,7 +74,7 @@ const avatarReq = {
                 json,
                 params
             };
-            const ref = userStore.applyCurrentUser(json);
+            const ref = applyCurrentUser(json);
             patchAndRefetchActiveQuery({
                 queryKey: queryKeys.user(ref.id),
                 nextData: {
@@ -97,7 +97,6 @@ const avatarReq = {
      * @returns { Promise<{json: any, params}> }
      */
     selectFallbackAvatar(params) {
-        const userStore = useUserStore();
         return request(`avatars/${params.avatarId}/selectfallback`, {
             method: 'PUT',
             params
@@ -106,7 +105,7 @@ const avatarReq = {
                 json,
                 params
             };
-            const ref = userStore.applyCurrentUser(json);
+            const ref = applyCurrentUser(json);
             patchAndRefetchActiveQuery({
                 queryKey: queryKeys.user(ref.id),
                 nextData: {

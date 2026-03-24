@@ -19,7 +19,7 @@ vi.mock('vue-i18n', () => {
     };
 });
 
-vi.mock('../../../../plugin/router', () => {
+vi.mock('../../../../plugins/router', () => {
     const { ref } = require('vue');
     return {
         router: {
@@ -44,8 +44,8 @@ vi.mock('vue-router', async (importOriginal) => {
         }))
     };
 });
-vi.mock('../../../../plugin/interopApi', () => ({ initInteropApi: vi.fn() }));
-vi.mock('../../../../service/database', () => ({
+vi.mock('../../../../plugins/interopApi', () => ({ initInteropApi: vi.fn() }));
+vi.mock('../../../../services/database', () => ({
     database: new Proxy(
         {},
         {
@@ -56,7 +56,7 @@ vi.mock('../../../../service/database', () => ({
         }
     )
 }));
-vi.mock('../../../../service/config', () => ({
+vi.mock('../../../../services/config', () => ({
     default: {
         init: vi.fn(),
         getString: vi.fn().mockImplementation((_k, d) => d ?? '{}'),
@@ -74,8 +74,8 @@ vi.mock('../../../../service/config', () => ({
         remove: vi.fn()
     }
 }));
-vi.mock('../../../../service/jsonStorage', () => ({ default: vi.fn() }));
-vi.mock('../../../../service/watchState', () => ({
+vi.mock('../../../../services/jsonStorage', () => ({ default: vi.fn() }));
+vi.mock('../../../../services/watchState', () => ({
     watchState: { isLoggedIn: false }
 }));
 
@@ -118,20 +118,22 @@ function mountComponent(overrides = {}) {
     });
 
     const userStore = useUserStore(pinia);
-    userStore.userDialog = {
-        id: 'usr_me',
-        ref: { id: 'usr_me' },
-        avatars: [...MOCK_AVATARS],
-        avatarSorting: 'name',
-        avatarReleaseStatus: 'all',
-        isAvatarsLoading: false,
-        isWorldsLoading: false,
-        ...overrides
-    };
-    userStore.currentUser = {
-        id: 'usr_me',
-        ...overrides.currentUser
-    };
+    userStore.$patch({
+        userDialog: {
+            id: 'usr_me',
+            ref: { id: 'usr_me' },
+            avatars: [...MOCK_AVATARS],
+            avatarSorting: 'name',
+            avatarReleaseStatus: 'all',
+            isAvatarsLoading: false,
+            isWorldsLoading: false,
+            ...overrides
+        },
+        currentUser: {
+            id: 'usr_me',
+            ...overrides.currentUser
+        }
+    });
 
     return mount(UserDialogAvatarsTab, {
         global: {
@@ -221,13 +223,13 @@ describe('UserDialogAvatarsTab.vue', () => {
             expect(input.exists()).toBe(true);
         });
 
-        test('does not render search input for other users', () => {
+        test('renders search input for other users too', () => {
             const wrapper = mountComponent({
                 id: 'usr_other',
                 ref: { id: 'usr_other' }
             });
             const input = wrapper.find('input');
-            expect(input.exists()).toBe(false);
+            expect(input.exists()).toBe(true);
         });
 
         test('filters avatars by search query', async () => {

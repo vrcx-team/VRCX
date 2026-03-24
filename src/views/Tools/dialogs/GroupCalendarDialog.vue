@@ -107,12 +107,12 @@
     import { formatDateFilter, getGroupName, replaceBioSymbols } from '../../../shared/utils';
     import { Switch } from '../../../components/ui/switch';
     import { groupRequest } from '../../../api';
-    import { processBulk } from '../../../service/request';
+    import { processBulk } from '../../../services/request';
     import { useGroupStore } from '../../../stores';
 
     import GroupCalendarEventCard from '../components/GroupCalendarEventCard.vue';
     import GroupCalendarMonth from '../components/GroupCalendarMonth.vue';
-    import configRepository from '../../../service/config';
+    import configRepository from '../../../services/config';
 
     const { applyGroupEvent, showGroupDialog } = useGroupStore();
 

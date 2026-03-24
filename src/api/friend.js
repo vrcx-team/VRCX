@@ -1,6 +1,7 @@
 import { queryClient } from '../queries';
-import { request } from '../service/request';
+import { request } from '../services/request';
 import { useUserStore } from '../stores/user';
+import { applyUser } from '../coordinators/userCoordinator';
 
 /**
  *
@@ -22,7 +23,6 @@ const friendReq = {
      * @type {import('../types/api/friend').GetFriends}
      */
     getFriends(params) {
-        const userStore = useUserStore();
         return request('auth/user/friends', {
             method: 'GET',
             params
@@ -36,7 +36,7 @@ const friendReq = {
                     console.error('/friends gave us garbage', user);
                     continue;
                 }
-                userStore.applyUser(user);
+                applyUser(user);
             }
             return args;
         });

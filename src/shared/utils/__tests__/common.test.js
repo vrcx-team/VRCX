@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 // Mock AppDebug
-vi.mock('../../../service/appConfig', () => ({
+vi.mock('../../../services/appConfig', () => ({
     AppDebug: { endpointDomain: 'https://api.vrchat.cloud/api/1' }
 }));
 
@@ -10,7 +10,7 @@ vi.mock('../../../views/Feed/Feed.vue', () => ({
     default: { template: '<div />' }
 }));
 vi.mock('../../../views/Feed/columns.jsx', () => ({ columns: [] }));
-vi.mock('../../../plugin/router', () => ({
+vi.mock('../../../plugins/router', () => ({
     default: { push: vi.fn(), currentRoute: { value: {} } }
 }));
 

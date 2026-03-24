@@ -45,7 +45,7 @@
         "get_help": "困った時はこちら",
         "github": "バグ報告・提案 (GitHub)",
         "discord": "みんなと話そう (Discord)",
-        "whats_new": "新機能 (更新履歴)",
+        "changelog": "新機能 (更新履歴)",
         "update_available": "更新があります！",
         "update": "更新",
         "custom_nav": {
@@ -99,6 +99,10 @@
                 "devEndpoint": "開発者用エンドポイント",
                 "endpoint": "エンドポイント",
                 "websocket": "ウェブソケット"
+            },
+            "language_detect": {
+                "title": "言語を検出しました",
+                "description": "システム言語は {language} のようです。切り替えますか？"
             }
         },
         "feed": {
@@ -178,9 +182,7 @@
             },
             "group": {
                 "header": "グループ"
-            },
-            "prev_page": "前",
-            "next_page": "次"
+            }
         },
         "favorite": {
             "worlds": {
@@ -564,14 +566,12 @@
                     "bio_language": "翻訳先の言語",
                     "theme_mode": "テーマ",
                     "font_family": "フォント",
-                    "font_family_tooltip": "システムフォントのみがCJK文字に影響します",
                     "font_family_inter": "Inter",
                     "font_family_noto_sans": "Noto Sans",
-                    "font_family_source_sans_3": "Source Sans 3",
+                    "font_family_geist": "Geist",
+                    "font_family_nunito_sans": "Nunito Sans",
                     "font_family_ibm_plex_sans": "IBM Plex Sans",
-                    "font_family_harmonyos_sans": "HarmonyOS Sans",
                     "font_family_jetbrains_mono": "JetBrains Mono",
-                    "font_family_roboto": "Roboto",
                     "font_family_fantasque_sans_mono": "Fantasque Sans Mono",
                     "font_family_system_ui": "システムフォント",
                     "theme_mode_system": "システムに合わせる",

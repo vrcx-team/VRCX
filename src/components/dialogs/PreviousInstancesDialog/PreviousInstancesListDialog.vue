@@ -47,16 +47,10 @@
         useUserStore,
         useVrcxStore
     } from '../../../stores';
-    import {
-        compareByCreatedAt,
-        localeIncludes,
-        parseLocation,
-        removeFromArray,
-        timeToText
-    } from '../../../shared/utils';
+    import { compareByCreatedAt, localeIncludes, parseLocation, removeFromArray, timeToText } from '../../../shared/utils';
     import { DataTableLayout } from '../../ui/data-table';
     import { createPreviousInstancesColumns } from './previousInstancesColumns.jsx';
-    import { database } from '../../../service/database';
+    import { database } from '../../../services/database';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     const props = defineProps({
@@ -176,9 +170,7 @@
 
     function deleteGameLogInstancePrompt(row) {
         const description =
-            props.variant === 'user'
-                ? 'Continue? Delete User From GameLog Instance'
-                : 'Continue? Delete GameLog Instance';
+            props.variant === 'user' ? 'Continue? Delete User From GameLog Instance' : 'Continue? Delete GameLog Instance';
         modalStore
             .confirm({
                 description,
@@ -259,6 +251,7 @@
             const D = previousInstancesListDialog.value;
             if (currentId.value !== D.lastId) {
                 table.setPageIndex(0);
+                pageIndex.value = 0;
                 D.lastId = currentId.value;
             }
             if (props.variant === 'user') {

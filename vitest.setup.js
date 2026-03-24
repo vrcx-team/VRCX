@@ -6,7 +6,7 @@
  * Provides global stubs for CefSharp IPC bindings.
  */
 
-import { i18n } from './src/plugin/i18n';
+import { i18n } from './src/plugins/i18n';
 
 import en from './src/localization/en.json';
 
@@ -48,6 +48,19 @@ Object.defineProperty(window, 'matchMedia', {
         dispatchEvent: vi.fn()
     }))
 });
+
+// localStorage polyfill (jsdom may not provide a full implementation)
+if (typeof globalThis.localStorage === 'undefined' || typeof globalThis.localStorage.clear !== 'function') {
+    const store = new Map();
+    globalThis.localStorage = {
+        getItem: (key) => store.get(key) ?? null,
+        setItem: (key, value) => store.set(key, String(value)),
+        removeItem: (key) => store.delete(key),
+        clear: () => store.clear(),
+        get length() { return store.size; },
+        key: (index) => [...store.keys()][index] ?? null
+    };
+}
 
 // Notification API stub
 globalThis.Notification = class {

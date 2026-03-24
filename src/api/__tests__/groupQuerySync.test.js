@@ -4,7 +4,7 @@ const mockRequest = vi.fn();
 const mockInvalidateQueries = vi.fn().mockResolvedValue();
 const mockApplyGroup = vi.fn((json) => json);
 
-vi.mock('../../service/request', () => ({
+vi.mock('../../services/request', () => ({
     request: (...args) => mockRequest(...args)
 }));
 
@@ -20,6 +20,12 @@ vi.mock('../../stores', () => ({
 vi.mock('../../queries', () => ({
     queryClient: {
         invalidateQueries: (...args) => mockInvalidateQueries(...args)
+    },
+    entityQueryPolicies: {
+        user: {},
+        avatar: {},
+        world: {},
+        worldCollection: {}
     }
 }));
 

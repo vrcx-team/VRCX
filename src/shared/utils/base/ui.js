@@ -1,19 +1,19 @@
 import { ref } from 'vue';
-import { storeToRefs } from 'pinia';
 import { toast } from 'vue-sonner';
 
 import {
+    APP_CJK_FONT_PACK_CONFIG,
+    APP_CJK_FONT_PACK_DEFAULT_KEY,
     APP_FONT_CONFIG,
     APP_FONT_DEFAULT_KEY,
     THEME_COLORS,
     THEME_CONFIG
 } from '../../constants';
-import { i18n } from '../../../plugin/i18n';
-import { router } from '../../../plugin/router';
+import { i18n } from '../../../plugins/i18n';
+import { router } from '../../../plugins/router';
 import { textToHex } from './string';
-import { useAppearanceSettingsStore } from '../../../stores';
 
-import configRepository from '../../../service/config.js';
+import configRepository from '../../../services/config.js';
 
 const THEME_COLOR_STORAGE_KEY = 'VRCX_themeColor';
 const THEME_COLOR_STYLE_ID = 'app-theme-color-style';
@@ -21,6 +21,7 @@ const THEME_MODE_STYLE_ID = 'app-theme-mode-style';
 const DEFAULT_THEME_COLOR_KEY = 'default';
 
 const APP_FONT_LINK_ATTR = 'data-app-font';
+const APP_CJK_FONT_PACK_LINK_ATTR = 'data-app-cjk-font-pack';
 
 const themeColors = THEME_COLORS.map((theme) => ({
     ...theme,
@@ -168,44 +169,89 @@ function resolveAppFontFamily(fontKey) {
     };
 }
 
-function ensureAppFontLinks(fontKey) {
+function ensureDynamicFontStyle(attrName, styleKey, cssImport) {
     const head = document.head;
     if (!head) {
         return;
     }
 
-    document
-        .querySelectorAll(`style[${APP_FONT_LINK_ATTR}]`)
-        .forEach((styleEl) => {
-            if (styleEl.getAttribute(APP_FONT_LINK_ATTR) !== fontKey) {
-                styleEl.remove();
-            }
-        });
+    document.querySelectorAll(`style[${attrName}]`).forEach((styleEl) => {
+        if (styleEl.getAttribute(attrName) !== styleKey) {
+            styleEl.remove();
+        }
+    });
 
-    const config = APP_FONT_CONFIG[fontKey];
-    if (!config?.cssImport) {
+    if (!cssImport) {
         return;
     }
 
-    const existing = document.querySelector(
-        `style[${APP_FONT_LINK_ATTR}="${fontKey}"]`
-    );
+    const existing = document.querySelector(`style[${attrName}="${styleKey}"]`);
     if (existing) {
         return;
     }
 
     const styleEl = document.createElement('style');
-    styleEl.setAttribute(APP_FONT_LINK_ATTR, fontKey);
-    styleEl.textContent = config.cssImport;
+    styleEl.setAttribute(attrName, styleKey);
+    styleEl.textContent = cssImport;
     head.appendChild(styleEl);
 }
 
-function applyAppFontFamily(fontKey) {
+function resolveAppCjkFontPack(packKey) {
+    const normalized = String(packKey || '')
+        .trim()
+        .toLowerCase();
+    if (APP_CJK_FONT_PACK_CONFIG[normalized]) {
+        return { key: normalized, ...APP_CJK_FONT_PACK_CONFIG[normalized] };
+    }
+    return {
+        key: APP_CJK_FONT_PACK_DEFAULT_KEY,
+        ...APP_CJK_FONT_PACK_CONFIG[APP_CJK_FONT_PACK_DEFAULT_KEY]
+    };
+}
+
+function ensureAppCjkFontPackLinks(packKey) {
+    const config = APP_CJK_FONT_PACK_CONFIG[packKey];
+    ensureDynamicFontStyle(
+        APP_CJK_FONT_PACK_LINK_ATTR,
+        packKey,
+        config?.cssImport
+    );
+}
+
+function applyAppFontFamily(fontKey, customCssName) {
+    if (fontKey === 'custom') {
+        const cssName = String(customCssName || '').trim() || 'system-ui';
+        const root = document.documentElement;
+        root.style.setProperty('--font-western-primary', cssName);
+        ensureDynamicFontStyle(APP_FONT_LINK_ATTR, 'custom', null);
+        return {
+            key: 'custom',
+            ...APP_FONT_CONFIG.custom,
+            cssName
+        };
+    }
+
     const resolved = resolveAppFontFamily(fontKey);
     const root = document.documentElement;
     root.style.setProperty('--font-western-primary', resolved.cssName);
+    ensureDynamicFontStyle(
+        APP_FONT_LINK_ATTR,
+        resolved.key,
+        resolved.cssImport
+    );
 
-    ensureAppFontLinks(resolved.key);
+    return resolved;
+}
+
+function applyAppCjkFontPack(packKey) {
+    const resolved = resolveAppCjkFontPack(packKey);
+    const root = document.documentElement;
+    root.style.setProperty('--font-cjk-jp-primary', resolved.cssName.jp);
+    root.style.setProperty('--font-cjk-sc-primary', resolved.cssName.sc);
+    root.style.setProperty('--font-cjk-kr-primary', resolved.cssName.kr);
+    root.style.setProperty('--font-cjk-tc-primary', resolved.cssName.tc);
+
+    ensureAppCjkFontPackLinks(resolved.key);
 
     return resolved;
 }
@@ -318,13 +364,12 @@ async function refreshCustomScript() {
 /**
  *
  * @param {number} hue
+ * @param isDarkMode
  * @returns {string}
  */
-function HueToHex(hue) {
-    const appSettingsStore = useAppearanceSettingsStore();
-    const { isDarkMode } = storeToRefs(appSettingsStore);
+function HueToHex(hue, isDarkMode) {
     // this.HSVtoRGB(hue / 65535, .8, .8);
-    if (isDarkMode.value) {
+    if (isDarkMode) {
         return HSVtoRGB(hue / 65535, 0.6, 1);
     }
     return HSVtoRGB(hue / 65535, 1, 0.7);
@@ -464,6 +509,7 @@ export {
     refreshCustomCss,
     refreshCustomScript,
     applyAppFontFamily,
+    applyAppCjkFontPack,
     HueToHex,
     HSVtoRGB,
     formatJsonVars,

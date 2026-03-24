@@ -1,3 +1,4 @@
+import { AppDebug, logWebRequest, withQueryLog } from '../services/appConfig';
 import { queryClient } from './client';
 import { queryKeys } from './keys';
 import { toQueryOptions } from './policies';
@@ -139,10 +140,15 @@ export function patchQueryDataWithRecency({ queryKey, nextData }) {
 }
 
 /**
- * @param {{queryKey: unknown[], policy: {staleTime: number, gcTime: number, retry: number, refetchOnWindowFocus: boolean}, queryFn: () => Promise<any>}} options
+ * @param {{queryKey: unknown[], policy: {staleTime: number, gcTime: number, retry: number, refetchOnWindowFocus: boolean}, queryFn: () => Promise<any>, label?: string}} options
  * @returns {Promise<{data: any, cache: boolean}>}
  */
-export async function fetchWithEntityPolicy({ queryKey, policy, queryFn }) {
+export async function fetchWithEntityPolicy({
+    queryKey,
+    policy,
+    queryFn,
+    label
+}) {
     const queryState = queryClient.getQueryState(queryKey);
     const isFresh =
         Boolean(queryState?.dataUpdatedAt) &&
@@ -151,9 +157,20 @@ export async function fetchWithEntityPolicy({ queryKey, policy, queryFn }) {
 
     const data = await queryClient.fetchQuery({
         queryKey,
-        queryFn,
+        queryFn: () => withQueryLog(queryFn),
         ...toQueryOptions(policy)
     });
+
+    if (isFresh) {
+        logWebRequest(
+            '[QUERY CACHE HIT]',
+            label || queryKey[0],
+            queryKey,
+            data
+        );
+    } else {
+        logWebRequest('[QUERY FETCH]', label || queryKey[0], queryKey, data);
+    }
 
     return {
         data,

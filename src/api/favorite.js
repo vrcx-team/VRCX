@@ -1,6 +1,11 @@
 import { useFavoriteStore, useUserStore } from '../stores';
+import {
+    handleFavoriteAdd,
+    handleFavoriteDelete,
+    handleFavoriteGroupClear
+} from '../coordinators/favoriteCoordinator';
 import { queryClient } from '../queries';
-import { request } from '../service/request';
+import { request } from '../services/request';
 
 /**
  *
@@ -63,7 +68,7 @@ const favoriteReq = {
                 json,
                 params
             };
-            useFavoriteStore().handleFavoriteAdd(args);
+            handleFavoriteAdd(args);
             refetchActiveFavoriteQueries();
             return args;
         });
@@ -81,7 +86,7 @@ const favoriteReq = {
                 json,
                 params
             };
-            useFavoriteStore().handleFavoriteDelete(params.objectId);
+            handleFavoriteDelete(params.objectId);
             refetchActiveFavoriteQueries();
             return args;
         });
@@ -145,7 +150,7 @@ const favoriteReq = {
                 json,
                 params
             };
-            useFavoriteStore().handleFavoriteGroupClear(args);
+            handleFavoriteGroupClear(args);
             refetchActiveFavoriteQueries();
             return args;
         });

@@ -37,10 +37,12 @@
                                             @click="showGroupDialog(item.row.ownerId)">
                                             <template v-if="item.row.isVisible">
                                                 <div class="relative inline-block flex-none size-9 mr-2.5">
-                                                    <img
-                                                        class="size-full rounded-full object-cover"
-                                                        :src="getSmallGroupIconUrl(item.row.iconUrl)"
-                                                        loading="lazy" />
+                                                    <Avatar class="size-9">
+                                                        <AvatarImage :src="getSmallGroupIconUrl(item.row.iconUrl)" class="object-cover" />
+                                                        <AvatarFallback>
+                                                            <Users class="size-4 text-muted-foreground" />
+                                                        </AvatarFallback>
+                                                    </Avatar>
                                                 </div>
                                                 <div class="flex-1 overflow-hidden">
                                                     <span class="block truncate font-medium leading-[18px]">
@@ -82,7 +84,8 @@
 
 <script setup>
     import { computed, nextTick, onMounted, ref, watch } from 'vue';
-    import { ChevronDown } from 'lucide-vue-next';
+    import { ChevronDown, Users } from 'lucide-vue-next';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -95,8 +98,10 @@
         ContextMenuTrigger
     } from '../../../components/ui/context-menu';
     import { buildGroupHeaderRow, buildGroupItemRow, estimateGroupRowSize, getGroupId } from '../groupsSidebarUtils';
-    import { checkCanInviteSelf, convertFileUrlToImageUrl, parseLocation } from '../../../shared/utils';
+    import { convertFileUrlToImageUrl, parseLocation } from '../../../shared/utils';
+    import { useInviteChecks } from '../../../composables/useInviteChecks';
     import { useAppearanceSettingsStore, useGroupStore, useLaunchStore } from '../../../stores';
+    import { showGroupDialog } from '../../../coordinators/groupCoordinator';
     import { instanceRequest } from '../../../api';
 
     import BackToTop from '../../../components/BackToTop.vue';
@@ -106,8 +111,9 @@
 
     const launchStore = useLaunchStore();
     const { isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
-    const { showGroupDialog, sortGroupInstancesByInGame } = useGroupStore();
+    const { sortGroupInstancesByInGame } = useGroupStore();
     const { groupInstances } = storeToRefs(useGroupStore());
+    const { checkCanInviteSelf } = useInviteChecks();
 
     const groupInstancesCfg = ref({});
     const scrollViewportRef = ref(null);

@@ -12,14 +12,29 @@
             "open": "Open",
             "confirm": "Confirm",
             "clear": "Clear",
-            "reset": "Reset"
+            "delete": "Delete",
+            "remove": "Remove",
+            "reset": "Reset",
+            "view_details": "View Details",
+            "configure": "Configure",
+            "refresh": "Refresh"
         },
+        "sort_by": "Sort by:",
         "time_units": {
             "y": "y",
             "d": "d",
             "h": "h",
             "m": "m",
             "s": "s"
+        },
+        "days": {
+            "sunday": "Sunday",
+            "monday": "Monday",
+            "tuesday": "Tuesday",
+            "wednesday": "Wednesday",
+            "thursday": "Thursday",
+            "friday": "Friday",
+            "saturday": "Saturday"
         }
     },
     "nav_tooltip": {
@@ -53,10 +68,12 @@
         "get_help": "GET HELP",
         "github": "VRCX on GitHub",
         "discord": "Join our Discord",
-        "whats_new": "What's New?",
+        "changelog": "Changelog",
         "update_available": "Update available",
         "update": "Update",
         "mark_all_read": "Mark All as Read",
+        "edit_dashboard": "Edit Dashboard",
+        "delete_dashboard": "Delete Dashboard",
         "custom_nav": {
             "header": "Customize Navigation",
             "dialog_title": "Customize Navigation Menu",
@@ -65,15 +82,76 @@
             "folder_icon_placeholder": "Icon class (e.g. ri-menu-fold-line)",
             "edit_folder": "Edit Folder",
             "delete_folder": "Delete Folder",
+            "edit_dashboard": "Edit Dashboard",
+            "delete_dashboard": "Delete Dashboard",
             "folder_empty": "This folder is empty",
             "folder_drop_here": "Drag items here",
             "hide": "Hide",
             "show": "Show",
             "hidden_items": "Hidden",
+            "pin_to_nav": "Pin to Navigation",
+            "unpin_from_nav": "Unpin",
+            "pinned": "Added to navigation",
+            "unpinned": "Removed from navigation",
             "confirm": "Confirm",
             "cancel": "Cancel",
             "restore_default": "Restore Default",
             "restore_default_confirm": "Restore navigation to its default order?"
+        }
+    },
+    "dashboard": {
+        "default_name": "Dashboard",
+        "new_dashboard": "New Dashboard",
+        "empty": "This dashboard is empty",
+        "actions": {
+            "start_editing": "Start Editing",
+            "add_row": "Add Row",
+            "add_full_row": "Add Full Row",
+            "add_split_row": "Add Split Row",
+            "add_vertical_row": "Add Vertical Row",
+            "cancel": "Cancel",
+            "save": "Save",
+            "delete": "Delete"
+        },
+        "toolbar": {
+            "name_placeholder": "Dashboard Name",
+            "icon_placeholder": "Icon Class (Optional)"
+        },
+        "panel": {
+            "not_selected": "No Panel Selected",
+            "select": "Select Panel",
+            "not_configured": "Panel Not Configured"
+        },
+        "selector": {
+            "title": "Select Panel Content",
+            "clear": "Clear Panel",
+            "widgets": "Widgets",
+            "pages": "Full Pages"
+        },
+        "widget": {
+            "feed": "Feed Widget",
+            "game_log": "Game Log Widget",
+            "instance": "Instance Widget",
+            "config": {
+                "filters": "Event Types",
+                "columns": "Columns",
+                "detail": "Detail",
+                "show_type": "Show Type"
+            },
+            "no_data": "No data",
+            "unknown_world": "Unknown World",
+            "feed_online": "online",
+            "feed_offline": "offline",
+            "feed_avatar": "→",
+            "feed_bio": "updated bio",
+            "instance_players": "players",
+            "instance_not_in_game": "Not in game",
+            "time_ago": "{time} ago"
+        },
+        "first_save_tip": "You can hide the New Dashboard button in Settings > Interface > Navigation.",
+        "confirmations": {
+            "delete_title": "Delete Dashboard",
+            "delete_description": "Are you sure you want to delete this dashboard? This action cannot be undone."
         }
     },
     "side_panel": {
@@ -109,9 +187,15 @@
         "offline": "OFFLINE",
         "pending_offline": "Pending Offline",
         "settings": {
+            "display": "Display",
+            "sort": "Sort",
+            "advanced": "Advanced",
+            "sorting": "Sorting",
+            "favorites_section": "Favorites",
             "group_by_instance": "Group by Instance",
             "split_favorite_friends": "Show Favorite Groups",
             "hide_friends_in_same_instance": "Hide Grouped Friends",
+            "same_instance_above_favorites": "Prioritize Same Instance",
             "sort_primary": "Sort by",
             "sort_secondary": "Then by",
             "sort_tertiary": "Then by",
@@ -127,7 +211,8 @@
             "tab_group": "Group",
             "tab_other": "Other",
             "past_notifications": "Last 24 hours",
-            "no_new_notifications": "No new notifications in the past 24 hours"
+            "no_new_notifications": "No new notifications in the past 24 hours",
+            "no_unseen_notifications": "No unread notifications"
         }
     },
     "view": {
@@ -137,7 +222,7 @@
             "register": "Register",
             "forgotPassword": "Forgot Password?",
             "updater": "Updater",
-            "proxy_settings": "Proxy settings",
+            "proxy_settings": "Proxy Settings",
             "settings": "Settings",
             "language": "Language",
             "field": {
@@ -147,6 +232,10 @@
                 "devEndpoint": "Dev Endpoint",
                 "endpoint": "Endpoint",
                 "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "Language Detected",
+                "description": "Your system language appears to be {language}. Would you like to switch to it?"
             }
         },
         "feed": {
@@ -168,6 +257,7 @@
             "same_instance": "Same instance",
             "active": "Active",
             "offline": "Offline",
+            "search_placeholder": "Search friends",
             "spacing": "Spacing",
             "scale": "Scale",
             "separate_same_instance_friends": "Separate Same Instance Friends",
@@ -220,6 +310,9 @@
             "avatar": {
                 "header": "Avatar",
                 "search_provider": "Search Provider",
+                "no_provider": "No avatar search provider configured",
+                "search_placeholder_avatar": "Type at least 3 characters",
+                "min_chars_warning": "Please enter at least 3 characters to search",
                 "refresh_tooltip": "Refresh own avatars",
                 "result_count": "Results {count}",
                 "all": "All",
@@ -234,13 +327,14 @@
             },
             "group": {
                 "header": "Group"
-            },
-            "prev_page": "Prev",
-            "next_page": "Next"
+            }
         },
         "favorite": {
             "worlds": {
                 "search": "Search",
+                "search_by_tag": "Search by Tag",
+                "search_mode_name": "Name",
+                "search_mode_tag": "Tag",
                 "vrchat_favorites": "VRChat Favorites",
                 "local_favorites": "Local Favorites",
                 "new_group": "New Group",
@@ -472,6 +566,39 @@
                     "exclude_friends_placeholder": "Select friends to exclude",
                     "exclude_friends_help": "Selected friends will be hidden from the graph."
                 }
+            },
+            "hot_worlds": {
+                "tab_label": "Hot Worlds",
+                "header": "Hot Worlds",
+                "refresh": "Refresh",
+                "sorted_by": "Sorted by unique friends",
+                "tips": {
+                    "description": "Shows which worlds your friends have been visiting the most. Ranked by the number of unique friends who visited. Trend compares the first half vs second half of the selected period."
+                },
+                "period": {
+                    "days_7": "Last 7d",
+                    "days_30": "Last 30d",
+                    "days_90": "Last 90d"
+                },
+                "trend": {
+                    "rising": "Rising",
+                    "cooling": "Cooling"
+                },
+                "stats_line": {
+                    "friends": "{count} friends",
+                    "visits": "{count} visits"
+                },
+                "stats": {
+                    "top_friends": "top friends",
+                    "total_visits": "total visits",
+                    "rising": "rising",
+                    "cooling": "cooling"
+                },
+                "sheet": {
+                    "friends_who_visited": "Friends who visited"
+                },
+                "no_friend_data": "No friend visit data",
+                "friend_visits": "{count} visits"
             }
         },
         "tools": {
@@ -503,10 +630,10 @@
                     "steam_screenshots_description": "Opens your Steam screenshots folder"
                 },
                 "header": "Pictures",
-                "screenshot": "Screenshot Management",
-                "screenshot_description": "Manage screenshots and view metadata",
-                "inventory": "VRC+ Images & Inventory Management",
-                "inventory_description": "Manage VRC+ Images & Inventory"
+                "screenshot": "Screenshot Manager",
+                "screenshot_description": "View and manage screenshot metadata",
+                "gallery": "Image Manager",
+                "gallery_description": "Manage images and inventory"
             },
             "shortcuts": {
                 "header": "Shortcuts",
@@ -555,7 +682,64 @@
                 "wrist_overlay": "Wrist Overlay",
                 "discord_presence": "Discord Presence",
                 "pictures": "Pictures",
-                "advanced": "Advanced"
+                "advanced": "Advanced",
+                "system": "System",
+                "interface": "Interface",
+                "social": "Social",
+                "vr": "VR",
+                "media": "Media",
+                "integrations": "Integrations"
+            },
+            "social": {
+                "interaction": {
+                    "header": "Interaction"
+                },
+                "favorites": {
+                    "header": "Favorites"
+                }
+            },
+            "vr": {
+                "vr_core": {
+                    "header": "VR Core"
+                },
+                "vr_notifications": {
+                    "header": "VR Notifications"
+                },
+                "wrist_overlay": {
+                    "header": "Wrist Overlay"
+                },
+                "vr_extras": {
+                    "header": "VR Extras"
+                }
+            },
+            "interface": {
+                "navigation": {
+                    "header": "Navigation",
+                    "show_new_dashboard_button": "Show New Dashboard Button"
+                },
+                "lists_tables": {
+                    "header": "Lists & Tables"
+                }
+            },
+            "integrations": {
+                "header": "Integrations"
+            },
+            "advanced_groups": {
+                "system": {
+                    "header": "System"
+                },
+                "security": {
+                    "header": "Security"
+                },
+                "diagnostics": {
+                    "header": "Diagnostics"
+                },
+                "database": {
+                    "header": "Database"
+                },
+                "nightly": {
+                    "header": "Nightly"
+                }
             },
             "general": {
                 "general": {
@@ -568,8 +752,8 @@
                 },
                 "vrcx_updater": {
                     "header": "VRCX Updater",
-                    "change_build": "Change build",
-                    "update_action": "Update action",
+                    "change_build": "Change Build",
+                    "update_action": "Update Action",
                     "auto_update_off": "Off",
                     "auto_update_notify": "Notify",
                     "auto_update_download": "Auto Download",
@@ -578,13 +762,13 @@
                 },
                 "application": {
                     "header": "Application",
-                    "startup": "Start at Windows startup",
-                    "minimized": "Start minimized at system startup",
-                    "tray": "Minimize to tray when closing",
+                    "startup": "Start at Windows Startup",
+                    "minimized": "Start Minimized at System Startup",
+                    "tray": "Minimize to Tray When Closing",
                     "disable_gpu_acceleration": "Disable GPU Acceleration",
                     "disable_gpu_acceleration_tooltip": "Only change this option if you know what you're doing, may fix issues with UI, requires restarting VRCX",
                     "disable_vr_overlay_gpu_acceleration": "Disable VR Overlay GPU Acceleration",
-                    "proxy": "Proxy settings",
+                    "proxy": "Proxy Settings",
                     "startup_linux": "Add \"--startup\" arg to startup VRCX.desktop file to start VRCX minimized at system startup"
                 },
                 "favorites": {
@@ -594,28 +778,28 @@
                 },
                 "logging": {
                     "header": "Logging",
-                    "resource_load": "Log Udon string/image load",
-                    "empty_avatar": "Log avatars in feed without names",
-                    "auto_login_delay": "Auto-login delay",
-                    "auto_login_delay_button": "Set delay seconds"
+                    "resource_load": "Log Udon String/Image Load",
+                    "empty_avatar": "Log Avatars in Feed Without Names",
+                    "auto_login_delay": "Auto-Login Delay",
+                    "auto_login_delay_button": "Set Delay Seconds"
                 },
                 "automation": {
                     "auto_change_status": "Auto Status & Invites",
                     "auto_change_status_switch": "Auto Change Status",
                     "auto_state_change_tooltip": "Configure automatic status changes and invite request handling",
                     "auto_state_change_switch_tooltip": "Automatically change status when there are other people in the instance (Alone / Company)",
-                    "alone_condition": "Consider alone when",
-                    "alone": "No other user",
-                    "no_friends": "No friend in instance",
+                    "alone_condition": "Consider Alone When",
+                    "alone": "No Other User",
+                    "no_friends": "No Friend in Instance",
                     "alone_status": "Alone Status",
                     "company_status": "Company Status",
-                    "allowed_instance_types": "Active in instance types",
+                    "allowed_instance_types": "Active in Instance Types",
                     "instance_type_placeholder": "All Instance Types",
                     "auto_invite_request_accept": "Auto Accept Invite Requests",
                     "auto_invite_request_accept_tooltip": "Automatically accept invite requests from favorite friends",
                     "auto_invite_request_accept_favs": "All Favorites",
                     "auto_invite_request_accept_selected_favs": "VRCX Favorites",
-                    "change_status_description": "Override status description",
+                    "change_status_description": "Override Status Description",
                     "status_description_placeholder": "Status description (max 32 characters)",
                     "auto_change_status_groups": "Only count friends from",
                     "auto_change_status_groups_placeholder": "Choose Groups",
@@ -640,16 +824,21 @@
                     "bio_language": "Target Language",
                     "theme_mode": "Theme",
                     "font_family": "Font",
-                    "font_family_tooltip": "Only the system font affects CJK characters",
-                    "font_family_inter": "Inter",
+                    "cjk_font_pack": "CJK Font",
+                    "font_family_inter": "Inter (Default)",
                     "font_family_noto_sans": "Noto Sans",
-                    "font_family_source_sans_3": "Source Sans 3",
+                    "font_family_geist": "Geist",
+                    "font_family_nunito_sans": "Nunito Sans",
                     "font_family_ibm_plex_sans": "IBM Plex Sans",
-                    "font_family_harmonyos_sans": "HarmonyOS Sans",
                     "font_family_jetbrains_mono": "JetBrains Mono",
-                    "font_family_roboto": "Roboto",
                     "font_family_fantasque_sans_mono": "Fantasque Sans Mono",
                     "font_family_system_ui": "System Font",
+                    "font_family_custom": "Custom",
+                    "font_family_custom_dialog_title": "Custom Font Family",
+                    "font_family_custom_dialog_description": "Enter a valid CSS font-family value",
+                    "font_family_custom_invalid": "Invalid font-family. Use comma-separated font names, e.g. 'My Font', Arial, sans-serif",
+                    "cjk_font_pack_noto": "Noto Sans CJK",
+                    "cjk_font_pack_pht": "PuHuiTi CJK",
                     "theme_mode_system": "System",
                     "theme_mode_light": "Light",
                     "theme_mode_dark": "Dark",
@@ -663,13 +852,15 @@
                     "theme_mode_material3": "Material 3",
                     "zoom": "Zoom",
                     "vrcplus_profile_icons": "VRCPlus Profile Icons",
-                    "show_instance_id": "Show Instance Name",
+                    "show_instance_id": "Show Instance ID",
                     "show_status_bar": "Show Status Bar",
-                    "age_gated_instances": "Age Gated Instances",
+                    "age_gated_instances": "Show Age-Gated Instances",
+                    "age_gated_instances_description": "Show age-restricted instances. When disabled, these instances are hidden and shown as restricted.",
                     "nicknames": "Memo Nicknames",
                     "sort_favorite_by": "Sort Favorites by",
                     "sort_favorite_by_name": "Name",
                     "sort_favorite_by_date": "Date",
+                    "sort_favorite_by_players": "Players",
                     "sort_instance_users_by": "Sort Instance Users by",
                     "sort_instance_users_by_time": "Time",
                     "sort_instance_users_by_alphabet": "Alphabetical",
@@ -677,12 +868,17 @@
                     "table_page_sizes_error": "Page size must be a number between 1 and 1000",
                     "show_notification_icon_dot": "Show Tray Notification Dot",
                     "striped_data_table_mode": "Striped Table Mode",
-                    "toggle_pointer_on_hover": "Force pointer on hover",
+                    "toggle_pointer_on_hover": "Force Pointer on Hover",
+                    "accessible_status_indicators": "Accessible Status Indicators",
+                    "accessible_status_indicators_description": "Adds shapes to status indicators so they're easier to distinguish without relying only on color",
+                    "use_official_status_colors": "Use Official Status Colors",
+                    "use_official_status_colors_description": "Match VRChat's original status colors",
                     "table_density": "Table Density",
                     "table_density_standard": "Standard",
                     "table_density_comfortable": "Comfortable",
                     "table_density_compact": "Compact",
-                    "table_entries_settings": "Table Entries Settings"
+                    "table_entries_settings": "Table Entries Settings",
+                    "table_entries_settings_description": "Adjust how many entries are loaded and displayed in large lists"
                 },
                 "display": {
                     "header": "Display"
@@ -695,7 +891,9 @@
                     "time_format": "Time Format",
                     "time_format_24": "24 Hour",
                     "time_format_12": "12 Hour",
-                    "force_iso_date_format": "Force ISO Date Format"
+                    "force_iso_date_format": "Force ISO Date Format",
+                    "week_starts_on": "Week Starts On",
+                    "week_starts_on_description": "Choose the first day of the week. Affects calendars, charts, and activity views."
                 },
                 "theme_color": {
                     "header": "Theme Color",
@@ -724,7 +922,12 @@
                 "user_dialog": {
                     "header": "User Dialog",
                     "vrchat_notes": "VRChat Notes",
-                    "vrcx_memos": "VRCX Memos"
+                    "vrchat_notes_description": "Shows notes stored in VRChat",
+                    "vrcx_memos": "VRCX Memos",
+                    "vrcx_memos_description": "Shows notes saved locally in VRCX",
+                    "recent_action_cooldown": "Recent Action Indicator",
+                    "recent_action_cooldown_description": "Show a clock icon on invite/request actions that were recently performed",
+                    "recent_action_cooldown_minutes": "Cooldown (Minutes)"
                 },
                 "user_colors": {
                     "header": "User Colors",
@@ -747,6 +950,9 @@
             "notifications": {
                 "notifications": {
                     "header": "Notifications",
+                    "layout": "Notification Layout",
+                    "layout_notification_center": "Notification Center",
+                    "layout_table": "Table",
                     "notification_filter": "Notification Filter",
                     "test_notification": "Test Notification",
                     "steamvr_notifications": {
@@ -758,7 +964,7 @@
                         "wayvr_notifications": "WayVR Notifications",
                         "ovrtoolkit_hud_notifications": "OVR Toolkit HUD Notifications",
                         "ovrtoolkit_wrist_notifications": "OVR Toolkit Wrist Notifications",
-                        "user_images": "User Images (slower)",
+                        "user_images": "User Images (Slower)",
                         "notification_opacity": "Notification Opacity",
                         "notification_timeout": "Notification Timeout"
                     },
@@ -773,12 +979,12 @@
                     },
                     "desktop_notifications": {
                         "header": "Desktop Notifications",
-                        "when_to_display": "When to display",
+                        "when_to_display": "When to Display",
                         "desktop_notification_while_afk": "Desktop Notifications While AFK"
                     },
                     "text_to_speech": {
                         "header": "Text-To-Speech",
-                        "when_to_play": "Notification TTS. When to play",
+                        "when_to_play": "Notification TTS",
                         "tts_voice": "TTS Voice",
                         "use_memo_nicknames": "Use Memo Nicknames",
                         "play": "Play",
@@ -818,14 +1024,14 @@
                     "description": "* Only active whilst in an instance.",
                     "enable": "Enable",
                     "enable_tooltip": "Recommended to disable Rich Presence in VRChat config.json to stop it from conflicting",
-                    "instance_type_player_count": "Instance type & player count",
-                    "join_button": "Join button (public only)",
-                    "show_details_in_private": "Show world details while in private",
-                    "show_images": "Show world images",
-                    "show_current_platform": "Show current platform",
-                    "world_integration": "World integration",
+                    "instance_type_player_count": "Instance Type & Player Count",
+                    "join_button": "Join Button (Public Only)",
+                    "show_details_in_private": "Show World Details While in Private",
+                    "show_images": "Show World Images",
+                    "show_current_platform": "Show Current Platform",
+                    "world_integration": "World Integration",
                     "world_integration_tooltip": "Show \"Watching/Listening to\" for Popcorn Palace, PyPyDance, VRDancing and LS Media",
-                    "display_world_name_as_discord_status": "Display world name as Discord status"
+                    "display_world_name_as_discord_status": "Display World Name as Discord Status"
                 },
                 "rpc": {
                     "vr": "VR",
@@ -837,7 +1043,7 @@
             "pictures": {
                 "pictures": {
                     "auto_delete_old_prints": "Auto Delete Old Prints",
-                    "auto_delete_prints_from_vrc": "Delete Old Prints from VRC when reaching print limit"
+                    "auto_delete_prints_from_vrc": "Delete Old Prints from VRC When Reaching Print Limit"
                 }
             },
             "advanced": {
@@ -852,23 +1058,23 @@
                     },
                     "primary_password": {
                         "header": "Primary Password",
-                        "description": "Encrypt password (disables auto login)"
+                        "description": "Encrypt Password (Disables Auto Login)"
                     },
                     "relaunch_vrchat": {
-                        "header": "Relaunch VRChat after crashing",
-                        "description": "Rejoin last instance when VRChat crashes"
+                        "header": "Relaunch VRChat After Crashing",
+                        "description": "Rejoin Last Instance When VRChat Crashes"
                     },
                     "vrchat_quit_fix": {
                         "header": "VRChat Quit Fix",
-                        "description": "Kill VRChat after exiting game"
+                        "description": "Kill VRChat After Exiting Game"
                     },
                     "auto_cache_management": {
                         "header": "Automatically Manage Cache When Closing VRChat",
-                        "description": "Auto delete old versions from cache"
+                        "description": "Auto Delete Old Versions from Cache"
                     },
                     "self_invite": {
                         "header": "Self Invite",
-                        "description": "Self invite instead of opening instance in VRChat"
+                        "description": "Self Invite Instead of Opening Instance in VRChat"
                     },
                     "anonymous_error_reporting": {
                         "header": "Anonymous Error Reporting (Nightly Only)",
@@ -882,7 +1088,7 @@
                         "header": "Save Instance Prints To File",
                         "header_tooltip": "Requires \"--enable-sdk-log-levels\" VRC launch option",
                         "description": "Save spawned prints to your VRChat Pictures folder",
-                        "crop": "Automatically remove white border from prints",
+                        "crop": "Automatically Remove White Border from Prints",
                         "crop_convert_old": "Would you like to crop all prints that have already been saved?",
                         "crop_convert_old_confirm": "Yes",
                         "crop_convert_old_cancel": "No"
@@ -905,6 +1111,7 @@
                     "remote_database": {
                         "header": "Remote Avatar Database",
                         "enable": "Enable",
+                        "enable_description": "Enables fetching avatar data from a remote database",
                         "avatar_database_provider": "Avatar Database Provider"
                     },
                     "youtube_api": {
@@ -920,15 +1127,15 @@
                         "enable_tooltip": "Translate user bios"
                     },
                     "video_progress_pie": {
-                        "header": "Progress pie overlay for videos",
+                        "header": "Progress Pie Overlay for Videos",
                         "enable": "Enable",
                         "enable_tooltip": "Requires SteamVR overlay to be enabled",
-                        "dance_world_only": "Supported world only"
+                        "dance_world_only": "Supported World Only"
                     },
                     "launch_commands": {
                         "header": "Launch Commands (Deep Links)",
                         "docs": "Launch Command Docs",
-                        "show_confirmation_on_switch_avatar_enable": "Show confirmation dialog before switching avatars",
+                        "show_confirmation_on_switch_avatar_enable": "Show Confirmation Dialog Before Switching Avatars",
                         "show_confirmation_on_switch_avatar_tooltip": "When disabled VRCX will not come to the front when switching avatars and ask for confirmation",
                         "website_userscript": "VRC Website Userscript"
                     },
@@ -945,20 +1152,20 @@
                         "header": "App Launcher",
                         "folder": "Auto-Launch Folder",
                         "folder_tooltip": "To auto-launch apps with VRChat, place shortcuts inside this folder, alteratively use the platform-specific subfolders, Steam app shortcuts are also supported",
-                        "auto_close": "Auto close apps",
-                        "run_process_once": "Open single instance of app"
+                        "auto_close": "Auto Close Apps",
+                        "run_process_once": "Open Single Instance of App"
                     },
                     "cache_debug": {
                         "header": "VRCX Instance Cache/Debug",
                         "udon_exception_logging": "Udon Exception Logging",
                         "disable_gamelog": "Disable GameLog",
                         "disable_gamelog_notice": "(will likely break things)",
-                        "user_cache": "User cache:",
-                        "world_cache": "World cache:",
-                        "avatar_cache": "Avatar cache:",
-                        "group_cache": "Group cache:",
-                        "avatar_name_cache": "Avatar Name cache:",
-                        "instance_cache": "Instance cache:",
+                        "user_cache": "User Cache:",
+                        "world_cache": "World Cache:",
+                        "avatar_cache": "Avatar Cache:",
+                        "group_cache": "Group Cache:",
+                        "avatar_name_cache": "Avatar Name Cache:",
+                        "instance_cache": "Instance Cache:",
                         "clear_cache": "Clear Cache",
                         "refresh_cache": "Refresh Cache",
                         "auto_clear_cache": "Auto Clear Cache",
@@ -979,6 +1186,32 @@
                         "portal_spawn": "Portal Spawn:",
                         "video_play": "Video Play:",
                         "event": "Event:"
+                    },
+                    "database_cleanup": {
+                        "header": "Database Cleanup",
+                        "auto_cleanup": "Auto-Cleanup Avatar Data Older Than",
+                        "auto_cleanup_description": "Checked once per week on startup",
+                        "auto_cleanup_off": "Off",
+                        "auto_cleanup_30": "30 days",
+                        "auto_cleanup_90": "90 days",
+                        "auto_cleanup_180": "6 months",
+                        "auto_cleanup_365": "1 year",
+                        "purge_button": "Purge Avatar Feed Data",
+                        "purge": "Purge",
+                        "purge_older_than": "Delete Avatar Data Older Than",
+                        "purge_option_180": "6 months",
+                        "purge_option_365": "1 year",
+                        "purge_option_730": "2 years",
+                        "purge_option_all": "All data",
+                        "purge_confirm_title": "Purge Avatar Feed Data",
+                        "purge_confirm_description_1": "This will permanently delete avatar change records from the database and reclaim disk space.",
+                        "purge_confirm_description_2": "This action cannot be undone!",
+                        "purge_confirm_description_3": "VRCX will restart after the operation completes.",
+                        "purge_confirm_alert": "It is strongly recommended to back up your database file before proceeding!",
+                        "purge_confirm_button": "Purge & Restart",
+                        "purge_in_progress": "Purging avatar data...",
+                        "purge_complete": "Avatar data purged successfully. Restarting...",
+                        "purge_failed": "Purge failed: {error}"
                     },
                     "user_generated_content": {
                         "header": "User Generated Content",
@@ -1135,8 +1368,10 @@
                 "vrcplus_hides_avatar": "When a VRC+ profile photo is set, avatar info is hidden. This also hides avatar changes in the feed",
                 "instance_full": "full",
                 "instance_closed": "Instance closed",
+                "instance_age_restricted": "Restricted",
+                "instance_age_restricted_tooltip": "In an age-restricted instance",
                 "close_instance": "Close Instance",
-                "instance_age_gated": "age gated",
+                "instance_age_gated": "Age Gated",
                 "open_previous_instance": "Open Previous Instances",
                 "show_mutual_friends": "Show Mutual Friends",
                 "show_discord_connections": "Show Discord Connections"
@@ -1200,6 +1435,52 @@
                     "last_active": "Last Active",
                     "friend_order": "Friend Order"
                 }
+            },
+            "activity": {
+                "header": "Activity",
+                "load": "Load Activity",
+                "load_hint": "Load activity data from the local database when needed.",
+                "refresh_hint": "Refresh activity data",
+                "total_events": "{count} online events",
+                "times_online": "times online",
+                "most_active_day": "Most active day:",
+                "most_active_time": "Peak hours:",
+                "period": "Period:",
+                "period_90": "Last 90 Days",
+                "period_30": "Last 30 Days",
+                "period_7": "Last 7 Days",
+                "minutes_online": "min online",
+                "no_data_in_period": "No activity data in selected period",
+                "days": {
+                    "mon": "Mon",
+                    "tue": "Tue",
+                    "wed": "Wed",
+                    "thu": "Thu",
+                    "fri": "Fri",
+                    "sat": "Sat",
+                    "sun": "Sun"
+                },
+                "chart_hint": "Did you farm your green squares today?",
+                "chart_hint_reply": "You can't farm this.",
+                "overlap": {
+                    "header": "Online Overlap",
+                    "peak_overlap": "Peak overlap:",
+                    "exclude_hours": "Exclude hours",
+                    "no_data": "Not enough data to calculate overlap",
+                    "times_overlap": "times overlapping",
+                    "minutes_overlap": "min overlap"
+                },
+                "most_visited_worlds": {
+                    "header": "Most Visited Worlds",
+                    "loading": "Loading most visited worlds...",
+                    "exclude_home_world": "Exclude home world",
+                    "sort_by_time": "By Time",
+                    "sort_by_count": "By Visits",
+                    "visit_count_label": "{count} visits"
+                },
+                "preparing_data": "Preparing activity data...",
+                "preparing_data_hint": "This may take a moment on first load.",
+                "data_ready": "Activity data is ready"
             },
             "note_memo": {
                 "header": "Edit Note And Memo",
@@ -1470,7 +1751,12 @@
             "header": "Social Status",
             "history": "History",
             "status_placeholder": "Status",
-            "update": "Update"
+            "update": "Update",
+            "presets": "Presets",
+            "save_preset": "Save as Preset",
+            "preset_saved": "Preset saved",
+            "preset_exists": "Preset already exists",
+            "preset_limit": "Maximum {max} presets"
         },
         "language": {
             "header": "Language",
@@ -1591,6 +1877,7 @@
         },
         "invite_request_message": {
             "header": "Send Invite Request Message",
+            "confirmation": "Are you sure you want to send?",
             "cancel": "Cancel",
             "refresh": "Refresh"
         },
@@ -1782,7 +2069,20 @@
                 "world_id": "World ID"
             },
             "no_results": "No results found",
-            "invalid_file": "Invalid file selected. Please select a valid VRChat screenshot."
+            "invalid_file": "Invalid file selected. Please select a valid VRChat screenshot.",
+            "section_location": "Location",
+            "section_players": "Players",
+            "section_file_info": "File Info",
+            "section_note": "Note",
+            "section_actions": "Actions",
+            "col_date": "Date",
+            "col_world": "World",
+            "col_players": "Players",
+            "col_resolution": "Resolution",
+            "col_match": "Match",
+            "col_author": "Author",
+            "back_to_results": "Back to {count} results",
+            "result_count": "{count} results"
         },
         "set_world_tags": {
             "header": "Set World Tags",
@@ -1903,7 +2203,9 @@
         "previous_instances": {
             "header": "Previous Instances",
             "info": "Previous Instance Info",
-            "search_placeholder": "Search"
+            "search_placeholder": "Search",
+            "table_view": "Table View",
+            "chart_view": "Chart View"
         },
         "group_member_moderation": {
             "header": "Group Member Moderation",
@@ -2033,7 +2335,18 @@
         },
         "open_source": {
             "header": "Open Source Software Notice",
-            "description": "VRCX is based on open source software. It was possible because of their contribution."
+            "description": "VRCX is based on open source software. It was possible because of their contribution.",
+            "loading": "Loading generated third-party notices...",
+            "unavailable": "No generated third-party notice manifest is available in this build. Run a production build to regenerate it.",
+            "search_placeholder": "Search packages, versions, or licenses",
+            "notice_location_prefix": "Full notices file location in the app directory:",
+            "open_project": "Open Project",
+            "open_license_url": "Open License URL",
+            "notice_unavailable": "No local license text was generated for this entry. Open the full notice file and review this component before release.",
+            "select_package": "Select a package to view details.",
+            "review_required": "Review required",
+            "no_results": "No matching packages found.",
+            "no_version": "No version metadata"
         },
         "primary_password": {
             "header": "Primary Password Required",
@@ -2054,7 +2367,7 @@
             "action": "Action",
             "auto_backup": "Auto backup every 3 days (deletes after 2 weeks)",
             "ask_to_restore": "Ask to restore when no VRC registry settings are present",
-            "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
+            "restore_prompt": "VRCX has noticed auto backup of VRChat registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
         },
         "avatar_database_provider": {
             "header": "Avatar Database Provider",
@@ -2303,7 +2616,9 @@
             "account_removed": "Account removed.",
             "auto_login_success": "Automatically logged in.",
             "auto_login_failed": "Failed to login automatically.",
-            "offline": "You're offline."
+            "offline": "You're offline.",
+            "login_network_issue_hint_title": "Having trouble signing in?",
+            "login_network_issue_hint_description": "Several recent sign-in attempts failed. Click Open for the troubleshooting guide."
         },
         "vrcx_updater": {
             "failed": "Failed to check for update, {message}",
@@ -2341,12 +2656,19 @@
         },
         "database": {
             "upgrade_complete": "Database upgrade complete",
+            "upgrade_in_progress_title": "Database upgrade in progress",
+            "upgrade_in_progress_description": "Updating database from version {from} to {to}. Please do not close VRCX.",
+            "upgrade_in_progress_initializing": "Initializing database upgrade. Please do not close VRCX.",
+            "upgrade_in_progress_wait": "User actions are temporarily blocked until the upgrade finishes.",
+            "upgrade_failed_title": "Database upgrade failed",
+            "upgrade_failed_description": "Database upgrade failed. Check the console for details.",
             "disk_space": "Please free up some disk space.",
             "disk_error": "Please check your disk for errors."
         },
         "file": {
             "not_image": "File isn't an image",
             "too_large": "File size too large",
+            "folder_opened": "Folder opened",
             "folder_missing": "Folder doesn't exist"
         },
         "group": {
@@ -2390,7 +2712,13 @@
         },
         "user": {
             "moderated": "User moderated",
-            "load_failed": "Failed to load user"
+            "load_failed": "Failed to load user",
+            "id_copied": "User ID copied to clipboard",
+            "url_copied": "User URL copied to clipboard",
+            "display_name_copied": "User DisplayName copied to clipboard",
+            "home_reset": "Home world has been reset",
+            "request_invite_sent": "Request invite sent",
+            "no_fallback_avatar": "No fallback avatar set"
         },
         "friend": {
             "load_failed": "Failed to load friends list, logging out"
@@ -2437,7 +2765,7 @@
     "table": {
         "header_menu": {
             "reset_all": "Reset All",
-            "lock_column_order": "Lock Column Order"
+            "lock_column_order": "Lock Column"
         },
         "pagination": {
             "rows_per_page": "Rows per page",
@@ -2646,10 +2974,73 @@
         "toggle_password": "Toggle password visibility",
         "clear_input": "Clear input"
     },
+    "onboarding": {
+        "welcome": {
+            "title": "Welcome to VRCX",
+            "subtitle": "Here are a few things you might not discover on your own.",
+            "features": {
+                "user_profiles": {
+                    "title": "User Profiles",
+                    "description": "Click any user to see mutual friends, activity heatmaps, and session logs with join/leave details"
+                },
+                "right_click": {
+                    "title": "Context Menus",
+                    "description": "Right-click on key elements for quick actions and additional options"
+                },
+                "dashboard": {
+                    "title": "Custom Dashboards",
+                    "description": "Compose your own workspace by combining panels that suit your needs"
+                },
+                "quick_search": {
+                    "title": "Quick Search",
+                    "description": "Press Ctrl+K (⌘+K on Mac) to instantly search for users, worlds, and avatars"
+                }
+            },
+            "cta": "Get Started"
+        },
+        "whatsnew": {
+            "title": "What's New in VRCX",
+            "subtitle": "Here's what changed in this update.",
+            "cta": "Got It",
+            "common": {
+                "got_it": "Got It",
+                "view_changelog": "View All Changes",
+                "support": "Support VRCX"
+            },
+            "releases": {
+                "2026_04_05": {
+                    "title": "Explore New Features",
+                    "subtitle": "A few useful features you might not notice",
+                    "items": {
+                        "quick_search": {
+                            "title": "Quick Search",
+                            "description": "Press Ctrl+K (⌘K) to find users, worlds, groups, and avatars."
+                        },
+                        "local_favorite_groups": {
+                            "title": "Local Favorites",
+                            "description": "Create unlimited custom friend groups beyond VRChat's limits."
+                        },
+                        "auto_status": {
+                            "title": "Auto Status",
+                            "description": "Auto-switch status based on friend presence, filtered by group."
+                        },
+                        "right_click_menus": {
+                            "title": "Context Menus",
+                            "description": "Right-click on friends, tables, and headers for quick actions."
+                        }
+                    }
+                }
+            }
+        }
+    },
     "status_bar": {
         "game": "Game",
         "game_running": "VRChat is running",
         "game_stopped": "VRChat is not running",
+        "game_started_at": "Started",
+        "game_session_duration": "Duration",
+        "game_last_session": "Last Session",
+        "game_last_offline": "Offline Since",
         "servers": "Servers",
         "servers_ok": "VRChat servers are operational",
         "servers_issue": "VRChat Server Issues",

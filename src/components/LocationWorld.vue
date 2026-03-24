@@ -5,7 +5,7 @@
             <Unlock v-if="isUnlocked" :class="['inline-block', 'mr-1.25']" />
             <span> {{ accessTypeName }} #{{ instanceName }}</span>
         </span>
-        <span v-if="groupName" @click="showGroupDialog" class="cursor-pointer">({{ groupName }})</span>
+        <span v-if="groupName" @click="openLocationGroupDialog" class="cursor-pointer">({{ groupName }})</span>
         <TooltipWrapper v-if="isClosed" :content="t('dialog.user.info.instance_closed')">
             <AlertTriangle :class="['inline-block', 'ml-1']" style="color: lightcoral" />
         </TooltipWrapper>
@@ -20,6 +20,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useGroupStore, useInstanceStore, useLaunchStore } from '../stores';
+    import { showGroupDialog } from '../coordinators/groupCoordinator';
     import { getGroupName, parseLocation } from '../shared/utils';
     import { accessTypeLocaleKeyMap } from '../shared/constants';
 
@@ -135,10 +136,10 @@
     /**
      *
      */
-    function showGroupDialog() {
+    function openLocationGroupDialog() {
         if (!location.value) return;
         const L = parseLocation(location.value);
         if (!L.groupId) return;
-        groupStore.showGroupDialog(L.groupId);
+        showGroupDialog(L.groupId);
     }
 </script>

@@ -1,39 +1,34 @@
-import {
-    useFriendStore,
-    useInstanceStore,
-    useLocationStore,
-    useUserStore
-} from '../../stores';
 import { parseLocation } from './location';
 
 /**
  *
  * @param {string} location
- * @returns
+ * @param {object} deps
+ * @param {string} deps.currentUserId - current user's id
+ * @param {string} deps.lastLocationStr - last location string from location store
+ * @param {Map} deps.cachedInstances - instance cache map
+ * @returns {boolean}
  */
-function checkCanInvite(location) {
+function checkCanInvite(location, deps) {
     if (!location) {
         return false;
     }
-    const userStore = useUserStore();
-    const locationStore = useLocationStore();
-    const instanceStore = useInstanceStore();
     const L = parseLocation(location);
-    const instance = instanceStore.cachedInstances.get(location);
+    const instance = deps.cachedInstances?.get(location);
     if (instance?.closedAt) {
         return false;
     }
     if (
         L.accessType === 'public' ||
         L.accessType === 'group' ||
-        L.userId === userStore.currentUser.id
+        L.userId === deps.currentUserId
     ) {
         return true;
     }
     if (L.accessType === 'invite' || L.accessType === 'friends') {
         return false;
     }
-    if (locationStore.lastLocation.location === location) {
+    if (deps.lastLocationStr === location) {
         return true;
     }
     return false;
@@ -42,24 +37,25 @@ function checkCanInvite(location) {
 /**
  *
  * @param {string} location
- * @returns
+ * @param {object} deps
+ * @param {string} deps.currentUserId - current user's id
+ * @param {Map} deps.cachedInstances - instance cache map
+ * @param {Map} deps.friends - friends map
+ * @returns {boolean}
  */
-function checkCanInviteSelf(location) {
+function checkCanInviteSelf(location, deps) {
     if (!location) {
         return false;
     }
-    const userStore = useUserStore();
-    const instanceStore = useInstanceStore();
-    const friendStore = useFriendStore();
     const L = parseLocation(location);
-    const instance = instanceStore.cachedInstances.get(location);
+    const instance = deps.cachedInstances?.get(location);
     if (instance?.closedAt) {
         return false;
     }
-    if (L.userId === userStore.currentUser.id) {
+    if (L.userId === deps.currentUserId) {
         return true;
     }
-    if (L.accessType === 'friends' && !friendStore.friends.has(L.userId)) {
+    if (L.accessType === 'friends' && !deps.friends?.has(L.userId)) {
         return false;
     }
     return true;

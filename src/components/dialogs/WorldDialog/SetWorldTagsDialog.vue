@@ -110,6 +110,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useWorldStore } from '../../../stores';
+    import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { worldRequest } from '../../../api';
 
     const props = defineProps({
@@ -132,8 +133,6 @@
     });
 
     const emit = defineEmits(['update:isSetWorldTagsDialogVisible']);
-
-    const { showWorldDialog } = useWorldStore();
 
     const { t } = useI18n();
 

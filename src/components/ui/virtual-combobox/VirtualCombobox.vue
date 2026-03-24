@@ -126,9 +126,7 @@
             const groupItems = Array.isArray(group?.items) ? group.items : [];
 
             const filteredItems = normalizedSearch
-                ? groupItems.filter((item) =>
-                      (item.search ?? item.label ?? '').toLowerCase().includes(normalizedSearch)
-                  )
+                ? groupItems.filter((item) => (item.search ?? item.label ?? '').toLowerCase().includes(normalizedSearch))
                 : groupItems;
 
             if (!filteredItems.length) continue;

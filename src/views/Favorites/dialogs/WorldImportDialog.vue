@@ -127,16 +127,18 @@
     import { useI18n } from 'vue-i18n';
 
     import { useFavoriteStore, useGalleryStore, useUserStore, useWorldStore } from '../../../stores';
+    import { showWorldDialog } from '../../../coordinators/worldCoordinator';
+    import { addLocalWorldFavorite } from '../../../coordinators/favoriteCoordinator';
     import { favoriteRequest, worldRequest } from '../../../api';
     import { createColumns } from './worldImportColumns.jsx';
     import { removeFromArray } from '../../../shared/utils';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
 
-    const { showUserDialog } = useUserStore();
     const { favoriteWorldGroups, worldImportDialogInput, worldImportDialogVisible, localWorldFavoriteGroups } =
         storeToRefs(useFavoriteStore());
-    const { localWorldFavGroupLength, addLocalWorldFavorite, getCachedFavoritesByObjectId } = useFavoriteStore();
-    const { showWorldDialog } = useWorldStore();
+    const { localWorldFavGroupLength, getCachedFavoritesByObjectId } = useFavoriteStore();
+
     const { showFullscreenImageDialog } = useGalleryStore();
 
     const emit = defineEmits(['update:worldImportDialogInput']);
@@ -166,9 +168,7 @@
 
     const tableStyle = { maxHeight: '400px' };
 
-    const rows = computed(() =>
-        Array.isArray(worldImportTable.value?.data) ? worldImportTable.value.data.slice() : []
-    );
+    const rows = computed(() => (Array.isArray(worldImportTable.value?.data) ? worldImportTable.value.data.slice() : []));
 
     const columns = computed(() =>
         createColumns({

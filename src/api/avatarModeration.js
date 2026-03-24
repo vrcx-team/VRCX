@@ -1,4 +1,4 @@
-import { request } from '../service/request';
+import { request } from '../services/request';
 
 const avatarModerationReq = {
     getAvatarModerations() {
@@ -14,7 +14,7 @@ const avatarModerationReq = {
 
     /**
      * @param {{ avatarModerationType: string, targetAvatarId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     sendAvatarModeration(params) {
         return request('auth/user/avatarmoderations', {
@@ -31,7 +31,7 @@ const avatarModerationReq = {
 
     /**
      * @param {{ avatarModerationType: string, targetAvatarId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     deleteAvatarModeration(params) {
         return request(

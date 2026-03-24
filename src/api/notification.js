@@ -1,8 +1,9 @@
-import { request } from '../service/request';
+import { request } from '../services/request';
 import { useGalleryStore } from '../stores';
 
 const notificationReq = {
-    /** @typedef {{
+    /**
+     * @typedef {{
      *      n: number,
      *      offset: number,
      *      sent: boolean,
@@ -89,7 +90,7 @@ const notificationReq = {
      * rsvp?: boolean,
      *  }} params
      * @param receiverUserId
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     sendInvite(params, receiverUserId) {
         return request(`invite/${receiverUserId}`, {
@@ -180,7 +181,7 @@ const notificationReq = {
 
     /**
      * @param {{ notificationId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     acceptFriendRequestNotification(params) {
         return request(
@@ -199,7 +200,7 @@ const notificationReq = {
 
     /**
      * @param {{ notificationId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     hideNotification(params) {
         return request(
@@ -218,7 +219,7 @@ const notificationReq = {
 
     /**
      * @param {{ notificationId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     seeNotification(params) {
         return request(`auth/user/notifications/${params.notificationId}/see`, {
@@ -234,7 +235,7 @@ const notificationReq = {
 
     /**
      * @param {{ notificationId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     seeNotificationV2(params) {
         return request(`notifications/${params.notificationId}/see`, {
@@ -254,7 +255,7 @@ const notificationReq = {
      * responseType: string,
      * responseData: string
      * }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     sendNotificationResponse(params) {
         return request(`notifications/${params.notificationId}/respond`, {

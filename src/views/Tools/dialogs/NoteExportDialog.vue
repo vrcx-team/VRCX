@@ -59,18 +59,21 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { removeFromArray, userImage, userImageFull } from '../../../shared/utils';
+    import { removeFromArray } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { useFriendStore, useGalleryStore, useUserStore } from '../../../stores';
     import { createColumns } from './noteExportColumns.jsx';
     import { miscRequest } from '../../../api';
     import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
 
     import * as workerTimers from 'worker-timers';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
 
+    const { userImage, userImageFull } = useUserDisplay();
     const { t } = useI18n();
 
     const { friends } = storeToRefs(useFriendStore());
-    const { showUserDialog } = useUserStore();
+
     const { showFullscreenImageDialog } = useGalleryStore();
 
     const props = defineProps({

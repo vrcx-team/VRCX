@@ -99,7 +99,7 @@
         (visible) => {
             if (visible) {
                 displayName.value = '';
-                queryRequest.fetch('user', { userId: sendBoopDialog.value.userId }).then((user) => {
+                queryRequest.fetch('user.dialog', { userId: sendBoopDialog.value.userId }).then((user) => {
                     displayName.value = user.ref.displayName;
                 });
             }

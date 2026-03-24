@@ -4,24 +4,25 @@ import { toast } from 'vue-sonner';
 import { useMagicKeys } from '@vueuse/core';
 import { useRouter } from 'vue-router';
 
-import { AppDebug } from '../service/appConfig';
+import { AppDebug } from '../services/appConfig';
 import { refreshCustomCss } from '../shared/utils/base/ui';
-import { updateLocalizedStrings } from '../plugin/i18n';
+import { updateLocalizedStrings } from '../plugins/i18n';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAvatarStore } from './avatar';
 import { useGroupStore } from './group';
+import { showGroupDialog } from '../coordinators/groupCoordinator';
+import { showWorldDialog } from '../coordinators/worldCoordinator';
+import { showAvatarDialog } from '../coordinators/avatarCoordinator';
+import { showUserDialog } from '../coordinators/userCoordinator';
 import { useInstanceStore } from './instance';
 import { useNotificationStore } from './notification';
+import { useNotificationsSettingsStore } from './settings/notifications';
 import { useSearchStore } from './search';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
 
 export const useUiStore = defineStore('Ui', () => {
     const notificationStore = useNotificationStore();
-    const userStore = useUserStore();
-    const worldStore = useWorldStore();
-    const avatarStore = useAvatarStore();
-    const groupStore = useGroupStore();
     const instanceStore = useInstanceStore();
     const router = useRouter();
     const keys = useMagicKeys();
@@ -142,19 +143,19 @@ export const useUiStore = defineStore('Ui', () => {
         }
         jumpDialogCrumb(index);
         if (item.type === 'user') {
-            userStore.showUserDialog(item.id);
+            showUserDialog(item.id);
             return;
         }
         if (item.type === 'world') {
-            worldStore.showWorldDialog(item.tag, item.shortName);
+            showWorldDialog(item.tag, item.shortName);
             return;
         }
         if (item.type === 'avatar') {
-            avatarStore.showAvatarDialog(item.id);
+            showAvatarDialog(item.id);
             return;
         }
         if (item.type === 'group') {
-            groupStore.showGroupDialog(item.id);
+            showGroupDialog(item.id);
             return;
         }
         if (item.type === 'previous-instances-user') {
@@ -199,7 +200,7 @@ export const useUiStore = defineStore('Ui', () => {
     }
 
     /**
-     * @param {Object} data
+     * @param {object} data
      * @param {string} data.type
      * @param {string} data.id
      * @param {string?} data.tag
@@ -286,6 +287,11 @@ export const useUiStore = defineStore('Ui', () => {
                 const name = String(routeName);
                 removeNotify(name);
                 if (name === 'notification') {
+                    const notificationsSettingsStore = useNotificationsSettingsStore();
+                    if (notificationsSettingsStore.notificationLayout === 'notification-center') {
+                        router.replace({ name: 'feed' });
+                        return;
+                    }
                     notificationStore.clearUnseenNotifications();
                 }
             }
@@ -314,10 +320,19 @@ export const useUiStore = defineStore('Ui', () => {
     }
 
     function updateTrayIconNotify(force = false) {
-        const newState =
-            appearanceSettings.notificationIconDot &&
-            (notifiedMenus.value.includes('notification') ||
-                notifiedMenus.value.includes('friend-log'));
+        const notificationsSettingsStore = useNotificationsSettingsStore();
+        let newState;
+        if (notificationsSettingsStore.notificationLayout === 'notification-center') {
+            newState =
+                appearanceSettings.notificationIconDot &&
+                (notificationStore.hasUnseenNotifications ||
+                    notifiedMenus.value.includes('friend-log'));
+        } else {
+            newState =
+                appearanceSettings.notificationIconDot &&
+                (notifiedMenus.value.includes('notification') ||
+                    notifiedMenus.value.includes('friend-log'));
+        }
 
         if (trayIconNotify.value !== newState || force) {
             trayIconNotify.value = newState;

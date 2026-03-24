@@ -5,9 +5,7 @@ vi.mock('vue-sonner', () => ({
 }));
 
 vi.mock('vue-i18n', () => ({
-    useI18n: () => ({ t: (key) => key ,
-            locale: require('vue').ref('en')
-        })
+    useI18n: () => ({ t: (key) => key, locale: require('vue').ref('en') })
 }));
 
 import {

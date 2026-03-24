@@ -9,13 +9,14 @@ import { ArrowUpDown, Trash2, X } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
 import { formatDateFilter } from '../../shared/utils';
-import { i18n } from '../../plugin';
+import { i18n } from '../../plugins';
 import { useUiStore, useUserStore } from '../../stores';
+import { showUserDialog } from '../../coordinators/userCoordinator';
 
 const { t, te } = i18n.global;
 
 export const createColumns = ({ onDelete, onDeletePrompt }) => {
-    const { showUserDialog } = useUserStore();
+
     const { shiftHeld } = storeToRefs(useUiStore());
     const { currentUser } = storeToRefs(useUserStore());
 

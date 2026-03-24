@@ -4,7 +4,7 @@ const mockRequest = vi.fn();
 const mockInvalidateQueries = vi.fn().mockResolvedValue();
 const mockApplyUser = vi.fn((json) => json);
 
-vi.mock('../../service/request', () => ({
+vi.mock('../../services/request', () => ({
     request: (...args) => mockRequest(...args)
 }));
 
@@ -14,9 +14,19 @@ vi.mock('../../stores/user', () => ({
     })
 }));
 
+vi.mock('../../coordinators/userCoordinator', () => ({
+    applyUser: (...args) => mockApplyUser(...args)
+}));
+
 vi.mock('../../queries', () => ({
     queryClient: {
         invalidateQueries: (...args) => mockInvalidateQueries(...args)
+    },
+    entityQueryPolicies: {
+        user: {},
+        avatar: {},
+        world: {},
+        worldCollection: {}
     }
 }));
 

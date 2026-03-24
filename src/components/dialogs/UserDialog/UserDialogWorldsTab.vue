@@ -10,11 +10,12 @@
                 <Spinner v-if="userDialog.isWorldsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span style="margin-left: 6px">{{
+            <span class="ml-1.5 text-sm">{{
                 t('dialog.user.worlds.total_count', { count: userDialog.worlds.length })
             }}</span>
         </div>
         <div style="display: flex; align-items: center">
+            <Input v-model="searchQuery" class="h-8 w-40 mr-2" placeholder="Search worlds" @click.stop />
             <span class="mr-1">{{ t('dialog.user.worlds.sort_by') }}</span>
             <Select
                 :model-value="userDialogWorldSortingKey"
@@ -54,12 +55,17 @@
     <div class="flex flex-wrap items-start" style="margin-top: 8px; min-height: 60px">
         <template v-if="userDialog.worlds.length">
             <div
-                v-for="world in userDialog.worlds"
+                v-for="world in filteredWorlds"
                 :key="world.id"
                 class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                 @click="showWorldDialog(world.id)">
                 <div class="relative inline-block flex-none size-9 mr-2.5">
-                    <img class="size-full rounded-full object-cover" :src="world.thumbnailImageUrl" loading="lazy" />
+                    <Avatar class="size-9">
+                        <AvatarImage :src="world.thumbnailImageUrl" class="object-cover" />
+                        <AvatarFallback>
+                            <Image class="size-4 text-muted-foreground" />
+                        </AvatarFallback>
+                    </Avatar>
                 </div>
                 <div class="flex-1 overflow-hidden">
                     <span class="block truncate font-medium leading-[18px]" v-text="world.name"></span>
@@ -79,13 +85,16 @@
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Button } from '@/components/ui/button';
     import { DataTableEmpty } from '@/components/ui/data-table';
-    import { RefreshCw } from 'lucide-vue-next';
+    import { Image, RefreshCw } from 'lucide-vue-next';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Spinner } from '@/components/ui/spinner';
-    import { ref } from 'vue';
+    import { Input } from '@/components/ui/input';
+    import { computed, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import { useUserStore, useWorldStore } from '../../../stores';
+    import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
     import { queryRequest } from '../../../api';
     import { useOptionKeySelect } from '../../../composables/useOptionKeySelect';
@@ -94,9 +103,18 @@
 
     const userStore = useUserStore();
     const { userDialog, currentUser } = storeToRefs(userStore);
-    const { cachedWorlds, showWorldDialog } = useWorldStore();
+    const { cachedWorlds } = useWorldStore();
 
     const userDialogWorldsRequestId = ref(0);
+
+    const searchQuery = ref('');
+    const filteredWorlds = computed(() => {
+        const worlds = userDialog.value.worlds;
+        const query = searchQuery.value.trim().toLowerCase();
+        if (!query) return worlds;
+        return worlds.filter((w) => (w.name || '').toLowerCase().includes(query));
+    });
+    watch(() => userDialog.value.id, () => { searchQuery.value = ''; });
 
     /**
      *

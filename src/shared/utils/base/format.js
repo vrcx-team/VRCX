@@ -1,5 +1,5 @@
 import { escapeTag } from './string';
-import { i18n } from '../../../plugin/i18n';
+import { i18n } from '../../../plugins/i18n';
 
 const TIME_UNIT_KEYS = {
     y: 'common.time_units.y',

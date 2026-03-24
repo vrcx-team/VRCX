@@ -3,7 +3,7 @@ import {
     extractFileVersion,
     extractVariantVersion
 } from '../common';
-import { useAvatarStore, useWorldStore } from '../../../stores';
+import { useAuthStore, useAvatarStore, useWorldStore } from '../../../stores';
 import { compareUnityVersion } from '../avatar';
 
 /**
@@ -12,6 +12,8 @@ import { compareUnityVersion } from '../avatar';
  * @returns {Promise<string|null>}
  */
 async function getBundleLocation(input) {
+    const authStore = useAuthStore();
+    const sdkUnityVersion = authStore.cachedConfig.sdkUnityVersion;
     const worldStore = useWorldStore();
     const avatarStore = useAvatarStore();
     let unityPackage;
@@ -36,7 +38,10 @@ async function getBundleLocation(input) {
             }
             if (
                 unityPackage.platform === 'standalonewindows' &&
-                compareUnityVersion(unityPackage.unitySortNumber)
+                compareUnityVersion(
+                    unityPackage.unitySortNumber,
+                    sdkUnityVersion
+                )
             ) {
                 assetUrl = unityPackage.assetUrl;
                 if (unityPackage.variant !== 'standard') {
@@ -59,7 +64,10 @@ async function getBundleLocation(input) {
             unityPackage = unityPackages[i];
             if (
                 unityPackage.platform === 'standalonewindows' &&
-                compareUnityVersion(unityPackage.unitySortNumber)
+                compareUnityVersion(
+                    unityPackage.unitySortNumber,
+                    sdkUnityVersion
+                )
             ) {
                 assetUrl = unityPackage.assetUrl;
                 break;

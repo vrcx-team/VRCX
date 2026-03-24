@@ -43,6 +43,10 @@
                 "devEndpoint": "Dev Endpoint",
                 "endpoint": "Endpoint",
                 "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "Langue détectée",
+                "description": "La langue de votre système semble être {language}. Souhaitez-vous y passer ?"
             }
         },
         "feed": {
@@ -109,9 +113,7 @@
             },
             "group": {
                 "header": "Groupe"
-            },
-            "prev_page": "Précédent",
-            "next_page": "Suivant"
+            }
         },
         "favorite": {
             "worlds": {

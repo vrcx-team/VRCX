@@ -14,7 +14,33 @@
         <DeprecationAlert
             v-if="userDialog.ref.id === currentUser.id"
             :feature-name="t('nav_tooltip.favorite_worlds')" />
+        <Input v-model="searchQuery" class="h-8 w-40 mt-2" placeholder="Search worlds" @click.stop />
+        <template v-if="searchActive">
+            <div
+                class="flex flex-wrap items-start"
+                style="margin-top: 8px; min-height: 60px; max-height: 50vh; overflow: auto">
+                <div
+                    v-for="world in allFilteredFavoriteWorlds"
+                    :key="world.favoriteId"
+                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
+                    @click="showWorldDialog(world.id)">
+                    <div class="relative inline-block flex-none size-9 mr-2.5">
+                        <Avatar class="size-9">
+                            <AvatarImage :src="world.thumbnailImageUrl" class="object-cover" />
+                            <AvatarFallback>
+                                <Image class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
+                    </div>
+                    <div class="flex-1 overflow-hidden">
+                        <span class="block truncate font-medium leading-[18px]" v-text="world.name"></span>
+                        <span v-if="world.occupants" class="block truncate text-xs">({{ world.occupants }})</span>
+                    </div>
+                </div>
+            </div>
+        </template>
         <TabsUnderline
+            v-else
             v-model="favoriteWorldsTab"
             :items="favoriteWorldTabs"
             :unmount-on-hide="false"
@@ -45,10 +71,12 @@
                         class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                         @click="showWorldDialog(world.id)">
                         <div class="relative inline-block flex-none size-9 mr-2.5">
-                            <img
-                                class="size-full rounded-full object-cover"
-                                :src="world.thumbnailImageUrl"
-                                loading="lazy" />
+                            <Avatar class="size-9">
+                                <AvatarImage :src="world.thumbnailImageUrl" class="object-cover" />
+                                <AvatarFallback>
+                                    <Image class="size-4 text-muted-foreground" />
+                                </AvatarFallback>
+                            </Avatar>
                         </div>
                         <div class="flex-1 overflow-hidden">
                             <span class="block truncate font-medium leading-[18px]" v-text="world.name"></span>
@@ -67,7 +95,10 @@
 </template>
 
 <script setup>
-    import { computed, ref } from 'vue';
+    import { computed, ref, watch } from 'vue';
+    import { Image } from 'lucide-vue-next';
+    import { Input } from '@/components/ui/input';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
@@ -75,15 +106,15 @@
 
     import DeprecationAlert from '@/components/DeprecationAlert.vue';
 
-    import { useFavoriteStore, useUserStore, useWorldStore } from '../../../stores';
+    import { useFavoriteStore, useUserStore } from '../../../stores';
+    import { showWorldDialog } from '../../../coordinators/worldCoordinator';
+    import { handleFavoriteWorldList } from '../../../coordinators/favoriteCoordinator';
     import { favoriteRequest } from '../../../api';
 
     const { t } = useI18n();
 
     const { userDialog, currentUser } = storeToRefs(useUserStore());
     const { favoriteLimits } = storeToRefs(useFavoriteStore());
-    const { handleFavoriteWorldList } = useFavoriteStore();
-    const { showWorldDialog } = useWorldStore();
 
     const favoriteWorldsTab = ref('0');
     const userDialogFavoriteWorldsRequestId = ref(0);
@@ -94,6 +125,17 @@
             label: list?.[0] ?? ''
         }))
     );
+
+    const searchQuery = ref('');
+    const searchActive = computed(() => searchQuery.value.trim().length > 0);
+    const allFilteredFavoriteWorlds = computed(() => {
+        const query = searchQuery.value.trim().toLowerCase();
+        if (!query) return [];
+        const lists = userDialog.value.userFavoriteWorlds || [];
+        const all = lists.flatMap((list) => list[2] || []);
+        return all.filter((w) => (w.name || '').toLowerCase().includes(query));
+    });
+    watch(() => userDialog.value.id, () => { searchQuery.value = ''; });
 
     /**
      *

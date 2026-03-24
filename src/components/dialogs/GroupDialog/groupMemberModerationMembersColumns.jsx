@@ -1,5 +1,5 @@
 import { Checkbox } from '@/components/ui/checkbox';
-import { i18n } from '@/plugin';
+import { i18n } from '@/plugins';
 import { formatDateFilter } from '@/shared/utils';
 import { ArrowUpDown } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';

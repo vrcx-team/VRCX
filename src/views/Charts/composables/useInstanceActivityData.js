@@ -2,7 +2,7 @@ import { nextTick, reactive, ref } from 'vue';
 
 import dayjs from 'dayjs';
 
-import { database } from '../../../service/database';
+import { database } from '../../../services/database';
 import { getWorldName } from '../../../shared/utils';
 
 export function useInstanceActivityData() {

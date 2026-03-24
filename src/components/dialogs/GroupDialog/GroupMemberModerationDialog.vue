@@ -122,7 +122,9 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAppearanceSettingsStore, useGalleryStore, useGroupStore, useUserStore } from '../../../stores';
-    import { hasGroupPermission, userImage, userImageFull } from '../../../shared/utils';
+    import { applyGroupMember, handleGroupMember, handleGroupMemberProps } from '../../../coordinators/groupCoordinator';
+    import { hasGroupPermission } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
     import { groupRequest, userRequest } from '../../../api';
     import { resolveRoleNames } from './groupModerationUtils';
@@ -138,14 +140,15 @@
     import GroupModerationInvitesTab from './GroupModerationInvitesTab.vue';
     import GroupModerationLogsTab from './GroupModerationLogsTab.vue';
     import GroupModerationMembersTab from './GroupModerationMembersTab.vue';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     // ── Stores ───────────────────────────────────────────────────
+    const { userImage, userImageFull } = useUserDisplay();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { randomUserColours } = storeToRefs(appearanceSettingsStore);
-    const { showUserDialog } = useUserStore();
+
     const { currentUser } = storeToRefs(useUserStore());
     const { groupDialog, groupMemberModeration } = storeToRefs(useGroupStore());
-    const { applyGroupMember, handleGroupMember, handleGroupMemberProps } = useGroupStore();
     const { showFullscreenImageDialog } = useGalleryStore();
     const { t } = useI18n();
 

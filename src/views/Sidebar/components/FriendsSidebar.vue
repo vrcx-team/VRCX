@@ -36,10 +36,12 @@
                                             <div
                                                 class="relative inline-block flex-none size-9 mr-2.5"
                                                 :class="userStatusClass(currentUser)">
-                                                <img
-                                                    class="size-full rounded-full object-cover"
-                                                    :src="userImage(currentUser)"
-                                                    loading="lazy" />
+                                                <Avatar class="size-full rounded-full">
+                                                    <AvatarImage :src="userImage(currentUser)" class="object-cover" />
+                                                    <AvatarFallback>
+                                                        <User class="size-5 text-muted-foreground" />
+                                                    </AvatarFallback>
+                                                </Avatar>
                                             </div>
                                             <div class="flex-1 overflow-hidden h-9 flex flex-col justify-between">
                                                 <span
@@ -106,6 +108,21 @@
                                                 </ContextMenuCheckboxItem>
                                             </ContextMenuSubContent>
                                         </ContextMenuSub>
+                                        <ContextMenuSub v-if="statusPresets.length">
+                                            <ContextMenuSubTrigger>
+                                                {{ t('dialog.social_status.presets') }}
+                                            </ContextMenuSubTrigger>
+                                            <ContextMenuSubContent>
+                                                <ContextMenuItem
+                                                    v-for="(preset, idx) in statusPresets"
+                                                    :key="idx"
+                                                    class="gap-2"
+                                                    @click="applyStatusPreset(preset)">
+                                                    <i class="x-user-status" :class="presetStatusClass(preset.status)"></i>
+                                                    <span class="truncate max-w-[180px]">{{ getPresetDisplayText(preset) }}</span>
+                                                </ContextMenuItem>
+                                            </ContextMenuSubContent>
+                                        </ContextMenuSub>
                                     </ContextMenuContent>
                                 </ContextMenu>
                             </template>
@@ -130,12 +147,18 @@
                                             v-if="item.row.friend.state === 'online'"
                                             @click="friendRequestInvite(item.row.friend)">
                                             {{ t('dialog.user.actions.request_invite') }}
+                                            <ContextMenuShortcut v-if="isActionRecent(item.row.friend.id, 'Request Invite')">
+                                                <Clock class="size-3.5 text-muted-foreground" />
+                                            </ContextMenuShortcut>
                                         </ContextMenuItem>
                                         <ContextMenuItem
                                             v-if="isGameRunning"
                                             :disabled="!canInviteToMyLocation"
                                             @click="friendInvite(item.row.friend)">
                                             {{ t('dialog.user.actions.invite') }}
+                                            <ContextMenuShortcut v-if="isActionRecent(item.row.friend.id, 'Invite')">
+                                                <Clock class="size-3.5 text-muted-foreground" />
+                                            </ContextMenuShortcut>
                                         </ContextMenuItem>
                                         <ContextMenuItem
                                             :disabled="!currentUser.isBoopingEnabled"
@@ -176,7 +199,7 @@
 
 <script setup>
     import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
-    import { ChevronDown } from 'lucide-vue-next';
+    import { ChevronDown, Clock, User } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -188,11 +211,13 @@
         ContextMenuContent,
         ContextMenuItem,
         ContextMenuSeparator,
+        ContextMenuShortcut,
         ContextMenuSub,
         ContextMenuSubContent,
         ContextMenuSubTrigger,
         ContextMenuTrigger
     } from '../../../components/ui/context-menu';
+    import { Avatar, AvatarFallback, AvatarImage } from '../../../components/ui/avatar';
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
@@ -204,18 +229,22 @@
         useUserStore
     } from '../../../stores';
     import { buildFriendRow, buildInstanceHeaderRow, buildToggleRow, estimateRowSize } from '../friendsSidebarUtils';
-    import { getFriendsSortFunction, isRealInstance, userImage, userStatusClass } from '../../../shared/utils';
+    import { getFriendsSortFunction, isRealInstance } from '../../../shared/utils';
     import { instanceRequest, notificationRequest, queryRequest, userRequest } from '../../../api';
-    import { checkCanInvite, checkCanInviteSelf } from '../../../shared/utils/invite.js';
+    import { useInviteChecks } from '../../../composables/useInviteChecks';
+    import { isActionRecent, recordRecentAction } from '../../../composables/useRecentActions';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { getFriendsLocations } from '../../../shared/utils/location.js';
     import { parseLocation } from '../../../shared/utils';
 
     import BackToTop from '../../../components/BackToTop.vue';
     import FriendItem from './FriendItem.vue';
     import Location from '../../../components/Location.vue';
-    import configRepository from '../../../service/config';
+    import configRepository from '../../../services/config';
+    import { useStatusPresets } from '../../../components/dialogs/UserDialog/composables/useStatusPresets';
 
     import '@/styles/status-icon.css';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { t } = useI18n();
 
@@ -232,19 +261,23 @@
     const {
         isSidebarGroupByInstance,
         isHideFriendsInSameInstance,
+        isSameInstanceAboveFavorites,
         isSidebarDivideByFriendGroup,
         sidebarFavoriteGroups,
         sidebarFavoriteGroupOrder,
         sidebarSortMethods
     } = storeToRefs(appearanceSettingsStore);
     const { gameLogDisabled } = storeToRefs(useAdvancedSettingsStore());
-    const { showUserDialog, showSendBoopDialog } = useUserStore();
+    const { showSendBoopDialog } = useUserStore();
     const launchStore = useLaunchStore();
     const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends, localFriendFavorites } =
         storeToRefs(useFavoriteStore());
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
     const { isGameRunning } = storeToRefs(useGameStore());
     const { currentUser } = storeToRefs(useUserStore());
+    const { checkCanInvite, checkCanInviteSelf } = useInviteChecks();
+    const { userImage, userStatusClass } = useUserDisplay();
+    const { presets: statusPresets, getStatusClass: presetStatusClass } = useStatusPresets();
 
     const isFriendsGroupMe = ref(true);
     const isVIPFriends = ref(true);
@@ -271,6 +304,38 @@
 
     const shouldHideSameInstance = computed(() => isSidebarGroupByInstance.value && isHideFriendsInSameInstance.value);
 
+    const selectedFavoriteGroupKeys = computed(() => new Set(sidebarFavoriteGroups.value));
+
+    const selectedFavoriteGroupIds = computed(() => {
+        const selectedGroups = selectedFavoriteGroupKeys.value;
+        const hasFilter = selectedGroups.size > 0;
+        if (!hasFilter) {
+            return allFavoriteFriendIds.value;
+        }
+
+        const ids = new Set();
+        const remoteFriendsByGroup = groupedByGroupKeyFavoriteFriends.value;
+        for (const key of selectedGroups) {
+            if (key.startsWith('local:')) {
+                const groupName = key.slice(6);
+                const userIds = localFriendFavorites.value?.[groupName];
+                if (userIds) {
+                    for (const id of userIds) ids.add(id);
+                }
+            } else if (remoteFriendsByGroup[key]) {
+                for (const friend of remoteFriendsByGroup[key]) ids.add(friend.id);
+            }
+        }
+        return ids;
+    });
+
+    const visibleFavoriteOnlineFriends = computed(() => {
+        const filtered = allFavoriteOnlineFriends.value.filter((friend) =>
+            selectedFavoriteGroupIds.value.has(friend.id)
+        );
+        return excludeSameInstance(filtered);
+    });
+
     /**
      *
      * @param list
@@ -289,64 +354,29 @@
             return excludeSameInstance(onlineFriends.value.filter((f) => !allFavoriteFriendIds.value.has(f.id)));
         }
         // When group filter is active, friends in unselected groups should appear in the online list
-        const displayedVipIds = new Set();
-        const remoteFriendsByGroup = groupedByGroupKeyFavoriteFriends.value;
-        for (const key of selectedGroups) {
-            if (key.startsWith('local:')) {
-                const groupName = key.slice(6);
-                const userIds = localFriendFavorites.value?.[groupName];
-                if (userIds) {
-                    for (const id of userIds) displayedVipIds.add(id);
-                }
-            } else if (remoteFriendsByGroup[key]) {
-                for (const f of remoteFriendsByGroup[key]) displayedVipIds.add(f.id);
-            }
-        }
-        const nonFavOnline = onlineFriends.value.filter((f) => !displayedVipIds.has(f.id));
+        const selectedIds = selectedFavoriteGroupIds.value;
+        const nonFavOnline = onlineFriends.value.filter((f) => !selectedIds.has(f.id));
         const existingIds = new Set(nonFavOnline.map((f) => f.id));
         const unselectedGroupFriends = allFavoriteOnlineFriends.value.filter(
-            (f) => !displayedVipIds.has(f.id) && !existingIds.has(f.id)
+            (f) => !selectedIds.has(f.id) && !existingIds.has(f.id)
         );
         return excludeSameInstance(
             [...nonFavOnline, ...unselectedGroupFriends].sort(getFriendsSortFunction(sidebarSortMethods.value))
         );
     });
 
-    const vipFriendsByGroupStatus = computed(() => {
-        const selectedGroups = sidebarFavoriteGroups.value;
-        const hasFilter = selectedGroups.length > 0;
-        if (!hasFilter) {
-            return excludeSameInstance(allFavoriteOnlineFriends.value);
-        }
-        // Filter to only include VIP friends whose group key is in selectedGroups
-        const allowedIds = new Set();
-        const remoteFriendsByGroup = groupedByGroupKeyFavoriteFriends.value;
-        for (const key of selectedGroups) {
-            if (key.startsWith('local:')) {
-                const groupName = key.slice(6);
-                const userIds = localFriendFavorites.value?.[groupName];
-                if (userIds) {
-                    for (const id of userIds) allowedIds.add(id);
-                }
-            } else if (remoteFriendsByGroup[key]) {
-                for (const f of remoteFriendsByGroup[key]) allowedIds.add(f.id);
-            }
-        }
-        return excludeSameInstance(allFavoriteOnlineFriends.value.filter((f) => allowedIds.has(f.id)));
-    });
-
     // VIP friends divide by group
     const vipFriendsDivideByGroup = computed(() => {
         const remoteFriendsByGroup = groupedByGroupKeyFavoriteFriends.value;
-        const selectedGroups = sidebarFavoriteGroups.value;
-        const hasFilter = selectedGroups.length > 0;
+        const selectedGroups = selectedFavoriteGroupKeys.value;
+        const hasFilter = selectedGroups.size > 0;
 
         // Build a normalized list of { key, groupName, memberIds }
         const groups = [];
 
         for (const key in remoteFriendsByGroup) {
             if (Object.hasOwn(remoteFriendsByGroup, key)) {
-                if (hasFilter && !selectedGroups.includes(key)) continue;
+                if (hasFilter && !selectedGroups.has(key)) continue;
                 const groupName = favoriteFriendGroups.value.find((g) => g.key === key)?.displayName || '';
                 const memberIds = new Set(remoteFriendsByGroup[key].map((f) => f.id));
                 groups.push({ key, groupName, memberIds });
@@ -355,7 +385,7 @@
 
         for (const groupName in localFriendFavorites.value) {
             const selectedKey = `local:${groupName}`;
-            if (hasFilter && !selectedGroups.includes(selectedKey)) continue;
+            if (hasFilter && !selectedGroups.has(selectedKey)) continue;
             const userIds = localFriendFavorites.value[groupName];
             if (userIds?.length) {
                 groups.push({ key: selectedKey, groupName, memberIds: new Set(userIds) });
@@ -365,9 +395,7 @@
         // Filter vipFriends per group, preserving vipFriends sort order
         const result = [];
         for (const { key, groupName, memberIds } of groups) {
-            const filteredFriends = excludeSameInstance(
-                allFavoriteOnlineFriends.value.filter((friend) => memberIds.has(friend.id))
-            );
+            const filteredFriends = visibleFavoriteOnlineFriends.value.filter((friend) => memberIds.has(friend.id));
             if (filteredFriends.length > 0) {
                 result.push(filteredFriends.map((item) => ({ groupName, key, ...item })));
             }
@@ -384,26 +412,10 @@
         });
     });
 
-    const virtualRows = computed(() => {
-        const rows = [];
-
-        rows.push(
-            buildToggleRow({
-                key: 'me-header',
-                label: t('side_panel.me'),
-                expanded: isFriendsGroupMe.value,
-                headerPadding: '0 0 5px',
-                onClick: toggleFriendsGroupMe
-            })
-        );
-
-        if (isFriendsGroupMe.value) {
-            rows.push({ type: 'me-item', key: `me:${currentUser.value?.id ?? 'me'}` });
-        }
-
+    function buildFavoriteRows(rows) {
         const vipFriendCount = isSidebarDivideByFriendGroup.value
             ? vipFriendsDivideByGroup.value.reduce((sum, group) => sum + group.length, 0)
-            : vipFriendsByGroupStatus.value.length;
+            : visibleFavoriteOnlineFriends.value.length;
 
         if (vipFriendCount) {
             rows.push(
@@ -452,12 +464,14 @@
                     }
                 });
             } else {
-                vipFriendsByGroupStatus.value.forEach((friend, idx) => {
+                visibleFavoriteOnlineFriends.value.forEach((friend, idx) => {
                     rows.push(buildFriendRow(friend, `vip:${friend?.id ?? idx}`));
                 });
             }
         }
+    }
 
+    function buildSameInstanceRows(rows) {
         if (isSidebarGroupByInstance.value && friendsInSameInstance.value.length) {
             rows.push(
                 buildToggleRow({
@@ -475,7 +489,11 @@
                     if (!friendArr || !friendArr.length) return;
                     const groupKey = friendArr?.[0]?.ref?.$location?.tag ?? `group-${groupIndex}`;
                     rows.push(
-                        buildInstanceHeaderRow(getFriendsLocations(friendArr), friendArr.length, `instance:${groupKey}`)
+                        buildInstanceHeaderRow(
+                            getFriendsLocations(friendArr, lastLocation.value),
+                            friendArr.length,
+                            `instance:${groupKey}`
+                        )
                     );
                     friendArr.forEach((friend, idx) => {
                         rows.push(
@@ -488,6 +506,32 @@
                     });
                 });
             }
+        }
+    }
+
+    const virtualRows = computed(() => {
+        const rows = [];
+
+        rows.push(
+            buildToggleRow({
+                key: 'me-header',
+                label: t('side_panel.me'),
+                expanded: isFriendsGroupMe.value,
+                headerPadding: '0 0 5px',
+                onClick: toggleFriendsGroupMe
+            })
+        );
+
+        if (isFriendsGroupMe.value) {
+            rows.push({ type: 'me-item', key: `me:${currentUser.value?.id ?? 'me'}` });
+        }
+
+        if (isSameInstanceAboveFavorites.value) {
+            buildSameInstanceRows(rows);
+            buildFavoriteRows(rows);
+        } else {
+            buildFavoriteRows(rows);
+            buildSameInstanceRows(rows);
         }
 
         if (onlineFriendsByGroupStatus.value.length) {
@@ -714,6 +758,23 @@
         });
     }
 
+    function getPresetDisplayText(preset) {
+        if (preset.statusDescription) return preset.statusDescription;
+        const option = statusOptions.value.find((o) => o.value === preset.status);
+        return option?.label || preset.status;
+    }
+
+    function applyStatusPreset(preset) {
+        userRequest
+            .saveCurrentUser({
+                status: preset.status,
+                statusDescription: preset.statusDescription
+            })
+            .then(() => {
+                toast.success('Status updated');
+            });
+    }
+
     const canInviteToMyLocation = computed(() => checkCanInvite(lastLocation.value.location));
 
     /**
@@ -740,6 +801,7 @@
      */
     function friendRequestInvite(friend) {
         notificationRequest.sendRequestInvite({ platform: 'standalonewindows' }, friend.id).then(() => {
+            recordRecentAction(friend.id, 'Request Invite');
             toast.success('Request invite sent');
         });
     }
@@ -753,7 +815,7 @@
             currentLocation = lastLocationDestination.value;
         }
         const L = parseLocation(currentLocation);
-        queryRequest.fetch('world', { worldId: L.worldId }).then((args) => {
+        queryRequest.fetch('world.location', { worldId: L.worldId }).then((args) => {
             notificationRequest
                 .sendInvite(
                     {
@@ -764,6 +826,7 @@
                     friend.id
                 )
                 .then(() => {
+                    recordRecentAction(friend.id, 'Invite');
                     toast.success(t('message.invite.sent'));
                 });
         });

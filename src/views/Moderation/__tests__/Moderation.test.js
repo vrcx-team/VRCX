@@ -25,23 +25,28 @@ mocks.pagination = mocks.makeRef({
     pageSize: 10
 });
 
-vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
-}));
+vi.mock('pinia', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        storeToRefs: (store) => store
+    };
+});
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
-    ,
-            locale: require('vue').ref('en')
-        })
+        t: (key) => key,
+        locale: require('vue').ref('en')
+    })
 }));
 
 vi.mock('../../../stores', () => ({
     useModerationStore: () => ({
         playerModerationTable: mocks.playerModerationTable,
-        refreshPlayerModerations: (...args) => mocks.refreshPlayerModerations(...args),
-        handlePlayerModerationDelete: (...args) => mocks.handlePlayerModerationDelete(...args)
+        refreshPlayerModerations: (...args) =>
+            mocks.refreshPlayerModerations(...args),
+        handlePlayerModerationDelete: (...args) =>
+            mocks.handlePlayerModerationDelete(...args)
     }),
     useAppearanceSettingsStore: () => ({
         tablePageSizes: [10, 25, 50],
@@ -55,7 +60,7 @@ vi.mock('../../../stores', () => ({
     })
 }));
 
-vi.mock('../../../service/config.js', () => ({
+vi.mock('../../../services/config.js', () => ({
     default: {
         getString: (...args) => mocks.configGetString(...args),
         setString: (...args) => mocks.configSetString(...args)
@@ -64,13 +69,23 @@ vi.mock('../../../service/config.js', () => ({
 
 vi.mock('../../../api', () => ({
     playerModerationRequest: {
-        deletePlayerModeration: (...args) => mocks.deletePlayerModeration(...args)
+        deletePlayerModeration: (...args) =>
+            mocks.deletePlayerModeration(...args)
     }
 }));
 
-vi.mock('../../../shared/constants', () => ({
-    moderationTypes: ['block', 'mute', 'unmute']
+vi.mock('../../../coordinators/moderationCoordinator', () => ({
+    runRefreshPlayerModerationsFlow: (...args) =>
+        mocks.refreshPlayerModerations(...args)
 }));
+
+vi.mock('../../../shared/constants', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        moderationTypes: ['block', 'mute', 'unmute']
+    };
+});
 
 vi.mock('../columns.jsx', () => ({
     createColumns: (handlers) => {
@@ -88,12 +103,6 @@ vi.mock('../../../lib/table/useVrcxVueTable', () => ({
     })
 }));
 
-vi.mock('../../../composables/useDataTableScrollHeight', () => ({
-    useDataTableScrollHeight: () => ({
-        tableStyle: {}
-    })
-}));
-
 vi.mock('@/components/ui/select', () => ({
     Select: {
         template: '<div><slot /></div>'
@@ -108,7 +117,8 @@ vi.mock('@/components/ui/select', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template: '<button data-testid="moderation-button" @click="$emit(\'click\')"><slot /></button>'
+        template:
+            '<button data-testid="moderation-button" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -177,15 +187,23 @@ describe('Moderation.vue', () => {
 
         mocks.configGetString.mockResolvedValue('["block"]');
         mocks.modalConfirm.mockResolvedValue({ ok: true });
-        mocks.deletePlayerModeration.mockResolvedValue({ ok: true, id: 'pm_1' });
+        mocks.deletePlayerModeration.mockResolvedValue({
+            ok: true,
+            id: 'pm_1'
+        });
     });
 
     test('loads persisted moderation filter on init', async () => {
         mountModeration();
         await flushAsync();
 
-        expect(mocks.configGetString).toHaveBeenCalledWith('VRCX_playerModerationTableFilters', '[]');
-        expect(mocks.playerModerationTable.value.filters[0].value).toEqual(['block']);
+        expect(mocks.configGetString).toHaveBeenCalledWith(
+            'VRCX_playerModerationTableFilters',
+            '[]'
+        );
+        expect(mocks.playerModerationTable.value.filters[0].value).toEqual([
+            'block'
+        ]);
     });
 
     test('updates moderation filter and persists value', async () => {
@@ -195,7 +213,9 @@ describe('Moderation.vue', () => {
         wrapper.vm.handleModerationFilterChange(['mute']);
         await nextTick();
 
-        expect(mocks.playerModerationTable.value.filters[0].value).toEqual(['mute']);
+        expect(mocks.playerModerationTable.value.filters[0].value).toEqual([
+            'mute'
+        ]);
         expect(mocks.configSetString).toHaveBeenCalledWith(
             'VRCX_playerModerationTableFilters',
             JSON.stringify(['mute'])
@@ -204,11 +224,22 @@ describe('Moderation.vue', () => {
 
     test('filters table rows by type and search text', async () => {
         mocks.playerModerationTable.value.data = [
-            { type: 'block', sourceDisplayName: 'Alpha', targetDisplayName: 'Beta' },
-            { type: 'mute', sourceDisplayName: 'Gamma', targetDisplayName: 'Delta' },
+            {
+                type: 'block',
+                sourceDisplayName: 'Alpha',
+                targetDisplayName: 'Beta'
+            },
+            {
+                type: 'mute',
+                sourceDisplayName: 'Gamma',
+                targetDisplayName: 'Delta'
+            },
             { type: 'mute', sourceDisplayName: 'X', targetDisplayName: 'Alice' }
         ];
-        mocks.playerModerationTable.value.filters = [{ value: ['mute'] }, { value: 'ali' }];
+        mocks.playerModerationTable.value.filters = [
+            { value: ['mute'] },
+            { value: 'ali' }
+        ];
 
         const wrapper = mountModeration();
         await flushAsync();
@@ -234,7 +265,10 @@ describe('Moderation.vue', () => {
             moderated: 'usr_1',
             type: 'mute'
         });
-        expect(mocks.handlePlayerModerationDelete).toHaveBeenCalledWith({ ok: true, id: 'pm_1' });
+        expect(mocks.handlePlayerModerationDelete).toHaveBeenCalledWith({
+            ok: true,
+            id: 'pm_1'
+        });
     });
 
     test('delete prompt confirms before deletion', async () => {

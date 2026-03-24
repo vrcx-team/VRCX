@@ -6,16 +6,17 @@
                     <div class="avatar-card-wrapper rounded-lg" @click="$emit('click')">
                         <Card
                             class="avatar-card x-hover-card flex flex-col gap-0 p-0 cursor-pointer overflow-hidden rounded-lg relative hover:bg-accent hover:shadow-sm"
-                            :class="isActive ? 'border-2 border-primary' : 'border border-border/50'">
+                            :class="isActive ? 'x-highlight-ring' : 'border border-border/50'">
                             <div class="w-full aspect-5/2 overflow-hidden bg-muted relative">
                                 <img
-                                    v-if="avatar.thumbnailImageUrl"
+                                    v-if="avatar.thumbnailImageUrl && !imageLoadError"
                                     :src="avatar.thumbnailImageUrl"
                                     :alt="avatar.name"
                                     loading="lazy"
                                     decoding="async"
                                     fetchpriority="low"
-                                    class="w-full h-full object-cover block" />
+                                    class="w-full h-full object-cover block"
+                                    @error="imageLoadError = true" />
                                 <div v-else class="w-full h-full grid place-items-center">
                                     <ImageIcon class="size-6 text-muted-foreground" />
                                 </div>
@@ -252,6 +253,7 @@
 
     const hoverOpen = ref(false);
     const contextMenuOpen = ref(false);
+    const imageLoadError = ref(false);
 
     const handleContextMenuOpen = (open) => {
         contextMenuOpen.value = open;

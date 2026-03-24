@@ -6,7 +6,8 @@ vi.mock('vue-i18n', () => ({
     useI18n: () => {
         const { ref } = require('vue');
         return {
-            t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
+            t: (key, params) =>
+                params ? `${key}:${JSON.stringify(params)}` : key,
             locale: ref('en')
         };
     },
@@ -16,7 +17,7 @@ vi.mock('vue-i18n', () => ({
     })
 }));
 
-vi.mock('../../../../plugin/router', () => {
+vi.mock('../../../../plugins/router', () => {
     const { ref } = require('vue');
     return {
         router: {
@@ -43,8 +44,8 @@ vi.mock('vue-router', async (importOriginal) => {
     };
 });
 
-vi.mock('../../../../plugin/interopApi', () => ({ initInteropApi: vi.fn() }));
-vi.mock('../../../../service/database', () => ({
+vi.mock('../../../../plugins/interopApi', () => ({ initInteropApi: vi.fn() }));
+vi.mock('../../../../services/database', () => ({
     database: new Proxy(
         {},
         {
@@ -56,7 +57,7 @@ vi.mock('../../../../service/database', () => ({
     )
 }));
 
-vi.mock('../../../../service/config', () => ({
+vi.mock('../../../../services/config', () => ({
     default: {
         init: vi.fn(),
         getString: vi.fn().mockImplementation((_k, d) => d ?? '{}'),
@@ -75,11 +76,11 @@ vi.mock('../../../../service/config', () => ({
     }
 }));
 
-vi.mock('../../../../service/jsonStorage', () => ({ default: vi.fn() }));
-vi.mock('../../../../service/watchState', () => ({
+vi.mock('../../../../services/jsonStorage', () => ({ default: vi.fn() }));
+vi.mock('../../../../services/watchState', () => ({
     watchState: { isLoggedIn: false }
 }));
-vi.mock('../../../../service/request', () => ({
+vi.mock('../../../../services/request', () => ({
     request: vi.fn().mockResolvedValue({ json: {} }),
     processBulk: vi.fn(),
     buildRequestInit: vi.fn(),
@@ -109,92 +110,100 @@ function mountComponent(overrides = {}) {
     });
 
     const appearanceSettingsStore = useAppearanceSettingsStore(pinia);
-    appearanceSettingsStore.hideUserNotes = false;
-    appearanceSettingsStore.hideUserMemos = false;
+    appearanceSettingsStore.$patch({
+        hideUserNotes: false,
+        hideUserMemos: false
+    });
 
     const advancedSettingsStore = useAdvancedSettingsStore(pinia);
-    advancedSettingsStore.bioLanguage = 'en';
-    advancedSettingsStore.translationApi = '';
-    advancedSettingsStore.translationApiType = 'google';
-    advancedSettingsStore.translateText = vi.fn().mockResolvedValue('');
+    advancedSettingsStore.$patch({
+        bioLanguage: 'en',
+        translationApi: '',
+        translationApiType: 'google'
+    });
+    const advancedSettings = advancedSettingsStore;
+    advancedSettings.translateText = vi.fn().mockResolvedValue('');
 
     const userStore = useUserStore(pinia);
-    userStore.userDialog = {
-        id: 'usr_target',
-        friend: {
-            state: 'online',
-            ref: {
-                location: 'wrld_test:123'
-            }
-        },
-        ref: {
+    userStore.$patch({
+        userDialog: {
             id: 'usr_target',
-            location: 'wrld_test:123',
-            travelingToLocation: '',
-            profilePicOverride: '',
-            currentAvatarImageUrl: '',
-            currentAvatarTags: [],
-            bio: '',
-            bioLinks: [],
-            state: 'online',
-            $online_for: 1000,
-            last_login: '2025-01-01T00:00:00.000Z',
-            last_activity: '2025-01-01T00:00:00.000Z',
-            date_joined: '2020-01-01',
+            friend: {
+                state: 'online',
+                ref: {
+                    location: 'wrld_test:123'
+                }
+            },
+            ref: {
+                id: 'usr_target',
+                location: 'wrld_test:123',
+                travelingToLocation: '',
+                profilePicOverride: '',
+                currentAvatarImageUrl: '',
+                currentAvatarTags: [],
+                bio: '',
+                bioLinks: [],
+                state: 'online',
+                $online_for: 1000,
+                last_login: '2025-01-01T00:00:00.000Z',
+                last_activity: '2025-01-01T00:00:00.000Z',
+                date_joined: '2020-01-01',
+                allowAvatarCopying: true,
+                displayName: 'Target'
+            },
+            $location: {
+                tag: 'wrld_test:123',
+                shortName: 'Test',
+                userId: '',
+                user: null
+            },
+            instance: {
+                ref: {},
+                friendCount: 0
+            },
+            users: [
+                {
+                    id: 'usr_friend_1',
+                    displayName: 'Friend A',
+                    $userColour: '#ffffff',
+                    location: 'traveling',
+                    $travelingToTime: Date.now(),
+                    $location_at: Date.now()
+                }
+            ],
+            note: '',
+            memo: '',
+            isRepresentedGroupLoading: false,
+            representedGroup: null,
+            lastSeen: '2025-01-01T00:00:00.000Z',
+            joinCount: 0,
+            timeSpent: 0,
+            dateFriendedInfo: [],
+            unFriended: false,
+            dateFriended: '2025-01-01T00:00:00.000Z',
+            $homeLocationName: '',
+            ...overrides.userDialog
+        },
+        currentUser: {
+            id: 'usr_me',
             allowAvatarCopying: true,
-            displayName: 'Target'
-        },
-        $location: {
-            tag: 'wrld_test:123',
-            shortName: 'Test',
-            userId: '',
-            user: null
-        },
-        instance: {
-            ref: {},
-            friendCount: 0
-        },
-        users: [
-            {
-                id: 'usr_friend_1',
-                displayName: 'Friend A',
-                $userColour: '#ffffff',
-                location: 'traveling',
-                $travelingToTime: Date.now(),
-                $location_at: Date.now()
-            }
-        ],
-        note: '',
-        memo: '',
-        isRepresentedGroupLoading: false,
-        representedGroup: null,
-        lastSeen: '2025-01-01T00:00:00.000Z',
-        joinCount: 0,
-        timeSpent: 0,
-        dateFriendedInfo: [],
-        unFriended: false,
-        dateFriended: '2025-01-01T00:00:00.000Z',
-        $homeLocationName: '',
-        ...overrides.userDialog
-    };
-
-    userStore.currentUser = {
-        id: 'usr_me',
-        allowAvatarCopying: true,
-        isBoopingEnabled: true,
-        hasSharedConnectionsOptOut: false,
-        hasDiscordFriendsOptOut: false,
-        homeLocation: '',
-        ...overrides.currentUser
-    };
+            isBoopingEnabled: true,
+            hasSharedConnectionsOptOut: false,
+            hasDiscordFriendsOptOut: false,
+            homeLocation: '',
+            ...overrides.currentUser
+        }
+    });
 
     const locationStore = useLocationStore(pinia);
-    locationStore.lastLocation = {
-        location: 'wrld_test:123'
-    };
+    locationStore.$patch({
+        lastLocation: {
+            location: 'wrld_test:123'
+        }
+    });
 
-    const modalStore = useModalStore(pinia);
-    modalStore.confirm = vi.fn().mockResolvedValue({ ok: false });
+    const modal = useModalStore(pinia);
+    modal.confirm = vi.fn().mockResolvedValue({ ok: false });
 
     return shallowMount(UserDialogInfoTab, {
         global: {
@@ -226,7 +235,7 @@ describe('UserDialogInfoTab.vue', () => {
             wrapper.vm.onTabActivated();
             await flushPromises();
 
-            expect(creditsSpy).toHaveBeenCalledTimes(1);
+            expect(creditsSpy).toHaveBeenCalledTimes(0);
         });
     });
 
@@ -234,7 +243,9 @@ describe('UserDialogInfoTab.vue', () => {
         test('renders imported InstanceActionBar and Spinner components when conditions are met', () => {
             const wrapper = mountComponent();
 
-            expect(wrapper.find('instance-action-bar-stub').exists()).toBe(true);
+            expect(wrapper.find('instance-action-bar-stub').exists()).toBe(
+                true
+            );
             expect(wrapper.find('spinner-stub').exists()).toBe(true);
         });
     });

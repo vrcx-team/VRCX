@@ -1,93 +1,67 @@
 <template>
-    <ContextMenu>
-        <ContextMenuTrigger as-child>
+    <UserContextMenu
+        :user-id="friend.id"
+        :state="friend.state"
+        :location="friend.ref?.location">
             <Card
-                class="friend-card x-hover-card p-0 gap-0 hover:bg-accent hover:shadow-sm"
+                class="friend-card x-hover-card hover:bg-muted relative"
                 :style="cardStyle"
                 @click="showUserDialog(friend.id)">
-                <div class="friend-card__header">
+                <div class="friend-card__header grid items-center mb-1.75">
                     <div>
-                        <Avatar
-                            class="friend-card__avatar"
-                            :style="{ width: `${avatarSize}px`, height: `${avatarSize}px` }">
+                        <Avatar :style="{ width: `${avatarSize}px`, height: `${avatarSize}px` }">
                             <AvatarImage :src="userImage(friend.ref, true)" />
-                            <AvatarFallback>{{ avatarFallback }}</AvatarFallback>
+                            <AvatarFallback>
+                                <User class="text-muted-foreground" :size="Math.max(16, 20 * cardScale)" />
+                            </AvatarFallback>
                         </Avatar>
                     </div>
-                    <span class="friend-card__status-dot rounded-full" :class="statusDotClass"></span>
-                    <div class="friend-card__name ml-0.5" :title="friend.name">{{ friend.name }}</div>
+                    <span
+                        class="friend-card__status-dot absolute rounded-full pointer-events-none"
+                        :class="statusDotClass"></span>
+                    <div
+                        class="friend-card__name font-semibold leading-[1.3] overflow-hidden text-ellipsis whitespace-nowrap ml-2"
+                        :title="friend.name">
+                        {{ friend.name }}
+                    </div>
                 </div>
-                <div class="friend-card__body">
-                    <div class="friend-card__signature ml-1" :title="friend.ref?.statusDescription">
-                        <Pencil v-if="friend.ref?.statusDescription" class="h-3.5 w-3.5 mr-1" style="opacity: 0.7" />
+                <div class="friend-card__body grid">
+                    <div
+                        class="friend-card__signature flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-muted-foreground"
+                        :title="friend.ref?.statusDescription">
+                        <Pencil v-if="friend.ref?.statusDescription" class="h-3.5 w-3.5 mr-0.5" style="opacity: 0.7" />
                         {{ friend.ref?.statusDescription || '&nbsp;' }}
                     </div>
-                    <div v-if="displayInstanceInfo" @click.stop class="friend-card__world" :title="friend.worldName">
+                    <div
+                        v-if="displayInstanceInfo"
+                        @click.stop
+                        class="friend-card__world flex items-center justify-start box-border max-w-full min-w-0 overflow-hidden"
+                        :title="friend.worldName">
                         <Location
-                            class="friend-card__location"
+                            class="friend-card__location flex w-full overflow-hidden leading-[1.3] wrap-break-word text-center"
                             :location="friend.ref?.location"
                             :traveling="friend.ref?.travelingToLocation"
+                            enable-context-menu
                             link />
                     </div>
                 </div>
             </Card>
-        </ContextMenuTrigger>
-        <ContextMenuContent>
-            <ContextMenuItem v-if="friend.state === 'online'" @click="friendRequestInvite">
-                {{ t('dialog.user.actions.request_invite') }}
-            </ContextMenuItem>
-            <ContextMenuItem v-if="isGameRunning" :disabled="!canInviteToMyLocation" @click="friendInvite">
-                {{ t('dialog.user.actions.invite') }}
-            </ContextMenuItem>
-            <ContextMenuItem :disabled="!currentUser?.isBoopingEnabled" @click="friendSendBoop">
-                {{ t('dialog.user.actions.send_boop') }}
-            </ContextMenuItem>
-            <ContextMenuSeparator v-if="friend.state === 'online' && hasFriendLocation" />
-            <ContextMenuItem
-                v-if="friend.state === 'online' && hasFriendLocation"
-                :disabled="!canJoinFriend"
-                @click="friendJoin">
-                {{ t('dialog.user.info.launch_invite_tooltip') }}
-            </ContextMenuItem>
-            <ContextMenuItem
-                v-if="friend.state === 'online' && hasFriendLocation"
-                :disabled="!canJoinFriend"
-                @click="friendInviteSelf">
-                {{ t('dialog.user.info.self_invite_tooltip') }}
-            </ContextMenuItem>
-        </ContextMenuContent>
-    </ContextMenu>
+    </UserContextMenu>
 </template>
 
 <script setup>
-    import {
-        ContextMenu,
-        ContextMenuContent,
-        ContextMenuItem,
-        ContextMenuSeparator,
-        ContextMenuTrigger
-    } from '@/components/ui/context-menu';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Card } from '@/components/ui/card';
-    import { Pencil } from 'lucide-vue-next';
+    import { Pencil, User } from 'lucide-vue-next';
     import { computed } from 'vue';
-    import { storeToRefs } from 'pinia';
-    import { toast } from 'vue-sonner';
-    import { useI18n } from 'vue-i18n';
 
-    import { isRealInstance, parseLocation, userImage, userStatusClass } from '../../../shared/utils';
-    import { useGameStore, useLaunchStore, useLocationStore, useUserStore } from '../../../stores';
-    import { instanceRequest, notificationRequest, queryRequest } from '../../../api';
-    import { checkCanInvite, checkCanInviteSelf } from '../../../shared/utils/invite.js';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
 
     import Location from '../../../components/Location.vue';
+    import UserContextMenu from '../../../components/UserContextMenu.vue';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
 
-    const { t } = useI18n();
-    const { showUserDialog, showSendBoopDialog } = useUserStore();
-    const launchStore = useLaunchStore();
-    const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
-    const { isGameRunning } = storeToRefs(useGameStore());
-    const { currentUser } = storeToRefs(useUserStore());
+    const { userImage, userStatusClass } = useUserDisplay();
 
     const props = defineProps({
         friend: {
@@ -108,16 +82,16 @@
         }
     });
 
-    const avatarSize = computed(() => 48 * props.cardScale);
+    const avatarSize = computed(() => Math.max(36, 46 * props.cardScale));
 
     const cardStyle = computed(() => ({
         '--card-scale': props.cardScale,
         '--card-spacing': props.cardSpacing,
         cursor: 'pointer',
-        padding: `${24 * props.cardScale * props.cardSpacing}px`
+        padding: `${54 * props.cardScale * props.cardSpacing}px`,
+        paddingBottom: `${36 * props.cardScale * props.cardSpacing}px !important`
     }));
 
-    const avatarFallback = computed(() => props.friend?.name?.charAt(0) ?? '?');
 
     const statusDotClass = computed(() => {
         const status = userStatusClass(props.friend.ref, props.friend.pendingOffline);
@@ -154,116 +128,27 @@
 
         return 'friend-card__status-dot--hidden';
     });
-
-    const canInviteToMyLocation = computed(() => checkCanInvite(lastLocation.value.location));
-
-    const hasFriendLocation = computed(() => {
-        const loc = props.friend.ref?.location;
-        return !!loc && isRealInstance(loc);
-    });
-
-    const canJoinFriend = computed(() => {
-        const loc = props.friend.ref?.location;
-        if (!loc || !isRealInstance(loc)) return false;
-        return checkCanInviteSelf(loc);
-    });
-
-    /**
-     *
-     */
-    function friendRequestInvite() {
-        notificationRequest.sendRequestInvite({ platform: 'standalonewindows' }, props.friend.id).then(() => {
-            toast.success('Request invite sent');
-        });
-    }
-
-    /**
-     *
-     */
-    function friendInvite() {
-        let currentLocation = lastLocation.value.location;
-        if (currentLocation === 'traveling') {
-            currentLocation = lastLocationDestination.value;
-        }
-        const L = parseLocation(currentLocation);
-        queryRequest.fetch('world', { worldId: L.worldId }).then((args) => {
-            notificationRequest
-                .sendInvite(
-                    {
-                        instanceId: L.tag,
-                        worldId: L.tag,
-                        worldName: args.ref.name
-                    },
-                    props.friend.id
-                )
-                .then(() => {
-                    toast.success(t('message.invite.sent'));
-                });
-        });
-    }
-
-    /**
-     *
-     */
-    function friendSendBoop() {
-        showSendBoopDialog(props.friend.id);
-    }
-
-    /**
-     *
-     */
-    function friendJoin() {
-        const loc = props.friend.ref?.location;
-        if (!loc) return;
-        launchStore.showLaunchDialog(loc);
-    }
-
-    /**
-     *
-     */
-    function friendInviteSelf() {
-        const loc = props.friend.ref?.location;
-        if (!loc) return;
-        const L = parseLocation(loc);
-        instanceRequest
-            .selfInvite({
-                instanceId: L.instanceId,
-                worldId: L.worldId
-            })
-            .then(() => {
-                toast.success(t('message.invite.self_sent'));
-            });
-    }
 </script>
 
 <style scoped>
     .friend-card {
         --card-scale: 1;
         --card-spacing: 1;
-        position: relative;
-        display: grid;
         gap: calc(14px * var(--card-scale) * var(--card-spacing));
-        border-radius: var(--radius-lg);
-        width: 100%;
         max-width: var(--friend-card-target-width, 220px);
         min-width: var(--friend-card-min-width, 220px);
-        box-sizing: border-box;
     }
 
     .friend-card__header {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        align-items: flex-start;
-        gap: calc(12px * var(--card-scale) * var(--card-spacing));
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: calc(10px * var(--card-scale) * var(--card-spacing));
     }
 
     .friend-card__status-dot {
-        position: absolute;
         top: calc(8px * var(--card-scale));
         right: calc(8px * var(--card-scale));
         inline-size: calc(12px * var(--card-scale));
         block-size: calc(12px * var(--card-scale));
-        pointer-events: none;
     }
 
     .friend-card__status-dot--hidden {
@@ -319,43 +204,29 @@
     }
 
     .friend-card__body {
-        display: grid;
-        gap: calc(12px * var(--card-scale) * var(--card-spacing));
+        gap: calc(8px * var(--card-scale) * var(--card-spacing));
     }
 
     .friend-card__name {
-        font-size: calc(17px * var(--card-scale));
-        font-weight: 600;
-        line-height: 1.2;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        font-size: calc(18px * var(--card-scale));
     }
 
     .friend-card__signature {
-        margin-top: calc(8px * var(--card-spacing));
-        font-size: calc(13px * var(--card-scale));
+        font-size: calc(12px * var(--card-scale));
         line-height: 1.4;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        display: flex;
-        align-items: center;
+        gap: calc(4px * var(--card-scale));
+    }
+
+    .friend-card__signature :deep(svg) {
+        margin-top: calc(1px * var(--card-scale));
     }
 
     .friend-card__world {
-        display: flex;
-        align-items: center;
-        justify-content: center;
         min-height: calc(40px * var(--card-scale));
-        padding: calc(8px * var(--card-scale)) calc(8px * var(--card-scale));
+        padding: calc(7px * var(--card-scale)) calc(8px * var(--card-scale));
         border-radius: calc(var(--radius-lg) * var(--card-scale));
         font-size: calc(12px * var(--card-scale));
         line-height: 1.3;
-        box-sizing: border-box;
-        max-width: 100%;
-        min-width: 0;
-        overflow: hidden;
     }
 
     :global(html.dark) .friend-card__world,
@@ -365,14 +236,8 @@
     }
 
     .friend-card__location {
-        display: flex;
-        width: 100%;
         max-height: calc(36px * var(--card-scale));
-        overflow: hidden;
-        line-height: 1.3;
         white-space: normal;
-        word-break: break-word;
-        text-align: center;
     }
 
     .friend-card__location :deep(.x-location__text) {

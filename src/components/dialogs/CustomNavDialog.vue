@@ -1,6 +1,6 @@
 <template>
     <Dialog :open="visible" @update:open="(open) => (open ? null : handleClose())">
-        <DialogContent class="sm:min-w-140">
+        <DialogContent class="sm:min-w-180">
             <DialogHeader>
                 <DialogTitle>{{ t('nav_menu.custom_nav.dialog_title') }}</DialogTitle>
             </DialogHeader>
@@ -30,6 +30,8 @@
                                     :drag-state="dragState"
                                     @edit-folder="openFolderEditor"
                                     @delete-folder="handleDeleteFolder"
+                                    @edit-dashboard="openDashboardEditor"
+                                    @delete-dashboard="handleDeleteDashboard"
                                     @hide="handleHideItem"
                                     @toggle="handleTreeToggle(item)" />
                             </template>
@@ -73,6 +75,9 @@
                         <Button variant="outline" @click="handleAddFolder">
                             {{ t('nav_menu.custom_nav.new_folder') }}
                         </Button>
+                        <Button variant="outline" @click="handleAddDashboard">
+                            {{ t('dashboard.new_dashboard') }}
+                        </Button>
                         <Button variant="ghost" class="text-destructive" @click="handleReset">
                             {{ t('nav_menu.custom_nav.restore_default') }}
                         </Button>
@@ -93,7 +98,13 @@
     <Dialog v-model:open="folderEditor.visible">
         <DialogContent class="sm:max-w-100">
             <DialogHeader>
-                <DialogTitle>{{ t('nav_menu.custom_nav.edit_folder') }}</DialogTitle>
+                <DialogTitle>
+                    {{
+                        folderEditor.editorType === 'dashboard'
+                            ? t('nav_menu.custom_nav.edit_dashboard')
+                            : t('nav_menu.custom_nav.edit_folder')
+                    }}
+                </DialogTitle>
             </DialogHeader>
             <div class="flex flex-col gap-3">
                 <InputGroupField
@@ -151,6 +162,7 @@
     import { DragDropProvider } from '@dnd-kit/vue';
     import { isSortable } from '@dnd-kit/vue/sortable';
     import { openExternalLink } from '@/shared/utils/common';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import dayjs from 'dayjs';
@@ -158,7 +170,10 @@
     import { InputGroupButton, InputGroupField } from '../ui/input-group';
     import { Separator } from '../ui/separator';
     import { Tree } from '../ui/tree';
+    import { isToolNavKey } from '../../shared/constants';
     import { navDefinitions } from '../../shared/constants/ui.js';
+    import { DASHBOARD_NAV_KEY_PREFIX, DEFAULT_DASHBOARD_ICON } from '../../shared/constants/dashboard';
+    import { useDashboardStore, useModalStore, useNotificationsSettingsStore } from '../../stores';
 
     import SortableTreeNode from './SortableTreeNode.vue';
 
@@ -175,14 +190,25 @@
             type: Array,
             default: () => []
         },
+        defaultHiddenKeys: {
+            type: Array,
+            default: () => []
+        },
         defaultLayout: {
+            type: Array,
+            default: () => []
+        },
+        definitions: {
             type: Array,
             default: () => []
         }
     });
 
-    const emit = defineEmits(['update:visible', 'save']);
+    const emit = defineEmits(['update:visible', 'save', 'dashboard-created']);
     const { t } = useI18n();
+    const dashboardStore = useDashboardStore();
+    const modalStore = useModalStore();
+    const { notificationLayout } = storeToRefs(useNotificationsSettingsStore());
 
     const cloneLayout = (source) => {
         if (!Array.isArray(source)) return [];
@@ -192,6 +218,7 @@
                     type: 'folder',
                     id: entry.id,
                     name: entry.name,
+                    nameKey: entry.nameKey || null,
                     icon: entry.icon,
                     items: Array.isArray(entry.items) ? [...entry.items] : []
                 };
@@ -209,6 +236,7 @@
         visible: false,
         isEditing: false,
         editingId: null,
+        editorType: 'folder',
         data: { id: '', name: '', icon: '' }
     });
 
@@ -242,49 +270,61 @@
 
     const definitionsMap = computed(() => {
         const map = new Map();
-        navDefinitions.forEach((def) => {
-            if (def?.key) map.set(def.key, def);
+        const source = props.definitions?.length ? props.definitions : navDefinitions;
+        source.forEach((def) => {
+            if (def?.key) {
+                if (def.key === 'notification' && notificationLayout.value === 'notification-center') {
+                    return;
+                }
+                map.set(def.key, def);
+            }
         });
         return map;
     });
 
     const treeItems = computed(() => {
-        return localLayout.value.map((entry) => {
-            if (entry.type === 'folder') {
-                const children = (entry.items || [])
-                    .map((key) => {
-                        const def = definitionsMap.value.get(key);
-                        if (!def) return null;
-                        return { id: key, type: 'item', key, level: 1, parentId: entry.id };
-                    })
-                    .filter(Boolean);
+        return localLayout.value
+            .map((entry) => {
+                if (entry.type === 'folder') {
+                    const children = (entry.items || [])
+                        .map((key) => {
+                            const def = definitionsMap.value.get(key);
+                            if (!def) return null;
+                            return { id: key, type: 'item', key, level: 1, parentId: entry.id };
+                        })
+                        .filter(Boolean);
 
-                const folderChildren = children.length
-                    ? children
-                    : [{ id: `${entry.id}__placeholder`, _placeholder: true, level: 1 }];
+                    const folderChildren = children.length
+                        ? children
+                        : [{ id: `${entry.id}__placeholder`, _placeholder: true, level: 1 }];
 
-                return {
-                    id: entry.id,
-                    type: 'folder',
-                    name: entry.name,
-                    icon: entry.icon,
-                    level: 0,
-                    children: folderChildren
-                };
-            }
-            return { id: entry.key, type: 'item', key: entry.key, level: 0 };
-        });
+                    return {
+                        id: entry.id,
+                        type: 'folder',
+                        name: entry.name,
+                        icon: entry.icon,
+                        level: 0,
+                        children: folderChildren
+                    };
+                }
+                if (!definitionsMap.value.has(entry.key)) return null;
+                return { id: entry.key, type: 'item', key: entry.key, level: 0 };
+            })
+            .filter(Boolean);
     });
 
     const expandedKeys = ref([]);
 
     const hiddenItems = computed(() =>
-        navDefinitions
-            .filter((def) => hiddenKeySet.value.has(def.key))
+        (props.definitions?.length ? props.definitions : navDefinitions)
+            .filter(
+                (def) =>
+                    hiddenKeySet.value.has(def.key) && !isToolNavKey(def.key)
+            )
             .map((def) => ({
                 key: def.key,
                 icon: def.icon,
-                label: t(def.labelKey)
+                label: def.isDashboard ? def.labelKey : t(def.labelKey)
             }))
     );
 
@@ -297,6 +337,11 @@
     };
 
     const handleHideItem = (key) => {
+        if (isToolNavKey(key)) {
+            removeFromLayout(key);
+            return;
+        }
+
         let placement = null;
         for (let i = 0; i < localLayout.value.length; i++) {
             const entry = localLayout.value[i];
@@ -401,12 +446,7 @@
             if (byId) return byId;
         }
 
-        if (
-            allowIndexFallback &&
-            typeof entity.index === 'number' &&
-            entity.index >= 0 &&
-            entity.index < nodes.length
-        ) {
+        if (allowIndexFallback && typeof entity.index === 'number' && entity.index >= 0 && entity.index < nodes.length) {
             return nodes[entity.index] || null;
         }
 
@@ -595,8 +635,7 @@
         const sourceNode =
             (sourceIdSnapshot
                 ? visibleNodes.find(
-                      (node) =>
-                          node.id === sourceIdSnapshot && node.type === (sourceIsFolderSnapshot ? 'folder' : 'item')
+                      (node) => node.id === sourceIdSnapshot && node.type === (sourceIsFolderSnapshot ? 'folder' : 'item')
                   )
                 : null) || resolveNodeFromDnDEntity(source, visibleNodes);
         if (!sourceNode) return;
@@ -645,13 +684,31 @@
         if (!entry) return;
         folderEditor.isEditing = true;
         folderEditor.editingId = folderId;
+        folderEditor.editorType = 'folder';
         folderEditor.data = { id: entry.id, name: entry.name, icon: entry.icon };
+        folderEditor.visible = true;
+    };
+
+    const openDashboardEditor = (dashboardKey) => {
+        const dashboardId = String(dashboardKey || '').replace(DASHBOARD_NAV_KEY_PREFIX, '');
+        const dashboard = dashboardStore.getDashboard(dashboardId);
+        if (!dashboard) return;
+
+        folderEditor.isEditing = true;
+        folderEditor.editingId = dashboardKey;
+        folderEditor.editorType = 'dashboard';
+        folderEditor.data = {
+            id: dashboardKey,
+            name: dashboard.name,
+            icon: dashboard.icon || ''
+        };
         folderEditor.visible = true;
     };
 
     const handleAddFolder = () => {
         folderEditor.isEditing = false;
         folderEditor.editingId = null;
+        folderEditor.editorType = 'folder';
         folderEditor.data = {
             id: createFolderId(),
             name: '',
@@ -660,13 +717,31 @@
         folderEditor.visible = true;
     };
 
-    const handleFolderEditorSave = () => {
+    const handleAddDashboard = async () => {
+        const dashboard = await dashboardStore.createDashboard(t('dashboard.default_name'));
+        dashboardStore.setEditingDashboardId(dashboard.id);
+        localLayout.value.push({
+            type: 'item',
+            key: `${DASHBOARD_NAV_KEY_PREFIX}${dashboard.id}`
+        });
+        localLayout.value = [...localLayout.value];
+        emit('dashboard-created', dashboard.id, cloneLayout(localLayout.value), [...hiddenKeySet.value]);
+    };
+
+    const handleFolderEditorSave = async () => {
         if (!folderEditor.data.name?.trim()) return;
 
-        if (folderEditor.isEditing) {
+        if (folderEditor.editorType === 'dashboard') {
+            const dashboardId = String(folderEditor.editingId || '').replace(DASHBOARD_NAV_KEY_PREFIX, '');
+            await dashboardStore.updateDashboard(dashboardId, {
+                name: folderEditor.data.name.trim(),
+                icon: folderEditor.data.icon?.trim() || DEFAULT_DASHBOARD_ICON
+            });
+        } else if (folderEditor.isEditing) {
             const entry = localLayout.value.find((e) => e.type === 'folder' && e.id === folderEditor.editingId);
             if (entry) {
                 entry.name = folderEditor.data.name.trim();
+                entry.nameKey = null;
                 entry.icon = folderEditor.data.icon?.trim() || DEFAULT_FOLDER_ICON;
                 localLayout.value = [...localLayout.value];
             }
@@ -675,6 +750,7 @@
                 type: 'folder',
                 id: folderEditor.data.id,
                 name: folderEditor.data.name.trim(),
+                nameKey: null,
                 icon: folderEditor.data.icon?.trim() || DEFAULT_FOLDER_ICON,
                 items: []
             });
@@ -686,6 +762,44 @@
         folderEditor.visible = false;
     };
 
+    const removeFromLayout = (key) => {
+        let removed = false;
+        for (let i = 0; i < localLayout.value.length; i++) {
+            const entry = localLayout.value[i];
+            if (entry.type === 'item' && entry.key === key) {
+                localLayout.value.splice(i, 1);
+                removed = true;
+                break;
+            }
+            if (entry.type === 'folder') {
+                const idx = entry.items?.indexOf(key);
+                if (idx !== undefined && idx >= 0) {
+                    entry.items.splice(idx, 1);
+                    removed = true;
+                }
+            }
+        }
+        if (removed) {
+            hiddenKeySet.value.delete(key);
+            hiddenPlacement.value.delete(key);
+            localLayout.value = [...localLayout.value];
+        }
+    };
+
+    const handleDeleteDashboard = async (dashboardKey) => {
+        const dashboardId = String(dashboardKey || '').replace(DASHBOARD_NAV_KEY_PREFIX, '');
+        const { ok } = await modalStore.confirm({
+            title: t('dashboard.confirmations.delete_title'),
+            description: t('dashboard.confirmations.delete_description'),
+            destructive: true
+        });
+        if (!ok) {
+            return;
+        }
+        await dashboardStore.deleteDashboard(dashboardId);
+        removeFromLayout(dashboardKey);
+    };
+
     const handleSave = () => {
         const cleanedLayout = localLayout.value.filter(
             (entry) => !(entry.type === 'folder' && (!entry.items || entry.items.length === 0))
@@ -695,7 +809,7 @@
 
     const handleReset = () => {
         localLayout.value = cloneLayout(props.defaultLayout || []);
-        hiddenKeySet.value = new Set();
+        hiddenKeySet.value = new Set(props.defaultHiddenKeys || []);
         hiddenPlacement.value = new Map();
         expandedKeys.value = localLayout.value.filter((e) => e.type === 'folder').map((e) => e.id);
     };

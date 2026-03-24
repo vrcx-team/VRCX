@@ -33,10 +33,17 @@ vi.mock('../../../../shared/utils', () => ({
     parseLocation: vi.fn(() => ({ worldId: 'wrld_test', tag: 'wrld_test~123' }))
 }));
 
-vi.mock('../../../../service/database', () => ({
+vi.mock('../../../../services/database', () => ({
     database: {
         addFriendLogHistory: vi.fn()
     }
+}));
+
+vi.mock('../../../../composables/useRecentActions', () => ({
+    recordRecentAction: vi.fn(),
+    useRecentActions: () => ({
+        isRecentAction: vi.fn(() => false)
+    })
 }));
 
 // Import mocks after vi.mock
@@ -48,7 +55,7 @@ const {
     playerModerationRequest,
     miscRequest
 } = await import('../../../../api');
-const { database } = await import('../../../../service/database');
+const { database } = await import('../../../../services/database');
 
 function createMockUserDialog() {
     return ref({
@@ -154,7 +161,7 @@ describe('useUserDialogCommands', () => {
             userDialogCommand('Share');
             expect(copyToClipboard).toHaveBeenCalledWith(
                 'https://vrchat.com/home/user/usr_test123',
-                'User URL copied to clipboard'
+                'message.user.url_copied'
             );
         });
 
@@ -200,7 +207,7 @@ describe('useUserDialogCommands', () => {
             );
             userDialogCommand('Show Fallback Avatar Details');
             expect(deps.toast.error).toHaveBeenCalledWith(
-                'No fallback avatar set'
+                'message.user.no_fallback_avatar'
             );
         });
 

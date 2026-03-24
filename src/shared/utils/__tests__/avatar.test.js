@@ -7,7 +7,7 @@ vi.mock('../../../views/Feed/Feed.vue', () => ({
     default: { template: '<div />' }
 }));
 vi.mock('../../../views/Feed/columns.jsx', () => ({ columns: [] }));
-vi.mock('../../../plugin/router', () => ({
+vi.mock('../../../plugins/router', () => ({
     router: {
         beforeEach: vi.fn(),
         push: vi.fn(),

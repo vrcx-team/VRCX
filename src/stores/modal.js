@@ -3,37 +3,39 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 /**
- * @typedef {Object} ConfirmResult
+ * @typedef {object} ConfirmResult
  * @property {boolean} ok
  * @property {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
  */
 
 /**
- * @typedef {Object} ConfirmOptions
+ * @typedef {object} ConfirmOptions
  * @property {string} title
  * @property {string} description
  * @property {string=} confirmText
  * @property {string=} cancelText
  * @property {boolean=} dismissible  // true: allow esc/outside, false: block
+ * @property {boolean=} destructive  // true: use destructive variant for confirm button
  */
 
 /**
- * @typedef {Object} AlertOptions
+ * @typedef {object} AlertOptions
  * @property {string} title
  * @property {string} description
  * @property {string=} confirmText
  * @property {boolean=} dismissible
+ * @property {boolean=} destructive  // true: use destructive variant for confirm button
  */
 
 /**
- * @typedef {Object} PromptResult
+ * @typedef {object} PromptResult
  * @property {boolean} ok
  * @property {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
  * @property {string} value
  */
 
 /**
- * @typedef {Object} PromptOptions
+ * @typedef {object} PromptOptions
  * @property {string} title
  * @property {string} description
  * @property {string=} confirmText
@@ -46,7 +48,7 @@ import { useI18n } from 'vue-i18n';
  */
 
 /**
- * @typedef {Object} OtpPromptOptions
+ * @typedef {object} OtpPromptOptions
  * @property {string} title
  * @property {string} description
  * @property {'totp' | 'emailOtp' | 'otp'} mode
@@ -65,6 +67,7 @@ export const useModalStore = defineStore('Modal', () => {
     const alertOkText = ref('');
     const alertCancelText = ref('');
     const alertDismissible = ref(true);
+    const alertDestructive = ref(false);
 
     const promptOpen = ref(false);
     const promptTitle = ref('');
@@ -155,6 +158,7 @@ export const useModalStore = defineStore('Modal', () => {
         alertTitle.value = options.title;
         alertDescription.value = options.description;
         alertDismissible.value = options.dismissible !== false;
+        alertDestructive.value = options.destructive === true;
 
         if (mode === 'alert') {
             alertOkText.value =
@@ -381,6 +385,7 @@ export const useModalStore = defineStore('Modal', () => {
         alertOkText,
         alertCancelText,
         alertDismissible,
+        alertDestructive,
         promptOpen,
         promptTitle,
         promptDescription,

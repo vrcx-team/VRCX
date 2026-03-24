@@ -21,16 +21,19 @@ const mocks = vi.hoisted(() => ({
     photonColumnToggleVisibility: vi.fn()
 }));
 
-vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
-}));
+vi.mock('pinia', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        storeToRefs: (store) => store
+    };
+});
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
-    ,
-            locale: require('vue').ref('en')
-        })
+        t: (key) => key,
+        locale: require('vue').ref('en')
+    })
 }));
 
 vi.mock('../../../stores', () => ({
@@ -40,12 +43,18 @@ vi.mock('../../../stores', () => ({
     usePhotonStore: () => ({
         photonLoggingEnabled: mocks.photonLoggingEnabled,
         chatboxUserBlacklist: mocks.chatboxUserBlacklist,
-        saveChatboxUserBlacklist: (...args) => mocks.saveChatboxUserBlacklist(...args)
+        saveChatboxUserBlacklist: (...args) =>
+            mocks.saveChatboxUserBlacklist(...args),
+        photonEventTable: ref({ data: [], pageSize: 10 }),
+        photonEventTablePrevious: ref({ data: [], pageSize: 10 }),
+        photonEventTableTypeFilter: ref([]),
+        photonEventTableFilter: ref(''),
+        photonEventIcon: ref(false),
+        photonEventTableFilterChange: vi.fn(),
+        showUserFromPhotonId: vi.fn()
     }),
     useUserStore: () => ({
-        currentUser: mocks.currentUser,
-        showUserDialog: (...args) => mocks.showUserDialog(...args),
-        lookupUser: (...args) => mocks.lookupUser(...args)
+        currentUser: mocks.currentUser
     }),
     useWorldStore: () => ({
         showWorldDialog: (...args) => mocks.showWorldDialog(...args)
@@ -57,11 +66,30 @@ vi.mock('../../../stores', () => ({
         currentInstanceLocation: mocks.currentInstanceLocation,
         currentInstanceWorld: mocks.currentInstanceWorld,
         currentInstanceUsersData: mocks.currentInstanceUsersData,
-        getCurrentInstanceUserList: (...args) => mocks.getCurrentInstanceUserList(...args)
+        getCurrentInstanceUserList: (...args) =>
+            mocks.getCurrentInstanceUserList(...args)
     }),
     useGalleryStore: () => ({
-        showFullscreenImageDialog: (...args) => mocks.showFullscreenImageDialog(...args)
+        showFullscreenImageDialog: (...args) =>
+            mocks.showFullscreenImageDialog(...args)
+    }),
+    useSearchStore: () => ({
+        stringComparer: { value: (a, b) => a.localeCompare(b) }
+    }),
+    useAvatarStore: () => ({
+        showAvatarDialog: vi.fn()
+    }),
+    useGroupStore: () => ({
+        showGroupDialog: vi.fn()
+    }),
+    useVrcxStore: () => ({
+        ipcEnabled: ref(false)
     })
+}));
+
+vi.mock('../../../coordinators/userCoordinator', () => ({
+    showUserDialog: (...args) => mocks.showUserDialog(...args),
+    lookupUser: (...args) => mocks.lookupUser(...args)
 }));
 
 vi.mock('../../../lib/table/useVrcxVueTable', () => ({
@@ -71,17 +99,12 @@ vi.mock('../../../lib/table/useVrcxVueTable', () => ({
             getColumn: (id) =>
                 id === 'photonId'
                     ? {
-                          toggleVisibility: (...args) => mocks.photonColumnToggleVisibility(...args)
+                          toggleVisibility: (...args) =>
+                              mocks.photonColumnToggleVisibility(...args)
                       }
                     : null,
             getRowModel: () => ({ rows: mocks.currentInstanceUsersData.value })
         }
-    })
-}));
-
-vi.mock('../../../composables/useDataTableScrollHeight', () => ({
-    useDataTableScrollHeight: () => ({
-        tableStyle: {}
     })
 }));
 
@@ -132,12 +155,14 @@ vi.mock('../dialogs/ChatboxBlacklistDialog.vue', () => ({
     }
 }));
 
-vi.mock('lucide-vue-next', () => ({
-    Apple: { template: '<span />' },
-    Home: { template: '<span />' },
-    Monitor: { template: '<span />' },
-    Smartphone: { template: '<span />' }
-}));
+vi.mock('lucide-vue-next', async (importOriginal) => {
+    const actual = await importOriginal();
+    const stubs = {};
+    for (const key of Object.keys(actual)) {
+        stubs[key] = { template: '<span />' };
+    }
+    return stubs;
+});
 
 import PlayerList from '../PlayerList.vue';
 
@@ -145,7 +170,9 @@ describe('PlayerList.vue', () => {
     beforeEach(() => {
         mocks.randomUserColours = ref(false);
         mocks.photonLoggingEnabled = ref(false);
-        mocks.chatboxUserBlacklist = ref(new Map([['usr_blocked', 'Blocked User']]));
+        mocks.chatboxUserBlacklist = ref(
+            new Map([['usr_blocked', 'Blocked User']])
+        );
         mocks.lastLocation = ref({
             playerList: new Set(),
             friendList: new Set(),
@@ -212,7 +239,9 @@ describe('PlayerList.vue', () => {
         });
 
         await wrapper.get('[data-testid="row-click-with-id"]').trigger('click');
-        await wrapper.get('[data-testid="row-click-without-id"]').trigger('click');
+        await wrapper
+            .get('[data-testid="row-click-without-id"]')
+            .trigger('click');
 
         expect(mocks.showUserDialog).toHaveBeenCalledWith('usr_1');
         expect(mocks.lookupUser).toHaveBeenCalledWith({ displayName: 'Bob' });
@@ -245,11 +274,19 @@ describe('PlayerList.vue', () => {
             }
         });
 
-        expect(wrapper.get('[data-testid="chatbox-dialog"]').attributes('data-visible')).toBe('false');
+        expect(
+            wrapper
+                .get('[data-testid="chatbox-dialog"]')
+                .attributes('data-visible')
+        ).toBe('false');
         wrapper.vm.showChatboxBlacklistDialog();
         await nextTick();
 
-        expect(wrapper.get('[data-testid="chatbox-dialog"]').attributes('data-visible')).toBe('true');
+        expect(
+            wrapper
+                .get('[data-testid="chatbox-dialog"]')
+                .attributes('data-visible')
+        ).toBe('true');
     });
 
     test('deletes chatbox blacklist user and refreshes list', async () => {
@@ -262,7 +299,9 @@ describe('PlayerList.vue', () => {
             }
         });
 
-        await wrapper.get('[data-testid="emit-delete-chatbox"]').trigger('click');
+        await wrapper
+            .get('[data-testid="emit-delete-chatbox"]')
+            .trigger('click');
 
         expect(mocks.chatboxUserBlacklist.value.has('usr_blocked')).toBe(false);
         expect(mocks.saveChatboxUserBlacklist).toHaveBeenCalledTimes(1);

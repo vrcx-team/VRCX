@@ -10,15 +10,14 @@ import {
     checkCanInvite,
     createDefaultNotificationRef,
     createDefaultNotificationV2Ref,
-    escapeTag,
     executeWithBackoff,
     findUserByDisplayName,
-    getUserMemo,
     parseLocation,
     parseNotificationDetails,
     removeFromArray,
     sanitizeNotificationJson
 } from '../../shared/utils';
+import { getUserMemo } from '../../coordinators/memoCoordinator';
 import {
     friendRequest,
     instanceRequest,
@@ -30,20 +29,23 @@ import {
     getUserIdFromNoty as getUserIdFromNotyBase,
     toNotificationText
 } from '../../shared/utils/notificationMessage';
-import { database, dbVars } from '../../service/database';
+import { database, dbVars } from '../../services/database';
 import {
     getNotificationCategory,
     getNotificationTs
 } from '../../shared/utils/notificationCategory';
-import { AppDebug } from '../../service/appConfig';
+import { AppDebug } from '../../services/appConfig';
 import { createOverlayDispatch } from './overlayDispatch';
 import { useAdvancedSettingsStore } from '../settings/advanced';
 import { useAppearanceSettingsStore } from '../settings/appearance';
 import { useFavoriteStore } from '../favorite';
 import { useFriendStore } from '../friend';
+import { handleFriendAdd } from '../../coordinators/friendRelationshipCoordinator';
 import { useGameStore } from '../game';
 import { useGeneralSettingsStore } from '../settings/general';
 import { useGroupStore } from '../group';
+import { showGroupDialog } from '../../coordinators/groupCoordinator';
+import { showUserDialog } from '../../coordinators/userCoordinator';
 import { useInstanceStore } from '../instance';
 import { useLocationStore } from '../location';
 import { useModalStore } from '../modal';
@@ -52,9 +54,9 @@ import { useSharedFeedStore } from '../sharedFeed';
 import { useUiStore } from '../ui';
 import { useUserStore } from '../user';
 import { useWristOverlaySettingsStore } from '../settings/wristOverlay';
-import { watchState } from '../../service/watchState';
+import { watchState } from '../../services/watchState';
 
-import configRepository from '../../service/config';
+import configRepository from '../../services/config';
 
 export const useNotificationStore = defineStore('Notification', () => {
     const { t } = useI18n();
@@ -72,7 +74,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     const sharedFeedStore = useSharedFeedStore();
     const instanceStore = useInstanceStore();
     const modalStore = useModalStore();
-    const groupStore = useGroupStore();
 
     const notificationInitStatus = ref(false);
     const notificationTable = ref({
@@ -344,7 +345,13 @@ export const useNotificationStore = defineStore('Notification', () => {
                 }
             }
         }
-        if (!checkCanInvite(currentLocation)) {
+        if (
+            !checkCanInvite(currentLocation, {
+                currentUserId: userStore.currentUser.id,
+                lastLocationStr: locationStore.lastLocation.location,
+                cachedInstances: instanceStore.cachedInstances
+            })
+        ) {
             return;
         }
 
@@ -428,7 +435,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     const seeQueue = [];
     const seenIds = new Set();
     let seeProcessing = false;
-    const SEE_CONCURRENCY = 2;
 
     /**
      *
@@ -436,48 +442,43 @@ export const useNotificationStore = defineStore('Notification', () => {
     async function processSeeQueue() {
         if (seeProcessing) return;
         seeProcessing = true;
-        const worker = async () => {
-            let item;
-            while ((item = seeQueue.shift())) {
-                const { id, version } = item;
-                try {
-                    await executeWithBackoff(
-                        async () => {
-                            if (version >= 2) {
-                                const args =
-                                    await notificationRequest.seeNotificationV2(
-                                        { notificationId: id }
-                                    );
-                                handleNotificationV2Update({
-                                    params: { notificationId: id },
-                                    json: { ...args.json, seen: true }
-                                });
-                            } else {
-                                await notificationRequest.seeNotification({
+        let item;
+        while ((item = seeQueue.shift())) {
+            const { id, version } = item;
+            try {
+                await executeWithBackoff(
+                    async () => {
+                        if (version >= 2) {
+                            const args =
+                                await notificationRequest.seeNotificationV2({
                                     notificationId: id
                                 });
-                                handleNotificationSee(id);
-                            }
-                        },
-                        {
-                            maxRetries: 3,
-                            baseDelay: 1000,
-                            shouldRetry: (err) =>
-                                err?.status === 429 ||
-                                (err?.message || '').includes('429')
+                            handleNotificationV2Update({
+                                params: { notificationId: id },
+                                json: { ...args.json, seen: true }
+                            });
+                        } else {
+                            await notificationRequest.seeNotification({
+                                notificationId: id
+                            });
+                            handleNotificationSee(id);
                         }
-                    );
-                } catch (err) {
-                    console.warn('Failed to mark notification as seen:', id);
-                    if (version >= 2) {
-                        handleNotificationV2Hide(id);
+                    },
+                    {
+                        maxRetries: 3,
+                        baseDelay: 1000,
+                        shouldRetry: (err) =>
+                            err?.status === 429 ||
+                            (err?.message || '').includes('429')
                     }
+                );
+            } catch (err) {
+                console.warn('Failed to mark notification as seen:', id);
+                if (version >= 2) {
+                    handleNotificationV2Hide(id);
                 }
             }
-        };
-        await Promise.all(
-            Array.from({ length: SEE_CONCURRENCY }, () => worker())
-        );
+        }
         seeProcessing = false;
     }
 
@@ -531,7 +532,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                 notificationId: ref.id
             }
         });
-        friendStore.handleFriendAdd({
+        handleFriendAdd({
             params: {
                 userId: ref.senderUserId
             }
@@ -539,7 +540,6 @@ export const useNotificationStore = defineStore('Notification', () => {
 
         const D = userStore.userDialog;
         if (
-            D.visible === false ||
             typeof args.ref === 'undefined' ||
             args.ref.type !== 'friendRequest' ||
             args.ref.senderUserId !== D.id
@@ -547,6 +547,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             return;
         }
         D.isFriend = true;
+        D.incomingRequest = false;
     }
 
     /**
@@ -556,11 +557,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     function handleNotificationExpire(args) {
         const { ref } = args;
         const D = userStore.userDialog;
-        if (
-            D.visible === false ||
-            ref.type !== 'friendRequest' ||
-            ref.senderUserId !== D.id
-        ) {
+        if (ref.type !== 'friendRequest' || ref.senderUserId !== D.id) {
             return;
         }
         D.incomingRequest = false;
@@ -1017,8 +1014,11 @@ export const useNotificationStore = defineStore('Notification', () => {
         if (id) return id;
         if (noty.displayName) {
             return (
-                findUserByDisplayName(userStore.cachedUsers, noty.displayName)
-                    ?.id ?? ''
+                findUserByDisplayName(
+                    userStore.cachedUsers,
+                    noty.displayName,
+                    userStore.cachedUserIdsByDisplayName
+                )?.id ?? ''
             );
         }
         return '';
@@ -1085,7 +1085,8 @@ export const useNotificationStore = defineStore('Notification', () => {
         } else if (noty.displayName) {
             const ref = findUserByDisplayName(
                 userStore.cachedUsers,
-                noty.displayName
+                noty.displayName,
+                userStore.cachedUserIdsByDisplayName
             );
             if (ref) {
                 noty.isFriend = friendStore.friends.has(ref.id);
@@ -1338,7 +1339,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                 console.log('Notification response', args);
                 if (!args.json) return;
                 handleNotificationV2Hide(notificationId);
-                toast.success(escapeTag(args.json));
+                toast.success(args.json);
             })
             .catch(() => {
                 handleNotificationV2Hide(notificationId);
@@ -1415,10 +1416,10 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         switch (data[0]) {
             case 'group':
-                groupStore.showGroupDialog(data[1]);
+                showGroupDialog(data[1]);
                 break;
             case 'user':
-                userStore.showUserDialog(data[1]);
+                showUserDialog(data[1]);
                 break;
             case 'event':
                 const ids = data[1].split(',');
@@ -1427,7 +1428,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                     return;
                 }
 
-                groupStore.showGroupDialog(ids[0]);
+                showGroupDialog(ids[0]);
                 // ids[1] cal_ is the event id
                 break;
             case 'openNotificationLink':

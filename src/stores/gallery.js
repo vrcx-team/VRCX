@@ -15,12 +15,12 @@ import {
     vrcPlusIconRequest,
     vrcPlusImageRequest
 } from '../api';
-import { AppDebug } from '../service/appConfig';
-import { handleImageUploadInput } from '../shared/utils/imageUpload';
-import { router } from '../plugin/router';
+import { AppDebug } from '../services/appConfig';
+import { handleImageUploadInput } from '../coordinators/imageUploadCoordinator';
+import { router } from '../plugins/router';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useModalStore } from './modal';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
 import * as workerTimers from 'worker-timers';
 
@@ -363,7 +363,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         const print = args.json;
         const createdAt = getPrintLocalDate(print);
         try {
-            const owner = await queryRequest.fetch('user', {
+            const owner = await queryRequest.fetch('user.dialog', {
                 userId: print.ownerId
             });
             console.log(
@@ -558,7 +558,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
             return;
         }
 
-        const userArgs = await queryRequest.fetch('user', {
+        const userArgs = await queryRequest.fetch('user.dialog', {
             userId: args.json.holderId
         });
         const displayName = userArgs.json?.displayName ?? '';

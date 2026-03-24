@@ -5,9 +5,9 @@ import { useI18n } from 'vue-i18n';
 
 import { instanceRequest } from '../api';
 import { parseLocation } from '../shared/utils';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 export const useLaunchStore = defineStore('Launch', () => {
     const isLaunchOptionsDialogVisible = ref(false);

@@ -1,13 +1,14 @@
 import { createPinia } from 'pinia';
 
-import { getSentry, isSentryOptedIn } from '../plugin';
-import { createPiniaActionTrailPlugin } from '../plugin/piniaActionTrail';
+import { getSentry, isSentryOptedIn } from '../plugins';
 import { useAdvancedSettingsStore } from './settings/advanced';
+import { useActivityStore } from './activity';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAuthStore } from './auth';
 import { useAvatarProviderStore } from './avatarProvider';
 import { useAvatarStore } from './avatar';
 import { useChartsStore } from './charts';
+import { useDashboardStore } from './dashboard';
 import { useDiscordPresenceSettingsStore } from './settings/discordPresence';
 import { useFavoriteStore } from './favorite';
 import { useFeedStore } from './feed';
@@ -16,7 +17,7 @@ import { useGalleryStore } from './gallery';
 import { useGameLogStore } from './gameLog';
 import { useGameStore } from './game';
 import { useGeneralSettingsStore } from './settings/general';
-import { useGlobalSearchStore } from './globalSearch';
+import { useQuickSearchStore } from './quickSearch';
 import { useGroupStore } from './group';
 import { useInstanceStore } from './instance';
 import { useInviteStore } from './invite';
@@ -30,6 +31,7 @@ import { usePhotonStore } from './photon';
 import { useSearchStore } from './search';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
+import { useToolsStore } from './tools';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
@@ -40,11 +42,6 @@ import { useWorldStore } from './world';
 import { useWristOverlaySettingsStore } from './settings/wristOverlay';
 
 export const pinia = createPinia();
-
-function registerPiniaActionTrailPlugin() {
-    if (!NIGHTLY) return;
-    pinia.use(createPiniaActionTrailPlugin({ maxEntries: 200 }));
-}
 
 async function registerSentryPiniaPlugin() {
     if (!NIGHTLY) return;
@@ -123,14 +120,12 @@ async function registerSentryPiniaPlugin() {
 
 export async function initPiniaPlugins() {
     await registerSentryPiniaPlugin();
-    setTimeout(() => {
-        registerPiniaActionTrailPlugin();
-    }, 60000);
 }
 
 export function createGlobalStores() {
     return {
         advancedSettings: useAdvancedSettingsStore(),
+        activity: useActivityStore(),
         appearanceSettings: useAppearanceSettingsStore(),
         discordPresenceSettings: useDiscordPresenceSettingsStore(),
         generalSettings: useGeneralSettingsStore(),
@@ -153,6 +148,7 @@ export function createGlobalStores() {
         notification: useNotificationStore(),
         feed: useFeedStore(),
         ui: useUiStore(),
+        tools: useToolsStore(),
         gameLog: useGameLogStore(),
         search: useSearchStore(),
         game: useGameStore(),
@@ -164,8 +160,9 @@ export function createGlobalStores() {
         auth: useAuthStore(),
         vrcStatus: useVrcStatusStore(),
         charts: useChartsStore(),
+        dashboard: useDashboardStore(),
         modal: useModalStore(),
-        globalSearch: useGlobalSearchStore()
+        quickSearch: useQuickSearchStore()
     };
 }
 
@@ -189,12 +186,15 @@ export {
     usePhotonStore,
     useSearchStore,
     useChartsStore,
+    useDashboardStore,
     useAdvancedSettingsStore,
+    useActivityStore,
     useAppearanceSettingsStore,
     useDiscordPresenceSettingsStore,
     useGeneralSettingsStore,
     useNotificationsSettingsStore,
     useWristOverlaySettingsStore,
+    useToolsStore,
     useUiStore,
     useUserStore,
     useVrStore,
@@ -205,5 +205,5 @@ export {
     useUpdateLoopStore,
     useVrcStatusStore,
     useModalStore,
-    useGlobalSearchStore
+    useQuickSearchStore
 };

@@ -93,6 +93,7 @@
     import { avatarRequest, queryRequest } from '../../../api';
     import { arraysMatch } from '../../../shared/utils';
     import { useAvatarStore } from '../../../stores';
+    import { applyAvatar } from '../../../coordinators/avatarCoordinator';
 
     const props = defineProps({
         setAvatarStylesDialog: {
@@ -104,7 +105,6 @@
     const emit = defineEmits(['update:setAvatarStylesDialog']);
 
     const { t } = useI18n();
-    const { applyAvatar } = useAvatarStore();
 
     const SELECT_CLEAR_VALUE = '__clear__';
 

@@ -1,5 +1,4 @@
 import { replaceBioSymbols } from './base/string';
-import { useAuthStore } from '../../stores';
 
 /**
  *
@@ -93,12 +92,12 @@ function getPlatformInfo(unityPackages) {
 /**
  *
  * @param {string} unitySortNumber
+ * @param sdkUnityVersion
  * @returns {boolean}
  */
-function compareUnityVersion(unitySortNumber) {
-    const authStore = useAuthStore();
-    if (!authStore.cachedConfig.sdkUnityVersion) {
-        console.error('No cachedConfig.sdkUnityVersion');
+function compareUnityVersion(unitySortNumber, sdkUnityVersion) {
+    if (!sdkUnityVersion) {
+        console.error('No sdkUnityVersion provided');
         return false;
     }
 
@@ -106,9 +105,9 @@ function compareUnityVersion(unitySortNumber) {
     // 2019.4.31f1 2019 04 31 000
     // 5.3.4p1     5    03 04 010
     // 2019.4.31f1c1 is a thing
-    const array = authStore.cachedConfig.sdkUnityVersion.split('.');
+    const array = sdkUnityVersion.split('.');
     if (array.length < 3) {
-        console.error('Invalid cachedConfig.sdkUnityVersion');
+        console.error('Invalid sdkUnityVersion');
         return false;
     }
     let currentUnityVersion = array[0];

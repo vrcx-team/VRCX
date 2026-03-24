@@ -1,26 +1,29 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { ref } from 'vue';
 
 const mocks = vi.hoisted(() => ({
-    favoriteWorldGroups: null,
-    shiftHeld: null,
     showFavoriteDialog: vi.fn(),
     deleteFavorite: vi.fn(),
+    removeLocalWorldFavorite: vi.fn(),
     newInstanceSelfInvite: vi.fn(),
-    createNewInstance: vi.fn()
+    createNewInstance: vi.fn(),
+    showWorldDialog: vi.fn(),
+    canOpenInstanceInGame: false
 }));
 
-vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
-}));
+vi.mock('pinia', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        storeToRefs: (store) => store
+    };
+});
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
-    ,
-            locale: require('vue').ref('en')
-        })
+        t: (key) => key,
+        locale: { value: 'en' }
+    })
 }));
 
 vi.mock('@/components/ui/context-menu', () => ({
@@ -33,9 +36,57 @@ vi.mock('@/components/ui/context-menu', () => ({
     ContextMenuContent: {
         template: '<div><slot /></div>'
     },
+    ContextMenuSeparator: {
+        template: '<hr />'
+    },
     ContextMenuItem: {
         emits: ['click'],
-        template: '<button @click="$emit(\'click\')"><slot /></button>'
+        template:
+            '<button data-testid="ctx-item" @click="$emit(\'click\')"><slot /></button>'
+    }
+}));
+
+vi.mock('@/components/ui/dropdown-menu', () => ({
+    DropdownMenu: {
+        template: '<div><slot /></div>'
+    },
+    DropdownMenuTrigger: {
+        template: '<div><slot /></div>'
+    },
+    DropdownMenuContent: {
+        template: '<div><slot /></div>'
+    },
+    DropdownMenuSeparator: {
+        template: '<hr />'
+    },
+    DropdownMenuItem: {
+        emits: ['click'],
+        template:
+            '<button data-testid="dd-item" @click="$emit(\'click\')"><slot /></button>'
+    }
+}));
+
+vi.mock('@/components/ui/item', () => ({
+    Item: {
+        emits: ['click'],
+        template:
+            '<div data-testid="item" @click="$emit(\'click\', $event)"><slot /></div>'
+    },
+    ItemActions: { template: '<div><slot /></div>' },
+    ItemMedia: { template: '<div><slot /></div>' },
+    ItemContent: { template: '<div><slot /></div>' },
+    ItemTitle: { template: '<div><slot /></div>' },
+    ItemDescription: { template: '<div><slot /></div>' }
+}));
+
+vi.mock('@/components/ui/avatar', () => ({
+    Avatar: { template: '<div data-testid="avatar"><slot /></div>' },
+    AvatarImage: {
+        props: ['src'],
+        template: '<img data-testid="avatar-image" :src="src" />'
+    },
+    AvatarFallback: {
+        template: '<span data-testid="avatar-fallback"><slot /></span>'
     }
 }));
 
@@ -52,33 +103,26 @@ vi.mock('@/components/ui/checkbox', () => ({
         props: ['modelValue'],
         emits: ['update:modelValue'],
         template:
-            '<input type="checkbox" :checked="modelValue" @change="$emit(\'update:modelValue\', $event.target.checked)" />'
+            '<input data-testid="checkbox" type="checkbox" :checked="modelValue" @change="$emit(\'update:modelValue\', $event.target.checked)" />'
     }
 }));
 
 vi.mock('lucide-vue-next', () => ({
     AlertTriangle: { template: '<i />' },
+    Image: { template: '<i />' },
     Lock: { template: '<i />' },
-    Mail: { template: '<i />' },
-    Plus: { template: '<i />' },
-    Star: { template: '<i />' },
-    Trash2: { template: '<i />' }
+    MoreHorizontal: { template: '<i />' }
 }));
 
 vi.mock('../../../../stores', () => ({
     useFavoriteStore: () => ({
-        favoriteWorldGroups: mocks.favoriteWorldGroups,
         showFavoriteDialog: (...args) => mocks.showFavoriteDialog(...args)
     }),
     useInviteStore: () => ({
-        newInstanceSelfInvite: (...args) => mocks.newInstanceSelfInvite(...args),
-        canOpenInstanceInGame: false
+        canOpenInstanceInGame: mocks.canOpenInstanceInGame
     }),
     useInstanceStore: () => ({
         createNewInstance: (...args) => mocks.createNewInstance(...args)
-    }),
-    useUiStore: () => ({
-        shiftHeld: mocks.shiftHeld
     })
 }));
 
@@ -88,90 +132,220 @@ vi.mock('../../../../api', () => ({
     }
 }));
 
+vi.mock('../../../../coordinators/inviteCoordinator', () => ({
+    runNewInstanceSelfInviteFlow: (...args) =>
+        mocks.newInstanceSelfInvite(...args)
+}));
+
+vi.mock('../../../../coordinators/worldCoordinator', () => ({
+    showWorldDialog: (...args) => mocks.showWorldDialog(...args)
+}));
+
+vi.mock('../../../../coordinators/favoriteCoordinator', () => ({
+    removeLocalWorldFavorite: (...args) =>
+        mocks.removeLocalWorldFavorite(...args)
+}));
+
 import FavoritesWorldItem from '../FavoritesWorldItem.vue';
 
 /**
  *
- * @param props
+ * @param {Record<string, any>} props
  */
 function mountItem(props = {}) {
     return mount(FavoritesWorldItem, {
         props: {
             favorite: {
                 id: 'wrld_default',
-                name: 'Default World',
-                authorName: 'Author'
+                ref: {
+                    name: 'Default World',
+                    authorName: 'Author',
+                    thumbnailImageUrl: '',
+                    releaseStatus: 'public'
+                }
             },
             group: 'Favorites',
-            isLocalFavorite: true,
+            isLocalFavorite: false,
             editMode: false,
+            selected: false,
             ...props
-        },
-        global: {
-            stubs: {
-                TooltipWrapper: {
-                    template: '<div><slot /></div>'
-                },
-                FavoritesMoveDropdown: {
-                    template: '<div />'
-                }
-            }
         }
     });
 }
 
+/**
+ *
+ * @param wrapper
+ * @param text
+ */
+async function clickMenuItem(wrapper, text) {
+    const buttons = wrapper.findAll('button');
+    const target = buttons.find((btn) => btn.text().includes(text));
+    expect(target, `menu item not found: ${text}`).toBeTruthy();
+    await target.trigger('click');
+}
+
 describe('FavoritesWorldItem.vue', () => {
     beforeEach(() => {
-        mocks.favoriteWorldGroups = ref([]);
-        mocks.shiftHeld = ref(false);
         mocks.showFavoriteDialog.mockReset();
         mocks.deleteFavorite.mockReset();
+        mocks.removeLocalWorldFavorite.mockReset();
         mocks.newInstanceSelfInvite.mockReset();
         mocks.createNewInstance.mockReset();
+        mocks.showWorldDialog.mockReset();
+        mocks.canOpenInstanceInGame = false;
     });
 
-    it('renders fallback text when local favorite has no name', () => {
-        const wrapper = mountItem({
-            favorite: {
-                id: 'wrld_missing_name'
-            }
-        });
+    it('opens world details when item is clicked', async () => {
+        const wrapper = mountItem();
 
-        expect(wrapper.text()).toContain('wrld_missing_name');
+        await wrapper.get('[data-testid="item"]').trigger('click');
+
+        expect(mocks.showWorldDialog).toHaveBeenCalledWith('wrld_default');
     });
 
-    it('emits local remove event in fallback mode when delete is clicked', async () => {
-        const wrapper = mountItem({
-            favorite: {
-                id: 'wrld_missing_name'
-            },
-            group: 'LocalGroup'
-        });
+    it('renders the full 5-item action menu', () => {
+        const wrapper = mountItem();
+        const text = wrapper.text();
 
-        await wrapper.get('[data-testid="btn"]').trigger('click');
-
-        expect(wrapper.emitted('remove-local-world-favorite')).toEqual([
-            ['wrld_missing_name', 'LocalGroup']
-        ]);
-        expect(mocks.deleteFavorite).not.toHaveBeenCalled();
+        expect(text).toContain('common.actions.view_details');
+        expect(text).toContain('dialog.world.actions.new_instance');
+        expect(text).toContain(
+            'dialog.world.actions.new_instance_and_self_invite'
+        );
+        expect(text).toContain('view.favorite.edit_favorite_tooltip');
+        expect(text).toContain('view.favorite.unfavorite_tooltip');
     });
 
-    it('opens local favorite dialog in edit mode when shift is not held', async () => {
-        const wrapper = mountItem({
-            favorite: {
-                id: 'wrld_local_1',
-                name: 'Local World',
-                authorName: 'Author'
-            },
-            editMode: true
-        });
+    it('opens world details from menu action', async () => {
+        const wrapper = mountItem();
 
-        await wrapper.get('[data-testid="btn"]').trigger('click');
+        await clickMenuItem(wrapper, 'common.actions.view_details');
+
+        expect(mocks.showWorldDialog).toHaveBeenCalledWith('wrld_default');
+    });
+
+    it('opens edit favorite dialog from menu action', async () => {
+        const wrapper = mountItem();
+
+        await clickMenuItem(wrapper, 'view.favorite.edit_favorite_tooltip');
 
         expect(mocks.showFavoriteDialog).toHaveBeenCalledWith(
             'world',
-            'wrld_local_1'
+            'wrld_default'
         );
-        expect(wrapper.emitted('remove-local-world-favorite')).toBeUndefined();
+    });
+
+    it('emits toggle-select in edit mode for remote favorites', async () => {
+        const wrapper = mountItem({ editMode: true });
+
+        await wrapper.get('[data-testid="checkbox"]').setValue(true);
+
+        expect(wrapper.emitted('toggle-select')).toEqual([[true]]);
+    });
+
+    it('does not show checkbox in edit mode for local favorites', () => {
+        const wrapper = mountItem({
+            editMode: true,
+            isLocalFavorite: true,
+            favorite: {
+                id: 'wrld_local_1',
+                name: 'Local World'
+            }
+        });
+
+        expect(wrapper.find('[data-testid="checkbox"]').exists()).toBe(false);
+    });
+
+    it('renders fallback id when world ref is missing', () => {
+        const wrapper = mountItem({
+            favorite: {
+                id: 'wrld_missing_ref'
+            },
+            isLocalFavorite: true
+        });
+
+        expect(wrapper.text()).toContain('wrld_missing_ref');
+    });
+
+    it('adds the unified hover classes on item', () => {
+        const wrapper = mountItem();
+
+        expect(wrapper.get('[data-testid="item"]').classes()).toEqual(
+            expect.arrayContaining([
+                'favorites-item',
+                'hover:bg-muted',
+                'x-hover-list'
+            ])
+        );
+    });
+
+    it('uses rounded avatar fallback when thumbnail is missing', () => {
+        const wrapper = mountItem({
+            favorite: {
+                id: 'wrld_no_thumb',
+                ref: {
+                    name: 'No Thumb World',
+                    authorName: 'Author',
+                    thumbnailImageUrl: '',
+                    releaseStatus: 'public'
+                }
+            }
+        });
+
+        expect(wrapper.find('[data-testid="avatar-image"]').exists()).toBe(
+            false
+        );
+        expect(wrapper.get('[data-testid="avatar"]').classes()).toEqual(
+            expect.arrayContaining(['rounded-sm', 'size-full'])
+        );
+        expect(
+            wrapper.get('[data-testid="avatar-fallback"]').classes()
+        ).toContain('rounded-sm');
+    });
+
+    it('deletes local favorite via coordinator', async () => {
+        const wrapper = mountItem({
+            favorite: {
+                id: 'wrld_local_1',
+                name: 'Local World'
+            },
+            group: 'LocalGroup',
+            isLocalFavorite: true
+        });
+
+        await clickMenuItem(wrapper, 'view.favorite.delete_tooltip');
+
+        expect(mocks.removeLocalWorldFavorite).toHaveBeenCalledWith(
+            'wrld_local_1',
+            'LocalGroup'
+        );
+        expect(mocks.deleteFavorite).not.toHaveBeenCalled();
+    });
+
+    it('deletes remote favorite via API', async () => {
+        const wrapper = mountItem({ isLocalFavorite: false });
+
+        await clickMenuItem(wrapper, 'view.favorite.unfavorite_tooltip');
+
+        expect(mocks.deleteFavorite).toHaveBeenCalledWith({
+            objectId: 'wrld_default'
+        });
+        expect(mocks.removeLocalWorldFavorite).not.toHaveBeenCalled();
+    });
+
+    it('runs new instance and self invite actions from menu', async () => {
+        const wrapper = mountItem();
+
+        await clickMenuItem(wrapper, 'dialog.world.actions.new_instance');
+        await clickMenuItem(
+            wrapper,
+            'dialog.world.actions.new_instance_and_self_invite'
+        );
+
+        expect(mocks.createNewInstance).toHaveBeenCalledWith('wrld_default');
+        expect(mocks.newInstanceSelfInvite).toHaveBeenCalledWith(
+            'wrld_default'
+        );
     });
 });

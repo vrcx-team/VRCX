@@ -1,5 +1,13 @@
 <script setup>
-    import { DialogClose, DialogContent, DialogOverlay, DialogPortal, useForwardPropsEmits } from 'reka-ui';
+    import {
+        DialogClose,
+        DialogContent,
+        DialogDescription,
+        DialogOverlay,
+        DialogPortal,
+        useForwardPropsEmits,
+        VisuallyHidden
+    } from 'reka-ui';
     import { inject, onBeforeUnmount, ref, watch } from 'vue';
     import { X } from 'lucide-vue-next';
     import { acquireModalPortalLayer } from '@/lib/modalPortalLayers';
@@ -75,6 +83,10 @@
                     }
                 ">
                 <slot />
+
+                <VisuallyHidden as-child>
+                    <DialogDescription />
+                </VisuallyHidden>
 
                 <DialogClose class="absolute top-4 right-4 p-0.5 transition-colors rounded-md hover:bg-secondary">
                     <X class="w-4 h-4" />

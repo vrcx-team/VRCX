@@ -10,15 +10,16 @@
                 <Spinner v-if="userDialog.isGroupsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span style="margin-left: 6px">{{
+            <span class="ml-1.5 text-sm">{{
                 t('dialog.user.groups.total_count', { count: userDialog.userGroups.groups.length })
             }}</span>
             <template v-if="userDialogGroupEditMode">
-                <span class="text-[10px]" style="margin-left: 8px">{{ t('dialog.user.groups.hold_shift') }}</span>
+                <span class="text-[10px] ml-2">{{ t('dialog.user.groups.hold_shift') }}</span>
             </template>
         </div>
         <div style="display: flex; align-items: center">
             <template v-if="!userDialogGroupEditMode">
+                <Input v-model="groupSearchQuery" class="h-8 w-40 mr-2" placeholder="Search groups" @click.stop />
                 <span style="margin-right: 6px">{{ t('dialog.user.groups.sort_by') }}</span>
                 <Select
                     :model-value="userDialogGroupSortingKey"
@@ -142,7 +143,12 @@
                         </Button>
                     </div>
                     <div class="relative inline-block flex-none size-9 mr-2.5">
-                        <img class="size-full rounded-full object-cover" :src="group.iconUrl" loading="lazy" />
+                        <Avatar class="size-9">
+                            <AvatarImage :src="group.iconUrl" class="object-cover" />
+                            <AvatarFallback>
+                                <Users class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
                     </div>
                     <div class="flex-1 overflow-hidden">
                         <span class="block truncate font-medium leading-[18px]" v-text="group.name"></span>
@@ -231,6 +237,15 @@
                 </div>
             </div>
         </template>
+        <template v-else-if="groupSearchActive">
+            <div class="flex flex-wrap items-start" style="margin-top: 8px; min-height: 60px">
+                <UserDialogGroupCard
+                    v-for="group in allFilteredGroups"
+                    :key="group.id"
+                    :group="group"
+                    :can-manage="currentUser.id === userDialog.id" />
+            </div>
+        </template>
         <template v-else>
             <template v-if="userDialog.userGroups.ownGroups.length > 0">
                 <span class="text-base font-bold">{{ t('dialog.user.groups.own_groups') }}</span>
@@ -241,72 +256,22 @@
                     }}</span
                 >
                 <div class="flex flex-wrap items-start" style="margin-top: 8px; margin-bottom: 16px; min-height: 60px">
-                    <div
+                    <UserDialogGroupCard
                         v-for="group in userDialog.userGroups.ownGroups"
                         :key="group.id"
-                        class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                        @click="showGroupDialog(group.id)">
-                        <div class="relative inline-block flex-none size-9 mr-2.5">
-                            <img class="size-full rounded-full object-cover" :src="group.iconUrl" loading="lazy" />
-                        </div>
-                        <div class="flex-1 overflow-hidden">
-                            <span class="block truncate font-medium leading-[18px]" v-text="group.name"></span>
-                            <span class="block truncate text-xs inline-flex! items-center">
-                                <TooltipWrapper
-                                    v-if="group.isRepresenting"
-                                    side="top"
-                                    :content="t('dialog.group.members.representing')">
-                                    <Tag style="margin-right: 6px" />
-                                </TooltipWrapper>
-                                <TooltipWrapper v-if="group.memberVisibility !== 'visible'" side="top">
-                                    <template #content>
-                                        <span
-                                            >{{ t('dialog.group.members.visibility') }}
-                                            {{ group.memberVisibility }}</span
-                                        >
-                                    </template>
-                                    <Eye style="margin-right: 6px" />
-                                </TooltipWrapper>
-                                <span>({{ group.memberCount }})</span>
-                            </span>
-                        </div>
-                    </div>
+                        :group="group"
+                        :can-manage="currentUser.id === userDialog.id" />
                 </div>
             </template>
             <template v-if="userDialog.userGroups.mutualGroups.length > 0">
                 <span class="text-base font-bold">{{ t('dialog.user.groups.mutual_groups') }}</span>
                 <span class="text-xs ml-1.5">{{ userDialog.userGroups.mutualGroups.length }}</span>
                 <div class="flex flex-wrap items-start" style="margin-top: 8px; margin-bottom: 16px; min-height: 60px">
-                    <div
+                    <UserDialogGroupCard
                         v-for="group in userDialog.userGroups.mutualGroups"
                         :key="group.id"
-                        class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                        @click="showGroupDialog(group.id)">
-                        <div class="relative inline-block flex-none size-9 mr-2.5">
-                            <img class="size-full rounded-full object-cover" :src="group.iconUrl" loading="lazy" />
-                        </div>
-                        <div class="flex-1 overflow-hidden">
-                            <span class="block truncate font-medium leading-[18px]" v-text="group.name"></span>
-                            <span class="block truncate text-xs inline-flex! items-center">
-                                <TooltipWrapper
-                                    v-if="group.isRepresenting"
-                                    side="top"
-                                    :content="t('dialog.group.members.representing')">
-                                    <Tag style="margin-right: 6px" />
-                                </TooltipWrapper>
-                                <TooltipWrapper v-if="group.memberVisibility !== 'visible'" side="top">
-                                    <template #content>
-                                        <span
-                                            >{{ t('dialog.group.members.visibility') }}
-                                            {{ group.memberVisibility }}</span
-                                        >
-                                    </template>
-                                    <Eye style="margin-right: 6px" />
-                                </TooltipWrapper>
-                                <span>({{ group.memberCount }})</span>
-                            </span>
-                        </div>
-                    </div>
+                        :group="group"
+                        :can-manage="currentUser.id === userDialog.id" />
                 </div>
             </template>
             <template v-if="userDialog.userGroups.remainingGroups.length > 0">
@@ -324,36 +289,11 @@
                     </template>
                 </span>
                 <div class="flex flex-wrap items-start" style="margin-top: 8px; margin-bottom: 16px; min-height: 60px">
-                    <div
+                    <UserDialogGroupCard
                         v-for="group in userDialog.userGroups.remainingGroups"
                         :key="group.id"
-                        class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                        @click="showGroupDialog(group.id)">
-                        <div class="relative inline-block flex-none size-9 mr-2.5">
-                            <img class="size-full rounded-full object-cover" :src="group.iconUrl" loading="lazy" />
-                        </div>
-                        <div class="flex-1 overflow-hidden">
-                            <span class="block truncate font-medium leading-[18px]" v-text="group.name"></span>
-                            <div class="block truncate text-xs inline-flex! items-center">
-                                <TooltipWrapper
-                                    v-if="group.isRepresenting"
-                                    side="top"
-                                    :content="t('dialog.group.members.representing')">
-                                    <Tag style="margin-right: 6px" />
-                                </TooltipWrapper>
-                                <TooltipWrapper v-if="group.memberVisibility !== 'visible'" side="top">
-                                    <template #content>
-                                        <span
-                                            >{{ t('dialog.group.members.visibility') }}
-                                            {{ group.memberVisibility }}</span
-                                        >
-                                    </template>
-                                    <Eye style="margin-right: 6px" />
-                                </TooltipWrapper>
-                                <span>({{ group.memberCount }})</span>
-                            </div>
-                        </div>
-                    </div>
+                        :group="group"
+                        :can-manage="currentUser.id === userDialog.id" />
                 </div>
             </template>
         </template>
@@ -361,26 +301,21 @@
 </template>
 
 <script setup>
-    import { ArrowDown, ArrowUp, DownloadIcon, Eye, LogOut, RefreshCw, Tag } from 'lucide-vue-next';
+    import { ArrowDown, ArrowUp, DownloadIcon, Eye, LogOut, RefreshCw, Tag, Users } from 'lucide-vue-next';
+    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { nextTick, ref } from 'vue';
+    import { computed, nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
+    import { Input } from '@/components/ui/input';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
+    import UserDialogGroupCard from './UserDialogGroupCard.vue';
     import { useAuthStore, useGroupStore, useUiStore, useUserStore } from '../../../stores';
-    import { compareByMemberCount, compareByName } from '../../../shared/utils';
-    import { groupRequest } from '../../../api';
-    import { useOptionKeySelect } from '../../../composables/useOptionKeySelect';
-    import { userDialogGroupSortingOptions } from '../../../shared/constants';
-
-    const { t } = useI18n();
-
-    const { userDialog, currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
-    const {
+    import {
         showGroupDialog,
         applyGroup,
         saveCurrentUserGroups,
@@ -389,7 +324,15 @@
         leaveGroupPrompt,
         setGroupVisibility,
         handleGroupList
-    } = useGroupStore();
+    } from '../../../coordinators/groupCoordinator';
+    import { compareByMemberCount, compareByName } from '../../../shared/utils';
+    import { groupRequest } from '../../../api';
+    import { useOptionKeySelect } from '../../../composables/useOptionKeySelect';
+    import { userDialogGroupSortingOptions } from '../../../shared/constants';
+
+    const { t } = useI18n();
+
+    const { userDialog, currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { currentUserGroups, inGameGroupOrder } = storeToRefs(useGroupStore());
     const { cachedConfig } = storeToRefs(useAuthStore());
     const { shiftHeld } = storeToRefs(useUiStore());
@@ -404,6 +347,15 @@
         () => userDialog.value.groupSorting,
         setUserDialogGroupSorting
     );
+
+    const groupSearchQuery = ref('');
+    const groupSearchActive = computed(() => groupSearchQuery.value.trim().length > 0);
+    const allFilteredGroups = computed(() => {
+        const query = groupSearchQuery.value.trim().toLowerCase();
+        if (!query) return [];
+        return userDialog.value.userGroups.groups.filter((g) => (g.name || '').toLowerCase().includes(query));
+    });
+    watch(() => userDialog.value.id, () => { groupSearchQuery.value = ''; });
 
     /**
      *

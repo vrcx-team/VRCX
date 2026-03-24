@@ -6,7 +6,8 @@
             </DialogHeader>
             <TabsUnderline v-model="activeTab" :items="editInviteTabs" :unmount-on-hide="false" class="mt-2.5">
                 <template #message>
-                    <DataTableLayout class="mt-2"
+                    <DataTableLayout
+                        class="mt-2"
                         style="cursor: pointer"
                         :table="inviteMessageTanstackTable"
                         :loading="false"
@@ -67,12 +68,8 @@
 
     import EditInviteMessageDialog from './EditInviteMessageDialog.vue';
 
-    const {
-        inviteMessageTable,
-        inviteRequestMessageTable,
-        inviteRequestResponseMessageTable,
-        inviteResponseMessageTable
-    } = storeToRefs(useInviteStore());
+    const { inviteMessageTable, inviteRequestMessageTable, inviteRequestResponseMessageTable, inviteResponseMessageTable } =
+        storeToRefs(useInviteStore());
     const { refreshInviteMessageTableData } = useInviteStore();
 
     const { t } = useI18n();

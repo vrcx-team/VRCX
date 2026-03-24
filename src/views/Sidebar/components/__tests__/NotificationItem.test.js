@@ -18,35 +18,65 @@ const mocks = vi.hoisted(() => ({
     },
     userStore: {
         cachedUsers: new Map(),
-        showUserDialog: vi.fn(),
-        showSendBoopDialog: vi.fn()
+        showSendBoopDialog: vi.fn(),
+        currentUser: { id: 'usr_me' }
     },
-    groupStore: {
-        showGroupDialog: vi.fn()
+    friendStore: {
+        friends: new Map()
     },
+    groupStore: {},
     locationStore: {
-        lastLocation: { value: { location: 'wrld_home:123' } }
+        lastLocation: {
+            location: 'wrld_home:123',
+            value: { location: 'wrld_home:123' }
+        }
     },
     gameStore: {
         isGameRunning: { value: true }
-    }
+    },
+    instanceStore: {
+        cachedInstances: new Map()
+    },
+    showUserDialog: vi.fn(),
+    showGroupDialog: vi.fn()
 }));
 
-vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
-}));
+vi.mock('pinia', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        storeToRefs: (store) => store
+    };
+});
 
 vi.mock('../../../../stores', () => ({
     useNotificationStore: () => mocks.notificationStore,
     useUserStore: () => mocks.userStore,
+    useFriendStore: () => mocks.friendStore,
     useGroupStore: () => mocks.groupStore,
     useLocationStore: () => mocks.locationStore,
-    useGameStore: () => mocks.gameStore
+    useGameStore: () => mocks.gameStore,
+    useInstanceStore: () => mocks.instanceStore
+}));
+
+vi.mock('../../../../coordinators/userCoordinator', () => ({
+    showUserDialog: (...args) => mocks.showUserDialog(...args)
+}));
+
+vi.mock('../../../../coordinators/groupCoordinator', () => ({
+    showGroupDialog: (...args) => mocks.showGroupDialog(...args)
 }));
 
 vi.mock('../../../../shared/utils', () => ({
     checkCanInvite: vi.fn(() => true),
     userImage: vi.fn(() => 'https://example.com/avatar.png')
+}));
+
+vi.mock('../../../../composables/useUserDisplay', () => ({
+    useUserDisplay: () => ({
+        userImage: vi.fn(() => 'https://example.com/avatar.png'),
+        userStatusClass: vi.fn(() => '')
+    })
 }));
 
 vi.mock('vue-i18n', () => ({
@@ -155,10 +185,12 @@ describe('NotificationItem.vue', () => {
         mocks.notificationStore.queueMarkAsSeen.mockReset();
         mocks.notificationStore.openNotificationLink.mockReset();
         mocks.notificationStore.isNotificationExpired.mockReturnValue(false);
-        mocks.userStore.showUserDialog.mockReset();
+        mocks.showUserDialog.mockReset();
         mocks.userStore.showSendBoopDialog.mockReset();
-        mocks.groupStore.showGroupDialog.mockReset();
+        mocks.showGroupDialog.mockReset();
         mocks.userStore.cachedUsers = new Map();
+        mocks.friendStore.friends = new Map();
+        mocks.instanceStore.cachedInstances = new Map();
     });
 
     test('renders sender and opens user dialog on sender click', async () => {
@@ -170,7 +202,7 @@ describe('NotificationItem.vue', () => {
 
         expect(wrapper.text()).toContain('Alice');
         await wrapper.get('span.truncate.cursor-pointer').trigger('click');
-        expect(mocks.userStore.showUserDialog).toHaveBeenCalledWith('usr_123');
+        expect(mocks.showUserDialog).toHaveBeenCalledWith('usr_123');
     });
 
     test('clicking accept icon calls acceptFriendRequestNotification', async () => {

@@ -1,20 +1,28 @@
 <template>
-    <div class="w-223">
+    <div class="w-223 flex-1 min-h-0 flex flex-col">
         <DialogHeader class="sr-only">
             <DialogTitle>{{ avatarDialog.ref?.name || t('dialog.avatar.info.header') }}</DialogTitle>
             <DialogDescription>
                 {{ avatarDialog.ref?.description || avatarDialog.ref?.name || t('dialog.avatar.info.header') }}
             </DialogDescription>
         </DialogHeader>
-        <div>
-            <div class="flex">
+        <div class="flex-1 min-h-0 flex flex-col">
+            <div class="flex flex-shrink-0">
                 <div style="flex: none; width: 160px; height: 120px">
                     <img
+                        v-if="!imageError"
                         :src="avatarDialog.ref.thumbnailImageUrl"
                         class="cursor-pointer"
                         @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)"
                         style="width: 160px; height: 120px; border-radius: var(--radius-xl); object-fit: cover"
+                        @error="imageError = true"
                         loading="lazy" />
+                    <div
+                        v-else
+                        class="flex items-center justify-center bg-muted"
+                        style="width: 160px; height: 120px; border-radius: var(--radius-xl)">
+                        <Image class="size-8 text-muted-foreground" />
+                    </div>
                 </div>
                 <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
                     <div style="flex: 1">
@@ -312,6 +320,7 @@
                 v-model="avatarDialog.activeTab"
                 :items="avatarDialogTabs"
                 :unmount-on-hide="false"
+                fill
                 @update:modelValue="avatarDialogTabClick">
                 <template #Info>
                     <div class="flex flex-wrap items-start px-2.5" style="max-height: unset">
@@ -346,7 +355,16 @@
                                                     :src="imageUrl"
                                                     style="width: 100%; height: 100%; object-fit: contain"
                                                     @click="showFullscreenImageDialog(imageUrl)"
+                                                    @error="
+                                                        $event.target.style.display = 'none';
+                                                        $event.target.nextElementSibling.style.display = 'flex';
+                                                    "
                                                     loading="lazy" />
+                                                <div
+                                                    class="absolute inset-0 items-center justify-center bg-muted"
+                                                    style="display: none">
+                                                    <Image class="size-8 text-muted-foreground" />
+                                                </div>
                                             </div>
                                         </CarouselItem>
                                     </CarouselContent>
@@ -558,7 +576,7 @@
         XCircle
     } from 'lucide-vue-next';
     import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-    import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
+    import { computed, nextTick, ref, watch } from 'vue';
     import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
@@ -567,10 +585,8 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import VueJsonPretty from 'vue-json-pretty';
-
     import {
-        useAppearanceSettingsStore,
+        useAuthStore,
         useAvatarStore,
         useFavoriteStore,
         useGalleryStore,
@@ -583,7 +599,6 @@
         commaNumber,
         compareUnityVersion,
         copyToClipboard,
-        downloadAndSaveJson,
         formatDateFilter,
         openFolderGeneric,
         timeToText
@@ -597,29 +612,34 @@
     } from '../../ui/dropdown-menu';
     import { Badge } from '../../ui/badge';
     import { avatarRequest } from '../../../api';
-    import { database } from '../../../service/database';
+    import { database } from '../../../services/database';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
-    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
+    import { handleImageUploadInput } from '../../../coordinators/imageUploadCoordinator';
+    import { runDeleteVRChatCacheFlow as deleteVRChatCache } from '../../../coordinators/gameCoordinator';
+    import {
+        showAvatarDialog,
+        applyAvatar,
+        selectAvatarWithoutConfirmation
+    } from '../../../coordinators/avatarCoordinator';
     import { useAvatarDialogCommands } from './useAvatarDialogCommands';
 
     import DialogJsonTab from '../DialogJsonTab.vue';
     import ImageCropDialog from '../ImageCropDialog.vue';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
 
-    const SetAvatarStylesDialog = defineAsyncComponent(() => import('./SetAvatarStylesDialog.vue'));
-    const SetAvatarTagsDialog = defineAsyncComponent(() => import('./SetAvatarTagsDialog.vue'));
+    import SetAvatarStylesDialog from './SetAvatarStylesDialog.vue';
+    import SetAvatarTagsDialog from './SetAvatarTagsDialog.vue';
 
-    const { showUserDialog, sortUserDialogAvatars } = useUserStore();
+    const { sortUserDialogAvatars } = useUserStore();
     const { userDialog, currentUser } = storeToRefs(useUserStore());
     const avatarStore = useAvatarStore();
     const { cachedAvatarModerations, cachedAvatars } = avatarStore;
     const { avatarDialog } = storeToRefs(avatarStore);
-    const { showAvatarDialog, getAvatarGallery, applyAvatarModeration, applyAvatar, selectAvatarWithoutConfirmation } =
-        avatarStore;
+    const { getAvatarGallery, applyAvatarModeration } = avatarStore;
     const { showFavoriteDialog } = useFavoriteStore();
     const { isGameRunning } = storeToRefs(useGameStore());
-    const { deleteVRChatCache } = useGameStore();
     const { showFullscreenImageDialog } = useGalleryStore();
-    const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
+    const authStore = useAuthStore();
     const modalStore = useModalStore();
     const uiStore = useUiStore();
 
@@ -628,11 +648,11 @@
     const {
         cropDialogOpen,
         cropDialogFile,
-        changeAvatarImageLoading,
         avatarDialogCommand,
         onFileChangeAvatarImage,
         onCropConfirmAvatar,
-        registerCallbacks
+        registerCallbacks,
+        copyAvatarUrl
     } = useAvatarDialogCommands(avatarDialog, {
         t,
         toast,
@@ -656,6 +676,14 @@
 
     const treeData = ref({});
     const memo = ref('');
+    const imageError = ref(false);
+
+    watch(
+        () => avatarDialog.value.id,
+        () => {
+            imageError.value = false;
+        }
+    );
     const setAvatarTagsDialog = ref({
         visible: false,
         loading: false,
@@ -688,15 +716,11 @@
         const platforms = [];
         if (ref.unityPackages) {
             for (const unityPackage of ref.unityPackages) {
-                if (
-                    unityPackage.variant &&
-                    unityPackage.variant !== 'standard' &&
-                    unityPackage.variant !== 'security'
-                ) {
+                if (unityPackage.variant && unityPackage.variant !== 'standard' && unityPackage.variant !== 'security') {
                     // skip imposters
                     continue;
                 }
-                if (!compareUnityVersion(unityPackage.unitySortNumber)) {
+                if (!compareUnityVersion(unityPackage.unitySortNumber, authStore.cachedConfig.sdkUnityVersion)) {
                     continue;
                 }
                 let platform = 'PC';

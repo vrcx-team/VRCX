@@ -59,7 +59,32 @@
                 </div>
             </div>
 
+            <div v-if="presets.length" class="pb-4 px-16">
+                <span class="text-xs text-muted-foreground mb-2 block">
+                    {{ t('dialog.social_status.presets') }}
+                </span>
+                <div class="flex flex-wrap gap-1.5">
+                    <div
+                        v-for="(preset, index) in presets"
+                        :key="index"
+                        class="group inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-full border bg-background text-xs cursor-pointer hover:bg-accent transition-colors max-w-[200px]"
+                        @click="applyPreset(preset)">
+                        <i class="x-user-status flex-none" :class="getStatusClass(preset.status)"></i>
+                        <span class="truncate">{{ preset.statusDescription || getStatusLabel(preset.status) }}</span>
+                        <button
+                            class="flex-none size-4 inline-flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 hover:bg-muted transition-opacity"
+                            @click.stop="handleDeletePreset(index)">
+                            <X class="size-3" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <DialogFooter>
+                <Button variant="outline" :disabled="socialStatusDialog.loading" @click="handleSavePreset">
+                    <Bookmark class="size-4" />
+                    {{ t('dialog.social_status.save_preset') }}
+                </Button>
                 <Button :disabled="socialStatusDialog.loading" @click="saveSocialStatus">
                     {{ t('dialog.social_status.update') }}
                 </Button>
@@ -77,7 +102,7 @@
         DropdownMenuItem,
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
-    import { Check, History } from 'lucide-vue-next';
+    import { Bookmark, Check, History, X } from 'lucide-vue-next';
     import { InputGroupButton, InputGroupField } from '@/components/ui/input-group';
     import { Button } from '@/components/ui/button';
     import { computed } from 'vue';
@@ -87,6 +112,7 @@
 
     import { useUserStore } from '../../../stores';
     import { userRequest } from '../../../api';
+    import { useStatusPresets } from './composables/useStatusPresets';
 
     const { t } = useI18n();
     const { currentUser } = storeToRefs(useUserStore());
@@ -103,6 +129,35 @@
     });
 
     const historyItems = computed(() => props.socialStatusHistoryTable?.data ?? []);
+
+    const { presets, addPreset, removePreset, getStatusClass, MAX_PRESETS } = useStatusPresets();
+
+    function getStatusLabel(status) {
+        const option = statusOptions.value.find((o) => o.value === status);
+        return option?.label || status;
+    }
+
+    function applyPreset(preset) {
+        const D = props.socialStatusDialog;
+        D.status = preset.status;
+        D.statusDescription = preset.statusDescription;
+    }
+
+    async function handleSavePreset() {
+        const D = props.socialStatusDialog;
+        const result = await addPreset(D.status, D.statusDescription);
+        if (result === 'ok') {
+            toast.success(t('dialog.social_status.preset_saved'));
+        } else if (result === 'exists') {
+            toast.info(t('dialog.social_status.preset_exists'));
+        } else if (result === 'limit') {
+            toast.warning(t('dialog.social_status.preset_limit', { max: MAX_PRESETS }));
+        }
+    }
+
+    async function handleDeletePreset(index) {
+        await removePreset(index);
+    }
 
     const statusOptions = computed(() => {
         const options = [

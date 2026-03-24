@@ -108,6 +108,14 @@
     import { useI18n } from 'vue-i18n';
 
     import { useFavoriteStore, useUserStore } from '../../stores';
+    import {
+        addLocalWorldFavorite,
+        removeLocalWorldFavorite,
+        addLocalAvatarFavorite,
+        removeLocalAvatarFavorite,
+        addLocalFriendFavorite,
+        removeLocalFriendFavorite
+    } from '../../coordinators/favoriteCoordinator';
     import { favoriteRequest } from '../../api';
 
     const { t } = useI18n();
@@ -124,18 +132,12 @@
     } = storeToRefs(favoriteStore);
     const {
         localWorldFavGroupLength,
-        addLocalWorldFavorite,
         hasLocalWorldFavorite,
         hasLocalAvatarFavorite,
-        addLocalAvatarFavorite,
         localAvatarFavGroupLength,
-        removeLocalAvatarFavorite,
-        removeLocalWorldFavorite,
         deleteFavoriteNoConfirm,
         localFriendFavGroupLength,
-        addLocalFriendFavorite,
-        hasLocalFriendFavorite,
-        removeLocalFriendFavorite
+        hasLocalFriendFavorite
     } = favoriteStore;
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 

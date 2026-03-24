@@ -12,6 +12,7 @@
             <AlertDialogModal></AlertDialogModal>
             <PromptDialogModal></PromptDialogModal>
             <OtpDialogModal></OtpDialogModal>
+            <DatabaseUpgradeDialog></DatabaseUpgradeDialog>
 
             <VRCXUpdateDialog></VRCXUpdateDialog>
         </div>
@@ -22,12 +23,15 @@
 <script setup>
     import { computed, onBeforeMount, onMounted } from 'vue';
 
+    import { addGameLogEvent, getGameLogTable } from './coordinators/gameLogCoordinator';
+    import { runCheckVRChatDebugLoggingFlow, runUpdateIsGameRunningFlow, runUpdateIsHmdAfkFlow } from './coordinators/gameCoordinator';
     import { Toaster } from './components/ui/sonner';
     import { TooltipProvider } from './components/ui/tooltip';
     import { createGlobalStores } from './stores';
-    import { initNoty } from './plugin/noty';
+    import { initNoty } from './plugins/noty';
 
     import AlertDialogModal from './components/ui/alert-dialog/AlertDialogModal.vue';
+    import DatabaseUpgradeDialog from './components/dialogs/DatabaseUpgradeDialog.vue';
     import MacOSTitleBar from './components/MacOSTitleBar.vue';
     import OtpDialogModal from './components/ui/dialog/OtpDialogModal.vue';
     import PromptDialogModal from './components/ui/dialog/PromptDialogModal.vue';
@@ -49,6 +53,10 @@
 
     if (typeof window !== 'undefined') {
         window.$pinia = store;
+        // Bridge: attach coordinator functions to store for C# IPC callbacks
+        store.game.updateIsGameRunning = runUpdateIsGameRunningFlow;
+        store.game.updateIsHmdAfk = runUpdateIsHmdAfkFlow;
+        store.gameLog.addGameLogEvent = addGameLogEvent;
     }
 
     onBeforeMount(() => {
@@ -56,10 +64,10 @@
     });
 
     onMounted(async () => {
-        store.gameLog.getGameLogTable();
+        getGameLogTable();
         await store.auth.migrateStoredUsers();
         store.auth.autoLoginAfterMounted();
         store.vrcx.checkAutoBackupRestoreVrcRegistry();
-        store.game.checkVRChatDebugLogging();
+        runCheckVRChatDebugLoggingFlow();
     });
 </script>

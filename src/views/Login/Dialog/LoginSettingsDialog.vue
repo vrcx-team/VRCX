@@ -62,14 +62,7 @@
 </template>
 
 <script setup>
-    import {
-        Dialog,
-        DialogContent,
-        DialogFooter,
-        DialogHeader,
-        DialogTitle,
-        DialogTrigger
-    } from '@/components/ui/dialog';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
@@ -80,7 +73,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAuthStore, useVRCXUpdaterStore, useVrcxStore } from '../../../stores';
-    import { AppDebug } from '../../../service/appConfig';
+    import { AppDebug } from '../../../services/appConfig';
 
     const { loginForm, enableCustomEndpoint } = storeToRefs(useAuthStore());
     const { toggleCustomEndpoint } = useAuthStore();

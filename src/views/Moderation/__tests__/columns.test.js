@@ -8,11 +8,15 @@ const mocks = vi.hoisted(() => ({
     te: vi.fn((key) => key === 'view.moderation.filters.block')
 }));
 
-vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
-}));
+vi.mock('pinia', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        storeToRefs: (store) => store
+    };
+});
 
-vi.mock('../../../plugin', () => ({
+vi.mock('../../../plugins', () => ({
     i18n: {
         global: {
             t: (...args) => mocks.t(...args),
@@ -26,9 +30,12 @@ vi.mock('../../../stores', () => ({
         shiftHeld: mocks.shiftHeld
     }),
     useUserStore: () => ({
-        currentUser: mocks.currentUser,
-        showUserDialog: (...args) => mocks.showUserDialog(...args)
+        currentUser: mocks.currentUser
     })
+}));
+
+vi.mock('../../../coordinators/userCoordinator', () => ({
+    showUserDialog: (...args) => mocks.showUserDialog(...args)
 }));
 
 vi.mock('../../../shared/utils', () => ({
@@ -82,9 +89,16 @@ describe('views/Moderation/columns.jsx', () => {
     });
 
     test('source and target cells open corresponding user dialog', () => {
-        const cols = createColumns({ onDelete: vi.fn(), onDeletePrompt: vi.fn() });
-        const sourceCol = cols.find((c) => c.accessorKey === 'sourceDisplayName');
-        const targetCol = cols.find((c) => c.accessorKey === 'targetDisplayName');
+        const cols = createColumns({
+            onDelete: vi.fn(),
+            onDeletePrompt: vi.fn()
+        });
+        const sourceCol = cols.find(
+            (c) => c.accessorKey === 'sourceDisplayName'
+        );
+        const targetCol = cols.find(
+            (c) => c.accessorKey === 'targetDisplayName'
+        );
         const row = {
             original: {
                 sourceUserId: 'usr_source',
@@ -97,15 +111,24 @@ describe('views/Moderation/columns.jsx', () => {
 
         const sourceCell = sourceCol.cell({ row });
         const targetCell = targetCol.cell({ row });
-        findNode(sourceCell, (n) => n.type === 'span' && typeof n.props?.onClick === 'function').props.onClick();
-        findNode(targetCell, (n) => n.type === 'span' && typeof n.props?.onClick === 'function').props.onClick();
+        findNode(
+            sourceCell,
+            (n) => n.type === 'span' && typeof n.props?.onClick === 'function'
+        ).props.onClick();
+        findNode(
+            targetCell,
+            (n) => n.type === 'span' && typeof n.props?.onClick === 'function'
+        ).props.onClick();
 
         expect(mocks.showUserDialog).toHaveBeenNthCalledWith(1, 'usr_source');
         expect(mocks.showUserDialog).toHaveBeenNthCalledWith(2, 'usr_target');
     });
 
     test('action cell hidden when source user is not current user', () => {
-        const cols = createColumns({ onDelete: vi.fn(), onDeletePrompt: vi.fn() });
+        const cols = createColumns({
+            onDelete: vi.fn(),
+            onDeletePrompt: vi.fn()
+        });
         const actionCol = cols.find((c) => c.id === 'action');
         const vnode = actionCol.cell({
             row: {

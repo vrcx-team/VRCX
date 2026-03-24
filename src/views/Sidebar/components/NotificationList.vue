@@ -70,9 +70,7 @@
 
     const sortedUnseenNotifications = computed(() => [...props.notifications].sort((a, b) => getTs(b) - getTs(a)));
 
-    const sortedRecentNotifications = computed(() =>
-        [...props.recentNotifications].sort((a, b) => getTs(b) - getTs(a))
-    );
+    const sortedRecentNotifications = computed(() => [...props.recentNotifications].sort((a, b) => getTs(b) - getTs(a)));
 
     const allRows = computed(() => {
         const rows = [];

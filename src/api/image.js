@@ -1,5 +1,6 @@
 import { useAvatarStore, useWorldStore } from '../stores';
-import { request } from '../service/request';
+import { applyWorld } from '../coordinators/worldCoordinator';
+import { request } from '../services/request';
 
 const imageReq = {
     async uploadAvatarFailCleanup(id) {
@@ -267,7 +268,7 @@ const imageReq = {
                 json,
                 params
             };
-            args.ref = worldStore.applyWorld(json);
+            args.ref = applyWorld(json);
             return args;
         });
     },

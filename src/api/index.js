@@ -3,7 +3,7 @@
  * Export all API requests from here
  */
 
-import { request } from '../service/request';
+import { request } from '../services/request';
 
 import authRequest from './auth';
 import avatarModerationRequest from './avatarModeration';

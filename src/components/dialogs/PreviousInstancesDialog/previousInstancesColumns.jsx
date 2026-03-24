@@ -4,7 +4,7 @@ import DisplayName from '../../DisplayName.vue';
 import Location from '../../Location.vue';
 import LocationWorld from '../../LocationWorld.vue';
 import { Button } from '../../ui/button';
-import { i18n } from '../../../plugin';
+import { i18n } from '../../../plugins';
 import { formatDateFilter } from '../../../shared/utils';
 
 const { t } = i18n.global;

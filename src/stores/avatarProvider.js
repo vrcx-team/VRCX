@@ -1,11 +1,11 @@
 import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 
-import { router } from '../plugin/router';
+import { router } from '../plugins/router';
 import { useAdvancedSettingsStore } from './settings/advanced';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
@@ -111,12 +111,8 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     }
 
     async function saveAvatarProviderList() {
-        const length = avatarRemoteDatabaseProviderList.value.length;
-        for (let i = 0; i < length; ++i) {
-            if (!avatarRemoteDatabaseProviderList.value[i]) {
-                avatarRemoteDatabaseProviderList.value.splice(i, 1);
-            }
-        }
+        avatarRemoteDatabaseProviderList.value =
+            avatarRemoteDatabaseProviderList.value.filter(Boolean);
         await configRepository.setString(
             'VRCX_avatarRemoteDatabaseProviderList',
             JSON.stringify(avatarRemoteDatabaseProviderList.value)

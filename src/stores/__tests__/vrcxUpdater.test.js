@@ -14,7 +14,7 @@ const mocks = vi.hoisted(() => ({
     }
 }));
 
-vi.mock('../../service/config', () => ({
+vi.mock('../../services/config', () => ({
     default: mocks.configRepository
 }));
 
@@ -28,10 +28,9 @@ vi.mock('vue-sonner', () => ({
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
-    ,
-            locale: require('vue').ref('en')
-        })
+        t: (key) => key,
+        locale: require('vue').ref('en')
+    })
 }));
 
 function flushPromises() {

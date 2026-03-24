@@ -19,7 +19,7 @@ vi.mock('vue-i18n', () => {
     };
 });
 
-vi.mock('../../../../plugin/router', () => {
+vi.mock('../../../../plugins/router', () => {
     const { ref } = require('vue');
     return {
         router: {
@@ -44,8 +44,8 @@ vi.mock('vue-router', async (importOriginal) => {
         }))
     };
 });
-vi.mock('../../../../plugin/interopApi', () => ({ initInteropApi: vi.fn() }));
-vi.mock('../../../../service/database', () => ({
+vi.mock('../../../../plugins/interopApi', () => ({ initInteropApi: vi.fn() }));
+vi.mock('../../../../services/database', () => ({
     database: new Proxy(
         {},
         {
@@ -56,7 +56,7 @@ vi.mock('../../../../service/database', () => ({
         }
     )
 }));
-vi.mock('../../../../service/config', () => ({
+vi.mock('../../../../services/config', () => ({
     default: {
         init: vi.fn(),
         getString: vi.fn().mockImplementation((_k, d) => d ?? '{}'),
@@ -74,11 +74,11 @@ vi.mock('../../../../service/config', () => ({
         remove: vi.fn()
     }
 }));
-vi.mock('../../../../service/jsonStorage', () => ({ default: vi.fn() }));
-vi.mock('../../../../service/watchState', () => ({
+vi.mock('../../../../services/jsonStorage', () => ({ default: vi.fn() }));
+vi.mock('../../../../services/watchState', () => ({
     watchState: { isLoggedIn: false }
 }));
-vi.mock('../../../../service/request', () => ({
+vi.mock('../../../../services/request', () => ({
     request: vi.fn().mockResolvedValue({ json: {} }),
     processBulk: vi.fn(),
     buildRequestInit: vi.fn(),
@@ -87,6 +87,12 @@ vi.mock('../../../../service/request', () => ({
     $throw: vi.fn(),
     failedGetRequests: new Map()
 }));
+
+import * as worldCoordinatorModule from '../../../../coordinators/worldCoordinator';
+vi.mock('../../../../coordinators/worldCoordinator', async (importOriginal) => {
+    const actual = await importOriginal();
+    return { ...actual, showWorldDialog: vi.fn() };
+});
 
 import UserDialogWorldsTab from '../UserDialogWorldsTab.vue';
 import { useUserStore } from '../../../../stores';
@@ -131,19 +137,21 @@ function mountComponent(overrides = {}) {
     });
 
     const userStore = useUserStore(pinia);
-    userStore.userDialog = {
-        id: 'usr_me',
-        ref: { id: 'usr_me' },
-        worlds: [...MOCK_WORLDS],
-        worldSorting: userDialogWorldSortingOptions.name,
-        worldOrder: userDialogWorldOrderOptions.descending,
-        isWorldsLoading: false,
-        ...overrides
-    };
-    userStore.currentUser = {
-        id: 'usr_me',
-        ...overrides.currentUser
-    };
+    userStore.$patch({
+        userDialog: {
+            id: 'usr_me',
+            ref: { id: 'usr_me' },
+            worlds: [...MOCK_WORLDS],
+            worldSorting: userDialogWorldSortingOptions.name,
+            worldOrder: userDialogWorldOrderOptions.descending,
+            isWorldsLoading: false,
+            ...overrides
+        },
+        currentUser: {
+            id: 'usr_me',
+            ...overrides.currentUser
+        }
+    });
 
     return mount(UserDialogWorldsTab, {
         global: {
@@ -235,21 +243,21 @@ describe('UserDialogWorldsTab.vue', () => {
         test('calls showWorldDialog when a world is clicked', async () => {
             const pinia = createTestingPinia({ stubActions: false });
             const userStore = useUserStore(pinia);
-            const { useWorldStore } = await import('../../../../stores');
-            const worldStore = useWorldStore(pinia);
             const showWorldDialogSpy = vi
-                .spyOn(worldStore, 'showWorldDialog')
+                .spyOn(worldCoordinatorModule, 'showWorldDialog')
                 .mockImplementation(() => {});
 
-            userStore.userDialog = {
-                id: 'usr_me',
-                ref: { id: 'usr_me' },
-                worlds: [...MOCK_WORLDS],
-                worldSorting: userDialogWorldSortingOptions.name,
-                worldOrder: userDialogWorldOrderOptions.descending,
-                isWorldsLoading: false
-            };
-            userStore.currentUser = { id: 'usr_me' };
+            userStore.$patch({
+                userDialog: {
+                    id: 'usr_me',
+                    ref: { id: 'usr_me' },
+                    worlds: [...MOCK_WORLDS],
+                    worldSorting: userDialogWorldSortingOptions.name,
+                    worldOrder: userDialogWorldOrderOptions.descending,
+                    isWorldsLoading: false
+                },
+                currentUser: { id: 'usr_me' }
+            });
 
             const wrapper = mount(UserDialogWorldsTab, {
                 global: {

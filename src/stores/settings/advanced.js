@@ -3,18 +3,18 @@ import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
-import { AppDebug } from '../../service/appConfig';
-import { database } from '../../service/database';
+import { logWebRequest } from '../../services/appConfig';
+import { database } from '../../services/database';
 import { languageCodes } from '../../localization';
 import { useGameStore } from '../game';
 import { useModalStore } from '../modal';
 import { useUpdateLoopStore } from '../updateLoop';
 import { useVRCXUpdaterStore } from '../vrcxUpdater';
 import { useVrcxStore } from '../vrcx';
-import { watchState } from '../../service/watchState';
+import { watchState } from '../../services/watchState';
 
-import configRepository from '../../service/config';
-import webApiService from '../../service/webapi';
+import configRepository from '../../services/config';
+import webApiService from '../../services/webapi';
 
 export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const gameStore = useGameStore();
@@ -60,6 +60,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const showConfirmationOnSwitchAvatar = ref(false);
     const gameLogDisabled = ref(false);
     const sqliteTableSizes = ref({});
+    const avatarAutoCleanup = ref('Off');
+    const purgeInProgress = ref(false);
     const ugcFolderPath = ref('');
     const autoDeleteOldPrints = ref(false);
     const notificationOpacity = ref(100);
@@ -109,6 +111,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             progressPieFilterConfig,
             showConfirmationOnSwitchAvatarConfig,
             gameLogDisabledConfig,
+            avatarAutoCleanupConfig,
             ugcFolderPathConfig,
             autoDeleteOldPrintsConfig,
             notificationOpacityConfig,
@@ -157,6 +160,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 false
             ),
             configRepository.getBool('VRCX_gameLogDisabled', false),
+            configRepository.getString('VRCX_avatarAutoCleanup', 'Off'),
             configRepository.getString('VRCX_userGeneratedContentPath', ''),
             configRepository.getBool('VRCX_autoDeleteOldPrints', false),
             configRepository.getFloat('VRCX_notificationOpacity', 100),
@@ -203,6 +207,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         showConfirmationOnSwitchAvatar.value =
             showConfirmationOnSwitchAvatarConfig;
         gameLogDisabled.value = gameLogDisabledConfig;
+        avatarAutoCleanup.value = avatarAutoCleanupConfig;
         ugcFolderPath.value = ugcFolderPathConfig;
         autoDeleteOldPrints.value = autoDeleteOldPrintsConfig;
         notificationOpacity.value = notificationOpacityConfig;
@@ -464,9 +469,12 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             }
 
             const data = JSON.parse(response.data);
-            if (AppDebug.debugWebRequests) {
-                console.log(modelsURL, data, response);
-            }
+            logWebRequest(
+                '[EXTERNAL GET]',
+                modelsURL,
+                `(${response.status})`,
+                data
+            );
 
             if (data.data && Array.isArray(data.data)) {
                 return data.data
@@ -519,6 +527,101 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             'VRCX_gameLogDisabled',
             gameLogDisabled.value
         );
+    }
+
+    async function setAvatarAutoCleanup(value) {
+        avatarAutoCleanup.value = value;
+        await configRepository.setString('VRCX_avatarAutoCleanup', value);
+    }
+
+    /**
+     * @param {number|null} days - Number of days to keep. Null means delete all.
+     */
+    async function purgeAvatarFeedData(days) {
+        let cutoffDate = null;
+        if (days !== null) {
+            const cutoff = new Date();
+            cutoff.setDate(cutoff.getDate() - days);
+            cutoffDate = cutoff.toJSON();
+        }
+    
+        purgeInProgress.value = true;
+        const msgBox = toast.warning(
+            t(
+                'view.settings.advanced.advanced.database_cleanup.purge_in_progress'
+            ),
+            { duration: Infinity }
+        );
+    
+        try {
+            await database.purgeAvatarFeedData(cutoffDate);
+            await database.vacuum();
+            toast.dismiss(msgBox);
+            toast.success(
+                t(
+                    'view.settings.advanced.advanced.database_cleanup.purge_complete'
+                )
+            );
+            // Brief delay before restart to show success message
+            await new Promise((resolve) =>
+                setTimeout(resolve, 1500)
+            );
+            VRCXUpdaterStore.restartVRCX(false);
+        } catch (err) {
+            console.error(err);
+            toast.dismiss(msgBox);
+            toast.error(t('view.settings.advanced.advanced.database_cleanup.purge_failed', { error: err }));
+        } finally {
+            purgeInProgress.value = false;
+        }
+    }
+
+    /**
+     * Run auto-cleanup on startup if configured and enough time has passed.
+     * Reads config directly from configRepository to avoid race condition
+     * with initAdvancedSettings not having completed yet.
+     * @param {string} userId - Current user ID for per-user cleanup tracking.
+     */
+    async function runAvatarAutoCleanup(userId) {
+        const cleanupSetting = await configRepository.getString(
+            'VRCX_avatarAutoCleanup',
+            'Off'
+        );
+        if (cleanupSetting === 'Off') return;
+    
+        const configKey = `VRCX_lastAvatarCleanupDate_${userId}`;
+        const lastCleanupStr = await configRepository.getString(
+            configKey,
+            ''
+        );
+        const now = new Date();
+    
+        if (lastCleanupStr) {
+            const lastCleanup = new Date(lastCleanupStr);
+            const daysSinceLastCleanup =
+                (now - lastCleanup) / (1000 * 60 * 60 * 24);
+            if (daysSinceLastCleanup < 7) return;
+        }
+    
+        const days = parseInt(cleanupSetting, 10);
+        if (isNaN(days) || days <= 0) return;
+    
+        const cutoff = new Date();
+        cutoff.setDate(cutoff.getDate() - days);
+        const cutoffDate = cutoff.toJSON();
+    
+        try {
+            await database.purgeAvatarFeedData(cutoffDate);
+            await configRepository.setString(
+                configKey,
+                now.toJSON()
+            );
+            console.log(
+                `Auto-cleaned avatar feed data older than ${days} days`
+            );
+        } catch (err) {
+            console.error('Avatar auto-cleanup failed:', err);
+        }
     }
 
     async function setSaveInstanceEmoji() {
@@ -703,9 +806,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 }
             });
             const json = JSON.parse(response.data);
-            if (AppDebug.debugWebRequests) {
-                console.log(url, json, response);
-            }
+            logWebRequest('[EXTERNAL GET]', url, `(${response.status})`, json);
             if (response.status === 200) {
                 data = json;
             } else {
@@ -753,9 +854,12 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                     );
                 }
                 const data = JSON.parse(response.data);
-                if (AppDebug.debugWebRequests) {
-                    console.log(url, data, response);
-                }
+                logWebRequest(
+                    '[EXTERNAL POST]',
+                    url,
+                    `(${response.status})`,
+                    data
+                );
                 return data.data.translations[0].translatedText;
             } catch (err) {
                 toast.error(`Translation failed: ${err.message}`);
@@ -817,9 +921,12 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             }
 
             const data = JSON.parse(response.data);
-            if (AppDebug.debugWebRequests) {
-                console.log(endpoint, data, response);
-            }
+            logWebRequest(
+                '[EXTERNAL POST]',
+                endpoint,
+                `(${response.status})`,
+                data
+            );
 
             const translated = data?.choices?.[0]?.message?.content;
             return typeof translated === 'string' ? translated.trim() : null;
@@ -1023,6 +1130,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         showConfirmationOnSwitchAvatar,
         gameLogDisabled,
         sqliteTableSizes,
+        avatarAutoCleanup,
+        purgeInProgress,
         ugcFolderPath,
         currentUserInventory,
         autoDeleteOldPrints,
@@ -1062,6 +1171,9 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         setProgressPieFilter,
         setShowConfirmationOnSwitchAvatar,
         setGameLogDisabled,
+        setAvatarAutoCleanup,
+        purgeAvatarFeedData,
+        runAvatarAutoCleanup,
         setUGCFolderPath,
         cropPrintsChanged,
         setAutoDeleteOldPrints,

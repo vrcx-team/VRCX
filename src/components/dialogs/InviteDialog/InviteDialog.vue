@@ -25,14 +25,34 @@
                     @click="addFriendsInInstanceToInvite"
                     >{{ t('dialog.invite.add_friends_in_instance') }}</Button
                 >
-                <Button
-                    class="mt-2"
-                    size="sm"
-                    variant="outline"
-                    :disabled="vipFriends.length === 0"
-                    @click="addFavoriteFriendsToInvite"
-                    >{{ t('dialog.invite.add_favorite_friends') }}</Button
-                >
+                <DropdownMenu>
+                    <DropdownMenuTrigger as-child>
+                        <Button
+                            class="mt-2"
+                            size="sm"
+                            variant="outline"
+                            :disabled="remoteFriendFavoriteGroupItems.length === 0 && localFriendFavoriteGroupItems.length === 0"
+                            >{{ t('dialog.invite.add_favorite_friends') }}</Button
+                        >
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" class="w-48">
+                        <DropdownMenuItem
+                            v-for="group in remoteFriendFavoriteGroupItems"
+                            :key="group.key"
+                            @select.prevent
+                            @click="addGroupOnlineFriendsToInvite(group)">
+                            {{ group.displayName }}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator v-if="remoteFriendFavoriteGroupItems.length && localFriendFavoriteGroupItems.length" />
+                        <DropdownMenuItem
+                            v-for="group in localFriendFavoriteGroupItems"
+                            :key="group.key"
+                            @select.prevent
+                            @click="addGroupOnlineFriendsToInvite(group)">
+                            {{ group.displayName }}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
 
                 <div class="mt-4" style="width: 100%">
                     <VirtualCombobox
@@ -105,14 +125,38 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import { useFriendStore, useGalleryStore, useInviteStore, useModalStore, useUserStore } from '../../../stores';
-    import { parseLocation, userImage, userStatusClass } from '../../../shared/utils';
+    import {
+        useFavoriteStore,
+        useFriendStore,
+        useGalleryStore,
+        useInviteStore,
+        useModalStore,
+        useUserStore
+    } from '../../../stores';
+    import { parseLocation } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { instanceRequest, notificationRequest } from '../../../api';
     import { VirtualCombobox } from '../../ui/virtual-combobox';
+    import {
+        DropdownMenu,
+        DropdownMenuContent,
+        DropdownMenuItem,
+        DropdownMenuSeparator,
+        DropdownMenuTrigger
+    } from '../../ui/dropdown-menu';
 
     import SendInviteDialog from './SendInviteDialog.vue';
 
-    const { vipFriends, onlineFriends, activeFriends } = storeToRefs(useFriendStore());
+    const { userImage, userStatusClass } = useUserDisplay();
+    const friendStore = useFriendStore();
+    const { vipFriends, onlineFriends, activeFriends, friends } = storeToRefs(friendStore);
+    const favoriteStore = useFavoriteStore();
+    const {
+        favoriteFriendGroups,
+        localFriendFavoriteGroups,
+        localFriendFavorites,
+        groupedByGroupKeyFavoriteFriends
+    } = storeToRefs(favoriteStore);
     const { refreshInviteMessageTableData } = useInviteStore();
     const { currentUser } = storeToRefs(useUserStore());
     const { clearInviteImageUpload } = useGalleryStore();
@@ -136,6 +180,29 @@
         params: {}
     });
 
+    const friendSections = computed(() => [
+        {
+            key: 'friendsInInstance',
+            label: t('dialog.invite.friends_in_instance'),
+            friends: props.inviteDialog?.friendsInInstance ?? []
+        },
+        {
+            key: 'vip',
+            label: t('side_panel.favorite'),
+            friends: vipFriends.value
+        },
+        {
+            key: 'online',
+            label: t('side_panel.online'),
+            friends: onlineFriends.value
+        },
+        {
+            key: 'active',
+            label: t('side_panel.active'),
+            friends: activeFriends.value
+        }
+    ]);
+
     const userPickerGroups = computed(() => {
         const groups = [];
 
@@ -154,7 +221,7 @@
             });
         }
 
-        const addFriendGroup = (key, label, friends) => {
+        const addFriendGroup = ({ key, label, friends }) => {
             if (!friends?.length) return;
             groups.push({
                 key,
@@ -172,14 +239,7 @@
             });
         };
 
-        addFriendGroup(
-            'friendsInInstance',
-            t('dialog.invite.friends_in_instance'),
-            props.inviteDialog?.friendsInInstance
-        );
-        addFriendGroup('vip', t('side_panel.favorite'), vipFriends.value);
-        addFriendGroup('online', t('side_panel.online'), onlineFriends.value);
-        addFriendGroup('active', t('side_panel.active'), activeFriends.value);
+        friendSections.value.forEach(addFriendGroup);
 
         return groups;
     });
@@ -196,10 +256,11 @@
 
     const friendById = computed(() => {
         const map = new Map();
-        for (const friend of props.inviteDialog?.friendsInInstance ?? []) map.set(friend.id, friend);
-        for (const friend of vipFriends.value) map.set(friend.id, friend);
-        for (const friend of onlineFriends.value) map.set(friend.id, friend);
-        for (const friend of activeFriends.value) map.set(friend.id, friend);
+        for (const section of friendSections.value) {
+            for (const friend of section.friends ?? []) {
+                map.set(friend.id, friend);
+            }
+        }
         return map;
     });
 
@@ -261,13 +322,62 @@
     }
 
     /**
-     *
+     * @param {string[]} userIds
+     * @returns {boolean}
      */
-    function addFavoriteFriendsToInvite() {
+    function hasOnlineFriend(userIds) {
+        for (const id of userIds) {
+            const ctx = friends.value.get(id);
+            if (ctx && ctx.state === 'online') return true;
+        }
+        return false;
+    }
+
+    const remoteFriendFavoriteGroupItems = computed(() =>
+        favoriteFriendGroups.value
+            .filter((group) => {
+                const favorites = groupedByGroupKeyFavoriteFriends.value[group.key];
+                return favorites?.length && hasOnlineFriend(favorites.map((f) => f.id));
+            })
+            .map((group) => ({
+                key: group.key,
+                displayName: group.displayName,
+                type: 'remote'
+            }))
+    );
+
+    const localFriendFavoriteGroupItems = computed(() =>
+        localFriendFavoriteGroups.value
+            .filter((groupName) => {
+                const userIds = localFriendFavorites.value[groupName];
+                return userIds?.length && hasOnlineFriend(userIds);
+            })
+            .map((groupName) => ({
+                key: `local:${groupName}`,
+                displayName: groupName,
+                type: 'local',
+                localName: groupName
+            }))
+    );
+
+    /**
+     * @param {object} group
+     */
+    function addGroupOnlineFriendsToInvite(group) {
         const D = props.inviteDialog;
-        for (const friend of vipFriends.value) {
-            if (!D.userIds.includes(friend.id)) {
-                D.userIds.push(friend.id);
+        let userIds;
+
+        if (group.type === 'remote') {
+            const favorites = groupedByGroupKeyFavoriteFriends.value[group.key] || [];
+            userIds = favorites.map((fav) => fav.id);
+        } else {
+            userIds = localFriendFavorites.value[group.localName] || [];
+        }
+
+        for (const userId of userIds) {
+            const ctx = friends.value.get(userId);
+            if (ctx && ctx.state === 'online' && !D.userIds.includes(userId)) {
+                D.userIds.push(userId);
             }
         }
     }

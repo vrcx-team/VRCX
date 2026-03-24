@@ -1,20 +1,26 @@
 import { defineStore } from 'pinia';
 import { watch } from 'vue';
 
-import { database } from '../service/database';
+import { database } from '../services/database';
 import { groupRequest } from '../api';
+import { runRefreshFriendsListFlow } from '../coordinators/friendSyncCoordinator';
+import { runUpdateIsGameRunningFlow } from '../coordinators/gameCoordinator';
+import { addGameLogEvent } from '../coordinators/gameLogCoordinator';
+import { runRefreshPlayerModerationsFlow } from '../coordinators/moderationCoordinator';
+import { clearVRCXCache } from '../coordinators/vrcxCoordinator';
 import { useAuthStore } from './auth';
 import { useDiscordPresenceSettingsStore } from './settings/discordPresence';
 import { useFriendStore } from './friend';
-import { useGameLogStore } from './gameLog';
-import { useGameStore } from './game';
-import { useGroupStore } from './group';
-import { useModerationStore } from './moderation';
+import { handleGroupUserInstances } from '../coordinators/groupCoordinator';
+import {
+    getCurrentUser,
+    updateAutoStateChange
+} from '../coordinators/userCoordinator';
 import { useUserStore } from './user';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
 import { useVrStore } from './vr';
 import { useVrcxStore } from './vrcx';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
 import * as workerTimers from 'worker-timers';
 
@@ -22,13 +28,9 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     const authStore = useAuthStore();
     const userStore = useUserStore();
     const friendStore = useFriendStore();
-    const gameStore = useGameStore();
-    const moderationStore = useModerationStore();
     const vrcxStore = useVrcxStore();
     const discordPresenceSettingsStore = useDiscordPresenceSettingsStore();
-    const gameLogStore = useGameLogStore();
     const vrcxUpdaterStore = useVRCXUpdaterStore();
-    const groupStore = useGroupStore();
     const vrStore = useVrStore();
     const state = {
         nextCurrentUserRefresh: 300,
@@ -62,23 +64,26 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
 
     const ipcTimeout = state.ipcTimeout;
 
+    /**
+     *
+     */
     async function updateLoop() {
         try {
             if (watchState.isLoggedIn) {
                 if (--state.nextCurrentUserRefresh <= 0) {
                     state.nextCurrentUserRefresh = 300; // 5min
-                    userStore.getCurrentUser();
+                    getCurrentUser();
                 }
                 if (--state.nextFriendsRefresh <= 0) {
                     state.nextFriendsRefresh = 3600; // 1hour
-                    friendStore.refreshFriendsList();
+                    runRefreshFriendsListFlow();
                     authStore.updateStoredUser(userStore.currentUser);
                     if (
                         userStore.currentUser.last_activity &&
                         new Date(userStore.currentUser.last_activity) >
                             new Date(Date.now() - 3600 * 1000) // 1hour
                     ) {
-                        moderationStore.refreshPlayerModerations();
+                        runRefreshPlayerModerationsFlow();
                     }
                 }
                 if (--state.nextGroupInstanceRefresh <= 0) {
@@ -86,7 +91,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                         state.nextGroupInstanceRefresh = 300; // 5min
                         const args =
                             await groupRequest.getUsersGroupInstances();
-                        groupStore.handleGroupUserInstances(args);
+                        handleGroupUserInstances(args);
                     }
                     AppApi.CheckGameRunning();
                 }
@@ -106,7 +111,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 ) {
                     state.nextClearVRCXCacheCheck =
                         vrcxStore.clearVRCXCacheFrequency / 2;
-                    vrcxStore.clearVRCXCache();
+                    clearVRCXCache();
                 }
                 if (--state.nextDiscordUpdate <= 0) {
                     state.nextDiscordUpdate = 3;
@@ -116,20 +121,20 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 }
                 if (--state.nextAutoStateChange <= 0) {
                     state.nextAutoStateChange = 3;
-                    userStore.updateAutoStateChange();
+                    updateAutoStateChange();
                 }
                 if (LINUX && --state.nextGetLogCheck <= 0) {
                     state.nextGetLogCheck = 0.5;
                     const logLines = await LogWatcher.GetLogLines();
                     if (logLines) {
                         logLines.forEach((logLine) => {
-                            gameLogStore.addGameLogEvent(logLine);
+                            addGameLogEvent(logLine);
                         });
                     }
                 }
                 if (LINUX && --state.nextGameRunningCheck <= 0) {
                     state.nextGameRunningCheck = 1;
-                    gameStore.updateIsGameRunning(
+                    await runUpdateIsGameRunningFlow(
                         await AppApi.IsGameRunning(),
                         await AppApi.IsSteamVRRunning()
                     );
@@ -141,28 +146,48 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 }
             }
         } catch (err) {
-            friendStore.setRefreshFriendsLoading(false);
+            friendStore.setIsRefreshFriendsLoading(false);
             console.error(err);
         }
         workerTimers.setTimeout(() => updateLoop(), 1000);
     }
 
+    /**
+     *
+     * @param value
+     */
     function setNextClearVRCXCacheCheck(value) {
         state.nextClearVRCXCacheCheck = value;
     }
 
+    /**
+     *
+     * @param value
+     */
     function setNextGroupInstanceRefresh(value) {
         state.nextGroupInstanceRefresh = value;
     }
 
+    /**
+     *
+     * @param value
+     */
     function setNextDiscordUpdate(value) {
         state.nextDiscordUpdate = value;
     }
 
+    /**
+     *
+     * @param value
+     */
     function setIpcTimeout(value) {
         state.ipcTimeout = value;
     }
 
+    /**
+     *
+     * @param value
+     */
     function setNextCurrentUserRefresh(value) {
         state.nextCurrentUserRefresh = value;
     }

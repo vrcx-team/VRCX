@@ -10,7 +10,7 @@ vi.mock('../../../../api', () => ({
     },
     userRequest: {}
 }));
-vi.mock('../../../../plugin/router', () => {
+vi.mock('../../../../plugins/router', () => {
     const { ref } = require('vue');
     return {
         router: {
@@ -35,8 +35,8 @@ vi.mock('vue-router', async (importOriginal) => {
         }))
     };
 });
-vi.mock('../../../../plugin/interopApi', () => ({ initInteropApi: vi.fn() }));
-vi.mock('../../../../service/database', () => ({
+vi.mock('../../../../plugins/interopApi', () => ({ initInteropApi: vi.fn() }));
+vi.mock('../../../../services/database', () => ({
     database: new Proxy(
         {},
         {
@@ -47,7 +47,7 @@ vi.mock('../../../../service/database', () => ({
         }
     )
 }));
-vi.mock('../../../../service/config', () => ({
+vi.mock('../../../../services/config', () => ({
     default: {
         init: vi.fn(),
         getString: vi.fn().mockImplementation((_k, d) => d ?? '{}'),
@@ -65,11 +65,11 @@ vi.mock('../../../../service/config', () => ({
         remove: vi.fn()
     }
 }));
-vi.mock('../../../../service/jsonStorage', () => ({ default: vi.fn() }));
-vi.mock('../../../../service/watchState', () => ({
+vi.mock('../../../../services/jsonStorage', () => ({ default: vi.fn() }));
+vi.mock('../../../../services/watchState', () => ({
     watchState: { isLoggedIn: false }
 }));
-vi.mock('../../../../service/request', () => ({
+vi.mock('../../../../services/request', () => ({
     request: vi.fn().mockResolvedValue({ json: {} }),
     processBulk: vi.fn(),
     buildRequestInit: vi.fn(),
@@ -80,12 +80,11 @@ vi.mock('../../../../service/request', () => ({
 }));
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
-    ,
-            locale: require('vue').ref('en')
-        }),
+        t: (key) => key,
+        locale: require('vue').ref('en')
+    }),
     createI18n: () => ({
-        global: { t: (key) => key , locale: require('vue').ref('en') },
+        global: { t: (key) => key, locale: require('vue').ref('en') },
         install: vi.fn()
     })
 }));
@@ -96,7 +95,7 @@ vi.mock('worker-timers', () => ({
 
 import { useGroupMembers } from '../useGroupMembers';
 import { groupRequest, queryRequest } from '../../../../api';
-import { groupDialogFilterOptions } from '../../../../shared/constants';
+import { FILTER_EVERYONE } from '../../../../shared/constants';
 
 /**
  *
@@ -409,9 +408,7 @@ describe('useGroupMembers', () => {
 
         test('marks done on error', async () => {
             const groupDialog = createGroupDialog();
-            queryRequest.fetch.mockRejectedValue(
-                new Error('fail')
-            );
+            queryRequest.fetch.mockRejectedValue(new Error('fail'));
 
             const {
                 loadMoreGroupMembers,
@@ -450,7 +447,7 @@ describe('useGroupMembers', () => {
     describe('setGroupMemberFilter', () => {
         test('does not reload when filter unchanged', async () => {
             const { markRaw } = require('vue');
-            const filter = markRaw(groupDialogFilterOptions.everyone);
+            const filter = markRaw(FILTER_EVERYONE);
             const groupDialog = createGroupDialog();
             // Use markRaw to prevent Vue from wrapping the filter in a Proxy
             groupDialog.value.memberFilter = filter;

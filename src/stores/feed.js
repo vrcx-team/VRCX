@@ -1,20 +1,16 @@
 import { ref, shallowRef, watch } from 'vue';
 import { defineStore } from 'pinia';
 
-import { database } from '../service/database';
+import { database } from '../services/database';
 import { useFriendStore } from './friend';
-import { useNotificationStore } from './notification';
-import { useSharedFeedStore } from './sharedFeed';
 import { useVrcxStore } from './vrcx';
-import { watchState } from '../service/watchState';
+import { watchState } from '../services/watchState';
 
-import configRepository from '../service/config';
+import configRepository from '../services/config';
 
 export const useFeedStore = defineStore('Feed', () => {
     const friendStore = useFriendStore();
-    const notificationStore = useNotificationStore();
     const vrcxStore = useVrcxStore();
-    const sharedFeedStore = useSharedFeedStore();
 
     const feedTableData = shallowRef([]);
     const feedTable = ref({
@@ -170,9 +166,12 @@ export const useFeedStore = defineStore('Feed', () => {
         }
     }
 
-    function addFeed(feed) {
-        notificationStore.queueFeedNoty(feed);
-        sharedFeedStore.addEntry(feed);
+    /**
+     * Appends a feed entry to the local table if it passes filters.
+     * Does NOT trigger notifications or shared feed — that is the caller's responsibility.
+     * @param {object} feed The feed entry to add.
+     */
+    function addFeedEntry(feed) {
         if (
             feedTable.value.filter.length > 0 &&
             !feedTable.value.filter.includes(feed.type)
@@ -222,6 +221,6 @@ export const useFeedStore = defineStore('Feed', () => {
         feedTableData,
         initFeedTable,
         feedTableLookup,
-        addFeed
+        addFeedEntry
     };
 });

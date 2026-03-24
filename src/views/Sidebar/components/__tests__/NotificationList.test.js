@@ -21,10 +21,9 @@ vi.mock('@tanstack/vue-virtual', () => ({
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
-    ,
-            locale: require('vue').ref('en')
-        })
+        t: (key) => key,
+        locale: require('vue').ref('en')
+    })
 }));
 
 vi.mock('@/components/ui/button', () => ({
@@ -83,7 +82,9 @@ describe('NotificationList.vue', () => {
                     makeNoty('old', '2026-03-08T00:00:00.000Z'),
                     makeNoty('new', '2026-03-09T00:00:00.000Z')
                 ],
-                recentNotifications: [makeNoty('recent1', '2026-03-07T00:00:00.000Z')]
+                recentNotifications: [
+                    makeNoty('recent1', '2026-03-07T00:00:00.000Z')
+                ]
             }
         });
 
@@ -118,7 +119,9 @@ describe('NotificationList.vue', () => {
             }
         });
 
-        await wrapper.get('[data-testid="emit-invite-response"]').trigger('click');
+        await wrapper
+            .get('[data-testid="emit-invite-response"]')
+            .trigger('click');
         await wrapper
             .get('[data-testid="emit-invite-request-response"]')
             .trigger('click');

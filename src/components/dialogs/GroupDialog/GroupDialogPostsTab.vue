@@ -18,18 +18,29 @@
                 <div class="flex-1 overflow-hidden">
                     <span style="display: block" v-text="post.title" />
                     <div v-if="post.imageUrl" style="display: inline-block; margin-right: 6px">
-                        <img
-                            :src="post.imageUrl"
+                        <div
                             class="cursor-pointer"
-                            style="
-                                flex: none;
-                                width: 60px;
-                                height: 60px;
-                                border-radius: var(--radius-md);
-                                object-fit: cover;
-                            "
-                            @click="showFullscreenImageDialog(post.imageUrl)"
-                            loading="lazy" />
+                            style="flex: none; width: 60px; height: 60px"
+                            @click="showFullscreenImageDialog(post.imageUrl)">
+                            <img
+                                :src="post.imageUrl"
+                                style="
+                                    width: 60px;
+                                    height: 60px;
+                                    border-radius: var(--radius-md);
+                                    object-fit: cover;
+                                "
+                                @error="
+                                    $event.target.style.display = 'none';
+                                    $event.target.nextElementSibling.style.display = 'flex';
+                                "
+                                loading="lazy" />
+                            <div
+                                class="items-center justify-center bg-muted"
+                                style="width: 60px; height: 60px; border-radius: var(--radius-md); display: none">
+                                <Image class="size-5 text-muted-foreground" />
+                            </div>
+                        </div>
                     </div>
                     <pre
                         class="text-xs font-[inherit]"
@@ -101,7 +112,7 @@
 </template>
 
 <script setup>
-    import { Eye, Pencil, Trash2 } from 'lucide-vue-next';
+    import { Eye, Image, Pencil, Trash2 } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { InputGroupField } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
@@ -110,7 +121,7 @@
     import { formatDateFilter, hasGroupPermission } from '../../../shared/utils';
     import { useGalleryStore, useGroupStore } from '../../../stores';
 
-    const props = defineProps({
+    defineProps({
         showGroupPostEditDialog: {
             type: Function,
             required: true

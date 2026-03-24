@@ -123,6 +123,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
+    import { addLocalAvatarFavorite } from '../../../coordinators/favoriteCoordinator';
     import { avatarRequest, favoriteRequest } from '../../../api';
     import { createColumns } from './avatarImportColumns.jsx';
     import { removeFromArray } from '../../../shared/utils';
@@ -130,11 +131,12 @@
 
     const emit = defineEmits(['update:avatarImportDialogInput']);
     const { t } = useI18n();
-    const { showUserDialog } = useUserStore();
+
     const { favoriteAvatarGroups, avatarImportDialogInput, avatarImportDialogVisible, localAvatarFavoriteGroups } =
         storeToRefs(useFavoriteStore());
-    const { addLocalAvatarFavorite, localAvatarFavGroupLength, getCachedFavoritesByObjectId } = useFavoriteStore();
-    const { showAvatarDialog, applyAvatar } = useAvatarStore();
+    const { localAvatarFavGroupLength, getCachedFavoritesByObjectId } = useFavoriteStore();
+    import { showAvatarDialog, applyAvatar } from '../../../coordinators/avatarCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
     const { showFullscreenImageDialog } = useGalleryStore();
 
     const avatarImportDialog = ref({
@@ -160,9 +162,7 @@
 
     const tableStyle = { maxHeight: '400px' };
 
-    const rows = computed(() =>
-        Array.isArray(avatarImportTable.value?.data) ? avatarImportTable.value.data.slice() : []
-    );
+    const rows = computed(() => (Array.isArray(avatarImportTable.value?.data) ? avatarImportTable.value.data.slice() : []));
 
     const columns = computed(() =>
         createColumns({

@@ -1,13 +1,13 @@
 import { defineConfig } from 'eslint/config';
-import { jsdoc } from 'eslint-plugin-jsdoc';
-
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
 import js from '@eslint/js';
 import pluginVue from 'eslint-plugin-vue';
-import prettyImport from '@kamiya4047/eslint-plugin-pretty-import';
+import oxlint from 'eslint-plugin-oxlint';
 
 export default defineConfig([
+    {
+        ignores: ['build/**', 'node_modules/**']
+    },
     {
         files: ['**/*.{js,mjs,cjs,vue}'],
         plugins: { js },
@@ -57,7 +57,8 @@ export default defineConfig([
         files: [
             '**/__tests__/**/*.{js,mjs,cjs,vue}',
             '**/*.spec.{js,mjs,cjs,vue}',
-            '**/*.test.{js,mjs,cjs,vue}'
+            '**/*.test.{js,mjs,cjs,vue}',
+            'vitest.setup.js'
         ],
         languageOptions: {
             globals: {
@@ -100,38 +101,5 @@ export default defineConfig([
             'vue/no-use-v-if-with-v-for': 'warn'
         }
     },
-    jsdoc({
-        config: 'flat/recommended',
-        rules: {
-            'jsdoc/require-param-description': 'off',
-            'jsdoc/require-returns-description': 'off',
-            'jsdoc/reject-function-type': 'off'
-        }
-    }),
-    {
-        ignores: [
-            '**/__tests__/**',
-            '**/*.spec.{js,mjs,cjs,vue}',
-            '**/*.test.{js,mjs,cjs,vue}'
-        ],
-        plugins: { 'pretty-import': prettyImport },
-        rules: {
-            'pretty-import/separate-type-imports': 'warn',
-            'pretty-import/sort-import-groups': [
-                'warn',
-                {
-                    groupStyleImports: true
-                }
-            ],
-            'pretty-import/sort-import-names': 'warn'
-        }
-    },
-    {
-        ...eslintPluginPrettierRecommended,
-        ignores: [
-            '**/__tests__/**',
-            '**/*.spec.{js,mjs,cjs,vue}',
-            '**/*.test.{js,mjs,cjs,vue}'
-        ]
-    }
+    ...oxlint.configs['flat/recommended']
 ]);

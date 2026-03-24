@@ -1,5 +1,5 @@
-import { request } from '../service/request';
-import { useUserStore } from '../stores';
+import { request } from '../services/request';
+import { handleConfig } from '../coordinators/userCoordinator';
 
 const loginReq = {
     /**
@@ -63,7 +63,7 @@ const loginReq = {
             const args = {
                 json
             };
-            useUserStore().handleConfig(args);
+            handleConfig(args);
             return args;
         });
     }

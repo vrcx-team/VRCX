@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
     appearanceStore: {
         isSidebarGroupByInstance: { value: false },
         isHideFriendsInSameInstance: { value: false },
+        isSameInstanceAboveFavorites: { value: false },
         isSidebarDivideByFriendGroup: { value: false },
         sidebarFavoriteGroups: { value: [] },
         sidebarFavoriteGroupOrder: { value: [] },
@@ -23,7 +24,6 @@ const mocks = vi.hoisted(() => ({
         gameLogDisabled: { value: false }
     },
     userStore: {
-        showUserDialog: vi.fn(),
         showSendBoopDialog: vi.fn(),
         currentUser: {
             value: {
@@ -56,9 +56,14 @@ const mocks = vi.hoisted(() => ({
     gameStore: {
         isGameRunning: { value: true }
     },
+    instanceStore: {
+        cachedInstances: new Map()
+    },
     configRepository: {
         getBool: vi.fn(),
-        setBool: vi.fn()
+        setBool: vi.fn(),
+        getArray: vi.fn(),
+        setArray: vi.fn()
     },
     notificationRequest: {
         sendRequestInvite: vi.fn().mockResolvedValue({}),
@@ -78,9 +83,13 @@ const mocks = vi.hoisted(() => ({
     }
 }));
 
-vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
-}));
+vi.mock('pinia', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        storeToRefs: (store) => store
+    };
+});
 
 vi.mock('@tanstack/vue-virtual', () => ({
     useVirtualizer: (optionsRef) => ({
@@ -108,7 +117,12 @@ vi.mock('../../../../stores', () => ({
     useGameStore: () => mocks.gameStore,
     useLaunchStore: () => mocks.launchStore,
     useLocationStore: () => mocks.locationStore,
+    useInstanceStore: () => mocks.instanceStore,
     useUserStore: () => mocks.userStore
+}));
+
+vi.mock('../../../../coordinators/userCoordinator', () => ({
+    showUserDialog: vi.fn()
 }));
 
 vi.mock('../../../../shared/utils', () => ({
@@ -133,7 +147,7 @@ vi.mock('../../../../shared/utils/location.js', () => ({
     getFriendsLocations: vi.fn(() => 'wrld_same:1')
 }));
 
-vi.mock('../../../../service/config', () => ({
+vi.mock('../../../../services/config', () => ({
     default: mocks.configRepository
 }));
 
@@ -166,6 +180,7 @@ vi.mock('../../../../components/ui/context-menu', () => ({
             '<button :disabled="disabled" @click="$emit(\'click\')"><slot /></button>'
     },
     ContextMenuSeparator: { template: '<hr />' },
+    ContextMenuShortcut: { template: '<span><slot /></span>' },
     ContextMenuSub: { template: '<div><slot /></div>' },
     ContextMenuSubContent: { template: '<div><slot /></div>' },
     ContextMenuSubTrigger: { template: '<div><slot /></div>' },
@@ -195,7 +210,14 @@ vi.mock('../FriendItem.vue', () => ({
 }));
 
 vi.mock('lucide-vue-next', () => ({
-    ChevronDown: { template: '<span data-testid="chevron" />' }
+    ChevronDown: { template: '<span data-testid="chevron" />' },
+    Clock: { template: '<span data-testid="clock" />' },
+    User: { template: '<i />' }
+}));
+
+vi.mock('../../../../composables/useRecentActions', () => ({
+    isActionRecent: vi.fn(() => false),
+    recordRecentAction: vi.fn()
 }));
 
 import FriendsSidebar from '../FriendsSidebar.vue';
@@ -226,6 +248,7 @@ describe('FriendsSidebar.vue', () => {
         mocks.friendStore.activeFriends.value = [];
         mocks.friendStore.offlineFriends.value = [];
         mocks.friendStore.friendsInSameInstance.value = [];
+        mocks.instanceStore.cachedInstances = new Map();
 
         mocks.appearanceStore.isSidebarGroupByInstance.value = false;
         mocks.appearanceStore.isHideFriendsInSameInstance.value = false;
@@ -238,6 +261,8 @@ describe('FriendsSidebar.vue', () => {
             (_key, defaultValue) => Promise.resolve(defaultValue ?? false)
         );
         mocks.configRepository.setBool.mockResolvedValue(undefined);
+        mocks.configRepository.getArray.mockResolvedValue([]);
+        mocks.configRepository.setArray.mockResolvedValue(undefined);
         vi.clearAllMocks();
     });
 

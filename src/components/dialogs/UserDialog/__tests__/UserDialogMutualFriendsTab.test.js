@@ -10,12 +10,12 @@ vi.mock('vue-i18n', () => ({
         locale: require('vue').ref('en')
     }),
     createI18n: () => ({
-        global: { t: (key) => key , locale: require('vue').ref('en') },
+        global: { t: (key) => key, locale: require('vue').ref('en') },
         install: vi.fn()
     })
 }));
 
-vi.mock('../../../../plugin/router', () => {
+vi.mock('../../../../plugins/router', () => {
     const { ref } = require('vue');
     return {
         router: {
@@ -40,8 +40,8 @@ vi.mock('vue-router', async (importOriginal) => {
         }))
     };
 });
-vi.mock('../../../../plugin/interopApi', () => ({ initInteropApi: vi.fn() }));
-vi.mock('../../../../service/database', () => ({
+vi.mock('../../../../plugins/interopApi', () => ({ initInteropApi: vi.fn() }));
+vi.mock('../../../../services/database', () => ({
     database: new Proxy(
         {},
         {
@@ -52,7 +52,7 @@ vi.mock('../../../../service/database', () => ({
         }
     )
 }));
-vi.mock('../../../../service/config', () => ({
+vi.mock('../../../../services/config', () => ({
     default: {
         init: vi.fn(),
         getString: vi.fn().mockImplementation((_k, d) => d ?? '{}'),
@@ -70,11 +70,11 @@ vi.mock('../../../../service/config', () => ({
         remove: vi.fn()
     }
 }));
-vi.mock('../../../../service/jsonStorage', () => ({ default: vi.fn() }));
-vi.mock('../../../../service/watchState', () => ({
+vi.mock('../../../../services/jsonStorage', () => ({ default: vi.fn() }));
+vi.mock('../../../../services/watchState', () => ({
     watchState: { isLoggedIn: false }
 }));
-vi.mock('../../../../service/request', () => ({
+vi.mock('../../../../services/request', () => ({
     request: vi.fn().mockResolvedValue({ json: {} }),
     processBulk: vi.fn(),
     buildRequestInit: vi.fn(),
@@ -83,6 +83,12 @@ vi.mock('../../../../service/request', () => ({
     $throw: vi.fn(),
     failedGetRequests: new Map()
 }));
+
+import * as userCoordinatorModule from '../../../../coordinators/userCoordinator';
+vi.mock('../../../../coordinators/userCoordinator', async (importOriginal) => {
+    const actual = await importOriginal();
+    return { ...actual, showUserDialog: vi.fn() };
+});
 
 import UserDialogMutualFriendsTab from '../UserDialogMutualFriendsTab.vue';
 import { useUserStore } from '../../../../stores';
@@ -121,19 +127,22 @@ function mountComponent(overrides = {}) {
     });
 
     const userStore = useUserStore(pinia);
-    userStore.userDialog = {
-        id: 'usr_target',
-        ref: { id: 'usr_target' },
-        mutualFriends: [...MOCK_MUTUAL_FRIENDS],
-        mutualFriendSorting: userDialogMutualFriendSortingOptions.alphabetical,
-        isMutualFriendsLoading: false,
-        ...overrides
-    };
-    userStore.currentUser = {
-        id: 'usr_me',
-        hasSharedConnectionsOptOut: false,
-        ...overrides.currentUser
-    };
+    userStore.$patch({
+        userDialog: {
+            id: 'usr_target',
+            ref: { id: 'usr_target' },
+            mutualFriends: [...MOCK_MUTUAL_FRIENDS],
+            mutualFriendSorting:
+                userDialogMutualFriendSortingOptions.alphabetical,
+            isMutualFriendsLoading: false,
+            ...overrides
+        },
+        currentUser: {
+            id: 'usr_me',
+            hasSharedConnectionsOptOut: false,
+            ...overrides.currentUser
+        }
+    });
 
     return mount(UserDialogMutualFriendsTab, {
         global: {
@@ -209,17 +218,19 @@ describe('UserDialogMutualFriendsTab.vue', () => {
         test('calls showUserDialog when a friend is clicked', async () => {
             const pinia = createTestingPinia({ stubActions: false });
             const userStore = useUserStore(pinia);
-            userStore.userDialog = {
-                id: 'usr_target',
-                ref: { id: 'usr_target' },
-                mutualFriends: [...MOCK_MUTUAL_FRIENDS],
-                mutualFriendSorting:
-                    userDialogMutualFriendSortingOptions.alphabetical,
-                isMutualFriendsLoading: false
-            };
-            userStore.currentUser = { id: 'usr_me' };
+            userStore.$patch({
+                userDialog: {
+                    id: 'usr_target',
+                    ref: { id: 'usr_target' },
+                    mutualFriends: [...MOCK_MUTUAL_FRIENDS],
+                    mutualFriendSorting:
+                        userDialogMutualFriendSortingOptions.alphabetical,
+                    isMutualFriendsLoading: false
+                },
+                currentUser: { id: 'usr_me' }
+            });
             const showUserDialogSpy = vi
-                .spyOn(userStore, 'showUserDialog')
+                .spyOn(userCoordinatorModule, 'showUserDialog')
                 .mockImplementation(() => {});
 
             const wrapper = mount(UserDialogMutualFriendsTab, {

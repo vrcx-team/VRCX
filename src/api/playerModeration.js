@@ -1,4 +1,4 @@
-import { request } from '../service/request';
+import { request } from '../services/request';
 
 const playerModerationReq = {
     getPlayerModerations() {
@@ -14,7 +14,7 @@ const playerModerationReq = {
 
     /**
      * @param {{ moderated: string, type: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     // old-way: POST auth/user/blocks {blocked:userId}
     sendPlayerModeration(params) {
@@ -32,7 +32,7 @@ const playerModerationReq = {
 
     /**
      * @param {{ moderated: string, type: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @returns { Promise<{json: any, params}> }
      */
     // old-way: PUT auth/user/unblocks {blocked:userId}
     deletePlayerModeration(params) {

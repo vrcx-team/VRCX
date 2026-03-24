@@ -255,7 +255,10 @@
     import dayjs from 'dayjs';
 
     import { useGameStore, useGroupStore, useLocationStore, useNotificationStore, useUserStore } from '../../../stores';
-    import { checkCanInvite, userImage } from '../../../shared/utils';
+    import { showGroupDialog } from '../../../coordinators/groupCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { useInviteChecks } from '../../../composables/useInviteChecks';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
 
     import Location from '../../../components/Location.vue';
 
@@ -273,6 +276,8 @@
     const { lastLocation } = storeToRefs(useLocationStore());
     const { isGameRunning } = storeToRefs(useGameStore());
     const { openNotificationLink, isNotificationExpired } = useNotificationStore();
+    const { checkCanInvite } = useInviteChecks();
+    const { userImage } = useUserDisplay();
 
     const senderName = computed(() => {
         const n = props.notification;
@@ -461,13 +466,13 @@
         if (userId.startsWith('grp_') || n.type?.startsWith('group.') || n.type === 'groupChange') {
             const groupId = userId.startsWith('grp_') ? userId : n.data?.groupId || n.details?.groupId || '';
             if (groupId) {
-                groupStore.showGroupDialog(groupId);
+                showGroupDialog(groupId);
                 return;
             }
         }
 
         if (userId) {
-            userStore.showUserDialog(userId);
+            showUserDialog(userId);
             return;
         }
 

@@ -6,29 +6,142 @@ const mockGetWorlds = vi.fn();
 const mockGetGroupCalendar = vi.fn();
 
 vi.mock('../../queries', () => ({
+    queryClient: {
+        invalidateQueries: vi.fn().mockResolvedValue(undefined)
+    },
     entityQueryPolicies: {
-        user: { staleTime: 20000, gcTime: 90000, retry: 1, refetchOnWindowFocus: false },
-        worldCollection: { staleTime: 60000, gcTime: 300000, retry: 1, refetchOnWindowFocus: false },
-        groupCollection: { staleTime: 60000, gcTime: 300000, retry: 1, refetchOnWindowFocus: false },
-        groupCalendarCollection: { staleTime: 120000, gcTime: 600000, retry: 1, refetchOnWindowFocus: false },
-        groupFollowingCalendarCollection: { staleTime: 60000, gcTime: 300000, retry: 1, refetchOnWindowFocus: false },
-        groupFeaturedCalendarCollection: { staleTime: 300000, gcTime: 900000, retry: 1, refetchOnWindowFocus: false },
-        groupCalendarEvent: { staleTime: 120000, gcTime: 600000, retry: 1, refetchOnWindowFocus: false },
-        avatar: { staleTime: 60000, gcTime: 300000, retry: 1, refetchOnWindowFocus: false },
-        avatarCollection: { staleTime: 60000, gcTime: 300000, retry: 1, refetchOnWindowFocus: false },
-        avatarGallery: { staleTime: 30000, gcTime: 120000, retry: 1, refetchOnWindowFocus: false },
-        world: { staleTime: 60000, gcTime: 300000, retry: 1, refetchOnWindowFocus: false },
-        group: { staleTime: 60000, gcTime: 300000, retry: 1, refetchOnWindowFocus: false },
-        friendList: { staleTime: 20000, gcTime: 90000, retry: 1, refetchOnWindowFocus: false },
-        favoriteCollection: { staleTime: 60000, gcTime: 300000, retry: 1, refetchOnWindowFocus: false },
-        galleryCollection: { staleTime: 60000, gcTime: 300000, retry: 1, refetchOnWindowFocus: false },
-        inventoryCollection: { staleTime: 20000, gcTime: 120000, retry: 1, refetchOnWindowFocus: false },
-        inventoryObject: { staleTime: 60000, gcTime: 300000, retry: 1, refetchOnWindowFocus: false },
-        fileAnalysis: { staleTime: 120000, gcTime: 600000, retry: 1, refetchOnWindowFocus: false },
-        worldPersistData: { staleTime: 120000, gcTime: 600000, retry: 1, refetchOnWindowFocus: false },
-        mutualCounts: { staleTime: 120000, gcTime: 600000, retry: 1, refetchOnWindowFocus: false },
-        visits: { staleTime: 300000, gcTime: 900000, retry: 1, refetchOnWindowFocus: false },
-        fileObject: { staleTime: 60000, gcTime: 300000, retry: 1, refetchOnWindowFocus: false }
+        user: {
+            staleTime: 20000,
+            gcTime: 90000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        worldCollection: {
+            staleTime: 60000,
+            gcTime: 300000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        groupCollection: {
+            staleTime: 60000,
+            gcTime: 300000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        groupCalendarCollection: {
+            staleTime: 120000,
+            gcTime: 600000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        groupFollowingCalendarCollection: {
+            staleTime: 60000,
+            gcTime: 300000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        groupFeaturedCalendarCollection: {
+            staleTime: 300000,
+            gcTime: 900000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        groupCalendarEvent: {
+            staleTime: 120000,
+            gcTime: 600000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        avatar: {
+            staleTime: 60000,
+            gcTime: 300000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        avatarCollection: {
+            staleTime: 60000,
+            gcTime: 300000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        avatarGallery: {
+            staleTime: 30000,
+            gcTime: 120000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        world: {
+            staleTime: 60000,
+            gcTime: 300000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        group: {
+            staleTime: 60000,
+            gcTime: 300000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        friendList: {
+            staleTime: 20000,
+            gcTime: 90000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        favoriteCollection: {
+            staleTime: 60000,
+            gcTime: 300000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        galleryCollection: {
+            staleTime: 60000,
+            gcTime: 300000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        inventoryCollection: {
+            staleTime: 20000,
+            gcTime: 120000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        inventoryObject: {
+            staleTime: 60000,
+            gcTime: 300000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        fileAnalysis: {
+            staleTime: 120000,
+            gcTime: 600000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        worldPersistData: {
+            staleTime: 120000,
+            gcTime: 600000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        mutualCounts: {
+            staleTime: 120000,
+            gcTime: 600000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        visits: {
+            staleTime: 300000,
+            gcTime: 900000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        },
+        fileObject: {
+            staleTime: 60000,
+            gcTime: 300000,
+            retry: 1,
+            refetchOnWindowFocus: false
+        }
     },
     fetchWithEntityPolicy: (...args) => mockFetchWithEntityPolicy(...args),
     queryKeys: {
@@ -37,16 +150,46 @@ vi.mock('../../queries', () => ({
         worldsByUser: (params) => ['worlds', 'user', params.userId, params],
         groupCalendar: (groupId) => ['group', groupId, 'calendar'],
         groupCalendars: (params) => ['group', 'calendar', params],
-        followingGroupCalendars: (params) => ['group', 'calendar', 'following', params],
-        featuredGroupCalendars: (params) => ['group', 'calendar', 'featured', params],
+        followingGroupCalendars: (params) => [
+            'group',
+            'calendar',
+            'following',
+            params
+        ],
+        featuredGroupCalendars: (params) => [
+            'group',
+            'calendar',
+            'featured',
+            params
+        ],
         avatar: (avatarId) => ['avatar', avatarId],
         world: (worldId) => ['world', worldId],
-        group: (groupId, includeRoles) => ['group', groupId, Boolean(includeRoles)],
+        group: (groupId, includeRoles) => [
+            'group',
+            groupId,
+            Boolean(includeRoles)
+        ],
         groupPosts: (params) => ['group', params.groupId, 'posts', params],
-        groupMember: (params) => ['group', params.groupId, 'member', params.userId],
+        groupMember: (params) => [
+            'group',
+            params.groupId,
+            'member',
+            params.userId
+        ],
         groupMembers: (params) => ['group', params.groupId, 'members', params],
-        groupGallery: (params) => ['group', params.groupId, 'gallery', params.galleryId, params],
-        groupCalendarEvent: (params) => ['group', params.groupId, 'calendarEvent', params.eventId],
+        groupGallery: (params) => [
+            'group',
+            params.groupId,
+            'gallery',
+            params.galleryId,
+            params
+        ],
+        groupCalendarEvent: (params) => [
+            'group',
+            params.groupId,
+            'calendarEvent',
+            params.eventId
+        ],
         avatarGallery: (avatarId) => ['avatar', avatarId, 'gallery'],
         friends: (params) => ['friends', params],
         favoriteLimits: () => ['favorite', 'limits'],
@@ -58,10 +201,24 @@ vi.mock('../../queries', () => ({
         prints: (params) => ['gallery', 'prints', params],
         print: (printId) => ['gallery', 'print', printId],
         inventoryItem: (inventoryId) => ['inventory', 'item', inventoryId],
-        userInventoryItem: (params) => ['inventory', 'item', params.userId, params.inventoryId],
+        userInventoryItem: (params) => [
+            'inventory',
+            'item',
+            params.userId,
+            params.inventoryId
+        ],
         inventoryItems: (params) => ['inventory', 'items', params],
-        inventoryTemplate: (inventoryTemplateId) => ['inventory', 'template', inventoryTemplateId],
-        fileAnalysis: (params) => ['analysis', params.fileId, Number(params.version), String(params.variant || '')],
+        inventoryTemplate: (inventoryTemplateId) => [
+            'inventory',
+            'template',
+            inventoryTemplateId
+        ],
+        fileAnalysis: (params) => [
+            'analysis',
+            params.fileId,
+            Number(params.version),
+            String(params.variant || '')
+        ],
         worldPersistData: (worldId) => ['world', worldId, 'persistData'],
         mutualCounts: (userId) => ['user', userId, 'mutualCounts'],
         visits: () => ['visits'],
@@ -99,7 +256,11 @@ vi.mock('../group', () => ({
 }));
 
 vi.mock('../avatar', () => ({
-    default: { getAvatar: vi.fn(), getAvatarGallery: vi.fn(), getAvatars: vi.fn() }
+    default: {
+        getAvatar: vi.fn(),
+        getAvatarGallery: vi.fn(),
+        getAvatars: vi.fn()
+    }
 }));
 vi.mock('../friend', () => ({ default: { getFriends: vi.fn() } }));
 vi.mock('../favorite', () => ({
@@ -158,6 +319,59 @@ describe('queryRequest', () => {
         expect(args.json.id).toBe('usr_1');
     });
 
+    test('uses same queryKey for user and user.dialog callers', async () => {
+        const data = { json: { id: 'usr_1' }, params: { userId: 'usr_1' } };
+        mockGetUser.mockResolvedValue(data);
+        mockFetchWithEntityPolicy.mockImplementation(async ({ queryFn }) => ({
+            data: await queryFn(),
+            cache: false
+        }));
+
+        await queryRequest.fetch('user', { userId: 'usr_1' });
+        await queryRequest.fetch('user.dialog', { userId: 'usr_1' });
+
+        const baseCall = mockFetchWithEntityPolicy.mock.calls[0][0];
+        const dialogCall = mockFetchWithEntityPolicy.mock.calls[1][0];
+        expect(baseCall.queryKey).toEqual(['user', 'usr_1']);
+        expect(dialogCall.queryKey).toEqual(baseCall.queryKey);
+    });
+
+    test('applies staleTime zero for user.force', async () => {
+        const data = { json: { id: 'usr_2' }, params: { userId: 'usr_2' } };
+        mockGetUser.mockResolvedValue(data);
+        mockFetchWithEntityPolicy.mockImplementation(async ({ queryFn }) => ({
+            data: await queryFn(),
+            cache: false
+        }));
+
+        await queryRequest.fetch('user.force', { userId: 'usr_2' });
+
+        expect(mockFetchWithEntityPolicy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                policy: expect.objectContaining({ staleTime: 0 }),
+                label: 'user.force'
+            })
+        );
+    });
+
+    test('applies staleTime 60000 for user.dialog', async () => {
+        const data = { json: { id: 'usr_3' }, params: { userId: 'usr_3' } };
+        mockGetUser.mockResolvedValue(data);
+        mockFetchWithEntityPolicy.mockImplementation(async ({ queryFn }) => ({
+            data: await queryFn(),
+            cache: false
+        }));
+
+        await queryRequest.fetch('user.dialog', { userId: 'usr_3' });
+
+        expect(mockFetchWithEntityPolicy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                policy: expect.objectContaining({ staleTime: 60_000 }),
+                label: 'user.dialog'
+            })
+        );
+    });
+
     test('supports worldsByUser option routing', async () => {
         const params = {
             userId: 'usr_me',
@@ -210,5 +424,12 @@ describe('queryRequest', () => {
             // @ts-expect-error verifying runtime guard
             queryRequest.fetch('missing_resource', {})
         ).rejects.toThrow('Unknown query resource');
+    });
+
+    test('throws on unknown caller variant', async () => {
+        await expect(
+            // @ts-expect-error verifying runtime guard
+            queryRequest.fetch('user.unknown', { userId: 'usr_1' })
+        ).rejects.toThrow('Unknown query resource: user.unknown');
     });
 });

@@ -1,4 +1,4 @@
-import { request } from '../service/request';
+import { request } from '../services/request';
 import { useUserStore } from '../stores';
 
 function getCurrentUserId() {

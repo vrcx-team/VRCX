@@ -4,7 +4,7 @@ vi.mock('../../../views/Feed/Feed.vue', () => ({
     default: { name: 'Feed' }
 }));
 vi.mock('../../../views/Feed/columns.jsx', () => ({ columns: [] }));
-vi.mock('../../../plugin/router', () => ({
+vi.mock('../../../plugins/router', () => ({
     default: { push: vi.fn(), currentRoute: { value: {} } }
 }));
 
@@ -15,6 +15,19 @@ describe('findUserByDisplayName', () => {
             map.set(entry.id, entry);
         }
         return map;
+    }
+
+    function createDisplayNameIndex(entries) {
+        const index = new Map();
+        for (const entry of entries) {
+            let ids = index.get(entry.displayName);
+            if (!ids) {
+                ids = new Set();
+                index.set(entry.displayName, ids);
+            }
+            ids.add(entry.id);
+        }
+        return index;
     }
 
     test('returns the user matching displayName', () => {
@@ -55,5 +68,32 @@ describe('findUserByDisplayName', () => {
         ]);
         expect(findUserByDisplayName(users, 'alice')).toBeUndefined();
         expect(findUserByDisplayName(users, 'ALICE')).toBeUndefined();
+    });
+
+    test('uses displayName index when provided', () => {
+        const entries = [
+            { id: 'usr_1', displayName: 'Alice' },
+            { id: 'usr_2', displayName: 'Bob' }
+        ];
+        const users = createCachedUsers(entries);
+        const index = createDisplayNameIndex(entries);
+
+        const result = findUserByDisplayName(users, 'Bob', index);
+
+        expect(result).toEqual({ id: 'usr_2', displayName: 'Bob' });
+    });
+
+    test('indexed lookup falls back to next duplicate when first user is missing', () => {
+        const entries = [
+            { id: 'usr_1', displayName: 'Alice' },
+            { id: 'usr_2', displayName: 'Alice' }
+        ];
+        const users = createCachedUsers(entries);
+        users.delete('usr_1');
+        const index = createDisplayNameIndex(entries);
+
+        const result = findUserByDisplayName(users, 'Alice', index);
+
+        expect(result).toEqual({ id: 'usr_2', displayName: 'Alice' });
     });
 });

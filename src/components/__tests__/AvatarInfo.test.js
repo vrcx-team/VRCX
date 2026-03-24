@@ -13,7 +13,7 @@ vi.mock('../../views/Feed/Feed.vue', () => ({
 vi.mock('../../views/Feed/columns.jsx', () => ({
     columns: []
 }));
-vi.mock('../../plugin/router', () => ({
+vi.mock('../../plugins/router', () => ({
     router: {
         beforeEach: vi.fn(),
         push: vi.fn(),
@@ -34,10 +34,10 @@ vi.mock('vue-router', async (importOriginal) => {
         }))
     };
 });
-vi.mock('../../plugin/interopApi', () => ({
+vi.mock('../../plugins/interopApi', () => ({
     initInteropApi: vi.fn()
 }));
-vi.mock('../../service/database', () => ({
+vi.mock('../../services/database', () => ({
     database: new Proxy(
         {},
         {
@@ -48,7 +48,7 @@ vi.mock('../../service/database', () => ({
         }
     )
 }));
-vi.mock('../../service/config', () => ({
+vi.mock('../../services/config', () => ({
     default: {
         init: vi.fn(),
         getString: vi
@@ -74,12 +74,18 @@ vi.mock('../../service/config', () => ({
         remove: vi.fn()
     }
 }));
-vi.mock('../../service/jsonStorage', () => ({
+vi.mock('../../services/jsonStorage', () => ({
     default: vi.fn()
 }));
-vi.mock('../../service/watchState', () => ({
+vi.mock('../../services/watchState', () => ({
     watchState: { isLoggedIn: false }
 }));
+
+import * as avatarCoordinatorModule from '../../coordinators/avatarCoordinator';
+vi.mock('../../coordinators/avatarCoordinator', async (importOriginal) => {
+    const actual = await importOriginal();
+    return { ...actual, showAvatarAuthorDialog: vi.fn() };
+});
 
 const i18n = createI18n({
     locale: 'en',
@@ -210,9 +216,9 @@ describe('AvatarInfo.vue', () => {
         test('does not call showAvatarAuthorDialog when no imageurl', async () => {
             const wrapper = mountAvatarInfo({});
             await wrapper.trigger('click');
-            const { useAvatarStore } = await import('../../stores');
-            const avatarStore = useAvatarStore();
-            expect(avatarStore.showAvatarAuthorDialog).not.toHaveBeenCalled();
+            expect(
+                avatarCoordinatorModule.showAvatarAuthorDialog
+            ).not.toHaveBeenCalled();
         });
     });
 });

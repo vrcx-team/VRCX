@@ -1,5 +1,5 @@
 <template>
-    <div class="screenshot-metadata-page x-container">
+    <div class="screenshot-metadata-page x-container flex flex-col overflow-hidden">
         <div class="flex items-center gap-2 ml-2">
             <Button variant="ghost" size="sm" class="mr-3" @click="goBack">
                 <ArrowLeft />
@@ -7,170 +7,281 @@
             </Button>
             <span class="header">{{ t('dialog.screenshot_metadata.header') }}</span>
         </div>
-        <div @dragover.prevent @dragenter.prevent @drop="handleDrop">
-            <span>{{ t('dialog.screenshot_metadata.drag') }}</span>
-            <br />
-            <br />
-            <Button size="sm" variant="outline" class="mr-2" @click="getAndDisplayScreenshotFromFile">{{
-                t('dialog.screenshot_metadata.browse')
-            }}</Button>
-            <Button size="sm" variant="outline" class="mr-2" @click="getAndDisplayLastScreenshot">{{
-                t('dialog.screenshot_metadata.last_screenshot')
-            }}</Button>
-            <Button
-                size="sm"
-                variant="outline"
-                class="mr-2"
-                @click="copyImageToClipboard(screenshotMetadataDialog.metadata.filePath)"
-                >{{ t('dialog.screenshot_metadata.copy_image') }}</Button
-            >
-            <Button
-                size="sm"
-                variant="outline"
-                class="mr-2"
-                @click="openImageFolder(screenshotMetadataDialog.metadata.filePath)"
-                >{{ t('dialog.screenshot_metadata.open_folder') }}</Button
-            >
-            <Button
-                size="sm"
-                variant="outline"
-                class="mr-2"
-                v-if="isLocalUserVrcPlusSupporter && screenshotMetadataDialog.metadata.filePath"
-                @click="uploadScreenshotToGallery"
-                >{{ t('dialog.screenshot_metadata.upload') }}</Button
-            >
-            <Button
-                size="sm"
-                variant="outline"
-                v-if="screenshotMetadataDialog.metadata.filePath"
-                @click="deleteMetadata(screenshotMetadataDialog.metadata.filePath)"
-                >{{ t('dialog.screenshot_metadata.delete_metadata') }}</Button
-            >
-            <br />
-            <br />
 
-            <div class="flex items-center">
-                <InputGroupSearch
-                    v-model="screenshotMetadataDialog.search"
-                    :placeholder="t('dialog.screenshot_metadata.search_placeholder')"
-                    style="width: 200px"
-                    @input="screenshotMetadataSearch" />
-                <Select :model-value="screenshotMetadataDialog.searchType" @update:modelValue="handleSearchTypeChange">
-                    <SelectTrigger class="ml-2" size="sm" style="width: 150px">
-                        <SelectValue :placeholder="t('dialog.screenshot_metadata.search_type_placeholder')" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem v-for="type in screenshotMetadataDialog.searchTypes" :key="type" :value="type">
-                                {{ t(screenshotMetadataSearchTypeLabels[type] ?? type) }}
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            </div>
-            <template v-if="screenshotMetadataDialog.searchIndex !== null">
-                <span class="ml-2 whitespace-pre-wrap text-xs">{{
-                    screenshotMetadataDialog.searchIndex + 1 + '/' + screenshotMetadataDialog.searchResults.length
-                }}</span>
-            </template>
-            <br />
-            <br />
-            <span v-text="screenshotMetadataDialog.metadata.fileName"></span>
-            <br />
-            <template v-if="screenshotMetadataDialog.metadata.note">
-                <span v-text="screenshotMetadataDialog.metadata.note"></span>
-                <br />
-            </template>
-            <span v-if="screenshotMetadataDialog.metadata.dateTime" style="margin-right: 6px">{{
-                formatDateFilter(screenshotMetadataDialog.metadata.dateTime, 'long')
+        <div class="flex items-center gap-2 my-2 flex-wrap">
+            <Button size="sm" variant="outline" @click="getAndDisplayScreenshotFromFile">
+                <FolderSearch />
+                {{ t('dialog.screenshot_metadata.browse') }}
+            </Button>
+            <Button size="sm" variant="outline" @click="getAndDisplayLastScreenshot">
+                <ImageIcon />
+                {{ t('dialog.screenshot_metadata.last_screenshot') }}
+            </Button>
+            <Button
+                v-if="screenshotMetadataDialog.metadata.filePath"
+                size="sm"
+                variant="outline"
+                @click="openImageFolder(screenshotMetadataDialog.metadata.filePath)">
+                <FolderOpen />
+                {{ t('dialog.screenshot_metadata.open_folder') }}
+            </Button>
+            <div class="flex-1" />
+            <InputGroupSearch
+                v-model="screenshotMetadataDialog.search"
+                :placeholder="t('dialog.screenshot_metadata.search_placeholder')"
+                style="width: 200px"
+                @input="screenshotMetadataSearch" />
+            <Select :model-value="screenshotMetadataDialog.searchType" @update:modelValue="handleSearchTypeChange">
+                <SelectTrigger size="sm" style="width: 150px">
+                    <SelectValue :placeholder="t('dialog.screenshot_metadata.search_type_placeholder')" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectItem v-for="type in screenshotMetadataDialog.searchTypes" :key="type" :value="type">
+                            {{ t(screenshotMetadataSearchTypeLabels[type] ?? type) }}
+                        </SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+            <span v-if="searchViewMode === 'table' && searchResultsData.length" class="whitespace-pre-wrap text-xs">{{
+                t('dialog.screenshot_metadata.result_count', { count: searchResultsData.length })
             }}</span>
-            <span
-                v-if="screenshotMetadataDialog.metadata.fileResolution"
-                style="margin-right: 6px"
-                v-text="screenshotMetadataDialog.metadata.fileResolution"></span>
-            <Badge v-if="screenshotMetadataDialog.metadata.fileSize" variant="outline">{{
-                screenshotMetadataDialog.metadata.fileSize
-            }}</Badge>
-            <br />
-            <Location
-                v-if="screenshotMetadataDialog.metadata.world"
-                :location="screenshotMetadataDialog.metadata.world.instanceId"
-                :hint="screenshotMetadataDialog.metadata.world.name" />
-            <DisplayName
-                v-if="screenshotMetadataDialog.metadata.author"
-                :userid="screenshotMetadataDialog.metadata.author.id"
-                :hint="screenshotMetadataDialog.metadata.author.displayName" />
-            <br />
-            <div class="my-2 w-[90%] ml-17">
-                <Carousel :opts="{ loop: false }" @init-api="handleScreenshotMetadataCarouselInit">
-                    <CarouselContent class="h-150">
-                        <CarouselItem>
-                            <div class="h-150 w-full">
-                                <img
-                                    :src="screenshotMetadataDialog.metadata.previousFilePath"
-                                    style="width: 100%; height: 100%; object-fit: contain" />
-                            </div>
-                        </CarouselItem>
-                        <CarouselItem>
-                            <div class="h-150 w-full">
-                                <img
-                                    class="cursor-pointer"
-                                    :src="screenshotMetadataDialog.metadata.filePath"
-                                    style="width: 100%; height: 100%; object-fit: contain"
-                                    @click="showFullscreenImageDialog(screenshotMetadataDialog.metadata.filePath)" />
-                            </div>
-                        </CarouselItem>
-                        <CarouselItem>
-                            <div class="h-150 w-full">
-                                <img
-                                    :src="screenshotMetadataDialog.metadata.nextFilePath"
-                                    style="width: 100%; height: 100%; object-fit: contain" />
-                            </div>
-                        </CarouselItem>
-                    </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                </Carousel>
+            <span v-else-if="screenshotMetadataDialog.searchIndex !== null" class="whitespace-pre-wrap text-xs">{{
+                screenshotMetadataDialog.searchIndex + 1 + '/' + screenshotMetadataDialog.searchResults.length
+            }}</span>
+        </div>
+
+        <!-- Search Results Table View -->
+        <div v-if="searchViewMode === 'table'" class="flex-1 min-h-0 overflow-auto">
+            <table class="w-full border-collapse text-[13px]">
+                <thead class="sticky top-0 z-1 bg-background">
+                    <tr>
+                        <th class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground" @click="toggleSearchSort('dateTime')">
+                            {{ t('dialog.screenshot_metadata.col_date') }}
+                            <span v-if="searchSort.key === 'dateTime'" class="ml-1 text-[10px]">{{ searchSort.asc ? '↑' : '↓' }}</span>
+                        </th>
+                        <th class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground" @click="toggleSearchSort('world')">
+                            {{ t('dialog.screenshot_metadata.col_world') }}
+                            <span v-if="searchSort.key === 'world'" class="ml-1 text-[10px]">{{ searchSort.asc ? '↑' : '↓' }}</span>
+                        </th>
+                        <th v-if="searchHasMatchColumn" class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground" @click="toggleSearchSort('match')">
+                            {{ t('dialog.screenshot_metadata.col_match') }}
+                            <span v-if="searchSort.key === 'match'" class="ml-1 text-[10px]">{{ searchSort.asc ? '↑' : '↓' }}</span>
+                        </th>
+                        <th class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground" @click="toggleSearchSort('author')">
+                            {{ t('dialog.screenshot_metadata.col_author') }}
+                            <span v-if="searchSort.key === 'author'" class="ml-1 text-[10px]">{{ searchSort.asc ? '↑' : '↓' }}</span>
+                        </th>
+                        <th class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground w-20" @click="toggleSearchSort('players')">
+                            {{ t('dialog.screenshot_metadata.col_players') }}
+                            <span v-if="searchSort.key === 'players'" class="ml-1 text-[10px]">{{ searchSort.asc ? '↑' : '↓' }}</span>
+                        </th>
+                        <th class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none w-[100px]">{{ t('dialog.screenshot_metadata.col_resolution') }}</th>
+                        <th class="w-8 border-b"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        v-for="(row, idx) in sortedSearchResults"
+                        :key="row.filePath"
+                        class="group/row cursor-pointer transition-colors duration-100 hover:bg-accent"
+                        :class="row.filePath === selectedSearchFilePath ? 'bg-accent border-l-[3px] border-l-primary' : ''"
+                        @click="selectSearchResult(idx)">
+                        <td class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis" :class="row.filePath === selectedSearchFilePath ? 'pl-[9px]' : ''">{{ row.dateFormatted }}</td>
+                        <td class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis">{{ row.world || '—' }}</td>
+                        <td v-if="searchHasMatchColumn" class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis text-primary">{{ row.match || '—' }}</td>
+                        <td class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis text-muted-foreground">{{ row.author || '—' }}</td>
+                        <td class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis">
+                            <span class="inline-flex items-center gap-1">
+                                <Users class="size-3 text-muted-foreground" />
+                                {{ row.playerCount }}
+                            </span>
+                        </td>
+                        <td class="text-xs text-muted-foreground px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis">{{ row.resolution }}</td>
+                        <td class="py-2 pr-2 border-b">
+                            <ChevronRight class="size-4 text-muted-foreground opacity-0 group-hover/row:opacity-100 transition-opacity duration-150" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Detail View -->
+        <div v-else class="grid flex-1 min-h-0 overflow-hidden gap-4" style="grid-template-columns: 1fr 380px">
+            <div
+                class="flex flex-col items-center min-h-0"
+                @dragover.prevent
+                @dragenter.prevent
+                @drop="handleDrop">
+                <div class="relative flex-1 w-full min-h-0 flex items-center justify-center">
+                    <template v-if="screenshotMetadataDialog.metadata.filePath">
+                        <img
+                            class="cursor-pointer max-w-full max-h-full object-contain"
+                            :src="screenshotMetadataDialog.metadata.filePath"
+                            @click="showFullscreenImageDialog(screenshotMetadataDialog.metadata.filePath)" />
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            class="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity bg-background/50 rounded-full"
+                            @click="navigatePrev">
+                            <ChevronLeft />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity bg-background/50 rounded-full"
+                            @click="navigateNext">
+                            <ChevronRight />
+                        </Button>
+                    </template>
+                    <span v-else class="text-muted-foreground text-sm">{{
+                        t('dialog.screenshot_metadata.drag')
+                    }}</span>
+                </div>
+                <div class="shrink-0 flex items-center justify-center h-[50px]">
+                    <ButtonGroup class="shadow-lg rounded-lg">
+                        <Button variant="outline" size="sm" @click="navigatePrev">
+                            <ArrowLeft />
+                            <Kbd class="ml-1">{{ isMac ? '⌥' : 'Alt' }}</Kbd>
+                            <Kbd>←</Kbd>
+                        </Button>
+                        <Button variant="outline" size="sm" @click="navigateNext">
+                            <Kbd class="ml-1">{{ isMac ? '⌥' : 'Alt' }}</Kbd>
+                            <Kbd>→</Kbd>
+                            <ArrowRight />
+                        </Button>
+                    </ButtonGroup>
+                </div>
             </div>
-            <template v-if="screenshotMetadataDialog.metadata.error">
-                <pre class="whitespace-pre-wrap text-xs" v-text="screenshotMetadataDialog.metadata.error"></pre>
-                <br />
-            </template>
-            <span v-for="user in screenshotMetadataDialog.metadata.players" :key="user.id" style="margin-top: 6px">
-                <span class="cursor-pointer" @click="lookupUser(user)" v-text="user.displayName"></span>
-                <span v-if="user.pos" v-text="'(' + user.pos.x + ', ' + user.pos.y + ', ' + user.pos.z + ')'"></span>
-                <br />
-            </span>
+
+            <div class="overflow-y-auto pr-1">
+                <Button v-if="searchResultsData.length" variant="ghost" size="sm" class="mb-2" @click="searchViewMode = 'table'">
+                    <ArrowLeft class="size-3.5" />
+                    {{ t('dialog.screenshot_metadata.back_to_results', { count: searchResultsData.length }) }}
+                </Button>
+                <template v-if="screenshotMetadataDialog.metadata.error">
+                    <pre class="whitespace-pre-wrap text-xs" v-text="screenshotMetadataDialog.metadata.error"></pre>
+                </template>
+                <template v-else>
+                    <div v-if="screenshotMetadataDialog.metadata.world || screenshotMetadataDialog.metadata.author" class="pb-4">
+                        <h4 class="text-[11px] font-medium uppercase tracking-[0.08em] mb-1.5 text-muted-foreground">{{ t('dialog.screenshot_metadata.section_location') }}</h4>
+                        <Location
+                            v-if="screenshotMetadataDialog.metadata.world"
+                            :location="screenshotMetadataDialog.metadata.world.instanceId"
+                            :hint="screenshotMetadataDialog.metadata.world.name" />
+                        <div v-if="screenshotMetadataDialog.metadata.author" class="flex items-center gap-1 text-muted-foreground">
+                            <Camera class="size-3.5 shrink-0" />
+                            <DisplayName
+                                :userid="screenshotMetadataDialog.metadata.author.id"
+                                :hint="screenshotMetadataDialog.metadata.author.displayName" />
+                        </div>
+                    </div>
+
+                    <div v-if="screenshotMetadataDialog.metadata.players?.length" class="border-t pt-4 pb-4">
+                        <h4 class="text-[11px] font-medium uppercase tracking-[0.08em] mb-1.5 text-muted-foreground">
+                            {{ t('dialog.screenshot_metadata.section_players') }} ({{ screenshotMetadataDialog.metadata.players.length }})
+                        </h4>
+                        <div class="flex flex-wrap gap-1 max-h-[180px] overflow-y-auto">
+                            <Badge
+                                v-for="user in screenshotMetadataDialog.metadata.players"
+                                :key="user.id"
+                                variant="secondary"
+                                class="cursor-pointer hover:bg-accent transition-colors"
+                                @click="lookupUser(user)">
+                                {{ user.displayName }}
+                            </Badge>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-4 pb-4">
+                        <h4 class="text-[11px] font-medium uppercase tracking-[0.08em] mb-1.5 text-muted-foreground">{{ t('dialog.screenshot_metadata.section_file_info') }}</h4>
+                        <span v-if="screenshotMetadataDialog.metadata.dateTime" class="text-sm">{{
+                            formatDateFilter(screenshotMetadataDialog.metadata.dateTime, 'long')
+                        }}</span>
+                        <br />
+                        <span class="text-xs text-muted-foreground">
+                            <span
+                                v-if="screenshotMetadataDialog.metadata.fileResolution"
+                                v-text="screenshotMetadataDialog.metadata.fileResolution"></span>
+                            <span v-if="screenshotMetadataDialog.metadata.fileResolution && screenshotMetadataDialog.metadata.fileSize"> · </span>
+                            <span v-if="screenshotMetadataDialog.metadata.fileSize">{{
+                                screenshotMetadataDialog.metadata.fileSize
+                            }}</span>
+                        </span>
+                        <br />
+                        <span class="text-xs text-muted-foreground/60" v-text="screenshotMetadataDialog.metadata.fileName"></span>
+                    </div>
+
+                    <div v-if="screenshotMetadataDialog.metadata.note" class="border-t pt-4 pb-4">
+                        <h4 class="text-[11px] font-medium uppercase tracking-[0.08em] mb-1.5 text-muted-foreground">{{ t('dialog.screenshot_metadata.section_note') }}</h4>
+                        <span class="text-sm text-muted-foreground" v-text="screenshotMetadataDialog.metadata.note"></span>
+                    </div>
+
+                    <div v-if="screenshotMetadataDialog.metadata.filePath" class="border-t pt-4 pb-4">
+                        <h4 class="text-[11px] font-medium uppercase tracking-[0.08em] mb-1.5 text-muted-foreground">{{ t('dialog.screenshot_metadata.section_actions') }}</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                @click="copyImageToClipboard(screenshotMetadataDialog.metadata.filePath)">
+                                <Copy />
+                                {{ t('dialog.screenshot_metadata.copy_image') }}
+                            </Button>
+                            <Button
+                                v-if="isLocalUserVrcPlusSupporter && screenshotMetadataDialog.metadata.filePath"
+                                size="sm"
+                                variant="outline"
+                                @click="uploadScreenshotToGallery">
+                                <Upload />
+                                {{ t('dialog.screenshot_metadata.upload') }}
+                            </Button>
+                            <Button
+                                v-if="screenshotMetadataDialog.metadata.filePath"
+                                size="sm"
+                                variant="destructive"
+                                @click="deleteMetadata(screenshotMetadataDialog.metadata.filePath)">
+                                <Trash2 />
+                                {{ t('dialog.screenshot_metadata.delete_metadata') }}
+                            </Button>
+                        </div>
+                    </div>
+                </template>
+            </div>
         </div>
     </div>
+
 </template>
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-    import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+    import { useMagicKeys, whenever } from '@vueuse/core';
+    import { onMounted, onUnmounted, reactive, ref, computed } from 'vue';
     import { useGalleryStore, useUserStore, useVrcxStore } from '@/stores';
-    import { ArrowLeft } from 'lucide-vue-next';
+    import { ArrowLeft, ArrowRight, Camera, ChevronLeft, ChevronRight, Copy, FolderOpen, FolderSearch, ImageIcon, Trash2, Upload, Users } from 'lucide-vue-next';
     import { Badge } from '@/components/ui/badge';
     import { Button } from '@/components/ui/button';
+    import { ButtonGroup } from '@/components/ui/button-group';
     import { InputGroupSearch } from '@/components/ui/input-group';
+    import { Kbd } from '@/components/ui/kbd';
+
     import { formatDateFilter } from '@/shared/utils';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
     import { useRouter } from 'vue-router';
     import { vrcPlusImageRequest } from '@/api';
+    import { lookupUser } from '@/coordinators/userCoordinator';
 
     const router = useRouter();
     const { t } = useI18n();
+
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
     const { showFullscreenImageDialog, handleGalleryImageAdd } = useGalleryStore();
     const { currentlyDroppingFile } = storeToRefs(useVrcxStore());
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { fullscreenImageDialog } = storeToRefs(useGalleryStore());
 
-    const userStore = useUserStore();
-    const { lookupUser } = userStore;
 
     const screenshotMetadataDialog = reactive({
         loading: false,
@@ -190,35 +301,176 @@
         'World ID': 'dialog.screenshot_metadata.search_types.world_id'
     };
 
+    const searchViewMode = ref('detail');
+    const searchResultsData = ref([]);
+    const selectedSearchFilePath = ref(null);
+    const searchSort = reactive({ key: 'dateTime', asc: false });
+
+    const searchHasMatchColumn = computed(() => {
+        const type = screenshotMetadataDialog.searchType;
+        return type === 'Player Name' || type === 'Player ID';
+    });
+
+    const sortedSearchResults = computed(() => {
+        const data = [...searchResultsData.value];
+        const { key, asc } = searchSort;
+        data.sort((a, b) => {
+            let va = a[key];
+            let vb = b[key];
+            if (typeof va === 'string') va = va.toLowerCase();
+            if (typeof vb === 'string') vb = vb.toLowerCase();
+            if (va < vb) return asc ? -1 : 1;
+            if (va > vb) return asc ? 1 : -1;
+            return 0;
+        });
+        return data;
+    });
+
+    function toggleSearchSort(key) {
+        if (searchSort.key === key) {
+            searchSort.asc = !searchSort.asc;
+        } else {
+            searchSort.key = key;
+            searchSort.asc = key === 'dateTime' ? false : true;
+        }
+    }
+
+    function selectSearchResult(idx) {
+        const row = sortedSearchResults.value[idx];
+        if (!row) return;
+        screenshotMetadataDialog.searchIndex = idx;
+        selectedSearchFilePath.value = row.filePath;
+        searchViewMode.value = 'detail';
+        getAndDisplayScreenshot(row.filePath, false);
+    }
+
+    async function loadSearchResultsMetadata(filePaths, query, searchType) {
+        const results = [];
+        const lowerQuery = String(query).toLowerCase();
+        const promises = filePaths.map(async (filePath) => {
+            try {
+                const metaJson = await AppApi.GetScreenshotMetadata(filePath);
+                const meta = JSON.parse(metaJson);
+                const extraJson = await AppApi.GetExtraScreenshotData(filePath, false);
+                const extra = JSON.parse(extraJson);
+
+                let dateTime = 0;
+                let dateFormatted = '—';
+                if (meta.timestamp) {
+                    dateTime = Date.parse(meta.timestamp);
+                } else if (extra.creationDate) {
+                    dateTime = Date.parse(extra.creationDate);
+                }
+                if (dateTime) {
+                    dateFormatted = formatDateFilter(dateTime, 'short');
+                }
+
+                let match = '';
+                if (searchType === 0) {
+                    const matched = meta.players?.filter((p) => p.displayName?.toLowerCase().includes(lowerQuery)) || [];
+                    match = matched.map((p) => p.displayName).join(', ');
+                } else if (searchType === 1) {
+                    const matched = meta.players?.find((p) => p.id === query);
+                    match = matched?.displayName || '';
+                }
+
+                results.push({
+                    filePath,
+                    dateTime,
+                    dateFormatted,
+                    world: meta.world?.name || '',
+                    playerCount: meta.players?.length || 0,
+                    players: meta.players?.length || 0,
+                    resolution: extra.fileResolution || '',
+                    match,
+                    author: meta.author?.displayName || ''
+                });
+            } catch (e) {
+                console.error('Error loading metadata for', filePath, e);
+            }
+        });
+        await Promise.all(promises);
+        return results;
+    }
+
     const screenshotMetadataSearchInputs = ref(0);
-    const screenshotMetadataCarouselApi = ref(null);
-    const ignoreCarouselSelect = ref(false);
 
     onMounted(() => {
         if (!screenshotMetadataDialog.metadata.filePath) {
             getAndDisplayLastScreenshot();
         }
-        window.addEventListener('keyup', handleComponentKeyup);
     });
 
-    onBeforeUnmount(() => {
-        window.removeEventListener('keyup', handleComponentKeyup);
+    // Keyboard shortcuts: Alt+Left (prev) / Alt+Right (next)
+    const keys = useMagicKeys();
+    const stopPrevWatch = whenever(keys['Alt+ArrowLeft'], () => {
+        navigatePrev();
+    });
+    const stopNextWatch = whenever(keys['Alt+ArrowRight'], () => {
+        navigateNext();
+    });
+    onUnmounted(() => {
+        stopPrevWatch();
+        stopNextWatch();
     });
 
-    const handleComponentKeyup = (event) => {
-        const carouselNavigation = { ArrowLeft: 0, ArrowRight: 2 }[event.key];
-        if (typeof carouselNavigation !== 'undefined') {
-            if (screenshotMetadataCarouselApi.value) {
-                if (event.key === 'ArrowLeft') {
-                    screenshotMetadataCarouselApi.value.scrollPrev();
-                } else {
-                    screenshotMetadataCarouselApi.value.scrollNext();
-                }
-                return;
+    /**
+     *
+     */
+    function navigatePrev() {
+        const D = screenshotMetadataDialog;
+
+        if (D.searchIndex !== null) {
+            const filesArr = D.searchResults;
+            let searchIndex = D.searchIndex;
+            if (searchIndex > 0) {
+                getAndDisplayScreenshot(filesArr[searchIndex - 1], false);
+                searchIndex--;
+            } else {
+                getAndDisplayScreenshot(filesArr[filesArr.length - 1], false);
+                searchIndex = filesArr.length - 1;
             }
-            screenshotMetadataCarouselChange(carouselNavigation);
+            D.searchIndex = searchIndex;
+            return;
         }
-    };
+
+        if (D.metadata.previousFilePath) {
+            getAndDisplayScreenshot(D.metadata.previousFilePath);
+        }
+
+        if (fullscreenImageDialog.value.visible) {
+            // TODO
+        }
+    }
+
+    /**
+     *
+     */
+    function navigateNext() {
+        const D = screenshotMetadataDialog;
+
+        if (D.searchIndex !== null) {
+            const filesArr = D.searchResults;
+            let searchIndex = D.searchIndex;
+            if (searchIndex < filesArr.length - 1) {
+                getAndDisplayScreenshot(filesArr[searchIndex + 1], false);
+                searchIndex++;
+            } else {
+                getAndDisplayScreenshot(filesArr[0], false);
+                searchIndex = 0;
+            }
+            D.searchIndex = searchIndex;
+            return;
+        }
+
+        if (D.metadata.nextFilePath) {
+            getAndDisplayScreenshot(D.metadata.nextFilePath);
+        }
+
+        if (fullscreenImageDialog.value.visible) {
+            // TODO
+        }
+    }
 
     /**
      *
@@ -376,7 +628,7 @@
             const searchType = D.searchTypes.indexOf(D.searchType);
             D.loading = true;
             AppApi.FindScreenshotsBySearch(D.search, searchType)
-                .then((json) => {
+                .then(async (json) => {
                     const results = JSON.parse(json);
 
                     if (results.length === 0) {
@@ -385,13 +637,17 @@
 
                         D.searchIndex = null;
                         D.searchResults = null;
+                        searchResultsData.value = [];
+                        searchViewMode.value = 'detail';
                         return;
                     }
 
                     D.searchIndex = 0;
                     D.searchResults = results;
 
-                    getAndDisplayScreenshot(results[0], false);
+                    const enriched = await loadSearchResultsMetadata(results, D.search, searchType);
+                    searchResultsData.value = enriched;
+                    searchViewMode.value = 'table';
                 })
                 .finally(() => {
                     D.loading = false;
@@ -410,40 +666,6 @@
 
     /**
      *
-     * @param index
-     */
-    function screenshotMetadataCarouselChange(index) {
-        const D = screenshotMetadataDialog;
-        const searchIndex = D.searchIndex;
-
-        if (searchIndex !== null) {
-            screenshotMetadataCarouselChangeSearch(index);
-            return;
-        }
-
-        if (index === 0) {
-            if (D.metadata.previousFilePath) {
-                getAndDisplayScreenshot(D.metadata.previousFilePath);
-            } else {
-                getAndDisplayScreenshot(D.metadata.filePath);
-            }
-        }
-        if (index === 2) {
-            if (D.metadata.nextFilePath) {
-                getAndDisplayScreenshot(D.metadata.nextFilePath);
-            } else {
-                getAndDisplayScreenshot(D.metadata.filePath);
-            }
-        }
-        resetCarouselIndex();
-
-        if (fullscreenImageDialog.value.visible) {
-            // TODO
-        }
-    }
-
-    /**
-     *
      */
     function screenshotMetadataResetSearch() {
         const D = screenshotMetadataDialog;
@@ -451,79 +673,9 @@
         D.search = '';
         D.searchIndex = null;
         D.searchResults = null;
-    }
-
-    /**
-     *
-     * @param index
-     */
-    function screenshotMetadataCarouselChangeSearch(index) {
-        const D = screenshotMetadataDialog;
-        let searchIndex = D.searchIndex;
-        const filesArr = D.searchResults;
-
-        if (searchIndex === null) {
-            return;
-        }
-
-        if (index === 0) {
-            if (searchIndex > 0) {
-                getAndDisplayScreenshot(filesArr[searchIndex - 1], false);
-                searchIndex--;
-            } else {
-                getAndDisplayScreenshot(filesArr[filesArr.length - 1], false);
-                searchIndex = filesArr.length - 1;
-            }
-        } else if (index === 2) {
-            if (searchIndex < filesArr.length - 1) {
-                getAndDisplayScreenshot(filesArr[searchIndex + 1], false);
-                searchIndex++;
-            } else {
-                getAndDisplayScreenshot(filesArr[0], false);
-                searchIndex = 0;
-            }
-        }
-
-        resetCarouselIndex();
-
-        D.searchIndex = searchIndex;
-    }
-
-    /**
-     *
-     * @param api
-     */
-    function handleScreenshotMetadataCarouselInit(api) {
-        screenshotMetadataCarouselApi.value = api;
-        api.on('select', handleCarouselSelect);
-        api.on('reInit', handleCarouselSelect);
-        resetCarouselIndex();
-    }
-
-    /**
-     *
-     */
-    function handleCarouselSelect() {
-        if (ignoreCarouselSelect.value || !screenshotMetadataCarouselApi.value) {
-            return;
-        }
-        const index = screenshotMetadataCarouselApi.value.selectedScrollSnap();
-        screenshotMetadataCarouselChange(index);
-    }
-
-    /**
-     *
-     */
-    function resetCarouselIndex() {
-        const api = screenshotMetadataCarouselApi.value;
-        if (!api) {
-            return;
-        }
-        ignoreCarouselSelect.value = true;
-        api.scrollTo(1, true);
-        setTimeout(() => {
-            ignoreCarouselSelect.value = false;
-        }, 0);
+        searchResultsData.value = [];
+        selectedSearchFilePath.value = null;
+        searchViewMode.value = 'detail';
     }
 
     /**
@@ -601,3 +753,4 @@
         }
     }
 </script>
+

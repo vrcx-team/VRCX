@@ -26,7 +26,7 @@ import { useLocationStore } from '../location';
 import { useUpdateLoopStore } from '../updateLoop';
 import { useUserStore } from '../user';
 
-import configRepository from '../../service/config';
+import configRepository from '../../services/config';
 
 export const useDiscordPresenceSettingsStore = defineStore(
     'DiscordPresenceSettings',
@@ -221,7 +221,7 @@ export const useDiscordPresenceSettingsStore = defineStore(
                     groupAccessName: ''
                 };
                 try {
-                    const args = await queryRequest.fetch('world', {
+                    const args = await queryRequest.fetch('world.location', {
                         worldId: L.worldId
                     });
                     state.lastLocationDetails.worldName = args.ref.name;

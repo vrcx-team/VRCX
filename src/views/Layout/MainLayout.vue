@@ -53,7 +53,7 @@
                     </ResizablePanelGroup>
                 </SidebarInset>
             </SidebarProvider>
-            <StatusBar v-if="showStatusBar" />
+            <StatusBar />
         </div>
 
         <!-- ## Dialogs ## -->
@@ -83,7 +83,13 @@
 
         <SendBoopDialog></SendBoopDialog>
 
+        <GlobalToolsDialogs></GlobalToolsDialogs>
+
         <ChangelogDialog></ChangelogDialog>
+
+        <WhatsNewDialog></WhatsNewDialog>
+
+        <SpotlightDialog></SpotlightDialog>
     </template>
 </template>
 
@@ -96,30 +102,33 @@
     import { SidebarInset, SidebarProvider } from '../../components/ui/sidebar';
     import { useAppearanceSettingsStore } from '../../stores';
     import { useMainLayoutResizable } from '../../composables/useMainLayoutResizable';
-    import { watchState } from '../../service/watchState';
+    import { watchState } from '../../services/watchState';
 
     import AvatarImportDialog from '../Favorites/dialogs/AvatarImportDialog.vue';
     import ChangelogDialog from '../Settings/dialogs/ChangelogDialog.vue';
     import ChooseFavoriteGroupDialog from '../../components/dialogs/ChooseFavoriteGroupDialog.vue';
     import FriendImportDialog from '../Favorites/dialogs/FriendImportDialog.vue';
     import FullscreenImagePreview from '../../components/FullscreenImagePreview.vue';
+    import GlobalToolsDialogs from '../Tools/components/GlobalToolsDialogs.vue';
     import GroupMemberModerationDialog from '../../components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
     import InviteGroupDialog from '../../components/dialogs/InviteGroupDialog.vue';
     import LaunchDialog from '../../components/dialogs/LaunchDialog.vue';
     import LaunchOptionsDialog from '../Settings/dialogs/LaunchOptionsDialog.vue';
     import MainDialogContainer from '../../components/dialogs/MainDialogContainer.vue';
-    import NavMenu from '../../components/NavMenu.vue';
+    import NavMenu from '../../components/nav-menu/NavMenu.vue';
     import PrimaryPasswordDialog from '../Settings/dialogs/PrimaryPasswordDialog.vue';
     import SendBoopDialog from '../../components/dialogs/SendBoopDialog.vue';
     import Sidebar from '../Sidebar/Sidebar.vue';
     import StatusBar from '../../components/StatusBar.vue';
     import VRChatConfigDialog from '../Settings/dialogs/VRChatConfigDialog.vue';
     import WorldImportDialog from '../Favorites/dialogs/WorldImportDialog.vue';
+    import WhatsNewDialog from '../../components/onboarding/WhatsNewDialog.vue';
+    import SpotlightDialog from '../../components/onboarding/SpotlightDialog.vue';
 
     const router = useRouter();
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const { navWidth, isNavCollapsed, showStatusBar } = storeToRefs(appearanceSettingsStore);
+    const { navWidth, isNavCollapsed } = storeToRefs(appearanceSettingsStore);
 
     const sidebarOpen = computed(() => !isNavCollapsed.value);
 
