@@ -32,6 +32,7 @@
 ;--------------------------------
 ;General
 
+    SetCompressor /SOLID lzma
     Unicode True
     Name "VRCX"
     OutFile "VRCX_Setup.exe"
