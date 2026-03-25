@@ -246,17 +246,17 @@
                 </ContextMenuTrigger>
                 <ContextMenuContent v-if="contextMenuNodeId" class="min-w-40">
                     <ContextMenuItem @click="handleNodeMenuViewDetails">
-                        <UserIcon class="mr-2 size-4" />
+                        <UserIcon class="size-4" />
                         {{ t('view.charts.mutual_friend.context_menu.view_details') }}
                     </ContextMenuItem>
                     <ContextMenuSeparator />
                     <ContextMenuItem @click="handleNodeMenuRefresh">
-                        <RefreshCwIcon class="mr-2 size-4" />
+                        <RefreshCwIcon class="size-4" />
                         {{ t('view.charts.mutual_friend.context_menu.refresh_mutuals') }}
                     </ContextMenuItem>
                     <ContextMenuSeparator />
                     <ContextMenuItem @click="handleNodeMenuHide">
-                        <EyeOffIcon class="mr-2 size-4" />
+                        <EyeOffIcon class="size-4" />
                         {{ t('view.charts.mutual_friend.context_menu.hide_friend') }}
                     </ContextMenuItem>
                 </ContextMenuContent>
