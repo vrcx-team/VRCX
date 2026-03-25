@@ -46,9 +46,9 @@
                                     <div class="flex-1 overflow-hidden">
                                         <span
                                             class="block truncate font-medium leading-[18px]"
-                                            :style="{ color: item.user.$userColour }">{{
-                                            item.user.displayName
-                                        }}</span>
+                                            :style="{ color: item.user.$userColour }"
+                                            >{{ item.user.displayName }}</span
+                                        >
                                     </div>
                                 </template>
                                 <template v-else>
@@ -236,11 +236,26 @@
                 </div>
             </div>
 
-            <div
-                v-show="!(hasFetched && !isFetching && !graphReady)"
-                ref="graphContainerRef"
-                class="mt-3 h-[calc(100vh-260px)] min-h-[520px] w-full flex-1 rounded-lg bg-transparent"
-                :style="{ backgroundColor: canvasBackground }"></div>
+            <ContextMenu @update:open="onNodeMenuOpenChange">
+                <ContextMenuTrigger as-child>
+                    <div
+                        v-show="!(hasFetched && !isFetching && !graphReady)"
+                        ref="graphContainerRef"
+                        class="mt-3 h-[calc(100vh-260px)] min-h-[520px] w-full flex-1 rounded-lg bg-transparent"
+                        :style="{ backgroundColor: canvasBackground }"></div>
+                </ContextMenuTrigger>
+                <ContextMenuContent v-if="contextMenuNodeId" class="min-w-40">
+                    <ContextMenuItem @click="handleNodeMenuViewDetails">
+                        <UserIcon class="mr-2 size-4" />
+                        {{ t('view.charts.mutual_friend.context_menu.view_details') }}
+                    </ContextMenuItem>
+                    <ContextMenuSeparator />
+                    <ContextMenuItem @click="handleNodeMenuHide">
+                        <EyeOffIcon class="mr-2 size-4" />
+                        {{ t('view.charts.mutual_friend.context_menu.hide_friend') }}
+                    </ContextMenuItem>
+                </ContextMenuContent>
+            </ContextMenu>
 
             <Empty v-if="hasFetched && !isFetching && !graphReady" class="mt-3 w-full flex-1">
                 <EmptyHeader>
@@ -262,7 +277,14 @@
     import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { Empty, EmptyDescription, EmptyHeader } from '@/components/ui/empty';
-    import { Check as CheckIcon, Settings } from 'lucide-vue-next';
+    import {
+        ContextMenu,
+        ContextMenuContent,
+        ContextMenuItem,
+        ContextMenuSeparator,
+        ContextMenuTrigger
+    } from '@/components/ui/context-menu';
+    import { Check as CheckIcon, EyeOff as EyeOffIcon, Settings, User as UserIcon } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Progress } from '@/components/ui/progress';
     import { Slider } from '@/components/ui/slider';
@@ -529,6 +551,8 @@
 
     const selectedFriendId = ref(null);
 
+    const contextMenuNodeId = ref(null);
+
     const EXCLUDED_FRIENDS_KEY = 'VRCX_MutualGraphExcludedFriends';
     const excludedFriendIds = useLocalStorage(EXCLUDED_FRIENDS_KEY, []);
 
@@ -564,7 +588,6 @@
         items.sort((a, b) => a.label.localeCompare(b.label));
         return [{ key: 'friends', label: t('side_panel.friends'), items }];
     });
-
 
     function navigateToFriend(friendId) {
         selectedFriendId.value = friendId;
@@ -1045,6 +1068,14 @@
             if (node) showUserDialog(node);
         });
 
+        sigmaInstance.on('rightClickNode', ({ node }) => {
+            contextMenuNodeId.value = node || null;
+        });
+
+        sigmaInstance.on('rightClickStage', () => {
+            contextMenuNodeId.value = null;
+        });
+
         sigmaInstance.refresh();
     }
 
@@ -1156,5 +1187,27 @@
 
     function cancelFetch() {
         chartsStore.requestMutualGraphCancel();
+    }
+
+    function onNodeMenuOpenChange(open) {
+        if (!open) {
+            contextMenuNodeId.value = null;
+        }
+    }
+
+    function handleNodeMenuViewDetails() {
+        if (contextMenuNodeId.value) {
+            showUserDialog(contextMenuNodeId.value);
+        }
+        contextMenuNodeId.value = null;
+    }
+
+    function handleNodeMenuHide() {
+        if (contextMenuNodeId.value) {
+            if (!excludedFriendIds.value.includes(contextMenuNodeId.value)) {
+                excludedFriendIds.value = [...excludedFriendIds.value, contextMenuNodeId.value];
+            }
+        }
+        contextMenuNodeId.value = null;
     }
 </script>

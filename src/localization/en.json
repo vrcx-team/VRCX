@@ -565,6 +565,10 @@
                     "exclude_friends": "Exclude friends",
                     "exclude_friends_placeholder": "Select friends to exclude",
                     "exclude_friends_help": "Selected friends will be hidden from the graph."
+                },
+                "context_menu": {
+                    "view_details": "View Details",
+                    "hide_friend": "Hide from Graph"
                 }
             },
             "hot_worlds": {
