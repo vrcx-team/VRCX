@@ -4,8 +4,18 @@
     "common": {
         "no_data": "無資料",
         "no_matching_records": "無符合記錄",
+        "feature_relocated": {
+            "title": "停用通知",
+            "description": "此功能將於未來的更新中移除。請改用 {feature}"
+        },
         "actions": {
-            "open": "開啟"
+            "open": "開啟",
+            "confirm": "確認",
+            "clear": "清除",
+            "delete": "刪除",
+            "remove": "移除",
+            "reset": "重設",
+            "view_details": "查看詳細資訊"
         },
         "time_units": {
             "y": "年",
@@ -25,6 +35,7 @@
         "favorite_friends": "收藏好友",
         "favorite_worlds": "收藏世界",
         "favorite_avatars": "收藏角色",
+        "my_avatars": "我的角色",
         "social": "社交",
         "friend_log": "好友紀錄",
         "moderation": "用戶處置",
@@ -48,41 +59,143 @@
         "changelog": "最新更新",
         "update_available": "有可用更新",
         "update": "更新",
+        "mark_all_read": "全部標記為已讀",
+        "edit_dashboard": "編輯儀錶板",
+        "delete_dashboard": "刪除儀錶板",
         "custom_nav": {
-            "header": "自訂導覽",
-            "dialog_title": "自訂導覽選單",
-            "add_folder": "新增資料夾",
+            "header": "自訂導航",
+            "dialog_title": "自訂導航選單",
+            "new_folder": "新增資料夾",
             "folder_name_placeholder": "資料夾名稱",
-            "folder_icon_placeholder": "圖示類別（例如：ri-menu-fold-line）",
+            "folder_icon_placeholder": "圖示類別（例如 ri-menu-fold-line）",
             "edit_folder": "編輯資料夾",
-            "folder_available": "可用項目",
-            "folder_selected": "資料夾項目",
-            "folder_selected_empty": "尚未選擇項目",
             "delete_folder": "刪除資料夾",
-            "remove_from_folder": "從資料夾移除",
-            "folder_empty": "此資料夾沒有任何項目",
-            "invalid_folder": "資料夾必須有名稱，且至少包含兩個項目 ",
+            "edit_dashboard": "編輯儀錶板",
+            "delete_dashboard": "刪除儀錶板",
+            "folder_empty": "此資料夾是空的",
+            "folder_drop_here": "將項目拖曳到此處",
+            "hide": "隱藏",
+            "show": "顯示",
+            "hidden_items": "已隱藏",
+            "pin_to_nav": "固定到導航",
+            "unpin_from_nav": "取消固定",
+            "pinned": "已加入導航",
+            "unpinned": "已從導航移除",
+            "confirm": "確認",
+            "cancel": "取消",
             "restore_default": "恢復預設",
-            "restore_default_confirm": "要將導覽選單恢復成預設排序嗎？",
+            "restore_default_confirm": "要將導航恢復為預設順序嗎？"
+        }
+    },
+    "dashboard": {
+        "default_name": "儀錶板",
+        "new_dashboard": "新增儀錶板",
+        "empty": "此儀錶板是空的",
+        "actions": {
+            "start_editing": "開始編輯",
+            "add_row": "新增列",
+            "add_full_row": "新增整列",
+            "add_split_row": "新增分割列",
+            "add_vertical_row": "新增垂直列",
+            "cancel": "取消",
             "save": "儲存",
-            "cancel": "取消"
+            "delete": "刪除"
+        },
+        "toolbar": {
+            "name_placeholder": "儀錶板名稱",
+            "icon_placeholder": "圖示類別（可選）"
+        },
+        "panel": {
+            "not_selected": "未選擇面板",
+            "select": "選擇面板",
+            "not_configured": "面板尚未設定"
+        },
+        "selector": {
+            "title": "選擇面板內容",
+            "clear": "清除面板",
+            "widgets": "小工具",
+            "pages": "完整頁面"
+        },
+        "widget": {
+            "feed": "動態小工具",
+            "game_log": "遊戲紀錄小工具",
+            "instance": "房間小工具",
+            "config": {
+                "filters": "事件類型",
+                "columns": "欄位",
+                "detail": "詳細資訊",
+                "show_type": "顯示類型"
+            },
+            "no_data": "沒有資料",
+            "unknown_world": "未知世界",
+            "feed_online": "線上",
+            "feed_offline": "離線",
+            "feed_avatar": "→",
+            "feed_bio": "更新了個人簡介",
+            "instance_players": "玩家",
+            "instance_not_in_game": "未在遊戲中",
+            "time_ago": "{time} 前"
+        },
+        "first_save_tip": "你可以建立更多儀錶板。右鍵點擊導航選單，或使用「自訂導航」對話框新增。",
+        "confirmations": {
+            "delete_title": "刪除儀錶板",
+            "delete_description": "確定要刪除此儀錶板嗎？此操作無法復原。"
         }
     },
     "side_panel": {
-        "search_placeholder": "搜尋",
-        "search_result_active": "上線",
-        "search_result_offline": "離線",
-        "search_result_more": "搜尋更多：",
+        "search_placeholder": "快速搜尋...",
+        "search_no_results": "沒有找到結果",
+        "search_min_chars": "請至少輸入 2 個字元",
+        "search_categories": "搜尋...",
+        "search_scope_all": "名稱、備註與筆記",
+        "search_scope_avatars": "自己的與收藏",
+        "search_scope_worlds": "自己的與收藏",
+        "search_scope_joined": "自己的與已加入",
+        "search_friends": "好友",
+        "search_avatars": "角色",
+        "search_own_avatars": "自己的角色",
+        "search_fav_avatars": "收藏角色",
+        "search_worlds": "世界",
+        "search_own_worlds": "自己的世界",
+        "search_fav_worlds": "收藏世界",
+        "search_groups": "群組",
+        "search_own_groups": "自己的群組",
+        "search_joined_groups": "已加入群組",
+        "search_result_active": "離線",
+        "search_result_offline": "在線",
+        "search_result_more": "更多搜尋：",
         "refresh_tooltip": "重新整理好友",
-        "groups": "群組房間",
+        "groups": "群組",
         "friends": "好友",
         "me": "我",
         "favorite": "收藏",
-        "same_instance": "同個房間",
-        "online": "上線",
+        "same_instance": "在同個房間",
+        "online": "在線",
         "active": "活躍",
         "offline": "離線",
-        "pending_offline": "待確認離線"
+        "pending_offline": "即將離線",
+        "settings": {
+            "group_by_instance": "依房間分組",
+            "split_favorite_friends": "顯示收藏群組",
+            "hide_friends_in_same_instance": "隱藏已分組好友",
+            "sort_primary": "排序依據",
+            "sort_secondary": "其次依據",
+            "sort_tertiary": "第三依據",
+            "favorite_groups": "收藏群組",
+            "favorite_groups_placeholder": "所有群組",
+            "edit_group_order": "編輯群組順序"
+        },
+        "notifications": "通知",
+        "notification_center": {
+            "title": "通知中心",
+            "view_more": "查看更多",
+            "tab_friend": "好友",
+            "tab_group": "群組",
+            "tab_other": "其他",
+            "past_notifications": "過去 24 小時",
+            "no_new_notifications": "過去 24 小時沒有新通知",
+            "no_unseen_notifications": "沒有未讀通知"
+        }
     },
     "view": {
         "login": {
@@ -92,6 +205,8 @@
             "forgotPassword": "忘記密碼？",
             "updater": "更新器",
             "proxy_settings": "代理設定",
+            "settings": "設定",
+            "language": "語言",
             "field": {
                 "username": "使用者名稱或電子信箱",
                 "password": "密碼",
@@ -115,7 +230,8 @@
                 "Status": "狀態",
                 "Avatar": "角色",
                 "Bio": "自我介紹"
-            }
+            },
+            "photon_event_logging": "Photon 事件記錄"
         },
         "friends_locations": {
             "online": "上線",
@@ -123,6 +239,7 @@
             "same_instance": "在同個房間",
             "active": "活躍",
             "offline": "離線",
+            "search_placeholder": "搜尋好友",
             "spacing": "間距",
             "scale": "縮放",
             "separate_same_instance_friends": "分開顯示同房好友",
@@ -153,6 +270,12 @@
                 "status_tooltip": "VRCX Companion 狀態"
             }
         },
+        "my_avatars": {
+            "filter": "篩選",
+            "clear_filters": "清除所有",
+            "table_view": "表格檢視",
+            "grid_view": "網格檢視"
+        },
         "search": {
             "search_placeholder": "搜尋",
             "clear_results_tooltip": "清除搜尋結果",
@@ -169,9 +292,13 @@
             "avatar": {
                 "header": "角色",
                 "search_provider": "搜尋提供方",
+                "no_provider": "未設定任何角色搜尋服務提供者",
+                "search_placeholder_avatar": "請輸入至少 3 個字元",
+                "min_chars_warning": "請輸入至少 3 個字元進行搜尋",
                 "refresh_tooltip": "重新整理自己的角色",
                 "result_count": "{count} 個搜尋結果",
                 "all": "所有",
+                "all_tags": "所有標籤",
                 "public": "公開",
                 "private": "私人",
                 "local": "本地",
@@ -211,14 +338,18 @@
                 "confirm_delete_description": "發現 {count} 個無效角色，要刪除嗎？",
                 "delete_summary": "成功刪除 {removed} 個無效角色",
                 "no_invalid_found": "未發現無效角色",
-                "delete_cancelled": "已取消刪除操作"
+                "delete_cancelled": "已取消刪除操作",
+                "local_history": "本地歷史紀錄",
+                "no_group_selected": "未選取任何群組",
+                "styles": "樣式",
+                "almost_nuisance": "接近滋擾"
             },
             "edit_mode": "編輯模式",
             "copy": "複製",
             "clear": "清除",
             "select_all": "選擇全部",
             "deselect_all": "取消選擇全部",
-            "bulk_unfavorite": "批量移除收藏",
+            "bulk_unfavorite": "批次移除收藏",
             "refresh_favorites_tooltip": "重新整理 VRChat 收藏",
             "export": "匯出",
             "import": "匯入",
@@ -227,6 +358,11 @@
             "unfavorite_tooltip": "解除收藏",
             "edit_favorite_tooltip": "編輯收藏",
             "visibility_tooltip": "變更可見度",
+            "visibility": {
+                "public": "公開",
+                "friends": "好友",
+                "private": "私人"
+            },
             "rename_tooltip": "重新命名",
             "clear_tooltip": "清除",
             "delete_tooltip": "刪除",
@@ -302,7 +438,8 @@
                     },
                     "report": {
                         "closed": "檢舉已完成"
-                    }
+                    },
+                    "contentrestriction": "內容審核與限制"
                 },
                 "instance": {
                     "closed": "房間關閉"
@@ -361,7 +498,8 @@
                     "start_fetch": "開始取得",
                     "fetch_again": "重新取得",
                     "stop": "停止",
-                    "stop_fetching": "停止取得"
+                    "stop_fetching": "停止取得",
+                    "go_to_friend": "前往好友頁面"
                 },
                 "status": {
                     "no_friends_to_process": "沒有可處理的好友",
@@ -395,11 +533,17 @@
                 "settings": {
                     "title": "圖形佈局設定",
                     "layout_iterations": "佈局迭代次數",
-                    "layout_iterations_help": "佈局運算執行的時間長度。數值越高，結果會越穩定且更有條理 ",
+                    "layout_iterations_help": "佈局運算執行的時間長度。數值越高，結果會越穩定且更有條理",
                     "layout_spacing": "佈局間距",
-                    "layout_spacing_help": "圖形元素之間的分散程度。數值越高，畫面會越不擁擠 ",
+                    "layout_spacing_help": "圖形元素之間的分散程度。數值越高，畫面會越不擁擠",
                     "edge_curvature": "連線曲率",
-                    "edge_curvature_help": "線條的彎曲程度。數值越高，在密集區域會顯得更平滑 "
+                    "edge_curvature_help": "線條的彎曲程度。數值越高，在密集區域會顯得更平滑",
+                    "community_separation": "社群間距",
+                    "community_separation_help": "不同社群之間的分離距離。數值越高，各社群群集會更明顯",
+                    "reset_defaults": "重設為預設值",
+                    "exclude_friends": "排除好友",
+                    "exclude_friends_placeholder": "選擇要排除的好友",
+                    "exclude_friends_help": "被選擇的好友將不會顯示在圖形中。"
                 }
             }
         },
@@ -438,7 +582,7 @@
                 "inventory_description": "管理 VRC+ 圖片與物品"
             },
             "shortcuts": {
-                "header": "快捷方式",
+                "header": "捷徑",
                 "vrcx_data": "VRCX 資料",
                 "vrcx_data_description": "開啟 VRCX 資料夾",
                 "vrchat_data": "VRChat 資料",
@@ -518,6 +662,7 @@
                 },
                 "favorites": {
                     "header": "VRCX 最愛好友",
+                    "header_tooltip": "選擇哪些收藏群組要視為 VIP，以便在動態、遊戲紀錄、通知與 VR 嵌入介面中進行篩選",
                     "group_placeholder": "選擇群組"
                 },
                 "logging": {
@@ -528,8 +673,10 @@
                     "auto_login_delay_button": "設定延遲秒數"
                 },
                 "automation": {
-                    "auto_change_status": "自動變更狀態",
-                    "auto_state_change_tooltip": "當房間中有其他人時，自動變更狀態 (獨處 / 有人)",
+                    "auto_change_status": "自動狀態與邀請",
+                    "auto_change_status_switch": "自動變更狀態",
+                    "auto_state_change_tooltip": "設定自動狀態變更與邀請請求處理",
+                    "auto_state_change_switch_tooltip": "當房間中有其他人時自動變更狀態（獨處 / 有人）",
                     "alone_condition": "獨處條件",
                     "alone": "獨處",
                     "no_friends": "沒有好友",
@@ -538,10 +685,15 @@
                     "allowed_instance_types": "允許的房間類型",
                     "instance_type_placeholder": "所有房間類型",
                     "auto_invite_request_accept": "自動接受邀請請求",
-                    "auto_invite_request_accept_tooltip": "自動接受來自好友最愛的邀請請求",
-                    "auto_invite_request_accept_off": "關閉",
-                    "auto_invite_request_accept_favs": "所有最愛",
-                    "auto_invite_request_accept_selected_favs": "VRCX 最愛好友"
+                    "auto_invite_request_accept_tooltip": "自動接受來自收藏好友的邀請請求",
+                    "auto_invite_request_accept_favs": "所有收藏",
+                    "auto_invite_request_accept_selected_favs": "VRCX 收藏好友",
+                    "change_status_description": "覆寫狀態描述",
+                    "status_description_placeholder": "狀態描述（最多 32 字）",
+                    "auto_change_status_groups": "只計算來自以下群組的好友",
+                    "auto_change_status_groups_placeholder": "選擇群組",
+                    "auto_accept_invite_groups": "只接受來自以下群組",
+                    "auto_accept_invite_groups_placeholder": "選擇群組"
                 },
                 "legal_notice": {
                     "header": "法律聲明",
@@ -561,7 +713,8 @@
                     "bio_language": "目標語言",
                     "theme_mode": "主題",
                     "font_family": "字型",
-                    "font_family_inter": "Inter",
+                    "cjk_font_pack": "CJK 字型包",
+                    "font_family_inter": "Inter（預設）",
                     "font_family_noto_sans": "Noto Sans",
                     "font_family_geist": "Geist",
                     "font_family_nunito_sans": "Nunito Sans",
@@ -569,30 +722,37 @@
                     "font_family_jetbrains_mono": "JetBrains Mono",
                     "font_family_fantasque_sans_mono": "Fantasque Sans Mono",
                     "font_family_system_ui": "系統字型",
+                    "font_family_custom": "自訂",
+                    "font_family_custom_dialog_title": "自訂字型",
+                    "font_family_custom_dialog_description": "輸入有效的 CSS font-family 值",
+                    "font_family_custom_invalid": "無效的 font-family。請使用逗號分隔字型名稱，例如：'My Font', Arial, sans-serif",
+                    "cjk_font_pack_noto": "Noto Sans CJK",
+                    "cjk_font_pack_pht": "PuHuiTi CJK",
                     "theme_mode_system": "系統",
                     "theme_mode_light": "淺色",
                     "theme_mode_dark": "深色",
                     "theme_mode_midnight": "午夜",
                     "theme_mode_blue": "藍色",
                     "theme_mode_darkblue": "深藍",
-                    "theme_mode_amoled": "黑暗",
-                    "theme_mode_darkvanillaold": "深色原生（舊版）",
-                    "theme_mode_darkvanilla": "深色原生",
+                    "theme_mode_amoled": "AMOLED 黑",
+                    "theme_mode_darkvanillaold": "原生深色（舊版）",
+                    "theme_mode_darkvanilla": "原生深色",
                     "theme_mode_pink": "粉色",
                     "theme_mode_material3": "Material 3",
                     "zoom": "介面縮放",
-                    "vrcplus_profile_icons": "VRChat+ 個人檔案圖示",
+                    "vrcplus_profile_icons": "VRChat+ 個人資料圖示",
                     "show_instance_id": "顯示房間 ID",
+                    "show_status_bar": "顯示狀態列",
                     "age_gated_instances": "年齡限制房間",
                     "nicknames": "備註暱稱",
                     "sort_favorite_by": "收藏排序依據",
                     "sort_favorite_by_name": "名稱",
                     "sort_favorite_by_date": "時間",
-                    "sort_instance_users_by": "房間用戶排序依據",
+                    "sort_instance_users_by": "房間使用者排序依據",
                     "sort_instance_users_by_time": "時間",
                     "sort_instance_users_by_alphabet": "字母順序",
                     "table_page_sizes": "表格每頁筆數",
-                    "table_page_sizes_error": "每頁筆數必須是 1 到 1000 之間的數字",
+                    "table_page_sizes_error": "每頁筆數必須為 1 到 1000 之間的數字",
                     "show_notification_icon_dot": "顯示系統匣通知紅點",
                     "striped_data_table_mode": "表格條紋模式",
                     "toggle_pointer_on_hover": "滑鼠懸停時強制顯示指標",
@@ -600,7 +760,13 @@
                     "table_density_standard": "標準",
                     "table_density_comfortable": "舒適",
                     "table_density_compact": "緊湊",
-                    "table_entries_settings": "表格最大尺寸"
+                    "table_entries_settings": "表格最大列數"
+                },
+                "display": {
+                    "header": "Display"
+                },
+                "sorting_tables": {
+                    "header": "Sorting & Tables"
                 },
                 "timedate": {
                     "header": "時間 / 日期",
@@ -621,7 +787,6 @@
                     "yellow": "黃色"
                 },
                 "side_panel": {
-                    "header": "側邊欄",
                     "sorting": {
                         "header": "排序順序",
                         "alphabetical": "依字母順序",
@@ -632,13 +797,7 @@
                         "last_seen": "上次看見",
                         "time_in_instance": "在房間中的時間",
                         "placeholder": "排序順序"
-                    },
-                    "group_by_instance": "依照房間分類",
-                    "group_by_instance_tooltip": "啟用後，若有多位好友在同一房間，將依房間分組顯示 ",
-                    "hide_friends_in_same_instance": "隱藏同房間好友",
-                    "hide_friends_in_same_instance_tooltip": "當好友在同一房間時，將其從好友列表中隱藏 ",
-                    "split_favorite_friends": "分類收藏好友",
-                    "split_favorite_friends_tooltip": "將收藏的好友依照分組別類 "
+                    }
                 },
                 "user_dialog": {
                     "header": "用戶資訊",
@@ -763,6 +922,12 @@
                 "advanced": {
                     "launch_options": "啟動選項",
                     "vrc_registry_backup": "VRC 註冊表備份",
+                    "vrchat_settings": {
+                        "header": "VRChat"
+                    },
+                    "vrcx_settings": {
+                        "header": "VRCX"
+                    },
                     "primary_password": {
                         "header": "主密碼",
                         "description": "密碼加密（將停用自動登入）"
@@ -970,7 +1135,7 @@
                 "invite_with_message": "邀請（訊息）",
                 "request_invite": "請求邀請",
                 "request_invite_with_message": "請求邀請（訊息）",
-                "invite_to_group": "邀情到群組",
+                "invite_to_group": "邀請到群組",
                 "group_moderation": "群組管理",
                 "send_boop": "戳一下",
                 "manage_gallery_inventory_icon": "管理相簿 / 圖示",
@@ -999,7 +1164,8 @@
                 "unfriend": "解除好友",
                 "unfriend_success_msg": "已解除好友",
                 "logout": "登出",
-                "edit_note_memo": "編輯註釋與備忘錄"
+                "edit_note_memo": "編輯註釋與備忘錄",
+                "reset_home": "Reset Home"
             },
             "info": {
                 "header": "資訊",
@@ -1021,6 +1187,7 @@
                 "memo_placeholder": "點擊新增備忘錄",
                 "avatar_info": "角色資訊",
                 "avatar_info_last_seen": "最後已知角色資訊",
+                "unknown_avatar": "未知角色",
                 "represented_group": "代表群組",
                 "bio": "自我介紹",
                 "last_seen": "最後上線",
@@ -1156,7 +1323,7 @@
                 "download_package": "下載 Unity Package",
                 "publish_to_labs": "發佈到社區實驗室",
                 "unpublish": "取消發佈",
-                "delete_persistent_data": "刪除狀態資料",
+                "delete_persistent_data": "刪除世界儲存資料",
                 "delete": "刪除"
             },
             "instances": {
@@ -1237,10 +1404,15 @@
                 "delete": "刪除",
                 "delete_impostor": "刪除投影替身",
                 "regenerate_impostor": "重新建立投影替身",
-                "create_impostor": "建立投影替身"
+                "create_impostor": "建立投影替身",
+                "manage_tags": "管理標籤",
+                "manage_tags_placeholder": "新增標籤...",
+                "manage_tags_hint": "點擊標籤以變更其顏色",
+                "view_details": "查看詳細資訊"
             },
             "info": {
                 "header": "資訊",
+                "name": "名稱",
                 "id": "角色 ID",
                 "id_tooltip": "複製到剪貼簿",
                 "copy_id": "複製 ID",
@@ -1249,7 +1421,12 @@
                 "last_updated": "最後更新",
                 "version": "版本",
                 "platform": "平台",
+                "pc_performance": "PC 效能表現",
+                "android_performance": "Android 效能表現",
+                "ios_performance": "iOS 效能表現",
                 "time_spent": "停留時長",
+                "visibility": "可見度",
+                "tags": "標籤",
                 "memo": "備註",
                 "memo_placeholder": "點擊新增備忘錄",
                 "listings": "列表",
@@ -1372,7 +1549,12 @@
             "header": "社交狀態",
             "history": "過去的社交狀態",
             "status_placeholder": "今天心情如何？",
-            "update": "更新"
+            "update": "更新",
+            "presets": "預設檔",
+            "save_preset": "儲存預設檔",
+            "preset_saved": "已儲存",
+            "preset_exists": "已存在",
+            "preset_limit": "最多 {max} 個"
         },
         "language": {
             "header": "語言",
@@ -1627,7 +1809,7 @@
             "emoji_animation_type": "動態表情符號",
             "emoji_animation_fps": "FPS：",
             "emoji_animation_frame_count": "影格數：",
-            "emoji_loop_pingpong": "乒乓循環",
+            "emoji_loop_pingpong": "桌球循環",
             "flipbook_info": "選擇一張 1024×1024 的 PNG 精靈圖來製作動態表情符號，可用的影格格線大小為：4、16 或 64（最大 FPS 為 64，最多 64 個影格）",
             "note": "注意",
             "crop_print_border": "裁切列印邊框",
@@ -1637,7 +1819,20 @@
             "drone_skin": "無人機外觀",
             "emoji": "表情符號",
             "redeem": "兌換",
-            "create_animated_emoji": "動態表情符號產生器"
+            "create_animated_emoji": "動畫表情生成器",
+            "crop_image": "確認上傳"
+        },
+        "image_crop": {
+            "rotate_left": "向左旋轉",
+            "rotate_right": "向右旋轉",
+            "flip_h": "水平翻轉",
+            "flip_v": "垂直翻轉",
+            "zoom_in": "放大",
+            "zoom_out": "縮小",
+            "mode_fit": "切換為適應模式",
+            "mode_free": "切換為自由模式",
+            "reset": "重設"
+        },
         },
         "gallery_select": {
             "header": "選擇圖片",
@@ -1650,7 +1845,9 @@
             "avatar": "變更角色圖片",
             "world": "變更世界圖片",
             "description": "推薦圖片尺寸：1200 像素 x 900 像素 (4:3)",
-            "upload": "上傳圖片"
+            "upload": "上傳圖片",
+            "confirm": "Confirm Crop",
+            "cancel": "Cancel"
         },
         "screenshot_metadata": {
             "header": "螢幕截圖詳細資料",
@@ -1670,7 +1867,20 @@
                 "world_id": "世界 ID"
             },
             "no_results": "找不到符合的結果",
-            "invalid_file": "選擇的檔案無效，請選擇有效的 VRChat 螢幕截圖 "
+            "invalid_file": "選擇的檔案無效，請選擇有效的 VRChat 螢幕截圖 ",
+            "section_location": "位置",
+            "section_players": "玩家",
+            "section_file_info": "檔案資訊",
+            "section_note": "備註",
+            "section_actions": "操作",
+            "col_date": "日期",
+            "col_world": "世界",
+            "col_players": "玩家",
+            "col_resolution": "解析度",
+            "col_match": "匹配",
+            "col_author": "作者",
+            "back_to_results": "返回 {count} 個結果",
+            "result_count": "{count} 個結果"
         },
         "set_world_tags": {
             "header": "設定世界標籤",
@@ -1838,7 +2048,14 @@
             "selected_roles": "已選擇身分",
             "remove_roles": "移除身份組",
             "add_roles": "新增身份組",
-            "export_logs": "輸出日誌"
+            "export_logs": "輸出日誌",
+            "export_bans": "匯出封鎖名單",
+            "import_bans": "匯入封鎖名單",
+            "import_bans_description": "在下方貼上 CSV 或使用者 ID。系統會自動從 CSV 標頭偵測 userId 欄位，或提取所有 usr_ 開頭的 ID。",
+            "import_bans_warning": "請勿一次匯入過多項目。此為敏感操作，官方會主動監控並執行相關限制，請自行承擔風險！",
+            "import_bans_placeholder": "在此貼上 CSV 或使用者 ID（每行一個）\nusr_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "import_bans_start": "匯入並封鎖",
+            "import_bans_clear_errors": "清除錯誤"
         },
         "group_post_edit": {
             "header": "創建/編輯貼文",
@@ -1959,6 +2176,19 @@
         "decline_type": "確定要拒絕 {type} 嗎？",
         "delete_type": "確定要刪除 {type} 嗎？",
         "command_question": "確定要執行 {command} 嗎？",
+        "clear_group": "確定要清空群組嗎？",
+        "delete_group": "確定要刪除群組 {name} 嗎？",
+        "delete_post": "確定要刪除這則貼文嗎？",
+        "block_group": "確定要封鎖此群組嗎？",
+        "unblock_group": "確定要解除封鎖此群組嗎？",
+        "leave_group": "確定要離開此群組嗎？",
+        "disable_gamelog": "確定要停用 GameLog 嗎？",
+        "restore_backup": "確定要還原備份嗎？",
+        "delete_vrc_registry": "確定要刪除 VRChat Registry 設定嗎？",
+        "clear_cache": "確定要清除所有 VRChat 快取嗎？",
+        "close_instance": "確定要關閉此房間嗎？關閉後將無法再加入",
+        "bulk_unfavorite": "確定要取消收藏 {count} 個項目嗎？\n此操作無法復原。",
+        "bulk_unfavorite_title": "刪除 {count} 個收藏？",
         "restart_required_title": "需要重新啟動",
         "restart_now": "立即重新啟動",
         "restart_later": "稍後再說"
@@ -2007,7 +2237,7 @@
             "input_error": "需要連結或 ID",
             "message": {
                 "error": "無效的連結或 ID",
-                "opened_from_clipboard": "從剪貼板開啟"
+                "opened_from_clipboard": "從剪貼簿開啟"
             }
         },
         "notification_timeout": {
@@ -2122,6 +2352,11 @@
                 "error": "名稱為 {name} 的群組已存在"
             }
         },
+        "backup_name": {
+            "header": "備份名稱",
+            "description": "請輸入備份名稱",
+            "input_error": "名稱為必填"
+        },
         "auto_login_delay": {
             "header": "自動登入延遲",
             "description": "請輸入延遲秒數（0 表示停用，最多 10 秒） ",
@@ -2156,6 +2391,18 @@
     },
     "message": {
         "auto_login_delay_countdown": "自動登入中，預計耗時 {seconds} 秒...",
+        "auth": {
+            "login_greeting": "你好，{name}！",
+            "logout_greeting": "再見，{name}！",
+            "email_2fa_resent": "已重新發送電子郵件 2FA 驗證。",
+            "email_2fa_no_credentials": "沒有已儲存的登入憑證，無法發送 2FA 郵件。請重新登入。",
+            "incorrect_primary_password": "主要密碼錯誤",
+            "saved_credentials_invalid": "已儲存的登入憑證已失效。",
+            "account_removed": "帳號已移除。",
+            "auto_login_success": "已自動登入。",
+            "auto_login_failed": "自動登入失敗。",
+            "offline": "你目前處於離線狀態。"
+        },
         "vrcx_updater": {
             "failed": "檢查更新失敗，{message}",
             "failed_install": "安裝更新失敗",
@@ -2174,29 +2421,47 @@
             "create_failed": "建立房間失敗"
         },
         "avatar": {
-            "change_moderation_failed": "變更角色審核狀態失敗"
+            "change_moderation_failed": "變更角色審核狀態失敗",
+            "fallback_changed": "備用角色已變更",
+            "blocked": "角色已封鎖",
+            "updated_public": "角色已設為公開",
+            "updated_private": "角色已設為私人",
+            "deleted": "角色已刪除",
+            "impostor_deleted": "投影替身已刪除",
+            "impostor_queued": "投影替身已加入建立佇列",
+            "impostor_regenerated": "投影替身已刪除並重新加入建立佇列"
         },
         "avatar_lookup": {
             "not_found": "在搜尋來源中找不到該角色",
             "failed": "角色查詢失敗",
             "private_or_not_found": "角色設為私人，或在搜尋來源中找不到",
-            "loading": "正在透過搜尋來源查找角色"
+            "loading": "正在透過搜尋來源尋找角色"
         },
         "database": {
-            "upgrade_complete": "資料庫升級完成"
+            "upgrade_complete": "資料庫升級完成",
+            "disk_space": "請釋放一些磁碟空間。",
+            "disk_error": "請檢查磁碟是否有錯誤。"
         },
         "file": {
             "not_image": "檔案不是圖片",
             "too_large": "檔案大小過大",
+            "folder_opened": "資料夾已開啟",
             "folder_missing": "資料夾不存在"
         },
         "group": {
-            "load_failed": "群組載入失敗"
+            "load_failed": "群組載入失敗",
+            "joined": "已加入群組",
+            "join_request_sent": "已發送加入群組請求",
+            "visibility_updated": "群組可見性已更新",
+            "subscription_updated": "群組訂閱設定已更新"
         },
         "invite": {
             "self_sent": "已送出給自己的邀請",
             "sent": "邀請已送出",
-            "message_update_failed": "VRChat API 未能更新訊息，請再試一次"
+            "message_update_failed": "VRChat API 未能更新訊息，請再試一次",
+            "message_updated": "邀請訊息已更新",
+            "response_sent": "邀請回覆訊息已發送",
+            "response_photo_sent": "邀請回覆照片訊息已發送"
         },
         "launch": {
             "invalid_path": "路徑無效，請輸入 VRChat 資料夾或 launch.exe"
@@ -2211,7 +2476,16 @@
             "error": "上傳失敗"
         },
         "world": {
-            "load_failed": "世界載入失敗"
+            "load_failed": "世界載入失敗",
+            "home_updated": "預設世界已更新",
+            "home_reset": "預設世界已重設",
+            "published": "世界已發布",
+            "unpublished": "世界已取消發布",
+            "persistent_data_deleted": "世界儲存資料已刪除",
+            "deleted": "世界已刪除",
+            "id_copied": "世界 ID 已複製到剪貼簿",
+            "url_copied": "世界網址已複製到剪貼簿",
+            "name_copied": "世界名稱已複製到剪貼簿"
         },
         "user": {
             "moderated": "用戶已進行審核",
@@ -2229,7 +2503,27 @@
         },
         "crash": {
             "vrcx_reload": "為確保穩定性，已重新載入 VRCX"
-        }
+        },
+        "image": {
+            "downloading": "正在下載圖片...",
+            "copied_to_clipboard": "圖片已複製到剪貼簿"
+        },
+        "registry": {
+            "restored": "VRC Registry 設定已還原",
+            "deleted": "VRC Registry 設定已刪除",
+            "restore_failed": "還原 VRC Registry 設定失敗，請查看主控台以取得完整錯誤資訊：{error}",
+            "invalid_json": "無效的 JSON"
+        },
+        "cache": {
+            "deleted": "所有 VRChat 快取已刪除",
+            "delete_error": "刪除 VRChat 快取時發生錯誤：{error}",
+            "invalid_config": "config.json 中的 JSON 無效"
+        },
+        "gamelog": {
+            "vrchat_must_be_closed": "必須先關閉 VRChat 才能變更此設定"
+        },
+        "copy_failed": "複製失敗",
+        "error": "錯誤"
     },
     "status": {
         "title": "VRChat 狀態"
@@ -2240,6 +2534,10 @@
         "traveling": "正在移動..."
     },
     "table": {
+        "header_menu": {
+            "reset_all": "重設全部",
+            "lock_column_order": "鎖定欄位順序"
+        },
         "pagination": {
             "rows_per_page": "每頁行數",
             "first": "第一頁",
@@ -2440,5 +2738,39 @@
                 "unavailable": "服務可能因 VRChat 內部問題而無法使用"
             }
         }
+    },
+    "accessibility": {
+        "toggle_sidebar": "切換側邊欄",
+        "back_to_top": "返回頂部",
+        "toggle_password": "切換密碼顯示",
+        "clear_input": "清除輸入"
+    },
+    "status_bar": {
+        "game": "遊戲",
+        "game_running": "VRChat 正在執行",
+        "game_stopped": "VRChat 未在執行",
+        "game_started_at": "啟動時間",
+        "game_session_duration": "執行時間",
+        "game_last_session": "上次遊戲",
+        "game_last_offline": "離線時間",
+        "servers": "伺服器",
+        "servers_ok": "VRChat 伺服器運作正常",
+        "servers_issue": "VRChat 伺服器發生問題",
+        "steamvr": "SteamVR",
+        "steamvr_running": "SteamVR 正在執行",
+        "steamvr_stopped": "SteamVR 未在執行",
+        "proxy": "代理",
+        "ws_connected": "已連線",
+        "ws_disconnected": "未連線",
+        "ws_avg_per_minute": "平均 {count}/分鐘",
+        "zoom": "縮放",
+        "zoom_tooltip": "點擊調整縮放比例",
+        "app_uptime": "應用程式運行時間",
+        "app_uptime_short": "運行時間",
+        "clocks": "時鐘",
+        "clock": "時鐘",
+        "clocks_label": "時鐘",
+        "clocks_none": "無",
+        "timezone": "時區"
     }
 }
