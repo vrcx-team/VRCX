@@ -307,21 +307,19 @@ const gameLog = {
         return ref;
     },
 
-    async getLastGroupVisit(groupName) {
+    async getLastGroupVisit(groupId) {
         var ref = {
-            created_at: '',
-            groupName: ''
+            created_at: ''
         };
         await sqliteService.execute(
             (row) => {
                 ref = {
-                    created_at: row[0],
-                    groupName: row[1]
+                    created_at: row[0]
                 };
             },
-            `SELECT created_at, group_name FROM gamelog_location WHERE group_name = @groupName ORDER BY id DESC LIMIT 1`,
+            `SELECT created_at FROM gamelog_location WHERE location LIKE @groupId ORDER BY id DESC LIMIT 1`,
             {
-                '@groupName': groupName
+                '@groupId': `%${groupId}%`
             }
         );
         return ref;
@@ -1461,11 +1459,18 @@ const gameLog = {
      * @param {string} [excludeWorldId=''] - Optional world ID to exclude from results.
      * @returns {Promise<Array<{worldId: string, worldName: string, visitCount: number, totalTime: number}>>}
      */
-    async getMyTopWorlds(days = 0, limit = 5, sortBy = 'time', excludeWorldId = '') {
+    async getMyTopWorlds(
+        days = 0,
+        limit = 5,
+        sortBy = 'time',
+        excludeWorldId = ''
+    ) {
         const results = [];
         const whereClause =
             days > 0 ? `AND created_at >= datetime('now', @daysOffset)` : '';
-        const excludeClause = excludeWorldId ? 'AND world_id != @excludeWorldId' : '';
+        const excludeClause = excludeWorldId
+            ? 'AND world_id != @excludeWorldId'
+            : '';
         const orderBy =
             sortBy === 'count' ? 'visit_count DESC' : 'total_time DESC';
         const params = { '@limit': limit };
