@@ -283,7 +283,7 @@ button {
 }
 
 .x-containerbottom {
-    padding: 3px 10px 3px;
+    padding: 3px 10px 2px;
     overflow: hidden;
     font-size: var(--vr-font-base);
     white-space: nowrap;
@@ -291,7 +291,7 @@ button {
     color: var(--vr-text-secondary);
     font-weight: 400;
     letter-spacing: 0.01em;
-    line-height: 1.4;
+    line-height: 1.2;
 }
 
 .x-containerbottom span {
@@ -306,13 +306,17 @@ button {
 
 .x-containerbottom > br ~ span {
     font-size: var(--vr-font-sm);
-    color: var(--vr-text-muted);
+    /* color: var(--vr-text-muted); */
 }
 
 .np-progress-bar {
     width: 0%;
     height: 3px;
-    background: linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0.9));
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.6),
+        rgba(255, 255, 255, 0.9)
+    );
     border-radius: 2px;
 }
 
@@ -604,6 +608,6 @@ i.x-user-status.busy {
 }
 
 .tracker-device span {
-    font-size: 13px;
+    font-size: 14px;
     letter-spacing: 0.02em;
 }
