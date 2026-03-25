@@ -865,7 +865,7 @@
                 profilePicOverride
             })
             .then((args) => {
-                toast.success('Profile picture changed');
+                toast.success(t('message.gallery.profile_pic_changed'));
                 return args;
             });
     }
@@ -932,7 +932,7 @@
                 userIcon
             })
             .then((args) => {
-                toast.success('Icon changed');
+                toast.success(t('message.gallery.profile_icon_changed'));
                 return args;
             });
     }

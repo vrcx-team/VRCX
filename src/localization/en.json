@@ -959,6 +959,7 @@
                     "layout_table": "Notifications Tab",
                     "notification_filter": "Notification Filters",
                     "test_notification": "Send Test Notification",
+                    "test_message": "Test notification.",
                     "steamvr_notifications": {
                         "header": "SteamVR Notifications",
                         "steamvr_overlay": "SteamVR Overlay",
@@ -2644,6 +2645,8 @@
             "create_failed": "Failed to create instance"
         },
         "avatar": {
+            "selected": "Avatar changed",
+            "already_selected": "Avatar already selected",
             "change_moderation_failed": "Failed to change avatar moderation",
             "fallback_changed": "Fallback avatar changed",
             "blocked": "Avatar blocked",
@@ -2697,7 +2700,9 @@
         },
         "gallery": {
             "uploaded": "Gallery image uploaded",
-            "failed": "Failed to upload gallery image"
+            "failed": "Failed to upload gallery image",
+            "profile_pic_changed": "Profile picture changed",
+            "profile_icon_changed": "Profile icon changed"
         },
         "upload": {
             "loading": "Uploading",
@@ -2759,6 +2764,44 @@
         },
         "copy_failed": "Copy failed",
         "error": "Error"
+    },
+    "notifications": {
+        "has_joined": "has joined",
+        "has_left": "has left",
+        "is_joining": "is joining",
+        "gps": "is in {location}",
+        "online_location": "has logged in to {location}",
+        "online": "has logged in",
+        "offline": "has logged out",
+        "status_update": "status is now {status} {description}",
+        "invite": "has invited you to {location} {message}",
+        "request_invite": "has requested an invite {message}",
+        "invite_response": "has responded to your invite {message}",
+        "request_invite_response": "has responded to your invite request {message}",
+        "friend_request": "has sent you a friend request",
+        "friend": "is now your friend",
+        "unfriend": "is no longer your friend",
+        "trust_level": "Trust level is now {trustLevel}",
+        "display_name": "changed their name to {displayName}",
+        "group_announcement_title": "Group Announcement",
+        "group_informative_title": "Group Informative",
+        "group_invite_title": "Group Invite",
+        "group_join_request_title": "Group Join Request",
+        "group_transfer_request_title": "Group Transfer Request",
+        "group_queue_ready_title": "Instance Queue Ready",
+        "instance_closed_title": "Instance Closed",
+        "portal_spawn_name": "has spawned a portal to {location}",
+        "portal_spawn": "User has spawned a portal",
+        "avatar_change": "changed into avatar {avatar}",
+        "chat_message": "said: {message}",
+        "blocked_player_joined": "Blocked user has joined",
+        "blocked_player_left": "Blocked user has left",
+        "muted_player_joined": "Muted user has joined",
+        "muted_player_left": "Muted user has left",
+        "blocked": "has blocked you",
+        "unblocked": "has unblocked you",
+        "muted": "has muted you",
+        "unmuted": "has unmuted you"
     },
     "status": {
         "title": "VRChat Status"
