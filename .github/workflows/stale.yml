@@ -21,4 +21,3 @@ jobs:
           operations-per-run: 100
           close-issue-message: >
             Closing this issue due to inactivity.
-            Feel free to comment or reopen it if this is still relevant.
