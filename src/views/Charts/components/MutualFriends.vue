@@ -250,6 +250,11 @@
                         {{ t('view.charts.mutual_friend.context_menu.view_details') }}
                     </ContextMenuItem>
                     <ContextMenuSeparator />
+                    <ContextMenuItem @click="handleNodeMenuRefresh">
+                        <RefreshCwIcon class="mr-2 size-4" />
+                        {{ t('view.charts.mutual_friend.context_menu.refresh_mutuals') }}
+                    </ContextMenuItem>
+                    <ContextMenuSeparator />
                     <ContextMenuItem @click="handleNodeMenuHide">
                         <EyeOffIcon class="mr-2 size-4" />
                         {{ t('view.charts.mutual_friend.context_menu.hide_friend') }}
@@ -284,7 +289,13 @@
         ContextMenuSeparator,
         ContextMenuTrigger
     } from '@/components/ui/context-menu';
-    import { Check as CheckIcon, EyeOff as EyeOffIcon, Settings, User as UserIcon } from 'lucide-vue-next';
+    import {
+        Check as CheckIcon,
+        EyeOff as EyeOffIcon,
+        RefreshCw as RefreshCwIcon,
+        Settings,
+        User as UserIcon
+    } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Progress } from '@/components/ui/progress';
     import { Slider } from '@/components/ui/slider';
@@ -552,6 +563,8 @@
     const selectedFriendId = ref(null);
 
     const contextMenuNodeId = ref(null);
+    const graphMeta = ref(new Map());
+    const isRefreshingNode = ref(false);
 
     const EXCLUDED_FRIENDS_KEY = 'VRCX_MutualGraphExcludedFriends';
     const excludedFriendIds = useLocalStorage(EXCLUDED_FRIENDS_KEY, []);
@@ -828,7 +841,7 @@
         });
     }
 
-    async function buildGraphFromMutualMap(mutualMap) {
+    async function buildGraphFromMutualMap(mutualMap, meta = null) {
         const graph = new Graph({
             type: 'undirected',
             multi: false,
@@ -880,7 +893,13 @@
             const degree = nodeDegree.get(id) || 0;
             const size = 4 + (maxDegree ? (degree / maxDegree) * 18 : 0);
             const label = truncateLabelText(nodeNames.get(id) || id);
-            graph.mergeNodeAttributes(id, { label, size, type: 'border' });
+            const attrs = { label, size, type: 'border' };
+            if (meta?.has(id)) {
+                const m = meta.get(id);
+                attrs.optedOut = m.optedOut;
+                attrs.lastFetchedAt = m.lastFetchedAt;
+            }
+            graph.mergeNodeAttributes(id, attrs);
         });
 
         if (graph.order > 1) {
@@ -939,6 +958,7 @@
 
                     const fontSize = settings.labelSize ?? 12;
                     const font = settings.labelFont ?? 'sans-serif';
+                    const smallFontSize = Math.max(9, fontSize - 2);
 
                     ctx.font = `${fontSize}px ${font}`;
                     ctx.textBaseline = 'middle';
@@ -946,9 +966,21 @@
                     const paddingX = 6;
                     const paddingY = 4;
 
-                    const textWidth = ctx.measureText(data.label).width;
-                    const w = textWidth + paddingX * 2;
-                    const h = fontSize + paddingY * 2;
+                    let subLine = '';
+                    if (data.lastFetchedAt) {
+                        const d = new Date(data.lastFetchedAt);
+                        subLine = `${t('view.charts.mutual_friend.context_menu.last_fetched')}: ${d.toLocaleString()}`;
+                    }
+
+                    const labelWidth = ctx.measureText(data.label).width;
+                    ctx.font = `${smallFontSize}px ${font}`;
+                    const subWidth = subLine ? ctx.measureText(subLine).width : 0;
+                    ctx.font = `${fontSize}px ${font}`;
+
+                    const w = Math.max(labelWidth, subWidth) + paddingX * 2;
+                    const lineHeight = fontSize + paddingY;
+                    const totalLines = subLine ? 2 : 1;
+                    const h = lineHeight * totalLines + paddingY;
 
                     const x = data.x + data.size - 5;
                     const y = data.y - h / 2;
@@ -961,8 +993,18 @@
                     ctx.fillStyle = 'rgba(255, 255, 255, 1)';
                     ctx.fillRect(x, y, w, h);
 
+                    ctx.shadowBlur = 0;
+                    ctx.shadowColor = 'transparent';
+
                     ctx.fillStyle = '#111827';
-                    ctx.fillText(data.label, x + paddingX, y + h / 2);
+                    ctx.font = `${fontSize}px ${font}`;
+                    ctx.fillText(data.label, x + paddingX, y + paddingY + fontSize / 2);
+
+                    if (subLine) {
+                        ctx.fillStyle = data.optedOut ? '#dc2626' : '#6b7280';
+                        ctx.font = `${smallFontSize}px ${font}`;
+                        ctx.fillText(subLine, x + paddingX, y + paddingY + lineHeight + smallFontSize / 2);
+                    }
                 }
             });
         } else {
@@ -990,8 +1032,12 @@
         sigmaInstance.setSetting('nodeReducer', (node, data) => {
             const res = { ...data };
 
+            if (data.optedOut) {
+                res.borderColor = '#9ca3af';
+            }
+
             if (!hovered) {
-                res.color = data.color;
+                res.color = data.optedOut ? '#d1d5db' : data.color;
                 res.zIndex = 1;
                 return res;
             }
@@ -1081,7 +1127,7 @@
 
     async function applyGraph(mutualMap) {
         lastMutualMap = mutualMap;
-        const graph = await buildGraphFromMutualMap(mutualMap);
+        const graph = await buildGraphFromMutualMap(mutualMap, graphMeta.value);
         currentGraph = graph;
         renderGraph(graph);
     }
@@ -1096,7 +1142,9 @@
         // loadingToastId.value = toast.info(t('view.charts.mutual_friend.status.loading_cache'));
 
         try {
-            const snapshot = await database.getMutualGraphSnapshot();
+            const [snapshot, meta] = await Promise.all([database.getMutualGraphSnapshot(), database.getMutualGraphMeta()]);
+            graphMeta.value = meta;
+
             if (!snapshot || snapshot.size === 0) {
                 if (totalFriends.value === 0) {
                     showStatusMessage(t('view.charts.mutual_friend.status.no_friends_to_process'), 'info');
@@ -1209,5 +1257,73 @@
             }
         }
         contextMenuNodeId.value = null;
+    }
+
+    async function handleNodeMenuRefresh() {
+        const nodeId = contextMenuNodeId.value;
+        contextMenuNodeId.value = null;
+        if (!nodeId || isRefreshingNode.value) return;
+
+        const isFriend = friends.value?.has(nodeId);
+
+        if (!isFriend) {
+            try {
+                const { ok } = await modalStore.confirm({
+                    title: t('view.charts.mutual_friend.context_menu.confirm_non_friend_title'),
+                    description: t('view.charts.mutual_friend.context_menu.confirm_non_friend_message'),
+                    confirmText: t('common.actions.confirm'),
+                    cancelText: t('common.actions.cancel')
+                });
+                if (!ok) return;
+            } catch {
+                return;
+            }
+        }
+
+        isRefreshingNode.value = true;
+        try {
+            const result = await chartsStore.fetchSingleFriendMutuals(nodeId);
+
+            if (result.optedOut) {
+                toast.warning(t('view.charts.mutual_friend.context_menu.user_opted_out'), { duration: 5000 });
+                graphMeta.value.set(nodeId, {
+                    lastFetchedAt: new Date().toISOString(),
+                    optedOut: true
+                });
+            } else if (result.success) {
+                const cached = cachedUsers.get(nodeId);
+                const name = cached?.displayName || nodeId;
+                toast.success(t('view.charts.mutual_friend.context_menu.refresh_success', { name }), { duration: 3000 });
+                graphMeta.value.set(nodeId, {
+                    lastFetchedAt: new Date().toISOString(),
+                    optedOut: false
+                });
+            } else {
+                toast.error(t('view.charts.mutual_friend.context_menu.refresh_error'), { duration: 4000 });
+                return;
+            }
+
+            const snapshot = await database.getMutualGraphSnapshot();
+            if (snapshot && snapshot.size > 0) {
+                const mutualMap = new Map();
+                snapshot.forEach((mutualIds, fId) => {
+                    if (!fId) return;
+                    const friendEntry = friends.value?.get ? friends.value.get(fId) : undefined;
+                    const fallbackRef = friendEntry?.ref || cachedUsers.get(fId);
+                    let normalizedMutuals = Array.isArray(mutualIds) ? mutualIds : [];
+                    normalizedMutuals = normalizedMutuals.filter((id) => id != 'usr_00000000-0000-0000-0000-000000000000');
+                    mutualMap.set(fId, {
+                        friend: friendEntry || (fallbackRef ? { id: fId, ref: fallbackRef } : { id: fId }),
+                        mutuals: normalizedMutuals.map((id) => ({ id }))
+                    });
+                });
+                await applyGraph(mutualMap);
+            }
+        } catch (err) {
+            console.error('[MutualNetworkGraph] Refresh node error', err);
+            toast.error(t('view.charts.mutual_friend.context_menu.refresh_error'), { duration: 4000 });
+        } finally {
+            isRefreshingNode.value = false;
+        }
     }
 </script>

@@ -139,6 +139,99 @@ export const useChartsStore = defineStore('Charts', () => {
             mutualGraphStatus.cancelRequested = true;
     }
 
+    /**
+     * Shared helper: fetch mutual friends for a single userId.
+     * @param {string} userId
+     * @param {object} [options]
+     * @param {{ wait(): Promise<void> }} [options.rateLimiter]
+     * @param {() => boolean} [options.isCancelled]
+     * @returns {Promise<Array>} collected mutual friend entries
+     */
+    async function fetchMutualFriendsForUser(userId, options = {}) {
+        const { rateLimiter, isCancelled = () => false } = options;
+        const collected = [];
+        let offset = 0;
+
+        while (true) {
+            if (isCancelled()) break;
+            if (rateLimiter) await rateLimiter.wait();
+            if (isCancelled()) break;
+
+            const args = await executeWithBackoff(
+                () => {
+                    if (isCancelled()) throw new Error('cancelled');
+                    return userRequest.getMutualFriends({
+                        userId,
+                        offset,
+                        n: 100
+                    });
+                },
+                {
+                    maxRetries: 4,
+                    baseDelay: 500,
+                    shouldRetry: (err) =>
+                        err?.status === 429 ||
+                        (err?.message || '').includes('429')
+                }
+            ).catch((err) => {
+                if ((err?.message || '') === 'cancelled') return null;
+                throw err;
+            });
+
+            if (!args || isCancelled()) break;
+
+            collected.push(
+                ...args.json.filter((entry) =>
+                    isValidMutualIdentifier(entry?.id)
+                )
+            );
+
+            if (args.json.length < 100) break;
+            offset += args.json.length;
+        }
+
+        return collected;
+    }
+
+    /**
+     * Fetch mutual friends for a single friend, independent of the full graph fetch.
+     * @param {string} friendId
+     * @returns {Promise<{success: boolean, mutuals: Array, optedOut: boolean}>}
+     */
+    async function fetchSingleFriendMutuals(friendId) {
+        if (!friendId || isOptOut.value) {
+            return { success: false, mutuals: [], optedOut: false };
+        }
+
+        try {
+            const mutuals = await fetchMutualFriendsForUser(friendId);
+
+            const mutualIds = mutuals
+                .map((entry) => normalizeIdentifier(entry?.id))
+                .filter(isValidMutualIdentifier);
+            await database.updateMutualsForFriend(friendId, mutualIds);
+            await database.upsertMutualGraphMeta(friendId, {
+                optedOut: false
+            });
+
+            return { success: true, mutuals, optedOut: false };
+        } catch (err) {
+            const status = err?.status;
+            if (status === 403 || status === 404) {
+                await database.upsertMutualGraphMeta(friendId, {
+                    optedOut: true
+                });
+                return { success: false, mutuals: [], optedOut: true };
+            }
+            console.error(
+                '[MutualNetworkGraph] Single fetch error',
+                friendId,
+                err
+            );
+            return { success: false, mutuals: [], optedOut: false };
+        }
+    }
+
     async function fetchMutualGraph() {
         if (mutualGraphStatus.isFetching || isOptOut.value) return null;
 
@@ -157,51 +250,6 @@ export const useChartsStore = defineStore('Charts', () => {
 
         const isCancelled = () => mutualGraphStatus.cancelRequested === true;
 
-        const fetchMutualFriends = async (userId) => {
-            const collected = [];
-            let offset = 0;
-
-            while (true) {
-                if (isCancelled()) break;
-                await rateLimiter.wait();
-                if (isCancelled()) break;
-
-                const args = await executeWithBackoff(
-                    () => {
-                        if (isCancelled()) throw new Error('cancelled');
-                        return userRequest.getMutualFriends({
-                            userId,
-                            offset,
-                            n: 100
-                        });
-                    },
-                    {
-                        maxRetries: 4,
-                        baseDelay: 500,
-                        shouldRetry: (err) =>
-                            err?.status === 429 ||
-                            (err?.message || '').includes('429')
-                    }
-                ).catch((err) => {
-                    if ((err?.message || '') === 'cancelled') return null;
-                    throw err;
-                });
-
-                if (!args || isCancelled()) break;
-
-                collected.push(
-                    ...args.json.filter((entry) =>
-                        isValidMutualIdentifier(entry?.id)
-                    )
-                );
-
-                if (args.json.length < 100) break;
-                offset += args.json.length;
-            }
-
-            return collected;
-        };
-
         mutualGraphStatus.isFetching = true;
         mutualGraphStatus.completionNotified = false;
         mutualGraphStatus.needsRefetch = false;
@@ -211,6 +259,7 @@ export const useChartsStore = defineStore('Charts', () => {
 
         const friendSnapshot = Array.from(friendStore.friends.values());
         const mutualMap = new Map();
+        const metaEntries = new Map();
 
         let cancelled = false;
 
@@ -225,16 +274,24 @@ export const useChartsStore = defineStore('Charts', () => {
                 }
 
                 try {
-                    const mutuals = await fetchMutualFriends(friend.id);
+                    const mutuals = await fetchMutualFriendsForUser(friend.id, {
+                        rateLimiter,
+                        isCancelled
+                    });
                     if (isCancelled()) {
                         cancelled = true;
                         break;
                     }
                     mutualMap.set(friend.id, { friend, mutuals });
+                    metaEntries.set(friend.id, { optedOut: false });
                 } catch (err) {
                     if ((err?.message || '') === 'cancelled' || isCancelled()) {
                         cancelled = true;
                         break;
+                    }
+                    const status = err?.status;
+                    if (status === 403 || status === 404) {
+                        metaEntries.set(friend.id, { optedOut: true });
                     }
                     console.warn(
                         '[MutualNetworkGraph] Skipping friend due to fetch error',
@@ -291,6 +348,17 @@ export const useChartsStore = defineStore('Charts', () => {
                 );
             }
 
+            try {
+                if (metaEntries.size > 0) {
+                    await database.bulkUpsertMutualGraphMeta(metaEntries);
+                }
+            } catch (metaErr) {
+                console.error(
+                    '[MutualNetworkGraph] Failed to write meta',
+                    metaErr
+                );
+            }
+
             markMutualGraphLoaded({ notify: true });
             return mutualMap;
         } catch (err) {
@@ -308,6 +376,7 @@ export const useChartsStore = defineStore('Charts', () => {
         resetMutualGraphState,
         markMutualGraphLoaded,
         requestMutualGraphCancel,
-        fetchMutualGraph
+        fetchMutualGraph,
+        fetchSingleFriendMutuals
     };
 });
