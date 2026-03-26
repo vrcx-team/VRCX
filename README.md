@@ -14,7 +14,7 @@ VRCX is an assistant/companion application for VRChat that provides information 
 
 <div align="center">
 
-Download and install the latest installer (`VRCXv*.*.*.apk `) from [here](https://github.com/pa81/VRCX_Android/releases).
+Download and install the latest APK (`VRCXv*.*.*.apk `) from [here](https://github.com/pa81/VRCX_Android/releases).
 
 
 # Screenshots
