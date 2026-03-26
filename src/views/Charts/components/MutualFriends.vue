@@ -945,6 +945,8 @@
 
         if (!sigmaInstance) {
             sigmaInstance = new Sigma(graph, container, {
+                // Sentry: VRCX-WEB-2EG
+                allowInvalidContainer: true,
                 renderLabels: true,
                 labelRenderedSizeThreshold: DEFAULT_LABEL_THRESHOLD,
                 labelColor: { color: labelColor },

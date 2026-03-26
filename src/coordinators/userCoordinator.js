@@ -577,7 +577,6 @@ async function handleUserUpdate(ref, props) {
 export async function refreshUserDialogAvatars(fileId) {
     const userStore = useUserStore();
     const avatarStore = useAvatarStore();
-    const t = i18n.global.t;
 
     const D = userStore.userDialog;
     const userId = D.id;

@@ -570,7 +570,7 @@
                 "context_menu": {
                     "view_details": "View Details",
                     "hide_friend": "Hide from Graph",
-                    "refresh_mutuals": "Refresh Their Mutuals",
+                    "refresh_mutuals": "Refresh Mutuals",
                     "confirm_non_friend_title": "Not a Friend",
                     "confirm_non_friend_message": "This user is no longer your friend. Do you still want to fetch their mutual friends data?",
                     "refresh_success": "Mutual friends data updated for {name}",
