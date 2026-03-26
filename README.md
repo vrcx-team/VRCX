@@ -1,5 +1,7 @@
 <div align="center">
 ⚠️Warning: This is not practical.<br>
+Fork and Build by huhu(pa81) <br>
+This also serves as a test for "Google AntiGravity".<br>
   
 # <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/images/VRCX.ico" width="64" height="64"> </img> VRCX
 
@@ -9,8 +11,8 @@
 [![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
 
 
-VRCX is an assistant/companion application for VRChat that provides information about and helps you accomplish various things related to VRChat in a more convenient fashion than relying on the plain VRChat client (desktop or VR), or website alone. It also includes some other neat features outlined below.
-
+VRCX is an assistant/companion application for VRChat that provides information about and helps you accomplish various things related to VRChat in a more convenient fashion than relying on the plain VRChat client (desktop or VR), or website alone. <br>
+<h1><strong>⚠️Most content is unavailable in this build.</strong></h1>
 # Getting Started
 
 <div align="center">
