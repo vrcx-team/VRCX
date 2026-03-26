@@ -1,5 +1,6 @@
 <div align="center">
-
+⚠️Warning: This is not practical.<br>
+  
 # <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/images/VRCX.ico" width="64" height="64"> </img> VRCX
 
 [![GitHub release](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/pa81/VRCX_Android/releases/latest)
