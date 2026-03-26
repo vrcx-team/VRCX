@@ -8,15 +8,16 @@ This also serves as a test for "Google AntiGravity".<br>
 
 
 VRCX is an assistant/companion application for VRChat that provides information about and helps you accomplish various things related to VRChat in a more convenient fashion than relying on the plain VRChat client (desktop or VR), or website alone. <br>
-<h1><strong>⚠️Most content is unavailable in this build.</strong></h1>
+⚠️Most content is unavailable in this build.<br>
 
 
 <div align="center">
-Getting Started
+  
+# Getting Started
 
 Download and install the latest APK (`VRCXv*.*.*.apk `) from [here](https://github.com/pa81/VRCX_Android/releases).
 
-Screenshots
+# Screenshots
 
 <div align="center">
 
