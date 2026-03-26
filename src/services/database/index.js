@@ -52,7 +52,7 @@ const database = {
 
     async initUserTables(userId) {
         dbVars.userId = userId;
-        dbVars.userPrefix = userId.replaceAll('-', '').replaceAll('_', '');
+        dbVars.userPrefix = userId.replace(/[-_]/g, '');
         // Fix escape, add underscore if prefix starts with a number
         if (dbVars.userPrefix.match(/^\d/)) {
             dbVars.userPrefix = '_' + dbVars.userPrefix;

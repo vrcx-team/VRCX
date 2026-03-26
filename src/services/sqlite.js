@@ -50,6 +50,7 @@ class SQLiteService {
 
     async execute(callback, sql, args = null) {
         try {
+            console.log('sqlite execute:', sql, args);
             if (LINUX) {
                 if (args) {
                     args = new Map(Object.entries(args));
@@ -72,6 +73,7 @@ class SQLiteService {
 
     async executeNonQuery(sql, args = null) {
         try {
+            console.log('sqlite executeNonQuery:', sql, args);
             if (LINUX && args) {
                 args = new Map(Object.entries(args));
             }

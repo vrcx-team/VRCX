@@ -36,6 +36,10 @@
         "start-electron": "electron . --hot-reload"
     },
     "dependencies": {
+        "@capacitor-community/sqlite": "^8.0.1",
+        "@capacitor/android": "^8.3.0",
+        "@capacitor/cli": "^8.3.0",
+        "@capacitor/core": "^8.3.0",
         "hazardous": "^0.3.0",
         "node-api-dotnet": "^0.9.19"
     },
