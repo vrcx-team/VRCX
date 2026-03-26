@@ -1,7 +1,6 @@
 <div align="center">
 ⚠️Warning: This is not practical.<br>
 Fork and Build by huhu(pa81) <br>
-This also serves as a test for "Google AntiGravity".<br>
   
 # <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/images/VRCX.ico" width="64" height="64"> </img> VRCX Android [![GitHub release](https://img.shields.io/badge/VRCXBaseVer-v2026.02.11-blue)](https://github.com/vrcx-team/VRCX/releases/tag/v2026.02.11)
 
