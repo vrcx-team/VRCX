@@ -1,0 +1,23 @@
+name: Mark and close stale issues
+
+on:
+    schedule:
+        - cron: '0 2 * * *'
+    workflow_dispatch:
+
+permissions:
+    issues: write
+
+jobs:
+    stale:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/stale@v10
+              with:
+                  stale-issue-label: Stale
+                  days-before-issue-stale: 60
+                  days-before-issue-close: 14
+                  exempt-issue-labels: Bug,Planned,Pinned,Security,Done,In Progress
+                  operations-per-run: 100
+                  close-issue-message: >
+                      Closing this issue due to inactivity.

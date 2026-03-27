@@ -51,12 +51,19 @@
                             </div>
                         </TooltipWrapper>
 
-                        <HoverCard v-if="!isMacOS && visibility.vrchat" v-model:open="gameHoverOpen" :open-delay="50" :close-delay="50">
+                        <HoverCard
+                            v-if="!isMacOS && visibility.vrchat"
+                            v-model:open="gameHoverOpen"
+                            :open-delay="50"
+                            :close-delay="50">
                             <HoverCardTrigger as-child>
-                                <div class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
+                                <div
+                                    class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
                                     <span
                                         class="inline-block size-2 rounded-full shrink-0"
-                                        :class="gameStore.isGameRunning ? 'bg-status-online' : 'bg-status-offline-alt'" />
+                                        :class="
+                                            gameStore.isGameRunning ? 'bg-status-online' : 'bg-status-offline-alt'
+                                        " />
                                     <span class="text-foreground text-[11px]">{{ t('status_bar.game') }}</span>
                                     <span v-if="gameStore.isGameRunning" class="text-[10px] text-foreground">{{
                                         gameSessionText
@@ -71,11 +78,15 @@
                                 :side-offset="4">
                                 <div class="flex flex-col gap-1">
                                     <div class="flex items-center justify-between gap-3">
-                                        <span class="text-[11px] text-muted-foreground">{{ t('status_bar.game_started_at') }}</span>
+                                        <span class="text-[11px] text-muted-foreground">{{
+                                            t('status_bar.game_started_at')
+                                        }}</span>
                                         <span class="text-[11px] text-foreground">{{ gameStartedAtText }}</span>
                                     </div>
                                     <div class="flex items-center justify-between gap-3">
-                                        <span class="text-[11px] text-muted-foreground">{{ t('status_bar.game_session_duration') }}</span>
+                                        <span class="text-[11px] text-muted-foreground">{{
+                                            t('status_bar.game_session_duration')
+                                        }}</span>
                                         <span class="text-[11px] text-foreground">{{ gameSessionDetailText }}</span>
                                     </div>
                                 </div>
@@ -88,11 +99,15 @@
                                 :side-offset="4">
                                 <div class="flex flex-col gap-1">
                                     <div class="flex items-center justify-between gap-3">
-                                        <span class="text-[11px] text-muted-foreground">{{ t('status_bar.game_last_session') }}</span>
+                                        <span class="text-[11px] text-muted-foreground">{{
+                                            t('status_bar.game_last_session')
+                                        }}</span>
                                         <span class="text-[11px] text-foreground">{{ lastSessionText }}</span>
                                     </div>
                                     <div class="flex items-center justify-between gap-3">
-                                        <span class="text-[11px] text-muted-foreground">{{ t('status_bar.game_last_offline') }}</span>
+                                        <span class="text-[11px] text-muted-foreground">{{
+                                            t('status_bar.game_last_offline')
+                                        }}</span>
                                         <span class="text-[11px] text-foreground">{{ lastOfflineTimeText }}</span>
                                     </div>
                                 </div>
@@ -269,7 +284,10 @@
                     @update:model-value="toggleVisibility('proxy')">
                     {{ t('status_bar.proxy') }}
                 </ContextMenuCheckboxItem>
-                <ContextMenuCheckboxItem :model-value="visibility.ws" @select.prevent @update:model-value="toggleVisibility('ws')">
+                <ContextMenuCheckboxItem
+                    :model-value="visibility.ws"
+                    @select.prevent
+                    @update:model-value="toggleVisibility('ws')">
                     WebSocket
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
@@ -542,7 +560,7 @@
     const defaultClocks = [{ offset: localOffset }, { offset: 0 }, { offset: localOffset < 0 ? 9 : -5 }];
 
     const clocks = ref(defaultClocks.map((c) => ({ ...c })));
-    const clockCount = ref(3);
+    const clockCount = ref(2);
     const clockPopoverOpen = reactive([false, false, false]);
 
     const visibleClocks = computed(() => clocks.value.slice(0, clockCount.value));

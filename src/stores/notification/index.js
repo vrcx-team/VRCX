@@ -1198,7 +1198,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         playNoty({
             type: 'Event',
             created_at: new Date().toJSON(),
-            data: 'Notification Test'
+            data: t('view.settings.notifications.notifications.test_message')
         });
     }
 

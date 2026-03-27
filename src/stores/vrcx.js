@@ -71,6 +71,16 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         windowState: '',
         externalNotifierVersion: 0
     });
+    const databaseUpgradeState = ref({
+        visible: false,
+        fromVersion: 0,
+        toVersion: 0
+    });
+    const databaseReadyForAutoLogin = ref(false);
+    let resolveDatabaseInit = () => {};
+    const databaseInitComplete = new Promise((resolve) => {
+        resolveDatabaseInit = resolve;
+    });
 
     const currentlyDroppingFile = ref(null);
     const isRegistryBackupDialogVisible = ref(false);
@@ -85,93 +95,123 @@ export const useVrcxStore = defineStore('Vrcx', () => {
      *
      */
     async function init() {
-        if (LINUX) {
-            window.electron.ipcRenderer.on('launch-command', (command) => {
-                if (command) {
-                    eventLaunchCommand(command);
+        try {
+            if (LINUX) {
+                try {
+                    window.electron.ipcRenderer.on(
+                        'launch-command',
+                        (command) => {
+                            if (command) {
+                                eventLaunchCommand(command);
+                            }
+                        }
+                    );
+
+                    window.electron.onWindowPositionChanged(
+                        (event, position) => {
+                            state.locationX = position.x;
+                            state.locationY = position.y;
+                            debounce(saveVRCXWindowOption, 300)();
+                        }
+                    );
+
+                    window.electron.onWindowSizeChanged((event, size) => {
+                        state.sizeWidth = size.width;
+                        state.sizeHeight = size.height;
+                        debounce(saveVRCXWindowOption, 300)();
+                    });
+
+                    window.electron.onWindowStateChange((event, newState) => {
+                        state.windowState = newState.toString();
+                        debounce(saveVRCXWindowOption, 300)();
+                    });
+
+                    window.electron.onBrowserFocus(() => {
+                        vrcStatusStore.onBrowserFocus();
+                    });
+                } catch (err) {
+                    console.error(
+                        'Failed to register Linux IPC handlers:',
+                        err
+                    );
                 }
-            });
+            }
 
-            window.electron.onWindowPositionChanged((event, position) => {
-                state.locationX = position.x;
-                state.locationY = position.y;
-                debounce(saveVRCXWindowOption, 300)();
-            });
-
-            window.electron.onWindowSizeChanged((event, size) => {
-                state.sizeWidth = size.width;
-                state.sizeHeight = size.height;
-                debounce(saveVRCXWindowOption, 300)();
-            });
-
-            window.electron.onWindowStateChange((event, newState) => {
-                state.windowState = newState.toString();
-                debounce(saveVRCXWindowOption, 300)();
-            });
-
-            window.electron.onBrowserFocus(() => {
-                vrcStatusStore.onBrowserFocus();
-            });
-        }
-
-        state.databaseVersion = await configRepository.getInt(
-            'VRCX_databaseVersion',
-            0
-        );
-        updateDatabaseVersion();
-
-        clearVRCXCacheFrequency.value = await configRepository.getInt(
-            'VRCX_clearVRCXCacheFrequency',
-            172800
-        );
-
-        if (!(await VRCXStorage.Get('VRCX_DatabaseLocation'))) {
-            await VRCXStorage.Set('VRCX_DatabaseLocation', '');
-        }
-        if (!(await VRCXStorage.Get('VRCX_ProxyServer'))) {
-            await VRCXStorage.Set('VRCX_ProxyServer', '');
-        }
-        if ((await VRCXStorage.Get('VRCX_DisableGpuAcceleration')) === '') {
-            await VRCXStorage.Set('VRCX_DisableGpuAcceleration', 'false');
-        }
-        if (
-            (await VRCXStorage.Get('VRCX_DisableVrOverlayGpuAcceleration')) ===
-            ''
-        ) {
-            await VRCXStorage.Set(
-                'VRCX_DisableVrOverlayGpuAcceleration',
-                'false'
+            state.databaseVersion = await configRepository.getInt(
+                'VRCX_databaseVersion',
+                0
             );
-        }
-        proxyServer.value = await VRCXStorage.Get('VRCX_ProxyServer');
-        state.locationX = parseInt(await VRCXStorage.Get('VRCX_LocationX'), 10);
-        state.locationY = parseInt(await VRCXStorage.Get('VRCX_LocationY'), 10);
-        state.sizeWidth = parseInt(await VRCXStorage.Get('VRCX_SizeWidth'), 10);
-        state.sizeHeight = parseInt(
-            await VRCXStorage.Get('VRCX_SizeHeight'),
-            10
-        );
-        state.windowState = await VRCXStorage.Get('VRCX_WindowState');
+            const databaseUpgradeSucceeded = await updateDatabaseVersion();
+            if (!databaseUpgradeSucceeded) {
+                return;
+            }
 
-        maxTableSize.value = await configRepository.getInt(
-            'VRCX_maxTableSize_v2',
-            DEFAULT_MAX_TABLE_SIZE
-        );
-        database.setMaxTableSize(maxTableSize.value);
+            clearVRCXCacheFrequency.value = await configRepository.getInt(
+                'VRCX_clearVRCXCacheFrequency',
+                172800
+            );
 
-        searchLimit.value = await configRepository.getInt(
-            'VRCX_searchLimit',
-            DEFAULT_SEARCH_LIMIT
-        );
-        if (searchLimit.value < SEARCH_LIMIT_MIN) {
-            searchLimit.value = SEARCH_LIMIT_MIN;
-        }
-        if (searchLimit.value > SEARCH_LIMIT_MAX) {
-            searchLimit.value = SEARCH_LIMIT_MAX;
-        }
-        database.setSearchTableSize(searchLimit.value);
+            if (!(await VRCXStorage.Get('VRCX_DatabaseLocation'))) {
+                await VRCXStorage.Set('VRCX_DatabaseLocation', '');
+            }
+            if (!(await VRCXStorage.Get('VRCX_ProxyServer'))) {
+                await VRCXStorage.Set('VRCX_ProxyServer', '');
+            }
+            if ((await VRCXStorage.Get('VRCX_DisableGpuAcceleration')) === '') {
+                await VRCXStorage.Set('VRCX_DisableGpuAcceleration', 'false');
+            }
+            if (
+                (await VRCXStorage.Get(
+                    'VRCX_DisableVrOverlayGpuAcceleration'
+                )) === ''
+            ) {
+                await VRCXStorage.Set(
+                    'VRCX_DisableVrOverlayGpuAcceleration',
+                    'false'
+                );
+            }
+            proxyServer.value = await VRCXStorage.Get('VRCX_ProxyServer');
+            state.locationX = parseInt(
+                await VRCXStorage.Get('VRCX_LocationX'),
+                10
+            );
+            state.locationY = parseInt(
+                await VRCXStorage.Get('VRCX_LocationY'),
+                10
+            );
+            state.sizeWidth = parseInt(
+                await VRCXStorage.Get('VRCX_SizeWidth'),
+                10
+            );
+            state.sizeHeight = parseInt(
+                await VRCXStorage.Get('VRCX_SizeHeight'),
+                10
+            );
+            state.windowState = await VRCXStorage.Get('VRCX_WindowState');
 
-        refreshCustomScript();
+            maxTableSize.value = await configRepository.getInt(
+                'VRCX_maxTableSize_v2',
+                DEFAULT_MAX_TABLE_SIZE
+            );
+            database.setMaxTableSize(maxTableSize.value);
+
+            searchLimit.value = await configRepository.getInt(
+                'VRCX_searchLimit',
+                DEFAULT_SEARCH_LIMIT
+            );
+            if (searchLimit.value < SEARCH_LIMIT_MIN) {
+                searchLimit.value = SEARCH_LIMIT_MIN;
+            }
+            if (searchLimit.value > SEARCH_LIMIT_MAX) {
+                searchLimit.value = SEARCH_LIMIT_MAX;
+            }
+            database.setSearchTableSize(searchLimit.value);
+
+            refreshCustomScript();
+            databaseReadyForAutoLogin.value = true;
+        } finally {
+            resolveDatabaseInit();
+        }
     }
 
     resetSearchIndexOnLogin();
@@ -182,15 +222,13 @@ export const useVrcxStore = defineStore('Vrcx', () => {
      */
     async function updateDatabaseVersion() {
         // requires dbVars.userPrefix to be already set
-        const databaseVersion = 13;
-        let msgBox;
+        const databaseVersion = 16;
         if (state.databaseVersion < databaseVersion) {
-            if (state.databaseVersion) {
-                msgBox = toast.warning(
-                    'DO NOT CLOSE VRCX, database upgrade in progress...',
-                    { duration: Infinity, position: 'bottom-right' }
-                );
-            }
+            databaseUpgradeState.value = {
+                visible: state.databaseVersion > 0,
+                fromVersion: state.databaseVersion,
+                toVersion: databaseVersion
+            };
             console.log(
                 `Updating database from ${state.databaseVersion} to ${databaseVersion}...`
             );
@@ -212,22 +250,28 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     databaseVersion
                 );
                 console.log('Database update complete.');
-                toast.dismiss(msgBox);
-                if (state.databaseVersion) {
-                    // only display when database exists
-                    toast.success(t('message.database.upgrade_complete'));
-                }
                 state.databaseVersion = databaseVersion;
+                databaseUpgradeState.value.visible = false;
             } catch (err) {
                 console.error(err);
-                toast.dismiss(msgBox);
-                toast.error(
-                    'Database upgrade failed, check console for details',
-                    { duration: 120000 }
-                );
+                databaseUpgradeState.value.visible = false;
+                await modalStore.alert({
+                    title: t('message.database.upgrade_failed_title'),
+                    description: t(
+                        'message.database.upgrade_failed_description'
+                    ),
+                    dismissible: false
+                });
                 AppApi.ShowDevTools();
+                return false;
             }
         }
+        return true;
+    }
+
+    async function waitForDatabaseInit() {
+        await databaseInitComplete;
+        return databaseReadyForAutoLogin.value;
     }
 
     /**
@@ -817,6 +861,8 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         state,
 
         appStartAt,
+        databaseUpgradeState,
+        databaseReadyForAutoLogin,
         proxyServer,
         setProxyServer,
         setIpcEnabled,
@@ -839,6 +885,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         ipcEvent,
         dragEnterCef,
         backupVrcRegistry,
-        updateDatabaseVersion
+        updateDatabaseVersion,
+        waitForDatabaseInit
     };
 });

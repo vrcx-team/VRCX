@@ -1,0 +1,101 @@
+{
+    "CefSharp.OffScreen.NETCore": {
+        "license": "BSD-3-Clause",
+        "projectUrl": "https://github.com/cefsharp/CefSharp",
+        "noticeText": "// Copyright © The CefSharp Authors. All rights reserved.\n//\n// Redistribution and use in source and binary forms, with or without\n// modification, are permitted provided that the following conditions are\n// met:\n//\n//    * Redistributions of source code must retain the above copyright\n//      notice, this list of conditions and the following disclaimer.\n//\n//    * Redistributions in binary form must reproduce the above\n//      copyright notice, this list of conditions and the following disclaimer\n//      in the documentation and/or other materials provided with the\n//      distribution.\n//\n//    * Neither the name of Google Inc. nor the name Chromium Embedded\n//      Framework nor the name CefSharp nor the names of its contributors\n//      may be used to endorse or promote products derived from this software\n//      without specific prior written permission.\n//\n// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n// \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\n// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\n// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT\n// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,\n// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT\n// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,\n// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY\n// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\n// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+    },
+    "CefSharp.WinForms.NETCore": {
+        "license": "BSD-3-Clause",
+        "projectUrl": "https://github.com/cefsharp/CefSharp",
+        "noticeText": "// Copyright © The CefSharp Authors. All rights reserved.\n//\n// Redistribution and use in source and binary forms, with or without\n// modification, are permitted provided that the following conditions are\n// met:\n//\n//    * Redistributions of source code must retain the above copyright\n//      notice, this list of conditions and the following disclaimer.\n//\n//    * Redistributions in binary form must reproduce the above\n//      copyright notice, this list of conditions and the following disclaimer\n//      in the documentation and/or other materials provided with the\n//      distribution.\n//\n//    * Neither the name of Google Inc. nor the name Chromium Embedded\n//      Framework nor the name CefSharp nor the names of its contributors\n//      may be used to endorse or promote products derived from this software\n//      without specific prior written permission.\n//\n// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n// \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\n// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\n// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT\n// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,\n// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT\n// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,\n// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY\n// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\n// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+    },
+    "DiscordRichPresence": {
+        "license": "MIT",
+        "projectUrl": "https://github.com/Lachee/discord-rpc-csharp",
+        "noticeText": "MIT License\n\nCopyright (c) 2018 Lachee\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE."
+    },
+    "Newtonsoft.Json": {
+        "license": "MIT",
+        "projectUrl": "https://github.com/JamesNK/Newtonsoft.Json",
+        "noticeText": "The MIT License (MIT)\n\nCopyright (c) 2007 James Newton-King\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+    },
+    "NLog": {
+        "license": "BSD-3-Clause",
+        "projectUrl": "https://github.com/NLog/NLog",
+        "noticeText": "BSD 3-Clause License\n\nCopyright (c) 2004-2024 Jaroslaw Kowalski <jaak@jkowalski.net>, Kim Christensen, Julian Verdurmen\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n\n1. Redistributions of source code must retain the above copyright notice, this\n   list of conditions and the following disclaimer.\n\n2. Redistributions in binary form must reproduce the above copyright notice,\n   this list of conditions and the following disclaimer in the documentation\n   and/or other materials provided with the distribution.\n\n3. Neither the name of the copyright holder nor the names of its\n   contributors may be used to endorse or promote products derived from\n   this software without specific prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\"\nAND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\nIMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\nDISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE\nFOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL\nDAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR\nSERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER\nCAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,\nOR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\nOF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+    },
+    "SixLabors.ImageSharp": {
+        "license": "Apache-2.0 OR Six Labors Split License",
+        "projectUrl": "https://github.com/SixLabors/ImageSharp",
+        "noticeText": "Apache License 2.0\n\nSix Labors Split License\nVersion 1.0, June 2022\nCopyright (c) Six Labors\n\nWorks in Source or Object form are split licensed and may be licensed under the Apache License, Version 2.0 or a Six Labors Commercial Use License.\n\nWorks in Source or Object form are licensed to You under the Apache License, Version 2.0 if:\n- You are consuming the Work in software licensed under an Open Source or Source Available license.\n- You are consuming the Work as a Transitive Package Dependency.\n- You are consuming the Work as a Direct Package Dependency as a for-profit company or individual with less than 1M USD annual gross revenue.\n- You are consuming the Work as a Direct Package Dependency as a non-profit organization or registered charity.\n\nFor all other scenarios, Works in Source or Object form are licensed to You under the Six Labors Commercial License."
+    },
+    "SixLabors.ImageSharp.Drawing": {
+        "license": "Apache-2.0 OR Six Labors Split License",
+        "projectUrl": "https://github.com/SixLabors/ImageSharp.Drawing",
+        "noticeText": "Apache License 2.0\n\nSix Labors Split License\nVersion 1.0, June 2022\nCopyright (c) Six Labors\n\nWorks in Source or Object form are split licensed and may be licensed under the Apache License, Version 2.0 or a Six Labors Commercial Use License.\n\nWorks in Source or Object form are licensed to You under the Apache License, Version 2.0 if:\n- You are consuming the Work in software licensed under an Open Source or Source Available license.\n- You are consuming the Work as a Transitive Package Dependency.\n- You are consuming the Work as a Direct Package Dependency as a for-profit company or individual with less than 1M USD annual gross revenue.\n- You are consuming the Work as a Direct Package Dependency as a non-profit organization or registered charity.\n\nFor all other scenarios, Works in Source or Object form are licensed to You under the Six Labors Commercial License."
+    },
+    "OpenVR SDK": {
+        "license": "BSD-3-Clause",
+        "projectUrl": "https://github.com/ValveSoftware/openvr",
+        "noticeText": "Copyright (c) 2015, Valve Corporation\nAll rights reserved.\n\nRedistribution and use in source and binary forms, with or without modification,\nare permitted provided that the following conditions are met:\n\n1. Redistributions of source code must retain the above copyright notice, this\nlist of conditions and the following disclaimer.\n\n2. Redistributions in binary form must reproduce the above copyright notice,\nthis list of conditions and the following disclaimer in the documentation and/or\nother materials provided with the distribution.\n\n3. Neither the name of the copyright holder nor the names of its contributors\nmay be used to endorse or promote products derived from this software without\nspecific prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\nANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\nWARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\nDISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR\nANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\nLOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON\nANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\nSOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+    },
+    "Blake2Sharp": {
+        "license": "CC0-1.0 OR OpenSSL OR Apache-2.0",
+        "projectUrl": "https://github.com/BLAKE2/BLAKE2"
+    },
+    "librsync.net": {
+        "license": "MIT"
+    },
+    "Microsoft.JavaScript.NodeApi": {
+        "license": "MIT",
+        "projectUrl": "https://github.com/microsoft/node-api-dotnet"
+    },
+    "Microsoft.JavaScript.NodeApi.Generator": {
+        "license": "MIT",
+        "projectUrl": "https://github.com/microsoft/node-api-dotnet"
+    },
+    "Microsoft.Toolkit.Uwp.Notifications": {
+        "license": "MIT",
+        "projectUrl": "https://github.com/CommunityToolkit/WindowsCommunityToolkit"
+    },
+    "Silk.NET.Direct3D.Compilers": {
+        "license": "MIT/X11",
+        "projectUrl": "https://github.com/dotnet/Silk.NET"
+    },
+    "Silk.NET.Direct3D11": {
+        "license": "MIT/X11",
+        "projectUrl": "https://github.com/dotnet/Silk.NET"
+    },
+    "Silk.NET.DXGI": {
+        "license": "MIT/X11",
+        "projectUrl": "https://github.com/dotnet/Silk.NET"
+    },
+    "Silk.NET.Windowing": {
+        "license": "MIT/X11",
+        "projectUrl": "https://github.com/dotnet/Silk.NET"
+    },
+    "SourceGear.sqlite3": {
+        "license": "Apache-2.0",
+        "projectUrl": "https://github.com/ericsink/SQLitePCL.raw"
+    },
+    "sqlite-net-pcl": {
+        "license": "MIT",
+        "projectUrl": "https://github.com/praeclarum/sqlite-net"
+    },
+    "System.CommandLine": {
+        "license": "MIT",
+        "projectUrl": "https://github.com/dotnet/command-line-api"
+    },
+    "System.Data.SQLite": {
+        "license": "Public Domain (with MS-PL components in LINQ/EF-related code)",
+        "projectUrl": "https://system.data.sqlite.org/"
+    },
+    "System.Management": {
+        "license": "MIT",
+        "projectUrl": "https://www.nuget.org/packages/System.Management"
+    },
+    "Websocket.Client": {
+        "license": "MIT",
+        "projectUrl": "https://github.com/Marfusios/websocket-client"
+    }
+}

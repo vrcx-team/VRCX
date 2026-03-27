@@ -1,7 +1,18 @@
 <template>
     <template v-if="favorite.ref">
-        <ContextMenu>
-            <ContextMenuTrigger as-child>
+        <UserContextMenu
+            :user-id="favorite.id"
+            :state="favorite.ref.state"
+            :location="favorite.ref.location">
+            <template #append>
+                <ContextMenuSeparator />
+                <ContextMenuItem @click="showFavoriteDialog('friend', favorite.id)">
+                    {{ t('view.favorite.edit_favorite_tooltip') }}
+                </ContextMenuItem>
+                <ContextMenuItem variant="destructive" @click="handleDeleteFavorite">
+                    {{ deleteMenuLabel }}
+                </ContextMenuItem>
+            </template>
                 <Item
                     variant="outline"
                     class="favorites-item cursor-pointer hover:bg-muted x-hover-list"
@@ -77,40 +88,7 @@
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </Item>
-            </ContextMenuTrigger>
-            <ContextMenuContent>
-                <ContextMenuItem @click="handleOpenProfile">{{ t('common.actions.view_details') }}</ContextMenuItem>
-                <ContextMenuItem v-if="favorite.ref.state === 'online'" @click="friendRequestInvite">
-                    {{ t('dialog.user.actions.request_invite') }}
-                </ContextMenuItem>
-                <ContextMenuItem v-if="isGameRunning" :disabled="!canInviteToMyLocation" @click="friendInvite">
-                    {{ t('dialog.user.actions.invite') }}
-                </ContextMenuItem>
-                <ContextMenuItem :disabled="!currentUser?.isBoopingEnabled" @click="friendSendBoop">
-                    {{ t('dialog.user.actions.send_boop') }}
-                </ContextMenuItem>
-                <ContextMenuSeparator v-if="favorite.ref.state === 'online' && hasFriendLocation" />
-                <ContextMenuItem
-                    v-if="favorite.ref.state === 'online' && hasFriendLocation"
-                    :disabled="!canJoinFriend"
-                    @click="friendJoin">
-                    {{ t('dialog.user.info.launch_invite_tooltip') }}
-                </ContextMenuItem>
-                <ContextMenuItem
-                    v-if="favorite.ref.state === 'online' && hasFriendLocation"
-                    :disabled="!canJoinFriend"
-                    @click="friendInviteSelf">
-                    {{ t('dialog.user.info.self_invite_tooltip') }}
-                </ContextMenuItem>
-                <ContextMenuSeparator />
-                <ContextMenuItem @click="showFavoriteDialog('friend', favorite.id)">
-                    {{ t('view.favorite.edit_favorite_tooltip') }}
-                </ContextMenuItem>
-                <ContextMenuItem variant="destructive" @click="handleDeleteFavorite">
-                    {{ deleteMenuLabel }}
-                </ContextMenuItem>
-            </ContextMenuContent>
-        </ContextMenu>
+        </UserContextMenu>
     </template>
     <template v-else>
         <Item variant="outline" class="favorites-item hover:bg-muted x-hover-list" :style="itemStyle">
@@ -143,11 +121,8 @@
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import {
-        ContextMenu,
-        ContextMenuContent,
         ContextMenuItem,
-        ContextMenuSeparator,
-        ContextMenuTrigger
+        ContextMenuSeparator
     } from '@/components/ui/context-menu';
     import {
         DropdownMenu,
@@ -172,6 +147,7 @@
     import { useUserDisplay } from '../../../composables/useUserDisplay';
 
     import Location from '../../../components/Location.vue';
+    import UserContextMenu from '../../../components/UserContextMenu.vue';
 
     const { userImage } = useUserDisplay();
     const props = defineProps({
