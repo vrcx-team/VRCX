@@ -18,7 +18,9 @@
             "view_details": "View Details",
             "configure": "Configure",
             "refresh": "Refresh",
-            "cancel": "Cancel"
+            "cancel": "Cancel",
+            "copy": "Copy",
+            "open_link": "Open Link"
         },
         "sort_by": "Sort by:",
         "time_units": {
