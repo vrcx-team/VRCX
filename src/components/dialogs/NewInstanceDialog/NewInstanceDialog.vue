@@ -1,6 +1,6 @@
 <template>
     <Dialog v-model:open="newInstanceDialog.visible">
-        <DialogContent>
+        <DialogContent class="sm:max-w-2xl">
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.new_instance.header') }}</DialogTitle>
                 <DialogDescription class="sr-only">{{ t('dialog.new_instance.header') }}</DialogDescription>
@@ -374,7 +374,7 @@
                             <FieldLabel>{{ t('dialog.new_instance.instance_creator') }}</FieldLabel>
                             <FieldContent>
                                 <VirtualCombobox
-                                    v-model="newInstanceDialog.userId"
+                                    v-model="newInstanceDialog.legacyUserId"
                                     :groups="creatorPickerGroups"
                                     :placeholder="t('dialog.new_instance.instance_creator_placeholder')"
                                     :search-placeholder="t('dialog.new_instance.instance_creator_placeholder')"
@@ -512,7 +512,7 @@
                     variant="outline"
                     :disabled="
                         (newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') &&
-                        newInstanceDialog.userId !== currentUser.id
+                        newInstanceDialog.legacyUserId !== currentUser.id
                     "
                     @click="showInviteDialog(newInstanceDialog.location)"
                     >{{ t('dialog.new_instance.invite') }}</Button
