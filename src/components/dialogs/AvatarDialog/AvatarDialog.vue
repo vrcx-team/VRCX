@@ -1,13 +1,13 @@
 <template>
-    <div class="w-223">
+    <div class="w-223 flex-1 min-h-0 flex flex-col">
         <DialogHeader class="sr-only">
             <DialogTitle>{{ avatarDialog.ref?.name || t('dialog.avatar.info.header') }}</DialogTitle>
             <DialogDescription>
                 {{ avatarDialog.ref?.description || avatarDialog.ref?.name || t('dialog.avatar.info.header') }}
             </DialogDescription>
         </DialogHeader>
-        <div>
-            <div class="flex">
+        <div class="flex-1 min-h-0 flex flex-col">
+            <div class="flex flex-shrink-0">
                 <div style="flex: none; width: 160px; height: 120px">
                     <img
                         v-if="!imageError"
@@ -320,6 +320,7 @@
                 v-model="avatarDialog.activeTab"
                 :items="avatarDialogTabs"
                 :unmount-on-hide="false"
+                fill
                 @update:modelValue="avatarDialogTabClick">
                 <template #Info>
                     <div class="flex flex-wrap items-start px-2.5" style="max-height: unset">
@@ -584,7 +585,6 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-
     import {
         useAuthStore,
         useAvatarStore,
@@ -651,7 +651,8 @@
         avatarDialogCommand,
         onFileChangeAvatarImage,
         onCropConfirmAvatar,
-        registerCallbacks
+        registerCallbacks,
+        copyAvatarUrl
     } = useAvatarDialogCommands(avatarDialog, {
         t,
         toast,

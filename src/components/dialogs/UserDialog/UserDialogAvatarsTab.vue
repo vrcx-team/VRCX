@@ -22,7 +22,7 @@
                 <Spinner v-if="userDialog.isAvatarsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span style="margin-left: 6px">{{
+            <span class="ml-1.5 text-sm">{{
                 t('dialog.user.avatars.total_count', { count: userDialogAvatars.length })
             }}</span>
         </div>

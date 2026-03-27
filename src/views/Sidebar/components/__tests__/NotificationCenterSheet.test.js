@@ -150,7 +150,8 @@ describe('NotificationCenterSheet.vue', () => {
             false
         );
         expect(mocks.router.push).toHaveBeenCalledWith({
-            name: 'notification'
+            name: 'notification',
+            query: { fromCenter: '1' }
         });
     });
 

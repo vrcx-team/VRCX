@@ -8,19 +8,19 @@
         ">
         <DialogContent class="x-dialog sm:max-w-100">
             <DialogHeader>
-                <DialogTitle>{{ t('dialog.invite_message.header') }}</DialogTitle>
+                <DialogTitle>{{ t(`dialog.${i18nPrefix}.header`) }}</DialogTitle>
             </DialogHeader>
 
             <div class="text-xs">
-                <span>{{ t('dialog.invite_message.confirmation') }}</span>
+                <span>{{ t(`dialog.${i18nPrefix}.confirmation`) }}</span>
             </div>
 
             <DialogFooter>
                 <Button variant="secondary" @click="cancelInviteConfirm">
-                    {{ t('dialog.invite_message.cancel') }}
+                    {{ t(`dialog.${i18nPrefix}.cancel`) }}
                 </Button>
                 <Button @click="sendInviteConfirm">
-                    {{ t('dialog.invite_message.confirm') }}
+                    {{ t('common.actions.confirm') }}
                 </Button>
             </DialogFooter>
         </DialogContent>
@@ -30,6 +30,7 @@
 <script setup>
     import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
+    import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -61,6 +62,11 @@
     });
 
     const emit = defineEmits(['update:isSendInviteConfirmDialogVisible', 'closeInviteDialog']);
+
+    const i18nPrefix = computed(() => {
+        const messageType = props.sendInviteDialog?.messageSlot?.messageType;
+        return messageType === 'request' ? 'invite_request_message' : 'invite_message';
+    });
 
     function cancelInviteConfirm() {
         emit('update:isSendInviteConfirmDialogVisible', false);

@@ -46,9 +46,9 @@
                                     <div class="flex-1 overflow-hidden">
                                         <span
                                             class="block truncate font-medium leading-[18px]"
-                                            :style="{ color: item.user.$userColour }">{{
-                                            item.user.displayName
-                                        }}</span>
+                                            :style="{ color: item.user.$userColour }"
+                                            >{{ item.user.displayName }}</span
+                                        >
                                     </div>
                                 </template>
                                 <template v-else>
@@ -236,11 +236,31 @@
                 </div>
             </div>
 
-            <div
-                v-show="!(hasFetched && !isFetching && !graphReady)"
-                ref="graphContainerRef"
-                class="mt-3 h-[calc(100vh-260px)] min-h-[520px] w-full flex-1 rounded-lg bg-transparent"
-                :style="{ backgroundColor: canvasBackground }"></div>
+            <ContextMenu @update:open="onNodeMenuOpenChange">
+                <ContextMenuTrigger as-child>
+                    <div
+                        v-show="!(hasFetched && !isFetching && !graphReady)"
+                        ref="graphContainerRef"
+                        class="mt-3 h-[calc(100vh-260px)] min-h-[520px] w-full flex-1 rounded-lg bg-transparent"
+                        :style="{ backgroundColor: canvasBackground }"></div>
+                </ContextMenuTrigger>
+                <ContextMenuContent v-if="contextMenuNodeId" class="min-w-40">
+                    <ContextMenuItem @click="handleNodeMenuViewDetails">
+                        <UserIcon class="size-4" />
+                        {{ t('view.charts.mutual_friend.context_menu.view_details') }}
+                    </ContextMenuItem>
+                    <ContextMenuSeparator />
+                    <ContextMenuItem @click="handleNodeMenuRefresh">
+                        <RefreshCwIcon class="size-4" />
+                        {{ t('view.charts.mutual_friend.context_menu.refresh_mutuals') }}
+                    </ContextMenuItem>
+                    <ContextMenuSeparator />
+                    <ContextMenuItem @click="handleNodeMenuHide">
+                        <EyeOffIcon class="size-4" />
+                        {{ t('view.charts.mutual_friend.context_menu.hide_friend') }}
+                    </ContextMenuItem>
+                </ContextMenuContent>
+            </ContextMenu>
 
             <Empty v-if="hasFetched && !isFetching && !graphReady" class="mt-3 w-full flex-1">
                 <EmptyHeader>
@@ -262,7 +282,20 @@
     import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
     import { Empty, EmptyDescription, EmptyHeader } from '@/components/ui/empty';
-    import { Check as CheckIcon, Settings } from 'lucide-vue-next';
+    import {
+        ContextMenu,
+        ContextMenuContent,
+        ContextMenuItem,
+        ContextMenuSeparator,
+        ContextMenuTrigger
+    } from '@/components/ui/context-menu';
+    import {
+        Check as CheckIcon,
+        EyeOff as EyeOffIcon,
+        RefreshCw as RefreshCwIcon,
+        Settings,
+        User as UserIcon
+    } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Progress } from '@/components/ui/progress';
     import { Slider } from '@/components/ui/slider';
@@ -529,6 +562,10 @@
 
     const selectedFriendId = ref(null);
 
+    const contextMenuNodeId = ref(null);
+    const graphMeta = ref(new Map());
+    const isRefreshingNode = ref(false);
+
     const EXCLUDED_FRIENDS_KEY = 'VRCX_MutualGraphExcludedFriends';
     const excludedFriendIds = useLocalStorage(EXCLUDED_FRIENDS_KEY, []);
 
@@ -564,7 +601,6 @@
         items.sort((a, b) => a.label.localeCompare(b.label));
         return [{ key: 'friends', label: t('side_panel.friends'), items }];
     });
-
 
     function navigateToFriend(friendId) {
         selectedFriendId.value = friendId;
@@ -805,7 +841,7 @@
         });
     }
 
-    async function buildGraphFromMutualMap(mutualMap) {
+    async function buildGraphFromMutualMap(mutualMap, meta = null) {
         const graph = new Graph({
             type: 'undirected',
             multi: false,
@@ -857,7 +893,13 @@
             const degree = nodeDegree.get(id) || 0;
             const size = 4 + (maxDegree ? (degree / maxDegree) * 18 : 0);
             const label = truncateLabelText(nodeNames.get(id) || id);
-            graph.mergeNodeAttributes(id, { label, size, type: 'border' });
+            const attrs = { label, size, type: 'border' };
+            if (meta?.has(id)) {
+                const m = meta.get(id);
+                attrs.optedOut = m.optedOut;
+                attrs.lastFetchedAt = m.lastFetchedAt;
+            }
+            graph.mergeNodeAttributes(id, attrs);
         });
 
         if (graph.order > 1) {
@@ -903,6 +945,8 @@
 
         if (!sigmaInstance) {
             sigmaInstance = new Sigma(graph, container, {
+                // Sentry: VRCX-WEB-2EG
+                allowInvalidContainer: true,
                 renderLabels: true,
                 labelRenderedSizeThreshold: DEFAULT_LABEL_THRESHOLD,
                 labelColor: { color: labelColor },
@@ -916,6 +960,7 @@
 
                     const fontSize = settings.labelSize ?? 12;
                     const font = settings.labelFont ?? 'sans-serif';
+                    const smallFontSize = Math.max(9, fontSize - 2);
 
                     ctx.font = `${fontSize}px ${font}`;
                     ctx.textBaseline = 'middle';
@@ -923,9 +968,21 @@
                     const paddingX = 6;
                     const paddingY = 4;
 
-                    const textWidth = ctx.measureText(data.label).width;
-                    const w = textWidth + paddingX * 2;
-                    const h = fontSize + paddingY * 2;
+                    let subLine = '';
+                    if (data.lastFetchedAt) {
+                        const d = new Date(data.lastFetchedAt);
+                        subLine = `${t('view.charts.mutual_friend.context_menu.last_fetched')}: ${d.toLocaleString()}`;
+                    }
+
+                    const labelWidth = ctx.measureText(data.label).width;
+                    ctx.font = `${smallFontSize}px ${font}`;
+                    const subWidth = subLine ? ctx.measureText(subLine).width : 0;
+                    ctx.font = `${fontSize}px ${font}`;
+
+                    const w = Math.max(labelWidth, subWidth) + paddingX * 2;
+                    const lineHeight = fontSize + paddingY;
+                    const totalLines = subLine ? 2 : 1;
+                    const h = lineHeight * totalLines + paddingY;
 
                     const x = data.x + data.size - 5;
                     const y = data.y - h / 2;
@@ -938,8 +995,18 @@
                     ctx.fillStyle = 'rgba(255, 255, 255, 1)';
                     ctx.fillRect(x, y, w, h);
 
+                    ctx.shadowBlur = 0;
+                    ctx.shadowColor = 'transparent';
+
                     ctx.fillStyle = '#111827';
-                    ctx.fillText(data.label, x + paddingX, y + h / 2);
+                    ctx.font = `${fontSize}px ${font}`;
+                    ctx.fillText(data.label, x + paddingX, y + paddingY + fontSize / 2);
+
+                    if (subLine) {
+                        ctx.fillStyle = data.optedOut ? '#dc2626' : '#6b7280';
+                        ctx.font = `${smallFontSize}px ${font}`;
+                        ctx.fillText(subLine, x + paddingX, y + paddingY + lineHeight + smallFontSize / 2);
+                    }
                 }
             });
         } else {
@@ -967,8 +1034,12 @@
         sigmaInstance.setSetting('nodeReducer', (node, data) => {
             const res = { ...data };
 
+            if (data.optedOut) {
+                res.borderColor = '#9ca3af';
+            }
+
             if (!hovered) {
-                res.color = data.color;
+                res.color = data.optedOut ? '#d1d5db' : data.color;
                 res.zIndex = 1;
                 return res;
             }
@@ -1045,12 +1116,20 @@
             if (node) showUserDialog(node);
         });
 
+        sigmaInstance.on('rightClickNode', ({ node }) => {
+            contextMenuNodeId.value = node || null;
+        });
+
+        sigmaInstance.on('rightClickStage', () => {
+            contextMenuNodeId.value = null;
+        });
+
         sigmaInstance.refresh();
     }
 
     async function applyGraph(mutualMap) {
         lastMutualMap = mutualMap;
-        const graph = await buildGraphFromMutualMap(mutualMap);
+        const graph = await buildGraphFromMutualMap(mutualMap, graphMeta.value);
         currentGraph = graph;
         renderGraph(graph);
     }
@@ -1065,7 +1144,9 @@
         // loadingToastId.value = toast.info(t('view.charts.mutual_friend.status.loading_cache'));
 
         try {
-            const snapshot = await database.getMutualGraphSnapshot();
+            const [snapshot, meta] = await Promise.all([database.getMutualGraphSnapshot(), database.getMutualGraphMeta()]);
+            graphMeta.value = meta;
+
             if (!snapshot || snapshot.size === 0) {
                 if (totalFriends.value === 0) {
                     showStatusMessage(t('view.charts.mutual_friend.status.no_friends_to_process'), 'info');
@@ -1156,5 +1237,95 @@
 
     function cancelFetch() {
         chartsStore.requestMutualGraphCancel();
+    }
+
+    function onNodeMenuOpenChange(open) {
+        if (!open) {
+            contextMenuNodeId.value = null;
+        }
+    }
+
+    function handleNodeMenuViewDetails() {
+        if (contextMenuNodeId.value) {
+            showUserDialog(contextMenuNodeId.value);
+        }
+        contextMenuNodeId.value = null;
+    }
+
+    function handleNodeMenuHide() {
+        if (contextMenuNodeId.value) {
+            if (!excludedFriendIds.value.includes(contextMenuNodeId.value)) {
+                excludedFriendIds.value = [...excludedFriendIds.value, contextMenuNodeId.value];
+            }
+        }
+        contextMenuNodeId.value = null;
+    }
+
+    async function handleNodeMenuRefresh() {
+        const nodeId = contextMenuNodeId.value;
+        contextMenuNodeId.value = null;
+        if (!nodeId || isRefreshingNode.value) return;
+
+        const isFriend = friends.value?.has(nodeId);
+
+        if (!isFriend) {
+            try {
+                const { ok } = await modalStore.confirm({
+                    title: t('view.charts.mutual_friend.context_menu.confirm_non_friend_title'),
+                    description: t('view.charts.mutual_friend.context_menu.confirm_non_friend_message'),
+                    confirmText: t('common.actions.confirm'),
+                    cancelText: t('common.actions.cancel')
+                });
+                if (!ok) return;
+            } catch {
+                return;
+            }
+        }
+
+        isRefreshingNode.value = true;
+        try {
+            const result = await chartsStore.fetchSingleFriendMutuals(nodeId);
+
+            if (result.optedOut) {
+                toast.warning(t('view.charts.mutual_friend.context_menu.user_opted_out'), { duration: 5000 });
+                graphMeta.value.set(nodeId, {
+                    lastFetchedAt: new Date().toISOString(),
+                    optedOut: true
+                });
+            } else if (result.success) {
+                const cached = cachedUsers.get(nodeId);
+                const name = cached?.displayName || nodeId;
+                toast.success(t('view.charts.mutual_friend.context_menu.refresh_success', { name }), { duration: 3000 });
+                graphMeta.value.set(nodeId, {
+                    lastFetchedAt: new Date().toISOString(),
+                    optedOut: false
+                });
+            } else {
+                toast.error(t('view.charts.mutual_friend.context_menu.refresh_error'), { duration: 4000 });
+                return;
+            }
+
+            const snapshot = await database.getMutualGraphSnapshot();
+            if (snapshot && snapshot.size > 0) {
+                const mutualMap = new Map();
+                snapshot.forEach((mutualIds, fId) => {
+                    if (!fId) return;
+                    const friendEntry = friends.value?.get ? friends.value.get(fId) : undefined;
+                    const fallbackRef = friendEntry?.ref || cachedUsers.get(fId);
+                    let normalizedMutuals = Array.isArray(mutualIds) ? mutualIds : [];
+                    normalizedMutuals = normalizedMutuals.filter((id) => id != 'usr_00000000-0000-0000-0000-000000000000');
+                    mutualMap.set(fId, {
+                        friend: friendEntry || (fallbackRef ? { id: fId, ref: fallbackRef } : { id: fId }),
+                        mutuals: normalizedMutuals.map((id) => ({ id }))
+                    });
+                });
+                await applyGraph(mutualMap);
+            }
+        } catch (err) {
+            console.error('[MutualNetworkGraph] Refresh node error', err);
+            toast.error(t('view.charts.mutual_friend.context_menu.refresh_error'), { duration: 4000 });
+        } finally {
+            isRefreshingNode.value = false;
+        }
     }
 </script>

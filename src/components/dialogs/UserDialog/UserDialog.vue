@@ -1,5 +1,5 @@
 <template>
-    <div class="w-223">
+    <div class="w-223 flex-1 min-h-0 flex flex-col">
         <DialogHeader class="sr-only">
             <DialogTitle>{{
                 userDialog.ref?.displayName || userDialog.id || t('dialog.user.info.header')
@@ -7,6 +7,7 @@
             <DialogDescription>{{ getUserStateText(userDialog.ref || {}) }}</DialogDescription>
         </DialogHeader>
         <UserSummaryHeader
+            class="flex-shrink-0"
             :get-user-state-text="getUserStateText"
             :copy-user-display-name="copyUserDisplayName"
             :toggle-badge-visibility="toggleBadgeVisibility"
@@ -17,6 +18,7 @@
             v-model="userDialog.activeTab"
             :items="userDialogTabs"
             :unmount-on-hide="false"
+            fill
             @update:modelValue="userDialogTabClick">
             <template #Info>
                 <UserDialogInfoTab ref="infoTabRef" @show-bio-dialog="showBioDialog" />

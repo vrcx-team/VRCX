@@ -72,15 +72,17 @@ export const createColumns = ({
     const { isGameRunning } = storeToRefs(useGameStore());
     const { isNotificationExpired } = useNotificationStore();
 
-    const { cachedInstances } = storeToRefs(useInstanceStore());
+    const { cachedInstances } = useInstanceStore();
 
     const canInvite = () => {
         const location = lastLocation.value?.location;
         return (
-            Boolean(location) && isGameRunning.value && checkCanInvite(location, {
+            Boolean(location) &&
+            isGameRunning.value &&
+            checkCanInvite(location, {
                 currentUserId: currentUser.value?.id,
                 lastLocationStr: lastLocation.value?.location,
-                cachedInstances: cachedInstances.value
+                cachedInstances: cachedInstances
             })
         );
     };

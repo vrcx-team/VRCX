@@ -162,6 +162,7 @@
     import { DragDropProvider } from '@dnd-kit/vue';
     import { isSortable } from '@dnd-kit/vue/sortable';
     import { openExternalLink } from '@/shared/utils/common';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
     import dayjs from 'dayjs';
@@ -172,7 +173,7 @@
     import { isToolNavKey } from '../../shared/constants';
     import { navDefinitions } from '../../shared/constants/ui.js';
     import { DASHBOARD_NAV_KEY_PREFIX, DEFAULT_DASHBOARD_ICON } from '../../shared/constants/dashboard';
-    import { useDashboardStore, useModalStore } from '../../stores';
+    import { useDashboardStore, useModalStore, useNotificationsSettingsStore } from '../../stores';
 
     import SortableTreeNode from './SortableTreeNode.vue';
 
@@ -207,6 +208,7 @@
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();
     const modalStore = useModalStore();
+    const { notificationLayout } = storeToRefs(useNotificationsSettingsStore());
 
     const cloneLayout = (source) => {
         if (!Array.isArray(source)) return [];
@@ -270,7 +272,12 @@
         const map = new Map();
         const source = props.definitions?.length ? props.definitions : navDefinitions;
         source.forEach((def) => {
-            if (def?.key) map.set(def.key, def);
+            if (def?.key) {
+                if (def.key === 'notification' && notificationLayout.value === 'notification-center') {
+                    return;
+                }
+                map.set(def.key, def);
+            }
         });
         return map;
     });

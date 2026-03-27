@@ -227,7 +227,9 @@
                     <span v-text="sqliteTableSizes.event"></span
                 ></span>
             </div>
+        </SettingsGroup>
 
+        <SettingsGroup :title="t('view.settings.advanced.advanced.database_cleanup.header')">
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.database_cleanup.auto_cleanup')"
                 :description="t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_description')">
@@ -329,45 +331,38 @@
         </Dialog>
 
         <SettingsGroup :title="t('view.settings.advanced_groups.diagnostics.header')">
-            <SettingsGroup :title="t('view.profile.game_info.header')">
-                <div class="px-1 py-1">
-                    <div class="flex-1 cursor-pointer" @click="getVisits">
-                        <span class="block truncate font-medium text-sm leading-[18px]">{{
-                            t('view.profile.game_info.online_users')
-                        }}</span>
-                        <span v-if="visits" class="block truncate text-xs text-muted-foreground">{{
-                            t('view.profile.game_info.user_online', { count: visits })
-                        }}</span>
-                        <span v-else class="block truncate text-xs text-muted-foreground">{{
-                            t('view.profile.game_info.refresh')
-                        }}</span>
-                    </div>
-                </div>
-            </SettingsGroup>
-
-            <SettingsGroup :title="t('view.profile.config_json')">
+            <SettingsItem :label="t('view.profile.game_info.online_users')">
                 <div class="flex items-center gap-2">
-                    <TooltipWrapper side="top" :content="t('view.profile.refresh_tooltip')">
-                        <Button class="rounded-full" size="icon-sm" variant="outline" @click="refreshConfigTreeData()">
-                            <RefreshCcw />
-                        </Button>
-                    </TooltipWrapper>
-                    <TooltipWrapper side="top" :content="t('view.profile.clear_results_tooltip')">
-                        <Button class="rounded-full" size="icon-sm" variant="outline" @click="configTreeData = {}">
-                            <Trash2 />
-                        </Button>
-                    </TooltipWrapper>
+                    <span v-if="visits !== null" class="text-sm text-muted-foreground">{{
+                        t('view.profile.game_info.user_online', { count: visits })
+                    }}</span>
+                    <Button size="sm" variant="outline" @click="getVisits">{{ t('common.actions.refresh') }}</Button>
                 </div>
-                <vue-json-pretty
-                    v-if="Object.keys(configTreeData).length > 0"
-                    :data="configTreeData"
-                    :deep="2"
-                    :theme="isDarkMode ? 'dark' : 'light'"
-                    :height="800"
-                    :dynamic-height="false"
-                    virtual
-                    show-icon />
-            </SettingsGroup>
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.profile.config_json')">
+                <div class="flex items-center gap-2">
+                    <Button size="sm" variant="outline" @click="refreshConfigTreeData()">{{
+                        t('common.actions.refresh')
+                    }}</Button>
+                    <Button
+                        v-if="Object.keys(configTreeData).length > 0"
+                        size="sm"
+                        variant="outline"
+                        @click="configTreeData = {}"
+                        >{{ t('common.actions.clear') }}</Button
+                    >
+                </div>
+            </SettingsItem>
+            <vue-json-pretty
+                v-if="Object.keys(configTreeData).length > 0"
+                :data="configTreeData"
+                :deep="2"
+                :theme="isDarkMode ? 'dark' : 'light'"
+                :height="800"
+                :dynamic-height="false"
+                virtual
+                show-icon />
         </SettingsGroup>
 
         <template v-if="branch === 'Nightly'">
@@ -386,7 +381,7 @@
 </template>
 
 <script setup>
-    import { RefreshCcw, Trash2, TriangleAlert } from 'lucide-vue-next';
+    import { Trash2, TriangleAlert } from 'lucide-vue-next';
     import { computed, reactive, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Switch } from '@/components/ui/switch';
@@ -421,7 +416,6 @@
     import RegistryBackupDialog from '../../../Tools/dialogs/RegistryBackupDialog.vue';
     import SettingsGroup from '../SettingsGroup.vue';
     import SettingsItem from '../SettingsItem.vue';
-    import { TooltipWrapper } from '@/components/ui/tooltip';
 
     const { t } = useI18n();
 
@@ -486,7 +480,7 @@
     } = advancedSettingsStore;
 
     const configTreeData = ref({});
-    const visits = ref(0);
+    const visits = ref(null);
     const selectedPurgePeriod = ref('180');
     const isPurgeDialogVisible = ref(false);
 

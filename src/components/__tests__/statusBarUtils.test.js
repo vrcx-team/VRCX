@@ -268,8 +268,8 @@ describe('loadClockCount', () => {
         storage = createMockStorage();
     });
 
-    test('returns 3 when storage is empty', () => {
-        expect(loadClockCount(storage)).toBe(3);
+    test('returns 2 when storage is empty', () => {
+        expect(loadClockCount(storage)).toBe(2);
     });
 
     test.each([0, 1, 2, 3])('returns valid stored count %i', (n) => {
@@ -277,17 +277,17 @@ describe('loadClockCount', () => {
         expect(loadClockCount(storage)).toBe(n);
     });
 
-    test('returns 3 for out-of-range values', () => {
+    test('returns 2 for out-of-range values', () => {
         storage.setItem('VRCX_statusBarClockCount', '4');
-        expect(loadClockCount(storage)).toBe(3);
+        expect(loadClockCount(storage)).toBe(2);
 
         storage.setItem('VRCX_statusBarClockCount', '-1');
-        expect(loadClockCount(storage)).toBe(3);
+        expect(loadClockCount(storage)).toBe(2);
     });
 
-    test('returns 3 for non-numeric values', () => {
+    test('returns 2 for non-numeric values', () => {
         storage.setItem('VRCX_statusBarClockCount', 'abc');
-        expect(loadClockCount(storage)).toBe(3);
+        expect(loadClockCount(storage)).toBe(2);
     });
 });
 

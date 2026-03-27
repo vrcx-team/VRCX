@@ -21,11 +21,12 @@
 
         variant: { type: String, default: 'fit' },
         unmountOnHide: { type: Boolean, default: false },
-        fill: { type: Boolean, default: false }
+        fill: { type: Boolean, default: false },
+        sticky: { type: Boolean, default: false }
     });
 
     const emit = defineEmits(['update:modelValue']);
-    const { modelValue, defaultValue, items, ariaLabel, variant, unmountOnHide, fill } = toRefs(props);
+    const { modelValue, defaultValue, items, ariaLabel, variant, unmountOnHide, fill, sticky } = toRefs(props);
 
     const itemsList = computed(() => (Array.isArray(items.value) ? items.value : []));
 
@@ -74,7 +75,8 @@
     const listClass = computed(() => {
         return [
             'relative flex w-full items-center gap-1 border-b border-border',
-            variant.value === 'pill' ? 'rounded-full bg-muted p-1' : ''
+            variant.value === 'pill' ? 'rounded-full bg-muted p-1' : '',
+            sticky.value ? 'sticky top-0 z-10 bg-background' : ''
         ].join(' ');
     });
 </script>

@@ -18,13 +18,16 @@ import { useNotificationStore } from '../stores/notification';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
 import { useGroupStore } from '../stores/group';
-import { syncGroupSearchIndex, removeGroupSearchIndex, clearGroupSearchIndex } from './searchIndexCoordinator';
+import {
+    syncGroupSearchIndex,
+    removeGroupSearchIndex,
+    clearGroupSearchIndex
+} from './searchIndexCoordinator';
 import { watchState } from '../services/watchState';
 
 import configRepository from '../services/config';
 
 import * as workerTimers from 'worker-timers';
-
 
 /**
  * @param ref
@@ -47,7 +50,6 @@ function applyGroupLanguage(ref) {
         });
     }
 }
-
 
 /**
  *
@@ -180,7 +182,6 @@ export function applyGroupMember(json) {
     return json;
 }
 
-
 /**
  *
  * @param ref
@@ -275,7 +276,6 @@ function groupRoleChange(ref, oldRoles, newRoles, oldRoleIds, newRoleIds) {
     }
 }
 
-
 /**
  *
  * @param groupId
@@ -348,7 +348,7 @@ export function showGroupDialog(groupId, options = {}) {
                     .then((args1) => {
                         D.ownerDisplayName = args1.ref.displayName;
                     });
-                database.getLastGroupVisit(D.ref.name).then((r) => {
+                database.getLastGroupVisit(D.id).then((r) => {
                     if (D.id === ref.id) {
                         D.lastVisit = r.created_at;
                     }
@@ -461,7 +461,6 @@ export function getGroupDialogGroup(groupId, existingRef) {
         });
 }
 
-
 /**
  *
  * @param {object} ref
@@ -507,7 +506,12 @@ export function onGroupJoined(groupId) {
             name: '',
             iconUrl: ''
         });
-        syncGroupSearchIndex({ id: groupId, name: '', ownerId: '', iconUrl: '' });
+        syncGroupSearchIndex({
+            id: groupId,
+            name: '',
+            ownerId: '',
+            iconUrl: ''
+        });
         groupRequest.getGroup({ groupId, includeRoles: true }).then((args) => {
             applyGroup(args.json);
             saveCurrentUserGroups();
@@ -546,7 +550,6 @@ export async function onGroupLeft(groupId) {
         workerTimers.setTimeout(() => saveCurrentUserGroups(), 100);
     }
 }
-
 
 /**
  *
@@ -708,7 +711,6 @@ export async function updateInGameGroupOrder() {
         console.error(err);
     }
 }
-
 
 /**
  *
