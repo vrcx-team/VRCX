@@ -327,7 +327,6 @@
                                     ">
                                     <Emoji
                                         :imageUrl="image.versions[image.versions.length - 1].file.url"
-                                        :size="200"
                                         class="aspect-square w-full rounded-t-md" />
                                 </ItemHeader>
                                 <ItemContent class="min-w-0 px-2.5 pt-1.5 pb-0">

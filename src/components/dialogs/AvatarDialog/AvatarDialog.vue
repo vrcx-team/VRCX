@@ -629,6 +629,7 @@
 
     import SetAvatarStylesDialog from './SetAvatarStylesDialog.vue';
     import SetAvatarTagsDialog from './SetAvatarTagsDialog.vue';
+    import { AppDebug } from '@/services/appConfig';
 
     const { sortUserDialogAvatars } = useUserStore();
     const { userDialog, currentUser } = storeToRefs(useUserStore());
