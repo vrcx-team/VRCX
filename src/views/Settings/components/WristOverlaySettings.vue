@@ -27,8 +27,7 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem
-                :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.hide_private_worlds')">
+            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.hide_private_worlds')">
                 <Switch
                     :model-value="hidePrivateFromFeed"
                     @update:modelValue="
@@ -38,52 +37,49 @@
             </SettingsItem>
 
             <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button')">
-                <RadioGroup
+                <Select
                     :model-value="overlaybutton ? 'true' : 'false'"
                     :disabled="!openVR || !overlayWrist"
-                    class="gap-2 flex"
                     @update:modelValue="handleOverlayButtonRadio">
-                    <div class="flex items-center space-x-2">
-                        <RadioGroupItem id="overlaybutton-false" value="false" />
-                        <label for="overlaybutton-false">{{
+                    <SelectTrigger size="sm">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="false">{{
                             t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button_grip')
-                        }}</label>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <RadioGroupItem id="overlaybutton-true" value="true" />
-                        <label for="overlaybutton-true">{{
+                        }}</SelectItem>
+                        <SelectItem value="true">{{
                             t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button_menu')
-                        }}</label>
-                    </div>
-                </RadioGroup>
+                        }}</SelectItem>
+                    </SelectContent>
+                </Select>
             </SettingsItem>
 
-            <SettingsItem
-                :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on')">
-                <ToggleGroup
-                    type="single"
-                    required
-                    variant="outline"
-                    size="sm"
+            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on')">
+                <Select
                     :model-value="overlayHand"
                     @update:model-value="
                         setOverlayHand($event);
                         saveOpenVROption();
                     ">
-                    <ToggleGroupItem value="1">{{
-                        t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_left')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="2">{{
-                        t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_right')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="0">{{
-                        t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_both')
-                    }}</ToggleGroupItem>
-                </ToggleGroup>
+                    <SelectTrigger size="sm">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="1">{{
+                            t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_left')
+                        }}</SelectItem>
+                        <SelectItem value="2">{{
+                            t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_right')
+                        }}</SelectItem>
+                        <SelectItem value="0">{{
+                            t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_both')
+                        }}</SelectItem>
+                    </SelectContent>
+                </Select>
             </SettingsItem>
 
-            <SettingsItem
-                :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.grey_background')">
+            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.grey_background')">
                 <Switch
                     :model-value="vrBackgroundEnabled"
                     :disabled="!openVR || !overlayWrist"
@@ -93,8 +89,7 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem
-                :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.minimal_feed_icons')">
+            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.minimal_feed_icons')">
                 <Switch
                     :model-value="minimalFeed"
                     :disabled="!openVR || !overlayWrist"
@@ -124,8 +119,7 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem
-                :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_game_uptime')">
+            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_game_uptime')">
                 <Switch
                     :model-value="!hideUptimeFromFeed"
                     :disabled="!openVR || !overlayWrist"
@@ -151,8 +145,7 @@
 <script setup>
     import { Button } from '@/components/ui/button';
     import { Switch } from '@/components/ui/switch';
-    import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-    import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -168,7 +161,6 @@
     const wristOverlaySettingsStore = useWristOverlaySettingsStore();
 
     const { openVR } = storeToRefs(notificationsSettingsStore);
-
 
     const {
         overlayWrist,

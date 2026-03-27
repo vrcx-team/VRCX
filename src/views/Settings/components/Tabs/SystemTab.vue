@@ -15,7 +15,10 @@
                     <span class="block truncate font-medium text-sm leading-[18px]">{{
                         t('view.settings.general.general.latest_app_version')
                     }}</span>
-                    <span v-if="latestAppVersion" class="block truncate text-xs text-muted-foreground" v-text="latestAppVersion"></span>
+                    <span
+                        v-if="latestAppVersion"
+                        class="block truncate text-xs text-muted-foreground"
+                        v-text="latestAppVersion"></span>
                     <span v-else class="block truncate text-xs text-muted-foreground">{{
                         t('view.settings.general.general.latest_app_version_refresh')
                     }}</span>
@@ -53,23 +56,22 @@
 
             <template v-if="!noUpdater">
                 <SettingsItem :label="t('view.settings.general.vrcx_updater.update_action')">
-                    <ToggleGroup
-                        type="single"
-                        required
-                        variant="outline"
-                        size="sm"
-                        :model-value="autoUpdateVRCX"
-                        @update:model-value="setAutoUpdateVRCX">
-                        <ToggleGroupItem value="Off">{{
-                            t('view.settings.general.vrcx_updater.auto_update_off')
-                        }}</ToggleGroupItem>
-                        <ToggleGroupItem value="Notify">{{
-                            t('view.settings.general.vrcx_updater.auto_update_notify')
-                        }}</ToggleGroupItem>
-                        <ToggleGroupItem value="Auto Download">{{
-                            t('view.settings.general.vrcx_updater.auto_update_download')
-                        }}</ToggleGroupItem>
-                    </ToggleGroup>
+                    <Select :model-value="autoUpdateVRCX" @update:model-value="setAutoUpdateVRCX">
+                        <SelectTrigger size="sm">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Off">{{
+                                t('view.settings.general.vrcx_updater.auto_update_off')
+                            }}</SelectItem>
+                            <SelectItem value="Notify">{{
+                                t('view.settings.general.vrcx_updater.auto_update_notify')
+                            }}</SelectItem>
+                            <SelectItem value="Auto Download">{{
+                                t('view.settings.general.vrcx_updater.auto_update_download')
+                            }}</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </SettingsItem>
             </template>
             <div v-else class="text-sm text-muted-foreground">
@@ -82,9 +84,7 @@
                 <Switch :model-value="isStartAtWindowsStartup" @update:modelValue="setIsStartAtWindowsStartup" />
             </SettingsItem>
 
-            <SettingsItem
-                v-if="!isLinux"
-                :label="t('view.settings.general.application.minimized')">
+            <SettingsItem v-if="!isLinux" :label="t('view.settings.general.application.minimized')">
                 <Switch :model-value="isStartAsMinimizedState" @update:modelValue="setIsStartAsMinimizedState" />
             </SettingsItem>
             <SettingsItem
@@ -132,7 +132,7 @@
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.general.legal_notice.header')">
-            <div class="flex flex-col gap-2 text-sm text-muted-foreground">
+            <div class="flex flex-col gap-2 text-sm text-muted-foreground mb-2">
                 <p class="m-0">
                     &copy; 2019-2026
                     <a class="cursor-pointer" @click="openExternalLink('https://github.com/pypy-vrc')">pypy</a> &amp;
@@ -163,7 +163,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { useGeneralSettingsStore, useVRCXUpdaterStore } from '@/stores';
     import { links } from '@/shared/constants';
     import { openExternalLink } from '@/shared/utils';

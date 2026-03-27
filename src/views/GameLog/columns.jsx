@@ -137,6 +137,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                                 location={original.location}
                                 hint={original.worldName}
                                 grouphint={original.groupName}
+                                enableContextMenu
                             />
                         </div>
                     );
@@ -149,6 +150,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                                 location={original.instanceId}
                                 hint={original.worldName}
                                 grouphint={original.groupName}
+                                enableContextMenu
                             />
                         </div>
                     );

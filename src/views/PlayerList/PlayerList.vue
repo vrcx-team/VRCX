@@ -206,8 +206,10 @@
     import { showWorldDialog } from '../../coordinators/worldCoordinator';
 
     import PhotonEventTable from './components/PhotonEventTable.vue';
+    import { useUserDisplay } from '../../composables/useUserDisplay';
 
     const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
+    const { userImage } = useUserDisplay();
     const photonStore = usePhotonStore();
     const { photonLoggingEnabled, chatboxUserBlacklist } = storeToRefs(photonStore);
     const { saveChatboxUserBlacklist } = photonStore;
@@ -299,7 +301,8 @@
             chatboxUserBlacklist,
             onBlockChatbox: addChatboxUserBlacklist,
             onUnblockChatbox: deleteChatboxUserBlacklist,
-            sortAlphabetically
+            sortAlphabetically,
+            userImage
         })
     );
 

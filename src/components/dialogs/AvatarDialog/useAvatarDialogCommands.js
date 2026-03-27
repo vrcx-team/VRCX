@@ -518,6 +518,7 @@ export function useAvatarDialogCommands(
         avatarDialogCommand,
         onFileChangeAvatarImage,
         onCropConfirmAvatar,
-        registerCallbacks
+        registerCallbacks,
+        copyAvatarUrl
     };
 }

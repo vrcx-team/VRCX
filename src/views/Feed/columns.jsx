@@ -16,10 +16,19 @@ import {
 } from 'lucide-vue-next';
 import { formatDateFilter, statusClass, timeToText } from '../../shared/utils';
 import { i18n } from '../../plugins/i18n';
-import { useGalleryStore } from '../../stores';
+import { useGalleryStore, useFriendStore } from '../../stores';
 import { showUserDialog } from '../../coordinators/userCoordinator';
+import UserContextMenu from '../../components/UserContextMenu.vue';
 
 const { t } = i18n.global;
+let friendStore;
+
+const getFriendStore = () => {
+    if (!friendStore) {
+        friendStore = useFriendStore();
+    }
+    return friendStore;
+};
 
 const expandedRow = ({ row }) => {
     const original = row.original;
@@ -33,6 +42,7 @@ const expandedRow = ({ row }) => {
                         <Location
                             location={original.previousLocation}
                             class="inline-block"
+                            enableContextMenu
                         />
                         <Badge variant="secondary" class="ml-1 w-fit">
                             {timeToText(original.time)}
@@ -48,6 +58,7 @@ const expandedRow = ({ row }) => {
                         location={original.location}
                         hint={original.worldName}
                         grouphint={original.groupName}
+                        enableContextMenu
                     />
                 ) : null}
             </div>
@@ -61,6 +72,7 @@ const expandedRow = ({ row }) => {
                     location={original.location}
                     hint={original.worldName}
                     grouphint={original.groupName}
+                    enableContextMenu
                 />
                 <Badge variant="secondary" class="ml-1 w-fit">
                     {timeToText(original.time)}
@@ -76,6 +88,7 @@ const expandedRow = ({ row }) => {
                     location={original.location}
                     hint={original.worldName}
                     grouphint={original.groupName}
+                    enableContextMenu
                 />
             </div>
         ) : null;
@@ -277,15 +290,21 @@ export const columns = [
         header: () => t('table.feed.user'),
         meta: { label: () => t('table.feed.user') },
         cell: ({ row }) => {
-
             const original = row.original;
+            const friend = getFriendStore().friends.get(original.userId);
             return (
-                <span
-                    class="cursor-pointer pr-2.5"
-                    onClick={() => showUserDialog(original.userId)}
+                <UserContextMenu
+                    userId={original.userId}
+                    state={friend?.state ?? ''}
+                    location={friend?.ref?.location ?? ''}
                 >
-                    {original.displayName}
-                </span>
+                    <span
+                        class="cursor-pointer pr-2.5"
+                        onClick={() => showUserDialog(original.userId)}
+                    >
+                        {original.displayName}
+                    </span>
+                </UserContextMenu>
             );
         }
     },
@@ -308,6 +327,7 @@ export const columns = [
                             location={original.location}
                             hint={original.worldName}
                             grouphint={original.groupName}
+                            enableContextMenu
                             disableTooltip
                         />
                     </div>
@@ -321,6 +341,7 @@ export const columns = [
                             location={original.location}
                             hint={original.worldName}
                             grouphint={original.groupName}
+                            enableContextMenu
                             disableTooltip
                         />
                     </div>
