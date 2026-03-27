@@ -9,6 +9,15 @@ Fork and Build by huhu(pa81) <br>
 VRCX is an assistant/companion application for VRChat that provides information about and helps you accomplish various things related to VRChat in a more convenient fashion than relying on the plain VRChat client (desktop or VR), or website alone. <br>
 ⚠️Most content is unavailable in this build.<br>
 
+# features
+
+<div align="center">
+✅ Login<br>
+✅ Cached login<br>
+✅ Feed,Sarch,Social,Friends Locations<br>
+✅ Theme,Setting<br>
+✖ Gamelog,Playerlist,Most tool functions
+  
 
 <div align="center">
   
