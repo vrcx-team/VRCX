@@ -492,7 +492,8 @@
             "favorites_only_tooltip": "Filter favorites only",
             "search_placeholder": "Search",
             "filter_placeholder": "Filter",
-            "load_mutual_friends": "Load Mutual Friends"
+            "load_mutual_friends": "Load Mutual Friends",
+            "mutual_loading_hint": "View progress on the Mutual Friend Graph page"
         },
         "charts": {
             "instance_activity": {

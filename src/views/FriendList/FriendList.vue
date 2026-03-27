@@ -78,7 +78,22 @@
                                     @update:modelValue="toggleFriendsListBulkUnfriendMode" />
                             </div>
                             <div class="flex items-center">
-                                <Button variant="outline" class="mr-2" :disabled="isMutualFetching || isMutualOptOut" @click="loadMutualFriends">
+                                <TooltipWrapper
+                                    v-if="isMutualFetching"
+                                    :content="t('view.friend_list.mutual_loading_hint')">
+                                    <span>
+                                        <Button variant="outline" class="mr-2" disabled>
+                                            <Loader2 class="h-4 w-4 animate-spin" />
+                                            {{ t('view.friend_list.load_mutual_friends') }}
+                                        </Button>
+                                    </span>
+                                </TooltipWrapper>
+                                <Button
+                                    v-else
+                                    variant="outline"
+                                    class="mr-2"
+                                    :disabled="isMutualOptOut"
+                                    @click="loadMutualFriends">
                                     {{ t('view.friend_list.load_mutual_friends') }}
                                 </Button>
 
@@ -130,6 +145,7 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
     import { useRoute } from 'vue-router';
+    import { Loader2 } from 'lucide-vue-next';
 
     import {
         useAppearanceSettingsStore,
@@ -143,6 +159,7 @@
     import { DataTableLayout } from '../../components/ui/data-table';
     import { Switch } from '../../components/ui/switch';
     import { Toggle } from '../../components/ui/toggle';
+    import { TooltipWrapper } from '../../components/ui/tooltip';
     import { createColumns } from './columns.jsx';
     import { localeIncludes } from '../../shared/utils';
     import removeConfusables, { removeWhitespace } from '../../services/confusables';
@@ -309,15 +326,17 @@
             getAllUserStats(),
             getAllUserMutualCount(),
             getAllUserMutualOptedOut()
-        ]).then((results) => {
-            if (results.every((result) => result.status === 'fulfilled')) {
-                lastFriendStatsRefreshAt = Date.now();
-                lastFriendStatsRefreshKey = friendStatsRefreshKey;
-            }
-            return results;
-        }).finally(() => {
-            friendStatsRefreshInFlight = null;
-        });
+        ])
+            .then((results) => {
+                if (results.every((result) => result.status === 'fulfilled')) {
+                    lastFriendStatsRefreshAt = Date.now();
+                    lastFriendStatsRefreshKey = friendStatsRefreshKey;
+                }
+                return results;
+            })
+            .finally(() => {
+                friendStatsRefreshInFlight = null;
+            });
         return friendStatsRefreshInFlight;
     }
 
@@ -564,10 +583,7 @@
     async function loadMutualFriends() {
         if (isMutualFetching.value) return;
         await chartsStore.fetchMutualGraph();
-        await Promise.allSettled([
-            getAllUserMutualCount(),
-            getAllUserMutualOptedOut()
-        ]);
+        await Promise.allSettled([getAllUserMutualCount(), getAllUserMutualOptedOut()]);
     }
 
     /**
