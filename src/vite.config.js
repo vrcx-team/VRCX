@@ -133,7 +133,16 @@ export default defineConfig(({ mode }) => {
         ],
         resolve: {
             alias: {
-                '@': resolve(import.meta.dirname, '.')
+                '@': resolve(import.meta.dirname, '.'),
+                // worker-timers spawns a Web Worker which is blocked in iOS WKWebView
+                // (capacitor://localhost origin). Replace with a native window-timer shim
+                // that is safe on all platforms (Electron, Android, iOS).
+                'worker-timers': resolve(import.meta.dirname, './shims/worker-timers-shim.js'),
+                // @capacitor-community/sqlite has no Package.swift / SPM support.
+                // When its Capacitor bridge can't find the native plugin, it throws a plain
+                // object {} (not an Error) which crashes the entire app at module load time.
+                // Our interopApi.js manages SQLite manually, so this shim is safe everywhere.
+                '@capacitor-community/sqlite': resolve(import.meta.dirname, './shims/capacitor-sqlite-shim.js')
             }
         },
         css: {
@@ -143,7 +152,7 @@ export default defineConfig(({ mode }) => {
                     customMedia: true
                 },
                 errorRecovery: true,
-                targets: browserslistToTargets(browserslist('Chrome 144'))
+                targets: browserslistToTargets(browserslist('Chrome 144, Safari 17'))
             }
         },
         optimizeDeps: {
@@ -171,8 +180,8 @@ export default defineConfig(({ mode }) => {
             strictPort: true
         },
         build: {
-            target: 'chrome144',
-            cssTarget: 'chrome144',
+            target: ['chrome144', 'safari17'],
+            cssTarget: ['chrome144', 'safari17'],
             outDir: '../build/html',
             license: true,
             emptyOutDir: true,

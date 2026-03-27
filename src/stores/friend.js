@@ -614,6 +614,7 @@ export const useFriendStore = defineStore('Friend', () => {
      */
     async function refreshFriends() {
         isRefreshFriendsLoading.value = true;
+        const isMobile = typeof window.Capacitor !== 'undefined';
         try {
             const onlineFriends = await bulkRefreshFriends({
                 offline: false
@@ -622,8 +623,14 @@ export const useFriendStore = defineStore('Friend', () => {
                 offline: true
             });
             var friends = onlineFriends.concat(offlineFriends);
-            friends = await refetchBrokenFriends(friends);
-            if (!watchState.isFriendsLoaded) {
+            // On mobile (iOS/Android), skip the per-friend re-fetch pass:
+            // it fires one individual API request per friend whose state
+            // doesn't match, which can be hundreds of calls and will freeze
+            // iOS due to CapacitorHttp bridge saturation.
+            if (!isMobile) {
+                friends = await refetchBrokenFriends(friends);
+            }
+            if (!watchState.isFriendsLoaded && !isMobile) {
                 friends = await refreshRemainingFriends(friends);
             }
 
@@ -644,7 +651,10 @@ export const useFriendStore = defineStore('Friend', () => {
         // it is now 7500
         const MAX_OFFSET = 7500;
         const PAGE_SIZE = 50;
-        const CONCURRENCY = 5;
+        // On iOS/Android (Capacitor) reduce concurrency to 1 to avoid saturating
+        // the CapacitorHttp native bridge and freezing the UI thread.
+        const isMobile = typeof window.Capacitor !== 'undefined';
+        const CONCURRENCY = isMobile ? 1 : 5;
         const RATE_PER_MINUTE = 60;
         const MAX_RETRY = 5;
         const RETRY_BASE_DELAY = 1000;

@@ -59,7 +59,10 @@ export async function loadStoredNavConfig(
 
     const storedValue = await repository.getString(configKey);
     if (!storedValue) {
-        return { layout, hiddenKeys };
+        // No stored value — using defaults. wasLoaded=false prevents the
+        // caller from immediately writing back (which would create an
+        // infinite loop via NAV_LAYOUT_UPDATED_EVENT on mobile/empty-DB).
+        return { layout, hiddenKeys, wasLoaded: false };
     }
 
     try {
@@ -76,5 +79,5 @@ export async function loadStoredNavConfig(
         // keep defaults
     }
 
-    return { layout, hiddenKeys };
+    return { layout, hiddenKeys, wasLoaded: true };
 }

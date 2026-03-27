@@ -158,7 +158,7 @@ export function useNavLayout({
         }
     };
 
-    const saveNavLayout = async (layout, hiddenKeys = []) => {
+    const saveNavLayout = async (layout, hiddenKeys = [], { suppressEvent = false } = {}) => {
         const normalizedHiddenKeys = normalizeHiddenKeys(
             [...hiddenKeys, ...getDefaultHiddenKeys(layout)],
             navDefinitionMap.value
@@ -176,7 +176,12 @@ export function useNavLayout({
             return;
         }
 
-        dispatchNavLayoutUpdated();
+        // Don't dispatch when called from loadNavMenuConfig's internal save-back.
+        // Dispatching would re-trigger handleExternalNavLayoutUpdate → loadNavMenuConfig
+        // → saveNavLayout → dispatch → ∞ (produces an 18k-line log on iOS).
+        if (!suppressEvent) {
+            dispatchNavLayoutUpdated();
+        }
     };
 
     const applyCustomNavLayout = async (layout, hiddenKeys = []) => {
@@ -213,6 +218,7 @@ export function useNavLayout({
     const loadNavMenuConfig = async () => {
         let layoutData = null;
         let hiddenKeysData = [];
+        let wasLoaded = false;
         try {
             const loaded = await loadStoredNavConfig(
                 configRepository,
@@ -224,6 +230,7 @@ export function useNavLayout({
             );
             layoutData = loaded.layout;
             hiddenKeysData = loaded.hiddenKeys;
+            wasLoaded = loaded.wasLoaded ?? true; // default true for backward compat
         } catch (error) {
             console.error('Failed to load custom nav', error);
         } finally {
@@ -240,13 +247,17 @@ export function useNavLayout({
             );
             navLayout.value = sanitized;
             navHiddenKeys.value = normalizedHiddenKeys;
+            // Only write back if we actually loaded from storage AND it was
+            // sanitized/changed. Skipping when wasLoaded=false (empty DB on
+            // mobile first boot) prevents the infinite read-write-event loop.
             if (
+                wasLoaded &&
                 layoutData?.length &&
                 (JSON.stringify(sanitized) !== JSON.stringify(fallbackLayout) ||
                     JSON.stringify(normalizedHiddenKeys) !==
                         JSON.stringify(hiddenKeysData))
             ) {
-                await saveNavLayout(sanitized, normalizedHiddenKeys);
+                await saveNavLayout(sanitized, normalizedHiddenKeys, { suppressEvent: true });
             }
             navLayoutReady.value = true;
             navigateToFirstNavEntry();
