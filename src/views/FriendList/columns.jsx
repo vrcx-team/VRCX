@@ -1,4 +1,4 @@
-import { ArrowUpDown, User, UserMinus } from 'lucide-vue-next';
+import { ArrowUpDown, EyeOff, User, UserMinus } from 'lucide-vue-next';
 import {
     Avatar,
     AvatarFallback,
@@ -391,7 +391,21 @@ export const createColumns = ({
             },
             cell: ({ row }) => {
                 const count = row.original?.$mutualCount;
-                return count ? <span>{count}</span> : null;
+                const optedOut = row.original?.$mutualOptedOut;
+                if (!count && !optedOut) return null;
+                return (
+                    <span class="inline-flex items-center gap-1">
+                        {count || null}
+                        {optedOut ? (
+                            <TooltipWrapper
+                                side="top"
+                                content={t('table.friendList.mutualOptedOut')}
+                            >
+                                <EyeOff class="h-3.5 w-3.5 text-muted-foreground" />
+                            </TooltipWrapper>
+                        ) : null}
+                    </span>
+                );
             }
         },
         {

@@ -2861,7 +2861,8 @@
             "lastLogin": "Last Login",
             "dateJoined": "Date Joined",
             "unfriend": "Unfriend",
-            "mutualFriends": "Mutual Friends"
+            "mutualFriends": "Mutual Friends",
+            "mutualOptedOut": "This user has disabled mutual friends sharing. Showing cached data."
         },
         "profile": {
             "invite_messages": {

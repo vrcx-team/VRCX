@@ -52,6 +52,21 @@ const mutualGraph = {
                 await sqliteService.executeNonQuery('COMMIT');
                 return;
             }
+            // Also clean links for friends in the new entries even if they
+            // were previously opted_out. We have fresh data for them now so
+            // old links must not linger.
+            let idsToClean = '';
+            pairs.forEach((_, friendId) => {
+                if (!friendId) return;
+                const safe = friendId.replace(/'/g, "''");
+                idsToClean += `'${safe}',`;
+            });
+            if (idsToClean) {
+                idsToClean = idsToClean.slice(0, -1);
+                await sqliteService.executeNonQuery(
+                    `DELETE FROM ${linkTable} WHERE friend_id IN (${idsToClean})`
+                );
+            }
             let friendValues = '';
             let edgeValues = '';
             pairs.forEach((mutualIds, friendId) => {

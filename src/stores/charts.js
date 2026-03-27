@@ -322,6 +322,14 @@ export const useChartsStore = defineStore('Charts', () => {
             mutualGraphStatus.friendSignature = friendCount.value;
             mutualGraphStatus.needsRefetch = false;
 
+            // Write meta first so saveMutualGraphSnapshot's DELETE
+            // uses up-to-date opted_out flags to decide what to preserve.
+            // If this fails, we must NOT proceed with snapshot save because
+            // the DELETE would use stale meta and corrupt data.
+            if (metaEntries.size > 0) {
+                await database.bulkUpsertMutualGraphMeta(metaEntries);
+            }
+
             try {
                 const entries = new Map();
                 mutualMap.forEach((value, friendId) => {
@@ -345,17 +353,6 @@ export const useChartsStore = defineStore('Charts', () => {
                 console.error(
                     '[MutualNetworkGraph] Failed to cache data',
                     persistErr
-                );
-            }
-
-            try {
-                if (metaEntries.size > 0) {
-                    await database.bulkUpsertMutualGraphMeta(metaEntries);
-                }
-            } catch (metaErr) {
-                console.error(
-                    '[MutualNetworkGraph] Failed to write meta',
-                    metaErr
                 );
             }
 

@@ -78,7 +78,7 @@
                                     @update:modelValue="toggleFriendsListBulkUnfriendMode" />
                             </div>
                             <div class="flex items-center">
-                                <Button variant="outline" class="mr-2" @click="openChartsTab">
+                                <Button variant="outline" class="mr-2" :disabled="isMutualFetching || isMutualOptOut" @click="loadMutualFriends">
                                     {{ t('view.friend_list.load_mutual_friends') }}
                                 </Button>
 
@@ -133,9 +133,11 @@
 
     import {
         useAppearanceSettingsStore,
+        useChartsStore,
         useFriendStore,
         useModalStore,
-        useSearchStore
+        useSearchStore,
+        useUserStore
     } from '../../stores';
     import { friendRequest, userRequest } from '../../api';
     import { DataTableLayout } from '../../components/ui/data-table';
@@ -144,7 +146,6 @@
     import { createColumns } from './columns.jsx';
     import { localeIncludes } from '../../shared/utils';
     import removeConfusables, { removeWhitespace } from '../../services/confusables';
-    import { router } from '../../plugins/router';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
     import { showUserDialog } from '../../coordinators/userCoordinator';
     import { confirmDeleteFriend, handleFriendDelete } from '../../coordinators/friendRelationshipCoordinator';
@@ -156,7 +157,10 @@
 
     const { friends, allFavoriteFriendIds } = storeToRefs(useFriendStore());
     const modalStore = useModalStore();
-    const { getAllUserStats, getAllUserMutualCount } = useFriendStore();
+    const { getAllUserStats, getAllUserMutualCount, getAllUserMutualOptedOut } = useFriendStore();
+    const chartsStore = useChartsStore();
+    const isMutualFetching = computed(() => chartsStore.mutualGraphStatus.isFetching);
+    const isMutualOptOut = computed(() => Boolean(useUserStore().currentUser?.hasSharedConnectionsOptOut));
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { randomUserColours } = storeToRefs(appearanceSettingsStore);
     const { userImage } = useUserDisplay();
@@ -303,7 +307,8 @@
         }
         friendStatsRefreshInFlight = Promise.allSettled([
             getAllUserStats(),
-            getAllUserMutualCount()
+            getAllUserMutualCount(),
+            getAllUserMutualOptedOut()
         ]).then((results) => {
             if (results.every((result) => result.status === 'fulfilled')) {
                 lastFriendStatsRefreshAt = Date.now();
@@ -556,8 +561,13 @@
     /**
      *
      */
-    function openChartsTab() {
-        router.push({ name: 'charts' });
+    async function loadMutualFriends() {
+        if (isMutualFetching.value) return;
+        await chartsStore.fetchMutualGraph();
+        await Promise.allSettled([
+            getAllUserMutualCount(),
+            getAllUserMutualOptedOut()
+        ]);
     }
 
     /**
