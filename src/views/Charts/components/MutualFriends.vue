@@ -307,6 +307,7 @@
     import { useI18n } from 'vue-i18n';
 
     import BackToTop from '@/components/BackToTop.vue';
+    import dayjs from 'dayjs';
     import EdgeCurveProgram from '@sigma/edge-curve';
     import Graph from 'graphology';
     import Sigma from 'sigma';
@@ -970,8 +971,7 @@
 
                     let subLine = '';
                     if (data.lastFetchedAt) {
-                        const d = new Date(data.lastFetchedAt);
-                        subLine = `${t('view.charts.mutual_friend.context_menu.last_fetched')}: ${d.toLocaleString()}`;
+                        subLine = `${t('view.charts.mutual_friend.context_menu.last_fetched')}: ${dayjs(data.lastFetchedAt).format('YYYY-MM-DD HH:mm')}`;
                     }
 
                     const labelWidth = ctx.measureText(data.label).width;
