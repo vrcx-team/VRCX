@@ -167,7 +167,7 @@
         <DataTableLayout
             v-if="viewMode === 'table'"
             :table="table"
-            :table-style="tableHeightStyle"
+            auto-height
             :page-sizes="pageSizes"
             :total-items="filteredAvatars.length"
             :loading="isLoading"
@@ -340,7 +340,6 @@
     import { getTagColor } from '../../shared/constants';
     import { processBulk } from '../../services/request';
     import { useAvatarCardGrid } from './composables/useAvatarCardGrid';
-    import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     import ImageCropDialog from '../../components/dialogs/ImageCropDialog.vue';
@@ -375,11 +374,7 @@
     const manageTagsOpen = ref(false);
     const manageTagsAvatar = ref(null);
 
-    const { tableStyle: tableHeightStyle } = useDataTableScrollHeight(containerRef, {
-        offset: 30,
-        toolbarHeight: 54,
-        paginationHeight: 52
-    });
+
 
     const allTags = computed(() => {
         const tagSet = new Set();
@@ -844,18 +839,18 @@
                 const list = Array.from(map.values());
                 const currentAvatarId = currentUser.value.currentAvatar;
                 const swapTime = currentUser.value.$previousAvatarSwapTime;
-                const tagsMap = await database.getAllAvatarTags();
+                const [tagsMap, avatarTimeSpentMap] = await Promise.all([
+                    database.getAllAvatarTags(),
+                    database.getAllAvatarTimeSpent()
+                ]);
                 avatarTagsMap.value = tagsMap;
-                await Promise.all(
-                    list.map(async (ref) => {
-                        const aviTime = await database.getAvatarTimeSpent(ref.id);
-                        ref.$timeSpent = aviTime.timeSpent;
-                        if (ref.id === currentAvatarId && swapTime) {
-                            ref.$timeSpent += Date.now() - swapTime;
-                        }
-                        ref.$tags = tagsMap.get(ref.id) || [];
-                    })
-                );
+                for (const ref of list) {
+                    ref.$timeSpent = avatarTimeSpentMap.get(ref.id) || 0;
+                    if (ref.id === currentAvatarId && swapTime) {
+                        ref.$timeSpent += Date.now() - swapTime;
+                    }
+                    ref.$tags = tagsMap.get(ref.id) || [];
+                }
                 avatars.value = list;
                 isLoading.value = false;
             }

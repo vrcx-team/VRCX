@@ -255,9 +255,13 @@ export function applyUser(json) {
     }
     if (hasPropChanged) {
         if (changedProps.location && changedProps.location[0] !== 'traveling') {
-            const ts = Date.now();
-            changedProps.location.push(ts - ref.$location_at);
-            ref.$location_at = ts;
+            if (playerListRef) {
+                ref.$location_at = playerListRef.joinTime;
+            } else {
+                const ts = Date.now();
+                changedProps.location.push(ts - ref.$location_at);
+                ref.$location_at = ts;
+            }
         }
         handleUserUpdate(ref, changedProps);
         if (AppDebug.debugUserDiff) {
@@ -573,7 +577,6 @@ async function handleUserUpdate(ref, props) {
 export async function refreshUserDialogAvatars(fileId) {
     const userStore = useUserStore();
     const avatarStore = useAvatarStore();
-    const t = i18n.global.t;
 
     const D = userStore.userDialog;
     const userId = D.id;

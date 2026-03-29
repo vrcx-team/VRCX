@@ -1,14 +1,16 @@
 <template>
     <Sidebar side="left" variant="sidebar" collapsible="icon">
-        <SidebarHeader v-if="!hasDashboards" class="px-2 py-2">
+        <SidebarHeader v-if="showNewDashboardButton" class="px-2 py-2">
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton
                         :tooltip="t('dashboard.new_dashboard')"
                         class="border border-dashed border-primary/40 text-primary hover:bg-primary/10"
                         @click="handleQuickCreateDashboard">
-                        <Plus class="size-4" />
-                        <span v-show="!isCollapsed">{{ t('dashboard.new_dashboard') }}</span>
+                        <div class="flex items-center gap-3 pl-1 group-data-[collapsible=icon]:pl-0">
+                            <Plus class="size-4" />
+                            <span v-show="!isCollapsed">{{ t('dashboard.new_dashboard') }}</span>
+                        </div>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>
@@ -42,16 +44,14 @@
                                                     }}</span>
                                                     <span
                                                         v-if="item.action === 'direct-access' && !isCollapsed"
-                                                        class="nav-shortcut-hint ml-auto inline-flex items-center gap-0.5">
+                                                        class="nav-shortcut-hint ml-auto inline-flex items-center gap-2">
                                                         <Kbd>{{ isMac ? '⌘' : 'Ctrl' }}</Kbd>
                                                         <Kbd>D</Kbd>
                                                     </span>
                                                 </SidebarMenuButton>
                                             </ContextMenuTrigger>
                                             <ContextMenuContent>
-                                                <ContextMenuItem
-                                                    v-if="hasNotifications"
-                                                    @click="clearAllNotifications">
+                                                <ContextMenuItem v-if="hasNotifications" @click="clearAllNotifications">
                                                     {{ t('nav_menu.mark_all_read') }}
                                                 </ContextMenuItem>
                                                 <ContextMenuSeparator v-if="hasNotifications" />
@@ -133,7 +133,7 @@
             :is-applying-theme-color="isApplyingThemeColor"
             :theme-display-name="themeDisplayName"
             :theme-color-display-name="themeColorDisplayName"
-            @show-change-log="showChangeLogDialog"
+            @show-changelog="showChangeLogDialog"
             @support-link="handleSupportLink"
             @toggle-theme="handleThemeToggle"
             @show-vrcx-update-dialog="showVRCXUpdateDialog"
@@ -229,7 +229,13 @@
     const modalStore = useModalStore();
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const { themeMode, tableDensity, isDarkMode, isNavCollapsed: isCollapsed } = storeToRefs(appearanceSettingsStore);
+    const {
+        themeMode,
+        tableDensity,
+        isDarkMode,
+        isNavCollapsed: isCollapsed,
+        showNewDashboardButton
+    } = storeToRefs(appearanceSettingsStore);
 
     const {
         themes,
@@ -275,7 +281,6 @@
     const collapsedDropdownOpenId = ref(null);
     const customNavDialogVisible = ref(false);
 
-    const hasDashboards = computed(() => dashboards.value.length > 0);
     const hasNotifications = computed(() => notifiedMenus.value.length > 0);
     const version = computed(() => appVersion.value?.split('VRCX ')?.[1] || '-');
     const vrcxLogo = new URL('../../../images/VRCX.png', import.meta.url).href;

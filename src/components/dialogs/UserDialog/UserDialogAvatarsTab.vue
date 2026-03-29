@@ -22,13 +22,13 @@
                 <Spinner v-if="userDialog.isAvatarsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span style="margin-left: 6px">{{
+            <span class="ml-1.5 text-sm">{{
                 t('dialog.user.avatars.total_count', { count: userDialogAvatars.length })
             }}</span>
         </div>
         <div class="flex items-center">
+            <Input v-model="avatarSearchQuery" class="h-8 w-40 mr-2" placeholder="Search avatars" @click.stop />
             <template v-if="userDialog.ref.id === currentUser.id">
-                <Input v-model="avatarSearchQuery" class="h-8 w-40 mr-2" placeholder="Search avatars" @click.stop />
                 <span class="mr-1">{{ t('dialog.user.avatars.sort_by') }}</span>
                 <Select
                     :model-value="userDialog.avatarSorting"
@@ -69,7 +69,10 @@
                 @click="showAvatarDialog(avatar.id)">
                 <div class="relative inline-block flex-none size-9 mr-2.5">
                     <Avatar class="size-9">
-                        <AvatarImage v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" class="object-cover" />
+                        <AvatarImage
+                            v-if="avatar.thumbnailImageUrl"
+                            :src="avatar.thumbnailImageUrl"
+                            class="object-cover" />
                         <AvatarFallback>
                             <Image class="size-4 text-muted-foreground" />
                         </AvatarFallback>
@@ -112,6 +115,7 @@
     import { Input } from '@/components/ui/input';
     import { Spinner } from '@/components/ui/spinner';
     import DeprecationAlert from '@/components/DeprecationAlert.vue';
+    import { refreshUserDialogAvatars } from '@/coordinators/userCoordinator';
 
     import { useAdvancedSettingsStore, useAvatarStore, useUserStore } from '../../../stores';
 
@@ -119,7 +123,7 @@
 
     const userStore = useUserStore();
     const { userDialog, currentUser } = storeToRefs(userStore);
-    const { sortUserDialogAvatars, refreshUserDialogAvatars } = userStore;
+    const { sortUserDialogAvatars } = userStore;
 
     import { showAvatarDialog, lookupAvatars } from '../../../coordinators/avatarCoordinator';
     const { cachedAvatars } = useAvatarStore();
@@ -136,9 +140,6 @@
     const avatarSearchQuery = ref('');
     const filteredUserDialogAvatars = computed(() => {
         const avatars = userDialogAvatars.value;
-        if (userDialog.value.ref?.id !== currentUser.value.id) {
-            return avatars;
-        }
         const query = avatarSearchQuery.value.trim().toLowerCase();
         if (!query) {
             return avatars;

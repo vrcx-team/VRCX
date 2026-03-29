@@ -14,8 +14,7 @@ import {
     getFaviconUrl,
     languageClass,
     openExternalLink,
-    statusClass,
-    userImage
+    statusClass
 } from '../../shared/utils';
 import { i18n } from '../../plugins';
 
@@ -65,7 +64,8 @@ export const createColumns = ({
     chatboxUserBlacklist,
     onBlockChatbox,
     onUnblockChatbox,
-    sortAlphabetically
+    sortAlphabetically,
+    userImage
 }) => {
     const cols = [
         {
@@ -200,7 +200,8 @@ export const createColumns = ({
             enableHiding: true,
             meta: {
                 label: () => t('table.playerList.photonId'),
-                disableVisibilityToggle: true
+                disableVisibilityToggle: true,
+                defaultHidden: true
             },
             sortingFn: (rowA, rowB) =>
                 (rowA.original?.photonId ?? 0) - (rowB.original?.photonId ?? 0),

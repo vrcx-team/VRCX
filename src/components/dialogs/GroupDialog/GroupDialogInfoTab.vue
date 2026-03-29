@@ -373,10 +373,9 @@
         formatDateFilter,
         getFaviconUrl,
         hasGroupPermission,
-        openExternalLink,
-        userImage,
-        userStatusClass
+        openExternalLink
     } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { refreshInstancePlayerCount } from '../../../coordinators/instanceCoordinator';
     import { useGalleryStore, useGroupStore, useInstanceStore, useLocationStore } from '../../../stores';
     import { useGroupCalendarEvents } from './useGroupCalendarEvents';
@@ -397,6 +396,7 @@
     });
 
     const { t } = useI18n();
+    const { userImage, userStatusClass } = useUserDisplay();
 
     const { groupDialog } = storeToRefs(useGroupStore());
     const { lastLocation } = storeToRefs(useLocationStore());

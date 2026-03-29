@@ -1,4 +1,3 @@
-/* eslint-disable  pretty-import/sort-import-groups */
 
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';

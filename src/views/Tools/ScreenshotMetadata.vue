@@ -182,18 +182,14 @@
                             {{ t('dialog.screenshot_metadata.section_players') }} ({{ screenshotMetadataDialog.metadata.players.length }})
                         </h4>
                         <div class="flex flex-wrap gap-1 max-h-[180px] overflow-y-auto">
-                            <TooltipWrapper
+                            <Badge
                                 v-for="user in screenshotMetadataDialog.metadata.players"
                                 :key="user.id"
-                                side="top"
-                                :content="user.pos ? '(' + user.pos.x + ', ' + user.pos.y + ', ' + user.pos.z + ')' : ''">
-                                <Badge
-                                    variant="secondary"
-                                    class="cursor-pointer hover:bg-accent transition-colors"
-                                    @click="lookupUser(user)">
-                                    {{ user.displayName }}
-                                </Badge>
-                            </TooltipWrapper>
+                                variant="secondary"
+                                class="cursor-pointer hover:bg-accent transition-colors"
+                                @click="lookupUser(user)">
+                                {{ user.displayName }}
+                            </Badge>
                         </div>
                     </div>
 
@@ -267,7 +263,7 @@
     import { ButtonGroup } from '@/components/ui/button-group';
     import { InputGroupSearch } from '@/components/ui/input-group';
     import { Kbd } from '@/components/ui/kbd';
-    import { TooltipWrapper } from '@/components/ui/tooltip';
+
     import { formatDateFilter } from '@/shared/utils';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

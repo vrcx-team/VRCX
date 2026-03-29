@@ -43,6 +43,10 @@
                 "devEndpoint": "Dev Endpoint",
                 "endpoint": "Endpoint",
                 "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "Đã phát hiện ngôn ngữ",
+                "description": "Ngôn ngữ hệ thống của bạn có vẻ là {language}. Bạn có muốn chuyển sang không?"
             }
         },
         "feed": {

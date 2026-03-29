@@ -1,32 +1,57 @@
 <template>
-    <div class="cursor-pointer">
-        <div v-if="!text" class="text-transparent">-</div>
-        <div v-show="text" class="flex items-center">
-            <div v-if="region" :class="['flags', 'mr-1.5', 'shrink-0', region]"></div>
-            <TooltipWrapper :content="tooltipContent" :disabled="tooltipDisabled" :delay-duration="300" side="top">
-                <div
-                    :class="locationClasses"
-                    class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden truncate"
-                    @click="handleShowWorldDialog">
-                    <Spinner v-if="isTraveling" class="mr-1 shrink-0" />
-                    <span class="min-w-0 flex-1 truncate">
-                        <span>{{ text }}</span>
-                        <span v-if="showInstanceIdInLocation && instanceName" class="ml-1">{{
-                            ` · #${instanceName}`
-                        }}</span>
-                        <span v-if="groupName" class="ml-0.5 cursor-pointer" @click.stop="handleShowGroupDialog">
-                            ({{ groupName }})
-                        </span>
-                    </span>
-                </div>
-            </TooltipWrapper>
+    <component :is="enableContextMenu ? ContextMenu : Passthrough">
+        <component :is="enableContextMenu ? ContextMenuTrigger : Passthrough" as-child>
+            <div class="cursor-pointer" v-bind="$attrs">
+                <div v-if="!text" class="text-transparent">-</div>
+                <div v-show="text" class="flex items-center">
+                    <template v-if="isAgeRestricted">
+                        <TooltipWrapper :content="t('dialog.user.info.instance_age_restricted_tooltip')" :delay-duration="300" side="top">
+                            <div class="inline-flex items-center gap-1 text-muted-foreground">
+                                <Lock class="size-3.5 shrink-0" />
+                                <span>{{ t('dialog.user.info.instance_age_restricted') }}</span>
+                            </div>
+                        </TooltipWrapper>
+                    </template>
+                    <template v-else>
+                        <div v-if="region" :class="['flags', 'mr-1.5', 'shrink-0', region]"></div>
+                        <TooltipWrapper :content="tooltipContent" :disabled="tooltipDisabled" :delay-duration="300" side="top">
+                            <div
+                                :class="locationClasses"
+                                class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden truncate"
+                                @click="handleShowWorldDialog">
+                                <Spinner v-if="isTraveling" class="mr-1 shrink-0" />
+                                <span class="min-w-0 flex-1 truncate">
+                                    <span>{{ text }}</span>
+                                    <span v-if="showInstanceIdInLocation && instanceName" class="ml-1">{{
+                                        ` · #${instanceName}`
+                                    }}</span>
+                                    <span v-if="groupName" class="ml-0.5 cursor-pointer" @click.stop="handleShowGroupDialog">
+                                        ({{ groupName }})
+                                    </span>
+                                </span>
+                            </div>
+                        </TooltipWrapper>
 
-            <TooltipWrapper v-if="isClosed" :content="closedTooltip" :disabled="disableTooltip">
-                <AlertTriangle class="inline-block ml-2 text-muted-foreground shrink-0" />
-            </TooltipWrapper>
-            <Lock v-if="strict" class="inline-block ml-2 text-muted-foreground shrink-0" />
-        </div>
-    </div>
+                        <TooltipWrapper v-if="isClosed" :content="closedTooltip" :disabled="disableTooltip">
+                            <AlertTriangle class="inline-block ml-2 text-muted-foreground shrink-0" />
+                        </TooltipWrapper>
+                        <Lock v-if="strict" class="inline-block ml-2 text-muted-foreground shrink-0" />
+                    </template>
+                </div>
+            </div>
+        </component>
+        <ContextMenuContent v-if="enableContextMenu && parsedLocation.isRealInstance && parsedLocation.worldId">
+            <WorldActionMenuItems
+                :can-open-instance-in-game="canOpenInstanceInGame"
+                :show-share="true"
+                :show-previous-instances="true"
+                @view-details="handleShowWorldDialog"
+                @share="handleShareLocation"
+                @new-instance="handleNewInstance"
+                @self-invite="handleNewInstanceSelfInvite"
+                @show-previous-instances="handleShowPreviousInstances" />
+        </ContextMenuContent>
+    </component>
 </template>
 
 <script setup>
@@ -36,18 +61,33 @@
     import { useI18n } from 'vue-i18n';
 
     import {
+        ContextMenu,
+        ContextMenuContent,
+        ContextMenuTrigger
+    } from './ui/context-menu';
+
+    import {
         getGroupName,
         getLocationText,
         getWorldName,
+        copyToClipboard,
         parseLocation,
         resolveRegion,
         translateAccessType
     } from '../shared/utils';
-    import { useAppearanceSettingsStore, useInstanceStore, useSearchStore, useWorldStore } from '../stores';
+    import { useAppearanceSettingsStore, useInstanceStore, useInviteStore, useSearchStore, useWorldStore } from '../stores';
     import { showGroupDialog } from '../coordinators/groupCoordinator';
     import { showWorldDialog } from '../coordinators/worldCoordinator';
+    import { runNewInstanceSelfInviteFlow } from '../coordinators/inviteCoordinator';
     import { Spinner } from './ui/spinner';
+    import WorldActionMenuItems from './WorldActionMenuItems.vue';
     import { accessTypeLocaleKeyMap } from '../shared/constants';
+
+    defineOptions({
+        inheritAttrs: false
+    });
+
+    const Passthrough = (_, { slots }) => slots.default?.();
 
     const { t } = useI18n();
 
@@ -56,7 +96,8 @@
     const { verifyShortName } = useSearchStore();
     const { cachedInstances } = useInstanceStore();
     const { lastInstanceApplied } = storeToRefs(useInstanceStore());
-    const { showInstanceIdInLocation } = storeToRefs(useAppearanceSettingsStore());
+    const { canOpenInstanceInGame } = useInviteStore();
+    const { showInstanceIdInLocation, isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
 
     const props = defineProps({
         location: String,
@@ -80,17 +121,24 @@
         isOpenPreviousInstanceInfoDialog: {
             type: Boolean,
             default: false
+        },
+        enableContextMenu: {
+            type: Boolean,
+            default: false
         }
     });
 
     const text = ref('');
     const region = ref('');
     const strict = ref(false);
+    const ageGate = ref(false);
     const isTraveling = ref(false);
+    const parsedLocation = ref({ isRealInstance: false, worldId: '', tag: '', shortName: '' });
     const groupName = ref('');
     const isClosed = ref(false);
     const instanceName = ref('');
 
+    const isAgeRestricted = computed(() => !isAgeGatedInstancesVisible.value && ageGate.value);
     const isLocationLink = computed(() => props.link && props.location !== 'private' && props.location !== 'offline');
     const locationClasses = computed(() => [
         'x-location',
@@ -135,6 +183,7 @@
         text.value = '';
         region.value = '';
         strict.value = false;
+        ageGate.value = false;
         isTraveling.value = false;
         groupName.value = '';
         isClosed.value = false;
@@ -156,6 +205,7 @@
             isTraveling.value = true;
         }
         const L = parseLocation(instanceId);
+        parsedLocation.value = L;
         setText(L);
         instanceName.value = L.instanceName;
         if (!L.isRealInstance) {
@@ -166,6 +216,7 @@
         updateGroupName(L, instanceId);
         updateRegion(L);
         strict.value = L.strict;
+        ageGate.value = L.ageGate;
     }
 
     /**
@@ -284,5 +335,44 @@
             return;
         }
         showGroupDialog(L.groupId);
+    }
+
+    /**
+     *
+     */
+    function handleShareLocation() {
+        const L = parsedLocation.value;
+        if (!L.worldId) return;
+        copyToClipboard(
+            `https://vrchat.com/home/world/${L.worldId}`,
+            t('message.world.url_copied')
+        );
+    }
+
+    /**
+     *
+     */
+    function handleNewInstance() {
+        const L = parsedLocation.value;
+        if (!L.worldId) return;
+        showWorldDialog(L.tag, L.shortName);
+    }
+
+    /**
+     *
+     */
+    function handleNewInstanceSelfInvite() {
+        const L = parsedLocation.value;
+        if (!L.worldId) return;
+        runNewInstanceSelfInviteFlow(L.worldId);
+    }
+
+    /**
+     *
+     */
+    function handleShowPreviousInstances() {
+        const instanceId = currentInstanceId();
+        if (!instanceId) return;
+        showPreviousInstancesInfoDialog(instanceId);
     }
 </script>

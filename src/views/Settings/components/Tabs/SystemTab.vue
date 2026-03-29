@@ -15,7 +15,10 @@
                     <span class="block truncate font-medium text-sm leading-[18px]">{{
                         t('view.settings.general.general.latest_app_version')
                     }}</span>
-                    <span v-if="latestAppVersion" class="block truncate text-xs text-muted-foreground" v-text="latestAppVersion"></span>
+                    <span
+                        v-if="latestAppVersion"
+                        class="block truncate text-xs text-muted-foreground"
+                        v-text="latestAppVersion"></span>
                     <span v-else class="block truncate text-xs text-muted-foreground">{{
                         t('view.settings.general.general.latest_app_version_refresh')
                     }}</span>
@@ -53,23 +56,22 @@
 
             <template v-if="!noUpdater">
                 <SettingsItem :label="t('view.settings.general.vrcx_updater.update_action')">
-                    <ToggleGroup
-                        type="single"
-                        required
-                        variant="outline"
-                        size="sm"
-                        :model-value="autoUpdateVRCX"
-                        @update:model-value="setAutoUpdateVRCX">
-                        <ToggleGroupItem value="Off">{{
-                            t('view.settings.general.vrcx_updater.auto_update_off')
-                        }}</ToggleGroupItem>
-                        <ToggleGroupItem value="Notify">{{
-                            t('view.settings.general.vrcx_updater.auto_update_notify')
-                        }}</ToggleGroupItem>
-                        <ToggleGroupItem value="Auto Download">{{
-                            t('view.settings.general.vrcx_updater.auto_update_download')
-                        }}</ToggleGroupItem>
-                    </ToggleGroup>
+                    <Select :model-value="autoUpdateVRCX" @update:model-value="setAutoUpdateVRCX">
+                        <SelectTrigger size="sm">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Off">{{
+                                t('view.settings.general.vrcx_updater.auto_update_off')
+                            }}</SelectItem>
+                            <SelectItem value="Notify">{{
+                                t('view.settings.general.vrcx_updater.auto_update_notify')
+                            }}</SelectItem>
+                            <SelectItem value="Auto Download">{{
+                                t('view.settings.general.vrcx_updater.auto_update_download')
+                            }}</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </SettingsItem>
             </template>
             <div v-else class="text-sm text-muted-foreground">
@@ -82,9 +84,7 @@
                 <Switch :model-value="isStartAtWindowsStartup" @update:modelValue="setIsStartAtWindowsStartup" />
             </SettingsItem>
 
-            <SettingsItem
-                v-if="!isLinux"
-                :label="t('view.settings.general.application.minimized')">
+            <SettingsItem v-if="!isLinux" :label="t('view.settings.general.application.minimized')">
                 <Switch :model-value="isStartAsMinimizedState" @update:modelValue="setIsStartAsMinimizedState" />
             </SettingsItem>
             <SettingsItem
@@ -121,44 +121,6 @@
             </SettingsItem>
         </SettingsGroup>
 
-        <SettingsGroup>
-            <template #description>
-                <div class="flex items-center gap-1.5">
-                    <span class="text-base font-semibold text-foreground">{{ t('view.settings.general.favorites.header') }}</span>
-                    <TooltipWrapper side="top" :content="t('view.settings.general.favorites.header_tooltip')">
-                        <Info class="size-3 text-muted-foreground cursor-help" />
-                    </TooltipWrapper>
-                </div>
-            </template>
-
-            <Select
-                :model-value="localFavoriteFriendsGroups"
-                multiple
-                @update:modelValue="setLocalFavoriteFriendsGroups">
-                <SelectTrigger>
-                    <SelectValue :placeholder="t('view.settings.general.favorites.group_placeholder')" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectItem v-for="group in favoriteFriendGroups" :key="group.key" :value="group.key">
-                            {{ group.displayName }}
-                        </SelectItem>
-                    </SelectGroup>
-                    <template v-if="localFriendFavoriteGroups.length">
-                        <SelectSeparator />
-                        <SelectGroup>
-                            <SelectItem
-                                v-for="group in localFriendFavoriteGroups"
-                                :key="'local:' + group"
-                                :value="'local:' + group">
-                                {{ group }}
-                            </SelectItem>
-                        </SelectGroup>
-                    </template>
-                </SelectContent>
-            </Select>
-        </SettingsGroup>
-
         <SettingsGroup :title="t('view.settings.general.contributors.header')">
             <div>
                 <img
@@ -170,7 +132,7 @@
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.general.legal_notice.header')">
-            <div class="flex flex-col gap-2 text-sm text-muted-foreground">
+            <div class="flex flex-col gap-2 text-sm text-muted-foreground mb-2">
                 <p class="m-0">
                     &copy; 2019-2026
                     <a class="cursor-pointer" @click="openExternalLink('https://github.com/pypy-vrc')">pypy</a> &amp;
@@ -198,21 +160,11 @@
     import { computed, defineAsyncComponent, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Switch } from '@/components/ui/switch';
-    import { Info } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import {
-        Select,
-        SelectContent,
-        SelectGroup,
-        SelectItem,
-        SelectSeparator,
-        SelectTrigger,
-        SelectValue
-    } from '@/components/ui/select';
-    import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-    import { useFavoriteStore, useGeneralSettingsStore, useVRCXUpdaterStore } from '@/stores';
+    import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { useGeneralSettingsStore, useVRCXUpdaterStore } from '@/stores';
     import { links } from '@/shared/constants';
     import { openExternalLink } from '@/shared/utils';
 
@@ -223,15 +175,13 @@
 
     const generalSettingsStore = useGeneralSettingsStore();
     const vrcxUpdaterStore = useVRCXUpdaterStore();
-    const favoriteStore = useFavoriteStore();
 
     const {
         isStartAtWindowsStartup,
         isStartAsMinimizedState,
         isCloseToTray,
         disableGpuAcceleration,
-        disableVrOverlayGpuAcceleration,
-        localFavoriteFriendsGroups
+        disableVrOverlayGpuAcceleration
     } = storeToRefs(generalSettingsStore);
 
     const {
@@ -240,11 +190,8 @@
         setIsCloseToTray,
         setDisableGpuAcceleration,
         setDisableVrOverlayGpuAcceleration,
-        setLocalFavoriteFriendsGroups,
         promptProxySettings
     } = generalSettingsStore;
-
-    const { favoriteFriendGroups, localFriendFavoriteGroups } = storeToRefs(favoriteStore);
 
     const { appVersion, autoUpdateVRCX, latestAppVersion, noUpdater } = storeToRefs(vrcxUpdaterStore);
     const { setAutoUpdateVRCX, checkForVRCXUpdate, showVRCXUpdateDialog, showChangeLogDialog } = vrcxUpdaterStore;

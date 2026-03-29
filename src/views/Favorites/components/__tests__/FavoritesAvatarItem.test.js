@@ -119,6 +119,7 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
 
 vi.mock('lucide-vue-next', () => ({
     AlertTriangle: { template: '<i />' },
+    Image: { template: '<i />' },
     Lock: { template: '<i />' },
     MoreHorizontal: { template: '<i />' },
     Trash2: { template: '<i />' }
@@ -207,7 +208,7 @@ describe('FavoritesAvatarItem.vue', () => {
         ).toContain('rounded-sm');
     });
 
-    it('shows fallback text when thumbnail is missing', () => {
+    it('shows fallback icon when thumbnail is missing', () => {
         const wrapper = mountItem({
             favorite: {
                 id: 'avtr_no_thumb',
@@ -223,9 +224,9 @@ describe('FavoritesAvatarItem.vue', () => {
         expect(wrapper.find('[data-testid="avatar-image"]').exists()).toBe(
             false
         );
-        expect(wrapper.get('[data-testid="avatar-fallback"]').text()).toContain(
-            'B'
-        );
+        expect(
+            wrapper.get('[data-testid="avatar-fallback"]').find('i').exists()
+        ).toBe(true);
     });
 
     it('uses local delete flow for local favorites', async () => {

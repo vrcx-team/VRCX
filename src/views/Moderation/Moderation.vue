@@ -1,5 +1,5 @@
 <template>
-    <div class="x-container" ref="moderationRef">
+    <div class="x-container x-container--auto-height" ref="moderationRef">
         <div class="mb-4 flex items-center">
             <Select
                 multiple
@@ -40,7 +40,7 @@
         <DataTableLayout
             :table="table"
             :loading="playerModerationTable.loading"
-            :table-style="tableHeightStyle"
+            auto-height
             :page-sizes="pageSizes"
             :total-items="totalItems"
             :on-page-size-change="handlePageSizeChange" />
@@ -63,7 +63,6 @@
     import { createColumns } from './columns.jsx';
     import { moderationTypes } from '../../shared/constants';
     import { playerModerationRequest } from '../../api';
-    import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     import configRepository from '../../services/config.js';
@@ -76,11 +75,6 @@
     const modalStore = useModalStore();
 
     const moderationRef = ref(null);
-    const { tableStyle: tableHeightStyle } = useDataTableScrollHeight(moderationRef, {
-        offset: 30,
-        toolbarHeight: 54,
-        paginationHeight: 52
-    });
 
     async function init() {
         playerModerationTable.value.filters[0].value = JSON.parse(

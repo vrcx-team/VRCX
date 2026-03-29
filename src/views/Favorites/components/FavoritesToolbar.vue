@@ -1,7 +1,7 @@
 <template>
     <div class="flex items-center justify-between gap-3 mb-3 flex-wrap">
         <div>
-            <Select :model-value="sortFavorites" @update:modelValue="$emit('update:sortFavorites', $event)">
+            <Select :model-value="sortValue" @update:modelValue="$emit('update:sortValue', $event)">
                 <SelectTrigger size="sm" class="min-w-[200px]">
                     <span class="flex items-center gap-2">
                         <ArrowUpDown class="h-4 w-4" />
@@ -11,14 +11,21 @@
                 <SelectContent>
                     <SelectGroup>
                         <SelectItem
-                            :value="false"
+                            value="name"
                             :text-value="t('view.settings.appearance.appearance.sort_favorite_by_name')">
                             {{ t('view.settings.appearance.appearance.sort_favorite_by_name') }}
                         </SelectItem>
                         <SelectItem
-                            :value="true"
+                            value="date"
                             :text-value="t('view.settings.appearance.appearance.sort_favorite_by_date')">
                             {{ t('view.settings.appearance.appearance.sort_favorite_by_date') }}
+                        </SelectItem>
+                        <SelectItem
+                            v-for="option in extraSortOptions"
+                            :key="option.value"
+                            :value="option.value"
+                            :text-value="option.label">
+                            {{ option.label }}
                         </SelectItem>
                     </SelectGroup>
                 </SelectContent>
@@ -30,7 +37,24 @@
                 class="flex-1"
                 :placeholder="searchPlaceholder"
                 @update:modelValue="$emit('update:searchQuery', $event)"
-                @input="$emit('search')" />
+                @input="$emit('search')">
+                <template v-if="searchModeVisible" #trailing>
+                    <ToggleGroup
+                        type="single"
+                        :model-value="searchMode"
+                        variant="outline"
+                        size="xs"
+                        class="mr-0.5"
+                        @update:modelValue="$emit('update:searchMode', $event)">
+                        <ToggleGroupItem value="name" class="h-5! px-1.5! text-[11px]">
+                            {{ t('view.favorite.worlds.search_mode_name') }}
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="tag" class="h-5! px-1.5! text-[11px]">
+                            {{ t('view.favorite.worlds.search_mode_tag') }}
+                        </ToggleGroupItem>
+                    </ToggleGroup>
+                </template>
+            </InputGroupSearch>
             <DropdownMenu :open="toolbarMenuOpen" @update:open="$emit('update:toolbarMenuOpen', $event)">
                 <DropdownMenuTrigger as-child>
                     <Button class="rounded-full" size="icon-sm" variant="ghost"><Ellipsis /></Button>
@@ -84,6 +108,7 @@
         DropdownMenuSeparator,
         DropdownMenuTrigger
     } from '@/components/ui/dropdown-menu';
+    import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
     import { ArrowUpDown, Ellipsis } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { InputGroupSearch } from '@/components/ui/input-group';
@@ -91,9 +116,12 @@
     import { useI18n } from 'vue-i18n';
 
     defineProps({
-        sortFavorites: { type: Boolean, default: false },
+        sortValue: { type: String, default: 'name' },
+        extraSortOptions: { type: Array, default: () => [] },
         searchQuery: { type: String, default: '' },
         searchPlaceholder: { type: String, default: '' },
+        searchMode: { type: String, default: 'name' },
+        searchModeVisible: { type: Boolean, default: false },
         toolbarMenuOpen: { type: Boolean, default: false },
         cardScaleValue: { type: Array, default: () => [50] },
         cardScalePercent: { type: Number, default: 100 },
@@ -104,8 +132,9 @@
     });
 
     defineEmits([
-        'update:sortFavorites',
+        'update:sortValue',
         'update:searchQuery',
+        'update:searchMode',
         'update:toolbarMenuOpen',
         'update:cardScaleValue',
         'update:cardSpacingValue',

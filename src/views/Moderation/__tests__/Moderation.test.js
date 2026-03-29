@@ -103,12 +103,6 @@ vi.mock('../../../lib/table/useVrcxVueTable', () => ({
     })
 }));
 
-vi.mock('../../../composables/useDataTableScrollHeight', () => ({
-    useDataTableScrollHeight: () => ({
-        tableStyle: {}
-    })
-}));
-
 vi.mock('@/components/ui/select', () => ({
     Select: {
         template: '<div><slot /></div>'

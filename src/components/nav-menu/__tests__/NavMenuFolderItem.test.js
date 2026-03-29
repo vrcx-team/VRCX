@@ -84,7 +84,8 @@ describe('NavMenuFolderItem', () => {
                 hasNotifications: false,
                 isEntryNotified: () => false,
                 isNavItemNotified: () => false,
-                isDashboardItem: () => false
+                isDashboardItem: () => false,
+                isToolItem: () => false
             }
         });
 
@@ -103,7 +104,8 @@ describe('NavMenuFolderItem', () => {
                 hasNotifications: false,
                 isEntryNotified: () => false,
                 isNavItemNotified: () => false,
-                isDashboardItem: () => false
+                isDashboardItem: () => false,
+                isToolItem: () => false
             }
         });
 

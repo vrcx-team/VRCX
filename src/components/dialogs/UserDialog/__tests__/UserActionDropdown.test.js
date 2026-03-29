@@ -27,11 +27,15 @@ vi.mock('../../../../stores', () => ({
 vi.mock('../../../../composables/useInviteChecks', () => ({
     useInviteChecks: () => ({ checkCanInvite: () => true })
 }));
+vi.mock('../../../../composables/useRecentActions', () => ({
+    isActionRecent: () => false
+}));
 vi.mock('../../../ui/dropdown-menu', () => ({
     DropdownMenu: { template: '<div><slot /></div>' },
     DropdownMenuTrigger: { template: '<div><slot /></div>' },
     DropdownMenuContent: { template: '<div><slot /></div>' },
     DropdownMenuSeparator: { template: '<hr />' },
+    DropdownMenuShortcut: { template: '<span><slot /></span>' },
     DropdownMenuItem: {
         emits: ['click'],
         template:
@@ -51,6 +55,7 @@ vi.mock('../../../ui/tooltip', () => ({
 vi.mock('lucide-vue-next', () => ({
     Check: { template: '<i />' },
     CheckCircle: { template: '<i />' },
+    Clock: { template: '<i />' },
     Flag: { template: '<i />' },
     LineChart: { template: '<i />' },
     Mail: { template: '<i />' },

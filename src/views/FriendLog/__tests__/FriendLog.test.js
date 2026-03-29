@@ -55,12 +55,6 @@ vi.mock('../../../stores', () => ({
     })
 }));
 
-vi.mock('../../../composables/useDataTableScrollHeight', () => ({
-    useDataTableScrollHeight: () => ({
-        tableStyle: {}
-    })
-}));
-
 vi.mock('../../../lib/table/useVrcxVueTable', () => ({
     useVrcxVueTable: (options) => ({
         table: {
@@ -212,7 +206,7 @@ describe('FriendLog.vue', () => {
             mocks.friendLogTable.value.data,
             row
         );
-        expect(mocks.deleteFriendLogHistory).toHaveBeenCalledWith(55);
+        expect(mocks.deleteFriendLogHistory).toHaveBeenCalledWith(row);
     });
 
     test('resets page index when page size changes', async () => {

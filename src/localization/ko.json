@@ -43,6 +43,10 @@
                 "devEndpoint": "개발자용 API",
                 "endpoint": "Endpoint",
                 "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "언어 감지됨",
+                "description": "시스템 언어가 {language}인 것 같습니다. 전환하시겠습니까?"
             }
         },
         "feed": {

@@ -25,7 +25,7 @@ import {
 } from '../../shared/utils/base/ui';
 import { computeTrustLevel, getNameColour } from '../../shared/utils';
 import { database } from '../../services/database';
-import { languageCodes } from '../../localization';
+
 import { loadLocalizedStrings } from '../../plugins';
 import { useFeedStore } from '../feed';
 import { useGameLogStore } from '../gameLog';
@@ -70,6 +70,7 @@ export const useAppearanceSettingsStore = defineStore(
         const tablePageSizes = ref([...DEFAULT_TABLE_PAGE_SIZES]);
         const dtHour12 = ref(false);
         const dtIsoFormat = ref(false);
+        const weekStartsOn = ref(1);
         const sidebarSortMethod1 = ref('Sort Private to Bottom');
         const sidebarSortMethod2 = ref('Sort by Time in Instance');
         const sidebarSortMethod3 = ref('Sort by Last Active');
@@ -81,6 +82,7 @@ export const useAppearanceSettingsStore = defineStore(
         const navWidth = ref(240);
         const isSidebarGroupByInstance = ref(true);
         const isHideFriendsInSameInstance = ref(false);
+        const isSameInstanceAboveFavorites = ref(false);
         const isSidebarDivideByFriendGroup = ref(false);
         const sidebarFavoriteGroups = ref([]);
         const sidebarFavoriteGroupOrder = ref([]);
@@ -108,12 +110,16 @@ export const useAppearanceSettingsStore = defineStore(
                 'friends-locations',
                 'friend-list',
                 'charts-instance',
-                'charts-mutual'
+                'charts-mutual',
+                'charts-hot-worlds'
             ].includes(currentRouteName);
         });
 
         const isDataTableStriped = ref(false);
         const showPointerOnHover = ref(false);
+        const accessibleStatusIndicators = ref(false);
+        const useOfficialStatusColors = ref(true);
+        const showNewDashboardButton = ref(true);
         const tableLimitsDialog = ref({
             visible: false,
             maxTableSize: 500,
@@ -154,10 +160,12 @@ export const useAppearanceSettingsStore = defineStore(
                 tablePageSizesConfig,
                 dtHour12Config,
                 dtIsoFormatConfig,
+                weekStartsOnConfig,
                 sidebarSortMethodsConfig,
                 navWidthConfig,
                 isSidebarGroupByInstanceConfig,
                 isHideFriendsInSameInstanceConfig,
+                isSameInstanceAboveFavoritesConfig,
                 isSidebarDivideByFriendGroupConfig,
                 sidebarFavoriteGroupsConfig,
                 sidebarFavoriteGroupOrderConfig,
@@ -172,6 +180,9 @@ export const useAppearanceSettingsStore = defineStore(
                 navIsCollapsedConfig,
                 dataTableStripedConfig,
                 showPointerOnHoverConfig,
+                accessibleStatusIndicatorsConfig,
+                useOfficialStatusColorsConfig,
+                showNewDashboardButtonConfig,
                 appFontFamilyConfig,
                 customFontFamilyConfig,
                 appCjkFontPackConfig,
@@ -200,6 +211,7 @@ export const useAppearanceSettingsStore = defineStore(
                 ),
                 configRepository.getBool('VRCX_dtHour12', false),
                 configRepository.getBool('VRCX_dtIsoFormat', false),
+                configRepository.getInt('VRCX_weekStartsOn', 1),
                 configRepository.getString(
                     'VRCX_sidebarSortMethods',
                     JSON.stringify([
@@ -212,6 +224,10 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getBool('VRCX_sidebarGroupByInstance', true),
                 configRepository.getBool(
                     'VRCX_hideFriendsInSameInstance',
+                    false
+                ),
+                configRepository.getBool(
+                    'VRCX_sameInstanceAboveFavorites',
                     false
                 ),
                 configRepository.getBool(
@@ -237,6 +253,12 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getBool('VRCX_navIsCollapsed', false),
                 configRepository.getBool('VRCX_dataTableStriped', false),
                 configRepository.getBool('VRCX_showPointerOnHover', false),
+                configRepository.getBool(
+                    'VRCX_accessibleStatusIndicators',
+                    false
+                ),
+                configRepository.getBool('VRCX_useOfficialStatusColors', true),
+                configRepository.getBool('VRCX_showNewDashboardButton', true),
                 configRepository.getString(
                     'VRCX_fontFamily',
                     APP_FONT_DEFAULT_KEY
@@ -252,19 +274,15 @@ export const useAppearanceSettingsStore = defineStore(
                 )
             ]);
 
-            if (!appLanguageConfig) {
-                const result = await AppApi.CurrentLanguage();
-
-                const lang = result.split('-')[0];
-
-                for (const ref of languageCodes) {
-                    const refLang = ref.split('_')[0];
-                    if (refLang === lang) {
-                        await changeAppLanguage(ref);
-                    }
-                }
-            } else {
+            if (appLanguageConfig) {
                 await changeAppLanguage(appLanguageConfig);
+            } else {
+                // First launch: load en in-memory only, do NOT persist.
+                // Login.vue detectAndPromptLanguage() will handle first-time language selection.
+                await loadLocalizedStrings('en');
+                appLanguage.value = 'en';
+                locale.value = 'en';
+                changeHtmlLangAttribute('en');
             }
 
             themeMode.value = initThemeMode;
@@ -305,6 +323,9 @@ export const useAppearanceSettingsStore = defineStore(
 
             dtHour12.value = dtHour12Config;
             dtIsoFormat.value = dtIsoFormatConfig;
+            weekStartsOn.value = [0, 1, 6].includes(weekStartsOnConfig)
+                ? weekStartsOnConfig
+                : 1;
 
             currentCulture.value = await AppApi.CurrentCulture();
 
@@ -326,6 +347,8 @@ export const useAppearanceSettingsStore = defineStore(
             isSidebarGroupByInstance.value = isSidebarGroupByInstanceConfig;
             isHideFriendsInSameInstance.value =
                 isHideFriendsInSameInstanceConfig;
+            isSameInstanceAboveFavorites.value =
+                isSameInstanceAboveFavoritesConfig;
             isSidebarDivideByFriendGroup.value =
                 isSidebarDivideByFriendGroupConfig;
             sidebarFavoriteGroups.value = JSON.parse(
@@ -354,8 +377,13 @@ export const useAppearanceSettingsStore = defineStore(
             isNavCollapsed.value = navIsCollapsedConfig;
             isDataTableStriped.value = dataTableStripedConfig;
             showPointerOnHover.value = showPointerOnHoverConfig;
+            accessibleStatusIndicators.value = accessibleStatusIndicatorsConfig;
+            useOfficialStatusColors.value = useOfficialStatusColorsConfig;
+            showNewDashboardButton.value = showNewDashboardButtonConfig;
 
             applyPointerHoverClass();
+            applyAccessibleStatusClass();
+            applyOfficialStatusColorsClass();
 
             await configRepository.remove('VRCX_navWidth');
 
@@ -706,6 +734,14 @@ export const useAppearanceSettingsStore = defineStore(
             configRepository.setBool('VRCX_dtIsoFormat', dtIsoFormat.value);
         }
         /**
+         * @param {number} value - 0 (Sunday), 1 (Monday), or 6 (Saturday)
+         */
+        function setWeekStartsOn(value) {
+            const v = [0, 1, 6].includes(value) ? value : 1;
+            weekStartsOn.value = v;
+            configRepository.setInt('VRCX_weekStartsOn', v);
+        }
+        /**
          * @param {string} method
          */
         function setSidebarSortMethod1(method) {
@@ -790,6 +826,17 @@ export const useAppearanceSettingsStore = defineStore(
             configRepository.setBool(
                 'VRCX_hideFriendsInSameInstance',
                 isHideFriendsInSameInstance.value
+            );
+        }
+        /**
+         *
+         */
+        function setIsSameInstanceAboveFavorites() {
+            isSameInstanceAboveFavorites.value =
+                !isSameInstanceAboveFavorites.value;
+            configRepository.setBool(
+                'VRCX_sameInstanceAboveFavorites',
+                isSameInstanceAboveFavorites.value
             );
         }
         /**
@@ -914,6 +961,66 @@ export const useAppearanceSettingsStore = defineStore(
                 showPointerOnHover.value
             );
             applyPointerHoverClass();
+        }
+
+        /**
+         *
+         */
+        function applyAccessibleStatusClass() {
+            const classList = document.documentElement.classList;
+            classList.remove('accessible-status-indicators');
+
+            if (accessibleStatusIndicators.value) {
+                classList.add('accessible-status-indicators');
+            }
+        }
+
+        /**
+         *
+         */
+        function toggleAccessibleStatusIndicators() {
+            accessibleStatusIndicators.value =
+                !accessibleStatusIndicators.value;
+            configRepository.setBool(
+                'VRCX_accessibleStatusIndicators',
+                accessibleStatusIndicators.value
+            );
+            applyAccessibleStatusClass();
+        }
+
+        /**
+         *
+         */
+        function applyOfficialStatusColorsClass() {
+            const classList = document.documentElement.classList;
+            classList.remove('vrcx-status-colors');
+
+            if (!useOfficialStatusColors.value) {
+                classList.add('vrcx-status-colors');
+            }
+        }
+
+        /**
+         *
+         */
+        function toggleOfficialStatusColors() {
+            useOfficialStatusColors.value = !useOfficialStatusColors.value;
+            configRepository.setBool(
+                'VRCX_useOfficialStatusColors',
+                useOfficialStatusColors.value
+            );
+            applyOfficialStatusColorsClass();
+        }
+
+        /**
+         *
+         */
+        function setShowNewDashboardButton() {
+            showNewDashboardButton.value = !showNewDashboardButton.value;
+            configRepository.setBool(
+                'VRCX_showNewDashboardButton',
+                showNewDashboardButton.value
+            );
         }
 
         /**
@@ -1127,6 +1234,7 @@ export const useAppearanceSettingsStore = defineStore(
             tablePageSizes,
             dtHour12,
             dtIsoFormat,
+            weekStartsOn,
             sidebarSortMethod1,
             sidebarSortMethod2,
             sidebarSortMethod3,
@@ -1134,6 +1242,7 @@ export const useAppearanceSettingsStore = defineStore(
             navWidth,
             isSidebarGroupByInstance,
             isHideFriendsInSameInstance,
+            isSameInstanceAboveFavorites,
             isSidebarDivideByFriendGroup,
             sidebarFavoriteGroups,
             sidebarFavoriteGroupOrder,
@@ -1149,6 +1258,9 @@ export const useAppearanceSettingsStore = defineStore(
             isNavCollapsed,
             isDataTableStriped,
             showPointerOnHover,
+            accessibleStatusIndicators,
+            useOfficialStatusColors,
+            showNewDashboardButton,
             tableLimitsDialog,
             TABLE_MAX_SIZE_MIN,
             TABLE_MAX_SIZE_MAX,
@@ -1166,6 +1278,7 @@ export const useAppearanceSettingsStore = defineStore(
             setTablePageSizes,
             setDtHour12,
             setDtIsoFormat,
+            setWeekStartsOn,
             setSidebarSortMethod1,
             setSidebarSortMethod2,
             setSidebarSortMethod3,
@@ -1173,6 +1286,7 @@ export const useAppearanceSettingsStore = defineStore(
             setNavWidth,
             setIsSidebarGroupByInstance,
             setIsHideFriendsInSameInstance,
+            setIsSameInstanceAboveFavorites,
             setIsSidebarDivideByFriendGroup,
             setSidebarFavoriteGroups,
             setSidebarFavoriteGroupOrder,
@@ -1182,6 +1296,9 @@ export const useAppearanceSettingsStore = defineStore(
             setRandomUserColours,
             toggleStripedDataTable,
             togglePointerOnHover,
+            toggleAccessibleStatusIndicators,
+            toggleOfficialStatusColors,
+            setShowNewDashboardButton,
             setTableDensity,
             setTrustColor,
             tryInitUserColours,

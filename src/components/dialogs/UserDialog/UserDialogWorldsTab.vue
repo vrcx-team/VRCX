@@ -10,11 +10,12 @@
                 <Spinner v-if="userDialog.isWorldsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span style="margin-left: 6px">{{
+            <span class="ml-1.5 text-sm">{{
                 t('dialog.user.worlds.total_count', { count: userDialog.worlds.length })
             }}</span>
         </div>
         <div style="display: flex; align-items: center">
+            <Input v-model="searchQuery" class="h-8 w-40 mr-2" placeholder="Search worlds" @click.stop />
             <span class="mr-1">{{ t('dialog.user.worlds.sort_by') }}</span>
             <Select
                 :model-value="userDialogWorldSortingKey"
@@ -54,7 +55,7 @@
     <div class="flex flex-wrap items-start" style="margin-top: 8px; min-height: 60px">
         <template v-if="userDialog.worlds.length">
             <div
-                v-for="world in userDialog.worlds"
+                v-for="world in filteredWorlds"
                 :key="world.id"
                 class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                 @click="showWorldDialog(world.id)">
@@ -87,7 +88,8 @@
     import { Image, RefreshCw } from 'lucide-vue-next';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Spinner } from '@/components/ui/spinner';
-    import { ref } from 'vue';
+    import { Input } from '@/components/ui/input';
+    import { computed, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -104,6 +106,15 @@
     const { cachedWorlds } = useWorldStore();
 
     const userDialogWorldsRequestId = ref(0);
+
+    const searchQuery = ref('');
+    const filteredWorlds = computed(() => {
+        const worlds = userDialog.value.worlds;
+        const query = searchQuery.value.trim().toLowerCase();
+        if (!query) return worlds;
+        return worlds.filter((w) => (w.name || '').toLowerCase().includes(query));
+    });
+    watch(() => userDialog.value.id, () => { searchQuery.value = ''; });
 
     /**
      *

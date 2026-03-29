@@ -1,5 +1,5 @@
 <template>
-    <div class="w-223">
+    <div class="w-223 flex-1 min-h-0 flex flex-col">
         <DialogHeader class="sr-only">
             <DialogTitle>{{
                 userDialog.ref?.displayName || userDialog.id || t('dialog.user.info.header')
@@ -7,6 +7,7 @@
             <DialogDescription>{{ getUserStateText(userDialog.ref || {}) }}</DialogDescription>
         </DialogHeader>
         <UserSummaryHeader
+            class="flex-shrink-0"
             :get-user-state-text="getUserStateText"
             :copy-user-display-name="copyUserDisplayName"
             :toggle-badge-visibility="toggleBadgeVisibility"
@@ -17,6 +18,7 @@
             v-model="userDialog.activeTab"
             :items="userDialogTabs"
             :unmount-on-hide="false"
+            fill
             @update:modelValue="userDialogTabClick">
             <template #Info>
                 <UserDialogInfoTab ref="infoTabRef" @show-bio-dialog="showBioDialog" />
@@ -40,6 +42,10 @@
 
             <template #Avatars>
                 <UserDialogAvatarsTab ref="avatarsTabRef" />
+            </template>
+
+            <template #Activity>
+                <UserDialogActivityTab ref="activityTabRef" />
             </template>
 
             <template #JSON>
@@ -70,7 +76,7 @@
 </template>
 
 <script setup>
-    import { computed, ref, watch } from 'vue';
+    import { computed, onMounted, ref, watch } from 'vue';
     import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
@@ -97,6 +103,7 @@
 
     import DialogJsonTab from '../DialogJsonTab.vue';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
+    import UserDialogActivityTab from './UserDialogActivityTab.vue';
     import UserDialogAvatarsTab from './UserDialogAvatarsTab.vue';
     import UserDialogFavoriteWorldsTab from './UserDialogFavoriteWorldsTab.vue';
     import UserDialogGroupsTab from './UserDialogGroupsTab.vue';
@@ -125,9 +132,13 @@
         if (userDialog.value.id !== currentUser.value.id && !currentUser.value.hasSharedConnectionsOptOut) {
             tabs.splice(1, 0, { value: 'mutual', label: t('dialog.user.mutual_friends.header') });
         }
+        // Insert Activity before JSON
+        const jsonIdx = tabs.findIndex((tab) => tab.value === 'JSON');
+        tabs.splice(jsonIdx, 0, { value: 'Activity', label: t('dialog.user.activity.header') });
         return tabs;
     });
     const infoTabRef = ref(null);
+    const activityTabRef = ref(null);
     const favoriteWorldsTabRef = ref(null);
     const mutualFriendsTabRef = ref(null);
     const worldsTabRef = ref(null);
@@ -194,6 +205,30 @@
             }
         }
     );
+
+    watch(
+        () => userDialog.value.visible,
+        (visible) => {
+            if (visible && !userDialog.value.loading) {
+                loadLastActiveTab();
+            }
+        }
+    );
+
+    watch(
+        () => userDialog.value.activeTab,
+        (activeTab) => {
+            if (activeTab === 'Activity' && userDialog.value.visible && !userDialog.value.loading) {
+                activityTabRef.value?.loadOnlineFrequency(userDialog.value.id);
+            }
+        }
+    );
+
+    onMounted(() => {
+        if (userDialog.value.visible && !userDialog.value.loading) {
+            loadLastActiveTab();
+        }
+    });
 
     const userDialogLastMutualFriends = ref('');
     const userDialogLastGroup = ref('');
@@ -326,6 +361,8 @@
                 userDialogLastFavoriteWorld.value = userId;
                 favoriteWorldsTabRef.value?.getUserFavoriteWorlds(userId);
             }
+        } else if (tabName === 'Activity') {
+            activityTabRef.value?.loadOnlineFrequency(userId);
         } else if (tabName === 'JSON') {
             refreshUserDialogTreeData();
         }
@@ -335,7 +372,8 @@
      *
      */
     function loadLastActiveTab() {
-        handleUserDialogTab(userDialog.value.lastActiveTab);
+        const tab = userDialog.value.lastActiveTab;
+        handleUserDialogTab(tab);
     }
 
     /**

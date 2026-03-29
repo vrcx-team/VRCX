@@ -1,4 +1,9 @@
-import { ArrowUpDown, UserMinus } from 'lucide-vue-next';
+import { ArrowUpDown, EyeOff, User, UserMinus } from 'lucide-vue-next';
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage
+} from '../../components/ui/avatar';
 
 import { Button } from '../../components/ui/button';
 import { Checkbox } from '../../components/ui/checkbox';
@@ -11,8 +16,7 @@ import {
     openExternalLink,
     sortStatus,
     statusClass,
-    timeToText,
-    userImage
+    timeToText
 } from '../../shared/utils';
 
 const { t } = i18n.global;
@@ -96,7 +100,8 @@ export const createColumns = ({
     randomUserColours,
     selectedFriends,
     onToggleFriendSelection,
-    onConfirmDeleteFriend
+    onConfirmDeleteFriend,
+    userImage
 }) => {
     const cols = [];
 
@@ -163,15 +168,20 @@ export const createColumns = ({
             meta: { label: () => t('table.friendList.avatar') },
             cell: ({ row }) => {
                 const src = userImage(row.original, true);
-                return src ? (
+                return (
                     <div class="flex items-center">
-                        <img
-                            src={src}
-                            class="friends-list-avatar object-cover w-6! h-6"
-                            loading="lazy"
-                        />
+                        <Avatar class="size-6 rounded-full">
+                            <AvatarImage
+                                src={src}
+                                class="friends-list-avatar object-cover"
+                                loading="lazy"
+                            />
+                            <AvatarFallback>
+                                <User class="size-3 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
                     </div>
-                ) : null;
+                );
             }
         },
         {
@@ -381,7 +391,21 @@ export const createColumns = ({
             },
             cell: ({ row }) => {
                 const count = row.original?.$mutualCount;
-                return count ? <span>{count}</span> : null;
+                const optedOut = row.original?.$mutualOptedOut;
+                if (!count && !optedOut) return null;
+                return (
+                    <span class="inline-flex items-center gap-1">
+                        {count || null}
+                        {optedOut ? (
+                            <TooltipWrapper
+                                side="top"
+                                content={t('table.friendList.mutualOptedOut')}
+                            >
+                                <EyeOff class="h-3.5 w-3.5 text-muted-foreground" />
+                            </TooltipWrapper>
+                        ) : null}
+                    </span>
+                );
             }
         },
         {

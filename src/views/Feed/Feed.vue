@@ -1,9 +1,9 @@
 <template>
-    <div class="x-container feed" ref="feedRef">
+    <div class="x-container feed x-container--auto-height" ref="feedRef">
         <DataTableLayout
             :table="table"
             :loading="feedTable.loading"
-            :table-style="tableHeightStyle"
+            auto-height
             :page-sizes="pageSizes"
             :total-items="totalItems"
             :on-page-size-change="handlePageSizeChange">
@@ -28,7 +28,8 @@
                                     v-model="dateRange"
                                     :locale="locale"
                                     :max-value="todayDate"
-                                    :number-of-months="2" />
+                                    :number-of-months="2"
+                                    :week-starts-on="weekStartsOn" />
                                 <div class="flex justify-end gap-2 mt-3">
                                     <Button variant="outline" size="sm" @click="clearDateFilter">
                                         {{ t('common.actions.clear') }}
@@ -86,7 +87,7 @@
 </template>
 
 <script setup>
-    import { computed, ref, watch } from 'vue';
+    import { computed, ref } from 'vue';
     import { ListFilter, Star } from 'lucide-vue-next';
     import { getLocalTimeZone, today } from '@internationalized/date';
     import { storeToRefs } from 'pinia';
@@ -104,12 +105,12 @@
     import { RangeCalendar } from '../../components/ui/range-calendar';
     import { Toggle } from '../../components/ui/toggle';
     import { columns as baseColumns } from './columns.jsx';
-    import { useDataTableScrollHeight } from '../../composables/useDataTableScrollHeight';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     const { feedTable, feedTableData } = storeToRefs(useFeedStore());
     const { feedTableLookup } = useFeedStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
+    const { weekStartsOn } = storeToRefs(appearanceSettingsStore);
     const vrcxStore = useVrcxStore();
 
     const { t, locale } = useI18n();
@@ -153,13 +154,6 @@
     }
 
     const feedRef = ref(null);
-
-    // TODO: simplify
-    const { tableStyle: tableHeightStyle } = useDataTableScrollHeight(feedRef, {
-        offset: 30,
-        toolbarHeight: 54,
-        paginationHeight: 52
-    });
 
     const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
 

@@ -117,7 +117,7 @@
 
     function navigateToTable() {
         isNotificationCenterOpen.value = false;
-        router.push({ name: 'notification' });
+        router.push({ name: 'notification', query: { fromCenter: '1' } });
     }
 
     function showSendInviteResponseDialog(invite) {

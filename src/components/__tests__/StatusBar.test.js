@@ -236,7 +236,7 @@ describe('StatusBar.vue - Servers indicator', () => {
         expect(wrapper.text()).toContain('Servers');
         const serversDots = wrapper.findAll('.bg-status-online');
         expect(serversDots.length).toBeGreaterThan(0);
-        expect(wrapper.find('.bg-\\[\\#e6a23c\\]').exists()).toBe(false);
+        expect(wrapper.find('.bg-status-askme').exists()).toBe(false);
     });
 
     test('shows Servers indicator with yellow dot when there is an issue', () => {
@@ -246,7 +246,7 @@ describe('StatusBar.vue - Servers indicator', () => {
             }
         });
         expect(wrapper.text()).toContain('Servers');
-        expect(wrapper.find('.bg-\\[\\#e6a23c\\]').exists()).toBe(true);
+        expect(wrapper.find('.bg-status-askme').exists()).toBe(true);
     });
 
     test('shows HoverCard content with status text when there is an issue', () => {

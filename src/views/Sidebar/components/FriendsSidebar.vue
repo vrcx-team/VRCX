@@ -1,6 +1,6 @@
 <template>
     <div class="relative h-full">
-        <div ref="scrollViewportRef" class="h-full w-full overflow-auto">
+        <div ref="scrollViewportRef" class="h-full w-full overflow-auto overflow-x-hidden">
             <div class="px-1.5 py-2.5">
                 <div v-if="virtualRows.length" class="relative w-full box-border" :style="virtualContainerStyle">
                     <template v-for="item in virtualItems" :key="String(item.virtualItem.key)">
@@ -118,8 +118,12 @@
                                                     :key="idx"
                                                     class="gap-2"
                                                     @click="applyStatusPreset(preset)">
-                                                    <i class="x-user-status" :class="presetStatusClass(preset.status)"></i>
-                                                    <span class="truncate max-w-[180px]">{{ getPresetDisplayText(preset) }}</span>
+                                                    <i
+                                                        class="x-user-status"
+                                                        :class="presetStatusClass(preset.status)"></i>
+                                                    <span class="truncate max-w-[180px]">{{
+                                                        getPresetDisplayText(preset)
+                                                    }}</span>
                                                 </ContextMenuItem>
                                             </ContextMenuSubContent>
                                         </ContextMenuSub>
@@ -147,12 +151,19 @@
                                             v-if="item.row.friend.state === 'online'"
                                             @click="friendRequestInvite(item.row.friend)">
                                             {{ t('dialog.user.actions.request_invite') }}
+                                            <ContextMenuShortcut
+                                                v-if="isActionRecent(item.row.friend.id, 'Request Invite')">
+                                                <Clock class="size-3.5 text-muted-foreground" />
+                                            </ContextMenuShortcut>
                                         </ContextMenuItem>
                                         <ContextMenuItem
                                             v-if="isGameRunning"
                                             :disabled="!canInviteToMyLocation"
                                             @click="friendInvite(item.row.friend)">
                                             {{ t('dialog.user.actions.invite') }}
+                                            <ContextMenuShortcut v-if="isActionRecent(item.row.friend.id, 'Invite')">
+                                                <Clock class="size-3.5 text-muted-foreground" />
+                                            </ContextMenuShortcut>
                                         </ContextMenuItem>
                                         <ContextMenuItem
                                             :disabled="!currentUser.isBoopingEnabled"
@@ -193,7 +204,7 @@
 
 <script setup>
     import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
-    import { ChevronDown, User } from 'lucide-vue-next';
+    import { ChevronDown, Clock, User } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -205,6 +216,7 @@
         ContextMenuContent,
         ContextMenuItem,
         ContextMenuSeparator,
+        ContextMenuShortcut,
         ContextMenuSub,
         ContextMenuSubContent,
         ContextMenuSubTrigger,
@@ -225,6 +237,7 @@
     import { getFriendsSortFunction, isRealInstance } from '../../../shared/utils';
     import { instanceRequest, notificationRequest, queryRequest, userRequest } from '../../../api';
     import { useInviteChecks } from '../../../composables/useInviteChecks';
+    import { isActionRecent, recordRecentAction } from '../../../composables/useRecentActions';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { getFriendsLocations } from '../../../shared/utils/location.js';
     import { parseLocation } from '../../../shared/utils';
@@ -253,6 +266,7 @@
     const {
         isSidebarGroupByInstance,
         isHideFriendsInSameInstance,
+        isSameInstanceAboveFavorites,
         isSidebarDivideByFriendGroup,
         sidebarFavoriteGroups,
         sidebarFavoriteGroupOrder,
@@ -321,9 +335,7 @@
     });
 
     const visibleFavoriteOnlineFriends = computed(() => {
-        const filtered = allFavoriteOnlineFriends.value.filter((friend) =>
-            selectedFavoriteGroupIds.value.has(friend.id)
-        );
+        const filtered = allFavoriteOnlineFriends.value.filter((friend) => selectedFavoriteGroupIds.value.has(friend.id));
         return excludeSameInstance(filtered);
     });
 
@@ -403,23 +415,7 @@
         });
     });
 
-    const virtualRows = computed(() => {
-        const rows = [];
-
-        rows.push(
-            buildToggleRow({
-                key: 'me-header',
-                label: t('side_panel.me'),
-                expanded: isFriendsGroupMe.value,
-                headerPadding: '0 0 5px',
-                onClick: toggleFriendsGroupMe
-            })
-        );
-
-        if (isFriendsGroupMe.value) {
-            rows.push({ type: 'me-item', key: `me:${currentUser.value?.id ?? 'me'}` });
-        }
-
+    function buildFavoriteRows(rows) {
         const vipFriendCount = isSidebarDivideByFriendGroup.value
             ? vipFriendsDivideByGroup.value.reduce((sum, group) => sum + group.length, 0)
             : visibleFavoriteOnlineFriends.value.length;
@@ -476,7 +472,9 @@
                 });
             }
         }
+    }
 
+    function buildSameInstanceRows(rows) {
         if (isSidebarGroupByInstance.value && friendsInSameInstance.value.length) {
             rows.push(
                 buildToggleRow({
@@ -511,6 +509,32 @@
                     });
                 });
             }
+        }
+    }
+
+    const virtualRows = computed(() => {
+        const rows = [];
+
+        rows.push(
+            buildToggleRow({
+                key: 'me-header',
+                label: t('side_panel.me'),
+                expanded: isFriendsGroupMe.value,
+                headerPadding: '0 0 5px',
+                onClick: toggleFriendsGroupMe
+            })
+        );
+
+        if (isFriendsGroupMe.value) {
+            rows.push({ type: 'me-item', key: `me:${currentUser.value?.id ?? 'me'}` });
+        }
+
+        if (isSameInstanceAboveFavorites.value) {
+            buildSameInstanceRows(rows);
+            buildFavoriteRows(rows);
+        } else {
+            buildFavoriteRows(rows);
+            buildSameInstanceRows(rows);
         }
 
         if (onlineFriendsByGroupStatus.value.length) {
@@ -780,6 +804,7 @@
      */
     function friendRequestInvite(friend) {
         notificationRequest.sendRequestInvite({ platform: 'standalonewindows' }, friend.id).then(() => {
+            recordRecentAction(friend.id, 'Request Invite');
             toast.success('Request invite sent');
         });
     }
@@ -804,6 +829,7 @@
                     friend.id
                 )
                 .then(() => {
+                    recordRecentAction(friend.id, 'Invite');
                     toast.success(t('message.invite.sent'));
                 });
         });

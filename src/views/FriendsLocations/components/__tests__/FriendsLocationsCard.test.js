@@ -196,6 +196,11 @@ const i18n = createI18n({
     messages: { en }
 });
 
+vi.mock('lucide-vue-next', () => ({
+    Pencil: { template: '<span class="pencil-icon" />' },
+    User: { template: '<span class="user-icon" />' }
+}));
+
 // Stub all complex UI components — render slots transparently
 const stubs = {
     ContextMenu: { template: '<div data-testid="context-menu"><slot /></div>' },
@@ -229,6 +234,7 @@ const stubs = {
         props: ['location', 'traveling', 'link', 'class']
     },
     Pencil: { template: '<span class="pencil-icon" />', props: ['class'] },
+    User: { template: '<span class="user-icon" />', props: ['class', 'size'] },
     TooltipWrapper: {
         template: '<span><slot /></span>',
         props: ['content', 'disabled', 'delayDuration', 'side']
@@ -356,11 +362,11 @@ describe('FriendsLocationsCard.vue', () => {
             expect(wrapper.text()).toContain('A');
         });
 
-        test('shows ? as avatar fallback when name is empty', () => {
+        test('shows user icon as avatar fallback when name is empty', () => {
             const wrapper = mountCard({
                 friend: makeFriend({ name: undefined })
             });
-            expect(wrapper.text()).toContain('?');
+            expect(wrapper.find('.user-icon').exists()).toBe(true);
         });
 
         test('hides location when displayInstanceInfo is false', () => {

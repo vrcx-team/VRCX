@@ -116,13 +116,27 @@ const friendLogHistory = {
         return friendLogHistory;
     },
 
-    deleteFriendLogHistory(rowId) {
-        sqliteService.executeNonQuery(
-            `DELETE FROM ${dbVars.userPrefix}_friend_log_history WHERE id = @row_id`,
-            {
-                '@row_id': rowId
-            }
-        );
+    // https://github.com/vrcx-team/VRCX/issues/1262
+    deleteFriendLogHistory(entry) {
+        if (entry.rowId != null) {
+            sqliteService.executeNonQuery(
+                `DELETE FROM ${dbVars.userPrefix}_friend_log_history WHERE id = @row_id`,
+                {
+                    '@row_id': entry.rowId
+                }
+            );
+        } else {
+            // Entries created in-session don't have a rowId yet;
+            // fall back to composite key so the DB row is still removed.
+            sqliteService.executeNonQuery(
+                `DELETE FROM ${dbVars.userPrefix}_friend_log_history WHERE created_at = @created_at AND type = @type AND user_id = @user_id`,
+                {
+                    '@created_at': entry.created_at,
+                    '@type': entry.type,
+                    '@user_id': entry.userId
+                }
+            );
+        }
     }
 };
 

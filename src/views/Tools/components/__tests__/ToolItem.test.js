@@ -1,24 +1,19 @@
 import { describe, expect, test, vi } from 'vitest';
-import { defineComponent, markRaw } from 'vue';
 import { mount } from '@vue/test-utils';
 
 import ToolItem from '../ToolItem.vue';
 
 describe('ToolItem.vue', () => {
     test('renders icon, title and description', () => {
-        const MockIcon = defineComponent({
-            template: '<svg data-test="mock-icon" />'
-        });
-
         const wrapper = mount(ToolItem, {
             props: {
-                icon: markRaw(MockIcon),
+                icon: 'ri-screenshot-line',
                 title: 'Test title',
                 description: 'Test description'
             }
         });
 
-        expect(wrapper.find('[data-test="mock-icon"]').exists()).toBe(true);
+        expect(wrapper.find('i.ri-screenshot-line').exists()).toBe(true);
         expect(wrapper.text()).toContain('Test title');
         expect(wrapper.text()).toContain('Test description');
     });
@@ -28,7 +23,7 @@ describe('ToolItem.vue', () => {
 
         const wrapper = mount(ToolItem, {
             props: {
-                icon: markRaw(defineComponent({ template: '<svg />' })),
+                icon: 'ri-screenshot-line',
                 title: 'Clickable title',
                 description: 'Clickable description'
             },

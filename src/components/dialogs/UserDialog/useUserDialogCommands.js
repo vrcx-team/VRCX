@@ -10,6 +10,7 @@ import {
 } from '../../../api';
 import { copyToClipboard, parseLocation } from '../../../shared/utils';
 import { database } from '../../../services/database';
+import { recordRecentAction } from '../../../composables/useRecentActions';
 
 /**
  * Composable for UserDialog command dispatch.
@@ -234,7 +235,7 @@ export function useUserDialogCommands(
             Share: () => {
                 copyToClipboard(
                     `https://vrchat.com/home/user/${D().id}`,
-                    'User URL copied to clipboard'
+                    t('message.user.url_copied')
                 );
             },
             'Add Favorite': () => {
@@ -253,7 +254,8 @@ export function useUserDialogCommands(
                         D().id
                     )
                     .then((args) => {
-                        toast('Request invite sent');
+                        toast(t('message.user.request_invite_sent'));
+                        recordRecentAction(D().id, 'Request Invite');
                         return args;
                     });
             },
@@ -272,6 +274,7 @@ export function useUserDialogCommands(
                             },
                             D().id
                         );
+                        recordRecentAction(D().id, 'Invite Message');
                     });
             },
             'Request Invite Message': () => {
@@ -281,6 +284,7 @@ export function useUserDialogCommands(
                     },
                     D().id
                 );
+                recordRecentAction(D().id, 'Request Invite Message');
             },
             Invite: () => {
                 let currentLocation = lastLocation.value.location;
@@ -304,6 +308,7 @@ export function useUserDialogCommands(
                             )
                             .then((_args) => {
                                 toast(t('message.invite.sent'));
+                                recordRecentAction(D().id, 'Invite');
                                 return _args;
                             });
                     });
@@ -321,7 +326,7 @@ export function useUserDialogCommands(
                 if (fallbackAvatar) {
                     showAvatarDialog(fallbackAvatar);
                 } else {
-                    toast.error('No fallback avatar set');
+                    toast.error(t('message.user.no_fallback_avatar'));
                 }
             },
             'Previous Instances': () => {
@@ -463,6 +468,7 @@ export function useUserDialogCommands(
                         userId
                     });
                     handleSendFriendRequest(args);
+                    recordRecentAction(userId, 'Send Friend Request');
                 }
             },
             'Moderation Unblock': {

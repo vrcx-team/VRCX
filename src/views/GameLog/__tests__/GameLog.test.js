@@ -48,9 +48,6 @@ vi.mock('../../../services/database', () => ({
     database: { deleteGameLogEntry: vi.fn() }
 }));
 vi.mock('../../../shared/utils', () => ({ removeFromArray: vi.fn() }));
-vi.mock('../../../composables/useDataTableScrollHeight', () => ({
-    useDataTableScrollHeight: () => ({ tableStyle: ref({}) })
-}));
 vi.mock('../../../lib/table/useVrcxVueTable', () => ({
     useVrcxVueTable: () => ({
         table: { getFilteredRowModel: () => ({ rows: [] }) },

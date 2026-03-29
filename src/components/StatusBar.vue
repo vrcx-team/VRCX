@@ -51,12 +51,19 @@
                             </div>
                         </TooltipWrapper>
 
-                        <HoverCard v-if="!isMacOS && visibility.vrchat" v-model:open="gameHoverOpen" :open-delay="50" :close-delay="50">
+                        <HoverCard
+                            v-if="!isMacOS && visibility.vrchat"
+                            v-model:open="gameHoverOpen"
+                            :open-delay="50"
+                            :close-delay="50">
                             <HoverCardTrigger as-child>
-                                <div class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
+                                <div
+                                    class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
                                     <span
                                         class="inline-block size-2 rounded-full shrink-0"
-                                        :class="gameStore.isGameRunning ? 'bg-status-online' : 'bg-status-offline-alt'" />
+                                        :class="
+                                            gameStore.isGameRunning ? 'bg-status-online' : 'bg-status-offline-alt'
+                                        " />
                                     <span class="text-foreground text-[11px]">{{ t('status_bar.game') }}</span>
                                     <span v-if="gameStore.isGameRunning" class="text-[10px] text-foreground">{{
                                         gameSessionText
@@ -71,11 +78,15 @@
                                 :side-offset="4">
                                 <div class="flex flex-col gap-1">
                                     <div class="flex items-center justify-between gap-3">
-                                        <span class="text-[11px] text-muted-foreground">{{ t('status_bar.game_started_at') }}</span>
+                                        <span class="text-[11px] text-muted-foreground">{{
+                                            t('status_bar.game_started_at')
+                                        }}</span>
                                         <span class="text-[11px] text-foreground">{{ gameStartedAtText }}</span>
                                     </div>
                                     <div class="flex items-center justify-between gap-3">
-                                        <span class="text-[11px] text-muted-foreground">{{ t('status_bar.game_session_duration') }}</span>
+                                        <span class="text-[11px] text-muted-foreground">{{
+                                            t('status_bar.game_session_duration')
+                                        }}</span>
                                         <span class="text-[11px] text-foreground">{{ gameSessionDetailText }}</span>
                                     </div>
                                 </div>
@@ -88,11 +99,15 @@
                                 :side-offset="4">
                                 <div class="flex flex-col gap-1">
                                     <div class="flex items-center justify-between gap-3">
-                                        <span class="text-[11px] text-muted-foreground">{{ t('status_bar.game_last_session') }}</span>
+                                        <span class="text-[11px] text-muted-foreground">{{
+                                            t('status_bar.game_last_session')
+                                        }}</span>
                                         <span class="text-[11px] text-foreground">{{ lastSessionText }}</span>
                                     </div>
                                     <div class="flex items-center justify-between gap-3">
-                                        <span class="text-[11px] text-muted-foreground">{{ t('status_bar.game_last_offline') }}</span>
+                                        <span class="text-[11px] text-muted-foreground">{{
+                                            t('status_bar.game_last_offline')
+                                        }}</span>
                                         <span class="text-[11px] text-foreground">{{ lastOfflineTimeText }}</span>
                                     </div>
                                 </div>
@@ -211,6 +226,7 @@
                                         :step="1"
                                         :format-options="{ maximumFractionDigits: 0 }"
                                         class="w-20"
+                                        @click.stop
                                         @update:modelValue="setZoomLevel">
                                         <NumberFieldContent>
                                             <NumberFieldDecrement />
@@ -245,36 +261,45 @@
                 <ContextMenuCheckboxItem
                     v-if="!isMacOS"
                     :model-value="visibility.vrchat"
+                    @select.prevent
                     @update:model-value="toggleVisibility('vrchat')">
                     {{ t('status_bar.game') }}
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     :model-value="visibility.servers"
+                    @select.prevent
                     @update:model-value="toggleVisibility('servers')">
                     {{ t('status_bar.servers') }}
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     v-if="!isMacOS"
                     :model-value="visibility.steamvr"
+                    @select.prevent
                     @update:model-value="toggleVisibility('steamvr')">
                     {{ t('status_bar.steamvr') }}
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     :model-value="visibility.proxy"
+                    @select.prevent
                     @update:model-value="toggleVisibility('proxy')">
                     {{ t('status_bar.proxy') }}
                 </ContextMenuCheckboxItem>
-                <ContextMenuCheckboxItem :model-value="visibility.ws" @update:model-value="toggleVisibility('ws')">
+                <ContextMenuCheckboxItem
+                    :model-value="visibility.ws"
+                    @select.prevent
+                    @update:model-value="toggleVisibility('ws')">
                     WebSocket
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     :model-value="visibility.uptime"
+                    @select.prevent
                     @update:model-value="toggleVisibility('uptime')">
                     {{ t('status_bar.app_uptime_short') }}
                 </ContextMenuCheckboxItem>
                 <ContextMenuCheckboxItem
                     v-if="!isMacOS"
                     :model-value="visibility.zoom"
+                    @select.prevent
                     @update:model-value="toggleVisibility('zoom')">
                     {{ t('status_bar.zoom') }}
                 </ContextMenuCheckboxItem>
@@ -284,21 +309,25 @@
                     <ContextMenuSubContent>
                         <ContextMenuCheckboxItem
                             :model-value="clockCount === 0"
+                            @select.prevent
                             @update:model-value="setClockCount('0')">
                             {{ t('status_bar.clocks_none') }}
                         </ContextMenuCheckboxItem>
                         <ContextMenuCheckboxItem
                             :model-value="clockCount === 1"
+                            @select.prevent
                             @update:model-value="setClockCount('1')">
                             1 {{ t('status_bar.clock') }}
                         </ContextMenuCheckboxItem>
                         <ContextMenuCheckboxItem
                             :model-value="clockCount === 2"
+                            @select.prevent
                             @update:model-value="setClockCount('2')">
                             2 {{ t('status_bar.clocks_label') }}
                         </ContextMenuCheckboxItem>
                         <ContextMenuCheckboxItem
                             :model-value="clockCount === 3"
+                            @select.prevent
                             @update:model-value="setClockCount('3')">
                             3 {{ t('status_bar.clocks_label') }}
                         </ContextMenuCheckboxItem>
@@ -531,7 +560,7 @@
     const defaultClocks = [{ offset: localOffset }, { offset: 0 }, { offset: localOffset < 0 ? 9 : -5 }];
 
     const clocks = ref(defaultClocks.map((c) => ({ ...c })));
-    const clockCount = ref(3);
+    const clockCount = ref(2);
     const clockPopoverOpen = reactive([false, false, false]);
 
     const visibleClocks = computed(() => clocks.value.slice(0, clockCount.value));

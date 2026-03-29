@@ -1,13 +1,13 @@
 <template>
-    <div class="w-223">
+    <div class="w-223 flex-1 min-h-0 flex flex-col">
         <DialogHeader class="sr-only">
             <DialogTitle>{{ worldDialog.ref?.name || t('dialog.world.info.header') }}</DialogTitle>
             <DialogDescription>
                 {{ worldDialog.ref?.description || worldDialog.ref?.name || t('dialog.world.info.header') }}
             </DialogDescription>
         </DialogHeader>
-        <div>
-            <div style="display: flex">
+        <div class="flex-1 min-h-0 flex flex-col">
+            <div class="flex-shrink-0" style="display: flex">
                 <div style="flex: none; width: 160px; height: 120px">
                     <img
                         v-if="!worldDialog.loading && !imageError"
@@ -313,6 +313,7 @@
                 v-model="worldDialog.activeTab"
                 :items="worldDialogTabs"
                 :unmount-on-hide="false"
+                fill
                 @update:modelValue="worldDialogTabClick">
                 <template #Instances>
                     <WorldDialogInstancesTab />

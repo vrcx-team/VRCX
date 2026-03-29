@@ -1,6 +1,6 @@
 import { computed, reactive, ref, shallowReactive, watch } from 'vue';
 import { defineStore } from 'pinia';
-import { useI18n } from 'vue-i18n';
+
 
 import {
     compareByCreatedAt,
@@ -33,7 +33,7 @@ export const useUserStore = defineStore('User', () => {
     const locationStore = useLocationStore();
     const instanceStore = useInstanceStore();
     const uiStore = useUiStore();
-    const { t } = useI18n();
+
 
     const currentUser = ref({
         acceptedPrivacyVersion: 0,

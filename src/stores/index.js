@@ -2,6 +2,7 @@ import { createPinia } from 'pinia';
 
 import { getSentry, isSentryOptedIn } from '../plugins';
 import { useAdvancedSettingsStore } from './settings/advanced';
+import { useActivityStore } from './activity';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAuthStore } from './auth';
 import { useAvatarProviderStore } from './avatarProvider';
@@ -124,6 +125,7 @@ export async function initPiniaPlugins() {
 export function createGlobalStores() {
     return {
         advancedSettings: useAdvancedSettingsStore(),
+        activity: useActivityStore(),
         appearanceSettings: useAppearanceSettingsStore(),
         discordPresenceSettings: useDiscordPresenceSettingsStore(),
         generalSettings: useGeneralSettingsStore(),
@@ -186,6 +188,7 @@ export {
     useChartsStore,
     useDashboardStore,
     useAdvancedSettingsStore,
+    useActivityStore,
     useAppearanceSettingsStore,
     useDiscordPresenceSettingsStore,
     useGeneralSettingsStore,

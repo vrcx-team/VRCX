@@ -51,15 +51,15 @@
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
 
-    /* VRChat Status Colors */
-    --status-online: #67c23a;
-    --status-joinme: #00b8ff;
-    --status-askme: #ff9500;
-    --status-busy: #ff2c2c;
-    --status-active: #f4e05e;
-    --status-offline: #909399;
+    /* VRChat Status Colors (Official) */
+    --status-online: #2ED319;
+    --status-joinme: #00B8FF;
+    --status-busy: #C80928;
+    --status-askme: #E97C03;
+    --status-offline: #737F8D;
     --status-offline-alt: #808080;
     --status-offline-card: #737f8d;
+    --status-active: #f4e05e;
 
     /* Platform Colors */
     --platform-pc: #0078d4;
@@ -70,6 +70,15 @@
     --visibility-public: #22c55e;
     --visibility-friends: #0ea5e9;
     --visibility-private: #ef4444;
+}
+
+/* VRCX adjusted status colors (when official colors are disabled) */
+.vrcx-status-colors {
+    --status-online: #67c23a;
+    --status-joinme: #00b8ff;
+    --status-askme: #ff9500;
+    --status-busy: #ff2c2c;
+    --status-offline: #909399;
 }
 
 .dark {
@@ -186,6 +195,12 @@ html {
     margin: 8px 0 8px 0;
     border-radius: var(--radius);
     border: 1px solid var(--border);
+}
+
+.x-container--auto-height {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .aside-collapsed .x-container {

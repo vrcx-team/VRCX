@@ -21,11 +21,9 @@
     import { useI18n } from 'vue-i18n';
 
     import { TooltipWrapper } from './ui/tooltip';
-    import { useAvatarStore } from '../stores';
     import { getAvatarName, showAvatarAuthorDialog } from '../coordinators/avatarCoordinator';
 
     const { t } = useI18n();
-    const avatarStore = useAvatarStore();
 
     const props = defineProps({
         imageurl: String,

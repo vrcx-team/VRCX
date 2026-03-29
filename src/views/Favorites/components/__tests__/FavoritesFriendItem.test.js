@@ -177,7 +177,8 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
 
 vi.mock('lucide-vue-next', () => ({
     MoreHorizontal: { template: '<i />' },
-    Trash2: { template: '<i />' }
+    Trash2: { template: '<i />' },
+    User: { template: '<i />' }
 }));
 
 import FavoritesFriendItem from '../FavoritesFriendItem.vue';

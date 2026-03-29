@@ -42,6 +42,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     const autoStateChangeGroups = ref([]);
     const autoAcceptInviteRequests = ref('Off');
     const autoAcceptInviteGroups = ref([]);
+    const recentActionCooldownEnabled = ref(false);
+    const recentActionCooldownMinutes = ref(60);
 
     async function initGeneralSettings() {
         const [
@@ -68,7 +70,9 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             autoStateChangeCompanyDescConfig,
             autoStateChangeGroupsStrConfig,
             autoAcceptInviteRequestsConfig,
-            autoAcceptInviteGroupsStrConfig
+            autoAcceptInviteGroupsStrConfig,
+            recentActionCooldownEnabledConfig,
+            recentActionCooldownMinutesConfig
         ] = await Promise.all([
             configRepository.getBool('VRCX_StartAtWindowsStartup', false),
             VRCXStorage.Get('VRCX_StartAsMinimizedState'),
@@ -108,7 +112,9 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             configRepository.getString('VRCX_autoStateChangeCompanyDesc', ''),
             configRepository.getString('VRCX_autoStateChangeGroups', '[]'),
             configRepository.getString('VRCX_autoAcceptInviteRequests', 'Off'),
-            configRepository.getString('VRCX_autoAcceptInviteGroups', '[]')
+            configRepository.getString('VRCX_autoAcceptInviteGroups', '[]'),
+            configRepository.getBool('VRCX_recentActionCooldownEnabled', false),
+            configRepository.getInt('VRCX_recentActionCooldownMinutes', 60)
         ]);
 
         isStartAtWindowsStartup.value = isStartAtWindowsStartupConfig;
@@ -159,6 +165,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         autoAcceptInviteGroups.value = JSON.parse(
             autoAcceptInviteGroupsStrConfig
         );
+        recentActionCooldownEnabled.value = recentActionCooldownEnabledConfig;
+        recentActionCooldownMinutes.value = recentActionCooldownMinutesConfig;
     }
 
     initGeneralSettings();
@@ -411,6 +419,29 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             });
     }
 
+    function setRecentActionCooldownEnabled() {
+        recentActionCooldownEnabled.value =
+            !recentActionCooldownEnabled.value;
+        configRepository.setBool(
+            'VRCX_recentActionCooldownEnabled',
+            recentActionCooldownEnabled.value
+        );
+    }
+
+    /**
+     * @param {number} value
+     */
+    function setRecentActionCooldownMinutes(value) {
+        const parsed = parseInt(value, 10);
+        recentActionCooldownMinutes.value = Number.isNaN(parsed)
+            ? 60
+            : Math.min(1440, Math.max(1, parsed));
+        configRepository.setInt(
+            'VRCX_recentActionCooldownMinutes',
+            recentActionCooldownMinutes.value
+        );
+    }
+
     return {
         isStartAtWindowsStartup,
         isStartAsMinimizedState,
@@ -435,6 +466,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         autoStateChangeGroups,
         autoAcceptInviteRequests,
         autoAcceptInviteGroups,
+        recentActionCooldownEnabled,
+        recentActionCooldownMinutes,
 
         setIsStartAtWindowsStartup,
         setIsStartAsMinimizedState,
@@ -459,6 +492,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         setAutoStateChangeGroups,
         setAutoAcceptInviteRequests,
         setAutoAcceptInviteGroups,
-        promptProxySettings
+        promptProxySettings,
+        setRecentActionCooldownEnabled,
+        setRecentActionCooldownMinutes
     };
 });

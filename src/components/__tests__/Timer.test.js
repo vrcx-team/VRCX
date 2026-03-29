@@ -1,30 +1,26 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { nextTick } from 'vue';
+import { nextTick, ref } from 'vue';
 
 const mocks = vi.hoisted(() => ({
-    timeToText: vi.fn((ms) => `${ms}ms`)
+    timeToText: vi.fn((ms) => `${ms}ms`),
+    nowRef: null
 }));
 
 vi.mock('../../shared/utils', () => ({
     timeToText: (...args) => mocks.timeToText(...args)
 }));
 
+vi.mock('@vueuse/core', () => ({
+    useNow: () => mocks.nowRef
+}));
+
 import Timer from '../Timer.vue';
 
 describe('Timer.vue', () => {
-    let intervalCallback;
-
     beforeEach(() => {
-        intervalCallback = null;
         mocks.timeToText.mockClear();
-
-        vi.spyOn(globalThis, 'setInterval').mockImplementation((cb) => {
-            intervalCallback = cb;
-            return 99;
-        });
-        vi.spyOn(globalThis, 'clearInterval').mockImplementation(() => {});
-        vi.spyOn(Date, 'now').mockReturnValue(10000);
+        mocks.nowRef = ref(10000);
     });
 
     afterEach(() => {
@@ -42,15 +38,14 @@ describe('Timer.vue', () => {
         expect(mocks.timeToText).toHaveBeenCalledWith(6000);
     });
 
-    it('updates text when interval callback runs', async () => {
+    it('updates text when now value changes', async () => {
         const wrapper = mount(Timer, {
             props: {
                 epoch: 4000
             }
         });
 
-        vi.mocked(Date.now).mockReturnValue(13000);
-        intervalCallback?.();
+        mocks.nowRef.value = 13000;
         await nextTick();
 
         expect(wrapper.text()).toBe('9000ms');
@@ -66,15 +61,15 @@ describe('Timer.vue', () => {
         expect(wrapper.text()).toBe('-');
     });
 
-    it('clears interval on unmount', () => {
+    it('computes correct elapsed time', () => {
+        mocks.nowRef.value = 20000;
         const wrapper = mount(Timer, {
             props: {
-                epoch: 1
+                epoch: 5000
             }
         });
 
-        wrapper.unmount();
-
-        expect(clearInterval).toHaveBeenCalledWith(99);
+        expect(wrapper.text()).toBe('15000ms');
+        expect(mocks.timeToText).toHaveBeenCalledWith(15000);
     });
 });

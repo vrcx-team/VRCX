@@ -90,9 +90,17 @@
                             :class="compareCurrentProfilePic(image.id) ? 'x-highlight-ring' : ''"
                             as-child>
                             <div
-                                v-if="image.versions && image.versions.length > 0 && image.versions[image.versions.length - 1].file.url"
+                                v-if="
+                                    image.versions &&
+                                    image.versions.length > 0 &&
+                                    image.versions[image.versions.length - 1].file.url
+                                "
                                 class="overflow-hidden rounded-[inherit]">
-                                <ItemHeader class="cursor-pointer" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)">
+                                <ItemHeader
+                                    class="cursor-pointer"
+                                    @click="
+                                        showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)
+                                    ">
                                     <img
                                         :src="image.versions[image.versions.length - 1].file.url"
                                         loading="lazy"
@@ -162,9 +170,17 @@
                             :class="compareCurrentVRCPlusIcon(image.id) ? 'x-highlight-ring' : ''"
                             as-child>
                             <div
-                                v-if="image.versions && image.versions.length > 0 && image.versions[image.versions.length - 1].file.url"
+                                v-if="
+                                    image.versions &&
+                                    image.versions.length > 0 &&
+                                    image.versions[image.versions.length - 1].file.url
+                                "
                                 class="overflow-hidden rounded-[inherit]">
-                                <ItemHeader class="cursor-pointer" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)">
+                                <ItemHeader
+                                    class="cursor-pointer"
+                                    @click="
+                                        showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)
+                                    ">
                                     <img
                                         :src="image.versions[image.versions.length - 1].file.url"
                                         loading="lazy"
@@ -200,52 +216,51 @@
                         accept="image/*"
                         @change="onFileChangeEmoji"
                         style="display: none" />
-                    <div class="flex items-center gap-2">
-                        <ButtonGroup>
-                            <Button variant="outline" size="sm" @click="refreshEmojiTable">
-                                <RefreshCw />
-                                {{ t('dialog.gallery_icons.refresh') }}
-                            </Button>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                :disabled="!isLocalUserVrcPlusSupporter || isUploading"
-                                @click="displayEmojiUpload">
-                                <Upload />
-                                {{ t('dialog.gallery_icons.upload') }}
-                            </Button>
-                        </ButtonGroup>
-                        <div class="flex-1 min-w-0 max-w-120">
-                            <VirtualCombobox
-                                v-model="emojiAnimationStyle"
-                                :groups="emojiStylePickerGroups"
-                                :placeholder="t('dialog.gallery_icons.emoji_animation_styles')"
-                                :search-placeholder="t('dialog.gallery_icons.emoji_animation_styles')"
-                                :clearable="false"
-                                :close-on-select="true">
-                                <template #item="{ item, selected }">
-                                    <div class="flex w-full items-center gap-2">
-                                        <div class="h-10 w-10 shrink-0 overflow-hidden rounded-sm bg-black/5">
-                                            <img
-                                                class="h-full w-full object-cover"
-                                                :src="`${emojiAnimationStyleUrl}${item.fileName}`"
-                                                loading="lazy" />
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center gap-2">
+                            <ButtonGroup>
+                                <Button variant="outline" size="sm" @click="refreshEmojiTable">
+                                    <RefreshCw />
+                                    {{ t('dialog.gallery_icons.refresh') }}
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    :disabled="!isLocalUserVrcPlusSupporter || isUploading"
+                                    @click="displayEmojiUpload">
+                                    <Upload />
+                                    {{ t('dialog.gallery_icons.upload') }}
+                                </Button>
+                            </ButtonGroup>
+                            <div class="flex-1 min-w-0 max-w-120">
+                                <VirtualCombobox
+                                    v-model="emojiAnimationStyle"
+                                    :groups="emojiStylePickerGroups"
+                                    :placeholder="t('dialog.gallery_icons.emoji_animation_styles')"
+                                    :search-placeholder="t('dialog.gallery_icons.emoji_animation_styles')"
+                                    :clearable="false"
+                                    :close-on-select="true">
+                                    <template #item="{ item, selected }">
+                                        <div class="flex w-full items-center gap-2">
+                                            <div class="h-10 w-10 shrink-0 overflow-hidden rounded-sm bg-black/5">
+                                                <img
+                                                    class="h-full w-full object-cover"
+                                                    :src="`${emojiAnimationStyleUrl}${item.fileName}`"
+                                                    loading="lazy" />
+                                            </div>
+                                            <span class="truncate text-sm" v-text="item.label"></span>
+                                            <span v-if="selected" class="ml-auto opacity-70">✓</span>
                                         </div>
-                                        <span class="truncate text-sm" v-text="item.label"></span>
-                                        <span v-if="selected" class="ml-auto opacity-70">✓</span>
-                                    </div>
-                                </template>
-                            </VirtualCombobox>
+                                    </template>
+                                </VirtualCombobox>
+                            </div>
+                            <label class="inline-flex items-center gap-2">
+                                <Checkbox v-model="emojiAnimType" />
+                                <span>{{ t('dialog.gallery_icons.emoji_animation_type') }}</span>
+                            </label>
                         </div>
-                        <label class="inline-flex items-center gap-2">
-                            <Checkbox v-model="emojiAnimType" />
-                            <span>{{ t('dialog.gallery_icons.emoji_animation_type') }}</span>
-                        </label>
-                        <template v-if="emojiAnimType">
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                @click="openExternalLink('https://vrcemoji.com')">
+                        <div v-if="emojiAnimType" class="flex items-center gap-2">
+                            <Button size="sm" variant="outline" @click="openExternalLink('https://vrcemoji.com')">
                                 {{ t('dialog.gallery_icons.create_animated_emoji') }}
                             </Button>
                             <span class="text-sm">{{ t('dialog.gallery_icons.emoji_animation_fps') }}</span>
@@ -262,9 +277,7 @@
                                     <NumberFieldIncrement />
                                 </NumberFieldContent>
                             </NumberField>
-                            <span class="text-sm">{{
-                                t('dialog.gallery_icons.emoji_animation_frame_count')
-                            }}</span>
+                            <span class="text-sm">{{ t('dialog.gallery_icons.emoji_animation_frame_count') }}</span>
                             <NumberField
                                 v-model="emojiAnimFrameCount"
                                 :min="2"
@@ -282,8 +295,10 @@
                                 <Checkbox v-model="emojiAnimLoopPingPong" />
                                 <span>{{ t('dialog.gallery_icons.emoji_loop_pingpong') }}</span>
                             </label>
-                        </template>
-                        <span v-if="emojiAnimType" class="basis-full text-sm text-muted-foreground">{{ t('dialog.gallery_icons.flipbook_info') }}</span>
+                        </div>
+                        <span v-if="emojiAnimType" class="basis-full text-sm text-muted-foreground">{{
+                            t('dialog.gallery_icons.flipbook_info')
+                        }}</span>
                     </div>
                     <ItemGroup
                         class="grid gap-3 mt-3"
@@ -296,14 +311,22 @@
                             class="p-0 x-hover-card hover:bg-accent hover:shadow-sm"
                             as-child>
                             <div
-                                v-if="image.versions && image.versions.length > 0 && image.versions[image.versions.length - 1].file.url"
+                                v-if="
+                                    image.versions &&
+                                    image.versions.length > 0 &&
+                                    image.versions[image.versions.length - 1].file.url
+                                "
                                 class="overflow-hidden">
                                 <ItemHeader
                                     class="cursor-pointer"
-                                    @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url, getEmojiFileName(image))">
+                                    @click="
+                                        showFullscreenImageDialog(
+                                            image.versions[image.versions.length - 1].file.url,
+                                            getEmojiFileName(image)
+                                        )
+                                    ">
                                     <Emoji
                                         :imageUrl="image.versions[image.versions.length - 1].file.url"
-                                        :size="200"
                                         class="aspect-square w-full rounded-t-md" />
                                 </ItemHeader>
                                 <ItemContent class="min-w-0 px-2.5 pt-1.5 pb-0">
@@ -364,9 +387,17 @@
                             class="p-0 x-hover-card hover:bg-accent hover:shadow-sm"
                             as-child>
                             <div
-                                v-if="image.versions && image.versions.length > 0 && image.versions[image.versions.length - 1].file.url"
+                                v-if="
+                                    image.versions &&
+                                    image.versions.length > 0 &&
+                                    image.versions[image.versions.length - 1].file.url
+                                "
                                 class="overflow-hidden">
-                                <ItemHeader class="cursor-pointer" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)">
+                                <ItemHeader
+                                    class="cursor-pointer"
+                                    @click="
+                                        showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)
+                                    ">
                                     <img
                                         :src="image.versions[image.versions.length - 1].file.url"
                                         loading="lazy"
@@ -433,7 +464,9 @@
                             class="p-0 x-hover-card hover:bg-accent hover:shadow-sm"
                             as-child>
                             <div class="overflow-hidden">
-                                <ItemHeader class="cursor-pointer" @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))">
+                                <ItemHeader
+                                    class="cursor-pointer"
+                                    @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))">
                                     <img
                                         :src="image.files.image"
                                         loading="lazy"
@@ -518,17 +551,23 @@
                                         {{ formatDateFilter(item.created_at, 'long') }}
                                     </ItemDescription>
                                     <ItemDescription class="text-xs">
-                                        <span v-if="item.itemType === 'prop'">{{ t('dialog.gallery_icons.item') }}</span>
-                                        <span v-else-if="item.itemType === 'sticker'">{{ t('dialog.gallery_icons.sticker') }}</span>
-                                        <span v-else-if="item.itemType === 'droneskin'">{{ t('dialog.gallery_icons.drone_skin') }}</span>
-                                        <span v-else-if="item.itemType === 'emoji'">{{ t('dialog.gallery_icons.emoji') }}</span>
+                                        <span v-if="item.itemType === 'prop'">{{
+                                            t('dialog.gallery_icons.item')
+                                        }}</span>
+                                        <span v-else-if="item.itemType === 'sticker'">{{
+                                            t('dialog.gallery_icons.sticker')
+                                        }}</span>
+                                        <span v-else-if="item.itemType === 'droneskin'">{{
+                                            t('dialog.gallery_icons.drone_skin')
+                                        }}</span>
+                                        <span v-else-if="item.itemType === 'emoji'">{{
+                                            t('dialog.gallery_icons.emoji')
+                                        }}</span>
                                         <span v-else v-text="item.itemTypeLabel"></span>
                                     </ItemDescription>
                                 </ItemContent>
                                 <ItemFooter v-if="item.itemType === 'bundle'" class="p-2">
-                                    <Button
-                                        size="sm"
-                                        @click="consumeInventoryBundle(item.id)">
+                                    <Button size="sm" @click="consumeInventoryBundle(item.id)">
                                         {{ t('dialog.gallery_icons.consume_bundle') }}
                                     </Button>
                                 </ItemFooter>
@@ -779,16 +818,7 @@
      *   errorMessage?: string
      * }} options
      */
-    function openImageUploadFlow(
-        e,
-        {
-            inputSelector,
-            aspectRatio,
-            beforeCrop,
-            upload,
-            errorMessage = 'Failed to upload'
-        }
-    ) {
+    function openImageUploadFlow(e, { inputSelector, aspectRatio, beforeCrop, upload, errorMessage = 'Failed to upload' }) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector,
             tooLargeMessage: () => t('message.file.too_large'),
@@ -865,7 +895,7 @@
                 profilePicOverride
             })
             .then((args) => {
-                toast.success('Profile picture changed');
+                toast.success(t('message.gallery.profile_pic_changed'));
                 return args;
             });
     }
@@ -932,7 +962,7 @@
                 userIcon
             })
             .then((args) => {
-                toast.success('Icon changed');
+                toast.success(t('message.gallery.profile_icon_changed'));
                 return args;
             });
     }

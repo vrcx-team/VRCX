@@ -493,11 +493,10 @@
         isRealInstance,
         openExternalLink,
         timeToText,
-        userImage,
         userOnlineFor,
-        userOnlineForTimestamp,
-        userStatusClass
+        userOnlineForTimestamp
     } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { refreshInstancePlayerCount } from '../../../coordinators/instanceCoordinator';
     import {
         useAdvancedSettingsStore,
@@ -532,6 +531,7 @@
 
     const { lastLocation } = storeToRefs(useLocationStore());
     const { showFullscreenImageDialog } = useGalleryStore();
+    const { userImage, userStatusClass } = useUserDisplay();
 
     const bioCache = ref({
         userId: null,
@@ -656,7 +656,7 @@
                         homeLocation: ''
                     })
                     .then((args) => {
-                        toast.success('Home world has been reset');
+                        toast.success(t('message.user.home_reset'));
                         return args;
                     });
             })
@@ -668,7 +668,7 @@
      * @param userId
      */
     function copyUserId(userId) {
-        copyToClipboard(userId, 'User ID copied to clipboard');
+        copyToClipboard(userId, t('message.user.id_copied'));
     }
 
     /**
@@ -676,7 +676,7 @@
      * @param userId
      */
     function copyUserURL(userId) {
-        copyToClipboard(`https://vrchat.com/home/user/${userId}`, 'User URL copied to clipboard');
+        copyToClipboard(`https://vrchat.com/home/user/${userId}`, t('message.user.url_copied'));
     }
 
     /**
@@ -684,7 +684,7 @@
      * @param displayName
      */
     function copyUserDisplayName(displayName) {
-        copyToClipboard(displayName, 'User DisplayName copied to clipboard');
+        copyToClipboard(displayName, t('message.user.display_name_copied'));
     }
 
     /**
