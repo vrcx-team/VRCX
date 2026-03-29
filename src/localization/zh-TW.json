@@ -84,7 +84,6 @@
             "confirm": "確認",
             "cancel": "取消",
             "remove_from_folder": "從資料夾移除",
-            "folder_empty": "此資料夾沒有任何項目",
             "invalid_folder": "資料夾必須有名稱，且至少包含兩個項目",
             "restore_default": "恢復預設",
             "restore_default_confirm": "要將導航恢復為預設順序嗎？"
@@ -764,12 +763,6 @@
                     "table_density_comfortable": "舒適",
                     "table_density_compact": "緊湊",
                     "table_entries_settings": "表格最大列數"
-                },
-                "display": {
-                    "header": "Display"
-                },
-                "sorting_tables": {
-                    "header": "Sorting & Tables"
                 },
                 "display": {
                     "header": "顯示"
@@ -1840,7 +1833,6 @@
             "mode_fit": "切換為適應模式",
             "mode_free": "切換為自由模式",
             "reset": "重設"
-        },
         },
         "gallery_select": {
             "header": "選擇圖片",
