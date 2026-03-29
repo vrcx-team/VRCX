@@ -207,25 +207,22 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         return true;
     }
 
-    /**
-     * @returns {boolean}
-     */
-    function showLatestWhatsNewDialog() {
-        const release = getLatestWhatsNewRelease();
+    // function showLatestWhatsNewDialog() {
+    //     const release = getLatestWhatsNewRelease();
 
-        if (!release) {
-            return false;
-        }
+    //     if (!release) {
+    //         return false;
+    //     }
 
-        whatsNewDialog.value = {
-            visible: true,
-            titleKey: release.titleKey,
-            subtitleKey: release.subtitleKey,
-            items: release.items.map((item) => ({ ...item }))
-        };
+    //     whatsNewDialog.value = {
+    //         visible: true,
+    //         titleKey: release.titleKey,
+    //         subtitleKey: release.subtitleKey,
+    //         items: release.items.map((item) => ({ ...item }))
+    //     };
 
-        return true;
-    }
+    //     return true;
+    // }
 
     function closeWhatsNewDialog() {
         whatsNewDialog.value.visible = false;
@@ -556,7 +553,6 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         setBranch,
 
         showWhatsNewDialog,
-        showLatestWhatsNewDialog,
         closeWhatsNewDialog,
         openChangeLogDialogOnly,
         checkForVRCXUpdate,
