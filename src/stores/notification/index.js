@@ -304,7 +304,8 @@ export const useNotificationStore = defineStore('Notification', () => {
             generalSettingsStore.autoAcceptInviteRequests === 'All Favorites' &&
             !favoriteStore.state.favoriteFriends_.some(
                 (x) => x.id === ref.senderUserId
-            )
+            ) &&
+            !favoriteStore.isInAnyLocalFriendGroup(ref.senderUserId)
         ) {
             return;
         }
@@ -321,8 +322,8 @@ export const useNotificationStore = defineStore('Notification', () => {
                     if (groupKey.startsWith('local:')) {
                         const localGroup = groupKey.slice(6);
                         const localFavs =
-                            favoriteStore.localFriendFavorites.get(localGroup);
-                        if (localFavs && localFavs.has(ref.senderUserId)) {
+                            favoriteStore.localFriendFavorites[localGroup];
+                        if (localFavs && localFavs.includes(ref.senderUserId)) {
                             found = true;
                             break;
                         }
