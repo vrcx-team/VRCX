@@ -1,51 +1,48 @@
 <template>
-    <UserContextMenu
-        :user-id="friend.id"
-        :state="friend.state"
-        :location="friend.ref?.location">
-            <Card
-                class="friend-card x-hover-card hover:bg-muted relative"
-                :style="cardStyle"
-                @click="showUserDialog(friend.id)">
-                <div class="friend-card__header grid items-center mb-1.75">
-                    <div>
-                        <Avatar :style="{ width: `${avatarSize}px`, height: `${avatarSize}px` }">
-                            <AvatarImage :src="userImage(friend.ref, true)" />
-                            <AvatarFallback>
-                                <User class="text-muted-foreground" :size="Math.max(16, 20 * cardScale)" />
-                            </AvatarFallback>
-                        </Avatar>
-                    </div>
-                    <span
-                        class="friend-card__status-dot absolute rounded-full pointer-events-none"
-                        :class="statusDotClass"></span>
-                    <div
-                        class="friend-card__name font-semibold leading-[1.3] overflow-hidden text-ellipsis whitespace-nowrap ml-2"
-                        :title="friend.name">
-                        {{ friend.name }}
-                    </div>
+    <UserContextMenu :user-id="friend.id" :state="friend.state" :location="friend.ref?.location">
+        <Card
+            class="friend-card x-hover-card hover:bg-muted relative"
+            :style="cardStyle"
+            @click="showUserDialog(friend.id)">
+            <div class="friend-card__header grid items-center mb-1.75">
+                <div>
+                    <Avatar :style="{ width: `${avatarSize}px`, height: `${avatarSize}px` }">
+                        <AvatarImage :src="userImage(friend.ref, true)" />
+                        <AvatarFallback>
+                            <User class="text-muted-foreground" :size="Math.max(16, 20 * cardScale)" />
+                        </AvatarFallback>
+                    </Avatar>
                 </div>
-                <div class="friend-card__body grid">
-                    <div
-                        class="friend-card__signature flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-muted-foreground"
-                        :title="friend.ref?.statusDescription">
-                        <Pencil v-if="friend.ref?.statusDescription" class="h-3.5 w-3.5 mr-0.5" style="opacity: 0.7" />
-                        {{ friend.ref?.statusDescription || '&nbsp;' }}
-                    </div>
-                    <div
-                        v-if="displayInstanceInfo"
-                        @click.stop
-                        class="friend-card__world flex items-center justify-start box-border max-w-full min-w-0 overflow-hidden"
-                        :title="friend.worldName">
-                        <Location
-                            class="friend-card__location flex w-full overflow-hidden leading-[1.3] wrap-break-word text-center"
-                            :location="friend.ref?.location"
-                            :traveling="friend.ref?.travelingToLocation"
-                            enable-context-menu
-                            link />
-                    </div>
+                <span
+                    class="friend-card__status-dot absolute rounded-full pointer-events-none"
+                    :class="statusDotClass"></span>
+                <div
+                    class="friend-card__name font-semibold leading-[1.3] overflow-hidden text-ellipsis whitespace-nowrap ml-2"
+                    :title="friend.name">
+                    {{ friend.name }}
                 </div>
-            </Card>
+            </div>
+            <div class="friend-card__body grid">
+                <div
+                    class="friend-card__signature flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-muted-foreground"
+                    :title="friend.ref?.statusDescription">
+                    <Pencil v-if="friend.ref?.statusDescription" class="h-3.5 w-3.5 mr-0.5" style="opacity: 0.7" />
+                    {{ friend.ref?.statusDescription || '&nbsp;' }}
+                </div>
+                <div
+                    v-if="displayInstanceInfo"
+                    @click.stop
+                    class="friend-card__world flex items-center justify-start box-border max-w-full min-w-0 overflow-hidden"
+                    :title="friend.worldName">
+                    <Location
+                        class="friend-card__location flex w-full overflow-hidden leading-[1.3] wrap-break-word text-center"
+                        :location="friend.ref?.location"
+                        :traveling="friend.ref?.travelingToLocation"
+                        enable-context-menu
+                        link />
+                </div>
+            </div>
+        </Card>
     </UserContextMenu>
 </template>
 
@@ -92,18 +89,17 @@
         paddingBottom: `${36 * props.cardScale * props.cardSpacing}px !important`
     }));
 
-
     const statusDotClass = computed(() => {
         const status = userStatusClass(props.friend.ref, props.friend.pendingOffline);
 
-        if (status.joinme) {
+        if (status?.joinme) {
             return 'friend-card__status-dot--join';
         }
-        if (status.online) {
+        if (status?.online) {
             return 'friend-card__status-dot--online';
         }
         // sometimes appearing and sometimes disappearing
-        if (status.active) {
+        if (status?.active) {
             const friendStatus = props.friend.status;
             if (friendStatus === 'join me') {
                 return 'friend-card__status-dot--active-join';
@@ -116,13 +112,13 @@
             }
             return 'friend-card__status-dot--active';
         }
-        if (status.askme) {
+        if (status?.askme) {
             return 'friend-card__status-dot--ask';
         }
-        if (status.busy) {
+        if (status?.busy) {
             return 'friend-card__status-dot--busy';
         }
-        if (status.offline) {
+        if (status?.offline) {
             return 'friend-card__status-dot--offline';
         }
 

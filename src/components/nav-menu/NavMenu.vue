@@ -44,7 +44,7 @@
                                                     }}</span>
                                                     <span
                                                         v-if="item.action === 'direct-access' && !isCollapsed"
-                                                        class="nav-shortcut-hint ml-auto inline-flex items-center gap-0.5">
+                                                        class="nav-shortcut-hint ml-auto inline-flex items-center gap-2">
                                                         <Kbd>{{ isMac ? '⌘' : 'Ctrl' }}</Kbd>
                                                         <Kbd>D</Kbd>
                                                     </span>

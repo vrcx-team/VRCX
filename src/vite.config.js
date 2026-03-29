@@ -126,7 +126,9 @@ export default defineConfig(({ mode }) => {
                         },
                         sourcemaps: {
                             assets: './build/html/**',
-                            filesToDeleteAfterUpload: './build/html/**/*.js.map'
+                            filesToDeleteAfterUpload:
+                                './build/html/**/*.js.map',
+                            ignore: []
                         }
                     })
                 )
@@ -179,7 +181,7 @@ export default defineConfig(({ mode }) => {
             copyPublicDir: true,
             reportCompressedSize: false,
             chunkSizeWarningLimit: 5000,
-            sourcemap: buildAndUploadSourceMaps,
+            sourcemap: buildAndUploadSourceMaps ? 'hidden' : false,
             assetsInlineLimit(filePath) {
                 if (isFont(filePath)) return 0;
                 return 40960;

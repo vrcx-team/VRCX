@@ -61,6 +61,7 @@ export const useFriendStore = defineStore('Friend', () => {
     let pendingSortedFriendsRebuild = false;
     let allUserStatsRequestId = 0;
     let allUserMutualCountRequestId = 0;
+    let allUserMutualOptedOutRequestId = 0;
 
     const derivedDebugCounters = reactive({
         allFavoriteFriendIds: 0,
@@ -904,11 +905,43 @@ export const useFriendStore = defineStore('Friend', () => {
             return;
         }
         runInSortedFriendsBatch(() => {
+            for (const ctx of friends.values()) {
+                if (ctx?.ref) {
+                    ctx.ref.$mutualCount = 0;
+                }
+            }
             for (const [userId, mutualCount] of mutualCountMap.entries()) {
                 const ref = friends.get(userId);
                 if (ref?.ref) {
                     ref.ref.$mutualCount = mutualCount;
                     reindexSortedFriend(ref);
+                }
+            }
+        });
+    }
+
+    /**
+     *
+     */
+    async function getAllUserMutualOptedOut() {
+        if (!friends.size) {
+            return;
+        }
+        const requestId = ++allUserMutualOptedOutRequestId;
+        const metaMap = await database.getMutualGraphMeta();
+        if (requestId !== allUserMutualOptedOutRequestId) {
+            return;
+        }
+        runInSortedFriendsBatch(() => {
+            for (const ctx of friends.values()) {
+                if (ctx?.ref) {
+                    ctx.ref.$mutualOptedOut = false;
+                }
+            }
+            for (const [userId, meta] of metaMap.entries()) {
+                const ref = friends.get(userId);
+                if (ref?.ref) {
+                    ref.ref.$mutualOptedOut = Boolean(meta.optedOut);
                 }
             }
         });
@@ -1398,6 +1431,7 @@ export const useFriendStore = defineStore('Friend', () => {
         updateOnlineFriendCounter,
         getAllUserStats,
         getAllUserMutualCount,
+        getAllUserMutualOptedOut,
         initFriendLog,
         migrateFriendLog,
         getFriendLog,

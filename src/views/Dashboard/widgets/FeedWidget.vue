@@ -45,42 +45,57 @@
                         </TableCell>
                         <TableCell class="max-w-0 truncate">
                             <template v-if="item.type === 'GPS'">
-                                <MapPin class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                                <UserContextMenu :user-id="item.userId" :state="getFriendState(item.userId)" :location="getFriendLocation(item.userId)">
-                                    <span class="cursor-pointer" @click="openUser(item.userId)">{{
-                                        item.displayName
-                                    }}</span>
-                                </UserContextMenu>
-                                <span class="text-muted-foreground"> → </span>
-                                <Location
-                                    class="inline [&>div]:inline-flex"
-                                    :location="item.location"
-                                    :hint="item.worldName"
-                                    :grouphint="item.groupName"
-                                    enable-context-menu
-                                    disable-tooltip />
+                                <div class="flex items-center min-w-0">
+                                    <MapPin class="mr-1 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                    <UserContextMenu
+                                        :user-id="item.userId"
+                                        :state="getFriendState(item.userId)"
+                                        :location="getFriendLocation(item.userId)">
+                                        <span class="shrink-0 cursor-pointer" @click="openUser(item.userId)">{{
+                                            item.displayName
+                                        }}</span>
+                                    </UserContextMenu>
+                                    <span class="shrink-0 text-muted-foreground mx-1"> → </span>
+                                    <div class="min-w-0 flex-1 truncate">
+                                        <Location
+                                            :location="item.location"
+                                            :hint="item.worldName"
+                                            :grouphint="item.groupName"
+                                            enable-context-menu
+                                            disable-tooltip />
+                                    </div>
+                                </div>
                             </template>
                             <template v-else-if="item.type === 'Online'">
-                                <i class="x-user-status online mr-1"></i>
-                                <UserContextMenu :user-id="item.userId" :state="getFriendState(item.userId)" :location="getFriendLocation(item.userId)">
-                                    <span class="cursor-pointer" @click="openUser(item.userId)">{{
-                                        item.displayName
-                                    }}</span>
-                                </UserContextMenu>
-                                <template v-if="item.location">
-                                    <span class="text-muted-foreground"> → </span>
-                                    <Location
-                                        class="inline [&>div]:inline-flex"
-                                        :location="item.location"
-                                        :hint="item.worldName"
-                                        :grouphint="item.groupName"
-                                        enable-context-menu
-                                        disable-tooltip />
-                                </template>
+                                <div class="flex items-center min-w-0">
+                                    <i class="x-user-status online mr-1 shrink-0"></i>
+                                    <UserContextMenu
+                                        :user-id="item.userId"
+                                        :state="getFriendState(item.userId)"
+                                        :location="getFriendLocation(item.userId)">
+                                        <span class="shrink-0 cursor-pointer" @click="openUser(item.userId)">{{
+                                            item.displayName
+                                        }}</span>
+                                    </UserContextMenu>
+                                    <template v-if="item.location">
+                                        <span class="shrink-0 text-muted-foreground"> → </span>
+                                        <div class="min-w-0 flex-1 truncate">
+                                            <Location
+                                                :location="item.location"
+                                                :hint="item.worldName"
+                                                :grouphint="item.groupName"
+                                                enable-context-menu
+                                                disable-tooltip />
+                                        </div>
+                                    </template>
+                                </div>
                             </template>
                             <template v-else-if="item.type === 'Offline'">
                                 <i class="x-user-status mr-1"></i>
-                                <UserContextMenu :user-id="item.userId" :state="getFriendState(item.userId)" :location="getFriendLocation(item.userId)">
+                                <UserContextMenu
+                                    :user-id="item.userId"
+                                    :state="getFriendState(item.userId)"
+                                    :location="getFriendLocation(item.userId)">
                                     <span class="cursor-pointer" @click="openUser(item.userId)">{{
                                         item.displayName
                                     }}</span>
@@ -88,16 +103,22 @@
                             </template>
                             <template v-else-if="item.type === 'Status'">
                                 <i class="x-user-status mr-1" :class="statusClass(item.status)"></i>
-                                <UserContextMenu :user-id="item.userId" :state="getFriendState(item.userId)" :location="getFriendLocation(item.userId)">
+                                <UserContextMenu
+                                    :user-id="item.userId"
+                                    :state="getFriendState(item.userId)"
+                                    :location="getFriendLocation(item.userId)">
                                     <span class="cursor-pointer" @click="openUser(item.userId)">{{
                                         item.displayName
                                     }}</span>
                                 </UserContextMenu>
-                                <span class="text-muted-foreground"> {{ item.statusDescription }}</span>
+                                <span class="text-muted-foreground ml-1"> {{ item.statusDescription }}</span>
                             </template>
                             <template v-else-if="item.type === 'Avatar'">
                                 <Box class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                                <UserContextMenu :user-id="item.userId" :state="getFriendState(item.userId)" :location="getFriendLocation(item.userId)">
+                                <UserContextMenu
+                                    :user-id="item.userId"
+                                    :state="getFriendState(item.userId)"
+                                    :location="getFriendLocation(item.userId)">
                                     <span class="cursor-pointer" @click="openUser(item.userId)">{{
                                         item.displayName
                                     }}</span>
@@ -106,7 +127,10 @@
                             </template>
                             <template v-else-if="item.type === 'Bio'">
                                 <Pencil class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                                <UserContextMenu :user-id="item.userId" :state="getFriendState(item.userId)" :location="getFriendLocation(item.userId)">
+                                <UserContextMenu
+                                    :user-id="item.userId"
+                                    :state="getFriendState(item.userId)"
+                                    :location="getFriendLocation(item.userId)">
                                     <span class="cursor-pointer" @click="openUser(item.userId)">{{
                                         item.displayName
                                     }}</span>
@@ -114,7 +138,10 @@
                                 <span class="ml-1 text-muted-foreground">{{ t('dashboard.widget.feed_bio') }}</span>
                             </template>
                             <template v-else>
-                                <UserContextMenu :user-id="item.userId" :state="getFriendState(item.userId)" :location="getFriendLocation(item.userId)">
+                                <UserContextMenu
+                                    :user-id="item.userId"
+                                    :state="getFriendState(item.userId)"
+                                    :location="getFriendLocation(item.userId)">
                                     <span class="cursor-pointer" @click="openUser(item.userId)">{{
                                         item.displayName
                                     }}</span>

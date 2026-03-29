@@ -95,7 +95,9 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.appearance.appearance.vrcplus_profile_icons')">
+            <SettingsItem
+                :label="t('view.settings.appearance.appearance.vrcplus_profile_icons')"
+                :description="t('view.settings.appearance.appearance.vrcplus_profile_icons_description')">
                 <Switch
                     :model-value="displayVRCPlusIconsAsAvatar"
                     @update:modelValue="
@@ -110,7 +112,9 @@
                 <Switch :model-value="showInstanceIdInLocation" @update:modelValue="setShowInstanceIdInLocation" />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.appearance.appearance.nicknames')">
+            <SettingsItem
+                :label="t('view.settings.appearance.appearance.nicknames')"
+                :description="t('view.settings.appearance.appearance.nicknames_description')">
                 <Switch
                     :model-value="!hideNicknames"
                     @update:modelValue="
@@ -129,7 +133,9 @@
                 <Switch :model-value="isDataTableStriped" @update:modelValue="toggleStripedDataTable" />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.appearance.appearance.toggle_pointer_on_hover')">
+            <SettingsItem
+                :label="t('view.settings.appearance.appearance.toggle_pointer_on_hover')"
+                :description="t('view.settings.appearance.appearance.toggle_pointer_on_hover_description')">
                 <Switch :model-value="showPointerOnHover" @update:modelValue="togglePointerOnHover" />
             </SettingsItem>
 
@@ -334,7 +340,9 @@
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.appearance.user_colors.header')">
-            <SettingsItem :label="t('view.settings.appearance.user_colors.random_colors_from_user_id')">
+            <SettingsItem
+                :label="t('view.settings.appearance.user_colors.random_colors_from_user_id')"
+                :description="t('view.settings.appearance.user_colors.random_colors_from_user_id_description')">
                 <Switch :model-value="randomUserColours" @update:modelValue="updateTrustColor('', '', true)" />
             </SettingsItem>
             <div class="settings-item">

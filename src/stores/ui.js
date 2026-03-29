@@ -287,9 +287,17 @@ export const useUiStore = defineStore('Ui', () => {
                 const name = String(routeName);
                 removeNotify(name);
                 if (name === 'notification') {
-                    const notificationsSettingsStore = useNotificationsSettingsStore();
-                    if (notificationsSettingsStore.notificationLayout === 'notification-center') {
-                        router.replace({ name: 'feed' });
+                    const notificationsSettingsStore =
+                        useNotificationsSettingsStore();
+                    if (
+                        notificationsSettingsStore.notificationLayout ===
+                        'notification-center'
+                    ) {
+                        if (router.currentRoute.value.query?.fromCenter) {
+                            router.replace({ name: 'notification' });
+                        } else {
+                            router.replace({ name: 'feed' });
+                        }
                         return;
                     }
                     notificationStore.clearUnseenNotifications();
@@ -322,7 +330,10 @@ export const useUiStore = defineStore('Ui', () => {
     function updateTrayIconNotify(force = false) {
         const notificationsSettingsStore = useNotificationsSettingsStore();
         let newState;
-        if (notificationsSettingsStore.notificationLayout === 'notification-center') {
+        if (
+            notificationsSettingsStore.notificationLayout ===
+            'notification-center'
+        ) {
             newState =
                 appearanceSettings.notificationIconDot &&
                 (notificationStore.hasUnseenNotifications ||

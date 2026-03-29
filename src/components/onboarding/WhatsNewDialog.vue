@@ -1,7 +1,7 @@
 <template>
     <Dialog v-model:open="whatsNewDialog.visible">
         <DialogContent
-            class="border border-border bg-background/88 p-5 shadow-lg backdrop-blur-xl backdrop-saturate-[1.4] sm:max-w-xl"
+            class="border border-border bg-background/88 p-5 shadow-lg backdrop-blur-xl backdrop-saturate-[1.4] sm:max-w-3xl"
             :show-close-button="false"
             @escape-key-down="handleDismiss"
             @pointer-down-outside="handleDismiss"

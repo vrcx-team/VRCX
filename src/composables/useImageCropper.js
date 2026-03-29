@@ -83,9 +83,6 @@ export function cropImage(
     cropCanvas.height = cropH;
     const ctx = cropCanvas.getContext('2d');
 
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, cropW, cropH);
-
     ctx.drawImage(source, -cropX, -cropY);
 
     return new Promise((resolve) => {

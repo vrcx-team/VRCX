@@ -1,7 +1,7 @@
 <template>
     <component :is="enableContextMenu ? ContextMenu : Passthrough">
         <component :is="enableContextMenu ? ContextMenuTrigger : Passthrough" as-child>
-            <div class="cursor-pointer">
+            <div class="cursor-pointer" v-bind="$attrs">
                 <div v-if="!text" class="text-transparent">-</div>
                 <div v-show="text" class="flex items-center">
                     <template v-if="isAgeRestricted">
@@ -82,6 +82,10 @@
     import { Spinner } from './ui/spinner';
     import WorldActionMenuItems from './WorldActionMenuItems.vue';
     import { accessTypeLocaleKeyMap } from '../shared/constants';
+
+    defineOptions({
+        inheritAttrs: false
+    });
 
     const Passthrough = (_, { slots }) => slots.default?.();
 

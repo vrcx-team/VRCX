@@ -1,6 +1,6 @@
 <template>
     <div class="relative h-full">
-        <div ref="scrollViewportRef" class="h-full w-full overflow-auto">
+        <div ref="scrollViewportRef" class="h-full w-full overflow-auto overflow-x-hidden">
             <div class="px-1.5 py-2.5">
                 <div v-if="virtualRows.length" class="relative w-full box-border" :style="virtualContainerStyle">
                     <template v-for="item in virtualItems" :key="String(item.virtualItem.key)">
@@ -118,8 +118,12 @@
                                                     :key="idx"
                                                     class="gap-2"
                                                     @click="applyStatusPreset(preset)">
-                                                    <i class="x-user-status" :class="presetStatusClass(preset.status)"></i>
-                                                    <span class="truncate max-w-[180px]">{{ getPresetDisplayText(preset) }}</span>
+                                                    <i
+                                                        class="x-user-status"
+                                                        :class="presetStatusClass(preset.status)"></i>
+                                                    <span class="truncate max-w-[180px]">{{
+                                                        getPresetDisplayText(preset)
+                                                    }}</span>
                                                 </ContextMenuItem>
                                             </ContextMenuSubContent>
                                         </ContextMenuSub>
@@ -147,7 +151,8 @@
                                             v-if="item.row.friend.state === 'online'"
                                             @click="friendRequestInvite(item.row.friend)">
                                             {{ t('dialog.user.actions.request_invite') }}
-                                            <ContextMenuShortcut v-if="isActionRecent(item.row.friend.id, 'Request Invite')">
+                                            <ContextMenuShortcut
+                                                v-if="isActionRecent(item.row.friend.id, 'Request Invite')">
                                                 <Clock class="size-3.5 text-muted-foreground" />
                                             </ContextMenuShortcut>
                                         </ContextMenuItem>
@@ -330,9 +335,7 @@
     });
 
     const visibleFavoriteOnlineFriends = computed(() => {
-        const filtered = allFavoriteOnlineFriends.value.filter((friend) =>
-            selectedFavoriteGroupIds.value.has(friend.id)
-        );
+        const filtered = allFavoriteOnlineFriends.value.filter((friend) => selectedFavoriteGroupIds.value.has(friend.id));
         return excludeSameInstance(filtered);
     });
 

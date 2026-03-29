@@ -828,7 +828,9 @@ export const useNotificationStore = defineStore('Notification', () => {
             return;
         }
         let displayName = '';
-        if (noty.displayName) {
+        if (noty.type === 'DisplayName' && noty.previousDisplayName) {
+            displayName = noty.previousDisplayName;
+        } else if (noty.displayName) {
             displayName = noty.displayName;
         } else if (noty.senderUsername) {
             displayName = noty.senderUsername;
@@ -1198,7 +1200,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         playNoty({
             type: 'Event',
             created_at: new Date().toJSON(),
-            data: 'Notification Test'
+            data: t('view.settings.notifications.notifications.test_message')
         });
     }
 

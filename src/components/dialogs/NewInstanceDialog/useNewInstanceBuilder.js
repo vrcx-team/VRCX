@@ -34,6 +34,7 @@ export function useNewInstanceBuilder(locationTagRef) {
         instanceId: '',
         instanceName: '',
         userId: '',
+        legacyUserId: '',
         accessType: 'public',
         region: 'US West',
         groupRegion: '',
@@ -68,7 +69,7 @@ export function useNewInstanceBuilder(locationTagRef) {
 
         configRepository
             .getString('instanceDialogUserId', '')
-            .then((value) => (newInstanceDialog.value.userId = value));
+            .then((value) => (newInstanceDialog.value.legacyUserId = value));
 
         configRepository
             .getString('instanceDialogAccessType', 'public')
@@ -102,7 +103,7 @@ export function useNewInstanceBuilder(locationTagRef) {
             accessType,
             region,
             instanceName,
-            userId,
+            legacyUserId,
             groupId,
             groupAccessType,
             queueEnabled,
@@ -115,7 +116,7 @@ export function useNewInstanceBuilder(locationTagRef) {
         configRepository.setString('instanceDialogInstanceName', instanceName);
         configRepository.setString(
             'instanceDialogUserId',
-            userId === currentUser.value.id ? '' : userId
+            legacyUserId === currentUser.value.id ? '' : legacyUserId
         );
         configRepository.setString('instanceDialogGroupId', groupId);
         configRepository.setString(
@@ -188,9 +189,7 @@ export function useNewInstanceBuilder(locationTagRef) {
         D.instanceId = '';
         D.shortName = '';
         D.secureOrShortName = '';
-        if (!D.userId) {
-            D.userId = currentUser.value.id;
-        }
+        D.userId = currentUser.value.id;
         refreshGroupRoles(D);
         saveNewInstanceDialog();
     }
@@ -205,8 +204,8 @@ export function useNewInstanceBuilder(locationTagRef) {
         if (D.instanceName) {
             D.instanceName = D.instanceName.replace(/[^A-Za-z0-9]/g, '');
         }
-        if (!D.userId) {
-            D.userId = currentUser.value.id;
+        if (!D.legacyUserId) {
+            D.legacyUserId = currentUser.value.id;
         }
         if (D.accessType !== 'invite' && D.accessType !== 'friends') {
             D.strict = false;
@@ -218,7 +217,7 @@ export function useNewInstanceBuilder(locationTagRef) {
 
         D.instanceId = buildLegacyInstanceTag({
             instanceName,
-            userId: D.userId,
+            userId: D.legacyUserId,
             accessType: D.accessType,
             groupId: D.groupId,
             groupAccessType: D.groupAccessType,

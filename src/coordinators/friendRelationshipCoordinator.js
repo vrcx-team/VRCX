@@ -218,7 +218,8 @@ export function updateFriendship(ref) {
                 previousDisplayName: ctx.displayName,
                 friendNumber: ref.$friendNumber
             };
-            friendLogTable.value.data.push(friendLogHistoryDisplayName);
+            // Sentry: VRCX-WEB-2A7
+            friendLogTable.value?.data.push(friendLogHistoryDisplayName);
             database.addFriendLogHistory(friendLogHistoryDisplayName);
             notificationStore.queueFriendLogNoty(friendLogHistoryDisplayName);
             sharedFeedStore.addEntry(friendLogHistoryDisplayName);

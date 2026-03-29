@@ -38,14 +38,34 @@ const mutualGraph = {
         }
         const friendTable = `${dbVars.userPrefix}_mutual_graph_friends`;
         const linkTable = `${dbVars.userPrefix}_mutual_graph_links`;
+        const metaTable = `${dbVars.userPrefix}_mutual_graph_meta`;
         const pairs = entries instanceof Map ? entries : new Map();
         await sqliteService.executeNonQuery('BEGIN');
         try {
-            await sqliteService.executeNonQuery(`DELETE FROM ${friendTable}`);
-            await sqliteService.executeNonQuery(`DELETE FROM ${linkTable}`);
+            await sqliteService.executeNonQuery(
+                `DELETE FROM ${linkTable} WHERE friend_id NOT IN (SELECT friend_id FROM ${metaTable} WHERE opted_out = 1)`
+            );
+            await sqliteService.executeNonQuery(
+                `DELETE FROM ${friendTable} WHERE friend_id NOT IN (SELECT friend_id FROM ${metaTable} WHERE opted_out = 1)`
+            );
             if (pairs.size === 0) {
                 await sqliteService.executeNonQuery('COMMIT');
                 return;
+            }
+            // Also clean links for friends in the new entries even if they
+            // were previously opted_out. We have fresh data for them now so
+            // old links must not linger.
+            let idsToClean = '';
+            pairs.forEach((_, friendId) => {
+                if (!friendId) return;
+                const safe = friendId.replace(/'/g, "''");
+                idsToClean += `'${safe}',`;
+            });
+            if (idsToClean) {
+                idsToClean = idsToClean.slice(0, -1);
+                await sqliteService.executeNonQuery(
+                    `DELETE FROM ${linkTable} WHERE friend_id IN (${idsToClean})`
+                );
             }
             let friendValues = '';
             let edgeValues = '';
@@ -131,6 +151,61 @@ const mutualGraph = {
             }
         }, `SELECT mutual_id, COUNT(*) FROM ${linkTable} GROUP BY mutual_id`);
         return mutualCountMap;
+    },
+
+    async upsertMutualGraphMeta(friendId, { lastFetchedAt, optedOut }) {
+        if (!dbVars.userPrefix || !friendId) {
+            return;
+        }
+        const metaTable = `${dbVars.userPrefix}_mutual_graph_meta`;
+        const escapedId = friendId.replace(/'/g, "''");
+        const time = (lastFetchedAt || new Date().toISOString()).replace(
+            /'/g,
+            "''"
+        );
+        const optedOutInt = optedOut ? 1 : 0;
+        await sqliteService.executeNonQuery(
+            `INSERT OR REPLACE INTO ${metaTable} (friend_id, last_fetched_at, opted_out) VALUES ('${escapedId}', '${time}', ${optedOutInt})`
+        );
+    },
+
+    async bulkUpsertMutualGraphMeta(entries) {
+        if (!dbVars.userPrefix || !entries || entries.size === 0) {
+            return;
+        }
+        const metaTable = `${dbVars.userPrefix}_mutual_graph_meta`;
+        let values = '';
+        const now = new Date().toISOString();
+        entries.forEach(({ optedOut }, friendId) => {
+            if (!friendId) return;
+            const escapedId = friendId.replace(/'/g, "''");
+            const optedOutInt = optedOut ? 1 : 0;
+            values += `('${escapedId}', '${now}', ${optedOutInt}),`;
+        });
+        if (values) {
+            values = values.slice(0, -1);
+            await sqliteService.executeNonQuery(
+                `INSERT OR REPLACE INTO ${metaTable} (friend_id, last_fetched_at, opted_out) VALUES ${values}`
+            );
+        }
+    },
+
+    async getMutualGraphMeta() {
+        const metaMap = new Map();
+        if (!dbVars.userPrefix) {
+            return metaMap;
+        }
+        const metaTable = `${dbVars.userPrefix}_mutual_graph_meta`;
+        await sqliteService.execute((dbRow) => {
+            const friendId = dbRow[0];
+            if (friendId) {
+                metaMap.set(friendId, {
+                    lastFetchedAt: dbRow[1] || null,
+                    optedOut: dbRow[2] === 1
+                });
+            }
+        }, `SELECT friend_id, last_fetched_at, opted_out FROM ${metaTable}`);
+        return metaMap;
     }
 };
 

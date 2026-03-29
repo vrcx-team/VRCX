@@ -915,6 +915,10 @@ app.on('before-quit', function () {
     // Mark it as a quitting state to make macOS Dock's "Quit" action take effect.
     appIsQuitting = true;
     disposeOverlay();
+    if (tray) {
+        tray.destroy();
+        tray = null;
+    }
 });
 
 app.on('window-all-closed', function () {

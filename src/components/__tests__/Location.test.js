@@ -112,6 +112,10 @@ const i18n = createI18n({
 });
 
 const stubs = {
+    ContextMenu: { template: '<div><slot /></div>' },
+    ContextMenuTrigger: { template: '<div><slot /></div>' },
+    ContextMenuContent: { template: '<div><slot /></div>' },
+    WorldActionMenuItems: { template: '<div />' },
     TooltipWrapper: {
         template: '<span><slot /></span>',
         props: [
@@ -126,9 +130,10 @@ const stubs = {
     AlertTriangle: { template: '<span class="alert-triangle" />' }
 };
 
-function mountLocation(props = {}, appearanceOverrides = {}) {
+function mountLocation(props = {}, appearanceOverrides = {}, mountOptions = {}) {
     return mount(Location, {
         props,
+        ...mountOptions,
         global: {
             plugins: [
                 i18n,
@@ -182,6 +187,24 @@ describe('Location.vue', () => {
             const wrapper = mountLocation({ location: '' });
             const placeholder = wrapper.find('.text-transparent');
             expect(placeholder.exists()).toBe(true);
+        });
+    });
+
+    describe('context menu attrs', () => {
+        test('keeps external classes on the visible location node when context menu is enabled', () => {
+            const wrapper = mountLocation(
+                { location: 'wrld_12345:67890', enableContextMenu: true },
+                {},
+                {
+                    attrs: {
+                        class: 'text-xs custom-location'
+                    }
+                }
+            );
+
+            const locationNode = wrapper.find('.custom-location');
+            expect(locationNode.exists()).toBe(true);
+            expect(locationNode.classes()).toContain('text-xs');
         });
     });
 

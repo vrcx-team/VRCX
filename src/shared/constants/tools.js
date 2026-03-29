@@ -1,8 +1,8 @@
 const toolCategories = [
     { key: 'image', labelKey: 'view.tools.pictures.header' },
     { key: 'shortcuts', labelKey: 'view.tools.shortcuts.header' },
-    { key: 'system', labelKey: 'view.tools.system_tools.header' },
     { key: 'group', labelKey: 'view.tools.group.header' },
+    { key: 'system', labelKey: 'view.tools.system_tools.header' },
     { key: 'user', labelKey: 'view.tools.export.header' },
     { key: 'other', labelKey: 'view.tools.other.header' }
 ];
