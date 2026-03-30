@@ -216,6 +216,7 @@ ipcMain.handle('app:restart', () => {
             }
         }
         app.relaunch(options);
+        destroyTray();
         app.exit(0);
     } else {
         app.relaunch();
@@ -292,6 +293,7 @@ function tryRelaunchWithArgs(args) {
 
     child.unref();
 
+    destroyTray();
     app.exit(0);
 }
 
@@ -478,6 +480,12 @@ function writeOverlayFrame(imageBuffer) {
 let tray = null;
 let trayIcon = null;
 let trayIconNotify = null;
+function destroyTray() {
+    if (tray) {
+        tray.destroy();
+        tray = null;
+    }
+}
 function createTray() {
     if (process.platform === 'darwin') {
         const image = nativeImage.createFromPath(
@@ -915,10 +923,7 @@ app.on('before-quit', function () {
     // Mark it as a quitting state to make macOS Dock's "Quit" action take effect.
     appIsQuitting = true;
     disposeOverlay();
-    if (tray) {
-        tray.destroy();
-        tray = null;
-    }
+    destroyTray();
 });
 
 app.on('window-all-closed', function () {
