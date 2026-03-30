@@ -943,7 +943,7 @@
           "vrchat_notes_description": "Shows notes stored in VRChat",
           "vrcx_memos": "显示本地备注",
           "vrcx_memos_description": "Shows notes saved locally in VRCX",
-          "recent_action_cooldown": "最近操作图标",
+          "recent_action_cooldown": "显示“最近操作”图标",
           "recent_action_cooldown_description": "在最近的邀请和加入申请操作上显示一个时钟图标。",
           "recent_action_cooldown_minutes": "冷却时间（分钟）"
         },
@@ -1143,7 +1143,7 @@
             "enable_tooltip": "获取视频标题以供日志记录使用，会一并获取进度条的时间"
           },
           "translation_api": {
-            "header": "个人简介翻译 API",
+            "header": "翻译 API",
             "enable": "启用",
             "translation_api_key": "输入 API 密钥",
             "enable_tooltip": "用于翻译玩家的个人简介"
@@ -1516,7 +1516,7 @@
         "private": "私人",
         "avatar_scaling_disabled": "已禁用模型缩放功能",
         "focus_view_disabled": "已禁用焦点视图功能",
-        "_future_proofing": "Future Proofing",
+        "future_proofing": "Future Proofing",
         "labs": "社区实验室",
         "cache": "缓存",
         "content_horror": "恐怖",
