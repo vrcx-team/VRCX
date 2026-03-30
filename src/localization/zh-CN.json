@@ -168,7 +168,7 @@
     "search_scope_joined": "找不到组织了吗？",
     "search_friends": "好友",
     "search_avatars": "模型",
-    "search_own_avatars": "属于我的模型",
+    "search_own_avatars": "我上传的模型",
     "search_fav_avatars": "我收藏的模型",
     "search_worlds": "世界",
     "search_own_worlds": "我上传的世界",
@@ -238,7 +238,7 @@
       },
       "language_detect": {
         "title": "界面语言",
-        "description": "您的系统语言似乎是 {language}。是否切换到该语言？"
+        "description": "你的系统语言似乎是 {language}。是否切换到该语言？"
       }
     },
     "feed": {
@@ -910,7 +910,7 @@
           "time_format_24": "24 小时制",
           "time_format_12": "12 小时制",
           "force_iso_date_format": "强制使用 ISO 时间格式",
-          "week_starts_on": "Week Starts On",
+          "week_starts_on": "一周的第一天是",
           "week_starts_on_description": "Choose the first day of the week. Affects calendars, charts, and activity views."
         },
         "theme_color": {
@@ -1133,7 +1133,7 @@
           "remote_database": {
             "header": "远程模型数据库",
             "enable": "启用",
-            "enable_description": "Enables fetching avatar data from a remote database",
+            "enable_description": "启用从远程数据库获取模型数据的功能",
             "avatar_database_provider": "数据库提供方设置"
           },
           "youtube_api": {
@@ -1482,15 +1482,15 @@
           "sat": "星期六",
           "sun": "星期日"
         },
-        "chart_hint": "今天你刷你的绿色格子了吗？",
+        "chart_hint": "今天你刷好你的绿色格子了吗？",
         "chart_hint_reply": "你刷不了这个。",
         "overlap": {
-          "header": "在线重叠",
-          "peak_overlap": "峰值重叠：",
+          "header": "在线时间重叠情况",
+          "peak_overlap": "重叠峰值：",
           "exclude_hours": "排除时间",
-          "no_data": "数据不足，无法计算重叠",
+          "no_data": "数据不足，无法计算重叠情况",
           "times_overlap": "重叠次数",
-          "minutes_overlap": "分钟重叠"
+          "minutes_overlap": "重叠时间（分钟级）"
         },
         "most_visited_worlds": {
           "header": "最常游玩的世界",
@@ -1778,7 +1778,7 @@
       "save_preset": "保存为预设",
       "preset_saved": "预设已保存",
       "preset_exists": "预设已存在",
-      "preset_limit": "最多 {max} 个预设"
+      "preset_limit": "目前最多可以存储 {max} 个预设，请删除一些不需要的预设后再试。"
     },
     "language": {
       "header": "语言",
@@ -1899,7 +1899,7 @@
     },
     "invite_request_message": {
       "header": "发送消息",
-      "confirmation": "Are you sure you want to send?",
+      "confirmation": "你确定要进行这个操作吗？",
       "cancel": "取消",
       "refresh": "刷新"
     },
@@ -2182,7 +2182,7 @@
       "save": "保存"
     },
     "translation_api": {
-      "header": "个人简介翻译 API",
+      "header": "翻译 API",
       "description": "输入你的 Google 翻译 API 密钥",
       "guide": "查看教程（英语）",
       "mode": "提供商",
