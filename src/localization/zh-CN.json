@@ -851,7 +851,7 @@
                     "font_family_custom": "自定义字体",
                     "font_family_custom_dialog_title": "自定义字体",
                     "font_family_custom_dialog_description": "输入有效的 CSS 字体名称",
-                    "font_family_custom_invalid": "无效的字体，请检查输入。请注意：字体名称使用逗号分隔，例如 'My Font', Arial, sans-serif",
+                    "font_family_custom_invalid": "无效的字体，请检查输入。注意：字体名称使用逗号分隔，例如 'My Font', Arial, sans-serif",
                     "cjk_font_pack_noto": "Noto Sans CJK",
                     "cjk_font_pack_pht": "PuHuiTi CJK",
                     "theme_mode_system": "跟随系统",
@@ -911,7 +911,7 @@
                     "time_format_12": "12 小时制",
                     "force_iso_date_format": "强制使用 ISO 时间格式",
                     "week_starts_on": "一周的第一天",
-                    "week_starts_on_description": "选择一周的第一天。会影响日历、图表和活动视图。"
+                    "week_starts_on_description": "选择一周的第一天。会影响日历、图表和活动视图的显示方式。"
                 },
                 "theme_color": {
                     "header": "主题颜色",
