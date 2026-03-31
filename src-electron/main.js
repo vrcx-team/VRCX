@@ -49,6 +49,10 @@ let isOverlayActive = false;
 let appIsQuitting = false;
 const rootDir = app.getAppPath();
 
+let tray = null;
+let trayIcon = null;
+let trayIconNotify = null;
+
 // Get launch arguments
 let appImagePath = process.env.APPIMAGE;
 const args = process.argv.slice(1);
@@ -477,9 +481,7 @@ function writeOverlayFrame(imageBuffer) {
     }
 }
 
-let tray = null;
-let trayIcon = null;
-let trayIconNotify = null;
+
 function destroyTray() {
     if (tray) {
         tray.destroy();
@@ -545,7 +547,9 @@ function createTray() {
 }
 
 function setTrayIconNotification(notify) {
-    tray.setImage(notify ? trayIconNotify : trayIcon);
+    if (tray) {
+        tray.setImage(notify ? trayIconNotify : trayIcon);
+    }
 }
 
 async function installVRCX() {
