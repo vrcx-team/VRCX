@@ -164,7 +164,7 @@
         "search_categories": "搜点什么...",
         "search_scope_all": "以及你给他们的备注",
         "search_scope_avatars": "看看有什么好玩的模型",
-        "search_scope_worlds": "看看有什么有趣的世界",
+        "search_scope_worlds": "找个好玩的地方玩玩",
         "search_scope_joined": "找不到组织了吗？",
         "search_friends": "好友",
         "search_avatars": "模型",
@@ -753,7 +753,7 @@
                     "header": "数据库"
                 },
                 "nightly": {
-                    "header": "测试版"
+                    "header": "测试版选项"
                 }
             },
             "general": {
@@ -850,8 +850,8 @@
                     "font_family_system_ui": "跟随系统字体",
                     "font_family_custom": "自定义字体",
                     "font_family_custom_dialog_title": "自定义字体",
-                    "font_family_custom_dialog_description": "输入有效的 CSS 字体值",
-                    "font_family_custom_invalid": "无效的字体，请检查输入。请注意：字体名使用逗号分隔，例如 'My Font', Arial, sans-serif",
+                    "font_family_custom_dialog_description": "输入有效的 CSS 字体名称",
+                    "font_family_custom_invalid": "无效的字体，请检查输入。请注意：字体名称使用逗号分隔，例如 'My Font', Arial, sans-serif",
                     "cjk_font_pack_noto": "Noto Sans CJK",
                     "cjk_font_pack_pht": "PuHuiTi CJK",
                     "theme_mode_system": "跟随系统",
@@ -871,7 +871,7 @@
                     "show_instance_id": "显示房间 ID",
                     "show_status_bar": "显示底部状态栏",
                     "age_gated_instances": "显示具有年龄限制的房间",
-                    "age_gated_instances_description": "显示具有年龄限制的房间。禁用时，这些房间将被隐藏并显示为受限。",
+                    "age_gated_instances_description": "显示具有年龄限制的房间。禁用时，这些房间将在列表中被隐藏，以跳转方式打开则显示为受限。",
                     "nicknames": "显示本地好友备注",
                     "nicknames_description": "在用户名后显示你的本地备注名。",
                     "sort_favorite_by": "收藏夹排序规则",
@@ -889,8 +889,8 @@
                     "toggle_pointer_on_hover_description": "对可点击元素始终显示指针光标。",
                     "accessible_status_indicators": "可访问的状态指示器",
                     "accessible_status_indicators_description": "在颜色之外使用形状来区分状态。",
-                    "use_official_status_colors": "使用官方状态颜色",
-                    "use_official_status_colors_description": "匹配 VRChat 的官方状态颜色。",
+                    "use_official_status_colors": "使用游戏内的状态颜色",
+                    "use_official_status_colors_description": "匹配游戏内的状态颜色。",
                     "table_density": "行高密度",
                     "table_density_standard": "标准",
                     "table_density_comfortable": "舒适",
@@ -910,8 +910,8 @@
                     "time_format_24": "24 小时制",
                     "time_format_12": "12 小时制",
                     "force_iso_date_format": "强制使用 ISO 时间格式",
-                    "week_starts_on": "一周的第一天是",
-                    "week_starts_on_description": "Choose the first day of the week. Affects calendars, charts, and activity views."
+                    "week_starts_on": "一周的第一天",
+                    "week_starts_on_description": "选择一周的第一天。会影响日历、图表和活动视图。"
                 },
                 "theme_color": {
                     "header": "主题颜色",
@@ -940,9 +940,9 @@
                 "user_dialog": {
                     "header": "玩家信息",
                     "vrchat_notes": "显示线上备注",
-                    "vrchat_notes_description": "Shows notes stored in VRChat",
+                    "vrchat_notes_description": "显示 VRChat 服务器上保存的备注",
                     "vrcx_memos": "显示本地备注",
-                    "vrcx_memos_description": "Shows notes saved locally in VRCX",
+                    "vrcx_memos_description": "显示在 VRCX 中本地保存的备注",
                     "recent_action_cooldown": "显示“最近操作”图标",
                     "recent_action_cooldown_description": "在最近的邀请和加入申请操作上显示一个时钟图标。",
                     "recent_action_cooldown_minutes": "冷却时间（分钟）"
@@ -1099,7 +1099,7 @@
                         "description": "直接给自己发送邀请，而不是在游戏中打开房间页面"
                     },
                     "anonymous_error_reporting": {
-                        "header": "匿名错误报告（仅限测试版）",
+                        "header": "匿名错误报告",
                         "description": "通过发送匿名的崩溃和错误报告来帮助改进 VRCX。不会收集任何有关个人或 VRChat 的相关数据。",
                         "consent_title": "匿名错误报告",
                         "consent_description": "启用匿名错误报告以帮助改进 VRCX吗？\n\n• 我们仅收集有关 VRCX 的崩溃和错误报告数据\n• 不会收集任何有关个人或 VRChat 的相关数据\n• 匿名错误报告仅限测试版可用\n• 并且可在高级设置中禁用",
@@ -1229,7 +1229,7 @@
                         "purge_confirm_description_1": "这将永久删除数据库中的模型变动记录并回收磁盘空间。",
                         "purge_confirm_description_2": "此操作无法撤销！",
                         "purge_confirm_description_3": "VRCX 将在操作完成后重启。",
-                        "purge_confirm_alert": "强烈建议在继续之前备份您的数据库文件！",
+                        "purge_confirm_alert": "强烈建议在继续之前备份你的数据库文件！",
                         "purge_confirm_button": "清理 & 重启",
                         "purge_in_progress": "正在清理模型变动的相关数据...",
                         "purge_complete": "模型变动相关数据清理成功。正在重启...",
@@ -2634,13 +2634,13 @@
             "email_2fa_resent": "已重发验证码邮件",
             "email_2fa_no_credentials": "由于登录数据无效，无法重新发送验证码邮件，请重新登录。",
             "incorrect_primary_password": "独立密码错误",
-            "saved_credentials_invalid": "保存的账号信息不再有效。",
+            "saved_credentials_invalid": "保存的账号信息不再有效，这可能是因为 IP 地址发生了变化导致登录状态过期。",
             "account_removed": "已移除账号。",
             "auto_login_success": "自动登录成功。",
             "auto_login_failed": "自动登录失败。",
             "offline": "你现在处于离线状态。",
             "login_network_issue_hint_title": "登录遇到问题？",
-            "login_network_issue_hint_description": "最近几次登录尝试失败。点击“打开”查看故障排查指南。"
+            "login_network_issue_hint_description": "发现你最近几次的登录都失败了，点击“打开”看看故障排查指南吧。"
         },
         "vrcx_updater": {
             "failed": "无法检查更新，{message}",
@@ -2660,8 +2660,8 @@
             "create_failed": "房间创建失败"
         },
         "avatar": {
-            "selected": "Avatar changed",
-            "already_selected": "Avatar already selected",
+            "selected": "模型已更换",
+            "already_selected": "你已经在使用这个模型了",
             "change_moderation_failed": "无法更新模型状态",
             "fallback_changed": "更改备用模型成功",
             "blocked": "模型屏蔽成功",
@@ -2796,7 +2796,7 @@
         "friend_request": "给你发送了一个好友请求",
         "friend": "现在是你的好友了",
         "unfriend": "不再是你的好友了",
-        "trust_level": "的信誉等级变更为 {trustLevel}",
+        "trust_level": "信誉等级变更为 {trustLevel}",
         "display_name": "已改名为 {displayName}",
         "group_announcement_title": "群组公告",
         "group_informative_title": "群组信息",
@@ -3024,7 +3024,7 @@
             "message": {
                 "error_message": "错误信息",
                 "endpoint": "接口",
-                "missing_credentials": "缺少访问凭据",
+                "missing_credentials": "缺少访问凭据，这可能是因为 IP 地址发生了变化导致登录状态过期。",
                 "vpn_in_use": "VRChat 目前限制了大多数的 VPN 服务。请断开所有已连接的 VPN 后重试。",
                 "login_error": "登录失败",
                 "invalid_json_response": "无效的 JSON 响应",
@@ -3079,7 +3079,7 @@
                     "items": {
                         "quick_search": {
                             "title": "快速搜索",
-                            "description": "按 Ctrl+K（⌘K）可查找玩家、世界、群组和模型。"
+                            "description": "按 Ctrl+K（⌘K）可快速查找玩家、世界、群组和模型。"
                         },
                         "local_favorite_groups": {
                             "title": "本地收藏夹/好友分组",
@@ -3091,7 +3091,7 @@
                         },
                         "right_click_menus": {
                             "title": "右键菜单",
-                            "description": "在好友、表格和标题上右键以执行快速操作。"
+                            "description": "在好友、表格和标题上右键可以执行快速操作。"
                         }
                     }
                 }
