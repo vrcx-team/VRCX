@@ -135,7 +135,7 @@
             <span v-if="instance?.queueSize" class="ml-1">
                 {{ t('dialog.user.info.instance_queue') }} {{ instance.queueSize }}
             </span>
-            <Badge v-if="instanceInfoState.isAgeGated" variant="outline" class="ml-1">
+            <Badge v-if="instanceInfoState.isAgeGated" variant="destructive" class="ml-1">
                 {{ t('dialog.user.info.instance_age_gated') }}
             </Badge>
         </div>

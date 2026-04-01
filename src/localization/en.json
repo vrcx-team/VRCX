@@ -788,7 +788,7 @@
                 },
                 "favorites": {
                     "header": "Favorite Groups Filter",
-                    "header_tooltip": "Choose which favorite groups are treated as VIP for filtering in Feed, Game Log, Notifications, and VR Overlay",
+                    "header_tooltip": "When the favorites filter is enabled on Feed, Game Log, Notifications Page, or VR Overlay, only entries from the selected groups will be shown",
                     "group_placeholder": "Select Groups"
                 },
                 "logging": {
@@ -813,7 +813,8 @@
                     "auto_invite_request_accept": "Auto Accept Invite Requests",
                     "auto_invite_request_accept_tooltip": "Automatically accept invite requests from favorite friends",
                     "auto_invite_request_accept_favs": "All Favorites",
-                    "auto_invite_request_accept_selected_favs": "VRCX Favorites",
+                    "auto_invite_request_accept_favs_hint": "Includes local friend favorite groups",
+                    "auto_invite_request_accept_selected_favs": "Custom Favorite Groups",
                     "change_status_description": "Override Status Description",
                     "status_description_placeholder": "Status description (max 32 characters)",
                     "auto_change_status_groups": "Only count friends from",
@@ -971,7 +972,7 @@
                     "header": "Notifications",
                     "layout": "Notification View",
                     "layout_notification_center": "Notification Center",
-                    "layout_table": "Notifications Tab",
+                    "layout_table": "Notifications Page",
                     "notification_filter": "Notification Filters",
                     "test_notification": "Send Test Notification",
                     "test_message": "Test notification.",

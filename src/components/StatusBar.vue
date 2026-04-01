@@ -317,7 +317,7 @@
                             :model-value="clockCount === 1"
                             @select.prevent
                             @update:model-value="setClockCount('1')">
-                            1 {{ t('status_bar.clock') }}
+                            1 {{ t('status_bar.clocks_label') }}
                         </ContextMenuCheckboxItem>
                         <ContextMenuCheckboxItem
                             :model-value="clockCount === 2"

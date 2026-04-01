@@ -176,11 +176,11 @@ function searchFriends(query, cleanQuery, comparer, limit = 10) {
     for (const ctx of indexedFriends) {
         let match = matchName(ctx.name, cleanQuery, comparer, ctx._normalized);
         let matchedField = match ? 'name' : null;
-        if (!match && ctx.memo) {
+        if (!match && ctx.memo && query.length >= 2) {
             match = localeIncludes(ctx.memo, query, comparer);
             if (match) matchedField = 'memo';
         }
-        if (!match && ctx.note) {
+        if (!match && ctx.note && query.length >= 2) {
             match = localeIncludes(ctx.note, query, comparer);
             if (match) matchedField = 'note';
         }
@@ -255,7 +255,7 @@ function searchItems(
 function handleSearch(payload) {
     const { seq, query, currentUserId, language } = payload;
 
-    if (!query || query.length < 2) {
+    if (!query || query.length < 1) {
         self.postMessage({
             type: 'searchResult',
             payload: {

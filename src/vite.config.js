@@ -64,7 +64,8 @@ function getAssetLanguage(assetId) {
  * @param moduleId
  */
 function getManualChunk(moduleId) {
-    const language = getAssetLanguage(moduleId);
+    const basename = moduleId.split('/').pop();
+    const language = getAssetLanguage(basename);
     if (!language) return;
 
     return `i18n/${language}`;
@@ -145,7 +146,7 @@ export default defineConfig(({ mode }) => {
                     customMedia: true
                 },
                 errorRecovery: true,
-                targets: browserslistToTargets(browserslist('Chrome 144'))
+                targets: browserslistToTargets(browserslist('Chrome 145'))
             }
         },
         optimizeDeps: {
@@ -173,8 +174,7 @@ export default defineConfig(({ mode }) => {
             strictPort: true
         },
         build: {
-            target: 'chrome144',
-            cssTarget: 'chrome144',
+            target: 'chrome145',
             outDir: '../build/html',
             license: true,
             emptyOutDir: true,
@@ -184,6 +184,7 @@ export default defineConfig(({ mode }) => {
             sourcemap: buildAndUploadSourceMaps ? 'hidden' : false,
             assetsInlineLimit(filePath) {
                 if (isFont(filePath)) return 0;
+                if (filePath.endsWith('.json')) return 0;
                 return 40960;
             },
             rolldownOptions: {
