@@ -75,7 +75,7 @@
                                 <span v-if="item.isFriend">{{ item.isFavorite ? '⭐' : '💚' }}</span>
                             </template>
                             <template v-else-if="item.type === 'VideoPlay'">
-                                <Video class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <Play class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 <TooltipWrapper
                                     :content="
                                         item.videoId
@@ -144,7 +144,7 @@
 <script setup>
     import { computed, onMounted, shallowRef, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import { LogIn, LogOut, MapPin, Settings, Video, Waypoints } from 'lucide-vue-next';
+    import { LogIn, LogOut, MapPin, Settings, Play, Waypoints } from 'lucide-vue-next';
 
     import { database } from '@/services/database';
     import { showUserDialog } from '@/coordinators/userCoordinator';
