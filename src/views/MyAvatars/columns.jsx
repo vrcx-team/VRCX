@@ -269,6 +269,30 @@ export function getColumns({
             cell: ({ row }) => <span>{row.original.version ?? '-'}</span>
         },
         {
+            id: 'impostor',
+            accessorFn: (row) =>
+                Array.isArray(row.unityPackages)
+                    ? row.unityPackages.find(
+                          (unityPackage) =>
+                              unityPackage.variant === 'impostor'
+                      )?.impostorizerVersion ?? ''
+                    : '',
+            header: ({ column }) =>
+                sortButton({
+                    column,
+                    label: () => t('dialog.avatar.tags.impostor')
+                }),
+            size: 100,
+            meta: {
+                class: 'text-right',
+                label: () => t('dialog.avatar.tags.impostor')
+            },
+            cell: ({ row }) => {
+                const version = row.getValue('impostor');
+                return <span>{version ? `v${version}` : '-'}</span>;
+            }
+        },
+        {
             id: 'pcPerf',
             accessorFn: (row) =>
                 getPlatformInfo(row.unityPackages)?.pc?.performanceRating ?? '',
