@@ -270,13 +270,20 @@ export function getColumns({
         },
         {
             id: 'impostor',
-            accessorFn: (row) =>
-                Array.isArray(row.unityPackages)
-                    ? row.unityPackages.find(
-                          (unityPackage) =>
-                              unityPackage.variant === 'impostor'
-                      )?.impostorizerVersion ?? ''
-                    : '',
+            accessorFn: (row) => {
+                if (!Array.isArray(row.unityPackages)) {
+                    return '';
+                }
+
+                for (let i = row.unityPackages.length - 1; i > -1; i--) {
+                    const unityPackage = row.unityPackages[i];
+                    if (unityPackage.variant === 'impostor') {
+                        return unityPackage.impostorizerVersion ?? '';
+                    }
+                }
+
+                return '';
+            },
             header: ({ column }) =>
                 sortButton({
                     column,
