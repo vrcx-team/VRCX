@@ -1,0 +1,162 @@
+name: VRCX Build Windows
+
+on:
+    workflow_dispatch:
+
+concurrency:
+    group: build-windows-${{ github.ref }}
+    cancel-in-progress: true
+
+permissions:
+    id-token: write
+    contents: write
+
+jobs:
+    set_version:
+        runs-on: ubuntu-latest
+        outputs:
+            version: ${{ steps.version.outputs.version }}
+            date: ${{ steps.version.outputs.date }}
+        steps:
+            - uses: actions/checkout@v5
+            - id: version
+              run: |
+                  export FILENAME="$(cat Version)"
+                  export DATE="$(cat Version)"
+                  echo "version=${FILENAME}" >> $GITHUB_OUTPUT
+                  echo "date=${DATE}" >> $GITHUB_OUTPUT
+
+    build_cef_html:
+        runs-on: ubuntu-latest
+        needs: set_version
+        steps:
+            - uses: actions/checkout@v5
+            - name: Set version
+              run: echo "${{ needs.set_version.outputs.version }}" > Version
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: lts/*
+            - name: Get npm cache directory
+              id: npm-cache-dir
+              run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+            - uses: actions/cache@v5
+              with:
+                  path: ${{ steps.npm-cache-dir.outputs.dir }}
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: ${{ runner.os }}-node-
+            - name: Restore dependencies
+              run: npm ci
+            - name: Build Cef html
+              env:
+                  SENTRY_AUTH_TOKEN: ${{ secrets.SentryAuthToken }}
+              run: npm run prod
+            - name: Upload Cef-html artifacts
+              uses: actions/upload-artifact@v7
+              with:
+                  name: Cef-html
+                  path: build/html
+
+    build_dotnet_windows:
+        runs-on: windows-latest
+        defaults:
+            run:
+                shell: bash
+        needs: [set_version, build_cef_html]
+        steps:
+            - uses: actions/checkout@v5
+            - name: Setup .NET 10
+              uses: actions/setup-dotnet@v5
+              with:
+                  dotnet-version: '10.0.x'
+            - name: Set version
+              run: |
+                  echo "${{ needs.set_version.outputs.version }}" > Version
+                  echo "!define PRODUCT_VERSION_FROM_FILE \"${{ needs.set_version.outputs.date }}.0\"" > Installer/version_define.nsh
+                  cat Version
+            - uses: actions/cache@v5
+              with:
+                  path: ~/.nuget/packages
+                  key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Cef.csproj') }}
+                  restore-keys: ${{ runner.os }}-nuget-
+            - name: Build Cef .NET Application
+              run: dotnet build Dotnet/VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
+            - name: Check if we want to sign
+              id: check_sign
+              run: |
+                  echo "sign=${{ secrets.AZURE_CLIENT_ID != '' }}" >> $GITHUB_OUTPUT
+            - name: Azure login
+              if: steps.check_sign.outputs.sign == 'true'
+              uses: azure/login@v2
+              with:
+                  client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                  tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                  subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+            - name: Sign Dotnet executables
+              if: steps.check_sign.outputs.sign == 'true'
+              uses: azure/trusted-signing-action@v0
+              with:
+                  azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                  azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                  azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+                  endpoint: https://eus.codesigning.azure.net/
+                  trusted-signing-account-name: ${{ secrets.AZURE_ACCOUNT_NAME }}
+                  certificate-profile-name: ${{ secrets.AZURE_PROFILE_NAME }}
+                  file-digest: SHA256
+                  timestamp-rfc3161: http://timestamp.acs.microsoft.com
+                  timestamp-digest: SHA256
+                  files: |
+                      ${{ github.workspace }}\build\Cef\CefSharp.BrowserSubprocess.Core.dll
+                      ${{ github.workspace }}\build\Cef\CefSharp.Core.dll
+                      ${{ github.workspace }}\build\Cef\CefSharp.Core.Runtime.dll
+                      ${{ github.workspace }}\build\Cef\CefSharp.dll
+                      ${{ github.workspace }}\build\Cef\CefSharp.OffScreen.dll
+                      ${{ github.workspace }}\build\Cef\CefSharp.WinForms.dll
+                      ${{ github.workspace }}\build\Cef\DiscordRPC.dll
+                      ${{ github.workspace }}\build\Cef\libcef.dll
+                      ${{ github.workspace }}\build\Cef\libEGL.dll
+                      ${{ github.workspace }}\build\Cef\libGLESv2.dll
+                      ${{ github.workspace }}\build\Cef\librsync.net.dll
+                      ${{ github.workspace }}\build\Cef\VRCX.dll
+                      ${{ github.workspace }}\build\Cef\VRCX.exe
+            - name: Download Cef-html artifacts
+              uses: actions/download-artifact@v8
+              with:
+                  name: Cef-html
+                  path: build/Cef/html
+            - name: Install NSIS
+              run: choco install nsis -y
+            - name: Create NSIS installer
+              uses: joncloud/makensis-action@v4
+              with:
+                  script-file: Installer/installer.nsi
+                  additional-plugin-paths: Installer/Plugins
+            - name: Rename setup
+              run: |
+                  file_name="VRCX_${{ needs.set_version.outputs.version }}_Setup.exe"
+                  echo "Setup FileName: ${file_name}"
+                  mv Installer/VRCX_Setup.exe $file_name
+            - name: Sign Cef setup
+              if: steps.check_sign.outputs.sign == 'true'
+              uses: azure/trusted-signing-action@v0
+              with:
+                  azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                  azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                  azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+                  endpoint: https://eus.codesigning.azure.net/
+                  trusted-signing-account-name: ${{ secrets.AZURE_ACCOUNT_NAME }}
+                  certificate-profile-name: ${{ secrets.AZURE_PROFILE_NAME }}
+                  file-digest: SHA256
+                  timestamp-rfc3161: http://timestamp.acs.microsoft.com
+                  timestamp-digest: SHA256
+                  files: |
+                      ${{ github.workspace }}\VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
+            - name: Upload Cef dotnet artifacts
+              uses: actions/upload-artifact@v7
+              with:
+                  name: Cef-Release
+                  path: build/Cef
+            - name: Upload setup artifact
+              uses: actions/upload-artifact@v7
+              with:
+                  name: Cef-Setup
+                  path: VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
