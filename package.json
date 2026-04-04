@@ -9,7 +9,7 @@
     "bugs": {
         "url": "https://github.com/vrcx-team/VRCX/issues"
     },
-    "license": "GPL-3.0-only",
+    "license": "MIT",
     "author": "VRCX Team",
     "repository": {
         "type": "git",
