@@ -128,7 +128,7 @@ ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {
     return interopApi.callMethod(className, methodName, args);
 });
 
-/** @type {BrowserWindow} */
+/** @type {Electron.CrossProcessExports.BrowserWindow} */
 let mainWindow = undefined;
 
 const VRCXStorage = interopApi.getDotNetObject('VRCXStorage');
