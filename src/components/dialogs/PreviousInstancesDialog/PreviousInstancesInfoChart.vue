@@ -22,7 +22,7 @@
     import * as echarts from 'echarts';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
     import InstanceActivityTooltip from '@/views/Charts/components/InstanceActivityTooltip.vue';
-    import { vueToHtml } from 'src/lib/utils';
+    import { vueToHtml } from '@/lib/utils';
 
     const { isDarkMode, dtHour12 } = storeToRefs(useAppearanceSettingsStore());
     const { currentUser } = storeToRefs(useUserStore());
