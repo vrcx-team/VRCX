@@ -5,6 +5,10 @@ on:
       - master
   workflow_dispatch:
 
+permissions:
+  security-events: write
+  contents: read
+
 jobs:
   lint_js:
     name: Lint JS (Oxlint)
@@ -33,12 +37,8 @@ jobs:
       - run: npm run fmt:check
 
   lint_c_sharp_windows:
-    name: Lint ${{ matrix.project }}
+    name: Lint Dotnet/VRCX-Cef.csproj
     runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        project: [Dotnet/VRCX-Cef.csproj]
     steps:
       - uses: actions/checkout@v6
         with:
@@ -46,7 +46,8 @@ jobs:
       - name: Annotate
         uses: JetBrains/ReSharper-InspectCode@v0.11
         with:
-          solution: ${{ matrix.project }}
+          solution: Dotnet/VRCX-Cef.csproj
+          severity: 'INFO'
         continue-on-error: true
 
   lint_c_sharp_linux:
@@ -65,6 +66,7 @@ jobs:
         uses: JetBrains/ReSharper-InspectCode@v0.11
         with:
           solution: ${{ matrix.project }}
+          severity: 'INFO'
         continue-on-error: true
 
   format_c_sharp:
@@ -77,7 +79,7 @@ jobs:
       - name: Setup .NET 9
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '10.0.x'
       - name: Run CSharpier
         run: |
           dotnet tool restore
