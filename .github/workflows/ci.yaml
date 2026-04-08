@@ -48,6 +48,9 @@ jobs:
         with:
           solution: Dotnet/VRCX-Cef.csproj
           severity: 'INFO'
+          build: false
+          no-build: true
+          caches-home: inspectcode
         continue-on-error: true
 
   lint_c_sharp_linux:
@@ -67,6 +70,9 @@ jobs:
         with:
           solution: ${{ matrix.project }}
           severity: 'INFO'
+          build: false
+          no-build: true
+          caches-home: inspectcode
         continue-on-error: true
 
   format_c_sharp:
