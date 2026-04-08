@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: oxc-project/oxlint-action@v2.0.1
         with:
           config: .oxlintrc.json
@@ -20,6 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v6
         with:
           node-version: lts/*
@@ -41,20 +45,28 @@ jobs:
           ]
     steps:
       - uses: actions/checkout@v6
-      - name: Setup .NET 9
-        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '9.0.x'
-      - run: dotnet tool restore
-      - name: Run Roslynator
-        run: dotnet roslynator analyze --severity-level error ${{ matrix.project }}
+          fetch-depth: 0
+      - name: Annotate
+        uses: JetBrains/ReSharper-InspectCode@v0.11
+        with:
+          solution: ${{ matrix.project }}
         continue-on-error: true
+        # - name: Setup .NET 9
+        #   uses: actions/setup-dotnet@v5
+        #   with:
+        #     dotnet-version: '9.0.x'
+        # - run: dotnet tool restore
+        # - name: Run Roslynator
+        #   run: dotnet roslynator analyze --severity-level error ${{ matrix.project }}
 
   format_c_sharp:
     name: Format C# (CSharpier)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - name: Setup .NET 9
         uses: actions/setup-dotnet@v5
         with:
