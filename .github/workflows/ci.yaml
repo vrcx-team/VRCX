@@ -32,18 +32,13 @@ jobs:
       - run: npm install --frozen-lockfile
       - run: npm run fmt:check
 
-  lint_c_sharp:
+  lint_c_sharp_windows:
     name: Lint ${{ matrix.project }}
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
-        project:
-          [
-            Dotnet/VRCX-Cef.csproj,
-            Dotnet/VRCX-Electron.csproj,
-            Dotnet/VRCX-Electron-arm64.csproj
-          ]
+        project: [Dotnet/VRCX-Cef.csproj]
     steps:
       - uses: actions/checkout@v6
         with:
@@ -53,13 +48,24 @@ jobs:
         with:
           solution: ${{ matrix.project }}
         continue-on-error: true
-        # - name: Setup .NET 9
-        #   uses: actions/setup-dotnet@v5
-        #   with:
-        #     dotnet-version: '9.0.x'
-        # - run: dotnet tool restore
-        # - name: Run Roslynator
-        #   run: dotnet roslynator analyze --severity-level error ${{ matrix.project }}
+
+  lint_c_sharp_linux:
+    name: Lint ${{ matrix.project }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          [Dotnet/VRCX-Electron.csproj, Dotnet/VRCX-Electron-arm64.csproj]
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Annotate
+        uses: JetBrains/ReSharper-InspectCode@v0.11
+        with:
+          solution: ${{ matrix.project }}
+        continue-on-error: true
 
   format_c_sharp:
     name: Format C# (CSharpier)
