@@ -1,0 +1,65 @@
+name: CI
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  lint_js:
+    name: Lint JS (Oxlint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oxc-project/oxlint-action@v2.0.1
+        with:
+          config: .oxlintrc.json
+        continue-on-error: true
+
+  format_js:
+    name: Format JS (Oxfmt)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm install --frozen-lockfile
+      - run: npm run fmt:check
+
+  lint_c_sharp:
+    name: Lint ${{ matrix.project }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          [
+            Dotnet/VRCX-Cef.csproj,
+            Dotnet/VRCX-Electron.csproj,
+            Dotnet/VRCX-Electron-arm64.csproj
+          ]
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '9.0.x'
+      - run: dotnet tool restore
+      - name: Run Roslynator
+        run: dotnet roslynator analyze --severity-level error ${{ matrix.project }}
+        continue-on-error: true
+
+  format_c_sharp:
+    name: Format C# (CSharpier)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '9.0.x'
+      - name: Run CSharpier
+        run: |
+          dotnet tool restore
+          dotnet csharpier check .
