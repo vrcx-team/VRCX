@@ -44,7 +44,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Annotate
-        uses: JetBrains/ReSharper-InspectCode@v0.11
+        uses: JetBrains/ReSharper-InspectCode@v0.12
         with:
           solution: Dotnet/VRCX-Cef.csproj
           severity: 'INFO'
@@ -63,7 +63,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Annotate
-        uses: JetBrains/ReSharper-InspectCode@v0.11
+        uses: JetBrains/ReSharper-InspectCode@v0.12
         with:
           solution: ${{ matrix.project }}
           severity: 'INFO'
