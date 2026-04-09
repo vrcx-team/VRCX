@@ -177,6 +177,20 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
     // ── Core invite function ───────────────────────────────────
 
     /**
+     * Parses common VRChat API errors into clean UI strings
+     */
+    function parseApiError(err) {
+        const msg = err?.error?.message || err?.message || 'Unknown API Error';
+        const lower = msg.toLowerCase();
+        if (lower.includes('rate limit') || err?.status === 429) return 'Rate Limited (429)';
+        if (lower.includes('already a member')) return 'Already a group member';
+        if (lower.includes('too many') || lower.includes('limit reached')) return 'User has too many invites/groups';
+        if (lower.includes('block') || lower.includes('privacy')) return 'User blocked invites';
+        if (lower.includes('permission')) return 'Permission Denied';
+        return msg;
+    }
+
+    /**
      * @param {string} userId
      * @param {string} displayName
      * @param {string} groupId
@@ -186,11 +200,15 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         if (!userId || !groupId) return false;
 
         // Skip self
-        if (userId === userStore.currentUser.id) return false;
+        if (userId === userStore.currentUser.id) {
+            console.log(`[GroupInvite] Skipped self (${displayName})`);
+            return false;
+        }
 
         // Check cache
         if (isAlreadyInvited(userId, groupId)) {
             addLog(userId, displayName, groupId, 'cached', 'Already invited (cached)');
+            console.log(`[GroupInvite] Skipped ${displayName} (${userId}) - Already present in session cache.`);
             return false;
         }
 
@@ -200,12 +218,14 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 userId
             });
             markInvited(userId, groupId);
-            addLog(userId, displayName, groupId, 'sent');
+            addLog(userId, displayName, groupId, 'sent', 'Group Invite');
+            console.log(`[GroupInvite] SUCCESS: Group Invite sent to ${displayName} (${userId})!`);
             return true;
         } catch (err) {
-            const msg = err?.error?.message || err?.message || 'Unknown error';
-            addLog(userId, displayName, groupId, 'error', msg);
-            console.error(`[GroupInvite] Failed to invite ${displayName}:`, msg);
+            const rawMsg = err?.error?.message || err?.message || 'Unknown API Error';
+            const uiMsg = parseApiError(err);
+            addLog(userId, displayName, groupId, 'error', uiMsg);
+            console.error(`[GroupInvite] FAILED to invite ${displayName} (${userId}). Reason: ${uiMsg} | Raw: ${rawMsg}`, err);
             return false;
         }
     }
@@ -256,15 +276,23 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
 
             if (!userId || userId === userStore.currentUser.id) {
                 skippedCount++;
+                console.log(`[GroupInvite] Engine Skipped: Ignoring own user account or invalid ID (${displayName})`);
                 continue;
             }
 
             if (only18Plus) {
                 const cachedUser = userStore.cachedUsers.get(userId);
-                if (cachedUser?.ageVerificationStatus !== '18+') {
+                if (cachedUser?.ageVerified !== true) {
                     skippedCount++;
-                    addLog(userId, displayName, groupId, 'skipped', 'Not 18+ verified');
+                    const reason = !cachedUser 
+                        ? 'Profile not cached (cannot verify)' 
+                        : (cachedUser.ageVerified === false ? 'Explicitly not 18+' : 'Age verification missing');
+                    
+                    addLog(userId, displayName, groupId, 'skipped', reason);
+                    console.log(`[GroupInvite] 18+ Check Failed for ${displayName} (${userId}). Reason: ${reason}. DB Value:`, cachedUser?.ageVerified);
                     continue;
+                } else {
+                    console.log(`[GroupInvite] 18+ Check Passed for ${displayName} (${userId}).`);
                 }
             }
 
@@ -362,6 +390,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
 
             if (!userId || userId === userStore.currentUser.id) {
                 skippedCount++;
+                console.log(`[InstanceInvite] Engine Skipped: Ignoring own user account or invalid ID (${displayName})`);
                 continue;
             }
 
@@ -377,11 +406,13 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 );
                 sentCount++;
                 addLog(userId, displayName, L.tag, 'sent', 'Instance Invite');
+                console.log(`[InstanceInvite] SUCCESS: Instant Invite sent to ${displayName} (${userId}) for World: ${worldName}`);
                 await sleep(delayMs.value);
             } catch (err) {
-                const msg = err?.error?.message || err?.message || 'Unknown error';
-                console.error(`[InstanceInvite] Failed for ${displayName}:`, msg);
-                addLog(userId, displayName, L.tag, 'error', msg);
+                const rawMsg = err?.error?.message || err?.message || 'Unknown API Error';
+                const uiMsg = parseApiError(err);
+                console.error(`[InstanceInvite] FAILED to invite ${displayName} (${userId}). Reason: ${uiMsg} | Raw: ${rawMsg}`, err);
+                addLog(userId, displayName, L.tag, 'error', uiMsg);
                 skippedCount++;
             }
         }
@@ -401,26 +432,29 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
      * @param {string} displayName
      */
     async function handlePlayerJoined(userId, displayName) {
-        if (!autoInviteEnabled.value) return;
-        if (!selectedGroupId.value) return;
-        if (!userId) return;
-        if (userId === userStore.currentUser.id) return;
+        if (!autoInviteEnabled.value || !selectedGroupId.value || !userId || userId === userStore.currentUser.id) return;
+        
         if (isAlreadyInvited(userId, selectedGroupId.value)) {
             addLog(userId, displayName, selectedGroupId.value, 'cached', 'Auto-invite skipped (cached)');
+            console.log(`[AutoInvite] Skipped ${displayName} (${userId}) - Already present in session cache.`);
             return;
         }
 
+        console.log(`[AutoInvite] Join Event Detected! Queueing group invite for ${displayName} (${userId})...`);
+        
         // Small delay to let the user fully join
         await sleep(1500);
 
+        const groupName = selectedGroup.value?.name || selectedGroupId.value;
         const sent = await sendSingleInvite(
             userId,
             displayName,
             selectedGroupId.value
         );
         if (sent) {
-            const groupName = selectedGroup.value?.name || selectedGroupId.value;
-            console.log(`[AutoInvite] Invited ${displayName} to ${groupName}`);
+            console.log(`[AutoInvite] AUTO-DISPATCH SUCCESS: Invited ${displayName} to ${groupName}`);
+        } else {
+            console.log(`[AutoInvite] AUTO-DISPATCH FAILED OR CANCELLED for ${displayName}`);
         }
     }
 
