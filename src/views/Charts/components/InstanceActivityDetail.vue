@@ -29,8 +29,8 @@
 
     import * as echarts from 'echarts';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
-    import { vueToHtml } from '@/lib/utils';
-    import InstanceActivityTooltip from './InstanceActivityTooltip.vue';
+    import InstanceActivityTooltip from './InstanceActivityTooltip.jsx';
+    import { renderToHtml } from '@/lib/utils';
 
     const { isDarkMode, dtHour12 } = storeToRefs(useAppearanceSettingsStore());
 
@@ -232,6 +232,8 @@
         // 2. time: the time the user spent in the instance
         // 3. tail: the time from startTimeStamp to the current entry's leaveTime
         // 4. entry: the original activity detail entry
+
+        // FIXME(kube): why are there not types here?
         const userGroupedEntries = new Map();
         // uniqueUserEntries has each user's first entry and used to keep the order of the users calculated in InstanceActivity.vue
         const uniqueUserEntries = [];
@@ -347,14 +349,16 @@
             if (!instanceData) return '';
 
             const format = dtHour12.value ? 'hh:mm:ss A' : 'HH:mm:ss';
-            return vueToHtml(InstanceActivityTooltip, {
-                color: params.color,
-                displayName: instanceData.display_name,
-                icon: friendOrFavIcon(instanceData.display_name),
-                joinTime: dayjs(instanceData.joinTime).format(format),
-                leaveTime: dayjs(instanceData.leaveTime).format(format),
-                duration: timeToText(instanceData.time, true)
-            });
+            return renderToHtml(
+                InstanceActivityTooltip({
+                    color: params.color,
+                    displayName: instanceData.display_name,
+                    icon: friendOrFavIcon(instanceData.display_name),
+                    joinTime: dayjs(instanceData.joinTime).format(format),
+                    leaveTime: dayjs(instanceData.leaveTime).format(format),
+                    duration: timeToText(instanceData.time, true)
+                })
+            );
         };
 
         const format = dtHour12.value ? 'hh:mm A' : 'HH:mm';

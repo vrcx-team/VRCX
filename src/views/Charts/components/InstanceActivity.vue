@@ -209,10 +209,10 @@
     import { useIntersectionObserver } from '../composables/useIntersectionObserver';
 
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
-    import InstanceActivityTooltip from './InstanceActivityTooltip.vue';
+    import InstanceActivityTooltip from './InstanceActivityTooltip.jsx';
 
     import * as echarts from 'echarts';
-    import { vueToHtml } from '@/lib/utils';
+    import { renderToHtml } from '@/lib/utils';
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const friendStore = useFriendStore();
@@ -594,14 +594,16 @@
             name = name.endsWith('}') ? name.slice(0, -1) : name;
             name = name.replaceAll('{filtered|', '').replaceAll('{normal|', '');
 
-            return vueToHtml(InstanceActivityTooltip, {
-                color: param.color,
-                displayName: `${name} #${location.instanceName}`,
-                icon: location.accessTypeName,
-                joinTime: dayjs(instanceData.joinTime).format(format),
-                leaveTime: dayjs(instanceData.leaveTime).format(format),
-                duration: timeToText(param.data, true)
-            });
+            return renderToHtml(
+                InstanceActivityTooltip({
+                    color: param.color,
+                    displayName: `${name} #${location.instanceName}`,
+                    icon: location.accessTypeName,
+                    joinTime: dayjs(instanceData.joinTime).format(format),
+                    leaveTime: dayjs(instanceData.leaveTime).format(format),
+                    duration: timeToText(param.data, true)
+                })
+            );
         };
 
         const format = dtHour12.value ? 'hh:mm A' : 'HH:mm';
