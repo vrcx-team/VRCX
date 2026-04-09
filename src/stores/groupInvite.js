@@ -218,7 +218,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
 
     // ── Mass invite: all in instance ───────────────────────────
 
-    async function massInviteAllInInstance() {
+    async function massInviteAllInInstance(only18Plus = false) {
         const groupId = selectedGroupId.value;
         if (!groupId) {
             toast.error('Please select a group first.');
@@ -252,12 +252,23 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
             }
 
             const userId = player.userId;
+            const displayName = player.displayName || userId;
+
             if (!userId || userId === userStore.currentUser.id) {
                 skippedCount++;
                 continue;
             }
 
-            const sent = await sendSingleInvite(userId, player.displayName, groupId);
+            if (only18Plus) {
+                const cachedUser = userStore.cachedUsers.get(userId);
+                if (cachedUser?.ageVerificationStatus !== '18+') {
+                    skippedCount++;
+                    addLog(userId, displayName, groupId, 'skipped', 'Not 18+ verified');
+                    continue;
+                }
+            }
+
+            const sent = await sendSingleInvite(userId, displayName, groupId);
             if (sent) {
                 sentCount++;
                 await sleep(delayMs.value);

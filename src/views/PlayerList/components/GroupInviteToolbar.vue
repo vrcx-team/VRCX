@@ -51,7 +51,7 @@
 
             <!-- Speed selector -->
             <Select v-model="delayPreset">
-                <SelectTrigger class="h-8 text-xs w-[110px] flex-none">
+                <SelectTrigger class="h-8 text-xs w-[125px] flex-none">
                     <SelectValue placeholder="Speed" />
                 </SelectTrigger>
                 <SelectContent>
@@ -101,20 +101,38 @@
         <div class="grid grid-cols-2 gap-2">
             <!-- Instance Invites Card -->
             <div class="rounded-md border border-border bg-muted/30 p-2.5">
-                <span class="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
-                    Instance
-                </span>
-                <TooltipWrapper side="top" content="Group-invite all players currently in the instance">
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        class="h-7 text-xs w-full"
-                        :disabled="!selectedGroupId || isRunning"
-                        @click="handleInviteAll">
-                        <Users class="h-3.5 w-3.5 mr-1.5" />
-                        Invite All in Instance
-                    </Button>
-                </TooltipWrapper>
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block">
+                        Instance
+                    </span>
+                    <TooltipWrapper side="top" content="Mass invite everyone currently in your instance to the selected group above">
+                        <Info class="size-3.5 text-muted-foreground hover:text-foreground transition-colors cursor-help" />
+                    </TooltipWrapper>
+                </div>
+                <div class="flex gap-1.5">
+                    <TooltipWrapper side="top" content="Invite everyone in the instance to the selected group">
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            class="flex-1 h-7 text-xs flex gap-1.5 items-center"
+                            :disabled="!selectedGroupId || isRunning"
+                            @click="handleMassInvite(false)">
+                            <Send class="size-3.5" />
+                            All
+                        </Button>
+                    </TooltipWrapper>
+                    <TooltipWrapper side="top" content="Invite ONLY 18+ verified people in the instance to the selected group">
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            class="flex-1 h-7 text-xs flex gap-1.5 items-center"
+                            :disabled="!selectedGroupId || isRunning"
+                            @click="handleMassInvite(true)">
+                            <Send class="size-3.5" />
+                            18+ Only
+                        </Button>
+                    </TooltipWrapper>
+                </div>
             </div>
 
             <!-- Friend Invites Card -->
@@ -200,12 +218,13 @@
         AlertCircle,
         CheckCircle2,
         ChevronRight,
+        Info,
         Loader2,
         MinusCircle,
+        Send,
         Shield,
         Timer,
         Trash2,
-        UserPlus,
         Users,
         X,
         Zap
@@ -244,14 +263,14 @@
 
     const { massInviteAllInInstance, massInviteFriends, cancelOperation } = groupInviteStore;
 
-    function handleInviteAll() {
+    function handleMassInvite(only18Plus = false) {
         modalStore
             .confirm({
-                description: 'Send group invites to all players currently in the instance?',
+                description: `Invite ${only18Plus ? 'all 18+ verified' : 'all'} instance members to the selected group?`,
                 title: 'Confirm Mass Invite'
             })
             .then(({ ok }) => {
-                if (ok) massInviteAllInInstance();
+                if (ok) massInviteAllInInstance(only18Plus);
             })
             .catch(() => {});
     }
