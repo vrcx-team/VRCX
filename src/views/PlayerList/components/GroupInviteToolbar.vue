@@ -7,6 +7,16 @@
                 <Badge v-if="cacheSize > 0" variant="secondary" class="text-[11px] h-5 px-1.5">
                     {{ cacheSize }} cached
                 </Badge>
+                <TooltipWrapper side="top" content="Manage list of users to completely ignore">
+                    <Button
+                        size="xs"
+                        variant="ghost"
+                        class="text-muted-foreground hover:text-foreground h-6 px-2 text-[11px]"
+                        @click="handleEditBlacklist">
+                        <UserMinus class="h-3 w-3 mr-1" />
+                        Blacklist{{ blacklist.length ? ` (${blacklist.length})` : '' }}
+                    </Button>
+                </TooltipWrapper>
                 <TooltipWrapper side="top" content="Clear invite cache so everyone can be re-invited">
                     <Button
                         size="xs"
@@ -202,7 +212,7 @@
                         :key="idx"
                         class="flex items-center gap-1.5 text-[11px] leading-4 px-1 py-0.5 rounded hover:bg-muted/60">
                         <CheckCircle2 v-if="entry.status === 'sent'" class="h-3 w-3 text-green-500 flex-none" />
-                        <MinusCircle v-else-if="entry.status === 'cached'" class="h-3 w-3 text-muted-foreground flex-none" />
+                        <MinusCircle v-else-if="entry.status === 'cached' || entry.status === 'skipped'" class="h-3 w-3 text-muted-foreground flex-none" />
                         <AlertCircle v-else-if="entry.status === 'error'" class="h-3 w-3 text-red-500 flex-none" />
                         <span class="truncate font-medium">{{ entry.displayName }}</span>
                         <span v-if="entry.message" class="text-muted-foreground truncate ml-auto text-[10px]">{{ entry.message }}</span>
@@ -210,6 +220,40 @@
                 </div>
             </CollapsibleContent>
         </Collapsible>
+
+        <!-- ─── Blacklist UI Dialog ─── -->
+        <Dialog :open="isBlacklistDialogOpen" @update:open="isBlacklistDialogOpen = $event">
+            <DialogContent class="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle>Invite Blacklist</DialogTitle>
+                    <DialogDescription>
+                        Users on this list will automatically bypass mass invites.
+                    </DialogDescription>
+                </DialogHeader>
+                
+                <div class="flex items-center gap-2 mb-2">
+                    <Input 
+                        v-model="newBlacklistUser" 
+                        placeholder="Enter exact Display Name or User ID..." 
+                        class="h-8 flex-1 text-xs" 
+                        @keydown.enter="addBlacklistUser" 
+                    />
+                    <Button size="sm" class="h-8" @click="addBlacklistUser">Add</Button>
+                </div>
+                
+                <div class="space-y-1.5 max-h-[30vh] overflow-y-auto pr-1">
+                    <div v-for="(user, index) in blacklist" :key="index" class="flex justify-between items-center bg-muted/50 px-2 py-1.5 rounded text-sm border border-border/50">
+                        <span class="font-medium px-1">{{ user }}</span>
+                        <Button variant="ghost" size="icon" class="h-6 w-6 text-muted-foreground hover:bg-destructive/20 hover:text-destructive shrink-0" @click="removeBlacklistUser(index)">
+                            <X class="h-3.5 w-3.5" />
+                        </Button>
+                    </div>
+                    <div v-if="blacklist.length === 0" class="text-center text-muted-foreground text-xs py-5">
+                        No users currently blacklisted.
+                    </div>
+                </div>
+            </DialogContent>
+        </Dialog>
     </div>
 </template>
 
@@ -225,15 +269,25 @@
         Shield,
         Timer,
         Trash2,
+        UserMinus,
         Users,
         X,
         Zap
     } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
+    import { ref } from 'vue';
 
     import { Badge } from '@/components/ui/badge';
     import { Button } from '@/components/ui/button';
     import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+    import {
+        Dialog,
+        DialogContent,
+        DialogDescription,
+        DialogHeader,
+        DialogTitle
+    } from '@/components/ui/dialog';
+    import { Input } from '@/components/ui/input';
     import {
         Select,
         SelectContent,
@@ -258,7 +312,8 @@
         isRunning,
         inviteLog,
         groupsWithInvitePermission,
-        cacheSize
+        cacheSize,
+        blacklist
     } = storeToRefs(groupInviteStore);
 
     const { massInviteAllInInstance, massInviteFriends, cancelOperation } = groupInviteStore;
@@ -298,5 +353,24 @@
                 if (ok) groupInviteStore.clearCache();
             })
             .catch(() => {});
+    }
+
+    const isBlacklistDialogOpen = ref(false);
+    const newBlacklistUser = ref('');
+
+    function handleEditBlacklist() {
+        isBlacklistDialogOpen.value = true;
+    }
+
+    function addBlacklistUser() {
+        const val = newBlacklistUser.value.trim();
+        if (val) {
+            blacklist.value.push(val);
+            newBlacklistUser.value = '';
+        }
+    }
+
+    function removeBlacklistUser(index) {
+        blacklist.value.splice(index, 1);
     }
 </script>

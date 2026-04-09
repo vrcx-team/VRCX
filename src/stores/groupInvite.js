@@ -36,6 +36,12 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
     const isCancelled = ref(false);
 
     /**
+     * List of user IDs or display names to ignore.
+     * @type {import('vue').Ref<string[]>}
+     */
+    const blacklist = ref([]);
+
+    /**
      * Session-only invite cache.
      * Keys are `${userId}::${groupId}` strings.
      * @type {Set<string>}
@@ -89,6 +95,8 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
 
     // ── Persistence (selected group only) ──────────────────────
 
+    let isSettingsLoaded = false;
+
     async function loadSettings() {
         selectedGroupId.value = await configRepository.getString(
             'groupInviteToolkit_selectedGroup',
@@ -98,9 +106,17 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
             'groupInviteToolkit_delayPreset',
             'normal'
         );
+        blacklist.value = await configRepository.getArray(
+            'groupInviteToolkit_blacklist',
+            []
+        );
+        
+        isSettingsLoaded = true;
     }
 
     async function saveSettings() {
+        if (!isSettingsLoaded) return;
+        
         await configRepository.setString(
             'groupInviteToolkit_selectedGroup',
             selectedGroupId.value
@@ -109,12 +125,17 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
             'groupInviteToolkit_delayPreset',
             delayPreset.value
         );
+        await configRepository.setArray(
+            'groupInviteToolkit_blacklist',
+            blacklist.value
+        );
     }
 
     loadSettings();
 
     watch(selectedGroupId, saveSettings);
     watch(delayPreset, saveSettings);
+    watch(blacklist, saveSettings, { deep: true });
 
     // ── Cache helpers ──────────────────────────────────────────
 
@@ -190,6 +211,14 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         return msg;
     }
 
+    function isBlacklisted(userId, displayName) {
+        if (!blacklist.value || blacklist.value.length === 0) return false;
+        return blacklist.value.some(
+            (b) => b.trim().toLowerCase() === userId.toLowerCase() ||
+                   b.trim().toLowerCase() === displayName?.toLowerCase()
+        );
+    }
+
     /**
      * @param {string} userId
      * @param {string} displayName
@@ -202,6 +231,13 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         // Skip self
         if (userId === userStore.currentUser.id) {
             console.log(`[GroupInvite] Skipped self (${displayName})`);
+            return false;
+        }
+
+        // Check blacklist
+        if (isBlacklisted(userId, displayName)) {
+            addLog(userId, displayName, groupId, 'skipped', 'User is blacklisted');
+            console.log(`[GroupInvite] Skipped ${displayName} (${userId}) - Blacklisted.`);
             return false;
         }
 
@@ -394,6 +430,14 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 continue;
             }
 
+            // Check blacklist
+            if (isBlacklisted(userId, displayName)) {
+                skippedCount++;
+                addLog(userId, displayName, L.tag, 'skipped', 'User is blacklisted');
+                console.log(`[InstanceInvite] Skipped ${displayName} (${userId}) - Blacklisted.`);
+                continue;
+            }
+
             try {
                 // Use notification request (instance invite)
                 await notificationRequest.sendInvite(
@@ -476,6 +520,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         isRunning,
         inviteCache,
         inviteLog,
+        blacklist,
 
         // Computed
         delayMs,
