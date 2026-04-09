@@ -438,6 +438,14 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 continue;
             }
 
+            // Check Cache
+            if (isAlreadyInvited(userId, L.tag)) {
+                skippedCount++;
+                addLog(userId, displayName, L.tag, 'cached', 'Already invited (cached)');
+                console.log(`[InstanceInvite] Skipped ${displayName} (${userId}) - Already present in session cache.`);
+                continue;
+            }
+
             try {
                 // Use notification request (instance invite)
                 await notificationRequest.sendInvite(
@@ -448,6 +456,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                     },
                     userId
                 );
+                markInvited(userId, L.tag);
                 sentCount++;
                 addLog(userId, displayName, L.tag, 'sent', 'Instance Invite');
                 console.log(`[InstanceInvite] SUCCESS: Instant Invite sent to ${displayName} (${userId}) for World: ${worldName}`);
