@@ -19,6 +19,7 @@ import { useGameStore } from './game';
 import { useGeneralSettingsStore } from './settings/general';
 import { useQuickSearchStore } from './quickSearch';
 import { useGroupStore } from './group';
+import { useGroupInviteStore } from './groupInvite';
 import { useInstanceStore } from './instance';
 import { useInviteStore } from './invite';
 import { useLaunchStore } from './launch';
@@ -140,6 +141,7 @@ export function createGlobalStores() {
         avatar: useAvatarStore(),
         world: useWorldStore(),
         group: useGroupStore(),
+        groupInvite: useGroupInviteStore(),
         location: useLocationStore(),
         instance: useInstanceStore(),
         moderation: useModerationStore(),
@@ -177,6 +179,7 @@ export {
     useGameStore,
     useGameLogStore,
     useGroupStore,
+    useGroupInviteStore,
     useInstanceStore,
     useInviteStore,
     useLaunchStore,

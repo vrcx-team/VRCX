@@ -38,6 +38,7 @@ import { useSharedFeedStore } from '../stores/sharedFeed';
 import { useUserStore } from '../stores/user';
 import { useVrStore } from '../stores/vr';
 import { useVrcxStore } from '../stores/vrcx';
+import { useGroupInviteStore } from '../stores/groupInvite';
 
 import gameLogService from '../services/gameLog.js';
 
@@ -271,13 +272,20 @@ export function addGameLogEntry(gameLog, location) {
                 userId
             );
             database.addGamelogJoinLeaveToDatabase(entry);
+            // Auto-invite hook: send group invite if enabled
+            {
+                const groupInviteStore = useGroupInviteStore();
+                if (groupInviteStore.autoInviteEnabled && userId) {
+                    groupInviteStore.handlePlayerJoined(userId, gameLog.displayName);
+                }
+            }
             break;
         case 'player-left':
             const ref1 = locationStore.lastLocation.playerList.get(userId);
             if (typeof ref1 === 'undefined') {
                 break;
             }
-            const time = dayjs(gameLog.dt) - ref1.joinTime;
+            const time = dayjs(gameLog.dt).valueOf() - ref1.joinTime;
             locationStore.lastLocation.playerList.delete(userId);
             locationStore.lastLocation.friendList.delete(userId);
             gameLogStore.state.lastLocationAvatarList.delete(

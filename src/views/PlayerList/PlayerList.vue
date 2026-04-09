@@ -160,6 +160,14 @@
                 </div>
             </div>
 
+            <!-- Group Invite Toolkit -->
+            <div class="mb-3">
+                <Separator class="mb-3" />
+                <div class="rounded-lg border border-border bg-card/50 p-3">
+                    <GroupInviteToolbar />
+                </div>
+            </div>
+
             <div class="mb-2" v-if="photonLoggingEnabled" ref="playerListPhotonRef">
                 <PhotonEventTable @show-chatbox-blacklist="showChatboxBlacklistDialog" />
             </div>
@@ -201,7 +209,9 @@
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
 
     import ChatboxBlacklistDialog from './dialogs/ChatboxBlacklistDialog.vue';
+    import GroupInviteToolbar from './components/GroupInviteToolbar.vue';
     import Timer from '../../components/Timer.vue';
+    import { Separator } from '../../components/ui/separator';
     import { showUserDialog, lookupUser } from '../../coordinators/userCoordinator';
     import { showWorldDialog } from '../../coordinators/worldCoordinator';
 
