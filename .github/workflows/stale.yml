@@ -1,0 +1,54 @@
+name: 'Check for stale issues and close ones without activity'
+
+permissions:
+  actions: write
+  contents: write
+  issues: write
+  pull-requests: write
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Run stale bot'
+        uses: actions/stale@v10
+        with:
+          days-before-stale: '90'
+          operations-per-run: '1000'
+          stale-issue-message: >
+            Hi there! 👋  
+            
+            This issue has been waiting for more information for over 90 days.
+
+            To help us move forward, please check the following:
+
+            **If this is a bug report:**
+            - Has the issue been resolved in a newer version?
+            - Make sure all relevant logs are attached (these are required).
+
+            **If this is a feature request:**
+            - Ensure all necessary details have been provided
+            - Double-check if there are any unanswered questions in the discussion
+
+            If we don’t receive an update within 30 days, this issue will be closed automatically.  
+            Thanks for your help and understanding! 🙏
+
+          days-before-close: '30'
+          only-labels: 'needs more information'
+          stale-issue-label: 'stale'
+          exempt-draft-pr: 'true'
+          exempt-issue-labels: 'nostale'
+          close-issue-message: >
+            Hi there 👋  
+            
+            We’re closing this issue due to missing information.
+
+            If you’d like us to take another look, feel free to reopen it after:
+            - Providing the requested details (logs, feature clarification, etc.)
+            - Answering any open questions from the team
+
+            Thanks again for your contribution! 🙏
