@@ -38,7 +38,11 @@
             "thursday": "星期四",
             "friday": "星期五",
             "saturday": "星期六"
-        }
+        },
+        "duration": "持续时间",
+        "load_more": "加载更多",
+        "no_more": "没有更多条目",
+        "current_session": "当前会话"
     },
     "nav_tooltip": {
         "friends_locations": "好友位置",
@@ -279,6 +283,15 @@
                 "External": "外部事件",
                 "StringLoad": "字符串加载",
                 "ImageLoad": "图片加载"
+            },
+            "sessions": {
+                "switch_to_table": "表格视图",
+                "switch_to_sessions": "会话视图",
+                "date_range": "日期范围",
+                "players_joined": "{count} 玩家加入",
+                "players_left": "{count} 玩家离开",
+                "play_count": "×{count}",
+                "no_data": "无日志"
             }
         },
         "player_list": {
@@ -582,6 +595,14 @@
                     "last_fetched": "最后获取时间"
                 }
             },
+            "playtime_trend": {
+                "header": "每日游戏时间",
+                "online_hours": "小时",
+                "daily_avg": "每日平均",
+                "total": "总计",
+                "waiting": "正在生成游戏时间数据，请稍后再来。",
+                "no_data": "暂无游戏时间数据"
+            },
             "hot_worlds": {
                 "tab_label": "热门世界",
                 "header": "热门世界",
@@ -699,7 +720,7 @@
                 "pictures": "相册",
                 "advanced": "高级",
                 "system": "系统",
-                "interface": "叠加界面",
+                "interface": "界面",
                 "social": "社交",
                 "vr": "VR",
                 "media": "媒体",
@@ -813,7 +834,8 @@
                     "auto_invite_request_accept": "自动同意加入申请",
                     "auto_invite_request_accept_tooltip": "自动同意指定分组好友的加入申请",
                     "auto_invite_request_accept_favs": "所有具有分组的好友",
-                    "auto_invite_request_accept_selected_favs": "仅指定分组的好友",
+                    "auto_invite_request_accept_favs_hint": "仅指定分组的好友",
+                    "auto_invite_request_accept_selected_favs": "选择自定义分组",
                     "change_status_description": "覆盖当前的状态描述",
                     "status_description_placeholder": "要使用的状态描述（最多 32 个字符）",
                     "auto_change_status_groups": "仅统计来自以下分组的好友",
@@ -887,8 +909,8 @@
                     "striped_data_table_mode": "斑马纹表格模式",
                     "toggle_pointer_on_hover": "悬停时强制显示指针",
                     "toggle_pointer_on_hover_description": "对可点击元素始终显示指针光标。",
-                    "accessible_status_indicators": "可访问的状态指示器",
-                    "accessible_status_indicators_description": "在颜色之外使用形状来区分状态。",
+                    "accessible_status_indicators": "无障碍版状态指示器",
+                    "accessible_status_indicators_description": "除了使用颜色之外，也使用形状来区分状态。",
                     "use_official_status_colors": "使用游戏内的状态颜色",
                     "use_official_status_colors_description": "匹配游戏内的状态颜色。",
                     "table_density": "行高密度",
@@ -896,7 +918,7 @@
                     "table_density_comfortable": "舒适",
                     "table_density_compact": "紧凑",
                     "table_entries_settings": "条目读取设置",
-                    "table_entries_settings_description": "Control how many items are loaded for lists and searches."
+                    "table_entries_settings_description": "控制读取列表和进行搜索时加载的条目数量"
                 },
                 "display": {
                     "header": "显示设置"
@@ -950,7 +972,7 @@
                 "user_colors": {
                     "header": "好友名称显示颜色",
                     "random_colors_from_user_id": "从玩家 ID 随机挑选颜色",
-                    "random_colors_from_user_id_description": "Assign a consistent color to each user based on their ID.",
+                    "random_colors_from_user_id_description": "根据 ID 为每个玩家分配一个随机颜色。",
                     "trust_levels": {
                         "visitor": "游客",
                         "new_user": "萌新",
@@ -1102,7 +1124,7 @@
                         "header": "匿名错误报告",
                         "description": "通过发送匿名的崩溃和错误报告来帮助改进 VRCX。不会收集任何有关个人或 VRChat 的相关数据。",
                         "consent_title": "匿名错误报告",
-                        "consent_description": "启用匿名错误报告以帮助改进 VRCX吗？\n\n• 我们仅收集有关 VRCX 的崩溃和错误报告数据\n• 不会收集任何有关个人或 VRChat 的相关数据\n• 匿名错误报告仅限测试版可用\n• 并且可在高级设置中禁用",
+                        "consent_description": "要启用匿名错误报告以帮助改进 VRCX 吗？\n\n• 我们仅收集有关 VRCX 的崩溃和错误报告数据\n• 不会收集任何有关个人或 VRChat 的相关数据\n• 匿名错误报告仅限测试版可用\n• 并且可在高级设置中禁用",
                         "enabled_restart_description": "错误报告目前已启用，要重启 VRCX 以便禁用它吗？",
                         "disabled_restart_description": "错误报告目前已禁用，要重启 VRCX 以便启用它吗？"
                     },
@@ -1149,7 +1171,7 @@
                         "enable_tooltip": "用于翻译玩家的个人简介"
                     },
                     "video_progress_pie": {
-                        "header": "视频进度圆饼叠加界面",
+                        "header": "在叠加界面上显示圆饼样式的视频进度图",
                         "enable": "启用",
                         "enable_tooltip": "需要启用 SteamVR 叠加界面选项",
                         "dance_world_only": "仅在舞蹈类房间显示"
@@ -1232,7 +1254,7 @@
                         "purge_confirm_alert": "强烈建议在继续之前备份你的数据库文件！",
                         "purge_confirm_button": "清理 & 重启",
                         "purge_in_progress": "正在清理模型变动的相关数据...",
-                        "purge_complete": "模型变动相关数据清理成功。正在重启...",
+                        "purge_complete": "模型变动相关数据清理成功。准备重启...",
                         "purge_failed": "清理失败: {error}"
                     },
                     "user_generated_content": {
@@ -1469,6 +1491,10 @@
                 "most_active_time": "高峰时段:",
                 "period": "时间段:",
                 "period_90": "最近 90 天",
+                "period_180": "最近 6 个月",
+                "period_365": "最近 1 年",
+                "period_all": "所有时间",
+                "building_cache": "正在计算扩展范围的所有活动数据...",
                 "period_30": "最近 30 天",
                 "period_7": "最近 7 天",
                 "minutes_online": "在线分钟数",
@@ -1482,8 +1508,8 @@
                     "sat": "星期六",
                     "sun": "星期日"
                 },
-                "chart_hint": "今天你刷好你的绿色格子了吗？",
-                "chart_hint_reply": "你刷不了这个。",
+                "chart_hint": "今天你 commit 了吗？",
+                "chart_hint_reply": "你没法 commit 这个，但是你依然可以假装这是你的 Github 提交图！",
                 "overlap": {
                     "header": "在线时间重叠情况",
                     "peak_overlap": "重叠峰值：",
@@ -3042,10 +3068,10 @@
     "onboarding": {
         "welcome": {
             "title": "欢迎使用 VRCX",
-            "subtitle": "这里有一些你可能不会自行发现的功能。",
+            "subtitle": "这里有一些你可能没注意到的奇妙功能",
             "features": {
                 "user_profiles": {
-                    "title": "用户资料",
+                    "title": "玩家资料",
                     "description": "点击任意玩家以查看共同好友、活动热力图和包含加入/离开详情的会话日志"
                 },
                 "right_click": {
@@ -3079,7 +3105,7 @@
                     "items": {
                         "quick_search": {
                             "title": "快速搜索",
-                            "description": "按 Ctrl+K（⌘K）可快速查找玩家、世界、群组和模型。"
+                            "description": "按 Ctrl+K（⌘K）可快速查找各种东西（包括你的好友、收藏的世界、加入的群组和模型）。"
                         },
                         "local_favorite_groups": {
                             "title": "本地收藏夹/好友分组",
@@ -3091,7 +3117,7 @@
                         },
                         "right_click_menus": {
                             "title": "右键菜单",
-                            "description": "在好友、表格和标题上右键可以执行快速操作。"
+                            "description": "在好友、表格头以及标题上右键可以执行快速操作。"
                         }
                     }
                 }
@@ -3124,6 +3150,7 @@
         "clock": "时钟",
         "clocks_label": "时钟",
         "clocks_none": "无",
-        "timezone": "时区"
+        "timezone": "时区",
+        "now_playing": "正在游玩"
     }
 }
