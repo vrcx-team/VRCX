@@ -128,7 +128,7 @@ ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {
     return interopApi.callMethod(className, methodName, args);
 });
 
-/** @type {BrowserWindow} */
+/** @type {Electron.CrossProcessExports.BrowserWindow} */
 let mainWindow = undefined;
 
 const VRCXStorage = interopApi.getDotNetObject('VRCXStorage');
@@ -616,6 +616,7 @@ async function installVRCX() {
                 fs.renameSync(appImagePath, appImageHomePath);
                 appImagePath = appImageHomePath;
                 console.log('AppImage moved to:', appImageHomePath);
+                await createDesktopFile();
             } catch (err) {
                 console.error(`Error moving AppImage ${appImageHomePath}`, err);
                 dialog.showErrorBox(
@@ -629,8 +630,6 @@ async function installVRCX() {
 
     // inform .NET side about AppImage path
     interopApi.getDotNetObject('Update').Init(appImagePath);
-
-    await createDesktopFile();
 }
 
 async function createDesktopFile() {

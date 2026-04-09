@@ -269,7 +269,7 @@
                                         <Pencil class="size-4" />
                                         {{ t('dialog.world.actions.change_allowed_video_player_domains') }}
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem v-if="isWindows" @click="worldDialogCommand('Change Image')">
+                                    <DropdownMenuItem @click="worldDialogCommand('Change Image')">
                                         <Image class="size-4" />
                                         {{ t('dialog.world.actions.change_image') }}
                                     </DropdownMenuItem>
@@ -505,9 +505,7 @@
             worldDialog.value.visible = value;
         }
     });
-
-    const isWindows = computed(() => WINDOWS);
-
+    
     watch(
         () => worldDialog.value.loading,
         () => {

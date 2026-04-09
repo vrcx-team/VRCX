@@ -100,6 +100,11 @@ export function useNavLayout({
         const navKeys = Array.isArray(currentRoute?.meta?.navKeys)
             ? currentRoute.meta.navKeys
             : [currentRoute?.meta?.navKey || currentRouteName].filter(Boolean);
+
+        if (currentRoute?.meta?.hidesActiveMenuItem === true) {
+            return '';
+        }
+
         if (!navKeys.length) {
             return getFirstNavKeyLocal(navLayout.value) || 'feed';
         }
