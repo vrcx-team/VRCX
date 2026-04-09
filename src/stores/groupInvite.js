@@ -3,12 +3,13 @@ import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 
 import { hasGroupPermission } from '../shared/utils';
-import { groupRequest } from '../api';
+import { groupRequest, notificationRequest, queryRequest } from '../api';
 import { useFriendStore } from './friend';
 import { useGroupStore } from './group';
 import { useLocationStore } from './location';
 import { useUserStore } from './user';
 import { watchState } from '../services/watchState';
+import { parseLocation } from '../shared/utils';
 
 import configRepository from '../services/config';
 
@@ -272,7 +273,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         );
     }
 
-    // ── Mass invite: friends ───────────────────────────────────
+    // ── Mass invite: friends (Instance Invite) ─────────────────
 
     /**
      * @param {'public' | 'all'} scope
@@ -280,18 +281,40 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
      *   'all'     = online + active (orange) friends
      */
     async function massInviteFriends(scope) {
-        const groupId = selectedGroupId.value;
-        if (!groupId) {
-            toast.error('Please select a group first.');
-            return;
-        }
         if (isRunning.value) {
             toast.warning('An invite operation is already running.');
             return;
         }
 
+        // Determine current instance
+        let currentLocation = locationStore.lastLocation?.location;
+        if (currentLocation === 'traveling') {
+            currentLocation = locationStore.lastLocationDestination;
+        }
+
+        if (!currentLocation || currentLocation === 'offline' || currentLocation === 'private') {
+            toast.error('You must be in an instance to send instance invites.');
+            return;
+        }
+
+        const L = parseLocation(currentLocation);
+        if (!L.worldId) {
+            toast.error('Failed to parse current instance location.');
+            return;
+        }
+
         isRunning.value = true;
         isCancelled.value = false;
+
+        let worldName = L.worldId;
+        try {
+            const worldArgs = await queryRequest.fetch('world.location', { worldId: L.worldId });
+            if (worldArgs?.ref?.name) {
+                worldName = worldArgs.ref.name;
+            }
+        } catch (e) {
+            console.warn('Could not fetch world name for invite.', e);
+        }
 
         // Gather target friends
         let targets = [];
@@ -312,8 +335,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
             return;
         }
 
-        const groupName = selectedGroup.value?.name || groupId;
-        toast.info(`Inviting ${targets.length} friends to ${groupName}...`);
+        toast.info(`Inviting ${targets.length} friends to instance...`);
 
         let sentCount = 0;
         let skippedCount = 0;
@@ -332,11 +354,23 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 continue;
             }
 
-            const sent = await sendSingleInvite(userId, displayName, groupId);
-            if (sent) {
+            try {
+                // Use notification request (instance invite)
+                await notificationRequest.sendInvite(
+                    {
+                        instanceId: L.tag,
+                        worldId: L.tag,
+                        worldName: worldName
+                    },
+                    userId
+                );
                 sentCount++;
+                addLog(userId, displayName, L.tag, 'sent', 'Instance Invite');
                 await sleep(delayMs.value);
-            } else {
+            } catch (err) {
+                const msg = err?.error?.message || err?.message || 'Unknown error';
+                console.error(`[InstanceInvite] Failed for ${displayName}:`, msg);
+                addLog(userId, displayName, L.tag, 'error', msg);
                 skippedCount++;
             }
         }

@@ -123,23 +123,23 @@
                     Friends
                 </span>
                 <div class="flex gap-1.5">
-                    <TooltipWrapper side="top" content="Invite online (green) friends to the selected group">
+                    <TooltipWrapper side="top" content="Invite online (green) friends to your current instance">
                         <Button
                             size="sm"
                             variant="outline"
                             class="h-7 text-xs flex-1"
-                            :disabled="!selectedGroupId || isRunning"
+                            :disabled="isRunning"
                             @click="handleInviteFriends('public')">
                             <div class="size-2 rounded-full bg-green-500 mr-1.5 flex-none" />
                             Online
                         </Button>
                     </TooltipWrapper>
-                    <TooltipWrapper side="top" content="Invite online + active (orange) friends to the selected group">
+                    <TooltipWrapper side="top" content="Invite online + active (orange) friends to your current instance">
                         <Button
                             size="sm"
                             variant="outline"
                             class="h-7 text-xs flex-1"
-                            :disabled="!selectedGroupId || isRunning"
+                            :disabled="isRunning"
                             @click="handleInviteFriends('all')">
                             <div class="flex gap-0.5 mr-1.5 flex-none">
                                 <div class="size-2 rounded-full bg-green-500" />
@@ -260,7 +260,7 @@
         const label = scope === 'public' ? 'online' : 'online + active';
         modalStore
             .confirm({
-                description: `Send group invites to all your ${label} friends?`,
+                description: `Send instance invites to all your ${label} friends?`,
                 title: 'Confirm Friend Invite'
             })
             .then(({ ok }) => {
