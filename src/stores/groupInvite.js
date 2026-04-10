@@ -24,6 +24,9 @@ const DELAY_PRESETS = {
     stealth: 15000
 };
 
+/** Maximum number of entries the persistent invite cache will hold. */
+const MAX_CACHE_SIZE = 5000;
+
 export const useGroupInviteStore = defineStore('GroupInvite', () => {
     const friendStore = useFriendStore();
     const groupStore = useGroupStore();
@@ -49,11 +52,14 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
     const blacklist = ref([]);
 
     /**
-     * Session-only invite cache.
+     * Persistent invite cache (survives account switches and restarts).
      * Keys are `${userId}::${groupId}` strings.
      * @type {Set<string>}
      */
     const inviteCache = reactive(new Set());
+
+    /** In-flight auto-invite dedup set to prevent concurrent API calls for the same user. */
+    const autoInviteInFlight = new Set();
 
     /**
      * Recent invite log entries for UI display.
@@ -93,9 +99,9 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 isRunning.value = false;
                 isCancelled.value = false;
                 rateLimitStrikes.value = 0;
-                // NOTE: inviteCache is intentionally NOT cleared on logout
-                // so it persists across account switches
-                inviteLog.value = [];
+                autoInviteInFlight.clear();
+                // NOTE: inviteCache and inviteLog are intentionally NOT cleared
+                // on logout so they persist across account switches
                 selectedGroupId.value = '';
             }
         },
@@ -127,6 +133,19 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         );
         savedCache.forEach((k) => inviteCache.add(k));
         console.log(`[GroupInvite] Loaded ${savedCache.length} cached invite entries from storage.`);
+
+        // Load persistent invite log (telemetry)
+        try {
+            const savedLog = JSON.parse(
+                await configRepository.getString('groupInviteToolkit_log', '[]')
+            );
+            if (Array.isArray(savedLog)) {
+                inviteLog.value = savedLog.slice(0, MAX_LOG);
+                console.log(`[GroupInvite] Loaded ${inviteLog.value.length} log entries from storage.`);
+            }
+        } catch {
+            inviteLog.value = [];
+        }
 
         isSettingsLoaded = true;
     }
@@ -180,24 +199,52 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
      */
     function markInvited(userId, groupId) {
         inviteCache.add(cacheKey(userId, groupId));
-        saveCache();
+        // Cap cache at MAX_CACHE_SIZE, evicting oldest entries (Set maintains insertion order)
+        if (inviteCache.size > MAX_CACHE_SIZE) {
+            const excess = inviteCache.size - MAX_CACHE_SIZE;
+            let count = 0;
+            for (const key of inviteCache) {
+                if (count >= excess) break;
+                inviteCache.delete(key);
+                count++;
+            }
+        }
+        debouncedPersist();
     }
 
     function clearCache() {
         inviteCache.clear();
-        saveCache();
+        flushPersist(); // Immediate write on explicit clear
         toast.success('Invite cache cleared — everyone can be re-invited.');
     }
 
+    // ── Debounced Persistence ──────────────────────────────────
+
+    let persistTimer = null;
+
     /**
-     * Persist the invite cache to SQLite so it survives account switches and restarts.
+     * Debounced write of cache + log to SQLite.
+     * Batches rapid writes (e.g., 50 invites) into a single I/O operation.
      */
-    function saveCache() {
+    function debouncedPersist() {
         if (!isSettingsLoaded) return;
-        configRepository.setArray(
-            'groupInviteToolkit_cache',
-            Array.from(inviteCache)
-        );
+        if (persistTimer) clearTimeout(persistTimer);
+        persistTimer = setTimeout(() => {
+            flushPersist();
+        }, 2000);
+    }
+
+    /**
+     * Immediately persist cache + log to SQLite.
+     */
+    function flushPersist() {
+        if (!isSettingsLoaded) return;
+        if (persistTimer) {
+            clearTimeout(persistTimer);
+            persistTimer = null;
+        }
+        configRepository.setArray('groupInviteToolkit_cache', Array.from(inviteCache));
+        configRepository.setString('groupInviteToolkit_log', JSON.stringify(inviteLog.value));
     }
 
     // ── Logging ────────────────────────────────────────────────
@@ -223,6 +270,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         if (inviteLog.value.length > MAX_LOG) {
             inviteLog.value.length = MAX_LOG;
         }
+        debouncedPersist();
     }
 
     // ── Core invite function ───────────────────────────────────
@@ -318,7 +366,56 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         }
     }
 
-    // ── Sleep utility ──────────────────────────────────────────
+    /**
+     * Unified friend/instance invite function.
+     * Uses `notificationRequest.sendInvite` instead of `groupRequest.sendGroupInvite`.
+     * @param {string} userId
+     * @param {string} displayName
+     * @param {string} locationTag  Instance location tag (used as cache key)
+     * @param {string} worldName    Resolved world name for display
+     * @returns {Promise<{sent: boolean, apiCalled: boolean}>}
+     */
+    async function sendSingleFriendInvite(userId, displayName, locationTag, worldName) {
+        if (!userId || !locationTag) return { sent: false, apiCalled: false };
+
+        if (userId === userStore.currentUser.id) {
+            return { sent: false, apiCalled: false };
+        }
+
+        if (isBlacklisted(userId, displayName)) {
+            addLog(userId, displayName, locationTag, 'skipped', 'User is blacklisted');
+            console.log(`[InstanceInvite] Skipped ${displayName} (${userId}) - Blacklisted.`);
+            return { sent: false, apiCalled: false };
+        }
+
+        if (isAlreadyInvited(userId, locationTag)) {
+            addLog(userId, displayName, locationTag, 'cached', 'Already invited (cached)');
+            console.log(`[InstanceInvite] Skipped ${displayName} (${userId}) - Cached.`);
+            return { sent: false, apiCalled: false };
+        }
+
+        try {
+            await notificationRequest.sendInvite(
+                { instanceId: locationTag, worldId: locationTag, worldName },
+                userId
+            );
+            markInvited(userId, locationTag);
+            rateLimitStrikes.value = 0;
+            addLog(userId, displayName, locationTag, 'sent', 'Instance Invite');
+            console.log(`[InstanceInvite] SUCCESS: Invite sent to ${displayName} for ${worldName}`);
+            return { sent: true, apiCalled: true };
+        } catch (err) {
+            const rawMsg = err?.error?.message || err?.message || 'Unknown API Error';
+            const uiMsg = parseApiError(err);
+            if (uiMsg === 'Rate Limited (429)') rateLimitStrikes.value++;
+            if (PERMANENT_ERRORS.includes(uiMsg)) markInvited(userId, locationTag);
+            addLog(userId, displayName, locationTag, 'error', uiMsg);
+            console.error(`[InstanceInvite] FAILED ${displayName}. Reason: ${uiMsg} | Raw: ${rawMsg}`, err);
+            return { sent: false, apiCalled: true };
+        }
+    }
+
+    // ── Sleep utility ────────────────────────────────────────────
 
     function sleep(ms) {
         return new Promise((resolve) => setTimeout(resolve, ms));
@@ -497,7 +594,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
 
         for (const friend of targets) {
             currentProgress.value++;
-            
+
             if (isCancelled.value) {
                 toast.info('Friend invite cancelled.');
                 break;
@@ -508,72 +605,31 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
 
             if (!userId || userId === userStore.currentUser.id) {
                 skippedCount++;
-                console.log(`[InstanceInvite] Engine Skipped: Ignoring own user account or invalid ID (${displayName})`);
                 continue;
             }
 
-            // Check blacklist
-            if (isBlacklisted(userId, displayName)) {
-                skippedCount++;
-                addLog(userId, displayName, L.tag, 'skipped', 'User is blacklisted');
-                console.log(`[InstanceInvite] Skipped ${displayName} (${userId}) - Blacklisted.`);
-                continue;
+            const previousStrikes = rateLimitStrikes.value;
+            const result = await sendSingleFriendInvite(userId, displayName, L.tag, worldName);
+
+            if (rateLimitStrikes.value >= 3) {
+                toast.error('API rate limit cutoff engaged (3 fail strikes). Cancelling batch.');
+                cancelOperation();
+                break;
             }
 
-            // Check Cache
-            if (isAlreadyInvited(userId, L.tag)) {
-                skippedCount++;
-                addLog(userId, displayName, L.tag, 'cached', 'Already invited (cached)');
-                console.log(`[InstanceInvite] Skipped ${displayName} (${userId}) - Already present in session cache.`);
-                continue;
-            }
-
-            try {
-                // Use notification request (instance invite)
-                await notificationRequest.sendInvite(
-                    {
-                        instanceId: L.tag,
-                        worldId: L.tag,
-                        worldName: worldName
-                    },
-                    userId
-                );
-                markInvited(userId, L.tag);
-                rateLimitStrikes.value = 0; // Reset consecutive strikes
+            if (result.sent) {
                 sentCount++;
-                addLog(userId, displayName, L.tag, 'sent', 'Instance Invite');
-                console.log(`[InstanceInvite] SUCCESS: Instant Invite sent to ${displayName} (${userId}) for World: ${worldName}`);
                 await sleep(delayMs.value);
-            } catch (err) {
-                const rawMsg = err?.error?.message || err?.message || 'Unknown API Error';
-                const uiMsg = parseApiError(err);
-                
-                if (uiMsg === 'Rate Limited (429)') {
-                    rateLimitStrikes.value++;
-                }
-
-                // Cache permanent-state errors to prevent re-spam
-                if (PERMANENT_ERRORS.includes(uiMsg)) {
-                    markInvited(userId, L.tag);
-                }
-
-                console.error(`[InstanceInvite] FAILED to invite ${displayName} (${userId}). Reason: ${uiMsg} | Raw: ${rawMsg}`, err);
-                addLog(userId, displayName, L.tag, 'error', uiMsg);
+            } else if (result.apiCalled) {
                 skippedCount++;
-
-                if (rateLimitStrikes.value >= 3) {
-                    toast.error('API rate limit cutoff engaged (3 fail strikes). Cancelling batch.');
-                    cancelOperation();
-                    break;
-                }
-
-                if (uiMsg === 'Rate Limited (429)') {
+                if (rateLimitStrikes.value > previousStrikes) {
                     toast.warning(`Rate limit strike (${rateLimitStrikes.value}/3). Waiting longer...`);
                     await sleep(delayMs.value * rateLimitStrikes.value);
                 } else {
-                    // Non-rate-limit API error — still delay to avoid spam
                     await sleep(delayMs.value);
                 }
+            } else {
+                skippedCount++;
             }
         }
 
@@ -596,31 +652,34 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
 
         // Don't auto-invite while rate limited
         if (rateLimitStrikes.value >= 3) {
-            console.log(`[AutoInvite] Skipped ${displayName} (${userId}) — rate limit cooldown active.`);
+            console.log(`[AutoInvite] Skipped ${displayName} — rate limit cooldown active.`);
             return;
         }
-        
+
         if (isAlreadyInvited(userId, selectedGroupId.value)) {
-            addLog(userId, displayName, selectedGroupId.value, 'cached', 'Auto-invite skipped (cached)');
-            console.log(`[AutoInvite] Skipped ${displayName} (${userId}) - Already present in cache.`);
-            return;
+            return; // Silent skip — already cached, no log spam
         }
 
-        console.log(`[AutoInvite] Join Event Detected! Queueing group invite for ${displayName} (${userId})...`);
-        
-        // Small delay to let the user fully join
-        await sleep(1500);
+        // In-flight dedup: prevent concurrent API calls for the same user
+        const flightKey = cacheKey(userId, selectedGroupId.value);
+        if (autoInviteInFlight.has(flightKey)) {
+            console.log(`[AutoInvite] Skipped ${displayName} — already processing.`);
+            return;
+        }
+        autoInviteInFlight.add(flightKey);
 
-        const groupName = selectedGroup.value?.name || selectedGroupId.value;
-        const result = await sendSingleInvite(
-            userId,
-            displayName,
-            selectedGroupId.value
-        );
-        if (result.sent) {
-            console.log(`[AutoInvite] AUTO-DISPATCH SUCCESS: Invited ${displayName} to ${groupName}`);
-        } else {
-            console.log(`[AutoInvite] AUTO-DISPATCH SKIPPED/FAILED for ${displayName} (apiCalled: ${result.apiCalled})`);
+        try {
+            console.log(`[AutoInvite] Join detected: Queueing invite for ${displayName}...`);
+            await sleep(1500); // Let user fully join
+
+            const result = await sendSingleInvite(userId, displayName, selectedGroupId.value);
+            if (result.sent) {
+                console.log(`[AutoInvite] SUCCESS: Invited ${displayName}`);
+            } else {
+                console.log(`[AutoInvite] SKIPPED/FAILED: ${displayName} (apiCalled: ${result.apiCalled})`);
+            }
+        } finally {
+            autoInviteInFlight.delete(flightKey);
         }
     }
 

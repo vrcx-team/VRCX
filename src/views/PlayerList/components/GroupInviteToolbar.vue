@@ -284,7 +284,6 @@
         Timer,
         Trash2,
         UserMinus,
-        Users,
         X,
         Zap
     } from 'lucide-vue-next';
