@@ -65,22 +65,34 @@
                     <SelectValue placeholder="Speed" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="fast">
-                        <div class="flex items-center gap-1.5">
-                            <Zap class="h-3 w-3 text-yellow-500" />
-                            Fast (2s)
-                        </div>
-                    </SelectItem>
                     <SelectItem value="normal">
                         <div class="flex items-center gap-1.5">
-                            <Timer class="h-3 w-3 text-blue-500" />
+                            <Zap class="h-3 w-3 text-blue-500" />
                             Normal (4s)
+                        </div>
+                    </SelectItem>
+                    <SelectItem value="relaxed">
+                        <div class="flex items-center gap-1.5">
+                            <Timer class="h-3 w-3 text-cyan-500" />
+                            Relaxed (6s)
+                        </div>
+                    </SelectItem>
+                    <SelectItem value="cautious">
+                        <div class="flex items-center gap-1.5">
+                            <Timer class="h-3 w-3 text-yellow-500" />
+                            Cautious (8s)
                         </div>
                     </SelectItem>
                     <SelectItem value="slow">
                         <div class="flex items-center gap-1.5">
+                            <Shield class="h-3 w-3 text-orange-500" />
+                            Slow (10s)
+                        </div>
+                    </SelectItem>
+                    <SelectItem value="stealth">
+                        <div class="flex items-center gap-1.5">
                             <Shield class="h-3 w-3 text-green-500" />
-                            Safe (10s)
+                            Stealth (15s)
                         </div>
                     </SelectItem>
                 </SelectContent>

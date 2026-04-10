@@ -39,6 +39,29 @@
                 </SidebarMenuButton>
             </SidebarMenuItem>
 
+            <SidebarMenuItem v-if="Object.keys(switchableAccounts).length > 0">
+                <DropdownMenu>
+                    <DropdownMenuTrigger as-child>
+                        <SidebarMenuButton tooltip="Switch Account">
+                            <i class="ri-user-shared-line inline-flex size-6 items-center justify-center text-lg" />
+                            <span v-show="!isCollapsed">Switch Account</span>
+                        </SidebarMenuButton>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent side="right" align="start" class="w-54">
+                        <DropdownMenuLabel class="text-xs text-muted-foreground">
+                            Current: {{ userStore.currentUser?.displayName }}
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                            v-for="(user, userId) in switchableAccounts"
+                            :key="userId"
+                            @click="handleSwitchAccount(user)">
+                            <span class="truncate">{{ user.user.displayName }}</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </SidebarMenuItem>
+
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger as-child>
@@ -178,8 +201,11 @@
     import { Heart } from 'lucide-vue-next';
     import { useI18n } from 'vue-i18n';
     import { useRouter } from 'vue-router';
-    import { computed, ref, watch } from 'vue';
+    import { computed, onMounted, ref, watch } from 'vue';
 
+    import { runLogoutFlow } from '@/coordinators/authCoordinator';
+    import { useAuthStore } from '@/stores/auth';
+    import { useUserStore } from '@/stores/user';
     import { TooltipWrapper } from '@/components/ui/tooltip';
     import {
         DropdownMenu,
@@ -280,4 +306,32 @@
         },
         { immediate: true }
     );
+
+    // ── Switch Account logic ──────────────────────────────────
+    const authStore = useAuthStore();
+    const userStore = useUserStore();
+    const switchableAccounts = ref({});
+
+    async function loadSwitchableAccounts() {
+        const all = await authStore.getAllSavedCredentials();
+        const currentId = userStore.currentUser?.id;
+        const filtered = {};
+        for (const [id, cred] of Object.entries(all)) {
+            if (id !== currentId) {
+                filtered[id] = cred;
+            }
+        }
+        switchableAccounts.value = filtered;
+    }
+
+    onMounted(loadSwitchableAccounts);
+
+    async function handleSwitchAccount(user) {
+        try {
+            await runLogoutFlow();
+            await authStore.relogin(user);
+        } catch (err) {
+            console.error('[SwitchAccount] Failed:', err);
+        }
+    }
 </script>

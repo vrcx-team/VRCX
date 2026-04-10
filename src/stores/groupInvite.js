@@ -17,9 +17,11 @@ import configRepository from '../services/config';
  * Delay presets in milliseconds.
  */
 const DELAY_PRESETS = {
-    fast: 2000,
     normal: 4000,
-    slow: 10000
+    relaxed: 6000,
+    cautious: 8000,
+    slow: 10000,
+    stealth: 15000
 };
 
 export const useGroupInviteStore = defineStore('GroupInvite', () => {
