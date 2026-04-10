@@ -42,7 +42,7 @@
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger as-child>
-                        <SidebarMenuButton :tooltip="t('nav_tooltip.manage')">
+                        <SidebarMenuButton :tooltip="t('nav_tooltip.manage')" :is-active="isSettingsRoute">
                             <span class="relative inline-flex size-6 items-center justify-center">
                                 <i class="ri-settings-3-line text-lg" />
                                 <span
@@ -177,6 +177,8 @@
 <script setup>
     import { Heart } from 'lucide-vue-next';
     import { useI18n } from 'vue-i18n';
+    import { useRouter } from 'vue-router';
+    import { computed, ref, watch } from 'vue';
 
     import { TooltipWrapper } from '@/components/ui/tooltip';
     import {
@@ -267,4 +269,15 @@
         'open-github'
     ]);
     const { t } = useI18n();
+
+    const router = useRouter();
+    const isSettingsRoute = ref(false);
+
+    watch(
+        () => router?.currentRoute.value?.name,
+        (name) => {
+            isSettingsRoute.value = name === 'settings';
+        },
+        { immediate: true }
+    );
 </script>
