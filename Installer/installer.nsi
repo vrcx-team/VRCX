@@ -44,17 +44,12 @@
 ;Variables
 
     VAR upgradeInstallation
-    VAR InstallMode         ; "appdata" or "programfiles"  — the NEW install location
-    VAR OldInstDir          ; previous install dir  (only used for "change" action)
-    VAR OldInstMode         ; previous install mode (only used for "change" action)
-    VAR MaintenanceAction   ; "" = fresh install | "update" | "change" | "uninstall"
+    VAR InstallMode         ; "appdata" or "programfiles"
+    VAR MaintenanceAction   ; "" = fresh install | "update"
     VAR ElevatedRelaunch    ; 1 if we were re-launched elevated via /PROGRAMFILES
 
     VAR RadioAppData
     VAR RadioProgramFiles
-    VAR RadioUpdate
-    VAR RadioChange
-    VAR RadioUninstall
 
     VAR DeleteUserData      ; 1 = user wants to delete %APPDATA%\VRCX
     VAR CheckboxDeleteData
@@ -73,10 +68,7 @@
 ;--------------------------------
 ;Pages
 
-    ; Maintenance page — shown only when VRCX is already installed
-    Page custom MaintenancePage MaintenancePageLeave
-
-    ; Location page — shown for fresh installs and "change location" action
+    ; Location page — fresh installs only
     Page custom InstallLocationPage InstallLocationPageLeave
 
     ; License + directory — fresh installs only
@@ -90,7 +82,7 @@
     !insertmacro MUI_PAGE_INSTFILES
 
     ;------------------------------
-    ; Finish Page — shown for fresh installs and "change location"; skipped for "update"
+    ; Finish Page — shown for fresh installs; skipped for updates
 
     !define MUI_FINISHPAGE_RUN
     !define MUI_FINISHPAGE_RUN_TEXT "Launch VRCX"
@@ -115,14 +107,6 @@
 
 ;--------------------------------
 ;Page skip helpers
-
-; Skip if this is a fresh install (show only for existing installs)
-Function SkipIfNotExistingInstall
-    StrCmp $upgradeInstallation 0 skip
-    Return
-    skip:
-        Abort
-FunctionEnd
 
 ; Skip for license/directory pages — fresh install only
 Function SkipIfNotFreshInstall
@@ -151,7 +135,7 @@ Function CheckVRCXNotRunning
         Abort
 FunctionEnd
 
-; Skip finish page only for "update" action (it auto-launches instead)
+; Skip finish page for updates (they auto-launch instead)
 Function SkipIfUpdate
     StrCmp $MaintenanceAction "update" skip
     Return
@@ -162,84 +146,9 @@ FunctionEnd
 ;--------------------------------
 ;Functions
 
-; Maintenance page — shown when VRCX is already installed.
-; Offers Update, Change Location, and Uninstall options.
-Function MaintenancePage
-    ; Skip for fresh installs
-    StrCmp $upgradeInstallation 0 skipPage
-    ; Skip if action is already determined (elevated re-launch)
-    StrCmp $MaintenanceAction "" 0 skipPage
-
-    !insertmacro MUI_HEADER_TEXT "VRCX is already installed" "What would you like to do?"
-
-    nsDialogs::Create 1018
-    Pop $0
-
-    ${NSD_CreateRadioButton} 0 0u 100% 14u "Update VRCX"
-    Pop $RadioUpdate
-
-    ${NSD_CreateLabel} 16u 16u 100% 14u "Reinstall or update to the current version in-place."
-    Pop $0
-
-    ${NSD_CreateRadioButton} 0 36u 100% 14u "Change install location"
-    Pop $RadioChange
-
-    ${NSD_CreateLabel} 16u 52u 100% 14u "Move VRCX between AppData and Program Files."
-    Pop $0
-
-    ${NSD_CreateRadioButton} 0 72u 100% 14u "Uninstall VRCX"
-    Pop $RadioUninstall
-
-    ${NSD_CreateLabel} 16u 88u 100% 14u "Remove VRCX from this computer."
-    Pop $0
-
-    ; Default to Update
-    ${NSD_Check} $RadioUpdate
-
-    nsDialogs::Show
-    Return
-
-    skipPage:
-        Abort
-FunctionEnd
-
-Function MaintenancePageLeave
-    ${NSD_GetState} $RadioUninstall $0
-    ${If} $0 = ${BST_CHECKED}
-        ; Launch the uninstaller and close the installer
-        ExecShell "" "$INSTDIR\Uninstall.exe"
-        Quit
-    ${EndIf}
-
-    ${NSD_GetState} $RadioChange $0
-    ${If} $0 = ${BST_CHECKED}
-        StrCpy $MaintenanceAction "change"
-        StrCpy $OldInstDir $INSTDIR
-        StrCpy $OldInstMode $InstallMode
-
-        ; If old install was in Program Files we need elevation now to be able to
-        ; remove those files later, even if the new location ends up being AppData.
-        ${If} $OldInstMode == "programfiles"
-            UserInfo::GetAccountType
-            Pop $0
-            ${If} $0 != "Admin"
-                ClearErrors
-                ExecShell "runas" "$EXEPATH" "/CHANGE"
-                ${If} ${Errors}
-                    MessageBox MB_OK|MB_ICONEXCLAMATION \
-                        "Could not obtain administrator privileges required to remove the Program Files installation."
-                ${EndIf}
-                Quit
-            ${EndIf}
-        ${EndIf}
-    ${Else}
-        StrCpy $MaintenanceAction "update"
-    ${EndIf}
-FunctionEnd
-
-; Location page — shown for fresh installs and "change location" action.
+; Location page — shown for fresh installs only.
 Function InstallLocationPage
-    ; Skip for "update" (keep current dir) and elevated re-launches (choice already made)
+    ; Skip for updates and elevated re-launches (choice already made)
     ${If} $MaintenanceAction == "update"
         Abort
     ${EndIf}
@@ -267,18 +176,8 @@ Function InstallLocationPage
     ${NSD_CreateLabel} 32u 78u 100% 14u "Installs to: $PROGRAMFILES64\VRCX"
     Pop $0
 
-    ; Pre-select based on current mode; for "change" default to the opposite of current
-    ${If} $MaintenanceAction == "change"
-        ${If} $OldInstMode == "programfiles"
-            ${NSD_Check} $RadioAppData
-        ${Else}
-            ${NSD_Check} $RadioProgramFiles
-        ${EndIf}
-    ${ElseIf} $InstallMode == "programfiles"
-        ${NSD_Check} $RadioProgramFiles
-    ${Else}
-        ${NSD_Check} $RadioAppData
-    ${EndIf}
+    ; Default to AppData
+    ${NSD_Check} $RadioAppData
 
     nsDialogs::Show
 FunctionEnd
@@ -289,14 +188,6 @@ Function InstallLocationPageLeave
         StrCpy $InstallMode "programfiles"
         StrCpy $INSTDIR "$PROGRAMFILES64\VRCX"
 
-        ; Block if the user picked the same location they're already installed to
-        ${If} $MaintenanceAction == "change"
-        ${AndIf} $OldInstMode == "programfiles"
-            MessageBox MB_OK|MB_ICONEXCLAMATION \
-                "VRCX is already installed to Program Files.$\nPlease choose a different location."
-            Abort
-        ${EndIf}
-
         UserInfo::GetAccountType
         Pop $0
         ${If} $0 != "Admin"
@@ -304,11 +195,7 @@ Function InstallLocationPageLeave
                 "Installing to Program Files requires administrator privileges.$\n$\nClick OK to restart the installer with elevated permissions, or Cancel to go back." \
                 /SD IDOK IDCANCEL goBack
             ClearErrors
-            ${If} $MaintenanceAction == "change"
-                ExecShell "runas" "$EXEPATH" "/PROGRAMFILES /CHANGE"
-            ${Else}
-                ExecShell "runas" "$EXEPATH" "/PROGRAMFILES"
-            ${EndIf}
+            ExecShell "runas" "$EXEPATH" "/PROGRAMFILES"
             ${If} ${Errors}
                 MessageBox MB_OK|MB_ICONEXCLAMATION \
                     "Could not obtain administrator privileges.$\nPlease try again or choose the AppData installation option."
@@ -320,14 +207,6 @@ Function InstallLocationPageLeave
     ${Else}
         StrCpy $InstallMode "appdata"
         StrCpy $INSTDIR "$LOCALAPPDATA\VRCX"
-
-        ; Block if the user picked the same location they're already installed to
-        ${If} $MaintenanceAction == "change"
-        ${AndIf} $OldInstMode == "appdata"
-            MessageBox MB_OK|MB_ICONEXCLAMATION \
-                "VRCX is already installed to AppData.$\nPlease choose a different location."
-            Abort
-        ${EndIf}
     ${EndIf}
 FunctionEnd
 
@@ -337,23 +216,15 @@ Function .onInit
     StrCpy $InstallMode "appdata"
     StrCpy $INSTDIR "$LOCALAPPDATA\VRCX"
     StrCpy $MaintenanceAction ""
-    StrCpy $OldInstDir ""
-    StrCpy $OldInstMode ""
     StrCpy $ElevatedRelaunch 0
 
-    ; Parse command line flags set by elevated re-launches
+    ; Parse command line flags
     ClearErrors
     ${GetParameters} $R0
 
     ${GetOptions} $R0 /UPDATE $R1
     ${IfNot} ${Errors}
         StrCpy $MaintenanceAction "update"
-    ${EndIf}
-    ClearErrors
-
-    ${GetOptions} $R0 /CHANGE $R1
-    ${IfNot} ${Errors}
-        StrCpy $MaintenanceAction "change"
     ${EndIf}
     ClearErrors
 
@@ -384,24 +255,24 @@ Function .onInit
         ${EndIf}
     ${EndIf}
 
-    ; For "change" action, snapshot the old location before any /PROGRAMFILES override
-    ${If} $MaintenanceAction == "change"
-        StrCpy $OldInstDir $INSTDIR
-        StrCpy $OldInstMode $InstallMode
+    ; If an existing install is found with no explicit action, default to update.
+    ; This handles older VRCX versions that launch the installer with no arguments.
+    ${If} $upgradeInstallation = 1
+    ${AndIf} $MaintenanceAction == ""
+        StrCpy $MaintenanceAction "update"
     ${EndIf}
 
     ; /PROGRAMFILES override — user already chose Program Files on the location page
     ${If} $ElevatedRelaunch = 1
         StrCpy $InstallMode "programfiles"
         StrCpy $INSTDIR "$PROGRAMFILES64\VRCX"
-        ; If this is an elevated upgrade re-launch with no explicit action, mark as update
         ${If} $upgradeInstallation = 1
         ${AndIf} $MaintenanceAction == ""
             StrCpy $MaintenanceAction "update"
         ${EndIf}
     ${EndIf}
 
-    ; For "update" to Program Files, elevate immediately if not already admin
+    ; For updates to Program Files, elevate immediately if not already admin
     ${If} $upgradeInstallation = 1
     ${AndIf} $MaintenanceAction == "update"
     ${AndIf} $InstallMode == "programfiles"
@@ -443,14 +314,7 @@ FunctionEnd
 
 Section "Install" SecInstall
 
-    ${If} $MaintenanceAction == "change"
-        ; Remove the old installation silently before installing to the new location.
-        ; _?= makes ExecWait actually wait for completion.
-        DetailPrint "Removing previous installation from $OldInstDir..."
-        ExecWait '"$OldInstDir\Uninstall.exe" /S _?=$OldInstDir'
-        Delete "$OldInstDir\Uninstall.exe"
-
-    ${ElseIf} $upgradeInstallation = 1
+    ${If} $upgradeInstallation = 1
         ; In-place update — uninstall current version first
         DetailPrint "Uninstalling previous version..."
         ExecWait '"$INSTDIR\Uninstall.exe" /S _?=$INSTDIR'
