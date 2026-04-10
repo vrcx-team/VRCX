@@ -208,32 +208,66 @@
             </Button>
         </div>
 
-        <!-- ─── Activity Log (collapsible) ─── -->
-        <Collapsible v-if="inviteLog.length > 0">
-            <CollapsibleTrigger as-child>
-                <Button
-                    variant="ghost"
-                    size="xs"
-                    class="h-5 text-[11px] text-muted-foreground w-full justify-start px-1 hover:bg-transparent">
-                    <ChevronRight class="h-3 w-3 mr-1 transition-transform duration-200 [[data-state=open]>&]:rotate-90" />
-                    Recent Activity ({{ inviteLog.length }})
-                </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-                <div class="max-h-28 overflow-y-auto mt-1 space-y-px rounded-md bg-muted/40 p-1.5">
+        <!-- ─── Activity Log Section ─── -->
+        <div v-if="inviteLog.length > 0" class="space-y-1.5">
+            <!-- Stats Bar (Always Visible) -->
+            <div class="flex items-center gap-3 px-1.5 py-1 text-[10px] bg-muted/20 border border-border/50 rounded-md">
+                <span v-if="selectedGroup" class="text-blue-400 font-medium whitespace-nowrap">Members: {{ selectedGroup.memberCount }}</span>
+                <span class="text-green-500 font-medium">✓ {{ logStats.sent }} sent</span>
+                <span class="text-red-500 font-medium">✗ {{ logStats.error }} failed</span>
+                <span class="text-muted-foreground">⊖ {{ logStats.cached }} cached</span>
+                <span class="text-muted-foreground">↷ {{ logStats.skipped }} skipped</span>
+                <span class="text-muted-foreground/50 ml-auto">{{ cacheSize }}/15000 ledger</span>
+            </div>
+
+            <!-- Log Collapsible -->
+            <Collapsible>
+                <CollapsibleTrigger as-child>
+                    <Button
+                        variant="ghost"
+                        size="xs"
+                        class="h-5 text-[11px] text-muted-foreground w-full justify-start px-1 hover:bg-transparent">
+                        <ChevronRight class="h-3 w-3 mr-1 transition-transform duration-200 [[data-state=open]>&]:rotate-90" />
+                        Recent Activity ({{ inviteLog.length }})
+                    </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                    <!-- Log Controls -->
+                    <div class="flex justify-end p-1">
+                        <Select v-model="consoleSize">
+                            <SelectTrigger class="h-5 text-[10px] bg-transparent border border-border/50 w-[70px] px-1 text-muted-foreground hover:text-foreground">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem :value="50" class="text-[10px]">Hist: 50</SelectItem>
+                                    <SelectItem :value="100" class="text-[10px]">Hist: 100</SelectItem>
+                                    <SelectItem :value="250" class="text-[10px]">Hist: 250</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <!-- Log Rows -->
+                    <div class="max-h-28 overflow-y-auto space-y-px rounded-md bg-muted/40 p-1.5">
                     <div
-                        v-for="(entry, idx) in inviteLog.slice(0, 50)"
+                        v-for="(entry, idx) in inviteLog.slice(0, consoleSize)"
                         :key="idx"
                         class="flex items-center gap-1.5 text-[11px] leading-4 px-1 py-0.5 rounded hover:bg-muted/60">
                         <CheckCircle2 v-if="entry.status === 'sent'" class="h-3 w-3 text-green-500 flex-none" />
                         <MinusCircle v-else-if="entry.status === 'cached' || entry.status === 'skipped'" class="h-3 w-3 text-muted-foreground flex-none" />
                         <AlertCircle v-else-if="entry.status === 'error'" class="h-3 w-3 text-red-500 flex-none" />
-                        <span class="truncate font-medium">{{ entry.displayName }}</span>
-                        <span v-if="entry.message" class="text-muted-foreground truncate ml-auto text-[10px]">{{ entry.message }}</span>
+                        <span
+                            class="truncate font-medium w-[130px] flex-none cursor-pointer hover:text-primary hover:underline transition-colors"
+                            @click="handleClickUser(entry.userId)">{{ entry.displayName }}</span>
+                        <span
+                            class="text-muted-foreground/60 truncate text-[10px] w-[90px] flex-none cursor-pointer hover:text-primary hover:underline transition-colors"
+                            @click="handleClickGroup(entry.groupId)">{{ resolveGroupName(entry.groupId) }}</span>
+                        <span v-if="entry.message" class="text-muted-foreground text-[10px] flex-none">{{ entry.message }}</span>
                     </div>
                 </div>
             </CollapsibleContent>
         </Collapsible>
+        </div>
 
         <!-- ─── Blacklist UI Dialog ─── -->
         <Dialog :open="isBlacklistDialogOpen" @update:open="isBlacklistDialogOpen = $event">
@@ -312,11 +346,15 @@
     import { Switch } from '@/components/ui/switch';
     import TooltipWrapper from '@/components/ui/tooltip/TooltipWrapper.vue';
 
+    import { showGroupDialog } from '../../../coordinators/groupCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
     import { useGroupInviteStore } from '../../../stores/groupInvite';
     import { useModalStore } from '../../../stores/modal';
 
     const groupInviteStore = useGroupInviteStore();
     const modalStore = useModalStore();
+
+    const consoleSize = ref(50);
 
     const {
         selectedGroupId,
@@ -325,13 +363,33 @@
         isRunning,
         inviteLog,
         groupsWithInvitePermission,
+        selectedGroup,
         cacheSize,
+        logStats,
         blacklist,
         currentProgress,
         totalProgress
     } = storeToRefs(groupInviteStore);
 
     const { massInviteAllInInstance, massInviteFriends, cancelOperation } = groupInviteStore;
+
+    /**
+     * Resolve a groupId to a short display name from the available groups.
+     * Falls back to a truncated ID if the group isn't in the current list.
+     */
+    function resolveGroupName(groupId) {
+        if (!groupId) return '';
+        const group = groupsWithInvitePermission.value.find((g) => g.id === groupId);
+        return group?.name || groupId.slice(0, 12);
+    }
+
+    function handleClickUser(userId) {
+        if (userId) showUserDialog(userId);
+    }
+
+    function handleClickGroup(groupId) {
+        if (groupId && groupId.startsWith('grp_')) showGroupDialog(groupId);
+    }
 
     function handleMassInvite(only18Plus = false) {
         modalStore

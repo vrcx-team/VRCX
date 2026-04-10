@@ -25,7 +25,7 @@ const DELAY_PRESETS = {
 };
 
 /** Maximum number of entries the persistent invite cache will hold. */
-const MAX_CACHE_SIZE = 5000;
+const MAX_CACHE_SIZE = 15000;
 
 export const useGroupInviteStore = defineStore('GroupInvite', () => {
     const friendStore = useFriendStore();
@@ -88,6 +88,18 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
     });
 
     const cacheSize = computed(() => inviteCache.size);
+
+    /** Telemetry counters derived from the invite log. Only counts for currently selected group if one exists. */
+    const logStats = computed(() => {
+        const stats = { sent: 0, error: 0, cached: 0, skipped: 0 };
+        for (const entry of inviteLog.value) {
+            // Filter by selected group if one is selected, else show all stats
+            if (selectedGroupId.value && entry.groupId !== selectedGroupId.value) continue;
+
+            if (stats[entry.status] !== undefined) stats[entry.status]++;
+        }
+        return stats;
+    });
 
     // ── Reset on logout ────────────────────────────────────────
 
@@ -152,7 +164,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
 
     async function saveSettings() {
         if (!isSettingsLoaded) return;
-        
+
         await configRepository.setString(
             'groupInviteToolkit_selectedGroup',
             selectedGroupId.value
@@ -307,7 +319,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         if (!blacklist.value || blacklist.value.length === 0) return false;
         return blacklist.value.some(
             (b) => b.trim().toLowerCase() === userId.toLowerCase() ||
-                   b.trim().toLowerCase() === displayName?.toLowerCase()
+                b.trim().toLowerCase() === displayName?.toLowerCase()
         );
     }
 
@@ -456,7 +468,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
 
         for (const player of players) {
             currentProgress.value++;
-            
+
             if (isCancelled.value) {
                 toast.info('Mass invite cancelled.');
                 break;
@@ -475,10 +487,10 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 const cachedUser = userStore.cachedUsers.get(userId);
                 if (cachedUser?.ageVerified !== true) {
                     skippedCount++;
-                    const reason = !cachedUser 
-                        ? 'Profile not cached (cannot verify)' 
+                    const reason = !cachedUser
+                        ? 'Profile not cached (cannot verify)'
                         : (cachedUser.ageVerified === false ? 'Explicitly not 18+' : 'Age verification missing');
-                    
+
                     addLog(userId, displayName, groupId, 'skipped', reason);
                     console.log(`[GroupInvite] 18+ Check Failed for ${displayName} (${userId}). Reason: ${reason}. DB Value:`, cachedUser?.ageVerified);
                     continue;
@@ -710,6 +722,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         groupsWithInvitePermission,
         selectedGroup,
         cacheSize,
+        logStats,
 
         // Actions
         clearCache,
