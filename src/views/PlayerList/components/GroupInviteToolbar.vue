@@ -183,7 +183,9 @@
         <!-- ─── Running Status Bar ─── -->
         <div v-if="isRunning" class="flex items-center gap-2 rounded-md border border-border bg-muted/30 px-3 py-1.5">
             <Loader2 class="h-3.5 w-3.5 animate-spin text-primary flex-none" />
-            <span class="text-xs text-muted-foreground flex-1">Sending invites...</span>
+            <span class="text-xs text-muted-foreground flex-1">
+                Sending invites ({{ currentProgress }}/{{ totalProgress }})...
+            </span>
             <Button
                 size="xs"
                 variant="destructive"
@@ -313,7 +315,9 @@
         inviteLog,
         groupsWithInvitePermission,
         cacheSize,
-        blacklist
+        blacklist,
+        currentProgress,
+        totalProgress
     } = storeToRefs(groupInviteStore);
 
     const { massInviteAllInInstance, massInviteFriends, cancelOperation } = groupInviteStore;

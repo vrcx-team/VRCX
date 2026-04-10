@@ -35,6 +35,11 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
     const isRunning = ref(false);
     const isCancelled = ref(false);
 
+    // ── Tracker State ──────────────────────────────────────────
+    const currentProgress = ref(0);
+    const totalProgress = ref(0);
+    const rateLimitStrikes = ref(0);
+
     /**
      * List of user IDs or display names to ignore.
      * @type {import('vue').Ref<string[]>}
@@ -254,12 +259,16 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 userId
             });
             markInvited(userId, groupId);
+            rateLimitStrikes.value = 0; // Reset consecutive strikes on success
             addLog(userId, displayName, groupId, 'sent', 'Group Invite');
             console.log(`[GroupInvite] SUCCESS: Group Invite sent to ${displayName} (${userId})!`);
             return true;
         } catch (err) {
             const rawMsg = err?.error?.message || err?.message || 'Unknown API Error';
             const uiMsg = parseApiError(err);
+            if (uiMsg === 'Rate Limited (429)') {
+                rateLimitStrikes.value++;
+            }
             addLog(userId, displayName, groupId, 'error', uiMsg);
             console.error(`[GroupInvite] FAILED to invite ${displayName} (${userId}). Reason: ${uiMsg} | Raw: ${rawMsg}`, err);
             return false;
@@ -298,10 +307,16 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         let sentCount = 0;
         let skippedCount = 0;
 
+        totalProgress.value = players.length;
+        currentProgress.value = 0;
+        rateLimitStrikes.value = 0;
+
         const groupName = selectedGroup.value?.name || groupId;
         toast.info(`Inviting ${players.length} players to ${groupName}...`);
 
         for (const player of players) {
+            currentProgress.value++;
+            
             if (isCancelled.value) {
                 toast.info('Mass invite cancelled.');
                 break;
@@ -332,10 +347,24 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 }
             }
 
+            const previousStrikes = rateLimitStrikes.value;
             const sent = await sendSingleInvite(userId, displayName, groupId);
+
+            // Absolute 3-Strike Killswitch
+            if (rateLimitStrikes.value >= 3) {
+                toast.error('API rate limit cutoff engaged (3 fail strikes). Cancelling batch.');
+                cancelOperation();
+                break;
+            }
+
             if (sent) {
                 sentCount++;
                 await sleep(delayMs.value);
+            } else if (rateLimitStrikes.value > previousStrikes) {
+                // Hit a rate limit on this exact iteration — perform exponential backoff
+                toast.warning(`Rate limit strike (${rateLimitStrikes.value}/3). Waiting longer...`);
+                await sleep(delayMs.value * rateLimitStrikes.value);
+                skippedCount++;
             } else {
                 skippedCount++;
             }
@@ -414,8 +443,13 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
 
         let sentCount = 0;
         let skippedCount = 0;
+        totalProgress.value = targets.length;
+        currentProgress.value = 0;
+        rateLimitStrikes.value = 0;
 
         for (const friend of targets) {
+            currentProgress.value++;
+            
             if (isCancelled.value) {
                 toast.info('Friend invite cancelled.');
                 break;
@@ -457,6 +491,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                     userId
                 );
                 markInvited(userId, L.tag);
+                rateLimitStrikes.value = 0; // Reset consecutive strikes
                 sentCount++;
                 addLog(userId, displayName, L.tag, 'sent', 'Instance Invite');
                 console.log(`[InstanceInvite] SUCCESS: Instant Invite sent to ${displayName} (${userId}) for World: ${worldName}`);
@@ -464,9 +499,25 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
             } catch (err) {
                 const rawMsg = err?.error?.message || err?.message || 'Unknown API Error';
                 const uiMsg = parseApiError(err);
+                
+                if (uiMsg === 'Rate Limited (429)') {
+                    rateLimitStrikes.value++;
+                }
+
                 console.error(`[InstanceInvite] FAILED to invite ${displayName} (${userId}). Reason: ${uiMsg} | Raw: ${rawMsg}`, err);
                 addLog(userId, displayName, L.tag, 'error', uiMsg);
                 skippedCount++;
+
+                if (rateLimitStrikes.value >= 3) {
+                    toast.error('API rate limit cutoff engaged (3 fail strikes). Cancelling batch.');
+                    cancelOperation();
+                    break;
+                }
+
+                if (uiMsg === 'Rate Limited (429)') {
+                    toast.warning(`Rate limit strike (${rateLimitStrikes.value}/3). Waiting longer...`);
+                    await sleep(delayMs.value * rateLimitStrikes.value);
+                }
             }
         }
 
@@ -530,6 +581,8 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         inviteCache,
         inviteLog,
         blacklist,
+        currentProgress,
+        totalProgress,
 
         // Computed
         delayMs,
