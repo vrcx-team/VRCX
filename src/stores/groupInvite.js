@@ -33,7 +33,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
     // ── State ──────────────────────────────────────────────────
     const selectedGroupId = ref('');
     const autoInviteEnabled = ref(false);
-    const delayPreset = ref('normal'); // 'fast' | 'normal' | 'slow'
+    const delayPreset = ref('normal'); // 'normal' | 'relaxed' | 'cautious' | 'slow' | 'stealth'
     const isRunning = ref(false);
     const isCancelled = ref(false);
 
@@ -92,7 +92,9 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 autoInviteEnabled.value = false;
                 isRunning.value = false;
                 isCancelled.value = false;
-                inviteCache.clear();
+                rateLimitStrikes.value = 0;
+                // NOTE: inviteCache is intentionally NOT cleared on logout
+                // so it persists across account switches
                 inviteLog.value = [];
                 selectedGroupId.value = '';
             }
@@ -117,7 +119,15 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
             'groupInviteToolkit_blacklist',
             []
         );
-        
+
+        // Load persistent invite cache
+        const savedCache = await configRepository.getArray(
+            'groupInviteToolkit_cache',
+            []
+        );
+        savedCache.forEach((k) => inviteCache.add(k));
+        console.log(`[GroupInvite] Loaded ${savedCache.length} cached invite entries from storage.`);
+
         isSettingsLoaded = true;
     }
 
@@ -170,11 +180,24 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
      */
     function markInvited(userId, groupId) {
         inviteCache.add(cacheKey(userId, groupId));
+        saveCache();
     }
 
     function clearCache() {
         inviteCache.clear();
+        saveCache();
         toast.success('Invite cache cleared — everyone can be re-invited.');
+    }
+
+    /**
+     * Persist the invite cache to SQLite so it survives account switches and restarts.
+     */
+    function saveCache() {
+        if (!isSettingsLoaded) return;
+        configRepository.setArray(
+            'groupInviteToolkit_cache',
+            Array.from(inviteCache)
+        );
     }
 
     // ── Logging ────────────────────────────────────────────────
@@ -205,14 +228,28 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
     // ── Core invite function ───────────────────────────────────
 
     /**
-     * Parses common VRChat API errors into clean UI strings
+     * API error strings that indicate a permanent state —
+     * the user should be cached and never re-requested.
+     */
+    const PERMANENT_ERRORS = [
+        'Already invited',
+        'Already a group member',
+        'User has too many invites/groups',
+        'User not found',
+        'User blocked invites'
+    ];
+
+    /**
+     * Parses common VRChat API errors into clean UI strings.
      */
     function parseApiError(err) {
         const msg = err?.error?.message || err?.message || 'Unknown API Error';
         const lower = msg.toLowerCase();
         if (lower.includes('rate limit') || err?.status === 429) return 'Rate Limited (429)';
+        if (lower.includes('already invited')) return 'Already invited';
         if (lower.includes('already a member')) return 'Already a group member';
         if (lower.includes('too many') || lower.includes('limit reached')) return 'User has too many invites/groups';
+        if (lower.includes('not found')) return 'User not found';
         if (lower.includes('block') || lower.includes('privacy')) return 'User blocked invites';
         if (lower.includes('permission')) return 'Permission Denied';
         return msg;
@@ -230,29 +267,29 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
      * @param {string} userId
      * @param {string} displayName
      * @param {string} groupId
-     * @returns {Promise<boolean>} true if invite was sent
+     * @returns {Promise<{sent: boolean, apiCalled: boolean}>}
      */
     async function sendSingleInvite(userId, displayName, groupId) {
-        if (!userId || !groupId) return false;
+        if (!userId || !groupId) return { sent: false, apiCalled: false };
 
         // Skip self
         if (userId === userStore.currentUser.id) {
             console.log(`[GroupInvite] Skipped self (${displayName})`);
-            return false;
+            return { sent: false, apiCalled: false };
         }
 
         // Check blacklist
         if (isBlacklisted(userId, displayName)) {
             addLog(userId, displayName, groupId, 'skipped', 'User is blacklisted');
             console.log(`[GroupInvite] Skipped ${displayName} (${userId}) - Blacklisted.`);
-            return false;
+            return { sent: false, apiCalled: false };
         }
 
         // Check cache
         if (isAlreadyInvited(userId, groupId)) {
             addLog(userId, displayName, groupId, 'cached', 'Already invited (cached)');
-            console.log(`[GroupInvite] Skipped ${displayName} (${userId}) - Already present in session cache.`);
-            return false;
+            console.log(`[GroupInvite] Skipped ${displayName} (${userId}) - Already present in cache.`);
+            return { sent: false, apiCalled: false };
         }
 
         try {
@@ -261,19 +298,23 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 userId
             });
             markInvited(userId, groupId);
-            rateLimitStrikes.value = 0; // Reset consecutive strikes on success
+            rateLimitStrikes.value = 0;
             addLog(userId, displayName, groupId, 'sent', 'Group Invite');
             console.log(`[GroupInvite] SUCCESS: Group Invite sent to ${displayName} (${userId})!`);
-            return true;
+            return { sent: true, apiCalled: true };
         } catch (err) {
             const rawMsg = err?.error?.message || err?.message || 'Unknown API Error';
             const uiMsg = parseApiError(err);
             if (uiMsg === 'Rate Limited (429)') {
                 rateLimitStrikes.value++;
             }
+            // Cache permanent-state errors to prevent re-spam on next run
+            if (PERMANENT_ERRORS.includes(uiMsg)) {
+                markInvited(userId, groupId);
+            }
             addLog(userId, displayName, groupId, 'error', uiMsg);
             console.error(`[GroupInvite] FAILED to invite ${displayName} (${userId}). Reason: ${uiMsg} | Raw: ${rawMsg}`, err);
-            return false;
+            return { sent: false, apiCalled: true };
         }
     }
 
@@ -350,7 +391,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
             }
 
             const previousStrikes = rateLimitStrikes.value;
-            const sent = await sendSingleInvite(userId, displayName, groupId);
+            const result = await sendSingleInvite(userId, displayName, groupId);
 
             // Absolute 3-Strike Killswitch
             if (rateLimitStrikes.value >= 3) {
@@ -359,15 +400,20 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 break;
             }
 
-            if (sent) {
+            if (result.sent) {
                 sentCount++;
                 await sleep(delayMs.value);
-            } else if (rateLimitStrikes.value > previousStrikes) {
-                // Hit a rate limit on this exact iteration — perform exponential backoff
-                toast.warning(`Rate limit strike (${rateLimitStrikes.value}/3). Waiting longer...`);
-                await sleep(delayMs.value * rateLimitStrikes.value);
+            } else if (result.apiCalled) {
+                // API was hit but failed — still respect delay to avoid spam
                 skippedCount++;
+                if (rateLimitStrikes.value > previousStrikes) {
+                    toast.warning(`Rate limit strike (${rateLimitStrikes.value}/3). Waiting longer...`);
+                    await sleep(delayMs.value * rateLimitStrikes.value);
+                } else {
+                    await sleep(delayMs.value);
+                }
             } else {
+                // Pure local skip (cache/blacklist) — no delay needed
                 skippedCount++;
             }
         }
@@ -506,6 +552,11 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                     rateLimitStrikes.value++;
                 }
 
+                // Cache permanent-state errors to prevent re-spam
+                if (PERMANENT_ERRORS.includes(uiMsg)) {
+                    markInvited(userId, L.tag);
+                }
+
                 console.error(`[InstanceInvite] FAILED to invite ${displayName} (${userId}). Reason: ${uiMsg} | Raw: ${rawMsg}`, err);
                 addLog(userId, displayName, L.tag, 'error', uiMsg);
                 skippedCount++;
@@ -519,6 +570,9 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 if (uiMsg === 'Rate Limited (429)') {
                     toast.warning(`Rate limit strike (${rateLimitStrikes.value}/3). Waiting longer...`);
                     await sleep(delayMs.value * rateLimitStrikes.value);
+                } else {
+                    // Non-rate-limit API error — still delay to avoid spam
+                    await sleep(delayMs.value);
                 }
             }
         }
@@ -539,10 +593,16 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
      */
     async function handlePlayerJoined(userId, displayName) {
         if (!autoInviteEnabled.value || !selectedGroupId.value || !userId || userId === userStore.currentUser.id) return;
+
+        // Don't auto-invite while rate limited
+        if (rateLimitStrikes.value >= 3) {
+            console.log(`[AutoInvite] Skipped ${displayName} (${userId}) — rate limit cooldown active.`);
+            return;
+        }
         
         if (isAlreadyInvited(userId, selectedGroupId.value)) {
             addLog(userId, displayName, selectedGroupId.value, 'cached', 'Auto-invite skipped (cached)');
-            console.log(`[AutoInvite] Skipped ${displayName} (${userId}) - Already present in session cache.`);
+            console.log(`[AutoInvite] Skipped ${displayName} (${userId}) - Already present in cache.`);
             return;
         }
 
@@ -552,15 +612,15 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         await sleep(1500);
 
         const groupName = selectedGroup.value?.name || selectedGroupId.value;
-        const sent = await sendSingleInvite(
+        const result = await sendSingleInvite(
             userId,
             displayName,
             selectedGroupId.value
         );
-        if (sent) {
+        if (result.sent) {
             console.log(`[AutoInvite] AUTO-DISPATCH SUCCESS: Invited ${displayName} to ${groupName}`);
         } else {
-            console.log(`[AutoInvite] AUTO-DISPATCH FAILED OR CANCELLED for ${displayName}`);
+            console.log(`[AutoInvite] AUTO-DISPATCH SKIPPED/FAILED for ${displayName} (apiCalled: ${result.apiCalled})`);
         }
     }
 
