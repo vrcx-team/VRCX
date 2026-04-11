@@ -182,13 +182,21 @@
             <div class="flex gap-2">
                 <Button 
                     class="flex-1 transition-all duration-300 relative overflow-hidden" 
-                    :class="autoInviteEnabled ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30 border-green-500/50' : 'bg-transparent text-muted-foreground hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/50'"
+                    :class="[
+                        !autoInviteEnabled ? 'bg-transparent text-muted-foreground hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/50' : 
+                        isRateLimited ? 'bg-amber-500/20 text-amber-500 border-amber-500/50 hover:bg-amber-500/30' : 
+                        'bg-green-500/20 text-green-400 hover:bg-green-500/30 border-green-500/50'
+                    ]"
                     :variant="'outline'"
                     :disabled="!selectedGroupId"
                     @click="autoInviteEnabled = !autoInviteEnabled"
                 >
                     <div class="flex flex-col items-center justify-center">
-                        <span class="font-bold tracking-wide">{{ autoInviteEnabled ? 'AUTO-INVITER: RUNNING' : 'AUTO-INVITER: OFFLINE' }}</span>
+                        <span class="font-bold tracking-wide">
+                            {{ !autoInviteEnabled ? 'AUTO-INVITER: OFFLINE' : 
+                               isRateLimited ? `PAUSED: COOLDOWN (${formatDuration(cooldownSecondsRemaining)})` : 
+                               'AUTO-INVITER: RUNNING' }}
+                        </span>
                     </div>
                 </Button>
                 
@@ -209,7 +217,10 @@
             </div>
             
             <div class="mt-2 text-center h-4 flex items-center justify-center">
-                <span v-if="autoInviteQueue.length > 0 && autoInviteEnabled" class="text-[10px] animate-pulse text-green-400 font-medium tracking-wide">
+                <span v-if="isRateLimited && autoInviteEnabled" class="text-[10px] text-amber-500 font-medium tracking-wide">
+                    Rate Limit active. Safely waiting for cooldown before next attempt...
+                </span>
+                <span v-else-if="autoInviteQueue.length > 0 && autoInviteEnabled" class="text-[10px] animate-pulse text-green-400 font-medium tracking-wide">
                     Currently processing {{ autoInviteQueue.length }} invite(s) in background queue...
                 </span>
                 <span v-else-if="!autoInviteEnabled" class="text-[10px] text-muted-foreground/50 tracking-wide">
@@ -396,10 +407,19 @@
         logStats,
         blacklist,
         currentProgress,
-        totalProgress
+        totalProgress,
+        isRateLimited,
+        cooldownSecondsRemaining
     } = storeToRefs(groupInviteStore);
 
     const { massInviteAllInInstance, massInviteFriends, cancelOperation } = groupInviteStore;
+
+    function formatDuration(seconds) {
+        if (!seconds || seconds <= 0) return '0:00';
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m}:${s.toString().padStart(2, '0')}`;
+    }
 
     /**
      * Resolve a groupId to a short display name from the available groups.

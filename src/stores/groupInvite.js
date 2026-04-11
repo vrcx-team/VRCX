@@ -24,6 +24,8 @@ const DELAY_PRESETS = {
     stealth: 15000
 };
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 /** Maximum number of entries the persistent invite cache will hold. */
 const MAX_CACHE_SIZE = 15000;
 
@@ -47,6 +49,8 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
     const currentProgress = ref(0);
     const totalProgress = ref(0);
     const rateLimitStrikes = ref(0);
+    const rateLimitCooldownUntil = ref(0); // Timestamp (ms) when cooldown expires
+    const currentTime = ref(Date.now()); // Reactive clock for UI countdowns
 
     /**
      * List of user IDs or display names to ignore.
@@ -103,6 +107,18 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         }
         return stats;
     });
+
+    const isRateLimited = computed(() => currentTime.value < rateLimitCooldownUntil.value);
+    
+    const cooldownSecondsRemaining = computed(() => {
+        if (!isRateLimited.value) return 0;
+        return Math.max(0, Math.ceil((rateLimitCooldownUntil.value - currentTime.value) / 1000));
+    });
+
+    // Pulse the clock every second to drive the UI countdown
+    setInterval(() => {
+        currentTime.value = Date.now();
+    }, 1000);
 
     // ── Reset on logout ────────────────────────────────────────
 
@@ -209,6 +225,19 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
     watch(delayPreset, saveSettings);
     watch(autoInvitePickupDelay, saveSettings);
     watch(blacklist, saveSettings, { deep: true });
+
+    watch(autoInviteEnabled, (enabled) => {
+        if (enabled) {
+            // Reset rate limit penalties when manually starting/restarting
+            rateLimitStrikes.value = 0;
+            rateLimitCooldownUntil.value = 0;
+            
+            // Kickstart the processing loop if there are already players waiting in the queue
+            if (autoInviteQueue.value.length > 0 && !isAutoInviterRunning.value) {
+                processAutoInviteQueue();
+            }
+        }
+    });
 
     // ── Cache helpers ──────────────────────────────────────────
 
@@ -352,7 +381,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
      * @param {string} userId
      * @param {string} displayName
      * @param {string} groupId
-     * @returns {Promise<{sent: boolean, apiCalled: boolean}>}
+     * @returns {Promise<{sent: boolean, apiCalled: boolean, isRateLimit?: boolean}>}
      */
     async function sendSingleInvite(userId, displayName, groupId) {
         if (!userId || !groupId) return { sent: false, apiCalled: false };
@@ -399,7 +428,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
             }
             addLog(userId, displayName, groupId, 'error', uiMsg);
             console.error(`[GroupInvite] FAILED to invite ${displayName} (${userId}). Reason: ${uiMsg} | Raw: ${rawMsg}`, err);
-            return { sent: false, apiCalled: true };
+            return { sent: false, apiCalled: true, isRateLimit: uiMsg === 'Rate Limited (429)' };
         }
     }
 
@@ -410,7 +439,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
      * @param {string} displayName
      * @param {string} locationTag  Instance location tag (used as cache key)
      * @param {string} worldName    Resolved world name for display
-     * @returns {Promise<{sent: boolean, apiCalled: boolean}>}
+     * @returns {Promise<{sent: boolean, apiCalled: boolean, isRateLimit?: boolean}>}
      */
     async function sendSingleFriendInvite(userId, displayName, locationTag, worldName) {
         if (!userId || !locationTag) return { sent: false, apiCalled: false };
@@ -448,7 +477,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
             if (PERMANENT_ERRORS.includes(uiMsg)) markInvited(userId, locationTag);
             addLog(userId, displayName, locationTag, 'error', uiMsg);
             console.error(`[InstanceInvite] FAILED ${displayName}. Reason: ${uiMsg} | Raw: ${rawMsg}`, err);
-            return { sent: false, apiCalled: true };
+            return { sent: false, apiCalled: true, isRateLimit: uiMsg === 'Rate Limited (429)' };
         }
     }
 
@@ -734,11 +763,15 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
 
         try {
             while (autoInviteQueue.value.length > 0 && autoInviteEnabled.value) {
-                // If rate limited mid-queue, pause heavily
-                if (rateLimitStrikes.value >= 3) {
-                    console.log('[AutoInvite Queue] Rate limit detected, pausing queue processing for 2 minutes...');
-                    await sleep(120000);
-                    continue; // Re-check after sleeping
+                // Tiered Rate Limit Guard
+                const now = Date.now();
+                if (now < rateLimitCooldownUntil.value) {
+                    const waitMs = rateLimitCooldownUntil.value - now;
+                    if (waitMs > 0) {
+                        console.log(`[AutoInvite Queue] PAUSED: Waiting ${Math.ceil(waitMs / 1000)}s for cooldown...`);
+                        await sleep(waitMs);
+                    }
+                    continue; // Re-check while conditions after sleeping
                 }
 
                 // Dequeue the next person
@@ -781,22 +814,40 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 try {
                     // Send the single invite payload
                     const result = await sendSingleInvite(userId, displayName, groupId);
+                    
                     if (result.sent) {
                         console.log(`[AutoInvite Queue] SUCCESS: Invited ${displayName}`);
+                        rateLimitStrikes.value = 0; // Reset consecutive strikes on success
+                    } else if (result.isRateLimit) {
+                        // TIERED BACKOFF LOGIC
+                        // Strike 1 (count is already incremented in sendSingleInvite)
+                        if (rateLimitStrikes.value === 1) {
+                            console.log(`[AutoInvite Queue] Strike 1: Waiting 15s before quick retry...`);
+                            rateLimitCooldownUntil.value = Date.now() + 15000;
+                        } else {
+                            // Strike 2+
+                            console.log(`[AutoInvite Queue] Strike ${rateLimitStrikes.value}: Mandatory 10 minute cooldown...`);
+                            rateLimitCooldownUntil.value = Date.now() + (10 * 60 * 1000);
+                        }
+                        // Re-add user back to the front of the queue so we don't lose them
+                        autoInviteQueue.value.unshift({ userId, displayName, groupId, addedAt });
+                        continue; // Go back to top to hit the Rate Limit Guard
                     } else {
-                        console.log(`[AutoInvite Queue] FAILED: ${displayName}`);
+                        console.log(`[AutoInvite Queue] FAILED (Non-Rate-Limit): ${displayName}`);
                     }
+                } catch (err) {
+                    console.error('[AutoInvite Queue] Fatal error in processing. Skipping user.', err);
                 } finally {
                     autoInviteInFlight.delete(flightKey);
                 }
 
                 // Respect the UI configured delay before eating the next item in the queue
-                // Minimum wait to prevent VRC API dropping the request is roughly 2s
-                // delayMs value dictates the cadence. normal is ~3000ms
                 if (autoInviteQueue.value.length > 0 && autoInviteEnabled.value) {
                     await sleep(delayMs.value); 
                 }
             }
+        } catch (err) {
+            console.error('[AutoInvite Queue] Daemon crashed.', err);
         } finally {
             // Loop naturally terminates when queue is empty or disabled
             isAutoInviterRunning.value = false;
@@ -835,6 +886,10 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         selectedGroup,
         cacheSize,
         logStats,
+        isRateLimited,
+        cooldownSecondsRemaining,
+        rateLimitStrikes,
+        rateLimitCooldownUntil,
 
         // Actions
         clearCache,
