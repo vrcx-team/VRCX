@@ -35,7 +35,7 @@
                         <template #content>
                             <span>{{ getUserStateText(userDialog.ref) }}</span>
                         </template>
-                        <i class="x-user-status" :class="userStatusClass(userDialog.ref)"></i>
+                        <i class="x-user-status" :class="dialogStatusClass"></i>
                     </TooltipWrapper>
                     <template v-if="userDialog.previousDisplayNames.length > 0">
                         <TooltipWrapper side="bottom">
@@ -263,7 +263,7 @@
 
 <script setup>
     import { Apple, ChevronDown, IdCard, Image, Monitor, Shield, Smartphone, UserPlus, Users } from 'lucide-vue-next';
-    import { ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -306,6 +306,20 @@
 
     const { showFullscreenImageDialog } = useGalleryStore();
     const { userImage, userStatusClass } = useUserDisplay();
+
+    // Use ctx.state instead of ref.state to determine active status...
+    // problem it would cause userStatusClass to return the wrong class so we fix that here.
+    const dialogStatusClass = computed(() => {
+        const r = userDialog.value?.ref;
+        if (!r) return {};
+        if (r.state === 'active') {
+            if (r.status === 'join me') return { 'active-joinme': true };
+            if (r.status === 'ask me') return { 'active-askme': true };
+            if (r.status === 'busy') return { 'active-busy': true };
+            return { active: true };
+        }
+        return userStatusClass(r);
+    });
 
     const profileImageError = ref(false);
     const userIconError = ref(false);
