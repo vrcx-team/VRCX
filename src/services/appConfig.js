@@ -12,6 +12,7 @@ const AppDebug = reactive({
     debugGameLog: false,
     debugWebRequests: false,
     debugFriendState: false,
+    debugRecompute: false,
     debugIPC: false,
     debugVrcPlus: false,
     errorNoty: null,

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
 import { database } from '../services/database';
 import { mergeSessions } from '../shared/utils/activityEngine.js';
@@ -9,6 +10,8 @@ const inFlightJobs = new Map();
 const workerCall = runActivityWorkerTask;
 const MAX_SNAPSHOT_ENTRIES = 12;
 let deferredWriteQueue = Promise.resolve();
+const FULL_CACHE_BATCH_DAYS = 30;
+const FULL_CACHE_MAX_DAYS = 3650; // vrchat max days??
 
 function deferWrite(task) {
     const run = () => {
@@ -106,6 +109,10 @@ function pairCursor(leftCursor, rightCursor) {
 }
 
 export const useActivityStore = defineStore('Activity', () => {
+    const fullCacheReady = ref(false);
+    let fullCacheBuildRunning = false;
+    let fullCacheBuildAborted = false;
+
     async function getCache(userId, isSelf = false) {
         const snapshot = await hydrateSnapshot(userId, isSelf);
         return {
@@ -377,7 +384,98 @@ export const useActivityStore = defineStore('Activity', () => {
         snapshotMap.delete(userId);
     }
 
+
+    async function startFullCacheBuild(userId) {
+        if (fullCacheBuildRunning) {
+            return;
+        }
+        fullCacheBuildRunning = true;
+        fullCacheBuildAborted = false;
+        fullCacheReady.value = false;
+
+        try {
+            const snapshot = await hydrateSnapshot(userId, true);
+
+            if (!snapshot.sync.updatedAt) {
+                await fullRefresh(snapshot, 90);
+            }
+
+            const currentDays = snapshot.sync.cachedRangeDays || 90;
+
+            const probeItems = await database.getActivitySourceSliceV2({
+                userId,
+                isSelf: true,
+                fromDays: FULL_CACHE_MAX_DAYS,
+                toDays: currentDays
+            });
+
+            if (probeItems.length === 0) {
+                fullCacheReady.value = true;
+                fullCacheBuildRunning = false;
+                return;
+            }
+
+            const earliestDate = new Date(probeItems[0].created_at);
+            const totalDays = Math.ceil((Date.now() - earliestDate.getTime()) / 86400000);
+
+            let targetDays = currentDays;
+            while (targetDays < totalDays && !fullCacheBuildAborted) {
+                targetDays = Math.min(targetDays + FULL_CACHE_BATCH_DAYS, totalDays);
+                const nextTarget = targetDays;
+
+                await new Promise((resolve) => {
+                    const callback = async () => {
+                        try {
+                            await expandRange(snapshot, nextTarget);
+                        } catch (error) {
+                            console.error('[Activity] full cache batch failed:', error);
+                        }
+                        resolve();
+                    };
+                    if (typeof requestIdleCallback === 'function') {
+                        requestIdleCallback(callback);
+                    } else {
+                        setTimeout(callback, 0);
+                    }
+                });
+            }
+
+            if (!fullCacheBuildAborted) {
+                fullCacheReady.value = true;
+            }
+        } catch (error) {
+            console.error('[Activity] full cache build error:', error);
+        } finally {
+            fullCacheBuildRunning = false;
+        }
+    }
+
+    function stopFullCacheBuild() {
+        fullCacheBuildAborted = true;
+    }
+
+    /**
+     * @returns {Promise<Array<{date: string, totalMs: number}>>}
+     */
+    async function getDailySummary(userId) {
+        const snapshot = await hydrateSnapshot(userId, true);
+        if (snapshot.sessions.length === 0) {
+            return [];
+        }
+
+        const rangeStartMs = snapshot.sessions[0].start;
+        const rangeEndMs = Date.now();
+
+        const result = await workerCall('computeDailySummary', {
+            sessions: snapshot.sessions,
+            rangeStartMs,
+            rangeEndMs
+        });
+        return result.dailySummary;
+    }
+
     return {
+        fullCacheReady,
         getCache,
         getCachedDays,
         isRefreshing,
@@ -389,6 +487,9 @@ export const useActivityStore = defineStore('Activity', () => {
         loadTopWorldsView,
         refreshActivity,
         invalidateUser,
+        startFullCacheBuild,
+        stopFullCacheBuild,
+        getDailySummary,
         workerCall: runActivityWorkerTask
     };
 });

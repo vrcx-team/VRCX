@@ -23,12 +23,19 @@
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                        <SelectItem v-if="fullCacheReady" value="0">{{ t('dialog.user.activity.period_all') }}</SelectItem>
+                        <SelectItem v-if="fullCacheReady" value="365">{{ t('dialog.user.activity.period_365') }}</SelectItem>
+                        <SelectItem v-if="fullCacheReady" value="180">{{ t('dialog.user.activity.period_180') }}</SelectItem>
                         <SelectItem value="90">{{ t('dialog.user.activity.period_90') }}</SelectItem>
                         <SelectItem value="30">{{ t('dialog.user.activity.period_30') }}</SelectItem>
                         <SelectItem value="7">{{ t('dialog.user.activity.period_7') }}</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
+        </div>
+
+        <div v-if="isSelf && hasAnyData && !fullCacheReady" class="text-xs text-muted-foreground mb-1">
+            {{ t('dialog.user.activity.building_cache') }}
         </div>
 
         <div v-if="peakDayText || peakTimeText" class="mt-2 mb-1 text-sm flex gap-4">
@@ -64,6 +71,11 @@
             class="min-w-0 overflow-hidden"
             style="width: 100%; height: 240px"
             @contextmenu.prevent="onChartRightClick" />
+
+        <DailyPlaytime
+            v-if="isSelf && hasAnyData"
+            :sessions="cachedSessions"
+            :range-days="currentRangeDays" />
 
         <div v-if="hasAnyData && !isSelf" class="mt-4 border-t border-border pt-3">
             <div class="flex items-center justify-between mb-2">
@@ -261,16 +273,20 @@
     import { useActivityStore, useAppearanceSettingsStore, useUserStore } from '../../../stores';
     import { useWorldStore } from '../../../stores/world';
     import { buildHeatmapOption, toHeatmapSeriesData } from './activity/buildHeatmapOption';
+    import DailyPlaytime from './activity/DailyPlaytime.vue';
 
     const { t, locale } = useI18n();
     const { userDialog, currentUser } = storeToRefs(useUserStore());
     const { isDarkMode, weekStartsOn } = storeToRefs(useAppearanceSettingsStore());
     const activityStore = useActivityStore();
+    const { fullCacheReady } = storeToRefs(activityStore);
     const worldStore = useWorldStore();
 
     const isLoading = ref(false);
     const hasAnyData = ref(false);
     const selectedPeriod = ref('30');
+    const currentRangeDays = ref(30);
+    const cachedSessions = ref([]);
     const filteredEventCount = ref(0);
     const peakDayText = ref('');
     const peakTimeText = ref('');
@@ -282,7 +298,7 @@
     const topWorldsLoading = ref(false);
     const topWorldsLoadingVisible = ref(false);
     const topWorlds = ref([]);
-    const topWorldsSortBy = ref('time');
+    const topWorldsSortBy = ref('count');
     const excludeHomeWorldEnabled = ref(false);
     const excludeHoursEnabled = ref(false);
     const excludeStartHour = ref('1');
@@ -343,14 +359,14 @@
         const [period, sortBy, excludeHomeWorld, overlapExcludeEnabled, overlapExcludeStart, overlapExcludeEnd] =
             await Promise.all([
                 configRepository.getString(periodKey, '30'),
-                configRepository.getString(ACTIVITY_SELF_TOP_WORLDS_SORT_KEY, 'time'),
+                configRepository.getString(ACTIVITY_SELF_TOP_WORLDS_SORT_KEY, 'count'),
                 configRepository.getBool(ACTIVITY_SELF_EXCLUDE_HOME_WORLD_KEY, false),
                 configRepository.getBool('VRCX_overlapExcludeEnabled', false),
                 configRepository.getString('VRCX_overlapExcludeStart', '1'),
                 configRepository.getString('VRCX_overlapExcludeEnd', '6')
             ]);
-        selectedPeriod.value = ['7', '30', '90'].includes(period) ? period : '30';
-        topWorldsSortBy.value = ['time', 'count'].includes(sortBy) ? sortBy : 'time';
+        selectedPeriod.value = ['0', '7', '30', '90', '180', '365'].includes(period) ? period : '30';
+        topWorldsSortBy.value = ['time', 'count'].includes(sortBy) ? sortBy : 'count';
         excludeHomeWorldEnabled.value = excludeHomeWorld;
         excludeHoursEnabled.value = overlapExcludeEnabled;
         excludeStartHour.value = String(overlapExcludeStart);
@@ -494,7 +510,7 @@
             return;
         }
 
-        const rangeDays = parseInt(selectedPeriod.value, 10) || 30;
+        const rangeDays = parseInt(selectedPeriod.value, 10) === 0 ? 3650 : (parseInt(selectedPeriod.value, 10) || 30);
         await loadTopWorldsSection({
             userId,
             rangeDays,
@@ -516,7 +532,7 @@
         }
 
         try {
-            const rangeDays = parseInt(selectedPeriod.value, 10) || 30;
+            const rangeDays = parseInt(selectedPeriod.value, 10) === 0 ? 3650 : (parseInt(selectedPeriod.value, 10) || 30);
             const activityView = await activityStore.loadActivityView({
                 userId,
                 isSelf: isSelf.value,
@@ -537,6 +553,12 @@
                 normalizedBuckets: activityView.normalizedBuckets
             };
             lastLoadedUserId = userId;
+
+            if (isSelf.value) {
+                currentRangeDays.value = rangeDays;
+                const cache = await activityStore.getCache(userId, true);
+                cachedSessions.value = cache.sessions || [];
+            }
 
             if (!hasAnyData.value) {
                 hasOverlapData.value = false;
@@ -617,7 +639,7 @@
         beginOverlapLoading(requestId);
 
         try {
-            const rangeDays = parseInt(selectedPeriod.value, 10) || 30;
+            const rangeDays = parseInt(selectedPeriod.value, 10) === 0 ? 3650 : (parseInt(selectedPeriod.value, 10) || 30);
             const overlapView = await activityStore.loadOverlapView({
                 currentUserId: currentUser.value.id,
                 targetUserId: userId,

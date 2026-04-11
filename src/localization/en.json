@@ -38,7 +38,11 @@
             "thursday": "Thursday",
             "friday": "Friday",
             "saturday": "Saturday"
-        }
+        },
+        "duration": "Duration",
+        "load_more": "Load more",
+        "no_more": "No more entries",
+        "current_session": "Current"
     },
     "nav_tooltip": {
         "friends_locations": "Friends Locations",
@@ -279,6 +283,15 @@
                 "External": "External",
                 "StringLoad": "String load",
                 "ImageLoad": "Image load"
+            },
+            "sessions": {
+                "switch_to_table": "Table view",
+                "switch_to_sessions": "Sessions view",
+                "date_range": "Date range",
+                "players_joined": "{count} players joined",
+                "players_left": "{count} players left",
+                "play_count": "×{count}",
+                "no_data": "No game log data"
             }
         },
         "player_list": {
@@ -581,6 +594,14 @@
                     "refresh_error": "Failed to refresh mutual friends data",
                     "last_fetched": "Last fetched"
                 }
+            },
+            "playtime_trend": {
+                "header": "Daily Playtime",
+                "online_hours": "Hours",
+                "daily_avg": "Daily Average",
+                "total": "Total",
+                "waiting": "Building playtime data, please come back later.",
+                "no_data": "No playtime data available"
             },
             "hot_worlds": {
                 "tab_label": "Hot Worlds",
@@ -1470,6 +1491,10 @@
                 "most_active_time": "Peak hours:",
                 "period": "Period:",
                 "period_90": "Last 90 Days",
+                "period_180": "Last 6 Months",
+                "period_365": "Last 1 Year",
+                "period_all": "All Time",
+                "building_cache": "Computing all activity data for extended ranges...",
                 "period_30": "Last 30 Days",
                 "period_7": "Last 7 Days",
                 "minutes_online": "min online",
@@ -3125,6 +3150,7 @@
         "clock": "Clock",
         "clocks_label": "Clocks",
         "clocks_none": "None",
-        "timezone": "Timezone"
+        "timezone": "Timezone",
+        "now_playing": "Now Playing"
     }
 }

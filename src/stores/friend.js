@@ -75,13 +75,13 @@ export const useFriendStore = defineStore('Friend', () => {
 
     /**
      * Tracks recomputes for the hottest friend-derived lists.
-     * Guarded by AppDebug.debugFriendState so normal behavior stays unchanged.
+     * Guarded by AppDebug.debugRecompute so normal behavior stays unchanged.
      * @param {keyof typeof derivedDebugCounters} name
      * @param {number} resultSize
      */
     function trackDerivedDebug(name, resultSize) {
         derivedDebugCounters[name] += 1;
-        if (!AppDebug.debugFriendState) {
+        if (!AppDebug.debugRecompute) {
             return;
         }
         console.log('[friendStore derived]', {
@@ -100,7 +100,7 @@ export const useFriendStore = defineStore('Friend', () => {
         for (const key in derivedDebugCounters) {
             derivedDebugCounters[key] = 0;
         }
-        if (AppDebug.debugFriendState) {
+        if (AppDebug.debugRecompute) {
             console.log('[friendStore derived] counters reset');
         }
     }
@@ -111,7 +111,7 @@ export const useFriendStore = defineStore('Friend', () => {
      */
     function getDerivedDebugCounters() {
         const snapshot = { ...derivedDebugCounters };
-        if (AppDebug.debugFriendState) {
+        if (AppDebug.debugRecompute) {
             console.log('[friendStore derived] counters snapshot', snapshot);
         }
         return snapshot;

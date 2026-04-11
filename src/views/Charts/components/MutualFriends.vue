@@ -371,6 +371,7 @@
     let sigmaInstance = null;
     let currentGraph = null;
     let resizeObserver = null;
+    let mutualGraphResizeObserver = null;
     let pendingRender = null;
     let pendingLayoutUpdate = null;
     let lastMutualMap = null;
@@ -612,9 +613,6 @@
         const camera = sigmaInstance.getCamera();
         camera.animate({ x: nodeDisplayData.x, y: nodeDisplayData.y, ratio: 0.15 }, { duration: 300 });
     }
-    const mutualGraphResizeObserver = new ResizeObserver(() => {
-        setMutualGraphHeight();
-    });
 
     function setMutualGraphHeight() {
         if (mutualGraphRef.value) {
@@ -633,7 +631,7 @@
                 if (sigmaInstance?.refresh) sigmaInstance.refresh();
             });
             resizeObserver.observe(graphContainerRef.value);
-
+            mutualGraphResizeObserver = new ResizeObserver(() => setMutualGraphHeight());
             mutualGraphResizeObserver.observe(mutualGraphRef.value);
             setMutualGraphHeight();
 
@@ -659,7 +657,10 @@
             layoutWorker.terminate();
             layoutWorker = null;
         }
-        if (mutualGraphResizeObserver) mutualGraphResizeObserver.disconnect();
+        if (mutualGraphResizeObserver) {
+            mutualGraphResizeObserver.disconnect();
+            mutualGraphResizeObserver = null;
+        }
     });
 
     watch(

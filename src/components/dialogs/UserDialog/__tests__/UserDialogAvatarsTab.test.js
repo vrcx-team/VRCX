@@ -139,10 +139,7 @@ function mountComponent(overrides = {}) {
         global: {
             plugins: [pinia],
             stubs: {
-                RefreshCw: { template: '<svg class="refresh-icon" />' },
-                DeprecationAlert: {
-                    template: '<div class="deprecation-stub" />'
-                }
+                RefreshCw: { template: '<svg class="refresh-icon" />' }
             }
         }
     });
@@ -181,18 +178,7 @@ describe('UserDialogAvatarsTab.vue', () => {
             expect(images[0].attributes('src')).toBe('https://img/1.png');
         });
 
-        test('shows deprecation alert for current user', () => {
-            const wrapper = mountComponent();
-            expect(wrapper.find('.deprecation-stub').exists()).toBe(true);
-        });
 
-        test('hides deprecation alert for other users', () => {
-            const wrapper = mountComponent({
-                id: 'usr_other',
-                ref: { id: 'usr_other' }
-            });
-            expect(wrapper.find('.deprecation-stub').exists()).toBe(false);
-        });
 
         test('shows empty state when no avatars and not loading', () => {
             const wrapper = mountComponent({ avatars: [] });

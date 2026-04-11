@@ -107,6 +107,8 @@ const OVERLAY_SHARED_WIDTH = Math.max(
 );
 const OVERLAY_FRAME_SIZE = OVERLAY_SHARED_WIDTH * OVERLAY_SHARED_HEIGHT * 4;
 const OVERLAY_SHM_PATH = '/dev/shm/vrcx_overlay';
+const overlayFrameBuffer = Buffer.alloc(OVERLAY_FRAME_SIZE + 1);
+let activeNotification = null;
 
 function createOverlayWindowShm() {
     fs.writeFileSync(OVERLAY_SHM_PATH, Buffer.alloc(OVERLAY_FRAME_SIZE + 1));
@@ -199,12 +201,23 @@ ipcMain.handle('dialog:openDirectory', async () => {
 });
 
 ipcMain.handle('notification:showNotification', (event, title, body, icon) => {
-    const notification = {
+    if (activeNotification) {
+        activeNotification.close();
+    }
+
+    const notification = new Notification({
         title,
         body,
         icon
-    };
-    new Notification(notification).show();
+    });
+    notification.on('close', () => {
+        if (activeNotification === notification) {
+            notification.removeAllListeners();
+            activeNotification = null;
+        }
+    });
+    activeNotification = notification;
+    notification.show();
 });
 
 ipcMain.handle('app:restart', () => {
@@ -467,17 +480,20 @@ function createOverlayWindowOffscreen() {
 }
 
 function writeOverlayFrame(imageBuffer) {
+    let fd;
     try {
-        const fd = fs.openSync(OVERLAY_SHM_PATH, 'r+');
-        const buffer = Buffer.alloc(OVERLAY_FRAME_SIZE + 1);
-        buffer[0] = 0; // not ready
-        imageBuffer.copy(buffer, 1, 0, OVERLAY_FRAME_SIZE);
-        buffer[0] = 1; // ready
-        fs.writeSync(fd, buffer);
-        fs.closeSync(fd);
+        fd = fs.openSync(OVERLAY_SHM_PATH, 'r+');
+        overlayFrameBuffer[0] = 0; // not ready
+        imageBuffer.copy(overlayFrameBuffer, 1, 0, OVERLAY_FRAME_SIZE);
+        overlayFrameBuffer[0] = 1; // ready
+        fs.writeSync(fd, overlayFrameBuffer);
         //console.log('Wrote frame to shared memory');
     } catch (err) {
         console.error('Error writing frame to shared memory:', err);
+    } finally {
+        if (typeof fd === 'number') {
+            fs.closeSync(fd);
+        }
     }
 }
 
@@ -913,6 +929,11 @@ function disposeOverlay() {
         return;
     }
     if (overlayWindow && !overlayWindow.isDestroyed()) {
+        const { webContents } = overlayWindow;
+        if (webContents && !webContents.isDestroyed()) {
+            webContents.removeAllListeners('paint');
+            webContents.stopPainting();
+        }
         overlayWindow.close();
     }
     overlayWindow = undefined;

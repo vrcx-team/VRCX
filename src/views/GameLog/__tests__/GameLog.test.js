@@ -4,7 +4,10 @@ import { ref } from 'vue';
 
 const mocks = vi.hoisted(() => ({
     lookup: vi.fn(),
-    table: { value: { vip: false, filter: [], search: '' } }
+    makeRef: (value) => ({ value, __v_isRef: true }),
+    setSessionsViewMode: vi.fn(),
+    table: { value: { vip: false, filter: [], search: '' } },
+    sessionsViewMode: { value: 'table', __v_isRef: true }
 }));
 
 vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
@@ -12,8 +15,10 @@ vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
 vi.mock('../../../stores', () => ({
     useGameLogStore: () => ({
         gameLogTableLookup: (...a) => mocks.lookup(...a),
+        setSessionsViewMode: (...a) => mocks.setSessionsViewMode(...a),
         gameLogTable: mocks.table,
-        gameLogTableData: ref([])
+        gameLogTableData: ref([]),
+        sessionsViewMode: mocks.sessionsViewMode
     }),
     useAppearanceSettingsStore: () => ({
         tablePageSizes: [20, 50],
@@ -24,6 +29,9 @@ vi.mock('../../../stores', () => ({
 }));
 vi.mock('../../../components/ui/data-table', () => ({
     DataTableLayout: { template: '<div><slot name="toolbar" /></div>' }
+}));
+vi.mock('../../../components/ui/tooltip', () => ({
+    TooltipWrapper: { template: '<div><slot /></div>' }
 }));
 vi.mock('../../../components/ui/input-group', () => ({
     InputGroupField: { template: '<input />' }
@@ -43,7 +51,24 @@ vi.mock('@/components/ui/select', () => ({
 vi.mock('@/components/ui/toggle', () => ({
     Toggle: { template: '<button><slot /></button>' }
 }));
-vi.mock('lucide-vue-next', () => ({ Star: { template: '<i />' } }));
+vi.mock('@/components/ui/toggle-group', () => ({
+    ToggleGroup: {
+        emits: ['update:model-value'],
+        template: '<div><slot /></div>'
+    },
+    ToggleGroupItem: {
+        props: ['value'],
+        template: '<button :data-value="value"><slot /></button>'
+    }
+}));
+vi.mock('lucide-vue-next', () => ({
+    Star: { template: '<i />' },
+    Logs: { template: '<i />' },
+    Table2: { template: '<i />' }
+}));
+vi.mock('../components/GameLogSessions.vue', () => ({
+    default: { template: '<div />' }
+}));
 vi.mock('../../../services/database', () => ({
     database: { deleteGameLogEntry: vi.fn() }
 }));

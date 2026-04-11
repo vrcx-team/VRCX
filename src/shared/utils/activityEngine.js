@@ -349,6 +349,39 @@ export function computeOverlapView({
     };
 }
 
+/**
+ * @param {Array<{start: number, end: number}>} sessions - sorted sessions
+ * @param {number} rangeStartMs - start of the range
+ * @param {number} rangeEndMs - end of the range
+ * @returns {Array<{date: string, totalMs: number}>} sorted by date ascending
+ */
+export function buildDailySummary(sessions, rangeStartMs, rangeEndMs = Date.now()) {
+    const dayMap = new Map();
+    const clipped = clipSessionsToRange(sessions, rangeStartMs, rangeEndMs);
+    const ONE_DAY_MS = 86400000;
+
+    for (const session of clipped) {
+        let cursor = session.start;
+        while (cursor < session.end) {
+            const dayStart = new Date(cursor);
+            dayStart.setHours(0, 0, 0, 0);
+            const dayKey = `${dayStart.getFullYear()}-${String(dayStart.getMonth() + 1).padStart(2, '0')}-${String(dayStart.getDate()).padStart(2, '0')}`;
+            const nextDayStart = dayStart.getTime() + ONE_DAY_MS;
+            const segmentEnd = Math.min(session.end, nextDayStart);
+            const duration = segmentEnd - cursor;
+            dayMap.set(dayKey, (dayMap.get(dayKey) || 0) + duration);
+            cursor = nextDayStart;
+        }
+    }
+
+    const result = [];
+    for (const [date, totalMs] of dayMap) {
+        result.push({ date, totalMs });
+    }
+    result.sort((a, b) => a.date.localeCompare(b.date));
+    return result;
+}
+
 function cloneSession(session) {
     return {
         start: session.start,

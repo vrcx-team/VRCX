@@ -1,4 +1,5 @@
 import {
+    buildDailySummary,
     buildSessionsFromEvents,
     buildSessionsFromGamelog,
     buildHeatmapBuckets,
@@ -64,6 +65,15 @@ self.addEventListener('message', (event) => {
                     normalized: normalizeBuckets(
                         payload.buckets || [],
                         payload.config || {}
+                    )
+                };
+                break;
+            case 'computeDailySummary':
+                result = {
+                    dailySummary: buildDailySummary(
+                        payload.sessions || [],
+                        payload.rangeStartMs,
+                        payload.rangeEndMs
                     )
                 };
                 break;
