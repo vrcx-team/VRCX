@@ -36,7 +36,7 @@ jobs:
       - run: npm run format:check
 
   format_c_sharp:
-    name: Format C# (CSharpier)
+    name: Format C# (dotnet format)
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -47,8 +47,7 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '9.0.x'
-      - name: Run CSharpier
-        run: | 
-          dotnet tool restore
+      - name: Run Dotnet format
+        run: |
           dotnet format whitespace --no-restore --verify-no-changes
           dotnet format style --no-restore --verify-no-changes
