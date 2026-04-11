@@ -4,7 +4,9 @@
             <SettingsItem
                 :label="t('view.settings.appearance.user_dialog.recent_action_cooldown')"
                 :description="t('view.settings.appearance.user_dialog.recent_action_cooldown_description')">
-                <Switch :model-value="recentActionCooldownEnabled" @update:modelValue="setRecentActionCooldownEnabled" />
+                <Switch
+                    :model-value="recentActionCooldownEnabled"
+                    @update:modelValue="setRecentActionCooldownEnabled" />
             </SettingsItem>
 
             <SettingsItem
@@ -89,23 +91,16 @@
     import SettingsGroup from '../SettingsGroup.vue';
     import SettingsItem from '../SettingsItem.vue';
 
-
     const { t } = useI18n();
 
     const generalSettingsStore = useGeneralSettingsStore();
     const favoriteStore = useFavoriteStore();
 
-    const {
-        recentActionCooldownEnabled,
-        recentActionCooldownMinutes,
-        localFavoriteFriendsGroups
-    } = storeToRefs(generalSettingsStore);
+    const { recentActionCooldownEnabled, recentActionCooldownMinutes, localFavoriteFriendsGroups } =
+        storeToRefs(generalSettingsStore);
 
-    const {
-        setRecentActionCooldownEnabled,
-        setRecentActionCooldownMinutes,
-        setLocalFavoriteFriendsGroups
-    } = generalSettingsStore;
+    const { setRecentActionCooldownEnabled, setRecentActionCooldownMinutes, setLocalFavoriteFriendsGroups } =
+        generalSettingsStore;
 
     const { favoriteFriendGroups, localFriendFavoriteGroups } = storeToRefs(favoriteStore);
 </script>

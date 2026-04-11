@@ -3,7 +3,6 @@ import { watch } from 'vue';
 import { useSearchIndexStore } from '../stores/searchIndex';
 import { watchState } from '../services/watchState';
 
-
 /**
  * @param {object} ctx
  */
@@ -21,7 +20,6 @@ export function removeFriendSearchIndex(id) {
 export function clearFriendSearchIndex() {
     useSearchIndexStore().clearFriends();
 }
-
 
 /**
  * @param {object} ref
@@ -76,7 +74,6 @@ export function removeGroupSearchIndex(id) {
 export function clearGroupSearchIndex() {
     useSearchIndexStore().clearGroups();
 }
-
 
 export function rebuildFavoriteSearchIndex() {
     useSearchIndexStore().rebuildFavoritesFromStore();

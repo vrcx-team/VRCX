@@ -23,7 +23,10 @@
                     :maxlength="1000"
                     size="sm">
                     <template #leading>
-                        <img v-if="link" :src="getFaviconUrl(link)" style="width: 16px; height: 16px; vertical-align: middle" />
+                        <img
+                            v-if="link"
+                            :src="getFaviconUrl(link)"
+                            style="width: 16px; height: 16px; vertical-align: middle" />
                         <div v-else style="width: 16px; height: 16px" />
                     </template>
                     <template #actions>

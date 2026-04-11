@@ -136,7 +136,7 @@ namespace VRCX
 
             SendMessages(messages);
         }
-        
+
         private struct OvrtMessage
         {
             [System.Text.Json.Serialization.JsonPropertyName("messageType")]

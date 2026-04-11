@@ -306,7 +306,12 @@ export const useActivityStore = defineStore('Activity', () => {
         { rangeDays = 30, limit = 5, sortBy = 'time', excludeWorldId = '' }
     ) {
         void userId;
-        return database.getMyTopWorlds(rangeDays, limit, sortBy, excludeWorldId);
+        return database.getMyTopWorlds(
+            rangeDays,
+            limit,
+            sortBy,
+            excludeWorldId
+        );
     }
 
     async function refreshActivity(userId, options) {
@@ -384,7 +389,6 @@ export const useActivityStore = defineStore('Activity', () => {
         snapshotMap.delete(userId);
     }
 
-
     async function startFullCacheBuild(userId) {
         if (fullCacheBuildRunning) {
             return;
@@ -416,11 +420,16 @@ export const useActivityStore = defineStore('Activity', () => {
             }
 
             const earliestDate = new Date(probeItems[0].created_at);
-            const totalDays = Math.ceil((Date.now() - earliestDate.getTime()) / 86400000);
+            const totalDays = Math.ceil(
+                (Date.now() - earliestDate.getTime()) / 86400000
+            );
 
             let targetDays = currentDays;
             while (targetDays < totalDays && !fullCacheBuildAborted) {
-                targetDays = Math.min(targetDays + FULL_CACHE_BATCH_DAYS, totalDays);
+                targetDays = Math.min(
+                    targetDays + FULL_CACHE_BATCH_DAYS,
+                    totalDays
+                );
                 const nextTarget = targetDays;
 
                 await new Promise((resolve) => {
@@ -428,7 +437,10 @@ export const useActivityStore = defineStore('Activity', () => {
                         try {
                             await expandRange(snapshot, nextTarget);
                         } catch (error) {
-                            console.error('[Activity] full cache batch failed:', error);
+                            console.error(
+                                '[Activity] full cache batch failed:',
+                                error
+                            );
                         }
                         resolve();
                     };

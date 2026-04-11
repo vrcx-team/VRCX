@@ -172,7 +172,7 @@
                 "local_favorites": "Favoris locaux (Requires VRC+)",
                 "new_group": "Nouveau groupe",
                 "cancel_refresh": "Annuler la réactualisation",
-                 "check_invalid": "Check for deleted/private avatars",
+                "check_invalid": "Check for deleted/private avatars",
                 "check_description": "Detect and remove invalid avatars from this group",
                 "checking": "Checking for invalid avatars...",
                 "removed_list_header": "Avatars pending deletion:",

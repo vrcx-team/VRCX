@@ -101,8 +101,6 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-
-
     import { useFavoriteStore, useUserStore } from '../../../stores';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { handleFavoriteWorldList } from '../../../coordinators/favoriteCoordinator';
@@ -132,7 +130,12 @@
         const all = lists.flatMap((list) => list[2] || []);
         return all.filter((w) => (w.name || '').toLowerCase().includes(query));
     });
-    watch(() => userDialog.value.id, () => { searchQuery.value = ''; });
+    watch(
+        () => userDialog.value.id,
+        () => {
+            searchQuery.value = '';
+        }
+    );
 
     /**
      *

@@ -35,6 +35,11 @@ describe('useActivityStore', () => {
         });
 
         expect(result).toEqual([{ worldId: 'wrld_1' }]);
-        expect(mocks.getMyTopWorlds).toHaveBeenCalledWith(30, 5, 'time', 'wrld_home');
+        expect(mocks.getMyTopWorlds).toHaveBeenCalledWith(
+            30,
+            5,
+            'time',
+            'wrld_home'
+        );
     });
 });

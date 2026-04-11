@@ -29,7 +29,8 @@ export function useStatusPresets() {
             return 'limit';
         }
         const exists = presets.value.some(
-            (p) => p.status === status && p.statusDescription === statusDescription
+            (p) =>
+                p.status === status && p.statusDescription === statusDescription
         );
         if (exists) {
             return 'exists';
@@ -52,5 +53,12 @@ export function useStatusPresets() {
         loadPromise = loadPresets();
     }
 
-    return { presets, loadPresets, addPreset, removePreset, getStatusClass, MAX_PRESETS };
+    return {
+        presets,
+        loadPresets,
+        addPreset,
+        removePreset,
+        getStatusClass,
+        MAX_PRESETS
+    };
 }

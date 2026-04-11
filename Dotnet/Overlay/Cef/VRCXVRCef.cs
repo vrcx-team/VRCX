@@ -691,7 +691,7 @@ namespace VRCX
             if (!dashboardVisible && DateTime.UtcNow.CompareTo(_nextOverlayUpdate) <= 0)
             {
                 unsafe
-                {                   
+                {
                     var texture = new Texture_t
                     {
                         handle = (IntPtr)_sharedTexture.Handle

@@ -24,7 +24,10 @@ import { useAvatarProviderStore } from '../stores/avatarProvider';
 import { useAvatarStore } from '../stores/avatar';
 import { useFavoriteStore } from '../stores/favorite';
 import { useModalStore } from '../stores/modal';
-import { syncAvatarSearchIndex, removeAvatarSearchIndex } from './searchIndexCoordinator';
+import {
+    syncAvatarSearchIndex,
+    removeAvatarSearchIndex
+} from './searchIndexCoordinator';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
 import { useVRCXUpdaterStore } from '../stores/vrcxUpdater';

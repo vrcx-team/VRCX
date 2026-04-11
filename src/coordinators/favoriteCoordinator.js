@@ -1291,4 +1291,3 @@ export function onLoginStateChanged(isLoggedIn) {
         rebuildFavoriteSearchIndex();
     }
 }
-

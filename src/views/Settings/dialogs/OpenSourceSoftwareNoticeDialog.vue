@@ -177,7 +177,10 @@
         });
     });
     const selectedEntry = computed(
-        () => filteredEntries.value.find((entry) => entry.id === selectedEntryId.value) || filteredEntries.value[0] || null
+        () =>
+            filteredEntries.value.find((entry) => entry.id === selectedEntryId.value) ||
+            filteredEntries.value[0] ||
+            null
     );
     watch(
         () => props.ossDialog,

@@ -5,7 +5,10 @@
         </div>
 
         <div :class="['rounded-md border', autoHeight && 'flex-1 min-h-0 flex flex-col overflow-hidden']">
-            <div ref="tableScrollRef" :class="['max-w-full overflow-auto relative', autoHeight && 'flex-1 min-h-0']" :style="tableStyle">
+            <div
+                ref="tableScrollRef"
+                :class="['max-w-full overflow-auto relative', autoHeight && 'flex-1 min-h-0']"
+                :style="tableStyle">
                 <Table :class="tableClassValue" :style="tableElementStyle">
                     <colgroup>
                         <col v-for="col in table.getVisibleLeafColumns()" :key="col.id" :style="getColStyle(col)" />

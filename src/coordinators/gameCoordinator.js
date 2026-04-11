@@ -49,8 +49,14 @@ export async function runGameRunningChangedFlow(isGameRunning) {
             // set store state synchronously so UI reads it immediately
             gameStore.setLastSession(sessionDuration, offlineAt);
             await Promise.all([
-                configRepository.setString('VRCX_lastGameSessionMs', String(sessionDuration)),
-                configRepository.setString('VRCX_lastGameOfflineAt', String(offlineAt))
+                configRepository.setString(
+                    'VRCX_lastGameSessionMs',
+                    String(sessionDuration)
+                ),
+                configRepository.setString(
+                    'VRCX_lastGameOfflineAt',
+                    String(offlineAt)
+                )
             ]);
         }
         userStore.markCurrentUserGameStopped();

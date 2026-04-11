@@ -130,7 +130,11 @@ const stubs = {
     AlertTriangle: { template: '<span class="alert-triangle" />' }
 };
 
-function mountLocation(props = {}, appearanceOverrides = {}, mountOptions = {}) {
+function mountLocation(
+    props = {},
+    appearanceOverrides = {},
+    mountOptions = {}
+) {
     return mount(Location, {
         props,
         ...mountOptions,
@@ -156,7 +160,6 @@ function mountLocation(props = {}, appearanceOverrides = {}, mountOptions = {}) 
         }
     });
 }
-
 
 describe('Location.vue', () => {
     beforeEach(() => {

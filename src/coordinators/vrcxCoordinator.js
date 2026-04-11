@@ -11,7 +11,6 @@ import { useUserStore } from '../stores/user';
 import { useWorldStore } from '../stores/world';
 import { failedGetRequests } from '../services/request';
 
-
 /**
  * Clears caches across multiple stores while preserving data that is
  * still needed (friends, current user, favorites, active instances).

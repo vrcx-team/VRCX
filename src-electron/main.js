@@ -497,7 +497,6 @@ function writeOverlayFrame(imageBuffer) {
     }
 }
 
-
 function destroyTray() {
     if (tray) {
         tray.destroy();

@@ -142,7 +142,9 @@ export const useFriendStore = defineStore('Friend', () => {
      * @returns {(a: object, b: object) => number}
      */
     function getSortedFriendsComparator() {
-        return getFriendsSortFunction(appearanceSettingsStore.sidebarSortMethods);
+        return getFriendsSortFunction(
+            appearanceSettingsStore.sidebarSortMethods
+        );
     }
 
     /**
@@ -222,8 +224,7 @@ export const useFriendStore = defineStore('Friend', () => {
      * @param {object | string} input
      */
     function reindexSortedFriend(input) {
-        const ctx =
-            typeof input === 'string' ? friends.get(input) : input;
+        const ctx = typeof input === 'string' ? friends.get(input) : input;
         if (!ctx) {
             return;
         }
@@ -584,7 +585,7 @@ export const useFriendStore = defineStore('Friend', () => {
             ctx.name = ref.name;
         }
         friends.set(id, ctx);
-        watchState.isLoggedIn = true
+        watchState.isLoggedIn = true;
         // Startup fill flow:
         //
         // login

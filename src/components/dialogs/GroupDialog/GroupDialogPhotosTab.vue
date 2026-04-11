@@ -50,9 +50,7 @@
                                 $event.target.nextElementSibling.style.display = 'flex';
                             "
                             loading="lazy" />
-                        <div
-                            class="hidden h-[200px] w-full items-center justify-center bg-muted"
-                            style="display: none">
+                        <div class="hidden h-[200px] w-full items-center justify-center bg-muted" style="display: none">
                             <Image class="size-8 text-muted-foreground" />
                         </div>
                     </div>

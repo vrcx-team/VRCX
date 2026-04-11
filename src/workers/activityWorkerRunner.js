@@ -31,4 +31,3 @@ export function runActivityWorkerTask(type, payload) {
         getWorker().postMessage({ type, seq, payload });
     });
 }
-

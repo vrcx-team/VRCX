@@ -26,26 +26,31 @@ export function getNotificationMessage(noty, message, displayNameOverride) {
         case 'GPS':
             return {
                 title: name,
-                body: t('notifications.gps', { location: displayLocation(
-                    noty.location,
-                    noty.worldName,
-                    noty.groupName
-                )})
+                body: t('notifications.gps', {
+                    location: displayLocation(
+                        noty.location,
+                        noty.worldName,
+                        noty.groupName
+                    )
+                })
             };
         case 'Online': {
             let locationName = '';
             if (noty.worldName) {
                 return {
                     title: name,
-                    body: t('notifications.online_location', { location: displayLocation(
-                        noty.location,
-                        noty.worldName,
-                        noty.groupName
-                    ) })
+                    body: t('notifications.online_location', {
+                        location: displayLocation(
+                            noty.location,
+                            noty.worldName,
+                            noty.groupName
+                        )
+                    })
                 };
             }
             return {
-                title: name, body: t('notifications.online')
+                title: name,
+                body: t('notifications.online')
             };
         }
         case 'Offline':
@@ -53,15 +58,21 @@ export function getNotificationMessage(noty, message, displayNameOverride) {
         case 'Status':
             return {
                 title: name,
-                body: t('notifications.status_update', { status: noty.status, description: noty.statusDescription })
+                body: t('notifications.status_update', {
+                    status: noty.status,
+                    description: noty.statusDescription
+                })
             };
         case 'invite':
             return {
                 title: sender,
-                body: t('notifications.invite', { location: displayLocation(
-                    noty.details.worldId,
-                    noty.details.worldName
-                ), message })
+                body: t('notifications.invite', {
+                    location: displayLocation(
+                        noty.details.worldId,
+                        noty.details.worldName
+                    ),
+                    message
+                })
             };
         case 'requestInvite':
             return {
@@ -93,40 +104,67 @@ export function getNotificationMessage(noty, message, displayNameOverride) {
         case 'TrustLevel':
             return {
                 title: name,
-                body: t('notifications.trust_level', { trustLevel: noty.trustLevel })
+                body: t('notifications.trust_level', {
+                    trustLevel: noty.trustLevel
+                })
             };
         case 'DisplayName':
             return {
                 title: displayNameOverride || noty.previousDisplayName,
-                body: t('notifications.display_name', { displayName: noty.displayName })
+                body: t('notifications.display_name', {
+                    displayName: noty.displayName
+                })
             };
         case 'boop':
             return { title: sender, body: noty.message };
         case 'groupChange':
             return { title: sender, body: noty.message };
         case 'group.announcement':
-            return { title: t('notifications.group_announcement_title'), body: noty.message };
+            return {
+                title: t('notifications.group_announcement_title'),
+                body: noty.message
+            };
         case 'group.informative':
-            return { title: t('notifications.group_informative_title'), body: noty.message };
+            return {
+                title: t('notifications.group_informative_title'),
+                body: noty.message
+            };
         case 'group.invite':
-            return { title: t('notifications.group_invite_title'), body: noty.message };
+            return {
+                title: t('notifications.group_invite_title'),
+                body: noty.message
+            };
         case 'group.joinRequest':
-            return { title: t('notifications.group_join_request_title'), body: noty.message };
+            return {
+                title: t('notifications.group_join_request_title'),
+                body: noty.message
+            };
         case 'group.transfer':
-            return { title: t('notifications.group_transfer_request_title'), body: noty.message };
+            return {
+                title: t('notifications.group_transfer_request_title'),
+                body: noty.message
+            };
         case 'group.queueReady':
-            return { title: t('notifications.group_queue_ready_title'), body: noty.message };
+            return {
+                title: t('notifications.group_queue_ready_title'),
+                body: noty.message
+            };
         case 'instance.closed':
-            return { title: t('notifications.instance_closed_title'), body: noty.message };
+            return {
+                title: t('notifications.instance_closed_title'),
+                body: noty.message
+            };
         case 'PortalSpawn':
             if (name) {
                 return {
                     title: name,
-                    body: t('notifications.portal_spawn_name', { location: displayLocation(
-                        noty.instanceId,
-                        noty.worldName,
-                        noty.groupName
-                    ) })
+                    body: t('notifications.portal_spawn_name', {
+                        location: displayLocation(
+                            noty.instanceId,
+                            noty.worldName,
+                            noty.groupName
+                        )
+                    })
                 };
             }
             return { title: '', body: t('notifications.portal_spawn') };

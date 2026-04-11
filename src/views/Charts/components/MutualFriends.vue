@@ -452,7 +452,11 @@
     const edgeCurvatureModel = computed({
         get: () => [layoutSettings.edgeCurvature],
         set: (value) => {
-            const next = clampNumber(value?.[0] ?? layoutSettings.edgeCurvature, EDGE_CURVATURE_MIN, EDGE_CURVATURE_MAX);
+            const next = clampNumber(
+                value?.[0] ?? layoutSettings.edgeCurvature,
+                EDGE_CURVATURE_MIN,
+                EDGE_CURVATURE_MAX
+            );
             layoutSettings.edgeCurvature = Number(next.toFixed(2));
         }
     });
@@ -513,7 +517,11 @@
         layoutSettings.layoutIterations = clampNumber(iterations, LAYOUT_ITERATIONS_MIN, LAYOUT_ITERATIONS_MAX);
         layoutSettings.layoutSpacing = clampNumber(spacing, LAYOUT_SPACING_MIN, LAYOUT_SPACING_MAX);
         layoutSettings.edgeCurvature = clampNumber(curvature, EDGE_CURVATURE_MIN, EDGE_CURVATURE_MAX);
-        layoutSettings.communitySeparation = clampNumber(separation, COMMUNITY_SEPARATION_MIN, COMMUNITY_SEPARATION_MAX);
+        layoutSettings.communitySeparation = clampNumber(
+            separation,
+            COMMUNITY_SEPARATION_MIN,
+            COMMUNITY_SEPARATION_MAX
+        );
         lastLayoutSpacing = layoutSettings.layoutSpacing;
     }
 
@@ -1145,7 +1153,10 @@
         // loadingToastId.value = toast.info(t('view.charts.mutual_friend.status.loading_cache'));
 
         try {
-            const [snapshot, meta] = await Promise.all([database.getMutualGraphSnapshot(), database.getMutualGraphMeta()]);
+            const [snapshot, meta] = await Promise.all([
+                database.getMutualGraphSnapshot(),
+                database.getMutualGraphMeta()
+            ]);
             graphMeta.value = meta;
 
             if (!snapshot || snapshot.size === 0) {
@@ -1296,7 +1307,9 @@
             } else if (result.success) {
                 const cached = cachedUsers.get(nodeId);
                 const name = cached?.displayName || nodeId;
-                toast.success(t('view.charts.mutual_friend.context_menu.refresh_success', { name }), { duration: 3000 });
+                toast.success(t('view.charts.mutual_friend.context_menu.refresh_success', { name }), {
+                    duration: 3000
+                });
                 graphMeta.value.set(nodeId, {
                     lastFetchedAt: new Date().toISOString(),
                     optedOut: false
@@ -1314,7 +1327,9 @@
                     const friendEntry = friends.value?.get ? friends.value.get(fId) : undefined;
                     const fallbackRef = friendEntry?.ref || cachedUsers.get(fId);
                     let normalizedMutuals = Array.isArray(mutualIds) ? mutualIds : [];
-                    normalizedMutuals = normalizedMutuals.filter((id) => id != 'usr_00000000-0000-0000-0000-000000000000');
+                    normalizedMutuals = normalizedMutuals.filter(
+                        (id) => id != 'usr_00000000-0000-0000-0000-000000000000'
+                    );
                     mutualMap.set(fId, {
                         friend: friendEntry || (fallbackRef ? { id: fId, ref: fallbackRef } : { id: fId }),
                         mutuals: normalizedMutuals.map((id) => ({ id }))

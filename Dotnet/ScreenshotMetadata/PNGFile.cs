@@ -12,7 +12,7 @@ public class PNGFile : IDisposable
 {
     private FileStream fileStream;
     private List<PNGChunk> metadataChunkCache = new List<PNGChunk>();
-    
+
     private static readonly byte[] pngSignatureBytes = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
     private const int MAX_CHUNKS_TO_READ = 16;
     private const int CHUNK_FIELD_SIZE = 4;
@@ -28,7 +28,7 @@ public class PNGFile : IDisposable
     {
         fileStream = new FileStream(filePath, FileMode.Open, writeAccess ? FileAccess.ReadWrite : FileAccess.Read, FileShare.ReadWrite, 4096);
     }
-    
+
     public PNGFile(string filePath, int bufferSize)
     {
         fileStream = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite, bufferSize);
@@ -42,14 +42,14 @@ public class PNGFile : IDisposable
     public PNGChunk? GetChunk(PNGChunkTypeFilter chunkTypeFilter)
     {
         ReadAndCacheMetadata();
-        
+
         var chunk = metadataChunkCache.FirstOrDefault((chunk) => chunkTypeFilter.HasFlag(chunk.ChunkTypeEnum));
         if (chunk == null || chunk.IsZero())
             return null;
 
         return chunk;
     }
-    
+
     /// <summary>
     /// Retrieves a PNG chunk of the specified type by searching from the last 8KB of the file to the end of the file.
     /// </summary>
@@ -66,7 +66,7 @@ public class PNGFile : IDisposable
 
         return chunk;
     }
-    
+
     /// <summary>
     /// Retrieves a list of all PNG metadata chunks read from the file, in order.
     /// </summary>
@@ -77,7 +77,7 @@ public class PNGFile : IDisposable
     public List<PNGChunk> GetChunks()
     {
         ReadAndCacheMetadata();
-        
+
         return metadataChunkCache.ToList();
     }
 
@@ -89,27 +89,27 @@ public class PNGFile : IDisposable
     public bool WriteChunk(PNGChunk chunk)
     {
         ReadAndCacheMetadata();
-        
+
         if (metadataChunkCache.Count == 0)
             return false;
-        
+
         var lastChunk = metadataChunkCache.LastOrDefault();
         if (lastChunk.IsZero())
             return false;
 
         int newChunkPosition = lastChunk.Index + CHUNK_NONDATA_SIZE + lastChunk.Length;
         fileStream.Seek((long)newChunkPosition, SeekOrigin.Begin);
-        
+
         byte[] fileBytes = new byte[fileStream.Length - newChunkPosition];
         fileStream.ReadExactly(fileBytes, 0, (int)(fileStream.Length - newChunkPosition));
         fileStream.Seek(newChunkPosition, SeekOrigin.Begin);
-        
+
         // Write new chunk, append rest of file
         var chunkBytes = chunk.GetBytes();
         fileStream.SetLength(fileStream.Length + CHUNK_NONDATA_SIZE + chunk.Length);
         fileStream.Write(chunkBytes, 0, chunkBytes.Length);
         fileStream.Write(fileBytes, 0, fileBytes.Length);
-        
+
         return true;
     }
 
@@ -122,7 +122,7 @@ public class PNGFile : IDisposable
     {
         if (!chunk.ExistsInFile(fileStream))
             return false;
-        
+
         int bufferSize = 128 * 1024;
         int deleteStart = chunk.Index;
         int deleteLength = chunk.Length + CHUNK_NONDATA_SIZE;
@@ -150,7 +150,7 @@ public class PNGFile : IDisposable
         fileStream.SetLength(fileStream.Length - deleteLength);
 
         metadataChunkCache.Remove(chunk);
-        
+
         // Update the index of cached chunks
         for (int i = 0; i < metadataChunkCache.Count; i++)
         {
@@ -161,7 +161,7 @@ public class PNGFile : IDisposable
 
         return true;
     }
-    
+
 
     /// <summary>
     /// Retrieves all PNG metadata chunks of a specified type
@@ -174,10 +174,10 @@ public class PNGFile : IDisposable
     public List<PNGChunk> GetChunksOfType(PNGChunkTypeFilter chunkTypeFilter)
     {
         ReadAndCacheMetadata();
-        
+
         return metadataChunkCache.FindAll((chunk) => chunk.ChunkTypeEnum.HasFlag(chunkTypeFilter));
     }
-    
+
     /// <summary>
     /// Reads PNG metadata chunks
     /// </summary>
@@ -197,7 +197,7 @@ public class PNGFile : IDisposable
         {
             if (chunksRead >= MAX_CHUNKS_TO_READ)
                 yield break;
-            
+
             chunksRead++;
             fileStream.Seek(currentIndex, SeekOrigin.Begin);
 
@@ -216,11 +216,11 @@ public class PNGFile : IDisposable
             fileStream.ReadExactly(buffer, 0, CHUNK_FIELD_SIZE);
 
             string chunkType = Encoding.ASCII.GetString(buffer, 0, CHUNK_FIELD_SIZE);
-            
+
             // Stop on start of image data
             if (chunkType == "IDAT")
                 yield break;
-            
+
             // Stop if we've reached IEND somehow
             if (chunkType == "IEND")
                 yield break;
@@ -247,8 +247,8 @@ public class PNGFile : IDisposable
             currentIndex += CHUNK_NONDATA_SIZE + chunkLength;
         }
     }
-    
-    
+
+
     /// <summary>
     /// Reads a PNG chunk from the end of the file, backtracking and bruteforce matching to find the first chunk of the given type.
     /// </summary>
@@ -261,15 +261,15 @@ public class PNGFile : IDisposable
     {
         if (fileStream.Length < 8300)
             return null;
-        
+
         byte[] searchChunkBytes = Encoding.ASCII.GetBytes(ChunkTypeEnumToChunkName(chunkTypeFilter));
-        
+
         // Read last 8KB of file minus IEND length, which should be enough to find any trailing chunks added by mods not following spec.
         fileStream.Seek(fileStream.Length - 8192 - CHUNK_NONDATA_SIZE, SeekOrigin.Begin);
-        
+
         byte[] trailingBytesBuffer = new byte[8192];
         fileStream.ReadExactly(trailingBytesBuffer, 0, 8192);
-        
+
         for (int i = 0; i < trailingBytesBuffer.Length - searchChunkBytes.Length; i++)
         {
             if (trailingBytesBuffer[i] == searchChunkBytes[0] &&
@@ -318,7 +318,7 @@ public class PNGFile : IDisposable
 
         return null;
     }
-    
+
     /// <summary>
     /// Reads PNG metadata chunks from the file and caches them for later use.
     /// </summary>
@@ -333,11 +333,11 @@ public class PNGFile : IDisposable
 
         if (!IsValid())
             return;
-        
+
         // literally only here because I abandoned the original usage of the enumerable impl rip
         metadataChunkCache.AddRange(ReadChunks());
     }
-    
+
     private bool FilterHasChunkType(string chunkTypeStr, PNGChunkTypeFilter chunkType)
     {
         switch (chunkTypeStr)
@@ -352,12 +352,12 @@ public class PNGFile : IDisposable
                 return chunkType.HasFlag(PNGChunkTypeFilter.IDAT);
             case "IEND":
                 return chunkType.HasFlag(PNGChunkTypeFilter.IEND);
-                
+
         }
 
         return false;
     }
-    
+
     private PNGChunkTypeFilter ChunkNameToEnum(string chunkType)
     {
         switch (chunkType)
@@ -367,12 +367,12 @@ public class PNGFile : IDisposable
             case "sRGB":
                 return PNGChunkTypeFilter.sRGB;
             case "iTXt":
-                return  PNGChunkTypeFilter.iTXt;
+                return PNGChunkTypeFilter.iTXt;
             case "IDAT":
-                return  PNGChunkTypeFilter.IDAT;
+                return PNGChunkTypeFilter.IDAT;
             case "IEND":
-                return  PNGChunkTypeFilter.IEND;
-                
+                return PNGChunkTypeFilter.IEND;
+
         }
 
         return PNGChunkTypeFilter.UNKNOWN;

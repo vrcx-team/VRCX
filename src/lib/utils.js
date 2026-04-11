@@ -11,25 +11,25 @@ export function cn(...inputs) {
  * stolen from here: https://github.com/TanStack/table/blob/70dbd624e5866ec56e10ba0659749e9bb3de9a92/packages/vue-table/src/FlexRender.ts#L12
  */
 function toVNode(renderable, props) {
-  if (typeof renderable === 'function') {
-    const rendered = renderable(props)
+    if (typeof renderable === 'function') {
+        const rendered = renderable(props);
 
-    if (isVNode(rendered)) {
-      return rendered
+        if (isVNode(rendered)) {
+            return rendered;
+        }
+
+        if (typeof rendered === 'function' || typeof rendered === 'object') {
+            return h(rendered, props);
+        }
+
+        return rendered;
     }
 
-    if (typeof rendered === 'function' || typeof rendered === 'object') {
-      return h(rendered, props)
+    if (typeof renderable === 'object') {
+        return h(renderable, props);
     }
 
-    return rendered
-  }
-
-  if (typeof renderable === 'object') {
-    return h(renderable, props)
-  }
-
-  return renderable
+    return renderable;
 }
 
 /**
@@ -41,5 +41,4 @@ export function renderToHtml(renderable, props) {
     // if vnode is null, this whill clean up the container: https://github.com/vuejs/core/blob/cb3d01416c8bdcde5b8497937b87caf201704182/packages/runtime-core/src/renderer.ts#L2400-L2404
     render(vnode, container);
     return container.innerHTML;
-
 }

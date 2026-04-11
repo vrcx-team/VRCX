@@ -487,9 +487,7 @@
     const worldSearchMode = ref('name');
 
     const worldSearchPlaceholder = computed(() =>
-        worldSearchMode.value === 'tag'
-            ? t('view.favorite.worlds.search_by_tag')
-            : t('view.favorite.worlds.search')
+        worldSearchMode.value === 'tag' ? t('view.favorite.worlds.search_by_tag') : t('view.favorite.worlds.search')
     );
 
     const worldExtraSortOptions = computed(() => [
@@ -707,7 +705,9 @@
         if (!activeRemoteGroup.value || !currentRemoteFavorites.value.length) {
             return false;
         }
-        return currentRemoteFavorites.value.map((fav) => fav.id).every((id) => selectedFavoriteWorlds.value.includes(id));
+        return currentRemoteFavorites.value
+            .map((fav) => fav.id)
+            .every((id) => selectedFavoriteWorlds.value.includes(id));
     });
 
     watch(

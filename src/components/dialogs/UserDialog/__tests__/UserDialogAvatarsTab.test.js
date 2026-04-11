@@ -178,8 +178,6 @@ describe('UserDialogAvatarsTab.vue', () => {
             expect(images[0].attributes('src')).toBe('https://img/1.png');
         });
 
-
-
         test('shows empty state when no avatars and not loading', () => {
             const wrapper = mountComponent({ avatars: [] });
             expect(wrapper.text()).toContain('0');

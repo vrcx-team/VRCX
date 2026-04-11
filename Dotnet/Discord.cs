@@ -1,7 +1,7 @@
 using System;
-using DiscordRPC;
 using System.Text;
 using System.Threading;
+using DiscordRPC;
 using NLog;
 
 namespace VRCX

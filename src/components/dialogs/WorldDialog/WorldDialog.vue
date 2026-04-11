@@ -505,7 +505,7 @@
             worldDialog.value.visible = value;
         }
     });
-    
+
     watch(
         () => worldDialog.value.loading,
         () => {

@@ -17,9 +17,16 @@ export default {
                         total: props.progress.total
                     })}
                 </div>
-                <Progress modelValue={props.progress.percentage} class="h-2 w-full" />
+                <Progress
+                    modelValue={props.progress.percentage}
+                    class="h-2 w-full"
+                />
                 <div class="flex justify-end">
-                    <Button size="sm" variant="secondary" onClick={props.onDismiss}>
+                    <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={props.onDismiss}
+                    >
                         {props.t('view.favorite.avatars.dismiss')}
                     </Button>
                 </div>

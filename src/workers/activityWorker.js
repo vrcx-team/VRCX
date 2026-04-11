@@ -34,7 +34,10 @@ self.addEventListener('message', (event) => {
                 };
                 break;
             case 'buildSessionsFromEvents':
-                result = buildSessionsFromEvents(payload.events || [], payload.initialStart ?? null);
+                result = buildSessionsFromEvents(
+                    payload.events || [],
+                    payload.initialStart ?? null
+                );
                 break;
             case 'buildHeatmapBuckets':
                 result = {
@@ -59,7 +62,9 @@ self.addEventListener('message', (event) => {
                 break;
             case 'normalizeHeatmapBuckets':
                 if ('thresholdMinutes' in payload || 'mode' in payload) {
-                    console.warn('[activityWorker] normalizeHeatmapBuckets received legacy payload fields (thresholdMinutes/mode). Use payload.config instead.');
+                    console.warn(
+                        '[activityWorker] normalizeHeatmapBuckets received legacy payload fields (thresholdMinutes/mode). Use payload.config instead.'
+                    );
                 }
                 result = {
                     normalized: normalizeBuckets(
@@ -86,7 +91,9 @@ self.addEventListener('message', (event) => {
         self.postMessage({
             type: 'error',
             seq,
-            payload: { message: error instanceof Error ? error.message : String(error) }
+            payload: {
+                message: error instanceof Error ? error.message : String(error)
+            }
         });
     }
 });
@@ -94,19 +101,26 @@ self.addEventListener('message', (event) => {
 function computeSessionsSnapshot(payload) {
     const sourceRevision = payload.sourceRevision || '';
     if (payload.sourceType === 'self_gamelog') {
-        const sessions = buildSessionsFromGamelog(payload.rows, payload.mergeGapMs, payload.nowMs)
-            .map((session, index, list) => ({
-                ...session,
-                isOpenTail: index === list.length - 1 && payload.mayHaveOpenTail === true,
-                sourceRevision
-            }));
+        const sessions = buildSessionsFromGamelog(
+            payload.rows,
+            payload.mergeGapMs,
+            payload.nowMs
+        ).map((session, index, list) => ({
+            ...session,
+            isOpenTail:
+                index === list.length - 1 && payload.mayHaveOpenTail === true,
+            sourceRevision
+        }));
         return {
             sessions,
             pendingSessionStartAt: null
         };
     }
 
-    const result = buildSessionsFromEvents(payload.events, payload.initialStart);
+    const result = buildSessionsFromEvents(
+        payload.events,
+        payload.initialStart
+    );
     return {
         pendingSessionStartAt: result.pendingSessionStartAt,
         sessions: result.sessions.map((session) => ({

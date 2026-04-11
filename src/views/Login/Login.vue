@@ -202,7 +202,13 @@
     import { useI18n } from 'vue-i18n';
     import { z } from 'zod';
 
-    import { useAppearanceSettingsStore, useAuthStore, useModalStore, useVrcStatusStore, useVRCXUpdaterStore } from '../../stores';
+    import {
+        useAppearanceSettingsStore,
+        useAuthStore,
+        useModalStore,
+        useVrcStatusStore,
+        useVRCXUpdaterStore
+    } from '../../stores';
     import { getLanguageName, languageCodes, resolveSystemLanguage } from '../../localization';
     import { tForLocale } from '../../plugins';
     import { openExternalLink } from '../../shared/utils';
@@ -334,20 +340,11 @@
             }
 
             const languageName = getLanguageName(matchedCode);
-            const [
-                promptTitle,
-                promptDescription,
-                promptConfirmText,
-                promptCancelText
-            ] = await Promise.all([
+            const [promptTitle, promptDescription, promptConfirmText, promptCancelText] = await Promise.all([
                 tForLocale(matchedCode, 'view.login.language_detect.title'),
-                tForLocale(
-                    matchedCode,
-                    'view.login.language_detect.description',
-                    {
-                        language: languageName
-                    }
-                ),
+                tForLocale(matchedCode, 'view.login.language_detect.description', {
+                    language: languageName
+                }),
                 tForLocale(matchedCode, 'dialog.alertdialog.confirm'),
                 tForLocale(matchedCode, 'dialog.alertdialog.cancel')
             ]);

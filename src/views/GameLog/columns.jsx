@@ -9,15 +9,23 @@ import {
     ContextMenuTrigger
 } from '../../components/ui/context-menu';
 import { TooltipWrapper } from '../../components/ui/tooltip';
-import { ArrowUpDown, Copy, ExternalLink, FileText, Trash2, X } from 'lucide-vue-next';
+import {
+    ArrowUpDown,
+    Copy,
+    ExternalLink,
+    FileText,
+    Trash2,
+    X
+} from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
-import { copyToClipboard, formatDateFilter, openExternalLink } from '../../shared/utils';
-import { i18n } from '../../plugins';
 import {
-    useInstanceStore,
-    useUiStore
-} from '../../stores';
+    copyToClipboard,
+    formatDateFilter,
+    openExternalLink
+} from '../../shared/utils';
+import { i18n } from '../../plugins';
+import { useInstanceStore, useUiStore } from '../../stores';
 import { lookupUser } from '../../coordinators/userCoordinator';
 import { showWorldDialog } from '../../coordinators/worldCoordinator';
 
@@ -31,9 +39,6 @@ const UNACTIONABLE_TYPES = new Set([
 ]);
 
 export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
-
-
-
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { shiftHeld } = storeToRefs(useUiStore());
 
@@ -167,7 +172,10 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                     return (
                         <ContextMenu>
                             <ContextMenuTrigger asChild>
-                                <TooltipWrapper content={original.data} side="bottom">
+                                <TooltipWrapper
+                                    content={original.data}
+                                    side="bottom"
+                                >
                                     <span class="block w-full min-w-0 truncate">
                                         {original.data}
                                     </span>
@@ -175,7 +183,9 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                             </ContextMenuTrigger>
                             <ContextMenuContent>
                                 <ContextMenuItem
-                                    onClick={() => copyToClipboard(original.data)}
+                                    onClick={() =>
+                                        copyToClipboard(original.data)
+                                    }
                                 >
                                     <Copy class="size-4" />
                                     {t('common.actions.copy')}
@@ -209,7 +219,10 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                     return (
                         <ContextMenu>
                             <ContextMenuTrigger asChild>
-                                <TooltipWrapper content={tooltipText} side="bottom">
+                                <TooltipWrapper
+                                    content={tooltipText}
+                                    side="bottom"
+                                >
                                     <span class="block w-full min-w-0 truncate cursor-pointer">
                                         {original.videoId ? (
                                             <span class="mr-1.5">
@@ -220,7 +233,9 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                                             <span
                                                 class="cursor-pointer"
                                                 onClick={() =>
-                                                    openExternalLink(original.videoUrl)
+                                                    openExternalLink(
+                                                        original.videoUrl
+                                                    )
                                                 }
                                             >
                                                 {label}
@@ -236,7 +251,9 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                                     <>
                                         <ContextMenuItem
                                             onClick={() =>
-                                                openExternalLink(original.videoUrl)
+                                                openExternalLink(
+                                                    original.videoUrl
+                                                )
                                             }
                                         >
                                             <ExternalLink class="size-4" />
@@ -273,7 +290,9 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                                         <span
                                             class="cursor-pointer"
                                             onClick={() =>
-                                                openExternalLink(original.resourceUrl)
+                                                openExternalLink(
+                                                    original.resourceUrl
+                                                )
                                             }
                                         >
                                             {original.resourceUrl}

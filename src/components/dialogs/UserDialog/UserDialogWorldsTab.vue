@@ -114,7 +114,12 @@
         if (!query) return worlds;
         return worlds.filter((w) => (w.name || '').toLowerCase().includes(query));
     });
-    watch(() => userDialog.value.id, () => { searchQuery.value = ''; });
+    watch(
+        () => userDialog.value.id,
+        () => {
+            searchQuery.value = '';
+        }
+    );
 
     /**
      *

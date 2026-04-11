@@ -266,12 +266,12 @@ namespace VRCX
 
             Registry.CurrentUser.DeleteSubKeyTree(@"SOFTWARE\VRChat\VRChat");
         }
-        
+
         public override string ReadVrcRegJsonFile(string filepath)
         {
             if (!File.Exists(filepath))
                 return string.Empty;
-            
+
             var json = File.ReadAllText(filepath);
             return json;
         }

@@ -16,7 +16,6 @@ import { showUserDialog } from '../../coordinators/userCoordinator';
 const { t } = i18n.global;
 
 export const createColumns = ({ onDelete, onDeletePrompt }) => {
-
     const { shiftHeld } = storeToRefs(useUiStore());
 
     return [

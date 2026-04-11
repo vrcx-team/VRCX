@@ -110,7 +110,7 @@ vi.mock('../../../components/ui/range-calendar', () => ({
     RangeCalendar: {
         emits: ['update:modelValue'],
         template:
-            '<button data-testid="set-date-range" @click="$emit(\'update:modelValue\', { start: { toDate: () => new Date(\'2026-04-01T00:00:00.000Z\') }, end: { toDate: () => new Date(\'2026-04-02T00:00:00.000Z\') } })">range</button>'
+            "<button data-testid=\"set-date-range\" @click=\"$emit('update:modelValue', { start: { toDate: () => new Date('2026-04-01T00:00:00.000Z') }, end: { toDate: () => new Date('2026-04-02T00:00:00.000Z') } })\">range</button>"
     }
 }));
 

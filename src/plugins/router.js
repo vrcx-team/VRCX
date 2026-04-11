@@ -128,7 +128,12 @@ const routes = [
                 component: ScreenshotMetadata,
                 meta: { navKeys: ['tool-screenshot-metadata', 'tools'] }
             },
-            { path: 'settings', name: 'settings', component: Settings, meta: { navKey: 'manage', hidesActiveMenuItem: true } }
+            {
+                path: 'settings',
+                name: 'settings',
+                component: Settings,
+                meta: { navKey: 'manage', hidesActiveMenuItem: true }
+            }
         ]
     }
 ];

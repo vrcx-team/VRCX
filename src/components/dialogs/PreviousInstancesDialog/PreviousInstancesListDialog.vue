@@ -47,7 +47,13 @@
         useUserStore,
         useVrcxStore
     } from '../../../stores';
-    import { compareByCreatedAt, localeIncludes, parseLocation, removeFromArray, timeToText } from '../../../shared/utils';
+    import {
+        compareByCreatedAt,
+        localeIncludes,
+        parseLocation,
+        removeFromArray,
+        timeToText
+    } from '../../../shared/utils';
     import { DataTableLayout } from '../../ui/data-table';
     import { createPreviousInstancesColumns } from './previousInstancesColumns.jsx';
     import { database } from '../../../services/database';
@@ -170,7 +176,9 @@
 
     function deleteGameLogInstancePrompt(row) {
         const description =
-            props.variant === 'user' ? 'Continue? Delete User From GameLog Instance' : 'Continue? Delete GameLog Instance';
+            props.variant === 'user'
+                ? 'Continue? Delete User From GameLog Instance'
+                : 'Continue? Delete GameLog Instance';
         modalStore
             .confirm({
                 description,

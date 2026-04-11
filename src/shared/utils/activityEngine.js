@@ -25,7 +25,11 @@ export function buildSessionsFromEvents(events, initialStart = null) {
     };
 }
 
-export function buildSessionsFromGamelog(rows, mergeGapMs = ONLINE_SESSION_MERGE_GAP_MS, nowMs = Date.now()) {
+export function buildSessionsFromGamelog(
+    rows,
+    mergeGapMs = ONLINE_SESSION_MERGE_GAP_MS,
+    nowMs = Date.now()
+) {
     if (rows.length === 0) {
         return [];
     }
@@ -51,11 +55,18 @@ export function buildSessionsFromGamelog(rows, mergeGapMs = ONLINE_SESSION_MERGE
     return mergeSessions([], rawSessions, mergeGapMs);
 }
 
-export function mergeSessions(olderSessions, newerSessions, mergeGapMs = ONLINE_SESSION_MERGE_GAP_MS) {
+export function mergeSessions(
+    olderSessions,
+    newerSessions,
+    mergeGapMs = ONLINE_SESSION_MERGE_GAP_MS
+) {
     if (olderSessions.length === 0 && newerSessions.length === 0) {
         return [];
     }
-    const all = [...olderSessions.map(cloneSession), ...newerSessions.map(cloneSession)];
+    const all = [
+        ...olderSessions.map(cloneSession),
+        ...newerSessions.map(cloneSession)
+    ];
     if (all.length === 0) {
         return [];
     }
@@ -68,7 +79,8 @@ export function mergeSessions(olderSessions, newerSessions, mergeGapMs = ONLINE_
         if (current.start <= last.end + mergeGapMs) {
             last.end = Math.max(last.end, current.end);
             last.isOpenTail = last.isOpenTail || current.isOpenTail;
-            last.sourceRevision = current.sourceRevision || last.sourceRevision || '';
+            last.sourceRevision =
+                current.sourceRevision || last.sourceRevision || '';
         } else {
             merged.push(current);
         }
@@ -76,9 +88,16 @@ export function mergeSessions(olderSessions, newerSessions, mergeGapMs = ONLINE_
     return merged;
 }
 
-export function clipSessionsToRange(sessions, rangeStartMs, rangeEndMs = Date.now()) {
+export function clipSessionsToRange(
+    sessions,
+    rangeStartMs,
+    rangeEndMs = Date.now()
+) {
     return sessions
-        .filter((session) => session.end > rangeStartMs && session.start < rangeEndMs)
+        .filter(
+            (session) =>
+                session.end > rangeStartMs && session.start < rangeEndMs
+        )
         .map((session) => ({
             ...session,
             start: Math.max(session.start, rangeStartMs),
@@ -96,7 +115,10 @@ export function buildHeatmapBuckets(
     const buckets = new Float64Array(168);
 
     for (const session of sessions) {
-        const effectiveEnd = Math.min(session.end, session.start + maxSessionMs);
+        const effectiveEnd = Math.min(
+            session.end,
+            session.start + maxSessionMs
+        );
         const start = Math.max(session.start, windowStartMs);
         const end = Math.min(effectiveEnd, nowMs);
         if (end <= start) {
@@ -130,7 +152,10 @@ export function buildOverlapBuckets(
     let leftIndex = 0;
     let rightIndex = 0;
 
-    while (leftIndex < selfSessions.length && rightIndex < targetSessions.length) {
+    while (
+        leftIndex < selfSessions.length &&
+        rightIndex < targetSessions.length
+    ) {
         const left = selfSessions[leftIndex];
         const right = targetSessions[rightIndex];
         const leftEnd = Math.min(left.end, left.start + maxSessionMs);
@@ -149,7 +174,12 @@ export function buildOverlapBuckets(
         }
     }
 
-    return buildHeatmapBuckets(intersections, windowStartMs, nowMs, maxSessionMs);
+    return buildHeatmapBuckets(
+        intersections,
+        windowStartMs,
+        nowMs,
+        maxSessionMs
+    );
 }
 
 export function normalizeBuckets(buckets, config) {
@@ -173,7 +203,9 @@ export function normalizeBuckets(buckets, config) {
         return Array.from({ length: 168 }, () => 0);
     }
 
-    const sortedValues = positiveEntries.map((e) => e.value).sort((a, b) => a - b);
+    const sortedValues = positiveEntries
+        .map((e) => e.value)
+        .sort((a, b) => a - b);
     const floor = percentile(sortedValues, floorPercentile);
     const cap = percentile(sortedValues, capPercentile);
     const logFloor = Math.log1p(floor);
@@ -193,11 +225,13 @@ export function normalizeBuckets(buckets, config) {
 
     for (let rank = 0; rank < count; rank++) {
         const { value, index } = gated[rank];
-        const base = logRange > 1e-9
-            ? Math.max((Math.log1p(value) - logFloor) / logRange, 0)
-            : 0.5;
+        const base =
+            logRange > 1e-9
+                ? Math.max((Math.log1p(value) - logFloor) / logRange, 0)
+                : 0.5;
         const clampedBase = Math.min(base, 1);
-        normalized[index] = clampedBase * ampWeight + tiedRanks[rank] * rankWeight;
+        normalized[index] =
+            clampedBase * ampWeight + tiedRanks[rank] * rankWeight;
     }
 
     const coverage = count / 168;
@@ -240,9 +274,10 @@ export function computePeaksFromBuckets(buckets, dayLabels) {
         while (endHour < 23 && hourSums[endHour + 1] >= threshold) {
             endHour++;
         }
-        peakTime = startHour === endHour
-            ? `${String(startHour).padStart(2, '0')}:00`
-            : `${String(startHour).padStart(2, '0')}:00-${String(endHour + 1).padStart(2, '0')}:00`;
+        peakTime =
+            startHour === endHour
+                ? `${String(startHour).padStart(2, '0')}:00`
+                : `${String(startHour).padStart(2, '0')}:00-${String(endHour + 1).padStart(2, '0')}:00`;
     }
 
     return { peakDay, peakTime };
@@ -296,9 +331,20 @@ export function computeActivityView({
 }) {
     const windowStartMs = nowMs - rangeDays * 86400000;
     const clippedSessions = clipSessionsToRange(sessions, windowStartMs, nowMs);
-    const rawBuckets = buildHeatmapBuckets(clippedSessions, windowStartMs, nowMs, maxSessionMs);
-    const normalizedBuckets = normalizeBuckets(rawBuckets, { ...normalizeConfig, rangeDays });
-    const { peakDay, peakTime } = computePeaksFromBuckets(rawBuckets, dayLabels);
+    const rawBuckets = buildHeatmapBuckets(
+        clippedSessions,
+        windowStartMs,
+        nowMs,
+        maxSessionMs
+    );
+    const normalizedBuckets = normalizeBuckets(rawBuckets, {
+        ...normalizeConfig,
+        rangeDays
+    });
+    const { peakDay, peakTime } = computePeaksFromBuckets(
+        rawBuckets,
+        dayLabels
+    );
     return {
         rangeDays,
         rawBuckets,
@@ -321,10 +367,30 @@ export function computeOverlapView({
 }) {
     const windowStartMs = nowMs - rangeDays * 86400000;
     const clippedSelf = clipSessionsToRange(selfSessions, windowStartMs, nowMs);
-    const clippedTarget = clipSessionsToRange(targetSessions, windowStartMs, nowMs);
-    const selfBuckets = buildHeatmapBuckets(clippedSelf, windowStartMs, nowMs, maxSessionMs);
-    const targetBuckets = buildHeatmapBuckets(clippedTarget, windowStartMs, nowMs, maxSessionMs);
-    const rawBuckets = buildOverlapBuckets(clippedSelf, clippedTarget, windowStartMs, nowMs, maxSessionMs);
+    const clippedTarget = clipSessionsToRange(
+        targetSessions,
+        windowStartMs,
+        nowMs
+    );
+    const selfBuckets = buildHeatmapBuckets(
+        clippedSelf,
+        windowStartMs,
+        nowMs,
+        maxSessionMs
+    );
+    const targetBuckets = buildHeatmapBuckets(
+        clippedTarget,
+        windowStartMs,
+        nowMs,
+        maxSessionMs
+    );
+    const rawBuckets = buildOverlapBuckets(
+        clippedSelf,
+        clippedTarget,
+        windowStartMs,
+        nowMs,
+        maxSessionMs
+    );
 
     if (excludeHours) {
         applyExcludeHours(rawBuckets, selfBuckets, targetBuckets, excludeHours);
@@ -334,11 +400,16 @@ export function computeOverlapView({
     const selfMinutes = sum(selfBuckets);
     const targetMinutes = sum(targetBuckets);
     const denominator = Math.min(selfMinutes, targetMinutes);
-    const overlapPercent = denominator > 0 ? Math.round((overlapMinutes / denominator) * 100) : 0;
-    const normalizedBuckets = normalizeBuckets(rawBuckets, { ...normalizeConfig, rangeDays });
-    const bestOverlapTime = overlapMinutes > 0
-        ? findBestOverlapTimeFromBuckets(rawBuckets, dayLabels)
-        : '';
+    const overlapPercent =
+        denominator > 0 ? Math.round((overlapMinutes / denominator) * 100) : 0;
+    const normalizedBuckets = normalizeBuckets(rawBuckets, {
+        ...normalizeConfig,
+        rangeDays
+    });
+    const bestOverlapTime =
+        overlapMinutes > 0
+            ? findBestOverlapTimeFromBuckets(rawBuckets, dayLabels)
+            : '';
 
     return {
         rangeDays,
@@ -355,7 +426,11 @@ export function computeOverlapView({
  * @param {number} rangeEndMs - end of the range
  * @returns {Array<{date: string, totalMs: number}>} sorted by date ascending
  */
-export function buildDailySummary(sessions, rangeStartMs, rangeEndMs = Date.now()) {
+export function buildDailySummary(
+    sessions,
+    rangeStartMs,
+    rangeEndMs = Date.now()
+) {
     const dayMap = new Map();
     const clipped = clipSessionsToRange(sessions, rangeStartMs, rangeEndMs);
     const ONE_DAY_MS = 86400000;
@@ -401,7 +476,10 @@ function percentile(sortedValues, percentileValue) {
     if (lower === upper) {
         return sortedValues[lower];
     }
-    return sortedValues[lower] + (sortedValues[upper] - sortedValues[lower]) * (index - lower);
+    return (
+        sortedValues[lower] +
+        (sortedValues[upper] - sortedValues[lower]) * (index - lower)
+    );
 }
 
 function bucketsToGrid(buckets) {
@@ -412,19 +490,52 @@ function bucketsToGrid(buckets) {
     return grid;
 }
 
-function applyExcludeHours(rawBuckets, selfBuckets, targetBuckets, excludeHours) {
+function applyExcludeHours(
+    rawBuckets,
+    selfBuckets,
+    targetBuckets,
+    excludeHours
+) {
     const { startHour, endHour } = excludeHours;
     for (let day = 0; day < 7; day++) {
         if (startHour <= endHour) {
-            zeroHourRange(day, startHour, endHour, rawBuckets, selfBuckets, targetBuckets);
+            zeroHourRange(
+                day,
+                startHour,
+                endHour,
+                rawBuckets,
+                selfBuckets,
+                targetBuckets
+            );
         } else {
-            zeroHourRange(day, startHour, 24, rawBuckets, selfBuckets, targetBuckets);
-            zeroHourRange(day, 0, endHour, rawBuckets, selfBuckets, targetBuckets);
+            zeroHourRange(
+                day,
+                startHour,
+                24,
+                rawBuckets,
+                selfBuckets,
+                targetBuckets
+            );
+            zeroHourRange(
+                day,
+                0,
+                endHour,
+                rawBuckets,
+                selfBuckets,
+                targetBuckets
+            );
         }
     }
 }
 
-function zeroHourRange(day, startHour, endHour, rawBuckets, selfBuckets, targetBuckets) {
+function zeroHourRange(
+    day,
+    startHour,
+    endHour,
+    rawBuckets,
+    selfBuckets,
+    targetBuckets
+) {
     for (let hour = startHour; hour < endHour; hour++) {
         const slot = day * 24 + hour;
         rawBuckets[slot] = 0;

@@ -3,11 +3,7 @@
         <div class="shrink-0 p-1.5">
             <span class="text-lg font-semibold text-foreground">{{ t('view.settings.header') }}</span>
         </div>
-        <TabsUnderline
-            default-value="system"
-            :items="settingsTabs"
-            :unmount-on-hide="false"
-            fill>
+        <TabsUnderline default-value="system" :items="settingsTabs" :unmount-on-hide="false" fill>
             <template #system>
                 <SystemTab />
             </template>

@@ -16,10 +16,7 @@
                     <Clock class="size-3.5 text-muted-foreground" />
                 </ContextMenuShortcut>
             </ContextMenuItem>
-            <ContextMenuItem
-                v-if="isGameRunning"
-                :disabled="!canInviteToMyLocation"
-                @click="handleInvite">
+            <ContextMenuItem v-if="isGameRunning" :disabled="!canInviteToMyLocation" @click="handleInvite">
                 <MessageSquare class="size-4" />
                 {{ t('dialog.user.actions.invite') }}
                 <ContextMenuShortcut v-if="showRecentInvite">
@@ -31,17 +28,11 @@
                 {{ t('dialog.user.actions.send_boop') }}
             </ContextMenuItem>
             <ContextMenuSeparator v-if="isOnline && hasLocation" />
-            <ContextMenuItem
-                v-if="isOnline && hasLocation"
-                :disabled="!canJoin"
-                @click="handleJoin">
+            <ContextMenuItem v-if="isOnline && hasLocation" :disabled="!canJoin" @click="handleJoin">
                 <LogIn class="size-4" />
                 {{ t('dialog.user.info.launch_invite_tooltip') }}
             </ContextMenuItem>
-            <ContextMenuItem
-                v-if="isOnline && hasLocation"
-                :disabled="!canJoin"
-                @click="handleSelfInvite">
+            <ContextMenuItem v-if="isOnline && hasLocation" :disabled="!canJoin" @click="handleSelfInvite">
                 <Mail class="size-4" />
                 {{ t('dialog.user.info.self_invite_tooltip') }}
             </ContextMenuItem>

@@ -9,9 +9,9 @@ public class OverlayMessage
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? FunctionName { get; set; }
 
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Data { get; set; }
 
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public OverlayVars? OverlayVars { get; set; }
 }

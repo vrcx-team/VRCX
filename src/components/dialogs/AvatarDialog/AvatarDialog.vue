@@ -717,7 +717,11 @@
         const platforms = [];
         if (ref.unityPackages) {
             for (const unityPackage of ref.unityPackages) {
-                if (unityPackage.variant && unityPackage.variant !== 'standard' && unityPackage.variant !== 'security') {
+                if (
+                    unityPackage.variant &&
+                    unityPackage.variant !== 'standard' &&
+                    unityPackage.variant !== 'security'
+                ) {
                     // skip imposters
                     continue;
                 }

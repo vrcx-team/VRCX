@@ -12,7 +12,6 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
 
     const version = ref(0);
 
-
     /**
      * Sync a friend context into the search index.
      * Extracts only the fields needed for searching.
@@ -57,7 +56,6 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
         }
     }
 
-
     /**
      * @param {object} ref - Avatar data object
      */
@@ -97,7 +95,6 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
             version.value++;
         }
     }
-
 
     /**
      * @param {object} ref - World data object
@@ -139,7 +136,6 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
         }
     }
 
-
     /**
      * @param {object} ref - Group data object
      */
@@ -180,7 +176,6 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
         }
     }
 
-
     function rebuildFavoritesFromStore() {
         const favoriteStore = useFavoriteStore();
 
@@ -210,7 +205,11 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
         } else {
             for (const [id, entry] of newFavAvatars) {
                 const existing = favAvatars.get(id);
-                if (!existing || existing.name !== entry.name || existing.imageUrl !== entry.imageUrl) {
+                if (
+                    !existing ||
+                    existing.name !== entry.name ||
+                    existing.imageUrl !== entry.imageUrl
+                ) {
                     changed = true;
                     break;
                 }
@@ -221,7 +220,11 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
         } else if (!changed) {
             for (const [id, entry] of newFavWorlds) {
                 const existing = favWorlds.get(id);
-                if (!existing || existing.name !== entry.name || existing.imageUrl !== entry.imageUrl) {
+                if (
+                    !existing ||
+                    existing.name !== entry.name ||
+                    existing.imageUrl !== entry.imageUrl
+                ) {
                     changed = true;
                     break;
                 }
@@ -249,7 +252,6 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
         }
     }
 
-
     /**
      * Build a snapshot from the internal index maps.
      * Used by quickSearch to send data to the Worker.
@@ -265,8 +267,6 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
             favWorlds: Array.from(favWorlds.values())
         };
     }
-
-
 
     return {
         version,

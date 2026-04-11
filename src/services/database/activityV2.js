@@ -360,8 +360,7 @@ const activityV2 = {
                 '@builtAt': entry.builtAt || ''
             }
         );
-    },
-
+    }
 };
 
 async function insertSessions(userId, sessions = []) {

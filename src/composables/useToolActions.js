@@ -2,10 +2,7 @@ import { toast } from 'vue-sonner';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 
-import {
-    toolDefinitionMap,
-    toolDefinitions
-} from '../shared/constants';
+import { toolDefinitionMap, toolDefinitions } from '../shared/constants';
 import {
     useAdvancedSettingsStore,
     useLaunchStore,
@@ -25,14 +22,7 @@ import {
  */
 export async function executeToolAction(
     definition,
-    {
-        router,
-        t,
-        toolsStore,
-        advancedSettingsStore,
-        launchStore,
-        vrcxStore
-    }
+    { router, t, toolsStore, advancedSettingsStore, launchStore, vrcxStore }
 ) {
     if (!definition?.action) {
         return;

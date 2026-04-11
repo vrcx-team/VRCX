@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
@@ -111,7 +111,7 @@ public class PNGChunk
             Array.Reverse(chunkData, 0, 4);
             Array.Reverse(chunkData, 4, 4);
         }
-        
+
         int width = BitConverter.ToInt32(chunkData, 0);
         int height = BitConverter.ToInt32(chunkData, 4);
 
@@ -126,26 +126,26 @@ public class PNGChunk
     public bool ExistsInFile(FileStream fileStream)
     {
         fileStream.Seek(Index, SeekOrigin.Begin);
-        
+
         byte[] buffer = new byte[4];
         fileStream.ReadExactly(buffer, 0, 4);
-        
+
         if (BitConverter.IsLittleEndian)
             Array.Reverse(buffer, 0, 4);
-        
+
         int chunkLength = BitConverter.ToInt32(buffer, 0);
         if (chunkLength != Length)
             return false;
 
         fileStream.Seek(4 + chunkLength, SeekOrigin.Current);
         fileStream.ReadExactly(buffer, 0, 4);
-        
+
         if (BitConverter.IsLittleEndian)
             Array.Reverse(buffer, 0, 4);
-        
+
         uint crc = BitConverter.ToUInt32(buffer, 0);
         uint calculatedCRC = CalculateCRC();
-        
+
         return crc == calculatedCRC;
     }
 
@@ -166,23 +166,23 @@ public class PNGChunk
         byte[] chunkTypeBytes = Encoding.ASCII.GetBytes(ChunkType);
         int totalLength = Data.Length + 12; //  data length + length + chunk type + crc
         byte[] result = new byte[totalLength];
-        
+
         // Copy length
         var chunkLength = BinaryPrimitives.ReverseEndianness(Data.Length);
         Buffer.BlockCopy(BitConverter.GetBytes(chunkLength), 0, result, 0, 4);
-    
+
         // Copy chunk type
         Buffer.BlockCopy(chunkTypeBytes, 0, result, 4, chunkTypeBytes.Length);
-    
+
         // Copy data
         Buffer.BlockCopy(Data, 0, result, 8, Data.Length);
-    
+
         // Calculate and copy CRC
         uint crc = CalculateCRC();
         uint reversedCrc = BinaryPrimitives.ReverseEndianness(crc);
-        
+
         Buffer.BlockCopy(BitConverter.GetBytes(reversedCrc), 0, result, totalLength - 4, 4);
-    
+
         return result;
     }
 

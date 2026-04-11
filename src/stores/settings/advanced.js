@@ -544,7 +544,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             cutoff.setDate(cutoff.getDate() - days);
             cutoffDate = cutoff.toJSON();
         }
-    
+
         purgeInProgress.value = true;
         const msgBox = toast.warning(
             t(
@@ -552,7 +552,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             ),
             { duration: Infinity }
         );
-    
+
         try {
             await database.purgeAvatarFeedData(cutoffDate);
             await database.vacuum();
@@ -563,14 +563,17 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 )
             );
             // Brief delay before restart to show success message
-            await new Promise((resolve) =>
-                setTimeout(resolve, 1500)
-            );
+            await new Promise((resolve) => setTimeout(resolve, 1500));
             VRCXUpdaterStore.restartVRCX(false);
         } catch (err) {
             console.error(err);
             toast.dismiss(msgBox);
-            toast.error(t('view.settings.advanced.advanced.database_cleanup.purge_failed', { error: err }));
+            toast.error(
+                t(
+                    'view.settings.advanced.advanced.database_cleanup.purge_failed',
+                    { error: err }
+                )
+            );
         } finally {
             purgeInProgress.value = false;
         }
@@ -588,34 +591,28 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             'Off'
         );
         if (cleanupSetting === 'Off') return;
-    
+
         const configKey = `VRCX_lastAvatarCleanupDate_${userId}`;
-        const lastCleanupStr = await configRepository.getString(
-            configKey,
-            ''
-        );
+        const lastCleanupStr = await configRepository.getString(configKey, '');
         const now = new Date();
-    
+
         if (lastCleanupStr) {
             const lastCleanup = new Date(lastCleanupStr);
             const daysSinceLastCleanup =
                 (now - lastCleanup) / (1000 * 60 * 60 * 24);
             if (daysSinceLastCleanup < 7) return;
         }
-    
+
         const days = parseInt(cleanupSetting, 10);
         if (isNaN(days) || days <= 0) return;
-    
+
         const cutoff = new Date();
         cutoff.setDate(cutoff.getDate() - days);
         const cutoffDate = cutoff.toJSON();
-    
+
         try {
             await database.purgeAvatarFeedData(cutoffDate);
-            await configRepository.setString(
-                configKey,
-                now.toJSON()
-            );
+            await configRepository.setString(configKey, now.toJSON());
             console.log(
                 `Auto-cleaned avatar feed data older than ${days} days`
             );

@@ -92,13 +92,13 @@ namespace VRCX
         private const int DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 = 19;
         private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
         private const int DWMWA_CAPTION_COLOR = 35;
-        
+
         private static void SetThemeToGlobal(IntPtr handle)
         {
             var whiteColor = 0xFFFFFF;
             var blackColor = 0x000000;
             var greyColor = 0x2B2B2B;
-            
+
             var isDark = currentTheme > 0 ? 1 : 0;
             if (PInvoke.DwmSetWindowAttribute(handle, DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1, ref isDark, sizeof(int)) != 0)
                 PInvoke.DwmSetWindowAttribute(handle, DWMWA_USE_IMMERSIVE_DARK_MODE, ref isDark, sizeof(int));

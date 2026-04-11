@@ -23,9 +23,15 @@
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem v-if="fullCacheReady" value="0">{{ t('dialog.user.activity.period_all') }}</SelectItem>
-                        <SelectItem v-if="fullCacheReady" value="365">{{ t('dialog.user.activity.period_365') }}</SelectItem>
-                        <SelectItem v-if="fullCacheReady" value="180">{{ t('dialog.user.activity.period_180') }}</SelectItem>
+                        <SelectItem v-if="fullCacheReady" value="0">{{
+                            t('dialog.user.activity.period_all')
+                        }}</SelectItem>
+                        <SelectItem v-if="fullCacheReady" value="365">{{
+                            t('dialog.user.activity.period_365')
+                        }}</SelectItem>
+                        <SelectItem v-if="fullCacheReady" value="180">{{
+                            t('dialog.user.activity.period_180')
+                        }}</SelectItem>
                         <SelectItem value="90">{{ t('dialog.user.activity.period_90') }}</SelectItem>
                         <SelectItem value="30">{{ t('dialog.user.activity.period_30') }}</SelectItem>
                         <SelectItem value="7">{{ t('dialog.user.activity.period_7') }}</SelectItem>
@@ -72,10 +78,7 @@
             style="width: 100%; height: 240px"
             @contextmenu.prevent="onChartRightClick" />
 
-        <DailyPlaytime
-            v-if="isSelf && hasAnyData"
-            :sessions="cachedSessions"
-            :range-days="currentRangeDays" />
+        <DailyPlaytime v-if="isSelf && hasAnyData" :sessions="cachedSessions" :range-days="currentRangeDays" />
 
         <div v-if="hasAnyData && !isSelf" class="mt-4 border-t border-border pt-3">
             <div class="flex items-center justify-between mb-2">
@@ -510,7 +513,7 @@
             return;
         }
 
-        const rangeDays = parseInt(selectedPeriod.value, 10) === 0 ? 3650 : (parseInt(selectedPeriod.value, 10) || 30);
+        const rangeDays = parseInt(selectedPeriod.value, 10) === 0 ? 3650 : parseInt(selectedPeriod.value, 10) || 30;
         await loadTopWorldsSection({
             userId,
             rangeDays,
@@ -532,7 +535,8 @@
         }
 
         try {
-            const rangeDays = parseInt(selectedPeriod.value, 10) === 0 ? 3650 : (parseInt(selectedPeriod.value, 10) || 30);
+            const rangeDays =
+                parseInt(selectedPeriod.value, 10) === 0 ? 3650 : parseInt(selectedPeriod.value, 10) || 30;
             const activityView = await activityStore.loadActivityView({
                 userId,
                 isSelf: isSelf.value,
@@ -639,7 +643,8 @@
         beginOverlapLoading(requestId);
 
         try {
-            const rangeDays = parseInt(selectedPeriod.value, 10) === 0 ? 3650 : (parseInt(selectedPeriod.value, 10) || 30);
+            const rangeDays =
+                parseInt(selectedPeriod.value, 10) === 0 ? 3650 : parseInt(selectedPeriod.value, 10) || 30;
             const overlapView = await activityStore.loadOverlapView({
                 currentUserId: currentUser.value.id,
                 targetUserId: userId,

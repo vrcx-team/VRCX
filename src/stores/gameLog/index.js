@@ -544,7 +544,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @returns {string}
      */
     function normalizeSessionsSearch(value) {
-        return String(value ?? '').trim().toUpperCase();
+        return String(value ?? '')
+            .trim()
+            .toUpperCase();
     }
 
     /**
@@ -763,10 +765,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
      */
     function rebuildSessions() {
         const events = filterSessionsEventsByFilters(sessionsRawEvents.value);
-        const result = buildGameLogSessions(
-            sessionsRawLocations.value,
-            events
-        );
+        const result = buildGameLogSessions(sessionsRawLocations.value, events);
         sessionsSegments.value = applySessionsSearchFilter(
             filterSessionsSegmentsByDateRange(result.segments)
         );
@@ -834,10 +833,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @param {string} to
      */
     async function setSessionsDateRange(from, to) {
-        const [normalizedFrom, normalizedTo] = clampSessionsDateRange(
-            from,
-            to
-        );
+        const [normalizedFrom, normalizedTo] = clampSessionsDateRange(from, to);
         sessionsDateFrom.value = normalizedFrom;
         sessionsDateTo.value = normalizedTo;
         await loadSessionsSegments();
@@ -879,10 +875,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             ...sessionsRawLocations.value,
             ...locations
         ];
-        sessionsRawEvents.value = [
-            ...sessionsRawEvents.value,
-            ...events
-        ];
+        sessionsRawEvents.value = [...sessionsRawEvents.value, ...events];
         rebuildSessions();
 
         return {

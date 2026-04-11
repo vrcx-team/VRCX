@@ -30,7 +30,10 @@ describe('buildSessionsFromEvents', () => {
         ];
         const result = buildSessionsFromEvents(events);
         expect(result).toEqual([
-            { start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T12:00:00Z') }
+            {
+                start: ts('2025-01-06T10:00:00Z'),
+                end: ts('2025-01-06T12:00:00Z')
+            }
         ]);
     });
 
@@ -43,8 +46,14 @@ describe('buildSessionsFromEvents', () => {
         ];
         const result = buildSessionsFromEvents(events);
         expect(result).toHaveLength(2);
-        expect(result[0]).toEqual({ start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T12:00:00Z') });
-        expect(result[1]).toEqual({ start: ts('2025-01-06T14:00:00Z'), end: ts('2025-01-06T16:00:00Z') });
+        expect(result[0]).toEqual({
+            start: ts('2025-01-06T10:00:00Z'),
+            end: ts('2025-01-06T12:00:00Z')
+        });
+        expect(result[1]).toEqual({
+            start: ts('2025-01-06T14:00:00Z'),
+            end: ts('2025-01-06T16:00:00Z')
+        });
     });
 
     test('handles consecutive Online events (closes previous session)', () => {
@@ -55,8 +64,14 @@ describe('buildSessionsFromEvents', () => {
         ];
         const result = buildSessionsFromEvents(events);
         expect(result).toHaveLength(2);
-        expect(result[0]).toEqual({ start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T12:00:00Z') });
-        expect(result[1]).toEqual({ start: ts('2025-01-06T12:00:00Z'), end: ts('2025-01-06T14:00:00Z') });
+        expect(result[0]).toEqual({
+            start: ts('2025-01-06T10:00:00Z'),
+            end: ts('2025-01-06T12:00:00Z')
+        });
+        expect(result[1]).toEqual({
+            start: ts('2025-01-06T12:00:00Z'),
+            end: ts('2025-01-06T14:00:00Z')
+        });
     });
 
     test('ignores Offline without preceding Online', () => {
@@ -67,7 +82,10 @@ describe('buildSessionsFromEvents', () => {
         ];
         const result = buildSessionsFromEvents(events);
         expect(result).toHaveLength(1);
-        expect(result[0]).toEqual({ start: ts('2025-01-06T12:00:00Z'), end: ts('2025-01-06T14:00:00Z') });
+        expect(result[0]).toEqual({
+            start: ts('2025-01-06T12:00:00Z'),
+            end: ts('2025-01-06T14:00:00Z')
+        });
     });
 
     test('does not close session if no Offline follows', () => {
@@ -90,7 +108,10 @@ describe('buildSessionsFromGamelog', () => {
         ];
         const result = buildSessionsFromGamelog(rows);
         expect(result).toEqual([
-            { start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T12:00:00Z') }
+            {
+                start: ts('2025-01-06T10:00:00Z'),
+                end: ts('2025-01-06T12:00:00Z')
+            }
         ]);
     });
 
@@ -111,9 +132,7 @@ describe('buildSessionsFromGamelog', () => {
     test('caps duration at 24h for last row with time=0', () => {
         const now = Date.now();
         const longAgo = new Date(now - 48 * 3600000).toISOString(); // 48h ago
-        const rows = [
-            { created_at: longAgo, time: 0 }
-        ];
+        const rows = [{ created_at: longAgo, time: 0 }];
         const result = buildSessionsFromGamelog(rows);
         expect(result).toHaveLength(1);
         const duration = result[0].end - result[0].start;
@@ -123,7 +142,7 @@ describe('buildSessionsFromGamelog', () => {
     test('merges adjacent sessions within default gap (5min)', () => {
         const rows = [
             { created_at: utc('2025-01-06T10:00:00Z'), time: 3600000 }, // 10:00-11:00
-            { created_at: utc('2025-01-06T11:03:00Z'), time: 3600000 }  // 11:03-12:03 (3min gap)
+            { created_at: utc('2025-01-06T11:03:00Z'), time: 3600000 } // 11:03-12:03 (3min gap)
         ];
         const result = buildSessionsFromGamelog(rows);
         expect(result).toHaveLength(1);
@@ -134,7 +153,7 @@ describe('buildSessionsFromGamelog', () => {
     test('does not merge sessions with gap exceeding mergeGapMs', () => {
         const rows = [
             { created_at: utc('2025-01-06T10:00:00Z'), time: 3600000 }, // 10:00-11:00
-            { created_at: utc('2025-01-06T12:00:00Z'), time: 3600000 }  // 12:00-13:00 (1h gap)
+            { created_at: utc('2025-01-06T12:00:00Z'), time: 3600000 } // 12:00-13:00 (1h gap)
         ];
         const result = buildSessionsFromGamelog(rows);
         expect(result).toHaveLength(2);
@@ -143,7 +162,7 @@ describe('buildSessionsFromGamelog', () => {
     test('respects custom mergeGapMs', () => {
         const rows = [
             { created_at: utc('2025-01-06T10:00:00Z'), time: 3600000 }, // 10:00-11:00
-            { created_at: utc('2025-01-06T11:03:00Z'), time: 3600000 }  // 11:03-12:03
+            { created_at: utc('2025-01-06T11:03:00Z'), time: 3600000 } // 11:03-12:03
         ];
         // Custom gap: 1 minute → should NOT merge (3min gap > 1min threshold)
         const result = buildSessionsFromGamelog(rows, 60000);
@@ -189,8 +208,18 @@ describe('filterSessionsByPeriod', () => {
 
 describe('calculateOverlapGrid', () => {
     test('returns zero overlap for non-overlapping sessions', () => {
-        const sessionsA = [{ start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T12:00:00Z') }];
-        const sessionsB = [{ start: ts('2025-01-06T14:00:00Z'), end: ts('2025-01-06T16:00:00Z') }];
+        const sessionsA = [
+            {
+                start: ts('2025-01-06T10:00:00Z'),
+                end: ts('2025-01-06T12:00:00Z')
+            }
+        ];
+        const sessionsB = [
+            {
+                start: ts('2025-01-06T14:00:00Z'),
+                end: ts('2025-01-06T16:00:00Z')
+            }
+        ];
         const result = calculateOverlapGrid(sessionsA, sessionsB);
         expect(result.overlapPercent).toBe(0);
         expect(result.totalOverlapMs).toBe(0);
@@ -198,8 +227,18 @@ describe('calculateOverlapGrid', () => {
     });
 
     test('calculates full overlap for identical sessions', () => {
-        const sessionsA = [{ start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T12:00:00Z') }];
-        const sessionsB = [{ start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T12:00:00Z') }];
+        const sessionsA = [
+            {
+                start: ts('2025-01-06T10:00:00Z'),
+                end: ts('2025-01-06T12:00:00Z')
+            }
+        ];
+        const sessionsB = [
+            {
+                start: ts('2025-01-06T10:00:00Z'),
+                end: ts('2025-01-06T12:00:00Z')
+            }
+        ];
         const result = calculateOverlapGrid(sessionsA, sessionsB);
         expect(result.overlapPercent).toBe(100);
         expect(result.totalOverlapMs).toBe(2 * 3600000);
@@ -208,16 +247,36 @@ describe('calculateOverlapGrid', () => {
     test('calculates partial overlap', () => {
         // A: 10:00-14:00 (4h), B: 12:00-16:00 (4h)
         // Overlap: 12:00-14:00 (2h) = 50%
-        const sessionsA = [{ start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T14:00:00Z') }];
-        const sessionsB = [{ start: ts('2025-01-06T12:00:00Z'), end: ts('2025-01-06T16:00:00Z') }];
+        const sessionsA = [
+            {
+                start: ts('2025-01-06T10:00:00Z'),
+                end: ts('2025-01-06T14:00:00Z')
+            }
+        ];
+        const sessionsB = [
+            {
+                start: ts('2025-01-06T12:00:00Z'),
+                end: ts('2025-01-06T16:00:00Z')
+            }
+        ];
         const result = calculateOverlapGrid(sessionsA, sessionsB);
         expect(result.overlapPercent).toBe(50);
         expect(result.totalOverlapMs).toBe(2 * 3600000);
     });
 
     test('returns correct grid dimensions', () => {
-        const sessionsA = [{ start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T12:00:00Z') }];
-        const sessionsB = [{ start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T12:00:00Z') }];
+        const sessionsA = [
+            {
+                start: ts('2025-01-06T10:00:00Z'),
+                end: ts('2025-01-06T12:00:00Z')
+            }
+        ];
+        const sessionsB = [
+            {
+                start: ts('2025-01-06T10:00:00Z'),
+                end: ts('2025-01-06T12:00:00Z')
+            }
+        ];
         const result = calculateOverlapGrid(sessionsA, sessionsB);
         expect(result.grid).toHaveLength(7);
         for (const row of result.grid) {
@@ -227,8 +286,18 @@ describe('calculateOverlapGrid', () => {
 
     test('populates grid at correct day/hour slots', () => {
         // 2025-01-06 is Monday, getDay()=1
-        const sessionsA = [{ start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T12:00:00Z') }];
-        const sessionsB = [{ start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T12:00:00Z') }];
+        const sessionsA = [
+            {
+                start: ts('2025-01-06T10:00:00Z'),
+                end: ts('2025-01-06T12:00:00Z')
+            }
+        ];
+        const sessionsB = [
+            {
+                start: ts('2025-01-06T10:00:00Z'),
+                end: ts('2025-01-06T12:00:00Z')
+            }
+        ];
         const result = calculateOverlapGrid(sessionsA, sessionsB);
         // day=1 (Monday), hours 10 and 11 should have value
         // Note: getDay() returns local day, getHours() returns local hour
@@ -237,14 +306,24 @@ describe('calculateOverlapGrid', () => {
     });
 
     test('handles empty sessionsA', () => {
-        const sessionsB = [{ start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T12:00:00Z') }];
+        const sessionsB = [
+            {
+                start: ts('2025-01-06T10:00:00Z'),
+                end: ts('2025-01-06T12:00:00Z')
+            }
+        ];
         const result = calculateOverlapGrid([], sessionsB);
         expect(result.overlapPercent).toBe(0);
         expect(result.totalOverlapMs).toBe(0);
     });
 
     test('handles empty sessionsB', () => {
-        const sessionsA = [{ start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T12:00:00Z') }];
+        const sessionsA = [
+            {
+                start: ts('2025-01-06T10:00:00Z'),
+                end: ts('2025-01-06T12:00:00Z')
+            }
+        ];
         const result = calculateOverlapGrid(sessionsA, []);
         expect(result.overlapPercent).toBe(0);
         expect(result.totalOverlapMs).toBe(0);
@@ -252,8 +331,18 @@ describe('calculateOverlapGrid', () => {
 
     test('overlap percent is based on the shorter online time', () => {
         // A: 2h online, B: 4h online, overlap: 2h → 2/2 = 100%
-        const sessionsA = [{ start: ts('2025-01-06T12:00:00Z'), end: ts('2025-01-06T14:00:00Z') }];
-        const sessionsB = [{ start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T14:00:00Z') }];
+        const sessionsA = [
+            {
+                start: ts('2025-01-06T12:00:00Z'),
+                end: ts('2025-01-06T14:00:00Z')
+            }
+        ];
+        const sessionsB = [
+            {
+                start: ts('2025-01-06T10:00:00Z'),
+                end: ts('2025-01-06T14:00:00Z')
+            }
+        ];
         const result = calculateOverlapGrid(sessionsA, sessionsB);
         expect(result.overlapPercent).toBe(100);
         expect(result.totalUserAMs).toBe(2 * 3600000);
@@ -273,7 +362,12 @@ describe('aggregateSessionsToGrid', () => {
 
     test('increments grid for session hours', () => {
         // A 3-hour session should increment 3 hour slots
-        const sessions = [{ start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T13:00:00Z') }];
+        const sessions = [
+            {
+                start: ts('2025-01-06T10:00:00Z'),
+                end: ts('2025-01-06T13:00:00Z')
+            }
+        ];
         const result = aggregateSessionsToGrid(sessions);
         const total = result.grid.flat().reduce((a, b) => a + b, 0);
         expect(total).toBe(3);
@@ -283,8 +377,14 @@ describe('aggregateSessionsToGrid', () => {
     test('stacks multiple sessions on same hour', () => {
         // Two sessions on the same day/hour
         const sessions = [
-            { start: ts('2025-01-06T10:00:00Z'), end: ts('2025-01-06T11:00:00Z') },
-            { start: ts('2025-01-13T10:00:00Z'), end: ts('2025-01-13T11:00:00Z') } // Same weekday, 1 week later
+            {
+                start: ts('2025-01-06T10:00:00Z'),
+                end: ts('2025-01-06T11:00:00Z')
+            },
+            {
+                start: ts('2025-01-13T10:00:00Z'),
+                end: ts('2025-01-13T11:00:00Z')
+            } // Same weekday, 1 week later
         ];
         const result = aggregateSessionsToGrid(sessions);
         expect(result.maxVal).toBe(2);
