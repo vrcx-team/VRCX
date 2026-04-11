@@ -1418,7 +1418,8 @@
                 "instance_age_gated": "Age Gated",
                 "open_previous_instance": "Open Previous Instances",
                 "show_mutual_friends": "Show Mutual Friends",
-                "show_discord_connections": "Show Discord Connections"
+                "show_discord_connections": "Show Discord Connections",
+                "instance_minimum_avatar_performance": "Min Avatar Perf"
             },
             "groups": {
                 "header": "Groups",
@@ -1868,7 +1869,8 @@
             "legacy": "Legacy",
             "roles": "Roles",
             "open_ingame": "Open in-game",
-            "display_name": "Display Name (VRC+)"
+            "display_name": "Display Name (VRC+)",
+            "minimum_avatar_performance": "Minimum Avatar Performance"
         },
         "launch": {
             "header": "Launch",

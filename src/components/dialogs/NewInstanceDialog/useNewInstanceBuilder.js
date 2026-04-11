@@ -50,7 +50,8 @@ export function useNewInstanceBuilder(locationTagRef) {
         lastSelectedGroupId: '',
         selectedGroupRoles: [],
         roleIds: [],
-        groupRef: {}
+        groupRef: {},
+        minimumAvatarPerformance: ''
     });
 
     // --- Config persistence ---
@@ -94,6 +95,13 @@ export function useNewInstanceBuilder(locationTagRef) {
         configRepository
             .getString('instanceDialogDisplayName', '')
             .then((value) => (newInstanceDialog.value.displayName = value));
+
+        configRepository
+            .getString('instanceDialogMinimumAvatarPerformance', '')
+            .then(
+                (value) =>
+                    (newInstanceDialog.value.minimumAvatarPerformance = value)
+            );
     }
     /**
      *
@@ -108,7 +116,8 @@ export function useNewInstanceBuilder(locationTagRef) {
             groupAccessType,
             queueEnabled,
             ageGate,
-            displayName
+            displayName,
+            minimumAvatarPerformance
         } = newInstanceDialog.value;
 
         configRepository.setString('instanceDialogAccessType', accessType);
@@ -126,6 +135,10 @@ export function useNewInstanceBuilder(locationTagRef) {
         configRepository.setBool('instanceDialogQueueEnabled', queueEnabled);
         configRepository.setBool('instanceDialogAgeGate', ageGate);
         configRepository.setString('instanceDialogDisplayName', displayName);
+        configRepository.setString(
+            'instanceDialogMinimumAvatarPerformance',
+            minimumAvatarPerformance
+        );
     }
 
     // --- Group role loading (shared between buildInstance & buildLegacyInstance) ---

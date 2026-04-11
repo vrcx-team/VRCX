@@ -158,6 +158,28 @@
                             </FieldContent>
                         </Field>
                         <Field v-if="newInstanceDialog.accessType === 'group'">
+                            <FieldLabel>{{ t('dialog.new_instance.minimum_avatar_performance') }}</FieldLabel>
+                            <FieldContent>
+                                <Select v-model="newInstanceDialog.minimumAvatarPerformance" @change="buildInstance">
+                                    <SelectTrigger size="sm" class="w-full">
+                                        <SelectValue>
+                                            <span>
+                                                {{ newInstanceDialog.minimumAvatarPerformance || 'None' }}
+                                            </span>
+                                        </SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value="None">None</SelectItem>
+                                            <SelectItem value="Poor">Poor</SelectItem>
+                                            <SelectItem value="Medium">Medium</SelectItem>
+                                            <SelectItem value="Good">Good</SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </FieldContent>
+                        </Field>
+                        <Field v-if="newInstanceDialog.accessType === 'group'">
                             <FieldLabel>{{ t('dialog.new_instance.group_id') }}</FieldLabel>
                             <FieldContent>
                                 <VirtualCombobox
