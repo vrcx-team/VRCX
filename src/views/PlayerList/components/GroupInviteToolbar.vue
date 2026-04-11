@@ -97,26 +97,6 @@
                     </SelectItem>
                 </SelectContent>
             </Select>
-
-            <!-- Auto-invite toggle -->
-            <TooltipWrapper side="top" content="Auto-invite new players who join the instance">
-                <div
-                    class="flex items-center gap-1.5 border rounded-md px-2.5 h-8 transition-colors flex-none"
-                    :class="autoInviteEnabled
-                        ? 'border-green-500/50 bg-green-500/10'
-                        : 'border-border'">
-                    <Switch
-                        :checked="autoInviteEnabled"
-                        :disabled="!selectedGroupId"
-                        @update:checked="autoInviteEnabled = $event"
-                        class="scale-75" />
-                    <span
-                        class="text-xs whitespace-nowrap"
-                        :class="autoInviteEnabled ? 'text-green-500 font-medium' : 'text-muted-foreground'">
-                        Auto
-                    </span>
-                </div>
-            </TooltipWrapper>
         </div>
 
         <!-- ─── Action Cards ─── -->
@@ -189,6 +169,52 @@
                         </Button>
                     </TooltipWrapper>
                 </div>
+            </div>
+        </div>
+
+        <!-- ─── Auto-Inviter Engine ─── -->
+        <div class="rounded-md border border-border bg-muted/20 p-2.5 mt-2">
+            <div class="flex items-center gap-2 mb-2">
+                <Zap class="size-3.5 text-blue-400" />
+                <span class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Auto-Inviter Engine</span>
+            </div>
+            
+            <div class="flex gap-2">
+                <Button 
+                    class="flex-1 transition-all duration-300 relative overflow-hidden" 
+                    :class="autoInviteEnabled ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30 border-green-500/50' : 'bg-transparent text-muted-foreground hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/50'"
+                    :variant="'outline'"
+                    :disabled="!selectedGroupId"
+                    @click="autoInviteEnabled = !autoInviteEnabled"
+                >
+                    <div class="flex flex-col items-center justify-center">
+                        <span class="font-bold tracking-wide">{{ autoInviteEnabled ? 'AUTO-INVITER: RUNNING' : 'AUTO-INVITER: OFFLINE' }}</span>
+                    </div>
+                </Button>
+                
+                <Select v-model="autoInvitePickupDelay" :disabled="!selectedGroupId">
+                    <SelectTrigger class="w-[140px] bg-background/50 border-border">
+                        <SelectValue placeholder="Pickup Delay" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem :value="0">Instant (0s)</SelectItem>
+                            <SelectItem :value="5000">Fast (5s delay)</SelectItem>
+                            <SelectItem :value="10000">Human (10s delay)</SelectItem>
+                            <SelectItem :value="15000">Slow (15s delay)</SelectItem>
+                            <SelectItem :value="30000">Very Slow (30s delay)</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </div>
+            
+            <div class="mt-2 text-center h-4 flex items-center justify-center">
+                <span v-if="autoInviteQueue.length > 0 && autoInviteEnabled" class="text-[10px] animate-pulse text-green-400 font-medium tracking-wide">
+                    Currently processing {{ autoInviteQueue.length }} invite(s) in background queue...
+                </span>
+                <span v-else-if="!autoInviteEnabled" class="text-[10px] text-muted-foreground/50 tracking-wide">
+                    Will actively monitor lobby joins and invite automatically
+                </span>
             </div>
         </div>
 
@@ -359,6 +385,8 @@
     const {
         selectedGroupId,
         autoInviteEnabled,
+        autoInvitePickupDelay,
+        autoInviteQueue,
         delayPreset,
         isRunning,
         inviteLog,

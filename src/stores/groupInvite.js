@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 
 import { hasGroupPermission } from '../shared/utils';
-import { groupRequest, notificationRequest, queryRequest } from '../api';
+import { groupRequest, notificationRequest, queryRequest, userRequest } from '../api';
 import { useFriendStore } from './friend';
 import { useGroupStore } from './group';
 import { useLocationStore } from './location';
@@ -36,6 +36,9 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
     // ── State ──────────────────────────────────────────────────
     const selectedGroupId = ref('');
     const autoInviteEnabled = ref(false);
+    const autoInvitePickupDelay = ref(5000); // Ms to wait after joining before processing
+    const autoInviteQueue = ref([]);
+    const isAutoInviterRunning = ref(false);
     const delayPreset = ref('normal'); // 'normal' | 'relaxed' | 'cautious' | 'slow' | 'stealth'
     const isRunning = ref(false);
     const isCancelled = ref(false);
@@ -111,6 +114,8 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 isRunning.value = false;
                 isCancelled.value = false;
                 rateLimitStrikes.value = 0;
+                autoInviteQueue.value = [];
+                isAutoInviterRunning.value = false;
                 autoInviteInFlight.clear();
                 // NOTE: inviteCache and inviteLog are intentionally NOT cleared
                 // on logout so they persist across account switches
@@ -133,6 +138,10 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
             'groupInviteToolkit_delayPreset',
             'normal'
         );
+        autoInvitePickupDelay.value = parseInt(await configRepository.getString(
+            'groupInviteToolkit_pickupDelay',
+            '5000'
+        ), 10) || 5000;
         blacklist.value = await configRepository.getArray(
             'groupInviteToolkit_blacklist',
             []
@@ -162,6 +171,17 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         isSettingsLoaded = true;
     }
 
+    watch(
+        autoInviteEnabled,
+        (enabled) => {
+            if (!enabled) {
+                // If the user turns off auto-invite, flush any waiting items to prevent 
+                // surprising late invites
+                autoInviteQueue.value = [];
+            }
+        }
+    );
+
     async function saveSettings() {
         if (!isSettingsLoaded) return;
 
@@ -173,6 +193,10 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
             'groupInviteToolkit_delayPreset',
             delayPreset.value
         );
+        await configRepository.setString(
+            'groupInviteToolkit_pickupDelay',
+            autoInvitePickupDelay.value.toString()
+        );
         await configRepository.setArray(
             'groupInviteToolkit_blacklist',
             blacklist.value
@@ -183,6 +207,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
 
     watch(selectedGroupId, saveSettings);
     watch(delayPreset, saveSettings);
+    watch(autoInvitePickupDelay, saveSettings);
     watch(blacklist, saveSettings, { deep: true });
 
     // ── Cache helpers ──────────────────────────────────────────
@@ -660,46 +685,130 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
      * @param {string} displayName
      */
     async function handlePlayerJoined(userId, displayName) {
-        if (!autoInviteEnabled.value || !selectedGroupId.value || !userId || userId === userStore.currentUser.id) return;
+        if (!autoInviteEnabled.value || !selectedGroupId.value || userId === userStore.currentUser.id) return;
 
-        // Don't auto-invite while rate limited
+        // Skip if hitting rate limits soon (loop will also handle this but protects queue from over-filling)
         if (rateLimitStrikes.value >= 3) {
-            console.log(`[AutoInvite] Skipped ${displayName} — rate limit cooldown active.`);
+            console.log(`[AutoInvite] Skipped enqueueing ${displayName} — rate limit active.`);
             return;
         }
 
+        // Custom UI Blacklist Integration: Skip explicitly blacklisted users
+        if (blacklist.value.some(b => b === userId || b === displayName)) {
+            console.log(`[AutoInvite] Skipped ${displayName} — user is blacklisted.`);
+            addLog(userId, displayName, selectedGroupId.value, 'skipped', 'Blacklisted');
+            return;
+        }
+
+        // Skip if already in the robust sqlite ledger Cache
         if (isAlreadyInvited(userId, selectedGroupId.value)) {
             return; // Silent skip — already cached, no log spam
         }
 
-        // In-flight dedup: prevent concurrent API calls for the same user
-        const flightKey = cacheKey(userId, selectedGroupId.value);
-        if (autoInviteInFlight.has(flightKey)) {
-            console.log(`[AutoInvite] Skipped ${displayName} — already processing.`);
-            return;
-        }
-        autoInviteInFlight.add(flightKey);
-
-        try {
-            console.log(`[AutoInvite] Join detected: Queueing invite for ${displayName}...`);
-            await sleep(1500); // Let user fully join
-
-            const result = await sendSingleInvite(userId, displayName, selectedGroupId.value);
-            if (result.sent) {
-                console.log(`[AutoInvite] SUCCESS: Invited ${displayName}`);
-            } else {
-                console.log(`[AutoInvite] SKIPPED/FAILED: ${displayName} (apiCalled: ${result.apiCalled})`);
+        // Enqueue the user for background processing to avoid rate limit spikes
+        // Ensure they aren't already sitting in the queue waiting
+        if (!autoInviteQueue.value.find(u => u.userId === userId && u.groupId === selectedGroupId.value)) {
+            autoInviteQueue.value.push({ 
+                userId, 
+                displayName, 
+                groupId: selectedGroupId.value,
+                addedAt: Date.now()
+            });
+            console.log(`[AutoInvite] Enqueued invite for ${displayName}. Queue size: ${autoInviteQueue.value.length}`);
+            
+            // Kickstart the background processor if it isn't running
+            if (!isAutoInviterRunning.value) {
+                processAutoInviteQueue();
             }
-        } finally {
-            autoInviteInFlight.delete(flightKey);
         }
     }
 
-    // ── Cancel ─────────────────────────────────────────────────
+    /**
+     * Background daemon that sequentially drains the autoInviteQueue one by one,
+     * applying the configured UI delay strictly between every API call to perfectly
+     * avoid HTTP 429 bounds even if 80 people join instances simultaneously.
+     */
+    async function processAutoInviteQueue() {
+        if (isAutoInviterRunning.value) return;
+        isAutoInviterRunning.value = true;
+
+        try {
+            while (autoInviteQueue.value.length > 0 && autoInviteEnabled.value) {
+                // If rate limited mid-queue, pause heavily
+                if (rateLimitStrikes.value >= 3) {
+                    console.log('[AutoInvite Queue] Rate limit detected, pausing queue processing for 2 minutes...');
+                    await sleep(120000);
+                    continue; // Re-check after sleeping
+                }
+
+                // Dequeue the next person
+                let { userId, displayName, groupId, addedAt } = autoInviteQueue.value.shift();
+                
+                // If they have no userId because they aren't cached, try to dynamically fetch them!
+                if (!userId) {
+                    try {
+                        console.log(`[AutoInvite Queue] Resolving missing userId for ${displayName}...`);
+                        const searchResult = await userRequest.getUsers({ search: displayName, n: 1, offset: 0 });
+                        if (searchResult?.json?.length > 0) {
+                            userId = searchResult.json[0].id;
+                        } else {
+                            console.log(`[AutoInvite Queue] Could not resolve ${displayName}. Skipping.`);
+                            continue;
+                        }
+                    } catch (err) {
+                        console.error(`[AutoInvite Queue] Error resolving ${displayName}.`, err);
+                        continue;
+                    }
+                }
+                
+                // Final cache/in-flight check just in case something manual happened
+                const flightKey = cacheKey(userId, groupId);
+                if (autoInviteInFlight.has(flightKey) || isAlreadyInvited(userId, groupId)) {
+                    continue; 
+                }
+
+                autoInviteInFlight.add(flightKey);
+
+                // Enforce the Pickup Delay logic. We must let them load into the instance cleanly.
+                const elapsedSinceJoin = Date.now() - addedAt;
+                const remainingPickupDelay = autoInvitePickupDelay.value - elapsedSinceJoin;
+                
+                if (remainingPickupDelay > 0 && autoInviteEnabled.value) {
+                    console.log(`[AutoInvite Queue] Waiting ${Math.ceil(remainingPickupDelay / 1000)}s for ${displayName} to spawn in...`);
+                    await sleep(remainingPickupDelay);
+                }
+
+                try {
+                    // Send the single invite payload
+                    const result = await sendSingleInvite(userId, displayName, groupId);
+                    if (result.sent) {
+                        console.log(`[AutoInvite Queue] SUCCESS: Invited ${displayName}`);
+                    } else {
+                        console.log(`[AutoInvite Queue] FAILED: ${displayName}`);
+                    }
+                } finally {
+                    autoInviteInFlight.delete(flightKey);
+                }
+
+                // Respect the UI configured delay before eating the next item in the queue
+                // Minimum wait to prevent VRC API dropping the request is roughly 2s
+                // delayMs value dictates the cadence. normal is ~3000ms
+                if (autoInviteQueue.value.length > 0 && autoInviteEnabled.value) {
+                    await sleep(delayMs.value); 
+                }
+            }
+        } finally {
+            // Loop naturally terminates when queue is empty or disabled
+            isAutoInviterRunning.value = false;
+        }
+    }
 
     function cancelOperation() {
         if (isRunning.value) {
             isCancelled.value = true;
+        }
+        if (autoInviteQueue.value.length > 0) {
+            autoInviteQueue.value = [];
         }
     }
 
@@ -709,6 +818,9 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         // State
         selectedGroupId,
         autoInviteEnabled,
+        autoInvitePickupDelay,
+        autoInviteQueue,
+        isAutoInviterRunning,
         delayPreset,
         isRunning,
         inviteCache,

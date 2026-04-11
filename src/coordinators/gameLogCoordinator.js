@@ -275,7 +275,7 @@ export function addGameLogEntry(gameLog, location) {
             // Auto-invite hook: send group invite if enabled
             {
                 const groupInviteStore = useGroupInviteStore();
-                if (groupInviteStore.autoInviteEnabled && userId) {
+                if (groupInviteStore.autoInviteEnabled) {
                     groupInviteStore.handlePlayerJoined(userId, gameLog.displayName);
                 }
             }
