@@ -29,7 +29,7 @@
         </template>
 
         <template v-else-if="panelKey && panelComponent">
-            <div class="dashboard-panel is-compact-table h-full w-full overflow-y-auto">
+            <div class="dashboard-panel h-full w-full overflow-y-auto">
                 <component :is="panelComponent" v-bind="widgetProps" />
             </div>
         </template>
