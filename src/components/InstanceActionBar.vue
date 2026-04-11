@@ -138,7 +138,10 @@
             <Badge v-if="instanceInfoState.isAgeGated" variant="destructive" class="ml-1">
                 {{ t('dialog.user.info.instance_age_gated') }}
             </Badge>
-            <Badge v-if="instance?.minimumAvatarPerformance" variant="warning" class="ml-1">
+            <Badge
+                v-if="instance?.minimumAvatarPerformance && instance.minimumAvatarPerformance !== 'None'"
+                variant="warning"
+                class="ml-1">
                 {{ t('dialog.user.info.instance_minimum_avatar_performance') }}: {{ instance.minimumAvatarPerformance }}
             </Badge>
         </div>
