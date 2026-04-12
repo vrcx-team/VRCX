@@ -436,7 +436,7 @@ export function showUserDialog(userId) {
                 if (locationStore.lastLocation.playerList.has(D.ref.id)) {
                     inCurrentWorld = true;
                 }
-                if (userId !== currentUser.id) {
+                if (userId !== currentUser.id && watchState.isFriendsLoaded) {
                     database
                         .getUserStats(D.ref, inCurrentWorld)
                         .then(async (ref1) => {

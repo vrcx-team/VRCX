@@ -82,6 +82,7 @@
                             <span class="text-platform-pc border-platform-pc!">PC: </span
                             >{{ instance?.platforms?.standalonewindows }}
                         </span>
+                        <br />
                         <span>
                             <span class="text-platform-quest border-platform-quest!">Android: </span
                             >{{ instance?.platforms?.android }}
