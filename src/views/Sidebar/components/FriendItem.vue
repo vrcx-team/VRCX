@@ -5,7 +5,7 @@
         <template v-if="friend.ref">
             <div
                 class="relative inline-block flex-none size-9 mr-2.5"
-                :class="isFriendActiveOrOffline ? undefined : userStatusClass(friend.ref, friend.pendingOffline)">
+                :class="friendStatusClass">
                 <Avatar class="size-full rounded-full">
                     <AvatarImage :src="userImage(friend.ref, true)" class="object-cover" />
                     <AvatarFallback>
@@ -96,6 +96,22 @@
 
     const isFriendTraveling = computed(() => props.friend.ref?.location === 'traveling');
     const isFriendActiveOrOffline = computed(() => props.friend.state === 'active' || props.friend.state === 'offline');
+
+    // we show status dots for active friends using circles instead of status--active to differ them from online friends.
+    // ctx.state is reliable at login... but ref.state may be stale until bulkRefreshFriends finishes. here again we check for ctx.state
+    // should note this is a wip refactor for online statuses. for now everything should work fine!
+    const friendStatusClass = computed(() => {
+        if (props.friend.state === 'offline') return undefined;
+        if (!props.friend.pendingOffline && props.friend.state === 'active') {
+            const refStatus = props.friend.ref?.status;
+            if (refStatus === 'join me') return { 'status-icon': true, 'active-joinme': true };
+            if (refStatus === 'ask me') return { 'status-icon': true, 'active-askme': true };
+            if (refStatus === 'busy') return { 'status-icon': true, 'active-busy': true };
+            return { 'status-icon': true, active: true };
+        }
+        return userStatusClass(props.friend.ref, props.friend.pendingOffline);
+    });
+
     const epoch = computed(() =>
         isFriendTraveling.value ? props.friend.ref?.$travelingToTime : props.friend.ref?.$location_at
     );
