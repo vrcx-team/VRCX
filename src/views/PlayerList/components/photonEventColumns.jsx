@@ -27,7 +27,15 @@ const avatarStatusClass = (status) => {
     return null;
 };
 
-function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, onShowUser, onShowImage }) {
+function DetailCell({
+    row,
+    isPrevious,
+    onShowAvatar,
+    onShowGroup,
+    onShowWorld,
+    onShowUser,
+    onShowImage
+}) {
     const r = row;
     if (!r) return null;
 

@@ -38,7 +38,9 @@
                                             <template v-if="item.row.isVisible">
                                                 <div class="relative inline-block flex-none size-9 mr-2.5">
                                                     <Avatar class="size-9">
-                                                        <AvatarImage :src="getSmallGroupIconUrl(item.row.iconUrl)" class="object-cover" />
+                                                        <AvatarImage
+                                                            :src="getSmallGroupIconUrl(item.row.iconUrl)"
+                                                            class="object-cover" />
                                                         <AvatarFallback>
                                                             <Users class="size-4 text-muted-foreground" />
                                                         </AvatarFallback>

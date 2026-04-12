@@ -65,8 +65,15 @@ export function useNavLayout({
     const createDefaultNavLayout = () => createBaseDefaultNavLayout(t);
 
     const menuItems = computed(() => {
-        const items = buildMenuItems(navLayout.value, navDefinitionMap.value, t);
-        if (notificationsSettingsStore.notificationLayout === 'notification-center') {
+        const items = buildMenuItems(
+            navLayout.value,
+            navDefinitionMap.value,
+            t
+        );
+        if (
+            notificationsSettingsStore.notificationLayout ===
+            'notification-center'
+        ) {
             return items.filter((item) => {
                 if (item.index === 'notification') {
                     return false;
@@ -101,7 +108,7 @@ export function useNavLayout({
             ? currentRoute.meta.navKeys
             : [currentRoute?.meta?.navKey || currentRouteName].filter(Boolean);
 
-        if (currentRoute?.meta?.hidesActiveMenuItem === true) {
+        if (currentRoute?.meta?.hidesActiveMenuItem) {
             return '';
         }
 
@@ -347,7 +354,9 @@ export function useNavLayout({
         navLayout,
         navLayoutReady,
         navHiddenKeys,
-        defaultHiddenKeys: computed(() => getDefaultHiddenKeys(defaultNavLayout.value)),
+        defaultHiddenKeys: computed(() =>
+            getDefaultHiddenKeys(defaultNavLayout.value)
+        ),
         menuItems,
         activeMenuIndex,
         allNavDefinitions,

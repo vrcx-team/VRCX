@@ -1,10 +1,10 @@
-﻿using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Timers;
+using NLog;
 
 namespace VRCX
 {
@@ -100,7 +100,7 @@ namespace VRCX
                 // We are also checking to see if the process is exiting before adding it, otherwise we'll keep adding it and then removing it constantly in an endless loop.
                 if (process == null || WinApi.HasProcessExited(process.Id))
                     continue;
-                
+
                 monitoredProcess.ProcessStarted(process);
                 ProcessStarted?.Invoke(monitoredProcess);
                 logger.Info($"Monitored process {monitoredProcess.ProcessName} (PID: {process.Id}) started.");

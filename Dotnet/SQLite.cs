@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
-using System.Text.Json;
 
 namespace VRCX
 {

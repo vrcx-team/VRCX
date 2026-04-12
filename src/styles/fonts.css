@@ -28,8 +28,7 @@
         var(--font-cjk-kr-primary), var(--font-cjk-tc-primary);
     --font-mono-cjk:
         ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-        'Liberation Mono', 'Courier New',
-        var(--font-primary-cjk), monospace;
+        'Liberation Mono', 'Courier New', var(--font-primary-cjk), monospace;
 }
 
 :root[lang='zh-CN'] {

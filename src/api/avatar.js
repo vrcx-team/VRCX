@@ -269,6 +269,23 @@ const avatarReq = {
             };
             return args;
         });
+    },
+
+    /**
+     * @param {{n: number, offset: number}} params
+     * @returns {Promise<{json: any, params}>}
+     */
+    getLicensedAvatars(params) {
+        return request('avatars/licensed', {
+            method: 'GET',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
     }
 };
 

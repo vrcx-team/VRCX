@@ -317,10 +317,7 @@
 
     const hiddenItems = computed(() =>
         (props.definitions?.length ? props.definitions : navDefinitions)
-            .filter(
-                (def) =>
-                    hiddenKeySet.value.has(def.key) && !isToolNavKey(def.key)
-            )
+            .filter((def) => hiddenKeySet.value.has(def.key) && !isToolNavKey(def.key))
             .map((def) => ({
                 key: def.key,
                 icon: def.icon,
@@ -446,7 +443,12 @@
             if (byId) return byId;
         }
 
-        if (allowIndexFallback && typeof entity.index === 'number' && entity.index >= 0 && entity.index < nodes.length) {
+        if (
+            allowIndexFallback &&
+            typeof entity.index === 'number' &&
+            entity.index >= 0 &&
+            entity.index < nodes.length
+        ) {
             return nodes[entity.index] || null;
         }
 
@@ -635,7 +637,8 @@
         const sourceNode =
             (sourceIdSnapshot
                 ? visibleNodes.find(
-                      (node) => node.id === sourceIdSnapshot && node.type === (sourceIsFolderSnapshot ? 'folder' : 'item')
+                      (node) =>
+                          node.id === sourceIdSnapshot && node.type === (sourceIsFolderSnapshot ? 'folder' : 'item')
                   )
                 : null) || resolveNodeFromDnDEntity(source, visibleNodes);
         if (!sourceNode) return;

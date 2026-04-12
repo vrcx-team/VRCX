@@ -420,8 +420,7 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     }
 
     function setRecentActionCooldownEnabled() {
-        recentActionCooldownEnabled.value =
-            !recentActionCooldownEnabled.value;
+        recentActionCooldownEnabled.value = !recentActionCooldownEnabled.value;
         configRepository.setBool(
             'VRCX_recentActionCooldownEnabled',
             recentActionCooldownEnabled.value

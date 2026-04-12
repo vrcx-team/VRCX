@@ -88,7 +88,6 @@ function removeWhitespace(a) {
     return a.replace(/\s/g, '');
 }
 
-
 function localeIncludes(str, search, comparer) {
     if (search === '') return true;
     if (!str || !search) return false;
@@ -116,7 +115,6 @@ function isPrefixMatch(name, cleanQuery, comparer) {
         comparer.compare(name.substring(0, cleanQuery.length), cleanQuery) === 0
     );
 }
-
 
 let indexedFriends = []; // { id, name, memo, note, imageUrl }
 let indexedAvatars = []; // { id, name, authorId, imageUrl }
@@ -354,7 +352,6 @@ function handleSearch(payload) {
         }
     });
 }
-
 
 self.addEventListener('message', (event) => {
     const { type, payload } = event.data;

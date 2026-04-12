@@ -5,7 +5,13 @@ import { i18n } from '../../../plugins';
 
 const { t } = i18n.global;
 
-export const createColumns = ({ userImage, userImageFull, onShowFullscreenImage, onShowUser, onDelete }) => [
+export const createColumns = ({
+    userImage,
+    userImageFull,
+    onShowFullscreenImage,
+    onShowUser,
+    onDelete
+}) => [
     {
         id: 'image',
         header: () => t('table.import.image'),

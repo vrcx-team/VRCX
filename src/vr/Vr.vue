@@ -1368,7 +1368,9 @@
                                 style="color: var(--platform-quest); margin-left: 10px"
                                 >Android</span
                             >
-                            <span v-else-if="feed.platform === 'iOS'" style="color: var(--platform-ios); margin-left: 10px"
+                            <span
+                                v-else-if="feed.platform === 'iOS'"
+                                style="color: var(--platform-ios); margin-left: 10px"
                                 >iOS</span
                             >
                             <span v-if="!feed.inCache" style="color: var(--vr-text-muted); margin-left: 10px"
@@ -1384,7 +1386,10 @@
                             v-else-if="feed.color === 'yellow'"
                             v-text="feed.text"
                             style="color: yellow; margin-left: 10px"></span>
-                        <span v-else style="margin-left: 10px; color: var(--vr-text-secondary)" v-text="feed.text"></span>
+                        <span
+                            v-else
+                            style="margin-left: 10px; color: var(--vr-text-secondary)"
+                            v-text="feed.text"></span>
                         <template v-if="feed.combo > 1">
                             <span class="combo" style="margin-left: 10px">x{{ feed.combo }}</span>
                         </template>

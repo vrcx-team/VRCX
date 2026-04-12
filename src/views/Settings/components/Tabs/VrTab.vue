@@ -84,7 +84,8 @@
 
         <!-- VR Notifications -->
         <SettingsGroup :title="t('view.settings.vr.vr_notifications.header')">
-            <SettingsItem :label="t('view.settings.notifications.notifications.desktop_notifications.when_to_display_vr')">
+            <SettingsItem
+                :label="t('view.settings.notifications.notifications.desktop_notifications.when_to_display_vr')">
                 <ToggleGroup
                     type="single"
                     required
@@ -167,7 +168,9 @@
 
             <SettingsItem
                 :label="t('view.settings.notifications.notifications.steamvr_notifications.user_images')"
-                :description="t('view.settings.notifications.notifications.steamvr_notifications.user_images_description')">
+                :description="
+                    t('view.settings.notifications.notifications.steamvr_notifications.user_images_description')
+                ">
                 <Switch
                     :model-value="imageNotifications"
                     @update:modelValue="

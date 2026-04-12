@@ -100,7 +100,7 @@
         }
         // sometimes appearing and sometimes disappearing
         if (status?.active) {
-            const friendStatus = props.friend.status;
+            const friendStatus = props.friend.ref?.status;
             if (friendStatus === 'join me') {
                 return 'friend-card__status-dot--active-join';
             }

@@ -1,10 +1,10 @@
+using System;
+using System.Runtime.InteropServices;
+using System.Threading;
 using CefSharp;
 using CefSharp.Enums;
 using CefSharp.OffScreen;
 using CefSharp.Structs;
-using System;
-using System.Runtime.InteropServices;
-using System.Threading;
 using NLog;
 using Silk.NET.Core.Native;
 using Silk.NET.Direct3D11;
@@ -19,13 +19,13 @@ public class OffScreenBrowser : ChromiumWebBrowser, IRenderHandler
     private ComPtr<ID3D11DeviceContext> _deviceContext;
     private ComPtr<ID3D11Query> _query;
     private ComPtr<ID3D11Texture2D> _renderTarget;
-    
+
     // legacy
     private readonly bool _isLegacy;
     private readonly ReaderWriterLockSlim _paintBufferLock = new();
     private GCHandle _paintBuffer;
     private int _width;
-    private int _height;   
+    private int _height;
 
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -70,7 +70,7 @@ public class OffScreenBrowser : ChromiumWebBrowser, IRenderHandler
             MiscFlags = 0
         }, ref _query);
     }
-    
+
     // legacy
     public void RenderToTexture(ComPtr<ID3D11DeviceContext> deviceContext, ComPtr<ID3D11Texture2D> texture)
     {
@@ -134,7 +134,7 @@ public class OffScreenBrowser : ChromiumWebBrowser, IRenderHandler
     {
         RenderHandler = null;
         base.Dispose();
-        
+
         // legacy
         _paintBufferLock.EnterWriteLock();
         try

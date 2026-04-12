@@ -604,7 +604,15 @@
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { VirtualCombobox } from '@/components/ui/virtual-combobox';
-    import { Item, ItemContent, ItemDescription, ItemFooter, ItemGroup, ItemHeader, ItemTitle } from '@/components/ui/item';
+    import {
+        Item,
+        ItemContent,
+        ItemDescription,
+        ItemFooter,
+        ItemGroup,
+        ItemHeader,
+        ItemTitle
+    } from '@/components/ui/item';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -818,7 +826,10 @@
      *   errorMessage?: string
      * }} options
      */
-    function openImageUploadFlow(e, { inputSelector, aspectRatio, beforeCrop, upload, errorMessage = 'Failed to upload' }) {
+    function openImageUploadFlow(
+        e,
+        { inputSelector, aspectRatio, beforeCrop, upload, errorMessage = 'Failed to upload' }
+    ) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector,
             tooLargeMessage: () => t('message.file.too_large'),

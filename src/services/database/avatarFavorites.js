@@ -55,12 +55,9 @@ const avatarFavorites = {
 
     async getAllAvatarTimeSpent() {
         const map = new Map();
-        await sqliteService.execute(
-            (row) => {
-                map.set(row[0], row[1] || 0);
-            },
-            `SELECT avatar_id, time FROM ${dbVars.userPrefix}_avatar_history`
-        );
+        await sqliteService.execute((row) => {
+            map.set(row[0], row[1] || 0);
+        }, `SELECT avatar_id, time FROM ${dbVars.userPrefix}_avatar_history`);
 
         return map;
     },

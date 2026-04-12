@@ -64,8 +64,7 @@
                 {{ t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip') }}
             </template>
 
-            <SettingsItem
-                :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')">
+            <SettingsItem :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')">
                 <Switch :model-value="saveInstancePrints" @update:modelValue="setSaveInstancePrints()" />
             </SettingsItem>
 
@@ -74,10 +73,8 @@
             </SettingsItem>
         </SettingsGroup>
 
-        <SettingsGroup
-            :title="t('view.settings.advanced.advanced.save_instance_stickers_to_file.header')">
-            <SettingsItem
-                :label="t('view.settings.advanced.advanced.save_instance_stickers_to_file.description')">
+        <SettingsGroup :title="t('view.settings.advanced.advanced.save_instance_stickers_to_file.header')">
+            <SettingsItem :label="t('view.settings.advanced.advanced.save_instance_stickers_to_file.description')">
                 <Switch :model-value="saveInstanceStickers" @update:modelValue="setSaveInstanceStickers()" />
             </SettingsItem>
         </SettingsGroup>
@@ -87,8 +84,7 @@
                 {{ t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip') }}
             </template>
 
-            <SettingsItem
-                :label="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')">
+            <SettingsItem :label="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')">
                 <Switch :model-value="saveInstanceEmoji" @update:modelValue="setSaveInstanceEmoji()" />
             </SettingsItem>
         </SettingsGroup>

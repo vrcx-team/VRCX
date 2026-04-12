@@ -165,7 +165,15 @@
     import WidgetHeader from './WidgetHeader.vue';
     import { Table, TableBody, TableRow, TableCell } from '@/components/ui/table';
 
-    const GAMELOG_TYPES = ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'VideoPlay', 'PortalSpawn', 'Event', 'External'];
+    const GAMELOG_TYPES = [
+        'Location',
+        'OnPlayerJoined',
+        'OnPlayerLeft',
+        'VideoPlay',
+        'PortalSpawn',
+        'Event',
+        'External'
+    ];
 
     const props = defineProps({
         config: {

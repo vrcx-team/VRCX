@@ -5,7 +5,10 @@
                 <div v-if="!text" class="text-transparent">-</div>
                 <div v-show="text" class="flex items-center">
                     <template v-if="isAgeRestricted">
-                        <TooltipWrapper :content="t('dialog.user.info.instance_age_restricted_tooltip')" :delay-duration="300" side="top">
+                        <TooltipWrapper
+                            :content="t('dialog.user.info.instance_age_restricted_tooltip')"
+                            :delay-duration="300"
+                            side="top">
                             <div class="inline-flex items-center gap-1 text-muted-foreground">
                                 <Lock class="size-3.5 shrink-0" />
                                 <span>{{ t('dialog.user.info.instance_age_restricted') }}</span>
@@ -14,7 +17,11 @@
                     </template>
                     <template v-else>
                         <div v-if="region" :class="['flags', 'mr-1.5', 'shrink-0', region]"></div>
-                        <TooltipWrapper :content="tooltipContent" :disabled="tooltipDisabled" :delay-duration="300" side="top">
+                        <TooltipWrapper
+                            :content="tooltipContent"
+                            :disabled="tooltipDisabled"
+                            :delay-duration="300"
+                            side="top">
                             <div
                                 :class="locationClasses"
                                 class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden truncate"
@@ -25,7 +32,10 @@
                                     <span v-if="showInstanceIdInLocation && instanceName" class="ml-1">{{
                                         ` · #${instanceName}`
                                     }}</span>
-                                    <span v-if="groupName" class="ml-0.5 cursor-pointer" @click.stop="handleShowGroupDialog">
+                                    <span
+                                        v-if="groupName"
+                                        class="ml-0.5 cursor-pointer"
+                                        @click.stop="handleShowGroupDialog">
                                         ({{ groupName }})
                                     </span>
                                 </span>
@@ -60,11 +70,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import {
-        ContextMenu,
-        ContextMenuContent,
-        ContextMenuTrigger
-    } from './ui/context-menu';
+    import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from './ui/context-menu';
 
     import {
         getGroupName,
@@ -75,7 +81,13 @@
         resolveRegion,
         translateAccessType
     } from '../shared/utils';
-    import { useAppearanceSettingsStore, useInstanceStore, useInviteStore, useSearchStore, useWorldStore } from '../stores';
+    import {
+        useAppearanceSettingsStore,
+        useInstanceStore,
+        useInviteStore,
+        useSearchStore,
+        useWorldStore
+    } from '../stores';
     import { showGroupDialog } from '../coordinators/groupCoordinator';
     import { showWorldDialog } from '../coordinators/worldCoordinator';
     import { runNewInstanceSelfInviteFlow } from '../coordinators/inviteCoordinator';
@@ -147,7 +159,9 @@
         }
     ]);
     const tooltipContent = computed(() => `${t('dialog.new_instance.instance_id')}: #${instanceName.value}`);
-    const tooltipDisabled = computed(() => props.disableTooltip || !instanceName.value || showInstanceIdInLocation.value);
+    const tooltipDisabled = computed(
+        () => props.disableTooltip || !instanceName.value || showInstanceIdInLocation.value
+    );
     const closedTooltip = computed(() => t('dialog.user.info.instance_closed'));
 
     let isDisposed = false;
@@ -343,10 +357,7 @@
     function handleShareLocation() {
         const L = parsedLocation.value;
         if (!L.worldId) return;
-        copyToClipboard(
-            `https://vrchat.com/home/world/${L.worldId}`,
-            t('message.world.url_copied')
-        );
+        copyToClipboard(`https://vrchat.com/home/world/${L.worldId}`, t('message.world.url_copied'));
     }
 
     /**

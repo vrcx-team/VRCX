@@ -1,7 +1,6 @@
 import { computed, reactive, ref, shallowReactive, watch } from 'vue';
 import { defineStore } from 'pinia';
 
-
 import {
     compareByCreatedAt,
     compareByDisplayName,
@@ -33,7 +32,6 @@ export const useUserStore = defineStore('User', () => {
     const locationStore = useLocationStore();
     const instanceStore = useInstanceStore();
     const uiStore = useUiStore();
-
 
     const currentUser = ref({
         acceptedPrivacyVersion: 0,
@@ -790,6 +788,20 @@ export const useUserStore = defineStore('User', () => {
         });
     }
 
+    function changePassword(currentPassword, password) {
+        return userRequest.saveCurrentUser({
+            currentPassword,
+            password
+        });
+    }
+
+    // check `currentUser.hideContentFilterSettings` before showing content filter settings in UI
+    function changeContentFilterSettings(contentFilters) {
+        return userRequest.saveCurrentUser({
+            contentFilters
+        });
+    }
+
     return {
         state,
 
@@ -828,6 +840,8 @@ export const useUserStore = defineStore('User', () => {
         markCurrentUserGameStopped,
         checkNote,
         toggleSharedConnectionsOptOut,
-        toggleDiscordFriendsOptOut
+        toggleDiscordFriendsOptOut,
+        changePassword,
+        changeContentFilterSettings
     };
 });

@@ -15,6 +15,12 @@
                 "bracketSameLine": true,
                 "vueIndentScriptAndStyle": true
             }
+        },
+        {
+            "files": ["*.yaml", "*.yml"],
+            "options": {
+                "tabWidth": 2
+            }
         }
     ]
 }
