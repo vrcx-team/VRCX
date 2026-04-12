@@ -84,6 +84,8 @@
         useWorldStore
     } from '../../../stores';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
+    import { showAvatarDialog } from '../../../coordinators/avatarCoordinator';
+    import { showGroupDialog } from '../../../coordinators/groupCoordinator';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
     import { createColumns } from './photonEventColumns.jsx';
     import { photonEventTableTypeFilterList } from '../../../shared/constants/photon';
@@ -108,9 +110,6 @@
 
     const { stringComparer } = storeToRefs(useSearchStore());
 
-    const { showAvatarDialog } = useAvatarStore();
-
-    const { showGroupDialog } = useGroupStore();
     const { showFullscreenImageDialog } = useGalleryStore();
     const { ipcEnabled } = storeToRefs(useVrcxStore());
 

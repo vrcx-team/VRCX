@@ -265,7 +265,7 @@
                         size="xs"
                         class="h-5 text-[11px] text-muted-foreground w-full justify-start px-1 hover:bg-transparent">
                         <ChevronRight class="h-3 w-3 mr-1 transition-transform duration-200 [[data-state=open]>&]:rotate-90" />
-                        Recent Activity ({{ inviteLog.length }})
+                        Recent Activity
                     </Button>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
@@ -310,7 +310,7 @@
                             <span class="opacity-50">@ </span>{{ entry.world || 'Unknown World' }}
                         </div>
                         
-                        <span class="w-[200px] text-left font-medium tracking-wide flex-none text-ellipsis overflow-hidden whitespace-nowrap text-[10px]" :title="entry.message" :class="{
+                        <span class="w-[300px] text-left font-medium tracking-wide flex-none text-ellipsis overflow-hidden whitespace-nowrap text-[10px]" :title="entry.message" :class="{
                             'text-green-500': entry.status === 'sent',
                             'text-red-500': entry.status === 'error',
                             'text-muted-foreground': entry.status === 'cached' || entry.status === 'skipped'
