@@ -162,7 +162,9 @@
 
     const tableStyle = { maxHeight: '400px' };
 
-    const rows = computed(() => (Array.isArray(avatarImportTable.value?.data) ? avatarImportTable.value.data.slice() : []));
+    const rows = computed(() =>
+        Array.isArray(avatarImportTable.value?.data) ? avatarImportTable.value.data.slice() : []
+    );
 
     const columns = computed(() =>
         createColumns({

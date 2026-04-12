@@ -2,9 +2,7 @@
     <div class="flex flex-col gap-10 py-2">
         <SettingsGroup :title="t('view.settings.notifications.notifications.header')">
             <SettingsItem :label="t('view.settings.notifications.notifications.layout')">
-                <Select
-                    :model-value="notificationLayout"
-                    @update:modelValue="setNotificationLayout">
+                <Select :model-value="notificationLayout" @update:modelValue="setNotificationLayout">
                     <SelectTrigger size="sm">
                         <SelectValue />
                     </SelectTrigger>
@@ -33,8 +31,7 @@
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.notifications.notifications.desktop_notifications.header')">
-            <SettingsItem
-                :label="t('view.settings.notifications.notifications.desktop_notifications.when_to_display')">
+            <SettingsItem :label="t('view.settings.notifications.notifications.desktop_notifications.when_to_display')">
                 <ToggleGroup
                     type="single"
                     required
@@ -75,8 +72,7 @@
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.notifications.notifications.text_to_speech.header')">
-            <SettingsItem
-                :label="t('view.settings.notifications.notifications.text_to_speech.when_to_play')">
+            <SettingsItem :label="t('view.settings.notifications.notifications.text_to_speech.when_to_play')">
                 <ToggleGroup
                     type="single"
                     required
@@ -120,16 +116,14 @@
                 </Select>
             </SettingsItem>
 
-            <SettingsItem
-                :label="t('view.settings.notifications.notifications.text_to_speech.use_memo_nicknames')">
+            <SettingsItem :label="t('view.settings.notifications.notifications.text_to_speech.use_memo_nicknames')">
                 <Switch
                     :model-value="notificationTTSNickName"
                     :disabled="notificationTTS === 'Never'"
                     @update:modelValue="setNotificationTTSNickName" />
             </SettingsItem>
 
-            <SettingsItem
-                :label="t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')">
+            <SettingsItem :label="t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')">
                 <Switch :model-value="isTestTTSVisible" @update:modelValue="isTestTTSVisible = !isTestTTSVisible" />
             </SettingsItem>
 
@@ -161,10 +155,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import {
-        useNotificationStore,
-        useNotificationsSettingsStore
-    } from '@/stores';
+    import { useNotificationStore, useNotificationsSettingsStore } from '@/stores';
 
     import FeedFiltersDialog from '../../dialogs/FeedFiltersDialog.vue';
     import SettingsGroup from '../SettingsGroup.vue';

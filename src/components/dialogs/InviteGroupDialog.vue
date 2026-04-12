@@ -101,13 +101,13 @@
     import { useFriendStore, useGroupStore, useModalStore } from '../../stores';
     import { groupRequest, queryRequest } from '../../api';
     import { VirtualCombobox } from '../ui/virtual-combobox';
+    import { applyGroup } from '../../coordinators/groupCoordinator';
 
     import configRepository from '../../services/config';
 
     const { userImage, userStatusClass } = useUserDisplay();
     const { vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
     const { currentUserGroups, inviteGroupDialog } = storeToRefs(useGroupStore());
-    const { applyGroup } = useGroupStore();
     const { t } = useI18n();
     const modalStore = useModalStore();
 

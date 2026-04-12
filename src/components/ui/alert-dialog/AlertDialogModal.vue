@@ -14,8 +14,16 @@
 
     const modalStore = useModalStore();
 
-    const { alertOpen, alertMode, alertTitle, alertDescription, alertOkText, alertCancelText, alertDismissible, alertDestructive } =
-        storeToRefs(modalStore);
+    const {
+        alertOpen,
+        alertMode,
+        alertTitle,
+        alertDescription,
+        alertOkText,
+        alertCancelText,
+        alertDismissible,
+        alertDestructive
+    } = storeToRefs(modalStore);
 
     function onEscapeKeyDown(event) {
         if (!alertDismissible.value) {

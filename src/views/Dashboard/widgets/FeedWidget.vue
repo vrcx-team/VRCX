@@ -28,12 +28,12 @@
         </WidgetHeader>
 
         <div class="min-h-0 flex-1 overflow-y-auto overflow-x-hidden" ref="listRef">
-            <Table v-if="filteredData.length" class="is-compact-table table-fixed">
+            <Table v-if="filteredData.length" class="">
                 <TableBody>
                     <TableRow
                         v-for="(item, index) in filteredData"
                         :key="`${item.type}-${item.created_at}-${index}`"
-                        class="cursor-default"
+                        class="cursor-default in-[.is-compact-table]:py-1! in-[.is-comfortable-table]:py-1.5!"
                         :class="{ 'border-l-2 border-l-chart-4': item.isFavorite }">
                         <TableCell class="w-28 text-[11px] tabular-nums text-muted-foreground">
                             <TooltipWrapper :content="formatExactTime(item.created_at)" side="top">

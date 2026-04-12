@@ -3,7 +3,9 @@
         <div
             v-if="image.frames"
             class="avatar absolute top-0 left-0"
-            :style="generateEmojiStyle(imageUrl, image.framesOverTime, image.frames, image.loopStyle, effectiveSize)"></div>
+            :style="
+                generateEmojiStyle(imageUrl, image.framesOverTime, image.frames, image.loopStyle, effectiveSize)
+            "></div>
         <Avatar v-else class="rounded w-full h-full">
             <AvatarImage :src="imageUrl" class="object-cover" />
             <AvatarFallback class="rounded">

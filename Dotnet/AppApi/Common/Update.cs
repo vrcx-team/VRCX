@@ -13,7 +13,7 @@ public partial class AppApi
     {
         Update.CancelUpdate();
     }
-    
+
     public int CheckUpdateProgress()
     {
         return Update.UpdateProgress;

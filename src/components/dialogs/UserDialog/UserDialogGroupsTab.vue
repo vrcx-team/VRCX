@@ -355,7 +355,12 @@
         if (!query) return [];
         return userDialog.value.userGroups.groups.filter((g) => (g.name || '').toLowerCase().includes(query));
     });
-    watch(() => userDialog.value.id, () => { groupSearchQuery.value = ''; });
+    watch(
+        () => userDialog.value.id,
+        () => {
+            groupSearchQuery.value = '';
+        }
+    );
 
     /**
      *

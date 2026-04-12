@@ -75,13 +75,13 @@ export const useFriendStore = defineStore('Friend', () => {
 
     /**
      * Tracks recomputes for the hottest friend-derived lists.
-     * Guarded by AppDebug.debugFriendState so normal behavior stays unchanged.
+     * Guarded by AppDebug.debugRecompute so normal behavior stays unchanged.
      * @param {keyof typeof derivedDebugCounters} name
      * @param {number} resultSize
      */
     function trackDerivedDebug(name, resultSize) {
         derivedDebugCounters[name] += 1;
-        if (!AppDebug.debugFriendState) {
+        if (!AppDebug.debugRecompute) {
             return;
         }
         console.log('[friendStore derived]', {
@@ -100,7 +100,7 @@ export const useFriendStore = defineStore('Friend', () => {
         for (const key in derivedDebugCounters) {
             derivedDebugCounters[key] = 0;
         }
-        if (AppDebug.debugFriendState) {
+        if (AppDebug.debugRecompute) {
             console.log('[friendStore derived] counters reset');
         }
     }
@@ -111,7 +111,7 @@ export const useFriendStore = defineStore('Friend', () => {
      */
     function getDerivedDebugCounters() {
         const snapshot = { ...derivedDebugCounters };
-        if (AppDebug.debugFriendState) {
+        if (AppDebug.debugRecompute) {
             console.log('[friendStore derived] counters snapshot', snapshot);
         }
         return snapshot;
@@ -142,7 +142,9 @@ export const useFriendStore = defineStore('Friend', () => {
      * @returns {(a: object, b: object) => number}
      */
     function getSortedFriendsComparator() {
-        return getFriendsSortFunction(appearanceSettingsStore.sidebarSortMethods);
+        return getFriendsSortFunction(
+            appearanceSettingsStore.sidebarSortMethods
+        );
     }
 
     /**
@@ -222,8 +224,7 @@ export const useFriendStore = defineStore('Friend', () => {
      * @param {object | string} input
      */
     function reindexSortedFriend(input) {
-        const ctx =
-            typeof input === 'string' ? friends.get(input) : input;
+        const ctx = typeof input === 'string' ? friends.get(input) : input;
         if (!ctx) {
             return;
         }
@@ -584,7 +585,7 @@ export const useFriendStore = defineStore('Friend', () => {
             ctx.name = ref.name;
         }
         friends.set(id, ctx);
-        watchState.isLoggedIn = true
+        watchState.isLoggedIn = true;
         // Startup fill flow:
         //
         // login

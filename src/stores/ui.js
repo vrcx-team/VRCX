@@ -203,8 +203,8 @@ export const useUiStore = defineStore('Ui', () => {
      * @param {object} data
      * @param {string} data.type
      * @param {string} data.id
-     * @param {string?} data.tag
-     * @param {string?} data.shortName
+     * @param {string} [data.tag]
+     * @param {string} [data.shortName]
      * @returns {boolean}
      */
     function openDialog(data) {

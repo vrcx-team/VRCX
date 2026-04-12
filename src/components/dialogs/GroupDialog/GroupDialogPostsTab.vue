@@ -24,12 +24,7 @@
                             @click="showFullscreenImageDialog(post.imageUrl)">
                             <img
                                 :src="post.imageUrl"
-                                style="
-                                    width: 60px;
-                                    height: 60px;
-                                    border-radius: var(--radius-md);
-                                    object-fit: cover;
-                                "
+                                style="width: 60px; height: 60px; border-radius: var(--radius-md); object-fit: cover"
                                 @error="
                                     $event.target.style.display = 'none';
                                     $event.target.nextElementSibling.style.display = 'flex';

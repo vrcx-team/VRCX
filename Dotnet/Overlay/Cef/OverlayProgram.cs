@@ -8,9 +8,9 @@ namespace VRCX.Overlay;
 internal static class OverlayProgram
 {
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-    
+
     public static VRCXVRInterface VRCXVRInstance;
-    
+
     public static void OverlayMain()
     {
         logger.Info("VRCX Overlay starting...");
@@ -19,7 +19,7 @@ internal static class OverlayProgram
         var isLegacy = VRCXStorage.Instance.Get("VRCX_DisableVrOverlayGpuAcceleration") == "true";
         VRCXVRInstance = new VRCXVRCef(isLegacy);
         VRCXVRInstance.Init();
-        
+
         OverlayClient.Init();
 
         logger.Info("VRCX Overlay started...");

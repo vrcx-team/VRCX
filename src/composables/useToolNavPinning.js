@@ -4,9 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { toast } from 'vue-sonner';
 
 import configRepository from '../services/config';
-import {
-    navDefinitions
-} from '../shared/constants';
+import { navDefinitions } from '../shared/constants';
 import { useDashboardStore } from '../stores';
 import {
     createBaseDefaultNavLayout,
@@ -183,7 +181,10 @@ export function useToolNavPinning() {
             options.placement
         );
         const nextHiddenKeys = hiddenKeys.filter((key) => key !== navKey);
-        const definitions = buildSanitizeDefinitions(nextLayout, nextHiddenKeys);
+        const definitions = buildSanitizeDefinitions(
+            nextLayout,
+            nextHiddenKeys
+        );
         const definitionMap = createNavDefinitionMap(buildDefinitions());
         const normalizedHiddenKeys = normalizeHiddenKeys(
             nextHiddenKeys,
@@ -216,7 +217,10 @@ export function useToolNavPinning() {
         const { layout, hiddenKeys } = await loadConfig();
         const nextLayout = removeToolNavItem(layout, navKey);
         const nextHiddenKeys = hiddenKeys.filter((key) => key !== navKey);
-        const definitions = buildSanitizeDefinitions(nextLayout, nextHiddenKeys);
+        const definitions = buildSanitizeDefinitions(
+            nextLayout,
+            nextHiddenKeys
+        );
         const definitionMap = createNavDefinitionMap(buildDefinitions());
         const normalizedHiddenKeys = normalizeHiddenKeys(
             nextHiddenKeys,

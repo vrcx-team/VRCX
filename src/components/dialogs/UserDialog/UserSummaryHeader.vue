@@ -263,7 +263,7 @@
 
 <script setup>
     import { Apple, ChevronDown, IdCard, Image, Monitor, Shield, Smartphone, UserPlus, Users } from 'lucide-vue-next';
-    import { ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

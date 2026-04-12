@@ -69,11 +69,17 @@
             createYearRange({
                 start:
                     props?.minValue ??
-                    (toRaw(props.placeholder) ?? props.defaultPlaceholder ?? today(getLocalTimeZone())).cycle('year', -100),
+                    (toRaw(props.placeholder) ?? props.defaultPlaceholder ?? today(getLocalTimeZone())).cycle(
+                        'year',
+                        -100
+                    ),
 
                 end:
                     props?.maxValue ??
-                    (toRaw(props.placeholder) ?? props.defaultPlaceholder ?? today(getLocalTimeZone())).cycle('year', 10)
+                    (toRaw(props.placeholder) ?? props.defaultPlaceholder ?? today(getLocalTimeZone())).cycle(
+                        'year',
+                        10
+                    )
             })
         );
     });

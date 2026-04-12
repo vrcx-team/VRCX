@@ -1,10 +1,4 @@
-import {
-    computed,
-    nextTick,
-    onBeforeMount,
-    ref,
-    watch
-} from 'vue';
+import { computed, nextTick, onBeforeMount, ref, watch } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 
 import configRepository from '../../../services/config.js';
@@ -205,7 +199,9 @@ export function useAvatarCardGrid(options = {}) {
     useResizeObserver(gridContainerRef, (entries) => {
         const [entry] = entries;
         containerWidth.value = Math.max(
-            entry?.contentRect?.width ?? gridContainerRef.value?.clientWidth ?? 0,
+            entry?.contentRect?.width ??
+                gridContainerRef.value?.clientWidth ??
+                0,
             0
         );
     });

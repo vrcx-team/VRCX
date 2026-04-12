@@ -403,7 +403,8 @@
     const { showFullscreenImageDialog } = useGalleryStore();
     const instanceStore = useInstanceStore();
 
-    const { pastCalenderEvents, upcomingCalenderEvents, updateFollowingCalendarData } = useGroupCalendarEvents(groupDialog);
+    const { pastCalenderEvents, upcomingCalenderEvents, updateFollowingCalendarData } =
+        useGroupCalendarEvents(groupDialog);
 
     const bannerError = ref(false);
     const announcementPhotoError = ref(false);
