@@ -290,16 +290,40 @@
                         v-for="(entry, idx) in inviteLog.slice(0, consoleSize)"
                         :key="idx"
                         class="flex items-center gap-1.5 text-[11px] leading-4 px-1 py-0.5 rounded hover:bg-muted/60">
-                        <CheckCircle2 v-if="entry.status === 'sent'" class="h-3 w-3 text-green-500 flex-none" />
-                        <MinusCircle v-else-if="entry.status === 'cached' || entry.status === 'skipped'" class="h-3 w-3 text-muted-foreground flex-none" />
-                        <AlertCircle v-else-if="entry.status === 'error'" class="h-3 w-3 text-red-500 flex-none" />
-                        <span
-                            class="truncate font-medium w-[130px] flex-none cursor-pointer hover:text-primary hover:underline transition-colors"
-                            @click="handleClickUser(entry.userId)">{{ entry.displayName }}</span>
-                        <span
-                            class="text-muted-foreground/60 truncate text-[10px] w-[90px] flex-none cursor-pointer hover:text-primary hover:underline transition-colors"
-                            @click="handleClickGroup(entry.groupId)">{{ resolveGroupName(entry.groupId) }}</span>
-                        <span v-if="entry.message" class="text-muted-foreground text-[10px] flex-none">{{ entry.message }}</span>
+                        <span class="text-muted-foreground/50 text-[10px] w-[55px] flex-none whitespace-nowrap" :title="new Date(entry.timestamp).toLocaleString()">
+                            {{ new Date(entry.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'}) }}
+                        </span>
+                        
+                        <div class="w-[140px] flex-none overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer hover:text-primary transition-colors text-xs text-secondary-foreground" @click.stop="handleClickUser(entry.userId)">
+                            <TooltipWrapper side="top" :v-slots="{ content: () => entry.userId }">
+                                {{ entry.displayName }}
+                            </TooltipWrapper>
+                        </div>
+                        
+                        <div class="flex flex-none items-center w-[120px]">
+                            <span class="w-full overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer hover:text-primary transition-colors text-[10px] text-muted-foreground" @click.stop="handleClickGroup(entry.groupId)">
+                                {{ resolveGroupName(entry.groupId) || 'Target Group' }}
+                            </span>
+                        </div>
+
+                        <div class="w-[150px] flex-none overflow-hidden text-ellipsis whitespace-nowrap text-[10px] text-muted-foreground">
+                            <span class="opacity-50">@ </span>{{ entry.world || 'Unknown World' }}
+                        </div>
+                        
+                        <div class="flex items-center ml-auto gap-2 text-[10px]">
+                            <span class="w-[110px] text-right truncate text-muted-foreground/50">via {{ entry.sender || 'Unknown Sender' }}</span>
+                            <span class="w-[60px] text-right font-medium tracking-wide flex-none" :class="{
+                                'text-green-500': entry.status === 'sent',
+                                'text-red-500': entry.status === 'error',
+                                'text-muted-foreground': entry.status === 'cached' || entry.status === 'skipped'
+                            }">
+                                {{ entry.status.toUpperCase() }}
+                            </span>
+                        </div>
+                        
+                        <TooltipWrapper v-if="entry.message" side="left" :v-slots="{ content: () => entry.message }">
+                            <InfoIcon class="h-3.5 w-3.5 text-muted-foreground/40 shrink-0 flex-none" />
+                        </TooltipWrapper>
                     </div>
                 </div>
             </CollapsibleContent>

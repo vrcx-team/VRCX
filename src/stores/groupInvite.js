@@ -61,16 +61,16 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
     /**
      * Persistent invite cache (survives account switches and restarts).
      * Keys are `${userId}::${groupId}` strings.
-     * @type {Set<string>}
+     * @type {Map<string, {timestamp: number, world: string, sender: string}>}
      */
-    const inviteCache = reactive(new Set());
+    const inviteCache = reactive(new Map());
 
     /** In-flight auto-invite dedup set to prevent concurrent API calls for the same user. */
     const autoInviteInFlight = new Set();
 
     /**
      * Recent invite log entries for UI display.
-     * @type {import('vue').Ref<Array<{userId: string, displayName: string, groupId: string, timestamp: number, status: string, message: string}>>}
+     * @type {import('vue').Ref<Array<{userId: string, displayName: string, groupId: string, timestamp: number, status: string, message: string, world: string, sender: string}>>}
      */
     const inviteLog = ref([]);
 
@@ -168,8 +168,18 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
             'groupInviteToolkit_cache',
             []
         );
-        savedCache.forEach((k) => inviteCache.add(k));
-        console.log(`[GroupInvite] Loaded ${savedCache.length} cached invite entries from storage.`);
+        savedCache.forEach((item) => {
+            if (typeof item === 'string') {
+                inviteCache.set(item, {
+                    timestamp: Date.now(),
+                    world: 'Legacy Cache',
+                    sender: 'Unknown'
+                });
+            } else if (Array.isArray(item) && item.length === 2) {
+                inviteCache.set(item[0], item[1]);
+            }
+        });
+        console.log(`[GroupInvite] Loaded ${inviteCache.size} cached invite entries from storage.`);
 
         // Load persistent invite log (telemetry)
         try {
@@ -262,14 +272,21 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
     /**
      * @param {string} userId
      * @param {string} groupId
+     * @param {string} [worldName]
+     * @param {string} [senderName]
      */
-    function markInvited(userId, groupId) {
-        inviteCache.add(cacheKey(userId, groupId));
-        // Cap cache at MAX_CACHE_SIZE, evicting oldest entries (Set maintains insertion order)
+    function markInvited(userId, groupId, worldName, senderName) {
+        inviteCache.set(cacheKey(userId, groupId), {
+            timestamp: Date.now(),
+            world: worldName || locationStore.lastLocation?.name || 'Unknown',
+            sender: senderName || userStore.currentUser?.displayName || 'Unknown'
+        });
+        
+        // Cap cache at MAX_CACHE_SIZE, evicting oldest entries (Map maintains insertion order)
         if (inviteCache.size > MAX_CACHE_SIZE) {
             const excess = inviteCache.size - MAX_CACHE_SIZE;
             let count = 0;
-            for (const key of inviteCache) {
+            for (const key of inviteCache.keys()) {
                 if (count >= excess) break;
                 inviteCache.delete(key);
                 count++;
@@ -309,7 +326,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
             clearTimeout(persistTimer);
             persistTimer = null;
         }
-        configRepository.setArray('groupInviteToolkit_cache', Array.from(inviteCache));
+        configRepository.setArray('groupInviteToolkit_cache', Array.from(inviteCache.entries()));
         configRepository.setString('groupInviteToolkit_log', JSON.stringify(inviteLog.value));
     }
 
@@ -323,15 +340,19 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
      * @param {string} groupId
      * @param {'sent' | 'cached' | 'error' | 'skipped'} status
      * @param {string} [message]
+     * @param {string} [worldNameOverride]
+     * @param {string} [senderOverride]
      */
-    function addLog(userId, displayName, groupId, status, message) {
+    function addLog(userId, displayName, groupId, status, message, worldNameOverride, senderOverride) {
         inviteLog.value.unshift({
             userId,
             displayName,
             groupId,
             timestamp: Date.now(),
             status,
-            message: message || ''
+            message: message || '',
+            world: worldNameOverride || locationStore.lastLocation?.name || 'Unknown',
+            sender: senderOverride || userStore.currentUser?.displayName || 'Unknown'
         });
         if (inviteLog.value.length > MAX_LOG) {
             inviteLog.value.length = MAX_LOG;
@@ -381,9 +402,11 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
      * @param {string} userId
      * @param {string} displayName
      * @param {string} groupId
+     * @param {string} [worldName]
+     * @param {string} [senderName]
      * @returns {Promise<{sent: boolean, apiCalled: boolean, isRateLimit?: boolean}>}
      */
-    async function sendSingleInvite(userId, displayName, groupId) {
+    async function sendSingleInvite(userId, displayName, groupId, worldName, senderName) {
         if (!userId || !groupId) return { sent: false, apiCalled: false };
 
         // Skip self
@@ -394,14 +417,14 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
 
         // Check blacklist
         if (isBlacklisted(userId, displayName)) {
-            addLog(userId, displayName, groupId, 'skipped', 'User is blacklisted');
+            addLog(userId, displayName, groupId, 'skipped', 'User is blacklisted', worldName, senderName);
             console.log(`[GroupInvite] Skipped ${displayName} (${userId}) - Blacklisted.`);
             return { sent: false, apiCalled: false };
         }
 
         // Check cache
         if (isAlreadyInvited(userId, groupId)) {
-            addLog(userId, displayName, groupId, 'cached', 'Already invited (cached)');
+            addLog(userId, displayName, groupId, 'cached', 'Already invited (cached)', worldName, senderName);
             console.log(`[GroupInvite] Skipped ${displayName} (${userId}) - Already present in cache.`);
             return { sent: false, apiCalled: false };
         }
@@ -411,9 +434,9 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 groupId,
                 userId
             });
-            markInvited(userId, groupId);
+            markInvited(userId, groupId, worldName, senderName);
             rateLimitStrikes.value = 0;
-            addLog(userId, displayName, groupId, 'sent', 'Group Invite');
+            addLog(userId, displayName, groupId, 'sent', 'Group Invite', worldName, senderName);
             console.log(`[GroupInvite] SUCCESS: Group Invite sent to ${displayName} (${userId})!`);
             return { sent: true, apiCalled: true };
         } catch (err) {
@@ -424,9 +447,9 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
             }
             // Cache permanent-state errors to prevent re-spam on next run
             if (PERMANENT_ERRORS.includes(uiMsg)) {
-                markInvited(userId, groupId);
+                markInvited(userId, groupId, worldName, senderName);
             }
-            addLog(userId, displayName, groupId, 'error', uiMsg);
+            addLog(userId, displayName, groupId, 'error', uiMsg, worldName, senderName);
             console.error(`[GroupInvite] FAILED to invite ${displayName} (${userId}). Reason: ${uiMsg} | Raw: ${rawMsg}`, err);
             return { sent: false, apiCalled: true, isRateLimit: uiMsg === 'Rate Limited (429)' };
         }
@@ -449,13 +472,13 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
         }
 
         if (isBlacklisted(userId, displayName)) {
-            addLog(userId, displayName, locationTag, 'skipped', 'User is blacklisted');
+            addLog(userId, displayName, locationTag, 'skipped', 'User is blacklisted', worldName);
             console.log(`[InstanceInvite] Skipped ${displayName} (${userId}) - Blacklisted.`);
             return { sent: false, apiCalled: false };
         }
 
         if (isAlreadyInvited(userId, locationTag)) {
-            addLog(userId, displayName, locationTag, 'cached', 'Already invited (cached)');
+            addLog(userId, displayName, locationTag, 'cached', 'Already invited (cached)', worldName);
             console.log(`[InstanceInvite] Skipped ${displayName} (${userId}) - Cached.`);
             return { sent: false, apiCalled: false };
         }
@@ -465,17 +488,17 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 { instanceId: locationTag, worldId: locationTag, worldName },
                 userId
             );
-            markInvited(userId, locationTag);
+            markInvited(userId, locationTag, worldName);
             rateLimitStrikes.value = 0;
-            addLog(userId, displayName, locationTag, 'sent', 'Instance Invite');
+            addLog(userId, displayName, locationTag, 'sent', 'Instance Invite', worldName);
             console.log(`[InstanceInvite] SUCCESS: Invite sent to ${displayName} for ${worldName}`);
             return { sent: true, apiCalled: true };
         } catch (err) {
             const rawMsg = err?.error?.message || err?.message || 'Unknown API Error';
             const uiMsg = parseApiError(err);
             if (uiMsg === 'Rate Limited (429)') rateLimitStrikes.value++;
-            if (PERMANENT_ERRORS.includes(uiMsg)) markInvited(userId, locationTag);
-            addLog(userId, displayName, locationTag, 'error', uiMsg);
+            if (PERMANENT_ERRORS.includes(uiMsg)) markInvited(userId, locationTag, worldName);
+            addLog(userId, displayName, locationTag, 'error', uiMsg, worldName);
             console.error(`[InstanceInvite] FAILED ${displayName}. Reason: ${uiMsg} | Raw: ${rawMsg}`, err);
             return { sent: false, apiCalled: true, isRateLimit: uiMsg === 'Rate Limited (429)' };
         }
@@ -741,7 +764,9 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 userId, 
                 displayName, 
                 groupId: selectedGroupId.value,
-                addedAt: Date.now()
+                addedAt: Date.now(),
+                worldName: locationStore.lastLocation?.name || 'Unknown World',
+                sender: userStore.currentUser?.displayName || 'Unknown Sender'
             });
             console.log(`[AutoInvite] Enqueued invite for ${displayName}. Queue size: ${autoInviteQueue.value.length}`);
             
@@ -775,7 +800,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                 }
 
                 // Dequeue the next person
-                let { userId, displayName, groupId, addedAt } = autoInviteQueue.value.shift();
+                let { userId, displayName, groupId, addedAt, worldName, sender } = autoInviteQueue.value.shift();
                 
                 // If they have no userId because they aren't cached, try to dynamically fetch them!
                 if (!userId) {
@@ -813,7 +838,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
 
                 try {
                     // Send the single invite payload
-                    const result = await sendSingleInvite(userId, displayName, groupId);
+                    const result = await sendSingleInvite(userId, displayName, groupId, worldName, sender);
                     
                     if (result.sent) {
                         console.log(`[AutoInvite Queue] SUCCESS: Invited ${displayName}`);
@@ -830,7 +855,7 @@ export const useGroupInviteStore = defineStore('GroupInvite', () => {
                             rateLimitCooldownUntil.value = Date.now() + (10 * 60 * 1000);
                         }
                         // Re-add user back to the front of the queue so we don't lose them
-                        autoInviteQueue.value.unshift({ userId, displayName, groupId, addedAt });
+                        autoInviteQueue.value.unshift({ userId, displayName, groupId, addedAt, worldName, sender });
                         continue; // Go back to top to hit the Rate Limit Guard
                     } else {
                         console.log(`[AutoInvite Queue] FAILED (Non-Rate-Limit): ${displayName}`);

@@ -302,6 +302,7 @@ export const createColumns = ({
                 onShowAvatar={onShowAvatar}
                 onShowGroup={onShowGroup}
                 onShowWorld={onShowWorld}
+                onShowUser={onShowUser}
                 onShowImage={onShowImage}
             />
         )
