@@ -300,30 +300,27 @@
                             </TooltipWrapper>
                         </div>
                         
-                        <div class="flex flex-none items-center w-[120px]">
-                            <span class="w-full overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer hover:text-primary transition-colors text-[10px] text-muted-foreground" @click.stop="handleClickGroup(entry.groupId)">
+                        <div class="flex flex-none items-center w-[90px]">
+                            <span class="w-full overflow-hidden text-ellipsis left text-left whitespace-nowrap cursor-pointer hover:text-primary transition-colors text-[10px] text-muted-foreground" @click.stop="handleClickGroup(entry.groupId)">
                                 {{ resolveGroupName(entry.groupId) || 'Target Group' }}
                             </span>
                         </div>
 
-                        <div class="w-[150px] flex-none overflow-hidden text-ellipsis whitespace-nowrap text-[10px] text-muted-foreground">
+                        <div class="w-[120px] flex-none overflow-hidden text-ellipsis whitespace-nowrap text-left text-[10px] text-muted-foreground">
                             <span class="opacity-50">@ </span>{{ entry.world || 'Unknown World' }}
                         </div>
                         
-                        <div class="flex items-center ml-auto gap-2 text-[10px]">
-                            <span class="w-[110px] text-right truncate text-muted-foreground/50">via {{ entry.sender || 'Unknown Sender' }}</span>
-                            <span class="w-[60px] text-right font-medium tracking-wide flex-none" :class="{
-                                'text-green-500': entry.status === 'sent',
-                                'text-red-500': entry.status === 'error',
-                                'text-muted-foreground': entry.status === 'cached' || entry.status === 'skipped'
-                            }">
-                                {{ entry.status.toUpperCase() }}
-                            </span>
+                        <span class="w-[200px] text-left font-medium tracking-wide flex-none text-ellipsis overflow-hidden whitespace-nowrap text-[10px]" :title="entry.message" :class="{
+                            'text-green-500': entry.status === 'sent',
+                            'text-red-500': entry.status === 'error',
+                            'text-muted-foreground': entry.status === 'cached' || entry.status === 'skipped'
+                        }">
+                            {{ entry.status === 'error' && entry.message ? entry.message.toUpperCase() : entry.status.toUpperCase() }}
+                        </span>
+
+                        <div class="flex items-center ml-auto text-[10px]">
+                            <span class="w-[80px] text-right text-ellipsis overflow-hidden whitespace-nowrap text-muted-foreground/50" :title="entry.sender">via {{ entry.sender || 'Unknown Sender' }}</span>
                         </div>
-                        
-                        <TooltipWrapper v-if="entry.message" side="left" :v-slots="{ content: () => entry.message }">
-                            <InfoIcon class="h-3.5 w-3.5 text-muted-foreground/40 shrink-0 flex-none" />
-                        </TooltipWrapper>
                     </div>
                 </div>
             </CollapsibleContent>
