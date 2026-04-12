@@ -90,22 +90,6 @@
     }));
 
     const statusDotClass = computed(() => {
-            // friend.ref can (most likely) have old data from a previous session. Instead we should call ctx.state directly
-            // So states of the users will be shown correctly on VRCX boot..
-        if (!props.friend.pendingOffline && props.friend.state === 'active') {
-            const friendStatus = props.friend.ref?.status;
-            if (friendStatus === 'join me') {
-                return 'friend-card__status-dot--active-join';
-            }
-            if (friendStatus === 'ask me') {
-                return 'friend-card__status-dot--active-ask';
-            }
-            if (friendStatus === 'busy') {
-                return 'friend-card__status-dot--active-busy';
-            }
-            return 'friend-card__status-dot--active';
-        }
-
         const status = userStatusClass(props.friend.ref, props.friend.pendingOffline);
 
         if (status?.joinme) {
