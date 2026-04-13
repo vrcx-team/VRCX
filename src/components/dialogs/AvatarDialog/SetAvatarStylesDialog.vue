@@ -33,8 +33,6 @@
                     </Select>
                 </div>
 
-                <br />
-
                 <div>
                     <span>{{ t('dialog.set_avatar_styles.secondary_style') }}</span>
                     <br />
@@ -55,8 +53,6 @@
                         </SelectContent>
                     </Select>
                 </div>
-
-                <br />
 
                 <div class="text-xs">{{ t('dialog.set_world_tags.author_tags') }}</div>
 
