@@ -79,14 +79,14 @@
         }
     });
 
-    const avatarSize = computed(() => Math.max(36, 46 * props.cardScale));
+    const avatarSize = computed(() => Math.max(28, 32 * props.cardScale));
 
     const cardStyle = computed(() => ({
         '--card-scale': props.cardScale,
         '--card-spacing': props.cardSpacing,
         cursor: 'pointer',
-        padding: `${54 * props.cardScale * props.cardSpacing}px`,
-        paddingBottom: `${36 * props.cardScale * props.cardSpacing}px !important`
+        padding: `${8 * props.cardScale}px`,
+        paddingBottom: `${6 * props.cardScale}px !important`
     }));
 
     const statusDotClass = computed(() => {
@@ -220,7 +220,7 @@
     }
 
     .friend-card__name {
-        font-size: calc(18px * var(--card-scale));
+        font-size: calc(13px * var(--card-scale));
     }
 
     .friend-card__signature {
@@ -234,7 +234,7 @@
     }
 
     .friend-card__world {
-        min-height: calc(40px * var(--card-scale));
+        min-height: calc(24px * var(--card-scale));
         padding: calc(7px * var(--card-scale)) calc(8px * var(--card-scale));
         border-radius: calc(var(--radius-lg) * var(--card-scale));
         font-size: calc(12px * var(--card-scale));
