@@ -92,28 +92,26 @@
     const statusDotClass = computed(() => {
         const status = userStatusClass(props.friend.ref, props.friend.pendingOffline);
 
-        if (status?.joinme) {
-            return 'friend-card__status-dot--join';
-        }
         if (status?.online) {
             return 'friend-card__status-dot--online';
         }
-        // sometimes appearing and sometimes disappearing
+        if (status?.['active-joinme']) {
+            return 'friend-card__status-dot--active-joinme';
+        }
+        if (status?.['active-askme']) {
+            return 'friend-card__status-dot--active-askme';
+        }
+        if (status?.['active-busy']) {
+            return 'friend-card__status-dot--active-busy';
+        }
         if (status?.active) {
-            const friendStatus = props.friend.ref?.status;
-            if (friendStatus === 'join me') {
-                return 'friend-card__status-dot--active-join';
-            }
-            if (friendStatus === 'ask me') {
-                return 'friend-card__status-dot--active-ask';
-            }
-            if (friendStatus === 'busy') {
-                return 'friend-card__status-dot--active-busy';
-            }
             return 'friend-card__status-dot--active';
         }
+        if (status?.joinme) {
+            return 'friend-card__status-dot--joinme';
+        }
         if (status?.askme) {
-            return 'friend-card__status-dot--ask';
+            return 'friend-card__status-dot--askme';
         }
         if (status?.busy) {
             return 'friend-card__status-dot--busy';
@@ -162,13 +160,13 @@
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-online) 40%, transparent);
     }
 
-    .friend-card__status-dot--active-join {
+    .friend-card__status-dot--active-joinme {
         background: transparent;
         border: calc(2px * var(--card-scale)) solid var(--status-joinme);
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-joinme) 40%, transparent);
     }
 
-    .friend-card__status-dot--active-ask {
+    .friend-card__status-dot--active-askme {
         background: transparent;
         border: calc(2px * var(--card-scale)) solid var(--status-askme);
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-askme) 40%, transparent);
@@ -180,7 +178,7 @@
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-busy) 40%, transparent);
     }
 
-    .friend-card__status-dot--join {
+    .friend-card__status-dot--joinme {
         background: var(--status-joinme);
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-joinme) 40%, transparent);
     }
@@ -190,7 +188,7 @@
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-busy) 40%, transparent);
     }
 
-    .friend-card__status-dot--ask {
+    .friend-card__status-dot--askme {
         background: var(--status-askme);
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-askme) 40%, transparent);
     }
