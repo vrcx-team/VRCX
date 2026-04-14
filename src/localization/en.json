@@ -1371,7 +1371,7 @@
                 "self_invite_tooltip": "Invite Yourself",
                 "open_in_vrchat_tooltip": "Open in VRChat",
                 "refresh_instance_info": "Refresh Instance Info",
-                "instance_queue": "Queue:",
+                "instance_queue": "Queue",
                 "instance_users": "Users:",
                 "instance_friends_tooltip": "Friends in this instance",
                 "instance_game_version": "Game Version:",
@@ -1412,6 +1412,7 @@
                 "vrcplus_hides_avatar": "When a VRC+ profile photo is set, avatar info is hidden. This also hides avatar changes in the feed",
                 "instance_full": "full",
                 "instance_closed": "Instance closed",
+                "instance_closed_at": "Instance closed at",
                 "instance_age_restricted": "Restricted",
                 "instance_age_restricted_tooltip": "In an age-restricted instance",
                 "close_instance": "Close Instance",
@@ -3156,3 +3157,4 @@
         "now_playing": "Now Playing"
     }
 }
+
