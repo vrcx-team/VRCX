@@ -1,5 +1,5 @@
 <template>
-    <div class="flex row-auto gap-6" v-bind="$attrs">
+    <div class="flex row-auto gap-2" v-bind="$attrs">
         <div id="standart-actions" class="flex row-auto gap-2">
             <div v-if="showLaunchButton" class="inline-block">
                 <TooltipWrapper side="top" :content="t('dialog.user.info.launch_invite_tooltip')">
@@ -94,6 +94,19 @@
                             {{ t('dialog.user.info.instance_disabled_content') }}
                             {{ instanceInfoState.disabledContentSettings }}
                         </span>
+
+                        <TooltipWrapper
+                            v-if="instanceInfoState.canCloseInstance && !instance?.closedAt"
+                            side="top"
+                            :content="t('dialog.user.info.close_instance')">
+                            <Button
+                                class="w-12 h-6 text-xs hover:text-muted-foreground"
+                                size="icon-sm"
+                                variant="destructive"
+                                @click="closeInstance(resolvedInstanceLocation)">
+                                <PowerIcon class="h-4 w-4" />
+                            </Button>
+                        </TooltipWrapper>
                     </div>
                 </template>
                 <div :class="cn('flex items-center gap-0.5', !instance?.hasCapacityForYou ? 'text-red-500' : null)">
@@ -108,7 +121,7 @@
 
             <TooltipWrapper v-if="friendcount" side="top" :content="t('dialog.user.info.instance_friends_tooltip')">
                 <span class="flex items-center gap-0.5">
-                    <Link class="h-4 w-4" />
+                    <UserPlus2 class="h-4 w-4" />
                     {{ friendcount }}
                 </span>
             </TooltipWrapper>
@@ -146,19 +159,6 @@
                 <img :src="performanceIcon" class="h-4 w-4" />
             </TooltipWrapper>
         </div>
-
-        <TooltipWrapper
-            v-if="instanceInfoState.canCloseInstance && !instance?.closedAt"
-            side="top"
-            :content="t('dialog.user.info.close_instance')">
-            <Button
-                class="w-12 h-6 text-xs hover:text-muted-foreground"
-                size="icon-sm"
-                variant="destructive"
-                @click="closeInstance(resolvedInstanceLocation)">
-                <PowerIcon class="h-4 w-4" />
-            </Button>
-        </TooltipWrapper>
     </div>
 </template>
 
@@ -173,8 +173,8 @@
         RefreshCw,
         UsersRound,
         SquareStack,
-        Link,
-        Lock
+        Lock,
+        UserPlus2
     } from 'lucide-vue-next';
     import { computed, reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
@@ -422,4 +422,3 @@
         immediate: true
     });
 </script>
-

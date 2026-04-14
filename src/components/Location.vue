@@ -41,11 +41,11 @@
                                 </span>
                             </div>
                         </TooltipWrapper>
-                        <div v-if="instanceRef?.closedAt">
+                        <div v-if="closedAt">
                             <TooltipWrapper side="top">
                                 <template #content>
-                                    {{ t('dialog.user.info.instance_closed_at') }}:
-                                    {{ formatDateFilter(instanceRef.closedAt, 'long') }}
+                                    {{ t('dialog.user.info.instance_closed') }}:
+                                    {{ formatDateFilter(closedAt, 'long') }}
                                 </template>
                                 <AlertTriangle class="text-orange-500 my-auto" />
                             </TooltipWrapper>
@@ -69,7 +69,7 @@
     </component>
 </template>
 
-<script lang="ts" setup>
+<script setup>
     import { computed, onBeforeUnmount, ref, watch } from 'vue';
     import { AlertTriangle, Lock } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
@@ -87,7 +87,13 @@
         resolveRegion,
         translateAccessType
     } from '../shared/utils';
-    import { useAppearanceSettingsStore, useInstanceStore, useInviteStore, useSearchStore, useWorldStore } from '../stores';
+    import {
+        useAppearanceSettingsStore,
+        useInstanceStore,
+        useInviteStore,
+        useSearchStore,
+        useWorldStore
+    } from '../stores';
     import { showGroupDialog } from '../coordinators/groupCoordinator';
     import { showWorldDialog } from '../coordinators/worldCoordinator';
     import { runNewInstanceSelfInviteFlow } from '../coordinators/inviteCoordinator';
@@ -148,7 +154,7 @@
     const isTraveling = ref(false);
     const parsedLocation = ref({ isRealInstance: false, worldId: '', tag: '', shortName: '' });
     const groupName = ref('');
-    const isClosed = ref(false);
+    const closedAt = ref('');
     const instanceName = ref('');
     const instanceRef = ref(null);
 
@@ -161,7 +167,9 @@
         }
     ]);
     const tooltipContent = computed(() => `${t('dialog.new_instance.instance_id')}: #${instanceName.value}`);
-    const tooltipDisabled = computed(() => props.disableTooltip || !instanceName.value || showInstanceIdInLocation.value);
+    const tooltipDisabled = computed(
+        () => props.disableTooltip || !instanceName.value || showInstanceIdInLocation.value
+    );
 
     let isDisposed = false;
     onBeforeUnmount(() => {
@@ -199,7 +207,7 @@
         ageGate.value = false;
         isTraveling.value = false;
         groupName.value = '';
-        isClosed.value = false;
+        closedAt.value = '';
         instanceName.value = '';
     }
 
@@ -221,6 +229,7 @@
         parsedLocation.value = L;
         setText(L);
         instanceName.value = L.instanceName;
+        closedAt.value = '';
         if (!L.isRealInstance) {
             return;
         }
@@ -233,7 +242,6 @@
     }
 
     /**
-     * FIXME(kube): this is fucky, no idea how to do it better but this is madness
      * @param L
      */
     function applyInstanceRef(L) {
@@ -247,7 +255,7 @@
             instanceName.value = cachedInstanceRef.displayName;
         }
         if (cachedInstanceRef.closedAt) {
-            isClosed.value = true;
+            closedAt.value = cachedInstanceRef.closedAt;
         }
     }
 
@@ -387,4 +395,3 @@
         showPreviousInstancesInfoDialog(instanceId);
     }
 </script>
-

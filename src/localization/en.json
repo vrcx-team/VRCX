@@ -1410,8 +1410,7 @@
                 "copy_url": "Copy URL",
                 "copy_display_name": "Copy DisplayName",
                 "vrcplus_hides_avatar": "When a VRC+ profile photo is set, avatar info is hidden. This also hides avatar changes in the feed",
-                "instance_full": "full",
-                "instance_closed": "Instance closed",
+                "instance_full": "Full",
                 "instance_closed_at": "Instance closed at",
                 "instance_age_restricted": "Restricted",
                 "instance_age_restricted_tooltip": "In an age-restricted instance",
@@ -1420,7 +1419,7 @@
                 "open_previous_instance": "Open Previous Instances",
                 "show_mutual_friends": "Show Mutual Friends",
                 "show_discord_connections": "Show Discord Connections",
-                "instance_minimum_avatar_performance": "Min Avatar Perf"
+                "instance_minimum_avatar_performance": "Minimum Avatar Performance"
             },
             "groups": {
                 "header": "Groups",
