@@ -30,8 +30,7 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem
-                :label="t('view.settings.discord_presence.discord_presence.instance_type_player_count')">
+            <SettingsItem :label="t('view.settings.discord_presence.discord_presence.instance_type_player_count')">
                 <Switch
                     :model-value="discordInstance"
                     :disabled="!discordActive"
@@ -51,8 +50,7 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem
-                :label="t('view.settings.discord_presence.discord_presence.show_details_in_private')">
+            <SettingsItem :label="t('view.settings.discord_presence.discord_presence.show_details_in_private')">
                 <Switch
                     :model-value="!discordHideInvite"
                     :disabled="!discordActive"
@@ -83,9 +81,7 @@
             </SettingsItem>
 
             <SettingsItem
-                :label="
-                    t('view.settings.discord_presence.discord_presence.display_world_name_as_discord_status')
-                ">
+                :label="t('view.settings.discord_presence.discord_presence.display_world_name_as_discord_status')">
                 <Switch
                     :model-value="discordWorldNameAsDiscordStatus"
                     :disabled="!discordActive"
@@ -98,9 +94,12 @@
 
         <!-- Translation API -->
         <SettingsGroup :title="t('view.settings.advanced.advanced.translation_api.header')">
-            <SettingsItem :label="t('view.settings.advanced.advanced.translation_api.enable')"
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.translation_api.enable')"
                 :description="t('view.settings.advanced.advanced.translation_api.enable_tooltip')">
-                <Switch :model-value="translationApi" @update:modelValue="changeTranslationAPI('VRCX_translationAPI')" />
+                <Switch
+                    :model-value="translationApi"
+                    @update:modelValue="changeTranslationAPI('VRCX_translationAPI')" />
             </SettingsItem>
 
             <SettingsItem :label="t('view.settings.advanced.advanced.translation_api.translation_api_key')">
@@ -113,7 +112,8 @@
 
         <!-- YouTube API -->
         <SettingsGroup :title="t('view.settings.advanced.advanced.youtube_api.header')">
-            <SettingsItem :label="t('view.settings.advanced.advanced.youtube_api.enable')"
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.youtube_api.enable')"
                 :description="t('view.settings.advanced.advanced.youtube_api.enable_tooltip')">
                 <Switch :model-value="youTubeApi" @update:modelValue="changeYouTubeApi('VRCX_youtubeAPI')" />
             </SettingsItem>
@@ -199,15 +199,9 @@
 
     const { showVRChatConfig } = advancedSettingsStore;
 
-    const {
-        avatarRemoteDatabase,
-        youTubeApi,
-        translationApi
-    } = storeToRefs(advancedSettingsStore);
+    const { avatarRemoteDatabase, youTubeApi, translationApi } = storeToRefs(advancedSettingsStore);
 
-    const {
-        setAvatarRemoteDatabase
-    } = advancedSettingsStore;
+    const { setAvatarRemoteDatabase } = advancedSettingsStore;
 
     const { isAvatarProviderDialogVisible } = storeToRefs(useAvatarProviderStore());
     const { showAvatarProviderDialog } = useAvatarProviderStore();

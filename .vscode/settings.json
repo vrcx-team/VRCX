@@ -1,13 +1,38 @@
 {
     "i18n-ally.localesPaths": ["src/localization"],
+    "i18n-ally.enabledFrameworks": ["vue"],
     "i18n-ally.keystyle": "nested",
+    "i18n-ally.dirStructure": "file",
+    "i18n-ally.namespace": false,
+    "i18n-ally.pathMatcher": "{locale}.json",
     "i18n-ally.sourceLanguage": "en",
     "i18n-ally.indent": 4,
     "oxc.fmt.configPath": ".oxfmtrc.json",
     "editor.defaultFormatter": "oxc.oxc-vscode",
     "editor.formatOnSave": true,
-    "omnisharp.enableRoslynAnalyzers": true,
+    "editor.defaultFormatter": "oxc.oxc-vscode",
     "omnisharp.useModernNet": false,
+    "[javascript]": {
+        "editor.defaultFormatter": "oxc.oxc-vscode"
+    },
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "oxc.oxc-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "oxc.oxc-vscode"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "oxc.oxc-vscode"
+    },
+    "[vue]": {
+        "editor.defaultFormatter": "oxc.oxc-vscode"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "oxc.oxc-vscode"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "oxc.oxc-vscode"
+    },
     "[csharp]": {
         "editor.defaultFormatter": "ms-dotnettools.csharp"
     },

@@ -1,10 +1,4 @@
-import {
-    computed,
-    nextTick,
-    onBeforeMount,
-    ref,
-    watch
-} from 'vue';
+import { computed, nextTick, onBeforeMount, ref, watch } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 
 import configRepository from '../../../services/config.js';

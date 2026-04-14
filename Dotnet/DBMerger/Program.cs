@@ -1,8 +1,4 @@
-﻿using NLog;
-using NLog.Targets;
-using SQLite;
 using System;
-
 // Use different command line parser for more standardized output
 // (like help text)
 using System.CommandLine;
@@ -11,6 +7,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using NLog;
+using NLog.Targets;
+using SQLite;
 
 namespace DBMerger
 {
@@ -66,7 +65,7 @@ namespace DBMerger
                     logger.Fatal("Could not connect to old DB. Perhaps passed in db is corrupt or not a valid sqlite db?");
                     return;
                 }
-            
+
                 logger.Debug("Creating connection to new DB");
                 try
                 {
@@ -128,19 +127,21 @@ namespace DBMerger
             var rootCommand = new RootCommand("Merge an old and new VRCX sqlite database into one.");
 
             var newDBOption = new Option<string>(
-                ["-n", "--new-db-path"], 
+                ["-n", "--new-db-path"],
                 description: "The path of the new DB to merge the old onto.",
                 parseArgument: validateDBPath
-            ) { IsRequired = true };
+            )
+            { IsRequired = true };
             rootCommand.AddOption(newDBOption);
 
             var oldDBOption = new Option<string>(
                 ["-o", "--old-db-path"],
                 description: "The path of the old DB to merge into the new.",
                 parseArgument: validateDBPath
-            ) { IsRequired = true };
+            )
+            { IsRequired = true };
             rootCommand.AddOption(oldDBOption);
-            
+
             // Add `debug` option to be consistent with args from the main exe
             var debugOption = new Option<bool>(["-v", "--verbose", "-d", "--debug"], () => false, "Add debug information to the output.");
             rootCommand.AddOption(debugOption);
@@ -187,7 +188,7 @@ namespace DBMerger
             });
         }
 
-        private static void CreateBackup() 
+        private static void CreateBackup()
         {
             // Get unique name for backup. Format matches the log file name format
             string date = DateTime.Now.ToString("yyyyMMdd");

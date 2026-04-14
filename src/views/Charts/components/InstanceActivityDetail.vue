@@ -29,6 +29,8 @@
 
     import * as echarts from 'echarts';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import InstanceActivityTooltip from './InstanceActivityTooltip.jsx';
+    import { renderToHtml } from '@/lib/utils';
 
     const { isDarkMode, dtHour12 } = storeToRefs(useAppearanceSettingsStore());
 
@@ -230,6 +232,8 @@
         // 2. time: the time the user spent in the instance
         // 3. tail: the time from startTimeStamp to the current entry's leaveTime
         // 4. entry: the original activity detail entry
+
+        // FIXME(kube): why are there not types here?
         const userGroupedEntries = new Map();
         // uniqueUserEntries has each user's first entry and used to keep the order of the users calculated in InstanceActivity.vue
         const uniqueUserEntries = [];
@@ -331,43 +335,30 @@
             return '';
         };
 
+        // FIXME(kube): this is a bandaid to make the formater shut up
+        // this should be looked at by someone with more experience
         const getTooltip = (params) => {
-            const activityDetailData = props.activityDetailData;
-            const param = params;
-            const userData = uniqueUserEntries[param.dataIndex];
             const isTimeSeries = params.seriesIndex % 2 === 1;
-            if (!isTimeSeries) {
-                return '';
-            }
+            if (!isTimeSeries) return '';
+
+            const userData = uniqueUserEntries[params.dataIndex];
             const targetEntryIndex = Math.floor(params.seriesIndex / 2);
-
-            if (!activityDetailData || !userData) {
-                return '';
-            }
-
             // first, find the user's entries, then get the focused entry
-            const instanceData = userGroupedEntries.get(userData.user_id)[targetEntryIndex]?.entry;
-            if (!instanceData) {
-                return '';
-            }
+            const instanceData = userGroupedEntries.get(userData?.user_id)?.[targetEntryIndex]?.entry;
+
+            if (!instanceData) return '';
 
             const format = dtHour12.value ? 'hh:mm:ss A' : 'HH:mm:ss';
-            const formattedLeftDateTime = dayjs(instanceData.leaveTime).format(format);
-            const formattedJoinDateTime = dayjs(instanceData.joinTime).format(format);
-
-            const timeString = timeToText(instanceData.time, true);
-            const color = param.color;
-
-            return `
-                        <div style="display: flex; align-items: center;">
-                            <div style="width: 10px; height: 55px; background-color: ${color}; margin-right: 6px;"></div>
-                            <div>
-                                <div>${instanceData.display_name} ${friendOrFavIcon(instanceData.display_name)}</div>
-                                <div>${formattedJoinDateTime} - ${formattedLeftDateTime}</div>
-                                <div>${timeString}</div>
-                            </div>
-                        </div>
-                        `;
+            return renderToHtml(
+                InstanceActivityTooltip({
+                    color: params.color,
+                    displayName: instanceData.display_name,
+                    icon: friendOrFavIcon(instanceData.display_name),
+                    joinTime: dayjs(instanceData.joinTime).format(format),
+                    leaveTime: dayjs(instanceData.leaveTime).format(format),
+                    duration: timeToText(instanceData.time, true)
+                })
+            );
         };
 
         const format = dtHour12.value ? 'hh:mm A' : 'HH:mm';

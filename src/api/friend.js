@@ -2,6 +2,7 @@ import { queryClient } from '../queries';
 import { request } from '../services/request';
 import { useUserStore } from '../stores/user';
 import { applyUser } from '../coordinators/userCoordinator';
+import { watchState } from '../services/watchState';
 
 /**
  *
@@ -23,6 +24,7 @@ const friendReq = {
      * @type {import('../types/api/friend').GetFriends}
      */
     getFriends(params) {
+        const userStore = useUserStore();
         return request('auth/user/friends', {
             method: 'GET',
             params
@@ -35,6 +37,26 @@ const friendReq = {
                 if (!user.displayName) {
                     console.error('/friends gave us garbage', user);
                     continue;
+                }
+                // hacky way to add state to bulk fetch at startup
+                if (!watchState.isFriendsLoaded) {
+                    for (const item of json) {
+                        if (
+                            userStore.currentUser.activeFriends.includes(
+                                item.id
+                            )
+                        ) {
+                            item.state = 'active';
+                        } else if (
+                            userStore.currentUser.onlineFriends.includes(
+                                item.id
+                            )
+                        ) {
+                            item.state = 'online';
+                        } else {
+                            item.state = 'offline';
+                        }
+                    }
                 }
                 applyUser(user);
             }

@@ -1,5 +1,4 @@
 <template>
-    <DeprecationAlert v-if="userDialog.ref.id === currentUser.id" :feature-name="t('nav_tooltip.my_avatars')" />
     <div style="display: flex; align-items: center; justify-content: space-between">
         <div style="display: flex; align-items: center">
             <Button
@@ -114,7 +113,7 @@
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { Input } from '@/components/ui/input';
     import { Spinner } from '@/components/ui/spinner';
-    import DeprecationAlert from '@/components/DeprecationAlert.vue';
+
     import { refreshUserDialogAvatars } from '@/coordinators/userCoordinator';
 
     import { useAdvancedSettingsStore, useAvatarStore, useUserStore } from '../../../stores';

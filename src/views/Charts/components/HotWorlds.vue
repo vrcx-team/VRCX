@@ -19,7 +19,7 @@
 
                 <div class="flex items-center gap-2">
                     <ToggleGroup
-                    variant="outline"
+                        variant="outline"
                         type="single"
                         :model-value="String(selectedDays)"
                         @update:modelValue="handleDaysChange">
@@ -46,75 +46,80 @@
 
             <template v-else>
                 <div class="mx-auto mt-3 flex max-w-[1100px] items-center gap-3">
-
                     <div class="flex items-center gap-2 rounded-lg border px-3 py-2">
                         <MapPin class="size-3.5 text-muted-foreground" />
                         <span class="text-sm font-medium">{{ totalVisits.toLocaleString() }}</span>
-                        <span class="text-xs text-muted-foreground">{{ t('view.charts.hot_worlds.stats.total_visits') }}</span>
+                        <span class="text-xs text-muted-foreground">{{
+                            t('view.charts.hot_worlds.stats.total_visits')
+                        }}</span>
                     </div>
                     <div v-if="risingCount > 0" class="flex items-center gap-2 rounded-lg border px-3 py-2">
                         <TrendingUp class="size-3.5 text-green-500/50" />
                         <span class="text-sm font-medium">{{ risingCount }}</span>
-                        <span class="text-xs text-muted-foreground">{{ t('view.charts.hot_worlds.stats.rising') }}</span>
+                        <span class="text-xs text-muted-foreground">{{
+                            t('view.charts.hot_worlds.stats.rising')
+                        }}</span>
                     </div>
                     <div v-if="coolingCount > 0" class="flex items-center gap-2 rounded-lg border px-3 py-2">
                         <TrendingDown class="size-3.5 text-blue-400/50" />
                         <span class="text-sm font-medium">{{ coolingCount }}</span>
-                        <span class="text-xs text-muted-foreground">{{ t('view.charts.hot_worlds.stats.cooling') }}</span>
+                        <span class="text-xs text-muted-foreground">{{
+                            t('view.charts.hot_worlds.stats.cooling')
+                        }}</span>
                     </div>
-                    <span class="ml-auto text-xs text-muted-foreground/50">{{ t('view.charts.hot_worlds.sorted_by') }}</span>
+                    <span class="ml-auto text-xs text-muted-foreground/50">{{
+                        t('view.charts.hot_worlds.sorted_by')
+                    }}</span>
                 </div>
 
                 <div class="mx-auto mt-3 flex max-w-[1100px] gap-x-6">
-                <div
-                    v-for="(column, colIdx) in columns"
-                    :key="colIdx"
-                    class="min-w-0 flex-1">
-                    <button
-                        v-for="world in column"
-                        :key="world.worldId"
-                        type="button"
-                        class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent"
-                        :class="world._rank === 1 ? 'bg-primary/[0.04]' : ''"
-                        @click="openDetail(world)">
-                        <span
-                            class="mt-0.5 w-6 shrink-0 text-right font-mono text-sm font-bold"
-                            :class="world._rank === 1 ? 'text-primary' : 'text-muted-foreground'">
-                            #{{ world._rank }}
-                        </span>
+                    <div v-for="(column, colIdx) in columns" :key="colIdx" class="min-w-0 flex-1">
+                        <button
+                            v-for="world in column"
+                            :key="world.worldId"
+                            type="button"
+                            class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent"
+                            :class="world._rank === 1 ? 'bg-primary/[0.04]' : ''"
+                            @click="openDetail(world)">
+                            <span
+                                class="mt-0.5 w-6 shrink-0 text-right font-mono text-sm font-bold"
+                                :class="world._rank === 1 ? 'text-primary' : 'text-muted-foreground'">
+                                #{{ world._rank }}
+                            </span>
 
-                        <div class="min-w-0 flex-1">
-                            <div class="flex items-center gap-1.5">
-                                <span class="block max-w-[380px] truncate text-sm font-medium">
-                                    {{ world.worldName }}
-                                </span>
-                                <template v-if="world.trend === 'rising'">
-                                    <TrendingUp class="size-3 shrink-0 text-green-500/50" />
-                                </template>
-                                <template v-else-if="world.trend === 'cooling'">
-                                    <TrendingDown class="size-3 shrink-0 text-blue-400/50" />
-                                </template>
-                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="block max-w-[380px] truncate text-sm font-medium">
+                                        {{ world.worldName }}
+                                    </span>
+                                    <template v-if="world.trend === 'rising'">
+                                        <TrendingUp class="size-3 shrink-0 text-green-500/50" />
+                                    </template>
+                                    <template v-else-if="world.trend === 'cooling'">
+                                        <TrendingDown class="size-3 shrink-0 text-blue-400/50" />
+                                    </template>
+                                </div>
 
-                            <div class="mt-0.5 text-xs text-muted-foreground">
-                                {{ t('view.charts.hot_worlds.stats_line.friends', { count: world.uniqueFriends }) }}
-                                <span class="text-muted-foreground/50">
-                                    ({{ t('view.charts.hot_worlds.stats_line.visits', { count: world.visitCount }) }})
-                                </span>
-                            </div>
+                                <div class="mt-0.5 text-xs text-muted-foreground">
+                                    {{ t('view.charts.hot_worlds.stats_line.friends', { count: world.uniqueFriends }) }}
+                                    <span class="text-muted-foreground/50">
+                                        ({{
+                                            t('view.charts.hot_worlds.stats_line.visits', { count: world.visitCount })
+                                        }})
+                                    </span>
+                                </div>
 
-                            <div
-                                class="mt-1.5 h-2 w-full overflow-hidden rounded-full"
-                                :class="isDarkMode ? 'bg-white/[0.08]' : 'bg-black/[0.06]'">
                                 <div
-                                    class="h-full rounded-full transition-all duration-500"
-                                    :class="isDarkMode ? 'bg-white/[0.45]' : 'bg-black/[0.25]'"
-                                    :style="{ width: getBarWidth(world.uniqueFriends) }">
+                                    class="mt-1.5 h-2 w-full overflow-hidden rounded-full"
+                                    :class="isDarkMode ? 'bg-white/[0.08]' : 'bg-black/[0.06]'">
+                                    <div
+                                        class="h-full rounded-full transition-all duration-500"
+                                        :class="isDarkMode ? 'bg-white/[0.45]' : 'bg-black/[0.25]'"
+                                        :style="{ width: getBarWidth(world.uniqueFriends) }"></div>
                                 </div>
                             </div>
-                        </div>
-                    </button>
-                </div>
+                        </button>
+                    </div>
                 </div>
             </template>
         </div>
@@ -135,11 +140,13 @@
 
             <div v-if="selectedWorld" class="flex flex-col gap-4 overflow-y-auto px-5">
                 <div class="flex flex-wrap items-center gap-2">
-                    <span class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium">
+                    <span
+                        class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium">
                         <Users class="size-3" />
                         {{ t('view.charts.hot_worlds.stats_line.friends', { count: selectedWorld.uniqueFriends }) }}
                     </span>
-                    <span class="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground">
+                    <span
+                        class="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground">
                         <MapPin class="size-3" />
                         {{ t('view.charts.hot_worlds.stats_line.visits', { count: selectedWorld.visitCount }) }}
                     </span>
@@ -177,7 +184,8 @@
                             class="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm transition-colors hover:bg-accent"
                             @click="openUserDialog(friend.userId)">
                             <span class="min-w-0 flex-1 truncate">{{ friend.displayName }}</span>
-                            <span class="shrink-0 rounded-md bg-muted px-1.5 py-0.5 text-[11px] tabular-nums text-muted-foreground">
+                            <span
+                                class="shrink-0 rounded-md bg-muted px-1.5 py-0.5 text-[11px] tabular-nums text-muted-foreground">
                                 {{ friend.visitCount }}×
                             </span>
                         </button>

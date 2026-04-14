@@ -23,7 +23,10 @@
                             :model-value="viewMode"
                             variant="outline"
                             @update:model-value="handleViewModeChange">
-                            <TooltipWrapper :content="t('dialog.previous_instances.table_view')" side="bottom" :delay-duration="300">
+                            <TooltipWrapper
+                                :content="t('dialog.previous_instances.table_view')"
+                                side="bottom"
+                                :delay-duration="300">
                                 <ToggleGroupItem
                                     value="table"
                                     class="px-2"
@@ -31,7 +34,10 @@
                                     <List class="size-4" />
                                 </ToggleGroupItem>
                             </TooltipWrapper>
-                            <TooltipWrapper :content="t('dialog.previous_instances.chart_view')" side="bottom" :delay-duration="300">
+                            <TooltipWrapper
+                                :content="t('dialog.previous_instances.chart_view')"
+                                side="bottom"
+                                :delay-duration="300">
                                 <ToggleGroupItem
                                     value="chart"
                                     class="px-2"
@@ -59,7 +65,10 @@
                         :model-value="viewMode"
                         variant="outline"
                         @update:model-value="handleViewModeChange">
-                        <TooltipWrapper :content="t('dialog.previous_instances.table_view')" side="bottom" :delay-duration="300">
+                        <TooltipWrapper
+                            :content="t('dialog.previous_instances.table_view')"
+                            side="bottom"
+                            :delay-duration="300">
                             <ToggleGroupItem
                                 value="table"
                                 class="px-2"
@@ -67,7 +76,10 @@
                                 <List class="size-4" />
                             </ToggleGroupItem>
                         </TooltipWrapper>
-                        <TooltipWrapper :content="t('dialog.previous_instances.chart_view')" side="bottom" :delay-duration="300">
+                        <TooltipWrapper
+                            :content="t('dialog.previous_instances.chart_view')"
+                            side="bottom"
+                            :delay-duration="300">
                             <ToggleGroupItem
                                 value="chart"
                                 class="px-2"
@@ -83,9 +95,7 @@
                 <div v-if="chartLoading" class="flex items-center justify-center" style="min-height: 200px">
                     <span class="text-muted-foreground text-sm">{{ t('view.friends_locations.loading_more') }}</span>
                 </div>
-                <PreviousInstancesInfoChart
-                    v-else
-                    :chart-data="chartData" />
+                <PreviousInstancesInfoChart v-else :chart-data="chartData" />
             </div>
         </div>
     </div>

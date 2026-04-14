@@ -31,7 +31,10 @@
                             class="mt-2"
                             size="sm"
                             variant="outline"
-                            :disabled="remoteFriendFavoriteGroupItems.length === 0 && localFriendFavoriteGroupItems.length === 0"
+                            :disabled="
+                                remoteFriendFavoriteGroupItems.length === 0 &&
+                                localFriendFavoriteGroupItems.length === 0
+                            "
                             >{{ t('dialog.invite.add_favorite_friends') }}</Button
                         >
                     </DropdownMenuTrigger>
@@ -43,7 +46,8 @@
                             @click="addGroupOnlineFriendsToInvite(group)">
                             {{ group.displayName }}
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator v-if="remoteFriendFavoriteGroupItems.length && localFriendFavoriteGroupItems.length" />
+                        <DropdownMenuSeparator
+                            v-if="remoteFriendFavoriteGroupItems.length && localFriendFavoriteGroupItems.length" />
                         <DropdownMenuItem
                             v-for="group in localFriendFavoriteGroupItems"
                             :key="group.key"
@@ -151,12 +155,8 @@
     const friendStore = useFriendStore();
     const { vipFriends, onlineFriends, activeFriends, friends } = storeToRefs(friendStore);
     const favoriteStore = useFavoriteStore();
-    const {
-        favoriteFriendGroups,
-        localFriendFavoriteGroups,
-        localFriendFavorites,
-        groupedByGroupKeyFavoriteFriends
-    } = storeToRefs(favoriteStore);
+    const { favoriteFriendGroups, localFriendFavoriteGroups, localFriendFavorites, groupedByGroupKeyFavoriteFriends } =
+        storeToRefs(favoriteStore);
     const { refreshInviteMessageTableData } = useInviteStore();
     const { currentUser } = storeToRefs(useUserStore());
     const { clearInviteImageUpload } = useGalleryStore();

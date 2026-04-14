@@ -42,7 +42,7 @@ namespace VRCX
                 if (isSteamVRRunning)
                     return true;
             }
-            
+
             // Check for wivrn-server (requires full scan)
             var allProcesses = Process.GetProcesses();
             var isRunning = allProcesses.Any(process => process.ProcessName.EndsWith("wivrn-server"));
@@ -79,7 +79,7 @@ namespace VRCX
             {
                 logger.Error($"Failed to start VRChat: {e.Message}, attempting to start via Steam path.");
             }
-            
+
             try
             {
                 var steamPath = _steamPath;

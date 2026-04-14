@@ -3,12 +3,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Microsoft.Win32;
-using System.Threading;
-using System.Windows.Forms;
-using System.Threading.Tasks;
 
 namespace VRCX
 {
@@ -18,7 +18,7 @@ namespace VRCX
         {
             return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat";
         }
-        
+
         public override string GetVRChatCacheLocation()
         {
             var defaultPath = Path.Join(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
@@ -39,7 +39,7 @@ namespace VRCX
                 var cachePath = Path.Join(cacheDir, "Cache-WindowsPlayer");
                 if (!Directory.Exists(cacheDir))
                     return defaultPath;
-                
+
                 return cachePath;
             }
             catch (Exception e)
@@ -61,7 +61,7 @@ namespace VRCX
                 var obj = JsonConvert.DeserializeObject<JObject>(json, JsonSerializerSettings);
                 if (obj["picture_output_folder"] == null)
                     return defaultPath;
-                
+
                 var photosDir = (string)obj["picture_output_folder"];
                 if (string.IsNullOrEmpty(photosDir) || !Directory.Exists(photosDir))
                     return defaultPath;
@@ -74,7 +74,7 @@ namespace VRCX
             }
             return defaultPath;
         }
-        
+
         public override string GetUGCPhotoLocation(string path = "")
         {
             if (string.IsNullOrEmpty(path))
@@ -209,7 +209,7 @@ namespace VRCX
             OpenFolderAndSelectItem(path, true);
             return true;
         }
-        
+
         public override void OpenShortcutFolder()
         {
             var path = AutoAppLaunchManager.Instance.AppShortcutDirectory;
@@ -218,7 +218,7 @@ namespace VRCX
 
             OpenFolderAndSelectItem(path, true);
         }
-        
+
         public override void OpenFolderAndSelectItem(string path, bool isFolder = false)
         {
             path = Path.GetFullPath(path);
@@ -316,7 +316,7 @@ namespace VRCX
 
             return await tcs.Task;
         }
-        
+
         public override async Task<string> OpenFileSelectorDialog(string defaultPath = "", string defaultExt = "", string defaultFilter = "All files (*.*)|*.*")
         {
             var tcs = new TaskCompletionSource<string>();

@@ -687,6 +687,9 @@ export const useInstanceStore = defineStore('Instance', () => {
             if (D.groupAccessType === 'members') {
                 params.roleIds = D.roleIds;
             }
+            if (D.minimumAvatarPerformance) {
+                params.minimumAvatarPerformance = D.minimumAvatarPerformance;
+            }
         }
         if (
             D.ageGate &&

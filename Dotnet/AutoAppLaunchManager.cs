@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -128,10 +128,10 @@ namespace VRCX
                 {
                     if (RunProcessOnce && IsProcessRunning(file))
                         continue;
-                    
+
                     if (IsChildProcessRunning(file))
                         continue;
-                    
+
                     StartChildProcess(file);
                 }
                 foreach (var steamId in steamIds)
@@ -190,7 +190,7 @@ namespace VRCX
             {
                 return pids;
             }
-            
+
             PROCESSENTRY32 procEntry = new PROCESSENTRY32();
             procEntry.dwSize = (uint)Marshal.SizeOf(typeof(PROCESSENTRY32));
 
@@ -304,7 +304,7 @@ namespace VRCX
         {
             return startedProcesses.ContainsKey(path);
         }
-        
+
         private bool IsProcessRunning(string filePath)
         {
             try
@@ -349,7 +349,7 @@ namespace VRCX
             {
                 timerTicks++;
 
-                if(timerTicks == 5)
+                if (timerTicks == 5)
                     childUpdateTimer.Interval = 60000;
             }
         }
@@ -382,7 +382,7 @@ namespace VRCX
                         var urlLine = lines.FirstOrDefault(l => l.StartsWith(urlPrefix));
                         if (urlLine == null)
                             continue;
-                        
+
                         var appId = urlLine[urlPrefix.Length..].Trim();
                         steamIds.Add(appId);
                     }
@@ -395,8 +395,8 @@ namespace VRCX
 
             return new Tuple<List<string>, List<string>>(shortcuts, steamIds);
         }
-        
-        
+
+
 
         /// <summary>
         /// Determines whether the specified file path is a shortcut by checking the file header.
@@ -413,7 +413,7 @@ namespace VRCX
 
             return headerBytes.SequenceEqual(shortcutSignatureBytes);
         }
-        
+
         private static bool IsUrlShortcutFile(string filePath)
         {
             var headerBytes = new byte[urlShortcutHeader.Length];
@@ -424,7 +424,7 @@ namespace VRCX
 
             return headerBytes.SequenceEqual(urlShortcutHeader);
         }
-        
+
         // Steam shortcuts
 
         [SupportedOSPlatform("windows")]

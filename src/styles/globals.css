@@ -52,11 +52,11 @@
     --sidebar-ring: oklch(0.708 0 0);
 
     /* VRChat Status Colors (Official) */
-    --status-online: #2ED319;
-    --status-joinme: #00B8FF;
-    --status-busy: #C80928;
-    --status-askme: #E97C03;
-    --status-offline: #737F8D;
+    --status-online: #2ed319;
+    --status-joinme: #00b8ff;
+    --status-busy: #c80928;
+    --status-askme: #e97c03;
+    --status-offline: #737f8d;
     --status-offline-alt: #808080;
     --status-offline-card: #737f8d;
     --status-active: #f4e05e;

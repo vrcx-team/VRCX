@@ -1,4 +1,3 @@
-﻿using SixLabors.ImageSharp.ColorSpaces;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
@@ -8,6 +7,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
+using SixLabors.ImageSharp.ColorSpaces;
 
 namespace VRCX
 {
@@ -24,7 +24,7 @@ namespace VRCX
 
             return "0x0";
         }
-        
+
 
         /// <summary>
         /// Reads the metadata associated with a specified keyword from text chunks within a PNG file.
@@ -51,7 +51,7 @@ namespace VRCX
 
                 return null;
             }
-            
+
             var iTXtChunk = pngFile.GetChunksOfType(PNGChunkTypeFilter.iTXt);
             if (iTXtChunk.Count == 0)
                 return null;

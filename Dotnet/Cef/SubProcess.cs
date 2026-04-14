@@ -1,7 +1,7 @@
-using CefSharp.Internals;
 using System;
 using System.IO;
 using System.Threading;
+using CefSharp.Internals;
 
 namespace VRCX;
 
@@ -31,7 +31,7 @@ public class BrowserSubprocess
             // this is the main process (as all subprocesses must have a type param).
             return;
         }
-        
+
         var browserSubprocessDllPath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "CefSharp.BrowserSubprocess.Core.dll");
         if (!File.Exists(browserSubprocessDllPath))
         {

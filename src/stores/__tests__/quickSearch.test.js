@@ -59,7 +59,9 @@ function setupStores() {
         version: 0,
         getSnapshot() {
             const friendsList = [];
-            for (const ctx of (mocks.friendStore?.friends || new Map()).values()) {
+            for (const ctx of (
+                mocks.friendStore?.friends || new Map()
+            ).values()) {
                 if (typeof ctx.ref === 'undefined') continue;
                 friendsList.push({
                     id: ctx.id,

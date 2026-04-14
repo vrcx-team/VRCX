@@ -29,14 +29,8 @@
     import { useI18n } from 'vue-i18n';
     import { ExternalLink, Flag, LineChart, MessageSquare, Share2 } from 'lucide-vue-next';
 
-    import {
-        ContextMenuItem,
-        ContextMenuSeparator
-    } from './ui/context-menu';
-    import {
-        DropdownMenuItem,
-        DropdownMenuSeparator
-    } from './ui/dropdown-menu';
+    import { ContextMenuItem, ContextMenuSeparator } from './ui/context-menu';
+    import { DropdownMenuItem, DropdownMenuSeparator } from './ui/dropdown-menu';
 
     const { t } = useI18n();
 
@@ -71,13 +65,7 @@
         }
     });
 
-    defineEmits([
-        'view-details',
-        'share',
-        'new-instance',
-        'self-invite',
-        'show-previous-instances'
-    ]);
+    defineEmits(['view-details', 'share', 'new-instance', 'self-invite', 'show-previous-instances']);
 
     const selfInviteLabel = computed(() =>
         props.canOpenInstanceInGame
@@ -85,28 +73,19 @@
             : t('dialog.world.actions.new_instance_and_self_invite')
     );
 
-    const itemComponent = computed(() =>
-        props.variant === 'dropdown' ? DropdownMenuItem : ContextMenuItem
-    );
+    const itemComponent = computed(() => (props.variant === 'dropdown' ? DropdownMenuItem : ContextMenuItem));
 
     const separatorComponent = computed(() =>
-        props.variant === 'dropdown'
-            ? DropdownMenuSeparator
-            : ContextMenuSeparator
+        props.variant === 'dropdown' ? DropdownMenuSeparator : ContextMenuSeparator
     );
 
     const showPrimarySeparator = computed(
-        () =>
-            (props.showViewDetails || props.showShare) &&
-            (props.showNewInstance || props.showSelfInvite)
+        () => (props.showViewDetails || props.showShare) && (props.showNewInstance || props.showSelfInvite)
     );
 
     const showSecondarySeparator = computed(
         () =>
             props.showPreviousInstances &&
-            (props.showViewDetails ||
-                props.showShare ||
-                props.showNewInstance ||
-                props.showSelfInvite)
+            (props.showViewDetails || props.showShare || props.showNewInstance || props.showSelfInvite)
     );
 </script>

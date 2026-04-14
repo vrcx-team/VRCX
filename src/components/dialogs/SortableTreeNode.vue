@@ -130,11 +130,7 @@
                     </template>
                     <template v-else>
                         <DropdownMenuItem @click="emit('hide', nodeValue.key)">
-                            {{
-                                isTool
-                                    ? t('common.actions.delete')
-                                    : t('nav_menu.custom_nav.hide')
-                            }}
+                            {{ isTool ? t('common.actions.delete') : t('nav_menu.custom_nav.hide') }}
                         </DropdownMenuItem>
                     </template>
                 </DropdownMenuContent>

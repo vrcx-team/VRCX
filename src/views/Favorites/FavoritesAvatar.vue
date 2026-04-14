@@ -668,7 +668,9 @@
         if (!activeRemoteGroup.value || !currentRemoteFavorites.value.length) {
             return false;
         }
-        return currentRemoteFavorites.value.map((fav) => fav.id).every((id) => selectedFavoriteAvatars.value.includes(id));
+        return currentRemoteFavorites.value
+            .map((fav) => fav.id)
+            .every((id) => selectedFavoriteAvatars.value.includes(id));
     });
 
     watch(

@@ -317,7 +317,8 @@ describe('useAuthStore login failure toast policy', () => {
         expect(mocks.toast.warning).toHaveBeenCalledWith(
             'message.auth.login_network_issue_hint_title',
             expect.objectContaining({
-                description: 'message.auth.login_network_issue_hint_description',
+                description:
+                    'message.auth.login_network_issue_hint_description',
                 duration: Infinity,
                 action: expect.objectContaining({
                     label: 'common.actions.open',

@@ -1,4 +1,4 @@
-﻿using CefSharp;
+using CefSharp;
 
 namespace VRCX
 {

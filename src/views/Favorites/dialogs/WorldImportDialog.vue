@@ -168,7 +168,9 @@
 
     const tableStyle = { maxHeight: '400px' };
 
-    const rows = computed(() => (Array.isArray(worldImportTable.value?.data) ? worldImportTable.value.data.slice() : []));
+    const rows = computed(() =>
+        Array.isArray(worldImportTable.value?.data) ? worldImportTable.value.data.slice() : []
+    );
 
     const columns = computed(() =>
         createColumns({

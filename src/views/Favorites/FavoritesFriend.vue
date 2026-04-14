@@ -292,7 +292,10 @@
                                             <div class="favorites-search-card__content">
                                                 <div class="favorites-search-card__avatar">
                                                     <Avatar class="size-full">
-                                                        <AvatarImage :src="userImage(favorite, true)" class="object-cover" loading="lazy" />
+                                                        <AvatarImage
+                                                            :src="userImage(favorite, true)"
+                                                            class="object-cover"
+                                                            loading="lazy" />
                                                         <AvatarFallback>
                                                             <User class="size-5 text-muted-foreground" />
                                                         </AvatarFallback>
@@ -559,7 +562,9 @@
         if (!activeRemoteGroup.value || !currentFriendFavorites.value.length) {
             return false;
         }
-        return currentFriendFavorites.value.map((fav) => fav.id).every((id) => selectedFavoriteFriends.value.includes(id));
+        return currentFriendFavorites.value
+            .map((fav) => fav.id)
+            .every((id) => selectedFavoriteFriends.value.includes(id));
     });
 
     watch(

@@ -68,8 +68,12 @@
 
     import EditInviteMessageDialog from './EditInviteMessageDialog.vue';
 
-    const { inviteMessageTable, inviteRequestMessageTable, inviteRequestResponseMessageTable, inviteResponseMessageTable } =
-        storeToRefs(useInviteStore());
+    const {
+        inviteMessageTable,
+        inviteRequestMessageTable,
+        inviteRequestResponseMessageTable,
+        inviteResponseMessageTable
+    } = storeToRefs(useInviteStore());
     const { refreshInviteMessageTableData } = useInviteStore();
 
     const { t } = useI18n();

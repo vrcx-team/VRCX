@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Security.Cryptography;
-using System.Net;
-using System.Text;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using NLog;
 
 namespace VRCX
