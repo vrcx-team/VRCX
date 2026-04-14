@@ -9,7 +9,7 @@
         <div v-if="closedAt">
             <TooltipWrapper side="top">
                 <template #content>
-                    {{ t('dialog.user.info.instance_closed') }}:
+                    {{ t('dialog.user.info.instance_closed_at') }}:
                     {{ formatDateFilter(closedAt, 'long') }}
                 </template>
                 <AlertTriangle class="text-orange-500 my-auto" />
