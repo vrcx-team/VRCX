@@ -5,9 +5,9 @@
             :style="cardStyle"
             @click="showUserDialog(friend.id)">
             <div class="friend-card__header grid items-center mb-1.75">
-                <div>
-                    <Avatar :style="{ width: `${avatarSize}px`, height: `${avatarSize}px` }">
-                        <AvatarImage :src="userImage(friend.ref, true)" />
+                <div class="relative inline-block flex-none size-9 mr-2.5">
+                    <Avatar class="size-full rounded-full">
+                        <AvatarImage :src="userImage(friend.ref, true)" class="object-cover" />
                         <AvatarFallback>
                             <User class="text-muted-foreground" :size="Math.max(16, 20 * cardScale)" />
                         </AvatarFallback>
@@ -17,7 +17,7 @@
                     class="friend-card__status-dot absolute rounded-full pointer-events-none"
                     :class="statusDotClass"></span>
                 <div
-                    class="friend-card__name font-semibold leading-[1.3] overflow-hidden text-ellipsis whitespace-nowrap ml-2"
+                    class="friend-card__name font-semibold overflow-hidden text-ellipsis whitespace-nowrap"
                     :title="friend.name">
                     {{ friend.name }}
                 </div>
@@ -35,7 +35,7 @@
                     class="friend-card__world flex items-center justify-start box-border max-w-full min-w-0 overflow-hidden"
                     :title="friend.worldName">
                     <Location
-                        class="friend-card__location flex w-full overflow-hidden leading-[1.3] wrap-break-word text-center"
+                        class="friend-card__location flex w-full overflow-hidden wrap-break-word text-center"
                         :location="friend.ref?.location"
                         :traveling="friend.ref?.travelingToLocation"
                         enable-context-menu
@@ -78,8 +78,6 @@
             default: 1
         }
     });
-
-    const avatarSize = computed(() => Math.max(28, 32 * props.cardScale));
 
     const cardStyle = computed(() => ({
         '--card-scale': props.cardScale,
@@ -207,6 +205,7 @@
 
     .friend-card__signature {
         font-size: calc(12px * var(--card-scale));
+        padding: calc(7px * var(--card-scale)) calc(8px * var(--card-scale));
         line-height: 1.4;
         gap: calc(4px * var(--card-scale));
     }
