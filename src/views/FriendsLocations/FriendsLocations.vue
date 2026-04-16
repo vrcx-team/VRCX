@@ -524,6 +524,8 @@
         () => !showSameInstance.value && activeSegment.value === 'online' && !normalizedSearchTerm.value
     );
 
+    const displayInstanceInfo = computed(() => activeSegment.value !== 'active' && activeSegment.value !== 'offline');
+
     const buildSameInstanceGroups = (entries = []) => {
         if (!Array.isArray(entries) || entries.length === 0) {
             return [];
@@ -693,7 +695,7 @@
                     const items = friends.map((friend) => ({
                         key: `f:${getFriendIdentity(friend)}`,
                         friend,
-                        displayInstanceInfo: true
+                        displayInstanceInfo: displayInstanceInfo.value
                     }));
                     rows.push(...chunkCardItems(items, `g:${group.instanceId}`));
                 }
@@ -716,7 +718,7 @@
                     const items = friends.map((friend) => ({
                         key: `f:${getFriendIdentity(friend)}`,
                         friend,
-                        displayInstanceInfo: false
+                        displayInstanceInfo: displayInstanceInfo.value
                     }));
                     rows.push(...chunkCardItems(items, `mg:${group.instanceId}`));
                 }
@@ -731,7 +733,7 @@
                 const items = online.map((entry) => ({
                     key: `e:${getEntryIdentity(entry)}`,
                     friend: entry.friend,
-                    displayInstanceInfo: true
+                    displayInstanceInfo: displayInstanceInfo.value
                 }));
                 rows.push(...chunkCardItems(items, 'o:merged'));
             }
@@ -754,7 +756,7 @@
                     const items = group.friends.map((friend) => ({
                         key: `fg:${group.key}:${getFriendIdentity(friend)}`,
                         friend,
-                        displayInstanceInfo: true
+                        displayInstanceInfo: displayInstanceInfo.value
                     }));
                     rows.push(...chunkCardItems(items, `vg:${group.key}`));
                 }
@@ -767,7 +769,7 @@
             const items = entries.map((entry) => ({
                 key: `e:${getEntryIdentity(entry)}`,
                 friend: entry.friend,
-                displayInstanceInfo: true
+                displayInstanceInfo: displayInstanceInfo.value
             }));
             rows.push(...chunkCardItems(items, 'r:all'));
         }
