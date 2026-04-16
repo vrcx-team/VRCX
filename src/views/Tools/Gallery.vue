@@ -355,7 +355,9 @@
             </template>
 
             <template #stickers>
-                <div>
+                <div
+                    @dragover.prevent
+                    @drop.prevent="handleDropSticker">
                     <input
                         id="StickerUploadButton"
                         type="file"
@@ -419,7 +421,9 @@
             </template>
 
             <template #prints>
-                <div>
+                <div
+                    @dragover.prevent
+                    @drop.prevent="handleDropPrint">
                     <input
                         id="PrintUploadButton"
                         type="file"
@@ -1145,6 +1149,56 @@
         vrcPlusImageRequest.deletePrint(printId).then((args) => {
             removeItemById(printTable.value, args.printId);
         });
+    }
+
+    async function handleDropSticker(event) {
+      event.preventDefault();
+      for (const file of event.dataTransfer.files) {
+        const b64str = await readFileToBase64Str(file);
+        const params = {
+            tag: 'sticker',
+            maskTag: 'square'
+        };
+        const args = await vrcPlusImageRequest.uploadSticker(b64str, params);
+        handleStickerAdd(args);
+      }
+    }
+
+    async function handleDropPrint(event) {
+      event.preventDefault();
+      for (const file of event.dataTransfer.files) {
+        const b64str = await readFileToBase64Str(file);
+        const filedate = file.lastModifiedDate ?? new Date();
+        const timestamp = filedate.toISOString().slice(0, 19);
+        const params = {
+          note: '',
+          // worldId: '',
+          timestamp,
+        };
+        const cropWhiteBorder = false;
+        const args = await vrcPlusImageRequest.uploadPrint(b64str, cropWhiteBorder, params);
+        if (printTable.value.length > 0) {
+          printTable.value.unshift(args.json);
+        }
+      }
+    }
+
+    function readFileAsDataUrlAsync(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function readFileToBase64Str(file) {
+      if (!file || !file.type.startsWith('image/'))
+        throw Exception(`unrecognized image format: ${file.type}`);
+
+      const reader = new FileReader();
+      const b64uri = await readFileAsDataUrlAsync(file);
+      return b64uri.split(',', 2)[1]; // strip data:...;base64,
     }
 
     /**
