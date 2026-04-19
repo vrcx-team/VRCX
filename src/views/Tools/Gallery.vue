@@ -49,7 +49,9 @@
                 </span>
             </template>
             <template #gallery>
-                <div>
+                <div
+                    @dragover.prevent
+                    @drop.prevent="handleDropGallery">
                     <input
                         id="GalleryUploadButton"
                         type="file"
@@ -129,7 +131,9 @@
             </template>
 
             <template #icons>
-                <div>
+                <div
+                    @dragover.prevent
+                    @drop.prevent="handleDropIcon">
                     <input
                         id="VRCPlusIconUploadButton"
                         type="file"
@@ -209,7 +213,9 @@
             </template>
 
             <template #emojis>
-                <div>
+                <div
+                    @dragover.prevent
+                    @drop.prevent="handleDropEmoji">
                     <input
                         id="EmojiUploadButton"
                         type="file"
@@ -931,6 +937,12 @@
         deleteFileAndRemove(fileId, galleryTable.value);
     }
 
+    async function uploadVRCPlusIcon(base64Body) {
+        const args = await vrcPlusIconRequest.uploadVRCPlusIcon(base64Body);
+        if (VRCPlusIconsTable.value.length > 0) {
+            VRCPlusIconsTable.value.unshift(args.json);
+        }
+    }
     /**
      *
      * @param e
@@ -941,10 +953,7 @@
             aspectRatio: 1 / 1,
             errorMessage: 'Failed to upload VRC+ icon',
             upload: async ({ base64Body }) => {
-                const args = await vrcPlusIconRequest.uploadVRCPlusIcon(base64Body);
-                if (VRCPlusIconsTable.value.length > 0) {
-                    VRCPlusIconsTable.value.unshift(args.json);
-                }
+                await uploadVRCPlusIcon(base64Body);
             }
         });
     }
@@ -1025,6 +1034,25 @@
         }
     }
 
+    async function uploadEmoji(base64Body) {
+        const params = {
+            tag: emojiAnimType.value ? 'emojianimated' : 'emoji',
+            animationStyle: emojiAnimationStyle.value.toLowerCase(),
+            maskTag: 'square'
+        };
+        if (emojiAnimType.value) {
+            params.frames = emojiAnimFrameCount.value;
+            params.framesOverTime = emojiAnimFps.value;
+        }
+        if (emojiAnimLoopPingPong.value) {
+            params.loopStyle = 'pingpong';
+        }
+        const args = await vrcPlusImageRequest.uploadEmoji(base64Body, params);
+        if (emojiTable.value.length > 0) {
+            emojiTable.value.unshift(args.json);
+        }
+    }
+
     /**
      *
      * @param e
@@ -1038,22 +1066,7 @@
                 parseEmojiFileName(file.name);
             },
             upload: async ({ base64Body }) => {
-                const params = {
-                    tag: emojiAnimType.value ? 'emojianimated' : 'emoji',
-                    animationStyle: emojiAnimationStyle.value.toLowerCase(),
-                    maskTag: 'square'
-                };
-                if (emojiAnimType.value) {
-                    params.frames = emojiAnimFrameCount.value;
-                    params.framesOverTime = emojiAnimFps.value;
-                }
-                if (emojiAnimLoopPingPong.value) {
-                    params.loopStyle = 'pingpong';
-                }
-                const args = await vrcPlusImageRequest.uploadEmoji(base64Body, params);
-                if (emojiTable.value.length > 0) {
-                    emojiTable.value.unshift(args.json);
-                }
+                await uploadEmoji(base64Body);
             }
         });
     }
@@ -1073,6 +1086,15 @@
         deleteFileAndRemove(fileId, emojiTable.value);
     }
 
+    async function uploadSticker(base64Body) {
+        const params = {
+            tag: 'sticker',
+            maskTag: 'square'
+        };
+        const args = await vrcPlusImageRequest.uploadSticker(base64Body, params);
+        handleStickerAdd(args);
+    }
+
     /**
      *
      * @param e
@@ -1082,12 +1104,7 @@
             inputSelector: '#StickerUploadButton',
             aspectRatio: 1 / 1,
             upload: async ({ base64Body }) => {
-                const params = {
-                    tag: 'sticker',
-                    maskTag: 'square'
-                };
-                const args = await vrcPlusImageRequest.uploadSticker(base64Body, params);
-                handleStickerAdd(args);
+                await uploadSticker(base64Body);
             }
         });
     }
@@ -1107,6 +1124,20 @@
         deleteFileAndRemove(fileId, stickerTable.value);
     }
 
+    async function uploadPrint(base64Body, date) {
+        const timestamp = date.toISOString().slice(0, 19);
+        const params = {
+            note: printUploadNote.value,
+            // worldId: '',
+            timestamp
+        };
+        const cropWhiteBorder = printCropBorder.value;
+        const args = await vrcPlusImageRequest.uploadPrint(base64Body, cropWhiteBorder, params);
+        if (printTable.value.length > 0) {
+            printTable.value.unshift(args.json);
+        }
+    }
+
     /**
      *
      * @param e
@@ -1116,20 +1147,10 @@
             inputSelector: '#PrintUploadButton',
             aspectRatio: 16 / 9,
             upload: async ({ base64Body }) => {
-                const date = new Date();
                 // why the fuck isn't this UTC
+                const date = new Date();
                 date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-                const timestamp = date.toISOString().slice(0, 19);
-                const params = {
-                    note: printUploadNote.value,
-                    // worldId: '',
-                    timestamp
-                };
-                const cropWhiteBorder = printCropBorder.value;
-                const args = await vrcPlusImageRequest.uploadPrint(base64Body, cropWhiteBorder, params);
-                if (printTable.value.length > 0) {
-                    printTable.value.unshift(args.json);
-                }
+                await uploadPrint(base64Body, date);
             }
         });
     }
@@ -1151,16 +1172,36 @@
         });
     }
 
+    async function handleDropGallery(event) {
+      event.preventDefault();
+      for (const file of event.dataTransfer.files) {
+        const b64str = await readFileToBase64Str(file);
+        const args = await vrcPlusImageRequest.uploadGalleryImage(b64str);
+        handleGalleryImageAdd(args);
+      }
+    }
+
+    async function handleDropIcon(event) {
+      event.preventDefault();
+      for (const file of event.dataTransfer.files) {
+        const b64str = await readFileToBase64Str(file);
+        await uploadVRCPlusIcon(b64str);
+      }
+    }
+
+    async function handleDropEmoji(event) {
+      event.preventDefault();
+      for (const file of event.dataTransfer.files) {
+        const b64str = await readFileToBase64Str(file);
+        await uploadEmoji(b64str);
+      }
+    }
+
     async function handleDropSticker(event) {
       event.preventDefault();
       for (const file of event.dataTransfer.files) {
         const b64str = await readFileToBase64Str(file);
-        const params = {
-            tag: 'sticker',
-            maskTag: 'square'
-        };
-        const args = await vrcPlusImageRequest.uploadSticker(b64str, params);
-        handleStickerAdd(args);
+        await uploadSticker(b64str);
       }
     }
 
@@ -1169,17 +1210,7 @@
       for (const file of event.dataTransfer.files) {
         const b64str = await readFileToBase64Str(file);
         const filedate = file.lastModifiedDate ?? new Date();
-        const timestamp = filedate.toISOString().slice(0, 19);
-        const params = {
-          note: '',
-          // worldId: '',
-          timestamp,
-        };
-        const cropWhiteBorder = false;
-        const args = await vrcPlusImageRequest.uploadPrint(b64str, cropWhiteBorder, params);
-        if (printTable.value.length > 0) {
-          printTable.value.unshift(args.json);
-        }
+        await uploadPrint(b64str, filedate);
       }
     }
 
