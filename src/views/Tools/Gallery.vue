@@ -49,7 +49,7 @@
                 </span>
             </template>
             <template #gallery>
-                <div>
+                <div @dragover.prevent @drop.prevent="handleDropGallery">
                     <input
                         id="GalleryUploadButton"
                         type="file"
@@ -129,7 +129,7 @@
             </template>
 
             <template #icons>
-                <div>
+                <div @dragover.prevent @drop.prevent="handleDropIcon">
                     <input
                         id="VRCPlusIconUploadButton"
                         type="file"
@@ -209,7 +209,7 @@
             </template>
 
             <template #emojis>
-                <div>
+                <div @dragover.prevent @drop.prevent="handleDropEmoji">
                     <input
                         id="EmojiUploadButton"
                         type="file"
@@ -355,7 +355,7 @@
             </template>
 
             <template #stickers>
-                <div>
+                <div @dragover.prevent @drop.prevent="handleDropSticker">
                     <input
                         id="StickerUploadButton"
                         type="file"
@@ -419,7 +419,7 @@
             </template>
 
             <template #prints>
-                <div>
+                <div @dragover.prevent @drop.prevent="handleDropPrint">
                     <input
                         id="PrintUploadButton"
                         type="file"
@@ -863,6 +863,11 @@
         });
     }
 
+    async function uploadGalleryImage(base64Body) {
+        const args = await vrcPlusImageRequest.uploadGalleryImage(base64Body);
+        handleGalleryImageAdd(args);
+    }
+
     /**
      *
      * @param e
@@ -872,8 +877,7 @@
             inputSelector: '#GalleryUploadButton',
             aspectRatio: 4 / 3,
             upload: async ({ base64Body }) => {
-                const args = await vrcPlusImageRequest.uploadGalleryImage(base64Body);
-                handleGalleryImageAdd(args);
+                await uploadGalleryImage(base64Body);
             }
         });
     }
@@ -927,6 +931,12 @@
         deleteFileAndRemove(fileId, galleryTable.value);
     }
 
+    async function uploadVRCPlusIcon(base64Body) {
+        const args = await vrcPlusIconRequest.uploadVRCPlusIcon(base64Body);
+        if (VRCPlusIconsTable.value.length > 0) {
+            VRCPlusIconsTable.value.unshift(args.json);
+        }
+    }
     /**
      *
      * @param e
@@ -937,10 +947,7 @@
             aspectRatio: 1 / 1,
             errorMessage: 'Failed to upload VRC+ icon',
             upload: async ({ base64Body }) => {
-                const args = await vrcPlusIconRequest.uploadVRCPlusIcon(base64Body);
-                if (VRCPlusIconsTable.value.length > 0) {
-                    VRCPlusIconsTable.value.unshift(args.json);
-                }
+                await uploadVRCPlusIcon(base64Body);
             }
         });
     }
@@ -1021,6 +1028,25 @@
         }
     }
 
+    async function uploadEmoji(base64Body) {
+        const params = {
+            tag: emojiAnimType.value ? 'emojianimated' : 'emoji',
+            animationStyle: emojiAnimationStyle.value.toLowerCase(),
+            maskTag: 'square'
+        };
+        if (emojiAnimType.value) {
+            params.frames = emojiAnimFrameCount.value;
+            params.framesOverTime = emojiAnimFps.value;
+        }
+        if (emojiAnimLoopPingPong.value) {
+            params.loopStyle = 'pingpong';
+        }
+        const args = await vrcPlusImageRequest.uploadEmoji(base64Body, params);
+        if (emojiTable.value.length > 0) {
+            emojiTable.value.unshift(args.json);
+        }
+    }
+
     /**
      *
      * @param e
@@ -1034,22 +1060,7 @@
                 parseEmojiFileName(file.name);
             },
             upload: async ({ base64Body }) => {
-                const params = {
-                    tag: emojiAnimType.value ? 'emojianimated' : 'emoji',
-                    animationStyle: emojiAnimationStyle.value.toLowerCase(),
-                    maskTag: 'square'
-                };
-                if (emojiAnimType.value) {
-                    params.frames = emojiAnimFrameCount.value;
-                    params.framesOverTime = emojiAnimFps.value;
-                }
-                if (emojiAnimLoopPingPong.value) {
-                    params.loopStyle = 'pingpong';
-                }
-                const args = await vrcPlusImageRequest.uploadEmoji(base64Body, params);
-                if (emojiTable.value.length > 0) {
-                    emojiTable.value.unshift(args.json);
-                }
+                await uploadEmoji(base64Body);
             }
         });
     }
@@ -1069,6 +1080,15 @@
         deleteFileAndRemove(fileId, emojiTable.value);
     }
 
+    async function uploadSticker(base64Body) {
+        const params = {
+            tag: 'sticker',
+            maskTag: 'square'
+        };
+        const args = await vrcPlusImageRequest.uploadSticker(base64Body, params);
+        handleStickerAdd(args);
+    }
+
     /**
      *
      * @param e
@@ -1078,12 +1098,7 @@
             inputSelector: '#StickerUploadButton',
             aspectRatio: 1 / 1,
             upload: async ({ base64Body }) => {
-                const params = {
-                    tag: 'sticker',
-                    maskTag: 'square'
-                };
-                const args = await vrcPlusImageRequest.uploadSticker(base64Body, params);
-                handleStickerAdd(args);
+                await uploadSticker(base64Body);
             }
         });
     }
@@ -1103,6 +1118,20 @@
         deleteFileAndRemove(fileId, stickerTable.value);
     }
 
+    async function uploadPrint(base64Body, date) {
+        const timestamp = date.toISOString().slice(0, 19);
+        const params = {
+            note: printUploadNote.value,
+            // worldId: '',
+            timestamp
+        };
+        const cropWhiteBorder = printCropBorder.value;
+        const args = await vrcPlusImageRequest.uploadPrint(base64Body, cropWhiteBorder, params);
+        if (printTable.value.length > 0) {
+            printTable.value.unshift(args.json);
+        }
+    }
+
     /**
      *
      * @param e
@@ -1112,20 +1141,10 @@
             inputSelector: '#PrintUploadButton',
             aspectRatio: 16 / 9,
             upload: async ({ base64Body }) => {
-                const date = new Date();
                 // why the fuck isn't this UTC
+                const date = new Date();
                 date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-                const timestamp = date.toISOString().slice(0, 19);
-                const params = {
-                    note: printUploadNote.value,
-                    // worldId: '',
-                    timestamp
-                };
-                const cropWhiteBorder = printCropBorder.value;
-                const args = await vrcPlusImageRequest.uploadPrint(base64Body, cropWhiteBorder, params);
-                if (printTable.value.length > 0) {
-                    printTable.value.unshift(args.json);
-                }
+                await uploadPrint(base64Body, date);
             }
         });
     }
@@ -1145,6 +1164,64 @@
         vrcPlusImageRequest.deletePrint(printId).then((args) => {
             removeItemById(printTable.value, args.printId);
         });
+    }
+
+    async function handleDropGallery(event) {
+        event.preventDefault();
+        for (const file of event.dataTransfer.files) {
+            const b64str = await readFileToBase64Str(file);
+            await uploadGalleryImage(b64str);
+        }
+    }
+
+    async function handleDropIcon(event) {
+        event.preventDefault();
+        for (const file of event.dataTransfer.files) {
+            const b64str = await readFileToBase64Str(file);
+            await uploadVRCPlusIcon(b64str);
+        }
+    }
+
+    async function handleDropEmoji(event) {
+        event.preventDefault();
+        for (const file of event.dataTransfer.files) {
+            const b64str = await readFileToBase64Str(file);
+            await uploadEmoji(b64str);
+        }
+    }
+
+    async function handleDropSticker(event) {
+        event.preventDefault();
+        for (const file of event.dataTransfer.files) {
+            const b64str = await readFileToBase64Str(file);
+            await uploadSticker(b64str);
+        }
+    }
+
+    async function handleDropPrint(event) {
+        event.preventDefault();
+        for (const file of event.dataTransfer.files) {
+            const b64str = await readFileToBase64Str(file);
+            const fileDate = file.lastModifiedDate ?? new Date();
+            await uploadPrint(b64str, fileDate);
+        }
+    }
+
+    function readFileAsDataUrlAsync(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    async function readFileToBase64Str(file) {
+        if (!file || !file.type.startsWith('image/')) {
+            throw new Error(`unrecognized image format: ${file.type}`);
+        }
+        const b64uri = await readFileAsDataUrlAsync(file);
+        return b64uri.split(',', 2)[1]; // strip data:...;base64,
     }
 
     /**

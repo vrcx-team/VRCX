@@ -117,10 +117,7 @@
         },
         {
             name: 'Natsumi',
-            links: [
-                { label: 'Ko-fi', url: 'https://ko-fi.com/natsumi_sama' },
-                { label: 'Patreon', url: 'https://www.patreon.com/Natsumi_VRCX' }
-            ]
+            links: [{ label: 'Ko-fi', url: 'https://ko-fi.com/natsumi_sama' }]
         }
     ];
 
