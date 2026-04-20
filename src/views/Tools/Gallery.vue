@@ -49,9 +49,7 @@
                 </span>
             </template>
             <template #gallery>
-                <div
-                    @dragover.prevent
-                    @drop.prevent="handleDropGallery">
+                <div @dragover.prevent @drop.prevent="handleDropGallery">
                     <input
                         id="GalleryUploadButton"
                         type="file"
@@ -131,9 +129,7 @@
             </template>
 
             <template #icons>
-                <div
-                    @dragover.prevent
-                    @drop.prevent="handleDropIcon">
+                <div @dragover.prevent @drop.prevent="handleDropIcon">
                     <input
                         id="VRCPlusIconUploadButton"
                         type="file"
@@ -213,9 +209,7 @@
             </template>
 
             <template #emojis>
-                <div
-                    @dragover.prevent
-                    @drop.prevent="handleDropEmoji">
+                <div @dragover.prevent @drop.prevent="handleDropEmoji">
                     <input
                         id="EmojiUploadButton"
                         type="file"
@@ -361,9 +355,7 @@
             </template>
 
             <template #stickers>
-                <div
-                    @dragover.prevent
-                    @drop.prevent="handleDropSticker">
+                <div @dragover.prevent @drop.prevent="handleDropSticker">
                     <input
                         id="StickerUploadButton"
                         type="file"
@@ -427,9 +419,7 @@
             </template>
 
             <template #prints>
-                <div
-                    @dragover.prevent
-                    @drop.prevent="handleDropPrint">
+                <div @dragover.prevent @drop.prevent="handleDropPrint">
                     <input
                         id="PrintUploadButton"
                         type="file"
@@ -873,6 +863,11 @@
         });
     }
 
+    async function uploadGalleryImage(base64Body) {
+        const args = await vrcPlusImageRequest.uploadGalleryImage(base64Body);
+        handleGalleryImageAdd(args);
+    }
+
     /**
      *
      * @param e
@@ -882,8 +877,7 @@
             inputSelector: '#GalleryUploadButton',
             aspectRatio: 4 / 3,
             upload: async ({ base64Body }) => {
-                const args = await vrcPlusImageRequest.uploadGalleryImage(base64Body);
-                handleGalleryImageAdd(args);
+                await uploadGalleryImage(base64Body);
             }
         });
     }
@@ -1173,63 +1167,61 @@
     }
 
     async function handleDropGallery(event) {
-      event.preventDefault();
-      for (const file of event.dataTransfer.files) {
-        const b64str = await readFileToBase64Str(file);
-        const args = await vrcPlusImageRequest.uploadGalleryImage(b64str);
-        handleGalleryImageAdd(args);
-      }
+        event.preventDefault();
+        for (const file of event.dataTransfer.files) {
+            const b64str = await readFileToBase64Str(file);
+            await uploadGalleryImage(b64str);
+        }
     }
 
     async function handleDropIcon(event) {
-      event.preventDefault();
-      for (const file of event.dataTransfer.files) {
-        const b64str = await readFileToBase64Str(file);
-        await uploadVRCPlusIcon(b64str);
-      }
+        event.preventDefault();
+        for (const file of event.dataTransfer.files) {
+            const b64str = await readFileToBase64Str(file);
+            await uploadVRCPlusIcon(b64str);
+        }
     }
 
     async function handleDropEmoji(event) {
-      event.preventDefault();
-      for (const file of event.dataTransfer.files) {
-        const b64str = await readFileToBase64Str(file);
-        await uploadEmoji(b64str);
-      }
+        event.preventDefault();
+        for (const file of event.dataTransfer.files) {
+            const b64str = await readFileToBase64Str(file);
+            await uploadEmoji(b64str);
+        }
     }
 
     async function handleDropSticker(event) {
-      event.preventDefault();
-      for (const file of event.dataTransfer.files) {
-        const b64str = await readFileToBase64Str(file);
-        await uploadSticker(b64str);
-      }
+        event.preventDefault();
+        for (const file of event.dataTransfer.files) {
+            const b64str = await readFileToBase64Str(file);
+            await uploadSticker(b64str);
+        }
     }
 
     async function handleDropPrint(event) {
-      event.preventDefault();
-      for (const file of event.dataTransfer.files) {
-        const b64str = await readFileToBase64Str(file);
-        const filedate = file.lastModifiedDate ?? new Date();
-        await uploadPrint(b64str, filedate);
-      }
+        event.preventDefault();
+        for (const file of event.dataTransfer.files) {
+            const b64str = await readFileToBase64Str(file);
+            const fileDate = file.lastModifiedDate ?? new Date();
+            await uploadPrint(b64str, fileDate);
+        }
     }
 
     function readFileAsDataUrlAsync(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
     }
 
     async function readFileToBase64Str(file) {
-      if (!file || !file.type.startsWith('image/'))
-        throw Exception(`unrecognized image format: ${file.type}`);
-
-      const reader = new FileReader();
-      const b64uri = await readFileAsDataUrlAsync(file);
-      return b64uri.split(',', 2)[1]; // strip data:...;base64,
+        if (!file || !file.type.startsWith('image/')) {
+            throw new Error(`unrecognized image format: ${file.type}`);
+        }
+        const b64uri = await readFileAsDataUrlAsync(file);
+        return b64uri.split(',', 2)[1]; // strip data:...;base64,
     }
 
     /**
