@@ -197,19 +197,9 @@ jobs:
                   name: Cef-Setup
                   path: VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
 
-    # Matrix runs x64 and arm64 in parallel instead of sequentially.
     build_dotnet_linux:
         runs-on: ubuntu-latest
         needs: set_version
-        strategy:
-            matrix:
-                include:
-                    - arch: x64
-                      project: VRCX-Electron.csproj
-                      artifact: Electron-Release-Linux-x64
-                    - arch: arm64
-                      project: VRCX-Electron-arm64.csproj
-                      artifact: Electron-Release-Linux-arm64
         steps:
             - uses: actions/checkout@v6
             - name: Setup .NET 9
@@ -246,19 +236,9 @@ jobs:
                   name: Electron-Release-Linux-arm64
                   path: build/Electron
 
-    # Matrix runs x64 and arm64 in parallel instead of sequentially.
     build_dotnet_macos:
         runs-on: macos-latest
         needs: set_version
-        strategy:
-            matrix:
-                include:
-                    - arch: x64
-                      project: VRCX-Electron.csproj
-                      artifact: Electron-Release-macOS-x64
-                    - arch: arm64
-                      project: VRCX-Electron-arm64.csproj
-                      artifact: Electron-Release-macOS-arm64
         steps:
             - uses: actions/checkout@v6
             - name: Setup .NET 9
@@ -319,12 +299,8 @@ jobs:
                   restore-keys: ${{ runner.os }}-node-
             - name: Restore dependencies
               run: npm ci
-            - name: Build Cef-html
-              env:
-                  SENTRY_AUTH_TOKEN: ${{ secrets.SentryAuthToken }}
-              run: npm run prod
-            - name: Upload Cef-html artifacts
-              uses: actions/upload-artifact@v7
+            - name: Download Electron html artifacts
+              uses: actions/download-artifact@v8
               with:
                   name: Electron-html
                   path: build/html
@@ -340,6 +316,8 @@ jobs:
               with:
                   name: Electron-AppImage-x64
                   path: 'build/VRCX_${{ needs.set_version.outputs.version }}_x64.AppImage'
+            - name: Cleanup
+              run: rm -R build/Electron
             - name: Download Electron arm64 dotnet artifacts
               uses: actions/download-artifact@v8
               with:
@@ -416,7 +394,7 @@ jobs:
             [
                 set_version,
                 build_dotnet_windows,
-                build_electron_linux,
+                build_node,
                 build_electron_macos,
             ]
         steps:
