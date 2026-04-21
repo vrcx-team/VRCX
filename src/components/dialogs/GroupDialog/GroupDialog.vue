@@ -1,13 +1,13 @@
 <template>
-    <div class="w-223">
+    <div class="w-223 flex-1 min-h-0 flex flex-col">
         <DialogHeader class="sr-only">
             <DialogTitle>{{ groupDialog.ref?.name || t('dialog.group.info.header') }}</DialogTitle>
             <DialogDescription>
                 {{ groupDialog.ref?.description || groupDialog.ref?.name || t('dialog.group.info.header') }}
             </DialogDescription>
         </DialogHeader>
-        <div>
-            <div style="display: flex">
+        <div class="flex-1 min-h-0 flex flex-col">
+            <div class="flex-shrink-0" style="display: flex">
                 <div style="flex: none; width: 120px; height: 120px">
                     <img
                         v-if="!groupDialog.loading && !imageError"
@@ -341,6 +341,7 @@
                 v-model="groupDialog.activeTab"
                 :items="groupDialogTabs"
                 :unmount-on-hide="false"
+                fill
                 @update:modelValue="groupDialogTabClick">
                 <template #Info>
                     <GroupDialogInfoTab

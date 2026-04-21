@@ -307,21 +307,19 @@ const gameLog = {
         return ref;
     },
 
-    async getLastGroupVisit(groupName) {
+    async getLastGroupVisit(groupId) {
         var ref = {
-            created_at: '',
-            groupName: ''
+            created_at: ''
         };
         await sqliteService.execute(
             (row) => {
                 ref = {
-                    created_at: row[0],
-                    groupName: row[1]
+                    created_at: row[0]
                 };
             },
-            `SELECT created_at, group_name FROM gamelog_location WHERE group_name = @groupName ORDER BY id DESC LIMIT 1`,
+            `SELECT created_at FROM gamelog_location WHERE location LIKE @groupId ORDER BY id DESC LIMIT 1`,
             {
-                '@groupName': groupName
+                '@groupId': `%${groupId}%`
             }
         );
         return ref;
@@ -348,9 +346,12 @@ const gameLog = {
                 };
                 data.set(row.location, row);
             },
-            `SELECT created_at, location, time, world_name, group_name FROM gamelog_location WHERE location LIKE '%${groupId}%' ORDER BY id DESC`,
+            `SELECT created_at, location, time, world_name, group_name
+             FROM gamelog_location
+             WHERE location LIKE @groupId
+             ORDER BY id DESC`,
             {
-                '@groupId': groupId
+                '@groupId': `%${groupId}%`
             }
         );
         return data;
@@ -470,6 +471,9 @@ const gameLog = {
     },
 
     async getAllUserStats(userIds, displayNames) {
+        if (!userIds.length && !displayNames.length) {
+            return [];
+        }
         var data = [];
         // this makes me most sad
         var userIdsString = '';
@@ -482,6 +486,13 @@ const gameLog = {
             displayNamesString += `'${displayName.replaceAll("'", "''")}', `;
         }
         displayNamesString = displayNamesString.slice(0, -2);
+        var whereClauses = [];
+        if (userIdsString) {
+            whereClauses.push(`g.user_id IN (${userIdsString})`);
+        }
+        if (displayNamesString) {
+            whereClauses.push(`g.display_name IN (${displayNamesString})`);
+        }
 
         await sqliteService.execute(
             (dbRow) => {
@@ -504,8 +515,7 @@ const gameLog = {
             FROM
                 gamelog_join_leave g
             WHERE
-                g.user_id IN (${userIdsString})
-                OR g.display_name IN (${displayNamesString})
+                ${whereClauses.join('\n                OR ')}
             GROUP BY
                 g.user_id,
                 g.display_name
@@ -828,7 +838,7 @@ const gameLog = {
                 checkString = `AND resource_type != 'StringLoad'`;
             }
             if (!resourceload_image) {
-                checkString = `AND resource_type != 'ImageLoad'`;
+                checkImage = `AND resource_type != 'ImageLoad'`;
             }
             selects.push(
                 `SELECT * FROM (SELECT id, created_at, resource_type AS type, NULL AS display_name, location, NULL AS user_id, NULL AS time, NULL AS world_id, NULL AS world_name, NULL AS group_name, NULL AS instance_id, NULL AS video_url, NULL AS video_name, NULL AS video_id, resource_url, resource_type, NULL AS data, NULL AS message FROM gamelog_resource_load WHERE 1=1 ${checkString} ${checkImage} ORDER BY id DESC LIMIT @perTable)`
@@ -1048,7 +1058,7 @@ const gameLog = {
                 checkString = `AND resource_type != 'StringLoad'`;
             }
             if (!resourceload_image) {
-                checkString = `AND resource_type != 'ImageLoad'`;
+                checkImage = `AND resource_type != 'ImageLoad'`;
             }
             selects.push(
                 `SELECT * FROM (SELECT id, created_at, resource_type AS type, NULL AS display_name, location, NULL AS user_id, NULL AS time, NULL AS world_id, NULL AS world_name, NULL AS group_name, NULL AS instance_id, NULL AS video_url, NULL AS video_name, NULL AS video_id, resource_url, resource_type, NULL AS data, NULL AS message FROM gamelog_resource_load WHERE resource_url LIKE @searchLike ${checkString} ${checkImage} ORDER BY id DESC LIMIT @perTable)`
@@ -1372,6 +1382,132 @@ const gameLog = {
         return instances;
     },
 
+    /**
+     * Get current user's online sessions from gamelog_location
+     * Each row has created_at (leave time) and time (duration in ms)
+     * Session start = created_at - time, Session end = created_at
+     * @param {number} [fromDays=0] - How many days back to start (0 = all time)
+     * @param {number} [toDays=0] - How many days back to stop (0 = now)
+     * @returns {Promise<Array<{created_at: string, time: number}>>}
+     */
+    async getCurrentUserOnlineSessions(fromDays = 0, toDays = 0) {
+        const data = [];
+        const now = new Date();
+        const params = {};
+        const where = [];
+
+        if (fromDays > 0) {
+            const fromDate = new Date(
+                now.getTime() - fromDays * 86400000
+            ).toISOString();
+            params['@fromDate'] = fromDate;
+            where.push('created_at >= @fromDate');
+
+            await sqliteService.execute(
+                (dbRow) => {
+                    data.push({ created_at: dbRow[0], time: dbRow[1] || 0 });
+                },
+                'SELECT created_at, time FROM gamelog_location WHERE created_at < @fromDate ORDER BY created_at DESC LIMIT 1',
+                { '@fromDate': fromDate }
+            );
+        }
+        if (toDays > 0) {
+            const toDate = new Date(
+                now.getTime() - toDays * 86400000
+            ).toISOString();
+            params['@toDate'] = toDate;
+            where.push('created_at < @toDate');
+        }
+
+        const dateClause =
+            where.length > 0 ? `WHERE ${where.join(' AND ')}` : '';
+        await sqliteService.execute(
+            (dbRow) => {
+                data.push({ created_at: dbRow[0], time: dbRow[1] || 0 });
+            },
+            `SELECT created_at, time FROM gamelog_location ${dateClause} ORDER BY created_at`,
+            params
+        );
+        return data;
+    },
+
+    /**
+     * Get current user's online sessions after a given timestamp (incremental).
+     * @param {string} afterCreatedAt - Only return rows created after this timestamp
+     * @param {boolean} [inclusive=false] - If true, use >= instead of > to re-read the last record
+     * @returns {Promise<Array<{created_at: string, time: number}>>}
+     */
+    async getCurrentUserOnlineSessionsAfter(afterCreatedAt, inclusive = false) {
+        const data = [];
+        const op = inclusive ? '>=' : '>';
+        await sqliteService.execute(
+            (dbRow) => {
+                data.push({ created_at: dbRow[0], time: dbRow[1] || 0 });
+            },
+            `SELECT created_at, time FROM gamelog_location WHERE created_at ${op} @after ORDER BY created_at`,
+            { '@after': afterCreatedAt }
+        );
+        return data;
+    },
+
+    /**
+     * Get current user's top visited worlds from gamelog_location.
+     * Groups by world_id and aggregates visit count and total time.
+     * @param {number} [days] - Number of days to look back. Omit or 0 for all time.
+     * @param {number} [limit=5] - Maximum number of worlds to return.
+     * @param {'time'|'count'} [sortBy='time'] - Sort by total time or visit count.
+     * @param {string} [excludeWorldId=''] - Optional world ID to exclude from results.
+     * @returns {Promise<Array<{worldId: string, worldName: string, visitCount: number, totalTime: number}>>}
+     */
+    async getMyTopWorlds(
+        days = 0,
+        limit = 5,
+        sortBy = 'time',
+        excludeWorldId = ''
+    ) {
+        const results = [];
+        const whereClause =
+            days > 0 ? `AND created_at >= datetime('now', @daysOffset)` : '';
+        const excludeClause = excludeWorldId
+            ? 'AND world_id != @excludeWorldId'
+            : '';
+        const orderBy =
+            sortBy === 'count' ? 'visit_count DESC' : 'total_time DESC';
+        const params = { '@limit': limit };
+        if (days > 0) {
+            params['@daysOffset'] = `-${days} days`;
+        }
+        if (excludeWorldId) {
+            params['@excludeWorldId'] = excludeWorldId;
+        }
+        await sqliteService.execute(
+            (dbRow) => {
+                results.push({
+                    worldId: dbRow[0],
+                    worldName: dbRow[1] || dbRow[0],
+                    visitCount: dbRow[2],
+                    totalTime: dbRow[3] || 0
+                });
+            },
+            `SELECT
+                world_id,
+                world_name,
+                COUNT(*) AS visit_count,
+                SUM(time) AS total_time
+            FROM gamelog_location
+            WHERE world_id IS NOT NULL
+                AND world_id != ''
+                AND world_id LIKE 'wrld_%'
+                ${whereClause}
+                ${excludeClause}
+            GROUP BY world_id
+            ORDER BY ${orderBy}
+            LIMIT @limit`,
+            params
+        );
+        return results;
+    },
+
     async getUserIdFromDisplayName(displayName) {
         var userId = '';
         await sqliteService.execute(
@@ -1560,6 +1696,150 @@ const gameLog = {
                 '@location': input.location
             }
         );
+    },
+
+    // ── Sessions view queries (read-only, no existing behavior changed) ──
+
+    /**
+     * Get Location segments paginated by cursor (id DESC).
+     * @param {number|null} beforeId - cursor: only return rows with id < beforeId. null = latest.
+     * @param {number} limit - how many segments to fetch.
+     * @returns {Promise<Array<{id: number, created_at: string, location: string, worldId: string, worldName: string, time: number, groupName: string}>>}
+     */
+    async getSessionsLocationSegments(beforeId, limit) {
+        const data = [];
+        const cursorClause = beforeId != null ? 'AND id < @beforeId' : '';
+        const args = { '@limit': limit };
+        if (beforeId != null) {
+            args['@beforeId'] = beforeId;
+        }
+        await sqliteService.execute(
+            (dbRow) => {
+                data.push({
+                    id: dbRow[0],
+                    created_at: dbRow[1],
+                    location: dbRow[2],
+                    worldId: dbRow[3],
+                    worldName: dbRow[4],
+                    time: dbRow[5],
+                    groupName: dbRow[6]
+                });
+            },
+            `SELECT id, created_at, location, world_id, world_name, time, group_name
+             FROM gamelog_location
+             WHERE 1=1 ${cursorClause}
+             ORDER BY id DESC
+             LIMIT @limit`,
+            args
+        );
+        return data;
+    },
+
+    /**
+     * Get join/leave and video_play events for a set of location tags within a date range.
+     * Excludes the current user's own join/leave.
+     * @param {string[]} locationTags - location values to match
+     * @param {string} afterDate - ISO date (inclusive lower bound)
+     * @param {string} beforeDate - ISO date (inclusive upper bound, with padding)
+     * @returns {Promise<Array<object>>}
+     */
+    async getSessionsEventsForSegments(locationTags, afterDate, beforeDate) {
+        if (!locationTags || locationTags.length === 0) return [];
+
+        const data = [];
+        const placeholders = [];
+        const args = {
+            '@afterDate': afterDate,
+            '@beforeDate': beforeDate
+        };
+
+        locationTags.forEach((loc, i) => {
+            const key = `@loc_${i}`;
+            args[key] = loc;
+            placeholders.push(key);
+        });
+
+        const locIn = placeholders.join(', ');
+
+        // join/leave events
+        await sqliteService.execute(
+            (dbRow) => {
+                data.push({
+                    type: dbRow[0],
+                    created_at: dbRow[1],
+                    displayName: dbRow[2],
+                    userId: dbRow[3],
+                    location: dbRow[4]
+                });
+            },
+            `SELECT type, created_at, display_name, user_id, location
+             FROM gamelog_join_leave
+             WHERE location IN (${locIn})
+               AND user_id != @selfId
+               AND created_at >= @afterDate
+               AND created_at <= @beforeDate
+             ORDER BY created_at ASC`,
+            { ...args, '@selfId': dbVars.userId }
+        );
+
+        // video_play events
+        await sqliteService.execute(
+            (dbRow) => {
+                data.push({
+                    type: 'VideoPlay',
+                    created_at: dbRow[0],
+                    videoUrl: dbRow[1],
+                    videoName: dbRow[2],
+                    videoId: dbRow[3],
+                    displayName: dbRow[4],
+                    userId: dbRow[5],
+                    location: dbRow[6]
+                });
+            },
+            `SELECT created_at, video_url, video_name, video_id, display_name, user_id, location
+             FROM gamelog_video_play
+             WHERE location IN (${locIn})
+               AND created_at >= @afterDate
+               AND created_at <= @beforeDate
+             ORDER BY created_at ASC`,
+            args
+        );
+
+        return data;
+    },
+
+    /**
+     * Get Location segments from a given date onwards (for anchor jumps).
+     * Returns segments with created_at >= sinceDate, capped by limit, ordered id DESC.
+     * @param {string} sinceDate - ISO date string
+     * @param {number} limit - max segments to return
+     * @returns {Promise<Array<object>>}
+     */
+    async getSessionsLocationSegmentsByAnchor(sinceDate, limit) {
+        const data = [];
+        await sqliteService.execute(
+            (dbRow) => {
+                data.push({
+                    id: dbRow[0],
+                    created_at: dbRow[1],
+                    location: dbRow[2],
+                    worldId: dbRow[3],
+                    worldName: dbRow[4],
+                    time: dbRow[5],
+                    groupName: dbRow[6]
+                });
+            },
+            `SELECT id, created_at, location, world_id, world_name, time, group_name
+             FROM gamelog_location
+             WHERE created_at >= @sinceDate
+             ORDER BY id DESC
+             LIMIT @limit`,
+            {
+                '@sinceDate': sinceDate,
+                '@limit': limit
+            }
+        );
+        return data;
     }
 };
 

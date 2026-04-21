@@ -1,8 +1,8 @@
 const toolCategories = [
     { key: 'image', labelKey: 'view.tools.pictures.header' },
     { key: 'shortcuts', labelKey: 'view.tools.shortcuts.header' },
-    { key: 'system', labelKey: 'view.tools.system_tools.header' },
     { key: 'group', labelKey: 'view.tools.group.header' },
+    { key: 'system', labelKey: 'view.tools.system_tools.header' },
     { key: 'user', labelKey: 'view.tools.export.header' },
     { key: 'other', labelKey: 'view.tools.other.header' }
 ];
@@ -49,7 +49,8 @@ const toolDefinitions = [
         iconKey: 'folder-image',
         navIcon: 'ri-folder-image-line',
         titleKey: 'view.tools.pictures.pictures.steam_screenshots',
-        descriptionKey: 'view.tools.pictures.pictures.steam_screenshots_description',
+        descriptionKey:
+            'view.tools.pictures.pictures.steam_screenshots_description',
         navEligible: true,
         action: {
             type: 'app-api',
@@ -151,7 +152,8 @@ const toolDefinitions = [
         iconKey: 'bot',
         navIcon: 'ri-user-settings-line',
         titleKey: 'view.settings.general.automation.auto_change_status',
-        descriptionKey: 'view.settings.general.automation.auto_state_change_tooltip',
+        descriptionKey:
+            'view.settings.general.automation.auto_state_change_tooltip',
         navEligible: true,
         action: { type: 'dialog', dialogKey: 'auto-change-status' }
     },
@@ -240,7 +242,8 @@ const toolNavDefinitions = toolDefinitions
     }));
 
 const defaultHiddenToolNavKeys = toolNavDefinitions.map((tool) => tool.key);
-const isToolNavKey = (key) => typeof key === 'string' && key.startsWith('tool-');
+const isToolNavKey = (key) =>
+    typeof key === 'string' && key.startsWith('tool-');
 
 function getToolsByCategory(categoryKey) {
     return toolDefinitions.filter((tool) => tool.category === categoryKey);

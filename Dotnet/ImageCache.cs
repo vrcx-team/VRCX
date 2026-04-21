@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using NLog;
@@ -28,22 +28,22 @@ internal static class ImageCache
         var httpClientHandler = new HttpClientHandler();
         if (WebApi.ProxySet)
             httpClientHandler.Proxy = WebApi.Proxy;
-            
+
         httpClient = new HttpClient(httpClientHandler);
         httpClient.DefaultRequestHeaders.Add("User-Agent", Program.Version);
     }
-    
+
     public static void PopulateImageHosts(List<string> hosts)
     {
         foreach (var host in hosts)
         {
             if (string.IsNullOrEmpty(host))
                 continue;
-            
+
             var uri = new Uri(host);
             if (string.IsNullOrEmpty(uri.Host))
                 continue;
-            
+
             if (!ImageHosts.Contains(uri.Host))
                 ImageHosts.Add(uri.Host);
         }
@@ -54,7 +54,7 @@ internal static class ImageCache
         var uri = new Uri(url);
         if (!ImageHosts.Contains(uri.Host))
             throw new ArgumentException("Invalid image host", url);
-            
+
         var cookieString = string.Empty;
         if (WebApi.Instance != null &&
             WebApi.Instance.CookieContainer != null &&
@@ -64,7 +64,7 @@ internal static class ImageCache
             foreach (Cookie cookie in cookies)
                 cookieString += $"{cookie.Name}={cookie.Value};";
         }
-        
+
         var request = new HttpRequestMessage(HttpMethod.Get, url);
         if (!string.IsNullOrEmpty(cookieString))
             request.Headers.Add("Cookie", cookieString);
@@ -78,7 +78,7 @@ internal static class ImageCache
     {
         var directoryLocation = Path.Join(cacheLocation, fileId);
         var fileLocation = Path.Join(directoryLocation, $"{version}.png");
-        
+
         if (File.Exists(fileLocation) && new FileInfo(fileLocation).Length > 0)
         {
             Directory.SetLastWriteTimeUtc(directoryLocation, DateTime.UtcNow);
@@ -115,7 +115,7 @@ internal static class ImageCache
         await using var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
         await stream.CopyToAsync(fileStream);
     }
-    
+
     private static void CleanImageCache()
     {
         var dirInfo = new DirectoryInfo(cacheLocation);

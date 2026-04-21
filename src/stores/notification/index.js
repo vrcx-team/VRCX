@@ -304,7 +304,8 @@ export const useNotificationStore = defineStore('Notification', () => {
             generalSettingsStore.autoAcceptInviteRequests === 'All Favorites' &&
             !favoriteStore.state.favoriteFriends_.some(
                 (x) => x.id === ref.senderUserId
-            )
+            ) &&
+            !favoriteStore.isInAnyLocalFriendGroup(ref.senderUserId)
         ) {
             return;
         }
@@ -321,8 +322,8 @@ export const useNotificationStore = defineStore('Notification', () => {
                     if (groupKey.startsWith('local:')) {
                         const localGroup = groupKey.slice(6);
                         const localFavs =
-                            favoriteStore.localFriendFavorites.get(localGroup);
-                        if (localFavs && localFavs.has(ref.senderUserId)) {
+                            favoriteStore.localFriendFavorites[localGroup];
+                        if (localFavs && localFavs.includes(ref.senderUserId)) {
                             found = true;
                             break;
                         }
@@ -540,7 +541,6 @@ export const useNotificationStore = defineStore('Notification', () => {
 
         const D = userStore.userDialog;
         if (
-            D.visible === false ||
             typeof args.ref === 'undefined' ||
             args.ref.type !== 'friendRequest' ||
             args.ref.senderUserId !== D.id
@@ -548,6 +548,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             return;
         }
         D.isFriend = true;
+        D.incomingRequest = false;
     }
 
     /**
@@ -557,11 +558,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     function handleNotificationExpire(args) {
         const { ref } = args;
         const D = userStore.userDialog;
-        if (
-            D.visible === false ||
-            ref.type !== 'friendRequest' ||
-            ref.senderUserId !== D.id
-        ) {
+        if (ref.type !== 'friendRequest' || ref.senderUserId !== D.id) {
             return;
         }
         D.incomingRequest = false;
@@ -832,7 +829,9 @@ export const useNotificationStore = defineStore('Notification', () => {
             return;
         }
         let displayName = '';
-        if (noty.displayName) {
+        if (noty.type === 'DisplayName' && noty.previousDisplayName) {
+            displayName = noty.previousDisplayName;
+        } else if (noty.displayName) {
             displayName = noty.displayName;
         } else if (noty.senderUsername) {
             displayName = noty.senderUsername;
@@ -1202,7 +1201,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         playNoty({
             type: 'Event',
             created_at: new Date().toJSON(),
-            data: 'Notification Test'
+            data: t('view.settings.notifications.notifications.test_message')
         });
     }
 

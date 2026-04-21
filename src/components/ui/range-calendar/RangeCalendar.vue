@@ -50,7 +50,12 @@
         class: { type: null, required: false }
     });
 
-    const emits = defineEmits(['update:modelValue', 'update:validModelValue', 'update:placeholder', 'update:startValue']);
+    const emits = defineEmits([
+        'update:modelValue',
+        'update:validModelValue',
+        'update:placeholder',
+        'update:startValue'
+    ]);
 
     const delegatedProps = reactiveOmit(props, 'class');
 

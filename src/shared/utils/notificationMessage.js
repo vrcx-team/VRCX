@@ -1,4 +1,5 @@
 import { displayLocation } from './locationParser';
+import { i18n } from '../../plugins/i18n';
 
 /**
  * Extracts the notification title and body from a notification object.
@@ -13,128 +14,169 @@ import { displayLocation } from './locationParser';
 export function getNotificationMessage(noty, message, displayNameOverride) {
     const name = displayNameOverride || noty.displayName;
     const sender = displayNameOverride || noty.senderUsername;
+    const t = i18n.global.t;
 
     switch (noty.type) {
         case 'OnPlayerJoined':
-            return { title: name, body: 'has joined' };
+            return { title: name, body: t('notifications.has_joined') };
         case 'OnPlayerLeft':
-            return { title: name, body: 'has left' };
+            return { title: name, body: t('notifications.has_left') };
         case 'OnPlayerJoining':
-            return { title: name, body: 'is joining' };
+            return { title: name, body: t('notifications.is_joining') };
         case 'GPS':
             return {
                 title: name,
-                body: `is in ${displayLocation(
-                    noty.location,
-                    noty.worldName,
-                    noty.groupName
-                )}`
+                body: t('notifications.gps', {
+                    location: displayLocation(
+                        noty.location,
+                        noty.worldName,
+                        noty.groupName
+                    )
+                })
             };
         case 'Online': {
             let locationName = '';
             if (noty.worldName) {
-                locationName = ` to ${displayLocation(
-                    noty.location,
-                    noty.worldName,
-                    noty.groupName
-                )}`;
+                return {
+                    title: name,
+                    body: t('notifications.online_location', {
+                        location: displayLocation(
+                            noty.location,
+                            noty.worldName,
+                            noty.groupName
+                        )
+                    })
+                };
             }
             return {
                 title: name,
-                body: `has logged in${locationName}`
+                body: t('notifications.online')
             };
         }
         case 'Offline':
-            return { title: name, body: 'has logged out' };
+            return { title: name, body: t('notifications.offline') };
         case 'Status':
             return {
                 title: name,
-                body: `status is now ${noty.status} ${noty.statusDescription}`
+                body: t('notifications.status_update', {
+                    status: noty.status,
+                    description: noty.statusDescription
+                })
             };
         case 'invite':
             return {
                 title: sender,
-                body: `has invited you to ${displayLocation(
-                    noty.details.worldId,
-                    noty.details.worldName
-                )}${message}`
+                body: t('notifications.invite', {
+                    location: displayLocation(
+                        noty.details.worldId,
+                        noty.details.worldName
+                    ),
+                    message
+                })
             };
         case 'requestInvite':
             return {
                 title: sender,
-                body: `has requested an invite${message}`
+                body: t('notifications.request_invite', { message })
             };
         case 'inviteResponse':
             return {
                 title: sender,
-                body: `has responded to your invite${message}`
+                body: t('notifications.invite_response', { message })
             };
         case 'requestInviteResponse':
             return {
                 title: sender,
-                body: `has responded to your invite request${message}`
+                body: t('notifications.request_invite_response', { message })
             };
         case 'friendRequest':
             return {
                 title: sender,
-                body: 'has sent you a friend request'
+                body: t('notifications.friend_request')
             };
         case 'Friend':
-            return { title: name, body: 'is now your friend' };
+            return { title: name, body: t('notifications.friend') };
         case 'Unfriend':
             return {
                 title: name,
-                body: 'is no longer your friend'
+                body: t('notifications.unfriend')
             };
         case 'TrustLevel':
             return {
                 title: name,
-                body: `trust level is now ${noty.trustLevel}`
+                body: t('notifications.trust_level', {
+                    trustLevel: noty.trustLevel
+                })
             };
         case 'DisplayName':
             return {
                 title: displayNameOverride || noty.previousDisplayName,
-                body: `changed their name to ${noty.displayName}`
+                body: t('notifications.display_name', {
+                    displayName: noty.displayName
+                })
             };
         case 'boop':
             return { title: sender, body: noty.message };
         case 'groupChange':
             return { title: sender, body: noty.message };
         case 'group.announcement':
-            return { title: 'Group Announcement', body: noty.message };
+            return {
+                title: t('notifications.group_announcement_title'),
+                body: noty.message
+            };
         case 'group.informative':
-            return { title: 'Group Informative', body: noty.message };
+            return {
+                title: t('notifications.group_informative_title'),
+                body: noty.message
+            };
         case 'group.invite':
-            return { title: 'Group Invite', body: noty.message };
+            return {
+                title: t('notifications.group_invite_title'),
+                body: noty.message
+            };
         case 'group.joinRequest':
-            return { title: 'Group Join Request', body: noty.message };
+            return {
+                title: t('notifications.group_join_request_title'),
+                body: noty.message
+            };
         case 'group.transfer':
-            return { title: 'Group Transfer Request', body: noty.message };
+            return {
+                title: t('notifications.group_transfer_request_title'),
+                body: noty.message
+            };
         case 'group.queueReady':
-            return { title: 'Instance Queue Ready', body: noty.message };
+            return {
+                title: t('notifications.group_queue_ready_title'),
+                body: noty.message
+            };
         case 'instance.closed':
-            return { title: 'Instance Closed', body: noty.message };
+            return {
+                title: t('notifications.instance_closed_title'),
+                body: noty.message
+            };
         case 'PortalSpawn':
             if (name) {
                 return {
                     title: name,
-                    body: `has spawned a portal to ${displayLocation(
-                        noty.instanceId,
-                        noty.worldName,
-                        noty.groupName
-                    )}`
+                    body: t('notifications.portal_spawn_name', {
+                        location: displayLocation(
+                            noty.instanceId,
+                            noty.worldName,
+                            noty.groupName
+                        )
+                    })
                 };
             }
-            return { title: '', body: 'User has spawned a portal' };
+            return { title: '', body: t('notifications.portal_spawn') };
         case 'AvatarChange':
             return {
                 title: name,
-                body: `changed into avatar ${noty.name}`
+                body: t('notifications.avatar_change', { avatar: noty.name })
             };
         case 'ChatBoxMessage':
             return {
                 title: name,
-                body: `said ${noty.text}`
+                body: t('notifications.chat_message', { message: noty.text })
             };
         case 'Event':
             return { title: 'Event', body: noty.data };
@@ -145,31 +187,31 @@ export function getNotificationMessage(noty, message, displayNameOverride) {
         case 'BlockedOnPlayerJoined':
             return {
                 title: name,
-                body: 'Blocked user has joined'
+                body: t('notifications.blocked_player_joined')
             };
         case 'BlockedOnPlayerLeft':
             return {
                 title: name,
-                body: 'Blocked user has left'
+                body: t('notifications.blocked_player_left')
             };
         case 'MutedOnPlayerJoined':
             return {
                 title: name,
-                body: 'Muted user has joined'
+                body: t('notifications.muted_player_joined')
             };
         case 'MutedOnPlayerLeft':
             return {
                 title: name,
-                body: 'Muted user has left'
+                body: t('notifications.muted_player_left')
             };
         case 'Blocked':
-            return { title: name, body: 'has blocked you' };
+            return { title: name, body: t('notifications.blocked') };
         case 'Unblocked':
-            return { title: name, body: 'has unblocked you' };
+            return { title: name, body: t('notifications.unblocked') };
         case 'Muted':
-            return { title: name, body: 'has muted you' };
+            return { title: name, body: t('notifications.muted') };
         case 'Unmuted':
-            return { title: name, body: 'has unmuted you' };
+            return { title: name, body: t('notifications.unmuted') };
         default:
             return null;
     }

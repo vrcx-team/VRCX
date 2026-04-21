@@ -32,7 +32,7 @@ namespace VRCX
 
             return output;
         }
-        
+
         public short GetVRChatUserModeration(string currentUserId, string userId)
         {
             var filePath = Path.Join(GetVRChatAppDataLocation(), @$"LocalPlayerModerations\{currentUserId}-show-hide-user.vrcset");

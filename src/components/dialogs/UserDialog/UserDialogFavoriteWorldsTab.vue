@@ -11,9 +11,6 @@
             @click="getUserFavoriteWorlds(userDialog.id)">
         </Button> -->
     <template v-if="userDialog.userFavoriteWorlds && userDialog.userFavoriteWorlds.length > 0">
-        <DeprecationAlert
-            v-if="userDialog.ref.id === currentUser.id"
-            :feature-name="t('nav_tooltip.favorite_worlds')" />
         <Input v-model="searchQuery" class="h-8 w-40 mt-2" placeholder="Search worlds" @click.stop />
         <template v-if="searchActive">
             <div
@@ -104,8 +101,6 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import DeprecationAlert from '@/components/DeprecationAlert.vue';
-
     import { useFavoriteStore, useUserStore } from '../../../stores';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { handleFavoriteWorldList } from '../../../coordinators/favoriteCoordinator';
@@ -135,7 +130,12 @@
         const all = lists.flatMap((list) => list[2] || []);
         return all.filter((w) => (w.name || '').toLowerCase().includes(query));
     });
-    watch(() => userDialog.value.id, () => { searchQuery.value = ''; });
+    watch(
+        () => userDialog.value.id,
+        () => {
+            searchQuery.value = '';
+        }
+    );
 
     /**
      *

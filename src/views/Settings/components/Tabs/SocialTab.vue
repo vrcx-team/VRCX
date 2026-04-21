@@ -4,7 +4,9 @@
             <SettingsItem
                 :label="t('view.settings.appearance.user_dialog.recent_action_cooldown')"
                 :description="t('view.settings.appearance.user_dialog.recent_action_cooldown_description')">
-                <Switch :model-value="recentActionCooldownEnabled" @update:modelValue="setRecentActionCooldownEnabled" />
+                <Switch
+                    :model-value="recentActionCooldownEnabled"
+                    @update:modelValue="setRecentActionCooldownEnabled" />
             </SettingsItem>
 
             <SettingsItem
@@ -27,49 +29,44 @@
             </SettingsItem>
         </SettingsGroup>
 
-        <SettingsGroup>
-            <template #description>
-                <div class="flex items-center gap-1.5">
-                    <span class="text-base font-semibold text-foreground">{{ t('view.settings.general.favorites.header') }}</span>
-                    <TooltipWrapper side="top" :content="t('view.settings.general.favorites.header_tooltip')">
-                        <Info class="size-3 text-muted-foreground cursor-help" />
-                    </TooltipWrapper>
-                </div>
-            </template>
-
-            <Select
-                :model-value="localFavoriteFriendsGroups"
-                multiple
-                @update:modelValue="setLocalFavoriteFriendsGroups">
-                <SelectTrigger>
-                    <SelectValue :placeholder="t('view.settings.general.favorites.group_placeholder')" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectItem v-for="group in favoriteFriendGroups" :key="group.key" :value="group.key">
-                            {{ group.displayName }}
-                        </SelectItem>
-                    </SelectGroup>
-                    <template v-if="localFriendFavoriteGroups.length">
-                        <SelectSeparator />
+        <SettingsGroup :title="t('view.settings.social.favorites.header')">
+            <SettingsItem
+                :label="t('view.settings.general.favorites.header')"
+                :description="t('view.settings.general.favorites.header_tooltip')">
+                <Select
+                    :model-value="localFavoriteFriendsGroups"
+                    multiple
+                    @update:modelValue="setLocalFavoriteFriendsGroups">
+                    <SelectTrigger class="w-48">
+                        <SelectValue :placeholder="t('view.settings.general.favorites.group_placeholder')" />
+                    </SelectTrigger>
+                    <SelectContent>
                         <SelectGroup>
-                            <SelectItem
-                                v-for="group in localFriendFavoriteGroups"
-                                :key="'local:' + group"
-                                :value="'local:' + group">
-                                {{ group }}
+                            <SelectItem v-for="group in favoriteFriendGroups" :key="group.key" :value="group.key">
+                                {{ group.displayName }}
                             </SelectItem>
                         </SelectGroup>
-                    </template>
-                </SelectContent>
-            </Select>
+                        <template v-if="localFriendFavoriteGroups.length">
+                            <SelectSeparator />
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="group in localFriendFavoriteGroups"
+                                    :key="'local:' + group"
+                                    :value="'local:' + group">
+                                    {{ group }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </template>
+                    </SelectContent>
+                </Select>
+            </SettingsItem>
         </SettingsGroup>
     </div>
 </template>
 
 <script setup>
     import { Switch } from '@/components/ui/switch';
-    import { Info } from 'lucide-vue-next';
+
     import {
         NumberField,
         NumberFieldContent,
@@ -93,24 +90,17 @@
 
     import SettingsGroup from '../SettingsGroup.vue';
     import SettingsItem from '../SettingsItem.vue';
-    import { TooltipWrapper } from '@/components/ui/tooltip';
 
     const { t } = useI18n();
 
     const generalSettingsStore = useGeneralSettingsStore();
     const favoriteStore = useFavoriteStore();
 
-    const {
-        recentActionCooldownEnabled,
-        recentActionCooldownMinutes,
-        localFavoriteFriendsGroups
-    } = storeToRefs(generalSettingsStore);
+    const { recentActionCooldownEnabled, recentActionCooldownMinutes, localFavoriteFriendsGroups } =
+        storeToRefs(generalSettingsStore);
 
-    const {
-        setRecentActionCooldownEnabled,
-        setRecentActionCooldownMinutes,
-        setLocalFavoriteFriendsGroups
-    } = generalSettingsStore;
+    const { setRecentActionCooldownEnabled, setRecentActionCooldownMinutes, setLocalFavoriteFriendsGroups } =
+        generalSettingsStore;
 
     const { favoriteFriendGroups, localFriendFavoriteGroups } = storeToRefs(favoriteStore);
 </script>

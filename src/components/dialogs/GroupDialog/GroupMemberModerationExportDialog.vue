@@ -74,7 +74,13 @@
         { label: 'description', text: 'dialog.group_member_moderation.description' },
         { label: 'data', text: 'dialog.group_member_moderation.data' }
     ];
-    const checkedGroupLogsExportLogsOptions = ref(['created_at', 'eventType', 'actorDisplayName', 'description', 'data']);
+    const checkedGroupLogsExportLogsOptions = ref([
+        'created_at',
+        'eventType',
+        'actorDisplayName',
+        'description',
+        'data'
+    ]);
 
     /**
      *

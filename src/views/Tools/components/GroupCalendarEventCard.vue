@@ -6,7 +6,12 @@
                 :class="cardClass"
                 @mouseenter="openEventPopover"
                 @mouseleave="scheduleCloseEventPopover">
-                <img v-if="!bannerError" :src="bannerUrl" @click="showFullscreenImageDialog(bannerUrl)" @error="bannerError = true" class="banner" />
+                <img
+                    v-if="!bannerError"
+                    :src="bannerUrl"
+                    @click="showFullscreenImageDialog(bannerUrl)"
+                    @error="bannerError = true"
+                    class="banner" />
                 <div v-else class="banner flex items-center justify-center bg-muted">
                     <Image class="size-6 text-muted-foreground" />
                 </div>

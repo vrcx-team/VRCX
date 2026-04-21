@@ -6,13 +6,13 @@
                 if (!open) closeSetAvatarTagsDialog();
             }
         ">
-        <DialogContent class="x-dialog sm:max-w-195">
+        <DialogContent class="x-dialog sm:max-w-195 gap-1">
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.set_avatar_tags.header') }}</DialogTitle>
             </DialogHeader>
 
             <template v-if="setAvatarTagsDialog.visible">
-                <label class="inline-flex items-center gap-2">
+                <label class="inline-flex items-center gap-2 mt-2">
                     <Checkbox
                         v-model="setAvatarTagsDialog.contentHorror"
                         @update:modelValue="updateSelectedAvatarTags" />
@@ -38,7 +38,6 @@
                     <Checkbox v-model="setAvatarTagsDialog.contentSex" @update:modelValue="updateSelectedAvatarTags" />
                     <span>{{ t('dialog.set_avatar_tags.content_sex') }}</span>
                 </label>
-                <br />
                 <InputGroupTextareaField
                     v-model="setAvatarTagsDialog.selectedTagsCsv"
                     :rows="2"
@@ -46,8 +45,6 @@
                     class="mt-2"
                     input-class="resize-none"
                     @input="updateInputAvatarTags" />
-                <br />
-                <br />
                 <template
                     v-if="setAvatarTagsDialog.ownAvatars.length === props.setAvatarTagsDialog.selectedAvatarIds.length">
                     <Button size="sm" variant="outline" @click="setAvatarTagsSelectToggle">{{
@@ -64,7 +61,6 @@
                     {{ setAvatarTagsDialog.ownAvatars.length }}</span
                 >
                 <Spinner v-if="setAvatarTagsDialog.loading" class="inline-block ml-2" />
-                <br />
                 <div
                     class="flex flex-wrap items-start max-h-[300px] overflow-hidden auto"
                     style="margin-top: 8px; min-height: 60px">

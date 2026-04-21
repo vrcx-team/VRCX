@@ -54,7 +54,14 @@
 
     import dayjs from 'dayjs';
 
-    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+    import {
+        Select,
+        SelectContent,
+        SelectGroup,
+        SelectItem,
+        SelectTrigger,
+        SelectValue
+    } from '../../components/ui/select';
     import { useAppearanceSettingsStore, useFriendStore, useModalStore, useVrcxStore } from '../../stores';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { InputGroupField } from '../../components/ui/input-group';
@@ -78,7 +85,9 @@
         const typeFilter = friendLogTable.value.filters?.[0]?.value ?? [];
         const searchFilter = friendLogTable.value.filters?.[1]?.value ?? '';
         const hideUnfriendsFilter = friendLogTable.value.filters?.[2]?.value;
-        const typeSet = Array.isArray(typeFilter) ? new Set(typeFilter.map((value) => String(value).toLowerCase())) : null;
+        const typeSet = Array.isArray(typeFilter)
+            ? new Set(typeFilter.map((value) => String(value).toLowerCase()))
+            : null;
         const searchValue = String(searchFilter).trim().toLowerCase();
 
         const filtered = data.filter((row) => {

@@ -24,7 +24,10 @@ import { useAvatarProviderStore } from '../stores/avatarProvider';
 import { useAvatarStore } from '../stores/avatar';
 import { useFavoriteStore } from '../stores/favorite';
 import { useModalStore } from '../stores/modal';
-import { syncAvatarSearchIndex, removeAvatarSearchIndex } from './searchIndexCoordinator';
+import {
+    syncAvatarSearchIndex,
+    removeAvatarSearchIndex
+} from './searchIndexCoordinator';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
 import { useVRCXUpdaterStore } from '../stores/vrcxUpdater';
@@ -490,9 +493,10 @@ export function selectAvatarWithConfirmation(id) {
  */
 export async function selectAvatarWithoutConfirmation(id) {
     const userStore = useUserStore();
+    const t = i18n.global.t;
 
     if (userStore.currentUser.currentAvatar === id) {
-        toast.info('Avatar already selected');
+        toast.info(t('message.avatar.already_selected'));
         return;
     }
     return avatarRequest
@@ -500,7 +504,7 @@ export async function selectAvatarWithoutConfirmation(id) {
             avatarId: id
         })
         .then(() => {
-            toast.success('Avatar changed');
+            toast.success(t('message.avatar.selected'));
         });
 }
 

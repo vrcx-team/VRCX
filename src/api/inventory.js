@@ -17,7 +17,7 @@ function refetchActiveInventoryQueries() {
 
 const inventoryReq = {
     /**
-     * @param {{ inventoryId: string, userId: string }} params
+     * @param {{ inventoryId: string, userId: string, flags }} params
      * @returns {Promise<{json: any, params}>}
      */
     getUserInventoryItem(params) {
@@ -53,7 +53,7 @@ const inventoryReq = {
     },
 
     /**
-     * @param {{ n: number, offset: number, order: string, types?: string }} params
+     * @param {{ n: number, offset: number, order: string, types?: string, flags?: string, notFlags?: string, archived?: boolean }} params
      * @returns {Promise<{json: any, params}>}
      */
     getInventoryItems(params) {
@@ -119,6 +119,92 @@ const inventoryReq = {
                 params
             };
             refetchActiveInventoryQueries();
+            return args;
+        });
+    },
+
+    /**
+     * @returns {Promise<{json: any, params}>}
+     */
+    getGlobalInventory() {
+        return request('inventory/global', {
+            method: 'GET'
+        }).then((json) => {
+            const args = {
+                json,
+                params: {}
+            };
+            return args;
+        });
+    },
+
+    /**
+     * @param {{
+     * equipSlot: 'drone' | 'warp' | 'portal' | 'loadingscreen'
+     * holderId: string
+     * }} params
+     * @returns {Promise<{json: any, params}>}
+     * Note: Do not redeem
+     */
+    getEquipSlot(params) {
+        return request('inventory', {
+            method: 'GET',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    /**
+     * @param {{
+     * equipSlot: 'drone' | 'warp' | 'portal' | 'loadingscreen'
+     * inventoryId: string
+     * }} params
+     * @returns {Promise<{json: any, params}>}
+     */
+    equipItem(params) {
+        return request(`inventory/${params.inventoryId}/equip`, {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    archiveItem(params) {
+        return request(`inventory/${params.inventoryId}`, {
+            method: 'PUT',
+            params: {
+                isArchived: true
+            }
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    unArchiveItem(params) {
+        return request(`inventory/${params.inventoryId}`, {
+            method: 'PUT',
+            params: {
+                isArchived: false
+            }
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
             return args;
         });
     }

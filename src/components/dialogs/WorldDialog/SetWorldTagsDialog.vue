@@ -1,20 +1,18 @@
 <template>
     <Dialog v-model:open="isVisible">
-        <DialogContent class="sm:max-w-100">
+        <DialogContent class="sm:max-w-100 gap-1">
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.set_world_tags.header') }}</DialogTitle>
             </DialogHeader>
 
-            <label class="inline-flex items-center gap-2">
+            <label class="inline-flex items-center gap-2 mt-2">
                 <Checkbox v-model="setWorldTagsDialog.avatarScalingDisabled" />
                 <span>{{ t('dialog.set_world_tags.avatar_scaling_disabled') }}</span>
             </label>
-            <br />
             <label class="inline-flex items-center gap-2">
                 <Checkbox v-model="setWorldTagsDialog.focusViewDisabled" />
                 <span>{{ t('dialog.set_world_tags.focus_view_disabled') }}</span>
             </label>
-            <br />
             <label class="inline-flex items-center gap-2">
                 <Checkbox v-model="setWorldTagsDialog.debugAllowed" />
                 <span>{{ t('dialog.set_world_tags.enable_debugging') }}</span>
@@ -30,22 +28,18 @@
                 <Checkbox v-model="setWorldTagsDialog.contentHorror" />
                 <span>{{ t('dialog.set_world_tags.content_horror') }}</span>
             </label>
-            <br />
             <label class="inline-flex items-center gap-2">
                 <Checkbox v-model="setWorldTagsDialog.contentGore" />
                 <span>{{ t('dialog.set_world_tags.content_gore') }}</span>
             </label>
-            <br />
             <label class="inline-flex items-center gap-2">
                 <Checkbox v-model="setWorldTagsDialog.contentViolence" />
                 <span>{{ t('dialog.set_world_tags.content_violence') }}</span>
             </label>
-            <br />
             <label class="inline-flex items-center gap-2">
                 <Checkbox v-model="setWorldTagsDialog.contentAdult" />
                 <span>{{ t('dialog.set_world_tags.content_adult') }}</span>
             </label>
-            <br />
             <label class="inline-flex items-center gap-2">
                 <Checkbox v-model="setWorldTagsDialog.contentSex" />
                 <span>{{ t('dialog.set_world_tags.content_sex') }}</span>
@@ -55,32 +49,26 @@
                 <Checkbox v-model="setWorldTagsDialog.emoji" />
                 <span>{{ t('dialog.new_instance.content_emoji') }}</span>
             </label>
-            <br />
             <label class="inline-flex items-center gap-2">
                 <Checkbox v-model="setWorldTagsDialog.stickers" />
                 <span>{{ t('dialog.new_instance.content_stickers') }}</span>
             </label>
-            <br />
             <label class="inline-flex items-center gap-2">
                 <Checkbox v-model="setWorldTagsDialog.pedestals" />
                 <span>{{ t('dialog.new_instance.content_pedestals') }}</span>
             </label>
-            <br />
             <label class="inline-flex items-center gap-2">
                 <Checkbox v-model="setWorldTagsDialog.prints" />
                 <span>{{ t('dialog.new_instance.content_prints') }}</span>
             </label>
-            <br />
             <label class="inline-flex items-center gap-2">
                 <Checkbox v-model="setWorldTagsDialog.drones" />
                 <span>{{ t('dialog.new_instance.content_drones') }}</span>
             </label>
-            <br />
             <label class="inline-flex items-center gap-2">
                 <Checkbox v-model="setWorldTagsDialog.props" />
                 <span>{{ t('dialog.new_instance.content_items') }}</span>
             </label>
-            <br />
             <label class="inline-flex items-center gap-2">
                 <Checkbox v-model="setWorldTagsDialog.thirdPerson" />
                 <span>{{ t('dialog.new_instance.content_third_person') }}</span>
@@ -109,7 +97,6 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import { useWorldStore } from '../../../stores';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { worldRequest } from '../../../api';
 

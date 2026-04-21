@@ -56,6 +56,7 @@ export interface VrcxUser extends GetUserResponse {
     $timeSpent: number;
     $lastSeen: string;
     $mutualCount: number;
+    $mutualOptedOut: boolean;
     $nickName: string;
     $previousLocation: string;
     $customTag: string;

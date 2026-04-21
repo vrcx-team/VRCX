@@ -92,9 +92,7 @@ describe('useNavLayout', () => {
         await applyCustomNavLayout(layout, []);
         await nextTick();
 
-        expect(navLayout.value).toEqual(
-            expect.arrayContaining(layout)
-        );
+        expect(navLayout.value).toEqual(expect.arrayContaining(layout));
         expect(mocks.setString).toHaveBeenCalled();
     });
 });

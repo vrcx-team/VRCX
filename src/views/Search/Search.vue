@@ -304,7 +304,15 @@
     import { Spinner } from '@/components/ui/spinner';
     import AvatarProviderDialog from '../Settings/dialogs/AvatarProviderDialog.vue';
     import SearchPagination from './components/SearchPagination.vue';
-    import { Item, ItemContent, ItemDescription, ItemGroup, ItemHeader, ItemMedia, ItemTitle } from '@/components/ui/item';
+    import {
+        Item,
+        ItemContent,
+        ItemDescription,
+        ItemGroup,
+        ItemHeader,
+        ItemMedia,
+        ItemTitle
+    } from '@/components/ui/item';
 
     import { computed, onUnmounted, ref } from 'vue';
     import { useMagicKeys, whenever } from '@vueuse/core';
@@ -317,14 +325,9 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import {
-        useAdvancedSettingsStore,
-        useAppearanceSettingsStore,
-        useAuthStore,
-        useAvatarProviderStore,
-        useSearchStore
-    } from '../../stores';
-    import { convertFileUrlToImageUrl, languageClass, userImage } from '../../shared/utils';
+    import { useAppearanceSettingsStore, useAuthStore, useAvatarProviderStore, useSearchStore } from '../../stores';
+    import { convertFileUrlToImageUrl, languageClass } from '../../shared/utils';
+    import { useUserDisplay } from '../../composables/useUserDisplay';
     import { showAvatarDialog } from '../../coordinators/avatarCoordinator';
     import { showGroupDialog } from '../../coordinators/groupCoordinator';
     import { showUserDialog } from '../../coordinators/userCoordinator';
@@ -338,13 +341,13 @@
     const { avatarRemoteDatabaseProviderList, avatarRemoteDatabaseProvider, isAvatarProviderDialogVisible } =
         storeToRefs(useAvatarProviderStore());
     const { setAvatarProvider } = useAvatarProviderStore();
-    const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
 
     const { searchText, searchUserResults } = storeToRefs(useSearchStore());
     const { clearSearch } = useSearchStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
 
     const { t } = useI18n();
+    const { userImage } = useUserDisplay();
 
     const activeSearchTab = ref('user');
 
@@ -404,8 +407,14 @@
         clearWorldSearch
     } = useSearchWorld();
 
-    const { searchGroupParams, searchGroupResults, isSearchGroupLoading, searchGroup, moreSearchGroup, clearGroupSearch } =
-        useSearchGroup();
+    const {
+        searchGroupParams,
+        searchGroupResults,
+        isSearchGroupLoading,
+        searchGroup,
+        moreSearchGroup,
+        clearGroupSearch
+    } = useSearchGroup();
 
     const paginationConfig = computed(() => {
         switch (activeSearchTab.value) {

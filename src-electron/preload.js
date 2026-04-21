@@ -8,6 +8,27 @@
  */
 const { contextBridge, ipcRenderer, app } = require('electron');
 
+const managedListeners = new Map();
+
+function registerManagedListener(channel, callback, mapKey = channel) {
+    const existingListener = managedListeners.get(mapKey);
+    if (existingListener) {
+        ipcRenderer.removeListener(channel, existingListener);
+    }
+
+    const listener = (event, ...args) => callback(event, ...args);
+    managedListeners.set(mapKey, listener);
+    ipcRenderer.on(channel, listener);
+
+    return () => {
+        const currentListener = managedListeners.get(mapKey);
+        if (currentListener === listener) {
+            ipcRenderer.removeListener(channel, listener);
+            managedListeners.delete(mapKey);
+        }
+    };
+}
+
 contextBridge.exposeInMainWorld('interopApi', {
     callDotNetMethod: (className, methodName, args) => {
         return ipcRenderer.invoke(
@@ -30,12 +51,13 @@ contextBridge.exposeInMainWorld('electron', {
     openFileDialog: () => ipcRenderer.invoke('dialog:openFile'),
     openDirectoryDialog: () => ipcRenderer.invoke('dialog:openDirectory'),
     onWindowPositionChanged: (callback) =>
-        ipcRenderer.on('setWindowPosition', callback),
+        registerManagedListener('setWindowPosition', callback),
     onWindowSizeChanged: (callback) =>
-        ipcRenderer.on('setWindowSize', callback),
+        registerManagedListener('setWindowSize', callback),
     onWindowStateChange: (callback) =>
-        ipcRenderer.on('setWindowState', callback),
-    onBrowserFocus: (callback) => ipcRenderer.on('onBrowserFocus', callback),
+        registerManagedListener('setWindowState', callback),
+    onBrowserFocus: (callback) =>
+        registerManagedListener('onBrowserFocus', callback),
     desktopNotification: (title, body, icon) =>
         ipcRenderer.invoke('notification:showNotification', title, body, icon),
     restartApp: () => ipcRenderer.invoke('app:restart'),
@@ -52,8 +74,14 @@ contextBridge.exposeInMainWorld('electron', {
     ipcRenderer: {
         on(channel, func) {
             if (validChannels.includes(channel)) {
-                ipcRenderer.on(channel, (event, ...args) => func(...args));
+                return registerManagedListener(
+                    channel,
+                    (_event, ...args) => func(...args),
+                    `ipcRenderer:${channel}`
+                );
             }
+
+            return undefined;
         }
     }
 });

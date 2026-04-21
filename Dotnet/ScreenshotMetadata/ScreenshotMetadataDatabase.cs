@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 
@@ -38,7 +38,7 @@ namespace VRCX
             var isFileCached = IsFileCached(filePath);
             if (isFileCached != -1)
                 return;
-            
+
             var cache = new MetadataCache()
             {
                 FilePath = filePath,
@@ -67,7 +67,7 @@ namespace VRCX
                 var isFileCached = IsFileCached(item.FilePath);
                 if (isFileCached != -1)
                     continue;
-                
+
                 filePathParam.Value = item.FilePath;
                 metadataParam.Value = item.Metadata;
                 cachedAtParam.Value = item.CachedAt.Ticks;

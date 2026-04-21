@@ -72,6 +72,7 @@ interface GetFriendsResponseItem {
     platform: string;
     profilePicOverride: string;
     profilePicOverrideThumbnail: string;
+    state?: string; // we add this manually, ty API
     status: string;
     statusDescription: string;
     tags: string[];

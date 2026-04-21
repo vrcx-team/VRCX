@@ -10,7 +10,7 @@
                 <Spinner v-if="userDialog.isMutualFriendsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span class="inline-flex items-center gap-1 ml-1.5">
+            <span class="inline-flex items-center gap-1 ml-1.5 text-sm">
                 <Users class="size-3.5 text-muted-foreground" />
                 {{ t('dialog.user.groups.total_count', { count: userDialog.mutualFriends.length }) }}
             </span>
@@ -71,7 +71,8 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { compareByDisplayName, compareByFriendOrder, compareByLastActiveRef, userImage } from '../../../shared/utils';
+    import { compareByDisplayName, compareByFriendOrder, compareByLastActiveRef } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { database } from '../../../services/database';
     import { processBulk } from '../../../services/request';
     import { useOptionKeySelect } from '../../../composables/useOptionKeySelect';
@@ -81,6 +82,7 @@
     import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     const { t } = useI18n();
+    const { userImage } = useUserDisplay();
 
     const userStore = useUserStore();
     const { userDialog, currentUser } = storeToRefs(userStore);
@@ -100,7 +102,12 @@
         if (!query) return friends;
         return friends.filter((u) => (u.displayName || '').toLowerCase().includes(query));
     });
-    watch(() => userDialog.value.id, () => { searchQuery.value = ''; });
+    watch(
+        () => userDialog.value.id,
+        () => {
+            searchQuery.value = '';
+        }
+    );
 
     /**
      *

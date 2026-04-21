@@ -594,18 +594,6 @@ const feed = {
         return feedDatabase;
     },
 
-    async getOnlineFrequencyData(userId) {
-        const data = [];
-        await sqliteService.execute(
-            (dbRow) => {
-                data.push(dbRow[0]);
-            },
-            `SELECT created_at FROM ${dbVars.userPrefix}_feed_online_offline WHERE type = 'Online' AND user_id = @userId ORDER BY created_at`,
-            { '@userId': userId }
-        );
-        return data;
-    },
-
     /**
      * @param {number} days - Number of days to look back
      * @param {number} limit - Max number of worlds to return

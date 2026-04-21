@@ -1,5 +1,5 @@
 <template>
-    <div class="w-223">
+    <div class="w-223 flex-1 min-h-0 flex flex-col">
         <DialogHeader class="sr-only">
             <DialogTitle>{{
                 userDialog.ref?.displayName || userDialog.id || t('dialog.user.info.header')
@@ -7,6 +7,7 @@
             <DialogDescription>{{ getUserStateText(userDialog.ref || {}) }}</DialogDescription>
         </DialogHeader>
         <UserSummaryHeader
+            class="flex-shrink-0"
             :get-user-state-text="getUserStateText"
             :copy-user-display-name="copyUserDisplayName"
             :toggle-badge-visibility="toggleBadgeVisibility"
@@ -17,12 +18,13 @@
             v-model="userDialog.activeTab"
             :items="userDialogTabs"
             :unmount-on-hide="false"
+            fill
             @update:modelValue="userDialogTabClick">
             <template #Info>
                 <UserDialogInfoTab ref="infoTabRef" @show-bio-dialog="showBioDialog" />
             </template>
 
-            <template v-if="userDialog.id !== currentUser.id && !currentUser.hasSharedConnectionsOptOut" #mutual>
+            <template v-if="!isSelf && !currentUser.hasSharedConnectionsOptOut" #mutual>
                 <UserDialogMutualFriendsTab ref="mutualFriendsTabRef" />
             </template>
 
@@ -34,15 +36,15 @@
                 <UserDialogWorldsTab ref="worldsTabRef" />
             </template>
 
-            <template #favorite-worlds>
+            <template v-if="!isSelf" #favorite-worlds>
                 <UserDialogFavoriteWorldsTab ref="favoriteWorldsTabRef" />
             </template>
 
-            <template #Avatars>
+            <template v-if="!isSelf" #Avatars>
                 <UserDialogAvatarsTab ref="avatarsTabRef" />
             </template>
 
-            <template v-if="userDialog.id !== currentUser.id" #Activity>
+            <template #Activity>
                 <UserDialogActivityTab ref="activityTabRef" />
             </template>
 
@@ -74,7 +76,7 @@
 </template>
 
 <script setup>
-    import { computed, ref, watch } from 'vue';
+    import { computed, onMounted, ref, watch } from 'vue';
     import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
@@ -118,23 +120,26 @@
     import SocialStatusDialog from './SocialStatusDialog.vue';
 
     const { t } = useI18n();
+    const isSelf = computed(() => userDialog.value.id === currentUser.value.id);
     const userDialogTabs = computed(() => {
         const tabs = [
             { value: 'Info', label: t('dialog.user.info.header') },
             { value: 'Groups', label: t('dialog.user.groups.header') },
-            { value: 'Worlds', label: t('dialog.user.worlds.header') },
-            { value: 'favorite-worlds', label: t('dialog.user.favorite_worlds.header') },
-            { value: 'Avatars', label: t('dialog.user.avatars.header') },
-            { value: 'JSON', label: t('dialog.user.json.header') }
+            { value: 'Worlds', label: t('dialog.user.worlds.header') }
         ];
-        if (userDialog.value.id !== currentUser.value.id && !currentUser.value.hasSharedConnectionsOptOut) {
+        if (!isSelf.value) {
+            tabs.push(
+                { value: 'favorite-worlds', label: t('dialog.user.favorite_worlds.header') },
+                { value: 'Avatars', label: t('dialog.user.avatars.header') }
+            );
+        }
+        tabs.push({ value: 'JSON', label: t('dialog.user.json.header') });
+        if (!isSelf.value && !currentUser.value.hasSharedConnectionsOptOut) {
             tabs.splice(1, 0, { value: 'mutual', label: t('dialog.user.mutual_friends.header') });
         }
-        if (userDialog.value.id !== currentUser.value.id) {
-            // Insert Activity before JSON
-            const jsonIdx = tabs.findIndex((tab) => tab.value === 'JSON');
-            tabs.splice(jsonIdx, 0, { value: 'Activity', label: t('dialog.user.activity.header') });
-        }
+        // Insert Activity before JSON
+        const jsonIdx = tabs.findIndex((tab) => tab.value === 'JSON');
+        tabs.splice(jsonIdx, 0, { value: 'Activity', label: t('dialog.user.activity.header') });
         return tabs;
     });
     const infoTabRef = ref(null);
@@ -152,7 +157,7 @@
     const { cachedUsers, showSendBoopDialog } = useUserStore();
     const { showFavoriteDialog } = useFavoriteStore();
     import { showAvatarDialog, showAvatarAuthorDialog } from '../../../coordinators/avatarCoordinator';
-    import { showUserDialog, refreshUserDialogAvatars } from '../../../coordinators/userCoordinator';
+    import { showUserDialog } from '../../../coordinators/userCoordinator';
     import { getFriendRequest, handleFriendDelete } from '../../../coordinators/friendRelationshipCoordinator';
 
     const { showModerateGroupDialog } = useGroupStore();
@@ -205,6 +210,30 @@
             }
         }
     );
+
+    watch(
+        () => userDialog.value.visible,
+        (visible) => {
+            if (visible && !userDialog.value.loading) {
+                loadLastActiveTab();
+            }
+        }
+    );
+
+    watch(
+        () => userDialog.value.activeTab,
+        (activeTab) => {
+            if (activeTab === 'Activity' && userDialog.value.visible && !userDialog.value.loading) {
+                activityTabRef.value?.loadOnlineFrequency(userDialog.value.id);
+            }
+        }
+    );
+
+    onMounted(() => {
+        if (userDialog.value.visible && !userDialog.value.loading) {
+            loadLastActiveTab();
+        }
+    });
 
     const userDialogLastMutualFriends = ref('');
     const userDialogLastGroup = ref('');
@@ -320,11 +349,7 @@
             avatarsTabRef.value?.setUserDialogAvatars(userId);
             if (userDialogLastAvatar.value !== userId) {
                 userDialogLastAvatar.value = userId;
-                if (userId === currentUser.value.id) {
-                    refreshUserDialogAvatars();
-                } else {
-                    avatarsTabRef.value?.setUserDialogAvatarsRemote(userId);
-                }
+                avatarsTabRef.value?.setUserDialogAvatarsRemote(userId);
             }
         } else if (tabName === 'Worlds') {
             worldsTabRef.value?.setUserDialogWorlds(userId);
@@ -349,11 +374,10 @@
      */
     function loadLastActiveTab() {
         let tab = userDialog.value.lastActiveTab;
-        // Activity tab is not available for own profile; fall back to Info
-        if (tab === 'Activity' && userDialog.value.id === currentUser.value.id) {
+        if (isSelf.value && (tab === 'Avatars' || tab === 'favorite-worlds')) {
             tab = 'Info';
-            userDialog.value.lastActiveTab = 'Info';
-            userDialog.value.activeTab = 'Info';
+            userDialog.value.activeTab = tab;
+            userDialog.value.lastActiveTab = tab;
         }
         handleUserDialogTab(tab);
     }

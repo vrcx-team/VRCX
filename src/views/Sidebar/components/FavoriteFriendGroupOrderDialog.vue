@@ -1,10 +1,10 @@
 <template>
-    <Sheet v-model:open="isOpen">
-        <SheetContent side="right" class="w-80 flex flex-col" @open-auto-focus.prevent>
-            <SheetHeader>
-                <SheetTitle>{{ t('side_panel.settings.edit_group_order') }}</SheetTitle>
-            </SheetHeader>
-            <div class="flex-1 overflow-auto p-3">
+    <Dialog v-model:open="isOpen">
+        <DialogContent class="w-80 flex flex-col max-h-[80vh]" @open-auto-focus.prevent>
+            <DialogHeader>
+                <DialogTitle>{{ t('side_panel.settings.edit_group_order') }}</DialogTitle>
+            </DialogHeader>
+            <div class="flex-1 overflow-auto py-3">
                 <DragDropProvider @dragEnd="onDragEnd">
                     <div class="flex flex-col gap-1.5">
                         <SortableGroupItem
@@ -16,20 +16,20 @@
                     </div>
                 </DragDropProvider>
             </div>
-            <div class="flex justify-end gap-2 border-t p-3">
+            <DialogFooter>
                 <Button variant="secondary" size="sm" @click="resetOrder">
                     {{ t('common.actions.reset') }}
                 </Button>
                 <Button size="sm" @click="confirmOrder">
                     {{ t('common.actions.confirm') }}
                 </Button>
-            </div>
-        </SheetContent>
-    </Sheet>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
-    import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { DragDropProvider } from '@dnd-kit/vue';

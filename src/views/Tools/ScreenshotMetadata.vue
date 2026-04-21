@@ -56,27 +56,51 @@
             <table class="w-full border-collapse text-[13px]">
                 <thead class="sticky top-0 z-1 bg-background">
                     <tr>
-                        <th class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground" @click="toggleSearchSort('dateTime')">
+                        <th
+                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground"
+                            @click="toggleSearchSort('dateTime')">
                             {{ t('dialog.screenshot_metadata.col_date') }}
-                            <span v-if="searchSort.key === 'dateTime'" class="ml-1 text-[10px]">{{ searchSort.asc ? '↑' : '↓' }}</span>
+                            <span v-if="searchSort.key === 'dateTime'" class="ml-1 text-[10px]">{{
+                                searchSort.asc ? '↑' : '↓'
+                            }}</span>
                         </th>
-                        <th class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground" @click="toggleSearchSort('world')">
+                        <th
+                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground"
+                            @click="toggleSearchSort('world')">
                             {{ t('dialog.screenshot_metadata.col_world') }}
-                            <span v-if="searchSort.key === 'world'" class="ml-1 text-[10px]">{{ searchSort.asc ? '↑' : '↓' }}</span>
+                            <span v-if="searchSort.key === 'world'" class="ml-1 text-[10px]">{{
+                                searchSort.asc ? '↑' : '↓'
+                            }}</span>
                         </th>
-                        <th v-if="searchHasMatchColumn" class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground" @click="toggleSearchSort('match')">
+                        <th
+                            v-if="searchHasMatchColumn"
+                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground"
+                            @click="toggleSearchSort('match')">
                             {{ t('dialog.screenshot_metadata.col_match') }}
-                            <span v-if="searchSort.key === 'match'" class="ml-1 text-[10px]">{{ searchSort.asc ? '↑' : '↓' }}</span>
+                            <span v-if="searchSort.key === 'match'" class="ml-1 text-[10px]">{{
+                                searchSort.asc ? '↑' : '↓'
+                            }}</span>
                         </th>
-                        <th class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground" @click="toggleSearchSort('author')">
+                        <th
+                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground"
+                            @click="toggleSearchSort('author')">
                             {{ t('dialog.screenshot_metadata.col_author') }}
-                            <span v-if="searchSort.key === 'author'" class="ml-1 text-[10px]">{{ searchSort.asc ? '↑' : '↓' }}</span>
+                            <span v-if="searchSort.key === 'author'" class="ml-1 text-[10px]">{{
+                                searchSort.asc ? '↑' : '↓'
+                            }}</span>
                         </th>
-                        <th class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground w-20" @click="toggleSearchSort('players')">
+                        <th
+                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground w-20"
+                            @click="toggleSearchSort('players')">
                             {{ t('dialog.screenshot_metadata.col_players') }}
-                            <span v-if="searchSort.key === 'players'" class="ml-1 text-[10px]">{{ searchSort.asc ? '↑' : '↓' }}</span>
+                            <span v-if="searchSort.key === 'players'" class="ml-1 text-[10px]">{{
+                                searchSort.asc ? '↑' : '↓'
+                            }}</span>
                         </th>
-                        <th class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none w-[100px]">{{ t('dialog.screenshot_metadata.col_resolution') }}</th>
+                        <th
+                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none w-[100px]">
+                            {{ t('dialog.screenshot_metadata.col_resolution') }}
+                        </th>
                         <th class="w-8 border-b"></th>
                     </tr>
                 </thead>
@@ -85,21 +109,40 @@
                         v-for="(row, idx) in sortedSearchResults"
                         :key="row.filePath"
                         class="group/row cursor-pointer transition-colors duration-100 hover:bg-accent"
-                        :class="row.filePath === selectedSearchFilePath ? 'bg-accent border-l-[3px] border-l-primary' : ''"
+                        :class="
+                            row.filePath === selectedSearchFilePath ? 'bg-accent border-l-[3px] border-l-primary' : ''
+                        "
                         @click="selectSearchResult(idx)">
-                        <td class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis" :class="row.filePath === selectedSearchFilePath ? 'pl-[9px]' : ''">{{ row.dateFormatted }}</td>
-                        <td class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis">{{ row.world || '—' }}</td>
-                        <td v-if="searchHasMatchColumn" class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis text-primary">{{ row.match || '—' }}</td>
-                        <td class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis text-muted-foreground">{{ row.author || '—' }}</td>
+                        <td
+                            class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis"
+                            :class="row.filePath === selectedSearchFilePath ? 'pl-[9px]' : ''">
+                            {{ row.dateFormatted }}
+                        </td>
+                        <td class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis">
+                            {{ row.world || '—' }}
+                        </td>
+                        <td
+                            v-if="searchHasMatchColumn"
+                            class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis text-primary">
+                            {{ row.match || '—' }}
+                        </td>
+                        <td
+                            class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis text-muted-foreground">
+                            {{ row.author || '—' }}
+                        </td>
                         <td class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis">
                             <span class="inline-flex items-center gap-1">
                                 <Users class="size-3 text-muted-foreground" />
                                 {{ row.playerCount }}
                             </span>
                         </td>
-                        <td class="text-xs text-muted-foreground px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis">{{ row.resolution }}</td>
+                        <td
+                            class="text-xs text-muted-foreground px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis">
+                            {{ row.resolution }}
+                        </td>
                         <td class="py-2 pr-2 border-b">
-                            <ChevronRight class="size-4 text-muted-foreground opacity-0 group-hover/row:opacity-100 transition-opacity duration-150" />
+                            <ChevronRight
+                                class="size-4 text-muted-foreground opacity-0 group-hover/row:opacity-100 transition-opacity duration-150" />
                         </td>
                     </tr>
                 </tbody>
@@ -108,11 +151,7 @@
 
         <!-- Detail View -->
         <div v-else class="grid flex-1 min-h-0 overflow-hidden gap-4" style="grid-template-columns: 1fr 380px">
-            <div
-                class="flex flex-col items-center min-h-0"
-                @dragover.prevent
-                @dragenter.prevent
-                @drop="handleDrop">
+            <div class="flex flex-col items-center min-h-0" @dragover.prevent @dragenter.prevent @drop="handleDrop">
                 <div class="relative flex-1 w-full min-h-0 flex items-center justify-center">
                     <template v-if="screenshotMetadataDialog.metadata.filePath">
                         <img
@@ -134,9 +173,7 @@
                             <ChevronRight />
                         </Button>
                     </template>
-                    <span v-else class="text-muted-foreground text-sm">{{
-                        t('dialog.screenshot_metadata.drag')
-                    }}</span>
+                    <span v-else class="text-muted-foreground text-sm">{{ t('dialog.screenshot_metadata.drag') }}</span>
                 </div>
                 <div class="shrink-0 flex items-center justify-center h-[50px]">
                     <ButtonGroup class="shadow-lg rounded-lg">
@@ -155,7 +192,12 @@
             </div>
 
             <div class="overflow-y-auto pr-1">
-                <Button v-if="searchResultsData.length" variant="ghost" size="sm" class="mb-2" @click="searchViewMode = 'table'">
+                <Button
+                    v-if="searchResultsData.length"
+                    variant="ghost"
+                    size="sm"
+                    class="mb-2"
+                    @click="searchViewMode = 'table'">
                     <ArrowLeft class="size-3.5" />
                     {{ t('dialog.screenshot_metadata.back_to_results', { count: searchResultsData.length }) }}
                 </Button>
@@ -163,13 +205,19 @@
                     <pre class="whitespace-pre-wrap text-xs" v-text="screenshotMetadataDialog.metadata.error"></pre>
                 </template>
                 <template v-else>
-                    <div v-if="screenshotMetadataDialog.metadata.world || screenshotMetadataDialog.metadata.author" class="pb-4">
-                        <h4 class="text-[11px] font-medium uppercase tracking-[0.08em] mb-1.5 text-muted-foreground">{{ t('dialog.screenshot_metadata.section_location') }}</h4>
+                    <div
+                        v-if="screenshotMetadataDialog.metadata.world || screenshotMetadataDialog.metadata.author"
+                        class="pb-4">
+                        <h4 class="text-[11px] font-medium uppercase tracking-[0.08em] mb-1.5 text-muted-foreground">
+                            {{ t('dialog.screenshot_metadata.section_location') }}
+                        </h4>
                         <Location
                             v-if="screenshotMetadataDialog.metadata.world"
                             :location="screenshotMetadataDialog.metadata.world.instanceId"
                             :hint="screenshotMetadataDialog.metadata.world.name" />
-                        <div v-if="screenshotMetadataDialog.metadata.author" class="flex items-center gap-1 text-muted-foreground">
+                        <div
+                            v-if="screenshotMetadataDialog.metadata.author"
+                            class="flex items-center gap-1 text-muted-foreground">
                             <Camera class="size-3.5 shrink-0" />
                             <DisplayName
                                 :userid="screenshotMetadataDialog.metadata.author.id"
@@ -179,7 +227,9 @@
 
                     <div v-if="screenshotMetadataDialog.metadata.players?.length" class="border-t pt-4 pb-4">
                         <h4 class="text-[11px] font-medium uppercase tracking-[0.08em] mb-1.5 text-muted-foreground">
-                            {{ t('dialog.screenshot_metadata.section_players') }} ({{ screenshotMetadataDialog.metadata.players.length }})
+                            {{ t('dialog.screenshot_metadata.section_players') }} ({{
+                                screenshotMetadataDialog.metadata.players.length
+                            }})
                         </h4>
                         <div class="flex flex-wrap gap-1 max-h-[180px] overflow-y-auto">
                             <Badge
@@ -194,7 +244,9 @@
                     </div>
 
                     <div class="border-t pt-4 pb-4">
-                        <h4 class="text-[11px] font-medium uppercase tracking-[0.08em] mb-1.5 text-muted-foreground">{{ t('dialog.screenshot_metadata.section_file_info') }}</h4>
+                        <h4 class="text-[11px] font-medium uppercase tracking-[0.08em] mb-1.5 text-muted-foreground">
+                            {{ t('dialog.screenshot_metadata.section_file_info') }}
+                        </h4>
                         <span v-if="screenshotMetadataDialog.metadata.dateTime" class="text-sm">{{
                             formatDateFilter(screenshotMetadataDialog.metadata.dateTime, 'long')
                         }}</span>
@@ -203,22 +255,36 @@
                             <span
                                 v-if="screenshotMetadataDialog.metadata.fileResolution"
                                 v-text="screenshotMetadataDialog.metadata.fileResolution"></span>
-                            <span v-if="screenshotMetadataDialog.metadata.fileResolution && screenshotMetadataDialog.metadata.fileSize"> · </span>
+                            <span
+                                v-if="
+                                    screenshotMetadataDialog.metadata.fileResolution &&
+                                    screenshotMetadataDialog.metadata.fileSize
+                                ">
+                                ·
+                            </span>
                             <span v-if="screenshotMetadataDialog.metadata.fileSize">{{
                                 screenshotMetadataDialog.metadata.fileSize
                             }}</span>
                         </span>
                         <br />
-                        <span class="text-xs text-muted-foreground/60" v-text="screenshotMetadataDialog.metadata.fileName"></span>
+                        <span
+                            class="text-xs text-muted-foreground/60"
+                            v-text="screenshotMetadataDialog.metadata.fileName"></span>
                     </div>
 
                     <div v-if="screenshotMetadataDialog.metadata.note" class="border-t pt-4 pb-4">
-                        <h4 class="text-[11px] font-medium uppercase tracking-[0.08em] mb-1.5 text-muted-foreground">{{ t('dialog.screenshot_metadata.section_note') }}</h4>
-                        <span class="text-sm text-muted-foreground" v-text="screenshotMetadataDialog.metadata.note"></span>
+                        <h4 class="text-[11px] font-medium uppercase tracking-[0.08em] mb-1.5 text-muted-foreground">
+                            {{ t('dialog.screenshot_metadata.section_note') }}
+                        </h4>
+                        <span
+                            class="text-sm text-muted-foreground"
+                            v-text="screenshotMetadataDialog.metadata.note"></span>
                     </div>
 
                     <div v-if="screenshotMetadataDialog.metadata.filePath" class="border-t pt-4 pb-4">
-                        <h4 class="text-[11px] font-medium uppercase tracking-[0.08em] mb-1.5 text-muted-foreground">{{ t('dialog.screenshot_metadata.section_actions') }}</h4>
+                        <h4 class="text-[11px] font-medium uppercase tracking-[0.08em] mb-1.5 text-muted-foreground">
+                            {{ t('dialog.screenshot_metadata.section_actions') }}
+                        </h4>
                         <div class="flex flex-wrap gap-2">
                             <Button
                                 size="sm"
@@ -249,7 +315,6 @@
             </div>
         </div>
     </div>
-
 </template>
 
 <script setup>
@@ -257,7 +322,20 @@
     import { useMagicKeys, whenever } from '@vueuse/core';
     import { onMounted, onUnmounted, reactive, ref, computed } from 'vue';
     import { useGalleryStore, useUserStore, useVrcxStore } from '@/stores';
-    import { ArrowLeft, ArrowRight, Camera, ChevronLeft, ChevronRight, Copy, FolderOpen, FolderSearch, ImageIcon, Trash2, Upload, Users } from 'lucide-vue-next';
+    import {
+        ArrowLeft,
+        ArrowRight,
+        Camera,
+        ChevronLeft,
+        ChevronRight,
+        Copy,
+        FolderOpen,
+        FolderSearch,
+        ImageIcon,
+        Trash2,
+        Upload,
+        Users
+    } from 'lucide-vue-next';
     import { Badge } from '@/components/ui/badge';
     import { Button } from '@/components/ui/button';
     import { ButtonGroup } from '@/components/ui/button-group';
@@ -281,7 +359,6 @@
     const { currentlyDroppingFile } = storeToRefs(useVrcxStore());
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { fullscreenImageDialog } = storeToRefs(useGalleryStore());
-
 
     const screenshotMetadataDialog = reactive({
         loading: false,
@@ -367,7 +444,8 @@
 
                 let match = '';
                 if (searchType === 0) {
-                    const matched = meta.players?.filter((p) => p.displayName?.toLowerCase().includes(lowerQuery)) || [];
+                    const matched =
+                        meta.players?.filter((p) => p.displayName?.toLowerCase().includes(lowerQuery)) || [];
                     match = matched.map((p) => p.displayName).join(', ');
                 } else if (searchType === 1) {
                     const matched = meta.players?.find((p) => p.id === query);
@@ -753,4 +831,3 @@
         }
     }
 </script>
-

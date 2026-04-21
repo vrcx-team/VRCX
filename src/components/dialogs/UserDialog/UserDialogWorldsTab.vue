@@ -10,7 +10,7 @@
                 <Spinner v-if="userDialog.isWorldsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span style="margin-left: 6px">{{
+            <span class="ml-1.5 text-sm">{{
                 t('dialog.user.worlds.total_count', { count: userDialog.worlds.length })
             }}</span>
         </div>
@@ -114,7 +114,12 @@
         if (!query) return worlds;
         return worlds.filter((w) => (w.name || '').toLowerCase().includes(query));
     });
-    watch(() => userDialog.value.id, () => { searchQuery.value = ''; });
+    watch(
+        () => userDialog.value.id,
+        () => {
+            searchQuery.value = '';
+        }
+    );
 
     /**
      *

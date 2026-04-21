@@ -2,13 +2,13 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.MemoryMappedFiles;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using NLog;
 using Valve.VR;
-using System.Numerics;
-using System.IO.MemoryMappedFiles;
 
 namespace VRCX
 {

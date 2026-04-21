@@ -139,12 +139,7 @@ export async function runUpdateFriendFlow(
 ) {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
-    const {
-        friends,
-        localFavoriteFriends,
-        pendingOfflineMap,
-        pendingOfflineDelay
-    } = friendStore;
+    const { friends, localFavoriteFriends, pendingOfflineMap } = friendStore;
 
     const ctx = friends.get(id);
     if (typeof ctx === 'undefined') {

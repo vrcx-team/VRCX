@@ -1,112 +1,116 @@
 <template>
-    <div class="flex items-center" v-bind="$attrs">
-        <div v-if="showLaunchButton" class="inline-block">
-            <TooltipWrapper side="top" :content="t('dialog.user.info.launch_invite_tooltip')">
+    <div class="flex row-auto gap-2" v-bind="$attrs">
+        <div id="standart-actions" class="flex row-auto gap-2">
+            <div v-if="showLaunchButton" class="inline-block">
+                <TooltipWrapper side="top" :content="t('dialog.user.info.launch_invite_tooltip')">
+                    <Button
+                        class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                        size="icon-sm"
+                        variant="outline"
+                        @click="confirmLaunch">
+                        <LogIn />
+                    </Button>
+                </TooltipWrapper>
+            </div>
+            <div v-if="showInviteYourself" class="inline-block">
+                <TooltipWrapper
+                    v-if="!canOpenInstanceInGame"
+                    side="top"
+                    :content="t('dialog.user.info.self_invite_tooltip')">
+                    <Button
+                        class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                        size="icon-sm"
+                        variant="outline"
+                        @click="confirmInvite">
+                        <Mail class="h-4 w-4" />
+                    </Button>
+                </TooltipWrapper>
+                <TooltipWrapper v-else side="top" :content="t('dialog.user.info.open_in_vrchat_tooltip')">
+                    <Button
+                        class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                        size="icon-sm"
+                        variant="outline"
+                        v-if="isOpeningInstance">
+                        <Loader2 class="h-4 w-4 animate-spin" />
+                    </Button>
+                    <Button
+                        class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                        size="icon-sm"
+                        variant="outline"
+                        v-else
+                        @click="openInstance">
+                        <Mail class="h-4 w-4" />
+                    </Button>
+                </TooltipWrapper>
+            </div>
+            <TooltipWrapper v-if="showRefreshButton" side="top" :content="refreshTooltip">
+                <Button
+                    class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                    size="icon"
+                    variant="outline"
+                    @click="handleRefresh">
+                    <RefreshCw class="h-4 w-4" />
+                </Button>
+            </TooltipWrapper>
+            <TooltipWrapper v-if="showHistoryButton" side="top" :content="historyTooltip">
                 <Button
                     class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
                     size="icon-sm"
                     variant="outline"
-                    @click="confirmLaunch">
-                    <LogIn />
+                    @click="handleHistory">
+                    <History class="h-4 w-4" />
                 </Button>
             </TooltipWrapper>
         </div>
-        <div v-if="showInviteYourself" class="inline-block" :style="inviteStyle">
-            <TooltipWrapper
-                v-if="!canOpenInstanceInGame"
-                side="top"
-                :content="t('dialog.user.info.self_invite_tooltip')">
-                <Button
-                    class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
-                    size="icon-sm"
-                    variant="outline"
-                    @click="confirmInvite">
-                    <Mail class="h-4 w-4" />
-                </Button>
-            </TooltipWrapper>
-            <TooltipWrapper v-else side="top" :content="t('dialog.user.info.open_in_vrchat_tooltip')">
-                <Button
-                    class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
-                    size="icon-sm"
-                    variant="outline"
-                    v-if="isOpeningInstance">
-                    <Loader2 class="h-4 w-4 animate-spin" />
-                </Button>
-                <Button
-                    class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
-                    size="icon-sm"
-                    variant="outline"
-                    v-else
-                    @click="openInstance">
-                    <Mail class="h-4 w-4" />
-                </Button>
-            </TooltipWrapper>
-        </div>
-        <TooltipWrapper v-if="showRefreshButton" side="top" :content="refreshTooltip">
-            <Button
-                class="rounded-full ml-1 w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
-                size="icon"
-                variant="outline"
-                @click="handleRefresh">
-                <RefreshCw class="h-4 w-4" />
-            </Button>
-        </TooltipWrapper>
-        <TooltipWrapper v-if="showHistoryButton" side="top" :content="historyTooltip">
-            <Button
-                class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground ml-1.5"
-                size="icon-sm"
-                variant="outline"
-                @click="handleHistory">
-                <History class="h-4 w-4" />
-            </Button>
-        </TooltipWrapper>
 
-        <div v-if="showInstanceInfo" class="flex items-center ml-2">
+        <div v-if="showInstanceInfo" class="flex items-center gap-1.5 text-muted-foreground">
             <TooltipWrapper v-if="instanceInfoState.isValidInstance" side="top">
                 <template #content>
-                    <div>
-                        <span v-if="instance?.closedAt">
-                            Closed At: {{ formatDateFilter(instance.closedAt, 'long') }}<br />
-                        </span>
-                        <template v-if="instanceInfoState.canCloseInstance">
-                            <Button
-                                class="mt-1"
-                                size="xs"
-                                :disabled="!!instance?.closedAt"
-                                @click="closeInstance(resolvedInstanceLocation)">
-                                {{ t('dialog.user.info.close_instance') }}
-                            </Button>
-                            <br /><br />
-                        </template>
+                    <div class="flex flex-col flex-wrap items-center gap-x-6 gap-y-2">
+                        <div class="flex gap-1">
+                            <span>
+                                <span class="text-platform-pc border-platform-pc!">PC: </span>
+                                {{ instance?.platforms?.standalonewindows }}
+                            </span>
+                            <span>
+                                <span class="text-platform-quest border-platform-quest!">Android: </span>
+                                {{ instance?.platforms?.android }}
+                            </span>
+                            <span>
+                                <span class="text-platform-ios border-platform-quest!">iOS: </span>
+                                {{ instance?.platforms?.ios }}
+                            </span>
+                        </div>
+
                         <span>
-                            <span class="text-platform-pc border-platform-pc!">PC: </span
-                            >{{ instance?.platforms?.standalonewindows }}
+                            {{ t('dialog.user.info.instance_game_version') }} {{ instance?.gameServerVersion }}
                         </span>
-                        <span>
-                            <span class="text-platform-quest border-platform-quest!">Android: </span
-                            >{{ instance?.platforms?.android }}
+
+                        <span v-if="instance?.queueEnabled" class="text-yellow-500 font-medium">
+                            {{ t('dialog.user.info.instance_queuing_enabled') }}
                         </span>
-                        <br />
-                        <span><span>iOS: </span>{{ instance?.platforms?.ios }}</span>
-                        <br />
-                        <span>{{ t('dialog.user.info.instance_game_version') }} {{ instance?.gameServerVersion }}</span>
-                        <br />
-                        <span v-if="instance?.queueEnabled"
-                            >{{ t('dialog.user.info.instance_queuing_enabled') }}<br
-                        /></span>
+
                         <span v-if="instanceInfoState.disabledContentSettings">
                             {{ t('dialog.user.info.instance_disabled_content') }}
-                            {{ instanceInfoState.disabledContentSettings }}<br />
+                            {{ instanceInfoState.disabledContentSettings }}
                         </span>
-                        <span v-if="instance?.users?.length">{{ t('dialog.user.info.instance_users') }}<br /></span>
-                        <template v-for="user in instance?.users || []" :key="user.id">
-                            <span style="cursor: pointer; margin-right: 6px" @click="showUserDialog(user.id)">
-                                {{ user.displayName }}
-                            </span>
-                        </template>
+
+                        <TooltipWrapper
+                            v-if="instanceInfoState.canCloseInstance && !instance?.closedAt"
+                            side="top"
+                            :content="t('dialog.user.info.close_instance')">
+                            <Button
+                                class="w-12 h-6 text-xs hover:text-muted-foreground"
+                                size="icon-sm"
+                                variant="destructive"
+                                @click="closeInstance(resolvedInstanceLocation)">
+                                <PowerIcon class="h-4 w-4" />
+                            </Button>
+                        </TooltipWrapper>
                     </div>
                 </template>
-                <div class="mr-1 text-muted-foreground">
+                <div :class="cn('flex items-center gap-0.5', !instance?.hasCapacityForYou ? 'text-red-500' : null)">
+                    <UsersRound class="h-4 w-4" />
                     <span v-if="resolvedInstanceLocation === locationStore.lastLocation.location">
                         {{ locationStore.lastLocation.playerList.size }}/{{ instance?.capacity }}
                     </span>
@@ -116,40 +120,68 @@
             </TooltipWrapper>
 
             <TooltipWrapper v-if="friendcount" side="top" :content="t('dialog.user.info.instance_friends_tooltip')">
-                <span class="ml-1 flex items-center text-muted-foreground"><UsersRound />{{ friendcount }}</span>
+                <span class="flex items-center gap-0.5">
+                    <UserPlus2 class="h-4 w-4" />
+                    {{ friendcount }}
+                </span>
             </TooltipWrapper>
-            <span v-if="showLastJoinIndicator" class="inline-block ml-1">
+            <span v-if="showLastJoinIndicator" class="inline-block">
                 <TooltipWrapper side="top">
                     <template #content>
                         <span>{{ t('dialog.user.info.last_join') }} </span>
                     </template>
-                    <span class="flex items-center ml-1">
-                        <MapPin class="h-4 w-4 text-muted-foreground" />
-                        <Timer class="text-muted-foreground" :epoch="lastJoin" />
+                    <span class="flex items-center gap-0.5">
+                        <MapPin class="h-4 w-4" />
+                        <Timer :epoch="lastJoin" />
                     </span>
                 </TooltipWrapper>
             </span>
-            <span v-if="instanceInfoState.isValidInstance && !instance?.hasCapacityForYou" class="ml-1">
-                {{ t('dialog.user.info.instance_full') }}
-            </span>
-            <span v-if="instance?.queueSize" class="ml-1">
-                {{ t('dialog.user.info.instance_queue') }} {{ instance.queueSize }}
-            </span>
-            <Badge v-if="instanceInfoState.isAgeGated" variant="outline" class="ml-1">
-                {{ t('dialog.user.info.instance_age_gated') }}
-            </Badge>
+        </div>
+
+        <div v-if="hasInstanceMetadata" class="flex items-center row-auto gap-2">
+            <TooltipWrapper side="top" :content="t('dialog.user.info.instance_queue')">
+                <span v-if="instance?.queueSize" class="flex items-center gap-0.5">
+                    <SquareStack class="h-4 w-4" />
+                    {{ instance.queueSize }}
+                </span>
+            </TooltipWrapper>
+            <TooltipWrapper side="top" :content="t('dialog.user.info.instance_age_gated')">
+                <span v-if="instanceInfoState.isAgeGated" class="flex items-center gap-0.5 text-red-500">
+                    <Lock class="h-4 w-4" />
+                </span>
+            </TooltipWrapper>
+            <TooltipWrapper
+                v-if="instance?.minimumAvatarPerformance && instance.minimumAvatarPerformance !== 'None'"
+                side="top"
+                :content="
+                    t('dialog.user.info.instance_minimum_avatar_performance') + ': ' + instance.minimumAvatarPerformance
+                ">
+                <img :src="performanceIcon" class="h-4 w-4" />
+            </TooltipWrapper>
         </div>
     </div>
 </template>
 
-<script setup>
-    import { History, Loader2, LogIn, Mail, MapPin, RefreshCw, UsersRound } from 'lucide-vue-next';
+<script lang="ts" setup>
+    import {
+        History,
+        Loader2,
+        LogIn,
+        Mail,
+        MapPin,
+        PowerIcon,
+        RefreshCw,
+        UsersRound,
+        SquareStack,
+        Lock,
+        UserPlus2
+    } from 'lucide-vue-next';
     import { computed, reactive, ref, watch } from 'vue';
-    import { Badge } from '@/components/ui/badge';
     import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
+    import { cn } from '@/lib/utils';
 
     import {
         useGroupStore,
@@ -160,10 +192,9 @@
         useModalStore,
         useUserStore
     } from '../stores';
-    import { formatDateFilter, hasGroupPermission, parseLocation } from '../shared/utils';
+    import { hasGroupPermission, parseLocation } from '../shared/utils';
     import { useInviteChecks } from '../composables/useInviteChecks';
     import { instanceRequest, miscRequest } from '../api';
-    import { showUserDialog } from '../coordinators/userCoordinator';
 
     defineOptions({
         inheritAttrs: false
@@ -271,12 +302,24 @@
     const showLaunchButton = computed(() => props.showLaunch && checkCanInviteSelf(resolvedLaunchLocation.value));
     const showInviteYourself = computed(() => props.showInvite && checkCanInviteSelf(resolvedInviteLocation.value));
 
-    const inviteStyle = computed(() => (showLaunchButton.value ? 'margin-left: 6px' : ''));
     const showRefreshButton = computed(() => props.showRefresh && typeof props.onRefresh === 'function');
     const showHistoryButton = computed(() => props.showHistory && typeof props.onHistory === 'function');
 
     const lastJoin = ref(null);
     const showLastJoinIndicator = computed(() => props.showLastJoin && lastJoin.value);
+    const hasInstanceMetadata = computed(() => {
+        return !!(
+            props.instance.value?.queueSize ||
+            instanceInfoState.isAgeGated ||
+            (props.instance.minimumAvatarPerformance && props.instance.minimumAvatarPerformance !== 'None')
+        );
+    });
+
+    const performanceIcon = computed(() => {
+        const rank = props.instance.minimumAvatarPerformance?.toLowerCase();
+        if (!rank || rank === 'none') return null;
+        return `/images/performance_ranks/${rank}.png`;
+    });
 
     const instanceInfoState = reactive({
         isValidInstance: false,

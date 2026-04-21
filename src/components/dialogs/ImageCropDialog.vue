@@ -20,6 +20,7 @@
                     :move-image="!loading"
                     :resize-image="!loading"
                     :image-restriction="freeMode ? 'none' : 'stencil'"
+                    @ready="handleCropperReady"
                     @change="onCropperChange" />
 
                 <!-- Toolbar -->
@@ -104,11 +105,12 @@
                     <TooltipWrapper
                         :content="freeMode ? t('dialog.image_crop.mode_fit') : t('dialog.image_crop.mode_free')">
                         <Button
+                            data-testid="crop-mode-toggle"
                             size="icon-sm"
                             :variant="freeMode ? 'default' : 'outline'"
                             class="rounded-full h-8 w-8"
                             :disabled="loading"
-                            @click="freeMode = !freeMode">
+                            @click="toggleMode">
                             <Expand v-if="freeMode" class="h-4 w-4" />
                             <Frame v-else class="h-4 w-4" />
                         </Button>
@@ -155,7 +157,7 @@
         ZoomOut
     } from 'lucide-vue-next';
     import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-    import { ref, watch } from 'vue';
+    import { nextTick, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Cropper } from 'vue-advanced-cropper';
     import { Slider } from '@/components/ui/slider';
@@ -193,6 +195,7 @@
 
     const loading = ref(false);
     const freeMode = ref(false);
+    const fitCropperToken = ref(0);
 
     const zoomSliderValue = ref([50]);
     const lastZoomRatio = ref(1);
@@ -226,6 +229,16 @@
         }
     );
 
+    watch(
+        () => freeMode.value,
+        (isFree, wasFree) => {
+            if (!isFree && wasFree) {
+                scheduleFitCropper();
+            }
+        },
+        { flush: 'post' }
+    );
+
     /**
      * @param result
      */
@@ -250,11 +263,58 @@
     /**
      *
      */
+    function fillCropper() {
+        cropperRef.value?.setCoordinates(
+            ({ imageSize }) => ({
+                left: 0,
+                top: 0,
+                width: imageSize.width,
+                height: imageSize.height
+            }),
+            {
+                transitions: false,
+                autoZoom: false
+            }
+        );
+    }
+
+    /**
+     *
+     */
+    async function scheduleFitCropper() {
+        const token = ++fitCropperToken.value;
+        await nextTick();
+        await nextTick();
+
+        if (fitCropperToken.value !== token || freeMode.value) {
+            return;
+        }
+
+        fillCropper();
+    }
+
+    /**
+     *
+     */
+    function handleCropperReady() {
+        if (!freeMode.value) {
+            scheduleFitCropper();
+        }
+    }
+
+    /**
+     *
+     */
+    function toggleMode() {
+        freeMode.value = !freeMode.value;
+    }
+
+    /**
+     *
+     */
     function handleReset() {
         freeMode.value = false;
-        cropperRef.value?.reset();
-        zoomSliderValue.value = [50];
-        lastZoomRatio.value = 1;
+        scheduleFitCropper();
     }
 
     /**

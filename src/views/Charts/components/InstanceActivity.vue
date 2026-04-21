@@ -131,6 +131,7 @@
                                 :default-placeholder="defaultCalendarPlaceholder"
                                 :is-date-disabled="isCalendarDateDisabled"
                                 :prevent-deselect="true"
+                                :week-starts-on="weekStartsOn"
                                 initial-focus
                                 @update:modelValue="handleCalendarModelUpdate" />
                         </PopoverContent>
@@ -208,15 +209,17 @@
     import { useIntersectionObserver } from '../composables/useIntersectionObserver';
 
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
+    import InstanceActivityTooltip from './InstanceActivityTooltip.jsx';
 
     import * as echarts from 'echarts';
+    import { renderToHtml } from '@/lib/utils';
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const friendStore = useFriendStore();
     const { friends, allFavoriteFriendIds } = storeToRefs(friendStore);
     const { currentUser } = storeToRefs(useUserStore());
     const { t } = useI18n();
-    const { isDarkMode, dtHour12 } = storeToRefs(appearanceSettingsStore);
+    const { isDarkMode, dtHour12, weekStartsOn } = storeToRefs(appearanceSettingsStore);
 
     const instanceActivityRef = ref(null);
 
@@ -571,6 +574,8 @@
      *
      */
     function getNewOption() {
+        // FIXME(kube): this is a bandaid to make the formater shut up
+        // this should be looked at by someone with more experience
         const getTooltip = (params) => {
             const activityDataArray = activityData.value;
             const param = params[1];
@@ -580,31 +585,25 @@
             }
 
             const instanceData = activityDataArray[param.dataIndex];
-
             const format = dtHour12.value ? 'hh:mm:ss A' : 'HH:mm:ss';
 
-            const formattedLeftDateTime = dayjs(instanceData.leaveTime).format(format);
-            const formattedJoinDateTime = dayjs(instanceData.joinTime).format(format);
+            const location = parseLocation(instanceData.location);
 
-            const timeString = timeToText(param.data, true);
-            const color = param.color;
             let name = param.name;
             // jank: remove axis label rich text formatting
             name = name.endsWith('}') ? name.slice(0, -1) : name;
             name = name.replaceAll('{filtered|', '').replaceAll('{normal|', '');
 
-            const location = parseLocation(instanceData.location);
-
-            return `
-                            <div style="display: flex; align-items: center;">
-                                <div style="width: 10px; height: 55px; background-color: ${color}; margin-right: 6px;"></div>
-                                <div>
-                                    <div>${name} #${location.instanceName} ${location.accessTypeName}</div>
-                                    <div>${formattedJoinDateTime} - ${formattedLeftDateTime}</div>
-                                    <div>${timeString}</div>
-                                </div>
-                            </div>
-                        `;
+            return renderToHtml(
+                InstanceActivityTooltip({
+                    color: param.color,
+                    displayName: `${name} #${location.instanceName}`,
+                    icon: location.accessTypeName,
+                    joinTime: dayjs(instanceData.joinTime).format(format),
+                    leaveTime: dayjs(instanceData.leaveTime).format(format),
+                    duration: timeToText(param.data, true)
+                })
+            );
         };
 
         const format = dtHour12.value ? 'hh:mm A' : 'HH:mm';

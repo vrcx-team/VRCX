@@ -60,7 +60,7 @@ export function buildRequestInit(endpoint, options) {
 
 /**
  * Parses a raw response: JSON-decodes response.data and detects API-level errors.
- * @param {{status: number, data?: string}} response
+ * @param {{status: number, data?: string | object}} response
  * @returns {{status: number, data?: any, hasApiError?: boolean, parseError?: boolean}}
  */
 export function parseResponse(response) {
@@ -85,7 +85,6 @@ export function parseResponse(response) {
  * @returns {Promise<T>}
  */
 export function request(endpoint, options) {
-    const userStore = useUserStore();
     const authStore = useAuthStore();
     const modalStore = useModalStore();
     const notificationStore = useNotificationStore();
@@ -99,7 +98,6 @@ export function request(endpoint, options) {
     }
     let req;
     const init = buildRequestInit(endpoint, options);
-    const { params } = init;
     if (init.method === 'GET') {
         // don't retry recent 404/403
         if (failedGetRequests.has(endpoint)) {
@@ -151,7 +149,34 @@ export function request(endpoint, options) {
                     );
                 }
             }
+            if (parsed.status === 403 && endpoint === 'config') {
+                modalStore.alert({
+                    description: t('api.error.message.vpn_in_use'),
+                    title: `403 ${t('api.error.message.login_error')}`
+                });
+                authStore.handleLogoutEvent();
+                $throw(403, parsed.data.error?.message || '', endpoint);
+            }
             if (parsed.hasApiError) {
+                if (parsed.status === 401) {
+                    if (parsed.data.error.message === '"Missing Credentials"') {
+                        authStore.handleAutoLogin();
+                        $throw(
+                            401,
+                            t('api.error.message.missing_credentials'),
+                            endpoint
+                        );
+                    } else if (
+                        parsed.data.error.message === '"Unauthorized"' &&
+                        endpoint !== 'auth/user'
+                    ) {
+                        // trigger 2FA dialog                }
+                        if (!authStore.twoFactorAuthDialogVisible) {
+                            getCurrentUser();
+                        }
+                        $throw(401, t('api.status_code.401'), endpoint);
+                    }
+                }
                 $throw(
                     parsed.data.error.status_code || 0,
                     parsed.data.error.message,
@@ -197,33 +222,6 @@ export function request(endpoint, options) {
                 }
                 return data;
             }
-            if (status === 401) {
-                if (data.error?.message === '"Missing Credentials"') {
-                    authStore.handleAutoLogin();
-                    $throw(
-                        401,
-                        t('api.error.message.missing_credentials'),
-                        endpoint
-                    );
-                } else if (
-                    data.error.message === '"Unauthorized"' &&
-                    endpoint !== 'auth/user'
-                ) {
-                    // trigger 2FA dialog                }
-                    if (!authStore.twoFactorAuthDialogVisible) {
-                        getCurrentUser();
-                    }
-                    $throw(401, t('api.status_code.401'), endpoint);
-                }
-            }
-            if (status === 403 && endpoint === 'config') {
-                modalStore.alert({
-                    description: t('api.error.message.vpn_in_use'),
-                    title: `403 ${t('api.error.message.login_error')}`
-                });
-                authStore.handleLogoutEvent();
-                $throw(403, endpoint);
-            }
             if (
                 init.method === 'GET' &&
                 status === 404 &&
@@ -259,9 +257,6 @@ export function request(endpoint, options) {
                 init.inviteId
             ) {
                 notificationStore.expireNotification(init.inviteId);
-            }
-            if (status === 403 && endpoint.startsWith('invite/myself/to/')) {
-                $throw(403, data.error?.message || '', endpoint);
             }
             if (data && data.error === Object(data.error)) {
                 $throw(

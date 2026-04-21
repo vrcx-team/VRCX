@@ -1,16 +1,31 @@
 import Location from '../../components/Location.vue';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
+import {
+    ContextMenu,
+    ContextMenuContent,
+    ContextMenuItem,
+    ContextMenuSeparator,
+    ContextMenuTrigger
+} from '../../components/ui/context-menu';
 import { TooltipWrapper } from '../../components/ui/tooltip';
-import { ArrowUpDown, FileText, Trash2, X } from 'lucide-vue-next';
+import {
+    ArrowUpDown,
+    Copy,
+    ExternalLink,
+    FileText,
+    Trash2,
+    X
+} from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
-import { formatDateFilter, openExternalLink } from '../../shared/utils';
-import { i18n } from '../../plugins';
 import {
-    useInstanceStore,
-    useUiStore
-} from '../../stores';
+    copyToClipboard,
+    formatDateFilter,
+    openExternalLink
+} from '../../shared/utils';
+import { i18n } from '../../plugins';
+import { useInstanceStore, useUiStore } from '../../stores';
 import { lookupUser } from '../../coordinators/userCoordinator';
 import { showWorldDialog } from '../../coordinators/worldCoordinator';
 
@@ -24,9 +39,6 @@ const UNACTIONABLE_TYPES = new Set([
 ]);
 
 export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
-
-
-
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { shiftHeld } = storeToRefs(useUiStore());
 
@@ -137,6 +149,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                                 location={original.location}
                                 hint={original.worldName}
                                 grouphint={original.groupName}
+                                enableContextMenu
                             />
                         </div>
                     );
@@ -149,6 +162,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                                 location={original.instanceId}
                                 hint={original.worldName}
                                 grouphint={original.groupName}
+                                enableContextMenu
                             />
                         </div>
                     );
@@ -156,11 +170,28 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
 
                 if (original.type === 'Event') {
                     return (
-                        <TooltipWrapper content={original.data} side="bottom">
-                            <span class="block w-full min-w-0 truncate">
-                                {original.data}
-                            </span>
-                        </TooltipWrapper>
+                        <ContextMenu>
+                            <ContextMenuTrigger asChild>
+                                <TooltipWrapper
+                                    content={original.data}
+                                    side="bottom"
+                                >
+                                    <span class="block w-full min-w-0 truncate">
+                                        {original.data}
+                                    </span>
+                                </TooltipWrapper>
+                            </ContextMenuTrigger>
+                            <ContextMenuContent>
+                                <ContextMenuItem
+                                    onClick={() =>
+                                        copyToClipboard(original.data)
+                                    }
+                                >
+                                    <Copy class="size-4" />
+                                    {t('common.actions.copy')}
+                                </ContextMenuItem>
+                            </ContextMenuContent>
+                        </ContextMenu>
                     );
                 }
 
@@ -186,27 +217,61 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                         ? `${original.videoId}: ${label}`
                         : label;
                     return (
-                        <TooltipWrapper content={tooltipText} side="bottom">
-                            <span class="block w-full min-w-0 truncate cursor-pointer">
-                                {original.videoId ? (
-                                    <span class="mr-1.5">
-                                        {original.videoId}:
+                        <ContextMenu>
+                            <ContextMenuTrigger asChild>
+                                <TooltipWrapper
+                                    content={tooltipText}
+                                    side="bottom"
+                                >
+                                    <span class="block w-full min-w-0 truncate cursor-pointer">
+                                        {original.videoId ? (
+                                            <span class="mr-1.5">
+                                                {original.videoId}:
+                                            </span>
+                                        ) : null}
+                                        {showLink ? (
+                                            <span
+                                                class="cursor-pointer"
+                                                onClick={() =>
+                                                    openExternalLink(
+                                                        original.videoUrl
+                                                    )
+                                                }
+                                            >
+                                                {label}
+                                            </span>
+                                        ) : (
+                                            <span>{original.videoName}</span>
+                                        )}
                                     </span>
-                                ) : null}
+                                </TooltipWrapper>
+                            </ContextMenuTrigger>
+                            <ContextMenuContent>
                                 {showLink ? (
-                                    <span
-                                        class="cursor-pointer"
-                                        onClick={() =>
-                                            openExternalLink(original.videoUrl)
-                                        }
-                                    >
-                                        {label}
-                                    </span>
-                                ) : (
-                                    <span>{original.videoName}</span>
-                                )}
-                            </span>
-                        </TooltipWrapper>
+                                    <>
+                                        <ContextMenuItem
+                                            onClick={() =>
+                                                openExternalLink(
+                                                    original.videoUrl
+                                                )
+                                            }
+                                        >
+                                            <ExternalLink class="size-4" />
+                                            {t('common.actions.open_link')}
+                                        </ContextMenuItem>
+                                        <ContextMenuSeparator />
+                                    </>
+                                ) : null}
+                                <ContextMenuItem
+                                    onClick={() =>
+                                        copyToClipboard(original.videoUrl)
+                                    }
+                                >
+                                    <Copy class="size-4" />
+                                    {t('common.actions.copy')}
+                                </ContextMenuItem>
+                            </ContextMenuContent>
+                        </ContextMenu>
                     );
                 }
 
@@ -215,21 +280,46 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                     original.type === 'StringLoad'
                 ) {
                     return (
-                        <TooltipWrapper
-                            content={original.resourceUrl}
-                            side="bottom"
-                        >
-                            <span class="block w-full min-w-0 truncate cursor-pointer">
-                                <span
-                                    class="cursor-pointer"
+                        <ContextMenu>
+                            <ContextMenuTrigger asChild>
+                                <TooltipWrapper
+                                    content={original.resourceUrl}
+                                    side="bottom"
+                                >
+                                    <span class="block w-full min-w-0 truncate cursor-pointer">
+                                        <span
+                                            class="cursor-pointer"
+                                            onClick={() =>
+                                                openExternalLink(
+                                                    original.resourceUrl
+                                                )
+                                            }
+                                        >
+                                            {original.resourceUrl}
+                                        </span>
+                                    </span>
+                                </TooltipWrapper>
+                            </ContextMenuTrigger>
+                            <ContextMenuContent>
+                                <ContextMenuItem
                                     onClick={() =>
                                         openExternalLink(original.resourceUrl)
                                     }
                                 >
-                                    {original.resourceUrl}
-                                </span>
-                            </span>
-                        </TooltipWrapper>
+                                    <ExternalLink class="size-4" />
+                                    {t('common.actions.open_link')}
+                                </ContextMenuItem>
+                                <ContextMenuSeparator />
+                                <ContextMenuItem
+                                    onClick={() =>
+                                        copyToClipboard(original.resourceUrl)
+                                    }
+                                >
+                                    <Copy class="size-4" />
+                                    {t('common.actions.copy')}
+                                </ContextMenuItem>
+                            </ContextMenuContent>
+                        </ContextMenu>
                     );
                 }
 

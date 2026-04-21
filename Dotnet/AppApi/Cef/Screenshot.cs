@@ -24,7 +24,7 @@ namespace VRCX
             var fileName = Path.GetFileNameWithoutExtension(path);
             if (!File.Exists(path) || !path.EndsWith(".png") || !fileName.StartsWith("VRChat_"))
                 return string.Empty;
-            
+
             // check if file is in use and we have permission to write
             var success = false;
             for (var i = 0; i < 10; i++)
@@ -54,7 +54,7 @@ namespace VRCX
             }
 
             ScreenshotHelper.WriteVRCXMetadata(metadataString, path);
-            
+
             return path;
         }
     }

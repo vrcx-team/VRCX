@@ -1,5 +1,4 @@
 <template>
-    <DeprecationAlert v-if="userDialog.ref.id === currentUser.id" :feature-name="t('nav_tooltip.my_avatars')" />
     <div style="display: flex; align-items: center; justify-content: space-between">
         <div style="display: flex; align-items: center">
             <Button
@@ -22,7 +21,7 @@
                 <Spinner v-if="userDialog.isAvatarsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span style="margin-left: 6px">{{
+            <span class="ml-1.5 text-sm">{{
                 t('dialog.user.avatars.total_count', { count: userDialogAvatars.length })
             }}</span>
         </div>
@@ -69,7 +68,10 @@
                 @click="showAvatarDialog(avatar.id)">
                 <div class="relative inline-block flex-none size-9 mr-2.5">
                     <Avatar class="size-9">
-                        <AvatarImage v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" class="object-cover" />
+                        <AvatarImage
+                            v-if="avatar.thumbnailImageUrl"
+                            :src="avatar.thumbnailImageUrl"
+                            class="object-cover" />
                         <AvatarFallback>
                             <Image class="size-4 text-muted-foreground" />
                         </AvatarFallback>
@@ -111,7 +113,8 @@
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { Input } from '@/components/ui/input';
     import { Spinner } from '@/components/ui/spinner';
-    import DeprecationAlert from '@/components/DeprecationAlert.vue';
+
+    import { refreshUserDialogAvatars } from '@/coordinators/userCoordinator';
 
     import { useAdvancedSettingsStore, useAvatarStore, useUserStore } from '../../../stores';
 
@@ -119,7 +122,7 @@
 
     const userStore = useUserStore();
     const { userDialog, currentUser } = storeToRefs(userStore);
-    const { sortUserDialogAvatars, refreshUserDialogAvatars } = userStore;
+    const { sortUserDialogAvatars } = userStore;
 
     import { showAvatarDialog, lookupAvatars } from '../../../coordinators/avatarCoordinator';
     const { cachedAvatars } = useAvatarStore();

@@ -10,8 +10,8 @@
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side="right" align="start" class="w-56">
-                        <DropdownMenuItem @click="emit('show-change-log')">
-                            <span>{{ t('nav_menu.whats_new') }}</span>
+                        <DropdownMenuItem @click="emit('show-changelog')">
+                            <span>{{ t('nav_menu.changelog') }}</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuLabel>{{ t('nav_menu.resources') }}</DropdownMenuLabel>
@@ -42,7 +42,7 @@
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger as-child>
-                        <SidebarMenuButton :tooltip="t('nav_tooltip.manage')">
+                        <SidebarMenuButton :tooltip="t('nav_tooltip.manage')" :is-active="isSettingsRoute">
                             <span class="relative inline-flex size-6 items-center justify-center">
                                 <i class="ri-settings-3-line text-lg" />
                                 <span
@@ -177,6 +177,8 @@
 <script setup>
     import { Heart } from 'lucide-vue-next';
     import { useI18n } from 'vue-i18n';
+    import { useRouter } from 'vue-router';
+    import { computed, ref, watch } from 'vue';
 
     import { TooltipWrapper } from '@/components/ui/tooltip';
     import {
@@ -253,7 +255,7 @@
     });
 
     const emit = defineEmits([
-        'show-change-log',
+        'show-changelog',
         'support-link',
         'toggle-theme',
         'show-vrcx-update-dialog',
@@ -267,4 +269,15 @@
         'open-github'
     ]);
     const { t } = useI18n();
+
+    const router = useRouter();
+    const isSettingsRoute = ref(false);
+
+    watch(
+        () => router?.currentRoute.value?.name,
+        (name) => {
+            isSettingsRoute.value = name === 'settings';
+        },
+        { immediate: true }
+    );
 </script>

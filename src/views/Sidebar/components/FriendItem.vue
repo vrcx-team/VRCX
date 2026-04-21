@@ -3,9 +3,7 @@
         class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
         @click="showUserDialog(friend.id)">
         <template v-if="friend.ref">
-            <div
-                class="relative inline-block flex-none size-9 mr-2.5"
-                :class="isFriendActiveOrOffline ? undefined : userStatusClass(friend.ref, friend.pendingOffline)">
+            <div class="relative inline-block flex-none size-9 mr-2.5" :class="friendStatusClass">
                 <Avatar class="size-full rounded-full">
                     <AvatarImage :src="userImage(friend.ref, true)" class="object-cover" />
                     <AvatarFallback>
@@ -96,6 +94,11 @@
 
     const isFriendTraveling = computed(() => props.friend.ref?.location === 'traveling');
     const isFriendActiveOrOffline = computed(() => props.friend.state === 'active' || props.friend.state === 'offline');
+
+    const friendStatusClass = computed(() => {
+        return userStatusClass(props.friend.ref, props.friend.pendingOffline);
+    });
+
     const epoch = computed(() =>
         isFriendTraveling.value ? props.friend.ref?.$travelingToTime : props.friend.ref?.$location_at
     );

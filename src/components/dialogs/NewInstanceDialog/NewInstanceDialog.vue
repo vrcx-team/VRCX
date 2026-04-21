@@ -1,6 +1,6 @@
 <template>
     <Dialog v-model:open="newInstanceDialog.visible">
-        <DialogContent>
+        <DialogContent class="sm:max-w-2xl">
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.new_instance.header') }}</DialogTitle>
                 <DialogDescription class="sr-only">{{ t('dialog.new_instance.header') }}</DialogDescription>
@@ -155,6 +155,28 @@
                                     size="sm"
                                     @click="$event.target.tagName === 'INPUT' && $event.target.select()"
                                     @change="buildInstance" />
+                            </FieldContent>
+                        </Field>
+                        <Field v-if="newInstanceDialog.accessType === 'group'">
+                            <FieldLabel>{{ t('dialog.new_instance.minimum_avatar_performance') }}</FieldLabel>
+                            <FieldContent>
+                                <Select v-model="newInstanceDialog.minimumAvatarPerformance" @change="buildInstance">
+                                    <SelectTrigger size="sm" class="w-full">
+                                        <SelectValue>
+                                            <span>
+                                                {{ newInstanceDialog.minimumAvatarPerformance || 'None' }}
+                                            </span>
+                                        </SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value="None">None</SelectItem>
+                                            <SelectItem value="Poor">Poor</SelectItem>
+                                            <SelectItem value="Medium">Medium</SelectItem>
+                                            <SelectItem value="Good">Good</SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
                             </FieldContent>
                         </Field>
                         <Field v-if="newInstanceDialog.accessType === 'group'">
@@ -374,7 +396,7 @@
                             <FieldLabel>{{ t('dialog.new_instance.instance_creator') }}</FieldLabel>
                             <FieldContent>
                                 <VirtualCombobox
-                                    v-model="newInstanceDialog.userId"
+                                    v-model="newInstanceDialog.legacyUserId"
                                     :groups="creatorPickerGroups"
                                     :placeholder="t('dialog.new_instance.instance_creator_placeholder')"
                                     :search-placeholder="t('dialog.new_instance.instance_creator_placeholder')"
@@ -512,7 +534,7 @@
                     variant="outline"
                     :disabled="
                         (newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') &&
-                        newInstanceDialog.userId !== currentUser.id
+                        newInstanceDialog.legacyUserId !== currentUser.id
                     "
                     @click="showInviteDialog(newInstanceDialog.location)"
                     >{{ t('dialog.new_instance.invite') }}</Button
@@ -565,9 +587,7 @@
         getLaunchURL,
         hasGroupPermission,
         isRealInstance,
-        parseLocation,
-        userImage,
-        userStatusClass
+        parseLocation
     } from '../../../shared/utils';
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
     import {
@@ -584,6 +604,9 @@
     import { useNewInstanceBuilder } from './useNewInstanceBuilder';
 
     import InviteDialog from '../InviteDialog/InviteDialog.vue';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
+
+    const { userImage, userStatusClass } = useUserDisplay();
 
     const props = defineProps({
         newInstanceDialogLocationTag: {

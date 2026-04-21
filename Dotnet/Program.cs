@@ -186,7 +186,7 @@ namespace VRCX
                     AppApiInstance.OpenLink("https://github.com/vrcx-team/VRCX/wiki#how-to-repair-vrcx-database");
                 }
             }
-            
+
             #endregion
 
             catch (Exception e)
@@ -234,11 +234,11 @@ namespace VRCX
             if (!string.IsNullOrEmpty(StartupArgs.LaunchArguments.LaunchCommand))
                 logger.Info("Launch Command: {0}", StartupArgs.LaunchArguments.LaunchCommand);
             logger.Debug("Wine detection: {0}", Wine.GetIfWine());
-            
+
             IPCServer.Instance.Init();
             SQLite.Instance.Init();
             AppApiInstance = new AppApiCef();
-            
+
             ProcessMonitor.Instance.Init();
             Discord.Instance.Init();
             WebApi.Instance.Init();

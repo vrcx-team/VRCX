@@ -8,6 +8,7 @@ export const defaultVisibility = {
     steamvr: true,
     proxy: true,
     ws: true,
+    nowPlaying: true,
     uptime: true,
     clocks: true,
     zoom: true,
@@ -131,7 +132,7 @@ export function loadClocks(storage, defaults) {
 
 /**
  * Load the clock count (0-3) from a Storage-like object.
- * Returns 3 when stored data is absent or invalid.
+ * Returns 2 when stored data is absent or invalid.
  * @param {Storage} storage
  * @returns {number}
  */
@@ -145,7 +146,7 @@ export function loadClockCount(storage) {
     } catch {
         // ignore
     }
-    return 3;
+    return 2;
 }
 
 /**

@@ -1,0 +1,16 @@
+{
+    "extends": "./tsconfig.app.json",
+    "compilerOptions": {
+        "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.checkjs.tsbuildinfo"
+    },
+    "include": ["src/**/*.js", "src/**/*.jsx", "src/types/**/*.d.ts"],
+    "exclude": [
+        "node_modules",
+        "build",
+        "src/**/*.spec.js",
+        "src/**/*.test.js",
+        "src/**/__tests__/**",
+        "src/app.js",
+        "src/vr/vr.js"
+    ]
+}

@@ -20,7 +20,10 @@ import { applyFavorite } from './favoriteCoordinator';
 import { useFavoriteStore } from '../stores/favorite';
 import { useInstanceStore } from '../stores/instance';
 import { useLocationStore } from '../stores/location';
-import { syncWorldSearchIndex, removeWorldSearchIndex } from './searchIndexCoordinator';
+import {
+    syncWorldSearchIndex,
+    removeWorldSearchIndex
+} from './searchIndexCoordinator';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
 import { useWorldStore } from '../stores/world';

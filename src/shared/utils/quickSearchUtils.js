@@ -67,11 +67,11 @@ export function searchFriends(query, friends, comparer, limit = 10) {
         let match = matchName(ctx.name, query, comparer);
         let matchedField = match ? 'name' : null;
         // Include memo and note matching for friends (with raw query for spaces)
-        if (!match && ctx.memo) {
+        if (!match && ctx.memo && query.length >= 2) {
             match = localeIncludes(ctx.memo, query, comparer);
             if (match) matchedField = 'memo';
         }
-        if (!match && ctx.ref.note) {
+        if (!match && ctx.ref.note && query.length >= 2) {
             match = localeIncludes(ctx.ref.note, query, comparer);
             if (match) matchedField = 'note';
         }

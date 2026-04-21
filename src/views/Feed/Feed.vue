@@ -28,7 +28,8 @@
                                     v-model="dateRange"
                                     :locale="locale"
                                     :max-value="todayDate"
-                                    :number-of-months="2" />
+                                    :number-of-months="2"
+                                    :week-starts-on="weekStartsOn" />
                                 <div class="flex justify-end gap-2 mt-3">
                                     <Button variant="outline" size="sm" @click="clearDateFilter">
                                         {{ t('common.actions.clear') }}
@@ -109,6 +110,7 @@
     const { feedTable, feedTableData } = storeToRefs(useFeedStore());
     const { feedTableLookup } = useFeedStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
+    const { weekStartsOn } = storeToRefs(appearanceSettingsStore);
     const vrcxStore = useVrcxStore();
 
     const { t, locale } = useI18n();

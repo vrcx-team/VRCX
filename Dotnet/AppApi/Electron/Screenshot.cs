@@ -23,7 +23,7 @@ namespace VRCX
             }
 
             path = path.Replace("\\", "/");
-            
+
             var fileName = Path.GetFileNameWithoutExtension(path);
             if (!File.Exists(path) || !path.EndsWith(".png") || !fileName.StartsWith("VRChat_"))
                 return string.Empty;

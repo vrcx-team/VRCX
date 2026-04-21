@@ -1,4 +1,4 @@
-﻿namespace DBMerger
+namespace DBMerger
 {
     public class Config(string newDBPath, string oldDBPath, bool debug, bool importConfig)
     {

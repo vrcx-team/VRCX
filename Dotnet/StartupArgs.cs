@@ -74,7 +74,7 @@ namespace VRCX
 
                 if (arg.StartsWith(VrcxLaunchArguments.IsDebugPrefix))
                     arguments.IsDebug = true;
-                
+
                 if (arg == VrcxLaunchArguments.Overlay)
                     arguments.IsOverlay = true;
 
@@ -103,7 +103,7 @@ namespace VRCX
 
             public const string IsDebugPrefix = "--debug";
             public bool IsDebug { get; set; } = false;
-            
+
             public const string Overlay = "--overlay";
             public bool IsOverlay { get; set; } = false;
 

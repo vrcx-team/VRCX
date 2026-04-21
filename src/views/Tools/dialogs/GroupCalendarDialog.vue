@@ -109,12 +109,13 @@
     import { groupRequest } from '../../../api';
     import { processBulk } from '../../../services/request';
     import { useGroupStore } from '../../../stores';
+    import { showGroupDialog } from '@/coordinators/groupCoordinator';
 
     import GroupCalendarEventCard from '../components/GroupCalendarEventCard.vue';
     import GroupCalendarMonth from '../components/GroupCalendarMonth.vue';
     import configRepository from '../../../services/config';
 
-    const { applyGroupEvent, showGroupDialog } = useGroupStore();
+    const { applyGroupEvent } = useGroupStore();
 
     const { t } = useI18n();
 

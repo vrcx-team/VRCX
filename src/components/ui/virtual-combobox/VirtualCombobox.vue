@@ -8,7 +8,14 @@
                     </span>
                 </slot>
 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1">
+                    <button
+                        v-if="clearable && selectedValueSet.size > 0"
+                        type="button"
+                        class="flex items-center justify-center rounded-sm opacity-50 hover:opacity-100"
+                        @click.stop.prevent="clearSelection">
+                        <X class="size-3.5" />
+                    </button>
                     <span class="opacity-60">▾</span>
                 </div>
             </Button>
@@ -78,6 +85,7 @@
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { Button } from '@/components/ui/button';
     import { Input } from '@/components/ui/input';
+    import { X } from 'lucide-vue-next';
     import { useVirtualizer } from '@tanstack/vue-virtual';
 
     const props = defineProps({
@@ -126,10 +134,23 @@
             const groupItems = Array.isArray(group?.items) ? group.items : [];
 
             const filteredItems = normalizedSearch
-                ? groupItems.filter((item) => (item.search ?? item.label ?? '').toLowerCase().includes(normalizedSearch))
+                ? groupItems.filter((item) =>
+                      (item.search ?? item.label ?? '').toLowerCase().includes(normalizedSearch)
+                  )
                 : groupItems;
 
             if (!filteredItems.length) continue;
+
+            const selected = [];
+            const unselected = [];
+            for (const item of filteredItems) {
+                if (selectedValueSet.value.has(String(item.value))) {
+                    selected.push(item);
+                } else {
+                    unselected.push(item);
+                }
+            }
+            const sortedItems = [...selected, ...unselected];
 
             entries.push({
                 type: 'group',
@@ -137,7 +158,7 @@
                 group
             });
 
-            for (const item of filteredItems) {
+            for (const item of sortedItems) {
                 entries.push({
                     type: 'item',
                     key: `item:${group?.key ?? ''}:${item?.value}`,

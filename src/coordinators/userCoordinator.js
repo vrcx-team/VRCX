@@ -436,7 +436,7 @@ export function showUserDialog(userId) {
                 if (locationStore.lastLocation.playerList.has(D.ref.id)) {
                     inCurrentWorld = true;
                 }
-                if (userId !== currentUser.id) {
+                if (userId !== currentUser.id && watchState.isFriendsLoaded) {
                     database
                         .getUserStats(D.ref, inCurrentWorld)
                         .then(async (ref1) => {
@@ -577,7 +577,6 @@ async function handleUserUpdate(ref, props) {
 export async function refreshUserDialogAvatars(fileId) {
     const userStore = useUserStore();
     const avatarStore = useAvatarStore();
-    const t = i18n.global.t;
 
     const D = userStore.userDialog;
     const userId = D.id;

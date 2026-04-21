@@ -16,6 +16,7 @@ import { showAvatarDialog } from '../coordinators/avatarCoordinator';
 import { showUserDialog } from '../coordinators/userCoordinator';
 import { useInstanceStore } from './instance';
 import { useNotificationStore } from './notification';
+import { useNotificationsSettingsStore } from './settings/notifications';
 import { useSearchStore } from './search';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
@@ -202,8 +203,8 @@ export const useUiStore = defineStore('Ui', () => {
      * @param {object} data
      * @param {string} data.type
      * @param {string} data.id
-     * @param {string?} data.tag
-     * @param {string?} data.shortName
+     * @param {string} [data.tag]
+     * @param {string} [data.shortName]
      * @returns {boolean}
      */
     function openDialog(data) {
@@ -286,6 +287,19 @@ export const useUiStore = defineStore('Ui', () => {
                 const name = String(routeName);
                 removeNotify(name);
                 if (name === 'notification') {
+                    const notificationsSettingsStore =
+                        useNotificationsSettingsStore();
+                    if (
+                        notificationsSettingsStore.notificationLayout ===
+                        'notification-center'
+                    ) {
+                        if (router.currentRoute.value.query?.fromCenter) {
+                            router.replace({ name: 'notification' });
+                        } else {
+                            router.replace({ name: 'feed' });
+                        }
+                        return;
+                    }
                     notificationStore.clearUnseenNotifications();
                 }
             }
@@ -314,10 +328,22 @@ export const useUiStore = defineStore('Ui', () => {
     }
 
     function updateTrayIconNotify(force = false) {
-        const newState =
-            appearanceSettings.notificationIconDot &&
-            (notifiedMenus.value.includes('notification') ||
-                notifiedMenus.value.includes('friend-log'));
+        const notificationsSettingsStore = useNotificationsSettingsStore();
+        let newState;
+        if (
+            notificationsSettingsStore.notificationLayout ===
+            'notification-center'
+        ) {
+            newState =
+                appearanceSettings.notificationIconDot &&
+                (notificationStore.hasUnseenNotifications ||
+                    notifiedMenus.value.includes('friend-log'));
+        } else {
+            newState =
+                appearanceSettings.notificationIconDot &&
+                (notifiedMenus.value.includes('notification') ||
+                    notifiedMenus.value.includes('friend-log'));
+        }
 
         if (trayIconNotify.value !== newState || force) {
             trayIconNotify.value = newState;

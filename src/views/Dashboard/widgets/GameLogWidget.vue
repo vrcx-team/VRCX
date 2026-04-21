@@ -42,13 +42,17 @@
                         </TableCell>
                         <TableCell class="max-w-0 truncate">
                             <template v-if="item.type === 'Location'">
-                                <MapPin class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                                <Location
-                                    class="inline [&>div]:inline-flex"
-                                    :location="item.location"
-                                    :hint="item.worldName"
-                                    :grouphint="item.groupName"
-                                    disable-tooltip />
+                                <div class="flex min-w-0 items-center">
+                                    <MapPin class="mr-1 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                    <div class="min-w-0 flex-1 truncate">
+                                        <Location
+                                            :location="item.location"
+                                            :hint="item.worldName"
+                                            :grouphint="item.groupName"
+                                            enable-context-menu
+                                            disable-tooltip />
+                                    </div>
+                                </div>
                             </template>
                             <template v-else-if="item.type === 'OnPlayerJoined'">
                                 <LogIn class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
@@ -71,7 +75,7 @@
                                 <span v-if="item.isFriend">{{ item.isFavorite ? '⭐' : '💚' }}</span>
                             </template>
                             <template v-else-if="item.type === 'VideoPlay'">
-                                <Video class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <Play class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 <TooltipWrapper
                                     :content="
                                         item.videoId
@@ -99,12 +103,13 @@
                                     item.displayName
                                 }}</span>
                                 <span class="text-muted-foreground"> → </span>
-                                <Location
-                                    v-if="item.location"
-                                    class="inline [&>div]:inline-flex"
-                                    :location="item.location"
-                                    :hint="item.worldName"
-                                    disable-tooltip />
+                                <div v-if="item.location" class="min-w-0 flex-1 truncate">
+                                    <Location
+                                        :location="item.location"
+                                        :hint="item.worldName"
+                                        enable-context-menu
+                                        disable-tooltip />
+                                </div>
                                 <span v-else class="text-muted-foreground">{{ item.worldName || '' }}</span>
                             </template>
                             <template v-else>
@@ -139,7 +144,7 @@
 <script setup>
     import { computed, onMounted, shallowRef, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import { LogIn, LogOut, MapPin, Settings, Video, Waypoints } from 'lucide-vue-next';
+    import { LogIn, LogOut, MapPin, Settings, Play, Waypoints } from 'lucide-vue-next';
 
     import { database } from '@/services/database';
     import { showUserDialog } from '@/coordinators/userCoordinator';
@@ -160,7 +165,15 @@
     import WidgetHeader from './WidgetHeader.vue';
     import { Table, TableBody, TableRow, TableCell } from '@/components/ui/table';
 
-    const GAMELOG_TYPES = ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'VideoPlay', 'PortalSpawn', 'Event', 'External'];
+    const GAMELOG_TYPES = [
+        'Location',
+        'OnPlayerJoined',
+        'OnPlayerLeft',
+        'VideoPlay',
+        'PortalSpawn',
+        'Event',
+        'External'
+    ];
 
     const props = defineProps({
         config: {

@@ -427,7 +427,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
         const params = {
             n: 100,
             offset: 0,
-            order: 'newest'
+            order: 'newest',
+            notFlags: 'ugc'
         };
         galleryDialogInventoryLoading.value = true;
         try {
@@ -439,13 +440,15 @@ export const useGalleryStore = defineStore('Gallery', () => {
                         item.id,
                         item
                     );
-                    if (!item.flags.includes('ugc')) {
-                        inventoryTable.value.push(item);
-                    }
+                    inventoryTable.value.push(item);
                 }
                 if (args.json.data.length === 0) {
                     break;
                 }
+            }
+            const globalInventory = await inventoryRequest.getGlobalInventory();
+            for (const item of globalInventory.json) {
+                inventoryTable.value.push(item);
             }
         } catch (error) {
             console.error('Error fetching inventory items:', error);

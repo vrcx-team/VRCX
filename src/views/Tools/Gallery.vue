@@ -49,7 +49,7 @@
                 </span>
             </template>
             <template #gallery>
-                <div>
+                <div @dragover.prevent @drop.prevent="handleDropGallery">
                     <input
                         id="GalleryUploadButton"
                         type="file"
@@ -90,9 +90,17 @@
                             :class="compareCurrentProfilePic(image.id) ? 'x-highlight-ring' : ''"
                             as-child>
                             <div
-                                v-if="image.versions && image.versions.length > 0 && image.versions[image.versions.length - 1].file.url"
+                                v-if="
+                                    image.versions &&
+                                    image.versions.length > 0 &&
+                                    image.versions[image.versions.length - 1].file.url
+                                "
                                 class="overflow-hidden rounded-[inherit]">
-                                <ItemHeader class="cursor-pointer" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)">
+                                <ItemHeader
+                                    class="cursor-pointer"
+                                    @click="
+                                        showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)
+                                    ">
                                     <img
                                         :src="image.versions[image.versions.length - 1].file.url"
                                         loading="lazy"
@@ -121,7 +129,7 @@
             </template>
 
             <template #icons>
-                <div>
+                <div @dragover.prevent @drop.prevent="handleDropIcon">
                     <input
                         id="VRCPlusIconUploadButton"
                         type="file"
@@ -162,9 +170,17 @@
                             :class="compareCurrentVRCPlusIcon(image.id) ? 'x-highlight-ring' : ''"
                             as-child>
                             <div
-                                v-if="image.versions && image.versions.length > 0 && image.versions[image.versions.length - 1].file.url"
+                                v-if="
+                                    image.versions &&
+                                    image.versions.length > 0 &&
+                                    image.versions[image.versions.length - 1].file.url
+                                "
                                 class="overflow-hidden rounded-[inherit]">
-                                <ItemHeader class="cursor-pointer" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)">
+                                <ItemHeader
+                                    class="cursor-pointer"
+                                    @click="
+                                        showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)
+                                    ">
                                     <img
                                         :src="image.versions[image.versions.length - 1].file.url"
                                         loading="lazy"
@@ -193,59 +209,58 @@
             </template>
 
             <template #emojis>
-                <div>
+                <div @dragover.prevent @drop.prevent="handleDropEmoji">
                     <input
                         id="EmojiUploadButton"
                         type="file"
                         accept="image/*"
                         @change="onFileChangeEmoji"
                         style="display: none" />
-                    <div class="flex items-center gap-2">
-                        <ButtonGroup>
-                            <Button variant="outline" size="sm" @click="refreshEmojiTable">
-                                <RefreshCw />
-                                {{ t('dialog.gallery_icons.refresh') }}
-                            </Button>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                :disabled="!isLocalUserVrcPlusSupporter || isUploading"
-                                @click="displayEmojiUpload">
-                                <Upload />
-                                {{ t('dialog.gallery_icons.upload') }}
-                            </Button>
-                        </ButtonGroup>
-                        <div class="flex-1 min-w-0 max-w-120">
-                            <VirtualCombobox
-                                v-model="emojiAnimationStyle"
-                                :groups="emojiStylePickerGroups"
-                                :placeholder="t('dialog.gallery_icons.emoji_animation_styles')"
-                                :search-placeholder="t('dialog.gallery_icons.emoji_animation_styles')"
-                                :clearable="false"
-                                :close-on-select="true">
-                                <template #item="{ item, selected }">
-                                    <div class="flex w-full items-center gap-2">
-                                        <div class="h-10 w-10 shrink-0 overflow-hidden rounded-sm bg-black/5">
-                                            <img
-                                                class="h-full w-full object-cover"
-                                                :src="`${emojiAnimationStyleUrl}${item.fileName}`"
-                                                loading="lazy" />
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center gap-2">
+                            <ButtonGroup>
+                                <Button variant="outline" size="sm" @click="refreshEmojiTable">
+                                    <RefreshCw />
+                                    {{ t('dialog.gallery_icons.refresh') }}
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    :disabled="!isLocalUserVrcPlusSupporter || isUploading"
+                                    @click="displayEmojiUpload">
+                                    <Upload />
+                                    {{ t('dialog.gallery_icons.upload') }}
+                                </Button>
+                            </ButtonGroup>
+                            <div class="flex-1 min-w-0 max-w-120">
+                                <VirtualCombobox
+                                    v-model="emojiAnimationStyle"
+                                    :groups="emojiStylePickerGroups"
+                                    :placeholder="t('dialog.gallery_icons.emoji_animation_styles')"
+                                    :search-placeholder="t('dialog.gallery_icons.emoji_animation_styles')"
+                                    :clearable="false"
+                                    :close-on-select="true">
+                                    <template #item="{ item, selected }">
+                                        <div class="flex w-full items-center gap-2">
+                                            <div class="h-10 w-10 shrink-0 overflow-hidden rounded-sm bg-black/5">
+                                                <img
+                                                    class="h-full w-full object-cover"
+                                                    :src="`${emojiAnimationStyleUrl}${item.fileName}`"
+                                                    loading="lazy" />
+                                            </div>
+                                            <span class="truncate text-sm" v-text="item.label"></span>
+                                            <span v-if="selected" class="ml-auto opacity-70">✓</span>
                                         </div>
-                                        <span class="truncate text-sm" v-text="item.label"></span>
-                                        <span v-if="selected" class="ml-auto opacity-70">✓</span>
-                                    </div>
-                                </template>
-                            </VirtualCombobox>
+                                    </template>
+                                </VirtualCombobox>
+                            </div>
+                            <label class="inline-flex items-center gap-2">
+                                <Checkbox v-model="emojiAnimType" />
+                                <span>{{ t('dialog.gallery_icons.emoji_animation_type') }}</span>
+                            </label>
                         </div>
-                        <label class="inline-flex items-center gap-2">
-                            <Checkbox v-model="emojiAnimType" />
-                            <span>{{ t('dialog.gallery_icons.emoji_animation_type') }}</span>
-                        </label>
-                        <template v-if="emojiAnimType">
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                @click="openExternalLink('https://vrcemoji.com')">
+                        <div v-if="emojiAnimType" class="flex items-center gap-2">
+                            <Button size="sm" variant="outline" @click="openExternalLink('https://vrcemoji.com')">
                                 {{ t('dialog.gallery_icons.create_animated_emoji') }}
                             </Button>
                             <span class="text-sm">{{ t('dialog.gallery_icons.emoji_animation_fps') }}</span>
@@ -262,9 +277,7 @@
                                     <NumberFieldIncrement />
                                 </NumberFieldContent>
                             </NumberField>
-                            <span class="text-sm">{{
-                                t('dialog.gallery_icons.emoji_animation_frame_count')
-                            }}</span>
+                            <span class="text-sm">{{ t('dialog.gallery_icons.emoji_animation_frame_count') }}</span>
                             <NumberField
                                 v-model="emojiAnimFrameCount"
                                 :min="2"
@@ -282,8 +295,10 @@
                                 <Checkbox v-model="emojiAnimLoopPingPong" />
                                 <span>{{ t('dialog.gallery_icons.emoji_loop_pingpong') }}</span>
                             </label>
-                        </template>
-                        <span v-if="emojiAnimType" class="basis-full text-sm text-muted-foreground">{{ t('dialog.gallery_icons.flipbook_info') }}</span>
+                        </div>
+                        <span v-if="emojiAnimType" class="basis-full text-sm text-muted-foreground">{{
+                            t('dialog.gallery_icons.flipbook_info')
+                        }}</span>
                     </div>
                     <ItemGroup
                         class="grid gap-3 mt-3"
@@ -296,14 +311,22 @@
                             class="p-0 x-hover-card hover:bg-accent hover:shadow-sm"
                             as-child>
                             <div
-                                v-if="image.versions && image.versions.length > 0 && image.versions[image.versions.length - 1].file.url"
+                                v-if="
+                                    image.versions &&
+                                    image.versions.length > 0 &&
+                                    image.versions[image.versions.length - 1].file.url
+                                "
                                 class="overflow-hidden">
                                 <ItemHeader
                                     class="cursor-pointer"
-                                    @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url, getEmojiFileName(image))">
+                                    @click="
+                                        showFullscreenImageDialog(
+                                            image.versions[image.versions.length - 1].file.url,
+                                            getEmojiFileName(image)
+                                        )
+                                    ">
                                     <Emoji
                                         :imageUrl="image.versions[image.versions.length - 1].file.url"
-                                        :size="200"
                                         class="aspect-square w-full rounded-t-md" />
                                 </ItemHeader>
                                 <ItemContent class="min-w-0 px-2.5 pt-1.5 pb-0">
@@ -332,7 +355,7 @@
             </template>
 
             <template #stickers>
-                <div>
+                <div @dragover.prevent @drop.prevent="handleDropSticker">
                     <input
                         id="StickerUploadButton"
                         type="file"
@@ -364,9 +387,17 @@
                             class="p-0 x-hover-card hover:bg-accent hover:shadow-sm"
                             as-child>
                             <div
-                                v-if="image.versions && image.versions.length > 0 && image.versions[image.versions.length - 1].file.url"
+                                v-if="
+                                    image.versions &&
+                                    image.versions.length > 0 &&
+                                    image.versions[image.versions.length - 1].file.url
+                                "
                                 class="overflow-hidden">
-                                <ItemHeader class="cursor-pointer" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)">
+                                <ItemHeader
+                                    class="cursor-pointer"
+                                    @click="
+                                        showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)
+                                    ">
                                     <img
                                         :src="image.versions[image.versions.length - 1].file.url"
                                         loading="lazy"
@@ -388,7 +419,7 @@
             </template>
 
             <template #prints>
-                <div>
+                <div @dragover.prevent @drop.prevent="handleDropPrint">
                     <input
                         id="PrintUploadButton"
                         type="file"
@@ -433,7 +464,9 @@
                             class="p-0 x-hover-card hover:bg-accent hover:shadow-sm"
                             as-child>
                             <div class="overflow-hidden">
-                                <ItemHeader class="cursor-pointer" @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))">
+                                <ItemHeader
+                                    class="cursor-pointer"
+                                    @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))">
                                     <img
                                         :src="image.files.image"
                                         loading="lazy"
@@ -518,17 +551,23 @@
                                         {{ formatDateFilter(item.created_at, 'long') }}
                                     </ItemDescription>
                                     <ItemDescription class="text-xs">
-                                        <span v-if="item.itemType === 'prop'">{{ t('dialog.gallery_icons.item') }}</span>
-                                        <span v-else-if="item.itemType === 'sticker'">{{ t('dialog.gallery_icons.sticker') }}</span>
-                                        <span v-else-if="item.itemType === 'droneskin'">{{ t('dialog.gallery_icons.drone_skin') }}</span>
-                                        <span v-else-if="item.itemType === 'emoji'">{{ t('dialog.gallery_icons.emoji') }}</span>
+                                        <span v-if="item.itemType === 'prop'">{{
+                                            t('dialog.gallery_icons.item')
+                                        }}</span>
+                                        <span v-else-if="item.itemType === 'sticker'">{{
+                                            t('dialog.gallery_icons.sticker')
+                                        }}</span>
+                                        <span v-else-if="item.itemType === 'droneskin'">{{
+                                            t('dialog.gallery_icons.drone_skin')
+                                        }}</span>
+                                        <span v-else-if="item.itemType === 'emoji'">{{
+                                            t('dialog.gallery_icons.emoji')
+                                        }}</span>
                                         <span v-else v-text="item.itemTypeLabel"></span>
                                     </ItemDescription>
                                 </ItemContent>
                                 <ItemFooter v-if="item.itemType === 'bundle'" class="p-2">
-                                    <Button
-                                        size="sm"
-                                        @click="consumeInventoryBundle(item.id)">
+                                    <Button size="sm" @click="consumeInventoryBundle(item.id)">
                                         {{ t('dialog.gallery_icons.consume_bundle') }}
                                     </Button>
                                 </ItemFooter>
@@ -565,7 +604,15 @@
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { VirtualCombobox } from '@/components/ui/virtual-combobox';
-    import { Item, ItemContent, ItemDescription, ItemFooter, ItemGroup, ItemHeader, ItemTitle } from '@/components/ui/item';
+    import {
+        Item,
+        ItemContent,
+        ItemDescription,
+        ItemFooter,
+        ItemGroup,
+        ItemHeader,
+        ItemTitle
+    } from '@/components/ui/item';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -781,13 +828,7 @@
      */
     function openImageUploadFlow(
         e,
-        {
-            inputSelector,
-            aspectRatio,
-            beforeCrop,
-            upload,
-            errorMessage = 'Failed to upload'
-        }
+        { inputSelector, aspectRatio, beforeCrop, upload, errorMessage = 'Failed to upload' }
     ) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector,
@@ -822,6 +863,11 @@
         });
     }
 
+    async function uploadGalleryImage(base64Body) {
+        const args = await vrcPlusImageRequest.uploadGalleryImage(base64Body);
+        handleGalleryImageAdd(args);
+    }
+
     /**
      *
      * @param e
@@ -831,8 +877,7 @@
             inputSelector: '#GalleryUploadButton',
             aspectRatio: 4 / 3,
             upload: async ({ base64Body }) => {
-                const args = await vrcPlusImageRequest.uploadGalleryImage(base64Body);
-                handleGalleryImageAdd(args);
+                await uploadGalleryImage(base64Body);
             }
         });
     }
@@ -865,7 +910,7 @@
                 profilePicOverride
             })
             .then((args) => {
-                toast.success('Profile picture changed');
+                toast.success(t('message.gallery.profile_pic_changed'));
                 return args;
             });
     }
@@ -886,6 +931,12 @@
         deleteFileAndRemove(fileId, galleryTable.value);
     }
 
+    async function uploadVRCPlusIcon(base64Body) {
+        const args = await vrcPlusIconRequest.uploadVRCPlusIcon(base64Body);
+        if (VRCPlusIconsTable.value.length > 0) {
+            VRCPlusIconsTable.value.unshift(args.json);
+        }
+    }
     /**
      *
      * @param e
@@ -896,10 +947,7 @@
             aspectRatio: 1 / 1,
             errorMessage: 'Failed to upload VRC+ icon',
             upload: async ({ base64Body }) => {
-                const args = await vrcPlusIconRequest.uploadVRCPlusIcon(base64Body);
-                if (VRCPlusIconsTable.value.length > 0) {
-                    VRCPlusIconsTable.value.unshift(args.json);
-                }
+                await uploadVRCPlusIcon(base64Body);
             }
         });
     }
@@ -932,7 +980,7 @@
                 userIcon
             })
             .then((args) => {
-                toast.success('Icon changed');
+                toast.success(t('message.gallery.profile_icon_changed'));
                 return args;
             });
     }
@@ -980,6 +1028,25 @@
         }
     }
 
+    async function uploadEmoji(base64Body) {
+        const params = {
+            tag: emojiAnimType.value ? 'emojianimated' : 'emoji',
+            animationStyle: emojiAnimationStyle.value.toLowerCase(),
+            maskTag: 'square'
+        };
+        if (emojiAnimType.value) {
+            params.frames = emojiAnimFrameCount.value;
+            params.framesOverTime = emojiAnimFps.value;
+        }
+        if (emojiAnimLoopPingPong.value) {
+            params.loopStyle = 'pingpong';
+        }
+        const args = await vrcPlusImageRequest.uploadEmoji(base64Body, params);
+        if (emojiTable.value.length > 0) {
+            emojiTable.value.unshift(args.json);
+        }
+    }
+
     /**
      *
      * @param e
@@ -993,22 +1060,7 @@
                 parseEmojiFileName(file.name);
             },
             upload: async ({ base64Body }) => {
-                const params = {
-                    tag: emojiAnimType.value ? 'emojianimated' : 'emoji',
-                    animationStyle: emojiAnimationStyle.value.toLowerCase(),
-                    maskTag: 'square'
-                };
-                if (emojiAnimType.value) {
-                    params.frames = emojiAnimFrameCount.value;
-                    params.framesOverTime = emojiAnimFps.value;
-                }
-                if (emojiAnimLoopPingPong.value) {
-                    params.loopStyle = 'pingpong';
-                }
-                const args = await vrcPlusImageRequest.uploadEmoji(base64Body, params);
-                if (emojiTable.value.length > 0) {
-                    emojiTable.value.unshift(args.json);
-                }
+                await uploadEmoji(base64Body);
             }
         });
     }
@@ -1028,6 +1080,15 @@
         deleteFileAndRemove(fileId, emojiTable.value);
     }
 
+    async function uploadSticker(base64Body) {
+        const params = {
+            tag: 'sticker',
+            maskTag: 'square'
+        };
+        const args = await vrcPlusImageRequest.uploadSticker(base64Body, params);
+        handleStickerAdd(args);
+    }
+
     /**
      *
      * @param e
@@ -1037,12 +1098,7 @@
             inputSelector: '#StickerUploadButton',
             aspectRatio: 1 / 1,
             upload: async ({ base64Body }) => {
-                const params = {
-                    tag: 'sticker',
-                    maskTag: 'square'
-                };
-                const args = await vrcPlusImageRequest.uploadSticker(base64Body, params);
-                handleStickerAdd(args);
+                await uploadSticker(base64Body);
             }
         });
     }
@@ -1062,6 +1118,20 @@
         deleteFileAndRemove(fileId, stickerTable.value);
     }
 
+    async function uploadPrint(base64Body, date) {
+        const timestamp = date.toISOString().slice(0, 19);
+        const params = {
+            note: printUploadNote.value,
+            // worldId: '',
+            timestamp
+        };
+        const cropWhiteBorder = printCropBorder.value;
+        const args = await vrcPlusImageRequest.uploadPrint(base64Body, cropWhiteBorder, params);
+        if (printTable.value.length > 0) {
+            printTable.value.unshift(args.json);
+        }
+    }
+
     /**
      *
      * @param e
@@ -1071,20 +1141,10 @@
             inputSelector: '#PrintUploadButton',
             aspectRatio: 16 / 9,
             upload: async ({ base64Body }) => {
-                const date = new Date();
                 // why the fuck isn't this UTC
+                const date = new Date();
                 date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-                const timestamp = date.toISOString().slice(0, 19);
-                const params = {
-                    note: printUploadNote.value,
-                    // worldId: '',
-                    timestamp
-                };
-                const cropWhiteBorder = printCropBorder.value;
-                const args = await vrcPlusImageRequest.uploadPrint(base64Body, cropWhiteBorder, params);
-                if (printTable.value.length > 0) {
-                    printTable.value.unshift(args.json);
-                }
+                await uploadPrint(base64Body, date);
             }
         });
     }
@@ -1104,6 +1164,64 @@
         vrcPlusImageRequest.deletePrint(printId).then((args) => {
             removeItemById(printTable.value, args.printId);
         });
+    }
+
+    async function handleDropGallery(event) {
+        event.preventDefault();
+        for (const file of event.dataTransfer.files) {
+            const b64str = await readFileToBase64Str(file);
+            await uploadGalleryImage(b64str);
+        }
+    }
+
+    async function handleDropIcon(event) {
+        event.preventDefault();
+        for (const file of event.dataTransfer.files) {
+            const b64str = await readFileToBase64Str(file);
+            await uploadVRCPlusIcon(b64str);
+        }
+    }
+
+    async function handleDropEmoji(event) {
+        event.preventDefault();
+        for (const file of event.dataTransfer.files) {
+            const b64str = await readFileToBase64Str(file);
+            await uploadEmoji(b64str);
+        }
+    }
+
+    async function handleDropSticker(event) {
+        event.preventDefault();
+        for (const file of event.dataTransfer.files) {
+            const b64str = await readFileToBase64Str(file);
+            await uploadSticker(b64str);
+        }
+    }
+
+    async function handleDropPrint(event) {
+        event.preventDefault();
+        for (const file of event.dataTransfer.files) {
+            const b64str = await readFileToBase64Str(file);
+            const fileDate = file.lastModifiedDate ?? new Date();
+            await uploadPrint(b64str, fileDate);
+        }
+    }
+
+    function readFileAsDataUrlAsync(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    async function readFileToBase64Str(file) {
+        if (!file || !file.type.startsWith('image/')) {
+            throw new Error(`unrecognized image format: ${file.type}`);
+        }
+        const b64uri = await readFileAsDataUrlAsync(file);
+        return b64uri.split(',', 2)[1]; // strip data:...;base64,
     }
 
     /**

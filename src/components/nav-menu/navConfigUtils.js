@@ -49,10 +49,7 @@ export function buildNavDefinitionsForLayout(
 export async function loadStoredNavConfig(
     repository,
     fallbackLayout,
-    {
-        configKey = NAV_CONFIG_KEY,
-        filterHiddenKey = () => true
-    } = {}
+    { configKey = NAV_CONFIG_KEY, filterHiddenKey = () => true } = {}
 ) {
     let layout = fallbackLayout;
     let hiddenKeys = [];

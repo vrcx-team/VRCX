@@ -43,39 +43,45 @@
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem @click="handleViewDetails">
-                            {{ t('common.actions.view_details') }}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem @click="handleNewInstance">
-                            {{ t('dialog.world.actions.new_instance') }}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem @click="handleSelfInvite">
-                            {{ inviteOrLaunchText }}
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem @click="showFavoriteDialog('world', favorite.id)">
-                            {{ t('view.favorite.edit_favorite_tooltip') }}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem variant="destructive" @click="handleDeleteFavorite">
-                            {{ deleteMenuLabel }}
-                        </DropdownMenuItem>
+                        <WorldActionMenuItems
+                            variant="dropdown"
+                            :can-open-instance-in-game="canOpenInstanceInGame"
+                            @view-details="handleViewDetails"
+                            @new-instance="handleNewInstance"
+                            @self-invite="handleSelfInvite">
+                            <template #append>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem @click="showFavoriteDialog('world', favorite.id)">
+                                    {{ t('view.favorite.edit_favorite_tooltip') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem variant="destructive" @click="handleDeleteFavorite">
+                                    {{ deleteMenuLabel }}
+                                </DropdownMenuItem>
+                            </template>
+                        </WorldActionMenuItems>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </Item>
         </ContextMenuTrigger>
         <ContextMenuContent>
-            <ContextMenuItem @click="handleViewDetails">{{ t('common.actions.view_details') }}</ContextMenuItem>
-            <ContextMenuItem @click="handleNewInstance">{{ t('dialog.world.actions.new_instance') }}</ContextMenuItem>
-            <ContextMenuItem @click="handleSelfInvite">{{ inviteOrLaunchText }}</ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuItem @click="showFavoriteDialog('world', favorite.id)">
-                {{ t('view.favorite.edit_favorite_tooltip') }}
-            </ContextMenuItem>
-            <ContextMenuItem variant="destructive" @click="handleDeleteFavorite">
-                {{ deleteMenuLabel }}
-            </ContextMenuItem>
+            <WorldActionMenuItems
+                :can-open-instance-in-game="canOpenInstanceInGame"
+                @view-details="handleViewDetails"
+                @new-instance="handleNewInstance"
+                @self-invite="handleSelfInvite">
+                <template #append>
+                    <ContextMenuSeparator />
+                    <ContextMenuItem @click="showFavoriteDialog('world', favorite.id)">
+                        {{ t('view.favorite.edit_favorite_tooltip') }}
+                    </ContextMenuItem>
+                    <ContextMenuItem variant="destructive" @click="handleDeleteFavorite">
+                        {{ deleteMenuLabel }}
+                    </ContextMenuItem>
+                </template>
+            </WorldActionMenuItems>
         </ContextMenuContent>
     </ContextMenu>
+    <NewInstanceDialog :new-instance-dialog-location-tag="newInstanceDialogLocationTag" :last-location="lastLocation" />
 </template>
 
 <script setup>
@@ -98,14 +104,17 @@
     } from '@/components/ui/dropdown-menu';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
-    import { computed } from 'vue';
+    import { computed, nextTick, ref } from 'vue';
     import { useI18n } from 'vue-i18n';
+    import { storeToRefs } from 'pinia';
 
     import { favoriteRequest } from '../../../api';
+    import WorldActionMenuItems from '../../../components/WorldActionMenuItems.vue';
     import { removeLocalWorldFavorite } from '../../../coordinators/favoriteCoordinator';
     import { runNewInstanceSelfInviteFlow as newInstanceSelfInvite } from '../../../coordinators/inviteCoordinator';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
-    import { useFavoriteStore, useInstanceStore, useInviteStore } from '../../../stores';
+    import { useFavoriteStore, useInviteStore, useLocationStore } from '../../../stores';
+    import NewInstanceDialog from '../../../components/dialogs/NewInstanceDialog/NewInstanceDialog.vue';
 
     const props = defineProps({
         group: [Object, String],
@@ -117,10 +126,12 @@
 
     const emit = defineEmits(['toggle-select']);
     const { showFavoriteDialog } = useFavoriteStore();
+    const { lastLocation } = storeToRefs(useLocationStore());
 
     const { t } = useI18n();
     const { canOpenInstanceInGame } = useInviteStore();
-    const { createNewInstance } = useInstanceStore();
+
+    const newInstanceDialogLocationTag = ref('');
 
     const isSelected = computed({
         get: () => props.selected,
@@ -146,12 +157,6 @@
         return url || localFavRef.value?.thumbnailImageUrl;
     });
 
-    const inviteOrLaunchText = computed(() => {
-        return canOpenInstanceInGame
-            ? t('dialog.world.actions.new_instance_and_open_ingame')
-            : t('dialog.world.actions.new_instance_and_self_invite');
-    });
-
     const deleteMenuLabel = computed(() =>
         props.isLocalFavorite ? t('view.favorite.delete_tooltip') : t('view.favorite.unfavorite_tooltip')
     );
@@ -170,7 +175,8 @@
     }
 
     function handleNewInstance() {
-        createNewInstance(props.favorite.id);
+        newInstanceDialogLocationTag.value = '';
+        nextTick(() => (newInstanceDialogLocationTag.value = props.favorite.id));
     }
 
     function handleSelfInvite() {

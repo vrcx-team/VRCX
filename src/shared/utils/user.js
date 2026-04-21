@@ -94,14 +94,30 @@ function userStatusClass(user, pendingOffline = false, currentUser) {
         // temp fix
         if ((currentUser?.activeFriends || []).includes(id)) {
             // Active
-            style.active = true;
+            if (user.status === 'join me') {
+                style['active-joinme'] = true;
+            } else if (user.status === 'ask me') {
+                style['active-askme'] = true;
+            } else if (user.status === 'busy') {
+                style['active-busy'] = true;
+            } else {
+                style.active = true;
+            }
         } else {
             // Offline
             style.offline = true;
         }
     } else if (user.state === 'active') {
         // Active
-        style.active = true;
+        if (user.status === 'join me') {
+            style['active-joinme'] = true;
+        } else if (user.status === 'ask me') {
+            style['active-askme'] = true;
+        } else if (user.status === 'busy') {
+            style['active-busy'] = true;
+        } else {
+            style.active = true;
+        }
     } else if (user.location === 'offline') {
         // Offline
         style.offline = true;
@@ -124,7 +140,8 @@ function userStatusClass(user, pendingOffline = false, currentUser) {
     if (
         user.$platform &&
         user.$platform !== 'standalonewindows' &&
-        user.$platform !== 'web'
+        user.$platform !== 'web' &&
+        user.state === 'online'
     ) {
         style.mobile = true;
     }

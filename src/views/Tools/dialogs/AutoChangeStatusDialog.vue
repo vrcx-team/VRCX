@@ -192,18 +192,22 @@
                     @change="handleAutoAcceptInviteSwitch" />
 
                 <Field>
-                    <FieldLabel>{{ t('view.settings.general.automation.auto_invite_request_accept') }}</FieldLabel>
                     <FieldContent>
                         <RadioGroup
                             :model-value="autoAcceptInviteMode"
                             :disabled="autoAcceptInviteRequests === 'Off'"
                             class="gap-2 flex"
                             @update:modelValue="handleAutoAcceptInviteModeChange">
-                            <div class="flex items-center space-x-2">
-                                <RadioGroupItem id="autoAcceptInvite-all" value="All Favorites" />
-                                <label for="autoAcceptInvite-all">
-                                    {{ t('view.settings.general.automation.auto_invite_request_accept_favs') }}
-                                </label>
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <RadioGroupItem id="autoAcceptInvite-all" value="All Favorites" />
+                                    <label for="autoAcceptInvite-all">
+                                        {{ t('view.settings.general.automation.auto_invite_request_accept_favs') }}
+                                    </label>
+                                </div>
+                                <p class="text-xs text-muted-foreground ml-6">
+                                    {{ t('view.settings.general.automation.auto_invite_request_accept_favs_hint') }}
+                                </p>
                             </div>
                             <div class="flex items-center space-x-2">
                                 <RadioGroupItem id="autoAcceptInvite-selected" value="Selected Favorites" />

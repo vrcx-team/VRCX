@@ -5,7 +5,10 @@
         </div>
 
         <div :class="['rounded-md border', autoHeight && 'flex-1 min-h-0 flex flex-col overflow-hidden']">
-            <div ref="tableScrollRef" :class="['max-w-full overflow-auto relative', autoHeight && 'flex-1 min-h-0']" :style="tableStyle">
+            <div
+                ref="tableScrollRef"
+                :class="['max-w-full overflow-auto relative', autoHeight && 'flex-1 min-h-0']"
+                :style="tableStyle">
                 <Table :class="tableClassValue" :style="tableElementStyle">
                     <colgroup>
                         <col v-for="col in table.getVisibleLeafColumns()" :key="col.id" :style="getColStyle(col)" />
@@ -628,6 +631,19 @@
             props.onSortChange(newSorting);
         }
     });
+
+    // When the total page count shrinks below the current page
+    // jump to the last available page
+    watch(
+        () => props.table.getPageCount?.(),
+        (pageCount) => {
+            if (pageCount == null || pageCount <= 0) return;
+            const pageIndex = props.table.getState?.().pagination?.pageIndex ?? 0;
+            if (pageIndex >= pageCount) {
+                props.table.setPageIndex(pageCount - 1);
+            }
+        }
+    );
 
     watch([currentPage, pageSizeProxy], async () => {
         await nextTick();

@@ -1,29 +1,34 @@
 <template>
     <div class="flex flex-col gap-10 py-2">
         <SettingsGroup :title="t('view.settings.advanced.advanced.vrchat_settings.header')">
-            <SettingsItem :label="t('view.settings.advanced.advanced.relaunch_vrchat.header')"
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.relaunch_vrchat.header')"
                 :description="t('view.settings.advanced.advanced.relaunch_vrchat.description')">
                 <Switch :model-value="relaunchVRChatAfterCrash" @update:modelValue="setRelaunchVRChatAfterCrash" />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.advanced.advanced.vrchat_quit_fix.header')"
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.vrchat_quit_fix.header')"
                 :description="t('view.settings.advanced.advanced.vrchat_quit_fix.description')">
                 <Switch :model-value="vrcQuitFix" @update:modelValue="setVrcQuitFix" />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.advanced.advanced.auto_cache_management.header')"
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.auto_cache_management.header')"
                 :description="t('view.settings.advanced.advanced.auto_cache_management.description')">
                 <Switch :model-value="autoSweepVRChatCache" @update:modelValue="setAutoSweepVRChatCache" />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.advanced.advanced.self_invite.header')"
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.self_invite.header')"
                 :description="t('view.settings.advanced.advanced.self_invite.description')">
                 <Switch :model-value="selfInviteOverride" @update:modelValue="setSelfInviteOverride" />
             </SettingsItem>
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.advanced_groups.security.header')">
-            <SettingsItem :label="t('view.settings.advanced.advanced.primary_password.header')"
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.primary_password.header')"
                 :description="t('view.settings.advanced.advanced.primary_password.description')">
                 <Switch
                     :model-value="enablePrimaryPassword"
@@ -49,7 +54,8 @@
                 <Switch :model-value="autoLoginDelayEnabled" @update:modelValue="setAutoLoginDelayEnabled" />
             </SettingsItem>
 
-            <SettingsItem v-if="autoLoginDelayEnabled"
+            <SettingsItem
+                v-if="autoLoginDelayEnabled"
                 :label="t('view.settings.general.logging.auto_login_delay_button')">
                 <Button size="sm" variant="outline" @click="promptAutoLoginDelaySeconds">
                     {{ t('view.settings.general.logging.auto_login_delay_button') }}
@@ -65,7 +71,8 @@
                     }}</Button>
                 </SettingsItem>
 
-                <SettingsItem :label="t('view.settings.advanced.advanced.remote_database.enable')"
+                <SettingsItem
+                    :label="t('view.settings.advanced.advanced.remote_database.enable')"
                     :description="t('view.settings.advanced.advanced.app_launcher.folder_tooltip')">
                     <Switch :model-value="enableAppLauncher" @update:modelValue="setEnableAppLauncher" />
                 </SettingsItem>
@@ -87,7 +94,9 @@
         <SettingsGroup :title="t('view.settings.advanced.advanced.launch_commands.header')">
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.launch_commands.show_confirmation_on_switch_avatar_enable')"
-                :description="t('view.settings.advanced.advanced.launch_commands.show_confirmation_on_switch_avatar_tooltip')">
+                :description="
+                    t('view.settings.advanced.advanced.launch_commands.show_confirmation_on_switch_avatar_tooltip')
+                ">
                 <Switch
                     :model-value="showConfirmationOnSwitchAvatar"
                     @update:modelValue="setShowConfirmationOnSwitchAvatar" />
@@ -128,12 +137,30 @@
             </SettingsItem>
 
             <div class="flex flex-col gap-1 text-sm">
-                <span>{{ t('view.settings.advanced.advanced.cache_debug.user_cache') }} <span v-text="cacheSize.cachedUsers"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.cache_debug.world_cache') }} <span v-text="cacheSize.cachedWorlds"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.cache_debug.avatar_cache') }} <span v-text="cacheSize.cachedAvatars"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.cache_debug.group_cache') }} <span v-text="cacheSize.cachedGroups"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.cache_debug.avatar_name_cache') }} <span v-text="cacheSize.cachedAvatarNames"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.cache_debug.instance_cache') }} <span v-text="cacheSize.cachedInstances"></span></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.cache_debug.user_cache') }}
+                    <span v-text="cacheSize.cachedUsers"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.cache_debug.world_cache') }}
+                    <span v-text="cacheSize.cachedWorlds"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.cache_debug.avatar_cache') }}
+                    <span v-text="cacheSize.cachedAvatars"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.cache_debug.group_cache') }}
+                    <span v-text="cacheSize.cachedGroups"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.cache_debug.avatar_name_cache') }}
+                    <span v-text="cacheSize.cachedAvatarNames"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.cache_debug.instance_cache') }}
+                    <span v-text="cacheSize.cachedInstances"></span
+                ></span>
             </div>
 
             <SettingsItem :label="t('view.settings.advanced.advanced.cache_debug.show_console')">
@@ -151,21 +178,58 @@
             </SettingsItem>
 
             <div class="flex flex-col gap-1 text-sm">
-                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.gps') }} <span v-text="sqliteTableSizes.gps"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.status') }} <span v-text="sqliteTableSizes.status"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.bio') }} <span v-text="sqliteTableSizes.bio"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.avatar') }} <span v-text="sqliteTableSizes.avatar"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.online_offline') }} <span v-text="sqliteTableSizes.onlineOffline"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.friend_log_history') }} <span v-text="sqliteTableSizes.friendLogHistory"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.notification') }} <span v-text="sqliteTableSizes.notification"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.location') }} <span v-text="sqliteTableSizes.location"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.join_leave') }} <span v-text="sqliteTableSizes.joinLeave"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.portal_spawn') }} <span v-text="sqliteTableSizes.portalSpawn"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.video_play') }} <span v-text="sqliteTableSizes.videoPlay"></span></span>
-                <span>{{ t('view.settings.advanced.advanced.sqlite_table_size.event') }} <span v-text="sqliteTableSizes.event"></span></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.sqlite_table_size.gps') }}
+                    <span v-text="sqliteTableSizes.gps"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.sqlite_table_size.status') }}
+                    <span v-text="sqliteTableSizes.status"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.sqlite_table_size.bio') }}
+                    <span v-text="sqliteTableSizes.bio"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.sqlite_table_size.avatar') }}
+                    <span v-text="sqliteTableSizes.avatar"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.sqlite_table_size.online_offline') }}
+                    <span v-text="sqliteTableSizes.onlineOffline"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.sqlite_table_size.friend_log_history') }}
+                    <span v-text="sqliteTableSizes.friendLogHistory"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.sqlite_table_size.notification') }}
+                    <span v-text="sqliteTableSizes.notification"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.sqlite_table_size.location') }}
+                    <span v-text="sqliteTableSizes.location"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.sqlite_table_size.join_leave') }}
+                    <span v-text="sqliteTableSizes.joinLeave"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.sqlite_table_size.portal_spawn') }}
+                    <span v-text="sqliteTableSizes.portalSpawn"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.sqlite_table_size.video_play') }}
+                    <span v-text="sqliteTableSizes.videoPlay"></span
+                ></span>
+                <span
+                    >{{ t('view.settings.advanced.advanced.sqlite_table_size.event') }}
+                    <span v-text="sqliteTableSizes.event"></span
+                ></span>
             </div>
+        </SettingsGroup>
 
-            <!-- [Disabled] Avatar DB log cleanup UI - auto cleanup select & purge button & dialog
+        <SettingsGroup :title="t('view.settings.advanced.advanced.database_cleanup.header')">
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.database_cleanup.auto_cleanup')"
                 :description="t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_description')">
@@ -175,11 +239,21 @@
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem value="Off">{{ t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_off') }}</SelectItem>
-                            <SelectItem value="30">{{ t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_30') }}</SelectItem>
-                            <SelectItem value="90">{{ t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_90') }}</SelectItem>
-                            <SelectItem value="180">{{ t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_180') }}</SelectItem>
-                            <SelectItem value="365">{{ t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_365') }}</SelectItem>
+                            <SelectItem value="Off">{{
+                                t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_off')
+                            }}</SelectItem>
+                            <SelectItem value="30">{{
+                                t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_30')
+                            }}</SelectItem>
+                            <SelectItem value="90">{{
+                                t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_90')
+                            }}</SelectItem>
+                            <SelectItem value="180">{{
+                                t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_180')
+                            }}</SelectItem>
+                            <SelectItem value="365">{{
+                                t('view.settings.advanced.advanced.database_cleanup.auto_cleanup_365')
+                            }}</SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
@@ -191,22 +265,34 @@
                     {{ t('view.settings.advanced.advanced.database_cleanup.purge') }}
                 </Button>
             </SettingsItem>
-            -->
         </SettingsGroup>
 
-        <!-- [Disabled] Avatar DB log cleanup - purge dialog
-        <Dialog :open="isPurgeDialogVisible" @update:open="(open) => { if (!open) isPurgeDialogVisible = false; }">
+        <Dialog
+            :open="isPurgeDialogVisible"
+            @update:open="
+                (open) => {
+                    if (!open) isPurgeDialogVisible = false;
+                }
+            ">
             <DialogContent class="x-dialog sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>{{ t('view.settings.advanced.advanced.database_cleanup.purge_confirm_title') }}</DialogTitle>
+                    <DialogTitle>{{
+                        t('view.settings.advanced.advanced.database_cleanup.purge_confirm_title')
+                    }}</DialogTitle>
                 </DialogHeader>
 
                 <Alert variant="warning" class="mb-3">
                     <TriangleAlert />
                     <AlertDescription>
-                        {{ t('view.settings.advanced.advanced.database_cleanup.purge_confirm_description') }}
+                        {{ t('view.settings.advanced.advanced.database_cleanup.purge_confirm_alert') }}
                     </AlertDescription>
                 </Alert>
+
+                <div class="flex flex-col gap-1 text-sm text-muted-foreground mb-3">
+                    <p>{{ t('view.settings.advanced.advanced.database_cleanup.purge_confirm_description_1') }}</p>
+                    <p>{{ t('view.settings.advanced.advanced.database_cleanup.purge_confirm_description_2') }}</p>
+                    <p>{{ t('view.settings.advanced.advanced.database_cleanup.purge_confirm_description_3') }}</p>
+                </div>
 
                 <SettingsItem :label="t('view.settings.advanced.advanced.database_cleanup.purge_older_than')">
                     <Select v-model="selectedPurgePeriod">
@@ -215,10 +301,18 @@
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="180">{{ t('view.settings.advanced.advanced.database_cleanup.purge_option_180') }}</SelectItem>
-                                <SelectItem value="365">{{ t('view.settings.advanced.advanced.database_cleanup.purge_option_365') }}</SelectItem>
-                                <SelectItem value="730">{{ t('view.settings.advanced.advanced.database_cleanup.purge_option_730') }}</SelectItem>
-                                <SelectItem value="all">{{ t('view.settings.advanced.advanced.database_cleanup.purge_option_all') }}</SelectItem>
+                                <SelectItem value="180">{{
+                                    t('view.settings.advanced.advanced.database_cleanup.purge_option_180')
+                                }}</SelectItem>
+                                <SelectItem value="365">{{
+                                    t('view.settings.advanced.advanced.database_cleanup.purge_option_365')
+                                }}</SelectItem>
+                                <SelectItem value="730">{{
+                                    t('view.settings.advanced.advanced.database_cleanup.purge_option_730')
+                                }}</SelectItem>
+                                <SelectItem value="all">{{
+                                    t('view.settings.advanced.advanced.database_cleanup.purge_option_all')
+                                }}</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -228,64 +322,53 @@
                     <Button variant="outline" size="sm" @click="isPurgeDialogVisible = false">
                         {{ t('confirm.cancel_button') }}
                     </Button>
-                    <Button
-                        size="sm"
-                        variant="destructive"
-                        :disabled="purgeInProgress"
-                        @click="handlePurge">
+                    <Button size="sm" variant="destructive" :disabled="purgeInProgress" @click="handlePurge">
                         <Trash2 class="h-4 w-4 mr-1" />
                         {{ t('view.settings.advanced.advanced.database_cleanup.purge_confirm_button') }}
                     </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-        -->
 
         <SettingsGroup :title="t('view.settings.advanced_groups.diagnostics.header')">
-            <SettingsGroup :title="t('view.profile.game_info.header')">
-                <div class="px-1 py-1">
-                    <div class="flex-1 cursor-pointer" @click="getVisits">
-                        <span class="block truncate font-medium text-sm leading-[18px]">{{
-                            t('view.profile.game_info.online_users')
-                        }}</span>
-                        <span v-if="visits" class="block truncate text-xs text-muted-foreground">{{
-                            t('view.profile.game_info.user_online', { count: visits })
-                        }}</span>
-                        <span v-else class="block truncate text-xs text-muted-foreground">{{
-                            t('view.profile.game_info.refresh')
-                        }}</span>
-                    </div>
-                </div>
-            </SettingsGroup>
-
-            <SettingsGroup :title="t('view.profile.config_json')">
+            <SettingsItem :label="t('view.profile.game_info.online_users')">
                 <div class="flex items-center gap-2">
-                    <TooltipWrapper side="top" :content="t('view.profile.refresh_tooltip')">
-                        <Button class="rounded-full" size="icon-sm" variant="outline" @click="refreshConfigTreeData()">
-                            <RefreshCcw />
-                        </Button>
-                    </TooltipWrapper>
-                    <TooltipWrapper side="top" :content="t('view.profile.clear_results_tooltip')">
-                        <Button class="rounded-full" size="icon-sm" variant="outline" @click="configTreeData = {}">
-                            <Trash2 />
-                        </Button>
-                    </TooltipWrapper>
+                    <span v-if="visits !== null" class="text-sm text-muted-foreground">{{
+                        t('view.profile.game_info.user_online', { count: visits })
+                    }}</span>
+                    <Button size="sm" variant="outline" @click="getVisits">{{ t('common.actions.refresh') }}</Button>
                 </div>
-                <vue-json-pretty
-                    v-if="Object.keys(configTreeData).length > 0"
-                    :data="configTreeData"
-                    :deep="2"
-                    :theme="isDarkMode ? 'dark' : 'light'"
-                    :height="800"
-                    :dynamic-height="false"
-                    virtual
-                    show-icon />
-            </SettingsGroup>
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.profile.config_json')">
+                <div class="flex items-center gap-2">
+                    <Button size="sm" variant="outline" @click="refreshConfigTreeData()">{{
+                        t('common.actions.refresh')
+                    }}</Button>
+                    <Button
+                        v-if="Object.keys(configTreeData).length > 0"
+                        size="sm"
+                        variant="outline"
+                        @click="configTreeData = {}"
+                        >{{ t('common.actions.clear') }}</Button
+                    >
+                </div>
+            </SettingsItem>
+            <vue-json-pretty
+                v-if="Object.keys(configTreeData).length > 0"
+                :data="configTreeData"
+                :deep="2"
+                :theme="isDarkMode ? 'dark' : 'light'"
+                :height="800"
+                :dynamic-height="false"
+                virtual
+                show-icon />
         </SettingsGroup>
 
         <template v-if="branch === 'Nightly'">
             <SettingsGroup :title="t('view.settings.advanced_groups.nightly.header')">
-                <SettingsItem :label="t('view.settings.advanced.advanced.anonymous_error_reporting.header')"
+                <SettingsItem
+                    :label="t('view.settings.advanced.advanced.anonymous_error_reporting.header')"
                     :description="t('view.settings.advanced.advanced.anonymous_error_reporting.description')">
                     <Switch :model-value="sentryErrorReporting" @update:modelValue="setSentryErrorReporting()" />
                 </SettingsItem>
@@ -298,16 +381,13 @@
 </template>
 
 <script setup>
-    import { RefreshCcw, Trash2 } from 'lucide-vue-next';
-    // [Disabled] Avatar DB log cleanup - unused imports
-    // import { TriangleAlert } from 'lucide-vue-next';
+    import { Trash2, TriangleAlert } from 'lucide-vue-next';
     import { computed, reactive, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Switch } from '@/components/ui/switch';
-    // [Disabled] Avatar DB log cleanup - unused imports
-    // import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    // import { Alert, AlertDescription } from '@/components/ui/alert';
-    // import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    import { Alert, AlertDescription } from '@/components/ui/alert';
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -336,7 +416,6 @@
     import RegistryBackupDialog from '../../../Tools/dialogs/RegistryBackupDialog.vue';
     import SettingsGroup from '../SettingsGroup.vue';
     import SettingsItem from '../SettingsItem.vue';
-    import { TooltipWrapper } from '@/components/ui/tooltip';
 
     const { t } = useI18n();
 
@@ -379,9 +458,8 @@
         showConfirmationOnSwitchAvatar,
         gameLogDisabled,
         sqliteTableSizes,
-        // [Disabled] Avatar DB log cleanup
-        // avatarAutoCleanup,
-        // purgeInProgress,
+        avatarAutoCleanup,
+        purgeInProgress,
         sentryErrorReporting
     } = storeToRefs(advancedSettingsStore);
 
@@ -395,18 +473,16 @@
         setEnableAppLauncherRunProcessOnce,
         setShowConfirmationOnSwitchAvatar,
         getSqliteTableSizes,
-        // [Disabled] Avatar DB log cleanup
-        // setAvatarAutoCleanup,
-        // purgeAvatarFeedData,
+        setAvatarAutoCleanup,
+        purgeAvatarFeedData,
         promptAutoClearVRCXCacheFrequency,
         setSentryErrorReporting
     } = advancedSettingsStore;
 
     const configTreeData = ref({});
-    const visits = ref(0);
-    // [Disabled] Avatar DB log cleanup
-    // const selectedPurgePeriod = ref('180');
-    // const isPurgeDialogVisible = ref(false);
+    const visits = ref(null);
+    const selectedPurgePeriod = ref('180');
+    const isPurgeDialogVisible = ref(false);
 
     const cacheSize = reactive({
         cachedUsers: 0,
@@ -419,15 +495,11 @@
 
     const isLinux = computed(() => LINUX);
 
-    // [Disabled] Avatar DB log cleanup - handlePurge
-    // function handlePurge() {
-    //     const days =
-    //         selectedPurgePeriod.value === 'all'
-    //             ? null
-    //             : parseInt(selectedPurgePeriod.value, 10);
-    //     isPurgeDialogVisible.value = false;
-    //     purgeAvatarFeedData(days);
-    // }
+    function handlePurge() {
+        const days = selectedPurgePeriod.value === 'all' ? null : parseInt(selectedPurgePeriod.value, 10);
+        isPurgeDialogVisible.value = false;
+        purgeAvatarFeedData(days);
+    }
 
     /**
      *

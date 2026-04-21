@@ -9,7 +9,7 @@ namespace VRCX;
 public class OverlayManager
 {
     private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-    
+
     private static Process _process;
 
     public static void StartOverlay()
@@ -23,7 +23,7 @@ public class OverlayManager
 
         StartOverlayProcess();
     }
-    
+
     private static void StartOverlayProcess()
     {
         if (Environment.ProcessPath == null)
@@ -31,7 +31,7 @@ public class OverlayManager
             logger.Error("Cannot start Overlay process without a process path");
             return;
         }
-        
+
         var args = new List<string>();
         args.Add(StartupArgs.VrcxLaunchArguments.Overlay);
         if (Program.LaunchDebug)

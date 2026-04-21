@@ -356,7 +356,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         const wristFilter = notificationsSettingsStore.sharedFeedFilters.wrist;
         // BlockedOnPlayerJoined, BlockedOnPlayerLeft, MutedOnPlayerJoined, MutedOnPlayerLeft
         for (const ref of moderationStore.cachedPlayerModerations.values()) {
-            if (ref.sourceUserId !== ctx.userId) {
+            if (ref.targetUserId !== ctx.userId) {
                 continue;
             }
 

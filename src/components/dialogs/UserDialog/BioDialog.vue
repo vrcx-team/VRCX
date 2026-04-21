@@ -21,10 +21,13 @@
                     :key="index"
                     v-model="bioDialog.bioLinks[index]"
                     :maxlength="1000"
-                    show-count
                     size="sm">
                     <template #leading>
-                        <img :src="getFaviconUrl(link)" style="width: 16px; height: 16px; vertical-align: middle" />
+                        <img
+                            v-if="link"
+                            :src="getFaviconUrl(link)"
+                            style="width: 16px; height: 16px; vertical-align: middle" />
+                        <div v-else style="width: 16px; height: 16px" />
                     </template>
                     <template #actions>
                         <Button variant="ghost" size="icon-sm" @click="bioDialog.bioLinks.splice(index, 1)"

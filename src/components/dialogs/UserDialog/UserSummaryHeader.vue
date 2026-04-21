@@ -263,11 +263,12 @@
 
 <script setup>
     import { Apple, ChevronDown, IdCard, Image, Monitor, Shield, Smartphone, UserPlus, Users } from 'lucide-vue-next';
-    import { ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { formatDateFilter, languageClass, openDiscordProfile, userImage, userStatusClass } from '../../../shared/utils';
+    import { formatDateFilter, languageClass, openDiscordProfile } from '../../../shared/utils';
+    import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover';
     import { useGalleryStore, useUserStore } from '../../../stores';
     import { Badge } from '../../ui/badge';
@@ -304,6 +305,7 @@
     const { userDialog, currentUser } = storeToRefs(useUserStore());
 
     const { showFullscreenImageDialog } = useGalleryStore();
+    const { userImage, userStatusClass } = useUserDisplay();
 
     const profileImageError = ref(false);
     const userIconError = ref(false);
