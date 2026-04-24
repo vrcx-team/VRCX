@@ -1587,7 +1587,15 @@
                 "content_gore": "過剰なゴア",
                 "content_violence": "写実的な暴力",
                 "content_adult": "成人向けの言葉やテーマ",
-                "content_sex": "性的なものを思わせる"
+                "content_sex": "性的なものを思わせる",
+                "performanceRating": {
+                    "Excellent": "優秀",
+                    "Good": "いいね",
+                    "Medium": "まあまあ",
+                    "Poor": "能無し",
+                    "VeryPoor": "めっちゃ能無し",
+                    "None": "なし"
+                }
             },
             "labels": {
                 "public": "(パブリック)",
