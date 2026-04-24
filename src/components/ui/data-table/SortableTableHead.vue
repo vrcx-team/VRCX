@@ -48,7 +48,7 @@
             <div class="flex items-center">
                 <GripVertical
                     v-if="!disabled"
-                    class="size-3.5 shrink-0 text-muted-foreground/50 -ml-1 mr-0.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    class="size-3.5 shrink-0 text-muted-foreground/50 -ml-1 mr-0.5 hidden group-hover:block transition-opacity" />
                 <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
             </div>
             <div
