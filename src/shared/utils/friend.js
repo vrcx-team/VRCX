@@ -5,7 +5,8 @@ import {
     compareByLocationAt,
     compareByName,
     compareByPrivate,
-    compareByStatus
+    compareByStatus,
+    compareByTimeInInstance
 } from './compare';
 
 /**
@@ -33,29 +34,7 @@ function getFriendsSortFunction(sortMethods) {
                 sorts.push(compareByLastSeen);
                 break;
             case 'Sort by Time in Instance':
-                sorts.push((a, b) => {
-                    if (
-                        typeof a.ref === 'undefined' ||
-                        typeof b.ref === 'undefined'
-                    ) {
-                        return 0;
-                    }
-                    // sort pending offline to bottom
-                    if (a.pendingOffline && !b.pendingOffline) {
-                        return 1;
-                    }
-                    if (a.pendingOffline && b.pendingOffline) {
-                        return 0;
-                    }
-                    if (!a.pendingOffline && b.pendingOffline) {
-                        return -1;
-                    }
-                    if (a.state !== 'online' || b.state !== 'online') {
-                        return 0;
-                    }
-
-                    return compareByLocationAt(b.ref, a.ref);
-                });
+                sorts.push(compareByTimeInInstance);
                 break;
             case 'Sort by Location':
                 sorts.push(compareByLocation);
@@ -65,6 +44,7 @@ function getFriendsSortFunction(sortMethods) {
                 break;
         }
     }
+    sorts.push(compareByName);
 
     /**
      * @param {object} a

@@ -356,7 +356,11 @@
         const selectedGroups = sidebarFavoriteGroups.value;
         const hasFilter = selectedGroups.length > 0;
         if (!hasFilter) {
-            return excludeSameInstance(onlineFriends.value.filter((f) => !allFavoriteFriendIds.value.has(f.id)));
+            return excludeSameInstance(
+                onlineFriends.value
+                    .filter((f) => !allFavoriteFriendIds.value.has(f.id))
+                    .sort(getFriendsSortFunction(sidebarSortMethods.value))
+            );
         }
         // When group filter is active, friends in unselected groups should appear in the online list
         const selectedIds = selectedFavoriteGroupIds.value;
