@@ -24,7 +24,7 @@
                 <UserDialogInfoTab ref="infoTabRef" @show-bio-dialog="showBioDialog" />
             </template>
 
-            <template v-if="!isSelf && !currentUser.hasSharedConnectionsOptOut" #mutual>
+            <template v-if="userDialog.id !== currentUser.id && !currentUser.hasSharedConnectionsOptOut" #mutual>
                 <UserDialogMutualFriendsTab ref="mutualFriendsTabRef" />
             </template>
 
@@ -36,11 +36,11 @@
                 <UserDialogWorldsTab ref="worldsTabRef" />
             </template>
 
-            <template v-if="!isSelf" #favorite-worlds>
+            <template #favorite-worlds>
                 <UserDialogFavoriteWorldsTab ref="favoriteWorldsTabRef" />
             </template>
 
-            <template v-if="!isSelf" #Avatars>
+            <template #Avatars>
                 <UserDialogAvatarsTab ref="avatarsTabRef" />
             </template>
 
@@ -120,21 +120,16 @@
     import SocialStatusDialog from './SocialStatusDialog.vue';
 
     const { t } = useI18n();
-    const isSelf = computed(() => userDialog.value.id === currentUser.value.id);
     const userDialogTabs = computed(() => {
         const tabs = [
             { value: 'Info', label: t('dialog.user.info.header') },
             { value: 'Groups', label: t('dialog.user.groups.header') },
-            { value: 'Worlds', label: t('dialog.user.worlds.header') }
+            { value: 'Worlds', label: t('dialog.user.worlds.header') },
+            { value: 'favorite-worlds', label: t('dialog.user.favorite_worlds.header') },
+            { value: 'Avatars', label: t('dialog.user.avatars.header') },
+            { value: 'JSON', label: t('dialog.user.json.header') }
         ];
-        if (!isSelf.value) {
-            tabs.push(
-                { value: 'favorite-worlds', label: t('dialog.user.favorite_worlds.header') },
-                { value: 'Avatars', label: t('dialog.user.avatars.header') }
-            );
-        }
-        tabs.push({ value: 'JSON', label: t('dialog.user.json.header') });
-        if (!isSelf.value && !currentUser.value.hasSharedConnectionsOptOut) {
+        if (userDialog.value.id !== currentUser.value.id && !currentUser.value.hasSharedConnectionsOptOut) {
             tabs.splice(1, 0, { value: 'mutual', label: t('dialog.user.mutual_friends.header') });
         }
         // Insert Activity before JSON
@@ -157,7 +152,7 @@
     const { cachedUsers, showSendBoopDialog } = useUserStore();
     const { showFavoriteDialog } = useFavoriteStore();
     import { showAvatarDialog, showAvatarAuthorDialog } from '../../../coordinators/avatarCoordinator';
-    import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { showUserDialog, refreshUserDialogAvatars } from '../../../coordinators/userCoordinator';
     import { getFriendRequest, handleFriendDelete } from '../../../coordinators/friendRelationshipCoordinator';
 
     const { showModerateGroupDialog } = useGroupStore();
@@ -349,7 +344,11 @@
             avatarsTabRef.value?.setUserDialogAvatars(userId);
             if (userDialogLastAvatar.value !== userId) {
                 userDialogLastAvatar.value = userId;
-                avatarsTabRef.value?.setUserDialogAvatarsRemote(userId);
+                if (userId === currentUser.value.id) {
+                    refreshUserDialogAvatars();
+                } else {
+                    avatarsTabRef.value?.setUserDialogAvatarsRemote(userId);
+                }
             }
         } else if (tabName === 'Worlds') {
             worldsTabRef.value?.setUserDialogWorlds(userId);
@@ -373,12 +372,7 @@
      *
      */
     function loadLastActiveTab() {
-        let tab = userDialog.value.lastActiveTab;
-        if (isSelf.value && (tab === 'Avatars' || tab === 'favorite-worlds')) {
-            tab = 'Info';
-            userDialog.value.activeTab = tab;
-            userDialog.value.lastActiveTab = tab;
-        }
+        const tab = userDialog.value.lastActiveTab;
         handleUserDialogTab(tab);
     }
 

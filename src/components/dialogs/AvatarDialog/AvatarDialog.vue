@@ -55,7 +55,11 @@
                                     <span
                                         v-if="avatarDialog.platformInfo.pc"
                                         class="x-grey text-platform-pc border-l-[0.8px] border-solid ml-1.5 pl-1.5 pb-px"
-                                        >{{ avatarDialog.platformInfo.pc.performanceRating }}</span
+                                        >{{
+                                            t(
+                                                `dialog.avatar.tags.performanceRating.${avatarDialog.platformInfo.pc.performanceRating.replace(' ', '')}`
+                                            )
+                                        }}</span
                                     >
                                     <span
                                         v-if="avatarDialog.fileAnalysis.standalonewindows?._fileSize"
@@ -72,7 +76,11 @@
                                     <span
                                         v-if="avatarDialog.platformInfo.android"
                                         class="x-grey text-platform-quest border-l-[0.8px] border-solid ml-1.5 pl-1.5 pb-px"
-                                        >{{ avatarDialog.platformInfo.android.performanceRating }}</span
+                                        >{{
+                                            t(
+                                                `dialog.avatar.tags.performanceRating.${avatarDialog.platformInfo.android.performanceRating.replace(' ', '')}`
+                                            )
+                                        }}</span
                                     >
                                     <span
                                         v-if="avatarDialog.fileAnalysis.android?._fileSize"
@@ -87,7 +95,11 @@
                                     <span
                                         v-if="avatarDialog.platformInfo.ios"
                                         class="x-grey text-platform-ios border-platform-ios border-l-[0.8px] border-solid ml-1.5 pl-1.5 pb-px"
-                                        >{{ avatarDialog.platformInfo.ios.performanceRating }}</span
+                                        >{{
+                                            t(
+                                                `dialog.avatar.tags.performanceRating.${avatarDialog.platformInfo.ios.performanceRating.replace(' ', '')}`
+                                            )
+                                        }}</span
                                     >
                                     <span
                                         v-if="avatarDialog.fileAnalysis.ios?._fileSize"

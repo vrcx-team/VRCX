@@ -227,6 +227,22 @@ function compareByActivityField(a, b, field) {
     return 0;
 }
 
+function compareByTimeInInstance(a, b) {
+    if (!a.ref || !b.ref) {
+        return 0;
+    }
+    // pending offline should be sorted to the bottom
+    if (a.pendingOffline && !b.pendingOffline) {
+        return 1;
+    }
+    if (!a.pendingOffline && b.pendingOffline) {
+        return -1;
+    }
+
+    // sort by time in instance (newer first)
+    return b.ref.$location_at - a.ref.$location_at;
+}
+
 /**
  * location at
  * @param {object} a
@@ -297,5 +313,6 @@ export {
     compareByLastSeen,
     compareByLocationAt,
     compareByLocation,
-    compareByFriendOrder
+    compareByFriendOrder,
+    compareByTimeInInstance
 };

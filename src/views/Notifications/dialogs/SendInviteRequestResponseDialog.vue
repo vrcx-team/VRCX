@@ -2,7 +2,7 @@
     <Dialog
         :open="sendInviteRequestResponseDialogVisible"
         @update:open="(open) => (open ? null : cancelSendInviteRequestResponse())">
-        <DialogContent>
+        <DialogContent class="x-dialog sm:max-w-200">
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.invite_request_response_message.header') }}</DialogTitle>
             </DialogHeader>

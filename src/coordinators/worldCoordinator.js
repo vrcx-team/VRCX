@@ -60,6 +60,12 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
         nextTick(() => (D.loading = false));
         return;
     }
+    if (L.instanceId) {
+        instanceRequest.getInstance({
+            worldId: L.worldId,
+            instanceId: L.instanceId
+        });
+    }
     L.shortName = shortName;
     D.id = L.worldId;
     D.$location = L;

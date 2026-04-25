@@ -98,7 +98,7 @@
                                 <IdCard class="h-4 w-4" /> 18+
                             </template>
                             <template v-else>
-                                <IdCard class="h-4 w-4" />
+                                <IdCard class="h-4 w-4 text-base" />
                             </template>
                         </Badge>
                     </TooltipWrapper>
