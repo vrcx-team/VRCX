@@ -15,13 +15,13 @@
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <span class="name" v-text="feed.displayName"></span>
-                                        <Loader2 v-if="feed.isTraveling" class="is-loading ml-5 h-4 w-4" />
+                                        <Loader2 v-if="feed.isTraveling" class="is-loading ml-2 h-4 w-4" />
                                         <VrLocation
                                             :location="feed.location"
                                             :hint="feed.worldName"
                                             :grouphint="feed.groupName"
                                             :instancedisplayname="feed.instanceDisplayName"
-                                            style="margin-left: 5px"></VrLocation>
+                                            style="margin-left: 2px"></VrLocation>
                                     </span>
                                 </div>
                             </div>
@@ -67,7 +67,7 @@
                                         <span class="name" v-text="feed.displayName" style="margin-right: 5px"></span>
                                         <template v-if="feed.statusDescription === feed.previousStatusDescription">
                                             <i class="x-user-status" :class="statusClass(feed.previousStatus)"></i>
-                                            <ArrowRight class="mx-1 h-4 w-4 inline-block" />
+                                            <ArrowRight class="h-4 w-4 inline-block" />
                                             <i class="x-user-status" :class="statusClass(feed.status)"></i>
                                         </template>
                                         <template v-else>
@@ -659,7 +659,7 @@
                                         <span class="name" v-text="feed.displayName" style="margin-right: 5px"></span>
                                         <template v-if="feed.statusDescription === feed.previousStatusDescription">
                                             <i class="x-user-status" :class="statusClass(feed.previousStatus)"></i>
-                                            <ArrowRight class="mx-1 inline-block h-4 w-4" />
+                                            <ArrowRight class="inline-block h-4 w-4" />
                                             <i class="x-user-status" :class="statusClass(feed.status)"></i>
                                         </template>
                                         <template v-else>
@@ -2224,13 +2224,3 @@
         hudTimeout
     } = toRefs(vrState);
 </script>
-
-<style scoped>
-    .ml-5 {
-        margin-left: 5px;
-    }
-
-    .mr-5 {
-        margin-right: 5px;
-    }
-</style>

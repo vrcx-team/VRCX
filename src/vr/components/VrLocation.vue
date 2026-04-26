@@ -1,14 +1,13 @@
 <template>
     <span>
-        <span>{{ text }}</span>
-        <span v-if="groupName">({{ groupName }})</span>
         <span
             v-if="region"
             class="flags"
             :class="region"
-            style="display: inline-block; margin-bottom: 2px; margin-left: 5px">
+            style="display: inline-block; margin-right: 5px; margin-top: 3px">
         </span>
-
+        <span>{{ text }}</span>
+        <span v-if="groupName">({{ groupName }})</span>
         <Lock v-if="strict" class="h-4 w-4" style="display: inline-block; margin-left: 5px" />
     </span>
 </template>

@@ -353,7 +353,7 @@ button {
     margin-right: 6px;
     color: var(--vr-text-muted);
     font-size: var(--vr-font-xs);
-    font-weight: 300;
+    font-weight: 600;
     font-variant-numeric: tabular-nums;
     opacity: 0.9;
     flex-shrink: 0;
@@ -403,18 +403,18 @@ button {
     overflow: hidden;
 }
 
-.x-friend-item > .detail > .name,
-.x-friend-item > .detail > .extra {
+.x-friend-item > .detail .extra {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.x-friend-item > .detail > .name {
+.x-friend-item > .detail .name {
     font-weight: 600;
+    margin-right: 5px;
 }
 
-.x-friend-item > .detail > .extra {
+.x-friend-item > .detail .extra {
     font-weight: 400;
     color: var(--vr-text-secondary);
 }
@@ -425,6 +425,7 @@ i.x-user-status {
     height: 13px;
     background: var(--status-offline-alt);
     border-radius: 50%;
+    margin-right: 3px;
 }
 
 i.x-user-status.active {
@@ -559,26 +560,19 @@ i.x-user-status.busy {
 }
 
 .x-friend-item .lucide {
-    width: 16px !important;
-    height: 16px !important;
-    min-width: 16px;
-    color: var(--vr-text-muted);
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px;
+    color: var(--vr-text-secondary);
     flex-shrink: 0;
     margin-right: 6px !important;
     margin-left: 0 !important;
     position: relative;
-    top: 1px;
-    opacity: 0.8;
+    top: 0px;
 }
 
 .x-friend-item .lucide + .lucide {
     margin-left: -2px !important;
-}
-
-.x-friend-item .lucide.mx-1 {
-    margin-left: 2px !important;
-    margin-right: 2px !important;
-    opacity: 0.5;
 }
 
 .tracker-container {
