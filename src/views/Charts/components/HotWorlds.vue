@@ -202,7 +202,7 @@
     defineOptions({ name: 'ChartsHotWorlds' });
 
     import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-    import { Info, MapPin, RefreshCcw, TrendingDown, TrendingUp } from 'lucide-vue-next';
+    import { Info, MapPin, RefreshCcw, TrendingDown, TrendingUp, Users } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

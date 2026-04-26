@@ -177,7 +177,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         );
         const savedViewMode = await configRepository.getString(
             'VRCX_gameLogViewMode',
-            'sessions'
+            'table'
         );
         if (savedViewMode === 'sessions' || savedViewMode === 'table') {
             sessionsViewMode.value = savedViewMode;

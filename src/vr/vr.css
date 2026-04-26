@@ -598,7 +598,7 @@ i.x-user-status.busy {
     display: inline-block;
     height: 20px;
     transition: all 0.25s linear;
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 .tracker-device span {
