@@ -75,13 +75,7 @@ export function useNavLayout({
             'notification-center'
         ) {
             return items.filter((item) => {
-                if (item.index === 'notification') {
-                    return false;
-                }
                 if (item.children) {
-                    item.children = item.children.filter(
-                        (child) => child.index !== 'notification'
-                    );
                     return item.children.length > 0;
                 }
                 return true;

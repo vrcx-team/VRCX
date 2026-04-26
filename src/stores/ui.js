@@ -287,19 +287,6 @@ export const useUiStore = defineStore('Ui', () => {
                 const name = String(routeName);
                 removeNotify(name);
                 if (name === 'notification') {
-                    const notificationsSettingsStore =
-                        useNotificationsSettingsStore();
-                    if (
-                        notificationsSettingsStore.notificationLayout ===
-                        'notification-center'
-                    ) {
-                        if (router.currentRoute.value.query?.fromCenter) {
-                            router.replace({ name: 'notification' });
-                        } else {
-                            router.replace({ name: 'feed' });
-                        }
-                        return;
-                    }
                     notificationStore.clearUnseenNotifications();
                 }
             }
