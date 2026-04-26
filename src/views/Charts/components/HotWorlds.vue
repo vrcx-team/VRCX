@@ -133,7 +133,7 @@
                 <SheetTitle class="text-left">
                     <button
                         type="button"
-                        class="text-left text-base font-semibold hover:underline"
+                        class="text-left text-base font-semibold hover:underline cursor-pointer"
                         @click="handleWorldClick">
                         {{ selectedWorld?.worldName }}
                     </button>
@@ -183,7 +183,7 @@
                             v-for="friend in friendDetail"
                             :key="friend.userId"
                             type="button"
-                            class="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm transition-colors hover:bg-accent"
+                            class="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm transition-colors hover:bg-accent cursor-pointer"
                             @click="openUserDialog(friend.userId)">
                             <span class="min-w-0 flex-1 truncate">{{ friend.displayName }}</span>
                             <span

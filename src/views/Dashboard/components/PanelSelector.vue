@@ -16,7 +16,7 @@
                             v-for="option in widgetOptions"
                             :key="option.key"
                             type="button"
-                            class="flex items-center gap-2 rounded-md border p-2 text-left text-sm hover:bg-accent"
+                            class="flex items-center gap-2 rounded-md border p-2 text-left text-sm hover:bg-accent cursor-pointer"
                             :class="
                                 option.key === currentPanelKey
                                     ? 'border-primary bg-primary/5 ring-1 ring-primary/40'
@@ -39,7 +39,7 @@
                             v-for="option in panelOptions"
                             :key="option.key"
                             type="button"
-                            class="flex items-center gap-2 rounded-md border p-2 text-left text-sm hover:bg-accent"
+                            class="flex items-center gap-2 rounded-md border p-2 text-left text-sm hover:bg-accent cursor-pointer"
                             :class="
                                 option.key === currentPanelKey
                                     ? 'border-primary bg-primary/5 ring-1 ring-primary/40'

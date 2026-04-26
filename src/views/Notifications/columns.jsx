@@ -599,7 +599,7 @@ export const createColumns = ({
                                         <TooltipTrigger asChild>
                                             <button
                                                 type="button"
-                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                                 onClick={() =>
                                                     acceptFriendRequestNotification(
                                                         original
@@ -624,7 +624,7 @@ export const createColumns = ({
                                         <TooltipTrigger asChild>
                                             <button
                                                 type="button"
-                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                                 onClick={() =>
                                                     showSendInviteResponseDialog(
                                                         original
@@ -651,7 +651,7 @@ export const createColumns = ({
                                                 <TooltipTrigger asChild>
                                                     <button
                                                         type="button"
-                                                        class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                        class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                                         onClick={() =>
                                                             acceptRequestInvite(
                                                                 original
@@ -674,7 +674,7 @@ export const createColumns = ({
                                             <TooltipTrigger asChild>
                                                 <button
                                                     type="button"
-                                                    class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                    class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                                     onClick={() =>
                                                         showSendInviteRequestResponseDialog(
                                                             original
@@ -732,7 +732,7 @@ export const createColumns = ({
                                                   <TooltipTrigger asChild>
                                                       <button
                                                           type="button"
-                                                          class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                          class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                                           onClick={onClick}
                                                       >
                                                           <ResponseIcon class="h-4 w-4" />
@@ -753,7 +753,7 @@ export const createColumns = ({
                                         <TooltipTrigger asChild>
                                             <button
                                                 type="button"
-                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                                 onClick={() =>
                                                     shiftHeld.value
                                                         ? hideNotification(
@@ -788,7 +788,7 @@ export const createColumns = ({
                                         <TooltipTrigger asChild>
                                             <button
                                                 type="button"
-                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                                 onClick={() =>
                                                     shiftHeld.value
                                                         ? deleteNotificationLog(
@@ -822,7 +822,7 @@ export const createColumns = ({
                                 <TooltipTrigger asChild>
                                     <button
                                         type="button"
-                                        class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                        class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                         onClick={() =>
                                             shiftHeld.value
                                                 ? deleteNotificationLog(

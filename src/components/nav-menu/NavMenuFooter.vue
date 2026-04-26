@@ -53,7 +53,7 @@
                             <div class="flex min-w-0 flex-col">
                                 <button
                                     type="button"
-                                    class="text-left text-sm font-medium truncate flex items-center gap-1"
+                                    class="text-left text-sm font-medium truncate flex items-center gap-1 cursor-pointer"
                                     @click="emit('open-github')">
                                     VRCX
                                     <Heart class="text-primary fill-current stroke-none" />
@@ -101,7 +101,7 @@
                                                 :aria-label="themeColorDisplayName(theme)"
                                                 :title="themeColorDisplayName(theme)"
                                                 @click="emit('theme-color-select', theme)"
-                                                class="h-3.5 w-3.5 shrink-0 rounded-sm transition-transform hover:scale-125"
+                                                class="h-3.5 w-3.5 shrink-0 rounded-sm transition-transform hover:scale-125 cursor-pointer"
                                                 :class="
                                                     currentThemeColor === theme.key
                                                         ? 'ring-1 ring-ring ring-offset-1 ring-offset-background'

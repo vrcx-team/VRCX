@@ -225,7 +225,7 @@ export const columns = [
             return (
                 <button
                     type="button"
-                    class="inline-flex h-6 items-center justify-center text-xs text-muted-foreground hover:text-foreground"
+                    class="inline-flex h-6 items-center justify-center text-xs text-muted-foreground hover:text-foreground cursor-pointer"
                     onClick={(event) => {
                         event.stopPropagation();
                         row.toggleExpanded();

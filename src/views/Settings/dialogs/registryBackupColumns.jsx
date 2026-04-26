@@ -27,7 +27,7 @@ export const createColumns = ({ onRestore, onSaveToFile, onDelete }) => [
         },
         header: ({ column }) => (
             <button
-                class="inline-flex items-center"
+                class="inline-flex items-center cursor-pointer"
                 onClick={() => {
                     const sorted = column.getIsSorted();
                     column.toggleSorting(sorted === 'asc');

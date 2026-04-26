@@ -217,8 +217,8 @@ export const createColumns = ({
                             <button
                                 class={
                                     isBlocked
-                                        ? 'mr-1 text-xs underline text-destructive'
-                                        : 'mr-1 text-xs underline'
+                                        ? 'mr-1 text-xs underline cursor-pointer text-destructive'
+                                        : 'mr-1 text-xs underline cursor-pointer'
                                 }
                                 onClick={(e) => {
                                     e.stopPropagation();

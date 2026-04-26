@@ -62,7 +62,7 @@
 
     const triggerClass = computed(() => {
         return [
-            'relative inline-flex h-10 items-center justify-center px-3 text-sm font-medium',
+            'relative inline-flex cursor-pointer h-10 items-center justify-center px-3 text-sm font-medium',
             'text-muted-foreground transition-colors hover:text-foreground',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background',
             'disabled:pointer-events-none disabled:opacity-50',

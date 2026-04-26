@@ -90,7 +90,7 @@
             <button
                 v-if="hasChildren"
                 type="button"
-                class="flex size-4 shrink-0 items-center justify-center rounded transition-transform"
+                class="flex size-4 shrink-0 items-center justify-center rounded transition-transform cursor-pointer"
                 :class="isExpanded ? 'rotate-90' : ''"
                 @click.stop="emit('toggle')">
                 <ChevronRight class="size-3.5" />

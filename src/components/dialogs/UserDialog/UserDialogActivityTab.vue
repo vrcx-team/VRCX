@@ -203,7 +203,7 @@
                     v-for="(world, index) in sortedTopWorlds"
                     :key="world.worldId"
                     type="button"
-                    class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent"
+                    class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent cursor-pointer"
                     :class="index === 0 ? 'bg-primary/4' : ''"
                     @click="openWorld(world.worldId)">
                     <span
