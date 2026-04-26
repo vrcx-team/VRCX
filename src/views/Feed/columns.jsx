@@ -243,6 +243,7 @@ export const columns = [
         header: ({ column }) => (
             <Button
                 variant="ghost"
+                class="pl-0!"
                 onClick={() =>
                     column.toggleSorting(column.getIsSorted() === 'asc')
                 }
