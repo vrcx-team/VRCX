@@ -16,7 +16,7 @@
                     {{ t('dialog.user.activity.total_events', { count: filteredEventCount }) }}
                 </span>
             </div>
-            <div v-if="hasAnyData" class="flex items-center gap-2">
+            <div class="flex items-center gap-2">
                 <span class="text-muted-foreground text-sm">{{ t('dialog.user.activity.period') }}</span>
                 <Select v-model="selectedPeriod" :disabled="isLoading">
                     <SelectTrigger size="sm" class="w-40" @click.stop>
@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <div v-if="isSelf && hasAnyData && !fullCacheReady" class="text-xs text-muted-foreground mb-1">
+        <div v-if="isSelf && !fullCacheReady" class="text-xs text-muted-foreground mb-1">
             {{ t('dialog.user.activity.building_cache') }}
         </div>
 
@@ -55,19 +55,13 @@
             </div>
         </div>
 
-        <div v-if="isLoading && !hasAnyData" class="flex flex-col items-center justify-center flex-1 mt-8 gap-2">
+        <div v-if="isLoading" class="flex flex-col items-center justify-center flex-1 mt-8 gap-2">
             <Spinner class="h-5 w-5" />
             <span class="text-sm text-muted-foreground">{{ t('dialog.user.activity.preparing_data') }}</span>
             <span class="text-xs text-muted-foreground">{{ t('dialog.user.activity.preparing_data_hint') }}</span>
         </div>
 
-        <div v-else-if="!isLoading && !hasAnyData" class="flex items-center justify-center flex-1 mt-8">
-            <DataTableEmpty type="nodata" />
-        </div>
-
-        <div
-            v-if="!isLoading && hasAnyData && filteredEventCount === 0"
-            class="flex items-center justify-center flex-1 mt-8">
+        <div v-if="!isLoading && filteredEventCount === 0" class="flex items-center justify-center flex-1 mt-8">
             <span class="text-muted-foreground text-sm">{{ t('dialog.user.activity.no_data_in_period') }}</span>
         </div>
 
@@ -78,9 +72,9 @@
             style="width: 100%; height: 240px"
             @contextmenu.prevent="onChartRightClick" />
 
-        <DailyPlaytime v-if="isSelf && hasAnyData" :sessions="cachedSessions" :range-days="currentRangeDays" />
+        <DailyPlaytime v-if="isSelf" :sessions="cachedSessions" :range-days="currentRangeDays" />
 
-        <div v-if="hasAnyData && !isSelf" class="mt-4 border-t border-border pt-3">
+        <div v-if="!isSelf" class="mt-4 border-t border-border pt-3">
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                     <span class="text-sm font-medium">{{ t('dialog.user.activity.overlap.header') }}</span>
@@ -144,12 +138,12 @@
                 style="width: 100%; height: 240px"
                 @contextmenu.prevent="onOverlapChartRightClick" />
 
-            <div v-if="!isOverlapLoading && !hasOverlapData && hasAnyData" class="text-sm text-muted-foreground py-2">
+            <div v-if="!isOverlapLoading && !hasOverlapData" class="text-sm text-muted-foreground py-2">
                 {{ t('dialog.user.activity.overlap.no_data') }}
             </div>
         </div>
 
-        <div v-if="isSelf && hasAnyData" class="mt-4 border-t border-border pt-3">
+        <div v-if="isSelf" class="mt-4 border-t border-border pt-3">
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                     <span class="text-sm font-medium">
@@ -286,7 +280,6 @@
     const worldStore = useWorldStore();
 
     const isLoading = ref(false);
-    const hasAnyData = ref(false);
     const selectedPeriod = ref('30');
     const currentRangeDays = ref(30);
     const cachedSessions = ref([]);
@@ -380,7 +373,6 @@
 
     function resetActivityState() {
         isLoading.value = false;
-        hasAnyData.value = false;
         filteredEventCount.value = 0;
         peakDayText.value = '';
         peakTimeText.value = '';
@@ -509,7 +501,7 @@
 
     async function refreshTopWorldsOnly() {
         const userId = userDialog.value.id;
-        if (!isSelf.value || !hasAnyData.value || !userId) {
+        if (!isSelf.value || !userId) {
             return;
         }
 
@@ -548,7 +540,6 @@
                 return;
             }
 
-            hasAnyData.value = activityView.hasAnyData;
             filteredEventCount.value = activityView.filteredEventCount;
             peakDayText.value = activityView.peakDay;
             peakTimeText.value = activityView.peakTime;
@@ -562,13 +553,6 @@
                 currentRangeDays.value = rangeDays;
                 const cache = await activityStore.getCache(userId, true);
                 cachedSessions.value = cache.sessions || [];
-            }
-
-            if (!hasAnyData.value) {
-                hasOverlapData.value = false;
-                topWorlds.value = [];
-                topWorldsLoading.value = false;
-                return;
             }
 
             if (isSelf.value) {
@@ -619,7 +603,7 @@
             resetActivityState();
             lastLoadedUserId = userId;
         }
-        if (hasAnyData.value || isLoading.value) {
+        if (isLoading.value) {
             return;
         }
         await refreshData();
@@ -635,7 +619,7 @@
 
     async function refreshOverlapOnly() {
         const userId = userDialog.value.id;
-        if (!userId || isSelf.value || !hasAnyData.value) {
+        if (!userId || isSelf.value) {
             return;
         }
 
