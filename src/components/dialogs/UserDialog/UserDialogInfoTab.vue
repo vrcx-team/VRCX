@@ -79,28 +79,28 @@
     </template>
 
     <div class="flex flex-wrap items-start px-2.5" style="max-height: none">
-        <div
-            v-if="userDialog.note && !hideUserNotes"
-            class="box-border flex items-center p-1.5 text-[13px] w-full cursor-pointer">
+        <div v-if="!hideUserNotes" class="box-border flex items-center p-1.5 text-[13px] w-full cursor-pointer">
             <div class="flex-1 overflow-hidden" @click="isEditNoteAndMemoDialogVisible = true">
                 <span class="block truncate font-medium leading-[18px]">{{ t('dialog.user.info.note') }}</span>
                 <pre
+                    v-if="userDialog.note"
                     class="text-xs font-[inherit]"
                     style="white-space: pre-wrap; margin: 0 0.5em 0 0; max-height: 210px; overflow-y: auto"
                     >{{ userDialog.note }}</pre
                 >
+                <pre class="text-xs font-[inherit] text-muted-foreground" v-else>—</pre>
             </div>
         </div>
-        <div
-            v-if="userDialog.memo && !hideUserMemos"
-            class="box-border flex items-center p-1.5 text-[13px] w-full cursor-pointer">
+        <div v-if="!hideUserMemos" class="box-border flex items-center p-1.5 text-[13px] w-full cursor-pointer">
             <div class="flex-1 overflow-hidden" @click="isEditNoteAndMemoDialogVisible = true">
                 <span class="block truncate font-medium leading-[18px]">{{ t('dialog.user.info.memo') }}</span>
                 <pre
+                    v-if="userDialog.memo"
                     class="text-xs font-[inherit]"
                     style="white-space: pre-wrap; margin: 0 0.5em 0 0; max-height: 210px; overflow-y: auto"
                     >{{ userDialog.memo }}</pre
                 >
+                <pre class="text-xs font-[inherit] text-muted-foreground" v-else>—</pre>
             </div>
         </div>
         <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
