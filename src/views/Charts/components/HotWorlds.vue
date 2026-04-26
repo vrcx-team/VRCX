@@ -78,7 +78,7 @@
                             v-for="world in column"
                             :key="world.worldId"
                             type="button"
-                            class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent"
+                            class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent cursor-pointer"
                             :class="world._rank === 1 ? 'bg-primary/[0.04]' : ''"
                             @click="openDetail(world)">
                             <span
@@ -89,7 +89,9 @@
 
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-center gap-1.5">
-                                    <span class="block max-w-[380px] truncate text-sm font-medium">
+                                    <span
+                                        class="block max-w-[380px] truncate text-sm font-medium hover:underline cursor-pointer"
+                                        @click.stop="showWorldDialog(world.worldId)">
                                         {{ world.worldName }}
                                     </span>
                                     <template v-if="world.trend === 'rising'">
