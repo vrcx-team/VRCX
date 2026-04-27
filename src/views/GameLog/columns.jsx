@@ -60,6 +60,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             header: ({ column }) => (
                 <Button
                     variant="ghost"
+                    class="pl-0!"
                     onClick={() =>
                         column.toggleSorting(column.getIsSorted() === 'asc')
                     }

@@ -43,7 +43,7 @@
                                 @click="showUserDialog(worldDialog.ref.authorId)"
                                 v-text="worldDialog.ref.authorName" />
                         </div>
-                        <div>
+                        <div class="flex flex-wrap items-center">
                             <Badge class="mr-1.5 mt-1.5" v-if="worldDialog.ref.$isLabs" variant="outline">
                                 {{ t('dialog.world.tags.labs') }}
                             </Badge>
@@ -61,7 +61,7 @@
                                     <Monitor class="h-4 w-4 text-platform-pc" />
                                     <span
                                         v-if="worldDialog.fileAnalysis.standalonewindows?._fileSize"
-                                        class="x-grey text-platform-pc border-l-[0.8px] border-solid ml-1.5 pl-1.5 pb-px">
+                                        class="x-grey text-platform-pc border-l-[0.8px] border-solid ml-1.5 pl-1.5">
                                         {{ worldDialog.fileAnalysis.standalonewindows._fileSize }}
                                     </span>
                                 </Badge>
@@ -74,7 +74,7 @@
                                     <Smartphone class="h-4 w-4 text-platform-quest" />
                                     <span
                                         v-if="worldDialog.fileAnalysis.android?._fileSize"
-                                        class="x-grey text-platform-quest border-l-[0.8px] border-solid ml-1.5 pl-1.5 pb-px">
+                                        class="x-grey text-platform-quest border-l-[0.8px] border-solid ml-1.5 pl-1.5">
                                         {{ worldDialog.fileAnalysis.android._fileSize }}
                                     </span>
                                 </Badge>
@@ -85,7 +85,7 @@
                                     <Apple class="h-4 w-4 text-platform-ios" />
                                     <span
                                         v-if="worldDialog.fileAnalysis.ios?._fileSize"
-                                        class="x-grey text-platform-ios border-platform-ios border-l-[0.8px] border-solid ml-1.5 pl-1.5 pb-px">
+                                        class="x-grey text-platform-ios border-platform-ios border-l-[0.8px] border-solid ml-1.5 pl-1.5">
                                         {{ worldDialog.fileAnalysis.ios._fileSize }}
                                     </span>
                                 </Badge>

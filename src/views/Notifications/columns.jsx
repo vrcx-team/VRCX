@@ -109,6 +109,15 @@ export const createColumns = ({
 
     return [
         {
+            id: 'spacer',
+            header: () => null,
+            enableSorting: false,
+            size: 20,
+            minSize: 0,
+            maxSize: 20,
+            cell: () => null
+        },
+        {
             accessorFn: (row) => getNotificationCreatedAtTs(row),
             id: 'created_at',
             size: 120,
@@ -116,6 +125,7 @@ export const createColumns = ({
             header: ({ column }) => (
                 <Button
                     variant="ghost"
+                    class="pl-0!"
                     onClick={() =>
                         column.toggleSorting(column.getIsSorted() === 'asc')
                     }
