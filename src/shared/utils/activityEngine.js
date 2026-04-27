@@ -129,10 +129,9 @@ export function buildHeatmapBuckets(
         while (cursor < end) {
             const date = new Date(cursor);
             const slot = date.getDay() * 24 + date.getHours();
-            const nextHour = new Date(cursor);
-            nextHour.setMinutes(0, 0, 0);
-            nextHour.setTime(nextHour.getTime() + ONE_HOUR_MS);
-            const segmentEnd = Math.min(nextHour.getTime(), end);
+            date.setUTCHours(date.getUTCHours() + 1, 0, 0, 0);
+            const nextHourMs = date.getTime();
+            const segmentEnd = Math.min(nextHourMs, end);
             buckets[slot] += (segmentEnd - cursor) / 60000;
             cursor = segmentEnd;
         }
@@ -434,14 +433,22 @@ export function buildDailySummary(
     const dayMap = new Map();
     const clipped = clipSessionsToRange(sessions, rangeStartMs, rangeEndMs);
     const ONE_DAY_MS = 86400000;
+    let lastDayStart = -1;
+    let lastDayKey = '';
 
     for (const session of clipped) {
         let cursor = session.start;
         while (cursor < session.end) {
-            const dayStart = new Date(cursor);
-            dayStart.setHours(0, 0, 0, 0);
-            const dayKey = `${dayStart.getFullYear()}-${String(dayStart.getMonth() + 1).padStart(2, '0')}-${String(dayStart.getDate()).padStart(2, '0')}`;
-            const nextDayStart = dayStart.getTime() + ONE_DAY_MS;
+            const dayStart = Math.floor(cursor / ONE_DAY_MS) * ONE_DAY_MS;
+            let dayKey;
+            if (dayStart === lastDayStart) {
+                dayKey = lastDayKey;
+            } else {
+                dayKey = formatTimestampKey(dayStart);
+                lastDayStart = dayStart;
+                lastDayKey = dayKey;
+            }
+            const nextDayStart = dayStart + ONE_DAY_MS;
             const segmentEnd = Math.min(session.end, nextDayStart);
             const duration = segmentEnd - cursor;
             dayMap.set(dayKey, (dayMap.get(dayKey) || 0) + duration);
@@ -455,6 +462,14 @@ export function buildDailySummary(
     }
     result.sort((a, b) => a.date.localeCompare(b.date));
     return result;
+}
+
+export function formatTimestampKey(timestamp) {
+    const date = new Date(timestamp);
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 }
 
 function cloneSession(session) {

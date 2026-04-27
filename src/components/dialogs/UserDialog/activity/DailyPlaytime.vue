@@ -22,6 +22,7 @@
     import * as echarts from 'echarts';
 
     import { useAppearanceSettingsStore } from '@/stores';
+    import { formatTimestampKey } from '@/shared/utils/activityEngine';
 
     const props = defineProps({
         sessions: { type: Array, default: () => [] },
@@ -98,9 +99,10 @@
         const now = Date.now();
         const rangeDays = props.rangeDays;
         const rangeStart = rangeDays > 0 ? now - rangeDays * 86400000 : sessions[0].start;
-
         const dayMap = new Map();
         const ONE_DAY_MS = 86400000;
+        let lastDayStart = -1;
+        let lastDayKey = '';
 
         for (const session of sessions) {
             if (session.end <= rangeStart || session.start >= now) continue;
@@ -109,10 +111,16 @@
 
             let cursor = clippedStart;
             while (cursor < clippedEnd) {
-                const dayStart = new Date(cursor);
-                dayStart.setHours(0, 0, 0, 0);
-                const dayKey = `${dayStart.getFullYear()}-${String(dayStart.getMonth() + 1).padStart(2, '0')}-${String(dayStart.getDate()).padStart(2, '0')}`;
-                const nextDayStart = dayStart.getTime() + ONE_DAY_MS;
+                const dayStart = Math.floor(cursor / ONE_DAY_MS) * ONE_DAY_MS;
+                let dayKey;
+                if (dayStart === lastDayStart) {
+                    dayKey = lastDayKey;
+                } else {
+                    dayKey = formatTimestampKey(dayStart);
+                    lastDayStart = dayStart;
+                    lastDayKey = dayKey;
+                }
+                const nextDayStart = dayStart + ONE_DAY_MS;
                 const segmentEnd = Math.min(clippedEnd, nextDayStart);
                 dayMap.set(dayKey, (dayMap.get(dayKey) || 0) + (segmentEnd - cursor));
                 cursor = nextDayStart;

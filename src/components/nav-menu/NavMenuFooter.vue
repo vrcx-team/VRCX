@@ -31,15 +31,6 @@
             </SidebarMenuItem>
 
             <SidebarMenuItem>
-                <SidebarMenuButton :tooltip="t('nav_tooltip.toggle_theme')" @click="emit('toggle-theme')">
-                    <i
-                        :class="isDarkMode ? 'ri-moon-line' : 'ri-sun-line'"
-                        class="inline-flex size-6 items-center justify-center text-[19px]" />
-                    <span v-show="!isCollapsed">{{ t('nav_tooltip.toggle_theme') }}</span>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-
-            <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger as-child>
                         <SidebarMenuButton :tooltip="t('nav_tooltip.manage')" :is-active="isSettingsRoute">
@@ -62,7 +53,7 @@
                             <div class="flex min-w-0 flex-col">
                                 <button
                                     type="button"
-                                    class="text-left text-sm font-medium truncate flex items-center gap-1"
+                                    class="text-left text-sm font-medium truncate flex items-center gap-1 cursor-pointer"
                                     @click="emit('open-github')">
                                     VRCX
                                     <Heart class="text-primary fill-current stroke-none" />
@@ -110,7 +101,7 @@
                                                 :aria-label="themeColorDisplayName(theme)"
                                                 :title="themeColorDisplayName(theme)"
                                                 @click="emit('theme-color-select', theme)"
-                                                class="h-3.5 w-3.5 shrink-0 rounded-sm transition-transform hover:scale-125"
+                                                class="h-3.5 w-3.5 shrink-0 rounded-sm transition-transform hover:scale-125 cursor-pointer"
                                                 :class="
                                                     currentThemeColor === theme.key
                                                         ? 'ring-1 ring-ring ring-offset-1 ring-offset-background'

@@ -147,7 +147,7 @@
             </TooltipWrapper>
             <TooltipWrapper side="top" :content="t('dialog.user.info.instance_age_gated')">
                 <span v-if="instanceInfoState.isAgeGated" class="flex items-center gap-0.5 text-red-500">
-                    <Lock class="h-4 w-4" />
+                    <IdCard class="h-4 w-4" />
                 </span>
             </TooltipWrapper>
             <TooltipWrapper
@@ -173,7 +173,7 @@
         RefreshCw,
         UsersRound,
         SquareStack,
-        Lock,
+        IdCard,
         UserPlus2
     } from 'lucide-vue-next';
     import { computed, reactive, ref, watch } from 'vue';

@@ -60,6 +60,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             header: ({ column }) => (
                 <Button
                     variant="ghost"
+                    class="pl-0!"
                     onClick={() =>
                         column.toggleSorting(column.getIsSorted() === 'asc')
                     }
@@ -365,7 +366,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                         {canDelete ? (
                             <button
                                 type="button"
-                                class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
+                                class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                 onClick={() =>
                                     shiftHeld.value
                                         ? onDelete(original)
@@ -386,7 +387,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                             >
                                 <button
                                     type="button"
-                                    class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
+                                    class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                     onClick={() =>
                                         showPreviousInstancesInfoDialog(
                                             original.location

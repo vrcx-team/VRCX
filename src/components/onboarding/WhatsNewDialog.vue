@@ -64,7 +64,7 @@
                         <template v-for="link in supporter.links" :key="link.label">
                             <span class="text-[11px] text-muted-foreground/40">·</span>
                             <button
-                                class="cursor-pointer border-0 bg-transparent p-0 text-[12px] font-medium text-muted-foreground/80 transition-colors duration-200 hover:text-foreground"
+                                class="cursor-pointer border-0 bg-transparent p-0 text-[12px] font-medium text-muted-foreground/80 transition-colors duration-200 hover:text-foreground cursor-pointer"
                                 @click="openExternalLink(link.url)">
                                 {{ link.label }}
                             </button>
@@ -76,7 +76,7 @@
             <!-- View Changelog -->
             <div class="mt-2 flex justify-center">
                 <button
-                    class="cursor-pointer border-0 bg-transparent text-xs text-muted-foreground/70 transition-colors duration-200 hover:text-foreground"
+                    class="cursor-pointer border-0 bg-transparent text-xs text-muted-foreground/70 transition-colors duration-200 hover:text-foreground cursor-pointer"
                     @click="handleViewChangelog">
                     {{ t('onboarding.whatsnew.common.view_changelog') }} →
                 </button>

@@ -273,9 +273,6 @@
         const source = props.definitions?.length ? props.definitions : navDefinitions;
         source.forEach((def) => {
             if (def?.key) {
-                if (def.key === 'notification' && notificationLayout.value === 'notification-center') {
-                    return;
-                }
                 map.set(def.key, def);
             }
         });
