@@ -1,5 +1,5 @@
 <template>
-    <div :class="['flex flex-col min-w-0 data-table', autoHeight && 'flex-1 min-h-0 overflow-hidden']">
+    <div :class="['flex flex-col min-w-0 data-table', autoHeight && 'flex-1 min-h-0']">
         <div v-if="$slots.toolbar" class="mb-2">
             <slot name="toolbar"></slot>
         </div>
@@ -250,7 +250,7 @@
                         <TableRow v-else>
                             <TableCell class="h-24 text-center" :colspan="table.getVisibleLeafColumns().length">
                                 <slot name="empty">
-                                    <DataTableEmpty v-if="!loading" :type="emptyType" />
+                                    <DataTableEmpty v-if="!loading" :type="emptyType" :error="error" />
                                 </slot>
                             </TableCell>
                         </TableRow>
@@ -362,6 +362,10 @@
         loading: {
             type: Boolean,
             default: false
+        },
+        error: {
+            type: String,
+            default: null
         },
         totalItems: {
             type: Number,

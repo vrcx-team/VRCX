@@ -11,6 +11,7 @@
     <AutoChangeStatusDialog
         :isAutoChangeStatusDialogVisible="autoChangeStatus"
         @close="closeDialog('autoChangeStatus')" />
+    <FormulaSearchHelpDialog v-if="formulaSearchHelp" @close="closeDialog('formulaSearchHelp')" />
 </template>
 
 <script setup>
@@ -19,6 +20,7 @@
     import { useFriendStore, useToolsStore } from '../../../stores';
 
     import AutoChangeStatusDialog from '../dialogs/AutoChangeStatusDialog.vue';
+    import FormulaSearchHelpDialog from '../dialogs/FormulaSearchHelpDialog.vue';
     import RegistryBackupDialog from '../dialogs/RegistryBackupDialog.vue';
 
     import EditInviteMessageDialog from '../dialogs/EditInviteMessagesDialog.vue';
@@ -36,6 +38,7 @@
         exportAvatarsList,
         exportDiscordNames,
         exportFriendsList,
+        formulaSearchHelp,
         groupCalendar,
         noteExport
     } = storeToRefs(toolsStore);
