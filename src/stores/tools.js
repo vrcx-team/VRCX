@@ -8,7 +8,8 @@ const initialDialogState = () => ({
     exportFriendsList: false,
     exportAvatarsList: false,
     editInviteMessages: false,
-    autoChangeStatus: false
+    autoChangeStatus: false,
+    formulaSearchHelp: false
 });
 
 export const useToolsStore = defineStore('Tools', () => {
