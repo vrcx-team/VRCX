@@ -466,7 +466,8 @@
                     "transfer": "Group Transfer",
                     "queueReady": "Queue Ready",
                     "event": {
-                        "created": "Group Event Created"
+                        "created": "Group Event Created",
+                        "starting": "Group Event Starting"
                     }
                 },
                 "moderation": {
