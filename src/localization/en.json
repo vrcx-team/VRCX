@@ -466,7 +466,8 @@
                     "transfer": "Group Transfer",
                     "queueReady": "Queue Ready",
                     "event": {
-                        "created": "Group Event Created"
+                        "created": "Group Event Created",
+                        "starting": "Group Event Starting"
                     }
                 },
                 "moderation": {
@@ -3107,7 +3108,7 @@
                 "support": "Support VRCX"
             },
             "releases": {
-                "2026_04_05": {
+                "2026_05_03": {
                     "title": "Explore New Features",
                     "subtitle": "A few useful features you might not notice",
                     "items": {

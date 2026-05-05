@@ -14,7 +14,20 @@
         side: { type: null, required: false },
         align: { type: null, required: false },
         sideOffset: { type: Number, required: false },
-        delayDuration: { type: Number, required: false },
+        delayDuration: {
+            type: Number,
+            required: false,
+            default() {
+                100;
+            }
+        },
+        skipDelayDuration: {
+            type: Number,
+            required: false,
+            default() {
+                100;
+            }
+        },
         disableHoverableContent: { type: Boolean, required: false },
         ignoreNonKeyboardFocus: { type: Boolean, required: false, default: true },
         disabled: { type: Boolean, required: false },
@@ -49,3 +62,4 @@
         </TooltipContent>
     </Tooltip>
 </template>
+
