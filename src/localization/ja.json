@@ -23,10 +23,6 @@
             "open_link": "リンクを開く"
         },
         "sort_by": "並び替え:",
-        "duration": "期間",
-        "load_more": "さらに読み込む",
-        "no_more": "これ以上ありません",
-        "current_session": "現在",
         "time_units": {
             "y": "年",
             "d": "日",
@@ -42,7 +38,11 @@
             "thursday": "木曜日",
             "friday": "金曜日",
             "saturday": "土曜日"
-        }
+        },
+        "duration": "期間",
+        "load_more": "さらに読み込む",
+        "no_more": "これ以上ありません",
+        "current_session": "現在"
     },
     "nav_tooltip": {
         "friends_locations": "フレンドの現在地",
@@ -1630,12 +1630,12 @@
                 "content_adult": "成人向けの言葉やテーマ",
                 "content_sex": "性的なものを思わせる",
                 "performanceRating": {
-                    "Excellent": "優秀",
-                    "Good": "いいね",
-                    "Medium": "まあまあ",
-                    "Poor": "能無し",
-                    "VeryPoor": "めっちゃ能無し",
-                    "None": "なし"
+                    "Excellent": "Excellent",
+                    "Good": "Good",
+                    "Medium": "Medium",
+                    "Poor": "Poor",
+                    "VeryPoor": "Very Poor",
+                    "None": "None"
                 }
             },
             "labels": {
