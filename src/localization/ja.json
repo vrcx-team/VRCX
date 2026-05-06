@@ -17,9 +17,16 @@
             "reset": "リセット",
             "view_details": "詳細を表示",
             "configure": "設定",
-            "refresh": "更新"
+            "refresh": "更新",
+            "cancel": "キャンセル",
+            "copy": "コピー",
+            "open_link": "リンクを開く"
         },
         "sort_by": "並び替え:",
+        "duration": "期間",
+        "load_more": "さらに読み込む",
+        "no_more": "これ以上ありません",
+        "current_session": "現在",
         "time_units": {
             "y": "年",
             "d": "日",
@@ -276,6 +283,15 @@
                 "External": "外部",
                 "StringLoad": "URI の読み込み",
                 "ImageLoad": "画像の読み込み"
+            },
+            "sessions": {
+                "switch_to_table": "テーブル表示",
+                "switch_to_sessions": "セッション表示",
+                "date_range": "日付範囲",
+                "players_joined": "{count}人が参加",
+                "players_left": "{count}人が退出",
+                "play_count": "×{count}",
+                "no_data": "ゲームログデータがありません"
             }
         },
         "player_list": {
@@ -450,7 +466,8 @@
                     "transfer": "移動",
                     "queueReady": "キューの準備が完了",
                     "event": {
-                        "created": "グループイベントの作成"
+                        "created": "グループイベントの作成",
+                        "starting": "イベント開始"
                     }
                 },
                 "moderation": {
@@ -491,7 +508,8 @@
             "favorites_only_tooltip": "お気に入りのみ",
             "search_placeholder": "検索...",
             "filter_placeholder": "フィルター",
-            "load_mutual_friends": "共通のフレンドを読み込む"
+            "load_mutual_friends": "共通のフレンドを読み込む",
+            "mutual_loading_hint": "進捗は共通のフレンドグラフページで確認できます"
         },
         "charts": {
             "instance_activity": {
@@ -565,7 +583,26 @@
                     "exclude_friends": "フレンドを除外",
                     "exclude_friends_placeholder": "除外するフレンドを選択",
                     "exclude_friends_help": "選択したフレンドはグラフから非表示になります。"
+                },
+                "context_menu": {
+                    "view_details": "詳細を表示",
+                    "hide_friend": "グラフから非表示",
+                    "refresh_mutuals": "共通のフレンドを更新",
+                    "confirm_non_friend_title": "フレンドではありません",
+                    "confirm_non_friend_message": "このユーザーはもうフレンドではありません。それでも共通のフレンド情報を取得しますか？",
+                    "refresh_success": "{name} の共通のフレンド情報を更新しました",
+                    "user_opted_out": "このユーザーは共通のフレンド共有を無効にしています。既存データを表示しています。",
+                    "refresh_error": "共通のフレンド情報の更新に失敗しました",
+                    "last_fetched": "最終取得"
                 }
+            },
+            "playtime_trend": {
+                "header": "日別プレイ時間",
+                "online_hours": "時間",
+                "daily_avg": "1日平均",
+                "total": "合計",
+                "waiting": "プレイ時間データを作成中です。しばらくしてから戻ってきてください！",
+                "no_data": "プレイ時間データがありません"
             },
             "hot_worlds": {
                 "tab_label": "注目のワールド",
@@ -798,6 +835,7 @@
                     "auto_invite_request_accept": "招待リクエストを自動許可",
                     "auto_invite_request_accept_tooltip": "お気に入りに入れているフレンドからの招待リクエストを自動的に許可する",
                     "auto_invite_request_accept_favs": "全てのお気に入り",
+                    "auto_invite_request_accept_favs_hint": "ローカルのフレンドお気に入りグループも含みます",
                     "auto_invite_request_accept_selected_favs": "お気に入りを選択",
                     "change_status_description": "ステータス説明を上書き",
                     "status_description_placeholder": "ステータス説明 (最大32文字)",
@@ -870,8 +908,6 @@
                     "table_page_sizes_error": "1〜1000の数字を入力してください。",
                     "show_notification_icon_dot": "トレイ通知ドットを表示",
                     "striped_data_table_mode": "テーブルの行に交互に色を付ける",
-                    "toggle_pointer_on_hover": "ホバー時にポインターを切り替え",
-                    "toggle_pointer_on_hover_description": "クリック可能な要素にホバーしたときに、ポインターを常に表示します",
                     "accessible_status_indicators": "アクセシブルなステータスインジケーター",
                     "accessible_status_indicators_description": "色に加え、アイコンの形状を変えることで、ステータスを識別しやすくします",
                     "use_official_status_colors": "公式のステータスカラーを使用",
@@ -1289,7 +1325,7 @@
                 "showcased": "プロフィールにバッジを表示"
             },
             "actions": {
-                "favorite_tooltip": "お気に入りに追加",
+                "favorites_tooltip": "お気に入り",
                 "refresh": "更新",
                 "share": "共有",
                 "invite": "招待を送信",
@@ -1374,14 +1410,15 @@
                 "copy_display_name": "表示名をコピー",
                 "vrcplus_hides_avatar": "VRC+のプロフィール画像が設定されている場合、そのプレイヤーのアバター情報、フィード内のアバター変更は表示されません。",
                 "instance_full": "満員",
-                "instance_closed": "閉じたインスタンス",
+                "instance_closed_at": "インスタンスが閉じた日時",
                 "instance_age_restricted": "年齢制限あり",
                 "instance_age_restricted_tooltip": "年齢制限のあるインスタンス",
                 "close_instance": "インスタンスを閉じる",
                 "instance_age_gated": "年齢制限あり",
                 "open_previous_instance": "前回のインスタンスを開く",
                 "show_mutual_friends": "共通のフレンドを公開",
-                "show_discord_connections": "連携した Discord を公開"
+                "show_discord_connections": "連携した Discord を公開",
+                "instance_minimum_avatar_performance": "最低アバターパフォーマンスランク"
             },
             "groups": {
                 "header": "グループ",
@@ -1454,6 +1491,10 @@
                 "most_active_time": "ピーク時間帯:",
                 "period": "期間:",
                 "period_90": "過去90日",
+                "period_180": "過去6か月",
+                "period_365": "過去1年",
+                "period_all": "全期間",
+                "building_cache": "長期間のアクティビティデータを計算中です...",
                 "period_30": "過去30日",
                 "period_7": "過去7日",
                 "minutes_online": "オンライン時間",
@@ -1835,7 +1876,8 @@
             "legacy": "レガシー",
             "roles": "ロール",
             "open_ingame": "ゲーム内で開く",
-            "display_name": "インスタンス名 (VRC+)"
+            "display_name": "インスタンス名 (VRC+)",
+            "minimum_avatar_performance": "最低アバターパフォーマンスランク"
         },
         "launch": {
             "header": "起動",
@@ -2779,8 +2821,8 @@
         "is_joining": "が参加しようとしています",
         "gps": "は {location} にいます",
         "online_location": "が {location} にログインしました",
-        "online": "はログインしました",
-        "offline": "はログアウトしました",
+        "online": "がログインしました",
+        "offline": "がログアウトしました",
         "status_update": "のステータスが {status} {description} に更新されました",
         "invite": "からの、{location} への招待 {message}",
         "request_invite": "からの、招待リクエスト {message}",
@@ -2900,7 +2942,8 @@
             "lastLogin": "最後のログイン",
             "dateJoined": "参加日時",
             "unfriend": "フレンド解除",
-            "mutualFriends": "共通のフレンド"
+            "mutualFriends": "共通のフレンド",
+            "mutualOptedOut": "このユーザーは共通のフレンド共有を無効にしています。キャッシュされたデータを表示しています。"
         },
         "profile": {
             "invite_messages": {
@@ -3116,6 +3159,7 @@
         "clock": "Clock",
         "clocks_label": "時計",
         "clocks_none": "なし",
-        "timezone": "タイムゾーン"
+        "timezone": "タイムゾーン",
+        "now_playing": "再生中"
     }
 }
