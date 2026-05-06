@@ -1,32 +1,226 @@
 {
     "language": "Magyar (hu)",
     "translator": "-",
+    "common": {
+        "no_data": "Nincs adat",
+        "no_matching_records": "Nincs egyező rekord",
+        "feature_relocated": {
+            "title": "Elavulási értesítés",
+            "description": "Ez a funkció egy jövőbeli frissítésben eltávolításra kerül. Kérjük, használja helyette: {feature}."
+        },
+        "actions": {
+            "open": "Megnyitás",
+            "confirm": "Megerősítés",
+            "clear": "Törlés",
+            "delete": "Törlés",
+            "remove": "Eltávolítás",
+            "reset": "Visszaállítás",
+            "view_details": "Részletek megtekintése",
+            "configure": "Konfigurálás",
+            "refresh": "Frissítés",
+            "cancel": "Mégse",
+            "copy": "Másolás",
+            "open_link": "Link megnyitása"
+        },
+        "sort_by": "Rendezés:",
+        "time_units": {
+            "y": "é",
+            "d": "n",
+            "h": "ó",
+            "m": "p",
+            "s": "mp"
+        },
+        "days": {
+            "sunday": "Vasárnap",
+            "monday": "Hétfő",
+            "tuesday": "Kedd",
+            "wednesday": "Szerda",
+            "thursday": "Csütörtök",
+            "friday": "Péntek",
+            "saturday": "Szombat"
+        },
+        "duration": "Időtartam",
+        "load_more": "Továbbiak betöltése",
+        "no_more": "Nincs több bejegyzés",
+        "current_session": "Jelenlegi"
+    },
     "nav_tooltip": {
+        "friends_locations": "Barátok helyszínei",
         "feed": "Feed",
         "game_log": "Játéknapló",
         "player_list": "Játékoslista",
         "search": "Keresés",
         "favorites": "Kedvencek",
+        "favorite_friends": "Kedvenc barátok",
+        "favorite_worlds": "Kedvenc világok",
+        "favorite_avatars": "Kedvenc avatarok",
+        "my_avatars": "Saját avatarok",
+        "social": "Közösségi",
         "friend_log": "Barátnapló",
         "moderation": "Moderáció",
         "notification": "Értesítés",
         "friend_list": "Barátlista",
-        "settings": "Beállítások"
+        "charts": "Diagramok",
+        "tools": "Eszközök",
+        "settings": "Beállítások",
+        "manage": "Kezelés",
+        "help_support": "Súgó & Támogatás",
+        "expand_menu": "Menü kibontása",
+        "collapse_menu": "Menü összecsukása",
+        "toggle_theme": "Téma váltása"
+    },
+    "nav_menu": {
+        "resources": "ERŐFORRÁSOK",
+        "wiki": "Wiki",
+        "get_help": "SEGÍTSÉG",
+        "github": "VRCX a GitHubon",
+        "discord": "Csatlakozz a Discordhoz",
+        "changelog": "Változásnapló",
+        "update_available": "Frissítés elérhető",
+        "update": "Frissítés",
+        "mark_all_read": "Összes olvasottnak jelölése",
+        "edit_dashboard": "Irányítópult szerkesztése",
+        "delete_dashboard": "Irányítópult törlése",
+        "custom_nav": {
+            "header": "Navigáció testreszabása",
+            "dialog_title": "Navigációs menü testreszabása",
+            "new_folder": "Új mappa",
+            "folder_name_placeholder": "Mappa neve",
+            "folder_icon_placeholder": "Ikon osztály (pl. ri-menu-fold-line)",
+            "edit_folder": "Mappa szerkesztése",
+            "delete_folder": "Mappa törlése",
+            "edit_dashboard": "Irányítópult szerkesztése",
+            "delete_dashboard": "Irányítópult törlése",
+            "folder_empty": "Ez a mappa üres",
+            "folder_drop_here": "Húzz ide elemeket",
+            "hide": "Elrejtés",
+            "show": "Megjelenítés",
+            "hidden_items": "Rejtett",
+            "pin_to_nav": "Rögzítés a navigációhoz",
+            "unpin_from_nav": "Rögzítés feloldása",
+            "pinned": "Hozzáadva a navigációhoz",
+            "unpinned": "Eltávolítva a navigációból",
+            "confirm": "Megerősítés",
+            "cancel": "Mégse",
+            "restore_default": "Alapértelmezett visszaállítása",
+            "restore_default_confirm": "Visszaállítod a navigációt az alapértelmezett sorrendbe?"
+        }
+    },
+    "dashboard": {
+        "default_name": "Irányítópult",
+        "new_dashboard": "Új irányítópult",
+        "empty": "Ez az irányítópult üres",
+        "actions": {
+            "start_editing": "Szerkesztés megkezdése",
+            "add_row": "Sor hozzáadása",
+            "add_full_row": "Teljes sor hozzáadása",
+            "add_split_row": "Osztott sor hozzáadása",
+            "add_vertical_row": "Függőleges sor hozzáadása",
+            "cancel": "Mégse",
+            "save": "Mentés",
+            "delete": "Törlés"
+        },
+        "toolbar": {
+            "name_placeholder": "Irányítópult neve",
+            "icon_placeholder": "Ikon osztály (opcionális)"
+        },
+        "panel": {
+            "not_selected": "Nincs panel kiválasztva",
+            "select": "Panel kiválasztása",
+            "not_configured": "A panel nincs konfigurálva"
+        },
+        "selector": {
+            "title": "Panel tartalmának kiválasztása",
+            "clear": "Panel törlése",
+            "widgets": "Widgetek",
+            "pages": "Teljes oldalak"
+        },
+        "widget": {
+            "feed": "Feed widget",
+            "game_log": "Játéknapló widget",
+            "instance": "Helyzet widget",
+            "config": {
+                "filters": "Eseménytípusok",
+                "columns": "Oszlopok",
+                "detail": "Részletek",
+                "show_type": "Típus megjelenítése"
+            },
+            "no_data": "Nincs adat",
+            "unknown_world": "Ismeretlen világ",
+            "feed_online": "online",
+            "feed_offline": "offline",
+            "feed_avatar": "→",
+            "feed_bio": "frissítette a bemutatkozását",
+            "instance_players": "játékos",
+            "instance_not_in_game": "Nincs játékban",
+            "time_ago": "{time} ezelőtt"
+        },
+        "first_save_tip": "Az Új irányítópult gombot elrejtheted a Beállítások > Felület > Navigáció menüpontban.",
+        "confirmations": {
+            "delete_title": "Irányítópult törlése",
+            "delete_description": "Biztosan törölni szeretnéd ezt az irányítópultot? Ez a művelet nem vonható vissza."
+        }
     },
     "side_panel": {
         "search_placeholder": "Keresés",
-        "search_result_active": "Aktív",
-        "search_result_offline": "Offline",
+        "search_no_results": "Nincs találat",
+        "search_min_chars": "Írj be legalább 2 karaktert",
+        "search_categories": "Keresés...",
+        "search_scope_all": "Név, memó és megjegyzés",
+        "search_scope_avatars": "Saját és kedvencek",
+        "search_scope_worlds": "Saját és kedvencek",
+        "search_scope_joined": "Saját és csatlakozott",
+        "search_friends": "Barátok",
+        "search_avatars": "Avatarok",
+        "search_own_avatars": "Saját avatarok",
+        "search_fav_avatars": "Kedvenc avatarok",
+        "search_worlds": "Világok",
+        "search_own_worlds": "Saját világok",
+        "search_fav_worlds": "Kedvenc világok",
+        "search_groups": "Csoportok",
+        "search_own_groups": "Saját csoportok",
+        "search_joined_groups": "Csatlakozott csoportok",
+        "search_result_active": "Offline",
+        "search_result_offline": "Aktív",
         "search_result_more": "További keresés:",
         "refresh_tooltip": "Barátok frissítése",
         "groups": "Csoportok",
         "friends": "Barátok",
         "me": "Én",
         "favorite": "Kedvencek",
+        "same_instance": "UGYANABBAN A HELYZETBEN",
         "online": "Online",
         "active": "Aktív",
         "offline": "Offline",
-        "pending_offline": "Függőben lévő offline"
+        "pending_offline": "Függőben lévő offline",
+        "settings": {
+            "display": "Megjelenítés",
+            "sort": "Rendezés",
+            "advanced": "Haladó",
+            "sorting": "Rendezés",
+            "favorites_section": "Kedvencek",
+            "group_by_instance": "Csoportosítás helyzet szerint",
+            "split_favorite_friends": "Kedvenc csoportok megjelenítése",
+            "hide_friends_in_same_instance": "Csoportosított barátok elrejtése",
+            "same_instance_above_favorites": "Ugyanazon helyzet előnyben részesítése",
+            "sort_primary": "Rendezés",
+            "sort_secondary": "Majd",
+            "sort_tertiary": "Majd",
+            "favorite_groups": "Kedvenc csoportok",
+            "favorite_groups_placeholder": "Összes csoport",
+            "edit_group_order": "Csoportsorrend szerkesztése"
+        },
+        "notifications": "Értesítések",
+        "notification_center": {
+            "title": "Értesítési központ",
+            "view_more": "Több megtekintése",
+            "tab_friend": "Barát",
+            "tab_group": "Csoport",
+            "tab_other": "Egyéb",
+            "past_notifications": "Elmúlt 24 óra",
+            "no_new_notifications": "Nincs új értesítés az elmúlt 24 órában",
+            "no_unseen_notifications": "Nincs olvasatlan értesítés"
+        }
     },
     "view": {
         "login": {
@@ -36,13 +230,15 @@
             "forgotPassword": "Elfelejtett jelszó?",
             "updater": "Frissítő",
             "proxy_settings": "Proxy beállítások",
+            "settings": "Beállítások",
+            "language": "Nyelv",
             "field": {
                 "username": "Felhasználónév vagy e-mail cím",
                 "password": "Jelszó",
                 "saveCredentials": "Hitelesítési adatok mentése",
                 "devEndpoint": "Fejlesztői végpont",
                 "endpoint": "Végpont",
-                "websocket": "Websocket"
+                "websocket": "WebSocket"
             },
             "language_detect": {
                 "title": "Nyelv észlelve",
@@ -51,11 +247,52 @@
         },
         "feed": {
             "favorites_only_tooltip": "Csak a kedvencek szűrése",
-            "search_placeholder": "Keresés"
+            "search_placeholder": "Keresés",
+            "filters": {
+                "GPS": "GPS",
+                "Online": "Online",
+                "Offline": "Offline",
+                "Status": "Állapot",
+                "Avatar": "Avatar",
+                "Bio": "Bio"
+            },
+            "photon_event_logging": "Photon esemény naplózás"
+        },
+        "friends_locations": {
+            "online": "Online",
+            "favorite": "Kedvencek",
+            "same_instance": "Ugyanazon helyzetben",
+            "active": "Aktív",
+            "offline": "Offline",
+            "search_placeholder": "Barátok keresése",
+            "spacing": "Térköz",
+            "scale": "Méretarány",
+            "separate_same_instance_friends": "Ugyanazon helyzetban lévő barátok elkülönítése",
+            "loading_more": "Betöltés..."
         },
         "game_log": {
             "filter_placeholder": "Szűrés",
-            "search_placeholder": "Keresés"
+            "search_placeholder": "Keresés",
+            "filters": {
+                "Location": "Helyszín",
+                "OnPlayerJoined": "Játékos csatlakozott",
+                "OnPlayerLeft": "Játékos elhagyta",
+                "PortalSpawn": "Portál létrehozás",
+                "VideoPlay": "Videó lejátszás",
+                "Event": "Esemény",
+                "External": "Külső",
+                "StringLoad": "String betöltés",
+                "ImageLoad": "Kép betöltés"
+            },
+            "sessions": {
+                "switch_to_table": "Táblázat nézet",
+                "switch_to_sessions": "Munkamenetek nézet",
+                "date_range": "Dátumtartomány",
+                "players_joined": "{count} játékos csatlakozott",
+                "players_left": "{count} játékos elhagyta",
+                "play_count": "×{count}",
+                "no_data": "Nincs játéknapló adat"
+            }
         },
         "player_list": {
             "photon": {
@@ -67,11 +304,19 @@
                 "status_tooltip": "Vrcx companion állapot"
             }
         },
+        "my_avatars": {
+            "filter": "Szűrés",
+            "clear_filters": "Összes törlése",
+            "table_view": "Táblázat nézet",
+            "grid_view": "Rács nézet"
+        },
         "search": {
             "search_placeholder": "Keresés",
             "clear_results_tooltip": "Keresési eredmények törlése",
             "user": {
-                "header": "Felhasználó"
+                "header": "Felhasználó",
+                "search_by_bio": "Keresés bio alapján",
+                "sort_by_last_logged_in": "Rendezés utolsó bejelentkezés szerint"
             },
             "world": {
                 "header": "Világ",
@@ -81,15 +326,19 @@
             "avatar": {
                 "header": "Avatar",
                 "search_provider": "Keresőszolgáltató",
+                "no_provider": "Nincs beállított avatar keresőszolgáltató",
+                "search_placeholder_avatar": "Írj be legalább 3 karaktert",
+                "min_chars_warning": "Kérlek, írj be legalább 3 karaktert a kereséshez",
                 "refresh_tooltip": "Saját avatarok frissítése",
                 "result_count": "{count} eredmény",
                 "all": "Összes",
+                "all_tags": "Összes címke",
                 "public": "Nyilvános",
                 "private": "Privát",
                 "local": "Helyi",
                 "remote": "Távoli",
                 "sort_name": "Rendezés név szerint",
-                "sort_update": "Rendezés legutolsó frissítés szerint",
+                "sort_update": "Rendezés frissítés szerint",
                 "sort_created": "Rendezés létrehozás szerint"
             },
             "group": {
@@ -99,21 +348,58 @@
         "favorite": {
             "worlds": {
                 "search": "Keresés",
+                "search_by_tag": "Keresés címke alapján",
+                "search_mode_name": "Név",
+                "search_mode_tag": "Címke",
                 "vrchat_favorites": "VRChat kedvencek",
                 "local_favorites": "Helyi kedvencek",
-                "new_group": "Új csoport"
+                "new_group": "Új csoport",
+                "cancel_refresh": "Frissítés megszakítása"
             },
             "avatars": {
                 "search": "Keresés",
                 "vrchat_favorites": "VRChat kedvencek",
                 "local_favorites": "Helyi kedvencek (VRC+ szükséges)",
-                "new_group": "Új csoport"
+                "new_group": "Új csoport",
+                "cancel_refresh": "Frissítés megszakítása",
+                "check_invalid": "Törölt/privát avatarok keresése",
+                "check_description": "Érvénytelen avatarok észlelése és eltávolítása ebből a csoportból",
+                "checking": "Érvénytelen avatarok keresése...",
+                "removed_list_header": "Törlésre váró avatarok:",
+                "copy_removed_ids": "Avatar azonosítók másolása",
+                "copied_ids": "Avatar azonosítók a vágólapra másolva",
+                "copy_failed": "Nem sikerült a vágólapra másolni",
+                "dismiss": "Bezárás",
+                "checking_progress": "Avatar ellenőrzése ({current}/{total})...",
+                "confirm_delete_invalid": "Töröljük az érvénytelen avatarokat?",
+                "confirm_delete_description": "{count} érvénytelen avatar találva, töröljük?",
+                "delete_summary": "Sikeresen törölve {removed} érvénytelen avatar",
+                "no_invalid_found": "Nem található érvénytelen avatar",
+                "delete_cancelled": "Törlési művelet megszakítva",
+                "local_history": "Helyi előzmények",
+                "no_group_selected": "Nincs csoport kiválasztva",
+                "styles": "Stílusok",
+                "almost_nuisance": "Majdnem zavaró"
             },
+            "edit_mode": "Szerkesztési mód",
+            "copy": "Másolás",
+            "clear": "Törlés",
+            "select_all": "Összes kijelölése",
+            "deselect_all": "Kijelölés törlése",
+            "bulk_unfavorite": "Tömeges eltávolítás a kedvencekből",
+            "refresh_favorites_tooltip": "VRChat kedvencek frissítése",
             "export": "Exportálás",
             "import": "Importálás",
             "move_tooltip": "Mozgatás",
+            "copy_tooltip": "Másolás",
             "unfavorite_tooltip": "Törlés a kedvencekből",
+            "edit_favorite_tooltip": "Kedvenc szerkesztése",
             "visibility_tooltip": "Láthatóság módosítása",
+            "visibility": {
+                "public": "Nyilvános",
+                "friends": "Barátok",
+                "private": "Privát"
+            },
             "rename_tooltip": "Átnevezés",
             "clear_tooltip": "Törlés",
             "delete_tooltip": "Törlés",
@@ -123,31 +409,290 @@
         },
         "friend_log": {
             "filter_placeholder": "Szűrés",
-            "search_placeholder": "Keresés"
+            "search_placeholder": "Keresés",
+            "filters": {
+                "Friend": "Új barát",
+                "Unfriend": "Barátság megszüntetése",
+                "FriendRequest": "Barátfelkérés",
+                "CancelFriendRequest": "Barátfelkérés visszavonása",
+                "DisplayName": "Megjelenített név",
+                "TrustLevel": "Bizalmi szint"
+            }
         },
         "moderation": {
             "filter_placeholder": "Szűrés",
             "search_placeholder": "Keresés",
-            "refresh_tooltip": "Frissítés"
+            "refresh_tooltip": "Frissítés",
+            "filters": {
+                "block": "Tiltás",
+                "unblock": "Tiltás feloldása",
+                "mute": "Némítás",
+                "unmute": "Némítás feloldása",
+                "interactOn": "Interakció be",
+                "interactOff": "Interakció ki",
+                "muteChat": "Chat némítása",
+                "unmuteChat": "Chat némítás feloldása"
+            }
         },
         "notification": {
             "filter_placeholder": "Szűrés",
             "search_placeholder": "Keresés",
-            "refresh_tooltip": "Frissítés"
+            "refresh_tooltip": "Frissítés",
+            "actions": {
+                "accept": "Elfogadás",
+                "invite": "Meghívás",
+                "decline": "Elutasítás",
+                "delete_log": "Napló törlése",
+                "decline_with_message": "Elutasítás üzenettel"
+            },
+            "filters": {
+                "requestInvite": "Meghívás kérése",
+                "invite": "Meghívás",
+                "requestInviteResponse": "Meghívás-kérés válasza",
+                "inviteResponse": "Meghívás válasza",
+                "friendRequest": "Barátfelkérés",
+                "ignoredFriendRequest": "Figyelmen kívül hagyott barátfelkérés",
+                "message": "Üzenet",
+                "boop": "Boop",
+                "groupChange": "Csoportváltozás",
+                "event": {
+                    "announcement": "Esemény bejelentés"
+                },
+                "group": {
+                    "announcement": "Csoport bejelentés",
+                    "informative": "Csoport tájékoztató",
+                    "invite": "Csoport meghívó",
+                    "joinRequest": "Csatlakozási kérelem",
+                    "transfer": "Csoport átruházás",
+                    "queueReady": "Várakozósor kész",
+                    "event": {
+                        "created": "Csoport esemény létrehozva",
+                        "starting": "Csoport esemény kezdődik"
+                    }
+                },
+                "moderation": {
+                    "warning": {
+                        "group": "Moderációs figyelmeztetés (csoport)"
+                    },
+                    "report": {
+                        "closed": "Moderációs jelentés lezárva"
+                    },
+                    "contentrestriction": "Tartalom-korlátozás"
+                },
+                "instance": {
+                    "closed": "helyzet bezárva"
+                },
+                "badge": {
+                    "earned": "Jelvény megszerezve"
+                },
+                "vrcplus": {
+                    "gift": "VRC+ ajándék"
+                },
+                "localNotifs": "Rendszer",
+                "economy": {
+                    "received": {
+                        "gift": "Ajándék érkezett"
+                    },
+                    "alert": "Gazdasági riasztás"
+                }
+            }
         },
         "friend_list": {
             "bulk_unfriend": "Tömeges barát-eltávolítás mód",
             "bulk_unfriend_selection": "Tömeges barát-eltávolítás kijelölés",
             "load": "Hiányzó bejegyzések betöltése",
+            "load_dialog_title": "Hiányzó bejegyzések betöltése",
+            "load_dialog_message": "Hiányzó profilmezők lekérése a barátaidhoz.",
+            "load_cancel": "Mégse",
+            "load_complete": "Hiányzó bejegyzések betöltve",
             "favorites_only_tooltip": "Csak a kedvencek szűrése",
             "search_placeholder": "Keresés",
-            "filter_placeholder": "Szűrés"
+            "filter_placeholder": "Szűrés",
+            "load_mutual_friends": "Közös barátok betöltése",
+            "mutual_loading_hint": "A haladást a Közös barátok hálózat oldalon követheted"
+        },
+        "charts": {
+            "instance_activity": {
+                "header": "helyzet aktivitás",
+                "online_time": "Online idő",
+                "previous_day": "Előző nap",
+                "next_day": "Következő nap",
+                "refresh": "Frissítés",
+                "tips": {
+                    "online_time": "Az online idő a VRCX által az adott napra rögzített játékidőt jelenti.",
+                    "click_Y_axis": "Kattints az Y-tengely címkéjére a helyzet részleteinek megnyitásához vagy a felhasználói párbeszédablak megnyitásához.",
+                    "click_instance_name": "Kattints a helyzet nevére az Előző helyzet infó párbeszédablak megnyitásához."
+                },
+                "settings": {
+                    "header": "Beállítások",
+                    "bar_width": "Sávszélesség",
+                    "show_solo_instance": "Egyedüli helyzet megjelenítése",
+                    "show_no_friend_instance": "Barát nélküli helyzet megjelenítése",
+                    "show_detail": "Részletek megjelenítése"
+                }
+            },
+            "mutual_friend": {
+                "tab_label": "Közös barát hálózat",
+                "actions": {
+                    "start_fetch": "Lekérés indítása",
+                    "fetch_again": "Újra lekérés",
+                    "stop": "Leállítás",
+                    "stop_fetching": "Lekérés leállítása",
+                    "go_to_friend": "Ugrás a barátra"
+                },
+                "status": {
+                    "no_friends_to_process": "Nincs feldolgozható barátod",
+                    "loading_cache": "Gyorsítótárba mentett közös barátok betöltése az adatbázisból"
+                },
+                "progress": {
+                    "friends_processed": "Feldolgozott barátok",
+                    "no_relationships_discovered": "Nem találtak kapcsolatot"
+                },
+                "prompt": {
+                    "title": "Közös barát hálózat",
+                    "message": "Nem találtunk gyorsítótárba mentett közös barát adatot. Elindítod a lekérést? Ez eltarthat egy ideig, értesítünk, amikor kész.",
+                    "confirm": "Lekérés indítása",
+                    "cancel": "Később"
+                },
+                "enable_sharing_prompt": {
+                    "title": "Közös barátok megosztásának engedélyezése",
+                    "message": "A közös barátok megosztása jelenleg le van tiltva. Szeretnéd engedélyezni?",
+                    "confirm": "Engedélyezés",
+                    "cancel": "Mégse"
+                },
+                "messages": {
+                    "fetch_cancelled_graph_not_updated": "Lekérés megszakítva"
+                },
+                "notifications": {
+                    "start_fetching": "Lekérés elindítva",
+                    "mutual_friend_graph_ready_title": "Közös barát hálózat gráf",
+                    "mutual_friend_graph_ready_message": "A közös barát hálózat gráf kész",
+                    "friend_list_changed_fetch_again": "A barátlista megváltozott. Kérjük, kérd le újra a közös barát hálózatot."
+                },
+                "settings": {
+                    "title": "Gráf elrendezési beállítások",
+                    "layout_iterations": "Elrendezési iterációk",
+                    "layout_iterations_help": "Mennyi ideig fusson az elrendezés. Magasabb érték = stabilabb és rendezettebb.",
+                    "layout_spacing": "Elrendezési közök",
+                    "layout_spacing_help": "Mennyire legyen szétterítve a gráf. Magasabb érték = kevésbé zsúfolt.",
+                    "edge_curvature": "Él görbület",
+                    "edge_curvature_help": "Mennyire legyenek görbe a vonalak. Magasabb érték = simább vonalak sűrű területeken.",
+                    "community_separation": "Közösségek elválasztása",
+                    "community_separation_help": "Mennyire legyenek egymástól távol a különböző közösségek. Magasabb érték = élesebb csoportok.",
+                    "reset_defaults": "Alapértelmezések visszaállítása",
+                    "exclude_friends": "Barátok kizárása",
+                    "exclude_friends_placeholder": "Kizárandó barátok kiválasztása",
+                    "exclude_friends_help": "A kiválasztott barátok el lesznek rejtve a gráfról."
+                },
+                "context_menu": {
+                    "view_details": "Részletek megtekintése",
+                    "hide_friend": "Elrejtés a gráfról",
+                    "refresh_mutuals": "Közös barátok frissítése",
+                    "confirm_non_friend_title": "Nem barát",
+                    "confirm_non_friend_message": "Ez a felhasználó már nem a barátod. Mégis le akarod kérni a közös barátaik adatait?",
+                    "refresh_success": "Közös barátok adatai frissítve: {name}",
+                    "user_opted_out": "Ez a felhasználó letiltotta a közös barátok megosztását. A meglévő adatok megőrzésre kerültek.",
+                    "refresh_error": "Nem sikerült frissíteni a közös barátok adatait",
+                    "last_fetched": "Utoljára lekérve"
+                }
+            },
+            "playtime_trend": {
+                "header": "Napi játékidő",
+                "online_hours": "Óra",
+                "daily_avg": "Napi átlag",
+                "total": "Összesen",
+                "waiting": "Játékidő adatok összeállítása folyamatban, kérjük térj vissza később.",
+                "no_data": "Nincs elérhető játékidő adat"
+            },
+            "hot_worlds": {
+                "tab_label": "Forró világok",
+                "header": "Forró világok",
+                "refresh": "Frissítés",
+                "sorted_by": "Egyedi barátok szerint rendezve",
+                "tips": {
+                    "description": "Megmutatja, melyik világokat látogatják leggyakrabban a barátaid. Rangsor az egyedi látogató barátok száma alapján. A trend az időszak első és második felét hasonlítja össze."
+                },
+                "period": {
+                    "days_7": "Utolsó 7 nap",
+                    "days_30": "Utolsó 30 nap",
+                    "days_90": "Utolsó 90 nap"
+                },
+                "trend": {
+                    "rising": "Emelkedő",
+                    "cooling": "Csökkenő"
+                },
+                "stats_line": {
+                    "friends": "{count} barát",
+                    "visits": "{count} látogatás"
+                },
+                "stats": {
+                    "top_friends": "legtöbb barát",
+                    "total_visits": "összes látogatás",
+                    "rising": "emelkedő",
+                    "cooling": "csökkenő"
+                },
+                "sheet": {
+                    "friends_who_visited": "Látogató barátok"
+                },
+                "no_friend_data": "Nincs baráti látogatási adat",
+                "friend_visits": "{count} látogatás"
+            }
         },
         "tools": {
+            "header": "Eszközök",
+            "group": {
+                "header": "Csoport",
+                "calendar": "Naptár",
+                "calendar_description": "Csoportesemény-naptár"
+            },
+            "user": {
+                "discord_names_description": "VRChat barátaid Discord felhasználónevének megkeresése",
+                "export_friend_list_description": "Barátlista exportálása a VRChat-ből",
+                "export_own_avatars_description": "Saját avatarok exportálása a VRChat-ből"
+            },
             "export": {
+                "header": "Exportálás",
+                "export_notes": "Felhasználói memók exportálása",
+                "export_notes_description": "VRCX felhasználói memók exportálása VRChat megjegyzésekbe",
                 "discord_names": "Discord nevek",
                 "export_friend_list": "Barátlista exportálása",
                 "export_own_avatars": "Saját avatarok exportálása"
+            },
+            "redirect_message": "Ez a funkció már ezen az oldalon érhető el.",
+            "pictures": {
+                "pictures": {
+                    "vrc_photos": "VRChat fotók",
+                    "steam_screenshots": "Steam képernyőképek",
+                    "vrc_photos_description": "Megnyitja a VRChat fotók mappáját",
+                    "steam_screenshots_description": "Megnyitja a Steam képernyőképek mappáját"
+                },
+                "header": "Képek",
+                "screenshot": "Képernyőkép-kezelő",
+                "screenshot_description": "Képernyőkép metaadatok megtekintése és kezelése",
+                "gallery": "Képkezelő",
+                "gallery_description": "Képek és leltár kezelése"
+            },
+            "shortcuts": {
+                "header": "Gyorselérések",
+                "vrcx_data": "VRCX adatok",
+                "vrcx_data_description": "VRCX adatmappa megnyitása",
+                "vrchat_data": "VRChat adatok",
+                "vrchat_data_description": "VRChat adatmappa megnyitása",
+                "crash_dumps": "Összeomlási naplók",
+                "crash_dumps_description": "VRChat összeomlási naplók mappájának megnyitása"
+            },
+            "system_tools": {
+                "header": "Rendszereszközök",
+                "vrchat_config": "VRChat konfiguráció",
+                "vrchat_config_description": "VRChat config.json beállítások megnyitása",
+                "launch_options_description": "VRChat indítási opciók szerkesztése",
+                "registry_backup": "VRChat rendszerleíró adatbázis mentése",
+                "registry_backup_description": "VRChat rendszerleíró adatbázis mentésének létrehozása vagy visszaállítása"
+            },
+            "other": {
+                "header": "Egyéb",
+                "edit_invite_message": "Meghívó üzenetek szerkesztése",
+                "edit_invite_message_description": "Meghívó és meghívóválasz üzenetek szerkesztése"
             }
         },
         "profile": {
@@ -173,7 +718,65 @@
                 "notifications": "Értesítések",
                 "wrist_overlay": "Csukló átfedés",
                 "discord_presence": "Discord jelenlét",
-                "advanced": "Haladó"
+                "pictures": "Képek",
+                "advanced": "Haladó",
+                "system": "Rendszer",
+                "interface": "Felület",
+                "social": "Közösségi",
+                "vr": "VR",
+                "media": "Média",
+                "integrations": "Integrációk"
+            },
+            "social": {
+                "interaction": {
+                    "header": "Interakció"
+                },
+                "favorites": {
+                    "header": "Kedvencek"
+                }
+            },
+            "vr": {
+                "vr_core": {
+                    "header": "VR alap"
+                },
+                "vr_notifications": {
+                    "header": "VR értesítések"
+                },
+                "wrist_overlay": {
+                    "header": "Csukló átfedés"
+                },
+                "vr_extras": {
+                    "header": "VR extrák"
+                }
+            },
+            "interface": {
+                "navigation": {
+                    "header": "Navigáció",
+                    "show_new_dashboard_button": "Új irányítópult gomb megjelenítése"
+                },
+                "lists_tables": {
+                    "header": "Listák és táblázatok"
+                }
+            },
+            "integrations": {
+                "header": "Integrációk"
+            },
+            "advanced_groups": {
+                "system": {
+                    "header": "Rendszer"
+                },
+                "security": {
+                    "header": "Biztonság"
+                },
+                "diagnostics": {
+                    "header": "Diagnosztika"
+                },
+                "database": {
+                    "header": "Adatbázis"
+                },
+                "nightly": {
+                    "header": "Éjszakai"
+                }
             },
             "general": {
                 "general": {
@@ -187,40 +790,65 @@
                 "vrcx_updater": {
                     "header": "VRCX frissítő",
                     "change_build": "Build váltása",
+                    "update_action": "Frissítési művelet",
                     "auto_update_off": "Kikapcsolva",
                     "auto_update_notify": "Értesítsen",
                     "auto_update_download": "Automatikus letöltés",
-                    "change_log": "Változásnapló"
+                    "change_log": "Változásnapló",
+                    "updater_disabled": "Frissítő letiltva, a frissítéseket a csomagkezelő kezeli."
                 },
                 "application": {
                     "header": "Alkalmazás",
                     "startup": "Indítás a Windows indításakor",
                     "minimized": "Indítás tálcára kicsinyítve",
                     "tray": "Bezárás a tálcára",
-                    "proxy": "Proxy beállítások"
+                    "disable_gpu_acceleration": "GPU gyorsítás letiltása",
+                    "disable_gpu_acceleration_tooltip": "Csak akkor változtasd meg ezt a beállítást, ha tudod mit csinálsz. Megoldhat UI-problémákat, de a VRCX újraindítása szükséges.",
+                    "disable_vr_overlay_gpu_acceleration": "VR átfedés GPU gyorsítás letiltása",
+                    "proxy": "Proxy beállítások",
+                    "startup_linux": "Add hozzá a \"--startup\" argumentumot a VRCX.desktop indítófájlhoz, hogy a VRCX minimalizálva induljon el a rendszerindításkor"
                 },
                 "favorites": {
-                    "header": "VRChat kedvenc barátok",
+                    "header": "Kedvenc csoport szűrő",
+                    "header_tooltip": "Ha a kedvencek szűrő aktív a Feeden, a Játéknaplón, az Értesítések oldalon vagy a VR Átfedésen, csak a kiválasztott csoportokból származó bejegyzések jelennek meg",
                     "group_placeholder": "Csoportok kiválasztása"
                 },
                 "logging": {
                     "header": "Naplózás",
                     "resource_load": "Udon string/kép betöltés naplózása",
-                    "empty_avatar": "Név nélküli avatarok naplózása a hírfolyamban"
+                    "empty_avatar": "Név nélküli avatarok naplózása a hírfolyamban",
+                    "auto_login_delay": "Automatikus bejelentkezés késleltetése",
+                    "auto_login_delay_button": "Késleltetési idő beállítása"
                 },
                 "automation": {
-                    "auto_state_change_tooltip": "Állapot automatikus váltása, ha mások is vannak a példányban (egyedül / társaságban)",
+                    "auto_change_status": "Automatikus állapot és meghívók",
+                    "auto_change_status_switch": "Állapot automatikus váltása",
+                    "auto_state_change_tooltip": "Automatikus állapotváltás és meghívás-kérelmek kezelésének konfigurálása",
+                    "auto_state_change_switch_tooltip": "Automatikusan vált állapotot, ha más személyek is vannak a helyzetban (Egyedül / Társaságban)",
+                    "alone_condition": "Egyedülnek számít, ha",
+                    "alone": "Nincs más felhasználó",
+                    "no_friends": "Nincs barát a helyzetban",
+                    "alone_status": "Egyedüli állapot",
+                    "company_status": "Társasági állapot",
+                    "allowed_instance_types": "Aktív helyzettípusokban",
+                    "instance_type_placeholder": "Összes helyzettípus",
                     "auto_invite_request_accept": "Meghívási kérelmek automatikus elfogadása",
                     "auto_invite_request_accept_tooltip": "Meghívási kérelmek automatikus elfogadása a kedvenc barátoktól",
-                    "auto_invite_request_accept_off": "Kikapcsolva",
                     "auto_invite_request_accept_favs": "Összes kedvenc",
-                    "auto_invite_request_accept_selected_favs": "VRCX kedvencek"
+                    "auto_invite_request_accept_favs_hint": "Tartalmazza a helyi barát kedvenc csoportokat is",
+                    "auto_invite_request_accept_selected_favs": "Egyéni kedvenc csoportok",
+                    "change_status_description": "Állapotleírás felülírása",
+                    "status_description_placeholder": "Állapotleírás (max. 32 karakter)",
+                    "auto_change_status_groups": "Csak ezekből a csoportokból számolja a barátokat",
+                    "auto_change_status_groups_placeholder": "Csoportok választása",
+                    "auto_accept_invite_groups": "Csak ezektől fogadja el",
+                    "auto_accept_invite_groups_placeholder": "Csoportok választása"
                 },
                 "legal_notice": {
                     "header": "Jogi nyilatkozat",
                     "info": "A VRCX egy asszisztens alkalmazás a VRChat-hez, mely adatokat szolgáltat barátságokról, illetve lehetővé teszi azok kezelését. Ez az alkalmazás kihasználja a nem hivatalos VRChat API SDK-t.",
                     "disclaimer1": "A VRCX-et nem hagyta jóvá a VRChat és nem tükrözi a VRChat, vagy bárki, aki hivatalosan részt vesz a gyártásában vagy kezelésében, nézeteit vagy véleményét. A VRChat és az összes kapcsolódó tulajdon a VRChat Inc. védjegye vagy bejegyzett védjegye. VRChat © VRChat Inc.",
-                    "disclaimer2": "pypy és Natsumi nem vállal felelősséget bármilyen problémáért, amit a VRCX okoz. Használd saját felelősségre!",
+                    "disclaimer2": "pypy és Natsumi, valamint az összes közreműködő nem vállal felelősséget bármilyen problémáért, amit a VRCX okoz. Használd saját felelősségre!",
                     "open_source_software_notice": "Nyílt forráskódú szoftverre vonatkozó megjegyzés"
                 },
                 "contributors": {
@@ -231,45 +859,128 @@
                 "appearance": {
                     "header": "Megjelenés",
                     "language": "Nyelv",
+                    "bio_language": "Célnyelv",
                     "theme_mode": "Téma mód",
+                    "font_family": "Betűkészlet",
+                    "cjk_font_pack": "CJK betűkészlet",
+                    "font_family_inter": "Inter (alapértelmezett)",
+                    "font_family_noto_sans": "Noto Sans",
+                    "font_family_geist": "Geist",
+                    "font_family_nunito_sans": "Nunito Sans",
+                    "font_family_ibm_plex_sans": "IBM Plex Sans",
+                    "font_family_jetbrains_mono": "JetBrains Mono",
+                    "font_family_fantasque_sans_mono": "Fantasque Sans Mono",
+                    "font_family_system_ui": "Rendszer betűkészlet",
+                    "font_family_custom": "Egyéni",
+                    "font_family_custom_dialog_title": "Egyéni betűkészlet",
+                    "font_family_custom_dialog_description": "Adjon meg egy érvényes CSS font-family értéket",
+                    "font_family_custom_invalid": "Érvénytelen font-family. Használjon vesszővel elválasztott betűkészlet-neveket, pl. 'Saját betűkészlet', Arial, sans-serif",
+                    "cjk_font_pack_noto": "Noto Sans CJK",
+                    "cjk_font_pack_pht": "PuHuiTi CJK",
                     "theme_mode_system": "Rendszer",
                     "theme_mode_light": "Világos",
                     "theme_mode_dark": "Sötét",
+                    "theme_mode_midnight": "Éjfél",
+                    "theme_mode_blue": "Kék",
+                    "theme_mode_darkblue": "Sötétkék",
+                    "theme_mode_amoled": "AMOLED",
                     "theme_mode_darkvanillaold": "Dark vanilla (régi)",
                     "theme_mode_darkvanilla": "Sötét vanilla",
                     "theme_mode_pink": "Rózsaszín",
                     "theme_mode_material3": "Material 3",
                     "zoom": "Nagyítás",
                     "vrcplus_profile_icons": "VRChat Plus profil ikonok",
+                    "vrcplus_profile_icons_description": "VRChat+ kizárólagos profilikonok használata, ha elérhető.",
+                    "show_instance_id": "helyzetazonosító megjelenítése",
+                    "show_status_bar": "Állapotsáv megjelenítése",
+                    "age_gated_instances": "Korhatáros helyzetek megjelenítése",
+                    "age_gated_instances_description": "Korhatáros helyzetek megjelenítése. Ha le van tiltva, ezek a helyzetek rejtve és korlátozottként jelennek meg.",
                     "nicknames": "Memo becenevek",
+                    "nicknames_description": "Egyéni memo nevek megjelenítése a felhasználónevek után.",
                     "sort_favorite_by": "Kedvencek rendezése",
-                    "sort_favorite_by_name": "név",
-                    "sort_favorite_by_date": "dátum",
-                    "sort_instance_users_by": "Példány felhasználóinak rendezése",
-                    "sort_instance_users_by_time": "idő",
-                    "sort_instance_users_by_alphabet": "betűrend"
+                    "sort_favorite_by_name": "Név",
+                    "sort_favorite_by_date": "Dátum",
+                    "sort_favorite_by_players": "Játékosok",
+                    "sort_instance_users_by": "Helyzet felhasználóinak rendezése",
+                    "sort_instance_users_by_time": "Helyzetben töltött idő",
+                    "sort_instance_users_by_alphabet": "Név",
+                    "table_page_sizes": "Táblázat oldalméret",
+                    "table_page_sizes_error": "Az oldalméretnek 1 és 1000 közötti számnak kell lennie",
+                    "show_notification_icon_dot": "Értesítési pont a tálcán",
+                    "striped_data_table_mode": "Csíkos táblázatok",
+                    "accessible_status_indicators": "Akadálymentesített állapotjelzők",
+                    "accessible_status_indicators_description": "Alakzatok használata a szín mellett az állapotok megkülönböztetéséhez.",
+                    "use_official_status_colors": "Hivatalos állapotszínek használata",
+                    "use_official_status_colors_description": "Egyezzen a VRChat hivatalos állapotszíneivel.",
+                    "table_density": "Táblázat sűrűség",
+                    "table_density_standard": "Normál",
+                    "table_density_comfortable": "Kényelmes",
+                    "table_density_compact": "Kompakt",
+                    "table_entries_settings": "Táblázat bejegyzések beállításai",
+                    "table_entries_settings_description": "Szabályozza, hogy hány elem töltődjön be a listákhoz és keresésekhez."
+                },
+                "display": {
+                    "header": "Megjelenítés"
+                },
+                "sorting_tables": {
+                    "header": "Rendezés és táblázatok"
                 },
                 "timedate": {
                     "header": "Idő/dátum",
                     "time_format": "Időformátum",
                     "time_format_24": "24 óra",
                     "time_format_12": "12 óra",
-                    "force_iso_date_format": "ISO-dátumformátum kényszerítése"
+                    "force_iso_date_format": "ISO-dátumformátum kényszerítése",
+                    "week_starts_on": "Hét kezdőnapja",
+                    "week_starts_on_description": "Válassza ki a hét első napját. Hatással van a naptárakra, diagramokra és aktivitásnézetekre."
+                },
+                "theme_color": {
+                    "header": "Témaszín",
+                    "default": "Cink",
+                    "blue": "Kék",
+                    "green": "Zöld",
+                    "orange": "Narancssárga",
+                    "red": "Piros",
+                    "rose": "Rózsaszín",
+                    "violet": "Ibolya",
+                    "yellow": "Sárga"
                 },
                 "side_panel": {
-                    "header": "Oldalsó panel",
                     "sorting": {
-                        "header": "Rendezés"
+                        "header": "Rendezési sorrend",
+                        "alphabetical": "Betűrend",
+                        "private_to_bottom": "Privát a lista aljára",
+                        "status": "Állapot",
+                        "location": "Helyszín",
+                        "last_active": "Utolsó aktivitás",
+                        "last_seen": "Utoljára látva",
+                        "time_in_instance": "Helyzetban töltött idő",
+                        "placeholder": "Rendezési sorrend"
                     }
                 },
                 "user_dialog": {
                     "header": "Felhasználói ablak",
                     "vrchat_notes": "VRChat jegyzetek",
-                    "vrcx_memos": "VRCX memók"
+                    "vrchat_notes_description": "VRChat-ben tárolt jegyzetek megjelenítése",
+                    "vrcx_memos": "VRCX memók",
+                    "vrcx_memos_description": "VRCX-ben helyileg mentett jegyzetek megjelenítése",
+                    "recent_action_cooldown": "Közelmúltbeli művelet ikon",
+                    "recent_action_cooldown_description": "Óra ikon megjelenítése a közelmúltbeli meghívó és kérelem műveleteken.",
+                    "recent_action_cooldown_minutes": "Várakozási idő (perc)"
                 },
                 "user_colors": {
                     "header": "Felhasználói színek",
-                    "random_colors_from_user_id": "Véletlenszerű színek a felhasználói azonosító alapján"
+                    "random_colors_from_user_id": "Felhasználóazonosítón alapuló konzisztens színek",
+                    "random_colors_from_user_id_description": "Minden felhasználóhoz az azonosítójuk alapján következetes szín rendelése.",
+                    "trust_levels": {
+                        "visitor": "Látogató",
+                        "new_user": "Új felhasználó",
+                        "user": "Felhasználó",
+                        "known_user": "Ismert felhasználó",
+                        "trusted_user": "Megbízható felhasználó",
+                        "vrchat_team": "VRChat csapat",
+                        "nuisance": "Zavaró"
+                    }
                 },
                 "friend_log": {
                     "header": "Barátnapló",
@@ -279,7 +990,12 @@
             "notifications": {
                 "notifications": {
                     "header": "Értesítések",
-                    "notification_filter": "Értesítésszűrő",
+                    "layout": "Értesítési nézet",
+                    "layout_notification_center": "Értesítési központ",
+                    "layout_table": "Értesítések oldala",
+                    "notification_filter": "Értesítési szűrők",
+                    "test_notification": "Teszt értesítés küldése",
+                    "test_message": "Teszt értesítés.",
                     "steamvr_notifications": {
                         "header": "SteamVR értesítések",
                         "steamvr_overlay": "SteamVR átfedés",
@@ -289,25 +1005,33 @@
                         "wayvr_notifications": "WayVR értesítések",
                         "ovrtoolkit_hud_notifications": "OVR Toolkit HUD értesítések",
                         "ovrtoolkit_wrist_notifications": "OVR Toolkit csukló értesítések",
-                        "user_images": "Felhasználói képek (lassabb)",
+                        "user_images": "Felhasználói ikonok megjelenítése",
+                        "user_images_description": "Hatással lehet a teljesítményre.",
+                        "notification_opacity": "Értesítés átlátszósága",
                         "notification_timeout": "Értesítés időtúllépése"
                     },
                     "conditions": {
                         "never": "Soha",
-                        "desktop": "Asztali mód",
+                        "desktop": "Csak asztali módban",
                         "inside_vr": "VR-on belül",
                         "outside_vr": "VR-on kívül",
+                        "inside_vrchat": "VRChat-en belül",
+                        "outside_vrchat": "VRChat-en kívül",
                         "always": "Mindig"
                     },
                     "desktop_notifications": {
                         "header": "Asztali értesítések",
-                        "when_to_display": "Mikor jelenjen meg",
-                        "desktop_notification_while_afk": "Asztali értesítések AFK módban"
+                        "when_to_display": "Asztali értesítések megjelenítése",
+                        "when_to_display_vr": "VR értesítések megjelenítése",
+                        "desktop_notification_while_afk": "Értesítések megjelenítése AFK módban"
                     },
                     "text_to_speech": {
                         "header": "Szövegfelolvasás",
-                        "when_to_play": "Értesítés felolvasása. Mikor játssza le",
-                        "tts_voice": "TTS hang"
+                        "when_to_play": "Értesítési TTS",
+                        "tts_voice": "TTS hang",
+                        "use_memo_nicknames": "Memo becenevek használata TTS-hez",
+                        "play": "Lejátszás",
+                        "tts_test_placeholder": "Teszt TTS lejátszása"
                     }
                 }
             },
@@ -330,10 +1054,10 @@
                     "display_overlay_on_both": "Mindkét kéz",
                     "grey_background": "Szürke háttér",
                     "minimal_feed_icons": "Minimális hírfolyam ikonok",
-                    "show_vr_devices": "VR eszközök mutatása",
-                    "show_cpu_usage": "CPU használat mutatása",
-                    "show_game_uptime": "Játékidő mutatása",
-                    "show_pc_uptime": "PC üzemidő mutatása",
+                    "show_vr_devices": "VR eszközök megjelenítése",
+                    "show_cpu_usage": "CPU-használat megjelenítése",
+                    "show_game_uptime": "Játékidő megjelenítése",
+                    "show_pc_uptime": "PC üzemidő megjelenítése",
                     "wrist_feed_filters": "Csukló hírfolyam szűrők"
                 }
             },
@@ -342,67 +1066,140 @@
                     "header": "Discord jelenlét",
                     "description": "* Csak akkor aktív, ha a VRChat fut.",
                     "enable": "Engedélyezés",
-                    "enable_tooltip": "Javasolt a Rich Presence kikapcsolása a VRChat config.json fájljában az ütközések elkerülése érdekében",
-                    "instance_type_player_count": "Példány típusa/játékosok száma",
-                    "join_button": "Csatlakozás gomb (csak nyilvánosnál)",
-                    "show_details_in_private": "Világ részleteinek mutatása privátban",
-                    "show_images": "Világképek mutatása"
+                    "enable_tooltip": "Az ütközések elkerülése érdekében tiltsd le a VRChat Rich Presence funkcióját.",
+                    "instance_type_player_count": "Helyzet típusa és játékosok száma",
+                    "join_button": "Csatlakozás gomb (csak nyilvánosan)",
+                    "show_details_in_private": "Részletek megjelenítése privát helyzetben",
+                    "show_images": "Világképek megjelenítése",
+                    "show_current_platform": "Jelenlegi platform megjelenítése",
+                    "world_integration": "Világ integráció",
+                    "world_integration_tooltip": "Megjeleníti a \"Nézi/Hallgatja\" állapotot a Popcorn Palace, PyPyDance, VRDancing és LS Media esetén",
+                    "display_world_name_as_discord_status": "Világ neve mint tevékenység"
+                },
+                "rpc": {
+                    "vr": "VR",
+                    "desktop": "Asztali",
+                    "powered_by_vrcx": "VRCX által biztosítva",
+                    "private_world": "Privát világ"
+                }
+            },
+            "pictures": {
+                "pictures": {
+                    "auto_delete_old_prints": "Régi nyomatok automatikus törlése",
+                    "auto_delete_prints_from_vrc": "Régi nyomatok automatikus törlése a limit elérésekor"
                 }
             },
             "advanced": {
                 "advanced": {
                     "launch_options": "Indítási opciók",
-                    "vrc_registry_backup": "VRC regisztrációs adatbázis mentése",
+                    "vrc_registry_backup": "VRC rendszerleíró adatbázis mentése",
+                    "vrchat_settings": {
+                        "header": "VRChat"
+                    },
+                    "vrcx_settings": {
+                        "header": "VRCX"
+                    },
                     "primary_password": {
                         "header": "Elsődleges jelszó",
                         "description": "Jelszó titkosítása (kikapcsolja az automatikus bejelentkezést)"
                     },
                     "relaunch_vrchat": {
-                        "header": "VRChat újraindítása összeomlás után",
-                        "description": "Visszacsatlakozás az utolsó példányhoz, ha a VRChat összeomlik"
+                        "header": "VRChat automatikus újraindítása összeomlás után",
+                        "description": "Automatikusan újraindítja és visszacsatlakozik az utolsó helyzethez összeomlás után."
                     },
                     "vrchat_quit_fix": {
-                        "header": "VRChat kilépési javítás",
+                        "header": "VRChat kiléptetése kilépéskor",
                         "description": "VRChat folyamat leállítása a játékból való kilépés után"
                     },
                     "auto_cache_management": {
-                        "header": "Gyorsítótár automatikus kezelése a VRChat bezárásakor",
-                        "description": "Régi verziók automatikus törlése a gyorsítótárból"
+                        "header": "Gyorsítótár automatikus kezelése kilépéskor",
+                        "description": "Régi gyorsítótár adatok automatikus törlése a VRChat bezárásakor."
+                    },
+                    "self_invite": {
+                        "header": "Önmeghívás művelet",
+                        "description": "Önmeghívás használata a VRChat-ban való megnyitás helyett."
+                    },
+                    "anonymous_error_reporting": {
+                        "header": "Névtelen hibajelentés (csak éjszakai verzióban)",
+                        "description": "Segíts fejleszteni a VRCX-et névtelen összeomlási és hibajelentések küldésével. Személyes vagy VRChat adatok nem kerülnek gyűjtésre.",
+                        "consent_title": "Névtelen hibajelentés",
+                        "consent_description": "Engedélyezed a névtelen hibajelentést a VRCX fejlesztéséhez?\n\n• Csak összeomlási és hibaadatok\n• Sem személyes, sem VRChat adatok\n• Csak éjszakai verziókban\n• Letiltható a Haladó beállításokban",
+                        "enabled_restart_description": "Hibajelentés engedélyezve. Újraindítod a VRCX-et a módosítások alkalmazásához?",
+                        "disabled_restart_description": "Hibajelentés letiltva. Újraindítod a VRCX-et a módosítások alkalmazásához?"
+                    },
+                    "save_instance_prints_to_file": {
+                        "header": "Helyzet nyomatainak mentése fájlba",
+                        "header_tooltip": "A --enable-sdk-log-levels VRChat indítási opciót igényli.",
+                        "description": "Létrehozott nyomatok mentése a VRChat Képek mappájába",
+                        "crop": "Fehér keret automatikus eltávolítása a nyomatokról",
+                        "crop_convert_old": "Szeretnéd az összes már mentett nyomatot is körbevágni?",
+                        "crop_convert_old_confirm": "Igen",
+                        "crop_convert_old_cancel": "Nem"
+                    },
+                    "save_instance_stickers_to_file": {
+                        "header": "Helyzet matricáinak mentése fájlba",
+                        "description": "Elhelyezett matricák mentése a VRChat Képek mappájába"
+                    },
+                    "save_instance_emoji_to_file": {
+                        "header": "Helyzet emojijainak mentése fájlba",
+                        "description": "Létrehozott emojik mentése a VRChat Képek mappájába"
+                    },
+                    "delete_all_screenshot_metadata": {
+                        "button": "Képernyőkép metaadatok eltávolítása",
+                        "ask": "Biztosan törölni szeretnéd az összes VRC és VRCX képernyőkép metaadatot a VRChat Képek mappájából?",
+                        "confirm": "Az összes képernyőkép metaadat törlése rendkívül romboló hatású és nem vonható vissza! Ez tartalmazza az összes nyomatot, almappát és egyéb irrelevant képet a VRChat Képek mappájában. Ha ezek a fotók fontosak számodra, kérjük mentést csinálj a folytatás előtt.",
+                        "confirm_yes": "Igen",
+                        "confirm_no": "Nem"
                     },
                     "remote_database": {
                         "header": "Távoli avatar adatbázis",
                         "enable": "Engedélyezés",
+                        "enable_description": "Avatar adatok lekérésének engedélyezése egy távoli adatbázisból",
                         "avatar_database_provider": "Avatar adatbázis szolgáltató"
                     },
                     "youtube_api": {
                         "header": "YouTube API",
                         "enable": "Engedélyezés",
                         "youtube_api_key": "YouTube API kulcs",
-                        "enable_tooltip": "Lekéri a videók címét a játéknaplóhoz és az időtartamot az átfedés folyamatjelzőjéhez"
+                        "enable_tooltip": "Videócímek lekérése a játéknaplóhoz és az időtartam lekérése az átfedés folyamatjelzőjéhez"
+                    },
+                    "translation_api": {
+                        "header": "Tartalom-fordítás engedélyezése",
+                        "enable": "Engedélyezés",
+                        "translation_api_key": "Fordítási API kulcs",
+                        "enable_tooltip": "Felhasználói bemutatkozások és világ leírások fordítása igény szerint."
                     },
                     "video_progress_pie": {
-                        "header": "Folyamatjelző tortadiagram a videókhoz",
+                        "header": "Folyamatjelző kördiagram videókhoz",
                         "enable": "Engedélyezés",
                         "enable_tooltip": "SteamVR átfedés engedélyezése szükséges",
                         "dance_world_only": "Csak támogatott világokban"
                     },
+                    "launch_commands": {
+                        "header": "Indítási parancsok (mélyhivatkozások)",
+                        "docs": "Indítási parancsok dokumentációja",
+                        "show_confirmation_on_switch_avatar_enable": "Megerősítés avatar váltás előtt",
+                        "show_confirmation_on_switch_avatar_tooltip": "Ha le van tiltva, a VRCX nem kér megerősítést avatar váltás előtt.",
+                        "website_userscript": "VRC weboldal felhasználói szkript"
+                    },
                     "screenshot_helper": {
                         "header": "Képernyőkép segéd",
-                        "description": "Eltárolja a világ azonosítóját, nevét és a példányban lévő játékosokat a játékban készített képek metaadataiban.",
-                        "description_tooltip": "Sajnos a Windows alapból nem támogatja a PNG szöveges blokkok megtekintését, de használhatsz olyan eszközöket, mint az exiftool, egy PNG blokk-ellenőrző vagy egy hexadecimális szerkesztő.",
-                        "enable": "Engedélyezés",
+                        "description": "Világ- és helyzetadatok beágyazása VRChat képernyőképekbe PNG metaadatként.",
+                        "description_tooltip": "A Windows alapból nem jeleníti meg a PNG szöveges metaadatokat. Használj eszközöket, mint az ExifTool vagy egy PNG ellenőrző a megtekintéshez.",
+                        "enable": "Képernyőkép metaadatok engedélyezése",
                         "modify_filename": "Fájlnév módosítása",
-                        "modify_filename_tooltip": "Hozzáadja a világ azonosítóját a képernyőkép fájlnevéhez is, a metaadatokon felül.",
+                        "modify_filename_tooltip": "A világ azonosítóját hozzáadja a képernyőkép fájlnevéhez is, a metaadatokon felül.",
                         "copy_to_clipboard": "Másolás a vágólapra"
                     },
                     "app_launcher": {
                         "header": "Alkalmazásindító",
                         "folder": "Automatikus indítási mappa",
-                        "folder_tooltip": "Az alkalmazások VRChat-tel együtt történő indításához helyezz el parancsikonokat ebben a mappában.",
-                        "auto_close": "Alkalmazások automatikus bezárása"
+                        "folder_tooltip": "Az alkalmazások VRChat-tel együtt történő indításához helyezz el parancsikonokat ebben a mappában, vagy használd a platformspecifikus almappákat. A Steam app parancsikonok is támogatottak.",
+                        "auto_close": "Alkalmazások automatikus bezárása",
+                        "run_process_once": "Csak egy helyzetben nyissa meg az alkalmazást"
                     },
                     "cache_debug": {
-                        "header": "VRCX példány gyorsítótár/hibakeresés",
+                        "header": "VRCX helyzet gyorsítótár/hibakeresés",
                         "udon_exception_logging": "Udon kivétel naplózás",
                         "disable_gamelog": "Játéknapló kikapcsolása",
                         "disable_gamelog_notice": "(ez valószínűleg hibákat okoz majd)",
@@ -411,10 +1208,11 @@
                         "avatar_cache": "Avatar gyorsítótár:",
                         "group_cache": "Csoport gyorsítótár:",
                         "avatar_name_cache": "Avatar név gyorsítótár:",
-                        "instance_cache": "Példány gyorsítótár:",
+                        "instance_cache": "Helyzet gyorsítótár:",
                         "clear_cache": "Gyorsítótár törlése",
+                        "refresh_cache": "Gyorsítótár frissítése",
                         "auto_clear_cache": "Gyorsítótár automatikus törlése",
-                        "show_console": "Konzol mutatása"
+                        "show_console": "Konzol megjelenítése"
                     },
                     "sqlite_table_size": {
                         "header": "SQLite táblaméret",
@@ -431,6 +1229,39 @@
                         "portal_spawn": "Portál létrehozás:",
                         "video_play": "Videó lejátszás:",
                         "event": "Esemény:"
+                    },
+                    "database_cleanup": {
+                        "header": "Adatbázis karbantartás",
+                        "auto_cleanup": "Régebbi avatar adatok automatikus törlése",
+                        "auto_cleanup_description": "Hetente egyszer ellenőrizve az indításkor",
+                        "auto_cleanup_off": "Kikapcsolva",
+                        "auto_cleanup_30": "30 nap",
+                        "auto_cleanup_90": "90 nap",
+                        "auto_cleanup_180": "6 hónap",
+                        "auto_cleanup_365": "1 év",
+                        "purge_button": "Avatar feed adatok végleges törlése",
+                        "purge": "Végleges törlés",
+                        "purge_older_than": "Régebbi avatar adatok törlése, mint",
+                        "purge_option_180": "6 hónap",
+                        "purge_option_365": "1 év",
+                        "purge_option_730": "2 év",
+                        "purge_option_all": "Összes adat",
+                        "purge_confirm_title": "Avatar feed adatok végleges törlése",
+                        "purge_confirm_description_1": "Ez véglegesen törli az avatar változási rekordokat az adatbázisból és felszabadítja a lemezterületet.",
+                        "purge_confirm_description_2": "Ez a művelet nem vonható vissza!",
+                        "purge_confirm_description_3": "A VRCX újraindul a művelet befejezése után.",
+                        "purge_confirm_alert": "Erősen javasolt az adatbázis fájl biztonsági mentése a folytatás előtt!",
+                        "purge_confirm_button": "Törlés és újraindítás",
+                        "purge_in_progress": "Avatar adatok törlése folyamatban...",
+                        "purge_complete": "Avatar adatok sikeresen törölve. Újraindítás...",
+                        "purge_failed": "Törlés sikertelen: {error}"
+                    },
+                    "user_generated_content": {
+                        "header": "Tartalom mappa",
+                        "folder": "Mappa megnyitása",
+                        "description": "Nyisd meg vagy állítsd be a VRChat tartalmak (pl. nyomatok és matricák) mappáját.",
+                        "set_folder": "Mappa beállítása",
+                        "reset_override": "Visszaállítás"
                     }
                 },
                 "photon": {
@@ -460,6 +1291,14 @@
         }
     },
     "dialog": {
+        "alertdialog": {
+            "ok": "OK",
+            "cancel": "Mégse",
+            "confirm": "Megerősítés"
+        },
+        "prompt": {
+            "input_invalid": "Érvénytelen bevitel"
+        },
         "user": {
             "status": {
                 "active": "Aktív",
@@ -472,26 +1311,38 @@
             "previous_display_names": "Korábbi megjelenített nevek:",
             "pronouns": "Névmások",
             "tags": {
-                "vrchat_team": "VRChat csapat"
+                "friend_number": "Barátszám",
+                "vrchat_team": "VRChat csapat",
+                "age_verified": "Korellenőrzött",
+                "trust_level": "Bizalmi szint",
+                "mutual_friends": "Közös barátok",
+                "open_in_discord": "Megnyitás Discordban",
+                "discord": "Discord"
+            },
+            "badges": {
+                "assigned": "Hozzárendelt",
+                "hidden": "Rejtett",
+                "showcased": "Kiemelt"
             },
             "actions": {
-                "favorite_tooltip": "Hozzáadás a kedvencekhez",
-                "unfavorite_tooltip": "Eltávolítás a kedvencekből",
+                "favorites_tooltip": "Kedvencek",
                 "refresh": "Frissítés",
+                "share": "Megosztás",
                 "invite": "Meghívás",
                 "invite_with_message": "Meghívás üzenettel",
                 "request_invite": "Meghívás kérése",
                 "request_invite_with_message": "Meghívás kérése üzenettel",
                 "invite_to_group": "Meghívás csoportba",
+                "group_moderation": "Csoport moderáció",
                 "send_boop": "Boop küldése",
-                "manage_gallery_inventory_icon": "Képek/ikonok/emojik kezelése",
+                "manage_gallery_inventory_icon": "VRC+ képek és leltár kezelése",
                 "accept_friend_request": "Barátfelkérés elfogadása",
                 "decline_friend_request": "Barátfelkérés elutasítása",
                 "cancel_friend_request": "Barátfelkérés visszavonása",
                 "send_friend_request": "Barátfelkérés küldése",
-                "show_avatar_author": "Avatar készítőjének mutatása",
-                "show_fallback_avatar": "Tartalék avatar részleteinek mutatása",
-                "show_previous_instances": "Korábbi példányok mutatása",
+                "show_avatar_author": "Avatar készítőjének megtekintése",
+                "show_fallback_avatar": "Tartalék avatar részleteinek megtekintése",
+                "show_previous_instances": "Korábbi helyzetek megtekintése",
                 "moderation_block": "Tiltás",
                 "moderation_unblock": "Tiltás feloldása",
                 "moderation_mute": "Némítás",
@@ -500,33 +1351,42 @@
                 "moderation_show_avatar": "Avatar megjelenítése",
                 "moderation_enable_avatar_interaction": "Avatar interakció engedélyezése",
                 "moderation_disable_avatar_interaction": "Avatar interakció letiltása",
+                "moderation_enable_chatbox": "Chatbox némítás feloldása",
+                "moderation_disable_chatbox": "Chatbox némítása",
                 "edit_status": "Közösségi állapot",
                 "edit_language": "Nyelv",
-                "edit_bio": "Bio",
+                "edit_bio": "Bemutatkozás",
                 "edit_pronouns": "Névmások",
                 "report_hacking": "Jelentés hackelésért",
                 "unfriend": "Barátság megszüntetése",
-                "logout": "Kijelentkezés"
+                "unfriend_success_msg": "Barátság megszüntetve",
+                "logout": "Kijelentkezés",
+                "edit_note_memo": "Megjegyzés és memó szerkesztése",
+                "reset_home": "Otthon visszaállítása"
             },
             "info": {
                 "header": "Infó",
                 "launch_invite_tooltip": "Indítás/meghívás",
                 "self_invite_tooltip": "Önmeghívás",
-                "refresh_instance_info": "Példányinfó frissítése",
-                "instance_queue": "Várakozási sor:",
+                "open_in_vrchat_tooltip": "Megnyitás VRChat-ben",
+                "refresh_instance_info": "Helyzet infó frissítése",
+                "instance_queue": "Várakozási sor",
                 "instance_users": "Felhasználók:",
+                "instance_friends_tooltip": "Barátok ebben a helyzetben",
                 "instance_game_version": "Játék verzió:",
-                "last_join": "Utolsó belépés:",
+                "last_join": "Utolsó belépés",
                 "instance_queuing_enabled": "Várakozási sor engedélyezve",
-                "instance_creator": "Példány létrehozója",
-                "note": "Jegyzet",
-                "note_placeholder": "Kattints ide jegyzet hozzáadásához",
+                "instance_disabled_content": "Letiltott tartalom:",
+                "instance_creator": "Helyzet létrehozója",
+                "note": "Megjegyzés",
+                "note_placeholder": "Kattints megjegyzés hozzáadásához",
                 "memo": "Memó",
-                "memo_placeholder": "Kattints ide memó hozzáadásához",
+                "memo_placeholder": "Kattints memó hozzáadásához",
                 "avatar_info": "Avatar infó",
                 "avatar_info_last_seen": "Avatar utoljára látva",
+                "unknown_avatar": "Ismeretlen avatar",
                 "represented_group": "Képviselt csoport",
-                "bio": "Bio",
+                "bio": "Bemutatkozás",
                 "last_seen": "Utoljára látva",
                 "join_count": "Belépések száma",
                 "time_together": "Együtt töltött idő",
@@ -543,21 +1403,39 @@
                 "avatar_cloning_allow": "Engedélyezve",
                 "avatar_cloning_deny": "Tiltva",
                 "home_location": "Otthoni világ",
-                "id": "Azonosító",
+                "id": "Felhasználói azonosító",
                 "id_tooltip": "Másolás a vágólapra",
                 "copy_id": "Azonosító másolása",
                 "copy_url": "URL másolása",
                 "copy_display_name": "Megjelenített név másolása",
-                "instance_full": "teli",
-                "instance_closed": "zárt",
-                "close_instance": "Példány bezárása"
+                "vrcplus_hides_avatar": "Ha VRC+ profilfotó van beállítva, az avatar adatai rejtve vannak. Ez a feedben is elrejti az avatar változásokat.",
+                "instance_full": "Teli",
+                "instance_closed_at": "Helyzet bezárva ekkor:",
+                "instance_age_restricted": "Korhatáros",
+                "instance_age_restricted_tooltip": "Korhatáros helyzetben van",
+                "close_instance": "Helyzet bezárása",
+                "instance_age_gated": "Korhatáros",
+                "open_previous_instance": "Korábbi helyzetek megnyitása",
+                "show_mutual_friends": "Közös barátok megtekintése",
+                "show_discord_connections": "Discord kapcsolatok megtekintése",
+                "instance_minimum_avatar_performance": "Minimális avatar teljesítmény"
             },
             "groups": {
                 "header": "Csoportok",
                 "total_count": "Összesen {count}",
+                "sort_by": "Rendezés:",
+                "edit_mode": "Szerkesztési mód",
+                "exit_edit_mode": "Szerkesztési mód kilépése",
+                "hold_shift": "Tartsd lenyomva a Shift-et megerősítés nélküli kilépéshez",
                 "own_groups": "Saját csoportok",
                 "mutual_groups": "Közös csoportok",
-                "groups": "Csoportok"
+                "groups": "Csoportok",
+                "sorting": {
+                    "alphabetical": "Betűrend",
+                    "members": "Tagok",
+                    "in_game": "Játékbeli sorrend"
+                },
+                "leave_group_tooltip": "Csoport elhagyása"
             },
             "worlds": {
                 "header": "Világok",
@@ -582,14 +1460,80 @@
             "avatars": {
                 "header": "Avatarok",
                 "total_count": "Összesen {count}",
-                "sort_by_name": "Rendezés név szerint",
-                "sort_by_update": "Rendezés legutolsó frissítés szerint",
+                "sort_by": "Rendezés:",
+                "sort_by_name": "Név",
+                "sort_by_update": "Frissítve",
+                "sort_by_uploaded": "Feltöltve",
                 "all": "Összes",
                 "public": "Nyilvános",
-                "private": "Privát"
+                "private": "Privát",
+                "group_by": "Csoportosítás:"
             },
             "json": {
                 "header": "JSON"
+            },
+            "mutual_friends": {
+                "header": "Közös barátok",
+                "sorting": {
+                    "alphabetical": "Betűrend",
+                    "last_active": "Utolsó aktivitás",
+                    "friend_order": "Barát sorrend"
+                }
+            },
+            "activity": {
+                "header": "Aktivitás",
+                "load": "Aktivitás betöltése",
+                "load_hint": "Aktivitás adatok betöltése a helyi adatbázisból szükség esetén.",
+                "refresh_hint": "Aktivitás adatok frissítése",
+                "total_events": "{count} online esemény",
+                "times_online": "alkalommal volt online",
+                "most_active_day": "Legaktívabb nap:",
+                "most_active_time": "Csúcsidő:",
+                "period": "Időszak:",
+                "period_90": "Utolsó 90 nap",
+                "period_180": "Utolsó 6 hónap",
+                "period_365": "Utolsó 1 év",
+                "period_all": "Összes idő",
+                "building_cache": "Összes aktivitás adat kiszámítása hosszabb tartományokhoz...",
+                "period_30": "Utolsó 30 nap",
+                "period_7": "Utolsó 7 nap",
+                "minutes_online": "perc online",
+                "no_data_in_period": "Nincs aktivitás adat a kiválasztott időszakban",
+                "days": {
+                    "mon": "H",
+                    "tue": "K",
+                    "wed": "Sze",
+                    "thu": "Cs",
+                    "fri": "P",
+                    "sat": "Szo",
+                    "sun": "V"
+                },
+                "chart_hint": "Begyűjtötted ma a zöld négyzeteidet?",
+                "chart_hint_reply": "Ezt nem lehet farmolni.",
+                "overlap": {
+                    "header": "Online átfedés",
+                    "peak_overlap": "Csúcsátfedés:",
+                    "exclude_hours": "Órák kizárása",
+                    "no_data": "Nincs elég adat az átfedés kiszámításához",
+                    "times_overlap": "alkalommal volt átfedés",
+                    "minutes_overlap": "perc átfedés"
+                },
+                "most_visited_worlds": {
+                    "header": "Legtöbbet látogatott világok",
+                    "loading": "Legtöbbet látogatott világok betöltése...",
+                    "exclude_home_world": "Otthoni világ kizárása",
+                    "sort_by_time": "Idő szerint",
+                    "sort_by_count": "Látogatások szerint",
+                    "visit_count_label": "{count} látogatás"
+                },
+                "preparing_data": "Aktivitás adatok előkészítése...",
+                "preparing_data_hint": "Az első betöltés eltarthat egy pillanatig.",
+                "data_ready": "Az aktivitás adatok készen vannak"
+            },
+            "note_memo": {
+                "header": "Megjegyzés és memó szerkesztése",
+                "cancel": "Mégse",
+                "confirm": "Megerősítés"
             }
         },
         "world": {
@@ -597,6 +1541,7 @@
                 "public": "Nyilvános",
                 "private": "Privát",
                 "avatar_scaling_disabled": "Avatar skálázás letiltva",
+                "focus_view_disabled": "Fókusznézet letiltva",
                 "future_proofing": "Jövőálló",
                 "labs": "Laborok",
                 "cache": "Gyorsítótár",
@@ -610,33 +1555,39 @@
                 "delete_cache_tooltip": "Világ törlése a gyorsítótárból",
                 "favorites_tooltip": "Kedvencek",
                 "refresh": "Frissítés",
-                "new_instance": "Új példány",
+                "share": "Megosztás",
+                "new_instance": "Új helyzet",
+                "new_instance_and_self_invite": "Új helyzet és önmeghívás",
+                "new_instance_and_open_ingame": "Új helyzet és megnyitás játékban",
                 "make_home": "Beállítás otthonként",
-                "reset_home": "Otthon alaphelyzetbe állítása",
-                "show_previous_instances": "Korábbi példányok mutatása",
+                "reset_home": "Otthon visszaállítása",
+                "show_previous_instances": "Korábbi helyzetek megtekintése",
                 "rename": "Átnevezés",
                 "change_description": "Leírás módosítása",
                 "change_capacity": "Kapacitás módosítása",
                 "change_recommended_capacity": "Ajánlott kapacitás módosítása",
                 "change_preview": "YouTube előnézet módosítása",
+                "change_warnings_settings_tags": "Tartalmi figyelmeztetések, beállítások és címkék módosítása",
                 "change_image": "Kép módosítása",
+                "change_allowed_video_player_domains": "Engedélyezett videolejátszó domainek módosítása",
                 "download_package": "Unity csomag letöltése",
-                "publish_to_labs": "Közzététel a laborokban",
+                "publish_to_labs": "Közzététel a laborokban. Hetente egyszer teheted meg (7 nap).",
                 "unpublish": "Visszavonás",
+                "delete_persistent_data": "Állandó adatok törlése",
                 "delete": "Törlés"
             },
             "instances": {
-                "header": "Példányok",
+                "header": "Helyzetek",
                 "public_count": "Nyilvános {count}",
                 "private_count": "Privát {count}",
                 "capacity_count": "Kapacitás {count} ({max})",
-                "refresh_instance_info": "Példányinfó frissítése",
-                "instance_creator": "Példány létrehozója"
+                "refresh_instance_info": "Helyzet infó frissítése",
+                "instance_creator": "Helyzet létrehozója"
             },
             "info": {
                 "header": "Infó",
                 "memo": "Memó",
-                "memo_placeholder": "Kattints ide memó hozzáadásához",
+                "memo_placeholder": "Kattints memó hozzáadásához",
                 "id": "Világ azonosító",
                 "id_tooltip": "Másolás a vágólapra",
                 "copy_id": "Azonosító másolása",
@@ -677,7 +1628,15 @@
                 "content_gore": "Vér",
                 "content_violence": "Erőszak",
                 "content_adult": "Felnőtt",
-                "content_sex": "Szexuális"
+                "content_sex": "Szexuális",
+                "performanceRating": {
+                    "Excellent": "Kiváló",
+                    "Good": "Jó",
+                    "Medium": "Közepes",
+                    "Poor": "Gyenge",
+                    "VeryPoor": "Nagyon gyenge",
+                    "None": "Nincs"
+                }
             },
             "labels": {
                 "public": "(nyilvános)",
@@ -687,6 +1646,7 @@
                 "delete_cache_tooltip": "Avatar törlése a gyorsítótárból",
                 "favorite_tooltip": "Kedvencek",
                 "refresh": "Frissítés",
+                "share": "Megosztás",
                 "select": "Avatar kiválasztása",
                 "select_fallback": "Tartalék avatar kiválasztása",
                 "block": "Avatar tiltása",
@@ -696,15 +1656,21 @@
                 "rename": "Átnevezés",
                 "change_description": "Leírás módosítása",
                 "change_content_tags": "Tartalmi címkék módosítása",
+                "change_styles_author_tags": "Stílusok és szerzői címkék módosítása",
                 "change_image": "Kép módosítása",
                 "download_package": "Unity csomag letöltése",
                 "delete": "Törlés",
                 "delete_impostor": "Imposztor törlése",
                 "regenerate_impostor": "Imposztor újragenerálása",
-                "create_impostor": "Imposztor létrehozása"
+                "create_impostor": "Imposztor létrehozása",
+                "manage_tags": "Címkék kezelése",
+                "manage_tags_placeholder": "Adj hozzá egy címkét...",
+                "manage_tags_hint": "Kattints egy címkére a szín megváltoztatásához",
+                "view_details": "Részletek megtekintése"
             },
             "info": {
                 "header": "Infó",
+                "name": "Név",
                 "id": "Avatar azonosító",
                 "id_tooltip": "Másolás a vágólapra",
                 "copy_id": "Azonosító másolása",
@@ -713,9 +1679,16 @@
                 "last_updated": "Utoljára frissítve",
                 "version": "Verzió",
                 "platform": "Platform",
+                "pc_performance": "PC teljesítmény",
+                "android_performance": "Android teljesítmény",
+                "ios_performance": "iOS teljesítmény",
                 "time_spent": "Eltöltött idő",
-                "memo": "Jegyzet",
-                "memo_placeholder": "Kattints jegyzet hozzáadásához"
+                "visibility": "Láthatóság",
+                "tags": "Címkék",
+                "memo": "Memó",
+                "memo_placeholder": "Kattints memó hozzáadásához",
+                "listings": "Listázások",
+                "gallery": "Galéria"
             },
             "json": {
                 "header": "JSON"
@@ -746,9 +1719,13 @@
                 "invite_required_tooltip": "Meghívó szükséges",
                 "join_group_tooltip": "Csatlakozás a csoporthoz",
                 "refresh": "Frissítés",
+                "share": "Megosztás",
                 "unsubscribe": "Leiratkozás a bejelentésekről",
                 "subscribe": "Feliratkozás a bejelentésekre",
                 "invite_to_group": "Meghívás a csoportba",
+                "manage_selected": "Kiválasztott csoportok kezelése",
+                "select_all": "Összes kijelölése",
+                "deselect_all": "Kijelölés törlése",
                 "visibility_everyone": "Láthatóság: Mindenki",
                 "visibility_friends": "Láthatóság: Barátok",
                 "visibility_hidden": "Láthatóság: Rejtett",
@@ -760,7 +1737,7 @@
             },
             "info": {
                 "header": "Infó",
-                "instances": "Példányok (Instances)",
+                "instances": "Helyzetek",
                 "announcement": "Bejelentés",
                 "rules": "Szabályok",
                 "members": "Tagok",
@@ -777,7 +1754,9 @@
                 "role_updated_at": "Frissítve:",
                 "role_created_at": "Létrehozva:",
                 "role_permissions": "Engedélyek:",
-                "last_visited": "Utoljára látogatva"
+                "last_visited": "Utoljára látogatva",
+                "past_events": "Korábbi események",
+                "upcoming_events": "Közelgő események"
             },
             "posts": {
                 "header": "Bejegyzések",
@@ -820,7 +1799,7 @@
         },
         "favorite": {
             "header": "Csoport választása",
-            "vrchat_favorites": "VRChat-es kedvencek",
+            "vrchat_favorites": "VRChat kedvencek",
             "local_favorites": "Helyi kedvencek",
             "local_avatar_favorites": "Helyi kedvencek (VRC+ szükséges)"
         },
@@ -828,7 +1807,12 @@
             "header": "Közösségi állapot",
             "history": "Előzmények",
             "status_placeholder": "Állapot",
-            "update": "Frissítés"
+            "update": "Frissítés",
+            "presets": "Előbeállítások",
+            "save_preset": "Mentés előbeállításként",
+            "preset_saved": "Előbeállítás mentve",
+            "preset_exists": "Az előbeállítás már létezik",
+            "preset_limit": "Maximum {max} előbeállítás"
         },
         "language": {
             "header": "Nyelvezet",
@@ -846,7 +1830,7 @@
             "update": "Frissítés"
         },
         "new_instance": {
-            "header": "Új példány",
+            "header": "Új Helyzet",
             "access_type": "Hozzáférés típusa",
             "access_type_public": "Nyilvános",
             "access_type_group": "Csoport",
@@ -863,10 +1847,17 @@
             "region_use": "USA Kelet",
             "region_eu": "Európa",
             "region_jp": "Japán",
+            "content_emoji": "Emoji",
+            "content_stickers": "Matricák",
+            "content_pedestals": "Talapzatok",
+            "content_prints": "Nyomatok",
+            "content_drones": "Drónok",
+            "content_items": "Tárgyak",
+            "content_third_person": "Harmadik személy",
             "world_id": "Világ azonosító",
-            "instance_id": "Példány azonosító",
+            "instance_id": "Helyzet azonosító",
             "instance_id_placeholder": "Véletlenszerű",
-            "instance_creator": "Példány létrehozója",
+            "instance_creator": "Helyzet létrehozója",
             "instance_creator_placeholder": "Felhasználó választása",
             "group_placeholder": "Csoport választása",
             "role_placeholder": "Szerepkörök választása",
@@ -877,12 +1868,16 @@
             "self_invite": "Önmeghívás",
             "invite": "Meghívás",
             "launch": "Indítás",
-            "create_instance": "Példány létrehozása",
-            "queueEnabled": "Várólista",
+            "create_instance": "Helyzet létrehozása",
+            "queueEnabled": "Várakozási sor",
+            "ageGate": "Korhatár",
             "normal": "Normál",
             "group": "Csoport",
             "legacy": "Hagyományos (Legacy)",
-            "roles": "Szerepkörök"
+            "roles": "Szerepkörök",
+            "open_ingame": "Megnyitás játékban",
+            "display_name": "Megjelenített név (VRC+)",
+            "minimum_avatar_performance": "Minimális avatar teljesítmény"
         },
         "launch": {
             "header": "Indítás",
@@ -891,9 +1886,14 @@
             "short_url_notice": "A rövid URL-ek egy meghatározott idő után lejárnak",
             "location": "Helyszín",
             "copy_tooltip": "Másolás a vágólapra",
-            "start_as_desktop": "Indítás asztali módban (Nincs VR)",
+            "start_as_desktop": "Indítás asztali módban",
             "invite": "Meghívás",
-            "launch": "Indítás"
+            "launch": "Indítás (VR)",
+            "open_ingame": "Megnyitás játékban",
+            "self_invite": "Önmeghívás",
+            "game_running_warning": "Biztosan el akarsz indítani egy második VRChat Helyzetet?",
+            "confirm_yes": "Igen",
+            "confirm_no": "Nem"
         },
         "launch_options": {
             "header": "VRChat indítási opciók",
@@ -908,18 +1908,20 @@
             "header": "Meghívás",
             "select_placeholder": "Barátok választása",
             "add_self": "Saját magam hozzáadása",
-            "add_friends_in_instance": "Példányban lévő barátok hozzáadása",
+            "add_friends_in_instance": "Helyzetben lévő barátok hozzáadása",
             "add_favorite_friends": "Kedvenc barátok hozzáadása",
             "invite_with_message": "Meghívás üzenettel",
             "invite": "Meghívás",
-            "friends_in_instance": "Barátok a példányban"
+            "friends_in_instance": "Barátok a Helyzetben"
         },
         "invite_to_group": {
             "header": "Meghívás a csoportba",
             "description": "Ne küldj túl sok meghívót egyszerre, mert korlátozhatják a fiókodat.",
             "choose_group_placeholder": "Csoport választása",
+            "groups_with_invite_permission": "Meghívási jogosultsággal rendelkező csoportok",
             "choose_friends_placeholder": "Barátok választása",
-            "selected_users": "Kiválasztott felhasználók"
+            "selected_users": "Kiválasztott felhasználók",
+            "invite": "Meghívás"
         },
         "invite_message": {
             "header": "Meghívó üzenet küldése",
@@ -932,6 +1934,7 @@
         },
         "invite_request_message": {
             "header": "Meghívó kérelem küldése",
+            "confirmation": "Biztosan el akarod küldeni?",
             "cancel": "Mégse",
             "refresh": "Frissítés"
         },
@@ -946,6 +1949,13 @@
             "header": "Meghívó kérelem válaszüzenet küldése",
             "cancel": "Mégse",
             "refresh": "Frissítés"
+        },
+        "edit_invite_messages": {
+            "header": "Meghívó üzenetek szerkesztése",
+            "invite_message_tab": "Meghívó",
+            "invite_request_tab": "Meghívó kérelem",
+            "invite_request_response_tab": "Meghívó kérelem válasz",
+            "invite_response_tab": "Meghívó válasz"
         },
         "edit_invite_message": {
             "header": "Meghívó üzenet szerkesztése",
@@ -1027,15 +2037,15 @@
             "description": "Kattints a hiányzó bejegyzések betöltésére a Barátlista fülön a teljes kereséshez"
         },
         "note_export": {
-            "header": "Jegyzetek exportálása",
-            "description1": "Ez a folyamat exportálja az összes VRCX jegyzetedet és beimportálja őket a VRChat megjegyzésekbe.",
+            "header": "Megjegyzések exportálása",
+            "description1": "Ez a folyamat exportálja az összes VRCX memódat és beimportálja őket a VRChat megjegyzésekbe.",
             "description2": "Vedd figyelembe a következő korlátozásokat:",
             "description3": "- Az API sebességkorlátozással rendelkezik, ami miatt késleltetés várható a kérések között.",
-            "description4": "- Jegyzetelésenként 256 karakter a limit.",
+            "description4": "- Megjegyzésenként 256 karakter a limit.",
             "description5": "- Káromkodásszűrő (nincs szórakozás).",
             "description6": "- Nincsenek új sorok (szóközzel lesznek helyettesítve).",
             "description7": "- Ez felülírja a felhasználókhoz tartozó meglévő VRChat megjegyzéseket.",
-            "description8": "- Az itt végzett szerkesztések nem érintik a VRCX jegyzeteket, csak a VRChat megjegyzéseket az exportálás után.",
+            "description8": "- Az itt végzett szerkesztések nem érintik a VRCX memókat, csak a VRChat megjegyzéseket az exportálás után.",
             "refresh": "Frissítés",
             "export": "Exportálás",
             "cancel": "Mégse",
@@ -1044,10 +2054,14 @@
             "clear_errors": "Hibák törlése"
         },
         "gallery_icons": {
-            "header": "Fotók, ikonok és emojik",
+            "header": "Fotók, ikonok, emojik és matricák kezelése",
+            "recommended_image_size": "Ajánlott képméret",
             "gallery": "Fotók",
             "icons": "Ikonok",
             "emojis": "Emojik",
+            "stickers": "Matricák",
+            "prints": "Nyomatok",
+            "inventory": "Leltár",
             "refresh": "Frissítés",
             "upload": "Feltöltés",
             "clear": "Törlés",
@@ -1056,7 +2070,28 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "Képkockák száma:",
             "emoji_loop_pingpong": "Ping-pong",
-            "flipbook_info": "Válassz egy 1024x1024-es PNG spritesheet-et animált emojinak. Elérhető rácsméretek: 4, 16 vagy 64 (max 64 FPS, max 64 képkocka)"
+            "flipbook_info": "Válassz egy 1024x1024-es PNG spritesheet-et animált emojinak. Elérhető rácsméretek: 4, 16 vagy 64 (max 64 FPS, max 64 képkocka)",
+            "note": "Megjegyzés",
+            "crop_print_border": "Nyomat szegélyének vágása",
+            "consume_bundle": "Beváltás",
+            "item": "Tárgy",
+            "sticker": "Matrica",
+            "drone_skin": "Drón skin",
+            "emoji": "Emoji",
+            "redeem": "Beváltás",
+            "create_animated_emoji": "Animált emoji generátor",
+            "crop_image": "Feltöltés megerősítése"
+        },
+        "image_crop": {
+            "rotate_left": "Forgatás balra",
+            "rotate_right": "Forgatás jobbra",
+            "flip_h": "Vízszintes tükrözés",
+            "flip_v": "Függőleges tükrözés",
+            "zoom_in": "Nagyítás",
+            "zoom_out": "Kicsinyítés",
+            "mode_fit": "Váltás illesztési módra",
+            "mode_free": "Váltás szabad módra",
+            "reset": "Visszaállítás"
         },
         "gallery_select": {
             "header": "Kép kiválasztása",
@@ -1069,7 +2104,9 @@
             "avatar": "Avatar kép módosítása",
             "world": "Világ képének módosítása",
             "description": "Ajánlott képméret: 1200x900px (4:3)",
-            "upload": "Kép feltöltése"
+            "upload": "Kép feltöltése",
+            "confirm": "Vágás megerősítése",
+            "cancel": "Mégse"
         },
         "screenshot_metadata": {
             "header": "Képernyőkép metaadatai",
@@ -1078,26 +2115,52 @@
             "last_screenshot": "Utolsó képernyőkép",
             "copy_image": "Kép másolása",
             "open_folder": "Mappa megnyitása",
-            "upload": "Feltöltés"
+            "delete_metadata": "Metaadatok törlése",
+            "upload": "Feltöltés",
+            "search_placeholder": "Keresés",
+            "search_type_placeholder": "Keresés típusa",
+            "search_types": {
+                "player_name": "Játékosnév",
+                "player_id": "Játékos azonosító",
+                "world_name": "Világ neve",
+                "world_id": "Világ azonosító"
+            },
+            "no_results": "Nincs találat",
+            "invalid_file": "Érvénytelen fájl. Kérlek, válassz érvényes VRChat képernyőképet.",
+            "section_location": "Helyszín",
+            "section_players": "Játékosok",
+            "section_file_info": "Fájl infó",
+            "section_note": "Megjegyzés",
+            "section_actions": "Műveletek",
+            "col_date": "Dátum",
+            "col_world": "Világ",
+            "col_players": "Játékosok",
+            "col_resolution": "Felbontás",
+            "col_match": "Egyezés",
+            "col_author": "Szerző",
+            "back_to_results": "Vissza a {count} találathoz",
+            "result_count": "{count} találat"
         },
         "set_world_tags": {
             "header": "Világ címkék beállítása",
             "avatar_scaling_disabled": "Avatar méretezés letiltása",
+            "focus_view_disabled": "Fókusznézet letiltása",
             "enable_debugging": "Világ hibakeresés engedélyezése másoknak",
             "author_tags": "Szerzői címkék (vesszővel elválasztva)",
             "content_tags": "Tartalmi figyelmeztetés címkék",
             "content_horror": "Horror",
-            "content_gore": "Erőszak/Vér",
+            "content_gore": "Vér",
             "content_violence": "Erőszak",
             "content_adult": "Felnőtt tartalom",
             "content_sex": "Szexuális tartalom",
+            "default_content_settings": "Alapértelmezett tartalombeállítások",
             "cancel": "Mégse",
             "save": "Mentés"
         },
         "set_avatar_tags": {
             "header": "Avatar címkék beállítása",
             "content_horror": "Horror",
-            "content_gore": "Erőszak/Vér",
+            "content_gore": "Vér",
             "content_violence": "Erőszak",
             "content_adult": "Felnőtt tartalom",
             "content_sex": "Szexuális tartalom",
@@ -1105,6 +2168,21 @@
             "select_all": "Összes kijelölése",
             "select_none": "Kijelölés törlése",
             "cancel": "Mégse",
+            "save": "Mentés"
+        },
+        "set_avatar_styles": {
+            "header": "Avatar stílusok beállítása",
+            "primary_style": "Elsődleges stílus",
+            "secondary_style": "Másodlagos stílus",
+            "select_style": "Stílus kiválasztása",
+            "save_success": "Avatar stílusok sikeresen megváltoztatva",
+            "save_failed": "Nem sikerült megváltoztatni az avatar stílusokat",
+            "cancel": "Mégse",
+            "save": "Mentés"
+        },
+        "allowed_video_player_domains": {
+            "header": "Engedélyezett videolejátszó domainek",
+            "add_domain": "Domain hozzáadása",
             "save": "Mentés"
         },
         "config_json": {
@@ -1123,6 +2201,7 @@
             "picture_directory": "Egyéni kép mappa helye",
             "fpv_steadycam_fov": "Belső nézetű Steadycam FOV",
             "camera_resolution": "Kamera felbontás",
+            "spout_resolution": "Spout felbontás",
             "screenshot_resolution": "Képernyőkép felbontás",
             "picture_sort_by_date": "Képek rendezése mappákba dátum szerint",
             "disable_discord_presence": "Discord Rich Presence letiltása",
@@ -1136,6 +2215,31 @@
             "placeholder": "YouTube API kulcs",
             "guide": "Útmutató",
             "save": "Mentés"
+        },
+        "translation_api": {
+            "header": "Bio fordítási API",
+            "description": "Add meg a Google Translate API kulcsodat",
+            "guide": "Útmutató",
+            "mode": "Szolgáltató",
+            "mode_google": "Google Translate",
+            "mode_openai": "OpenAI",
+            "test": "Teszt",
+            "save": "Mentés",
+            "msg_fill_endpoint_model": "Kérlek, add meg a végpontot és a modellt",
+            "msg_settings_saved": "Fordítási beállítások mentve",
+            "msg_test_success": "Teszt sikeres",
+            "msg_test_failed": "Teszt sikertelen",
+            "openai": {
+                "endpoint": "API végpont",
+                "api_key": "API kulcs (opcionális)",
+                "model": "Modell neve",
+                "prompt_optional": "Prompt (opcionális)"
+            },
+            "fetch_models": "Modellek lekérése",
+            "fetching_models": "Lekérés...",
+            "msg_endpoint_required": "Kérlek, először add meg a végpontot",
+            "msg_models_fetched": "{count} modell található",
+            "msg_no_models_found": "Nem találtunk modelleket"
         },
         "notification_position": {
             "header": "Értesítés pozíciója",
@@ -1154,9 +2258,11 @@
             "close": "Bezárás"
         },
         "previous_instances": {
-            "header": "Előző példányok",
-            "info": "Előző példány infó",
-            "search_placeholder": "Keresés"
+            "header": "Korábbi helyzetek",
+            "info": "Korábbi helyzet infó",
+            "search_placeholder": "Keresés",
+            "table_view": "Táblázat nézet",
+            "chart_view": "Diagram nézet"
         },
         "group_member_moderation": {
             "header": "Csoporttag moderáció",
@@ -1197,11 +2303,20 @@
             "select_user": "Felhasználó kiválasztása",
             "selected_users": "Kiválasztott felhasználók",
             "select_all": "Összes kijelölése",
+            "user_isnt_in_group": "A felhasználó nincs a csoportban",
             "cancel": "Mégse",
             "choose_roles_placeholder": "Szerepkörök választása",
             "selected_roles": "Kiválasztott szerepkörök",
             "remove_roles": "Szerepkörök eltávolítása",
-            "add_roles": "Szerepkörök hozzáadása"
+            "add_roles": "Szerepkörök hozzáadása",
+            "export_logs": "Naplók exportálása",
+            "export_bans": "Tiltások exportálása",
+            "import_bans": "Tiltások importálása",
+            "import_bans_description": "Illessze be alább a CSV-t vagy a felhasználói azonosítókat. A userId oszlop automatikusan felismerhető a CSV fejlécekből, vagy az összes usr_ azonosító kinyerhető.",
+            "import_bans_warning": "Ne importáljon egyszerre túl sokat. Ez egy érzékeny művelet, amelyet a platform aktívan felügyel – használja saját felelősségére!",
+            "import_bans_placeholder": "Illessze be ide a CSV-t vagy a felhasználói azonosítókat (soronként egyet)\nusr_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "import_bans_start": "Importálás és tiltás",
+            "import_bans_clear_errors": "Hibák törlése"
         },
         "group_post_edit": {
             "header": "Bejegyzés létrehozása/szerkesztése",
@@ -1216,9 +2331,35 @@
             "create_post": "Bejegyzés létrehozása",
             "edit_post": "Bejegyzés szerkesztése"
         },
+        "group_calendar": {
+            "header": "Csoportnaptár",
+            "list_view": "Lista nézet",
+            "calendar_view": "Naptár nézet",
+            "no_events": "Nem található esemény",
+            "search_placeholder": "Csoportok vagy események keresése...",
+            "search_no_matching": "Nincs egyező esemény",
+            "search_no_this_month": "Nincs esemény ebben a hónapban",
+            "event_card": {
+                "category": "Kategória",
+                "interested_user": "Érdeklődő felhasználók",
+                "close_time": "Helyzet bezárása a vége után",
+                "created": "Létrehozás dátuma",
+                "description": "Leírás",
+                "export_to_calendar": "Exportálás naptárba",
+                "download_ics": ".ics letöltése",
+                "copied_event_link": "Naptáresemény URL vágólapra másolva"
+            },
+            "featured_events": "Kiemelt események"
+        },
+        "moderate_group": {
+            "header": "Csoporttag moderálása",
+            "choose_group_placeholder": "Csoport választása",
+            "moderation_tools": "Moderációs eszközök"
+        },
         "boop_dialog": {
             "header": "Boop",
             "emoji_manager": "Emoji kezelő",
+            "select_default_emoji": "Alapértelmezett emoji kiválasztása",
             "default_emojis": "Alapértelmezett emojik",
             "cancel": "Mégse",
             "send": "Küldés"
@@ -1233,8 +2374,14 @@
             "header": "VRCX frissítő",
             "latest_version": "A VRCX naprakész.",
             "ready_for_update": "Telepítésre kész, indítsd újra a VRCX-et az alkalmazáshoz.",
+            "branch_stable": "Stabil",
+            "branch_nightly": "Éjszakai",
+            "nightly_title": "Éjszakai verziók",
+            "nightly_notice": "Az éjszakai verziók tesztelésre valók. Stabilitáshoz használd a stabil verziót.",
+            "release": "Kiadás",
             "download": "Letöltés",
-            "install": "Telepítés"
+            "install": "Telepítés",
+            "cancel": "Mégse"
         },
         "change_log": {
             "header": "Változásnapló",
@@ -1245,7 +2392,18 @@
         },
         "open_source": {
             "header": "Nyílt forráskódú szoftverre vonatkozó megjegyzés",
-            "description": "A VRCX nyílt forráskódú szoftvereken alapul. Az ő hozzájárulásuk tette ezt lehetővé."
+            "description": "A VRCX nyílt forráskódú szoftvereken alapul. Az ő hozzájárulásuk tette ezt lehetővé.",
+            "loading": "Generált harmadik fél értesítések betöltése...",
+            "unavailable": "Nem érhető el generált harmadik fél értesítési manifest ebben a buildben. Futtass production buildet az újrageneráláshoz.",
+            "search_placeholder": "Csomagok, verziók vagy licencek keresése",
+            "notice_location_prefix": "Teljes értesítési fájl helye az alkalmazás könyvtárában:",
+            "open_project": "Projekt megnyitása",
+            "open_license_url": "Licenc URL megnyitása",
+            "notice_unavailable": "Ehhez a bejegyzéshez nem lett helyi licencszöveg generálva. Nyisd meg a teljes értesítési fájlt és ellenőrizd ezt a komponenst kiadás előtt.",
+            "select_package": "Válassz egy csomagot a részletek megtekintéséhez.",
+            "review_required": "Ellenőrzés szükséges",
+            "no_results": "Nem található egyező csomag.",
+            "no_version": "Nincs verzió metaadat"
         },
         "primary_password": {
             "header": "Elsődleges jelszó szükséges",
@@ -1264,13 +2422,48 @@
             "name": "Név",
             "date": "Dátum",
             "action": "Művelet",
-            "auto_backup": "Heti automatikus mentés",
+            "auto_backup": "Automatikus mentés 3 naponta (2 hét után törlődik)",
+            "ask_to_restore": "Kérdezzen rá a visszaállításra, ha nincs VRC rendszerleíró beállítás",
             "restore_prompt": "A VRCX észlelte, hogy az automatikus mentés engedélyezve van, de ezen a számítógépen nincsenek adatok. Ha szeretnéd visszaállítani egy mentésből, itt megteheted."
         },
         "avatar_database_provider": {
             "header": "Avatar adatbázis szolgáltató",
             "add_provider": "Szolgáltató hozzáadása"
         }
+    },
+    "confirm": {
+        "title": "Megerősítés",
+        "confirm_button": "Megerősítés",
+        "cancel_button": "Mégse",
+        "message": "Folytatja: {command}?",
+        "logout": "Folytatja? Kijelentkezés",
+        "unfriend": "Folytatja? Barátság megszüntetése",
+        "clear_avatar_history": "Folytatja? Avatar előzmények törlése",
+        "select_avatar": "Folytatja? Avatar kiválasztása",
+        "invite": "Folytatja? Meghívás",
+        "invite_group": "Folytatja? Felhasználó(k) meghívása a csoportba",
+        "delete_log": "Folytatja? Napló törlése",
+        "accept_friend_request": "Folytatja? Barátfelkérés elfogadása",
+        "send_invite": "Folytatja? Meghívás küldése",
+        "decline_type": "Folytatja? {type} elutasítása",
+        "delete_type": "Folytatja? {type}",
+        "command_question": "Biztosan végrehajtja ezt: {command}?",
+        "clear_group": "Folytatja? Csoport törlése",
+        "delete_group": "Folytatja? {name} csoport törlése",
+        "delete_post": "Biztosan törölni szeretnéd ezt a bejegyzést?",
+        "block_group": "Biztosan le szeretnéd tiltani ezt a csoportot?",
+        "unblock_group": "Biztosan fel szeretnéd oldani ennek a csoportnak a tiltását?",
+        "leave_group": "Biztosan el szeretnéd hagyni ezt a csoportot?",
+        "disable_gamelog": "Folytatja? Játéknapló kikapcsolása",
+        "restore_backup": "Folytatja? Mentés visszaállítása",
+        "delete_vrc_registry": "Folytatja? VRC rendszerleíró adatbázis törlése",
+        "clear_cache": "Folytatja? VRChat összes gyorsítótárának törlése",
+        "close_instance": "Folytatja? Helyzet bezárása, senki sem tud majd csatlakozni",
+        "bulk_unfavorite": "Biztosan el szeretnél távolítani {count} kedvencet?\nEz a művelet nem vonható vissza.",
+        "bulk_unfavorite_title": "{count} kedvenc törlése?",
+        "restart_required_title": "Újraindítás szükséges",
+        "restart_now": "Újraindítás most",
+        "restart_later": "Később"
     },
     "prompt": {
         "totp": {
@@ -1310,12 +2503,13 @@
         },
         "direct_access_omni": {
             "header": "Közvetlen hozzáférés",
-            "description": "Adj meg egy Felhasználó/Világ/Példány/Avatar/Csoport URL-t vagy azonosítót (UUID)",
+            "description": "Adj meg egy Felhasználó/Világ/Helyzet/Avatar/Csoport URL-t vagy azonosítót (UUID)",
             "cancel": "Mégse",
             "ok": "OK",
             "input_error": "URL vagy azonosító megadása kötelező",
             "message": {
-                "error": "Érvénytelen URL/azonosító"
+                "error": "Érvénytelen URL/azonosító",
+                "opened_from_clipboard": "Megnyitva a vágólapról"
             }
         },
         "notification_timeout": {
@@ -1374,7 +2568,7 @@
         },
         "change_world_capacity": {
             "header": "A világ létszámának módosítása",
-            "description": "Add meg a világ maximális létszámát, Max: 80",
+            "description": "Add meg a világ maximális létszámát (kemény korlát), max: 80",
             "cancel": "Mégse",
             "ok": "OK",
             "input_error": "Érvényes szám megadása kötelező",
@@ -1384,7 +2578,7 @@
         },
         "change_world_recommended_capacity": {
             "header": "Ajánlott létszám módosítása",
-            "description": "Add meg a világ ajánlott létszámát",
+            "description": "Add meg a világ ajánlott létszámát (puha korlát)",
             "input_error": "Érvényes szám megadása kötelező",
             "message": {
                 "success": "Világ ajánlott létszáma módosítva"
@@ -1430,21 +2624,256 @@
                 "error": "Már létezik csoport ezzel a névvel: {name}"
             }
         },
+        "backup_name": {
+            "header": "Mentés neve",
+            "description": "Add meg a mentés nevét",
+            "input_error": "A név megadása kötelező"
+        },
+        "auto_login_delay": {
+            "header": "Automatikus bejelentkezés késleltetése",
+            "description": "Add meg a késleltetést másodpercekben (0 = letiltva, max 10).",
+            "input_error": "Kérlek, adj meg egy egész számot 0 és 10 között."
+        },
         "proxy_settings": {
             "header": "Proxy beállítások",
             "description": "Add meg a proxy szerver címét és portját",
             "close": "Bezárás",
             "restart": "Újraindítás"
         },
+        "redeem": {
+            "header": "Kód beváltása",
+            "description": "Add meg a beváltandó kódot",
+            "cancel": "Mégse",
+            "redeem": "Beváltás",
+            "success": "Kód sikeresen beváltva"
+        },
         "table_entries_settings": {
-            "header": "Maximális táblázatméret",
-            "description": "Az adatbázisból a felületre betöltött bejegyzések számának korlátozása. A nagyobb méret befolyásolhatja a RAM használatot és a teljesítményt.",
+            "header": "Táblázat bejegyzések beállításai",
+            "description": "Korlátozza az adatbázisból a felületre betöltött bejegyzések számát. A nagyobb szám befolyásolhatja a RAM használatot és a teljesítményt.",
             "table_max_entries": "Maximális táblázatméret",
+            "table_max_entries_error": "Adj meg egy számot {min} és {max} között.",
+            "table_max_entries_hint": "Érvényes tartomány: {min} – {max}.",
+            "search_limit_returns": "Keresési találatok korlátja",
+            "search_limit_returns_error": "Adj meg egy számot {min} és {max} között.",
+            "search_limit_returns_hint": "Érvényes tartomány: {min} – {max}.",
+            "search_limit_returns_warning": "A túl nagy érték lefagyaszthatja az alkalmazást.",
             "cancel": "Mégse",
             "save": "Mentés"
         }
     },
+    "message": {
+        "auto_login_delay_countdown": "Automatikus bejelentkezés {seconds}mp múlva...",
+        "auth": {
+            "login_greeting": "Üdvözöllek, {name}!",
+            "logout_greeting": "Viszlát, {name}!",
+            "email_2fa_resent": "E-mail 2FA újraküldve.",
+            "email_2fa_no_credentials": "Nem lehet 2FA e-mailt küldeni mentett hitelesítési adatok nélkül. Kérlek, jelentkezz be újra.",
+            "incorrect_primary_password": "Helytelen elsődleges jelszó",
+            "saved_credentials_invalid": "A mentett hitelesítési adatok már nem érvényesek.",
+            "account_removed": "Fiók eltávolítva.",
+            "auto_login_success": "Automatikusan bejelentkezve.",
+            "auto_login_failed": "Az automatikus bejelentkezés sikertelen.",
+            "offline": "Offline vagy.",
+            "login_network_issue_hint_title": "Gondok vannak a bejelentkezéssel?",
+            "login_network_issue_hint_description": "Több közelmúltbeli bejelentkezési kísérlet sikertelen volt. Kattints a Megnyitásra a hibaelhárítási útmutatóért."
+        },
+        "vrcx_updater": {
+            "failed": "Nem sikerült ellenőrizni a frissítést: {message}",
+            "failed_install": "Nem sikerült telepíteni a frissítést",
+            "checking_hash": "Hash ellenőrzése..."
+        },
+        "api_handler": {
+            "avatar_private_or_deleted": "Az avatar privát vagy törölték"
+        },
+        "badge": {
+            "updated": "Jelvény frissítve"
+        },
+        "instance": {
+            "closed": "Helyzet bezárva",
+            "removed_form_queue": "{worldName} helyzet eltávolítva a várakozósorból",
+            "not_allowed": "Nincs hozzáférésed ehhez a helyzethez",
+            "create_failed": "Nem sikerült létrehozni a helyzetet"
+        },
+        "avatar": {
+            "selected": "Avatar megváltozott",
+            "already_selected": "Ez az avatar már ki van választva",
+            "change_moderation_failed": "Nem sikerült megváltoztatni az avatar moderációt",
+            "fallback_changed": "Tartalék avatar megváltozott",
+            "blocked": "Avatar letiltva",
+            "updated_public": "Avatar nyilvánosra frissítve",
+            "updated_private": "Avatar priváttra frissítve",
+            "deleted": "Avatar törölve",
+            "impostor_deleted": "Imposztor törölve",
+            "impostor_queued": "Imposztor létrehozásra várakozik",
+            "impostor_regenerated": "Imposztor törölve és újragenerálásra várakozik"
+        },
+        "avatar_lookup": {
+            "not_found": "Az avatar nem található a keresőszolgáltatóknál",
+            "failed": "Avatar keresés sikertelen",
+            "private_or_not_found": "A felhasználó avatarjá privát vagy nem található a keresőszolgáltatóknál",
+            "loading": "Avatar keresése a keresőszolgáltatóknál"
+        },
+        "database": {
+            "upgrade_complete": "Adatbázis-frissítés kész",
+            "upgrade_in_progress_title": "Adatbázis-frissítés folyamatban",
+            "upgrade_in_progress_description": "Az adatbázis frissítése {from}-ről {to}-ra. Kérlek, ne zárd be a VRCX-et.",
+            "upgrade_in_progress_initializing": "Adatbázis-frissítés inicializálása. Kérlek, ne zárd be a VRCX-et.",
+            "upgrade_in_progress_wait": "A felhasználói műveletek ideiglenesen le vannak tiltva, amíg a frissítés be nem fejeződik.",
+            "upgrade_failed_title": "Adatbázis-frissítés sikertelen",
+            "upgrade_failed_description": "Az adatbázis-frissítés sikertelen. Ellenőrizd a konzolt a részletekért.",
+            "disk_space": "Kérlek, szabadíts fel lemezterületet.",
+            "disk_error": "Kérlek, ellenőrizd a lemezt hibák miatt."
+        },
+        "file": {
+            "not_image": "A fájl nem kép",
+            "too_large": "A fájl mérete túl nagy",
+            "folder_opened": "Mappa megnyitva",
+            "folder_missing": "A mappa nem létezik"
+        },
+        "group": {
+            "load_failed": "Nem sikerült betölteni a csoportot",
+            "joined": "Csoporthoz csatlakoztál",
+            "join_request_sent": "Csatlakozási kérelem elküldve",
+            "visibility_updated": "Csoport láthatósága frissítve",
+            "subscription_updated": "Csoport előfizetés frissítve"
+        },
+        "invite": {
+            "self_sent": "Önmeghívás elküldve",
+            "sent": "Meghívó elküldve",
+            "message_update_failed": "A VRChat API nem frissítette az üzenetet, próbáld újra",
+            "message_updated": "Meghívó üzenet frissítve",
+            "response_sent": "Meghívó válaszüzenet elküldve",
+            "response_photo_sent": "Meghívó fotó válaszüzenet elküldve"
+        },
+        "launch": {
+            "invalid_path": "Érvénytelen elérési út, meg kell adnod a VRChat mappát vagy a launch.exe-t"
+        },
+        "gallery": {
+            "uploaded": "Galéria kép feltöltve",
+            "failed": "Nem sikerült feltölteni a galéria képet",
+            "profile_pic_changed": "Profilkép megváltozott",
+            "profile_icon_changed": "Profil ikon megváltozott"
+        },
+        "upload": {
+            "loading": "Feltöltés",
+            "success": "Feltöltés kész",
+            "error": "Feltöltés sikertelen"
+        },
+        "world": {
+            "load_failed": "Nem sikerült betölteni a világot",
+            "home_updated": "Otthoni világ frissítve",
+            "home_reset": "Otthoni világ visszaállítva",
+            "published": "Világ közzétéve",
+            "unpublished": "Világ visszavonva",
+            "persistent_data_deleted": "Állandó adatok törölve",
+            "deleted": "Világ törölve",
+            "id_copied": "Világ azonosító vágólapra másolva",
+            "url_copied": "Világ URL vágólapra másolva",
+            "name_copied": "Világ neve vágólapra másolva"
+        },
+        "user": {
+            "moderated": "Felhasználó moderálva",
+            "load_failed": "Nem sikerült betölteni a felhasználót",
+            "id_copied": "Felhasználói azonosító vágólapra másolva",
+            "url_copied": "Felhasználói URL vágólapra másolva",
+            "display_name_copied": "Felhasználó megjelenített neve vágólapra másolva",
+            "home_reset": "Otthoni világ visszaállítva",
+            "request_invite_sent": "Meghívás kérése elküldve",
+            "no_fallback_avatar": "Nincs tartalék avatar beállítva"
+        },
+        "friend": {
+            "load_failed": "Nem sikerült betölteni a barátlistát, kijelentkezés"
+        },
+        "vrcplus": {
+            "required": "VRCPlus szükséges"
+        },
+        "screenshot_metadata": {
+            "deleted": "Képernyőkép metaadatok törölve",
+            "delete_failed": "Nem sikerült törölni a képernyőkép metaadatokat"
+        },
+        "crash": {
+            "vrcx_reload": "A VRCX stabilitási okokból újratöltődött"
+        },
+        "image": {
+            "downloading": "Kép letöltése...",
+            "copied_to_clipboard": "Kép vágólapra másolva"
+        },
+        "registry": {
+            "restored": "VRC rendszerleíró adatbázis beállítások visszaállítva",
+            "deleted": "VRC rendszerleíró adatbázis beállítások törölve",
+            "restore_failed": "Nem sikerült visszaállítani a VRC rendszerleíró adatbázis beállításokat. Ellenőrizd a konzolt a teljes hibáért: {error}",
+            "invalid_json": "Érvénytelen JSON"
+        },
+        "cache": {
+            "deleted": "Az összes VRChat gyorsítótár törölve",
+            "delete_error": "Hiba a VRChat gyorsítótár törlésekor: {error}",
+            "invalid_config": "Érvénytelen JSON a config.json-ban"
+        },
+        "gamelog": {
+            "vrchat_must_be_closed": "A VRChat-et be kell zárni, mielőtt megváltoztatható ez a beállítás"
+        },
+        "copy_failed": "Másolás sikertelen",
+        "error": "Hiba"
+    },
+    "notifications": {
+        "has_joined": "csatlakozott",
+        "has_left": "elhagyta",
+        "is_joining": "csatlakozik",
+        "gps": "itt van: {location}",
+        "online_location": "bejelentkezett itt: {location}",
+        "online": "bejelentkezett",
+        "offline": "kijelentkezett",
+        "status_update": "állapota: {status} {description}",
+        "invite": "meghívott ide: {location} {message}",
+        "request_invite": "meghívást kért {message}",
+        "invite_response": "válaszolt a meghívódra {message}",
+        "request_invite_response": "válaszolt a meghívás kérésedre {message}",
+        "friend_request": "barátfelkérést küldött",
+        "friend": "már a barátod",
+        "unfriend": "már nem a barátod",
+        "trust_level": "Bizalmi szint: {trustLevel}",
+        "display_name": "megváltoztatta a nevét erre: {displayName}",
+        "group_announcement_title": "Csoport bejelentés",
+        "group_informative_title": "Csoport tájékoztató",
+        "group_invite_title": "Csoport meghívó",
+        "group_join_request_title": "Csatlakozási kérelem",
+        "group_transfer_request_title": "Csoport átruházási kérelem",
+        "group_queue_ready_title": "Várakozósor kész",
+        "instance_closed_title": "Helyzet bezárva",
+        "portal_spawn_name": "portált nyitott ide: {location}",
+        "portal_spawn": "Egy felhasználó portált nyitott",
+        "avatar_change": "avatart váltott: {avatar}",
+        "chat_message": "mondta: {message}",
+        "blocked_player_joined": "Letiltott felhasználó csatlakozott",
+        "blocked_player_left": "Letiltott felhasználó elhagyta",
+        "muted_player_joined": "Elnémított felhasználó csatlakozott",
+        "muted_player_left": "Elnémított felhasználó elhagyta",
+        "blocked": "letiltott téged",
+        "unblocked": "feloldotta a tiltásodat",
+        "muted": "elnémított téged",
+        "unmuted": "feloldotta a némításodat"
+    },
+    "status": {
+        "title": "VRChat állapot"
+    },
+    "location": {
+        "offline": "Offline",
+        "private": "Privát",
+        "traveling": "Utazás"
+    },
     "table": {
+        "header_menu": {
+            "reset_all": "Összes visszaállítása",
+            "lock_column_order": "Oszlop zárolása"
+        },
+        "pagination": {
+            "rows_per_page": "Sorok oldalanként",
+            "first": "Első",
+            "previous": "Előző",
+            "next": "Következő",
+            "last": "Utolsó",
+            "more_pages": "Több oldal"
+        },
         "feed": {
             "date": "Dátum",
             "type": "Típus",
@@ -1470,6 +2899,7 @@
             "rank": "Rang",
             "language": "Nyelv",
             "bioLink": "Bemutatkozó linkek",
+            "note": "Megjegyzés",
             "date": "Dátum",
             "user": "Felhasználó",
             "type": "Típus",
@@ -1511,7 +2941,9 @@
             "lastActivity": "Utolsó aktivitás",
             "lastLogin": "Utolsó bejelentkezés",
             "dateJoined": "Ismeretség kezdete",
-            "unfriend": "Ismerős eltávolítása"
+            "unfriend": "Ismerős eltávolítása",
+            "mutualFriends": "Közös barátok",
+            "mutualOptedOut": "Ez a felhasználó letiltotta a közös barátok megosztását. Gyorsítótárazott adatok megjelenítése."
         },
         "profile": {
             "invite_messages": {
@@ -1534,8 +2966,8 @@
             "date": "Dátum",
             "display_name": "Megjelenített név",
             "world": "Világ",
-            "instance_name": "Példány neve",
-            "instance_creator": "Példány létrehozója",
+            "instance_name": "Helyzet neve",
+            "instance_creator": "Helyzet létrehozója",
             "time": "Idő",
             "count": "Szám",
             "action": "Művelet"
@@ -1548,5 +2980,186 @@
             "cpu": "CPU:",
             "online": "Online:"
         }
+    },
+    "api": {
+        "status_code": {
+            "100": "Folytatás",
+            "101": "Protokollváltás",
+            "102": "Feldolgozás",
+            "103": "Korai tippek",
+            "200": "OK",
+            "201": "Létrehozva",
+            "202": "Elfogadva",
+            "203": "Nem hiteles információ",
+            "204": "Nincs tartalom",
+            "205": "Tartalom visszaállítása",
+            "206": "Részleges tartalom",
+            "207": "Többszörös állapot",
+            "208": "Már jelentve",
+            "226": "IM használva",
+            "300": "Többszörös választás",
+            "301": "Véglegesen áthelyezve",
+            "302": "Megtalálva",
+            "303": "Máshol néz",
+            "304": "Nem módosítva",
+            "305": "Proxy használata",
+            "306": "Proxy váltás",
+            "307": "Ideiglenes átirányítás",
+            "308": "Végleges átirányítás",
+            "400": "Hibás kérés",
+            "401": "Jogosulatlan",
+            "402": "Fizetés szükséges",
+            "403": "Tiltott",
+            "404": "Nem található",
+            "405": "Módszer nem engedélyezett",
+            "406": "Nem elfogadható",
+            "407": "Proxy hitelesítés szükséges",
+            "408": "Kérés időtúllépés",
+            "409": "Ütközés",
+            "410": "Eltűnt",
+            "411": "Hossz szükséges",
+            "412": "Előfeltétel sikertelen",
+            "413": "Tartalom túl nagy",
+            "414": "URI túl hosszú",
+            "415": "Nem támogatott médiatípus",
+            "416": "Tartomány nem kielégíthető",
+            "417": "Elvárás sikertelen",
+            "418": "Én egy teáskanna vagyok",
+            "421": "Hibásan irányított kérés",
+            "422": "Feldolgozhatatlan entitás",
+            "423": "Zárolva",
+            "424": "Sikertelen függőség",
+            "425": "Túl korai",
+            "426": "Frissítés szükséges",
+            "428": "Előfeltétel szükséges",
+            "429": "Túl sok kérés",
+            "431": "Kérés fejléc mezők túl nagyok",
+            "451": "Jogi okokból nem elérhető",
+            "500": "Belső szerverhiba",
+            "501": "Nincs megvalósítva",
+            "502": "Rossz átjáró",
+            "503": "A szolgáltatás nem elérhető",
+            "504": "Átjáró időtúllépés",
+            "505": "HTTP verzió nem támogatott",
+            "506": "Változat is tárgyal",
+            "507": "Elégtelen tároló",
+            "508": "Hurok észlelve",
+            "510": "Nem kiterjesztett",
+            "511": "Hálózati hitelesítés szükséges",
+            "520": "A webszerver ismeretlen hibát ad vissza",
+            "521": "A webszerver nem elérhető",
+            "522": "Kapcsolat időtúllépés",
+            "523": "A forrás nem érhető el",
+            "524": "Időtúllépés történt",
+            "525": "SSL kézfogás sikertelen",
+            "526": "Érvénytelen SSL tanúsítvány",
+            "527": "Railgun listener forráshibája"
+        },
+        "error": {
+            "message": {
+                "error_message": "Hibaüzenet",
+                "endpoint": "Végpont",
+                "missing_credentials": "Hiányzó hitelesítési adatok",
+                "vpn_in_use": "A VRChat jelenleg a legtöbb VPN-t blokkolja. Kérlek, kapcsold ki a csatlakoztatott VPN-eket és próbáld újra.",
+                "login_error": "Bejelentkezési hiba",
+                "invalid_json_response": "Érvénytelen JSON válasz",
+                "403_404_bailing_request": "Kérés megszakítva a közelmúltbeli 404/403 miatt",
+                "unavailable": "A szolgáltatás VRChat belső problémák miatt nem elérhető"
+            }
+        }
+    },
+    "accessibility": {
+        "toggle_sidebar": "Oldalsáv váltása",
+        "back_to_top": "Vissza a tetejére",
+        "toggle_password": "Jelszó láthatóságának váltása",
+        "clear_input": "Bevitel törlése"
+    },
+    "onboarding": {
+        "welcome": {
+            "title": "Üdvözöl a VRCX",
+            "subtitle": "Íme néhány dolog, amit talán nem fedezel fel magadtól.",
+            "features": {
+                "user_profiles": {
+                    "title": "Felhasználói profilok",
+                    "description": "Kattints bármelyik felhasználóra a közös barátok, aktivitási hőtérképek és belépési/kilépési naplók megtekintéséhez"
+                },
+                "right_click": {
+                    "title": "Helyi menük",
+                    "description": "Jobb klikk a kulcsfontosságú elemekre gyors műveletek és további beállítások eléréséhez"
+                },
+                "dashboard": {
+                    "title": "Egyéni irányítópultok",
+                    "description": "Hozd létre a saját munkaterületedet az igényeidnek megfelelő panelek kombinálásával"
+                },
+                "quick_search": {
+                    "title": "Gyorskeresés",
+                    "description": "Nyomd meg a Ctrl+K (⌘+K Mac-en) billentyűkombinációt a felhasználók, világok és avatarok azonnali kereséséhez"
+                }
+            },
+            "cta": "Kezdjük el"
+        },
+        "whatsnew": {
+            "title": "Mi újság a VRCX-ben",
+            "subtitle": "Ezek változtak ebben a frissítésben.",
+            "cta": "Értem",
+            "common": {
+                "got_it": "Értem",
+                "view_changelog": "Összes változás megtekintése",
+                "support": "VRCX támogatása"
+            },
+            "releases": {
+                "2026_05_03": {
+                    "title": "Fedezd fel az új funkciókat",
+                    "subtitle": "Néhány hasznos funkció, amit talán nem veszel észre",
+                    "items": {
+                        "quick_search": {
+                            "title": "Gyorskeresés",
+                            "description": "Nyomd meg a Ctrl+K (⌘K) billentyűkombinációt felhasználók, világok, csoportok és avatarok kereséséhez."
+                        },
+                        "local_favorite_groups": {
+                            "title": "Helyi kedvencek",
+                            "description": "Korlátlan egyéni barátcsoportot hozhatsz létre a VRChat korlátozásain túl."
+                        },
+                        "auto_status": {
+                            "title": "Automatikus állapot",
+                            "description": "Automatikus állapotváltás a barátok jelenléte alapján, csoportok szerinti szűréssel."
+                        },
+                        "right_click_menus": {
+                            "title": "Helyi menük",
+                            "description": "Jobb klikk a barátokon, táblázatokon és fejléceken a gyors műveletekért."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "status_bar": {
+        "game": "Játék",
+        "game_running": "A VRChat fut",
+        "game_stopped": "A VRChat nem fut",
+        "game_started_at": "Elindult",
+        "game_session_duration": "Időtartam",
+        "game_last_session": "Utolsó munkamenet",
+        "game_last_offline": "Offline azóta",
+        "servers": "Szerverek",
+        "servers_ok": "A VRChat szerverek működnek",
+        "servers_issue": "VRChat szerverprobléma",
+        "steamvr": "SteamVR",
+        "steamvr_running": "A SteamVR fut",
+        "steamvr_stopped": "A SteamVR nem fut",
+        "proxy": "Proxy",
+        "ws_connected": "Csatlakozva",
+        "ws_disconnected": "Lecsatlakozva",
+        "ws_avg_per_minute": "{count} átl./perc",
+        "zoom": "Nagyítás",
+        "zoom_tooltip": "Kattints a nagyítási szint módosításához",
+        "app_uptime": "Alkalmazás üzemideje",
+        "app_uptime_short": "Üzemidő",
+        "clocks": "Órák",
+        "clock": "Óra",
+        "clocks_label": "Órák",
+        "clocks_none": "Nincs",
+        "timezone": "Időzóna",
+        "now_playing": "Most játszik"
     }
 }
