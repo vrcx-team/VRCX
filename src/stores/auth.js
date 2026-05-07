@@ -43,9 +43,7 @@ export const useAuthStore = defineStore('Auth', () => {
     const activityStore = useActivityStore();
 
     const { t } = useI18n();
-    const state = reactive({
-        autoLoginAttempts: new Set()
-    });
+    const autoLoginAttempts = ref(new Set());
 
     const loginForm = ref({
         loading: false,
@@ -1033,8 +1031,7 @@ export const useAuthStore = defineStore('Auth', () => {
     }
 
     return {
-        state,
-
+        autoLoginAttempts,
         loginForm,
         enablePrimaryPasswordDialog,
         credentialsToSave,

@@ -328,13 +328,10 @@ export const useNotificationStore = defineStore('Notification', () => {
                             break;
                         }
                     } else {
-                        const remoteFavs =
-                            favoriteStore.cachedFavorites.get(groupKey);
                         if (
-                            remoteFavs &&
-                            remoteFavs.some(
-                                (f) => f.favoriteId === ref.senderUserId
-                            )
+                            favoriteStore.cachedFavoritesByObjectId.get(
+                                ref.senderUserId
+                            )?.$groupKey === groupKey
                         ) {
                             found = true;
                             break;

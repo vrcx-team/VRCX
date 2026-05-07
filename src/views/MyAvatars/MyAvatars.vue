@@ -244,7 +244,7 @@
                 :style="{ height: `${virtualizer?.getTotalSize?.() ?? 0}px` }">
                 <div
                     v-for="vItem in virtualItems"
-                    :key="String(vItem.virtualItem.key)"
+                    :key="vItem.row?.key ?? String(vItem.virtualItem.index)"
                     class="absolute left-0 top-0 w-full box-border pb-2"
                     :data-index="vItem.virtualItem.index"
                     :ref="virtualizer.measureElement"
@@ -258,7 +258,6 @@
                         <MyAvatarCard
                             v-for="avatar in vItem.row.items"
                             :key="avatar.id"
-                            v-memo="[currentAvatarId, cardScale]"
                             :avatar="avatar"
                             :current-avatar-id="currentAvatarId"
                             :card-scale="cardScale"
@@ -314,7 +313,7 @@
     import { useI18n } from 'vue-i18n';
     import { useVirtualizer } from '@tanstack/vue-virtual';
 
-    import { useAppearanceSettingsStore, useAvatarStore, useModalStore, useUserStore } from '../../stores';
+    import { useAppearanceSettingsStore, useModalStore, useUserStore } from '../../stores';
     import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from '../../components/ui/context-menu';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
     import { Field, FieldContent, FieldLabel } from '../../components/ui/field';
@@ -353,7 +352,6 @@
 
     const { t } = useI18n();
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const avatarStore = useAvatarStore();
     const modalStore = useModalStore();
 
     const { currentUser } = storeToRefs(useUserStore());
@@ -722,6 +720,7 @@
     const virtualizer = useVirtualizer(
         computed(() => ({
             count: gridRows.value.length,
+            getItemKey: (index) => gridRows.value[index]?.key ?? `avatar-row:${index}`,
             getScrollElement: () => gridScrollRef.value,
             estimateSize: (index) => estimateRowHeight(gridRows.value[index]?.items?.length ?? 0),
             overscan: 5
@@ -739,7 +738,13 @@
     watch(gridContainerRefEl, (el) => {
         gridContainerRef.value = el;
     });
-    watch([cardScale, cardSpacing, gridRows], () => {
+
+    const gridLayoutSignature = computed(() => {
+        const firstRowItems = gridRows.value[0]?.items?.length ?? 0;
+        return `${filteredAvatars.value.length}:${firstRowItems}:${cardScale.value}:${cardSpacing.value}`;
+    });
+
+    watch(gridLayoutSignature, () => {
         nextTick(() => {
             updateContainerWidth();
             virtualizer.value?.measure?.();
