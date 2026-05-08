@@ -28,7 +28,7 @@
                     <div style="flex: 1">
                         <div>
                             <span
-                                class="font-bold mr-1.5"
+                                class="font-bold mr-1.5 break-all"
                                 style="cursor: pointer"
                                 v-text="avatarDialog.ref.name"
                                 @click="copyToClipboard(avatarDialog.ref.name)"></span>
@@ -177,7 +177,7 @@
                         <div style="margin-top: 6px">
                             <span
                                 v-show="avatarDialog.ref.name !== avatarDialog.ref.description"
-                                class="text-xs"
+                                class="text-xs break-all"
                                 v-text="avatarDialog.ref.description"></span>
                         </div>
                     </div>
