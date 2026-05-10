@@ -48,6 +48,7 @@
         "friends_locations": "Friends Locations",
         "feed": "Feed",
         "game_log": "Game Log",
+        "api_log": "API Log",
         "player_list": "Player List",
         "search": "Search",
         "favorites": "Favorites",
@@ -292,7 +293,12 @@
                 "players_left": "{count} players left",
                 "play_count": "×{count}",
                 "no_data": "No game log data"
-            }
+            },
+            "aget_tooltip": "Average API GET requests per hour this session"
+        },
+        "api_log": {
+            "clear": "Clear",
+            "no_entries": "No requests yet"
         },
         "player_list": {
             "photon": {
