@@ -55,7 +55,9 @@
             </div>
         </div>
 
-        <div v-if="isLoading && filteredEventCount === 0" class="flex flex-col items-center justify-center flex-1 mt-8 gap-2">
+        <div
+            v-if="isLoading && filteredEventCount === 0"
+            class="flex flex-col items-center justify-center flex-1 mt-8 gap-2">
             <Spinner class="h-5 w-5" />
             <span class="text-sm text-muted-foreground">{{ t('dialog.user.activity.preparing_data') }}</span>
             <span class="text-xs text-muted-foreground">{{ t('dialog.user.activity.preparing_data_hint') }}</span>
@@ -491,7 +493,10 @@
             return;
         }
 
-        const rangeDays = parseInt(userDialog.value.activityPeriodDays, 10) === 0 ? 3650 : parseInt(userDialog.value.activityPeriodDays, 10) || 30;
+        const rangeDays =
+            parseInt(userDialog.value.activityPeriodDays, 10) === 0
+                ? 3650
+                : parseInt(userDialog.value.activityPeriodDays, 10) || 30;
         await loadTopWorldsSection({
             userId,
             rangeDays,
@@ -514,7 +519,9 @@
 
         try {
             const rangeDays =
-                parseInt(userDialog.value.activityPeriodDays, 10) === 0 ? 3650 : parseInt(userDialog.value.activityPeriodDays, 10) || 30;
+                parseInt(userDialog.value.activityPeriodDays, 10) === 0
+                    ? 3650
+                    : parseInt(userDialog.value.activityPeriodDays, 10) || 30;
             const activityView = await activityStore.loadActivityView({
                 userId,
                 isSelf: isSelf.value,
@@ -596,7 +603,9 @@
 
         try {
             const rangeDays =
-                parseInt(userDialog.value.activityPeriodDays, 10) === 0 ? 3650 : parseInt(userDialog.value.activityPeriodDays, 10) || 30;
+                parseInt(userDialog.value.activityPeriodDays, 10) === 0
+                    ? 3650
+                    : parseInt(userDialog.value.activityPeriodDays, 10) || 30;
             const overlapView = await activityStore.loadOverlapView({
                 currentUserId: currentUser.value.id,
                 targetUserId: userId,
@@ -844,8 +853,7 @@
         }
         if (userId !== userActivity.value.lastLoadedUserId) {
             resetActivityState();
-        }
-        else if (isLoading.value || filteredEventCount.value > 0) {
+        } else if (isLoading.value || filteredEventCount.value > 0) {
             return;
         }
 
