@@ -1021,21 +1021,6 @@ const groupReq = {
             };
             return args;
         });
-    },
-
-    followGroupEvent(params) {
-        return request(`calendar/${params.groupId}/${params.eventId}/follow`, {
-            method: 'POST',
-            params: {
-                isFollowing: params.isFollowing
-            }
-        }).then((json) => {
-            const args = {
-                json,
-                params
-            };
-            return args;
-        });
     }
 
     // getRequestedGroups() {

@@ -215,15 +215,6 @@
         }
     );
 
-    watch(
-        () => userDialog.value.activeTab,
-        (activeTab) => {
-            if (activeTab === 'Activity' && userDialog.value.visible && !userDialog.value.loading) {
-                activityTabRef.value?.loadOnlineFrequency(userDialog.value.id);
-            }
-        }
-    );
-
     onMounted(() => {
         if (userDialog.value.visible && !userDialog.value.loading) {
             loadLastActiveTab();

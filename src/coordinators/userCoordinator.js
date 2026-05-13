@@ -587,8 +587,6 @@ export async function refreshUserDialogAvatars(fileId) {
     if (fileId) {
         D.loading = true;
     }
-    D.avatarSorting = 'update';
-    D.avatarReleaseStatus = 'all';
     const params = {
         n: 50,
         offset: 0,
