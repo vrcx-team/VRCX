@@ -207,6 +207,7 @@ export const useUserStore = defineStore('User', () => {
         },
         avatarSorting: 'update',
         avatarReleaseStatus: 'all',
+        activityPeriodDays: '30',
         memo: '',
         $avatarInfo: {
             ownerId: '',
