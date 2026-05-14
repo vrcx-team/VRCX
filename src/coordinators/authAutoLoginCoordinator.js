@@ -18,6 +18,7 @@ export async function runHandleAutoLoginFlow({
     const t = i18n.global.t;
 
     if (authStore.attemptingAutoLogin) {
+        console.warn('Already attempting auto login, skipping.');
         return;
     }
     authStore.setAttemptingAutoLogin(true);
@@ -25,6 +26,7 @@ export async function runHandleAutoLoginFlow({
         authStore.loginForm.lastUserLoggedIn
     );
     if (!user) {
+        console.log('No saved credentials found for auto login.');
         authStore.setAttemptingAutoLogin(false);
         return;
     }
