@@ -1,6 +1,5 @@
 export const ONLINE_SESSION_MERGE_GAP_MS = 5 * 60 * 1000;
 export const DEFAULT_MAX_SESSION_MS = 8 * 60 * 60 * 1000;
-const ONE_HOUR_MS = 60 * 60 * 1000;
 
 export function buildSessionsFromEvents(events, initialStart = null) {
     const sessions = [];
@@ -129,7 +128,7 @@ export function buildHeatmapBuckets(
         while (cursor < end) {
             const date = new Date(cursor);
             const slot = date.getDay() * 24 + date.getHours();
-            date.setUTCHours(date.getUTCHours() + 1, 0, 0, 0);
+            date.setHours(date.getHours() + 1, 0, 0, 0);
             const nextHourMs = date.getTime();
             const segmentEnd = Math.min(nextHourMs, end);
             buckets[slot] += (segmentEnd - cursor) / 60000;
@@ -432,23 +431,24 @@ export function buildDailySummary(
 ) {
     const dayMap = new Map();
     const clipped = clipSessionsToRange(sessions, rangeStartMs, rangeEndMs);
-    const ONE_DAY_MS = 86400000;
-    let lastDayStart = -1;
+    let lastDayStart;
     let lastDayKey = '';
 
     for (const session of clipped) {
         let cursor = session.start;
         while (cursor < session.end) {
-            const dayStart = Math.floor(cursor / ONE_DAY_MS) * ONE_DAY_MS;
             let dayKey;
-            if (dayStart === lastDayStart) {
+            if (cursor < lastDayStart) {
                 dayKey = lastDayKey;
             } else {
+                const dayStart = new Date(cursor);
+                dayStart.setHours(0, 0, 0, 0);
                 dayKey = formatTimestampKey(dayStart);
-                lastDayStart = dayStart;
+                dayStart.setDate(dayStart.getDate() + 1);
+                lastDayStart = dayStart.getTime();
                 lastDayKey = dayKey;
             }
-            const nextDayStart = dayStart + ONE_DAY_MS;
+            const nextDayStart = lastDayStart;
             const segmentEnd = Math.min(session.end, nextDayStart);
             const duration = segmentEnd - cursor;
             dayMap.set(dayKey, (dayMap.get(dayKey) || 0) + duration);
@@ -465,10 +465,9 @@ export function buildDailySummary(
 }
 
 export function formatTimestampKey(timestamp) {
-    const date = new Date(timestamp);
-    const year = date.getUTCFullYear();
-    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(date.getUTCDate()).padStart(2, '0');
+    const year = timestamp.getFullYear();
+    const month = String(timestamp.getMonth() + 1).padStart(2, '0');
+    const day = String(timestamp.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
 

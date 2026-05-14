@@ -1008,6 +1008,12 @@ export const useAuthStore = defineStore('Auth', () => {
      *
      */
     async function loginComplete() {
+        if (!userStore.currentUser?.id) {
+            console.error(
+                'No current user after login complete, aborting post-login flow.'
+            );
+            return;
+        }
         await database.initUserTables(userStore.currentUser.id);
         advancedSettingsStore.runAvatarAutoCleanup(userStore.currentUser.id);
         watchState.isLoggedIn = true;

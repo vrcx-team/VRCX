@@ -719,7 +719,6 @@
 
     const handleAddDashboard = async () => {
         const dashboard = await dashboardStore.createDashboard(t('dashboard.default_name'));
-        dashboardStore.setEditingDashboardId(dashboard.id);
         localLayout.value.push({
             type: 'item',
             key: `${DASHBOARD_NAV_KEY_PREFIX}${dashboard.id}`
