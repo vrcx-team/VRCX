@@ -166,33 +166,18 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             autoAcceptInviteGroupsStrConfig
         );
 
-        // When "Custom Favorite Groups" was first added to the auto-accept dialog, users
-        // who had previously used the "VRCX Favorites" option (stored internally as
-        // 'Selected Favorites') found that nobody was being auto-accepted anymore.
-        // The cause: the old setting stored only the mode string (VRCX_autoAcceptInviteRequests),
-        // and "VRCX Favorites" implicitly meant "use whatever groups are in
-        // VRCX_localFavoriteFriendsGroups". The new UI introduced a dedicated
-        // VRCX_autoAcceptInviteGroups key for the group picker, but no migration was written —
-        // so on first launch after the update it defaulted to an empty array and silently
-        // accepted nobody.
-        //
-        // Fix: if someone has 'Selected Favorites' set but the groups list is still at its
-        // default empty value, we know they're coming from the old version and migrate them.
         if (
             autoAcceptInviteRequestsConfig === 'Selected Favorites' &&
             autoAcceptInviteGroupsStrConfig === '[]'
         ) {
             const oldGroups = JSON.parse(localFavoriteFriendsGroupsStrConfig);
             if (oldGroups.length === 0) {
-                // They had no group filter before, meaning all local favorites were accepted.
-                // "All Favorites" covers that now (and also includes VRChat API favorites).
                 autoAcceptInviteRequests.value = 'All Favorites';
                 configRepository.setString(
                     'VRCX_autoAcceptInviteRequests',
                     'All Favorites'
                 );
             } else {
-                // They had specific local groups selected — carry those over with the local: prefix.
                 const migratedGroups = oldGroups.map((g) => `local:${g}`);
                 autoAcceptInviteGroups.value = migratedGroups;
                 configRepository.setString(
