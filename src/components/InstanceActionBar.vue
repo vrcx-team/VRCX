@@ -4,7 +4,7 @@
             <div v-if="showLaunchButton" class="inline-block">
                 <TooltipWrapper side="top" :content="t('dialog.user.info.launch_invite_tooltip')">
                     <Button
-                        class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                        class="rounded-lg w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
                         size="icon-sm"
                         variant="outline"
                         @click="confirmLaunch">
@@ -18,7 +18,7 @@
                     side="top"
                     :content="t('dialog.user.info.self_invite_tooltip')">
                     <Button
-                        class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                        class="rounded-lg h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
                         size="icon-sm"
                         variant="outline"
                         @click="confirmInvite">
@@ -27,14 +27,14 @@
                 </TooltipWrapper>
                 <TooltipWrapper v-else side="top" :content="t('dialog.user.info.open_in_vrchat_tooltip')">
                     <Button
-                        class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                        class="rounded-lg h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
                         size="icon-sm"
                         variant="outline"
                         v-if="isOpeningInstance">
                         <Loader2 class="h-4 w-4 animate-spin" />
                     </Button>
                     <Button
-                        class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                        class="rounded-lg h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
                         size="icon-sm"
                         variant="outline"
                         v-else
@@ -45,7 +45,7 @@
             </div>
             <TooltipWrapper v-if="showRefreshButton" side="top" :content="refreshTooltip">
                 <Button
-                    class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                    class="rounded-lg w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
                     size="icon"
                     variant="outline"
                     @click="handleRefresh">
@@ -54,7 +54,7 @@
             </TooltipWrapper>
             <TooltipWrapper v-if="showHistoryButton" side="top" :content="historyTooltip">
                 <Button
-                    class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                    class="rounded-lg w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
                     size="icon-sm"
                     variant="outline"
                     @click="handleHistory">
