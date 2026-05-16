@@ -1,7 +1,8 @@
 <template>
+    <!-- Instance/Location section in ful lwidh currently but only when relevant.. -->
     <template v-if="isFriendOnline(userDialog.friend) || currentUser.id === userDialog.id">
         <div
-            class="mb-2 pb-2 border-b border-border"
+            class="mb-2.5 pb-2.5 border-b border-border"
             v-if="userDialog.ref.location"
             style="display: flex; flex-direction: column">
             <div style="flex: none">
@@ -78,391 +79,326 @@
         </div>
     </template>
 
-    <div class="flex flex-wrap items-start px-2.5" style="max-height: none">
-        <div v-if="!hideUserNotes" class="box-border flex items-center p-1.5 text-[13px] w-full cursor-pointer">
-            <div class="flex-1 overflow-hidden" @click="isEditNoteAndMemoDialogVisible = true">
-                <span class="block truncate font-medium leading-[18px]">{{ t('dialog.user.info.note') }}</span>
-                <pre
-                    v-if="userDialog.note"
-                    class="text-xs font-[inherit]"
-                    style="white-space: pre-wrap; margin: 0 0.5em 0 0; max-height: 210px; overflow-y: auto"
-                    >{{ userDialog.note }}</pre
-                >
-                <pre class="text-xs font-[inherit] text-muted-foreground" v-else>—</pre>
-            </div>
-        </div>
-        <div v-if="!hideUserMemos" class="box-border flex items-center p-1.5 text-[13px] w-full cursor-pointer">
-            <div class="flex-1 overflow-hidden" @click="isEditNoteAndMemoDialogVisible = true">
-                <span class="block truncate font-medium leading-[18px]">{{ t('dialog.user.info.memo') }}</span>
-                <pre
-                    v-if="userDialog.memo"
-                    class="text-xs font-[inherit]"
-                    style="white-space: pre-wrap; margin: 0 0.5em 0 0; max-height: 210px; overflow-y: auto"
-                    >{{ userDialog.memo }}</pre
-                >
-                <pre class="text-xs font-[inherit] text-muted-foreground" v-else>—</pre>
-            </div>
-        </div>
-        <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
-            <div class="flex-1 overflow-hidden">
-                <span class="block truncate font-medium leading-[18px]">
-                    {{
-                        userDialog.id !== currentUser.id &&
-                        userDialog.ref.profilePicOverride &&
-                        userDialog.ref.currentAvatarImageUrl
-                            ? t('dialog.user.info.avatar_info_last_seen')
-                            : t('dialog.user.info.avatar_info')
-                    }}
-                    <TooltipWrapper
-                        v-if="userDialog.ref.profilePicOverride && !userDialog.ref.currentAvatarImageUrl"
-                        side="top"
-                        :content="t('dialog.user.info.vrcplus_hides_avatar')">
-                        <Info class="inline-block" />
-                    </TooltipWrapper>
-                </span>
-                <div class="text-xs">
-                    <AvatarInfo
-                        :key="userDialog.id"
-                        :imageurl="userDialog.ref.currentAvatarImageUrl"
-                        :userid="userDialog.id"
-                        :avatartags="userDialog.ref.currentAvatarTags"
-                        style="display: inline-block" />
-                </div>
-            </div>
-        </div>
-        <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
-            <div class="flex-1 overflow-hidden">
-                <span class="block truncate font-medium leading-[18px]" style="margin-bottom: 6px">{{
-                    t('dialog.user.info.represented_group')
-                }}</span>
-                <div
-                    v-if="
-                        userDialog.isRepresentedGroupLoading ||
-                        (userDialog.representedGroup && userDialog.representedGroup.isRepresenting)
-                    "
-                    class="text-xs">
-                    <div style="display: inline-block; flex: none; margin-right: 6px">
-                        <Avatar
-                            class="cursor-pointer size-15! rounded-lg!"
-                            :style="{
-                                background: userDialog.isRepresentedGroupLoading ? 'var(--muted)' : ''
-                            }"
-                            @click="showFullscreenImageDialog(userDialog.representedGroup.iconUrl)">
-                            <AvatarImage
-                                :src="userDialog.representedGroup.$thumbnailUrl"
-                                @load="userDialog.isRepresentedGroupLoading = false"
-                                @error="userDialog.isRepresentedGroupLoading = false" />
-                            <AvatarFallback class="rounded-lg!">
-                                <Image class="size-5 text-muted-foreground" />
-                            </AvatarFallback>
-                        </Avatar>
-                    </div>
-                    <span
-                        v-if="userDialog.representedGroup.isRepresenting"
-                        style="vertical-align: top; cursor: pointer"
-                        @click="showGroupDialog(userDialog.representedGroup.groupId)">
-                        <span v-if="userDialog.representedGroup.ownerId === userDialog.id" style="margin-right: 6px"
-                            >👑</span
-                        >
-                        <span style="margin-right: 6px" v-text="userDialog.representedGroup.name"></span>
-                        <span>({{ userDialog.representedGroup.memberCount }})</span>
-                    </span>
-                </div>
-                <div v-else class="text-xs">-</div>
-            </div>
-        </div>
-        <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
-            <div class="flex-1 overflow-hidden">
-                <span class="block truncate font-medium leading-[18px]">{{ t('dialog.user.info.bio') }}</span>
-                <pre
-                    class="text-xs truncate font-[inherit]"
-                    style="white-space: pre-wrap; margin: 0 0.5em 0 0; max-height: 210px; overflow-y: auto"
-                    >{{ bioCache.translated || userDialog.ref.bio || '-' }}</pre
-                >
-                <div style="float: right">
-                    <Button
-                        v-if="translationApi && userDialog.ref.bio"
-                        class="w-3 h-6 text-xs mr-0.5"
-                        size="icon-sm"
-                        variant="ghost"
-                        @click="translateBio">
-                        <Spinner v-if="translateLoading" class="size-1" />
-                        <Languages v-else class="h-3 w-3" />
-                    </Button>
-                    <Button
-                        class="w-3 h-6 text-xs"
-                        size="icon-sm"
-                        variant="ghost"
-                        v-if="userDialog.id === currentUser.id"
-                        style="margin-left: 6px; padding: 0"
-                        @click="$emit('showBioDialog')"
-                        ><Pencil class="h-3 w-3" />
-                    </Button>
-                </div>
-                <div style="margin-top: 6px" class="flex items-center">
-                    <TooltipWrapper v-for="(link, index) in userDialog.ref.bioLinks" :key="index">
-                        <template #content>
-                            <span v-text="link"></span>
-                        </template>
-                        <!-- onerror="this.onerror=null;this.class='icon-error'" -->
-                        <img
-                            :src="getFaviconUrl(link)"
-                            style="
-                                width: 16px;
-                                height: 16px;
-                                vertical-align: middle;
-                                margin-right: 6px;
-                                cursor: pointer;
-                            "
-                            @click.stop="openExternalLink(link)"
-                            loading="lazy" />
-                    </TooltipWrapper>
-                </div>
-            </div>
-        </div>
-        <template v-if="currentUser.id !== userDialog.id">
-            <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
-                <div class="flex-1 overflow-hidden">
-                    <span class="block truncate font-medium leading-[18px]">
-                        {{ t('dialog.user.info.last_seen') }}
-                    </span>
-                    <span class="block truncate text-xs">{{ formatDateFilter(userDialog.lastSeen, 'long') }}</span>
-                </div>
-            </div>
-
-            <div
-                class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px]"
-                @click="showPreviousInstancesListDialog(userDialog.ref)">
-                <div class="flex-1 overflow-hidden">
-                    <div
-                        class="block truncate font-medium leading-[18px]"
-                        style="display: flex; justify-content: space-between; align-items: center">
-                        <div>
-                            {{ t('dialog.user.info.join_count') }}
+    <!-- 2-column info grid -->
+    <div class="@container">
+        <div class="grid gap-2.5 grid-cols-1 @[560px]:grid-cols-[minmax(0,1fr)_230px]" style="align-items: start">
+            <!-- LEFT COLUMN -->
+            <div class="flex flex-col gap-2.5">
+                <!-- Bio card -->
+                <div class="rounded-xl bg-muted/40 p-3">
+                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
+                        <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                            {{
+                                userDialog.id !== currentUser.id &&
+                                userDialog.ref.profilePicOverride &&
+                                userDialog.ref.currentAvatarImageUrl
+                                    ? t('dialog.user.info.avatar_info_last_seen')
+                                    : t('dialog.user.info.bio')
+                            }}
+                            <TooltipWrapper
+                                v-if="userDialog.ref.profilePicOverride && !userDialog.ref.currentAvatarImageUrl"
+                                side="top"
+                                :content="t('dialog.user.info.vrcplus_hides_avatar')">
+                                <Info class="inline-block h-3 w-3" />
+                            </TooltipWrapper>
+                        </span>
+                        <div class="flex items-center gap-1">
+                            <Button
+                                v-if="translationApi && userDialog.ref.bio"
+                                class="h-5 w-5"
+                                size="icon-sm"
+                                variant="ghost"
+                                @click="translateBio">
+                                <Spinner v-if="translateLoading" class="size-3" />
+                                <Languages v-else class="h-3 w-3" />
+                            </Button>
+                            <Button
+                                v-if="userDialog.id === currentUser.id"
+                                class="h-5 w-5"
+                                size="icon-sm"
+                                variant="ghost"
+                                @click="$emit('showBioDialog')">
+                                <Pencil class="h-3 w-3" />
+                            </Button>
                         </div>
-
-                        <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
-                            <MoreHorizontal style="margin-right: 16px" />
+                    </div>
+                    <pre
+                        class="text-xs font-[inherit]"
+                        style="white-space: pre-wrap; max-height: 210px; overflow-y: auto"
+                        >{{ bioCache.translated || userDialog.ref.bio || '—' }}</pre
+                    >
+                    <div
+                        v-if="userDialog.ref.bioLinks && userDialog.ref.bioLinks.length"
+                        class="flex flex-wrap items-center gap-1.5 mt-2">
+                        <TooltipWrapper v-for="(link, index) in userDialog.ref.bioLinks" :key="index">
+                            <template #content>
+                                <span v-text="link"></span>
+                            </template>
+                            <img
+                                :src="getFaviconUrl(link)"
+                                style="width: 16px; height: 16px; vertical-align: middle; cursor: pointer"
+                                @click.stop="openExternalLink(link)"
+                                loading="lazy" />
                         </TooltipWrapper>
                     </div>
-                    <span v-if="userDialog.joinCount === 0" class="block truncate text-xs">-</span>
-                    <span v-else class="block truncate text-xs" v-text="userDialog.joinCount"></span>
+                </div>
+
+                <!-- Note card -->
+                <div
+                    v-if="!hideUserNotes"
+                    class="rounded-xl bg-muted/40 p-3 cursor-pointer"
+                    @click="isEditNoteAndMemoDialogVisible = true">
+                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
+                        <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                            {{ t('dialog.user.info.note') }}
+                        </span>
+                        <Pencil class="h-3 w-3 text-muted-foreground" />
+                    </div>
+                    <pre
+                        v-if="userDialog.note"
+                        class="text-xs font-[inherit]"
+                        style="white-space: pre-wrap; max-height: 210px; overflow-y: auto"
+                        >{{ userDialog.note }}</pre
+                    >
+                    <pre class="text-xs font-[inherit] text-muted-foreground" v-else>—</pre>
+                </div>
+
+                <!-- Memo card -->
+                <div
+                    v-if="!hideUserMemos"
+                    class="rounded-xl bg-muted/40 p-3 cursor-pointer"
+                    @click="isEditNoteAndMemoDialogVisible = true">
+                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
+                        <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                            {{ t('dialog.user.info.memo') }}
+                        </span>
+                        <Pencil class="h-3 w-3 text-muted-foreground" />
+                    </div>
+                    <pre
+                        v-if="userDialog.memo"
+                        class="text-xs font-[inherit]"
+                        style="white-space: pre-wrap; max-height: 210px; overflow-y: auto"
+                        >{{ userDialog.memo }}</pre
+                    >
+                    <pre class="text-xs font-[inherit] text-muted-foreground" v-else>—</pre>
                 </div>
             </div>
 
-            <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
-                <div class="flex-1 overflow-hidden">
-                    <span class="block truncate font-medium leading-[18px]">
-                        {{ t('dialog.user.info.time_together') }}
-                    </span>
-                    <span v-if="userDialog.timeSpent === 0" class="block truncate text-xs">-</span>
-                    <span v-else class="block truncate text-xs">{{ timeToText(userDialog.timeSpent) }}</span>
+            <!-- RIGHT COLUMN -->
+            <div class="flex flex-col gap-2.5">
+                <!-- Represented Group card -->
+                <div class="rounded-xl bg-muted/40 p-3">
+                    <div
+                        class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2 pb-2 border-b border-border">
+                        {{ t('dialog.user.info.represented_group') }}
+                    </div>
+                    <div
+                        v-if="
+                            userDialog.isRepresentedGroupLoading ||
+                            (userDialog.representedGroup && userDialog.representedGroup.isRepresenting)
+                        "
+                        class="flex items-center gap-2.5 cursor-pointer"
+                        @click="showGroupDialog(userDialog.representedGroup.groupId)">
+                        <div style="display: inline-block; flex: none; margin-right: 0">
+                            <Avatar
+                                class="cursor-pointer size-10! rounded-lg!"
+                                :style="{ background: userDialog.isRepresentedGroupLoading ? 'var(--muted)' : '' }"
+                                @click.stop="showFullscreenImageDialog(userDialog.representedGroup.iconUrl)">
+                                <AvatarImage
+                                    :src="userDialog.representedGroup.$thumbnailUrl"
+                                    @load="userDialog.isRepresentedGroupLoading = false"
+                                    @error="userDialog.isRepresentedGroupLoading = false" />
+                                <AvatarFallback class="rounded-lg!">
+                                    <Image class="size-4 text-muted-foreground" />
+                                </AvatarFallback>
+                            </Avatar>
+                        </div>
+                        <div v-if="userDialog.representedGroup.isRepresenting" class="flex-1 min-w-0">
+                            <div class="text-xs font-medium truncate">
+                                <span v-if="userDialog.representedGroup.ownerId === userDialog.id" class="mr-1"
+                                    >👑</span
+                                >
+                                <span v-text="userDialog.representedGroup.name"></span>
+                            </div>
+                            <div class="text-xs text-muted-foreground">
+                                ({{ userDialog.representedGroup.memberCount }})
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="text-xs text-muted-foreground">—</div>
                 </div>
-            </div>
-        </template>
-        <template v-else>
-            <TooltipWrapper
-                :disabled="currentUser.id !== userDialog.id"
-                side="top"
-                :content="t('dialog.user.info.open_previous_instance')">
-                <div
-                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px]"
-                    @click="showPreviousInstancesListDialog(userDialog.ref)">
-                    <div class="flex-1 overflow-hidden">
-                        <span class="block truncate font-medium leading-[18px]">
-                            {{ t('dialog.user.info.play_time') }}
-                        </span>
-                        <span v-if="userDialog.timeSpent === 0" class="block truncate text-xs">-</span>
-                        <span v-else class="block truncate text-xs">{{ timeToText(userDialog.timeSpent) }}</span>
+
+                <!-- Avatar Info card -->
+                <div class="rounded-xl bg-muted/40 p-3">
+                    <div
+                        class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2 pb-2 border-b border-border">
+                        {{ t('dialog.user.info.avatar_info') }}
+                    </div>
+                    <div class="text-xs">
+                        <AvatarInfo
+                            :key="userDialog.id"
+                            :imageurl="userDialog.ref.currentAvatarImageUrl"
+                            :userid="userDialog.id"
+                            :avatartags="userDialog.ref.currentAvatarTags"
+                            style="display: inline-block" />
                     </div>
                 </div>
-            </TooltipWrapper>
-        </template>
-        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
-            <TooltipWrapper :side="currentUser.id !== userDialog.id ? 'bottom' : 'top'">
-                <template #content>
-                    <span>{{ formatDateFilter(userOnlineForTimestamp(userDialog), 'short') }}</span>
-                </template>
-                <div class="flex-1 overflow-hidden">
-                    <span
-                        v-if="userDialog.ref.state === 'online' && userDialog.ref.$online_for"
-                        class="block truncate font-medium leading-[18px]">
-                        {{ t('dialog.user.info.online_for') }}
-                    </span>
-                    <span v-else class="block truncate font-medium leading-[18px]">
-                        {{ t('dialog.user.info.offline_for') }}
-                    </span>
-                    <span class="block truncate text-xs">{{ userOnlineFor(userDialog.ref) }}</span>
+
+                <!-- Info stats card -->
+                <div class="rounded-xl bg-muted/40 p-3">
+                    <div
+                        class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2 pb-2 border-b border-border">
+                        {{ t('dialog.user.info.header') }}
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <template v-if="currentUser.id !== userDialog.id">
+                            <div class="flex justify-between items-start gap-2 text-xs">
+                                <span class="text-muted-foreground shrink-0">{{
+                                    t('dialog.user.info.last_seen')
+                                }}</span>
+                                <span class="text-right text-muted-foreground">{{
+                                    formatDateFilter(userDialog.lastSeen, 'long')
+                                }}</span>
+                            </div>
+                            <div
+                                class="flex justify-between items-start gap-2 text-xs cursor-pointer hover:text-foreground"
+                                @click="showPreviousInstancesListDialog(userDialog.ref)">
+                                <span class="text-muted-foreground shrink-0">{{
+                                    t('dialog.user.info.join_count')
+                                }}</span>
+                                <span class="text-right text-muted-foreground">{{ userDialog.joinCount || '—' }}</span>
+                            </div>
+                            <div class="flex justify-between items-start gap-2 text-xs">
+                                <span class="text-muted-foreground shrink-0">{{
+                                    t('dialog.user.info.time_together')
+                                }}</span>
+                                <span class="text-right text-muted-foreground">{{
+                                    userDialog.timeSpent ? timeToText(userDialog.timeSpent) : '—'
+                                }}</span>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
+                                <div
+                                    class="flex justify-between items-start gap-2 text-xs cursor-pointer hover:text-foreground"
+                                    @click="showPreviousInstancesListDialog(userDialog.ref)">
+                                    <span class="text-muted-foreground shrink-0">{{
+                                        t('dialog.user.info.play_time')
+                                    }}</span>
+                                    <span class="text-right text-muted-foreground">{{
+                                        userDialog.timeSpent ? timeToText(userDialog.timeSpent) : '—'
+                                    }}</span>
+                                </div>
+                            </TooltipWrapper>
+                        </template>
+
+                        <TooltipWrapper :side="currentUser.id !== userDialog.id ? 'bottom' : 'top'">
+                            <template #content>
+                                <span>{{ formatDateFilter(userOnlineForTimestamp(userDialog), 'short') }}</span>
+                            </template>
+                            <div class="flex justify-between items-start gap-2 text-xs">
+                                <span class="text-muted-foreground shrink-0">
+                                    {{
+                                        userDialog.ref.state === 'online' && userDialog.ref.$online_for
+                                            ? t('dialog.user.info.online_for')
+                                            : t('dialog.user.info.offline_for')
+                                    }}
+                                </span>
+                                <span class="text-right text-muted-foreground">{{
+                                    userOnlineFor(userDialog.ref)
+                                }}</span>
+                            </div>
+                        </TooltipWrapper>
+
+                        <TooltipWrapper :side="currentUser.id !== userDialog.id ? 'bottom' : 'top'">
+                            <template #content>
+                                <span
+                                    >{{ t('dialog.user.info.last_login') }}
+                                    {{ formatDateFilter(userDialog.ref.last_login, 'long') }}</span
+                                >
+                                <br />
+                                <span
+                                    >{{ t('dialog.user.info.last_activity') }}
+                                    {{ formatDateFilter(userDialog.ref.last_activity, 'long') }}</span
+                                >
+                            </template>
+                            <div class="flex justify-between items-start gap-2 text-xs">
+                                <span class="text-muted-foreground shrink-0">{{
+                                    t('dialog.user.info.last_activity')
+                                }}</span>
+                                <span class="text-right text-muted-foreground">
+                                    {{
+                                        userDialog.ref.last_activity
+                                            ? timeToText(Date.now() - Date.parse(userDialog.ref.last_activity))
+                                            : '—'
+                                    }}
+                                </span>
+                            </div>
+                        </TooltipWrapper>
+
+                        <div class="flex justify-between items-start gap-2 text-xs">
+                            <span class="text-muted-foreground shrink-0">{{ t('dialog.user.info.date_joined') }}</span>
+                            <span class="text-right text-muted-foreground" v-text="userDialog.ref.date_joined"></span>
+                        </div>
+
+                        <template v-if="currentUser.id !== userDialog.id">
+                            <TooltipWrapper side="top" :disabled="userDialog.dateFriendedInfo.length < 2">
+                                <template #content>
+                                    <template v-for="ref in userDialog.dateFriendedInfo" :key="ref.type">
+                                        <span>{{ ref.type }}: {{ formatDateFilter(ref.created_at, 'long') }}</span
+                                        ><br />
+                                    </template>
+                                </template>
+                                <div class="flex justify-between items-start gap-2 text-xs">
+                                    <span class="text-muted-foreground shrink-0">
+                                        {{
+                                            userDialog.unFriended
+                                                ? t('dialog.user.info.unfriended')
+                                                : t('dialog.user.info.friended')
+                                        }}
+                                    </span>
+                                    <span class="text-right text-muted-foreground">{{
+                                        formatDateFilter(userDialog.dateFriended, 'long')
+                                    }}</span>
+                                </div>
+                            </TooltipWrapper>
+                        </template>
+
+                        <div
+                            v-if="currentUser.id === userDialog.id"
+                            class="flex justify-between items-start gap-2 text-xs cursor-pointer hover:text-foreground"
+                            @click="getVRChatCredits()">
+                            <span class="text-muted-foreground shrink-0">{{
+                                t('view.profile.profile.vrchat_credits')
+                            }}</span>
+                            <span class="text-right text-muted-foreground">{{
+                                vrchatCredit ?? t('view.profile.profile.refresh')
+                            }}</span>
+                        </div>
+                    </div>
                 </div>
-            </TooltipWrapper>
-        </div>
-        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
-            <TooltipWrapper :side="currentUser.id !== userDialog.id ? 'bottom' : 'top'">
-                <template #content>
-                    <span
-                        >{{ t('dialog.user.info.last_login') }}
-                        {{ formatDateFilter(userDialog.ref.last_login, 'long') }}</span
-                    >
-                    <br />
-                    <span
-                        >{{ t('dialog.user.info.last_activity') }}
-                        {{ formatDateFilter(userDialog.ref.last_activity, 'long') }}</span
-                    >
-                </template>
-                <div class="flex-1 overflow-hidden">
-                    <span class="block truncate font-medium leading-[18px]">{{
-                        t('dialog.user.info.last_activity')
-                    }}</span>
-                    <span v-if="userDialog.ref.last_activity" class="block truncate text-xs">{{
-                        timeToText(Date.now() - Date.parse(userDialog.ref.last_activity))
-                    }}</span>
-                    <span v-else class="block truncate text-xs">-</span>
+
+                <!-- Home Location card (self only) -->
+                <div
+                    v-if="userDialog.ref.id === currentUser.id && currentUser.homeLocation"
+                    class="rounded-xl bg-muted/40 p-3">
+                    <div
+                        class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2 pb-2 border-b border-border">
+                        {{ t('dialog.user.info.home_location') }}
+                    </div>
+                    <div
+                        class="flex items-center justify-between gap-2 text-xs cursor-pointer"
+                        @click="showWorldDialog(currentUser.homeLocation)">
+                        <span class="truncate" v-text="userDialog.$homeLocationName"></span>
+                        <Button
+                            class="rounded-full h-5 w-5 flex-none"
+                            size="icon-sm"
+                            variant="ghost"
+                            @click.stop="resetHome()">
+                            <Trash2 class="h-3 w-3" />
+                        </Button>
+                    </div>
                 </div>
-            </TooltipWrapper>
-        </div>
-        <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
-            <div class="flex-1 overflow-hidden">
-                <span class="block truncate font-medium leading-[18px]">{{ t('dialog.user.info.date_joined') }}</span>
-                <span class="block truncate text-xs" v-text="userDialog.ref.date_joined"></span>
-            </div>
-        </div>
-        <div
-            v-if="currentUser.id !== userDialog.id"
-            class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
-            <TooltipWrapper side="top" :disabled="userDialog.dateFriendedInfo.length < 2">
-                <template #content>
-                    <template v-for="ref in userDialog.dateFriendedInfo" :key="ref.type">
-                        <span>{{ ref.type }}: {{ formatDateFilter(ref.created_at, 'long') }}</span
-                        ><br />
-                    </template>
-                </template>
-                <div class="flex-1 overflow-hidden">
-                    <span v-if="userDialog.unFriended" class="block truncate font-medium leading-[18px]">
-                        {{ t('dialog.user.info.unfriended') }}
-                    </span>
-                    <span v-else class="block truncate font-medium leading-[18px]">
-                        {{ t('dialog.user.info.friended') }}
-                    </span>
-                    <span class="block truncate text-xs">{{ formatDateFilter(userDialog.dateFriended, 'long') }}</span>
-                </div>
-            </TooltipWrapper>
-        </div>
-        <template v-if="currentUser.id === userDialog.id">
-            <div
-                class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px]"
-                @click="toggleAvatarCopying">
-                <div class="flex-1 overflow-hidden">
-                    <span class="block truncate font-medium leading-[18px]">{{
-                        t('dialog.user.info.avatar_cloning')
-                    }}</span>
-                    <span v-if="currentUser.allowAvatarCopying" class="block truncate text-xs">{{
-                        t('dialog.user.info.avatar_cloning_allow')
-                    }}</span>
-                    <span v-else class="block truncate text-xs">{{ t('dialog.user.info.avatar_cloning_deny') }}</span>
-                </div>
-            </div>
-            <div
-                class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px]"
-                @click="toggleAllowBooping">
-                <div class="flex-1 overflow-hidden">
-                    <span class="block truncate font-medium leading-[18px]">{{ t('dialog.user.info.booping') }}</span>
-                    <span v-if="currentUser.isBoopingEnabled" class="block truncate text-xs">{{
-                        t('dialog.user.info.avatar_cloning_allow')
-                    }}</span>
-                    <span v-else class="block truncate text-xs">{{ t('dialog.user.info.avatar_cloning_deny') }}</span>
-                </div>
-            </div>
-            <div
-                class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px]"
-                @click="toggleSharedConnectionsOptOut">
-                <div class="flex-1 overflow-hidden">
-                    <span class="block truncate font-medium leading-[18px]">{{
-                        t('dialog.user.info.show_mutual_friends')
-                    }}</span>
-                    <span v-if="!currentUser.hasSharedConnectionsOptOut" class="block truncate text-xs">{{
-                        t('dialog.user.info.avatar_cloning_allow')
-                    }}</span>
-                    <span v-else class="block truncate text-xs">{{ t('dialog.user.info.avatar_cloning_deny') }}</span>
-                </div>
-            </div>
-            <div
-                class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px]"
-                @click="toggleDiscordFriendsOptOut">
-                <div class="flex-1 overflow-hidden">
-                    <span class="block truncate font-medium leading-[18px]">{{
-                        t('dialog.user.info.show_discord_connections')
-                    }}</span>
-                    <span v-if="!currentUser.hasDiscordFriendsOptOut" class="block truncate text-xs">{{
-                        t('dialog.user.info.avatar_cloning_allow')
-                    }}</span>
-                    <span v-else class="block truncate text-xs">{{ t('dialog.user.info.avatar_cloning_deny') }}</span>
-                </div>
-            </div>
-        </template>
-        <template v-else>
-            <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
-                <div class="flex-1 overflow-hidden">
-                    <span class="block truncate font-medium leading-[18px]">{{
-                        t('dialog.user.info.avatar_cloning')
-                    }}</span>
-                    <span v-if="userDialog.ref.allowAvatarCopying" class="block truncate text-xs">{{
-                        t('dialog.user.info.avatar_cloning_allow')
-                    }}</span>
-                    <span v-else class="block truncate text-xs">{{ t('dialog.user.info.avatar_cloning_deny') }}</span>
-                </div>
-            </div>
-        </template>
-        <div
-            v-if="userDialog.ref.id === currentUser.id"
-            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px]"
-            @click="getVRChatCredits()">
-            <div class="flex-1 overflow-hidden">
-                <span class="block truncate font-medium leading-[18px]">{{
-                    t('view.profile.profile.vrchat_credits')
-                }}</span>
-                <span class="block truncate text-xs">{{ vrchatCredit ?? t('view.profile.profile.refresh') }}</span>
-            </div>
-        </div>
-        <div
-            v-if="userDialog.ref.id === currentUser.id && currentUser.homeLocation"
-            class="box-border flex items-center p-1.5 text-[13px] w-full cursor-pointer"
-            @click="showWorldDialog(currentUser.homeLocation)">
-            <div class="flex-1 overflow-hidden">
-                <span class="block truncate font-medium leading-[18px]">{{ t('dialog.user.info.home_location') }}</span>
-                <span class="block truncate text-xs">
-                    <span v-text="userDialog.$homeLocationName"></span>
-                    <Button class="rounded-full ml-1 text-xs" size="icon-sm" variant="ghost" @click.stop="resetHome()"
-                        ><Trash2 class="h-4 w-4" />
-                    </Button>
-                </span>
-            </div>
-        </div>
-        <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
-            <div class="flex-1 overflow-hidden">
-                <span class="block truncate font-medium leading-[18px]">{{ t('dialog.user.info.id') }}</span>
-                <span class="block truncate text-xs">
-                    {{ userDialog.id }}
-                    <TooltipWrapper side="top" :content="t('dialog.user.info.id_tooltip')">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger as-child>
-                                <Button class="rounded-full ml-1 text-xs" size="icon-sm" variant="ghost" @click.stop
-                                    ><Copy class="h-4 w-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                <DropdownMenuItem @click="copyUserId(userDialog.id)">
-                                    {{ t('dialog.user.info.copy_id') }}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem @click="copyUserURL(userDialog.id)">
-                                    {{ t('dialog.user.info.copy_url') }}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem @click="copyUserDisplayName(userDialog.ref.displayName)">
-                                    {{ t('dialog.user.info.copy_display_name') }}
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </TooltipWrapper>
-                </span>
             </div>
         </div>
     </div>
@@ -470,13 +406,7 @@
 </template>
 
 <script setup>
-    import { Copy, Image, Info, Languages, MoreHorizontal, Pencil, Trash2, User } from 'lucide-vue-next';
-    import {
-        DropdownMenu,
-        DropdownMenuContent,
-        DropdownMenuItem,
-        DropdownMenuTrigger
-    } from '@/components/ui/dropdown-menu';
+    import { Image, Info, Languages, Pencil, Trash2, User } from 'lucide-vue-next';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
@@ -527,7 +457,6 @@
     const { bioLanguage, translationApi, translationApiType } = storeToRefs(useAdvancedSettingsStore());
     const { translateText } = useAdvancedSettingsStore();
     const { userDialog, currentUser } = storeToRefs(useUserStore());
-    const { toggleSharedConnectionsOptOut, toggleDiscordFriendsOptOut } = useUserStore();
 
     const { lastLocation } = storeToRefs(useLocationStore());
     const { showFullscreenImageDialog } = useGalleryStore();
@@ -623,24 +552,6 @@
     /**
      *
      */
-    function toggleAvatarCopying() {
-        userRequest.saveCurrentUser({
-            allowAvatarCopying: !currentUser.value.allowAvatarCopying
-        });
-    }
-
-    /**
-     *
-     */
-    function toggleAllowBooping() {
-        userRequest.saveCurrentUser({
-            isBoopingEnabled: !currentUser.value.isBoopingEnabled
-        });
-    }
-
-    /**
-     *
-     */
     function resetHome() {
         modalStore
             .confirm({
@@ -665,30 +576,6 @@
 
     /**
      *
-     * @param userId
-     */
-    function copyUserId(userId) {
-        copyToClipboard(userId, t('message.user.id_copied'));
-    }
-
-    /**
-     *
-     * @param userId
-     */
-    function copyUserURL(userId) {
-        copyToClipboard(`https://vrchat.com/home/user/${userId}`, t('message.user.url_copied'));
-    }
-
-    /**
-     *
-     * @param displayName
-     */
-    function copyUserDisplayName(displayName) {
-        copyToClipboard(displayName, t('message.user.display_name_copied'));
-    }
-
-    /**
-     *
      */
     function getVRChatCredits() {
         queryRequest.fetch('vrchatCredits').then((args) => (vrchatCredit.value = args.json?.balance));
@@ -699,3 +586,4 @@
         showEditNoteAndMemoDialog
     });
 </script>
+

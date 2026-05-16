@@ -13,6 +13,7 @@ import { avatarRequest, queryRequest } from '../api';
 import { debounce, parseLocation } from '../shared/utils';
 import { AppDebug } from '../services/appConfig';
 import { database } from '../services/database';
+import { addImageCacheLogEntry } from '../services/activityCounters.js';
 import { refreshCustomScript } from '../shared/utils/base/ui';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
@@ -886,6 +887,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         dragEnterCef,
         backupVrcRegistry,
         updateDatabaseVersion,
-        waitForDatabaseInit
+        waitForDatabaseInit,
+        addImageCacheLogEntry
     };
 });

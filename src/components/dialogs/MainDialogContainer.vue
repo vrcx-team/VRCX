@@ -121,7 +121,7 @@
                 return 'x-dialog translate-y-0 sm:max-w-250';
             case 'user':
             default:
-                return 'x-dialog sm:max-w-235 translate-y-0 overflow-hidden flex flex-col';
+                return 'x-dialog sm:max-w-280 translate-y-0 overflow-hidden flex flex-col';
         }
     });
 

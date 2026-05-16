@@ -19,7 +19,7 @@
                     <Button
                         :variant="hasRisk ? 'destructive' : 'outline'"
                         size="icon-lg"
-                        class="rounded-full"
+                        class="rounded-lg"
                         :class="{ 'dot-indicator': hasRequest }">
                         <MoreHorizontal />
                     </Button>
