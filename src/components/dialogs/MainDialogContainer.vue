@@ -113,7 +113,7 @@
             case 'avatar':
                 return 'x-dialog sm:max-w-235 translate-y-0 overflow-hidden flex flex-col';
             case 'group':
-                return 'x-dialog translate-y-0 sm:max-w-235 overflow-hidden flex flex-col';
+                return 'x-dialog translate-y-0 sm:max-w-280 overflow-hidden flex flex-col';
             case 'previous-instances-info':
             case 'previous-instances-user':
             case 'previous-instances-world':
