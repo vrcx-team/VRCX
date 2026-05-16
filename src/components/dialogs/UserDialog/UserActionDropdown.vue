@@ -5,10 +5,10 @@
                 v-if="userDialog.isFavorite"
                 side="top"
                 :content="t('dialog.user.actions.favorites_tooltip')">
-                <Button class="rounded-full" size="icon-lg" @click="userDialogCommand('Add Favorite')"><Star /></Button>
+                <Button class="rounded-lg size-7.5!" size="icon-lg" @click="userDialogCommand('Add Favorite')"><Star /></Button>
             </TooltipWrapper>
             <TooltipWrapper v-else side="top" :content="t('dialog.user.actions.favorites_tooltip')">
-                <Button class="rounded-full" size="icon-lg" variant="outline" @click="userDialogCommand('Add Favorite')"
+                <Button class="rounded-lg size-7.5!" size="icon-lg" variant="outline" @click="userDialogCommand('Add Favorite')"
                     ><Star
                 /></Button>
             </TooltipWrapper>
@@ -19,7 +19,7 @@
                     <Button
                         :variant="hasRisk ? 'destructive' : 'outline'"
                         size="icon-lg"
-                        class="rounded-lg"
+                        class="rounded-lg size-7.5!"
                         :class="{ 'dot-indicator': hasRequest }">
                         <MoreHorizontal />
                     </Button>
