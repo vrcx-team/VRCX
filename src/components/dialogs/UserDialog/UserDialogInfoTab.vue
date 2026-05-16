@@ -1,14 +1,14 @@
 <template>
     <!-- Instance/Location section in ful lwidh currently but only when relevant.. -->
     <template v-if="isFriendOnline(userDialog.friend) || currentUser.id === userDialog.id">
-        <div
-            class="mb-2.5 pb-2.5 border-b border-border"
-            v-if="userDialog.ref.location"
-            style="display: flex; flex-direction: column">
-            <div style="flex: none">
+        <div v-if="userDialog.ref.location" class="rounded-xl bg-muted/40 p-3 mb-2.5 flex flex-col gap-2">
+            <div class="flex items-center justify-between gap-2">
+                <Location
+                    class="text-sm flex-1 min-w-0"
+                    :location="userDialog.ref.location"
+                    :traveling="userDialog.ref.travelingToLocation" />
                 <template v-if="isRealInstance(userDialog.$location.tag)">
                     <InstanceActionBar
-                        class="mb-1"
                         :location="userDialog.$location.tag"
                         :shortname="userDialog.$location.shortName"
                         :currentlocation="lastLocation.location"
@@ -17,12 +17,8 @@
                         :refresh-tooltip="t('dialog.user.info.refresh_instance_info')"
                         :on-refresh="() => refreshInstancePlayerCount(userDialog.$location.tag)" />
                 </template>
-                <Location
-                    class="text-sm"
-                    :location="userDialog.ref.location"
-                    :traveling="userDialog.ref.travelingToLocation" />
             </div>
-            <div class="flex flex-wrap items-start" style="flex: 1; margin-top: 8px; max-height: 150px; overflow: auto">
+            <div v-if="userDialog.$location.userId || userDialog.users?.length" class="flex flex-wrap items-start" style="max-height: 150px; overflow: auto">
                 <div
                     v-if="userDialog.$location.userId"
                     class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"

@@ -39,49 +39,46 @@
 
         <!-- Card content with padding -->
         <div class="flex flex-col gap-2 p-3">
-            <!-- Name pronound and stuff -->
-            <div class="flex items-start gap-1.5">
-                <div class="flex-1 min-w-0">
-                    <div class="flex flex-wrap items-center gap-x-1 leading-snug">
-                        <TooltipWrapper v-if="userDialog.ref.status" side="top">
-                            <template #content>
-                                <span>{{ getUserStateText(userDialog.ref) }}</span>
-                            </template>
-                            <i class="x-user-status flex-none" :class="userStatusClass(userDialog.ref)"></i>
-                        </TooltipWrapper>
-                        <template v-if="userDialog.previousDisplayNames.length > 0">
-                            <TooltipWrapper side="bottom">
-                                <template #content>
-                                    <span>{{ t('dialog.user.previous_display_names') }}</span>
-                                    <div
-                                        v-for="data in userDialog.previousDisplayNames"
-                                        :key="data.displayName"
-                                        placement="top">
-                                        <span>{{ data.displayName }}</span>
-                                        <span v-if="data.updated_at">
-                                            &horbar; {{ formatDateFilter(data.updated_at, 'long') }}</span
-                                        >
-                                    </div>
-                                </template>
-                                <ChevronDown class="inline-block" />
-                            </TooltipWrapper>
+            <div class="flex flex-col gap-0.5">
+                <div class="flex items-center gap-1 min-w-0">
+                    <TooltipWrapper v-if="userDialog.ref.status" side="top">
+                        <template #content>
+                            <span>{{ getUserStateText(userDialog.ref) }}</span>
                         </template>
-                        <span
-                            class="font-bold cursor-pointer"
-                            v-text="userDialog.ref.displayName"
-                            @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
-                        <TooltipWrapper v-if="userDialog.ref.pronouns" side="top" :content="t('dialog.user.pronouns')">
-                            <span class="x-grey font-mono text-xs" v-text="userDialog.ref.pronouns"></span>
+                        <i class="x-user-status flex-none" :class="userStatusClass(userDialog.ref)"></i>
+                    </TooltipWrapper>
+                    <template v-if="userDialog.previousDisplayNames.length > 0">
+                        <TooltipWrapper side="bottom">
+                            <template #content>
+                                <span>{{ t('dialog.user.previous_display_names') }}</span>
+                                <div
+                                    v-for="data in userDialog.previousDisplayNames"
+                                    :key="data.displayName"
+                                    placement="top">
+                                    <span>{{ data.displayName }}</span>
+                                    <span v-if="data.updated_at">
+                                        &horbar; {{ formatDateFilter(data.updated_at, 'long') }}</span
+                                    >
+                                </div>
+                            </template>
+                            <ChevronDown class="inline-block flex-none" />
                         </TooltipWrapper>
-                    </div>
-                    <template v-if="userDialog.ref.id === currentUser.id">
-                        <span
-                            class="x-grey font-mono text-xs cursor-pointer"
-                            v-text="currentUser.username"
-                            @click="copyUserDisplayName(currentUser.username)"></span>
                     </template>
+                    <span
+                        class="font-bold cursor-pointer truncate"
+                        v-text="userDialog.ref.displayName"
+                        @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
+                    <UserActionDropdown class="flex-none ml-auto" :user-dialog-command="userDialogCommand" />
                 </div>
-                <UserActionDropdown class="flex-none mt-0.5" :user-dialog-command="userDialogCommand" />
+                <TooltipWrapper v-if="userDialog.ref.pronouns" side="top" :content="t('dialog.user.pronouns')">
+                    <span class="x-grey font-mono text-xs truncate block" v-text="userDialog.ref.pronouns"></span>
+                </TooltipWrapper>
+                <template v-if="userDialog.ref.id === currentUser.id">
+                    <span
+                        class="x-grey font-mono text-xs cursor-pointer truncate block"
+                        v-text="currentUser.username"
+                        @click="copyUserDisplayName(currentUser.username)"></span>
+                </template>
             </div>
 
             <!-- badges and trust and platform -->
