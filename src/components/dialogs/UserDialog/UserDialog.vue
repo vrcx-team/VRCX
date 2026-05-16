@@ -1,77 +1,83 @@
 <template>
-    <div class="w-223 flex-1 min-h-0 flex flex-col">
+    <div class="flex-1 min-h-0 min-w-0 flex flex-row">
         <DialogHeader class="sr-only">
             <DialogTitle>{{
                 userDialog.ref?.displayName || userDialog.id || t('dialog.user.info.header')
             }}</DialogTitle>
             <DialogDescription>{{ getUserStateText(userDialog.ref || {}) }}</DialogDescription>
         </DialogHeader>
-        <UserSummaryHeader
-            class="flex-shrink-0"
-            :get-user-state-text="getUserStateText"
-            :copy-user-display-name="copyUserDisplayName"
-            :toggle-badge-visibility="toggleBadgeVisibility"
-            :toggle-badge-showcased="toggleBadgeShowcased"
-            :user-dialog-command="userDialogCommand" />
 
-        <TabsUnderline
-            v-model="userDialog.activeTab"
-            :items="userDialogTabs"
-            :unmount-on-hide="false"
-            fill
-            @update:modelValue="userDialogTabClick">
-            <template #Info>
-                <UserDialogInfoTab ref="infoTabRef" @show-bio-dialog="showBioDialog" />
-            </template>
+        <!-- left profile card lol -->
+        <div class="flex-none w-70 pr-4 overflow-y-auto">
+            <UserSummaryHeader
+                :get-user-state-text="getUserStateText"
+                :copy-user-display-name="copyUserDisplayName"
+                :toggle-badge-visibility="toggleBadgeVisibility"
+                :toggle-badge-showcased="toggleBadgeShowcased"
+                :user-dialog-command="userDialogCommand" />
+        </div>
 
-            <template v-if="userDialog.id !== currentUser.id && !currentUser.hasSharedConnectionsOptOut" #mutual>
-                <UserDialogMutualFriendsTab ref="mutualFriendsTabRef" />
-            </template>
+        <!-- right tabs -->
+        <div class="flex-1 min-w-0 flex flex-col min-h-0 pl-4">
+            <TabsUnderline
+                v-model="userDialog.activeTab"
+                :items="userDialogTabs"
+                :unmount-on-hide="false"
+                fill
+                @update:modelValue="userDialogTabClick">
+                <template #Info>
+                    <UserDialogInfoTab ref="infoTabRef" @show-bio-dialog="showBioDialog" />
+                </template>
 
-            <template #Groups>
-                <UserDialogGroupsTab ref="groupsTabRef" />
-            </template>
+                <template v-if="userDialog.id !== currentUser.id && !currentUser.hasSharedConnectionsOptOut" #mutual>
+                    <UserDialogMutualFriendsTab ref="mutualFriendsTabRef" />
+                </template>
 
-            <template #Worlds>
-                <UserDialogWorldsTab ref="worldsTabRef" />
-            </template>
+                <template #Groups>
+                    <UserDialogGroupsTab ref="groupsTabRef" />
+                </template>
 
-            <template #favorite-worlds>
-                <UserDialogFavoriteWorldsTab ref="favoriteWorldsTabRef" />
-            </template>
+                <template #Worlds>
+                    <UserDialogWorldsTab ref="worldsTabRef" />
+                </template>
 
-            <template #Avatars>
-                <UserDialogAvatarsTab ref="avatarsTabRef" />
-            </template>
+                <template #favorite-worlds>
+                    <UserDialogFavoriteWorldsTab ref="favoriteWorldsTabRef" />
+                </template>
 
-            <template #Activity>
-                <UserDialogActivityTab ref="activityTabRef" />
-            </template>
+                <template #Avatars>
+                    <UserDialogAvatarsTab ref="avatarsTabRef" />
+                </template>
 
-            <template #JSON>
-                <DialogJsonTab
-                    :tree-data="treeData"
-                    :tree-data-key="treeData?.id"
-                    :dialog-id="userDialog.id"
-                    :dialog-ref="userDialog.ref"
-                    @refresh="refreshUserDialogTreeData()" />
-            </template>
-        </TabsUnderline>
-        <SendInviteDialog
-            v-model:sendInviteDialogVisible="sendInviteDialogVisible"
-            v-model:sendInviteDialog="sendInviteDialog"
-            @closeInviteDialog="closeInviteDialog" />
-        <SendInviteRequestDialog
-            v-model:sendInviteRequestDialogVisible="sendInviteRequestDialogVisible"
-            v-model:sendInviteDialog="sendInviteDialog"
-            @closeInviteDialog="closeInviteDialog" />
-        <SocialStatusDialog
-            :social-status-dialog="socialStatusDialog"
-            :social-status-history-table="socialStatusHistoryTable" />
-        <LanguageDialog />
-        <BioDialog :bio-dialog="bioDialog" />
-        <PronounsDialog :pronouns-dialog="pronounsDialog" />
-        <ModerateGroupDialog />
+                <template #Activity>
+                    <UserDialogActivityTab ref="activityTabRef" />
+                </template>
+
+                <template #JSON>
+                    <DialogJsonTab
+                        :tree-data="treeData"
+                        :tree-data-key="treeData?.id"
+                        :dialog-id="userDialog.id"
+                        :dialog-ref="userDialog.ref"
+                        @refresh="refreshUserDialogTreeData()" />
+                </template>
+            </TabsUnderline>
+            <SendInviteDialog
+                v-model:sendInviteDialogVisible="sendInviteDialogVisible"
+                v-model:sendInviteDialog="sendInviteDialog"
+                @closeInviteDialog="closeInviteDialog" />
+            <SendInviteRequestDialog
+                v-model:sendInviteRequestDialogVisible="sendInviteRequestDialogVisible"
+                v-model:sendInviteDialog="sendInviteDialog"
+                @closeInviteDialog="closeInviteDialog" />
+            <SocialStatusDialog
+                :social-status-dialog="socialStatusDialog"
+                :social-status-history-table="socialStatusHistoryTable" />
+            <LanguageDialog />
+            <BioDialog :bio-dialog="bioDialog" />
+            <PronounsDialog :pronouns-dialog="pronounsDialog" />
+            <ModerateGroupDialog />
+        </div>
     </div>
 </template>
 

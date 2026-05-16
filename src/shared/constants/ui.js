@@ -23,6 +23,13 @@ const navDefinitions = [
         routeName: 'game-log'
     },
     {
+        key: 'api-log',
+        icon: 'ri-terminal-box-line',
+        tooltip: 'nav_tooltip.api_log',
+        labelKey: 'nav_tooltip.api_log',
+        routeName: 'api-log'
+    },
+    {
         key: 'player-list',
         icon: 'ri-group-3-line',
         tooltip: 'nav_tooltip.player_list',

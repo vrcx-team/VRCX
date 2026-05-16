@@ -11,6 +11,7 @@ import FriendLog from './../views/FriendLog/FriendLog.vue';
 import FriendsLocations from './../views/FriendsLocations/FriendsLocations.vue';
 import Dashboard from './../views/Dashboard/Dashboard.vue';
 import Gallery from './../views/Tools/Gallery.vue';
+import ApiLog from './../views/ApiLog/ApiLog.vue';
 import GameLog from './../views/GameLog/GameLog.vue';
 import Login from './../views/Login/Login.vue';
 import MainLayout from '../views/Layout/MainLayout.vue';
@@ -43,6 +44,7 @@ const routes = [
                 component: FriendsLocations
             },
             { path: 'game-log', name: 'game-log', component: GameLog },
+            { path: 'api-log', name: 'api-log', component: ApiLog },
             { path: 'player-list', name: 'player-list', component: PlayerList },
             { path: 'search', name: 'search', component: Search },
             {
