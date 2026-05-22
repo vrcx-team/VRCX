@@ -1733,7 +1733,9 @@
                 "moderation_tools": "Moderation Tools",
                 "leave": "Leave Group",
                 "block": "Block Group",
-                "unblock": "Unblock Group"
+                "unblock": "Unblock Group",
+                "unsubscribe_event": "Unsubscribe From Event Announcements",
+                "subscribe_event": "Subscribe To Event Announcements"
             },
             "info": {
                 "header": "Info",
@@ -2735,7 +2737,8 @@
             "joined": "Group joined",
             "join_request_sent": "Group join request sent",
             "visibility_updated": "Group visibility updated",
-            "subscription_updated": "Group subscription updated"
+            "subscription_updated": "Group subscription updated",
+            "event_announcement_updated": "Group event announcements updated"
         },
         "invite": {
             "self_sent": "Self invite sent",

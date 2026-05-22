@@ -182,6 +182,7 @@ const groupReq = {
     params: {
         visibility: string,
         isSubscribedToAnnouncements: bool,
+        isSubscribedToEventAnnouncements: bool,
         managerNotes: string
     }
      * @param userId

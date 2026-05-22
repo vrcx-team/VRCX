@@ -63,32 +63,56 @@
                             <Badge v-if="groupDialog.ref.joinState === 'open'" variant="outline" class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.open') }}
                             </Badge>
-                            <Badge v-else-if="groupDialog.ref.joinState === 'request'" variant="outline" class="mr-1.5 mt-1.5">
+                            <Badge
+                                v-else-if="groupDialog.ref.joinState === 'request'"
+                                variant="outline"
+                                class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.request') }}
                             </Badge>
-                            <Badge v-else-if="groupDialog.ref.joinState === 'invite'" variant="outline" class="mr-1.5 mt-1.5">
+                            <Badge
+                                v-else-if="groupDialog.ref.joinState === 'invite'"
+                                variant="outline"
+                                class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.invite') }}
                             </Badge>
-                            <Badge v-else-if="groupDialog.ref.joinState === 'closed'" variant="outline" class="mr-1.5 mt-1.5">
+                            <Badge
+                                v-else-if="groupDialog.ref.joinState === 'closed'"
+                                variant="outline"
+                                class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.closed') }}
                             </Badge>
                             <Badge v-if="groupDialog.inGroup" variant="outline" class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.joined') }}
                             </Badge>
-                            <Badge v-if="groupDialog.ref.myMember && groupDialog.ref.myMember.bannedAt" variant="outline" class="mr-1.5 mt-1.5">
+                            <Badge
+                                v-if="groupDialog.ref.myMember && groupDialog.ref.myMember.bannedAt"
+                                variant="outline"
+                                class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.banned') }}
                             </Badge>
                             <template v-if="groupDialog.inGroup && groupDialog.ref.myMember">
-                                <Badge v-if="groupDialog.ref.myMember.visibility === 'visible'" variant="outline" class="mr-1.5 mt-1.5">
+                                <Badge
+                                    v-if="groupDialog.ref.myMember.visibility === 'visible'"
+                                    variant="outline"
+                                    class="mr-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.visible') }}
                                 </Badge>
-                                <Badge v-else-if="groupDialog.ref.myMember.visibility === 'friends'" variant="outline" class="mr-1.5 mt-1.5">
+                                <Badge
+                                    v-else-if="groupDialog.ref.myMember.visibility === 'friends'"
+                                    variant="outline"
+                                    class="mr-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.friends') }}
                                 </Badge>
-                                <Badge v-else-if="groupDialog.ref.myMember.visibility === 'hidden'" variant="outline" class="mr-1.5 mt-1.5">
+                                <Badge
+                                    v-else-if="groupDialog.ref.myMember.visibility === 'hidden'"
+                                    variant="outline"
+                                    class="mr-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.hidden') }}
                                 </Badge>
-                                <Badge v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements" variant="outline" class="mr-1.5 mt-1.5">
+                                <Badge
+                                    v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements"
+                                    variant="outline"
+                                    class="mr-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.subscribed') }}
                                 </Badge>
                             </template>
@@ -225,6 +249,22 @@
                                             @click="groupDialogCommand('Subscribe To Announcements')">
                                             <Bell class="size-4" />
                                             {{ t('dialog.group.actions.subscribe') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            v-if="
+                                                groupDialog.ref.myMember.isSubscribedToEventAnnouncements ||
+                                                typeof groupDialog.ref.myMember.isSubscribedToEventAnnouncements ===
+                                                    'undefined'
+                                            "
+                                            @click="groupDialogCommand('Unsubscribe To Event Announcements')">
+                                            <BellOff class="size-4" />
+                                            {{ t('dialog.group.actions.unsubscribe_event') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            v-else
+                                            @click="groupDialogCommand('Subscribe To Event Announcements')">
+                                            <Bell class="size-4" />
+                                            {{ t('dialog.group.actions.subscribe_event') }}
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
                                             v-if="hasGroupPermission(groupDialog.ref, 'group-invites-manage')"
@@ -382,7 +422,8 @@
         showGroupDialog,
         leaveGroupPrompt,
         setGroupVisibility,
-        setGroupSubscription
+        setGroupSubscription,
+        setGroupEventAnnouncements
     } from '../../../coordinators/groupCoordinator';
     import { groupRequest, queryRequest } from '../../../api';
     import { queryKeys, refetchActiveEntityQuery } from '../../../queries';
@@ -423,6 +464,7 @@
         leaveGroupPrompt,
         setGroupVisibility,
         setGroupSubscription,
+        setGroupEventAnnouncements,
         showGroupMemberModerationDialog,
         showInviteGroupDialog: (groupId, userId) => {
             if (groupId) {
