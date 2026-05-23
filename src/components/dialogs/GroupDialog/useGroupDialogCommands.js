@@ -12,6 +12,7 @@ import { copyToClipboard } from '../../../shared/utils';
  * @param deps.leaveGroupPrompt
  * @param deps.setGroupVisibility
  * @param deps.setGroupSubscription
+ * @param deps.setGroupEventAnnouncements
  * @param deps.showGroupMemberModerationDialog
  * @param deps.showInviteGroupDialog
  * @param deps.showGroupPostEditDialog
@@ -28,6 +29,7 @@ export function useGroupDialogCommands(
         leaveGroupPrompt,
         setGroupVisibility,
         setGroupSubscription,
+        setGroupEventAnnouncements,
         showGroupMemberModerationDialog,
         showInviteGroupDialog,
         showGroupPostEditDialog,
@@ -78,6 +80,12 @@ export function useGroupDialogCommands(
             },
             'Unsubscribe To Announcements': () => {
                 setGroupSubscription(D().id, false);
+            },
+            'Subscribe To Event Announcements': () => {
+                setGroupEventAnnouncements(D().id, true);
+            },
+            'Unsubscribe To Event Announcements': () => {
+                setGroupEventAnnouncements(D().id, false);
             },
 
             // --- Confirmed commands ---

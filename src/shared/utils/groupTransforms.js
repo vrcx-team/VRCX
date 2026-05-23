@@ -37,6 +37,7 @@ export function createDefaultGroupRef(json) {
             id: '',
             isRepresenting: false,
             isSubscribedToAnnouncements: false,
+            isSubscribedToEventAnnouncements: false,
             joinedAt: '',
             managerNotes: '',
             membershipStatus: '',
