@@ -185,23 +185,22 @@
                 <span v-else class="block truncate text-xs">-</span>
             </div>
         </div>
-        <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
+        <div
+            v-if="pastCalenderEvents.length > 0"
+            class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
             <div class="flex-1" style="overflow: visible">
                 <span class="block truncate font-medium leading-[18px]">{{ t('dialog.group.info.past_events') }}</span>
-                <template v-if="pastCalenderEvents.length > 0">
-                    <br />
-                    <div class="grid-view flex flex-wrap gap-4 overflow-y-auto max-h-[360px] py-2.5">
-                        <GroupCalendarEventCard
-                            v-for="value in pastCalenderEvents"
-                            :key="value.id"
-                            :event="value"
-                            :is-following="value.userInterest?.isFollowing"
-                            @update-following-calendar-data="updateFollowingCalendarData"
-                            mode="grid"
-                            card-class="group-dialog-grid-card" />
-                    </div>
-                </template>
-                <span v-else class="block truncate text-xs">-</span>
+                <br />
+                <div class="grid-view flex flex-wrap gap-4 overflow-y-auto max-h-[360px] py-2.5">
+                    <GroupCalendarEventCard
+                        v-for="value in pastCalenderEvents"
+                        :key="value.id"
+                        :event="value"
+                        :is-following="value.userInterest?.isFollowing"
+                        @update-following-calendar-data="updateFollowingCalendarData"
+                        mode="grid"
+                        card-class="group-dialog-grid-card" />
+                </div>
             </div>
         </div>
         <div class="box-border flex items-center p-1.5 text-[13px] cursor-default w-[167px]">
