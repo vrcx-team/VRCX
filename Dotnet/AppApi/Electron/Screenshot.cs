@@ -23,6 +23,7 @@ namespace VRCX
             }
 
             path = path.Replace("\\", "/");
+            path = Path.GetFullPath(path);
 
             var fileName = Path.GetFileNameWithoutExtension(path);
             if (!File.Exists(path) || !path.EndsWith(".png") || !fileName.StartsWith("VRChat_"))
@@ -30,7 +31,7 @@ namespace VRCX
 
             if (changeFilename)
             {
-                var newFileName = $"{fileName}_{worldId}";
+                var newFileName = $"{fileName}_{MakeValidFileName(worldId)}";
                 var newPath = Path.Join(Path.GetDirectoryName(path), newFileName + Path.GetExtension(path));
                 File.Move(path, newPath);
                 path = newPath;
