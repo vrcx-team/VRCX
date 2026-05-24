@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-    import { computed, onMounted, ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
@@ -100,6 +100,9 @@
     import { formatJsonVars } from '../../../shared/utils/base/ui';
     import { miscRequest } from '../../../api';
     import { useUserDialogCommands } from './useUserDialogCommands';
+    import { showAvatarDialog, showAvatarAuthorDialog } from '../../../coordinators/avatarCoordinator';
+    import { showUserDialog, refreshUserDialogAvatars } from '../../../coordinators/userCoordinator';
+    import { getFriendRequest, handleFriendDelete } from '../../../coordinators/friendRelationshipCoordinator';
 
     import DialogJsonTab from '../DialogJsonTab.vue';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
@@ -118,6 +121,17 @@
     import PronounsDialog from './PronounsDialog.vue';
     import SendInviteRequestDialog from './SendInviteRequestDialog.vue';
     import SocialStatusDialog from './SocialStatusDialog.vue';
+    
+    const props = defineProps({
+        previousIds: {
+            type: Object,
+            required: true
+        },
+        updatePreviousId: {
+            type: Function,
+            default: () => {}
+        }
+    });
 
     const { t } = useI18n();
     const userDialogTabs = computed(() => {
@@ -151,10 +165,6 @@
     const { userDialog, languageDialog, currentUser } = storeToRefs(useUserStore());
     const { cachedUsers, showSendBoopDialog } = useUserStore();
     const { showFavoriteDialog } = useFavoriteStore();
-    import { showAvatarDialog, showAvatarAuthorDialog } from '../../../coordinators/avatarCoordinator';
-    import { showUserDialog, refreshUserDialogAvatars } from '../../../coordinators/userCoordinator';
-    import { getFriendRequest, handleFriendDelete } from '../../../coordinators/friendRelationshipCoordinator';
-
     const { showModerateGroupDialog } = useGroupStore();
     const { inviteGroupDialog } = storeToRefs(useGroupStore());
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
@@ -214,18 +224,6 @@
             }
         }
     );
-
-    onMounted(() => {
-        if (userDialog.value.visible && !userDialog.value.loading) {
-            loadLastActiveTab();
-        }
-    });
-
-    const userDialogLastMutualFriends = ref('');
-    const userDialogLastGroup = ref('');
-    const userDialogLastAvatar = ref('');
-    const userDialogLastWorld = ref('');
-    const userDialogLastFavoriteWorld = ref('');
 
     const socialStatusDialog = ref({
         visible: false,
@@ -322,19 +320,19 @@
                 userDialog.value.lastActiveTab = 'Info';
                 return;
             }
-            if (userDialogLastMutualFriends.value !== userId) {
-                userDialogLastMutualFriends.value = userId;
+            if (props.previousIds.mutualFriend !== userId) {
+                props.updatePreviousId('mutualFriend', userId);
                 mutualFriendsTabRef.value?.getUserMutualFriends(userId);
             }
         } else if (tabName === 'Groups') {
-            if (userDialogLastGroup.value !== userId) {
-                userDialogLastGroup.value = userId;
+            if (props.previousIds.group !== userId) {
+                props.updatePreviousId('group', userId);
                 groupsTabRef.value?.getUserGroups(userId);
             }
         } else if (tabName === 'Avatars') {
             avatarsTabRef.value?.setUserDialogAvatars(userId);
-            if (userDialogLastAvatar.value !== userId) {
-                userDialogLastAvatar.value = userId;
+            if (props.previousIds.avatar !== userId) {
+                props.updatePreviousId('avatar', userId);
                 if (userId === currentUser.value.id) {
                     refreshUserDialogAvatars();
                 } else {
@@ -343,13 +341,13 @@
             }
         } else if (tabName === 'Worlds') {
             worldsTabRef.value?.setUserDialogWorlds(userId);
-            if (userDialogLastWorld.value !== userId) {
-                userDialogLastWorld.value = userId;
+            if (props.previousIds.world !== userId) {
+                props.updatePreviousId('world', userId);
                 worldsTabRef.value?.refreshUserDialogWorlds();
             }
         } else if (tabName === 'favorite-worlds') {
-            if (userDialogLastFavoriteWorld.value !== userId) {
-                userDialogLastFavoriteWorld.value = userId;
+            if (props.previousIds.favoriteWorld !== userId) {
+                props.updatePreviousId('favoriteWorld', userId);
                 favoriteWorldsTabRef.value?.getUserFavoriteWorlds(userId);
             }
         } else if (tabName === 'Activity') {
