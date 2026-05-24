@@ -257,13 +257,13 @@
                                                     'undefined'
                                             "
                                             @click="groupDialogCommand('Unsubscribe To Event Announcements')">
-                                            <BellOff class="size-4" />
+                                            <MessageCircleOff class="size-4" />
                                             {{ t('dialog.group.actions.unsubscribe_event') }}
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
                                             v-else
                                             @click="groupDialogCommand('Subscribe To Event Announcements')">
-                                            <Bell class="size-4" />
+                                            <MessageCircle class="size-4" />
                                             {{ t('dialog.group.actions.subscribe_event') }}
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
@@ -378,6 +378,8 @@
     import {
         Bell,
         BellOff,
+        MessageCircle,
+        MessageCircleOff,
         Bookmark,
         BookmarkCheck,
         Check,
@@ -741,7 +743,8 @@
             posts: D.posts,
             instances: D.instances,
             members: D.members,
-            galleries: D.galleries
+            galleries: D.galleries,
+            calendar: D.calendar
         };
     }
 

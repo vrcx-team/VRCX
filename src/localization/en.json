@@ -2349,7 +2349,8 @@
                 "description": "Description",
                 "export_to_calendar": "Export to Calendar",
                 "download_ics": "Download .ics",
-                "copied_event_link": "Calendar event URL copied to clipboard"
+                "copied_event_link": "Calendar event URL copied to clipboard",
+                "repeating_event_tooltip": "Repeating Event"
             },
             "featured_events": "Featured Events"
         },
