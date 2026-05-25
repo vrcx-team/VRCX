@@ -162,6 +162,10 @@ export async function runDeleteVRChatCacheFlow(ref) {
 
 /**
  * Checks if VRChat crashed and attempts to relaunch.
+ *
+ * On Linux the graceful-exit flag may not be written in time before this
+ * function runs (race condition with SIGTERM). A 500 ms deferred
+ * double-check is performed before committing to a relaunch.
  */
 export function runCheckIfGameCrashedFlow() {
     const advancedSettingsStore = useAdvancedSettingsStore();
@@ -176,26 +180,44 @@ export function runCheckIfGameCrashedFlow() {
         if (result || !isRealInstance(location)) {
             return;
         }
-        // check if relaunched less than 2mins ago (prevent crash loop)
-        if (
-            gameStore.state.lastCrashedTime &&
-            new Date().getTime() - gameStore.state.lastCrashedTime.getTime() <
-                120_000
-        ) {
-            console.log('VRChat was recently crashed, not relaunching');
-            return;
-        }
-        gameStore.setLastCrashedTime(new Date());
-        // wait a bit for SteamVR to potentially close before deciding to relaunch
-        let restartDelay = 8000;
-        if (gameStore.isGameNoVR) {
-            // wait for game to close before relaunching
-            restartDelay = 2000;
-        }
-        workerTimers.setTimeout(
-            () => runRestartCrashedGameFlow(location),
-            restartDelay
-        );
+
+        // On Linux, VrcClosedGracefully() can return false even after a clean
+        // exit (SIGTERM race condition). Re-check after a short delay to
+        // confirm the exit was indeed a crash before attempting a relaunch.
+        workerTimers.setTimeout(() => {
+            AppApi.VrcClosedGracefully().then((confirmedGraceful) => {
+                if (confirmedGraceful) {
+                    console.log(
+                        'VRChat exited gracefully (confirmed on second check), skipping relaunch'
+                    );
+                    return;
+                }
+
+                // check if relaunched less than 2mins ago (prevent crash loop)
+                if (
+                    gameStore.state.lastCrashedTime &&
+                    new Date().getTime() -
+                        gameStore.state.lastCrashedTime.getTime() <
+                        120_000
+                ) {
+                    console.log(
+                        'VRChat was recently crashed, not relaunching'
+                    );
+                    return;
+                }
+                gameStore.setLastCrashedTime(new Date());
+                // wait a bit for SteamVR to potentially close before deciding to relaunch
+                let restartDelay = 8000;
+                if (gameStore.isGameNoVR) {
+                    // wait for game to close before relaunching
+                    restartDelay = 2000;
+                }
+                workerTimers.setTimeout(
+                    () => runRestartCrashedGameFlow(location),
+                    restartDelay
+                );
+            });
+        }, 500);
     });
 }
 
