@@ -19,7 +19,7 @@
     import { ArrowLeft } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { TooltipWrapper } from '@/components/ui/tooltip';
-    import { computed } from 'vue';
+    import { computed, ref } from 'vue';
     import { storeToRefs } from 'pinia';
 
     import AvatarDialog from './AvatarDialog/AvatarDialog.vue';
@@ -37,6 +37,20 @@
     const worldStore = useWorldStore();
 
     const { previousInstancesInfoDialog, previousInstancesListDialog } = storeToRefs(instanceStore);
+
+    const previousIds = ref({
+        userDialog: {
+            mutualFriend: null,
+            group: null,
+            avatar: null,
+            world: null,
+            favoriteWorld: null
+        }
+    });
+
+    function updateUserPreviousId(key, value) {
+        previousIds.value.userDialog[key] = value;
+    }
 
     const dialogCrumbs = computed(() => uiStore.dialogCrumbs);
     const activeType = computed(() => {
@@ -87,6 +101,8 @@
     });
     const activeComponentProps = computed(() => {
         switch (activeType.value) {
+            case 'user':
+                return { previousIds: previousIds.value.userDialog, updatePreviousId: updateUserPreviousId };
             case 'previous-instances-user':
                 return { variant: 'user' };
             case 'previous-instances-world':
