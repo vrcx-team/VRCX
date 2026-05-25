@@ -58,6 +58,7 @@
             //         filterState.filtered.groups.add(groupId);
             //     }
             // }
-        }
+        },
+        { flush: 'sync' }
     );
 </script>
