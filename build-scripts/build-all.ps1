@@ -1,6 +1,8 @@
-cd ..
-
 $ErrorActionPreference = "Stop"
+
+cd "$PSScriptRoot/.."
+
+$root = Resolve-Path .
 
 $installPath = (&"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version 16.0 -property installationpath) | Select-Object -Last 1
 Import-Module (Join-Path $installPath "Common7\Tools\Microsoft.VisualStudio.DevShell.dll")
@@ -20,7 +22,7 @@ $ErrorActionPreference = "Continue"
 npm run prod
 $ErrorActionPreference = "Stop"
 Remove-Item -Path "build\Cef\html" -Force -Recurse -ErrorAction SilentlyContinue
-New-Item -ItemType Junction -Path "build\Cef\html" -Target "build\html"
+New-Item -ItemType Junction -Path "$root\build\Cef\html" -Target "$root\build\html"
 
 Write-Host "Creating Zip..." -ForegroundColor Green
 cd "build\Cef"
