@@ -8,7 +8,6 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using NLog;
-using NLog.Config;
 
 #if !LINUX
 using CefSharp;
