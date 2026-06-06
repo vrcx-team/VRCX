@@ -3,7 +3,7 @@
         <component :is="enableContextMenu ? ContextMenuTrigger : Passthrough" as-child>
             <div class="cursor-pointer" v-bind="$attrs">
                 <div v-if="!text" class="text-transparent">-</div>
-                <div v-show="text" class="flex items-center">
+                <div v-show="text" class="flex items-center gap-2">
                     <template v-if="isAgeRestricted">
                         <TooltipWrapper
                             :content="t('dialog.user.info.instance_age_restricted_tooltip')"
@@ -16,7 +16,7 @@
                         </TooltipWrapper>
                     </template>
                     <template v-else>
-                        <div v-if="region" :class="['flags', 'mr-1.5', 'shrink-0', region]"></div>
+                        <div v-if="region" :class="cn('flags shrink-0', region)"></div>
                         <TooltipWrapper
                             :content="tooltipContent"
                             :disabled="tooltipDisabled"
@@ -41,11 +41,16 @@
                                 </span>
                             </div>
                         </TooltipWrapper>
-
-                        <TooltipWrapper v-if="isClosed" :content="closedTooltip" :disabled="disableTooltip">
-                            <AlertTriangle class="inline-block ml-2 text-muted-foreground shrink-0" />
-                        </TooltipWrapper>
-                        <Lock v-if="strict" class="inline-block ml-2 text-muted-foreground shrink-0" />
+                        <div v-if="closedAt">
+                            <TooltipWrapper side="top">
+                                <template #content>
+                                    {{ t('dialog.user.info.instance_closed_at') }}:
+                                    {{ formatDateFilter(closedAt, 'long') }}
+                                </template>
+                                <AlertTriangle class="text-orange-500 my-auto" />
+                            </TooltipWrapper>
+                        </div>
+                        <Lock v-if="strict" class="text-muted-foreground" />
                     </template>
                 </div>
             </div>
@@ -77,6 +82,7 @@
         getLocationText,
         getWorldName,
         copyToClipboard,
+        formatDateFilter,
         parseLocation,
         resolveRegion,
         translateAccessType
@@ -94,6 +100,7 @@
     import { Spinner } from './ui/spinner';
     import WorldActionMenuItems from './WorldActionMenuItems.vue';
     import { accessTypeLocaleKeyMap } from '../shared/constants';
+    import { cn } from '@/lib/utils';
 
     defineOptions({
         inheritAttrs: false
@@ -147,8 +154,9 @@
     const isTraveling = ref(false);
     const parsedLocation = ref({ isRealInstance: false, worldId: '', tag: '', shortName: '' });
     const groupName = ref('');
-    const isClosed = ref(false);
+    const closedAt = ref('');
     const instanceName = ref('');
+    const instanceRef = ref(null);
 
     const isAgeRestricted = computed(() => !isAgeGatedInstancesVisible.value && ageGate.value);
     const isLocationLink = computed(() => props.link && props.location !== 'private' && props.location !== 'offline');
@@ -162,7 +170,6 @@
     const tooltipDisabled = computed(
         () => props.disableTooltip || !instanceName.value || showInstanceIdInLocation.value
     );
-    const closedTooltip = computed(() => t('dialog.user.info.instance_closed'));
 
     let isDisposed = false;
     onBeforeUnmount(() => {
@@ -200,7 +207,7 @@
         ageGate.value = false;
         isTraveling.value = false;
         groupName.value = '';
-        isClosed.value = false;
+        closedAt.value = '';
         instanceName.value = '';
     }
 
@@ -222,6 +229,7 @@
         parsedLocation.value = L;
         setText(L);
         instanceName.value = L.instanceName;
+        closedAt.value = '';
         if (!L.isRealInstance) {
             return;
         }
@@ -234,20 +242,20 @@
     }
 
     /**
-     *
      * @param L
      */
     function applyInstanceRef(L) {
-        const instanceRef = cachedInstances.get(L.tag);
-        if (typeof instanceRef === 'undefined') {
+        const cachedInstanceRef = cachedInstances.get(L.tag);
+        if (typeof cachedInstanceRef === 'undefined') {
             return;
         }
-        if (instanceRef.displayName) {
+        instanceRef.value = cachedInstanceRef;
+        if (cachedInstanceRef.displayName) {
             setText(L);
-            instanceName.value = instanceRef.displayName;
+            instanceName.value = cachedInstanceRef.displayName;
         }
-        if (instanceRef.closedAt) {
-            isClosed.value = true;
+        if (cachedInstanceRef.closedAt) {
+            closedAt.value = cachedInstanceRef.closedAt;
         }
     }
 

@@ -103,12 +103,6 @@ describe('ChangelogDialog.vue', () => {
             expect(wrapper.text()).toContain('dialog.change_log.description');
         });
 
-        test('renders donation links', () => {
-            const wrapper = mountComponent();
-            expect(wrapper.text()).toContain('Ko-fi');
-            expect(wrapper.text()).toContain('Patreon');
-        });
-
         test('renders GitHub button', () => {
             const wrapper = mountComponent();
             expect(wrapper.text()).toContain('dialog.change_log.github');

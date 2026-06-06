@@ -24,7 +24,7 @@
                 <UserDialogInfoTab ref="infoTabRef" @show-bio-dialog="showBioDialog" />
             </template>
 
-            <template v-if="!isSelf && !currentUser.hasSharedConnectionsOptOut" #mutual>
+            <template v-if="userDialog.id !== currentUser.id && !currentUser.hasSharedConnectionsOptOut" #mutual>
                 <UserDialogMutualFriendsTab ref="mutualFriendsTabRef" />
             </template>
 
@@ -36,11 +36,11 @@
                 <UserDialogWorldsTab ref="worldsTabRef" />
             </template>
 
-            <template v-if="!isSelf" #favorite-worlds>
+            <template #favorite-worlds>
                 <UserDialogFavoriteWorldsTab ref="favoriteWorldsTabRef" />
             </template>
 
-            <template v-if="!isSelf" #Avatars>
+            <template #Avatars>
                 <UserDialogAvatarsTab ref="avatarsTabRef" />
             </template>
 
@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-    import { computed, onMounted, ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
@@ -100,6 +100,9 @@
     import { formatJsonVars } from '../../../shared/utils/base/ui';
     import { miscRequest } from '../../../api';
     import { useUserDialogCommands } from './useUserDialogCommands';
+    import { showAvatarDialog, showAvatarAuthorDialog } from '../../../coordinators/avatarCoordinator';
+    import { showUserDialog, refreshUserDialogAvatars } from '../../../coordinators/userCoordinator';
+    import { getFriendRequest, handleFriendDelete } from '../../../coordinators/friendRelationshipCoordinator';
 
     import DialogJsonTab from '../DialogJsonTab.vue';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
@@ -118,23 +121,29 @@
     import PronounsDialog from './PronounsDialog.vue';
     import SendInviteRequestDialog from './SendInviteRequestDialog.vue';
     import SocialStatusDialog from './SocialStatusDialog.vue';
+    
+    const props = defineProps({
+        previousIds: {
+            type: Object,
+            required: true
+        },
+        updatePreviousId: {
+            type: Function,
+            default: () => {}
+        }
+    });
 
     const { t } = useI18n();
-    const isSelf = computed(() => userDialog.value.id === currentUser.value.id);
     const userDialogTabs = computed(() => {
         const tabs = [
             { value: 'Info', label: t('dialog.user.info.header') },
             { value: 'Groups', label: t('dialog.user.groups.header') },
-            { value: 'Worlds', label: t('dialog.user.worlds.header') }
+            { value: 'Worlds', label: t('dialog.user.worlds.header') },
+            { value: 'favorite-worlds', label: t('dialog.user.favorite_worlds.header') },
+            { value: 'Avatars', label: t('dialog.user.avatars.header') },
+            { value: 'JSON', label: t('dialog.user.json.header') }
         ];
-        if (!isSelf.value) {
-            tabs.push(
-                { value: 'favorite-worlds', label: t('dialog.user.favorite_worlds.header') },
-                { value: 'Avatars', label: t('dialog.user.avatars.header') }
-            );
-        }
-        tabs.push({ value: 'JSON', label: t('dialog.user.json.header') });
-        if (!isSelf.value && !currentUser.value.hasSharedConnectionsOptOut) {
+        if (userDialog.value.id !== currentUser.value.id && !currentUser.value.hasSharedConnectionsOptOut) {
             tabs.splice(1, 0, { value: 'mutual', label: t('dialog.user.mutual_friends.header') });
         }
         // Insert Activity before JSON
@@ -156,10 +165,6 @@
     const { userDialog, languageDialog, currentUser } = storeToRefs(useUserStore());
     const { cachedUsers, showSendBoopDialog } = useUserStore();
     const { showFavoriteDialog } = useFavoriteStore();
-    import { showAvatarDialog, showAvatarAuthorDialog } from '../../../coordinators/avatarCoordinator';
-    import { showUserDialog } from '../../../coordinators/userCoordinator';
-    import { getFriendRequest, handleFriendDelete } from '../../../coordinators/friendRelationshipCoordinator';
-
     const { showModerateGroupDialog } = useGroupStore();
     const { inviteGroupDialog } = storeToRefs(useGroupStore());
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
@@ -219,27 +224,6 @@
             }
         }
     );
-
-    watch(
-        () => userDialog.value.activeTab,
-        (activeTab) => {
-            if (activeTab === 'Activity' && userDialog.value.visible && !userDialog.value.loading) {
-                activityTabRef.value?.loadOnlineFrequency(userDialog.value.id);
-            }
-        }
-    );
-
-    onMounted(() => {
-        if (userDialog.value.visible && !userDialog.value.loading) {
-            loadLastActiveTab();
-        }
-    });
-
-    const userDialogLastMutualFriends = ref('');
-    const userDialogLastGroup = ref('');
-    const userDialogLastAvatar = ref('');
-    const userDialogLastWorld = ref('');
-    const userDialogLastFavoriteWorld = ref('');
 
     const socialStatusDialog = ref({
         visible: false,
@@ -336,30 +320,34 @@
                 userDialog.value.lastActiveTab = 'Info';
                 return;
             }
-            if (userDialogLastMutualFriends.value !== userId) {
-                userDialogLastMutualFriends.value = userId;
+            if (props.previousIds.mutualFriend !== userId) {
+                props.updatePreviousId('mutualFriend', userId);
                 mutualFriendsTabRef.value?.getUserMutualFriends(userId);
             }
         } else if (tabName === 'Groups') {
-            if (userDialogLastGroup.value !== userId) {
-                userDialogLastGroup.value = userId;
+            if (props.previousIds.group !== userId) {
+                props.updatePreviousId('group', userId);
                 groupsTabRef.value?.getUserGroups(userId);
             }
         } else if (tabName === 'Avatars') {
             avatarsTabRef.value?.setUserDialogAvatars(userId);
-            if (userDialogLastAvatar.value !== userId) {
-                userDialogLastAvatar.value = userId;
-                avatarsTabRef.value?.setUserDialogAvatarsRemote(userId);
+            if (props.previousIds.avatar !== userId) {
+                props.updatePreviousId('avatar', userId);
+                if (userId === currentUser.value.id) {
+                    refreshUserDialogAvatars();
+                } else {
+                    avatarsTabRef.value?.setUserDialogAvatarsRemote(userId);
+                }
             }
         } else if (tabName === 'Worlds') {
             worldsTabRef.value?.setUserDialogWorlds(userId);
-            if (userDialogLastWorld.value !== userId) {
-                userDialogLastWorld.value = userId;
+            if (props.previousIds.world !== userId) {
+                props.updatePreviousId('world', userId);
                 worldsTabRef.value?.refreshUserDialogWorlds();
             }
         } else if (tabName === 'favorite-worlds') {
-            if (userDialogLastFavoriteWorld.value !== userId) {
-                userDialogLastFavoriteWorld.value = userId;
+            if (props.previousIds.favoriteWorld !== userId) {
+                props.updatePreviousId('favoriteWorld', userId);
                 favoriteWorldsTabRef.value?.getUserFavoriteWorlds(userId);
             }
         } else if (tabName === 'Activity') {
@@ -373,12 +361,7 @@
      *
      */
     function loadLastActiveTab() {
-        let tab = userDialog.value.lastActiveTab;
-        if (isSelf.value && (tab === 'Avatars' || tab === 'favorite-worlds')) {
-            tab = 'Info';
-            userDialog.value.activeTab = tab;
-            userDialog.value.lastActiveTab = tab;
-        }
+        const tab = userDialog.value.lastActiveTab;
         handleUserDialogTab(tab);
     }
 

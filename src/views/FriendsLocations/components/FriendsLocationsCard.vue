@@ -5,9 +5,9 @@
             :style="cardStyle"
             @click="showUserDialog(friend.id)">
             <div class="friend-card__header grid items-center mb-1.75">
-                <div>
-                    <Avatar :style="{ width: `${avatarSize}px`, height: `${avatarSize}px` }">
-                        <AvatarImage :src="userImage(friend.ref, true)" />
+                <div class="relative inline-block flex-none size-9 mr-2.5">
+                    <Avatar class="size-full rounded-full">
+                        <AvatarImage :src="userImage(friend.ref, true)" class="object-cover" />
                         <AvatarFallback>
                             <User class="text-muted-foreground" :size="Math.max(16, 20 * cardScale)" />
                         </AvatarFallback>
@@ -17,7 +17,7 @@
                     class="friend-card__status-dot absolute rounded-full pointer-events-none"
                     :class="statusDotClass"></span>
                 <div
-                    class="friend-card__name font-semibold leading-[1.3] overflow-hidden text-ellipsis whitespace-nowrap ml-2"
+                    class="friend-card__name font-semibold overflow-hidden text-ellipsis whitespace-nowrap"
                     :title="friend.name">
                     {{ friend.name }}
                 </div>
@@ -35,7 +35,7 @@
                     class="friend-card__world flex items-center justify-start box-border max-w-full min-w-0 overflow-hidden"
                     :title="friend.worldName">
                     <Location
-                        class="friend-card__location flex w-full overflow-hidden leading-[1.3] wrap-break-word text-center"
+                        class="friend-card__location flex w-full overflow-hidden wrap-break-word text-center"
                         :location="friend.ref?.location"
                         :traveling="friend.ref?.travelingToLocation"
                         enable-context-menu
@@ -79,41 +79,37 @@
         }
     });
 
-    const avatarSize = computed(() => Math.max(36, 46 * props.cardScale));
-
     const cardStyle = computed(() => ({
         '--card-scale': props.cardScale,
         '--card-spacing': props.cardSpacing,
         cursor: 'pointer',
-        padding: `${54 * props.cardScale * props.cardSpacing}px`,
-        paddingBottom: `${36 * props.cardScale * props.cardSpacing}px !important`
+        padding: `${8 * props.cardScale}px`,
+        paddingBottom: `${6 * props.cardScale}px !important`
     }));
 
     const statusDotClass = computed(() => {
         const status = userStatusClass(props.friend.ref, props.friend.pendingOffline);
 
-        if (status?.joinme) {
-            return 'friend-card__status-dot--join';
-        }
         if (status?.online) {
             return 'friend-card__status-dot--online';
         }
-        // sometimes appearing and sometimes disappearing
+        if (status?.['active-joinme']) {
+            return 'friend-card__status-dot--active-joinme';
+        }
+        if (status?.['active-askme']) {
+            return 'friend-card__status-dot--active-askme';
+        }
+        if (status?.['active-busy']) {
+            return 'friend-card__status-dot--active-busy';
+        }
         if (status?.active) {
-            const friendStatus = props.friend.ref?.status;
-            if (friendStatus === 'join me') {
-                return 'friend-card__status-dot--active-join';
-            }
-            if (friendStatus === 'ask me') {
-                return 'friend-card__status-dot--active-ask';
-            }
-            if (friendStatus === 'busy') {
-                return 'friend-card__status-dot--active-busy';
-            }
             return 'friend-card__status-dot--active';
         }
+        if (status?.joinme) {
+            return 'friend-card__status-dot--joinme';
+        }
         if (status?.askme) {
-            return 'friend-card__status-dot--ask';
+            return 'friend-card__status-dot--askme';
         }
         if (status?.busy) {
             return 'friend-card__status-dot--busy';
@@ -162,13 +158,13 @@
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-online) 40%, transparent);
     }
 
-    .friend-card__status-dot--active-join {
+    .friend-card__status-dot--active-joinme {
         background: transparent;
         border: calc(2px * var(--card-scale)) solid var(--status-joinme);
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-joinme) 40%, transparent);
     }
 
-    .friend-card__status-dot--active-ask {
+    .friend-card__status-dot--active-askme {
         background: transparent;
         border: calc(2px * var(--card-scale)) solid var(--status-askme);
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-askme) 40%, transparent);
@@ -180,7 +176,7 @@
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-busy) 40%, transparent);
     }
 
-    .friend-card__status-dot--join {
+    .friend-card__status-dot--joinme {
         background: var(--status-joinme);
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-joinme) 40%, transparent);
     }
@@ -190,7 +186,7 @@
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-busy) 40%, transparent);
     }
 
-    .friend-card__status-dot--ask {
+    .friend-card__status-dot--askme {
         background: var(--status-askme);
         box-shadow: 0 0 calc(8px * var(--card-scale)) color-mix(in oklch, var(--status-askme) 40%, transparent);
     }
@@ -204,11 +200,12 @@
     }
 
     .friend-card__name {
-        font-size: calc(18px * var(--card-scale));
+        font-size: calc(13px * var(--card-scale));
     }
 
     .friend-card__signature {
         font-size: calc(12px * var(--card-scale));
+        padding: calc(7px * var(--card-scale)) calc(8px * var(--card-scale));
         line-height: 1.4;
         gap: calc(4px * var(--card-scale));
     }
@@ -218,7 +215,7 @@
     }
 
     .friend-card__world {
-        min-height: calc(40px * var(--card-scale));
+        min-height: calc(24px * var(--card-scale));
         padding: calc(7px * var(--card-scale)) calc(8px * var(--card-scale));
         border-radius: calc(var(--radius-lg) * var(--card-scale));
         font-size: calc(12px * var(--card-scale));

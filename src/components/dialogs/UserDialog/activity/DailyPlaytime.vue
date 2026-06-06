@@ -22,6 +22,7 @@
     import * as echarts from 'echarts';
 
     import { useAppearanceSettingsStore } from '@/stores';
+    import { formatTimestampKey } from '@/shared/utils/activityEngine';
 
     const props = defineProps({
         sessions: { type: Array, default: () => [] },
@@ -98,9 +99,9 @@
         const now = Date.now();
         const rangeDays = props.rangeDays;
         const rangeStart = rangeDays > 0 ? now - rangeDays * 86400000 : sessions[0].start;
-
         const dayMap = new Map();
-        const ONE_DAY_MS = 86400000;
+        let lastDayStart;
+        let lastDayKey = '';
 
         for (const session of sessions) {
             if (session.end <= rangeStart || session.start >= now) continue;
@@ -109,10 +110,18 @@
 
             let cursor = clippedStart;
             while (cursor < clippedEnd) {
-                const dayStart = new Date(cursor);
-                dayStart.setHours(0, 0, 0, 0);
-                const dayKey = `${dayStart.getFullYear()}-${String(dayStart.getMonth() + 1).padStart(2, '0')}-${String(dayStart.getDate()).padStart(2, '0')}`;
-                const nextDayStart = dayStart.getTime() + ONE_DAY_MS;
+                let dayKey;
+                if (cursor < lastDayStart) {
+                    dayKey = lastDayKey;
+                } else {
+                    const dayStart = new Date(cursor);
+                    dayStart.setHours(0, 0, 0, 0);
+                    dayKey = formatTimestampKey(dayStart);
+                    dayStart.setDate(dayStart.getDate() + 1);
+                    lastDayStart = dayStart.getTime();
+                    lastDayKey = dayKey;
+                }
+                const nextDayStart = lastDayStart;
                 const segmentEnd = Math.min(clippedEnd, nextDayStart);
                 dayMap.set(dayKey, (dayMap.get(dayKey) || 0) + (segmentEnd - cursor));
                 cursor = nextDayStart;
@@ -135,14 +144,19 @@
         const chartDom = chartRef.value;
         if (!chartDom) return;
 
+        let hasAnimated = false;
+
         if (!echartsInstance) {
             echartsInstance = echarts.init(chartDom, isDarkMode.value ? 'dark' : null);
             resizeObserver = new ResizeObserver((entries) => {
                 for (const entry of entries) {
                     echartsInstance?.resize({
                         width: entry.contentRect.width,
-                        animation: { duration: 300 }
+                        animation: {
+                            duration: hasAnimated ? 0 : 300
+                        }
                     });
+                    hasAnimated = true;
                 }
             });
             resizeObserver.observe(chartDom);

@@ -60,6 +60,7 @@ export interface GroupCalendarEvent {
     createdAt: string;
     deletedAt: string | null;
     description: string;
+    durationInMs: number;
     endsAt: string;
     featured: boolean;
     guestEarlyJoinMinutes: number;
@@ -70,9 +71,12 @@ export interface GroupCalendarEvent {
     interestedUserCount: number;
     isDraft: boolean;
     languages: string[];
+    occurrenceKind: 'occurrence' | 'single' | string;
     ownerId: string;
     platforms: string[];
+    recurrence: string | null;
     roleIds: string[] | null;
+    seriesId: string | null;
     startsAt: string;
     tags: string[];
     title: string;

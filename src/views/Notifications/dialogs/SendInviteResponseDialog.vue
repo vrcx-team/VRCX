@@ -1,6 +1,6 @@
 <template>
     <Dialog :open="sendInviteResponseDialogVisible" @update:open="(open) => (open ? null : cancelSendInviteResponse())">
-        <DialogContent>
+        <DialogContent class="x-dialog sm:max-w-200">
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.invite_response_message.header') }}</DialogTitle>
             </DialogHeader>

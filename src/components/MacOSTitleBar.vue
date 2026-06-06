@@ -79,7 +79,6 @@
 
     /* Light theme styles */
     :global(html:not(.dark)) .macos-title-bar {
-        background-color: rgba(248, 248, 248, 0.8);
         border-bottom-color: rgba(0, 0, 0, 0.06);
     }
 
@@ -89,7 +88,6 @@
 
     /* Dark theme styles */
     :global(html.dark) .macos-title-bar {
-        background-color: rgba(30, 30, 30, 0.8);
         border-bottom-color: rgba(255, 255, 255, 0.06);
     }
 

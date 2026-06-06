@@ -273,9 +273,6 @@
         const source = props.definitions?.length ? props.definitions : navDefinitions;
         source.forEach((def) => {
             if (def?.key) {
-                if (def.key === 'notification' && notificationLayout.value === 'notification-center') {
-                    return;
-                }
                 map.set(def.key, def);
             }
         });
@@ -722,7 +719,6 @@
 
     const handleAddDashboard = async () => {
         const dashboard = await dashboardStore.createDashboard(t('dashboard.default_name'));
-        dashboardStore.setEditingDashboardId(dashboard.id);
         localLayout.value.push({
             type: 'item',
             key: `${DASHBOARD_NAV_KEY_PREFIX}${dashboard.id}`

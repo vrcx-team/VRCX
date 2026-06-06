@@ -109,6 +109,15 @@ export const createColumns = ({
 
     return [
         {
+            id: 'spacer',
+            header: () => null,
+            enableSorting: false,
+            size: 20,
+            minSize: 0,
+            maxSize: 20,
+            cell: () => null
+        },
+        {
             accessorFn: (row) => getNotificationCreatedAtTs(row),
             id: 'created_at',
             size: 120,
@@ -116,6 +125,7 @@ export const createColumns = ({
             header: ({ column }) => (
                 <Button
                     variant="ghost"
+                    class="pl-0!"
                     onClick={() =>
                         column.toggleSorting(column.getIsSorted() === 'asc')
                     }
@@ -599,7 +609,7 @@ export const createColumns = ({
                                         <TooltipTrigger asChild>
                                             <button
                                                 type="button"
-                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                                 onClick={() =>
                                                     acceptFriendRequestNotification(
                                                         original
@@ -624,7 +634,7 @@ export const createColumns = ({
                                         <TooltipTrigger asChild>
                                             <button
                                                 type="button"
-                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                                 onClick={() =>
                                                     showSendInviteResponseDialog(
                                                         original
@@ -651,7 +661,7 @@ export const createColumns = ({
                                                 <TooltipTrigger asChild>
                                                     <button
                                                         type="button"
-                                                        class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                        class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                                         onClick={() =>
                                                             acceptRequestInvite(
                                                                 original
@@ -674,7 +684,7 @@ export const createColumns = ({
                                             <TooltipTrigger asChild>
                                                 <button
                                                     type="button"
-                                                    class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                    class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                                     onClick={() =>
                                                         showSendInviteRequestResponseDialog(
                                                             original
@@ -732,7 +742,7 @@ export const createColumns = ({
                                                   <TooltipTrigger asChild>
                                                       <button
                                                           type="button"
-                                                          class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                          class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                                           onClick={onClick}
                                                       >
                                                           <ResponseIcon class="h-4 w-4" />
@@ -753,7 +763,7 @@ export const createColumns = ({
                                         <TooltipTrigger asChild>
                                             <button
                                                 type="button"
-                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                                 onClick={() =>
                                                     shiftHeld.value
                                                         ? hideNotification(
@@ -788,7 +798,7 @@ export const createColumns = ({
                                         <TooltipTrigger asChild>
                                             <button
                                                 type="button"
-                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                                class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                                 onClick={() =>
                                                     shiftHeld.value
                                                         ? deleteNotificationLog(
@@ -822,7 +832,7 @@ export const createColumns = ({
                                 <TooltipTrigger asChild>
                                     <button
                                         type="button"
-                                        class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground"
+                                        class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                         onClick={() =>
                                             shiftHeld.value
                                                 ? deleteNotificationLog(

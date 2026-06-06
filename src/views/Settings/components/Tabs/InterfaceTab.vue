@@ -134,12 +134,6 @@
             </SettingsItem>
 
             <SettingsItem
-                :label="t('view.settings.appearance.appearance.toggle_pointer_on_hover')"
-                :description="t('view.settings.appearance.appearance.toggle_pointer_on_hover_description')">
-                <Switch :model-value="showPointerOnHover" @update:modelValue="togglePointerOnHover" />
-            </SettingsItem>
-
-            <SettingsItem
                 :label="t('view.settings.appearance.appearance.accessible_status_indicators')"
                 :description="t('view.settings.appearance.appearance.accessible_status_indicators_description')">
                 <Switch
@@ -442,7 +436,6 @@
         notificationIconDot,
         tablePageSizes,
         isDataTableStriped,
-        showPointerOnHover,
         accessibleStatusIndicators,
         useOfficialStatusColors,
         showNewDashboardButton
@@ -468,7 +461,6 @@
         setNotificationIconDot,
         setTablePageSizes,
         toggleStripedDataTable,
-        togglePointerOnHover,
         toggleAccessibleStatusIndicators,
         toggleOfficialStatusColors,
         setShowNewDashboardButton,

@@ -103,7 +103,7 @@
                                 <CollapsibleTrigger as-child>
                                     <button
                                         type="button"
-                                        class="flex w-full items-center justify-between py-0.5 text-[11px] font-medium text-muted-foreground uppercase tracking-wide cursor-pointer hover:text-foreground transition-colors">
+                                        class="flex w-full items-center justify-between py-0.5 text-[11px] font-medium text-muted-foreground uppercase tracking-wide cursor-pointer hover:text-foreground transition-colors cursor-pointer">
                                         {{ t('side_panel.settings.advanced') }}
                                         <ChevronDown
                                             class="size-3.5 transition-transform duration-200"

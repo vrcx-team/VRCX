@@ -28,7 +28,7 @@
                                     v-for="color in TAG_COLORS"
                                     :key="color.name"
                                     type="button"
-                                    class="h-4 w-4 shrink-0 rounded-sm transition-transform hover:scale-125"
+                                    class="h-4 w-4 shrink-0 rounded-sm transition-transform hover:scale-125 cursor-pointer"
                                     :class="
                                         isColorSelected(entry, color)
                                             ? 'ring-1 ring-ring ring-offset-1 ring-offset-background'

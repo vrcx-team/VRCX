@@ -214,6 +214,10 @@ export function applyFavoriteCached(json) {
     let ref = favoriteStore.cachedFavorites.get(json.id);
     if (typeof ref === 'undefined') {
         ref = createDefaultFavoriteCachedRef(json);
+        const oldEntry = favoriteStore.cachedFavoritesByObjectId.get(ref.favoriteId);
+        if (oldEntry && oldEntry.id !== ref.id) {
+            favoriteStore.cachedFavorites.delete(oldEntry.id);
+        }
         favoriteStore.cachedFavorites.set(ref.id, ref);
         favoriteStore.cachedFavoritesByObjectId.set(ref.favoriteId, ref);
         if (
@@ -236,6 +240,7 @@ export function applyFavoriteCached(json) {
             favoriteStore.cachedFavoritesByObjectId.delete(ref.favoriteId);
         }
         Object.assign(ref, json);
+        ref.$groupKey = `${ref.type}:${String(ref.tags[0])}`;
         favoriteStore.cachedFavoritesByObjectId.set(ref.favoriteId, ref);
     }
 
@@ -306,6 +311,7 @@ export async function applyFavorite(type, objectId) {
                     removeFromArray(favoriteStore.state.favoriteAvatars_, ctx);
                 }
             }
+            ctx.groupKey = favorite.$groupKey;
             if (type === 'friend') {
                 ref = userStore.cachedUsers.get(objectId);
                 if (typeof ref !== 'undefined') {
@@ -427,7 +433,7 @@ export function refreshFavorites() {
             if (ok) {
                 for (const id of favoriteStore.favoritesSortOrder) {
                     if (!newFavoriteSortOrder.includes(id)) {
-                        const fav = favoriteStore.cachedFavorites.get(id);
+                        const fav = favoriteStore.cachedFavoritesByObjectId.get(id);
                         if (fav) {
                             handleFavoriteAtDelete(fav);
                         }

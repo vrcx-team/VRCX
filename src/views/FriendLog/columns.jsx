@@ -129,7 +129,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
                     <div class="flex justify-end">
                         <button
                             type="button"
-                            class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
+                            class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                             onClick={() =>
                                 shiftHeld.value
                                     ? onDelete(original)

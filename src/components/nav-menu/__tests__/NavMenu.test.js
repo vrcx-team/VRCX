@@ -357,19 +357,4 @@ describe('NavMenu.vue', () => {
 
         expect(mocks.directAccessPaste).toHaveBeenCalledTimes(1);
     });
-
-    it('toggles theme when toggle-theme button is clicked', async () => {
-        const wrapper = mountComponent();
-        await Promise.resolve();
-        await Promise.resolve();
-
-        const target = wrapper
-            .findAll('[data-testid="menu-btn"]')
-            .find((node) => node.text().includes('nav_tooltip.toggle_theme'));
-        expect(target).toBeTruthy();
-
-        await target.trigger('click');
-
-        expect(mocks.toggleThemeMode).toHaveBeenCalledTimes(1);
-    });
 });

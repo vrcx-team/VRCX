@@ -50,84 +50,69 @@
                                 @click="showUserDialog(groupDialog.ref.ownerId)"
                                 v-text="groupDialog.ownerDisplayName"></span>
                         </div>
-                        <div class="group-tags">
-                            <Badge
-                                v-if="groupDialog.ref.isVerified"
-                                variant="outline"
-                                style="margin-right: 6px; margin-top: 6px">
+                        <div class="group-tags flex flex-wrap items-center">
+                            <Badge v-if="groupDialog.ref.isVerified" variant="outline" class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.verified') }}
                             </Badge>
-                            <Badge
-                                v-if="groupDialog.ref.privacy === 'private'"
-                                variant="outline"
-                                style="margin-right: 6px; margin-top: 6px">
+                            <Badge v-if="groupDialog.ref.privacy === 'private'" variant="outline" class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.private') }}
                             </Badge>
-                            <Badge
-                                v-if="groupDialog.ref.privacy === 'default'"
-                                variant="outline"
-                                style="margin-right: 6px; margin-top: 6px">
+                            <Badge v-if="groupDialog.ref.privacy === 'default'" variant="outline" class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.public') }}
                             </Badge>
-                            <Badge
-                                v-if="groupDialog.ref.joinState === 'open'"
-                                variant="outline"
-                                style="margin-right: 6px; margin-top: 6px">
+                            <Badge v-if="groupDialog.ref.joinState === 'open'" variant="outline" class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.open') }}
                             </Badge>
                             <Badge
                                 v-else-if="groupDialog.ref.joinState === 'request'"
                                 variant="outline"
-                                style="margin-right: 6px; margin-top: 6px">
+                                class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.request') }}
                             </Badge>
                             <Badge
                                 v-else-if="groupDialog.ref.joinState === 'invite'"
                                 variant="outline"
-                                style="margin-right: 6px; margin-top: 6px">
+                                class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.invite') }}
                             </Badge>
                             <Badge
                                 v-else-if="groupDialog.ref.joinState === 'closed'"
                                 variant="outline"
-                                style="margin-right: 6px; margin-top: 6px">
+                                class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.closed') }}
                             </Badge>
-                            <Badge
-                                v-if="groupDialog.inGroup"
-                                variant="outline"
-                                style="margin-right: 6px; margin-top: 6px">
+                            <Badge v-if="groupDialog.inGroup" variant="outline" class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.joined') }}
                             </Badge>
                             <Badge
                                 v-if="groupDialog.ref.myMember && groupDialog.ref.myMember.bannedAt"
                                 variant="outline"
-                                style="margin-right: 6px; margin-top: 6px">
+                                class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.banned') }}
                             </Badge>
                             <template v-if="groupDialog.inGroup && groupDialog.ref.myMember">
                                 <Badge
                                     v-if="groupDialog.ref.myMember.visibility === 'visible'"
                                     variant="outline"
-                                    style="margin-right: 6px; margin-top: 6px">
+                                    class="mr-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.visible') }}
                                 </Badge>
                                 <Badge
                                     v-else-if="groupDialog.ref.myMember.visibility === 'friends'"
                                     variant="outline"
-                                    style="margin-right: 6px; margin-top: 6px">
+                                    class="mr-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.friends') }}
                                 </Badge>
                                 <Badge
                                     v-else-if="groupDialog.ref.myMember.visibility === 'hidden'"
                                     variant="outline"
-                                    style="margin-right: 6px; margin-top: 6px">
+                                    class="mr-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.hidden') }}
                                 </Badge>
                                 <Badge
                                     v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements"
                                     variant="outline"
-                                    style="margin-right: 6px; margin-top: 6px">
+                                    class="mr-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.subscribed') }}
                                 </Badge>
                             </template>
@@ -266,6 +251,22 @@
                                             {{ t('dialog.group.actions.subscribe') }}
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
+                                            v-if="
+                                                groupDialog.ref.myMember.isSubscribedToEventAnnouncements ||
+                                                typeof groupDialog.ref.myMember.isSubscribedToEventAnnouncements ===
+                                                    'undefined'
+                                            "
+                                            @click="groupDialogCommand('Unsubscribe To Event Announcements')">
+                                            <MessageCircleOff class="size-4" />
+                                            {{ t('dialog.group.actions.unsubscribe_event') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            v-else
+                                            @click="groupDialogCommand('Subscribe To Event Announcements')">
+                                            <MessageCircle class="size-4" />
+                                            {{ t('dialog.group.actions.subscribe_event') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
                                             v-if="hasGroupPermission(groupDialog.ref, 'group-invites-manage')"
                                             @click="groupDialogCommand('Invite To Group')">
                                             <MessageSquare class="size-4" />
@@ -377,6 +378,8 @@
     import {
         Bell,
         BellOff,
+        MessageCircle,
+        MessageCircleOff,
         Bookmark,
         BookmarkCheck,
         Check,
@@ -421,7 +424,8 @@
         showGroupDialog,
         leaveGroupPrompt,
         setGroupVisibility,
-        setGroupSubscription
+        setGroupSubscription,
+        setGroupEventAnnouncements
     } from '../../../coordinators/groupCoordinator';
     import { groupRequest, queryRequest } from '../../../api';
     import { queryKeys, refetchActiveEntityQuery } from '../../../queries';
@@ -462,6 +466,7 @@
         leaveGroupPrompt,
         setGroupVisibility,
         setGroupSubscription,
+        setGroupEventAnnouncements,
         showGroupMemberModerationDialog,
         showInviteGroupDialog: (groupId, userId) => {
             if (groupId) {
@@ -738,7 +743,8 @@
             posts: D.posts,
             instances: D.instances,
             members: D.members,
-            galleries: D.galleries
+            galleries: D.galleries,
+            calendar: D.calendar
         };
     }
 

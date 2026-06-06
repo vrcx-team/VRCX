@@ -78,7 +78,7 @@
                             v-for="world in column"
                             :key="world.worldId"
                             type="button"
-                            class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent"
+                            class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent cursor-pointer"
                             :class="world._rank === 1 ? 'bg-primary/[0.04]' : ''"
                             @click="openDetail(world)">
                             <span
@@ -89,7 +89,9 @@
 
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-center gap-1.5">
-                                    <span class="block max-w-[380px] truncate text-sm font-medium">
+                                    <span
+                                        class="block max-w-[380px] truncate text-sm font-medium hover:underline cursor-pointer"
+                                        @click.stop="showWorldDialog(world.worldId)">
                                         {{ world.worldName }}
                                     </span>
                                     <template v-if="world.trend === 'rising'">
@@ -131,7 +133,7 @@
                 <SheetTitle class="text-left">
                     <button
                         type="button"
-                        class="text-left text-base font-semibold hover:underline"
+                        class="text-left text-base font-semibold hover:underline cursor-pointer"
                         @click="handleWorldClick">
                         {{ selectedWorld?.worldName }}
                     </button>
@@ -181,7 +183,7 @@
                             v-for="friend in friendDetail"
                             :key="friend.userId"
                             type="button"
-                            class="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm transition-colors hover:bg-accent"
+                            class="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm transition-colors hover:bg-accent cursor-pointer"
                             @click="openUserDialog(friend.userId)">
                             <span class="min-w-0 flex-1 truncate">{{ friend.displayName }}</span>
                             <span
@@ -200,7 +202,7 @@
     defineOptions({ name: 'ChartsHotWorlds' });
 
     import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-    import { Info, MapPin, RefreshCcw, TrendingDown, TrendingUp } from 'lucide-vue-next';
+    import { Info, MapPin, RefreshCcw, TrendingDown, TrendingUp, Users } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 

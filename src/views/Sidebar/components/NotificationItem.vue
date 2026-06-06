@@ -60,7 +60,7 @@
                                 :content="t('view.notification.actions.accept')">
                                 <button
                                     type="button"
-                                    class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
+                                    class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
                                     @click.stop="notificationStore.acceptFriendRequestNotification(notification)">
                                     <Check class="size-3" />
                                 </button>
@@ -72,7 +72,7 @@
                                 :content="t('view.notification.actions.decline_with_message')">
                                 <button
                                     type="button"
-                                    class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
+                                    class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
                                     @click.stop="$emit('show-invite-response', notification)">
                                     <MessageCircle class="size-3" />
                                 </button>
@@ -85,7 +85,7 @@
                                     :content="t('view.notification.actions.invite')">
                                     <button
                                         type="button"
-                                        class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
+                                        class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
                                         @click.stop="notificationStore.acceptRequestInvite(notification)">
                                         <Check class="size-3" />
                                     </button>
@@ -95,7 +95,7 @@
                                     :content="t('view.notification.actions.decline_with_message')">
                                     <button
                                         type="button"
-                                        class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
+                                        class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
                                         @click.stop="$emit('show-invite-request-response', notification)">
                                         <MessageCircle class="size-3" />
                                     </button>
@@ -110,7 +110,7 @@
                                     :content="response.text">
                                     <button
                                         type="button"
-                                        class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
+                                        class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
                                         @click.stop="handleResponse(response)">
                                         <component :is="getResponseIcon(response)" class="size-3" />
                                     </button>
@@ -123,7 +123,7 @@
                                 :content="t('view.notification.actions.decline')">
                                 <button
                                     type="button"
-                                    class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-muted"
+                                    class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-muted cursor-pointer"
                                     @click.stop="notificationStore.hideNotificationPrompt(notification)">
                                     <X class="size-3" />
                                 </button>
@@ -136,7 +136,7 @@
                             :content="t('view.notification.actions.delete_log')">
                             <button
                                 type="button"
-                                class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-muted"
+                                class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-muted cursor-pointer"
                                 @click.stop="notificationStore.deleteNotificationLogPrompt(notification)">
                                 <Trash2 class="size-3" />
                             </button>

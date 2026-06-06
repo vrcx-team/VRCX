@@ -1,6 +1,5 @@
 export const ONLINE_SESSION_MERGE_GAP_MS = 5 * 60 * 1000;
 export const DEFAULT_MAX_SESSION_MS = 8 * 60 * 60 * 1000;
-const ONE_HOUR_MS = 60 * 60 * 1000;
 
 export function buildSessionsFromEvents(events, initialStart = null) {
     const sessions = [];
@@ -129,10 +128,9 @@ export function buildHeatmapBuckets(
         while (cursor < end) {
             const date = new Date(cursor);
             const slot = date.getDay() * 24 + date.getHours();
-            const nextHour = new Date(cursor);
-            nextHour.setMinutes(0, 0, 0);
-            nextHour.setTime(nextHour.getTime() + ONE_HOUR_MS);
-            const segmentEnd = Math.min(nextHour.getTime(), end);
+            date.setHours(date.getHours() + 1, 0, 0, 0);
+            const nextHourMs = date.getTime();
+            const segmentEnd = Math.min(nextHourMs, end);
             buckets[slot] += (segmentEnd - cursor) / 60000;
             cursor = segmentEnd;
         }
@@ -433,15 +431,24 @@ export function buildDailySummary(
 ) {
     const dayMap = new Map();
     const clipped = clipSessionsToRange(sessions, rangeStartMs, rangeEndMs);
-    const ONE_DAY_MS = 86400000;
+    let lastDayStart;
+    let lastDayKey = '';
 
     for (const session of clipped) {
         let cursor = session.start;
         while (cursor < session.end) {
-            const dayStart = new Date(cursor);
-            dayStart.setHours(0, 0, 0, 0);
-            const dayKey = `${dayStart.getFullYear()}-${String(dayStart.getMonth() + 1).padStart(2, '0')}-${String(dayStart.getDate()).padStart(2, '0')}`;
-            const nextDayStart = dayStart.getTime() + ONE_DAY_MS;
+            let dayKey;
+            if (cursor < lastDayStart) {
+                dayKey = lastDayKey;
+            } else {
+                const dayStart = new Date(cursor);
+                dayStart.setHours(0, 0, 0, 0);
+                dayKey = formatTimestampKey(dayStart);
+                dayStart.setDate(dayStart.getDate() + 1);
+                lastDayStart = dayStart.getTime();
+                lastDayKey = dayKey;
+            }
+            const nextDayStart = lastDayStart;
             const segmentEnd = Math.min(session.end, nextDayStart);
             const duration = segmentEnd - cursor;
             dayMap.set(dayKey, (dayMap.get(dayKey) || 0) + duration);
@@ -455,6 +462,13 @@ export function buildDailySummary(
     }
     result.sort((a, b) => a.date.localeCompare(b.date));
     return result;
+}
+
+export function formatTimestampKey(timestamp) {
+    const year = timestamp.getFullYear();
+    const month = String(timestamp.getMonth() + 1).padStart(2, '0');
+    const day = String(timestamp.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 }
 
 function cloneSession(session) {

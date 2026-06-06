@@ -12,7 +12,7 @@
                     <button
                         v-if="clearable && selectedValueSet.size > 0"
                         type="button"
-                        class="flex items-center justify-center rounded-sm opacity-50 hover:opacity-100"
+                        class="flex items-center justify-center rounded-sm opacity-50 hover:opacity-100 cursor-pointer"
                         @click.stop.prevent="clearSelection">
                         <X class="size-3.5" />
                     </button>
@@ -50,7 +50,7 @@
                             <template v-else>
                                 <button
                                     type="button"
-                                    class="flex w-full items-center gap-2 px-2 text-left"
+                                    class="flex w-full items-center gap-2 px-2 text-left cursor-pointer"
                                     :style="{ height: `${itemHeight}px` }"
                                     @click="toggleSelection(virtualListEntries[virtualRow.index].value)">
                                     <slot

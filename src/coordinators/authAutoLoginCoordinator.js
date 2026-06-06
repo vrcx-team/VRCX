@@ -8,11 +8,9 @@ import { useAuthStore } from '../stores/auth';
 /**
  * Runs the full auto-login orchestration flow.
  * @param {object} [options] Test seams.
- * @param {function} [options.now] Timestamp provider.
  * @param {function} [options.isOnline] Online-check provider.
  */
 export async function runHandleAutoLoginFlow({
-    now = Date.now,
     isOnline = () => navigator.onLine
 } = {}) {
     const authStore = useAuthStore();
@@ -20,6 +18,7 @@ export async function runHandleAutoLoginFlow({
     const t = i18n.global.t;
 
     if (authStore.attemptingAutoLogin) {
+        console.warn('Already attempting auto login, skipping.');
         return;
     }
     authStore.setAttemptingAutoLogin(true);
@@ -27,6 +26,7 @@ export async function runHandleAutoLoginFlow({
         authStore.loginForm.lastUserLoggedIn
     );
     if (!user) {
+        console.log('No saved credentials found for auto login.');
         authStore.setAttemptingAutoLogin(false);
         return;
     }
@@ -36,9 +36,8 @@ export async function runHandleAutoLoginFlow({
         await authStore.handleLogoutEvent();
         return;
     }
-    const currentTimestamp = now();
-    const autoLoginAttempts = authStore.state.autoLoginAttempts;
-    const attemptsInLastHour = Array.from(autoLoginAttempts).filter(
+    const currentTimestamp = Date.now();
+    const attemptsInLastHour = Array.from(authStore.autoLoginAttempts).filter(
         (timestamp) => timestamp > currentTimestamp - 3600000
     ).length;
     if (attemptsInLastHour >= 3) {
@@ -50,7 +49,7 @@ export async function runHandleAutoLoginFlow({
         AppApi.FlashWindow();
         return;
     }
-    autoLoginAttempts.add(currentTimestamp);
+    authStore.autoLoginAttempts.add(currentTimestamp);
     console.log('Attempting automatic login...');
     try {
         await authStore.relogin(user);

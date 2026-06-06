@@ -182,6 +182,7 @@ const groupReq = {
     params: {
         visibility: string,
         isSubscribedToAnnouncements: bool,
+        isSubscribedToEventAnnouncements: bool,
         managerNotes: string
     }
      * @param userId
@@ -1018,21 +1019,6 @@ const groupReq = {
         }).then((json) => {
             const args = {
                 json
-            };
-            return args;
-        });
-    },
-
-    followGroupEvent(params) {
-        return request(`calendar/${params.groupId}/${params.eventId}/follow`, {
-            method: 'POST',
-            params: {
-                isFollowing: params.isFollowing
-            }
-        }).then((json) => {
-            const args = {
-                json,
-                params
             };
             return args;
         });

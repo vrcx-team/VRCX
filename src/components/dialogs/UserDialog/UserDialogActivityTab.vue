@@ -16,9 +16,9 @@
                     {{ t('dialog.user.activity.total_events', { count: filteredEventCount }) }}
                 </span>
             </div>
-            <div v-if="hasAnyData" class="flex items-center gap-2">
+            <div class="flex items-center gap-2">
                 <span class="text-muted-foreground text-sm">{{ t('dialog.user.activity.period') }}</span>
-                <Select v-model="selectedPeriod" :disabled="isLoading">
+                <Select v-model="userDialog.activityPeriodDays" :disabled="isLoading">
                     <SelectTrigger size="sm" class="w-40" @click.stop>
                         <SelectValue />
                     </SelectTrigger>
@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <div v-if="isSelf && hasAnyData && !fullCacheReady" class="text-xs text-muted-foreground mb-1">
+        <div v-if="isSelf && !fullCacheReady" class="text-xs text-muted-foreground mb-1">
             {{ t('dialog.user.activity.building_cache') }}
         </div>
 
@@ -55,19 +55,15 @@
             </div>
         </div>
 
-        <div v-if="isLoading && !hasAnyData" class="flex flex-col items-center justify-center flex-1 mt-8 gap-2">
+        <div
+            v-if="isLoading && filteredEventCount === 0"
+            class="flex flex-col items-center justify-center flex-1 mt-8 gap-2">
             <Spinner class="h-5 w-5" />
             <span class="text-sm text-muted-foreground">{{ t('dialog.user.activity.preparing_data') }}</span>
             <span class="text-xs text-muted-foreground">{{ t('dialog.user.activity.preparing_data_hint') }}</span>
         </div>
 
-        <div v-else-if="!isLoading && !hasAnyData" class="flex items-center justify-center flex-1 mt-8">
-            <DataTableEmpty type="nodata" />
-        </div>
-
-        <div
-            v-if="!isLoading && hasAnyData && filteredEventCount === 0"
-            class="flex items-center justify-center flex-1 mt-8">
+        <div v-if="!isLoading && filteredEventCount === 0" class="flex items-center justify-center flex-1 mt-8">
             <span class="text-muted-foreground text-sm">{{ t('dialog.user.activity.no_data_in_period') }}</span>
         </div>
 
@@ -78,15 +74,15 @@
             style="width: 100%; height: 240px"
             @contextmenu.prevent="onChartRightClick" />
 
-        <DailyPlaytime v-if="isSelf && hasAnyData" :sessions="cachedSessions" :range-days="currentRangeDays" />
+        <DailyPlaytime v-if="isSelf" :sessions="cachedSessions" :range-days="currentRangeDays" />
 
-        <div v-if="hasAnyData && !isSelf" class="mt-4 border-t border-border pt-3">
+        <div v-if="!isSelf" v-show="filteredEventCount > 0" class="mt-4 border-t border-border pt-3">
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                     <span class="text-sm font-medium">{{ t('dialog.user.activity.overlap.header') }}</span>
                     <Spinner v-if="isOverlapLoadingVisible" class="h-3.5 w-3.5" />
                 </div>
-                <div v-if="hasOverlapData" class="flex items-center gap-1.5 shrink-0">
+                <div class="flex items-center gap-1.5 shrink-0">
                     <Switch :model-value="excludeHoursEnabled" class="scale-75" @update:model-value="onExcludeToggle" />
                     <span class="text-sm text-muted-foreground whitespace-nowrap">
                         {{ t('dialog.user.activity.overlap.exclude_hours') }}
@@ -144,12 +140,12 @@
                 style="width: 100%; height: 240px"
                 @contextmenu.prevent="onOverlapChartRightClick" />
 
-            <div v-if="!isOverlapLoading && !hasOverlapData && hasAnyData" class="text-sm text-muted-foreground py-2">
+            <div v-if="!isOverlapLoading && !hasOverlapData" class="text-sm text-muted-foreground py-2">
                 {{ t('dialog.user.activity.overlap.no_data') }}
             </div>
         </div>
 
-        <div v-if="isSelf && hasAnyData" class="mt-4 border-t border-border pt-3">
+        <div v-if="isSelf && filteredEventCount > 0" class="mt-4 border-t border-border pt-3">
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                     <span class="text-sm font-medium">
@@ -203,7 +199,7 @@
                     v-for="(world, index) in sortedTopWorlds"
                     :key="world.worldId"
                     type="button"
-                    class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent"
+                    class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent cursor-pointer"
                     :class="index === 0 ? 'bg-primary/4' : ''"
                     @click="openWorld(world.worldId)">
                     <span
@@ -282,12 +278,10 @@
     const { userDialog, currentUser } = storeToRefs(useUserStore());
     const { isDarkMode, weekStartsOn } = storeToRefs(useAppearanceSettingsStore());
     const activityStore = useActivityStore();
-    const { fullCacheReady } = storeToRefs(activityStore);
+    const { fullCacheReady, userActivity } = storeToRefs(activityStore);
     const worldStore = useWorldStore();
 
     const isLoading = ref(false);
-    const hasAnyData = ref(false);
-    const selectedPeriod = ref('30');
     const currentRangeDays = ref(30);
     const cachedSessions = ref([]);
     const filteredEventCount = ref(0);
@@ -316,10 +310,6 @@
     });
     const isRestoringSettings = ref(false);
 
-    let activeRequestId = 0;
-    let activeOverlapRequestId = 0;
-    let activeTopWorldsRequestId = 0;
-    let lastLoadedUserId = '';
     let topWorldsLoadingTimer = null;
     let overlapLoadingTimer = null;
     let overlapRenderTimer = null;
@@ -351,24 +341,19 @@
         return Array.from({ length: 7 }, (_, index) => dayLabels.value[(start + index) % 7]);
     });
     const hourLabels = Array.from({ length: 24 }, (_, index) => `${String(index).padStart(2, '0')}:00`);
-    const ACTIVITY_SELF_PERIOD_KEY = 'VRCX_activitySelfPeriodDays';
-    const ACTIVITY_FRIEND_PERIOD_KEY = 'VRCX_activityFriendPeriodDays';
     const ACTIVITY_SELF_TOP_WORLDS_SORT_KEY = 'VRCX_activitySelfTopWorldsSortBy';
     const ACTIVITY_SELF_EXCLUDE_HOME_WORLD_KEY = 'VRCX_activitySelfExcludeHomeWorld';
 
-    async function applySettingsForCurrentContext() {
+    async function applySettingsAndRefresh() {
         isRestoringSettings.value = true;
-        const periodKey = isSelf.value ? ACTIVITY_SELF_PERIOD_KEY : ACTIVITY_FRIEND_PERIOD_KEY;
-        const [period, sortBy, excludeHomeWorld, overlapExcludeEnabled, overlapExcludeStart, overlapExcludeEnd] =
+        const [sortBy, excludeHomeWorld, overlapExcludeEnabled, overlapExcludeStart, overlapExcludeEnd] =
             await Promise.all([
-                configRepository.getString(periodKey, '30'),
                 configRepository.getString(ACTIVITY_SELF_TOP_WORLDS_SORT_KEY, 'count'),
                 configRepository.getBool(ACTIVITY_SELF_EXCLUDE_HOME_WORLD_KEY, false),
                 configRepository.getBool('VRCX_overlapExcludeEnabled', false),
                 configRepository.getString('VRCX_overlapExcludeStart', '1'),
                 configRepository.getString('VRCX_overlapExcludeEnd', '6')
             ]);
-        selectedPeriod.value = ['0', '7', '30', '90', '180', '365'].includes(period) ? period : '30';
         topWorldsSortBy.value = ['time', 'count'].includes(sortBy) ? sortBy : 'count';
         excludeHomeWorldEnabled.value = excludeHomeWorld;
         excludeHoursEnabled.value = overlapExcludeEnabled;
@@ -376,15 +361,14 @@
         excludeEndHour.value = String(overlapExcludeEnd);
         await nextTick();
         isRestoringSettings.value = false;
+        await refreshData();
     }
 
     function resetActivityState() {
         isLoading.value = false;
-        hasAnyData.value = false;
         filteredEventCount.value = 0;
         peakDayText.value = '';
         peakTimeText.value = '';
-        selectedPeriod.value = '30';
         hasOverlapData.value = false;
         overlapPercent.value = 0;
         bestOverlapTime.value = '';
@@ -397,10 +381,6 @@
         overlapHeatmapView.value = { rawBuckets: [], normalizedBuckets: [] };
         clearOverlapLoadingTimer();
         clearOverlapRenderTimer();
-        activeRequestId++;
-        activeOverlapRequestId++;
-        activeTopWorldsRequestId++;
-        lastLoadedUserId = '';
         clearTimeout(topWorldsLoadingTimer);
         topWorldsLoadingTimer = null;
     }
@@ -425,14 +405,14 @@
         clearOverlapLoadingTimer();
         overlapLoadingTimer = setTimeout(() => {
             overlapLoadingTimer = null;
-            if (requestId === activeOverlapRequestId && isOverlapLoading.value) {
+            if (requestId === userActivity.value.activeOverlapRequestId && isOverlapLoading.value) {
                 isOverlapLoadingVisible.value = true;
             }
         }, OVERLAP_LOADING_DELAY);
     }
 
     function finishOverlapLoading(requestId) {
-        if (requestId !== activeOverlapRequestId) {
+        if (requestId !== userActivity.value.activeOverlapRequestId) {
             return;
         }
         clearOverlapLoadingTimer();
@@ -462,14 +442,14 @@
         clearTimeout(topWorldsLoadingTimer);
         topWorldsLoadingTimer = setTimeout(() => {
             topWorldsLoadingTimer = null;
-            if (requestId === activeTopWorldsRequestId) {
+            if (requestId === userActivity.value.activeTopWorldsRequestId) {
                 topWorldsLoadingVisible.value = true;
             }
         }, TOP_WORLDS_LOADING_DELAY);
     }
 
     function finishTopWorldsLoading(requestId) {
-        if (requestId !== activeTopWorldsRequestId) {
+        if (requestId !== userActivity.value.activeTopWorldsRequestId) {
             return;
         }
         clearTimeout(topWorldsLoadingTimer);
@@ -479,7 +459,7 @@
     }
 
     async function loadTopWorldsSection({ userId, rangeDays, sortBy, period }) {
-        const requestId = ++activeTopWorldsRequestId;
+        const requestId = ++userActivity.value.activeTopWorldsRequestId;
         topWorldsLoading.value = true;
         scheduleTopWorldsLoading(requestId);
 
@@ -492,10 +472,10 @@
                 excludeWorldId: excludeHomeWorldEnabled.value ? currentHomeWorldId.value : ''
             });
             if (
-                requestId !== activeTopWorldsRequestId ||
+                requestId !== userActivity.value.activeTopWorldsRequestId ||
                 userDialog.value.id !== userId ||
                 topWorldsSortBy.value !== sortBy ||
-                selectedPeriod.value !== period
+                userDialog.value.activityPeriodDays !== period
             ) {
                 return;
             }
@@ -509,16 +489,19 @@
 
     async function refreshTopWorldsOnly() {
         const userId = userDialog.value.id;
-        if (!isSelf.value || !hasAnyData.value || !userId) {
+        if (!isSelf.value || !userId) {
             return;
         }
 
-        const rangeDays = parseInt(selectedPeriod.value, 10) === 0 ? 3650 : parseInt(selectedPeriod.value, 10) || 30;
+        const rangeDays =
+            parseInt(userDialog.value.activityPeriodDays, 10) === 0
+                ? 3650
+                : parseInt(userDialog.value.activityPeriodDays, 10) || 30;
         await loadTopWorldsSection({
             userId,
             rangeDays,
             sortBy: topWorldsSortBy.value,
-            period: selectedPeriod.value
+            period: userDialog.value.activityPeriodDays
         });
     }
 
@@ -528,15 +511,17 @@
             return;
         }
 
-        const requestId = ++activeRequestId;
-        const overlapRequestId = ++activeOverlapRequestId;
+        const requestId = ++userActivity.value.activeRequestId;
+        const overlapRequestId = ++userActivity.value.activeOverlapRequestId;
         if (!silent) {
             isLoading.value = true;
         }
 
         try {
             const rangeDays =
-                parseInt(selectedPeriod.value, 10) === 0 ? 3650 : parseInt(selectedPeriod.value, 10) || 30;
+                parseInt(userDialog.value.activityPeriodDays, 10) === 0
+                    ? 3650
+                    : parseInt(userDialog.value.activityPeriodDays, 10) || 30;
             const activityView = await activityStore.loadActivityView({
                 userId,
                 isSelf: isSelf.value,
@@ -544,11 +529,10 @@
                 dayLabels: dayLabels.value,
                 forceRefresh
             });
-            if (requestId !== activeRequestId || userDialog.value.id !== userId) {
+            if (requestId !== userActivity.value.activeRequestId || userDialog.value.id !== userId) {
                 return;
             }
 
-            hasAnyData.value = activityView.hasAnyData;
             filteredEventCount.value = activityView.filteredEventCount;
             peakDayText.value = activityView.peakDay;
             peakTimeText.value = activityView.peakTime;
@@ -556,7 +540,7 @@
                 rawBuckets: activityView.rawBuckets,
                 normalizedBuckets: activityView.normalizedBuckets
             };
-            lastLoadedUserId = userId;
+            userActivity.value.lastLoadedUserId = userId;
 
             if (isSelf.value) {
                 currentRangeDays.value = rangeDays;
@@ -564,21 +548,14 @@
                 cachedSessions.value = cache.sessions || [];
             }
 
-            if (!hasAnyData.value) {
-                hasOverlapData.value = false;
-                topWorlds.value = [];
-                topWorldsLoading.value = false;
-                return;
-            }
-
             if (isSelf.value) {
                 await loadTopWorldsSection({
                     userId,
                     rangeDays,
                     sortBy: topWorldsSortBy.value,
-                    period: selectedPeriod.value
+                    period: userDialog.value.activityPeriodDays
                 });
-                if (requestId !== activeRequestId || userDialog.value.id !== userId) {
+                if (requestId !== userActivity.value.activeRequestId || userDialog.value.id !== userId) {
                     return;
                 }
                 hasOverlapData.value = false;
@@ -598,53 +575,37 @@
                     endHour: parseInt(excludeEndHour.value, 10)
                 }
             });
-            if (requestId !== activeRequestId || userDialog.value.id !== userId) {
+            if (requestId !== userActivity.value.activeRequestId || userDialog.value.id !== userId) {
                 return;
             }
             applyOverlapView(overlapView);
         } finally {
-            if (requestId === activeRequestId) {
+            if (requestId === userActivity.value.activeRequestId) {
                 isLoading.value = false;
             }
             finishOverlapLoading(overlapRequestId);
         }
     }
 
-    async function loadForVisibleTab() {
-        const userId = userDialog.value.id;
-        if (!userId) {
-            return;
-        }
-        if (userId !== lastLoadedUserId) {
-            resetActivityState();
-            lastLoadedUserId = userId;
-        }
-        if (hasAnyData.value || isLoading.value) {
-            return;
-        }
-        await refreshData();
-    }
-
-    async function onPeriodChange() {
-        await configRepository.setString(
-            isSelf.value ? ACTIVITY_SELF_PERIOD_KEY : ACTIVITY_FRIEND_PERIOD_KEY,
-            selectedPeriod.value
-        );
+    async function onPeriodChange(period) {
+        userDialog.value.activityPeriodDays = period;
         await refreshData();
     }
 
     async function refreshOverlapOnly() {
         const userId = userDialog.value.id;
-        if (!userId || isSelf.value || !hasAnyData.value) {
+        if (!userId || isSelf.value) {
             return;
         }
 
-        const requestId = ++activeOverlapRequestId;
+        const requestId = ++userActivity.value.activeOverlapRequestId;
         beginOverlapLoading(requestId);
 
         try {
             const rangeDays =
-                parseInt(selectedPeriod.value, 10) === 0 ? 3650 : parseInt(selectedPeriod.value, 10) || 30;
+                parseInt(userDialog.value.activityPeriodDays, 10) === 0
+                    ? 3650
+                    : parseInt(userDialog.value.activityPeriodDays, 10) || 30;
             const overlapView = await activityStore.loadOverlapView({
                 currentUserId: currentUser.value.id,
                 targetUserId: userId,
@@ -657,7 +618,7 @@
                     endHour: parseInt(excludeEndHour.value, 10)
                 }
             });
-            if (requestId !== activeOverlapRequestId || userDialog.value.id !== userId) {
+            if (requestId !== userActivity.value.activeOverlapRequestId || userDialog.value.id !== userId) {
                 return;
             }
             applyOverlapView(overlapView);
@@ -886,33 +847,34 @@
         }
     }
 
-    function loadOnlineFrequency(userId) {
+    async function loadOnlineFrequency(userId) {
         if (!userId || userDialog.value.id !== userId) {
             return;
         }
-        void loadForVisibleTab();
+        if (userId !== userActivity.value.lastLoadedUserId) {
+            resetActivityState();
+        } else if (isLoading.value || filteredEventCount.value > 0) {
+            return;
+        }
+
+        await applySettingsAndRefresh();
     }
 
     watch(
         () => userDialog.value.id,
         async () => {
-            resetActivityState();
             rebuildCharts();
-            await applySettingsForCurrentContext();
-            if (userDialog.value.visible && userDialog.value.activeTab === 'Activity') {
-                void nextTick(() => loadForVisibleTab());
-            }
         }
     );
     watch([locale, isDarkMode, weekStartsOn], rebuildCharts);
     watch(
-        () => selectedPeriod.value,
-        () => {
+        () => userDialog.value.activityPeriodDays,
+        (period) => {
             if (isRestoringSettings.value) {
                 return;
             }
             if (userDialog.value.visible && userDialog.value.activeTab === 'Activity') {
-                void onPeriodChange();
+                void onPeriodChange(period);
             }
         }
     );
@@ -948,34 +910,6 @@
         },
         { deep: true }
     );
-    watch(
-        () => userDialog.value.visible,
-        (visible) => {
-            if (!visible) return;
-            nextTick(() => {
-                activityChart?.resize();
-                overlapChart?.resize();
-            });
-            if (userDialog.value.activeTab === 'Activity') {
-                void loadForVisibleTab();
-            }
-        }
-    );
-    watch(
-        () => userDialog.value.activeTab,
-        (activeTab) => {
-            if (activeTab === 'Activity' && userDialog.value.visible) {
-                void loadForVisibleTab();
-            }
-        }
-    );
-
-    onMounted(async () => {
-        await applySettingsForCurrentContext();
-        if (userDialog.value.visible && userDialog.value.activeTab === 'Activity') {
-            await loadForVisibleTab();
-        }
-    });
 
     onBeforeUnmount(() => {
         clearTimeout(easterEggTimer);

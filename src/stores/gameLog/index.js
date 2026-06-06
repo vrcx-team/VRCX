@@ -17,6 +17,7 @@ import { tryLoadPlayerList } from '../../coordinators/gameLogCoordinator';
 import { useAdvancedSettingsStore } from '../settings/advanced';
 import { useFriendStore } from '../friend';
 import { useNotificationStore } from '../notification';
+import { useDashboardStore } from '../dashboard';
 import { useUiStore } from '../ui';
 import { useUserStore } from '../user';
 import { useVrStore } from '../vr';
@@ -45,6 +46,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     const uiStore = useUiStore();
     const vrcxStore = useVrcxStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
+    const dashboardStore = useDashboardStore();
 
     const router = useRouter();
 
@@ -124,10 +126,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
     );
 
     watch(
-        router.currentRoute,
-        async (value) => {
+        [router.currentRoute, () => dashboardStore.dashboards],
+        async ([value]) => {
             await initPromise;
-            if (value.name === 'game-log') {
+            const isDashboardPanel =
+                value.name === 'dashboard' &&
+                dashboardStore.getDashboard(value.params.id, 'game-log');
+            if (value.name === 'game-log' || isDashboardPanel) {
                 if (sessionsViewMode.value === 'sessions') {
                     loadSessionsSegments();
                 } else {
@@ -142,7 +147,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 sessionsHasMore.value = true;
             }
         },
-        { immediate: true }
+        { immediate: true, deep: true }
     );
 
     watch(
@@ -177,7 +182,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         );
         const savedViewMode = await configRepository.getString(
             'VRCX_gameLogViewMode',
-            'sessions'
+            'table'
         );
         if (savedViewMode === 'sessions' || savedViewMode === 'table') {
             sessionsViewMode.value = savedViewMode;
