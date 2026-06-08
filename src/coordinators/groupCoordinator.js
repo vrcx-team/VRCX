@@ -5,6 +5,7 @@ import { i18n } from '../plugins/i18n';
 import {
     convertFileUrlToImageUrl,
     createDefaultGroupRef,
+    hasGroupPermission,
     sanitizeEntityJson
 } from '../shared/utils';
 import { groupRequest, instanceRequest, queryRequest } from '../api';
@@ -359,6 +360,58 @@ export function showGroupDialog(groupId, options = {}) {
                 getGroupDialogGroup(groupId, ref);
             }
         });
+}
+
+export function clearGroupMemberModerationDialog() {
+    const groupStore = useGroupStore();
+    const D = groupStore.groupMemberModeration;
+    D.tables.members.data = [];
+    D.tables.members.pageIndex = 0;
+    D.tables.bans.data = [];
+    D.tables.bans.pageIndex = 0;
+    D.tables.invites.data = [];
+    D.tables.invites.pageIndex = 0;
+    D.tables.logs.data = [];
+    D.tables.logs.pageIndex = 0;
+}
+
+/**
+ * @param groupId
+ * @param userId
+ */
+export function showGroupMemberModerationDialog(groupId, userId = '') {
+    const uiStore = useUiStore();
+    const groupStore = useGroupStore();
+    const isMainDialogOpen = uiStore.openDialog({
+        type: 'group-member-moderation',
+        id: groupId
+    });
+    const D = groupStore.groupMemberModeration;
+    if (!isMainDialogOpen || groupId !== D.id) {
+        clearGroupMemberModerationDialog();
+    }
+    D.id = groupId;
+    D.openWithUserId = userId;
+
+    D.groupRef = {};
+    D.auditLogTypes = [];
+    queryRequest.fetch('group.dialog', { groupId }).then((args) => {
+        D.groupRef = args.ref;
+        uiStore.setDialogCrumbLabel(
+            'group-member-moderation',
+            D.id,
+            D.groupRef?.name || D.id
+        );
+        if (hasGroupPermission(D.groupRef, 'group-audit-view')) {
+            groupRequest.getGroupAuditLogTypes({ groupId }).then((args) => {
+                if (D.id !== args.params.groupId) {
+                    return;
+                }
+                D.auditLogTypes = args.json;
+            });
+        }
+    });
+    D.visible = true;
 }
 
 /**

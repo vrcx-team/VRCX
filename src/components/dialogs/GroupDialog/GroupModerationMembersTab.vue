@@ -61,6 +61,7 @@
         <DataTableLayout
             v-if="tableData.data.length"
             style="margin-top: 8px"
+            :on-page-change="handlePageChange"
             :table="tanstackTable"
             :loading="loading"
             :page-sizes="pageSizes"
@@ -96,7 +97,8 @@
         sortingOptions: { type: Array, required: true },
         filterOptions: { type: Array, required: true },
         pageSizes: { type: Array, required: true },
-        columnContext: { type: Object, required: true }
+        columnContext: { type: Object, required: true },
+        handlePageChange: { type: Function, required: true }
     });
 
     defineEmits(['refresh', 'update:memberSearch', 'search', 'sort-change', 'filter-change', 'select-all']);
@@ -116,7 +118,10 @@
         },
         columns,
         getRowId: (row) => String(row?.userId ?? ''),
-        initialPagination: { pageIndex: 0, pageSize: props.tableData.pageSize ?? 15 }
+        initialPagination: { pageIndex: props.tableData.pageIndex ?? 0, pageSize: props.tableData.pageSize ?? 15 },
+        tableOptions: {
+            autoResetPageIndex: false
+        }
     });
 
     const totalItems = computed(() => tanstackTable.getFilteredRowModel().rows.length);

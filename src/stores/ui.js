@@ -10,7 +10,11 @@ import { updateLocalizedStrings } from '../plugins/i18n';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAvatarStore } from './avatar';
 import { useGroupStore } from './group';
-import { showGroupDialog } from '../coordinators/groupCoordinator';
+import {
+    clearGroupMemberModerationDialog,
+    showGroupDialog,
+    showGroupMemberModerationDialog
+} from '../coordinators/groupCoordinator';
 import { showWorldDialog } from '../coordinators/worldCoordinator';
 import { showAvatarDialog } from '../coordinators/avatarCoordinator';
 import { showUserDialog } from '../coordinators/userCoordinator';
@@ -174,6 +178,10 @@ export const useUiStore = defineStore('Ui', () => {
             instanceStore.showPreviousInstancesInfoDialog(item.id);
             return;
         }
+        if (item.type === 'group-member-moderation') {
+            showGroupMemberModerationDialog(item.id);
+            return;
+        }
         console.error(
             `Unknown dialog crumb type: ${item.type}, closing dialog`
         );
@@ -195,6 +203,8 @@ export const useUiStore = defineStore('Ui', () => {
         worldStore.setWorldDialogVisible(false);
         avatarStore.setAvatarDialogVisible(false);
         groupStore.setGroupDialogVisible(false);
+        groupStore.setGroupMemberModerationVisible(false);
+        clearGroupMemberModerationDialog();
         instanceStore.hidePreviousInstancesDialogs();
         clearDialogCrumbs();
     }
@@ -225,6 +235,7 @@ export const useUiStore = defineStore('Ui', () => {
             worldStore.worldDialog.visible ||
             avatarStore.avatarDialog.visible ||
             groupStore.groupDialog.visible ||
+            groupStore.groupMemberModeration.visible ||
             (instanceStore.previousInstancesInfoDialog.visible &&
                 !isPrevInfo) ||
             (instanceStore.previousInstancesListDialog.visible && !isPrevList);
@@ -240,6 +251,9 @@ export const useUiStore = defineStore('Ui', () => {
         }
         if (type !== 'group') {
             groupStore.setGroupDialogVisible(false);
+        }
+        if (type !== 'group-member-moderation') {
+            groupStore.setGroupMemberModerationVisible(false);
         }
         if (!isPrevInfo) {
             instanceStore.setPreviousInstancesInfoDialogVisible(false);
