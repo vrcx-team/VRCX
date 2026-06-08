@@ -330,11 +330,9 @@ namespace VRCX
             string error = process.StandardError.ReadToEnd();
             process.WaitForExit();
 
-            if (!string.IsNullOrEmpty(error) &&
-                !error.Contains("wineserver: using server-side synchronization.") &&
-                !error.Contains("fixme:wineusb:query_id"))
+            if (process.ExitCode != 0)
             {
-                logger.Error($"Wine reg command error: {error}");
+                logger.Error($"Wine reg command failed (exit {process.ExitCode}): {error}");
                 return null;
             }
 
