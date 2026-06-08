@@ -59,8 +59,6 @@
         <!-- ## Dialogs ## -->
         <MainDialogContainer></MainDialogContainer>
 
-        <GroupMemberModerationDialog></GroupMemberModerationDialog>
-
         <InviteGroupDialog></InviteGroupDialog>
 
         <FullscreenImagePreview></FullscreenImagePreview>

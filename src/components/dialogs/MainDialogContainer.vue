@@ -28,6 +28,7 @@
     import PreviousInstancesListDialog from './PreviousInstancesDialog/PreviousInstancesListDialog.vue';
     import UserDialog from './UserDialog/UserDialog.vue';
     import WorldDialog from './WorldDialog/WorldDialog.vue';
+    import GroupMemberModerationDialog from './GroupDialog/GroupMemberModerationDialog.vue';
 
     const avatarStore = useAvatarStore();
     const groupStore = useGroupStore();
@@ -73,6 +74,9 @@
             if (groupStore.groupDialog.visible) {
                 return 'group';
             }
+            if (groupStore.groupMemberModeration.visible) {
+                return 'group-member-moderation';
+            }
             return null;
         })();
         return type;
@@ -95,6 +99,8 @@
                 return PreviousInstancesListDialog;
             case 'previous-instances-group':
                 return PreviousInstancesListDialog;
+            case 'group-member-moderation':
+                return GroupMemberModerationDialog;
             default:
                 return null;
         }
@@ -130,6 +136,8 @@
                 return 'x-dialog sm:max-w-235 translate-y-0 overflow-hidden flex flex-col';
             case 'group':
                 return 'x-dialog translate-y-0 sm:max-w-235 overflow-hidden flex flex-col';
+            case 'group-member-moderation':
+                return 'x-dialog translate-y-0 max-w-none flex flex-col sm:min-w-[90vw] sm:max-w-[90vw] sm:min-h-[80vh] sm:max-h-[80vh]';
             case 'previous-instances-info':
             case 'previous-instances-user':
             case 'previous-instances-world':

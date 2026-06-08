@@ -327,7 +327,7 @@
                                                 </div>
                                                 <div class="favorites-search-card__detail">
                                                     <div class="flex items-center gap-2">
-                                                        <span class="name">{{ favorite.name }}</span>
+                                                        <span class="name truncate">{{ favorite.name }}</span>
                                                     </div>
                                                     <span class="text-xs">{{ favorite.authorName }}</span>
                                                 </div>

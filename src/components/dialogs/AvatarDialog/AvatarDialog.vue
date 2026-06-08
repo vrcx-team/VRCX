@@ -26,16 +26,16 @@
                 </div>
                 <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
                     <div style="flex: 1">
-                        <div>
+                        <div class="max-h-25 overflow-hidden">
                             <span
-                                class="font-bold mr-1.5"
+                                class="font-bold mr-1.5 break-all"
                                 style="cursor: pointer"
                                 v-text="avatarDialog.ref.name"
                                 @click="copyToClipboard(avatarDialog.ref.name)"></span>
                         </div>
                         <div class="mt-1.5">
                             <span
-                                class="cursor-pointer x-grey font-mono"
+                                class="cursor-pointer x-grey font-mono break-all"
                                 @click="showUserDialog(avatarDialog.ref.authorId)"
                                 v-text="avatarDialog.ref.authorName"></span>
                         </div>
@@ -177,7 +177,7 @@
                         <div style="margin-top: 6px">
                             <span
                                 v-show="avatarDialog.ref.name !== avatarDialog.ref.description"
-                                class="text-xs"
+                                class="text-xs break-all"
                                 v-text="avatarDialog.ref.description"></span>
                         </div>
                     </div>

@@ -26,8 +26,8 @@
                 </div>
                 <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
                     <div style="flex: 1">
-                        <div>
-                            <span class="font-bold mr-1.5" style="cursor: pointer" @click="copyWorldName">
+                        <div class="max-h-25 overflow-hidden">
+                            <span class="font-bold mr-1.5 break-all" style="cursor: pointer" @click="copyWorldName">
                                 <Home
                                     v-if="
                                         currentUser.$homeLocation &&
@@ -39,7 +39,7 @@
                         </div>
                         <div class="mt-1.5">
                             <span
-                                class="cursor-pointer x-grey font-mono"
+                                class="cursor-pointer x-grey font-mono break-all"
                                 @click="showUserDialog(worldDialog.ref.authorId)"
                                 v-text="worldDialog.ref.authorName" />
                         </div>
@@ -136,7 +136,7 @@
                         <div style="margin-top: 6px; display: flex; align-items: center">
                             <span
                                 v-show="worldDialog.ref.name !== worldDialog.ref.description"
-                                class="text-xs"
+                                class="text-xs break-all"
                                 style="flex: 1; margin-right: 0.5em"
                                 >{{ translatedDescription || worldDialog.ref.description }}</span
                             >

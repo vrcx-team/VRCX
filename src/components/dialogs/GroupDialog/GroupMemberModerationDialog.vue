@@ -1,122 +1,129 @@
 <template>
-    <Dialog v-model:open="groupMemberModeration.visible">
-        <DialogContent class="x-dialog max-w-none sm:min-w-[90vw] sm:max-w-[90vw] sm:min-h-[90vh] sm:max-h-[90vh]">
-            <DialogHeader>
-                <DialogTitle>{{ t('dialog.group_member_moderation.header') }}</DialogTitle>
-            </DialogHeader>
+    <div class="flex-1 min-h-0 flex flex-col">
+        <DialogHeader class="sr-only">
+            <DialogTitle>{{ t('dialog.group_member_moderation.header') }}</DialogTitle>
+        </DialogHeader>
 
-            <div>
-                <h3>{{ groupMemberModeration.groupRef.name }}</h3>
-                <TabsUnderline default-value="members" :items="groupModerationTabs" :unmount-on-hide="false">
-                    <template #members>
-                        <GroupModerationMembersTab
-                            :loading="isGroupMembersLoading"
-                            :table-data="tables.members"
-                            :group-ref="groupMemberModeration.groupRef"
-                            :member-sort-order="memberSortOrder"
-                            :member-filter="memberFilter"
-                            :member-search="memberSearch"
-                            :sorting-options="groupDialogSortingOptions"
-                            :filter-options="groupDialogFilterOptions"
-                            :page-sizes="pageSizes"
-                            :column-context="membersColumnContext"
-                            @refresh="loadAllGroupMembers"
-                            @update:member-search="memberSearch = $event"
-                            @search="groupMembersSearch"
-                            @sort-change="setGroupMemberSortOrder"
-                            @filter-change="setGroupMemberFilter"
-                            @select-all="selectAll" />
-                    </template>
+        <div class="flex-1 min-h-0 flex flex-col">
+            <h3>{{ groupMemberModeration.groupRef.name }}</h3>
+            <TabsUnderline
+                v-model="groupMemberModeration.activeTab"
+                @update:modelValue="tabClick"
+                default-value="members"
+                :items="groupModerationTabs"
+                :unmount-on-hide="false">
+                <template #members>
+                    <GroupModerationMembersTab
+                        :loading="isGroupMembersLoading"
+                        :table-data="tables.members"
+                        :group-ref="groupMemberModeration.groupRef"
+                        :member-sort-order="memberSortOrder"
+                        :member-filter="memberFilter"
+                        :member-search="memberSearch"
+                        :sorting-options="groupDialogSortingOptions"
+                        :filter-options="groupDialogFilterOptions"
+                        :page-sizes="pageSizes"
+                        :column-context="membersColumnContext"
+                        :handle-page-change="(val) => (tables.members.pageIndex = Math.max(0, val - 1))"
+                        @refresh="loadAllGroupMembers"
+                        @update:member-search="memberSearch = $event"
+                        @search="groupMembersSearch"
+                        @sort-change="setGroupMemberSortOrder"
+                        @filter-change="setGroupMemberFilter"
+                        @select-all="selectAll" />
+                </template>
 
-                    <template #bans>
-                        <GroupModerationBansTab
-                            :loading="isGroupMembersLoading"
-                            :table-data="tables.bans"
-                            :group-ref="groupMemberModeration.groupRef"
-                            :page-sizes="pageSizes"
-                            :column-context="bansColumnContext"
-                            @refresh="getAllGroupBans(groupMemberModeration.id)"
-                            @select-all="selectAll"
-                            @export="isGroupBansExportDialogVisible = true"
-                            @import="isGroupBansImportDialogVisible = true" />
-                    </template>
+                <template #bans>
+                    <GroupModerationBansTab
+                        :loading="isGroupMembersLoading"
+                        :table-data="tables.bans"
+                        :group-ref="groupMemberModeration.groupRef"
+                        :page-sizes="pageSizes"
+                        :column-context="bansColumnContext"
+                        :handle-page-change="(val) => (tables.bans.pageIndex = Math.max(0, val - 1))"
+                        @refresh="getAllGroupBans(groupMemberModeration.id)"
+                        @select-all="selectAll"
+                        @export="isGroupBansExportDialogVisible = true"
+                        @import="isGroupBansImportDialogVisible = true" />
+                </template>
 
-                    <template #invites>
-                        <GroupModerationInvitesTab
-                            :loading="isGroupMembersLoading"
-                            :invites-table="tables.invites"
-                            :join-requests-table="tables.joinRequests"
-                            :blocked-table="tables.blocked"
-                            :group-ref="groupMemberModeration.groupRef"
-                            :progress-current="progressCurrent"
-                            :page-sizes="pageSizes"
-                            :column-context="invitesColumnContext"
-                            @refresh="getAllGroupInvitesAndJoinRequests(groupMemberModeration.id)"
-                            @select-all="selectAll"
-                            @delete-sent-invite="handleDeleteSentInvite"
-                            @accept-invite-request="handleAcceptInviteRequest"
-                            @reject-invite-request="handleRejectInviteRequest"
-                            @block-join-request="handleBlockJoinRequest"
-                            @delete-blocked-request="handleDeleteBlockedRequest" />
-                    </template>
+                <template #invites>
+                    <GroupModerationInvitesTab
+                        :loading="isGroupMembersLoading"
+                        :invites-table="tables.invites"
+                        :join-requests-table="tables.joinRequests"
+                        :blocked-table="tables.blocked"
+                        :group-ref="groupMemberModeration.groupRef"
+                        :progress-current="progressCurrent"
+                        :page-sizes="pageSizes"
+                        :column-context="invitesColumnContext"
+                        :handle-page-change="(val) => (tables.invites.pageIndex = Math.max(0, val - 1))"
+                        @refresh="getAllGroupInvitesAndJoinRequests(groupMemberModeration.id)"
+                        @select-all="selectAll"
+                        @delete-sent-invite="handleDeleteSentInvite"
+                        @accept-invite-request="handleAcceptInviteRequest"
+                        @reject-invite-request="handleRejectInviteRequest"
+                        @block-join-request="handleBlockJoinRequest"
+                        @delete-blocked-request="handleDeleteBlockedRequest" />
+                </template>
 
-                    <template #logs>
-                        <GroupModerationLogsTab
-                            ref="logsTabRef"
-                            :loading="isGroupMembersLoading"
-                            :table-data="tables.logs"
-                            :audit-log-types="groupMemberModeration.auditLogTypes"
-                            :page-sizes="pageSizes"
-                            :column-context="logsColumnContext"
-                            @refresh="handleLogsRefresh"
-                            @export="isGroupLogsExportDialogVisible = true" />
-                    </template>
-                </TabsUnderline>
+                <template #logs>
+                    <GroupModerationLogsTab
+                        ref="logsTabRef"
+                        :loading="isGroupMembersLoading"
+                        :table-data="tables.logs"
+                        :audit-log-types="groupMemberModeration.auditLogTypes"
+                        :page-sizes="pageSizes"
+                        :column-context="logsColumnContext"
+                        :handle-page-change="(val) => (tables.logs.pageIndex = Math.max(0, val - 1))"
+                        @refresh="handleLogsRefresh"
+                        @export="isGroupLogsExportDialogVisible = true" />
+                </template>
+            </TabsUnderline>
 
-                <br />
-                <br />
-                <GroupModerationBulkActions
-                    :select-user-id="selectUserId"
-                    :selected-users-array="selectedUsersArray"
-                    :selected-roles="selectedRoles"
-                    :note="note"
-                    :progress-current="progressCurrent"
-                    :progress-total="progressTotal"
-                    :group-ref="groupMemberModeration.groupRef"
-                    @update:select-user-id="selectUserId = $event"
-                    @update:note="note = $event"
-                    @update:selected-roles="selectedRoles = $event"
-                    @select-user="handleSelectUser"
-                    @clear-all="clearAllSelected"
-                    @delete-user="deleteSelectedUser"
-                    @add-roles="handleAddRoles"
-                    @remove-roles="handleRemoveRoles"
-                    @save-note="handleSaveNote"
-                    @kick="handleKick"
-                    @ban="handleBan"
-                    @unban="handleUnban"
-                    @cancel-progress="progressTotal = 0" />
-            </div>
+            <br />
+            <br />
+            <GroupModerationBulkActions
+                :select-user-id="selectUserId"
+                :selected-users-array="groupMemberModeration.selectedUsersArray"
+                :selected-roles="selectedRoles"
+                :note="note"
+                :progress-current="progressCurrent"
+                :progress-total="progressTotal"
+                :group-ref="groupMemberModeration.groupRef"
+                @update:select-user-id="selectUserId = $event"
+                @update:note="note = $event"
+                @update:selected-roles="selectedRoles = $event"
+                @select-user="handleSelectUser"
+                @clear-all="clearAllSelected"
+                @delete-user="deleteSelectedUser"
+                @add-roles="handleAddRoles"
+                @remove-roles="handleRemoveRoles"
+                @save-note="handleSaveNote"
+                @kick="handleKick"
+                @ban="handleBan"
+                @unban="handleUnban"
+                @cancel-progress="progressTotal = 0" />
+        </div>
 
-            <group-member-moderation-export-dialog
-                v-model:isGroupLogsExportDialogVisible="isGroupLogsExportDialogVisible"
-                :group-logs-moderation-table="tables.logs" />
+        <group-member-moderation-export-dialog
+            v-model:isGroupLogsExportDialogVisible="isGroupLogsExportDialogVisible"
+            :group-logs-moderation-table="tables.logs" />
 
-            <group-member-moderation-ban-export-dialog
-                v-model:isGroupBansExportDialogVisible="isGroupBansExportDialogVisible"
-                :group-bans-moderation-table="tables.bans" />
+        <group-member-moderation-ban-export-dialog
+            v-model:isGroupBansExportDialogVisible="isGroupBansExportDialogVisible"
+            :group-bans-moderation-table="tables.bans" />
 
-            <group-member-moderation-ban-import-dialog
-                v-model:isGroupBansImportDialogVisible="isGroupBansImportDialogVisible"
-                :group-id="groupMemberModeration.id"
-                @imported="getAllGroupBans(groupMemberModeration.id)" />
-        </DialogContent>
-    </Dialog>
+        <group-member-moderation-ban-import-dialog
+            v-model:isGroupBansImportDialogVisible="isGroupBansImportDialogVisible"
+            :group-id="groupMemberModeration.id"
+            @imported="getAllGroupBans(groupMemberModeration.id)" />
+    </div>
 </template>
 
 <script setup>
-    import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-    import { computed, reactive, ref, watch } from 'vue';
+    import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import { computed, ref, watch } from 'vue';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -130,7 +137,7 @@
     import { hasGroupPermission } from '../../../shared/utils';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
-    import { groupRequest, userRequest } from '../../../api';
+    import { groupRequest } from '../../../api';
     import { resolveRoleNames } from './groupModerationUtils';
     import { useGroupBatchOperations } from './useGroupBatchOperations';
     import { useGroupModerationData } from './useGroupModerationData';
@@ -179,32 +186,11 @@
     const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
 
     // ── Table data ───────────────────────────────────────────────
-    const tables = {
-        members: reactive({ data: [], pageSize: 15 }),
-        bans: reactive({ data: [], filters: [{ prop: ['$displayName'], value: '' }], pageSize: 15 }),
-        invites: reactive({ data: [], pageSize: 15 }),
-        joinRequests: reactive({ data: [], pageSize: 15 }),
-        blocked: reactive({ data: [], pageSize: 15 }),
-        logs: reactive({ data: [], filters: [{ prop: ['description'], value: '' }], pageSize: 15 })
-    };
+    const tables = groupMemberModeration.value.tables;
 
     // ── Selection ────────────────────────────────────────────────
-    const {
-        selectedUsers,
-        selectedUsersArray,
-        setSelectedUsers,
-        deselectedUsers,
-        onSelectionChange,
-        deleteSelectedUser,
-        clearAllSelected,
-        selectAll
-    } = useGroupModerationSelection({
-        members: tables.members,
-        bans: tables.bans,
-        invites: tables.invites,
-        joinRequests: tables.joinRequests,
-        blocked: tables.blocked
-    });
+    const { setSelectedUsers, deselectedUsers, onSelectionChange, deleteSelectedUser, clearAllSelected, selectAll } =
+        useGroupModerationSelection(groupMemberModeration.value);
 
     // ── Column contexts ──────────────────────────────────────────
     const rolesText = (roleIds) => resolveRoleNames(roleIds, groupMemberModeration.value?.groupRef?.roles ?? []);
@@ -256,17 +242,15 @@
         addGroupMemberToSelection,
         getAllGroupBans,
         getAllGroupLogs,
-        getAllGroupInvitesAndJoinRequests,
-        resetData
+        getAllGroupInvitesAndJoinRequests
     } = useGroupModerationData({
         groupMemberModeration,
         currentUser,
         applyGroupMember,
         handleGroupMember,
         tables,
-        selection: { selectedUsers, setSelectedUsers },
-        groupRequest,
-        userRequest
+        selection: { selectedUsers: groupMemberModeration.value.selectedUsers, setSelectedUsers },
+        groupRequest
     });
 
     // ── Batch operations ─────────────────────────────────────────
@@ -300,7 +284,7 @@
         groupMembersBlockJoinRequest,
         groupMembersDeleteBlockedRequest
     } = useGroupBatchOperations({
-        selectedUsersArray,
+        selectedUsersArray: groupMemberModeration.value.selectedUsersArray,
         currentUser,
         groupMemberModeration,
         deselectedUsers,
@@ -410,21 +394,20 @@
         getAllGroupLogs(groupMemberModeration.value.id, eventTypes);
     }
 
+    function tabClick(newTab) {
+        groupMemberModeration.value.activeTab = newTab;
+    }
+
     // ── Dialog open watcher ──────────────────────────────────────
     watch(
         () => groupMemberModeration.value.visible,
         (newVal) => {
             if (newVal) {
-                resetData();
-                clearAllSelected();
-                selectUserId.value = '';
-                selectedRoles.value = [];
-                note.value = '';
-
                 if (groupMemberModeration.value.openWithUserId) {
                     addGroupMemberToSelection(groupMemberModeration.value.openWithUserId);
                 }
             }
-        }
+        },
+        { immediate: true }
     );
 </script>
