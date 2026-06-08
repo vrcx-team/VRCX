@@ -27,11 +27,13 @@
                 <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
                     <div class="group-header" style="flex: 1">
                         <span class="mr-1.5" v-if="groupDialog.ref.ownerId === currentUser.id">👑</span>
-                        <span
-                            class="font-bold mr-1.5"
-                            style="cursor: pointer"
-                            v-text="groupDialog.ref.name"
-                            @click="copyToClipboard(groupDialog.ref.name)"></span>
+                        <div class="max-h-25 overflow-hidden">
+                            <span
+                                class="font-bold mr-1.5 break-all"
+                                style="cursor: pointer"
+                                v-text="groupDialog.ref.name"
+                                @click="copyToClipboard(groupDialog.ref.name)"></span>
+                        </div>
                         <span class="group-discriminator x-grey mr-1.5 font-mono text-xs">
                             {{ groupDialog.ref.shortCode }}.{{ groupDialog.ref.discriminator }}
                         </span>
@@ -120,8 +122,8 @@
                         <div style="margin-top: 6px">
                             <pre
                                 v-show="groupDialog.ref.name !== groupDialog.ref.description"
-                                class="text-xs font-[inherit]"
-                                style="white-space: pre-wrap; max-height: 40vh; overflow-y: auto"
+                                class="text-xs font-[inherit] break-all"
+                                style="white-space: pre-wrap; max-height: 20vh; overflow-y: auto"
                                 v-text="groupDialog.ref.description"></pre>
                         </div>
                     </div>
