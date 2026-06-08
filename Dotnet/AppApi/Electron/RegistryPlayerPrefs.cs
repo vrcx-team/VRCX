@@ -283,6 +283,38 @@ namespace VRCX
                     return null;
                 }
             }
+            else
+            {
+                // The checks above only cover Steam's own compatibilitytools.d, but Steam searches more locations than that.
+                // Fall back to the rest of its documented search order.
+                // https://github.com/ValveSoftware/steam-for-linux/issues/6310#issuecomment-511630263
+                // Each root is a directory holding tool subdirs, except STEAM_EXTRA_COMPAT_TOOLS_PATHS entries which can also be a tool directory themselves, so check both forms.
+                var roots = new List<string>
+                {
+                    "/usr/share/steam/compatibilitytools.d",
+                    "/usr/local/share/steam/compatibilitytools.d",
+                };
+                var extraPaths = Environment.GetEnvironmentVariable("STEAM_EXTRA_COMPAT_TOOLS_PATHS");
+                if (!string.IsNullOrEmpty(extraPaths))
+                    roots.AddRange(extraPaths.Split(':', StringSplitOptions.RemoveEmptyEntries));
+
+                foreach (var root in roots)
+                {
+                    var candidates = new List<string> { root };
+                    if (Directory.Exists(root))
+                        candidates.AddRange(Directory.GetDirectories(root, $"*{compatTool}*"));
+
+                    foreach (var candidate in candidates)
+                    {
+                        winePath = Path.Join(candidate, "files", "bin", "wine");
+                        if (File.Exists(winePath))
+                            break;
+                        winePath = "";
+                    }
+                    if (winePath != "")
+                        break;
+                }
+            }
 
             if (winePath == "")
             {
