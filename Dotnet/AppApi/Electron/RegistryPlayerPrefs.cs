@@ -240,21 +240,12 @@ namespace VRCX
             }
 
             string steamPath = _steamPath;
-            string steamAppsCommonPath = Path.Join(steamPath, "steamapps", "common");
-            string compatabilityToolsPath = Path.Join(steamPath, "compatibilitytools.d");
-            string protonPath = Path.Join(steamAppsCommonPath, compatTool);
-            string compatToolPath = Path.Join(compatabilityToolsPath, compatTool);
             string winePath = "";
-            if (Directory.Exists(compatToolPath))
-            {
-                winePath = Path.Join(compatToolPath, "files", "bin", "wine");
-                if (!File.Exists(winePath))
-                {
-                    Console.WriteLine("Wine not found in CompatTool path");
-                    return null;
-                }
-            }
-            else if (Directory.Exists(protonPath))
+
+            // A Proton install in a Steam library uses a different layout than a
+            // registered compat tool, so check it on its own.
+            string protonPath = Path.Join(steamPath, "steamapps", "common", compatTool);
+            if (Directory.Exists(protonPath))
             {
                 winePath = Path.Join(protonPath, "dist", "bin", "wine");
                 if (!File.Exists(winePath))
@@ -263,32 +254,13 @@ namespace VRCX
                     return null;
                 }
             }
-            else if (Directory.Exists(compatabilityToolsPath))
-            {
-                var dirs = Directory.GetDirectories(compatabilityToolsPath);
-                foreach (var dir in dirs)
-                {
-                    if (dir.Contains(compatTool))
-                    {
-                        winePath = Path.Join(dir, "files", "bin", "wine");
-                        if (File.Exists(winePath))
-                        {
-                            break;
-                        }
-                    }
-                }
-                if (!File.Exists(winePath))
-                {
-                    Console.WriteLine("Wine not found in CompatTool path");
-                    return null;
-                }
-            }
             else
             {
-                // The checks above only cover Steam's own compatibilitytools.d, but Steam searches more locations than that.
-                // Fall back to the rest of its documented search order.
+                // Search every compatibilitytools.d Steam looks in, in its
+                // documented order.
                 // https://github.com/ValveSoftware/steam-for-linux/issues/6310#issuecomment-511630263
-                // Each root is a directory holding tool subdirs, except STEAM_EXTRA_COMPAT_TOOLS_PATHS entries which can also be a tool directory themselves, so check both forms.
+                // STEAM_EXTRA_COMPAT_TOOLS_PATHS entries can be a tool directory
+                // themselves rather than a parent of one, so check both forms.
                 var roots = new List<string>
                 {
                     "/usr/share/steam/compatibilitytools.d",
@@ -297,10 +269,11 @@ namespace VRCX
                 var extraPaths = Environment.GetEnvironmentVariable("STEAM_EXTRA_COMPAT_TOOLS_PATHS");
                 if (!string.IsNullOrEmpty(extraPaths))
                     roots.AddRange(extraPaths.Split(':', StringSplitOptions.RemoveEmptyEntries));
+                roots.Add(Path.Join(steamPath, "compatibilitytools.d"));
 
                 foreach (var root in roots)
                 {
-                    var candidates = new List<string> { root };
+                    var candidates = new List<string> { root, Path.Join(root, compatTool) };
                     if (Directory.Exists(root))
                         candidates.AddRange(Directory.GetDirectories(root, $"*{compatTool}*"));
 
