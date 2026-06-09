@@ -2,11 +2,11 @@
     <Empty>
         <EmptyHeader>
             <EmptyMedia variant="icon">
-                <SearchAlert v-if="props.type === 'nomatch'" class="text-lg" />
+                <SearchAlert v-if="props.type === 'nomatch' || props.error" class="text-lg text-red-500" />
                 <Inbox v-else class="text-lg" />
             </EmptyMedia>
-            <EmptyDescription>
-                {{ emptyText }}
+            <EmptyDescription :class="(props.type === 'nomatch' || props.error) ? 'text-red-500' : ''">
+                {{ props.error || emptyText }}
             </EmptyDescription>
         </EmptyHeader>
     </Empty>
@@ -23,6 +23,10 @@
         type: {
             type: String,
             default: 'nodata'
+        },
+        error: {
+            type: String,
+            default: null
         }
     });
 

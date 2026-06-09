@@ -3,6 +3,7 @@
         <DataTableLayout
             :table="table"
             :loading="feedTable.loading"
+            :error="feedTable.error"
             auto-height
             :page-sizes="pageSizes"
             :total-items="totalItems"
@@ -30,6 +31,22 @@
                                     :max-value="todayDate"
                                     :number-of-months="2"
                                     :week-starts-on="weekStartsOn" />
+                                <div class="px-3 pb-3">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <span class="text-sm font-medium whitespace-nowrap">
+                                            {{ t('view.feed.search_limit') }}
+                                        </span>
+                                        <InputGroupField
+                                            v-model="tempLimit"
+                                            type="number"
+                                            size="sm"
+                                            class="w-24"
+                                            :placeholder="String(vrcxStore.searchLimit)" />
+                                        <span class="text-xs text-muted-foreground">
+                                            {{ t('view.feed.search_limit_hint') }}
+                                        </span>
+                                    </div>
+                                </div>
                                 <div class="flex justify-end gap-2 mt-3">
                                     <Button variant="outline" size="sm" @click="clearDateFilter">
                                         {{ t('common.actions.clear') }}
@@ -79,7 +96,19 @@
                         clearable
                         style="flex: 0.4"
                         @keyup.enter="feedTableLookup"
-                        @change="feedTableLookup" />
+                        @change="feedTableLookup">
+                        <template #trailing>
+                            <TooltipWrapper side="bottom" :content="t('view.tools.formula_search.formula_search_help')">
+                                <Button
+                                    variant="ghost"
+                                    size="icon-xs"
+                                    class="size-6 p-0 hover:bg-transparent"
+                                    @click="toolsStore.openDialog('formulaSearchHelp')">
+                                    <Info class="size-4 text-muted-foreground" />
+                                </Button>
+                            </TooltipWrapper>
+                        </template>
+                    </InputGroupField>
                 </div>
             </template>
         </DataTableLayout>
@@ -87,7 +116,7 @@
 </template>
 
 <script setup>
-    import { computed, ref } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { ListFilter, Star } from 'lucide-vue-next';
     import { getLocalTimeZone, today } from '@internationalized/date';
     import { storeToRefs } from 'pinia';
@@ -96,10 +125,13 @@
     import dayjs from 'dayjs';
 
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
-    import { useAppearanceSettingsStore, useFeedStore, useVrcxStore } from '../../stores';
+    import { useAppearanceSettingsStore, useFeedStore, useToolsStore, useVrcxStore } from '../../stores';
+    import { database } from '../../services/database';
+    import configRepository from '../../services/config';
     import { ToggleGroup, ToggleGroupItem } from '../../components/ui/toggle-group';
     import { Badge } from '../../components/ui/badge';
     import { Button } from '../../components/ui/button';
+    import { Info } from 'lucide-vue-next';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { InputGroupField } from '../../components/ui/input-group';
     import { RangeCalendar } from '../../components/ui/range-calendar';
@@ -112,12 +144,20 @@
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const { weekStartsOn } = storeToRefs(appearanceSettingsStore);
     const vrcxStore = useVrcxStore();
+    const toolsStore = useToolsStore();
 
     const { t, locale } = useI18n();
     const feedFilterTypes = ['GPS', 'Online', 'Offline', 'Status', 'Avatar', 'Bio'];
 
     const popoverOpen = ref(false);
+    const tempLimit = ref(vrcxStore.searchLimit);
     const todayDate = today(getLocalTimeZone());
+
+    watch(popoverOpen, (open) => {
+        if (open) {
+            tempLimit.value = vrcxStore.searchLimit;
+        }
+    });
     const dateRange = ref(undefined);
     const hasDateFilter = computed(() => !!(feedTable.value.dateFrom || feedTable.value.dateTo));
     const activeFilterCount = computed(() => (hasDateFilter.value ? 1 : 0));
@@ -126,25 +166,27 @@
      *
      */
     function applyDateFilter() {
-        if (dateRange.value?.start) {
-            const s = dateRange.value.start;
-            feedTable.value.dateFrom = dayjs(`${s.year}-${s.month}-${s.day}`).startOf('day').toISOString();
+        const start = dateRange.value?.start;
+        const end = dateRange.value?.end;
+
+        if (start && end) {
+            feedTable.value.dateFrom = dayjs(`${start.year}-${start.month}-${start.day}`).startOf('day').toISOString();
+            feedTable.value.dateTo = dayjs(`${end.year}-${end.month}-${end.day}`).endOf('day').toISOString();
+        } else if (start) {
+            // Single click = Everything before
+            feedTable.value.dateFrom = '';
+            feedTable.value.dateTo = dayjs(`${start.year}-${start.month}-${start.day}`).endOf('day').toISOString();
         } else {
             feedTable.value.dateFrom = '';
-        }
-        if (dateRange.value?.end) {
-            const e = dateRange.value.end;
-            feedTable.value.dateTo = dayjs(`${e.year}-${e.month}-${e.day}`).endOf('day').toISOString();
-        } else {
             feedTable.value.dateTo = '';
         }
+        vrcxStore.setSearchLimit(Number(tempLimit.value) || vrcxStore.searchLimit);
+        configRepository.setInt('VRCX_searchLimit', vrcxStore.searchLimit);
+        database.setSearchTableSize(vrcxStore.searchLimit);
         popoverOpen.value = false;
         feedTableLookup();
     }
 
-    /**
-     *
-     */
     function clearDateFilter() {
         dateRange.value = undefined;
         feedTable.value.dateFrom = '';
