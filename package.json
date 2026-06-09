@@ -142,7 +142,7 @@
         ],
         "asarUnpack": [
             "node_modules/node-api-dotnet/**/*",
-            "node_modules/node-api-dotnet/net9.0/**/*",
+            "node_modules/node-api-dotnet/net10.0/**/*",
             "build/Electron/*",
             "build/Electron/**",
             "build/Electron/dotnet-runtime/**/*",
@@ -154,12 +154,12 @@
                 "to": "app.asar.unpacked/build/Electron/"
             },
             {
-                "from": "node_modules/node-api-dotnet/net9.0/Microsoft.JavaScript.NodeApi.dll",
-                "to": "app.asar.unpacked/node_modules/node-api-dotnet/net9.0/Microsoft.JavaScript.NodeApi.dll"
+                "from": "node_modules/node-api-dotnet/net10.0/Microsoft.JavaScript.NodeApi.dll",
+                "to": "app.asar.unpacked/node_modules/node-api-dotnet/net10.0/Microsoft.JavaScript.NodeApi.dll"
             },
             {
-                "from": "node_modules/node-api-dotnet/net9.0/Microsoft.JavaScript.NodeApi.DotNetHost.dll",
-                "to": "app.asar.unpacked/node_modules/node-api-dotnet/net9.0/Microsoft.JavaScript.NodeApi.DotNetHost.dll"
+                "from": "node_modules/node-api-dotnet/net10.0/Microsoft.JavaScript.NodeApi.DotNetHost.dll",
+                "to": "app.asar.unpacked/node_modules/node-api-dotnet/net10.0/Microsoft.JavaScript.NodeApi.DotNetHost.dll"
             },
             {
                 "from": "build/Electron/dotnet-runtime/",
