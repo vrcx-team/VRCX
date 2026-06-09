@@ -31,14 +31,17 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
     const onPlayerJoining = ref([]);
 
     async function rebuildOnPlayerJoining() {
+        const wristFilter =
+            notificationsSettingsStore.sharedFeedFilters.wrist.OnPlayerJoining;
         let newOnPlayerJoining = [];
         for (const ref of userStore.currentTravelers.values()) {
+            if (!wristFilter || wristFilter === 'Off') {
+                break;
+            }
             const isFavorite = friendStore.localFavoriteFriends.has(ref.id);
             if (
                 locationStore.lastLocation.playerList.has(ref.id) ||
-                (notificationsSettingsStore.sharedFeedFilters.wrist
-                    .OnPlayerJoining === 'VIP' &&
-                    !isFavorite)
+                (wristFilter === 'VIP' && !isFavorite)
             ) {
                 continue;
             }
