@@ -4,7 +4,6 @@ import { toast } from 'vue-sonner';
 /**
  * Composable for batch moderation operations with progress tracking.
  * @param {object} deps
- * @param {import('vue').Ref} deps.selectedUsersArray
  * @param {import('vue').Ref} deps.currentUser
  * @param {import('vue').Ref} deps.groupMemberModeration
  * @param {Function} deps.deselectedUsers
@@ -35,7 +34,7 @@ export function useGroupBatchOperations(deps) {
         skipSelf = true,
         onComplete
     }) {
-        const users = [...deps.selectedUsersArray.value];
+        const users = [...deps.groupMemberModeration.value.selectedUsersArray];
         const memberCount = users.length;
         const groupId = deps.groupMemberModeration.value.id;
         progressTotal.value = memberCount;
