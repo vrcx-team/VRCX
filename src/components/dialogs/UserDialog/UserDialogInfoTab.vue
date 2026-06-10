@@ -445,7 +445,7 @@
                     <TooltipWrapper side="top" :content="t('dialog.user.info.id_tooltip')">
                         <DropdownMenu>
                             <DropdownMenuTrigger as-child>
-                                <Button class="rounded-full ml-1 text-xs" size="icon-sm" variant="ghost" @click.stop
+                                <Button class="rounded-full ml-1 text-xs" size="icon-sm" variant="ghost" @click.stop :ariaLabel="t('dialog.avatar.info.id_tooltip')"
                                     ><Copy class="h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>
