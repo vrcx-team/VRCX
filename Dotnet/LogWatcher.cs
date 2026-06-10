@@ -31,6 +31,7 @@ namespace VRCX
         private bool threadActive;
         private Thread? m_Thread;
         private DateTime tillDate;
+        private TimeZoneInfo? lastGameTZ = null;
         public bool VrcClosedGracefully;
         private readonly ConcurrentQueue<string> m_LogQueue = new ConcurrentQueue<string>(); // for electron
         private static readonly Regex CleanId = new("[^a-zA-Z0-9_\\-~:()]", RegexOptions.Compiled);
@@ -163,6 +164,35 @@ namespace VRCX
             m_FirstRun = false;
         }
 
+#if LINUX
+        private DateTime ConvertToGameTimeZoneUTC(DateTime lineDate, string? dateString)
+        {
+            if (lastGameTZ != null && lastGameTZ.Id != TimeZoneInfo.Local.Id)
+            {
+                bool isInvalid = lastGameTZ.IsInvalidTime(lineDate);
+                bool isAmbiguous = lastGameTZ.IsAmbiguousTime(lineDate);
+                if (isInvalid || isAmbiguous)
+                {
+                    // Theoretically shouldn't happen because the TimeZoneInfo we get should account for this already,
+                    // but putting a log here just incase VRChat itself doesn't handle daylight savings transitions well.
+                    //
+                    // TimeZoneInfo.ConvertTimeToUtc would throw an exception in the Invalid case, so we'll have to
+                    // adjust later if this does turn out to be an issue.
+                    string issueType = isAmbiguous ? "Ambiguous" : "Invalid";
+
+                    if (dateString != null)
+                        logger.Warn("{0} log time for detected game timezone (likely daylight savings issue), using fallback: {1}", issueType, dateString);
+
+                    return lineDate.ToUniversalTime();
+                }
+                else
+                    return TimeZoneInfo.ConvertTimeToUtc(lineDate, lastGameTZ);
+            }
+
+            return lineDate.ToUniversalTime();
+        }
+#endif
+
         /// <summary>
         /// Parses the log file starting from the current position and updates the log context.
         /// </summary>
@@ -196,21 +226,34 @@ namespace VRCX
                     if (ParseLogUdonException(fileInfo, line))
                         continue;
 
+#if LINUX
+                    if (ParseLogTimeZone(line))
+                        continue;
+#endif
+
                     if (line.Length <= 36 ||
                         line[31] != '-')
                     {
                         continue;
                     }
 
+                    string dateString = line.Substring(0, 19);
+
                     if (DateTime.TryParseExact(
-                            line.Substring(0, 19),
+                            dateString,
                             "yyyy.MM.dd HH:mm:ss",
                             CultureInfo.InvariantCulture,
                             DateTimeStyles.None,
                             out var lineDate
                         ))
                     {
+#if LINUX
+                        // Linux users may encounter a mismatch between the game timezone and the machine timezone.
+                        lineDate = ConvertToGameTimeZoneUTC(lineDate, dateString);
+#else
                         lineDate = lineDate.ToUniversalTime();
+#endif
+
                         // check if date is older than last database entry
                         if (DateTime.Compare(lineDate, tillDate) <= 0)
                         {
@@ -328,7 +371,11 @@ namespace VRCX
                     out var dt
                 ))
             {
+#if LINUX
+                dt = ConvertToGameTimeZoneUTC(dt, null);
+#else
                 dt = dt.ToUniversalTime();
+#endif
             }
             else
             {
@@ -339,6 +386,50 @@ namespace VRCX
             return dt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'", CultureInfo.InvariantCulture);
         }
 
+#if LINUX
+        private bool ParseLogTimeZone(string line)
+        {
+            // Linux users may run into issues where the game's timezone doesn't match their machine's timezone.
+            // Fortunately, the game tells us what timezone it has detected, so we can detect and account for this.
+            //
+            // 2026.06.04 14:50:57 Debug      -  Found 139 time zones, default: 'Greenwich Standard Time', 24-hour clock: False
+            // 2026.06.04 15:55:20 Debug      -  Found 139 time zones, default: 'GMT Standard Time', 24-hour clock: False
+            // 2026.06.04 16:59:08 Debug      -  Found 139 time zones, default: 'W. Europe Standard Time', 24-hour clock: False
+            // 2026.06.04 21:29:46 Debug      -  Found 139 time zones, default: 'Russian Standard Time', 24-hour clock: False
+
+            if (!line.Contains("time zones, default: '") || !line.Contains("', 24-hour clock: "))
+                return false;
+
+            var lineOffsetStart = line.LastIndexOf("default: '", StringComparison.Ordinal);
+            var lineOffsetEnd = line.LastIndexOf("', 24-hour clock: ", StringComparison.Ordinal);
+
+            if (lineOffsetStart < 0 || lineOffsetEnd < 0)
+                return true;
+
+            lineOffsetStart += 10;
+
+            if (lineOffsetStart > line.Length)
+                return true;
+
+            var gameTZString = line.Substring(lineOffsetStart, lineOffsetEnd - lineOffsetStart);
+            logger.Info("gameTZString = {0}", gameTZString);
+
+            TimeZoneInfo hostTZ = TimeZoneInfo.Local;
+            logger.Info("hostTZ = {0}", hostTZ.Id);
+
+            TimeZoneInfo? gameTZ = null;
+            if (!TimeZoneInfo.TryFindSystemTimeZoneById(gameTZString, out gameTZ))
+            {
+                logger.Warn("Couldn't get TimeZoneInfo for game timezone string of \"{0}\"", gameTZString);
+                return true;
+            }
+
+            logger.Info("gameTZId = {0}", gameTZ.Id);
+
+            lastGameTZ = gameTZ;
+            return true;
+        }
+#endif
         private bool ParseLogLocation(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2020.10.31 23:36:28 Log        -  [VRCFlowManagerVRC] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
