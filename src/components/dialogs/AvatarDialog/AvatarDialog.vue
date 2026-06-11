@@ -201,7 +201,11 @@
                             v-if="avatarDialog.isFavorite"
                             side="top"
                             :content="t('dialog.avatar.actions.favorite_tooltip')">
-                            <Button class="rounded-full" size="icon-lg" @click="avatarDialogCommand('Add Favorite')" :ariaLabel="t('dialog.avatar.actions.favorite_tooltip')"
+                            <Button
+                                class="rounded-full"
+                                size="icon-lg"
+                                @click="avatarDialogCommand('Add Favorite')"
+                                :ariaLabel="t('dialog.avatar.actions.favorite_tooltip')"
                                 ><Star
                             /></Button>
                         </TooltipWrapper>
@@ -210,7 +214,7 @@
                                 class="rounded-full"
                                 size="icon-lg"
                                 variant="outline"
-                                @click="avatarDialogCommand('Add Favorite')" 
+                                @click="avatarDialogCommand('Add Favorite')"
                                 :ariaLabel="t('dialog.avatar.actions.favorite_tooltip')"
                                 ><Star
                             /></Button>
@@ -223,7 +227,7 @@
                                 variant="outline"
                                 :disabled="currentUser.currentAvatar === avatarDialog.id"
                                 @click="selectAvatarWithoutConfirmation(avatarDialog.id)"
-                                :aria-label="t('dialog.avatar.actions.select')">
+                                :ariaLabel="t('dialog.avatar.actions.select')">
                                 <CheckCircle
                             /></Button>
                         </TooltipWrapper>
@@ -232,7 +236,7 @@
                                 <Button
                                     class="rounded-full ml-2"
                                     :variant="avatarDialog.isBlocked ? 'destructive' : 'outline'"
-                                    size="icon-lg" 
+                                    size="icon-lg"
                                     :ariaLabel="t('nav_tooltip.manage')">
                                     <Ellipsis />
                                 </Button>
@@ -1047,3 +1051,4 @@
         }
     }
 </script>
+

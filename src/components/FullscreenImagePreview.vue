@@ -20,7 +20,7 @@
                             class="h-8 w-8"
                             :disabled="!imageUrl"
                             @click="copyImageToClipboard(imageUrl)"
-                            aria-label="Copy">
+                            :ariaLabel="t('common.actions.copy')">
                             <Copy class="h-4 w-4" />
                         </Button>
 
@@ -30,7 +30,7 @@
                             class="h-8 w-8"
                             :disabled="!imageUrl"
                             @click="downloadAndSaveImage(imageUrl, fullscreenImageDialog.fileName)"
-                            aria-label="Download">
+                            :ariaLabel="t('dialog.vrcx_updater.download')">
                             <Download class="h-4 w-4" />
                         </Button>
 
@@ -41,10 +41,15 @@
                             size="icon"
                             class="h-8 w-8"
                             @click="zoomOutCenter"
-                            aria-label="Zoom out">
+                            :ariaLabel="t('dialog.image_crop.zoom_out')">
                             <ZoomOut class="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" class="h-8 w-8" @click="zoomInCenter" aria-label="Zoom in">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            class="h-8 w-8"
+                            @click="zoomInCenter"
+                            :ariaLabel="t('dialog.image_crop.zoom_in')">
                             <ZoomIn class="h-4 w-4" />
                         </Button>
 
@@ -53,7 +58,7 @@
                             size="icon"
                             class="h-8 w-8"
                             @click="rotateCW"
-                            aria-label="Rotate clockwise">
+                            :ariaLabel="t('dialog.image_crop.rotate_right')">
                             <RotateCw class="h-4 w-4" />
                         </Button>
                         <Button
@@ -61,17 +66,27 @@
                             size="icon"
                             class="h-8 w-8"
                             @click="rotateCCW"
-                            aria-label="Rotate counterclockwise">
+                            :ariaLabel="t('dialog.image_crop.rotate_left')">
                             <RotateCcw class="h-4 w-4" />
                         </Button>
 
-                        <Button variant="ghost" size="icon" class="h-8 w-8" @click="resetTransform" aria-label="Reset">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            class="h-8 w-8"
+                            @click="resetTransform"
+                            :ariaLabel="t('dialog.image_crop.reset')">
                             <RefreshCcw class="h-4 w-4" />
                         </Button>
 
                         <div class="mx-1 h-5 w-px bg-border" />
 
-                        <Button variant="ghost" size="icon" class="h-8 w-8" @click="closeDialog" aria-label="Close">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            class="h-8 w-8"
+                            @click="closeDialog"
+                            :ariaLabel="t('dialog.shared_feed_filters.close')">
                             <X class="h-4 w-4" />
                         </Button>
                     </div>
@@ -348,3 +363,4 @@
         cursor: grabbing;
     }
 </style>
+
