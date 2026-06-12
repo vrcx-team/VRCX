@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { nextTick } from 'vue';
+import { nextTick, reactive } from 'vue';
 
 const mocks = vi.hoisted(() => ({
     checkCanInviteSelf: vi.fn(() => true),
@@ -127,8 +127,12 @@ vi.mock('lucide-vue-next', () => ({
     LogIn: { template: '<i data-testid="icon-login" />' },
     Mail: { template: '<i data-testid="icon-mail" />' },
     MapPin: { template: '<i data-testid="icon-map" />' },
+    PowerIcon: { template: '<i data-testid="icon-power" />' },
     RefreshCw: { template: '<i data-testid="icon-refresh" />' },
-    UsersRound: { template: '<i data-testid="icon-users" />' }
+    UsersRound: { template: '<i data-testid="icon-users" />' },
+    UserPlus2: { template: '<i data-testid="icon-user-plus" />' },
+    SquareStack: { template: '<i data-testid="icon-queue" />' },
+    IdCard: { template: '<i data-testid="icon-age-gate" />' }
 }));
 
 import InstanceActionBar from '../InstanceActionBar.vue';
@@ -331,9 +335,7 @@ describe('InstanceActionBar.vue', () => {
 
         const closeBtn = wrapper
             .findAll('button')
-            .find((btn) =>
-                btn.text().includes('dialog.user.info.close_instance')
-            );
+            .find((btn) => btn.find('[data-testid="icon-power"]').exists());
         expect(closeBtn).toBeTruthy();
 
         await closeBtn.trigger('click');
@@ -350,6 +352,37 @@ describe('InstanceActionBar.vue', () => {
         expect(mocks.toastSuccess).toHaveBeenCalledWith(
             'message.instance.closed'
         );
+    });
+
+    it('shows user counter once instance data arrives via in-place update', async () => {
+        // simulates the getInstance response being merged into the same
+        // object after mount (vrcx-team/VRCX#1641)
+        const instance = reactive({});
+        const wrapper = mountBar({
+            instance,
+            friendcount: 0,
+            showLaunch: false,
+            showInvite: false,
+            showRefresh: false,
+            showHistory: false,
+            showLastJoin: false
+        });
+
+        expect(wrapper.text()).not.toContain('4/16');
+
+        Object.assign(instance, {
+            ownerId: 'usr_owner',
+            capacity: 16,
+            userCount: 4,
+            hasCapacityForYou: true,
+            platforms: { standalonewindows: 3, android: 1, ios: 0 },
+            gameServerVersion: 123,
+            $disabledContentSettings: []
+        });
+        await nextTick();
+        await nextTick();
+
+        expect(wrapper.text()).toContain('4/16');
     });
 
     it('hides launch and invite buttons when invite-self is not allowed', () => {

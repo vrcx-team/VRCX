@@ -537,8 +537,9 @@ export const useUserStore = defineStore('User', () => {
                 ref: {}
             };
         }
-        const instanceRef = instanceStore.cachedInstances.get(L.tag) || {};
-        Object.assign(D.instance.ref, instanceRef);
+        // replace instead of merging into the old ref, otherwise stale data
+        // from a previously viewed instance lingers when the dialog updates
+        D.instance.ref = instanceStore.cachedInstances.get(L.tag) || {};
         D.instance.friendCount = friendCount;
     }
 

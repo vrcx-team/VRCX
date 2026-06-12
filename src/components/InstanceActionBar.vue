@@ -309,14 +309,14 @@
     const showLastJoinIndicator = computed(() => props.showLastJoin && lastJoin.value);
     const hasInstanceMetadata = computed(() => {
         return !!(
-            props.instance.value?.queueSize ||
+            props.instance?.queueSize ||
             instanceInfoState.isAgeGated ||
-            (props.instance.minimumAvatarPerformance && props.instance.minimumAvatarPerformance !== 'None')
+            (props.instance?.minimumAvatarPerformance && props.instance.minimumAvatarPerformance !== 'None')
         );
     });
 
     const performanceIcon = computed(() => {
-        const rank = props.instance.minimumAvatarPerformance?.toLowerCase();
+        const rank = props.instance?.minimumAvatarPerformance?.toLowerCase();
         if (!rank || rank === 'none') return null;
         return `/images/performance_ranks/${rank}.png`;
     });
@@ -418,7 +418,10 @@
 
     watch(() => resolvedLastJoinLocation.value, parseLastJoin, { immediate: true });
     watch(() => props.currentlocation, parseLastJoin);
+    // deep: the instance object is updated in place (Object.assign) when the
+    // getInstance response arrives, so a shallow watch would miss it
     watch([resolvedInstanceLocation, () => props.instance, () => props.friendcount], parseInstanceInfo, {
-        immediate: true
+        immediate: true,
+        deep: true
     });
 </script>
