@@ -61,7 +61,7 @@
                                 <button
                                     type="button"
                                     class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
-                                    @click.stop="notificationStore.acceptFriendRequestNotification(notification)" 
+                                    @click.stop="notificationStore.acceptFriendRequestNotification(notification)"
                                     :ariaLabel="t('view.notification.actions.accept')">
                                     <Check class="size-3" />
                                 </button>
@@ -115,6 +115,7 @@
                                     <button
                                         type="button"
                                         class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
+                                        :ariaLabel="response.text"
                                         @click.stop="handleResponse(response)">
                                         <component :is="getResponseIcon(response)" class="size-3" />
                                     </button>
@@ -497,3 +498,4 @@
         notificationStore.queueMarkAsSeen(props.notification.id, version);
     });
 </script>
+
