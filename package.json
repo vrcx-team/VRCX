@@ -1,5 +1,6 @@
 {
-    "name": "VRCX",
+    "name": "vrcx",
+    "version": "2026.05.03",
     "private": true,
     "description": "Friendship management tool for VRChat",
     "keywords": [
@@ -118,11 +119,19 @@
     },
     "overrides": {
         "js-cookie": ">=3.0.7",
-        "tmp": ">=0.2.6"
+        "tmp": ">=0.2.6",
+        "yauzl": "^3.3.1"
     },
     "engines": {
         "node": ">=24.15.0",
         "npm": ">=11.5.0"
+    },
+    "allowScripts": {
+        "@sentry/cli": true,
+        "core-js": true,
+        "electron-winstaller": true,
+        "vue-demi": true,
+        "electron": true
     },
     "build": {
         "appId": "app.vrcx",
@@ -195,7 +204,8 @@
                 }
             },
             "maintainer": "rs189 <35667100+rs189@users.noreply.github.com>",
-            "description": "Friendship management tool for VRChat"
+            "description": "Friendship management tool for VRChat",
+            "syncDesktopName": true
         },
         "mac": {
             "artifactName": "VRCX_Version.${ext}",
@@ -205,13 +215,10 @@
             "icon": "images/VRCX.png",
             "category": "public.app-category.utilities",
             "executableName": "VRCX"
+        },
+        "toolsets": {
+            "appimage": "1.0.3"
         }
     },
-    "allowScripts": {
-        "@sentry/cli": true,
-        "core-js": true,
-        "electron-winstaller": true,
-        "vue-demi": true,
-        "electron": true
-    }
+    "desktopName": "VRCX"
 }
