@@ -309,7 +309,8 @@
                         </FavoritesContentHeader>
                         <div ref="avatarFavoritesContainerRef" class="flex-1 min-h-0">
                             <template v-if="isSearchActive">
-                                <div class="favorites-content__scroll favorites-content__scroll--native">
+                                <div
+                                    class="favorites-content__scroll favorites-content__scroll--native h-full overflow-auto">
                                     <div
                                         v-if="avatarFavoriteSearchResults.length"
                                         class="favorites-search-grid"
