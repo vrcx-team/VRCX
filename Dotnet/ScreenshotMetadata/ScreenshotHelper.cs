@@ -231,10 +231,12 @@ namespace VRCX
 
         public static bool WriteVRCXMetadata(string text, string path)
         {
-            using var pngFile = new PNGFile(path, true);
+            var pngFile = new PNGFile(path, true);
             var chunk = PNGHelper.GenerateTextChunk("Description", text);
+            var status = pngFile.WriteChunk(chunk);
+            pngFile.Dispose();
 
-            return pngFile.WriteChunk(chunk); ;
+            return status;
         }
 
         public static ScreenshotMetadata ParseVRCImage(string xmlString)
@@ -321,7 +323,7 @@ namespace VRCX
             // Entry with image rotation enabled (rq:)
             // lfs|2|author:usr_8c0a2f22-26d4-4dc9-8396-2ab40e3d07fc,knah|world:wrld_fb4edc80-6c48-43f2-9bd1-2fa9f1345621,35341,Luminescent Ledge|pos:8.231676,0.257298,-0.1983307|rq:2|players:usr_65b9eeeb-7c91-4ad2-8ce4-addb1c161cd6,0.74,0.59,1.57,Jakkuba;usr_6a50647f-d971-4281-90c3-3fe8caf2ba80,8.07,9.76,0.16,SopwithPup;usr_8c0a2f22-26d4-4dc9-8396-2ab40e3d07fc,0.26,1.03,-0.28,knah;usr_7f593ad1-3e9e-4449-a623-5c1c0a8d8a78,0.15,0.60,1.46,NekOwneD
 
-            // LFS v1 format: https://github.com/knah/VRCMods/blob/23c3311fdfc4af4b568eedfb2e366710f2a9f925/LagFreeScreenshots/LagFreeScreenshotsMod.cs 
+            // LFS v1 format: https://github.com/knah/VRCMods/blob/23c3311fdfc4af4b568eedfb2e366710f2a9f925/LagFreeScreenshots/LagFreeScreenshotsMod.cs
             // Why support this tho
             // lfs|1|world:wrld_6caf5200-70e1-46c2-b043-e3c4abe69e0f:47213,The Great Pug|players:usr_290c03d6-66cc-4f0e-b782-c07f5cfa8deb,VirtualTeacup;usr_290c03d6-66cc-4f0e-b782-c07f5cfa8deb,VirtualTeacup
 
@@ -389,7 +391,7 @@ namespace VRCX
 
                     // We don't use this, so don't parse it.
                     /*case "rq":
-                        // Image rotation 
+                        // Image rotation
                         metadata.Add("rq", value);
                         break;*/
 
