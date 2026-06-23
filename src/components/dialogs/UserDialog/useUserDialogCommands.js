@@ -274,7 +274,6 @@ export function useUserDialogCommands(
                             },
                             D().id
                         );
-                        recordRecentAction(D().id, 'Invite Message');
                     });
             },
             'Request Invite Message': () => {
@@ -284,7 +283,6 @@ export function useUserDialogCommands(
                     },
                     D().id
                 );
-                recordRecentAction(D().id, 'Request Invite Message');
             },
             Invite: () => {
                 let currentLocation = lastLocation.value.location;
