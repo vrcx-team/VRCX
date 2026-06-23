@@ -72,15 +72,6 @@
     --visibility-private: #ef4444;
 }
 
-/* VRCX adjusted status colors (when official colors are disabled) */
-.vrcx-status-colors {
-    --status-online: #67c23a;
-    --status-joinme: #00b8ff;
-    --status-askme: #ff9500;
-    --status-busy: #ff2c2c;
-    --status-offline: #909399;
-}
-
 .dark {
     /* --background: oklch(0.145 0 0); */
     --background: oklch(0.205 0 0);

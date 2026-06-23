@@ -912,8 +912,6 @@
                     "toggle_pointer_on_hover_description": "对可点击元素始终显示指针光标。",
                     "accessible_status_indicators": "无障碍版状态指示器",
                     "accessible_status_indicators_description": "除了使用颜色之外，也使用形状来区分状态。",
-                    "use_official_status_colors": "使用游戏内的状态颜色",
-                    "use_official_status_colors_description": "匹配游戏内的状态颜色。",
                     "table_density": "行高密度",
                     "table_density_standard": "标准",
                     "table_density_comfortable": "舒适",

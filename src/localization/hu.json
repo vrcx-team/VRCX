@@ -910,8 +910,6 @@
                     "striped_data_table_mode": "Csíkos táblázatok",
                     "accessible_status_indicators": "Akadálymentesített állapotjelzők",
                     "accessible_status_indicators_description": "Alakzatok használata a szín mellett az állapotok megkülönböztetéséhez.",
-                    "use_official_status_colors": "Hivatalos állapotszínek használata",
-                    "use_official_status_colors_description": "Egyezzen a VRChat hivatalos állapotszíneivel.",
                     "table_density": "Táblázat sűrűség",
                     "table_density_standard": "Normál",
                     "table_density_comfortable": "Kényelmes",

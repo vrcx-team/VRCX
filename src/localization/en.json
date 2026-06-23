@@ -910,8 +910,6 @@
                     "striped_data_table_mode": "Striped Tables",
                     "accessible_status_indicators": "Accessible Status Indicators",
                     "accessible_status_indicators_description": "Use shapes in addition to color to distinguish statuses.",
-                    "use_official_status_colors": "Use Official Status Colors",
-                    "use_official_status_colors_description": "Match VRChat's official status colors.",
                     "table_density": "Table Density",
                     "table_density_standard": "Standard",
                     "table_density_comfortable": "Comfortable",
