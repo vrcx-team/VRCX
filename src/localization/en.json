@@ -669,7 +669,7 @@
                 "header": "Pictures",
                 "screenshot": "Screenshot Manager",
                 "screenshot_description": "View and manage screenshot metadata",
-                "gallery": "Image Manager",
+                "gallery": "Inventory",
                 "gallery_description": "Manage images and inventory"
             },
             "shortcuts": {
