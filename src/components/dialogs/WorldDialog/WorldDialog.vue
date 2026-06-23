@@ -344,6 +344,7 @@
             <SetWorldTagsDialog
                 v-model:is-set-world-tags-dialog-visible="isSetWorldTagsDialogVisible"
                 :old-tags="worldDialog.ref?.tags"
+                :old-disabled-prop-abilities="worldDialog.ref?.disabledPropAbilities"
                 :world-id="worldDialog.id"
                 :is-world-dialog-visible="worldDialog.visible" />
             <NewInstanceDialog

@@ -57,6 +57,7 @@ export type SaveWorld = (params: {
     previewYoutubeId?: string;
     urlList?: string[];
     tags?: string[];
+    disabledPropAbilities?: string[];
 }) => Promise<{
     json: SaveWorldResponse;
     params: {
@@ -77,6 +78,7 @@ interface WorldSearchResponseItem extends BaseWorld {
     // World search specific fields
     occupants: number;
     defaultContentSettings: Record<string, any>;
+    disabledPropAbilities: string[];
 }
 
 interface GetWorldResponse extends BaseWorld {
@@ -86,6 +88,7 @@ interface GetWorldResponse extends BaseWorld {
     privateOccupants: number;
     publicOccupants: number;
     defaultContentSettings: Record<string, unknown>;
+    disabledPropAbilities: string[];
     urlList: any[];
     version: number;
     visits: number;
