@@ -62,7 +62,7 @@
                 >
                 <Spinner v-if="setAvatarTagsDialog.loading" class="inline-block ml-2" />
                 <div
-                    class="flex flex-wrap items-start max-h-[300px] overflow-hidden auto"
+                    class="flex flex-wrap items-start max-h-[300px] overflow-auto"
                     style="margin-top: 8px; min-height: 60px">
                     <div
                         v-for="avatar in setAvatarTagsDialog.ownAvatars"
