@@ -19,24 +19,24 @@ namespace VRCX
         private const string VrcxUrl = "https://vrcx.app";
 
         static Discord()
-        {
+        { 
             Instance = new Discord();
         }
 
         public Discord()
-        {
+        { 
             _lock = new ReaderWriterLockSlim();
             _presence = new RichPresence();
             _timer = new Timer(TimerCallback, null, -1, -1);
         }
 
         public void Init()
-        {
+        { 
             _timer.Change(0, 3000);
         }
 
         public void Exit()
-        {
+        { 
             lock (this)
             {
                 _timer.Change(-1, -1);
@@ -45,22 +45,22 @@ namespace VRCX
         }
 
         private void TimerCallback(object state)
-        {
+        { 
             lock (this)
             {
                 try
-                {
+                { 
                     Update();
                 }
                 catch (Exception ex)
-                {
+                { 
                     _logger.Error(ex, "Error updating Discord Rich Presence {Error}", ex.Message);
                 }
             }
         }
 
         private void Update()
-        {
+        { 
             if (_client == null && _active)
             {
                 _client = new DiscordRpcClient(_discordAppId);
@@ -109,21 +109,21 @@ namespace VRCX
         }
 
         public bool SetActive(bool active)
-        {
+        { 
             _active = active;
             return _active;
         }
 
         // https://stackoverflow.com/questions/1225052/best-way-to-shorten-utf8-string-based-on-byte-length
         private static string LimitByteLength(string str, int maxBytesLength)
-        {
+        { 
             if (str == null)
                 return string.Empty;
             var bytesArr = Encoding.UTF8.GetBytes(str);
             var bytesToRemove = 0;
             var lastIndexInString = str.Length - 1;
             while (bytesArr.Length - bytesToRemove > maxBytesLength)
-            {
+            { 
                 bytesToRemove += Encoding.UTF8.GetByteCount(new char[] { str[lastIndexInString] });
                 --lastIndexInString;
             }
@@ -152,17 +152,16 @@ namespace VRCX
             string appId,
             int activityType,
             int statusDisplayType)
-        {
+        { 
             _lock.EnterWriteLock();
             try
             {
                 if (string.IsNullOrEmpty(largeKey) &&
                     string.IsNullOrEmpty(smallKey))
-                {
+                { 
                     _presence.Assets = null;
                     _presence.Party = null;
                     _presence.Timestamps = null;
-                    _lock.ExitWriteLock();
                     return;
                 }
 
@@ -181,7 +180,7 @@ namespace VRCX
                 // m_Presence.Assets.SmallImageUrl
 
                 if (startUnixMilliseconds == 0)
-                {
+                { 
                     _presence.Timestamps = null;
                 }
                 else
@@ -195,7 +194,7 @@ namespace VRCX
                 }
 
                 if (partyMax == 0)
-                {
+                { 
                     _presence.Party = null;
                 }
                 else
