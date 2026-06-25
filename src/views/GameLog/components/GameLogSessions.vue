@@ -11,7 +11,8 @@
                             size="sm"
                             :model-value="sessionsVipFilter"
                             @update:modelValue="gameLogStore.toggleSessionsVipFilter()">
-                            <Star />
+                            <Star fill="currentColor" v-if="sessionsVipFilter" />
+                            <Star v-else />
                         </Toggle>
                     </div>
                 </TooltipWrapper>
