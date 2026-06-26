@@ -52,7 +52,8 @@
                                             feedTableLookup();
                                         }
                                     ">
-                                    <Star />
+                                    <Star fill="currentColor" v-if="feedTable.vip" />
+                                    <Star v-else />
                                 </Toggle>
                             </div>
                         </TooltipWrapper>

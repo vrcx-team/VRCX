@@ -78,7 +78,8 @@
                                                 gameLogTableLookup();
                                             }
                                         ">
-                                        <Star />
+                                        <Star fill="currentColor" v-if="gameLogTable.vip" />
+                                        <Star v-else />
                                     </Toggle>
                                 </div>
                             </TooltipWrapper>
