@@ -13,6 +13,7 @@ import { avatarRequest, queryRequest } from '../api';
 import { debounce, parseLocation } from '../shared/utils';
 import { AppDebug } from '../services/appConfig';
 import { database } from '../services/database';
+import { runDatabaseMigrations } from '../services/database/databaseMigration';
 import { refreshCustomScript } from '../shared/utils/base/ui';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
@@ -233,16 +234,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 `Updating database from ${state.databaseVersion} to ${databaseVersion}...`
             );
             try {
-                await database.cleanLegendFromFriendLog(); // fix friendLog spammed with crap
-                await database.fixGameLogTraveling(); // fix bug with gameLog location being set as traveling
-                await database.fixNegativeGPS(); // fix GPS being a negative value due to VRCX bug with traveling
-                await database.fixBrokenLeaveEntries(); // fix user instance timer being higher than current user location timer
-                await database.fixBrokenGroupInvites(); // fix notification v2 in wrong table
-                await database.fixBrokenNotifications(); // fix notifications being null
-                await database.fixBrokenGroupChange(); // fix spam group left & name change
-                await database.fixCancelFriendRequestTypo(); // fix CancelFriendRequst typo
-                await database.fixBrokenGameLogDisplayNames(); // fix gameLog display names "DisplayName (userId)"
-                await database.upgradeDatabaseVersion(); // update database version
+                await runDatabaseMigrations(database);
                 await database.vacuum(); // succ
                 await database.optimize();
                 await configRepository.setInt(
