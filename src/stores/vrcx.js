@@ -13,7 +13,6 @@ import { avatarRequest, queryRequest } from '../api';
 import { debounce, parseLocation } from '../shared/utils';
 import { AppDebug } from '../services/appConfig';
 import { database } from '../services/database';
-import { runDatabaseMigrations } from '../services/database/databaseMigration';
 import { refreshCustomScript } from '../shared/utils/base/ui';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAvatarProviderStore } from './avatarProvider';
@@ -234,7 +233,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 `Updating database from ${state.databaseVersion} to ${databaseVersion}...`
             );
             try {
-                await runDatabaseMigrations(database);
+                await database.upgradeDatabaseVersion(); // Migrations
                 await database.vacuum(); // succ
                 await database.optimize();
                 await configRepository.setInt(

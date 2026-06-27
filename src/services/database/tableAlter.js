@@ -2,17 +2,20 @@ import sqliteService from '../sqlite.js';
 
 const tableAlter = {
     async upgradeDatabaseVersion() {
-        // var version = 0;
-        // await sqliteService.execute((dbRow) => {
-        //     version = dbRow[0];
-        // }, 'PRAGMA user_version');
-        // if (version === 0) {
+        await this.initTables();
+        await this.cleanLegendFromFriendLog(); // fix friendLog spammed with crap
+        await this.fixGameLogTraveling(); // fix bug with gameLog location being set as traveling
+        await this.fixNegativeGPS(); // fix GPS being a negative value due to VRCX bug with traveling
+        await this.fixBrokenLeaveEntries(); // fix user instance timer being higher than current user location timer
+        await this.fixBrokenGroupInvites(); // fix notification v2 in wrong table
+        await this.fixBrokenNotifications(); // fix notifications being null
+        await this.fixBrokenGroupChange(); // fix spam group left & name change
+        await this.fixCancelFriendRequestTypo(); // fix CancelFriendRequst typo
+        await this.fixBrokenGameLogDisplayNames(); // fix gameLog display names "DisplayName (userId)"
         await this.updateTableForGroupNames();
         await this.addFriendLogFriendNumber();
         await this.updateTableForAvatarHistory();
         await this.addPerformanceIndexes(); // 16
-        // }
-        // await sqliteService.executeNonQuery('PRAGMA user_version = 1');
     },
 
     async updateTableForGroupNames() {
@@ -84,23 +87,6 @@ const tableAlter = {
     },
 
     async addPerformanceIndexes() {
-        // gamelog_location: covers getLastVisit, getVisitCount, getTimeSpentInWorld, getPreviousInstancesByWorldId, getMyTopWorlds
-        await sqliteService.executeNonQuery(
-            `CREATE INDEX IF NOT EXISTS idx_gamelog_location_world_created ON gamelog_location (world_id, created_at)`
-        );
-        // gamelog_join_leave: covers getPlayersFromInstance, getPlayerDetailFromInstance
-        await sqliteService.executeNonQuery(
-            `CREATE INDEX IF NOT EXISTS idx_gamelog_jl_location ON gamelog_join_leave (location)`
-        );
-        // gamelog_join_leave: covers getUserStats, getAllUserStats, getLastSeen, getPreviousInstancesByUserId, getPreviousDisplayNamesByUserId
-        await sqliteService.executeNonQuery(
-            `CREATE INDEX IF NOT EXISTS idx_gamelog_jl_user_created ON gamelog_join_leave (user_id, created_at)`
-        );
-        // gamelog_join_leave: covers getUserStats, getLastSeen for display_name OR path
-        await sqliteService.executeNonQuery(
-            `CREATE INDEX IF NOT EXISTS idx_gamelog_jl_display_created ON gamelog_join_leave (display_name, created_at)`
-        );
-
         // per-user friend_log_history: covers getFriendLogHistoryForUserId
         var tables = [];
         await sqliteService.execute((dbRow) => {
