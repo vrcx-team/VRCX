@@ -275,7 +275,7 @@ namespace VRCX
             return filePath;
         }
 
-        public async Task<string> SaveStickerToFile(string url, string ugcFolderPath, string monthFolder, string fileName)
+        public async Task<string> SaveStickerToFile(string url, string ugcFolderPath, string monthFolder, string fileName, string metadata)
         {
             var folder = Path.Join(GetUGCPhotoLocation(ugcFolderPath), "Stickers", MakeValidFileName(monthFolder));
             Directory.CreateDirectory(folder);
@@ -291,6 +291,19 @@ namespace VRCX
             {
                 logger.Error(ex, "Failed to save print to file");
                 return null;
+            }
+
+            try
+            {
+                if (!string.IsNullOrEmpty(metadata))
+                    ScreenshotHelper.WriteVRCXMetadata(metadata, filePath);
+
+                else
+                    logger.Debug("Saved sticker {File} without metadata (empty metadata string)", fileName);
+            }
+            catch (Exception ex)
+            {
+                logger.Warn(ex, "Failed to write metadata to file");
             }
 
             return filePath;
