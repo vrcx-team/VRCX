@@ -6,6 +6,8 @@ obj1/
 *.log
 *.DotSettings.user
 .vs/
+*.user
+
 Installer/version_define.nsh
 bun.lock
 

@@ -5,7 +5,7 @@
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <OutputType>Library</OutputType>
     <Configurations>Debug;Release</Configurations>
     <Platforms>ARM64</Platforms>
@@ -35,9 +35,9 @@
   <PropertyGroup>
     <DefineConstants>LINUX</DefineConstants>
   </PropertyGroup>
-    
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <DebugType>pdbonly</DebugType>

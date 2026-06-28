@@ -4,6 +4,9 @@
         "lokalise.i18n-ally",
         "dbaeumer.vscode-eslint",
         "oxc.oxc-vscode",
-        "bradlc.vscode-tailwindcss"
+        "bradlc.vscode-tailwindcss",
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.csharp",
+        "vitest.explorer"
     ]
 }

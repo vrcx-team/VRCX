@@ -2,6 +2,27 @@
 // generate-third-party-licenses.js
 // use by frontend open source software notice dialog
 
+/**
+ * @typedef {{
+ *  name: string;
+ *  version: string;
+ *  sourceType: string;
+ *  projects?: string[]
+ *  }} PackageReference
+ *
+ * @typedef {PackageReference & {
+ *  id: string,
+ *  license: string|null,
+ *  sourceLabel: string,
+ *  noticeText?: string|null,
+ *  needsReview: boolean,
+ *  projectUrl?: string|null,
+ *  licenseUrl?: string|null,
+ *  filePath?: string|null,
+ * }} ProjectLicense
+ *
+ */
+
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -24,22 +45,36 @@ const overridesPath = path.join(__dirname, 'licenses', 'nuget-overrides.json');
 
 const nugetOverrides = JSON.parse(fs.readFileSync(overridesPath, 'utf8'));
 
+/**
+ * @param {fs.PathLike} directoryPath
+ */
 function ensureDirectory(directoryPath) {
     fs.mkdirSync(directoryPath, { recursive: true });
 }
 
+/**
+ * @param {fs.PathLike | null} filePath
+ */
 function readFileIfExists(filePath) {
-    if (!fs.existsSync(filePath)) {
+    if (!filePath || !fs.existsSync(filePath)) {
         return null;
     }
 
     return fs.readFileSync(filePath, 'utf8');
 }
 
+/**
+ * @param {string | null} value
+ * @returns {string | null}
+ */
 function normalizeWhitespace(value) {
     return value?.replace(/\r\n/g, '\n').trim() || '';
 }
 
+/**
+ * @param {string} value
+ * @returns {string}
+ */
 function sanitizeId(value) {
     return value
         .toLowerCase()
@@ -47,6 +82,11 @@ function sanitizeId(value) {
         .replace(/^-|-$/g, '');
 }
 
+/**
+ * @param {string} xml
+ * @param {string} tagName
+ * @returns {string}
+ */
 function extractXmlTagValue(xml, tagName) {
     const match = xml.match(
         new RegExp(`<${tagName}>([\\s\\S]*?)<\\/${tagName}>`, 'i')
@@ -55,6 +95,12 @@ function extractXmlTagValue(xml, tagName) {
     return match?.[1]?.trim() || '';
 }
 
+/**
+ * @param {string} xml
+ * @param {string} tagName
+ * @param {string} attributeName
+ * @returns {string}
+ */
 function extractXmlSelfClosingTagAttribute(xml, tagName, attributeName) {
     const match = xml.match(
         new RegExp(
@@ -66,16 +112,31 @@ function extractXmlSelfClosingTagAttribute(xml, tagName, attributeName) {
     return match?.[1]?.trim() || '';
 }
 
+/**
+ * @param {string} xml
+ * @returns {string}
+ */
 function extractRepositoryUrl(xml) {
     const match = xml.match(/<repository[^>]*url="([^"]+)"/i);
 
     return match?.[1]?.trim() || '';
 }
 
+/**
+ * @param {(string | null)[]} filePaths
+ * @returns {string | null}
+ */
 function findFirstExistingFile(filePaths) {
-    return filePaths.find((filePath) => fs.existsSync(filePath)) || null;
+    return (
+        filePaths.find((filePath) => filePath && fs.existsSync(filePath)) ||
+        null
+    );
 }
 
+/**
+ * @param {string} packageDir
+ * @return {string | null}
+ */
 function findPackageLicenseFile(packageDir) {
     if (!fs.existsSync(packageDir)) {
         return null;
@@ -84,7 +145,7 @@ function findPackageLicenseFile(packageDir) {
     const stack = [packageDir];
 
     while (stack.length > 0) {
-        const currentDir = stack.pop();
+        const currentDir = /** @type {!string} */ (stack.pop());
         const dirEntries = fs.readdirSync(currentDir, { withFileTypes: true });
 
         for (const dirEntry of dirEntries) {
@@ -110,6 +171,10 @@ function findPackageLicenseFile(packageDir) {
     return null;
 }
 
+/**
+ * @param {string} markdown
+ * @returns {ProjectLicense[]}
+ */
 function parseFrontendLicenses(markdown) {
     const normalized = normalizeWhitespace(markdown);
     if (!normalized) {
@@ -129,12 +194,12 @@ function parseFrontendLicenses(markdown) {
                 return null;
             }
 
-            const [, name, version, license] = headerMatch;
+            const [, packageName, version, license] = headerMatch;
             const noticeText = normalizeWhitespace(bodyLines.join('\n'));
 
             return {
-                id: `frontend-${sanitizeId(`${name}-${version}`)}`,
-                name,
+                id: `frontend-${sanitizeId(`${packageName}-${version}`)}`,
+                name: packageName,
                 version,
                 license,
                 sourceType: 'frontend',
@@ -143,30 +208,38 @@ function parseFrontendLicenses(markdown) {
                 needsReview: !license && !noticeText
             };
         })
-        .filter(Boolean)
+        .filter((section) => section != null)
         .sort((left, right) => left.name.localeCompare(right.name));
 }
 
+/**
+ * @param {string} csprojText
+ * @returns {PackageReference[]}
+ */
 function parseCsprojPackageReferences(csprojText) {
     return [
         ...csprojText.matchAll(
             /<PackageReference\s+Include="([^"]+)"\s+Version="([^"]+)"/g
         )
-    ].map(([, name, version]) => ({
-        name,
+    ].map(([, packageName, version]) => ({
+        name: packageName,
         version,
         sourceType: 'dotnet'
     }));
 }
 
+/**
+ * @param {string} csprojText
+ * @returns {(PackageReference & {filePath: string})[]}
+ */
 function parseCsprojBinaryReferences(csprojText) {
     const binaryEntries = [];
 
-    for (const [, name, hintPath] of csprojText.matchAll(
+    for (const [, include, hintPath] of csprojText.matchAll(
         /<Reference\s+Include="([^"]+)">[\s\S]*?<HintPath>([^<]+)<\/HintPath>[\s\S]*?<\/Reference>/g
     )) {
         binaryEntries.push({
-            name,
+            name: include,
             version: '',
             sourceType: 'native',
             filePath: hintPath.replaceAll('\\', '/')
@@ -192,6 +265,10 @@ function parseCsprojBinaryReferences(csprojText) {
     return binaryEntries;
 }
 
+/**
+ * @param {fs.PathLike} projectAssetsPath
+ * @return {PackageReference[]}
+ */
 function parseAssetsLibraries(projectAssetsPath) {
     const assetsRaw = readFileIfExists(projectAssetsPath);
     if (!assetsRaw) {
@@ -218,7 +295,12 @@ function parseAssetsLibraries(projectAssetsPath) {
         });
 }
 
+/**
+ * @param {string[]} csprojFiles
+ * @returns {(PackageReference)[]}
+ */
 function mergeDotnetEntries(csprojFiles) {
+    /** @type {Map<string, PackageReference>} */
     const collectedEntries = new Map();
 
     for (const csprojFile of csprojFiles) {
@@ -240,8 +322,9 @@ function mergeDotnetEntries(csprojFiles) {
                 projects: []
             };
 
+            const previousProjects = existingEntry.projects ?? [];
             existingEntry.projects = [
-                ...new Set([...existingEntry.projects, projectName])
+                ...new Set([...previousProjects, projectName])
             ].sort();
             collectedEntries.set(key, existingEntry);
         }
@@ -252,11 +335,19 @@ function mergeDotnetEntries(csprojFiles) {
     );
 }
 
-function resolveNugetMetadata(name, version) {
-    const packageDir = path.join(nugetCacheDir, name.toLowerCase(), version);
+/**
+ * @param {string} packageName
+ * @param {string} version
+ */
+function resolveNugetMetadata(packageName, version) {
+    const packageDir = path.join(
+        nugetCacheDir,
+        packageName.toLowerCase(),
+        version
+    );
     const nuspecPath =
         findFirstExistingFile([
-            path.join(packageDir, `${name.toLowerCase()}.nuspec`),
+            path.join(packageDir, `${packageName.toLowerCase()}.nuspec`),
             ...(fs.existsSync(packageDir)
                 ? fs
                       .readdirSync(packageDir)
@@ -265,7 +356,7 @@ function resolveNugetMetadata(name, version) {
                 : [])
         ]) || null;
 
-    const override = nugetOverrides[name] || {};
+    const override = nugetOverrides[packageName] || {};
     const metadata = {
         license: override.license || '',
         licenseUrl: override.licenseUrl || '',
@@ -303,7 +394,9 @@ function resolveNugetMetadata(name, version) {
             : null;
         const discoveredLicensePath = findPackageLicenseFile(packageDir);
         const resolvedLicensePath = findFirstExistingFile(
-            [embeddedLicensePath, discoveredLicensePath].filter(Boolean)
+            [embeddedLicensePath, discoveredLicensePath].filter(
+                (path) => path != null
+            )
         );
 
         metadata.noticeText = normalizeWhitespace(
@@ -315,6 +408,10 @@ function resolveNugetMetadata(name, version) {
     return metadata;
 }
 
+/**
+ * @param {(PackageReference)[]} entries
+ * @returns {ProjectLicense[]}
+ */
 function enrichDotnetEntries(entries) {
     return entries.map((entry) => {
         const override = nugetOverrides[entry.name] || {};
@@ -355,6 +452,10 @@ function enrichDotnetEntries(entries) {
     });
 }
 
+/**
+ * @param {string} frontendLicenseMarkdown
+ * @param {ProjectLicense[]} entries
+ */
 function createThirdPartyNoticeText(frontendLicenseMarkdown, entries) {
     const lines = [
         'VRCX Third-Party Notices',
