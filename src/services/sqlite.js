@@ -5,7 +5,7 @@ import { useModalStore } from '../stores';
 // requires binding of SQLite
 class SQLiteService {
     handleSQLiteError(e) {
-        if (typeof e.message === 'string') {
+        if (typeof e.message === 'string' && !window.isVrOverlay) {
             const modalStore = useModalStore();
             if (e.message.includes('database disk image is malformed')) {
                 modalStore
