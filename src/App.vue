@@ -68,10 +68,13 @@
     });
 
     onMounted(async () => {
-        getGameLogTable();
-        await store.auth.migrateStoredUsers();
-        store.auth.autoLoginAfterMounted();
-        store.vrcx.checkAutoBackupRestoreVrcRegistry();
+        if (await store.vrcx.waitForDatabaseInit()) {
+            getGameLogTable();
+            await store.auth.migrateStoredUsers();
+            store.auth.autoLoginAfterMounted();
+            store.vrcx.checkAutoBackupRestoreVrcRegistry();
+        }
+        
         runCheckVRChatDebugLoggingFlow();
     });
 </script>
