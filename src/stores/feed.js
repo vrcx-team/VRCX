@@ -1,5 +1,6 @@
 import { ref, shallowRef, watch } from 'vue';
 import { defineStore } from 'pinia';
+import { useI18n } from 'vue-i18n';
 
 import { database } from '../services/database';
 import { useFriendStore } from './friend';
@@ -11,6 +12,7 @@ import configRepository from '../services/config';
 export const useFeedStore = defineStore('Feed', () => {
     const friendStore = useFriendStore();
     const vrcxStore = useVrcxStore();
+    const { t } = useI18n();
 
     const feedTableData = shallowRef([]);
     const feedTable = ref({
@@ -21,7 +23,8 @@ export const useFeedStore = defineStore('Feed', () => {
         loading: false,
         filter: [],
         pageSize: 20,
-        pageSizeLinked: true
+        pageSizeLinked: true,
+        error: null
     });
 
     watch(
@@ -129,6 +132,8 @@ export const useFeedStore = defineStore('Feed', () => {
     }
 
     async function feedTableLookup() {
+        feedTable.value.loading = true;
+        feedTable.value.error = null;
         await configRepository.setString(
             'VRCX_feedTableFilters',
             JSON.stringify(feedTable.value.filter)
@@ -137,7 +142,6 @@ export const useFeedStore = defineStore('Feed', () => {
             'VRCX_feedTableVIPFilter',
             feedTable.value.vip
         );
-        feedTable.value.loading = true;
         try {
             let vipList = [];
             if (feedTable.value.vip) {
@@ -161,6 +165,33 @@ export const useFeedStore = defineStore('Feed', () => {
                       );
             feedTableData.value = [];
             feedTableData.value = [...feedTableData.value, ...rows];
+        } catch (err) {
+            console.error('[FeedStore] Search error:', err);
+            let errorMessage = t('view.tools.formula_search.error.search_failed');
+            if (err && typeof err === 'object' && err.type) {
+                switch (err.type) {
+                    case 'unclosed_parenthesis':
+                        errorMessage = t('view.tools.formula_search.error.unclosed_parenthesis');
+                        break;
+                    case 'invalid_field':
+                        errorMessage = t('view.tools.formula_search.error.invalid_field', { field: err.field, fields: err.fields });
+                        break;
+                    case 'extra_right_parenthesis':
+                        errorMessage = t('view.tools.formula_search.error.extra_right_parenthesis');
+                        break;
+                    case 'unclosed_array':
+                        errorMessage = t('view.tools.formula_search.error.unclosed_array');
+                        break;
+                    default:
+                        if (err.message) {
+                            errorMessage = err.message;
+                        }
+                }
+            } else if (err?.message) {
+                errorMessage = err.message;
+            }
+            feedTable.value.error = errorMessage;
+            feedTableData.value = [];
         } finally {
             feedTable.value.loading = false;
         }
