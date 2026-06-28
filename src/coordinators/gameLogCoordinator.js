@@ -484,7 +484,8 @@ export function addGameLogEntry(gameLog, location) {
             galleryStore.trySaveStickerToFile(
                 gameLog.displayName,
                 gameLog.userId,
-                gameLog.inventoryId
+                gameLog.inventoryId,
+                gameLog.dt
             );
             break;
     }
