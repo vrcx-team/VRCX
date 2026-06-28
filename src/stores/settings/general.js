@@ -165,6 +165,28 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         autoAcceptInviteGroups.value = JSON.parse(
             autoAcceptInviteGroupsStrConfig
         );
+
+        if (
+            autoAcceptInviteRequestsConfig === 'Selected Favorites' &&
+            autoAcceptInviteGroupsStrConfig === '[]'
+        ) {
+            const oldGroups = JSON.parse(localFavoriteFriendsGroupsStrConfig);
+            if (oldGroups.length === 0) {
+                autoAcceptInviteRequests.value = 'All Favorites';
+                configRepository.setString(
+                    'VRCX_autoAcceptInviteRequests',
+                    'All Favorites'
+                );
+            } else {
+                const migratedGroups = oldGroups.map((g) => `local:${g}`);
+                autoAcceptInviteGroups.value = migratedGroups;
+                configRepository.setString(
+                    'VRCX_autoAcceptInviteGroups',
+                    JSON.stringify(migratedGroups)
+                );
+            }
+        }
+
         recentActionCooldownEnabled.value = recentActionCooldownEnabledConfig;
         recentActionCooldownMinutes.value = recentActionCooldownMinutesConfig;
     }
