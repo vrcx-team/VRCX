@@ -1,0 +1,68 @@
+name: Sync from upstream VRCX
+
+on:
+    schedule:
+        # Run every 6 hours
+        - cron: '0 */6 * * *'
+    workflow_dispatch:
+
+permissions:
+    contents: write
+    actions: write
+
+jobs:
+    sync:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout fork
+              uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+                  token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Configure Git
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+
+            - name: Fetch upstream
+              run: |
+                  git remote add upstream https://github.com/vrcx-team/VRCX.git || true
+                  git fetch upstream --tags
+
+            - name: Get latest upstream tag
+              id: upstream_tag
+              run: |
+                  LATEST_TAG=$(git tag -l --sort=-v:refname | head -n 1)
+                  if [ -z "$LATEST_TAG" ]; then
+                    LATEST_TAG=$(git ls-remote --tags upstream | awk -F/ '{print $NF}' | sort -V | tail -n 1)
+                  fi
+                  echo "tag=${LATEST_TAG}" >> $GITHUB_OUTPUT
+                  echo "Latest upstream tag: ${LATEST_TAG}"
+
+            - name: Check if already synced
+              id: check_sync
+              run: |
+                  UPSTREAM_TAG="${{ steps.upstream_tag.outputs.tag }}"
+                  git fetch origin
+                  if git rev-parse "refs/tags/${UPSTREAM_TAG}" >/dev/null 2>&1; then
+                    echo "already_synced=true" >> $GITHUB_OUTPUT
+                    echo "Tag ${UPSTREAM_TAG} already exists on fork."
+                  else
+                    echo "already_synced=false" >> $GITHUB_OUTPUT
+                  fi
+
+            - name: Merge upstream changes
+              if: steps.check_sync.outputs.already_synced == 'false'
+              run: |
+                  UPSTREAM_TAG="${{ steps.upstream_tag.outputs.tag }}"
+                  git checkout master
+                  git merge --no-edit "upstream/master" || git merge --abort
+                  git push origin master
+
+            - name: Trigger release workflow
+              if: steps.check_sync.outputs.already_synced == 'false'
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  gh workflow run github_actions.yml --ref master

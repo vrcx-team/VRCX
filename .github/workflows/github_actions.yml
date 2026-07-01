@@ -1,7 +1,13 @@
 name: VRCX
 
 on:
-    - workflow_dispatch
+    workflow_dispatch:
+    push:
+        branches:
+            - master
+    pull_request:
+        branches:
+            - master
 
 concurrency:
     group: ${{ github.ref }}
@@ -32,6 +38,9 @@ jobs:
             run:
                 shell: bash
         needs: [set_version, build_node]
+        strategy:
+            matrix:
+                arch: [x64, ARM64]
         steps:
             - uses: actions/checkout@v6
             - name: Setup .NET 10
@@ -46,11 +55,11 @@ jobs:
             - uses: actions/cache@v5
               with:
                   path: ~/.nuget/packages
-                  key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Cef.csproj') }}
+                  key: ${{ runner.os }}-nuget-${{ matrix.arch }}-${{ hashFiles('**/Dotnet/VRCX-Cef.csproj') }}
                   restore-keys: |
                       ${{ runner.os }}-nuget-
-            - name: Build Cef .NET Application
-              run: dotnet build Dotnet/VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
+            - name: Build Cef .NET Application (${{ matrix.arch }})
+              run: dotnet build Dotnet/VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=${{ matrix.arch }} -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a ${{ matrix.arch }} --self-contained
             - name: Check if we want to sign
               id: check_sign
               run: |
@@ -97,16 +106,17 @@ jobs:
                   path: build/Cef/html
             - name: Install NSIS
               run: choco install nsis -y
-            - name: Create NSIS installer
+            - name: Create NSIS installer (${{ matrix.arch }})
               uses: joncloud/makensis-action@v5.0
               with:
                   script-file: Installer/installer.nsi
                   additional-plugin-paths: Installer/Plugins
+                  args: /DARCH=${{ matrix.arch }}
             - name: Rename setup
               run: |
-                  file_name="VRCX_${{ needs.set_version.outputs.version }}_Setup.exe"
+                  file_name="VRCX_${{ needs.set_version.outputs.version }}_${{ matrix.arch }}_Setup.exe"
                   echo "Setup FileName: ${file_name}"
-                  mv Installer/VRCX_Setup.exe $file_name
+                  mv "Installer/VRCX_${{ matrix.arch }}_Setup.exe" "$file_name"
             - name: Sign Cef setup
               uses: azure/trusted-signing-action@v1
               if: steps.check_sign.outputs.sign == 'true'
@@ -121,18 +131,18 @@ jobs:
                   timestamp-rfc3161: http://timestamp.acs.microsoft.com
                   timestamp-digest: SHA256
                   files: |
-                      ${{ github.workspace }}\VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
+                      ${{ github.workspace }}\VRCX_${{ needs.set_version.outputs.version }}_${{ matrix.arch }}_Setup.exe
 
-            - name: Upload Cef dotnet artifacts
+            - name: Upload Cef dotnet artifacts (${{ matrix.arch }})
               uses: actions/upload-artifact@v7
               with:
-                  name: Cef-Release
+                  name: Cef-Release-${{ matrix.arch }}
                   path: build/Cef
-            - name: Upload setup artifact
+            - name: Upload setup artifact (${{ matrix.arch }})
               uses: actions/upload-artifact@v7
               with:
-                  name: Cef-Setup
-                  path: VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
+                  name: Cef-Setup-${{ matrix.arch }}
+                  path: VRCX_${{ needs.set_version.outputs.version }}_${{ matrix.arch }}_Setup.exe
 
     build_dotnet_linux:
         runs-on: ubuntu-latest
@@ -349,17 +359,21 @@ jobs:
                 build_dotnet_linux,
                 build_dotnet_macos,
                 build_node,
-                build_macos
+                build_macos,
             ]
         steps:
-            - name: Download Cef-Setup artifacts
+            - name: Download Cef-Setup (x64) artifacts
               uses: actions/download-artifact@v8
               with:
-                  name: Cef-Setup
-            - name: Download Cef dotnet artifacts
+                  name: Cef-Setup-x64
+            - name: Download Cef-Setup (ARM64) artifacts
               uses: actions/download-artifact@v8
               with:
-                  name: Cef-Release
+                  name: Cef-Setup-ARM64
+            - name: Download Cef dotnet (x64) artifacts
+              uses: actions/download-artifact@v8
+              with:
+                  name: Cef-Release-x64
                   path: build/Cef
             - name: Download Cef-html artifacts
               uses: actions/download-artifact@v8
@@ -379,3 +393,29 @@ jobs:
               with:
                   name: VRCX-Zip
                   path: 'VRCX_${{ needs.set_version.outputs.version }}.zip'
+
+    release:
+        runs-on: ubuntu-latest
+        needs: [create_setup]
+        if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+        permissions:
+            contents: write
+        steps:
+            - name: Download all artifacts
+              uses: actions/download-artifact@v8
+              with:
+                  path: artifacts
+            - name: Create Release
+              uses: softprops/action-gh-release@v2
+              with:
+                  tag_name: v${{ needs.set_version.outputs.version }}
+                  name: VRCX ${{ needs.set_version.outputs.version }} (Windows ARM64 Build)
+                  body: |
+                      Automated build of VRCX ${{ needs.set_version.outputs.version }} including Windows ARM64 installer.
+
+                      This release is published from the fork and tracks upstream VRCX releases.
+                  files: |
+                      artifacts/Cef-Setup-x64/*.exe
+                      artifacts/Cef-Setup-ARM64/*.exe
+                      artifacts/VRCX-Zip/*.zip
+                  make_latest: true

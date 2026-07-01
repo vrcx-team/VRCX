@@ -14,6 +14,11 @@
     !define PRODUCT_VERSION ${PRODUCT_VERSION_FROM_FILE}
     !define VERSION ${PRODUCT_VERSION_FROM_FILE}
 
+    ; Allow architecture to be passed via /DARCH=arm64 or default to x64
+    !ifndef ARCH
+        !define ARCH "x64"
+    !endif
+
     VIProductVersion "${PRODUCT_VERSION}"
     VIFileVersion "${VERSION}"
     VIAddVersionKey "FileVersion" "${VERSION}"
@@ -36,7 +41,7 @@
     SetCompressorDictSize 16
     Unicode True
     Name "VRCX"
-    OutFile "VRCX_Setup.exe"
+    OutFile "VRCX_${ARCH}_Setup.exe"
     InstallDir "$PROGRAMFILES64\VRCX"
     InstallDirRegKey HKLM "Software\VRCX" "InstallDir"
     RequestExecutionLevel admin
@@ -159,9 +164,9 @@ Section "Install" SecInstall
         Goto afterUpgrade
     noUpgrade:
 
-    inetc::get "https://aka.ms/vs/17/release/vc_redist.x64.exe" $TEMP\vcredist_x64.exe
-    ExecWait "$TEMP\vcredist_x64.exe /install /quiet /norestart"
-    Delete "$TEMP\vcredist_x64.exe"
+    inetc::get "https://aka.ms/vs/17/release/vc_redist.${ARCH}.exe" $TEMP\vcredist_${ARCH}.exe
+    ExecWait "$TEMP\vcredist_${ARCH}.exe /install /quiet /norestart"
+    Delete "$TEMP\vcredist_${ARCH}.exe"
 
     afterUpgrade:
 
@@ -174,7 +179,7 @@ Section "Install" SecInstall
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayName" "VRCX"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "Publisher" "vrcx-team"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayVersion" "${VERSION}"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayArch" "x64"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayArch" "${ARCH}"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "InstallLocation" "$INSTDIR"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayIcon" "$\"$INSTDIR\VRCX.ico$\""
