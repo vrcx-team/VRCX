@@ -311,6 +311,14 @@ export function shouldIgnoreError(code, endpoint) {
     if (endpoint?.endsWith('/mutuals') && (code === 403 || code === -1)) {
         return true;
     }
+    if (
+        (code === 403 || code === 404 || code === -1) &&
+        typeof endpoint === 'string' &&
+        endpoint.startsWith('users/') &&
+        endpoint.endsWith('/groups')
+    ) {
+        return true;
+    }
     return false;
 }
 

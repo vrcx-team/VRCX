@@ -15,6 +15,7 @@ const testDefinitions = [
     { key: 'charts-instance', routeName: 'charts-instance' },
     { key: 'charts-mutual', routeName: 'charts-mutual' },
     { key: 'charts-hot-worlds', routeName: 'charts-hot-worlds' },
+    { key: 'charts-popular-groups', routeName: 'charts-popular-groups' },
     { key: 'notification', routeName: 'notification' },
     { key: 'direct-access', action: 'direct-access' }
 ];
@@ -285,7 +286,8 @@ describe('sanitizeLayout', () => {
         expect(chartsFolder.items).toEqual([
             'charts-instance',
             'charts-mutual',
-            'charts-hot-worlds'
+            'charts-hot-worlds',
+            'charts-popular-groups'
         ]);
     });
 

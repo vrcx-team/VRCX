@@ -31,7 +31,7 @@ export function createBaseDefaultNavLayout(t) {
             nameKey: 'nav_tooltip.charts',
             name: t('nav_tooltip.charts'),
             icon: 'ri-pie-chart-line',
-            items: ['charts-instance', 'charts-mutual', 'charts-hot-worlds']
+            items: ['charts-instance', 'charts-mutual', 'charts-hot-worlds', 'charts-popular-groups']
         },
         { type: 'item', key: 'tools' },
         { type: 'item', key: 'direct-access' }

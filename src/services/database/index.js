@@ -3,6 +3,7 @@ import { avatarFavorites } from './avatarFavorites.js';
 import { avatarTags } from './avatarTags.js';
 import { feed } from './feed.js';
 import { friendFavorites } from './friendFavorites.js';
+import { friendGroups } from './friendGroups.js';
 import { friendLogCurrent } from './friendLogCurrent.js';
 import { friendLogHistory } from './friendLogHistory.js';
 import { gameLog } from './gameLog.js';
@@ -41,6 +42,7 @@ const database = {
     ...tableFixes,
     ...tableSize,
     ...mutualGraph,
+    ...friendGroups,
 
     setMaxTableSize(limit) {
         dbVars.maxTableSize = limit;
@@ -149,6 +151,15 @@ const database = {
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_mutual_graph_meta (friend_id TEXT PRIMARY KEY, last_fetched_at TEXT, opted_out INTEGER DEFAULT 0)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_friend_groups_links (friend_id TEXT NOT NULL, group_id TEXT NOT NULL, PRIMARY KEY(friend_id, group_id))`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_friend_groups_info (group_id TEXT PRIMARY KEY, name TEXT, short_code TEXT, discriminator TEXT, icon_url TEXT, banner_url TEXT, member_count INTEGER, owner_id TEXT, updated_at TEXT)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_friend_groups_meta (friend_id TEXT PRIMARY KEY, last_fetched_at TEXT, unavailable INTEGER DEFAULT 0)`
         );
     },
 

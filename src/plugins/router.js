@@ -115,6 +115,12 @@ const routes = [
                 component: () =>
                     import('./../views/Charts/components/HotWorlds.vue')
             },
+            {
+                path: 'charts/popular-groups',
+                name: 'charts-popular-groups',
+                component: () =>
+                    import('./../views/Charts/components/PopularGroups.vue')
+            },
             { path: 'tools', name: 'tools', component: Tools },
             {
                 path: 'tools/gallery',

@@ -114,6 +114,13 @@ const navDefinitions = [
         routeName: 'charts-hot-worlds'
     },
     {
+        key: 'charts-popular-groups',
+        icon: 'ri-team-line',
+        tooltip: 'view.charts.popular_groups.tab_label',
+        labelKey: 'view.charts.popular_groups.tab_label',
+        routeName: 'charts-popular-groups'
+    },
+    {
         key: 'tools',
         icon: 'ri-tools-line',
         tooltip: 'nav_tooltip.tools',

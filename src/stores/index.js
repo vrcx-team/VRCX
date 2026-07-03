@@ -28,6 +28,7 @@ import { useModerationStore } from './moderation';
 import { useNotificationStore } from './notification';
 import { useNotificationsSettingsStore } from './settings/notifications';
 import { usePhotonStore } from './photon';
+import { usePopularGroupsStore } from './popularGroups';
 import { useSearchStore } from './search';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
@@ -160,6 +161,7 @@ export function createGlobalStores() {
         auth: useAuthStore(),
         vrcStatus: useVrcStatusStore(),
         charts: useChartsStore(),
+        popularGroups: usePopularGroupsStore(),
         dashboard: useDashboardStore(),
         modal: useModalStore(),
         quickSearch: useQuickSearchStore()
@@ -184,6 +186,7 @@ export {
     useModerationStore,
     useNotificationStore,
     usePhotonStore,
+    usePopularGroupsStore,
     useSearchStore,
     useChartsStore,
     useDashboardStore,

@@ -47,7 +47,8 @@ export function sanitizeLayout(
     const chartsKeys = [
         'charts-instance',
         'charts-mutual',
-        'charts-hot-worlds'
+        'charts-hot-worlds',
+        'charts-popular-groups'
     ];
 
     const appendItemEntry = (key, target = normalized) => {

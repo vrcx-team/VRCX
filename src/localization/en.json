@@ -636,6 +636,51 @@
                 },
                 "no_friend_data": "No friend visit data",
                 "friend_visits": "{count} visits"
+            },
+            "popular_groups": {
+                "tab_label": "Popular Groups",
+                "header": "Popular Groups",
+                "search_placeholder": "Search groups",
+                "hide_joined": "Hide joined",
+                "joined": "Joined",
+                "never_fetched": "No data yet. Fetch to see which groups are most popular among your friends.",
+                "no_friend_data": "No friend data",
+                "last_fetched": "Last fetched {time}",
+                "tips": {
+                    "description": "Shows groups your friends have made visible to you, ranked by how many friends are members. Only groups friends have chosen to show are counted. Fetching is manual and rate-limited to respect the VRChat API."
+                },
+                "actions": {
+                    "start_fetch": "Start Fetch",
+                    "fetch_again": "Fetch Again",
+                    "stop": "Stop",
+                    "stop_fetching": "Stop fetching"
+                },
+                "status": {
+                    "no_friends_to_process": "You have no friends to process"
+                },
+                "progress": {
+                    "friends_processed": "Friends processed"
+                },
+                "messages": {
+                    "fetch_cancelled": "Fetch cancelled"
+                },
+                "notifications": {
+                    "start_fetching": "Started fetching",
+                    "ready_title": "Popular Groups",
+                    "ready_message": "Popular groups list is ready",
+                    "friend_list_changed": "Friend list changed. Please fetch again."
+                },
+                "stats": {
+                    "total_groups": "groups",
+                    "skipped_friends": "friends skipped"
+                },
+                "stats_line": {
+                    "friends": "{count} friends",
+                    "members": "{count} members"
+                },
+                "sheet": {
+                    "friends_in_group": "Friends in this group"
+                }
             }
         },
         "tools": {

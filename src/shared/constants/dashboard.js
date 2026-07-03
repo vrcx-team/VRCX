@@ -8,5 +8,6 @@ export const DASHBOARD_BLOCKED_PANEL_KEYS = new Set([
     'charts-instance',
     'charts-mutual',
     'charts-hot-worlds',
+    'charts-popular-groups',
     'tools'
 ]);

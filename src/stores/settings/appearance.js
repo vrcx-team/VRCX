@@ -111,7 +111,8 @@ export const useAppearanceSettingsStore = defineStore(
                 'friend-list',
                 'charts-instance',
                 'charts-mutual',
-                'charts-hot-worlds'
+                'charts-hot-worlds',
+                'charts-popular-groups'
             ].includes(currentRouteName);
         });
 

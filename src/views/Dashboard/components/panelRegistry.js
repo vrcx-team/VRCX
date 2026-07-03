@@ -38,6 +38,9 @@ export const panelComponentMap = {
     'charts-hot-worlds': defineAsyncComponent(
         () => import('../../Charts/components/HotWorlds.vue')
     ),
+    'charts-popular-groups': defineAsyncComponent(
+        () => import('../../Charts/components/PopularGroups.vue')
+    ),
     tools: Tools,
     'widget:feed': defineAsyncComponent(
         () => import('../widgets/FeedWidget.vue')

@@ -20,6 +20,7 @@ export * from './gallery';
 export * from './location';
 export * from './invite';
 export * from './world';
+export * from './popularGroups';
 export * from './throttle';
 export * from './retry';
 export * from './gameLog';
