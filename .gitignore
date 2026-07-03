@@ -5,6 +5,7 @@ obj1/
 .idea/
 *.log
 *.DotSettings.user
+*.csproj.user
 .vs/
 Installer/version_define.nsh
 bun.lock
