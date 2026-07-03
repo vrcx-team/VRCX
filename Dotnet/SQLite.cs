@@ -54,7 +54,8 @@ namespace VRCX
 
         public object[][] Execute(string sql, IDictionary<string, object>? args = null)
         {
-            m_ConnectionLock.EnterReadLock();
+            // Must use the write lock: System.Data.SQLite's SQLiteConnection isn't thread-safe, so concurrent reads on this shared connection can corrupt its internal caches and throw.
+            m_ConnectionLock.EnterWriteLock();
             try
             {
                 using var command = new SQLiteCommand(sql, m_Connection);
@@ -81,7 +82,7 @@ namespace VRCX
             }
             finally
             {
-                m_ConnectionLock.ExitReadLock();
+                m_ConnectionLock.ExitWriteLock();
             }
         }
 
