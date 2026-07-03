@@ -2,8 +2,38 @@ import { dbVars } from '../database';
 
 import sqliteService from '../sqlite.js';
 
-function escapeSql(value) {
-    return String(value ?? '').replace(/'/g, "''");
+// Keep well under SQLite's SQLITE_MAX_VARIABLE_NUMBER (999 on older builds)
+// even with several columns per row.
+const INSERT_BATCH_SIZE = 100;
+
+/**
+ * Insert rows using fully parameterized placeholders (no manual string
+ * escaping/concatenation of values) so arbitrary text - e.g. group names -
+ * can never be misinterpreted as SQL syntax.
+ * @param {string} table
+ * @param {string[]} columns
+ * @param {any[][]} rows
+ */
+async function insertRowsParameterized(table, columns, rows) {
+    if (rows.length === 0) {
+        return;
+    }
+    for (let start = 0; start < rows.length; start += INSERT_BATCH_SIZE) {
+        const batch = rows.slice(start, start + INSERT_BATCH_SIZE);
+        const args = {};
+        const valueClauses = batch.map((row, rowIndex) => {
+            const placeholders = row.map((value, colIndex) => {
+                const paramName = `@p${rowIndex}_${colIndex}`;
+                args[paramName] = value;
+                return paramName;
+            });
+            return `(${placeholders.join(', ')})`;
+        });
+        await sqliteService.executeNonQuery(
+            `INSERT OR REPLACE INTO ${table} (${columns.join(', ')}) VALUES ${valueClauses.join(', ')}`,
+            args
+        );
+    }
 }
 
 const friendGroups = {
@@ -84,40 +114,40 @@ const friendGroups = {
             }
             // Also clean links for friends in the new entries even if they were
             // previously marked unavailable - we have fresh data for them now.
-            let idsToClean = '';
-            links.forEach((_, friendId) => {
-                if (!friendId) return;
-                idsToClean += `'${escapeSql(friendId)}',`;
-            });
-            if (idsToClean) {
-                idsToClean = idsToClean.slice(0, -1);
+            const friendIdsToClean = Array.from(links.keys()).filter(Boolean);
+            if (friendIdsToClean.length > 0) {
+                const args = {};
+                const placeholders = friendIdsToClean.map((friendId, i) => {
+                    const paramName = `@f${i}`;
+                    args[paramName] = friendId;
+                    return paramName;
+                });
                 await sqliteService.executeNonQuery(
-                    `DELETE FROM ${linkTable} WHERE friend_id IN (${idsToClean})`
+                    `DELETE FROM ${linkTable} WHERE friend_id IN (${placeholders.join(', ')})`,
+                    args
                 );
             }
-            let linkValues = '';
+            const linkRows = [];
             links.forEach((groupIds, friendId) => {
                 if (!friendId) {
                     return;
                 }
-                const safeFriendId = escapeSql(friendId);
                 const collection = Array.isArray(groupIds) ? groupIds : [];
                 for (const groupId of collection) {
                     if (!groupId) {
                         continue;
                     }
-                    linkValues += `('${safeFriendId}', '${escapeSql(groupId)}'),`;
+                    linkRows.push([friendId, groupId]);
                 }
             });
-            if (linkValues) {
-                linkValues = linkValues.slice(0, -1);
-                await sqliteService.executeNonQuery(
-                    `INSERT OR REPLACE INTO ${linkTable} (friend_id, group_id) VALUES ${linkValues}`
-                );
-            }
+            await insertRowsParameterized(
+                linkTable,
+                ['friend_id', 'group_id'],
+                linkRows
+            );
             if (groupInfos.size > 0) {
                 const now = new Date().toISOString();
-                let infoValues = '';
+                const infoRows = [];
                 groupInfos.forEach((info, groupId) => {
                     if (!groupId) {
                         return;
@@ -125,18 +155,33 @@ const friendGroups = {
                     const memberCount = Number.isFinite(info?.memberCount)
                         ? info.memberCount
                         : 0;
-                    infoValues +=
-                        `('${escapeSql(groupId)}', '${escapeSql(info?.name)}', ` +
-                        `'${escapeSql(info?.shortCode)}', '${escapeSql(info?.discriminator)}', ` +
-                        `'${escapeSql(info?.iconUrl)}', '${escapeSql(info?.bannerUrl)}', ` +
-                        `${memberCount}, '${escapeSql(info?.ownerId)}', '${escapeSql(now)}'),`;
+                    infoRows.push([
+                        groupId,
+                        info?.name || '',
+                        info?.shortCode || '',
+                        info?.discriminator || '',
+                        info?.iconUrl || '',
+                        info?.bannerUrl || '',
+                        memberCount,
+                        info?.ownerId || '',
+                        now
+                    ]);
                 });
-                if (infoValues) {
-                    infoValues = infoValues.slice(0, -1);
-                    await sqliteService.executeNonQuery(
-                        `INSERT OR REPLACE INTO ${infoTable} (group_id, name, short_code, discriminator, icon_url, banner_url, member_count, owner_id, updated_at) VALUES ${infoValues}`
-                    );
-                }
+                await insertRowsParameterized(
+                    infoTable,
+                    [
+                        'group_id',
+                        'name',
+                        'short_code',
+                        'discriminator',
+                        'icon_url',
+                        'banner_url',
+                        'member_count',
+                        'owner_id',
+                        'updated_at'
+                    ],
+                    infoRows
+                );
             }
             await sqliteService.executeNonQuery('COMMIT');
         } catch (err) {
@@ -150,10 +195,13 @@ const friendGroups = {
             return;
         }
         const metaTable = `${dbVars.userPrefix}_friend_groups_meta`;
-        const time = escapeSql(lastFetchedAt || new Date().toISOString());
-        const unavailableInt = unavailable ? 1 : 0;
         await sqliteService.executeNonQuery(
-            `INSERT OR REPLACE INTO ${metaTable} (friend_id, last_fetched_at, unavailable) VALUES ('${escapeSql(friendId)}', '${time}', ${unavailableInt})`
+            `INSERT OR REPLACE INTO ${metaTable} (friend_id, last_fetched_at, unavailable) VALUES (@friend_id, @last_fetched_at, @unavailable)`,
+            {
+                '@friend_id': friendId,
+                '@last_fetched_at': lastFetchedAt || new Date().toISOString(),
+                '@unavailable': unavailable ? 1 : 0
+            }
         );
     },
 
@@ -162,19 +210,17 @@ const friendGroups = {
             return;
         }
         const metaTable = `${dbVars.userPrefix}_friend_groups_meta`;
-        let values = '';
         const now = new Date().toISOString();
+        const rows = [];
         entries.forEach(({ unavailable }, friendId) => {
             if (!friendId) return;
-            const unavailableInt = unavailable ? 1 : 0;
-            values += `('${escapeSql(friendId)}', '${escapeSql(now)}', ${unavailableInt}),`;
+            rows.push([friendId, now, unavailable ? 1 : 0]);
         });
-        if (values) {
-            values = values.slice(0, -1);
-            await sqliteService.executeNonQuery(
-                `INSERT OR REPLACE INTO ${metaTable} (friend_id, last_fetched_at, unavailable) VALUES ${values}`
-            );
-        }
+        await insertRowsParameterized(
+            metaTable,
+            ['friend_id', 'last_fetched_at', 'unavailable'],
+            rows
+        );
     },
 
     async getFriendGroupsMeta() {
