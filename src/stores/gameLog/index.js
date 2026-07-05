@@ -1253,10 +1253,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
         sessionsViewMode.value = mode;
         await configRepository.setString('VRCX_gameLogViewMode', mode);
         if (mode === 'table') {
-            initGameLogTable();
+            await gameLogTableLookup();
         } else {
             gameLogTableData.value = [];
-            loadSessionsSegments();
+            await loadSessionsSegments();
         }
     }
 
