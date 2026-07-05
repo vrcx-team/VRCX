@@ -31,6 +31,13 @@
         }
     }
 
+    async function syncVisibleResults() {
+        if (!filterState.search) return;
+
+        await nextTick();
+        overrideFilter();
+    }
+
     watch(
         () => filterState.search,
         async (value) => {
@@ -41,23 +48,11 @@
             // and locale-aware matching; the Command's built-in useFilter
             // (which uses a plain Intl.Collator) would otherwise hide
             // results that the Worker correctly matched via confusables.
-            if (value) {
-                await nextTick();
-                overrideFilter();
-            }
-
-            // [OLD] Only override when query < 2 chars (hint categories).
-            // If above approach causes issues, revert to this:
-            // if (value && value.length < 2) {
-            //     await nextTick();
-            //     for (const id of allItems.value.keys()) {
-            //         filterState.filtered.items.set(id, 1);
-            //     }
-            //     filterState.filtered.count = allItems.value.size;
-            //     for (const groupId of allGroups.value.keys()) {
-            //         filterState.filtered.groups.add(groupId);
-            //     }
-            // }
+            await syncVisibleResults();
         }
     );
+
+    watch([() => allItems.value.size, () => allGroups.value.size], async () => {
+        await syncVisibleResults();
+    });
 </script>

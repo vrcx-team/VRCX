@@ -287,7 +287,6 @@ button {
     overflow: hidden;
     font-size: var(--vr-font-base);
     white-space: nowrap;
-    border-top: 1px solid var(--vr-border-strong);
     color: var(--vr-text-secondary);
     font-weight: 400;
     letter-spacing: 0.01em;
@@ -554,7 +553,6 @@ i.x-user-status.busy {
 }
 
 .x-containerbottom:first-of-type {
-    border-top: 1px solid var(--vr-border);
     padding: 6px 10px 4px;
     background: rgba(255, 255, 255, 0.01);
 }

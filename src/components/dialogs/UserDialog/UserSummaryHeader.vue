@@ -30,7 +30,7 @@
         </div>
         <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
             <div style="flex: 1">
-                <div>
+                <div class="max-h-25 overflow-hidden">
                     <TooltipWrapper v-if="userDialog.ref.status" side="top">
                         <template #content>
                             <span>{{ getUserStateText(userDialog.ref) }}</span>
@@ -55,7 +55,7 @@
                         </TooltipWrapper>
                     </template>
                     <span
-                        class="font-bold"
+                        class="font-bold break-all"
                         style="margin-left: 6px; margin-right: 6px; cursor: pointer"
                         v-text="userDialog.ref.displayName"
                         @click="copyUserDisplayName(userDialog.ref.displayName)"></span>

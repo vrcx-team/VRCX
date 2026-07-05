@@ -74,7 +74,45 @@ export const useGroupStore = defineStore('Group', () => {
         id: '',
         groupRef: {},
         auditLogTypes: [],
-        openWithUserId: ''
+        openWithUserId: '',
+        activeTab: '',
+        activeInviteTab: '',
+        selectedUsers: {},
+        selectedUsersArray: [],
+        tables: {
+            members: {
+                data: [],
+                pageSize: 15,
+                pageIndex: 0
+            },
+            bans: {
+                data: [],
+                pageSize: 15,
+                pageIndex: 0,
+                filters: [{ prop: ['$displayName'], value: '' }]
+            },
+            invites: {
+                data: [],
+                pageSize: 15,
+                pageIndex: 0
+            },
+            joinRequests: {
+                data: [],
+                pageSize: 15,
+                pageIndex: 0
+            },
+            blocked: {
+                data: [],
+                pageSize: 15,
+                pageIndex: 0
+            },
+            logs: {
+                data: [],
+                pageSize: 15,
+                pageIndex: 0,
+                filters: [{ prop: ['description'], value: '' }]
+            }
+        }
     });
 
     const inGameGroupOrder = ref([]);
@@ -260,29 +298,10 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     /**
-     *
-     * @param groupId
-     * @param userId
+     * @param {boolean} value
      */
-    function showGroupMemberModerationDialog(groupId, userId = '') {
-        const D = groupMemberModeration.value;
-        D.id = groupId;
-        D.openWithUserId = userId;
-
-        D.groupRef = {};
-        D.auditLogTypes = [];
-        queryRequest.fetch('group.dialog', { groupId }).then((args) => {
-            D.groupRef = args.ref;
-            if (hasGroupPermission(D.groupRef, 'group-audit-view')) {
-                groupRequest.getGroupAuditLogTypes({ groupId }).then((args) => {
-                    if (D.id !== args.params.groupId) {
-                        return;
-                    }
-                    D.auditLogTypes = args.json;
-                });
-            }
-        });
-        D.visible = true;
+    function setGroupMemberModerationVisible(value) {
+        groupMemberModeration.value.visible = value;
     }
 
     /**
@@ -324,7 +343,7 @@ export const useGroupStore = defineStore('Group', () => {
         clearGroupInstances,
         setGroupDialogVisible,
         showModerateGroupDialog,
-        showGroupMemberModerationDialog,
+        setGroupMemberModerationVisible,
         setCurrentUserGroupsInit,
         setInGameGroupOrder,
         setGroupInstances

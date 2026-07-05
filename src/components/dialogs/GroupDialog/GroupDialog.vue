@@ -27,11 +27,13 @@
                 <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
                     <div class="group-header" style="flex: 1">
                         <span class="mr-1.5" v-if="groupDialog.ref.ownerId === currentUser.id">👑</span>
-                        <span
-                            class="font-bold mr-1.5"
-                            style="cursor: pointer"
-                            v-text="groupDialog.ref.name"
-                            @click="copyToClipboard(groupDialog.ref.name)"></span>
+                        <div class="max-h-25 overflow-hidden">
+                            <span
+                                class="font-bold mr-1.5 break-all"
+                                style="cursor: pointer"
+                                v-text="groupDialog.ref.name"
+                                @click="copyToClipboard(groupDialog.ref.name)"></span>
+                        </div>
                         <span class="group-discriminator x-grey mr-1.5 font-mono text-xs">
                             {{ groupDialog.ref.shortCode }}.{{ groupDialog.ref.discriminator }}
                         </span>
@@ -63,32 +65,56 @@
                             <Badge v-if="groupDialog.ref.joinState === 'open'" variant="outline" class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.open') }}
                             </Badge>
-                            <Badge v-else-if="groupDialog.ref.joinState === 'request'" variant="outline" class="mr-1.5 mt-1.5">
+                            <Badge
+                                v-else-if="groupDialog.ref.joinState === 'request'"
+                                variant="outline"
+                                class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.request') }}
                             </Badge>
-                            <Badge v-else-if="groupDialog.ref.joinState === 'invite'" variant="outline" class="mr-1.5 mt-1.5">
+                            <Badge
+                                v-else-if="groupDialog.ref.joinState === 'invite'"
+                                variant="outline"
+                                class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.invite') }}
                             </Badge>
-                            <Badge v-else-if="groupDialog.ref.joinState === 'closed'" variant="outline" class="mr-1.5 mt-1.5">
+                            <Badge
+                                v-else-if="groupDialog.ref.joinState === 'closed'"
+                                variant="outline"
+                                class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.closed') }}
                             </Badge>
                             <Badge v-if="groupDialog.inGroup" variant="outline" class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.joined') }}
                             </Badge>
-                            <Badge v-if="groupDialog.ref.myMember && groupDialog.ref.myMember.bannedAt" variant="outline" class="mr-1.5 mt-1.5">
+                            <Badge
+                                v-if="groupDialog.ref.myMember && groupDialog.ref.myMember.bannedAt"
+                                variant="outline"
+                                class="mr-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.banned') }}
                             </Badge>
                             <template v-if="groupDialog.inGroup && groupDialog.ref.myMember">
-                                <Badge v-if="groupDialog.ref.myMember.visibility === 'visible'" variant="outline" class="mr-1.5 mt-1.5">
+                                <Badge
+                                    v-if="groupDialog.ref.myMember.visibility === 'visible'"
+                                    variant="outline"
+                                    class="mr-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.visible') }}
                                 </Badge>
-                                <Badge v-else-if="groupDialog.ref.myMember.visibility === 'friends'" variant="outline" class="mr-1.5 mt-1.5">
+                                <Badge
+                                    v-else-if="groupDialog.ref.myMember.visibility === 'friends'"
+                                    variant="outline"
+                                    class="mr-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.friends') }}
                                 </Badge>
-                                <Badge v-else-if="groupDialog.ref.myMember.visibility === 'hidden'" variant="outline" class="mr-1.5 mt-1.5">
+                                <Badge
+                                    v-else-if="groupDialog.ref.myMember.visibility === 'hidden'"
+                                    variant="outline"
+                                    class="mr-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.hidden') }}
                                 </Badge>
-                                <Badge v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements" variant="outline" class="mr-1.5 mt-1.5">
+                                <Badge
+                                    v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements"
+                                    variant="outline"
+                                    class="mr-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.subscribed') }}
                                 </Badge>
                             </template>
@@ -96,8 +122,8 @@
                         <div style="margin-top: 6px">
                             <pre
                                 v-show="groupDialog.ref.name !== groupDialog.ref.description"
-                                class="text-xs font-[inherit]"
-                                style="white-space: pre-wrap; max-height: 40vh; overflow-y: auto"
+                                class="text-xs font-[inherit] break-all"
+                                style="white-space: pre-wrap; max-height: 20vh; overflow-y: auto"
                                 v-text="groupDialog.ref.description"></pre>
                         </div>
                     </div>
@@ -227,6 +253,22 @@
                                             {{ t('dialog.group.actions.subscribe') }}
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
+                                            v-if="
+                                                groupDialog.ref.myMember.isSubscribedToEventAnnouncements ||
+                                                typeof groupDialog.ref.myMember.isSubscribedToEventAnnouncements ===
+                                                    'undefined'
+                                            "
+                                            @click="groupDialogCommand('Unsubscribe To Event Announcements')">
+                                            <MessageCircleOff class="size-4" />
+                                            {{ t('dialog.group.actions.unsubscribe_event') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            v-else
+                                            @click="groupDialogCommand('Subscribe To Event Announcements')">
+                                            <MessageCircle class="size-4" />
+                                            {{ t('dialog.group.actions.subscribe_event') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
                                             v-if="hasGroupPermission(groupDialog.ref, 'group-invites-manage')"
                                             @click="groupDialogCommand('Invite To Group')">
                                             <MessageSquare class="size-4" />
@@ -338,6 +380,8 @@
     import {
         Bell,
         BellOff,
+        MessageCircle,
+        MessageCircleOff,
         Bookmark,
         BookmarkCheck,
         Check,
@@ -382,7 +426,8 @@
         showGroupDialog,
         leaveGroupPrompt,
         setGroupVisibility,
-        setGroupSubscription
+        setGroupSubscription,
+        setGroupEventAnnouncements
     } from '../../../coordinators/groupCoordinator';
     import { groupRequest, queryRequest } from '../../../api';
     import { queryKeys, refetchActiveEntityQuery } from '../../../queries';
@@ -397,6 +442,7 @@
     import GroupDialogPostsTab from './GroupDialogPostsTab.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
+    import { showGroupMemberModerationDialog } from '../../../coordinators/groupCoordinator';
 
     const { t } = useI18n();
     const groupDialogTabs = computed(() => [
@@ -411,7 +457,7 @@
 
     const { currentUser } = storeToRefs(useUserStore());
     const { groupDialog, inviteGroupDialog } = storeToRefs(useGroupStore());
-    const { updateGroupPostSearch, showGroupMemberModerationDialog } = useGroupStore();
+    const { updateGroupPostSearch } = useGroupStore();
 
     const { showFullscreenImageDialog } = useGalleryStore();
 
@@ -423,6 +469,7 @@
         leaveGroupPrompt,
         setGroupVisibility,
         setGroupSubscription,
+        setGroupEventAnnouncements,
         showGroupMemberModerationDialog,
         showInviteGroupDialog: (groupId, userId) => {
             if (groupId) {
@@ -699,7 +746,8 @@
             posts: D.posts,
             instances: D.instances,
             members: D.members,
-            galleries: D.galleries
+            galleries: D.galleries,
+            calendar: D.calendar
         };
     }
 

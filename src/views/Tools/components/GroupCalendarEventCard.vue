@@ -21,6 +21,11 @@
                             {{ groupName }}
                         </div>
                         <div class="event-title-content" @click="onGroupClick">
+                            <TooltipWrapper
+                                v-if="event.seriesId"
+                                :content="t('dialog.group_calendar.event_card.repeating_event_tooltip')">
+                                <Repeat class="size-4! inline" />
+                            </TooltipWrapper>
                             {{ event.title }}
                         </div>
                     </div>
@@ -42,7 +47,8 @@
                         size="icon"
                         :variant="isFollowing ? 'default' : 'secondary'"
                         class="rounded-full badge">
-                        <Star />
+                        <Star fill="currentColor" v-if="isFollowing" />
+                        <Star v-else />
                     </Button>
                 </div>
             </Card>
@@ -114,7 +120,7 @@
 </template>
 
 <script setup>
-    import { Calendar, Download, Image, Share2, Star } from 'lucide-vue-next';
+    import { Calendar, Download, Image, Share2, Star, Repeat } from 'lucide-vue-next';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
@@ -126,6 +132,7 @@
     import { AppDebug } from '../../../services/appConfig';
     import { formatDateFilter } from '../../../shared/utils';
     import { groupRequest } from '../../../api';
+    import TooltipWrapper from '@/components/ui/tooltip/TooltipWrapper.vue';
 
     const { showFullscreenImageDialog } = useGalleryStore();
 

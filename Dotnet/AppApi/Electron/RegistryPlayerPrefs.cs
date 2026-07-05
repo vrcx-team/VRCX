@@ -240,21 +240,12 @@ namespace VRCX
             }
 
             string steamPath = _steamPath;
-            string steamAppsCommonPath = Path.Join(steamPath, "steamapps", "common");
-            string compatabilityToolsPath = Path.Join(steamPath, "compatibilitytools.d");
-            string protonPath = Path.Join(steamAppsCommonPath, compatTool);
-            string compatToolPath = Path.Join(compatabilityToolsPath, compatTool);
             string winePath = "";
-            if (Directory.Exists(compatToolPath))
-            {
-                winePath = Path.Join(compatToolPath, "files", "bin", "wine");
-                if (!File.Exists(winePath))
-                {
-                    Console.WriteLine("Wine not found in CompatTool path");
-                    return null;
-                }
-            }
-            else if (Directory.Exists(protonPath))
+
+            // A Proton install in a Steam library uses a different layout than a
+            // registered compat tool, so check it on its own.
+            string protonPath = Path.Join(steamPath, "steamapps", "common", compatTool);
+            if (Directory.Exists(protonPath))
             {
                 winePath = Path.Join(protonPath, "dist", "bin", "wine");
                 if (!File.Exists(winePath))
@@ -263,24 +254,38 @@ namespace VRCX
                     return null;
                 }
             }
-            else if (Directory.Exists(compatabilityToolsPath))
+            else
             {
-                var dirs = Directory.GetDirectories(compatabilityToolsPath);
-                foreach (var dir in dirs)
+                // Search every compatibilitytools.d Steam looks in, in its
+                // documented order.
+                // https://github.com/ValveSoftware/steam-for-linux/issues/6310#issuecomment-511630263
+                // STEAM_EXTRA_COMPAT_TOOLS_PATHS entries can be a tool directory
+                // themselves rather than a parent of one, so check both forms.
+                var roots = new List<string>
                 {
-                    if (dir.Contains(compatTool))
+                    "/usr/share/steam/compatibilitytools.d",
+                    "/usr/local/share/steam/compatibilitytools.d",
+                };
+                var extraPaths = Environment.GetEnvironmentVariable("STEAM_EXTRA_COMPAT_TOOLS_PATHS");
+                if (!string.IsNullOrEmpty(extraPaths))
+                    roots.AddRange(extraPaths.Split(':', StringSplitOptions.RemoveEmptyEntries));
+                roots.Add(Path.Join(steamPath, "compatibilitytools.d"));
+
+                foreach (var root in roots)
+                {
+                    var candidates = new List<string> { root, Path.Join(root, compatTool) };
+                    if (Directory.Exists(root))
+                        candidates.AddRange(Directory.GetDirectories(root, $"*{compatTool}*"));
+
+                    foreach (var candidate in candidates)
                     {
-                        winePath = Path.Join(dir, "files", "bin", "wine");
+                        winePath = Path.Join(candidate, "files", "bin", "wine");
                         if (File.Exists(winePath))
-                        {
                             break;
-                        }
+                        winePath = "";
                     }
-                }
-                if (!File.Exists(winePath))
-                {
-                    Console.WriteLine("Wine not found in CompatTool path");
-                    return null;
+                    if (winePath != "")
+                        break;
                 }
             }
 
@@ -330,11 +335,9 @@ namespace VRCX
             string error = process.StandardError.ReadToEnd();
             process.WaitForExit();
 
-            if (!string.IsNullOrEmpty(error) &&
-                !error.Contains("wineserver: using server-side synchronization.") &&
-                !error.Contains("fixme:wineusb:query_id"))
+            if (process.ExitCode != 0)
             {
-                logger.Error($"Wine reg command error: {error}");
+                logger.Error($"Wine reg command failed (exit {process.ExitCode}): {error}");
                 return null;
             }
 
