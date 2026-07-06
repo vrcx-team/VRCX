@@ -174,9 +174,9 @@
             }
             return;
         }
-        const worldGroups = groupArgs.json.filter((list) => list.type === 'world');
+        const worldGroups = groupArgs.json;
         const tasks = worldGroups.map(async (list) => {
-            if (list.type !== 'world') {
+            if (list.type !== 'world' && list.type !== 'vrcPlusWorld') {
                 return null;
             }
             const params = {

@@ -12,7 +12,8 @@
                             :model-value="sessionsVipFilter"
                             :ariaLabel="t('view.feed.favorites_only_tooltip')"
                             @update:modelValue="gameLogStore.toggleSessionsVipFilter()">
-                            <Star />
+                            <Star fill="currentColor" v-if="sessionsVipFilter" />
+                            <Star v-else />
                         </Toggle>
                     </div>
                 </TooltipWrapper>

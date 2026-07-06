@@ -524,7 +524,6 @@ export function addGameLogEvent(json) {
  * Starts game log processing from the database tail.
  */
 export async function getGameLogTable() {
-    await database.initTables();
     const dateTill = await database.getLastDateGameLogDatabase();
     await updateGameLog(dateTill);
 }

@@ -83,7 +83,8 @@
                                                 gameLogTableLookup();
                                             }
                                         ">
-                                        <Star />
+                                        <Star fill="currentColor" v-if="gameLogTable.vip" />
+                                        <Star v-else />
                                     </Toggle>
                                 </div>
                             </TooltipWrapper>
@@ -229,7 +230,7 @@
         const displayName = row?.displayName ?? '';
         const location = row?.location ?? '';
 
-        return `${type}:${createdAt}:${userId}:${displayName}:${location}`;
+        return `${type}:${createdAt}:${userId}:${displayName}:${location}:${Date.now()}`;
     }
 
     const { table, pagination } = useVrcxVueTable({

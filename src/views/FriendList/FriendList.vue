@@ -27,7 +27,8 @@
                                                 friendsListSearchChange();
                                             }
                                         ">
-                                        <Star />
+                                        <Star fill="currentColor" v-if="friendsListSearchFilterVIP" />
+                                        <Star v-else />
                                     </Toggle>
                                 </div>
                             </TooltipWrapper>

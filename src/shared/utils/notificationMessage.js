@@ -35,7 +35,6 @@ export function getNotificationMessage(noty, message, displayNameOverride) {
                 })
             };
         case 'Online': {
-            let locationName = '';
             if (noty.worldName) {
                 return {
                     title: name,
@@ -121,37 +120,41 @@ export function getNotificationMessage(noty, message, displayNameOverride) {
             return { title: sender, body: noty.message };
         case 'group.announcement':
             return {
-                title: t('notifications.group_announcement_title'),
+                title:
+                    noty.title || t('notifications.group_announcement_title'),
                 body: noty.message
             };
         case 'group.informative':
             return {
-                title: t('notifications.group_informative_title'),
+                title: noty.title || t('notifications.group_informative_title'),
                 body: noty.message
             };
         case 'group.invite':
             return {
-                title: t('notifications.group_invite_title'),
+                title: noty.title || t('notifications.group_invite_title'),
                 body: noty.message
             };
         case 'group.joinRequest':
             return {
-                title: t('notifications.group_join_request_title'),
+                title:
+                    noty.title || t('notifications.group_join_request_title'),
                 body: noty.message
             };
         case 'group.transfer':
             return {
-                title: t('notifications.group_transfer_request_title'),
+                title:
+                    noty.title ||
+                    t('notifications.group_transfer_request_title'),
                 body: noty.message
             };
         case 'group.queueReady':
             return {
-                title: t('notifications.group_queue_ready_title'),
+                title: noty.title || t('notifications.group_queue_ready_title'),
                 body: noty.message
             };
         case 'instance.closed':
             return {
-                title: t('notifications.instance_closed_title'),
+                title: noty.title || t('notifications.instance_closed_title'),
                 body: noty.message
             };
         case 'PortalSpawn':

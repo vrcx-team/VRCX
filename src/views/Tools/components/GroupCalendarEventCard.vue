@@ -47,7 +47,8 @@
                         size="icon"
                         :variant="isFollowing ? 'default' : 'secondary'"
                         class="rounded-full badge">
-                        <Star />
+                        <Star fill="currentColor" v-if="isFollowing" />
+                        <Star v-else />
                     </Button>
                 </div>
             </Card>

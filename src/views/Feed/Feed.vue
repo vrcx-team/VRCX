@@ -53,7 +53,8 @@
                                             feedTableLookup();
                                         }
                                     ">
-                                    <Star />
+                                    <Star fill="currentColor" v-if="feedTable.vip" />
+                                    <Star v-else />
                                 </Toggle>
                             </div>
                         </TooltipWrapper>
@@ -172,7 +173,7 @@
         const location = row?.location ?? row?.details?.location ?? '';
         const message = row?.message ?? '';
 
-        return `${type}:${createdAt}:${userId}:${location}:${message}`;
+        return `${type}:${createdAt}:${userId}:${location}:${message}:${Date.now()}`;
     }
 
     const { table, pagination } = useVrcxVueTable({

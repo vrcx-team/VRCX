@@ -5,6 +5,7 @@ import { initPlugins } from '../plugins';
 
 import Vr from './Vr.vue';
 
+window.isVrOverlay = true;
 await initPlugins(true);
 
 const vr = createApp(Vr);

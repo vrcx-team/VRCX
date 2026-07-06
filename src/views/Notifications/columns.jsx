@@ -837,13 +837,6 @@ export const createColumns = ({
                                                 )}
                                             </button>
                                         </TooltipTrigger>
-                                        <TooltipContent side="top">
-                                            <span>
-                                                {t(
-                                                    'view.notification.actions.delete_log'
-                                                )}
-                                            </span>
-                                        </TooltipContent>
                                     </Tooltip>
                                 ) : null}
                             </span>

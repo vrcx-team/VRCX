@@ -136,7 +136,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 if (sessionsViewMode.value === 'sessions') {
                     loadSessionsSegments();
                 } else {
-                    initGameLogTable();
+                    gameLogTableLookup();
                 }
             } else {
                 gameLogTableData.value = [];
@@ -499,23 +499,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
         if (j > vrcxStore.maxTableSize + 50) {
             gameLogTableData.value = gameLogTableData.value.slice(0, -50);
         }
-    }
-
-    /**
-     *
-     */
-    async function initGameLogTable() {
-        gameLogTable.value.loading = true;
-        const rows = await database.lookupGameLogDatabase(
-            gameLogTable.value.filter,
-            []
-        );
-        for (const row of rows) {
-            row.isFriend = gameLogIsFriend(row);
-            row.isFavorite = gameLogIsFavorite(row);
-        }
-        gameLogTableData.value = rows;
-        gameLogTable.value.loading = false;
     }
 
     /**

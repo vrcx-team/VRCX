@@ -25,6 +25,7 @@ import { useGameStore } from '../game';
 import { useLocationStore } from '../location';
 import { useUpdateLoopStore } from '../updateLoop';
 import { useUserStore } from '../user';
+import { useInstanceStore } from '../instance';
 
 import configRepository from '../../services/config';
 
@@ -36,6 +37,7 @@ export const useDiscordPresenceSettingsStore = defineStore(
         const gameLogStore = useGameLogStore();
         const userStore = useUserStore();
         const updateLoopStore = useUpdateLoopStore();
+        const instanceStore = useInstanceStore();
         const { t } = useI18n();
 
         const state = reactive({
@@ -230,6 +232,11 @@ export const useDiscordPresenceSettingsStore = defineStore(
                     state.lastLocationDetails.worldCapacity = args.ref.capacity;
                     if (args.ref.releaseStatus === 'public') {
                         state.lastLocationDetails.worldLink = `https://vrchat.com/home/world/${L.worldId}`;
+                    }
+                    const instanceName =
+                        await instanceStore.getInstanceName(currentLocation);
+                    if (instanceName) {
+                        L.instanceName = instanceName;
                     }
                 } catch (e) {
                     console.error(
