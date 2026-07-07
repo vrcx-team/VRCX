@@ -4,22 +4,30 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.avatar_database_provider.header') }}</DialogTitle>
             </DialogHeader>
-            <div>
-                <InputGroupAction
-                    class="mt-1.5"
+            <div class="flex flex-col gap-3 mt-2">
+                <div
                     v-for="(provider, index) in avatarRemoteDatabaseProviderList"
                     :key="index"
-                    v-model="avatarRemoteDatabaseProviderList[index]"
-                    size="sm"
-                    @change="saveAvatarProviderList">
-                    <template #actions>
-                        <Trash2
-                            class="cursor-pointer opacity-80 hover:opacity-100"
-                            @click="removeAvatarProvider(provider)" />
-                    </template>
-                </InputGroupAction>
+                    class="flex flex-col gap-1.5 p-3 border rounded-md">
+                    <InputGroupAction
+                        v-model="provider.url"
+                        size="sm"
+                        placeholder="Provider URL"
+                        @change="saveAvatarProviderList">
+                        <template #actions>
+                            <Trash2
+                                class="cursor-pointer opacity-80 hover:opacity-100 text-destructive"
+                                @click="removeAvatarProvider(provider.url)" />
+                        </template>
+                    </InputGroupAction>
+                    <Input
+                        v-model="provider.apiKey"
+                        size="sm"
+                        placeholder="API Key (Optional)"
+                        @change="saveAvatarProviderList" />
+                </div>
 
-                <Button size="sm" style="margin-top: 6px" @click="addProvider">
+                <Button size="sm" @click="addProvider">
                     {{ t('dialog.avatar_database_provider.add_provider') }}
                 </Button>
             </div>
@@ -30,6 +38,7 @@
 <script setup>
     import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
+    import { Input } from '@/components/ui/input';
     import { InputGroupAction } from '@/components/ui/input-group';
     import { Trash2 } from 'lucide-vue-next';
     import { storeToRefs } from 'pinia';
@@ -64,6 +73,6 @@
      *
      */
     function addProvider() {
-        avatarRemoteDatabaseProviderList.value.push('');
+        avatarRemoteDatabaseProviderList.value.push({ url: '', apiKey: '' });
     }
 </script>

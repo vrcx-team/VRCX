@@ -668,9 +668,20 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 });
                 break;
             case 'addavatardb':
-                avatarProviderStore.addAvatarProvider(
-                    input.replace('addavatardb/', '')
-                );
+                const rawUrl = input.replace('addavatardb/', '');
+                try {
+                    const parsedUrl = new URL(rawUrl);
+                    const apiKey = parsedUrl.searchParams.get('apiKey');
+                    if (apiKey) {
+                        parsedUrl.searchParams.delete('apiKey');
+                    }
+                    avatarProviderStore.addAvatarProvider(
+                        parsedUrl.toString(),
+                        apiKey || ''
+                    );
+                } catch (e) {
+                    avatarProviderStore.addAvatarProvider(rawUrl);
+                }
                 break;
             case 'switchavatar':
                 const avatarId = commandArg;

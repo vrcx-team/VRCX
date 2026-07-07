@@ -12,10 +12,10 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
 
     const isAvatarProviderDialogVisible = ref(false);
 
-    const avatarRemoteDatabaseProvider = ref('');
+    const avatarRemoteDatabaseProvider = ref(null);
 
     const avatarRemoteDatabaseProviderList = ref([
-        'https://api.avtrdb.com/v3/avatar/search/vrcx'
+        { url: 'https://api.avtrdb.com/v3/avatar/search/vrcx', apiKey: '' }
     ]);
     watch(
         () => watchState.isLoggedIn,
@@ -26,10 +26,10 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     );
 
     async function initAvatarProviderState() {
-        avatarRemoteDatabaseProviderList.value = JSON.parse(
+        let list = JSON.parse(
             await configRepository.getString(
                 'VRCX_avatarRemoteDatabaseProviderList',
-                '[ "https://api.avtrdb.com/v3/avatar/search/vrcx" ]'
+                '[ { "url": "https://api.avtrdb.com/v3/avatar/search/vrcx", "apiKey": "" } ]'
             )
         );
         const deprecated = 'https://avtr.just-h.party/vrcx_search.php';
@@ -37,9 +37,10 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
         const v2 = 'https://api.avtrdb.com/v2/avatar/search/vrcx';
         const v3 = 'https://api.avtrdb.com/v3/avatar/search/vrcx';
 
-        const newList = avatarRemoteDatabaseProviderList.value
-            .filter((u) => u !== deprecated)
-            .map((u) => (u === v1 || u === v2 ? v3 : u));
+        const newList = list
+            .map((u) => (u.url ? u : { url: u, apiKey: '' }))
+            .filter((u) => u.url !== deprecated)
+            .map((u) => (u.url === v1 || u.url === v2 ? { ...u, url: v3 } : u));
 
         if (
             JSON.stringify(newList) !==
@@ -58,17 +59,15 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
             )
         ) {
             // move existing provider to new list
-            const avatarRemoteDatabaseProvider =
+            const legacyProvider =
                 await configRepository.getString(
                     'VRCX_avatarRemoteDatabaseProvider'
                 );
             if (
-                !avatarRemoteDatabaseProviderList.value.includes(
-                    avatarRemoteDatabaseProvider
-                )
+                !avatarRemoteDatabaseProviderList.value.find(p => p.url === legacyProvider)
             ) {
                 avatarRemoteDatabaseProviderList.value.push(
-                    avatarRemoteDatabaseProvider
+                    { url: legacyProvider, apiKey: '' }
                 );
             }
             await configRepository.remove('VRCX_avatarRemoteDatabaseProvider');
@@ -85,14 +84,18 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
 
     /**
      * @param {string} url
+     * @param {string} apiKey
      */
-    function addAvatarProvider(url) {
+    function addAvatarProvider(url, apiKey = '') {
         if (!url) {
             return;
         }
         showAvatarProviderDialog();
-        if (!avatarRemoteDatabaseProviderList.value.includes(url)) {
-            avatarRemoteDatabaseProviderList.value.push(url);
+        const existing = avatarRemoteDatabaseProviderList.value.find(p => p.url === url);
+        if (!existing) {
+            avatarRemoteDatabaseProviderList.value.push({ url, apiKey });
+        } else if (apiKey && !existing.apiKey) {
+            existing.apiKey = apiKey;
         }
         saveAvatarProviderList();
     }
@@ -102,8 +105,8 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
      */
     function removeAvatarProvider(url) {
         const length = avatarRemoteDatabaseProviderList.value.length;
-        for (let i = 0; i < length; ++i) {
-            if (avatarRemoteDatabaseProviderList.value[i] === url) {
+        for (let i = length - 1; i >= 0; --i) {
+            if (avatarRemoteDatabaseProviderList.value[i].url === url) {
                 avatarRemoteDatabaseProviderList.value.splice(i, 1);
             }
         }
@@ -112,7 +115,7 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
 
     async function saveAvatarProviderList() {
         avatarRemoteDatabaseProviderList.value =
-            avatarRemoteDatabaseProviderList.value.filter(Boolean);
+            avatarRemoteDatabaseProviderList.value.filter(p => p.url);
         await configRepository.setString(
             'VRCX_avatarRemoteDatabaseProviderList',
             JSON.stringify(avatarRemoteDatabaseProviderList.value)
@@ -122,7 +125,7 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
                 avatarRemoteDatabaseProviderList.value[0];
             advancedSettingsStore.setAvatarRemoteDatabase(true);
         } else {
-            avatarRemoteDatabaseProvider.value = '';
+            avatarRemoteDatabaseProvider.value = null;
             advancedSettingsStore.setAvatarRemoteDatabase(false);
         }
     }
@@ -133,7 +136,7 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     }
 
     /**
-     * @param {string} provider
+     * @param {object} provider
      */
     function setAvatarProvider(provider) {
         avatarRemoteDatabaseProvider.value = provider;

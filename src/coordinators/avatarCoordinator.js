@@ -289,15 +289,21 @@ export async function lookupAvatars(type, search) {
     const avatars = new Map();
     if (type === 'search') {
         try {
+            const provider = avatarProviderStore.avatarRemoteDatabaseProvider;
+            if (!provider || !provider.url) return avatars;
             const url = `${
-                avatarProviderStore.avatarRemoteDatabaseProvider
+                provider.url
             }?${type}=${encodeURIComponent(search)}&n=5000`;
             const response = await webApiService.execute({
                 url,
                 method: 'GET',
                 headers: {
                     Referer: 'https://vrcx.app',
-                    'VRCX-ID': vrcxUpdaterStore.vrcxId
+                    'VRCX-ID': vrcxUpdaterStore.vrcxId,
+                    ...(provider.apiKey && {
+                        'x-api-key': provider.apiKey,
+                        'Authorization': `Bearer ${provider.apiKey}`
+                    })
                 }
             });
             const json = JSON.parse(response.data);
@@ -325,7 +331,7 @@ export async function lookupAvatars(type, search) {
                 throw new Error(`Error: ${response.data}`);
             }
         } catch (err) {
-            const msg = `Avatar search failed for ${search} with ${avatarProviderStore.avatarRemoteDatabaseProvider}\n${err}`;
+            const msg = `Avatar search failed for ${search} with ${avatarProviderStore.avatarRemoteDatabaseProvider?.url}\n${err}`;
             console.error(msg);
             toast.error(msg);
         }
@@ -333,8 +339,8 @@ export async function lookupAvatars(type, search) {
         const length =
             avatarProviderStore.avatarRemoteDatabaseProviderList.length;
         for (let i = 0; i < length; ++i) {
-            const url = avatarProviderStore.avatarRemoteDatabaseProviderList[i];
-            const avatarArray = await lookupAvatarsByAuthor(url, search);
+            const provider = avatarProviderStore.avatarRemoteDatabaseProviderList[i];
+            const avatarArray = await lookupAvatarsByAuthor(provider, search);
             avatarArray.forEach((avatar) => {
                 if (!avatars.has(avatar.id)) {
                     avatars.set(avatar.id, avatar);
@@ -353,15 +359,15 @@ export async function lookupAvatars(type, search) {
 export async function lookupAvatarByImageFileId(authorId, fileId) {
     const avatarProviderStore = useAvatarProviderStore();
 
-    for (const providerUrl of avatarProviderStore.avatarRemoteDatabaseProviderList) {
-        const avatar = await lookupAvatarByFileId(providerUrl, fileId);
+    for (const provider of avatarProviderStore.avatarRemoteDatabaseProviderList) {
+        const avatar = await lookupAvatarByFileId(provider, fileId);
         if (avatar?.id) {
             return avatar.id;
         }
     }
 
-    for (const providerUrl of avatarProviderStore.avatarRemoteDatabaseProviderList) {
-        const avatarArray = await lookupAvatarsByAuthor(providerUrl, authorId);
+    for (const provider of avatarProviderStore.avatarRemoteDatabaseProviderList) {
+        const avatarArray = await lookupAvatarsByAuthor(provider, authorId);
         for (const avatar of avatarArray) {
             if (extractFileId(avatar.imageUrl) === fileId) {
                 return avatar.id;
@@ -376,17 +382,22 @@ export async function lookupAvatarByImageFileId(authorId, fileId) {
  * @param providerUrl
  * @param fileId
  */
-async function lookupAvatarByFileId(providerUrl, fileId) {
+async function lookupAvatarByFileId(provider, fileId) {
     const vrcxUpdaterStore = useVRCXUpdaterStore();
 
     try {
-        const url = `${providerUrl}?fileId=${encodeURIComponent(fileId)}`;
+        if (!provider || !provider.url) return null;
+        const url = `${provider.url}?fileId=${encodeURIComponent(fileId)}`;
         const response = await webApiService.execute({
             url,
             method: 'GET',
             headers: {
                 Referer: 'https://vrcx.app',
-                'VRCX-ID': vrcxUpdaterStore.vrcxId
+                'VRCX-ID': vrcxUpdaterStore.vrcxId,
+                ...(provider.apiKey && {
+                    'x-api-key': provider.apiKey,
+                    'Authorization': `Bearer ${provider.apiKey}`
+                })
             }
         });
         const json = JSON.parse(response.data);
@@ -420,21 +431,25 @@ async function lookupAvatarByFileId(providerUrl, fileId) {
  * @param providerUrl
  * @param authorId
  */
-async function lookupAvatarsByAuthor(providerUrl, authorId) {
+async function lookupAvatarsByAuthor(provider, authorId) {
     const vrcxUpdaterStore = useVRCXUpdaterStore();
 
     const avatars = [];
-    if (!providerUrl || !authorId) {
+    if (!provider || !provider.url || !authorId) {
         return avatars;
     }
-    const url = `${providerUrl}?authorId=${encodeURIComponent(authorId)}`;
+    const url = `${provider.url}?authorId=${encodeURIComponent(authorId)}`;
     try {
         const response = await webApiService.execute({
             url,
             method: 'GET',
             headers: {
                 Referer: 'https://vrcx.app',
-                'VRCX-ID': vrcxUpdaterStore.vrcxId
+                'VRCX-ID': vrcxUpdaterStore.vrcxId,
+                ...(provider.apiKey && {
+                    'x-api-key': provider.apiKey,
+                    'Authorization': `Bearer ${provider.apiKey}`
+                })
             }
         });
         const json = JSON.parse(response.data);
