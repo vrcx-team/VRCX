@@ -131,7 +131,9 @@
 
     const userDialogAvatars = computed(() => {
         const { avatars, avatarReleaseStatus } = userDialog.value;
-        if (avatarReleaseStatus === 'public' || avatarReleaseStatus === 'private') {
+        const isCurrentUser = userDialog.value.ref.id === currentUser.value.id;
+        const releaseStatus = isCurrentUser ? avatarReleaseStatus : 'all';
+        if (releaseStatus === 'public' || releaseStatus === 'private') {
             return avatars.filter((avatar) => avatar.releaseStatus === avatarReleaseStatus);
         }
         return avatars;
@@ -193,8 +195,6 @@
                     }
                 });
             }
-            userDialog.value.avatarSorting = 'name';
-            userDialog.value.avatarReleaseStatus = 'all';
             userDialog.value.isAvatarsLoading = false;
         }
         sortUserDialogAvatars(userDialog.value.avatars);
