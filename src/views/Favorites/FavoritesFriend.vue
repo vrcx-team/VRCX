@@ -39,6 +39,7 @@
                                         variant="ghost"
                                         size="icon-sm"
                                         :disabled="isFavoriteLoading"
+                                        :ariaLabel="t('view.favorite.refresh_favorites_tooltip')"
                                         @click.stop="handleRefreshFavorites">
                                         <Spinner v-if="isFavoriteLoading" />
                                         <RefreshCw v-else />
@@ -76,6 +77,7 @@
                                                         class="rounded-full"
                                                         variant="ghost"
                                                         size="icon-sm"
+                                                        :ariaLabel="t('nav_tooltip.manage')"
                                                         @click.stop>
                                                         <MoreHorizontal />
                                                     </Button>
@@ -130,6 +132,7 @@
                                     class="rounded-full"
                                     size="icon-sm"
                                     variant="ghost"
+                                    :ariaLabel="t('common.actions.refresh')"
                                     @click.stop="getLocalFriendFavorites"
                                     ><RefreshCcw />
                                 </Button>

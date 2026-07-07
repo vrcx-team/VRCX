@@ -610,6 +610,9 @@ export const createColumns = ({
                                             <button
                                                 type="button"
                                                 class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
+                                                aria-label={t(
+                                                    'view.notification.actions.accept'
+                                                )}
                                                 onClick={() =>
                                                     acceptFriendRequestNotification(
                                                         original
@@ -635,6 +638,9 @@ export const createColumns = ({
                                             <button
                                                 type="button"
                                                 class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
+                                                aria-label={t(
+                                                    'view.notification.actions.decline_with_message'
+                                                )}
                                                 onClick={() =>
                                                     showSendInviteResponseDialog(
                                                         original
@@ -662,6 +668,9 @@ export const createColumns = ({
                                                     <button
                                                         type="button"
                                                         class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
+                                                        aria-label={t(
+                                                            'view.notification.actions.invite'
+                                                        )}
                                                         onClick={() =>
                                                             acceptRequestInvite(
                                                                 original
@@ -685,6 +694,9 @@ export const createColumns = ({
                                                 <button
                                                     type="button"
                                                     class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
+                                                    aria-label={t(
+                                                        'view.notification.actions.decline_with_message'
+                                                    )}
                                                     onClick={() =>
                                                         showSendInviteRequestResponseDialog(
                                                             original
@@ -743,6 +755,9 @@ export const createColumns = ({
                                                       <button
                                                           type="button"
                                                           class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
+                                                          aria-label={
+                                                              response.text
+                                                          }
                                                           onClick={onClick}
                                                       >
                                                           <ResponseIcon class="h-4 w-4" />
@@ -764,6 +779,9 @@ export const createColumns = ({
                                             <button
                                                 type="button"
                                                 class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
+                                                aria-label={t(
+                                                    'view.notification.actions.decline'
+                                                )}
                                                 onClick={() =>
                                                     shiftHeld.value
                                                         ? hideNotification(
@@ -799,6 +817,9 @@ export const createColumns = ({
                                             <button
                                                 type="button"
                                                 class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
+                                                aria-label={t(
+                                                    'view.notification.actions.delete_log'
+                                                )}
                                                 onClick={() =>
                                                     shiftHeld.value
                                                         ? deleteNotificationLog(
@@ -826,6 +847,9 @@ export const createColumns = ({
                                     <button
                                         type="button"
                                         class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
+                                        aria-label={t(
+                                            'view.notification.actions.delete_log'
+                                        )}
                                         onClick={() =>
                                             shiftHeld.value
                                                 ? deleteNotificationLog(
@@ -866,3 +890,4 @@ export const createColumns = ({
         }
     ];
 };
+

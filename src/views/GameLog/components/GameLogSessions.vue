@@ -10,6 +10,7 @@
                             variant="outline"
                             size="sm"
                             :model-value="sessionsVipFilter"
+                            :ariaLabel="t('view.feed.favorites_only_tooltip')"
                             @update:modelValue="gameLogStore.toggleSessionsVipFilter()">
                             <Star fill="currentColor" v-if="sessionsVipFilter" />
                             <Star v-else />
@@ -23,7 +24,8 @@
                             variant="outline"
                             size="sm"
                             class="h-8 shrink-0 gap-1.5"
-                            :class="hasDateFilter && 'bg-accent text-accent-foreground'">
+                            :class="hasDateFilter && 'bg-accent text-accent-foreground'"
+                            :ariaLabel="t('view.tools.group.calendar')">
                             <CalendarRange class="size-4" />
                             <Badge
                                 v-if="hasDateFilter"

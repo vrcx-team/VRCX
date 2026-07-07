@@ -31,6 +31,7 @@
                             variant="outline"
                             class="rounded-full h-8 w-8"
                             :disabled="loading"
+                            :ariaLabel="t('dialog.image_crop.rotate_left')"
                             @click="cropperRef?.rotate(-90)">
                             <RotateCcw class="h-4 w-4" />
                         </Button>
@@ -41,6 +42,7 @@
                             variant="outline"
                             class="rounded-full h-8 w-8"
                             :disabled="loading"
+                            :ariaLabel="t('dialog.image_crop.rotate_right')"
                             @click="cropperRef?.rotate(90)">
                             <RotateCw class="h-4 w-4" />
                         </Button>
@@ -54,6 +56,7 @@
                             variant="outline"
                             class="rounded-full h-8 w-8"
                             :disabled="loading"
+                            :ariaLabel="t('dialog.image_crop.flip_h')"
                             @click="cropperRef?.flip(true, false)">
                             <FlipHorizontal class="h-4 w-4" />
                         </Button>
@@ -64,6 +67,7 @@
                             variant="outline"
                             class="rounded-full h-8 w-8"
                             :disabled="loading"
+                            :ariaLabel="t('dialog.image_crop.flip_v')"
                             @click="cropperRef?.flip(false, true)">
                             <FlipVertical class="h-4 w-4" />
                         </Button>
@@ -77,6 +81,7 @@
                             variant="ghost"
                             class="rounded-full h-7 w-7"
                             :disabled="loading"
+                            :ariaLabel="t('dialog.image_crop.zoom_out')"
                             @click="cropperRef?.zoom(0.8)">
                             <ZoomOut class="h-3.5 w-3.5" />
                         </Button>
@@ -95,6 +100,7 @@
                             variant="ghost"
                             class="rounded-full h-7 w-7"
                             :disabled="loading"
+                            :ariaLabel="t('dialog.image_crop.zoom_in')"
                             @click="cropperRef?.zoom(1.2)">
                             <ZoomIn class="h-3.5 w-3.5" />
                         </Button>
@@ -110,6 +116,7 @@
                             :variant="freeMode ? 'default' : 'outline'"
                             class="rounded-full h-8 w-8"
                             :disabled="loading"
+                            :ariaLabel="freeMode ? t('dialog.image_crop.mode_fit') : t('dialog.image_crop.mode_free')"
                             @click="toggleMode">
                             <Expand v-if="freeMode" class="h-4 w-4" />
                             <Frame v-else class="h-4 w-4" />
@@ -122,6 +129,7 @@
                             variant="outline"
                             class="rounded-full h-8 w-8"
                             :disabled="loading"
+                            :ariaLabel="t('dialog.image_crop.reset')"
                             @click="handleReset">
                             <RefreshCw class="h-4 w-4" />
                         </Button>
@@ -342,3 +350,4 @@
         }
     }
 </script>
+

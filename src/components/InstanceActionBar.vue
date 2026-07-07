@@ -7,6 +7,7 @@
                         class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
                         size="icon-sm"
                         variant="outline"
+                        :ariaLabel="t('dialog.user.info.launch_invite_tooltip')"
                         @click="confirmLaunch">
                         <LogIn />
                     </Button>
@@ -21,6 +22,7 @@
                         class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
                         size="icon-sm"
                         variant="outline"
+                        :ariaLabel="t('dialog.user.info.self_invite_tooltip')"
                         @click="confirmInvite">
                         <Mail class="h-4 w-4" />
                     </Button>
@@ -30,6 +32,7 @@
                         class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
                         size="icon-sm"
                         variant="outline"
+                        :ariaLabel="t('dialog.user.info.open_in_vrchat_tooltip')"
                         v-if="isOpeningInstance">
                         <Loader2 class="h-4 w-4 animate-spin" />
                     </Button>
@@ -37,6 +40,7 @@
                         class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
                         size="icon-sm"
                         variant="outline"
+                        :ariaLabel="t('dialog.user.info.open_in_vrchat_tooltip')"
                         v-else
                         @click="openInstance">
                         <Mail class="h-4 w-4" />
@@ -48,6 +52,7 @@
                     class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
                     size="icon"
                     variant="outline"
+                    :ariaLabel="t('common.actions.refresh')"
                     @click="handleRefresh">
                     <RefreshCw class="h-4 w-4" />
                 </Button>
@@ -57,6 +62,7 @@
                     class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
                     size="icon-sm"
                     variant="outline"
+                    :ariaLabel="t('dialog.social_status.history')"
                     @click="handleHistory">
                     <History class="h-4 w-4" />
                 </Button>
@@ -103,6 +109,7 @@
                                 class="w-12 h-6 text-xs hover:text-muted-foreground"
                                 size="icon-sm"
                                 variant="destructive"
+                                :ariaLabel="t('dialog.user.info.close_instance')"
                                 @click="closeInstance(resolvedInstanceLocation)">
                                 <PowerIcon class="h-4 w-4" />
                             </Button>
@@ -432,3 +439,4 @@
         immediate: true
     });
 </script>
+

@@ -65,6 +65,7 @@
                             size="icon-sm"
                             :disabled="isNotificationsLoading"
                             style="flex: none"
+                            :ariaLabel="t('view.notification.refresh_tooltip')"
                             @click="refreshNotifications()">
                             <Spinner v-if="isNotificationsLoading" />
                             <RefreshCw v-else />

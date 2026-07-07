@@ -21,6 +21,7 @@
                         variant="outline"
                         size="icon-sm"
                         :disabled="VRChatCacheSizeLoading"
+                        :ariaLabel="t('dialog.config_json.refresh')"
                         @click="getVRChatCacheSize">
                         <Spinner v-if="VRChatCacheSizeLoading" />
                         <RefreshCw v-else />

@@ -20,6 +20,7 @@
                                         variant="outline"
                                         size="sm"
                                         :model-value="friendsListSearchFilterVIP"
+                                        :ariaLabel="t('view.friend_list.favorites_only_tooltip')"
                                         @update:modelValue="
                                             (v) => {
                                                 friendsListSearchFilterVIP = v;
@@ -76,6 +77,7 @@
                                 <span class="name mr-2 text-xs">{{ t('view.friend_list.bulk_unfriend') }}</span>
                                 <Switch
                                     v-model="friendsListBulkUnfriendMode"
+                                    :ariaLabel="t('view.friend_list.bulk_unfriend')"
                                     @update:modelValue="toggleFriendsListBulkUnfriendMode" />
                             </div>
                             <div class="flex items-center">

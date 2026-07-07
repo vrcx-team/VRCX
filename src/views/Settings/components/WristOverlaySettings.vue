@@ -12,6 +12,7 @@
                     size="sm"
                     variant="outline"
                     :disabled="!openVR || !overlayWrist"
+                    :ariaLabel="t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_filters')"
                     @click="emit('open-feed-filters')"
                     >{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_filters') }}</Button
                 >
@@ -21,6 +22,7 @@
                 <Switch
                     :model-value="overlayWrist"
                     :disabled="!openVR"
+                    :ariaLabel="t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_overlay')"
                     @update:modelValue="
                         setOverlayWrist();
                         saveOpenVROption();
@@ -30,6 +32,7 @@
             <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.hide_private_worlds')">
                 <Switch
                     :model-value="hidePrivateFromFeed"
+                    :ariaLabel="t('view.settings.wrist_overlay.steamvr_wrist_overlay.hide_private_worlds')"
                     @update:modelValue="
                         setHidePrivateFromFeed();
                         saveOpenVROption();
@@ -83,6 +86,7 @@
                 <Switch
                     :model-value="vrBackgroundEnabled"
                     :disabled="!openVR || !overlayWrist"
+                    :ariaLabel="t('view.settings.wrist_overlay.steamvr_wrist_overlay.grey_background')"
                     @update:modelValue="
                         setVrBackgroundEnabled();
                         saveOpenVROption();
@@ -93,6 +97,7 @@
                 <Switch
                     :model-value="minimalFeed"
                     :disabled="!openVR || !overlayWrist"
+                    :ariaLabel="t('view.settings.wrist_overlay.steamvr_wrist_overlay.minimal_feed_icons')"
                     @update:modelValue="
                         setMinimalFeed();
                         saveOpenVROption();
@@ -103,6 +108,7 @@
                 <Switch
                     :model-value="!hideDevicesFromFeed"
                     :disabled="!openVR || !overlayWrist"
+                    :ariaLabel="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_vr_devices')"
                     @update:modelValue="
                         setHideDevicesFromFeed();
                         saveOpenVROption();
@@ -113,6 +119,7 @@
                 <Switch
                     :model-value="vrOverlayCpuUsage"
                     :disabled="!openVR || !overlayWrist"
+                    :ariaLabel="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_cpu_usage')"
                     @update:modelValue="
                         setVrOverlayCpuUsage();
                         saveOpenVROption();
@@ -123,6 +130,7 @@
                 <Switch
                     :model-value="!hideUptimeFromFeed"
                     :disabled="!openVR || !overlayWrist"
+                    :ariaLabel="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_game_uptime')"
                     @update:modelValue="
                         setHideUptimeFromFeed();
                         saveOpenVROption();
@@ -133,6 +141,7 @@
                 <Switch
                     :model-value="pcUptimeOnFeed"
                     :disabled="!openVR || !overlayWrist"
+                    :ariaLabel="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_pc_uptime')"
                     @update:modelValue="
                         setPcUptimeOnFeed();
                         saveOpenVROption();
