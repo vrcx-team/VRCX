@@ -3,6 +3,7 @@
     import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
     import { ArrowUp } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
+    import { useI18n } from 'vue-i18n';
 
     const props = defineProps({
         // scroll DOM ref
@@ -29,6 +30,7 @@
     });
 
     const visible = ref(false);
+    const { t } = useI18n();
     let containerEl = null;
 
     function resolveElement(target) {
@@ -128,7 +130,7 @@
                             size="icon"
                             variant="secondary"
                             class="rounded-full shadow"
-                            aria-label="Back to top"
+                            :ariaLabel="t('accessibility.back_to_top')"
                             @click="scrollToTop">
                             <ArrowUp class="h-4 w-4" />
                         </Button>
@@ -143,7 +145,7 @@
                     size="icon"
                     variant="secondary"
                     class="rounded-full shadow"
-                    aria-label="Back to top"
+                    :ariaLabel="t('accessibility.back_to_top')"
                     @click="scrollToTop">
                     <ArrowUp class="h-4 w-4" />
                 </Button>
@@ -159,7 +161,7 @@
                         size="icon"
                         variant="secondary"
                         class="rounded-full shadow"
-                        aria-label="Back to top"
+                        :ariaLabel="t('accessibility.back_to_top')"
                         @click="scrollToTop">
                         <ArrowUp class="h-4 w-4" />
                     </Button>
@@ -174,7 +176,7 @@
                 size="icon"
                 variant="secondary"
                 class="rounded-full shadow"
-                aria-label="Back to top"
+                :ariaLabel="t('accessibility.back_to_top')"
                 @click="scrollToTop">
                 <ArrowUp class="h-4 w-4" />
             </Button>

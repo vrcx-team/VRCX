@@ -260,16 +260,13 @@
                                         :step="1"
                                         :format-options="{ maximumFractionDigits: 0 }"
                                         class="w-20"
-                                        @click.stop
-                                        @update:modelValue="setZoomLevel">
+                                        @click.stop>
                                         <NumberFieldContent>
                                             <NumberFieldDecrement />
                                             <NumberFieldInput
                                                 ref="zoomInputRef"
                                                 class="h-[18px] text-[11px] px-0.5 text-center"
-                                                @blur="zoomEditing = false"
-                                                @keydown.enter="zoomEditing = false"
-                                                @keydown.escape="zoomEditing = false" />
+                                                @blur="setZoomLevel" />
                                             <NumberFieldIncrement />
                                         </NumberFieldContent>
                                     </NumberField>
@@ -720,9 +717,19 @@
         drawSparkline();
     });
 
+    const zoomLevel = ref(100);
+    const zoomEditing = ref(false);
+    const zoomInputRef = ref(null);
+    let cleanupWheel = null;
+
     onBeforeUnmount(() => {
         clearTimeout(serversHoverTimer);
+        if (cleanupWheel) {
+            cleanupWheel();
+        }
     });
+
+    initGetZoomLevel();
 
     watch(
         () => visibility.ws,
@@ -735,45 +742,34 @@
         }
     );
 
-    const zoomLevel = ref(100);
-    const zoomEditing = ref(false);
-    const zoomInputRef = ref(null);
-
-    if (!isMacOS.value) {
-        initZoom();
+    async function initGetZoomLevel() {
+        const handleWheel = (event) => {
+            if (event.ctrlKey) {
+                getZoomLevel();
+            }
+        };
+        window.addEventListener('wheel', handleWheel);
+        cleanupWheel = () => {
+            window.removeEventListener('wheel', handleWheel);
+        };
+        getZoomLevel();
     }
 
-    /**
-     *
-     */
-    async function initZoom() {
-        try {
-            zoomLevel.value = ((await AppApi.GetZoom()) + 10) * 10;
-        } catch {
-            // AppApi not available
-        }
+    async function getZoomLevel() {
+        zoomLevel.value = Math.round(((await AppApi.GetZoom()) + 10) * 10);
     }
 
-    /**
-     *
-     */
     function setZoomLevel() {
-        try {
-            AppApi.SetZoom(zoomLevel.value / 10 - 10);
-        } catch {
-            // AppApi not available
-        }
+        zoomEditing.value = false;
+        AppApi.SetZoom(zoomLevel.value / 10 - 10);
     }
 
-    /**
-     *
-     */
     async function toggleZoomEdit() {
         if (zoomEditing.value) {
             zoomEditing.value = false;
             return;
         }
-        await initZoom();
+        await getZoomLevel();
         zoomEditing.value = true;
         await nextTick();
         zoomInputRef.value?.$el?.focus?.();

@@ -910,8 +910,6 @@
                     "striped_data_table_mode": "テーブルの行に交互に色を付ける",
                     "accessible_status_indicators": "アクセシブルなステータスインジケーター",
                     "accessible_status_indicators_description": "色に加え、アイコンの形状を変えることで、ステータスを識別しやすくします",
-                    "use_official_status_colors": "公式のステータスカラーを使用",
-                    "use_official_status_colors_description": "VRChat の元のステータスカラーと一致させます",
                     "table_density": "テーブルの行の高さ",
                     "table_density_standard": "標準",
                     "table_density_comfortable": "やや低め",

@@ -30,7 +30,11 @@
                         <div v-else style="width: 16px; height: 16px" />
                     </template>
                     <template #actions>
-                        <Button variant="ghost" size="icon-sm" @click="bioDialog.bioLinks.splice(index, 1)"
+                        <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            @click="bioDialog.bioLinks.splice(index, 1)"
+                            :ariaLabel="t('common.actions.delete')"
                             ><Trash2 class="size-4"
                         /></Button>
                     </template>

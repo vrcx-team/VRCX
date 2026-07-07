@@ -5,6 +5,7 @@
             <SettingsItem :label="t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')">
                 <Switch
                     :model-value="openVR"
+                    :ariaLabel="t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')"
                     @update:modelValue="
                         setOpenVR();
                         saveOpenVROption();
@@ -15,6 +16,7 @@
                 <Select
                     :model-value="openVRAlways ? 'true' : 'false'"
                     :disabled="!openVR"
+                    :ariaLabel="t('view.settings.wrist_overlay.steamvr_wrist_overlay.start_overlay_with')"
                     @update:modelValue="handleOpenVRAlwaysRadio">
                     <SelectTrigger size="sm">
                         <SelectValue />
@@ -33,6 +35,9 @@
                     ">
                     <Switch
                         :model-value="xsNotifications"
+                        :ariaLabel="
+                            t('view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications')
+                        "
                         @update:modelValue="
                             setXsNotifications();
                             saveOpenVROption();
@@ -44,6 +49,9 @@
                     :label="t('view.settings.notifications.notifications.steamvr_notifications.wayvr_notifications')">
                     <Switch
                         :model-value="xsNotifications"
+                        :ariaLabel="
+                            t('view.settings.notifications.notifications.steamvr_notifications.wayvr_notifications')
+                        "
                         @update:modelValue="
                             setXsNotifications();
                             saveOpenVROption();
@@ -60,6 +68,11 @@
                     ">
                     <Switch
                         :model-value="ovrtHudNotifications"
+                        :ariaLabel="
+                            t(
+                                'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications'
+                            )
+                        "
                         @update:modelValue="
                             setOvrtHudNotifications();
                             saveOpenVROption();
@@ -74,6 +87,11 @@
                     ">
                     <Switch
                         :model-value="ovrtWristNotifications"
+                        :ariaLabel="
+                            t(
+                                'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications'
+                            )
+                        "
                         @update:modelValue="
                             setOvrtWristNotifications();
                             saveOpenVROption();
@@ -122,6 +140,9 @@
                 <Switch
                     :model-value="overlayNotifications"
                     :disabled="!openVR"
+                    :ariaLabel="
+                        t('view.settings.notifications.notifications.steamvr_notifications.overlay_notifications')
+                    "
                     @update:modelValue="
                         setOverlayNotifications();
                         saveOpenVROption();
@@ -173,6 +194,7 @@
                 ">
                 <Switch
                     :model-value="imageNotifications"
+                    :ariaLabel="t('view.settings.notifications.notifications.steamvr_notifications.user_images')"
                     @update:modelValue="
                         setImageNotifications();
                         saveOpenVROption();
@@ -191,6 +213,7 @@
                 <Switch
                     :model-value="progressPie"
                     :disabled="!openVR"
+                    :ariaLabel="t('view.settings.advanced.advanced.video_progress_pie.header')"
                     @update:modelValue="changeYouTubeApi('VRCX_progressPie')" />
             </SettingsItem>
 
@@ -198,6 +221,7 @@
                 <Switch
                     :model-value="progressPieFilter"
                     :disabled="!openVR"
+                    :ariaLabel="t('view.settings.advanced.advanced.video_progress_pie.dance_world_only')"
                     @update:modelValue="changeYouTubeApi('VRCX_progressPieFilter')" />
             </SettingsItem>
         </SettingsGroup>

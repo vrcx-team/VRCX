@@ -61,7 +61,8 @@
                                 <button
                                     type="button"
                                     class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
-                                    @click.stop="notificationStore.acceptFriendRequestNotification(notification)">
+                                    @click.stop="notificationStore.acceptFriendRequestNotification(notification)"
+                                    :ariaLabel="t('view.notification.actions.accept')">
                                     <Check class="size-3" />
                                 </button>
                             </TooltipWrapper>
@@ -73,7 +74,8 @@
                                 <button
                                     type="button"
                                     class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
-                                    @click.stop="$emit('show-invite-response', notification)">
+                                    @click.stop="$emit('show-invite-response', notification)"
+                                    :ariaLabel="t('view.notification.actions.decline_with_message')">
                                     <MessageCircle class="size-3" />
                                 </button>
                             </TooltipWrapper>
@@ -86,7 +88,8 @@
                                     <button
                                         type="button"
                                         class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
-                                        @click.stop="notificationStore.acceptRequestInvite(notification)">
+                                        @click.stop="notificationStore.acceptRequestInvite(notification)"
+                                        :ariaLabel="t('view.notification.actions.invite')">
                                         <Check class="size-3" />
                                     </button>
                                 </TooltipWrapper>
@@ -96,7 +99,8 @@
                                     <button
                                         type="button"
                                         class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
-                                        @click.stop="$emit('show-invite-request-response', notification)">
+                                        @click.stop="$emit('show-invite-request-response', notification)"
+                                        :ariaLabel="t('view.notification.actions.decline_with_message')">
                                         <MessageCircle class="size-3" />
                                     </button>
                                 </TooltipWrapper>
@@ -111,6 +115,7 @@
                                     <button
                                         type="button"
                                         class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
+                                        :ariaLabel="response.text"
                                         @click.stop="handleResponse(response)">
                                         <component :is="getResponseIcon(response)" class="size-3" />
                                     </button>
@@ -124,7 +129,8 @@
                                 <button
                                     type="button"
                                     class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-muted cursor-pointer"
-                                    @click.stop="notificationStore.hideNotificationPrompt(notification)">
+                                    @click.stop="notificationStore.hideNotificationPrompt(notification)"
+                                    :ariaLabel="t('view.notification.actions.decline')">
                                     <X class="size-3" />
                                 </button>
                             </TooltipWrapper>
@@ -137,7 +143,8 @@
                             <button
                                 type="button"
                                 class="inline-flex size-5 items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-muted cursor-pointer"
-                                @click.stop="notificationStore.deleteNotificationLogPrompt(notification)">
+                                @click.stop="notificationStore.deleteNotificationLogPrompt(notification)"
+                                :ariaLabel="t('view.notification.actions.delete_log')">
                                 <Trash2 class="size-3" />
                             </button>
                         </TooltipWrapper>

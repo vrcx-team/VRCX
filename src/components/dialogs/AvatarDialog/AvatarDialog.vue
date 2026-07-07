@@ -192,6 +192,7 @@
                                 variant="outline"
                                 :disabled="isGameRunning && avatarDialog.cacheLocked"
                                 @click="deleteVRChatCache(avatarDialog.ref)"
+                                :ariaLabel="t('dialog.avatar.actions.delete_cache_tooltip')"
                                 ><Trash2
                             /></Button>
                         </TooltipWrapper>
@@ -200,7 +201,11 @@
                             v-if="avatarDialog.isFavorite"
                             side="top"
                             :content="t('dialog.avatar.actions.favorite_tooltip')">
-                            <Button class="rounded-full" size="icon-lg" @click="avatarDialogCommand('Add Favorite')"
+                            <Button
+                                class="rounded-full"
+                                size="icon-lg"
+                                @click="avatarDialogCommand('Add Favorite')"
+                                :ariaLabel="t('dialog.avatar.actions.favorite_tooltip')"
                                 ><Star
                             /></Button>
                         </TooltipWrapper>
@@ -210,6 +215,7 @@
                                 size="icon-lg"
                                 variant="outline"
                                 @click="avatarDialogCommand('Add Favorite')"
+                                :ariaLabel="t('dialog.avatar.actions.favorite_tooltip')"
                                 ><Star
                             /></Button>
                         </TooltipWrapper>
@@ -220,7 +226,8 @@
                                 size="icon-lg"
                                 variant="outline"
                                 :disabled="currentUser.currentAvatar === avatarDialog.id"
-                                @click="selectAvatarWithoutConfirmation(avatarDialog.id)">
+                                @click="selectAvatarWithoutConfirmation(avatarDialog.id)"
+                                :ariaLabel="t('dialog.avatar.actions.select')">
                                 <CheckCircle
                             /></Button>
                         </TooltipWrapper>
@@ -229,7 +236,8 @@
                                 <Button
                                     class="rounded-full ml-2"
                                     :variant="avatarDialog.isBlocked ? 'destructive' : 'outline'"
-                                    size="icon-lg">
+                                    size="icon-lg"
+                                    :ariaLabel="t('nav_tooltip.manage')">
                                     <Ellipsis />
                                 </Button>
                             </DropdownMenuTrigger>
@@ -354,7 +362,8 @@
                                 size="sm"
                                 :disabled="avatarDialog.galleryLoading"
                                 class="ml-1"
-                                @click="displayAvatarGalleryUpload">
+                                @click="displayAvatarGalleryUpload"
+                                :ariaLabel="t('dialog.screenshot_metadata.upload')">
                                 <Upload />
                                 {{ t('dialog.screenshot_metadata.upload') }}
                             </Button>
@@ -445,6 +454,7 @@
                                                     size="icon-sm"
                                                     variant="ghost"
                                                     @click.stop
+                                                    :ariaLabel="t('dialog.avatar.info.id_tooltip')"
                                                     ><Copy class="h-4 w-4" />
                                                 </Button>
                                             </DropdownMenuTrigger>

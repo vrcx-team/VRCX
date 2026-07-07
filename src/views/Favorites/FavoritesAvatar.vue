@@ -39,6 +39,7 @@
                                         variant="ghost"
                                         size="icon-sm"
                                         :disabled="isFavoriteLoading"
+                                        :ariaLabel="t('view.favorite.refresh_favorites_tooltip')"
                                         @click.stop="handleRefreshFavorites">
                                         <Spinner v-if="isFavoriteLoading" />
                                         <RefreshCw v-else />
@@ -76,6 +77,7 @@
                                                         class="rounded-full"
                                                         variant="ghost"
                                                         size="icon-sm"
+                                                        :ariaLabel="t('nav_tooltip.manage')"
                                                         @click.stop>
                                                         <MoreHorizontal />
                                                     </Button>
@@ -146,6 +148,7 @@
                                         class="rounded-full"
                                         size="icon"
                                         variant="ghost"
+                                        :ariaLabel="t('common.actions.refresh')"
                                         @click.stop="refreshLocalAvatarFavorites"
                                         ><RefreshCcw
                                     /></Button>
@@ -306,7 +309,8 @@
                         </FavoritesContentHeader>
                         <div ref="avatarFavoritesContainerRef" class="flex-1 min-h-0">
                             <template v-if="isSearchActive">
-                                <div class="favorites-content__scroll favorites-content__scroll--native">
+                                <div
+                                    class="favorites-content__scroll favorites-content__scroll--native h-full overflow-auto">
                                     <div
                                         v-if="avatarFavoriteSearchResults.length"
                                         class="favorites-search-grid"

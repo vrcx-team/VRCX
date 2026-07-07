@@ -67,7 +67,14 @@
                 :label="
                     t('view.settings.notifications.notifications.desktop_notifications.desktop_notification_while_afk')
                 ">
-                <Switch :model-value="afkDesktopToast" @update:modelValue="setAfkDesktopToast" />
+                <Switch
+                    :model-value="afkDesktopToast"
+                    :ariaLabel="
+                        t(
+                            'view.settings.notifications.notifications.desktop_notifications.desktop_notification_while_afk'
+                        )
+                    "
+                    @update:modelValue="setAfkDesktopToast" />
             </SettingsItem>
         </SettingsGroup>
 
@@ -120,11 +127,15 @@
                 <Switch
                     :model-value="notificationTTSNickName"
                     :disabled="notificationTTS === 'Never'"
+                    :ariaLabel="t('view.settings.notifications.notifications.text_to_speech.use_memo_nicknames')"
                     @update:modelValue="setNotificationTTSNickName" />
             </SettingsItem>
 
             <SettingsItem :label="t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')">
-                <Switch :model-value="isTestTTSVisible" @update:modelValue="isTestTTSVisible = !isTestTTSVisible" />
+                <Switch
+                    :model-value="isTestTTSVisible"
+                    :ariaLabel="t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')"
+                    @update:modelValue="isTestTTSVisible = !isTestTTSVisible" />
             </SettingsItem>
 
             <div v-if="isTestTTSVisible" class="flex items-center gap-2 mt-1">

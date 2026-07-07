@@ -85,6 +85,7 @@
                                     size="icon-sm"
                                     class="h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
                                     variant="ghost"
+                                    :ariaLabel="t('dialog.group.posts.edit_tooltip')"
                                     @click="showGroupPostEditDialog(groupDialog.id, post)"
                                     ><Pencil class="h-4 w-4" />
                                 </Button>
@@ -94,6 +95,7 @@
                                     size="icon-sm"
                                     class="h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
                                     variant="ghost"
+                                    :ariaLabel="t('dialog.group.posts.delete_tooltip')"
                                     @click="confirmDeleteGroupPost(post)"
                                     ><Trash2 class="h-4 w-4" />
                                 </Button>

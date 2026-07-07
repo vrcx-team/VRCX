@@ -138,6 +138,7 @@
                                     variant="secondary"
                                     size="icon-lg"
                                     style="margin-left: 6px"
+                                    :ariaLabel="t('dialog.group.actions.unrepresent_tooltip')"
                                     @click="clearGroupRepresentation(groupDialog.id)">
                                     <BookmarkCheck />
                                 </Button>
@@ -148,6 +149,7 @@
                                         class="rounded-full mr-2"
                                         variant="outline"
                                         size="icon-lg"
+                                        :ariaLabel="t('dialog.group.actions.represent_tooltip')"
                                         :disabled="groupDialog.ref.privacy === 'private'"
                                         @click="setGroupRepresentation(groupDialog.id)">
                                         <Bookmark />
@@ -162,6 +164,7 @@
                                         class="rounded-full mr-2"
                                         variant="outline"
                                         size="icon-lg"
+                                        :ariaLabel="t('dialog.group.actions.cancel_join_request_tooltip')"
                                         @click="cancelGroupRequest(groupDialog.id)">
                                         <X />
                                     </Button>
@@ -175,6 +178,7 @@
                                         class="rounded-full mr-2"
                                         variant="outline"
                                         size="icon-lg"
+                                        :ariaLabel="t('dialog.group.actions.pending_request_tooltip')"
                                         @click="joinGroup(groupDialog.id)">
                                         <Check />
                                     </Button>
@@ -190,6 +194,7 @@
                                     class="rounded-full mr-2"
                                     variant="outline"
                                     size="icon-lg"
+                                    :ariaLabel="t('dialog.group.actions.request_join_tooltip')"
                                     @click="joinGroup(groupDialog.id)">
                                     <MessageSquare />
                                 </Button>
@@ -199,7 +204,12 @@
                                 side="top"
                                 :content="t('dialog.group.actions.invite_required_tooltip')">
                                 <span>
-                                    <Button class="rounded-full mr-2" variant="outline" size="icon-lg" disabled>
+                                    <Button
+                                        class="rounded-full mr-2"
+                                        variant="outline"
+                                        size="icon-lg"
+                                        :ariaLabel="t('dialog.group.actions.invite_required_tooltip')"
+                                        disabled>
                                         <MessageSquare />
                                     </Button>
                                 </span>
@@ -212,6 +222,7 @@
                                     class="rounded-full mr-2"
                                     variant="outline"
                                     size="icon-lg"
+                                    :ariaLabel="t('dialog.group.actions.join_group_tooltip')"
                                     @click="joinGroup(groupDialog.id)">
                                     <Check />
                                 </Button>
@@ -224,7 +235,8 @@
                                     :variant="
                                         groupDialog.ref.membershipStatus === 'userblocked' ? 'destructive' : 'outline'
                                     "
-                                    size="icon-lg">
+                                    size="icon-lg"
+                                    :ariaLabel="t('nav_tooltip.manage')">
                                     <MoreHorizontal />
                                 </Button>
                             </DropdownMenuTrigger>

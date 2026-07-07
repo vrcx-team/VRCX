@@ -73,6 +73,10 @@
                 <Checkbox v-model="setWorldTagsDialog.thirdPerson" />
                 <span>{{ t('dialog.new_instance.content_third_person') }}</span>
             </label>
+            <label class="inline-flex items-center gap-2">
+                <Checkbox v-model="setWorldTagsDialog.propMovement" />
+                <span>{{ t('dialog.new_instance.content_prop_movement') }}</span>
+            </label>
 
             <DialogFooter>
                 <div class="flex gap-2">
@@ -99,9 +103,14 @@
 
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { worldRequest } from '../../../api';
+    import { removeFromArray } from '../../../shared/utils';
 
     const props = defineProps({
         oldTags: {
+            type: Array,
+            default: () => []
+        },
+        oldDisabledPropAbilities: {
             type: Array,
             default: () => []
         },
@@ -140,7 +149,8 @@
         prints: true,
         drones: true,
         props: true,
-        thirdPerson: true
+        thirdPerson: true,
+        propMovement: true
     });
 
     const isVisible = computed({
@@ -229,8 +239,10 @@
                     break;
                 case 'feature_third_person_view_disabled':
                     D.thirdPerson = false;
+                    break;
             }
         });
+        D.propMovement = !props.oldDisabledPropAbilities.includes('player_movement');
         D.authorTags = authorTags.toString();
         D.contentTags = contentTags.toString();
     }
@@ -243,6 +255,7 @@
         const authorTags = D.authorTags.trim().split(',');
         const contentTags = D.contentTags.trim().split(',');
         const tags = [];
+        const disabledPropAbilities = [...props.oldDisabledPropAbilities];
         authorTags.forEach((tag) => {
             if (tag) {
                 tags.unshift(`author_tag_${tag}`);
@@ -308,10 +321,17 @@
         if (!D.thirdPerson) {
             tags.unshift('feature_third_person_view_disabled');
         }
+        const disabledPlayerMovement = disabledPropAbilities.indexOf('player_movement') > -1;
+        if (D.propMovement && disabledPlayerMovement) {
+            removeFromArray(disabledPropAbilities, 'player_movement');
+        } else if (!D.propMovement && !disabledPlayerMovement) {
+            disabledPropAbilities.unshift('player_movement');
+        }
         worldRequest
             .saveWorld({
                 id: props.worldId,
-                tags
+                tags,
+                disabledPropAbilities
             })
             .then((args) => {
                 toast.success('Tags updated');

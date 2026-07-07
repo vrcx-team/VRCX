@@ -121,7 +121,7 @@
     import PronounsDialog from './PronounsDialog.vue';
     import SendInviteRequestDialog from './SendInviteRequestDialog.vue';
     import SocialStatusDialog from './SocialStatusDialog.vue';
-    
+
     const props = defineProps({
         previousIds: {
             type: Object,

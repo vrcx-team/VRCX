@@ -42,7 +42,12 @@
                 </ItemActions>
                 <DropdownMenu v-else>
                     <DropdownMenuTrigger as-child>
-                        <Button size="icon-sm" variant="ghost" class="rounded-full" @click.stop>
+                        <Button
+                            size="icon-sm"
+                            variant="ghost"
+                            class="rounded-full"
+                            @click.stop
+                            :ariaLabel="t('nav_tooltip.manage')">
                             <MoreHorizontal class="h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>

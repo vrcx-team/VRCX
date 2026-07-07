@@ -284,7 +284,6 @@
         groupMembersBlockJoinRequest,
         groupMembersDeleteBlockedRequest
     } = useGroupBatchOperations({
-        selectedUsersArray: groupMemberModeration.value.selectedUsersArray,
         currentUser,
         groupMemberModeration,
         deselectedUsers,

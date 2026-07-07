@@ -9,6 +9,7 @@ export function createDefaultWorldRef(json) {
         name: '',
         description: '',
         defaultContentSettings: {},
+        disabledPropAbilities: [],
         authorId: '',
         authorName: '',
         capacity: 0,

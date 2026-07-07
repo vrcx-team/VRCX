@@ -164,6 +164,7 @@
                                 class="rounded-full mr-2"
                                 size="icon-lg"
                                 variant="outline"
+                                :ariaLabel="t('common.actions.delete')"
                                 :disabled="isGameRunning && worldDialog.cacheLocked"
                                 @click="deleteVRChatCache(worldDialog.ref)"
                                 ><Trash2
@@ -173,7 +174,11 @@
                             v-if="worldDialog.isFavorite"
                             side="top"
                             :content="t('dialog.world.actions.favorites_tooltip')">
-                            <Button class="rounded-full" size="icon-lg" @click="worldDialogCommand('Add Favorite')"
+                            <Button
+                                class="rounded-full"
+                                size="icon-lg"
+                                @click="worldDialogCommand('Add Favorite')"
+                                :ariaLabel="t('dialog.world.actions.favorites_tooltip')"
                                 ><Star
                             /></Button>
                         </TooltipWrapper>
@@ -182,6 +187,7 @@
                                 class="rounded-full"
                                 size="icon-lg"
                                 variant="outline"
+                                :ariaLabel="t('dialog.world.actions.favorites_tooltip')"
                                 @click="worldDialogCommand('Add Favorite')"
                                 ><Star
                             /></Button>
@@ -338,6 +344,7 @@
             <SetWorldTagsDialog
                 v-model:is-set-world-tags-dialog-visible="isSetWorldTagsDialogVisible"
                 :old-tags="worldDialog.ref?.tags"
+                :old-disabled-prop-abilities="worldDialog.ref?.disabledPropAbilities"
                 :world-id="worldDialog.id"
                 :is-world-dialog-visible="worldDialog.visible" />
             <NewInstanceDialog

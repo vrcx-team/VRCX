@@ -114,6 +114,7 @@
                         <Button
                             size="icon-sm"
                             variant="ghost"
+                            :ariaLabel="t('dialog.vrcx_updater.download')"
                             style="display: block; padding: 7px; font-size: 9px; margin-left: 0; rotate: 180deg"
                             @click="moveGroupTop(group.id)">
                             <DownloadIcon />
@@ -121,6 +122,7 @@
                         <Button
                             size="icon-sm"
                             variant="ghost"
+                            :ariaLabel="t('dialog.vrcx_updater.download')"
                             style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
                             @click="moveGroupBottom(group.id)">
                             <DownloadIcon />
@@ -221,6 +223,7 @@
                             variant="outline"
                             v-if="shiftHeld"
                             style="margin-left: 6px"
+                            :ariaLabel="t('dialog.user.groups.leave_group_tooltip')"
                             @click.stop="leaveGroup(group.id)">
                             <LogOut />
                         </Button>
@@ -230,6 +233,7 @@
                             variant="outline"
                             v-else
                             style="margin-left: 6px"
+                            :ariaLabel="t('dialog.user.groups.leave_group_tooltip')"
                             @click.stop="leaveGroupPrompt(group.id)">
                             <LogOut />
                         </Button>

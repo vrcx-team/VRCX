@@ -55,7 +55,12 @@
         </template>
         <template v-else-if="!friend.ref && !isRefreshFriendsLoading">
             <span>{{ friend.name || friend.id }}</span>
-            <Button size="sm" variant="ghost" class="mr-1 w-6 h-6 text-xs" @click.stop="confirmDeleteFriend(friend.id)"
+            <Button
+                size="sm"
+                variant="ghost"
+                class="mr-1 w-6 h-6 text-xs"
+                :ariaLabel="t('common.actions.delete')"
+                @click.stop="confirmDeleteFriend(friend.id)"
                 ><Trash2 class="h-4 w-4" />
             </Button>
         </template>

@@ -466,7 +466,8 @@
                     "transfer": "转让",
                     "queueReady": "队列准备就绪",
                     "event": {
-                        "created": "群组活动"
+                        "created": "群组活动创建",
+                        "starting": "群组活动开始"
                     }
                 },
                 "moderation": {
@@ -911,8 +912,6 @@
                     "toggle_pointer_on_hover_description": "对可点击元素始终显示指针光标。",
                     "accessible_status_indicators": "无障碍版状态指示器",
                     "accessible_status_indicators_description": "除了使用颜色之外，也使用形状来区分状态。",
-                    "use_official_status_colors": "使用游戏内的状态颜色",
-                    "use_official_status_colors_description": "匹配游戏内的状态颜色。",
                     "table_density": "行高密度",
                     "table_density_standard": "标准",
                     "table_density_comfortable": "舒适",
@@ -1411,14 +1410,15 @@
                 "copy_display_name": "复制昵称",
                 "vrcplus_hides_avatar": "当设置了 VRC+ 专属的个人资料图标后，模型信息将会被隐藏。同时这也会导致动态中的“模型变动”事件被隐藏",
                 "instance_full": "房间已满",
-                "instance_closed": "房间已关闭",
+                "instance_closed_at": "房间关闭于",
                 "instance_age_restricted": "年龄限制",
                 "instance_age_restricted_tooltip": "位于年龄限制房间",
                 "close_instance": "关闭该房间",
                 "instance_age_gated": "房间具有年龄限制",
                 "open_previous_instance": "打开之前加入的房间的列表",
                 "show_mutual_friends": "是否允许查看共同好友",
-                "show_discord_connections": "是否允许查看绑定的 Discord 账号信息"
+                "show_discord_connections": "是否允许查看绑定的 Discord 账号信息",
+                "instance_minimum_avatar_performance": "最低模型性能"
             },
             "groups": {
                 "header": "群组",
@@ -1628,7 +1628,15 @@
                 "content_gore": "血腥",
                 "content_violence": "暴力",
                 "content_adult": "成人内容",
-                "content_sex": "性暗示"
+                "content_sex": "性暗示",
+                "performanceRating": {
+                    "Excellent": "流畅",
+                    "Good": "低负载",
+                    "Medium": "中负载",
+                    "Poor": "高负载",
+                    "VeryPoor": "极高负载",
+                    "None": "无"
+                }
             },
             "labels": {
                 "public": "（公开）",
@@ -1725,7 +1733,9 @@
                 "moderation_tools": "成员管理",
                 "leave": "离开群组",
                 "block": "屏蔽该群组",
-                "unblock": "取消屏蔽该群组"
+                "unblock": "取消屏蔽该群组",
+                "unsubscribe_event": "取消订阅活动公告",
+                "subscribe_event": "订阅活动公告"
             },
             "info": {
                 "header": "信息",
@@ -1868,7 +1878,8 @@
             "legacy": "传统",
             "roles": "身份组",
             "open_ingame": "在 VRChat 中打开",
-            "display_name": "自定义房间名称 (需要 VRC+)"
+            "display_name": "自定义房间名称 (需要 VRC+)",
+            "minimum_avatar_performance": "最低模型性能"
         },
         "launch": {
             "header": "启动",
@@ -2338,7 +2349,8 @@
                 "description": "描述",
                 "export_to_calendar": "导出到日历",
                 "download_ics": "下载 .ics 文件",
-                "copied_event_link": "相关活动日历的链接已复制到剪贴板"
+                "copied_event_link": "相关活动日历的链接已复制到剪贴板",
+                "repeating_event_tooltip": "重复活动"
             },
             "featured_events": "精选活动"
         },
@@ -2726,7 +2738,8 @@
             "joined": "加入群组成功",
             "join_request_sent": "已发送加入申请",
             "visibility_updated": "群组可见性已更新",
-            "subscription_updated": "群组通知订阅状态已更新"
+            "subscription_updated": "群组通知订阅状态已更新",
+            "event_announcement_updated": "群组活动公告已更新"
         },
         "invite": {
             "self_sent": "已发送自我邀请",

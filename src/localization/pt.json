@@ -863,8 +863,6 @@
                     "toggle_pointer_on_hover": "Forçar Ponteiro ao Passar o Mouse",
                     "accessible_status_indicators": "Indicadores de Status Acessíveis",
                     "accessible_status_indicators_description": "Adiciona formas aos indicadores de status para que sejam mais fáceis de distinguir sem depender apenas da cor",
-                    "use_official_status_colors": "Usar Cores de Status Oficiais",
-                    "use_official_status_colors_description": "Corresponder às cores de status originais do VRChat",
                     "table_density": "Densidade da Tabela",
                     "table_density_standard": "Padrão",
                     "table_density_comfortable": "Confortável",

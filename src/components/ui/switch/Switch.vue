@@ -2,6 +2,7 @@
     import { SwitchRoot, SwitchThumb, useForwardPropsEmits } from 'reka-ui';
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
+    import { computed } from 'vue';
 
     const props = defineProps({
         defaultValue: { type: Boolean, required: false },
@@ -13,7 +14,8 @@
         as: { type: null, required: false },
         name: { type: String, required: false },
         required: { type: Boolean, required: false },
-        class: { type: null, required: false }
+        class: { type: null, required: false },
+        ariaLabel: { type: String, required: false }
     });
 
     const emits = defineEmits(['update:modelValue']);
@@ -21,6 +23,10 @@
     const delegatedProps = reactiveOmit(props, 'class');
 
     const forwarded = useForwardPropsEmits(delegatedProps, emits);
+
+    const computedAriaLabel = computed(() => {
+        return props.ariaLabel;
+    });
 </script>
 
 <template>
@@ -28,6 +34,7 @@
         v-slot="slotProps"
         data-slot="switch"
         v-bind="forwarded"
+        :aria-label="computedAriaLabel"
         :class="
             cn(
                 'peer data-[state=checked]:bg-primary data-[state=unchecked]:bg-input focus-visible:border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer',

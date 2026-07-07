@@ -74,7 +74,7 @@
             store.auth.autoLoginAfterMounted();
             store.vrcx.checkAutoBackupRestoreVrcRegistry();
         }
-        
+
         runCheckVRChatDebugLoggingFlow();
     });
 </script>

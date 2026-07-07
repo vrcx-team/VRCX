@@ -26,7 +26,12 @@
                     <TooltipWrapper side="top" :content="t('dialog.world.info.id_tooltip')">
                         <DropdownMenu>
                             <DropdownMenuTrigger as-child>
-                                <Button class="rounded-full text-xs" size="icon-sm" variant="ghost" @click.stop
+                                <Button
+                                    class="rounded-full text-xs"
+                                    size="icon-sm"
+                                    variant="ghost"
+                                    @click.stop
+                                    :ariaLabel="t('dialog.world.info.id_tooltip')"
                                     ><Copy class="h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>

@@ -21,7 +21,12 @@
                         @input="updateSearchText"
                         @keyup.enter="search" />
                     <TooltipWrapper side="bottom" :content="t('view.search.clear_results_tooltip')">
-                        <Button class="rounded-full ml-2" size="icon" variant="ghost" @click="handleClearSearch">
+                        <Button
+                            class="rounded-full ml-2"
+                            size="icon"
+                            variant="ghost"
+                            :ariaLabel="t('view.search.clear_results_tooltip')"
+                            @click="handleClearSearch">
                             <Trash2 />
                         </Button>
                     </TooltipWrapper>
