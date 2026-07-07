@@ -150,6 +150,11 @@
                     <IdCard class="h-4 w-4" />
                 </span>
             </TooltipWrapper>
+            <TooltipWrapper side="top" :content="t('dialog.user.info.instance_role_restricted')">
+                <span v-if="instanceInfoState.isRoleRestricted" class="flex items-center gap-0.5 text-red-500">
+                    <UserLock class="h-4 w-4" />
+                </span>
+            </TooltipWrapper>
             <TooltipWrapper
                 v-if="instance?.minimumAvatarPerformance && instance.minimumAvatarPerformance !== 'None'"
                 side="top"
@@ -174,6 +179,7 @@
         UsersRound,
         SquareStack,
         IdCard,
+        UserLock,
         UserPlus2
     } from 'lucide-vue-next';
     import { computed, reactive, ref, watch } from 'vue';
@@ -311,6 +317,7 @@
         return !!(
             props.instance.value?.queueSize ||
             instanceInfoState.isAgeGated ||
+            instanceInfoState.isRoleRestricted ||
             (props.instance.minimumAvatarPerformance && props.instance.minimumAvatarPerformance !== 'None')
         );
     });
@@ -325,6 +332,7 @@
         isValidInstance: false,
         canCloseInstance: false,
         isAgeGated: false,
+        isRoleRestricted: false,
         disabledContentSettings: ''
     });
 
@@ -380,6 +388,7 @@
             isValidInstance: false,
             canCloseInstance: false,
             isAgeGated: false,
+            isRoleRestricted: false,
             disabledContentSettings: ''
         });
 
@@ -394,6 +403,7 @@
         }
         instanceInfoState.isAgeGated = props.instance.ageGate === true;
         if (resolvedInstanceLocation.value?.includes('~ageGate')) instanceInfoState.isAgeGated = true;
+        instanceInfoState.isRoleRestricted = props.instance.roleRestricted === true;
         if (props.instance.$disabledContentSettings?.length) {
             instanceInfoState.disabledContentSettings = props.instance.$disabledContentSettings.join(', ');
         }
