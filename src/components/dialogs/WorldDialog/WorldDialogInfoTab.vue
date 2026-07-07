@@ -309,4 +309,3 @@
         openPreviousInstancesListDialog('world', worldRef);
     }
 </script>
-

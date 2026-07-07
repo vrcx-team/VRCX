@@ -498,4 +498,3 @@
         notificationStore.queueMarkAsSeen(props.notification.id, version);
     });
 </script>
-

@@ -130,7 +130,11 @@
 
             <DropdownMenu v-if="viewMode === 'grid'">
                 <DropdownMenuTrigger as-child>
-                    <Button class="rounded-full" size="icon-sm" variant="ghost" :ariaLabel="t('view.settings.appearance.appearance.header')">
+                    <Button
+                        class="rounded-full"
+                        size="icon-sm"
+                        variant="ghost"
+                        :ariaLabel="t('view.settings.appearance.appearance.header')">
                         <SettingsIcon class="size-4" />
                     </Button>
                 </DropdownMenuTrigger>
@@ -160,7 +164,12 @@
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button size="icon-sm" variant="ghost" :disabled="isLoading" @click="refreshAvatars" :ariaLabel="t('view.charts.instance_activity.refresh')">
+            <Button
+                size="icon-sm"
+                variant="ghost"
+                :disabled="isLoading"
+                @click="refreshAvatars"
+                :ariaLabel="t('view.charts.instance_activity.refresh')">
                 <RefreshCw :class="{ 'animate-spin': isLoading }" />
             </Button>
         </div>

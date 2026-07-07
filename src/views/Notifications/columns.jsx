@@ -890,4 +890,3 @@ export const createColumns = ({
         }
     ];
 };
-

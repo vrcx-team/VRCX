@@ -111,4 +111,3 @@
     const locationProp = computed(() => props.friend.ref?.location || '');
     const travelingProp = computed(() => props.friend.ref?.travelingToLocation || '');
 </script>
-

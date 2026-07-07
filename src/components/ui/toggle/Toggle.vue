@@ -40,4 +40,3 @@
         <slot v-bind="slotProps" />
     </Toggle>
 </template>
-

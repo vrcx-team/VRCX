@@ -36,4 +36,3 @@
         <slot />
     </Primitive>
 </template>
-

@@ -709,4 +709,3 @@
         showEditNoteAndMemoDialog
     });
 </script>
-

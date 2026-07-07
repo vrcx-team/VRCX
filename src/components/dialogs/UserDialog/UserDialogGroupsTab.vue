@@ -654,4 +654,3 @@
 
     defineExpose({ getUserGroups });
 </script>
-

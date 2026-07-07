@@ -92,7 +92,9 @@
                 <Switch
                     :model-value="discordWorldNameAsDiscordStatus"
                     :disabled="!discordActive"
-                    :ariaLabel="t('view.settings.discord_presence.discord_presence.display_world_name_as_discord_status')"
+                    :ariaLabel="
+                        t('view.settings.discord_presence.discord_presence.display_world_name_as_discord_status')
+                    "
                     @update:modelValue="
                         setDiscordWorldNameAsDiscordStatus();
                         saveDiscordOption();
@@ -124,7 +126,10 @@
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.youtube_api.enable')"
                 :description="t('view.settings.advanced.advanced.youtube_api.enable_tooltip')">
-                <Switch :model-value="youTubeApi" :ariaLabel="t('view.settings.advanced.advanced.youtube_api.enable')" @update:modelValue="changeYouTubeApi('VRCX_youtubeAPI')" />
+                <Switch
+                    :model-value="youTubeApi"
+                    :ariaLabel="t('view.settings.advanced.advanced.youtube_api.enable')"
+                    @update:modelValue="changeYouTubeApi('VRCX_youtubeAPI')" />
             </SettingsItem>
 
             <SettingsItem :label="t('view.settings.advanced.advanced.youtube_api.youtube_api_key')">

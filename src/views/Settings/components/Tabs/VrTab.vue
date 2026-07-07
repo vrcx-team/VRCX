@@ -35,7 +35,9 @@
                     ">
                     <Switch
                         :model-value="xsNotifications"
-                        :ariaLabel="t('view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications')"
+                        :ariaLabel="
+                            t('view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications')
+                        "
                         @update:modelValue="
                             setXsNotifications();
                             saveOpenVROption();
@@ -47,7 +49,9 @@
                     :label="t('view.settings.notifications.notifications.steamvr_notifications.wayvr_notifications')">
                     <Switch
                         :model-value="xsNotifications"
-                        :ariaLabel="t('view.settings.notifications.notifications.steamvr_notifications.wayvr_notifications')"
+                        :ariaLabel="
+                            t('view.settings.notifications.notifications.steamvr_notifications.wayvr_notifications')
+                        "
                         @update:modelValue="
                             setXsNotifications();
                             saveOpenVROption();
@@ -64,7 +68,11 @@
                     ">
                     <Switch
                         :model-value="ovrtHudNotifications"
-                        :ariaLabel="t('view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications')"
+                        :ariaLabel="
+                            t(
+                                'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications'
+                            )
+                        "
                         @update:modelValue="
                             setOvrtHudNotifications();
                             saveOpenVROption();
@@ -79,7 +87,11 @@
                     ">
                     <Switch
                         :model-value="ovrtWristNotifications"
-                        :ariaLabel="t('view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications')"
+                        :ariaLabel="
+                            t(
+                                'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications'
+                            )
+                        "
                         @update:modelValue="
                             setOvrtWristNotifications();
                             saveOpenVROption();
@@ -128,7 +140,9 @@
                 <Switch
                     :model-value="overlayNotifications"
                     :disabled="!openVR"
-                    :ariaLabel="t('view.settings.notifications.notifications.steamvr_notifications.overlay_notifications')"
+                    :ariaLabel="
+                        t('view.settings.notifications.notifications.steamvr_notifications.overlay_notifications')
+                    "
                     @update:modelValue="
                         setOverlayNotifications();
                         saveOpenVROption();

@@ -9,7 +9,10 @@
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.screenshot_helper.enable')"
                 :description="t('view.settings.advanced.advanced.screenshot_helper.description_tooltip')">
-                <Switch :model-value="screenshotHelper" :ariaLabel="t('view.settings.advanced.advanced.screenshot_helper.enable')" @update:modelValue="setScreenshotHelper()" />
+                <Switch
+                    :model-value="screenshotHelper"
+                    :ariaLabel="t('view.settings.advanced.advanced.screenshot_helper.enable')"
+                    @update:modelValue="setScreenshotHelper()" />
             </SettingsItem>
 
             <SettingsItem
@@ -30,15 +33,22 @@
             </SettingsItem>
 
             <SettingsItem :label="t('view.settings.advanced.advanced.delete_all_screenshot_metadata.button')">
-                <Button size="sm" variant="outline" :ariaLabel="t('view.settings.advanced.advanced.delete_all_screenshot_metadata.button')" @click="askDeleteAllScreenshotMetadata()">{{
-                    t('view.settings.advanced.advanced.delete_all_screenshot_metadata.button')
-                }}</Button>
+                <Button
+                    size="sm"
+                    variant="outline"
+                    :ariaLabel="t('view.settings.advanced.advanced.delete_all_screenshot_metadata.button')"
+                    @click="askDeleteAllScreenshotMetadata()"
+                    >{{ t('view.settings.advanced.advanced.delete_all_screenshot_metadata.button') }}</Button
+                >
             </SettingsItem>
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.pictures.pictures.auto_delete_old_prints')">
             <SettingsItem :label="t('view.settings.pictures.pictures.auto_delete_prints_from_vrc')">
-                <Switch :model-value="autoDeleteOldPrints" :ariaLabel="t('view.settings.pictures.pictures.auto_delete_prints_from_vrc')" @update:modelValue="setAutoDeleteOldPrints()" />
+                <Switch
+                    :model-value="autoDeleteOldPrints"
+                    :ariaLabel="t('view.settings.pictures.pictures.auto_delete_prints_from_vrc')"
+                    @update:modelValue="setAutoDeleteOldPrints()" />
             </SettingsItem>
         </SettingsGroup>
 
@@ -67,17 +77,26 @@
             </template>
 
             <SettingsItem :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')">
-                <Switch :model-value="saveInstancePrints" :ariaLabel="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')" @update:modelValue="setSaveInstancePrints()" />
+                <Switch
+                    :model-value="saveInstancePrints"
+                    :ariaLabel="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')"
+                    @update:modelValue="setSaveInstancePrints()" />
             </SettingsItem>
 
             <SettingsItem :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.crop')">
-                <Switch :model-value="cropInstancePrints" :ariaLabel="t('view.settings.advanced.advanced.save_instance_prints_to_file.crop')" @update:modelValue="setCropInstancePrints()" />
+                <Switch
+                    :model-value="cropInstancePrints"
+                    :ariaLabel="t('view.settings.advanced.advanced.save_instance_prints_to_file.crop')"
+                    @update:modelValue="setCropInstancePrints()" />
             </SettingsItem>
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.advanced.advanced.save_instance_stickers_to_file.header')">
             <SettingsItem :label="t('view.settings.advanced.advanced.save_instance_stickers_to_file.description')">
-                <Switch :model-value="saveInstanceStickers" :ariaLabel="t('view.settings.advanced.advanced.save_instance_stickers_to_file.description')" @update:modelValue="setSaveInstanceStickers()" />
+                <Switch
+                    :model-value="saveInstanceStickers"
+                    :ariaLabel="t('view.settings.advanced.advanced.save_instance_stickers_to_file.description')"
+                    @update:modelValue="setSaveInstanceStickers()" />
             </SettingsItem>
         </SettingsGroup>
 
@@ -87,7 +106,10 @@
             </template>
 
             <SettingsItem :label="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')">
-                <Switch :model-value="saveInstanceEmoji" :ariaLabel="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')" @update:modelValue="setSaveInstanceEmoji()" />
+                <Switch
+                    :model-value="saveInstanceEmoji"
+                    :ariaLabel="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')"
+                    @update:modelValue="setSaveInstanceEmoji()" />
             </SettingsItem>
         </SettingsGroup>
     </div>

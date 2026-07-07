@@ -17,7 +17,11 @@
                     <div>
                         <Popover>
                             <PopoverTrigger asChild>
-                                <Button class="rounded-full mr-2" size="icon" variant="ghost" :ariaLabel="t('view.charts.instance_activity.settings.header')">
+                                <Button
+                                    class="rounded-full mr-2"
+                                    size="icon"
+                                    variant="ghost"
+                                    :ariaLabel="t('view.charts.instance_activity.settings.header')">
                                     <Settings />
                                 </Button>
                             </PopoverTrigger>

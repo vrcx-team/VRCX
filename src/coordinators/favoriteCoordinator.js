@@ -214,7 +214,9 @@ export function applyFavoriteCached(json) {
     let ref = favoriteStore.cachedFavorites.get(json.id);
     if (typeof ref === 'undefined') {
         ref = createDefaultFavoriteCachedRef(json);
-        const oldEntry = favoriteStore.cachedFavoritesByObjectId.get(ref.favoriteId);
+        const oldEntry = favoriteStore.cachedFavoritesByObjectId.get(
+            ref.favoriteId
+        );
         if (oldEntry && oldEntry.id !== ref.id) {
             favoriteStore.cachedFavorites.delete(oldEntry.id);
         }
@@ -433,7 +435,8 @@ export function refreshFavorites() {
             if (ok) {
                 for (const id of favoriteStore.favoritesSortOrder) {
                     if (!newFavoriteSortOrder.includes(id)) {
-                        const fav = favoriteStore.cachedFavoritesByObjectId.get(id);
+                        const fav =
+                            favoriteStore.cachedFavoritesByObjectId.get(id);
                         if (fav) {
                             handleFavoriteAtDelete(fav);
                         }

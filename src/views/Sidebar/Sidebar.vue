@@ -64,7 +64,11 @@
                 </template>
                 <Popover v-model:open="isSettingsPopoverOpen">
                     <PopoverTrigger as-child>
-                        <Button class="rounded-full" variant="ghost" size="icon-sm" :ariaLabel="t('nav_tooltip.settings')">
+                        <Button
+                            class="rounded-full"
+                            variant="ghost"
+                            size="icon-sm"
+                            :ariaLabel="t('nav_tooltip.settings')">
                             <Settings />
                         </Button>
                     </PopoverTrigger>

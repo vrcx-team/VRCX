@@ -428,4 +428,3 @@
         instanceStore.showPreviousInstancesListDialog('group', groupRef);
     }
 </script>
-

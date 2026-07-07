@@ -196,4 +196,3 @@
         height: 1.75rem;
     }
 </style>
-

@@ -363,4 +363,3 @@
         cursor: grabbing;
     }
 </style>
-

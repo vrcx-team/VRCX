@@ -135,4 +135,3 @@
     const { updateGroupPostSearch } = useGroupStore();
     const { showFullscreenImageDialog } = useGalleryStore();
 </script>
-
