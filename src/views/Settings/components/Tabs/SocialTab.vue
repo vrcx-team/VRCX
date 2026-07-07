@@ -6,6 +6,7 @@
                 :description="t('view.settings.appearance.user_dialog.recent_action_cooldown_description')">
                 <Switch
                     :model-value="recentActionCooldownEnabled"
+                    :ariaLabel="t('view.settings.appearance.user_dialog.recent_action_cooldown')"
                     @update:modelValue="setRecentActionCooldownEnabled" />
             </SettingsItem>
 

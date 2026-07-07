@@ -106,6 +106,7 @@
                     <Button
                         size="icon-sm"
                         variant="ghost"
+                        :ariaLabel="t('nav_tooltip.manage')"
                         class="ml-auto size-6 shrink-0 opacity-0 group-hover:opacity-100"
                         @click.stop>
                         <Ellipsis class="size-3.5" />
@@ -138,3 +139,4 @@
         </template>
     </TreeItem>
 </template>
+

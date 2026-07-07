@@ -142,6 +142,7 @@
                             <Button
                                 size="sm"
                                 variant="ghost"
+                                :ariaLabel="t('dialog.group.posts.edit_tooltip')"
                                 style="margin-left: 6px; padding: 0"
                                 @click="showGroupPostEditDialog(groupDialog.id, groupDialog.announcement)"></Button>
                         </TooltipWrapper>
@@ -149,6 +150,7 @@
                             <Button
                                 size="sm"
                                 variant="ghost"
+                                :ariaLabel="t('dialog.group.posts.delete_tooltip')"
                                 style="margin-left: 6px; padding: 0"
                                 @click="confirmDeleteGroupPost(groupDialog.announcement)"></Button>
                         </TooltipWrapper>
@@ -274,6 +276,7 @@
                                 class="rounded-full ml-1 text-xs"
                                 size="icon-sm"
                                 variant="ghost"
+                                :ariaLabel="t('dialog.group.info.url_tooltip')"
                                 @click="copyToClipboard(groupDialog.ref.$url)"
                                 ><Copy class="h-4 w-4" />
                             </Button> </TooltipWrapper
@@ -290,6 +293,7 @@
                                 class="rounded-full ml-1 text-xs"
                                 size="icon-sm"
                                 variant="ghost"
+                                :ariaLabel="t('dialog.group.info.id_tooltip')"
                                 @click="copyToClipboard(groupDialog.id)"
                                 ><Copy class="h-4 w-4" />
                             </Button> </TooltipWrapper
@@ -424,3 +428,4 @@
         instanceStore.showPreviousInstancesListDialog('group', groupRef);
     }
 </script>
+

@@ -431,7 +431,12 @@
                 <span class="block truncate font-medium leading-[18px]">{{ t('dialog.user.info.home_location') }}</span>
                 <span class="block truncate text-xs">
                     <span v-text="userDialog.$homeLocationName"></span>
-                    <Button class="rounded-full ml-1 text-xs" size="icon-sm" variant="ghost" @click.stop="resetHome()"
+                    <Button
+                        class="rounded-full ml-1 text-xs"
+                        size="icon-sm"
+                        variant="ghost"
+                        @click.stop="resetHome()"
+                        :ariaLabel="t('common.actions.delete')"
                         ><Trash2 class="h-4 w-4" />
                     </Button>
                 </span>
@@ -445,7 +450,12 @@
                     <TooltipWrapper side="top" :content="t('dialog.user.info.id_tooltip')">
                         <DropdownMenu>
                             <DropdownMenuTrigger as-child>
-                                <Button class="rounded-full ml-1 text-xs" size="icon-sm" variant="ghost" @click.stop
+                                <Button
+                                    class="rounded-full ml-1 text-xs"
+                                    size="icon-sm"
+                                    variant="ghost"
+                                    @click.stop
+                                    :ariaLabel="t('dialog.avatar.info.id_tooltip')"
                                     ><Copy class="h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>
@@ -699,3 +709,4 @@
         showEditNoteAndMemoDialog
     });
 </script>
+
