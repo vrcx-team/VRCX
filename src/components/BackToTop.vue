@@ -3,6 +3,7 @@
     import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
     import { ArrowUp } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
+    import { useI18n } from 'vue-i18n';
 
     const props = defineProps({
         // scroll DOM ref
@@ -29,6 +30,7 @@
     });
 
     const visible = ref(false);
+    const { t } = useI18n();
     let containerEl = null;
 
     function resolveElement(target) {
@@ -209,4 +211,3 @@
         }
     }
 </style>
-

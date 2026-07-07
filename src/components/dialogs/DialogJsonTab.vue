@@ -7,6 +7,7 @@
 
     import { downloadAndSaveJson } from '../../shared/utils';
     import { useAppearanceSettingsStore } from '../../stores';
+    import { useI18n } from 'vue-i18n';
 
     defineProps({
         treeData: {
@@ -33,6 +34,7 @@
 
     const emit = defineEmits(['refresh']);
     const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
+    const { t } = useI18n();
 </script>
 
 <template>
@@ -58,4 +60,3 @@
         <vue-json-pretty :data="fileAnalysis" :deep="2" :theme="isDarkMode ? 'dark' : 'light'" show-icon />
     </template>
 </template>
-
