@@ -323,7 +323,6 @@
                     "instance_type_placeholder": "Todos los Tipos de Instancia",
                     "auto_invite_request_accept": "Aceptar Solicitudes de Invitación Automáticamente",
                     "auto_invite_request_accept_tooltip": "Aceptar automáticamente las solicitudes de invitación de amigos favoritos",
-                    "auto_invite_request_accept_off": "Apagado",
                     "auto_invite_request_accept_favs": "Todos los Favoritos",
                     "auto_invite_request_accept_selected_favs": "Favoritos de VRCX"
                 },
@@ -368,7 +367,6 @@
                     "force_iso_date_format": "Forzar Formato de Fecha ISO"
                 },
                 "side_panel": {
-                    "header": "Panel Lateral",
                     "sorting": {
                         "header": "Orden de Clasificación",
                         "alphabetical": "Alfabético",
@@ -379,13 +377,7 @@
                         "last_seen": "Última Vez Visto",
                         "time_in_instance": "Tiempo en Instancia",
                         "placeholder": "Orden de Clasificación"
-                    },
-                    "group_by_instance": "Agrupar por Instancia",
-                    "group_by_instance_tooltip": "Habilitar esto agrupará a los amigos por instancia cuando haya más de un amigo en la misma instancia.",
-                    "hide_friends_in_same_instance": "Ocultar Amigos en la Misma Instancia",
-                    "hide_friends_in_same_instance_tooltip": "Ocultar amigos de la lista de amigos cuando estén en la misma instancia.",
-                    "split_favorite_friends": "Dividir Amigos Favoritos",
-                    "split_favorite_friends_tooltip": "Separar amigos favoritos en sus grupos individuales."
+                    }
                 },
                 "user_dialog": {
                     "header": "Diálogo de Usuario",
@@ -637,8 +629,6 @@
                 "showcased": "Exhibido"
             },
             "actions": {
-                "favorite_tooltip": "Agregar a favoritos",
-                "unfavorite_tooltip": "Eliminar de favoritos",
                 "refresh": "Actualizar",
                 "share": "Compartir",
                 "invite": "Invitar",
@@ -715,7 +705,6 @@
                 "copy_display_name": "Copiar Nombre de Pantalla",
                 "vrcplus_hides_avatar": "Cuando se establece una foto de perfil de VRC+, la información del avatar se oculta. Esto también oculta los cambios de avatar en el feed",
                 "instance_full": "lleno",
-                "instance_closed": "cerrado",
                 "close_instance": "Cerrar Instancia",
                 "instance_age_gated": "Restringido por Edad",
                 "open_previous_instance": "Abrir Instancia Anterior"

@@ -3113,18 +3113,6 @@
                         "quick_search": {
                             "title": "クイック検索",
                             "description": "ユーザー、ワールド、およびアバターをすぐに検索できます。"
-                        },
-                        "dashboard": {
-                            "title": "ダッシュボード",
-                            "description": "あなたの使用方法に合ったワークスペースを構築します。"
-                        },
-                        "activity_insights": {
-                            "title": "アクティビティインサイト",
-                            "description": "共有オンライン時間、最も訪問されたワールド、および活動トレンドを確認できます。"
-                        },
-                        "my_avatars": {
-                            "title": "自分のアバター",
-                            "description": "より少ない手間でアバターを参照・管理できます。"
                         }
                     }
                 }

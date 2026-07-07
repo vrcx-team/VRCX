@@ -223,7 +223,6 @@
                     "auto_state_change_tooltip": "인스턴스에 다른 사람이 있을 때 상태를 자동으로 바꿉니다",
                     "auto_invite_request_accept": "Auto Accept Invite Requests",
                     "auto_invite_request_accept_tooltip": "Automatically accept invite requests from favorite friends",
-                    "auto_invite_request_accept_off": "끄기",
                     "auto_invite_request_accept_favs": "All Favorites",
                     "auto_invite_request_accept_selected_favs": "VRCX Favorites"
                 },
@@ -268,7 +267,6 @@
                     "force_iso_date_format": "ISO 날짜 표기 강제"
                 },
                 "side_panel": {
-                    "header": "친구 목록",
                     "sorting": {
                         "header": "정렬"
                     }
@@ -486,8 +484,6 @@
                 "vrchat_team": "VRChat Team"
             },
             "actions": {
-                "favorite_tooltip": "즐겨찾기 추가",
-                "unfavorite_tooltip": "즐겨찾기 해제",
                 "refresh": "새로고침",
                 "invite": "초대",
                 "invite_with_message": "메시지 초대",
@@ -560,7 +556,6 @@
                 "copy_url": "Copy URL",
                 "copy_display_name": "Copy DisplayName",
                 "instance_full": "풀방",
-                "instance_closed": "closed",
                 "close_instance": "Close Instance"
             },
             "groups": {
