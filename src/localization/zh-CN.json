@@ -1418,7 +1418,7 @@
                 "open_previous_instance": "打开之前加入的房间的列表",
                 "show_mutual_friends": "是否允许查看共同好友",
                 "show_discord_connections": "是否允许查看绑定的 Discord 账号信息",
-                "instance_minimum_avatar_performance": "最低模型性能"
+                "instance_minimum_avatar_performance": "模型性能评级限制"
             },
             "groups": {
                 "header": "群组",
@@ -1879,7 +1879,7 @@
             "roles": "身份组",
             "open_ingame": "在 VRChat 中打开",
             "display_name": "自定义房间名称 (需要 VRC+)",
-            "minimum_avatar_performance": "最低模型性能"
+            "minimum_avatar_performance": "模型性能评级限制"
         },
         "launch": {
             "header": "启动",
