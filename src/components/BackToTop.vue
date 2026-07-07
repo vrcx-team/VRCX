@@ -128,7 +128,7 @@
                             size="icon"
                             variant="secondary"
                             class="rounded-full shadow"
-                            aria-label="Back to top"
+                            :ariaLabel="t('accessibility.back_to_top')"
                             @click="scrollToTop">
                             <ArrowUp class="h-4 w-4" />
                         </Button>
@@ -143,7 +143,7 @@
                     size="icon"
                     variant="secondary"
                     class="rounded-full shadow"
-                    aria-label="Back to top"
+                    :ariaLabel="t('accessibility.back_to_top')"
                     @click="scrollToTop">
                     <ArrowUp class="h-4 w-4" />
                 </Button>
@@ -159,7 +159,7 @@
                         size="icon"
                         variant="secondary"
                         class="rounded-full shadow"
-                        aria-label="Back to top"
+                        :ariaLabel="t('accessibility.back_to_top')"
                         @click="scrollToTop">
                         <ArrowUp class="h-4 w-4" />
                     </Button>
@@ -174,7 +174,7 @@
                 size="icon"
                 variant="secondary"
                 class="rounded-full shadow"
-                aria-label="Back to top"
+                :ariaLabel="t('accessibility.back_to_top')"
                 @click="scrollToTop">
                 <ArrowUp class="h-4 w-4" />
             </Button>
@@ -209,3 +209,4 @@
         }
     }
 </style>
+

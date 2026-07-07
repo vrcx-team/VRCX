@@ -36,10 +36,20 @@
 </script>
 
 <template>
-    <Button class="rounded-full mr-2" size="icon-sm" variant="ghost" @click="emit('refresh')">
+    <Button
+        class="rounded-full mr-2"
+        size="icon-sm"
+        variant="ghost"
+        @click="emit('refresh')"
+        :ariaLabel="t('common.actions.refresh')">
         <RefreshCw />
     </Button>
-    <Button class="rounded-full" size="icon-sm" variant="ghost" @click="downloadAndSaveJson(dialogId, dialogRef)">
+    <Button
+        class="rounded-full"
+        size="icon-sm"
+        variant="ghost"
+        @click="downloadAndSaveJson(dialogId, dialogRef)"
+        :ariaLabel="t('dialog.vrcx_updater.download')">
         <Download />
     </Button>
     <vue-json-pretty :key="treeDataKey" :data="treeData" :deep="2" :theme="isDarkMode ? 'dark' : 'light'" show-icon />
@@ -48,3 +58,4 @@
         <vue-json-pretty :data="fileAnalysis" :deep="2" :theme="isDarkMode ? 'dark' : 'light'" show-icon />
     </template>
 </template>
+

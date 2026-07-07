@@ -46,6 +46,7 @@
                                     variant="outline"
                                     size="sm"
                                     :model-value="feedTable.vip"
+                                    :ariaLabel="t('view.feed.favorites_only_tooltip')"
                                     @update:modelValue="
                                         (v) => {
                                             feedTable.vip = v;
@@ -255,3 +256,4 @@
         border-radius: 4px;
     }
 </style>
+
