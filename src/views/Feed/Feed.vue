@@ -164,8 +164,8 @@
      * @param row
      */
     function getFeedRowId(row) {
-        if (row?.id != null) return `id:${row.id}`;
-        if (row?.rowId != null) return `row:${row.rowId}`;
+        if (row?.id != null) return `id:${row.id}:${row?.type ?? ''}`;
+        if (row?.rowId != null) return `row:${row.rowId}:${row?.type ?? ''}`;
 
         const type = row?.type ?? '';
         const createdAt = row?.created_at ?? row?.createdAt ?? '';
