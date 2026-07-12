@@ -36,13 +36,28 @@ namespace VRCX
 
         public void OpenLink(string url)
         {
-            if (url.StartsWith("http://") ||
-                url.StartsWith("https://"))
+            if (string.IsNullOrWhiteSpace(url))
+                return;
+
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+                return;
+
+            if (uri.Scheme != Uri.UriSchemeHttp &&
+                uri.Scheme != Uri.UriSchemeHttps)
+                return;
+
+            try
             {
-                Process.Start(new ProcessStartInfo(url)
+                var psi = new ProcessStartInfo
                 {
+                    FileName = uri.AbsoluteUri,
                     UseShellExecute = true
-                });
+                };
+                Process.Start(psi);
+            }
+            catch
+            {
+                logger.Error("Failed to open link: {url}", url);
             }
         }
 
