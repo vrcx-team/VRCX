@@ -6,16 +6,6 @@
             </DialogHeader>
             <div class="changelog-dialog">
                 <h2 v-text="changeLogDialog.buildName"></h2>
-                <span>
-                    {{ t('dialog.change_log.description') }}
-                    <br />
-                    Map1en:
-                    <a class="cursor-pointer" @click="openExternalLink('https://ko-fi.com/map1en_')">Ko-fi</a>.
-                    <a class="cursor-pointer" @click="openExternalLink('https://ifdian.net/a/map1en_')">爱发电</a>
-                    <br />
-                    Natsumi:
-                    <a class="cursor-pointer" @click="openExternalLink('https://ko-fi.com/natsumi_sama')">Ko-fi</a>.
-                </span>
                 <VueShowdown
                     class="changelog-markdown mt-2"
                     :markdown="changeLogDialog.changeLog"
