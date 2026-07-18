@@ -40,6 +40,8 @@
                                         'group.joinRequest',
                                         'group.transfer',
                                         'group.queueReady',
+                                        'group.event.created',
+                                        'group.event.starting',
                                         'moderation.warning.group',
                                         'moderation.report.closed',
                                         'moderation.contentrestriction',

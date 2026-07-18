@@ -124,6 +124,18 @@ export function getNotificationMessage(noty, message, displayNameOverride) {
                     noty.title || t('notifications.group_announcement_title'),
                 body: noty.message
             };
+        case 'group.event.created':
+            return {
+                title:
+                    noty.title || t('notifications.group_event_created_title'),
+                body: noty.message
+            };
+        case 'group.event.starting':
+            return {
+                title:
+                    noty.title || t('notifications.group_event_starting_title'),
+                body: noty.message
+            };
         case 'group.informative':
             return {
                 title: noty.title || t('notifications.group_informative_title'),

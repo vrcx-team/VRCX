@@ -318,6 +318,30 @@
                                 </div>
                             </div>
                             <div
+                                v-else-if="feed.type === 'group.event.created'"
+                                class="x-friend-item"
+                                :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
+                                <div class="detail">
+                                    <span class="extra flex items-center">
+                                        <span class="time">{{ formatDate(feed.created_at) }}</span>
+                                        <CalendarPlus class="mr-5 h-5 w-5" />
+                                        <span class="name" v-text="feed.message"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div
+                                v-else-if="feed.type === 'group.event.starting'"
+                                class="x-friend-item"
+                                :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
+                                <div class="detail">
+                                    <span class="extra flex items-center">
+                                        <span class="time">{{ formatDate(feed.created_at) }}</span>
+                                        <CalendarCheck class="mr-5 h-5 w-5" />
+                                        <span class="name" v-text="feed.message"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div
                                 v-else-if="feed.type === 'group.informative'"
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
@@ -887,6 +911,30 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
+                                        <span class="name" v-text="feed.message"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div
+                                v-else-if="feed.type === 'group.event.created'"
+                                class="x-friend-item"
+                                :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
+                                <div class="detail">
+                                    <span class="extra flex items-center">
+                                        <span class="time">{{ formatDate(feed.created_at) }}</span>
+                                        <CalendarPlus class="mr-5 h-5 w-5" />
+                                        <span class="name" v-text="feed.message"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div
+                                v-else-if="feed.type === 'group.event.starting'"
+                                class="x-friend-item"
+                                :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
+                                <div class="detail">
+                                    <span class="extra flex items-center">
+                                        <span class="time">{{ formatDate(feed.created_at) }}</span>
+                                        <Clock class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -1953,6 +2001,12 @@
                 text = `<strong>${noty.senderUsername}</strong> ${noty.message}`;
                 break;
             case 'group.announcement':
+                text = noty.message;
+                break;
+            case 'group.event.created':
+                text = noty.message;
+                break;
+            case 'group.event.starting':
                 text = noty.message;
                 break;
             case 'group.informative':

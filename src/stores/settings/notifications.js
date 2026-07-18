@@ -49,6 +49,8 @@ export const useNotificationsSettingsStore = defineStore(
                 TrustLevel: 'VIP',
                 groupChange: 'On',
                 'group.announcement': 'On',
+                'group.event.created': 'On',
+                'group.event.starting': 'On',
                 'group.informative': 'On',
                 'group.invite': 'On',
                 'group.joinRequest': 'Off',
@@ -91,6 +93,8 @@ export const useNotificationsSettingsStore = defineStore(
                 TrustLevel: 'Friends',
                 groupChange: 'On',
                 'group.announcement': 'On',
+                'group.event.created': 'On',
+                'group.event.starting': 'On',
                 'group.informative': 'On',
                 'group.invite': 'On',
                 'group.joinRequest': 'On',
@@ -295,6 +299,16 @@ export const useNotificationsSettingsStore = defineStore(
                 sharedFeedFilters.value.wrist['group.informative'] = 'On';
                 sharedFeedFilters.value.wrist['group.invite'] = 'On';
                 sharedFeedFilters.value.wrist['group.joinRequest'] = 'On';
+            }
+            if (!sharedFeedFilters.value.noty['group.event.created']) {
+                sharedFeedFilters.value.noty['group.event.created'] =
+                    sharedFeedFilters.value.noty['group.announcement'];
+                sharedFeedFilters.value.wrist['group.event.created'] =
+                    sharedFeedFilters.value.wrist['group.announcement'];
+                sharedFeedFilters.value.noty['group.event.starting'] =
+                    sharedFeedFilters.value.noty['group.announcement'];
+                sharedFeedFilters.value.wrist['group.event.starting'] =
+                    sharedFeedFilters.value.wrist['group.announcement'];
             }
             if (!sharedFeedFilters.value.noty['group.queueReady']) {
                 sharedFeedFilters.value.noty['group.queueReady'] = 'On';

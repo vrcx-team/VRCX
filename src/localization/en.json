@@ -2838,6 +2838,8 @@
         "trust_level": "Trust level is now {trustLevel}",
         "display_name": "changed their name to {displayName}",
         "group_announcement_title": "Group Announcement",
+        "group_event_created_title": "Group Event Created",
+        "group_event_starting_title": "Group Event Starting",
         "group_informative_title": "Group Informative",
         "group_invite_title": "Group Invite",
         "group_join_request_title": "Group Join Request",

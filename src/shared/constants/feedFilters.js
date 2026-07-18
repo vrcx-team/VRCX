@@ -118,6 +118,16 @@ function feedFiltersOptions() {
             options: getOptions(['Off', 'On'])
         },
         {
+            key: 'group.event.created',
+            name: 'Group Event Created',
+            options: getOptions(['Off', 'On'])
+        },
+        {
+            key: 'group.event.starting',
+            name: 'Group Event Starting',
+            options: getOptions(['Off', 'On'])
+        },
+        {
             key: 'group.informative',
             name: 'Group Join',
             options: getOptions(['Off', 'On']),
