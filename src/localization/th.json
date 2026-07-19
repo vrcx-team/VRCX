@@ -127,7 +127,7 @@
             "filter_placeholder": "ฟิลเตอร์",
             "search_placeholder": "ค้นหา",
             "filters": {
-                "Location": "ที่ตั้ง",
+                "Location": "สถานที่",
                 "OnPlayerJoined": "ผู้เล่นเข้าร่วม",
                 "OnPlayerLeft": "ผู้เล่นออก",
                 "PortalSpawn": "พอร์ทัลเกิด",
