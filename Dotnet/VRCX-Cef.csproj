@@ -36,7 +36,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <DebugType>pdbonly</DebugType>
@@ -45,7 +45,7 @@
   <PropertyGroup>
     <ApplicationIcon>..\images\VRCX.ico</ApplicationIcon>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <StartupObject />
     <CefSharpExcludeSubProcessExe>true</CefSharpExcludeSubProcessExe>
@@ -64,12 +64,12 @@
     <None Remove="DBMerger\**" />
   </ItemGroup>
   <ItemGroup>
-	  <Reference Include="Blake2Sharp">
-		  <HintPath>libs\Blake2Sharp.dll</HintPath>
-	  </Reference>
-	  <Reference Include="librsync.net">
-		  <HintPath>libs\librsync.net.dll</HintPath>
-	  </Reference>
+    <Reference Include="Blake2Sharp">
+      <HintPath>libs\Blake2Sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="librsync.net">
+      <HintPath>libs\librsync.net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.manifest" />
@@ -78,10 +78,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-	  <None Include="libs\openvr_api.dll">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		  <TargetPath>openvr_api.dll</TargetPath>
-	  </None>
+    <None Include="libs\openvr_api.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>openvr_api.dll</TargetPath>
+    </None>
     <Content Include="..\images\VRCX.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -107,14 +107,14 @@
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
     <PackageReference Include="SourceGear.sqlite3" Version="3.50.4.5" />
     <PackageReference Include="System.Data.SQLite" Version="2.0.3" />
-	<PackageReference Include="System.Management" Version="10.0.8" />
+    <PackageReference Include="System.Management" Version="10.0.8" />
     <PackageReference Include="Websocket.Client" Version="5.5.0" />
   </ItemGroup>
 
   <Target Name="CefSharpAfterBuildDebug" AfterTargets="AfterBuild">
     <CallTarget Targets="CefSharpAfterBuildDiagnostic" />
   </Target>
-  
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="&quot;$(ProjectDir)..\Dotnet\build-tools\Topten.nvpatch.exe&quot; --enable &quot;$(ProjectDir)..\build\Cef\VRCX.exe&quot;" />
   </Target>

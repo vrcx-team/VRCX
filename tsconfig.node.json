@@ -16,11 +16,14 @@
         "paths": {
             "*": ["./*"],
             "@/*": ["./src/*"]
-        }
+        },
+        "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo"
     },
     "include": [
         "src/vite.config.js",
-        "src/shared/utils/localizationHelperCLI.js"
+        "src/shared/utils/localizationHelperCLI.js",
+        "src/localization/*.js",
+        "build-scripts/generate-third-party-licenses.js"
     ],
     "exclude": ["node_modules", "build"]
 }
