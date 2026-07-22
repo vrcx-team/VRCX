@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using NLog;
 using NLog.Targets;
-using SQLite;
+using System.Data.SQLite;
 
 namespace DBMerger
 {
@@ -58,7 +58,8 @@ namespace DBMerger
                 logger.Debug("Creating connection to old DB");
                 try
                 {
-                    DBConn = new SQLiteConnection(Config.OldDBPath) { Tracer = logger.Trace, Trace = true };
+                    DBConn = new SQLiteConnection($"Data Source=\"{Config.OldDBPath}\";Version=3;");
+                    DBConn.Open();
                 }
                 catch (SQLiteException)
                 {
@@ -107,17 +108,17 @@ namespace DBMerger
                 string extension = Path.GetExtension(path);
                 if (extension == "")
                 {
-                    path += Path.ChangeExtension(path, "sqlite3");
+                    path = Path.ChangeExtension(path, "sqlite3");
                 }
                 else if (extension != ".sqlite3")
                 {
-                    arg.ErrorMessage = $"File given to option `{option.Aliases.First()}` is not a sqlite database!";
+                    arg.AddError($"File given to option `{option.Aliases.First()}` is not a sqlite database!");
                     return null;
                 }
 
                 if (!File.Exists(path))
                 {
-                    arg.ErrorMessage = $"File given to option `{option.Aliases.First()}` does not exist!";
+                    arg.AddError($"File given to option `{option.Aliases.First()}` does not exist!");
                     return null;
                 }
 
@@ -127,35 +128,52 @@ namespace DBMerger
             var rootCommand = new RootCommand("Merge an old and new VRCX sqlite database into one.");
 
             var newDBOption = new Option<string>(
-                ["-n", "--new-db-path"],
-                description: "The path of the new DB to merge the old onto.",
-                parseArgument: validateDBPath
+                "--new-db-path",
+                "-n"
             )
-            { IsRequired = true };
-            rootCommand.AddOption(newDBOption);
+            {
+                Description = "The path of the new DB to merge the old onto.",
+                Required = true,
+                CustomParser = validateDBPath
+            };
+            rootCommand.Add(newDBOption);
 
             var oldDBOption = new Option<string>(
-                ["-o", "--old-db-path"],
-                description: "The path of the old DB to merge into the new.",
-                parseArgument: validateDBPath
+                "--old-db-path",
+                "-o"
             )
-            { IsRequired = true };
-            rootCommand.AddOption(oldDBOption);
+            {
+                Description = "The path of the old DB to merge into the new.",
+                Required = true,
+                CustomParser = validateDBPath
+            };
+            rootCommand.Add(oldDBOption);
 
             // Add `debug` option to be consistent with args from the main exe
-            var debugOption = new Option<bool>(["-v", "--verbose", "-d", "--debug"], () => false, "Add debug information to the output.");
-            rootCommand.AddOption(debugOption);
-
-            var importConfigOption = new Option<bool>(["--import-config"], () => false, "Imports the config values from the old database. This will override the config in the new database.");
-            rootCommand.AddOption(importConfigOption);
-
-            rootCommand.SetHandler((newDBPath, oldDBPath, debug, importConfig) =>
+            var debugOption = new Option<bool>("--verbose", "-v", "-d", "--debug")
             {
+                Description = "Add debug information to the output."
+            };
+            rootCommand.Add(debugOption);
+
+            var importConfigOption = new Option<bool>("--import-config")
+            {
+                Description = "Imports the config values from the old database. This will override the config in the new database."
+            };
+            rootCommand.Add(importConfigOption);
+
+            rootCommand.SetAction(parseResult =>
+            {
+                var newDBPath = parseResult.GetValue(newDBOption);
+                var oldDBPath = parseResult.GetValue(oldDBOption);
+                var debug = parseResult.GetValue(debugOption);
+                var importConfig = parseResult.GetValue(importConfigOption);
+
                 Config = new Config(newDBPath, oldDBPath, debug, importConfig);
-            }, newDBOption, oldDBOption, debugOption, importConfigOption);
+            });
 
             // If the args weren't parsable or verifiable, exit
-            if (rootCommand.Invoke(args) != 0)
+            if (rootCommand.Parse(args).Invoke() != 0)
             {
                 Environment.Exit(0);
             }

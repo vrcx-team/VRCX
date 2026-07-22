@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NLog;
-using SQLite;
+using System.Data.SQLite;
 
 namespace DBMerger
 {
@@ -26,21 +26,25 @@ namespace DBMerger
             logger.Info("Starting merge process...");
 
             logger.Debug("Creating transaction for databases");
-            dbConn.BeginTransaction();
+            var transaction = dbConn.BeginTransaction();
             try
             {
                 MergeInternal();
+
+                logger.Debug("Committing changes to database");
+                transaction.Commit();
             }
             catch
             {
                 logger.Warn("Encoutered error! Rolling back changes to databases");
-                dbConn.Rollback();
+                transaction.Rollback();
 
                 throw;
             }
-
-            logger.Debug("Committing changes to database");
-            dbConn.Commit();
+            finally
+            {
+                transaction.Dispose();
+            }
 
             logger.Info("Optimizing database size...");
             dbConn.Execute("VACUUM new_db;");
@@ -338,8 +342,10 @@ namespace DBMerger
 
                 // Skip friend log current for obvious reasons
                 // Skip notes and mutual friends since they aren't time based
+                // Skip activity tables, they're only used for cache data
                 if (table.EndsWith("_friend_log_current") || table.EndsWith("_notes") ||
-                    table.EndsWith("_mutual_graph_friends") || table.EndsWith("_mutual_graph_links"))
+                    table.EndsWith("_mutual_graph_friends") || table.EndsWith("_mutual_graph_links") || table.EndsWith("_mutual_graph_meta") ||
+                    table.Contains("_activity_"))
                 {
                     continue;
                 }
@@ -524,14 +530,14 @@ namespace DBMerger
 
         /// <summary>
         /// A method that automates various processes of merging.
-        /// 
+        ///
         /// It first finds a table that matches the `tableMatcher` predicate,
         /// then removes it from `unMergedTables`.
         /// Then it loops over every row in the old database table, checking if
         /// the row exists in the new table. It does this by checking if the
         /// column indices passed into `colIndicesToMatch` are the same.
-        /// Then for each row, it calls `rowTransformer`, passing in the old 
-        /// rows and existing new rows. `rowTransformer` should return the row 
+        /// Then for each row, it calls `rowTransformer`, passing in the old
+        /// rows and existing new rows. `rowTransformer` should return the row
         /// to insert into the new database or null.
         /// </summary>
         /// <param name="tableMatcher">A predicate to check if a table is one to edit</param>
