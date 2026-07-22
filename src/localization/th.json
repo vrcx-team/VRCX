@@ -333,7 +333,6 @@
                     "instance_type_placeholder": "ทุกประเภทอินสแตนซ์",
                     "auto_invite_request_accept": "ตอบรับคำขอเชิญอัตโนมัติ",
                     "auto_invite_request_accept_tooltip": "ตอบรับคำขอเชิญจากเพื่อนคนโปรดโดยอัตโนมัติ",
-                    "auto_invite_request_accept_off": "ปิด",
                     "auto_invite_request_accept_favs": "เพื่อนคนโปรดทั้งหมด",
                     "auto_invite_request_accept_selected_favs": "เพื่อนคนโปรดใน VRCX"
                 },
@@ -379,7 +378,6 @@
                     "force_iso_date_format": "บังคับใช้รูปแบบวันที่ ISO"
                 },
                 "side_panel": {
-                    "header": "แผงด้านข้าง",
                     "sorting": {
                         "header": "ลำดับการเรียง",
                         "alphabetical": "ตามตัวอักษร",
@@ -390,13 +388,7 @@
                         "last_seen": "เห็นล่าสุด",
                         "time_in_instance": "เวลาในอินสแตนซ์",
                         "placeholder": "ลำดับการเรียง"
-                    },
-                    "group_by_instance": "จัดกลุ่มตามอินสแตนซ์",
-                    "group_by_instance_tooltip": "การเปิดใช้งานตัวเลือกนี้จะจัดกลุ่มเพื่อนตามอินสแตนซ์เมื่อมีเพื่อนมากกว่าหนึ่งคนอยู่ในอินสแตนซ์เดียวกัน",
-                    "hide_friends_in_same_instance": "ซ่อนเพื่อนที่อยู่ในอินสแตนซ์เดียวกัน",
-                    "hide_friends_in_same_instance_tooltip": "ซ่อนเพื่อนจากรายชื่อเพื่อนเมื่อพวกเขาอยู่ในอินสแตนซ์เดียวกัน",
-                    "split_favorite_friends": "แยกเพื่อนคนโปรด",
-                    "split_favorite_friends_tooltip": "แยกเพื่อนคนโปรดออกเป็นกลุ่มของตัวเอง"
+                    }
                 },
                 "user_dialog": {
                     "header": "หน้าต่างผู้ใช้",
@@ -660,8 +652,6 @@
                 "showcased": "ที่จัดแสดง"
             },
             "actions": {
-                "favorite_tooltip": "เพิ่มในรายการโปรด",
-                "unfavorite_tooltip": "ลบออกจากรายการโปรด",
                 "refresh": "รีเฟรช",
                 "share": "แชร์",
                 "invite": "เชิญ",
@@ -739,7 +729,6 @@
                 "copy_display_name": "คัดลอกชื่อที่แสดง",
                 "vrcplus_hides_avatar": "เมื่อตั้งค่ารูปโปรไฟล์ VRC+ ข้อมูลอวาตาร์จะถูกซ่อนไว้ ซึ่งจะซ่อนการเปลี่ยนแปลงอวาตาร์ในฟีดด้วย",
                 "instance_full": "เต็ม",
-                "instance_closed": "ปิดแล้ว",
                 "close_instance": "ปิดอินสแตนซ์",
                 "instance_age_gated": "จำกัดอายุ",
                 "open_previous_instance": "เปิดอินสแตนซ์ก่อนหน้า"

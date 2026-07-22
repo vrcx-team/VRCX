@@ -31,20 +31,13 @@
         "custom_nav": {
             "header": "Edytuj nawigację",
             "dialog_title": "Edytuj menu nawigacyjne",
-            "add_folder": "Dodaj folder",
             "folder_name_placeholder": "Nazwa folderu",
             "folder_icon_placeholder": "Klasa ikony (np. ri-menu-fold-line)",
             "edit_folder": "Edytuj folder",
-            "folder_available": "Dostępne elementy",
-            "folder_selected": "Elementy w folderze",
-            "folder_selected_empty": "Brak wybranych elementów",
             "delete_folder": "Usuń folder",
-            "remove_from_folder": "Usuń z folderu",
             "folder_empty": "Brak elementów w folderze",
-            "invalid_folder": "Folder musi mieć nazwę i zawierać przynajmniej 2 elementy",
             "restore_default": "Przywróć domyślne",
             "restore_default_confirm": "Przywrócić nawigację do jej domyślnego stanu?",
-            "save": "Zapisz",
             "cancel": "Anuluj"
         }
     },
@@ -372,9 +365,7 @@
                 },
                 "header": "Obrazki",
                 "screenshot": "Zarządzanie zrzutami ekanu",
-                "screenshot_description": "Zarządzaj zrzutami ekranu i edytuj metadane",
-                "inventory": "Obrazki VRC+ i zarządzanie ekwipunkiem",
-                "inventory_description": "Zarządzaj obrazkami VRC+ i ekwipunkiem"
+                "screenshot_description": "Zarządzaj zrzutami ekranu i edytuj metadane"
             },
             "other": {
                 "header": "Inne",
@@ -459,7 +450,6 @@
                     "instance_type_placeholder": "Wszystkie typy instancji",
                     "auto_invite_request_accept": "Automatycznie akceptuj prośby o dołączenie",
                     "auto_invite_request_accept_tooltip": "Automatycznie akceptuj prośby o dołączenie od ulubionych znajomych",
-                    "auto_invite_request_accept_off": "Wył.",
                     "auto_invite_request_accept_favs": "Wszyscy ulubieni",
                     "auto_invite_request_accept_selected_favs": "Ulubieni VRCX"
                 },
@@ -510,7 +500,6 @@
                     "force_iso_date_format": "Wymuś format daty ISO"
                 },
                 "side_panel": {
-                    "header": "Panel boczny",
                     "sorting": {
                         "header": "Sortowanie",
                         "alphabetical": "Alfabetycznie",
@@ -521,13 +510,7 @@
                         "last_seen": "Ostatnio widziany",
                         "time_in_instance": "Czas na instancji",
                         "placeholder": "Sortowanie"
-                    },
-                    "group_by_instance": "Grupuj po instancji",
-                    "group_by_instance_tooltip": "Włączenie tego spowoduje grupowanie znajomych po instancji, gdy na instancji jest więcej niż jeden znajomy.",
-                    "hide_friends_in_same_instance": "Ukryj znajomych na tej samej instancji",
-                    "hide_friends_in_same_instance_tooltip": "Ukryj znajomych w liście znajomych, gdy znajdują się w tej samej instancji.",
-                    "split_favorite_friends": "Podziel ulubionych znajomych",
-                    "split_favorite_friends_tooltip": "Podziel ulubionych znajomych na konkretne grupy."
+                    }
                 },
                 "user_dialog": {
                     "header": "Podgląd użytkownika",
@@ -823,8 +806,6 @@
                 "showcased": "Pokazane"
             },
             "actions": {
-                "favorite_tooltip": "Dodaj do ulubionych",
-                "unfavorite_tooltip": "Usuń z ulubionych",
                 "refresh": "Odśwież",
                 "share": "Udostępnij",
                 "invite": "Zaproś",
@@ -904,7 +885,6 @@
                 "copy_display_name": "Kopiuj wyświetlaną nazwę",
                 "vrcplus_hides_avatar": "Po ustawieniu obrazka profilowego VRC+ informacje o awatarze są ukryte. Ukrywa to również zmiany awatara w aktywności.",
                 "instance_full": "pełna",
-                "instance_closed": "zamknięta",
                 "close_instance": "Zamknij instancję",
                 "instance_age_gated": "weryfikacja wiekowa",
                 "open_previous_instance": "Otwórz poprzednią instancję",

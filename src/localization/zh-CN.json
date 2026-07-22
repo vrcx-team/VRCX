@@ -908,8 +908,6 @@
                     "table_page_sizes_error": "页面尺寸必须是 1 到 1000 之间的数字",
                     "show_notification_icon_dot": "显示托盘通知",
                     "striped_data_table_mode": "斑马纹表格模式",
-                    "toggle_pointer_on_hover": "悬停时强制显示指针",
-                    "toggle_pointer_on_hover_description": "对可点击元素始终显示指针光标。",
                     "accessible_status_indicators": "无障碍版状态指示器",
                     "accessible_status_indicators_description": "除了使用颜色之外，也使用形状来区分状态。",
                     "table_density": "行高密度",
@@ -1415,10 +1413,11 @@
                 "instance_age_restricted_tooltip": "位于年龄限制房间",
                 "close_instance": "关闭该房间",
                 "instance_age_gated": "房间具有年龄限制",
+                "instance_role_restricted": "房间具有身份组限制",
                 "open_previous_instance": "打开之前加入的房间的列表",
                 "show_mutual_friends": "是否允许查看共同好友",
                 "show_discord_connections": "是否允许查看绑定的 Discord 账号信息",
-                "instance_minimum_avatar_performance": "最低模型性能"
+                "instance_minimum_avatar_performance": "模型性能评级限制"
             },
             "groups": {
                 "header": "群组",
@@ -1856,6 +1855,7 @@
             "content_drones": "无人机",
             "content_items": "物品",
             "content_third_person": "第三人称视角",
+            "content_prop_movement": "改变玩家移动方式的道具",
             "world_id": "世界 ID",
             "instance_id": "房间 ID",
             "instance_id_placeholder": "通常是随机数",
@@ -1879,7 +1879,7 @@
             "roles": "身份组",
             "open_ingame": "在 VRChat 中打开",
             "display_name": "自定义房间名称 (需要 VRC+)",
-            "minimum_avatar_performance": "最低模型性能"
+            "minimum_avatar_performance": "模型性能评级限制"
         },
         "launch": {
             "header": "启动",
