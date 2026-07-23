@@ -39,7 +39,7 @@
             </FieldGroup>
 
             <DialogFooter>
-                <Button variant="secondary" class="mr-2" @click="closeTableLimitsDialog">
+                <Button variant="secondary" class="me-2" @click="closeTableLimitsDialog">
                     {{ t('prompt.table_entries_settings.cancel') }}
                 </Button>
                 <Button :disabled="isSaveDisabled" @click="saveTableLimitsDialog">

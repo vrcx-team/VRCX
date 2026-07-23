@@ -10,13 +10,13 @@
                 <Spinner v-if="userDialog.isMutualFriendsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span class="inline-flex items-center gap-1 ml-1.5 text-sm">
+            <span class="inline-flex items-center gap-1 ms-1.5 text-sm">
                 <Users class="size-3.5 text-muted-foreground" />
                 {{ t('dialog.user.groups.total_count', { count: userDialog.mutualFriends.length }) }}
             </span>
         </div>
         <div style="display: flex; align-items: center">
-            <Input v-model="searchQuery" class="h-8 w-40 mr-2" placeholder="Search friends" @click.stop />
+            <Input v-model="searchQuery" class="h-8 w-40 me-2" placeholder="Search friends" @click.stop />
             <span style="margin-right: 6px">{{ t('dialog.user.groups.sort_by') }}</span>
             <Select
                 :model-value="userDialogMutualFriendSortingKey"
@@ -42,7 +42,7 @@
             :key="user.id"
             class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
             @click="showUserDialog(user.id)">
-            <div class="relative inline-block flex-none size-9 mr-2.5">
+            <div class="relative inline-block flex-none size-9 me-2.5">
                 <Avatar class="size-9">
                     <AvatarImage :src="userImage(user)" class="object-cover" />
                     <AvatarFallback>
@@ -72,6 +72,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { compareByDisplayName, compareByFriendOrder, compareByLastActiveRef } from '../../../shared/utils';
+    import { localeIncludesCI } from '../../../shared/utils/base/string';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { database } from '../../../services/database';
     import { processBulk } from '../../../services/request';
@@ -98,9 +99,9 @@
     const searchQuery = ref('');
     const filteredMutualFriends = computed(() => {
         const friends = userDialog.value.mutualFriends;
-        const query = searchQuery.value.trim().toLowerCase();
+        const query = searchQuery.value.trim();
         if (!query) return friends;
-        return friends.filter((u) => (u.displayName || '').toLowerCase().includes(query));
+        return friends.filter((u) => localeIncludesCI(u.displayName, query));
     });
     watch(
         () => userDialog.value.id,

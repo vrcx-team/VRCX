@@ -15,10 +15,10 @@
                 <Spinner v-if="isGroupMembersLoading" /><RefreshCcw v-else
             /></Button>
             <Button
-                class="rounded-full h-6 w-6 ml-2"
+                class="rounded-full h-6 w-6 ms-2"
                 size="icon-sm"
                 variant="ghost"
-                style="margin-left: 6px"
+                style="margin-inline-start: 6px"
                 @click="downloadAndSaveJson(`${groupDialog.id}_members`, groupDialog.members)">
                 <Download class="h-4 w-4" />
             </Button>
@@ -30,13 +30,13 @@
             >
             <div
                 v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')"
-                style="float: right"
+                style="float: inline-end"
                 class="flex items-center">
-                <span style="margin-right: 6px">{{ t('dialog.group.members.sort_by') }}</span>
+                <span style="margin-inline-end: 6px">{{ t('dialog.group.members.sort_by') }}</span>
                 <Select
                     v-model="groupDialogMemberSortValue"
                     :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0">
-                    <SelectTrigger class="h-8 w-45 mr-1">
+                    <SelectTrigger class="h-8 w-45 me-1">
                         <SelectValue :placeholder="t('dialog.group.members.sort_by')" />
                     </SelectTrigger>
                     <SelectContent>
@@ -45,7 +45,7 @@
                         </SelectItem>
                     </SelectContent>
                 </Select>
-                <span class="ml-2 mr-1">{{ t('dialog.group.members.filter') }}</span>
+                <span class="ms-2 me-1">{{ t('dialog.group.members.filter') }}</span>
                 <div style="display: inline-block; width: 220px">
                     <VirtualCombobox
                         v-model="groupDialogMemberFilterKey"
@@ -81,7 +81,7 @@
                 :key="user.id"
                 class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                 @click="showUserDialog(user.userId)">
-                <div class="relative inline-block flex-none size-9 mr-2.5">
+                <div class="relative inline-block flex-none size-9 me-2.5">
                     <Avatar class="size-9">
                         <AvatarImage :src="userImage(user.user)" class="object-cover" />
                         <AvatarFallback>
@@ -100,19 +100,19 @@
                                 v-if="user.isRepresenting"
                                 side="top"
                                 :content="t('dialog.group.members.representing')">
-                                <Tag style="margin-right: 6px" />
+                                <Tag style="margin-inline-end: 6px" />
                             </TooltipWrapper>
                             <TooltipWrapper v-if="user.visibility !== 'visible'" side="top">
                                 <template #content>
                                     <span>{{ t('dialog.group.members.visibility') }} {{ user.visibility }}</span>
                                 </template>
-                                <Eye style="margin-right: 6px" />
+                                <Eye style="margin-inline-end: 6px" />
                             </TooltipWrapper>
                             <TooltipWrapper
                                 v-if="!user.isSubscribedToAnnouncements"
                                 side="top"
                                 :content="t('dialog.group.members.unsubscribed_announcements')">
-                                <MessageSquare style="margin-right: 6px" />
+                                <MessageSquare style="margin-inline-end: 6px" />
                             </TooltipWrapper>
                             <TooltipWrapper v-if="user.managerNotes" side="top">
                                 <template #content>
@@ -120,7 +120,7 @@
                                     <br />
                                     <span>{{ user.managerNotes }}</span>
                                 </template>
-                                <Pencil style="margin-right: 6px" />
+                                <Pencil style="margin-inline-end: 6px" />
                             </TooltipWrapper>
                         </template>
                         <template v-for="roleId in user.roleIds" :key="roleId">
@@ -143,7 +143,7 @@
                 :key="user.id"
                 class="infinite-list-item box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                 @click="showUserDialog(user.userId)">
-                <div class="relative inline-block flex-none size-9 mr-2.5">
+                <div class="relative inline-block flex-none size-9 me-2.5">
                     <Avatar class="size-9">
                         <AvatarImage :src="userImage(user.user)" class="object-cover" />
                         <AvatarFallback>
@@ -162,19 +162,19 @@
                                 v-if="user.isRepresenting"
                                 side="top"
                                 :content="t('dialog.group.members.representing')">
-                                <Tag style="margin-right: 6px" />
+                                <Tag style="margin-inline-end: 6px" />
                             </TooltipWrapper>
                             <TooltipWrapper v-if="user.visibility !== 'visible'" side="top">
                                 <template #content>
                                     <span>{{ t('dialog.group.members.visibility') }} {{ user.visibility }}</span>
                                 </template>
-                                <Eye style="margin-right: 6px" />
+                                <Eye style="margin-inline-end: 6px" />
                             </TooltipWrapper>
                             <TooltipWrapper
                                 v-if="!user.isSubscribedToAnnouncements"
                                 side="top"
                                 :content="t('dialog.group.members.unsubscribed_announcements')">
-                                <MessageSquare style="margin-right: 6px" />
+                                <MessageSquare style="margin-inline-end: 6px" />
                             </TooltipWrapper>
                             <TooltipWrapper v-if="user.managerNotes" side="top">
                                 <template #content>
@@ -182,7 +182,7 @@
                                     <br />
                                     <span>{{ user.managerNotes }}</span>
                                 </template>
-                                <Pencil style="margin-right: 6px" />
+                                <Pencil style="margin-inline-end: 6px" />
                             </TooltipWrapper>
                         </template>
                         <template v-for="roleId in user.roleIds" :key="roleId">

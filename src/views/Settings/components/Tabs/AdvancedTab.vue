@@ -297,7 +297,7 @@
 
             <SettingsItem :label="t('view.settings.advanced.advanced.database_cleanup.purge_button')">
                 <Button size="sm" variant="outline" @click="isPurgeDialogVisible = true">
-                    <Trash2 class="h-4 w-4 mr-1" />
+                    <Trash2 class="h-4 w-4 me-1" />
                     {{ t('view.settings.advanced.advanced.database_cleanup.purge') }}
                 </Button>
             </SettingsItem>
@@ -359,7 +359,7 @@
                         {{ t('confirm.cancel_button') }}
                     </Button>
                     <Button size="sm" variant="destructive" :disabled="purgeInProgress" @click="handlePurge">
-                        <Trash2 class="h-4 w-4 mr-1" />
+                        <Trash2 class="h-4 w-4 me-1" />
                         {{ t('view.settings.advanced.advanced.database_cleanup.purge_confirm_button') }}
                     </Button>
                 </DialogFooter>

@@ -7,7 +7,7 @@
             <div class="options-container-item">
                 <span class="name">{{ t('view.settings.appearance.appearance.bio_language') }}</span>
                 <Select :model-value="bioLanguage" @update:modelValue="setBioLanguage">
-                    <SelectTrigger size="sm" style="float: right">
+                    <SelectTrigger size="sm" style="float: inline-end">
                         <SelectValue :placeholder="String(getLanguageName(bioLanguage) || bioLanguage || '')" />
                     </SelectTrigger>
                     <SelectContent>

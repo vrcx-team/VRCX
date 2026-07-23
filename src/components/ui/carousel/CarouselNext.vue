@@ -1,9 +1,12 @@
 <script setup>
     import { ArrowRight } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
+    import { useI18n } from 'vue-i18n';
     import { cn } from '@/lib/utils';
 
     import { useCarousel } from './useCarousel';
+
+    const { t } = useI18n();
 
     const props = defineProps({
         variant: { type: String, required: false, default: 'outline' },
@@ -22,7 +25,7 @@
             cn(
                 'absolute size-8 rounded-full',
                 orientation === 'horizontal'
-                    ? 'top-1/2 -right-12 -translate-y-1/2'
+                    ? 'top-1/2 -end-12 -translate-y-1/2'
                     : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
                 props.class
             )
@@ -31,8 +34,8 @@
         :size="size"
         @click="scrollNext">
         <slot>
-            <ArrowRight />
-            <span class="sr-only">Next Slide</span>
+            <ArrowRight class="rtl:scale-x-[-1]" />
+            <span class="sr-only">{{ t('accessibility.next_slide') }}</span>
         </slot>
     </Button>
 </template>

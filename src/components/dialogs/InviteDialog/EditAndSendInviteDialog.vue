@@ -24,7 +24,7 @@
                 show-count />
 
             <DialogFooter>
-                <Button variant="secondary" class="mr-2" @click="cancelEditAndSendInvite">
+                <Button variant="secondary" class="me-2" @click="cancelEditAndSendInvite">
                     {{ t('dialog.edit_send_invite_message.cancel') }}
                 </Button>
                 <Button @click="saveEditAndSendInvite" :disabled="!editAndSendInviteDialog.newMessage">
@@ -155,7 +155,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        toast.success('Invite photo message sent');
+                        toast.success(t('toast.invite_photo_message_sent'));
                         return args;
                     });
             } else {
@@ -165,7 +165,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        toast.success('Invite message sent');
+                        toast.success(t('toast.invite_message_sent'));
                         return args;
                     });
             }
@@ -179,7 +179,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        toast.success('Request invite photo message sent');
+                        toast.success(t('toast.request_invite_photo_message_sent'));
                         return args;
                     });
             } else {
@@ -189,7 +189,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        toast.success('Request invite message sent');
+                        toast.success(t('toast.request_invite_message_sent'));
                         return args;
                     });
             }

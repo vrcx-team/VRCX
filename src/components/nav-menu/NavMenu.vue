@@ -1,5 +1,5 @@
 <template>
-    <Sidebar side="left" variant="sidebar" collapsible="icon">
+    <Sidebar :side="textDirection === 'rtl' ? 'right' : 'left'" variant="sidebar" collapsible="icon">
         <SidebarHeader v-if="showNewDashboardButton" class="px-2 py-2">
             <SidebarMenu>
                 <SidebarMenuItem>
@@ -7,7 +7,7 @@
                         :tooltip="t('dashboard.new_dashboard')"
                         class="border border-dashed border-primary/40 text-primary hover:bg-primary/10"
                         @click="handleQuickCreateDashboard">
-                        <div class="flex items-center gap-3 pl-1 group-data-[collapsible=icon]:pl-0">
+                        <div class="flex items-center gap-3 ps-1 group-data-[collapsible=icon]:ps-0">
                             <Plus class="size-4" />
                             <span v-show="!isCollapsed">{{ t('dashboard.new_dashboard') }}</span>
                         </div>
@@ -36,7 +36,7 @@
                                                         <span
                                                             v-if="isNavItemNotified(item)"
                                                             class="notify-dot-not-collapsed bg-red-500"
-                                                            :class="{ '-right-1!': isCollapsed }"
+                                                            :class="{ '-end-1!': isCollapsed }"
                                                             aria-hidden="true"></span>
                                                     </i>
                                                     <span v-show="!isCollapsed">{{
@@ -44,7 +44,7 @@
                                                     }}</span>
                                                     <span
                                                         v-if="item.action === 'direct-access' && !isCollapsed"
-                                                        class="nav-shortcut-hint ml-auto inline-flex items-center gap-2">
+                                                        class="nav-shortcut-hint ms-auto inline-flex items-center gap-2">
                                                         <Kbd>{{ isMac ? '⌘' : 'Ctrl' }}</Kbd>
                                                         <Kbd>D</Kbd>
                                                     </span>
@@ -160,6 +160,7 @@
 
 <script setup>
     import { computed, h, onMounted, ref, watch } from 'vue';
+    import { useDirection } from 'reka-ui';
 
     import { storeToRefs } from 'pinia';
     import { Plus } from 'lucide-vue-next';
@@ -209,6 +210,7 @@
 
     const { t, locale } = useI18n();
     const router = useRouter();
+    const textDirection = useDirection();
     const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
@@ -455,7 +457,7 @@
     .notify-dot-not-collapsed {
         position: absolute;
         top: 4px;
-        right: 0;
+        inset-inline-end: 0;
         width: 6px;
         height: 6px;
         border-radius: 50%;

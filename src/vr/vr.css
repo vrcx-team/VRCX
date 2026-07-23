@@ -54,8 +54,8 @@ body {
 }
 body {
     font-family:
-        var(--font-western), var(--font-symbol), var(--font-primary-cjk),
-        var(--font-fallback-cjk);
+        var(--font-western), var(--font-symbol), var(--font-primary-ar),
+        var(--font-primary-cjk), var(--font-fallback-cjk);
 }
 
 .noty_body {
@@ -216,8 +216,8 @@ textarea,
 select,
 button {
     font-family:
-        var(--font-western), var(--font-symbol), var(--font-primary-cjk),
-        var(--font-fallback-cjk);
+        var(--font-western), var(--font-symbol), var(--font-primary-ar),
+        var(--font-primary-cjk), var(--font-fallback-cjk);
     line-height: normal;
     text-shadow:
         #000 0px 0px 3px,
@@ -602,4 +602,82 @@ i.x-user-status.busy {
 .tracker-device span {
     font-size: 14px;
     letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+ * RTL Support for VR Overlay
+ * ==========================================================================*/
+
+[dir="rtl"] .wrist {
+    left: auto;
+    right: 0;
+}
+
+[dir="rtl"] .hmd {
+    left: auto;
+    right: 0;
+}
+
+[dir="rtl"] .hud-feed {
+    right: auto;
+    left: 0;
+}
+
+[dir="rtl"] .hud-timeout {
+    right: auto;
+    left: 0;
+}
+
+[dir="rtl"] .hud-timeout-feed {
+    right: auto;
+    left: 0;
+}
+
+[dir="rtl"] .hud-timeout svg {
+    right: auto;
+    left: -160px;
+}
+
+[dir="rtl"] .vr-bottom-right {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+[dir="rtl"] .x-friend-item .time {
+    margin-right: 0;
+    margin-left: 6px;
+}
+
+[dir="rtl"] .x-friend-item > .avatar {
+    margin-right: 0;
+    margin-left: 8px;
+}
+
+[dir="rtl"] .x-friend-item > img.avatar {
+    margin-left: 0;
+    margin-right: 5px;
+}
+
+[dir="rtl"] .x-friend-item > .detail .name {
+    margin-right: 0;
+    margin-left: 5px;
+}
+
+[dir="rtl"] .x-friend-item .lucide {
+    margin-right: 0;
+    margin-left: 6px !important;
+}
+
+[dir="rtl"] .x-friend-item .lucide + .lucide {
+    margin-left: 0;
+    margin-right: -2px !important;
+}
+
+[dir="rtl"] .hud-feed .item,
+[dir="rtl"] .hud-timeout .item {
+    text-align: left;
+}
+
+[dir="rtl"] body {
+    direction: rtl;
 }

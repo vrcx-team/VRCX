@@ -10,7 +10,7 @@
     <div
         :class="
             cn(
-                'relative [&>[data-slot=input]]:has-[[data-slot=increment]]:pr-5 [&>[data-slot=input]]:has-[[data-slot=decrement]]:pl-5',
+                'relative [&>[data-slot=input]]:has-[[data-slot=increment]]:pe-5 [&>[data-slot=input]]:has-[[data-slot=decrement]]:ps-5',
                 props.class
             )
         ">

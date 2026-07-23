@@ -2,27 +2,27 @@
     <Sheet v-model:open="isNotificationCenterOpen">
         <SheetContent side="right" class="flex flex-col p-0 sm:max-w-md px-1" @open-auto-focus.prevent>
             <SheetHeader class="border-b px-4 pt-4 pb-3">
-                <div class="flex items-center pr-6">
+                <div class="flex items-center pe-6">
                     <SheetTitle>{{ t('side_panel.notification_center.title') }}</SheetTitle>
                 </div>
             </SheetHeader>
             <Tabs v-model="activeTab" class="flex min-h-0 flex-1 flex-col">
-                <TabsList class="mr-4 ml-2 mt-2 grid w-auto grid-cols-3">
+                <TabsList class="me-4 ms-2 mt-2 grid w-auto grid-cols-3">
                     <TabsTrigger value="friend">
                         {{ t('side_panel.notification_center.tab_friend') }}
-                        <span v-if="unseenFriendNotifications.length" class="ml-1 text-xs text-muted-foreground">
+                        <span v-if="unseenFriendNotifications.length" class="ms-1 text-xs text-muted-foreground">
                             ({{ unseenFriendNotifications.length }})
                         </span>
                     </TabsTrigger>
                     <TabsTrigger value="group">
                         {{ t('side_panel.notification_center.tab_group') }}
-                        <span v-if="unseenGroupNotifications.length" class="ml-1 text-xs text-muted-foreground">
+                        <span v-if="unseenGroupNotifications.length" class="ms-1 text-xs text-muted-foreground">
                             ({{ unseenGroupNotifications.length }})
                         </span>
                     </TabsTrigger>
                     <TabsTrigger value="other">
                         {{ t('side_panel.notification_center.tab_other') }}
-                        <span v-if="unseenOtherNotifications.length" class="ml-1 text-xs text-muted-foreground">
+                        <span v-if="unseenOtherNotifications.length" class="ms-1 text-xs text-muted-foreground">
                             ({{ unseenOtherNotifications.length }})
                         </span>
                     </TabsTrigger>

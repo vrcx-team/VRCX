@@ -4,14 +4,14 @@
             <Spinner v-if="loading" />
             <RefreshCw v-else />
         </Button>
-        <span class="ml-1.5 mr-1.5 text-sm"> {{ tableData.data.length }}/{{ groupRef.memberCount }} </span>
-        <div class="mt-1.5" style="float: right">
-            <span class="mr-1.5">{{ t('dialog.group.members.sort_by') }}</span>
+        <span class="ms-1.5 me-1.5 text-sm"> {{ tableData.data.length }}/{{ groupRef.memberCount }} </span>
+        <div class="mt-1.5" style="float: inline-end">
+            <span class="me-1.5">{{ t('dialog.group.members.sort_by') }}</span>
             <DropdownMenu>
                 <DropdownMenuTrigger as-child :disabled="sortFilterDisabled">
                     <Button size="sm" variant="outline" :disabled="sortFilterDisabled" @click.stop>
                         {{ t(memberSortOrder.name) }}
-                        <ArrowDown class="ml-1.5" />
+                        <ArrowDown class="ms-1.5" />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
@@ -23,12 +23,12 @@
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-            <span class="ml-2 mr-1.5">{{ t('dialog.group.members.filter') }}</span>
+            <span class="ms-2 me-1.5">{{ t('dialog.group.members.filter') }}</span>
             <DropdownMenu>
                 <DropdownMenuTrigger as-child :disabled="sortFilterDisabled">
                     <Button size="sm" variant="outline" :disabled="sortFilterDisabled" @click.stop>
                         {{ t(memberFilter.name) }}
-                        <ArrowDown class="ml-1.5" />
+                        <ArrowDown class="ms-1.5" />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>

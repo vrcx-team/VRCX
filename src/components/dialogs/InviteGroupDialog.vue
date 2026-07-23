@@ -21,7 +21,7 @@
                         :deselect-on-reselect="true">
                         <template #item="{ item, selected }">
                             <div class="flex w-full items-center p-1.5 text-[13px]">
-                                <div class="relative inline-block flex-none size-9 mr-2.5">
+                                <div class="relative inline-block flex-none size-9 me-2.5">
                                     <img
                                         class="size-full rounded-full object-cover"
                                         :src="item.iconUrl"
@@ -30,7 +30,7 @@
                                 <div class="flex-1 overflow-hidden">
                                     <span class="block truncate font-medium leading-[18px]" v-text="item.label"></span>
                                 </div>
-                                <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                                <CheckIcon :class="['ms-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
                             </div>
                         </template>
                     </VirtualCombobox>
@@ -49,7 +49,7 @@
                             <div class="flex w-full items-center p-1.5 text-[13px]">
                                 <template v-if="item.user">
                                     <div
-                                        class="relative inline-block flex-none size-9 mr-2.5"
+                                        class="relative inline-block flex-none size-9 me-2.5"
                                         :class="userStatusClass(item.user)">
                                         <img
                                             class="size-full rounded-full object-cover"
@@ -67,7 +67,7 @@
                                     <span v-text="item.label"></span>
                                 </template>
 
-                                <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                                <CheckIcon :class="['ms-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
                             </div>
                         </template>
                     </VirtualCombobox>
@@ -304,7 +304,7 @@
                 }
                 // not allowed to invite
                 inviteGroupDialog.value.groupId = '';
-                toast.error('You are not allowed to invite to this group');
+                toast.error(t('dialog.invite_to_group.not_allowed'));
                 return args;
             })
             .finally(() => {
@@ -318,7 +318,7 @@
         modalStore
             .confirm({
                 description: t('confirm.invite_group'),
-                title: 'Confirm'
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (!ok) return;

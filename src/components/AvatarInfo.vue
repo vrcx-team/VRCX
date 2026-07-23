@@ -1,9 +1,9 @@
 <template>
     <div @click="confirm" class="cursor-pointer w-fit align-top flex items-center">
-        <span v-if="avatarName" class="flex items-center mr-1"
-            >{{ avatarName }} <Lock v-if="avatarType && avatarType === '(own)'" class="h-4 w-4 ml-1"
+        <span v-if="avatarName" class="flex items-center me-1"
+            >{{ avatarName }} <Lock v-if="avatarType && avatarType === '(own)'" class="h-4 w-4 ms-1"
         /></span>
-        <span v-else class="flex items-center mr-1 text-muted-foreground">{{
+        <span v-else class="flex items-center me-1 text-muted-foreground">{{
             t('dialog.user.info.unknown_avatar')
         }}</span>
         <TooltipWrapper v-if="avatarTags">

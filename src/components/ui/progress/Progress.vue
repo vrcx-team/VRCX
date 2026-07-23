@@ -1,5 +1,5 @@
 <script setup>
-    import { ProgressIndicator, ProgressRoot } from 'reka-ui';
+    import { ProgressIndicator, ProgressRoot, useDirection } from 'reka-ui';
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
 
@@ -14,6 +14,12 @@
     });
 
     const delegatedProps = reactiveOmit(props, 'class');
+    const textDirection = useDirection();
+
+    const getProgressTranslate = () => {
+        const pct = 100 - (props.modelValue ?? 0);
+        return textDirection.value === 'rtl' ? pct : -pct;
+    };
 </script>
 
 <template>
@@ -24,6 +30,6 @@
         <ProgressIndicator
             data-slot="progress-indicator"
             class="bg-primary h-full w-full flex-1 transition-all"
-            :style="`transform: translateX(-${100 - (props.modelValue ?? 0)}%);`" />
+            :style="{ transform: `translateX(${getProgressTranslate()}%)` }" />
     </ProgressRoot>
 </template>

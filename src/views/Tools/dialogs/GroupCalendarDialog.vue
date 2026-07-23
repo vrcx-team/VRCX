@@ -7,7 +7,7 @@
                 </div>
                 <div class="featured-switch">
                     <span class="featured-switch-text">{{ t('dialog.group_calendar.featured_events') }}</span>
-                    <Switch v-model="showFeaturedEvents" @update:modelValue="toggleFeaturedEvents" class="mr-2" />
+                    <Switch v-model="showFeaturedEvents" @update:modelValue="toggleFeaturedEvents" class="me-2" />
                     <Button size="sm" variant="outline" @click="toggleViewMode" class="view-toggle-btn">
                         {{
                             viewMode === 'timeline'
@@ -489,10 +489,10 @@
             .timeline-view {
                 .timeline-container {
                     min-width: 200px;
-                    padding-left: 4px;
-                    padding-right: 16px;
-                    margin-left: 8px;
-                    margin-right: 8px;
+                    padding-inline-start: 4px;
+                    padding-inline-end: 16px;
+                    margin-inline-start: 8px;
+                    margin-inline-end: 8px;
                     overflow: auto;
                     height: 50vh;
 
@@ -503,7 +503,9 @@
                     }
 
                     .timeline-group {
-                        padding: 0 20px 8px 8px;
+                        padding-block: 0 8px;
+                        padding-inline-start: 8px;
+                        padding-inline-end: 20px;
                     }
 
                     .timeline-timestamp {
@@ -548,7 +550,7 @@
                             .calendar-event-badge {
                                 position: absolute;
                                 top: 2px;
-                                right: 2px;
+                                inset-inline-end: 2px;
                                 min-width: 16px;
                                 height: 16px;
                                 border-radius: var(--radius-xl);
@@ -586,7 +588,7 @@
         margin-top: 8px;
         .featured-switch-text {
             font-size: 13px;
-            margin-right: 6px;
+            margin-inline-end: 6px;
         }
     }
 
@@ -601,8 +603,8 @@
     .grid-view {
         position: absolute;
         top: 0;
-        left: 0;
-        right: 0;
+        inset-inline-start: 0;
+        inset-inline-end: 0;
         bottom: 0;
         display: flex;
         flex-direction: column;
@@ -636,7 +638,7 @@
 
                         .rotation-transition {
                             font-size: 14px;
-                            margin-right: 8px;
+                            margin-inline-end: 8px;
                             transition: transform 0.3s;
                         }
                     }

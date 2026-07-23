@@ -19,11 +19,11 @@
                     :model-value="avatarExportFavoriteGroupSelection"
                     @update:modelValue="handleAvatarExportFavoriteGroupSelect">
                     <SelectTrigger size="sm">
-                        <SelectValue placeholder="All Favorites" />
+                        <SelectValue :placeholder="t('dialog.avatar_export.all_favorites')" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem :value="AVATAR_EXPORT_ALL_VALUE">All Favorites</SelectItem>
+                            <SelectItem :value="AVATAR_EXPORT_ALL_VALUE">{{ t('dialog.avatar_export.all_favorites') }}</SelectItem>
                             <SelectItem
                                 v-for="groupAPI in favoriteAvatarGroups"
                                 :key="groupAPI.name"
@@ -35,15 +35,15 @@
                 </Select>
 
                 <Select
-                    class="ml-2"
+                    class="ms-2"
                     :model-value="avatarExportLocalFavoriteGroupSelection"
                     @update:modelValue="handleAvatarExportLocalFavoriteGroupSelect">
                     <SelectTrigger size="sm">
-                        <SelectValue placeholder="Select Group" />
+                        <SelectValue :placeholder="t('dialog.avatar_export.select_group')" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem :value="AVATAR_EXPORT_NONE_VALUE">None</SelectItem>
+                            <SelectItem :value="AVATAR_EXPORT_NONE_VALUE">{{ t('dialog.avatar_export.none') }}</SelectItem>
                             <SelectItem v-for="group in localAvatarFavoriteGroups" :key="group" :value="group">
                                 {{ group }} ({{ localAvatarFavGroupLength(group) }})
                             </SelectItem>
@@ -105,13 +105,13 @@
 
     const avatarExportFavoriteGroupSelection = ref(AVATAR_EXPORT_ALL_VALUE);
     const avatarExportLocalFavoriteGroupSelection = ref(AVATAR_EXPORT_NONE_VALUE);
-    const exportSelectedOptions = ref(['ID', 'Name']);
+    const exportSelectedOptions = ref([t('dialog.avatar_export.id'), t('dialog.avatar_export.name')]);
     const exportSelectOptions = ref([
-        { label: 'ID', value: 'id' },
-        { label: 'Name', value: 'name' },
-        { label: 'Author ID', value: 'authorId' },
-        { label: 'Author Name', value: 'authorName' },
-        { label: 'Thumbnail', value: 'thumbnailImageUrl' }
+        { label: t('dialog.avatar_export.id'), value: 'id' },
+        { label: t('dialog.avatar_export.name'), value: 'name' },
+        { label: t('dialog.avatar_export.author_id'), value: 'authorId' },
+        { label: t('dialog.avatar_export.author_name'), value: 'authorName' },
+        { label: t('dialog.avatar_export.thumbnail'), value: 'thumbnailImageUrl' }
     ]);
 
     /**
@@ -196,11 +196,11 @@
         navigator.clipboard
             .writeText(avatarExportContent.value)
             .then(() => {
-                toast.success('Copied successfully!', { duration: 2000 });
+                toast.success(t('dialog.avatar_export.copied_successfully'), { duration: 2000 });
             })
             .catch((err) => {
                 console.error('Copy failed:', err);
-                toast.error('Copy failed!');
+                toast.error(t('dialog.avatar_export.copy_failed'));
             });
     }
     /**

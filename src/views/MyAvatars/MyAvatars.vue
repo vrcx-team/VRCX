@@ -34,7 +34,7 @@
                         <Badge
                             v-if="activeFilterCount"
                             variant="secondary"
-                            class="ml-0.5 h-4.5 min-w-4.5 rounded-full px-1 text-xs">
+                            class="ms-0.5 h-4.5 min-w-4.5 rounded-full px-1 text-xs">
                             {{ activeFilterCount }}
                         </Badge>
                     </Button>
@@ -256,7 +256,7 @@
                 <div
                     v-for="vItem in virtualItems"
                     :key="vItem.row?.key ?? String(vItem.virtualItem.index)"
-                    class="absolute left-0 top-0 w-full box-border pb-2"
+                    class="absolute start-0 top-0 w-full box-border pb-2"
                     :data-index="vItem.virtualItem.index"
                     :ref="virtualizer.measureElement"
                     :style="{ transform: `translateY(${vItem.virtualItem.start}px)` }">

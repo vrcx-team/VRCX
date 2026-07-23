@@ -18,6 +18,7 @@
     --font-cjk-sc-primary: 'Noto Sans SC Variable';
     --font-cjk-kr-primary: 'Noto Sans KR Variable';
     --font-cjk-tc-primary: 'Noto Sans TC Variable';
+    --font-ar-primary: 'Noto Sans Arabic';
     --font-western:
         'ellipsis-font', -apple-system, var(--font-western-primary), 'Segoe UI',
         'Roboto', 'Ubuntu', 'Cantarell', 'DejaVu Sans';
@@ -26,6 +27,7 @@
     --font-primary-cjk:
         var(--font-cjk-jp-primary), var(--font-cjk-sc-primary),
         var(--font-cjk-kr-primary), var(--font-cjk-tc-primary);
+    --font-primary-ar: var(--font-ar-primary);
     --font-mono-cjk:
         ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
         'Liberation Mono', 'Courier New', var(--font-primary-cjk), monospace;
@@ -53,4 +55,8 @@
     --font-primary-cjk:
         var(--font-cjk-tc-primary), var(--font-cjk-jp-primary),
         var(--font-cjk-kr-primary), var(--font-cjk-sc-primary);
+}
+
+:root[lang='ar'] {
+    --font-primary-ar: var(--font-ar-primary);
 }

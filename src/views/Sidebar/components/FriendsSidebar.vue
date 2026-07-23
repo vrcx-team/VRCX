@@ -6,7 +6,7 @@
                     <template v-for="item in virtualItems" :key="String(item.virtualItem.key)">
                         <div
                             v-if="item.row"
-                            class="absolute left-0 top-0 w-full box-border"
+                            class="absolute start-0 top-0 w-full box-border"
                             :data-index="item.virtualItem.index"
                             :ref="virtualizer.measureElement"
                             :style="rowStyle(item)">
@@ -18,7 +18,7 @@
                                     <ChevronDown
                                         class="transition-transform duration-200 ease-in-out"
                                         :class="{ '-rotate-90': !item.row.expanded }" />
-                                    <span class="ml-1.5">
+                                    <span class="ms-1.5">
                                         {{ item.row.label }}
                                         <template v-if="item.row.count !== null && item.row.count !== undefined">
                                             &horbar; {{ item.row.count }}
@@ -34,7 +34,7 @@
                                             class="friend-row box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
                                             @click="showUserDialog(currentUser.id)">
                                             <div
-                                                class="relative inline-block flex-none size-9 mr-2.5"
+                                                class="relative inline-block flex-none size-9 me-2.5"
                                                 :class="userStatusClass(currentUser)">
                                                 <Avatar class="size-full rounded-full">
                                                     <AvatarImage :src="userImage(currentUser)" class="object-cover" />
@@ -134,7 +134,7 @@
                             <template v-else-if="item.row.type === 'instance-header'">
                                 <div class="mb-1 flex items-center">
                                     <Location class="inline text-xs" :location="item.row.location" />
-                                    <span class="text-xs ml-1.5">{{ `(${item.row.count})` }}</span>
+                                    <span class="text-xs ms-1.5">{{ `(${item.row.count})` }}</span>
                                 </div>
                             </template>
 
@@ -753,7 +753,7 @@
      */
     function changeStatus(value) {
         userRequest.saveCurrentUser({ status: value }).then(() => {
-            toast.success('Status updated');
+            toast.success(t('toast.status_updated'));
         });
     }
 
@@ -763,7 +763,7 @@
      */
     function setStatusFromHistory(status) {
         userRequest.saveCurrentUser({ statusDescription: status }).then(() => {
-            toast.success('Status updated');
+            toast.success(t('toast.status_updated'));
         });
     }
 
@@ -780,7 +780,7 @@
                 statusDescription: preset.statusDescription
             })
             .then(() => {
-                toast.success('Status updated');
+                toast.success(t('toast.status_updated'));
             });
     }
 
@@ -811,7 +811,7 @@
     function friendRequestInvite(friend) {
         notificationRequest.sendRequestInvite({ platform: 'standalonewindows' }, friend.id).then(() => {
             recordRecentAction(friend.id, 'Request Invite');
-            toast.success('Request invite sent');
+            toast.success(t('toast.request_invite_sent'));
         });
     }
 

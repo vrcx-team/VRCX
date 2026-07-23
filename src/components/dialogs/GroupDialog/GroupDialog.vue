@@ -24,17 +24,17 @@
                         <Image class="size-8 text-muted-foreground" />
                     </div>
                 </div>
-                <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
+                <div class="ms-4" style="flex: 1; display: flex; align-items: flex-start">
                     <div class="group-header" style="flex: 1">
-                        <span class="mr-1.5" v-if="groupDialog.ref.ownerId === currentUser.id">👑</span>
+                        <span class="me-1.5" v-if="groupDialog.ref.ownerId === currentUser.id">👑</span>
                         <div class="max-h-25 overflow-hidden">
                             <span
-                                class="font-bold mr-1.5 break-all"
+                                class="font-bold me-1.5 break-all"
                                 style="cursor: pointer"
                                 v-text="groupDialog.ref.name"
                                 @click="copyToClipboard(groupDialog.ref.name)"></span>
                         </div>
-                        <span class="group-discriminator x-grey mr-1.5 font-mono text-xs">
+                        <span class="group-discriminator x-grey me-1.5 font-mono text-xs">
                             {{ groupDialog.ref.shortCode }}.{{ groupDialog.ref.discriminator }}
                         </span>
                         <TooltipWrapper v-for="item in groupDialog.ref.$languages" :key="item.key" side="top">
@@ -53,68 +53,68 @@
                                 v-text="groupDialog.ownerDisplayName"></span>
                         </div>
                         <div class="group-tags flex flex-wrap items-center">
-                            <Badge v-if="groupDialog.ref.isVerified" variant="outline" class="mr-1.5 mt-1.5">
+                            <Badge v-if="groupDialog.ref.isVerified" variant="outline" class="me-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.verified') }}
                             </Badge>
-                            <Badge v-if="groupDialog.ref.privacy === 'private'" variant="outline" class="mr-1.5 mt-1.5">
+                            <Badge v-if="groupDialog.ref.privacy === 'private'" variant="outline" class="me-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.private') }}
                             </Badge>
-                            <Badge v-if="groupDialog.ref.privacy === 'default'" variant="outline" class="mr-1.5 mt-1.5">
+                            <Badge v-if="groupDialog.ref.privacy === 'default'" variant="outline" class="me-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.public') }}
                             </Badge>
-                            <Badge v-if="groupDialog.ref.joinState === 'open'" variant="outline" class="mr-1.5 mt-1.5">
+                            <Badge v-if="groupDialog.ref.joinState === 'open'" variant="outline" class="me-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.open') }}
                             </Badge>
                             <Badge
                                 v-else-if="groupDialog.ref.joinState === 'request'"
                                 variant="outline"
-                                class="mr-1.5 mt-1.5">
+                                class="me-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.request') }}
                             </Badge>
                             <Badge
                                 v-else-if="groupDialog.ref.joinState === 'invite'"
                                 variant="outline"
-                                class="mr-1.5 mt-1.5">
+                                class="me-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.invite') }}
                             </Badge>
                             <Badge
                                 v-else-if="groupDialog.ref.joinState === 'closed'"
                                 variant="outline"
-                                class="mr-1.5 mt-1.5">
+                                class="me-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.closed') }}
                             </Badge>
-                            <Badge v-if="groupDialog.inGroup" variant="outline" class="mr-1.5 mt-1.5">
+                            <Badge v-if="groupDialog.inGroup" variant="outline" class="me-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.joined') }}
                             </Badge>
                             <Badge
                                 v-if="groupDialog.ref.myMember && groupDialog.ref.myMember.bannedAt"
                                 variant="outline"
-                                class="mr-1.5 mt-1.5">
+                                class="me-1.5 mt-1.5">
                                 {{ t('dialog.group.tags.banned') }}
                             </Badge>
                             <template v-if="groupDialog.inGroup && groupDialog.ref.myMember">
                                 <Badge
                                     v-if="groupDialog.ref.myMember.visibility === 'visible'"
                                     variant="outline"
-                                    class="mr-1.5 mt-1.5">
+                                    class="me-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.visible') }}
                                 </Badge>
                                 <Badge
                                     v-else-if="groupDialog.ref.myMember.visibility === 'friends'"
                                     variant="outline"
-                                    class="mr-1.5 mt-1.5">
+                                    class="me-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.friends') }}
                                 </Badge>
                                 <Badge
                                     v-else-if="groupDialog.ref.myMember.visibility === 'hidden'"
                                     variant="outline"
-                                    class="mr-1.5 mt-1.5">
+                                    class="me-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.hidden') }}
                                 </Badge>
                                 <Badge
                                     v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements"
                                     variant="outline"
-                                    class="mr-1.5 mt-1.5">
+                                    class="me-1.5 mt-1.5">
                                     {{ t('dialog.group.tags.subscribed') }}
                                 </Badge>
                             </template>
@@ -127,14 +127,14 @@
                                 v-text="groupDialog.ref.description"></pre>
                         </div>
                     </div>
-                    <div class="ml-2 mt-12">
+                    <div class="ms-2 mt-12">
                         <template v-if="groupDialog.inGroup && groupDialog.ref?.myMember">
                             <TooltipWrapper
                                 v-if="groupDialog.ref.myMember?.isRepresenting"
                                 side="top"
                                 :content="t('dialog.group.actions.unrepresent_tooltip')">
                                 <Button
-                                    class="rounded-full mr-2"
+                                    class="rounded-full me-2"
                                     variant="secondary"
                                     size="icon-lg"
                                     style="margin-left: 6px"
@@ -146,7 +146,7 @@
                             <TooltipWrapper v-else side="top" :content="t('dialog.group.actions.represent_tooltip')">
                                 <span>
                                     <Button
-                                        class="rounded-full mr-2"
+                                        class="rounded-full me-2"
                                         variant="outline"
                                         size="icon-lg"
                                         :ariaLabel="t('dialog.group.actions.represent_tooltip')"
@@ -161,7 +161,7 @@
                             <TooltipWrapper side="top" :content="t('dialog.group.actions.cancel_join_request_tooltip')">
                                 <span>
                                     <Button
-                                        class="rounded-full mr-2"
+                                        class="rounded-full me-2"
                                         variant="outline"
                                         size="icon-lg"
                                         :ariaLabel="t('dialog.group.actions.cancel_join_request_tooltip')"
@@ -175,7 +175,7 @@
                             <TooltipWrapper side="top" :content="t('dialog.group.actions.pending_request_tooltip')">
                                 <span>
                                     <Button
-                                        class="rounded-full mr-2"
+                                        class="rounded-full me-2"
                                         variant="outline"
                                         size="icon-lg"
                                         :ariaLabel="t('dialog.group.actions.pending_request_tooltip')"
@@ -191,7 +191,7 @@
                                 side="top"
                                 :content="t('dialog.group.actions.request_join_tooltip')">
                                 <Button
-                                    class="rounded-full mr-2"
+                                    class="rounded-full me-2"
                                     variant="outline"
                                     size="icon-lg"
                                     :ariaLabel="t('dialog.group.actions.request_join_tooltip')"
@@ -205,7 +205,7 @@
                                 :content="t('dialog.group.actions.invite_required_tooltip')">
                                 <span>
                                     <Button
-                                        class="rounded-full mr-2"
+                                        class="rounded-full me-2"
                                         variant="outline"
                                         size="icon-lg"
                                         :ariaLabel="t('dialog.group.actions.invite_required_tooltip')"
@@ -219,7 +219,7 @@
                                 side="top"
                                 :content="t('dialog.group.actions.join_group_tooltip')">
                                 <Button
-                                    class="rounded-full mr-2"
+                                    class="rounded-full me-2"
                                     variant="outline"
                                     size="icon-lg"
                                     :ariaLabel="t('dialog.group.actions.join_group_tooltip')"

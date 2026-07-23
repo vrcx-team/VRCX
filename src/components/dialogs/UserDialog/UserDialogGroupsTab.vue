@@ -10,17 +10,17 @@
                 <Spinner v-if="userDialog.isGroupsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span class="ml-1.5 text-sm">{{
+            <span class="ms-1.5 text-sm">{{
                 t('dialog.user.groups.total_count', { count: userDialog.userGroups.groups.length })
             }}</span>
             <template v-if="userDialogGroupEditMode">
-                <span class="text-[10px] ml-2">{{ t('dialog.user.groups.hold_shift') }}</span>
+                <span class="text-[10px] ms-2">{{ t('dialog.user.groups.hold_shift') }}</span>
             </template>
         </div>
         <div style="display: flex; align-items: center">
             <template v-if="!userDialogGroupEditMode">
-                <Input v-model="groupSearchQuery" class="h-8 w-40 mr-2" placeholder="Search groups" @click.stop />
-                <span style="margin-right: 6px">{{ t('dialog.user.groups.sort_by') }}</span>
+                <Input v-model="groupSearchQuery" class="h-8 w-40 me-2" placeholder="Search groups" @click.stop />
+                <span style="margin-inline-end: 6px">{{ t('dialog.user.groups.sort_by') }}</span>
                 <Select
                     :model-value="userDialogGroupSortingKey"
                     :disabled="userDialog.isGroupsLoading"
@@ -48,7 +48,7 @@
                 size="sm"
                 variant="outline"
                 v-else-if="currentUser.id === userDialog.id"
-                class="ml-2"
+                class="ms-2"
                 @click="editModeCurrentUserGroups">
                 {{ t('dialog.user.groups.edit_mode') }}
             </Button>
@@ -59,7 +59,7 @@
             <div class="flex flex-wrap items-start" style="margin-top: 8px; margin-bottom: 16px; max-height: unset">
                 <!-- Bulk actions dropdown (shown only in edit mode) -->
                 <Select :model-value="bulkGroupActionValue" @update:modelValue="handleBulkGroupAction">
-                    <SelectTrigger size="sm" style="margin-right: 6px; margin-bottom: 6px" @click.stop>
+                    <SelectTrigger size="sm" style="margin-inline-end: 6px; margin-bottom: 6px" @click.stop>
                         <SelectValue :placeholder="t('dialog.group.actions.manage_selected')" />
                     </SelectTrigger>
                     <SelectContent>
@@ -99,8 +99,8 @@
                     <!-- Manual checkbox -->
                     <div
                         style="
-                            margin-left: 6px;
-                            margin-right: 6px;
+                            margin-inline-start: 6px;
+                            margin-inline-end: 6px;
                             transform: scale(0.8);
                             transform-origin: left center;
                         "
@@ -110,12 +110,12 @@
                             @update:modelValue="() => toggleGroupSelection(group.id)" />
                     </div>
 
-                    <div style="margin-right: 3px; margin-left: 6px" @click.stop>
+                    <div style="margin-inline-end: 3px; margin-inline-start: 6px" @click.stop>
                         <Button
                             size="icon-sm"
                             variant="ghost"
                             :ariaLabel="t('dialog.vrcx_updater.download')"
-                            style="display: block; padding: 7px; font-size: 9px; margin-left: 0; rotate: 180deg"
+                            style="display: block; padding: 7px; font-size: 9px; margin-inline-start: 0; rotate: 180deg"
                             @click="moveGroupTop(group.id)">
                             <DownloadIcon />
                         </Button>
@@ -123,28 +123,28 @@
                             size="icon-sm"
                             variant="ghost"
                             :ariaLabel="t('dialog.vrcx_updater.download')"
-                            style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
+                            style="display: block; padding: 7px; font-size: 9px; margin-inline-start: 0"
                             @click="moveGroupBottom(group.id)">
                             <DownloadIcon />
                         </Button>
                     </div>
-                    <div style="margin-right: 8px" @click.stop>
+                    <div style="margin-inline-end: 8px" @click.stop>
                         <Button
                             size="icon-sm"
                             variant="outline"
-                            style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
+                            style="display: block; padding: 7px; font-size: 9px; margin-inline-start: 0"
                             @click="moveGroupUp(group.id)">
                             <ArrowUp />
                         </Button>
                         <Button
                             size="icon-sm"
                             variant="outline"
-                            style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
+                            style="display: block; padding: 7px; font-size: 9px; margin-inline-start: 0"
                             @click="moveGroupDown(group.id)">
                             <ArrowDown />
                         </Button>
                     </div>
-                    <div class="relative inline-block flex-none size-9 mr-2.5">
+                    <div class="relative inline-block flex-none size-9 me-2.5">
                         <Avatar class="size-9">
                             <AvatarImage :src="group.iconUrl" class="object-cover" />
                             <AvatarFallback>
@@ -159,7 +159,7 @@
                                 v-if="group.isRepresenting"
                                 side="top"
                                 :content="t('dialog.group.members.representing')">
-                                <Tag style="margin-right: 6px" />
+                                <Tag style="margin-inline-end: 6px" />
                             </TooltipWrapper>
                             <TooltipWrapper v-if="group.myMember?.visibility !== 'visible'" side="top">
                                 <template #content>
@@ -168,7 +168,7 @@
                                         {{ group.myMember.visibility }}</span
                                     >
                                 </template>
-                                <Eye style="margin-right: 6px" />
+                                <Eye style="margin-inline-end: 6px" />
                             </TooltipWrapper>
                             <span>({{ group.memberCount }})</span>
                         </span>
@@ -222,7 +222,7 @@
                             size="icon-sm"
                             variant="outline"
                             v-if="shiftHeld"
-                            style="margin-left: 6px"
+                            style="margin-inline-start: 6px"
                             :ariaLabel="t('dialog.user.groups.leave_group_tooltip')"
                             @click.stop="leaveGroup(group.id)">
                             <LogOut />
@@ -232,7 +232,7 @@
                             size="icon-sm"
                             variant="outline"
                             v-else
-                            style="margin-left: 6px"
+                            style="margin-inline-start: 6px"
                             :ariaLabel="t('dialog.user.groups.leave_group_tooltip')"
                             @click.stop="leaveGroupPrompt(group.id)">
                             <LogOut />
@@ -253,7 +253,7 @@
         <template v-else>
             <template v-if="userDialog.userGroups.ownGroups.length > 0">
                 <span class="text-base font-bold">{{ t('dialog.user.groups.own_groups') }}</span>
-                <span class="text-xs ml-1.5"
+                <span class="text-xs ms-1.5"
                     >{{ userDialog.userGroups.ownGroups.length }}/{{
                         // @ts-ignore
                         cachedConfig?.constants?.GROUPS?.MAX_OWNED
@@ -269,7 +269,7 @@
             </template>
             <template v-if="userDialog.userGroups.mutualGroups.length > 0">
                 <span class="text-base font-bold">{{ t('dialog.user.groups.mutual_groups') }}</span>
-                <span class="text-xs ml-1.5">{{ userDialog.userGroups.mutualGroups.length }}</span>
+                <span class="text-xs ms-1.5">{{ userDialog.userGroups.mutualGroups.length }}</span>
                 <div class="flex flex-wrap items-start" style="margin-top: 8px; margin-bottom: 16px; min-height: 60px">
                     <UserDialogGroupCard
                         v-for="group in userDialog.userGroups.mutualGroups"
@@ -280,7 +280,7 @@
             </template>
             <template v-if="userDialog.userGroups.remainingGroups.length > 0">
                 <span class="text-base font-bold">{{ t('dialog.user.groups.groups') }}</span>
-                <span class="text-xs ml-1.5">
+                <span class="text-xs ms-1.5">
                     {{ userDialog.userGroups.remainingGroups.length }}
                     <template v-if="currentUser.id === userDialog.id">
                         /
@@ -330,6 +330,7 @@
         handleGroupList
     } from '../../../coordinators/groupCoordinator';
     import { compareByMemberCount, compareByName } from '../../../shared/utils';
+    import { localeIncludesCI } from '../../../shared/utils/base/string';
     import { groupRequest } from '../../../api';
     import { useOptionKeySelect } from '../../../composables/useOptionKeySelect';
     import { userDialogGroupSortingOptions } from '../../../shared/constants';
@@ -355,9 +356,9 @@
     const groupSearchQuery = ref('');
     const groupSearchActive = computed(() => groupSearchQuery.value.trim().length > 0);
     const allFilteredGroups = computed(() => {
-        const query = groupSearchQuery.value.trim().toLowerCase();
+        const query = groupSearchQuery.value.trim();
         if (!query) return [];
-        return userDialog.value.userGroups.groups.filter((g) => (g.name || '').toLowerCase().includes(query));
+        return userDialog.value.userGroups.groups.filter((g) => localeIncludesCI(g.name, query));
     });
     watch(
         () => userDialog.value.id,
@@ -522,7 +523,7 @@
             );
         } catch (err) {
             console.error(err);
-            toast.error('Failed to save in-game group order');
+            toast.error(t('toast.failed_to_save_group_order'));
         }
     }
 

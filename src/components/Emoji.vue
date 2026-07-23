@@ -2,7 +2,7 @@
     <div ref="containerRef" class="relative overflow-hidden" :style="sizeStyle">
         <div
             v-if="image.frames"
-            class="avatar absolute top-0 left-0"
+            class="avatar absolute top-0 start-0"
             :style="
                 generateEmojiStyle(imageUrl, image.framesOverTime, image.frames, image.loopStyle, effectiveSize)
             "></div>

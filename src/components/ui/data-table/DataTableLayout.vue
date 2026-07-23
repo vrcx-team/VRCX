@@ -36,11 +36,11 @@
                                                             :props="header.getContext()" />
                                                         <div
                                                             v-if="header.column.getCanResize?.()"
-                                                            class="absolute right-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
+                                                            class="absolute end-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
                                                             @mousedown.stop="header.getResizeHandler?.()($event)"
                                                             @touchstart.stop="header.getResizeHandler?.()($event)">
                                                             <div
-                                                                class="absolute right-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
+                                                                class="absolute end-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
                                                         </div>
                                                     </template>
                                                 </TableHead>
@@ -59,11 +59,11 @@
                                                     :props="header.getContext()" />
                                                 <div
                                                     v-if="header.column.getCanResize?.()"
-                                                    class="absolute right-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
+                                                    class="absolute end-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
                                                     @mousedown.stop="header.getResizeHandler?.()($event)"
                                                     @touchstart.stop="header.getResizeHandler?.()($event)">
                                                     <div
-                                                        class="absolute right-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
+                                                        class="absolute end-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
                                                 </div>
                                             </template>
                                         </TableHead>
@@ -120,11 +120,11 @@
                                                             :props="header.getContext()" />
                                                         <div
                                                             v-if="header.column.getCanResize?.()"
-                                                            class="absolute right-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
+                                                            class="absolute end-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
                                                             @mousedown.stop="header.getResizeHandler?.()($event)"
                                                             @touchstart.stop="header.getResizeHandler?.()($event)">
                                                             <div
-                                                                class="absolute right-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
+                                                                class="absolute end-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
                                                         </div>
                                                     </template>
                                                 </TableHead>
@@ -143,11 +143,11 @@
                                                     :props="header.getContext()" />
                                                 <div
                                                     v-if="header.column.getCanResize?.()"
-                                                    class="absolute right-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
+                                                    class="absolute end-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
                                                     @mousedown.stop="header.getResizeHandler?.()($event)"
                                                     @touchstart.stop="header.getResizeHandler?.()($event)">
                                                     <div
-                                                        class="absolute right-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
+                                                        class="absolute end-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
                                                 </div>
                                             </template>
                                         </TableHead>
@@ -183,11 +183,11 @@
                                     <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
                                     <div
                                         v-if="header.column.getCanResize?.()"
-                                        class="absolute right-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
+                                        class="absolute end-0 top-0 h-full w-2 cursor-col-resize touch-none select-none opacity-0 transition-opacity group-hover:opacity-100"
                                         @mousedown.stop="header.getResizeHandler?.()($event)"
                                         @touchstart.stop="header.getResizeHandler?.()($event)">
                                         <div
-                                            class="absolute right-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
+                                            class="absolute end-0 top-0 h-full w-px bg-border dark:bg-border dark:brightness-[2]" />
                                     </div>
                                 </template>
                             </TableHead>

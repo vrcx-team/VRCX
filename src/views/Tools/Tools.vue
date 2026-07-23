@@ -9,14 +9,14 @@
                         class="cursor-pointer flex items-center p-2 px-3 rounded-lg mb-3 transition-all duration-200 ease-in-out"
                         @click="toggleCategory(category.key)">
                         <i
-                            class="ri-arrow-down-s-line mr-2 text-sm transition-transform duration-300"
+                            class="ri-arrow-down-s-line me-2 text-sm transition-transform duration-300"
                             :class="{ '-rotate-90': categoryCollapsed[category.key] }" />
-                        <span class="ml-1.5 text-base font-semibold">
+                        <span class="ms-1.5 text-base font-semibold">
                             {{ t(category.labelKey) }}
                         </span>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4 ml-4" v-show="!categoryCollapsed[category.key]">
+                    <div class="grid grid-cols-2 gap-4 ms-4" v-show="!categoryCollapsed[category.key]">
                         <ToolItem
                             v-for="tool in category.tools"
                             :key="tool.key"
@@ -40,7 +40,7 @@
                                             <i
                                                 class="ri-side-bar-line inline-flex size-4 items-center justify-center text-base" />
                                             <span
-                                                class="absolute -right-1 -top-1 grid size-2.5 place-items-center rounded-full bg-background shadow-sm">
+                                                class="absolute -end-1 -top-1 grid size-2.5 place-items-center rounded-full bg-background shadow-sm">
                                                 <i
                                                     class="ri-subtract-line inline-flex size-2 items-center justify-center text-[10px]" />
                                             </span>
@@ -63,7 +63,7 @@
                                             <i
                                                 class="ri-side-bar-line inline-flex size-4 items-center justify-center text-base" />
                                             <span
-                                                class="absolute -right-1 -top-1 grid size-2.5 place-items-center rounded-full bg-background shadow-sm">
+                                                class="absolute -end-1 -top-1 grid size-2.5 place-items-center rounded-full bg-background shadow-sm">
                                                 <i
                                                     class="ri-add-line inline-flex size-2 items-center justify-center text-[10px]" />
                                             </span>

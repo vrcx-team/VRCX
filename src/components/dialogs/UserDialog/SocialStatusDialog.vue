@@ -67,7 +67,7 @@
                     <div
                         v-for="(preset, index) in presets"
                         :key="index"
-                        class="group inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-full border bg-background text-xs cursor-pointer hover:bg-accent transition-colors max-w-[200px]"
+                        class="group inline-flex items-center gap-1.5 ps-2.5 pe-1.5 py-1 rounded-full border bg-background text-xs cursor-pointer hover:bg-accent transition-colors max-w-[200px]"
                         @click="applyPreset(preset)">
                         <i class="x-user-status flex-none" :class="getStatusClass(preset.status)"></i>
                         <span class="truncate">{{ preset.statusDescription || getStatusLabel(preset.status) }}</span>
@@ -220,7 +220,7 @@
             })
             .then((args) => {
                 D.visible = false;
-                toast.success('Status updated');
+                toast.success(t('toast.status_updated'));
                 return args;
             });
     }

@@ -43,14 +43,14 @@
                 :on-page-size-change="handlePageSizeChange">
                 <template #toolbar>
                     <div class="mt-0 mx-0 mb-2" style="display: flex; align-items: center">
-                        <div class="mr-2" style="flex: none; display: flex; align-items: center">
+                        <div class="me-2" style="flex: none; display: flex; align-items: center">
                             <ToggleGroup
                                 type="single"
                                 variant="outline"
                                 size="sm"
                                 :model-value="sessionsViewMode"
                                 @update:model-value="handleViewModeChange"
-                                class="mr-2">
+                                class="me-2">
                                 <TooltipWrapper side="bottom" :content="t('view.game_log.sessions.switch_to_sessions')">
                                     <ToggleGroupItem
                                         value="sessions"
@@ -117,7 +117,7 @@
                             </SelectContent>
                         </Select>
                         <InputGroupField
-                            class="ml-2"
+                            class="ms-2"
                             v-model="gameLogTable.search"
                             :placeholder="t('view.game_log.search_placeholder')"
                             clearable

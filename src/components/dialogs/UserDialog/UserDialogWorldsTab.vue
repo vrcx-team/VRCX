@@ -10,13 +10,13 @@
                 <Spinner v-if="userDialog.isWorldsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span class="ml-1.5 text-sm">{{
+            <span class="ms-1.5 text-sm">{{
                 t('dialog.user.worlds.total_count', { count: userDialog.worlds.length })
             }}</span>
         </div>
         <div style="display: flex; align-items: center">
-            <Input v-model="searchQuery" class="h-8 w-40 mr-2" placeholder="Search worlds" @click.stop />
-            <span class="mr-1">{{ t('dialog.user.worlds.sort_by') }}</span>
+            <Input v-model="searchQuery" class="h-8 w-40 me-2" placeholder="Search worlds" @click.stop />
+            <span class="me-1">{{ t('dialog.user.worlds.sort_by') }}</span>
             <Select
                 :model-value="userDialogWorldSortingKey"
                 :disabled="userDialog.isWorldsLoading"
@@ -33,7 +33,7 @@
                     </SelectItem>
                 </SelectContent>
             </Select>
-            <span class="ml-2 mr-1">{{ t('dialog.user.worlds.order_by') }}</span>
+            <span class="ms-2 me-1">{{ t('dialog.user.worlds.order_by') }}</span>
             <Select
                 :model-value="userDialogWorldOrderKey"
                 :disabled="userDialog.isWorldsLoading"
@@ -59,7 +59,7 @@
                 :key="world.id"
                 class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                 @click="showWorldDialog(world.id)">
-                <div class="relative inline-block flex-none size-9 mr-2.5">
+                <div class="relative inline-block flex-none size-9 me-2.5">
                     <Avatar class="size-9">
                         <AvatarImage :src="world.thumbnailImageUrl" class="object-cover" />
                         <AvatarFallback>
@@ -94,6 +94,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useUserStore, useWorldStore } from '../../../stores';
+    import { localeIncludesCI } from '../../../shared/utils/base/string';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
     import { queryRequest } from '../../../api';
@@ -110,9 +111,9 @@
     const searchQuery = ref('');
     const filteredWorlds = computed(() => {
         const worlds = userDialog.value.worlds;
-        const query = searchQuery.value.trim().toLowerCase();
+        const query = searchQuery.value.trim();
         if (!query) return worlds;
-        return worlds.filter((w) => (w.name || '').toLowerCase().includes(query));
+        return worlds.filter((w) => localeIncludesCI(w.name, query));
     });
     watch(
         () => userDialog.value.id,

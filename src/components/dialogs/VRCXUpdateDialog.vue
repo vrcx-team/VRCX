@@ -62,7 +62,7 @@
             </div>
 
             <DialogFooter>
-                <Button variant="secondary" class="mr-2" v-if="updateInProgress" @click="cancelUpdate">
+                <Button variant="secondary" class="me-2" v-if="updateInProgress" @click="cancelUpdate">
                     {{ t('dialog.vrcx_updater.cancel') }}
                 </Button>
                 <Button

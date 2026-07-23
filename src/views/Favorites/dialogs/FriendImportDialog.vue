@@ -10,7 +10,7 @@
                     <div v-if="friendImportDialog.progress">
                         {{ t('dialog.friend_import.process_progress') }} {{ friendImportDialog.progress }} /
                         {{ friendImportDialog.progressTotal }}
-                        <Spinner class="inline-block ml-1 mr-1" />
+                        <Spinner class="inline-block ms-1 me-1" />
                     </div>
                     <Button v-if="friendImportDialog.loading" size="sm" variant="secondary" @click="cancelFriendImport">
                         {{ t('dialog.friend_import.cancel') }}
@@ -44,7 +44,7 @@
                         </Select>
 
                         <Select
-                            class="ml-2"
+                            class="ms-2"
                             :model-value="friendImportLocalFavoriteGroupSelection"
                             @update:modelValue="handleFriendImportLocalGroupSelect">
                             <SelectTrigger size="sm">
@@ -59,7 +59,7 @@
                             </SelectContent>
                         </Select>
                     </div>
-                    <span class="ml-1.5" v-if="friendImportDialog.friendImportFavoriteGroup">
+                    <span class="ms-1.5" v-if="friendImportDialog.friendImportFavoriteGroup">
                         {{ friendImportTable.data.length }} /
                         {{
                             friendImportDialog.friendImportFavoriteGroup.capacity -
@@ -70,7 +70,7 @@
                 <div>
                     <Button
                         size="sm"
-                        class="mr-2"
+                        class="me-2"
                         variant="secondary"
                         :disabled="friendImportTable.data.length === 0"
                         @click="clearFriendImportTable">
@@ -89,7 +89,7 @@
                 </div>
             </div>
             <span class="m-2" v-if="friendImportDialog.importProgress">
-                <Spinner class="inline-block ml-2 mr-2" />
+                <Spinner class="inline-block ms-2 me-2" />
                 {{ t('dialog.friend_import.import_progress') }} {{ friendImportDialog.importProgress }}/{{
                     friendImportDialog.importProgressTotal
                 }}
@@ -300,7 +300,7 @@
             })
             .then((args) => {
                 if (message) {
-                    toast.success('Friend added to favorites');
+                    toast.success(t('toast.friend_added_to_favorites'));
                 }
                 return args;
             });

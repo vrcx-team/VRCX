@@ -5,7 +5,7 @@
             :style="cardStyle"
             @click="showUserDialog(friend.id)">
             <div class="friend-card__header grid items-center mb-1.75">
-                <div class="relative inline-block flex-none size-9 mr-2.5">
+                <div class="relative inline-block flex-none size-9 me-2.5">
                     <Avatar class="size-full rounded-full">
                         <AvatarImage :src="userImage(friend.ref, true)" class="object-cover" />
                         <AvatarFallback>
@@ -26,7 +26,7 @@
                 <div
                     class="friend-card__signature flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-muted-foreground"
                     :title="friend.ref?.statusDescription">
-                    <Pencil v-if="friend.ref?.statusDescription" class="h-3.5 w-3.5 mr-0.5" style="opacity: 0.7" />
+                    <Pencil v-if="friend.ref?.statusDescription" class="h-3.5 w-3.5 me-0.5" style="opacity: 0.7" />
                     {{ friend.ref?.statusDescription || '&nbsp;' }}
                 </div>
                 <div

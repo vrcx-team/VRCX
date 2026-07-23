@@ -26,15 +26,15 @@
                                 :class="locationClasses"
                                 class="inline-flex min-w-0 flex-nowrap items-center overflow-hidden truncate"
                                 @click="handleShowWorldDialog">
-                                <Spinner v-if="isTraveling" class="mr-1 shrink-0" />
+                                <Spinner v-if="isTraveling" class="me-1 shrink-0" />
                                 <span class="min-w-0 flex-1 truncate">
                                     <span>{{ text }}</span>
-                                    <span v-if="showInstanceIdInLocation && instanceName" class="ml-1">{{
+                                    <span v-if="showInstanceIdInLocation && instanceName" class="ms-1">{{
                                         ` · #${instanceName}`
                                     }}</span>
                                     <span
                                         v-if="groupName"
-                                        class="ml-0.5 cursor-pointer"
+                                        class="ms-0.5 cursor-pointer"
                                         @click.stop="handleShowGroupDialog">
                                         ({{ groupName }})
                                     </span>

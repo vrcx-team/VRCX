@@ -471,11 +471,16 @@ function formatJsonVars(ref) {
     return sortedRef;
 }
 
+const RTL_LANGUAGES = ['ar'];
+
 function changeHtmlLangAttribute(language) {
     const htmlElement = document.documentElement;
     htmlElement.setAttribute('lang', language);
+    htmlElement.setAttribute(
+        'dir',
+        RTL_LANGUAGES.includes(language) ? 'rtl' : 'ltr'
+    );
 }
-
 async function getThemeMode(configRepository) {
     const initThemeMode = await configRepository.getString(
         'VRCX_ThemeMode',
@@ -514,6 +519,7 @@ export {
     HSVtoRGB,
     formatJsonVars,
     changeHtmlLangAttribute,
+    RTL_LANGUAGES,
     getThemeMode,
     redirectToToolsTab
 };

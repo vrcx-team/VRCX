@@ -7,7 +7,7 @@
                     <span class="shrink-0">{{ t('view.charts.hot_worlds.header') }}</span>
                     <HoverCard>
                         <HoverCardTrigger as-child>
-                            <Info class="ml-1 text-xs opacity-70" />
+                            <Info class="ms-1 text-xs opacity-70" />
                         </HoverCardTrigger>
                         <HoverCardContent side="bottom" align="start" class="w-75">
                             <div class="text-xs">
@@ -67,7 +67,7 @@
                             t('view.charts.hot_worlds.stats.cooling')
                         }}</span>
                     </div>
-                    <span class="ml-auto text-xs text-muted-foreground/50">{{
+                    <span class="ms-auto text-xs text-muted-foreground/50">{{
                         t('view.charts.hot_worlds.sorted_by')
                     }}</span>
                 </div>

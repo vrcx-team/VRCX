@@ -24,7 +24,7 @@
             class="rounded-full"
             size="icon-sm"
             variant="outline"
-            style="margin-left: 6px"
+            style="margin-inline-start: 6px"
             :ariaLabel="t('common.actions.delete')"
             @click="$emit('clear-all')">
             <Trash2 />
@@ -34,19 +34,19 @@
             v-for="user in selectedUsersArray"
             :key="user.id"
             variant="outline"
-            style="margin-right: 6px; margin-top: 6px">
+            style="margin-inline-end: 6px; margin-top: 6px">
             <TooltipWrapper v-if="user.membershipStatus !== 'member'" side="top">
                 <template #content>
                     <span>{{ t('dialog.group_member_moderation.user_isnt_in_group') }}</span>
                 </template>
-                <AlertTriangle style="margin-left: 3px; display: inline-block" />
+                <AlertTriangle style="margin-inline-start: 3px; display: inline-block" />
             </TooltipWrapper>
-            <span v-text="user.user?.displayName || user.userId" style="font-weight: bold; margin-left: 6px"></span>
+            <span v-text="user.user?.displayName || user.userId" style="font-weight: bold; margin-inline-start: 6px"></span>
             <button
                 type="button"
                 :ariaLabel="t('common.actions.delete')"
                 style="
-                    margin-left: 8px;
+                    margin-inline-start: 8px;
                     border: none;
                     background: transparent;
                     padding: 0;
@@ -134,13 +134,13 @@
                 >{{ t('dialog.group_member_moderation.unban') }}</Button
             >
             <span v-if="progressCurrent" style="margin-top: 8px">
-                <Spinner class="inline-block ml-2 mr-2" />
+                <Spinner class="inline-block ms-2 me-2" />
                 {{ t('dialog.group_member_moderation.progress') }} {{ progressCurrent }}/{{ progressTotal }}
             </span>
             <Button
                 v-if="progressCurrent"
                 variant="secondary"
-                style="margin-left: 6px"
+                style="margin-inline-start: 6px"
                 @click="$emit('cancel-progress')"
                 >{{ t('dialog.group_member_moderation.cancel') }}</Button
             >

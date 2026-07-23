@@ -26,7 +26,7 @@
             </Badge>
             <div
                 v-if="segment.events && segment.events.length > 0"
-                class="flex items-center gap-2 text-muted-foreground text-[0.6875rem] ml-auto shrink-0">
+                class="flex items-center gap-2 text-muted-foreground text-[0.6875rem] ms-auto shrink-0">
                 <span
                     v-if="joinCount"
                     class="flex items-center gap-0.5"

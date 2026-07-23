@@ -12,7 +12,7 @@
                     <Spinner v-if="isLoading" />
                     <RefreshCw v-else />
                 </Button>
-                <span v-if="filteredEventCount > 0" class="text-accent-foreground ml-1 text-sm">
+                <span v-if="filteredEventCount > 0" class="text-accent-foreground ms-1 text-sm">
                     {{ t('dialog.user.activity.total_events', { count: filteredEventCount }) }}
                 </span>
             </div>
@@ -47,11 +47,11 @@
         <div v-if="peakDayText || peakTimeText" class="mt-2 mb-1 text-sm flex gap-4">
             <div v-if="peakDayText">
                 <span class="text-muted-foreground">{{ t('dialog.user.activity.most_active_day') }}</span>
-                <span class="font-medium ml-1">{{ peakDayText }}</span>
+                <span class="font-medium ms-1">{{ peakDayText }}</span>
             </div>
             <div v-if="peakTimeText">
                 <span class="text-muted-foreground">{{ t('dialog.user.activity.most_active_time') }}</span>
-                <span class="font-medium ml-1">{{ peakTimeText }}</span>
+                <span class="font-medium ms-1">{{ peakTimeText }}</span>
             </div>
         </div>
 
@@ -129,7 +129,7 @@
                 </div>
                 <div v-if="bestOverlapTime" class="text-sm">
                     <span class="text-muted-foreground">{{ t('dialog.user.activity.overlap.peak_overlap') }}</span>
-                    <span class="font-medium ml-1">{{ bestOverlapTime }}</span>
+                    <span class="font-medium ms-1">{{ bestOverlapTime }}</span>
                 </div>
             </div>
 

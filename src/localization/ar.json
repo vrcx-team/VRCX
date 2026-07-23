@@ -1,0 +1,3292 @@
+{
+    "language": "العربية (ar)",
+    "translator": "HBX1",
+    "common": {
+        "no_data": "لا توجد بيانات",
+        "no_matching_records": "لا توجد سجلات مطابقة",
+        "feature_relocated": {
+            "title": "إشعار إيقاف",
+            "description": "ستُزال هذه الميزة في تحديث مستقبلي. يُرجى استخدام {feature} بدلاً منها."
+        },
+        "actions": {
+            "open": "فتح",
+            "confirm": "تأكيد",
+            "clear": "مسح",
+            "delete": "حذف",
+            "remove": "إزالة",
+            "reset": "إعادة تعيين",
+            "view_details": "عرض التفاصيل",
+            "configure": "تكوين",
+            "refresh": "تحديث",
+            "cancel": "إلغاء",
+            "copy": "نسخ",
+            "open_link": "فتح الرابط"
+        },
+        "sort_by": "فرز حسب:",
+        "time_units": {
+            "y": "سنة",
+            "d": "يوم",
+            "h": "ساعة",
+            "m": "دقيقة",
+            "s": "ثانية"
+        },
+        "days": {
+            "sunday": "الأحد",
+            "monday": "الاثنين",
+            "tuesday": "الثلاثاء",
+            "wednesday": "الأربعاء",
+            "thursday": "الخميس",
+            "friday": "الجمعة",
+            "saturday": "السبت"
+        },
+        "duration": "المدة",
+        "load_more": "تحميل المزيد",
+        "no_more": "لا مزيد من العناصر",
+        "current_session": "الحالي"
+    },
+    "nav_tooltip": {
+        "friends_locations": "مواقع الأصدقاء",
+        "feed": "الموجز",
+        "game_log": "سجل اللعبة",
+        "player_list": "قائمة اللاعبين",
+        "search": "بحث",
+        "favorites": "المفضلة",
+        "favorite_friends": "الأصدقاء المفضلون",
+        "favorite_worlds": "العوالم المفضلة",
+        "favorite_avatars": "الأفاتارات المفضلة",
+        "my_avatars": "أفاتاراتي",
+        "social": "اجتماعي",
+        "friend_log": "سجل الأصدقاء",
+        "moderation": "الإشراف",
+        "notification": "الإشعارات",
+        "friend_list": "قائمة الأصدقاء",
+        "charts": "المخططات",
+        "tools": "الأدوات",
+        "settings": "الإعدادات",
+        "manage": "إدارة",
+        "help_support": "المساعدة والدعم",
+        "expand_menu": "توسيع القائمة",
+        "collapse_menu": "طيّ القائمة",
+        "toggle_theme": "تبديل المظهر"
+    },
+    "nav_menu": {
+        "resources": "الموارد",
+        "wiki": "الويكي",
+        "get_help": "احصل على المساعدة",
+        "github": "VRCX على GitHub",
+        "discord": "انضم إلى Discord الخاص بنا",
+        "changelog": "سجل التغييرات",
+        "update_available": "يتوفر تحديث",
+        "update": "تحديث",
+        "mark_all_read": "تحديد الكل كمقروء",
+        "edit_dashboard": "تعديل لوحة المعلومات",
+        "delete_dashboard": "حذف لوحة المعلومات",
+        "custom_nav": {
+            "header": "تخصيص التنقل",
+            "dialog_title": "تخصيص قائمة التنقل",
+            "new_folder": "مجلد جديد",
+            "folder_name_placeholder": "اسم المجلد",
+            "folder_icon_placeholder": "فئة الأيقونة (مثال: ri-menu-fold-line)",
+            "edit_folder": "تعديل المجلد",
+            "delete_folder": "حذف المجلد",
+            "edit_dashboard": "تعديل لوحة المعلومات",
+            "delete_dashboard": "حذف لوحة المعلومات",
+            "folder_empty": "هذا المجلد فارغ",
+            "folder_drop_here": "اسحب العناصر إلى هنا",
+            "hide": "إخفاء",
+            "show": "إظهار",
+            "hidden_items": "مخفي",
+            "pin_to_nav": "تثبيت في التنقل",
+            "unpin_from_nav": "إلغاء التثبيت",
+            "pinned": "أضيف إلى التنقل",
+            "unpinned": "أزيل من التنقل",
+            "confirm": "تأكيد",
+            "cancel": "إلغاء",
+            "restore_default": "استعادة الافتراضي",
+            "restore_default_confirm": "هل تريد استعادة ترتيب التنقل الافتراضي؟"
+        }
+    },
+    "dashboard": {
+        "default_name": "لوحة المعلومات",
+        "new_dashboard": "لوحة معلومات جديدة",
+        "empty": "هذه اللوحة فارغة",
+        "actions": {
+            "start_editing": "بدء التحرير",
+            "add_row": "إضافة صف",
+            "add_full_row": "إضافة صف كامل",
+            "add_split_row": "إضافة صف مقسوم",
+            "add_vertical_row": "إضافة صف عمودي",
+            "cancel": "إلغاء",
+            "save": "حفظ",
+            "delete": "حذف"
+        },
+        "toolbar": {
+            "name_placeholder": "اسم لوحة المعلومات",
+            "icon_placeholder": "فئة الأيقونة (اختياري)"
+        },
+        "panel": {
+            "not_selected": "لم يتم تحديد لوحة",
+            "select": "تحديد لوحة",
+            "not_configured": "اللوحة غير مهيأة"
+        },
+        "selector": {
+            "title": "تحديد محتوى اللوحة",
+            "clear": "مسح اللوحة",
+            "widgets": "العناصر",
+            "pages": "صفحات كاملة"
+        },
+        "widget": {
+            "feed": "عنصر الموجز",
+            "game_log": "عنصر سجل اللعبة",
+            "instance": "Instance Widget",
+            "config": {
+                "filters": "أنواع الأحداث",
+                "columns": "الأعمدة",
+                "detail": "التفاصيل",
+                "show_type": "إظهار النوع"
+            },
+            "no_data": "لا توجد بيانات",
+            "unknown_world": "عالم غير معروف",
+            "feed_online": "متصل",
+            "feed_offline": "غير متصل",
+            "feed_avatar": "→",
+            "feed_bio": "حدّث النبذة",
+            "instance_players": "لاعبون",
+            "instance_not_in_game": "ليس داخل اللعبة",
+            "time_ago": "منذ {time}"
+        },
+        "first_save_tip": "يمكنك إخفاء زر لوحة المعلومات الجديدة من الإعدادات > الواجهة > التنقل.",
+        "confirmations": {
+            "delete_title": "حذف لوحة المعلومات",
+            "delete_description": "هل أنت متأكد من حذف لوحة المعلومات هذه؟ لا يمكن التراجع عن هذا الإجراء."
+        }
+    },
+    "side_panel": {
+        "search_placeholder": "بحث سريع...",
+        "search_no_results": "لم يتم العثور على نتائج",
+        "search_min_chars": "اكتب حرفين على الأقل",
+        "search_categories": "ابحث عن...",
+        "search_scope_all": "الاسم والمذكرة والملاحظة",
+        "search_scope_avatars": "الخاص والمفضل",
+        "search_scope_worlds": "الخاص والمفضل",
+        "search_scope_joined": "الخاص والمنضم إليه",
+        "search_friends": "الأصدقاء",
+        "search_avatars": "الأفاتارات",
+        "search_own_avatars": "أفاتاراتي",
+        "search_fav_avatars": "الأفاتارات المفضلة",
+        "search_worlds": "العوالم",
+        "search_own_worlds": "عوالمي",
+        "search_fav_worlds": "العوالم المفضلة",
+        "search_groups": "المجموعات",
+        "search_own_groups": "مجموعاتي",
+        "search_joined_groups": "المجموعات المنضم إليها",
+        "search_result_active": "نشط",
+        "search_result_offline": "غير متصل",
+        "search_result_more": "بحث أكثر:",
+        "refresh_tooltip": "تحديث الأصدقاء",
+        "groups": "المجموعات",
+        "friends": "الأصدقاء",
+        "me": "أنا",
+        "favorite": "المفضلة",
+        "same_instance": "نفس الـInstance",
+        "online": "متصل",
+        "active": "نشط",
+        "offline": "غير متصل",
+        "pending_offline": "غير متصل قيد الانتظار",
+        "settings": {
+            "display": "العرض",
+            "sort": "الفرز",
+            "advanced": "متقدم",
+            "sorting": "الترتيب",
+            "favorites_section": "المفضلة",
+            "group_by_instance": "تجميع حسب Instance",
+            "split_favorite_friends": "إظهار مجموعات المفضلة",
+            "hide_friends_in_same_instance": "إخفاء الأصدقاء المجمّعين",
+            "same_instance_above_favorites": "إعطاء أولوية لنفس الـInstance",
+            "sort_primary": "فرز حسب",
+            "sort_secondary": "ثم حسب",
+            "sort_tertiary": "ثم حسب",
+            "favorite_groups": "مجموعات المفضلة",
+            "favorite_groups_placeholder": "كل المجموعات",
+            "edit_group_order": "تعديل ترتيب المجموعات"
+        },
+        "notifications": "الإشعارات",
+        "notification_center": {
+            "title": "مركز الإشعارات",
+            "view_more": "عرض المزيد",
+            "tab_friend": "صديق",
+            "tab_group": "مجموعة",
+            "tab_other": "أخرى",
+            "past_notifications": "آخر 24 ساعة",
+            "no_new_notifications": "لا توجد إشعارات جديدة خلال آخر 24 ساعة",
+            "no_unseen_notifications": "لا توجد إشعارات غير مقروءة"
+        }
+    },
+    "view": {
+        "login": {
+            "savedAccounts": "الحسابات المحفوظة",
+            "login": "تسجيل الدخول",
+            "register": "إنشاء حساب",
+            "forgotPassword": "هل نسيت كلمة المرور؟",
+            "updater": "أداة التحديث",
+            "proxy_settings": "إعدادات الوكيل",
+            "settings": "الإعدادات",
+            "language": "اللغة",
+            "field": {
+                "username": "اسم المستخدم أو البريد الإلكتروني",
+                "password": "كلمة المرور",
+                "saveCredentials": "حفظ بيانات الاعتماد",
+                "devEndpoint": "نقطة نهاية التطوير",
+                "endpoint": "نقطة النهاية",
+                "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "تم اكتشاف اللغة",
+                "description": "يبدو أن لغة النظام لديك هي {language}. هل تريد التبديل إليها؟"
+            }
+        },
+        "feed": {
+            "favorites_only_tooltip": "تصفية المفضلة فقط",
+            "search_placeholder": "بحث",
+            "filters": {
+                "GPS": "GPS",
+                "Online": "متصل",
+                "Offline": "غير متصل",
+                "Status": "الحالة",
+                "Avatar": "أفاتار",
+                "Bio": "النبذة"
+            },
+            "photon_event_logging": "تسجيل أحداث Photon"
+        },
+        "friends_locations": {
+            "online": "متصل",
+            "favorite": "المفضلة",
+"same_instance": "نفس الـInstance",
+            "active": "نشط",
+            "offline": "غير متصل",
+            "search_placeholder": "بحث عن الأصدقاء",
+            "spacing": "التباعد",
+            "scale": "المقياس",
+            "separate_same_instance_friends": "فصل الأصدقاء الموجودين في نفس الـInstance",
+            "loading_more": "جارٍ تحميل المزيد..."
+        },
+        "game_log": {
+            "filter_placeholder": "تصفية",
+            "search_placeholder": "بحث",
+            "filters": {
+                "Location": "الموقع",
+                "OnPlayerJoined": "انضم لاعب",
+                "OnPlayerLeft": "غادر لاعب",
+                "PortalSpawn": "إنشاء بوابة",
+                "VideoPlay": "تشغيل فيديو",
+                "Event": "حدث",
+                "External": "خارجي",
+                "StringLoad": "تحميل نص",
+                "ImageLoad": "تحميل صورة"
+            },
+            "sessions": {
+                "switch_to_table": "عرض الجدول",
+                "switch_to_sessions": "عرض الجلسات",
+                "date_range": "النطاق الزمني",
+                "players_joined": "انضم {count} من اللاعبين",
+                "players_left": "غادر {count} من اللاعبين",
+                "play_count": "×{count}",
+                "no_data": "لا توجد بيانات لسجل اللعب"
+            }
+        },
+        "player_list": {
+            "photon": {
+                "current": "الحالي",
+                "previous": "السابق",
+                "search_placeholder": "بحث",
+                "filter_placeholder": "تصفية",
+                "chatbox_blacklist": "القائمة السوداء لصندوق الدردشة",
+                "status_tooltip": "حالة VRCX Companion"
+            }
+        },
+        "my_avatars": {
+            "filter": "تصفية",
+            "clear_filters": "مسح الكل",
+            "table_view": "عرض الجدول",
+            "grid_view": "عرض الشبكة"
+        },
+        "search": {
+            "search_placeholder": "بحث",
+            "clear_results_tooltip": "مسح نتائج البحث",
+            "user": {
+                "header": "المستخدم",
+                "search_by_bio": "البحث حسب النبذة",
+                "sort_by_last_logged_in": "الترتيب حسب آخر تسجيل دخول"
+            },
+            "world": {
+                "header": "العالم",
+                "category": "البحث حسب الفئة",
+                "community_lab": "تضمين مختبرات المجتمع"
+            },
+            "avatar": {
+                "header": "أفاتار",
+                "search_provider": "مزود البحث",
+                "no_provider": "لم يتم إعداد مزود بحث للأفاتارات",
+                "search_placeholder_avatar": "اكتب 3 أحرف على الأقل",
+                "min_chars_warning": "يرجى إدخال 3 أحرف على الأقل للبحث",
+                "refresh_tooltip": "تحديث أفاتاراتك",
+                "result_count": "النتائج {count}",
+                "all": "الكل",
+                "all_tags": "جميع الوسوم",
+                "public": "عام",
+                "private": "خاص",
+                "local": "محلي",
+                "remote": "عن بُعد",
+                "sort_name": "الترتيب حسب الاسم",
+                "sort_update": "الترتيب حسب التحديث",
+                "sort_created": "الترتيب حسب تاريخ الإنشاء"
+            },
+            "group": {
+                "header": "المجموعة"
+            }
+        },
+        "favorite": {
+            "worlds": {
+                "search": "بحث",
+                "search_by_tag": "البحث حسب الوسم",
+                "search_mode_name": "الاسم",
+                "search_mode_tag": "الوسم",
+                "vrchat_favorites": "مفضلات VRChat",
+                "local_favorites": "المفضلات المحلية",
+                "new_group": "مجموعة جديدة",
+                "cancel_refresh": "إلغاء التحديث"
+            },
+            "avatars": {
+                "search": "بحث",
+                "vrchat_favorites": "مفضلات VRChat",
+                "local_favorites": "المفضلات المحلية (تتطلب VRC+)",
+                "new_group": "مجموعة جديدة",
+                "cancel_refresh": "إلغاء التحديث",
+                "check_invalid": "التحقق من الأفاتارات المحذوفة/الخاصة",
+                "check_description": "اكتشاف الأفاتارات غير الصالحة وإزالتها من هذه المجموعة",
+                "checking": "جارٍ التحقق من الأفاتارات غير الصالحة...",
+                "removed_list_header": "الأفاتارات المعلقة للحذف:",
+                "copy_removed_ids": "نسخ معرّفات الأفاتارات",
+                "copied_ids": "تم نسخ معرّفات الأفاتارات إلى الحافظة",
+                "copy_failed": "فشل النسخ إلى الحافظة",
+                "dismiss": "تجاهل",
+                "checking_progress": "جارٍ التحقق من الأفاتار ({current}/{total})...",
+                "confirm_delete_invalid": "حذف الأفاتارات غير الصالحة؟",
+                "confirm_delete_description": "تم العثور على {count} من الأفاتارات غير الصالحة، هل تريد حذفها؟",
+                "delete_summary": "تم حذف {removed} من الأفاتارات غير الصالحة بنجاح",
+                "no_invalid_found": "لم يتم العثور على أفاتارات غير صالحة",
+                "delete_cancelled": "تم إلغاء عملية الحذف",
+                "local_history": "السجل المحلي",
+                "no_group_selected": "لم يتم تحديد مجموعة",
+                "styles": "الأنماط",
+                "almost_nuisance": "شبه مُزعج"
+            },
+            "edit_mode": "وضع التحرير",
+            "copy": "نسخ",
+            "clear": "مسح",
+            "select_all": "تحديد الكل",
+            "deselect_all": "إلغاء تحديد الكل",
+            "bulk_unfavorite": "إزالة من المفضلة بشكل جماعي",
+            "refresh_favorites_tooltip": "تحديث مفضلات VRChat",
+            "export": "تصدير",
+            "import": "استيراد",
+            "move_tooltip": "نقل",
+            "copy_tooltip": "نسخ",
+            "unfavorite_tooltip": "إزالة من المفضلة",
+            "edit_favorite_tooltip": "تحرير المفضلة",
+            "visibility_tooltip": "تغيير مستوى الظهور",
+            "visibility": {
+                "public": "عام",
+                "friends": "الأصدقاء",
+                "private": "خاص"
+            },
+            "rename_tooltip": "إعادة تسمية",
+            "clear_tooltip": "مسح",
+            "delete_tooltip": "حذف",
+            "unavailable_tooltip": "غير متاح",
+            "private": "خاص",
+            "select_avatar_tooltip": "اختيار الأفاتار",
+            "no_group_selected": "لم يتم تحديد مجموعة"
+        },
+        "friend_log": {
+            "filter_placeholder": "تصفية",
+            "search_placeholder": "بحث",
+            "filters": {
+                "Friend": "صديق جديد",
+                "Unfriend": "إزالة الصداقة",
+                "FriendRequest": "طلب صداقة",
+                "CancelFriendRequest": "إلغاء طلب الصداقة",
+                "DisplayName": "الاسم المعروض",
+                "TrustLevel": "مستوى الثقة"
+            }
+        },
+        "moderation": {
+            "filter_placeholder": "تصفية",
+            "search_placeholder": "بحث",
+            "refresh_tooltip": "تحديث",
+            "filters": {
+                "block": "حظر",
+                "unblock": "إلغاء الحظر",
+                "mute": "كتم",
+                "unmute": "إلغاء الكتم",
+                "interactOn": "تفعيل التفاعل",
+                "interactOff": "تعطيل التفاعل",
+                "muteChat": "كتم الدردشة",
+                "unmuteChat": "إلغاء كتم الدردشة"
+            }
+        },
+        "notification": {
+            "filter_placeholder": "تصفية",
+            "search_placeholder": "بحث",
+            "refresh_tooltip": "تحديث",
+            "actions": {
+                "accept": "قبول",
+                "invite": "دعوة",
+                "decline": "رفض",
+                "delete_log": "حذف السجل",
+                "decline_with_message": "رفض مع رسالة"
+            },
+            "filters": {
+                "requestInvite": "طلب دعوة",
+                "invite": "دعوة",
+                "requestInviteResponse": "رد طلب الدعوة",
+                "inviteResponse": "رد الدعوة",
+                "friendRequest": "طلب صداقة",
+                "ignoredFriendRequest": "طلب صداقة متجاهَل",
+                "message": "رسالة",
+                "boop": "بووب",
+                "groupChange": "تغيير المجموعة",
+                "event": {
+                    "announcement": "إعلان حدث"
+                },
+                "group": {
+                    "announcement": "إعلان المجموعة",
+                    "informative": "معلومات المجموعة",
+                    "invite": "دعوة إلى المجموعة",
+                    "joinRequest": "طلب الانضمام إلى المجموعة",
+                    "transfer": "نقل المجموعة",
+                    "queueReady": "الطابور جاهز",
+                    "event": {
+                        "created": "تم إنشاء حدث المجموعة",
+                        "starting": "بدء حدث المجموعة"
+                    }
+                },
+                "moderation": {
+                    "warning": {
+                        "group": "مجموعة تحذير الإشراف"
+                    },
+                    "report": {
+                        "closed": "تم إغلاق بلاغ الإشراف"
+                    },
+                    "contentrestriction": "تقييد المحتوى الإشرافي"
+                },
+                "instance": {
+                    "closed": "تم إغلاق Instance"
+                },
+                "badge": {
+                    "earned": "تم الحصول على شارة"
+                },
+                "vrcplus": {
+                    "gift": "هدية VRC+"
+                },
+                "localNotifs": "النظام",
+                "economy": {
+                    "received": {
+                        "gift": "تم استلام هدية"
+                    },
+                    "alert": "تنبيه الاقتصاد"
+                }
+            }
+        },
+        "friend_list": {
+            "bulk_unfriend": "وضع إزالة الصداقة الجماعية",
+            "bulk_unfriend_selection": "تحديد إزالة الصداقة الجماعية",
+            "load": "تحميل الإدخالات الناقصة",
+            "load_dialog_title": "تحميل الإدخالات الناقصة",
+            "load_dialog_message": "جارٍ استرداد حقول الملف الشخصي الناقصة لأصدقائك.",
+            "load_cancel": "إلغاء",
+            "load_complete": "تم تحميل الإدخالات الناقصة",
+            "favorites_only_tooltip": "تصفية المفضلة فقط",
+            "search_placeholder": "بحث",
+            "filter_placeholder": "تصفية",
+            "load_mutual_friends": "تحميل الأصدقاء المشتركين",
+            "mutual_loading_hint": "اعرض التقدم في صفحة رسم الأصدقاء المشتركين"
+        },
+        "charts": {
+            "instance_activity": {
+                "header": "نشاط Instance",
+                "online_time": "وقت الاتصال",
+                "previous_day": "اليوم السابق",
+                "next_day": "اليوم التالي",
+                "refresh": "تحديث",
+                "tips": {
+                    "online_time": "يشير وقت الاتصال إلى وقت اللعب الذي سجله VRCX لليوم الحالي.",
+                    "click_Y_axis": "انقر على تسمية المحور Y للانتقال إلى تفاصيل Instance أو فتح نافذة المستخدم.",
+                    "click_instance_name": "انقر على اسم Instance لفتح نافذة معلومات Instance السابق."
+                },
+                "settings": {
+                    "header": "الإعدادات",
+                    "bar_width": "عرض الشريط",
+                    "show_solo_instance": "إظهار Instance الفردي",
+                    "show_no_friend_instance": "إظهار Instance بلا أصدقاء",
+                    "show_detail": "إظهار التفاصيل"
+                },
+                "no_data": "لا توجد بيانات",
+                "invalid_timestamp": "بيانات الوقت غير صالحة"
+            },
+            "mutual_friend": {
+                "tab_label": "شبكة الأصدقاء المشتركين",
+                "actions": {
+                    "start_fetch": "بدء الجلب",
+                    "fetch_again": "الجلب مرة أخرى",
+                    "stop": "إيقاف",
+                    "stop_fetching": "إيقاف الجلب",
+                    "go_to_friend": "الانتقال إلى الصديق"
+                },
+                "status": {
+                    "no_friends_to_process": "ليس لديك أصدقاء لمعالجتهم",
+                    "loading_cache": "جارٍ تحميل الأصدقاء المشتركين المخزّنين في الكاش من قاعدة البيانات"
+                },
+                "progress": {
+                    "friends_processed": "الأصدقاء الذين تمت معالجتهم",
+                    "no_relationships_discovered": "لم يتم اكتشاف أي علاقات"
+                },
+                "prompt": {
+                    "title": "شبكة الأصدقاء المشتركين",
+                    "message": "لم يتم العثور على بيانات مخزّنة في الكاش عن الأصدقاء المشتركين. هل تريد بدء الجلب الآن؟ قد يستغرق ذلك بعض الوقت، وسنخطرك عند الانتهاء.",
+                    "confirm": "بدء الجلب",
+                    "cancel": "ربما لاحقًا"
+                },
+                "enable_sharing_prompt": {
+                    "title": "تفعيل مشاركة الأصدقاء المشتركين",
+                    "message": "مشاركة الأصدقاء المشتركين معطلة حاليًا. هل تريد تفعيلها الآن؟",
+                    "confirm": "تفعيل",
+                    "cancel": "إلغاء"
+                },
+                "messages": {
+                    "fetch_cancelled_graph_not_updated": "تم إلغاء الجلب"
+                },
+                "notifications": {
+                    "start_fetching": "بدأ الجلب",
+                    "mutual_friend_graph_ready_title": "رسم شبكة الأصدقاء المشتركين",
+                    "mutual_friend_graph_ready_message": "أصبح رسم شبكة الأصدقاء المشتركين جاهزًا",
+                    "friend_list_changed_fetch_again": "تغيّرت قائمة الأصدقاء. يرجى جلب شبكة الأصدقاء المشتركين مرة أخرى."
+                },
+                "settings": {
+                    "title": "إعدادات تخطيط الرسم",
+                    "layout_iterations": "تكرارات التخطيط",
+                    "layout_iterations_help": "تحدد مدة تشغيل التخطيط. القيم الأعلى تعني ثباتًا وتنظيمًا أكبر.",
+                    "layout_spacing": "تباعد التخطيط",
+                    "layout_spacing_help": "تحدد مدى تباعد الرسم. القيم الأعلى تعني ازدحامًا أقل.",
+                    "edge_curvature": "انحناء الحواف",
+                    "edge_curvature_help": "تحدد مدى انحناء الخطوط. القيم الأعلى تعني خطوطًا أكثر سلاسة في المناطق المزدحمة.",
+                    "community_separation": "فصل المجتمعات",
+                    "community_separation_help": "تحدد مدى إبعاد المجتمعات المختلفة عن بعضها. القيم الأعلى تعني تجمعات أوضح.",
+                    "reset_defaults": "إعادة التعيين إلى الافتراضيات",
+                    "exclude_friends": "استبعاد الأصدقاء",
+                    "exclude_friends_placeholder": "اختر الأصدقاء المراد استبعادهم",
+                    "exclude_friends_help": "سيتم إخفاء الأصدقاء المحددين من الرسم."
+                },
+                "context_menu": {
+                    "view_details": "عرض التفاصيل",
+                    "hide_friend": "إخفاء من الرسم",
+                    "refresh_mutuals": "تحديث الأصدقاء المشتركين",
+                    "confirm_non_friend_title": "ليس صديقًا",
+                    "confirm_non_friend_message": "لم يعد هذا المستخدم صديقًا لك. هل ما زلت تريد جلب بيانات أصدقائه المشتركين؟",
+                    "refresh_success": "تم تحديث بيانات الأصدقاء المشتركين لـ {name}",
+                    "user_opted_out": "عطّل هذا المستخدم مشاركة الأصدقاء المشتركين. تم الاحتفاظ بالبيانات الحالية.",
+                    "refresh_error": "فشل تحديث بيانات الأصدقاء المشتركين",
+                    "last_fetched": "آخر جلب"
+                }
+            },
+            "playtime_trend": {
+                "header": "وقت اللعب اليومي",
+                "online_hours": "الساعات",
+                "daily_avg": "المتوسط اليومي",
+                "total": "الإجمالي",
+                "waiting": "جارٍ إنشاء بيانات وقت اللعب، يرجى العودة لاحقًا.",
+                "no_data": "لا تتوفر بيانات لوقت اللعب"
+            },
+            "hot_worlds": {
+                "tab_label": "العوالم الرائجة",
+                "header": "العوالم الرائجة",
+                "refresh": "تحديث",
+                "sorted_by": "مرتبة حسب الأصدقاء الفريدين",
+                "tips": {
+                    "description": "يوضح العوالم التي زارها أصدقاؤك أكثر من غيرها. يتم الترتيب حسب عدد الأصدقاء الفريدين الذين زاروها. يقارن الاتجاه بين النصف الأول والنصف الثاني من الفترة المحددة."
+                },
+                "period": {
+                    "days_7": "آخر 7 أيام",
+                    "days_30": "آخر 30 يومًا",
+                    "days_90": "آخر 90 يومًا"
+                },
+                "trend": {
+                    "rising": "صاعدة",
+                    "cooling": "متراجعة"
+                },
+                "stats_line": {
+                    "friends_zero": "لا أصدقاء",
+                    "friends_one": "صديق واحد",
+                    "friends_two": "صديقان",
+                    "friends_few": "{count} أصدقاء",
+                    "friends_many": "{count} صديقًا",
+                    "friends_other": "{count} صديق",
+                    "visits_zero": "لا زيارات",
+                    "visits_one": "زيارة واحدة",
+                    "visits_two": "زيارتان",
+                    "visits_few": "{count} زيارات",
+                    "visits_many": "{count} زيارة",
+                    "visits_other": "{count} زيارة"
+                },
+                "stats": {
+                    "top_friends": "أبرز الأصدقاء",
+                    "total_visits": "إجمالي الزيارات",
+                    "rising": "صاعدة",
+                    "cooling": "متراجعة"
+                },
+                "sheet": {
+                    "friends_who_visited": "الأصدقاء الذين زاروا"
+                },
+                "no_friend_data": "لا توجد بيانات لزيارات الأصدقاء",
+                "friend_visits_zero": "لا زيارات",
+                "friend_visits_one": "زيارة واحدة",
+                "friend_visits_two": "زيارتان",
+                "friend_visits_few": "{count} زيارات",
+                "friend_visits_many": "{count} زيارة",
+                "friend_visits_other": "{count} زيارة"
+            }
+        },
+        "tools": {
+            "header": "الأدوات",
+            "group": {
+                "header": "المجموعة",
+                "calendar": "التقويم",
+                "calendar_description": "تقويم أحداث المجموعة"
+            },
+            "user": {
+                "discord_names_description": "اعثر على أسماء مستخدمي Discord الخاصة بأصدقائك في VRChat",
+                "export_friend_list_description": "صدّر قائمة أصدقائك من VRChat",
+                "export_own_avatars_description": "صدّر أفاتاراتك الشخصية من VRChat"
+            },
+            "export": {
+                "header": "تصدير",
+                "export_notes": "تصدير مذكرات المستخدم",
+                "export_notes_description": "صدّر مذكرات مستخدمي VRCX إلى ملاحظات VRChat",
+                "discord_names": "أسماء Discord",
+                "export_friend_list": "تصدير قائمة الأصدقاء",
+                "export_own_avatars": "تصدير أفاتاراتك"
+            },
+            "redirect_message": "هذه الميزة متاحة الآن في هذه الصفحة.",
+            "pictures": {
+                "pictures": {
+                    "vrc_photos": "صور VRChat",
+                    "steam_screenshots": "لقطات Steam",
+                    "vrc_photos_description": "يفتح مجلد صور VRChat",
+                    "steam_screenshots_description": "يفتح مجلد لقطات Steam"
+                },
+                "header": "الصور",
+                "screenshot": "مدير اللقطات",
+                "screenshot_description": "عرض بيانات اللقطات الوصفية وإدارتها",
+                "gallery": "المخزون",
+                "gallery_description": "إدارة الصور والمخزون"
+            },
+            "shortcuts": {
+                "header": "الاختصارات",
+                "vrcx_data": "بيانات VRCX",
+                "vrcx_data_description": "فتح مجلد بيانات VRCX",
+                "vrchat_data": "بيانات VRChat",
+                "vrchat_data_description": "فتح مجلد بيانات VRChat",
+                "crash_dumps": "ملفات تفريغ الأعطال",
+                "crash_dumps_description": "فتح مجلد ملفات أعطال VRChat"
+            },
+            "system_tools": {
+                "header": "أدوات النظام",
+                "vrchat_config": "إعدادات VRChat",
+                "vrchat_config_description": "فتح إعدادات config.json الخاصة بـ VRChat",
+                "launch_options_description": "تحرير خيارات تشغيل VRChat",
+                "registry_backup": "نسخة احتياطية من سجل VRChat",
+                "registry_backup_description": "إنشاء نسخة احتياطية لسجل VRChat أو استعادتها"
+            },
+            "other": {
+                "header": "أخرى",
+                "edit_invite_message": "تحرير رسائل الدعوة",
+                "edit_invite_message_description": "تحرير رسائل الدعوة وردود الدعوة"
+            }
+        },
+        "profile": {
+            "profile": {
+                "vrchat_credits": "رصيد VRChat",
+                "refresh": "انقر للتحديث"
+            },
+            "game_info": {
+                "header": "معلومات اللعبة",
+                "online_users": "المستخدمون المتصلون",
+                "user_online": "{count} مستخدم متصل.",
+                "refresh": "انقر للتحديث"
+            },
+            "config_json": "ملف إعدادات JSON",
+            "refresh_tooltip": "تحديث",
+            "clear_results_tooltip": "مسح النتائج"
+        },
+        "settings": {
+            "header": "الإعدادات",
+            "category": {
+                "general": "عام",
+                "appearance": "المظهر",
+                "notifications": "الإشعارات",
+                "wrist_overlay": "طبقة المعصم",
+                "discord_presence": "التواجد على Discord",
+                "pictures": "الصور",
+                "advanced": "متقدم",
+                "system": "النظام",
+                "interface": "الواجهة",
+                "social": "اجتماعي",
+                "vr": "VR",
+                "media": "الوسائط",
+                "integrations": "التكاملات"
+            },
+            "social": {
+                "interaction": {
+                    "header": "التفاعل"
+                },
+                "favorites": {
+                    "header": "المفضلة"
+                }
+            },
+            "vr": {
+                "vr_core": {
+                    "header": "أساسيات VR"
+                },
+                "vr_notifications": {
+                    "header": "إشعارات VR"
+                },
+                "wrist_overlay": {
+                    "header": "طبقة المعصم"
+                },
+                "vr_extras": {
+                    "header": "إضافات VR"
+                }
+            },
+            "interface": {
+                "navigation": {
+                    "header": "التنقل",
+                    "show_new_dashboard_button": "إظهار زر لوحة المعلومات الجديدة"
+                },
+                "lists_tables": {
+                    "header": "القوائم والجداول"
+                }
+            },
+            "integrations": {
+                "header": "التكاملات"
+            },
+            "advanced_groups": {
+                "system": {
+                    "header": "النظام"
+                },
+                "security": {
+                    "header": "الأمان"
+                },
+                "diagnostics": {
+                    "header": "التشخيص"
+                },
+                "database": {
+                    "header": "قاعدة البيانات"
+                },
+                "nightly": {
+                    "header": "ليلي"
+                }
+            },
+            "general": {
+                "general": {
+                    "header": "عام",
+                    "version": "الإصدار",
+                    "latest_app_version": "أحدث إصدار",
+                    "latest_app_version_refresh": "انقر للتحديث",
+                    "repository_url": "رابط المستودع",
+                    "support": "الدعم"
+                },
+                "vrcx_updater": {
+                    "header": "محدّث VRCX",
+                    "change_build": "تغيير البنية",
+                    "update_action": "إجراء التحديث",
+                    "auto_update_off": "إيقاف",
+                    "auto_update_notify": "إشعار",
+                    "auto_update_download": "تنزيل تلقائي",
+                    "change_log": "سجل التغييرات",
+                    "updater_disabled": "تم تعطيل أداة التحديث، وتُدار التحديثات بواسطة مدير الحزم لديك."
+                },
+                "application": {
+                    "header": "التطبيق",
+                    "startup": "التشغيل عند بدء Windows",
+                    "minimized": "البدء مصغرًا عند بدء تشغيل النظام",
+                    "tray": "التصغير إلى شريط النظام عند الإغلاق",
+                    "disable_gpu_acceleration": "تعطيل تسريع GPU",
+                    "disable_gpu_acceleration_tooltip": "لا تغيّر هذا الخيار إلا إذا كنت تعرف ما تفعله؛ فقد يحل مشكلات في UI ويتطلب إعادة تشغيل VRCX",
+                    "disable_vr_overlay_gpu_acceleration": "تعطيل تسريع GPU لطبقة VR",
+                    "proxy": "إعدادات الوكيل",
+                    "startup_linux": "أضف الوسيط \"--startup\" إلى ملف VRCX.desktop لبدء VRCX مصغرًا عند بدء تشغيل النظام"
+                },
+                "favorites": {
+                    "header": "تصفية مجموعات المفضلة",
+                    "header_tooltip": "عند تمكين تصفية المفضلة في الخلاصة أو سجل اللعب أو صفحة الإشعارات أو طبقة VR، لن تظهر إلا الإدخالات من المجموعات المحددة",
+                    "group_placeholder": "تحديد المجموعات"
+                },
+                "logging": {
+                    "header": "التسجيل",
+                    "resource_load": "تسجيل تحميل نصوص/صور Udon",
+                    "empty_avatar": "تسجيل الأفاتارات في الخلاصة بدون أسماء",
+                    "auto_login_delay": "تأخير تسجيل الدخول التلقائي",
+                    "auto_login_delay_button": "تعيين مدة التأخير بالثواني"
+                },
+                "automation": {
+                    "auto_change_status": "الحالة والدعوات التلقائية",
+                    "auto_change_status_switch": "تغيير الحالة تلقائيًا",
+                    "auto_state_change_tooltip": "قم بإعداد تغييرات الحالة التلقائية ومعالجة طلبات الدعوات",
+                    "auto_state_change_switch_tooltip": "غيّر الحالة تلقائيًا عند وجود أشخاص آخرين في Instance (وحيد / بصحبة)",
+                    "alone_condition": "اعتبر نفسك وحيدًا عندما",
+                    "alone": "لا يوجد مستخدم آخر",
+                    "no_friends": "لا يوجد صديق في Instance",
+                    "alone_status": "الحالة عند الانفراد",
+                    "company_status": "الحالة عند وجود آخرين",
+                    "allowed_instance_types": "يعمل في أنواع Instances",
+                    "instance_type_placeholder": "كل أنواع Instances",
+                    "auto_invite_request_accept": "قبول طلبات الدعوة تلقائيًا",
+                    "auto_invite_request_accept_tooltip": "اقبل طلبات الدعوة تلقائيًا من الأصدقاء المفضلين",
+                    "auto_invite_request_accept_favs": "جميع المفضلين",
+                    "auto_invite_request_accept_favs_hint": "يشمل مجموعات الأصدقاء المفضلين المحلية",
+                    "auto_invite_request_accept_selected_favs": "مجموعات مفضلة مخصصة",
+                    "change_status_description": "تجاوز وصف الحالة",
+                    "status_description_placeholder": "وصف الحالة (بحد أقصى 32 حرفًا)",
+                    "auto_change_status_groups": "احتسب الأصدقاء فقط من",
+                    "auto_change_status_groups_placeholder": "اختر المجموعات",
+                    "auto_accept_invite_groups": "اقبل فقط من",
+                    "auto_accept_invite_groups_placeholder": "اختر المجموعات"
+                },
+                "legal_notice": {
+                    "header": "إشعار قانوني",
+                    "info": "VRCX هو تطبيق مساعد لـ VRChat يوفّر معلومات عن الصداقات وإدارتها. يستخدم هذا التطبيق حزمة SDK غير الرسمية الخاصة بـ VRChat API.",
+                    "disclaimer1": "VRCX غير معتمد من VRChat ولا يعكس آراء أو مواقف VRChat أو أي شخص مشارك رسميًا في إنتاج ممتلكات VRChat أو إدارتها. VRChat وجميع الممتلكات المرتبطة بها علامات تجارية أو علامات تجارية مسجلة لشركة VRChat Inc. ‏VRChat © VRChat Inc.",
+                    "disclaimer2": "‏pypy وNatsumi وجميع المساهمين غير مسؤولين عن أي مشكلات يسببها VRCX. استخدمه على مسؤوليتك الخاصة!",
+                    "open_source_software_notice": "إشعار البرمجيات مفتوحة المصدر"
+                },
+                "contributors": {
+                    "header": "المساهمون"
+                }
+            },
+            "appearance": {
+                "appearance": {
+                    "header": "المظهر",
+                    "language": "اللغة",
+                    "bio_language": "اللغة المستهدفة",
+                    "theme_mode": "المظهر",
+                    "font_family": "الخط",
+                    "cjk_font_pack": "خط CJK",
+                    "font_family_inter": "Inter (الافتراضي)",
+                    "font_family_noto_sans": "Noto Sans",
+                    "font_family_geist": "Geist",
+                    "font_family_nunito_sans": "Nunito Sans",
+                    "font_family_ibm_plex_sans": "IBM Plex Sans",
+                    "font_family_jetbrains_mono": "JetBrains Mono",
+                    "font_family_fantasque_sans_mono": "Fantasque Sans Mono",
+                    "font_family_system_ui": "خط النظام",
+                    "font_family_custom": "مخصص",
+                    "font_family_custom_dialog_title": "عائلة خط مخصصة",
+                    "font_family_custom_dialog_description": "أدخل قيمة CSS font-family صالحة",
+                    "font_family_custom_invalid": "قيمة font-family غير صالحة. استخدم أسماء خطوط مفصولة بفواصل، مثل 'My Font', Arial, sans-serif",
+                    "cjk_font_pack_noto": "Noto Sans CJK",
+                    "cjk_font_pack_pht": "PuHuiTi CJK",
+                    "theme_mode_system": "النظام",
+                    "theme_mode_light": "فاتح",
+                    "theme_mode_dark": "داكن",
+                    "theme_mode_midnight": "منتصف الليل",
+                    "theme_mode_blue": "أزرق",
+                    "theme_mode_darkblue": "أزرق داكن",
+                    "theme_mode_amoled": "AMOLED",
+                    "theme_mode_darkvanillaold": "فانيلا داكن (قديم)",
+                    "theme_mode_darkvanilla": "فانيلا داكن",
+                    "theme_mode_pink": "وردي",
+                    "theme_mode_material3": "Material 3",
+                    "zoom": "التكبير",
+                    "vrcplus_profile_icons": "أيقونات الملف الشخصي لـ VRChat+",
+                    "vrcplus_profile_icons_description": "استخدم أيقونات الملف الشخصي الحصرية لـ VRChat+ عند توفرها.",
+                    "show_instance_id": "إظهار معرّف Instance",
+                    "show_status_bar": "إظهار شريط الحالة",
+                    "age_gated_instances": "إظهار Instances المقيّدة بالعمر",
+                    "age_gated_instances_description": "اعرض Instances المقيّدة بالعمر. عند التعطيل، تُخفى هذه Instances وتُعرض كمقيّدة.",
+                    "nicknames": "الأسماء المستعارة في مذكرات الأصدقاء",
+                    "nicknames_description": "اعرض أسماء المذكرات المخصصة بعد أسماء المستخدمين.",
+                    "sort_favorite_by": "ترتيب المفضلة حسب",
+                    "sort_favorite_by_name": "الاسم",
+                    "sort_favorite_by_date": "التاريخ",
+                    "sort_favorite_by_players": "اللاعبون",
+                    "sort_instance_users_by": "ترتيب المستخدمين في Instance حسب",
+                    "sort_instance_users_by_time": "الوقت في Instance",
+                    "sort_instance_users_by_alphabet": "الاسم",
+                    "table_page_sizes": "أحجام صفحات الجداول",
+                    "table_page_sizes_error": "يجب أن يكون حجم الصفحة رقمًا بين 1 و1000",
+                    "show_notification_icon_dot": "نقطة إشعارات شريط النظام",
+                    "striped_data_table_mode": "جداول مخططة",
+                    "accessible_status_indicators": "مؤشرات حالة ميسّرة",
+                    "accessible_status_indicators_description": "استخدم الأشكال بالإضافة إلى الألوان لتمييز الحالات.",
+                    "table_density": "كثافة الجداول",
+                    "table_density_standard": "قياسي",
+                    "table_density_comfortable": "مريح",
+                    "table_density_compact": "مضغوط",
+                    "table_entries_settings": "إعدادات عناصر الجداول",
+                    "table_entries_settings_description": "تحكم في عدد العناصر التي تُحمّل للقوائم وعمليات البحث."
+                },
+                "display": {
+                    "header": "العرض"
+                },
+                "sorting_tables": {
+                    "header": "الفرز والجداول"
+                },
+                "timedate": {
+                    "header": "الوقت/التاريخ",
+                    "time_format": "تنسيق الوقت",
+                    "time_format_24": "24 ساعة",
+                    "time_format_12": "12 ساعة",
+                    "force_iso_date_format": "فرض تنسيق تاريخ ISO",
+                    "week_starts_on": "بداية الأسبوع",
+                    "week_starts_on_description": "اختر أول يوم في الأسبوع. يؤثر ذلك في التقويمات والرسوم البيانية وعروض النشاط."
+                },
+                "theme_color": {
+                    "header": "لون المظهر",
+                    "default": "زنك",
+                    "blue": "أزرق",
+                    "green": "أخضر",
+                    "orange": "برتقالي",
+                    "red": "أحمر",
+                    "rose": "زهري",
+                    "violet": "بنفسجي",
+                    "yellow": "أصفر"
+                },
+                "side_panel": {
+                    "sorting": {
+                        "header": "ترتيب الفرز",
+                        "alphabetical": "أبجديًا",
+                        "private_to_bottom": "الخاص في الأسفل",
+                        "status": "الحالة",
+                        "location": "الموقع",
+                        "last_active": "آخر نشاط",
+                        "last_seen": "آخر ظهور",
+                        "time_in_instance": "الوقت في Instance",
+                        "placeholder": "ترتيب الفرز"
+                    }
+                },
+                "user_dialog": {
+                    "header": "نافذة المستخدم",
+                    "vrchat_notes": "ملاحظات VRChat",
+                    "vrchat_notes_description": "يعرض الملاحظات المخزنة في VRChat",
+                    "vrcx_memos": "مذكرات VRCX",
+                    "vrcx_memos_description": "يعرض الملاحظات المحفوظة محليًا في VRCX",
+                    "recent_action_cooldown": "أيقونة الإجراء الأخير",
+                    "recent_action_cooldown_description": "اعرض أيقونة ساعة على إجراءات الدعوات والطلبات الأخيرة.",
+                    "recent_action_cooldown_minutes": "فترة الانتظار (بالدقائق)"
+                },
+                "user_colors": {
+                    "header": "ألوان المستخدمين",
+                    "random_colors_from_user_id": "استخدام ألوان ثابتة لكل مستخدم",
+                    "random_colors_from_user_id_description": "عيّن لونًا ثابتًا لكل مستخدم استنادًا إلى معرّفه.",
+                    "trust_levels": {
+                        "visitor": "زائر",
+                        "new_user": "مستخدم جديد",
+                        "user": "مستخدم",
+                        "known_user": "مستخدم معروف",
+                        "trusted_user": "مستخدم موثوق",
+                        "vrchat_team": "فريق VRChat",
+                        "nuisance": "مُزعج"
+                    }
+                },
+                "friend_log": {
+                    "header": "سجل الأصدقاء",
+                    "hide_unfriends": "إخفاء أحداث إزالة الصداقة"
+                }
+            },
+            "notifications": {
+                "notifications": {
+                    "header": "الإشعارات",
+                    "layout": "عرض الإشعارات",
+                    "layout_notification_center": "مركز الإشعارات",
+                    "layout_table": "صفحة الإشعارات",
+                    "notification_filter": "عوامل تصفية الإشعارات",
+                    "test_notification": "إرسال إشعار تجريبي",
+                    "test_message": "إشعار تجريبي.",
+                    "steamvr_notifications": {
+                        "header": "إشعارات SteamVR",
+                        "steamvr_overlay": "طبقة SteamVR",
+                        "overlay_notifications": "إشعارات الطبقة",
+                        "notification_position": "موضع الإشعار",
+                        "xsoverlay_notifications": "إشعارات XSOverlay",
+                        "wayvr_notifications": "إشعارات WayVR",
+                        "ovrtoolkit_hud_notifications": "إشعارات HUD في OVR Toolkit",
+                        "ovrtoolkit_wrist_notifications": "إشعارات المعصم في OVR Toolkit",
+                        "user_images": "إظهار أيقونات المستخدمين",
+                        "user_images_description": "قد يؤثر في الأداء.",
+                        "notification_opacity": "شفافية الإشعار",
+                        "notification_timeout": "مهلة الإشعار"
+                    },
+                    "conditions": {
+                        "never": "أبداً",
+                        "desktop": "سطح المكتب فقط",
+                        "inside_vr": "في VR",
+                        "outside_vr": "خارج VR",
+                        "inside_vrchat": "في VRChat",
+                        "outside_vrchat": "خارج VRChat",
+                        "always": "دائماً"
+                    },
+                    "desktop_notifications": {
+                        "header": "إشعارات سطح المكتب",
+                        "when_to_display": "إظهار إشعارات سطح المكتب",
+                        "when_to_display_vr": "إظهار إشعارات VR",
+                        "desktop_notification_while_afk": "إظهار الإشعارات أثناء الغياب عن الجهاز"
+                    },
+                    "text_to_speech": {
+                        "header": "تحويل النص إلى كلام",
+                        "when_to_play": "نطق الإشعارات",
+                        "tts_voice": "صوت النطق",
+                        "use_memo_nicknames": "استخدام الأسماء المستعارة في المذكرات للنطق",
+                        "play": "تشغيل",
+                        "tts_test_placeholder": "تشغيل نطق تجريبي"
+                    }
+                }
+            },
+            "wrist_overlay": {
+                "steamvr_wrist_overlay": {
+                    "header": "طبقة المعصم في SteamVR",
+                    "description": "* يعمل تلقائياً أثناء تشغيل VRChat.",
+                    "grip": "المقبض: زر الإمساك في Vive أو وحدات التحكم الأخرى، أو زرا X/A في Oculus",
+                    "menu": "القائمة: زر القائمة في Vive، أو زر B في Index، أو زرا Y/B في Oculus",
+                    "steamvr_overlay": "طبقة SteamVR",
+                    "wrist_feed_overlay": "طبقة موجز المعصم",
+                    "hide_private_worlds": "إخفاء العوالم الخاصة",
+                    "start_overlay_with": "بدء الطبقة مع",
+                    "overlay_button": "زر الطبقة",
+                    "overlay_button_grip": "المقبض",
+                    "overlay_button_menu": "القائمة",
+                    "display_overlay_on": "العرض على",
+                    "display_overlay_on_left": "اليد اليسرى",
+                    "display_overlay_on_right": "اليد اليمنى",
+                    "display_overlay_on_both": "كلتا اليدين",
+                    "grey_background": "استخدام خلفية رمادية",
+                    "minimal_feed_icons": "استخدام أيقونات موجز مبسطة",
+                    "show_vr_devices": "إظهار أجهزة VR",
+                    "show_cpu_usage": "إظهار استخدام CPU",
+                    "show_game_uptime": "إظهار مدة تشغيل اللعبة",
+                    "show_pc_uptime": "إظهار مدة تشغيل الكمبيوتر",
+                    "wrist_feed_filters": "عوامل تصفية موجز المعصم"
+                }
+            },
+            "discord_presence": {
+                "discord_presence": {
+                    "header": "حالة Discord",
+                    "description": "* تعمل فقط أثناء التواجد في Instance.",
+                    "enable": "تمكين",
+                    "enable_tooltip": "عطّل Rich Presence الخاصة بـ VRChat لتجنب التعارض.",
+                    "instance_type_player_count": "نوع الـInstance وعدد اللاعبين",
+                    "join_button": "زر الانضمام (للعام فقط)",
+                    "show_details_in_private": "إظهار التفاصيل في Instances الخاصة",
+                    "show_images": "إظهار صور العالم",
+                    "show_current_platform": "إظهار المنصة الحالية",
+                    "world_integration": "تكامل العالم",
+                    "world_integration_tooltip": "إظهار \"يشاهد/يستمع إلى\" في Popcorn Palace وPyPyDance وVRDancing وLS Media",
+                    "display_world_name_as_discord_status": "استخدام اسم العالم كنشاط"
+                },
+                "rpc": {
+                    "vr": "VR",
+                    "desktop": "سطح المكتب",
+                    "powered_by_vrcx": "مدعوم بواسطة VRCX",
+                    "private_world": "عالم خاص"
+                }
+            },
+            "pictures": {
+                "pictures": {
+                    "auto_delete_old_prints": "حذف المطبوعات القديمة تلقائياً",
+                    "auto_delete_prints_from_vrc": "الحذف التلقائي للمطبوعات القديمة عند بلوغ الحد"
+                }
+            },
+            "advanced": {
+                "advanced": {
+                    "launch_options": "خيارات التشغيل",
+                    "vrc_registry_backup": "نسخة احتياطية من VRC Registry",
+                    "vrchat_settings": {
+                        "header": "VRChat"
+                    },
+                    "vrcx_settings": {
+                        "header": "VRCX"
+                    },
+                    "primary_password": {
+                        "header": "كلمة المرور الأساسية",
+                        "description": "تشفير كلمة المرور (يعطّل تسجيل الدخول التلقائي)"
+                    },
+                    "relaunch_vrchat": {
+                        "header": "إعادة تشغيل VRChat تلقائياً بعد التعطل",
+                        "description": "إعادة تشغيل VRChat تلقائياً وإعادة الانضمام إلى آخر Instance بعد التعطل."
+                    },
+                    "vrchat_quit_fix": {
+                        "header": "فرض إنهاء VRChat عند الخروج",
+                        "description": "إنهاء VRChat بعد الخروج من اللعبة"
+                    },
+                    "auto_cache_management": {
+                        "header": "إدارة الكاش تلقائياً عند الخروج",
+                        "description": "تنظيف بيانات الكاش القديمة تلقائياً عند إغلاق VRChat."
+                    },
+                    "self_invite": {
+                        "header": "إجراء الدعوة الذاتية",
+                        "description": "استخدام دعوة ذاتية بدلاً من فتح الـInstance في VRChat."
+                    },
+                    "anonymous_error_reporting": {
+                        "header": "الإبلاغ المجهول عن الأخطاء (Nightly فقط)",
+                        "description": "ساعد في تحسين VRCX عبر إرسال تقارير تعطل وأخطاء مجهولة. لا يتم جمع أي بيانات شخصية أو بيانات VRChat.",
+                        "consent_title": "الإبلاغ المجهول عن الأخطاء",
+                        "consent_description": "السماح بالإبلاغ المجهول عن الأخطاء للمساعدة في تحسين VRCX?\n\n• بيانات الأعطال والأخطاء فقط\n• لا توجد بيانات شخصية أو بيانات VRChat\n• لإصدارات Nightly فقط\n• يمكن تعطيله من الإعدادات المتقدمة",
+                        "enabled_restart_description": "تم تمكين الإبلاغ عن الأخطاء. هل تريد إعادة تشغيل VRCX لتطبيق التغييرات؟",
+                        "disabled_restart_description": "تم تعطيل الإبلاغ عن الأخطاء. هل تريد إعادة تشغيل VRCX لتطبيق التغييرات؟"
+                    },
+                    "save_instance_prints_to_file": {
+                        "header": "حفظ مطبوعات الـInstance في ملف",
+                        "header_tooltip": "يتطلب خيار تشغيل VRChat ‏--enable-sdk-log-levels.",
+                        "description": "حفظ المطبوعات التي تم إنشاؤها في مجلد VRChat Pictures",
+                        "crop": "إزالة الحافة البيضاء من المطبوعات تلقائياً",
+                        "crop_convert_old": "هل تريد اقتصاص جميع المطبوعات التي حُفظت مسبقاً؟",
+                        "crop_convert_old_confirm": "نعم",
+                        "crop_convert_old_cancel": "لا"
+                    },
+                    "save_instance_stickers_to_file": {
+                        "header": "حفظ ملصقات الـInstance في ملف",
+                        "description": "حفظ الملصقات الموضوعة في مجلد VRChat Pictures"
+                    },
+                    "save_instance_emoji_to_file": {
+                        "header": "حفظ رموز الـInstance التعبيرية في ملف",
+                        "description": "حفظ الرموز التعبيرية التي تم إنشاؤها في مجلد VRChat Pictures"
+                    },
+                    "delete_all_screenshot_metadata": {
+                        "button": "إزالة بيانات لقطة الشاشة الوصفية",
+                        "ask": "هل أنت متأكد من أنك تريد حذف جميع البيانات الوصفية للقطات الشاشة الخاصة بـ VRC وVRCX من مجلد VRChat Pictures؟",
+                        "confirm": "حذف جميع البيانات الوصفية للقطات الشاشة إجراء تدميري للغاية ولا يمكن التراجع عنه! يشمل ذلك جميع المطبوعات والمجلدات الفرعية والصور الأخرى غير المرتبطة داخل مجلد VRChat Pictures. إذا كانت هذه الصور مهمة لك، فيرجى إنشاء نسخة احتياطية قبل المتابعة.",
+                        "confirm_yes": "نعم",
+                        "confirm_no": "لا"
+                    },
+                    "remote_database": {
+                        "header": "قاعدة بيانات الأفاتار البعيدة",
+                        "enable": "تمكين",
+                        "enable_description": "يتيح جلب بيانات الأفاتار من قاعدة بيانات بعيدة",
+                        "avatar_database_provider": "موفر قاعدة بيانات الأفاتار"
+                    },
+                    "youtube_api": {
+                        "header": "YouTube API",
+                        "enable": "تمكين",
+                        "youtube_api_key": "مفتاح YouTube API",
+                        "enable_tooltip": "يجلب عناوين الفيديو للاستخدام مع gameLog والمدة لشريط تقدم الطبقة"
+                    },
+                    "translation_api": {
+                        "header": "تمكين ترجمة المحتوى",
+                        "enable": "تمكين",
+                        "translation_api_key": "مفتاح Translate API",
+                        "enable_tooltip": "ترجمة النبذات الشخصية للمستخدمين وأوصاف العوالم عند الطلب."
+                    },
+                    "video_progress_pie": {
+                        "header": "طبقة مخطط التقدم الدائري للفيديوهات",
+                        "enable": "تمكين",
+                        "enable_tooltip": "يتطلب تمكين طبقة SteamVR",
+                        "dance_world_only": "العوالم المدعومة فقط"
+                    },
+                    "launch_commands": {
+                        "header": "أوامر التشغيل (الروابط العميقة)",
+                        "docs": "توثيق أوامر التشغيل",
+                        "show_confirmation_on_switch_avatar_enable": "تأكيد قبل تبديل الأفاتار",
+                        "show_confirmation_on_switch_avatar_tooltip": "عند التعطيل، لن يطلب VRCX تأكيداً قبل تبديل الأفاتارات.",
+                        "website_userscript": "Userscript لموقع VRC"
+                    },
+                    "screenshot_helper": {
+                        "header": "مساعد لقطات الشاشة",
+                        "description": "تضمين بيانات العالم والـInstance في لقطات شاشة VRChat كبيانات PNG وصفية.",
+                        "description_tooltip": "لا يعرض Windows بيانات نص PNG الوصفية بشكل أصلي. استخدم أدوات مثل ExifTool أو أداة فحص PNG لعرضها.",
+                        "enable": "تمكين بيانات لقطة الشاشة الوصفية",
+                        "modify_filename": "تعديل اسم الملف",
+                        "modify_filename_tooltip": "سيضيف World ID إلى اسم ملف لقطة الشاشة، بالإضافة إلى بيانات الملف الوصفية.",
+                        "copy_to_clipboard": "نسخ إلى الحافظة"
+                    },
+                    "app_launcher": {
+                        "header": "مشغّل التطبيقات",
+                        "folder": "مجلد التشغيل التلقائي",
+                        "folder_tooltip": "لتشغيل التطبيقات تلقائياً مع VRChat، ضع الاختصارات داخل هذا المجلد. ويمكنك أيضاً استخدام المجلدات الفرعية الخاصة بكل منصة، كما أن اختصارات تطبيقات Steam مدعومة أيضاً",
+                        "auto_close": "إغلاق التطبيقات تلقائياً",
+                        "run_process_once": "فتح نسخة واحدة من التطبيق"
+                    },
+                    "cache_debug": {
+                        "header": "كاش/تصحيح VRCX للـInstance",
+                        "udon_exception_logging": "تسجيل استثناءات Udon",
+                        "disable_gamelog": "تعطيل GameLog",
+                        "disable_gamelog_notice": "(من المرجح أن يتسبب هذا في تعطيل بعض الميزات)",
+                        "user_cache": "الكاش للمستخدم:",
+                        "world_cache": "الكاش للعالم:",
+                        "avatar_cache": "الكاش للأفاتار:",
+                        "group_cache": "الكاش للمجموعة:",
+                        "avatar_name_cache": "الكاش لأسماء الأفاتارات:",
+                        "instance_cache": "كاش الـInstance:",
+                        "clear_cache": "مسح الكاش",
+                        "refresh_cache": "تحديث الكاش",
+                        "auto_clear_cache": "مسح الكاش تلقائياً",
+                        "show_console": "إظهار Console"
+                    },
+                    "sqlite_table_size": {
+                        "header": "حجم جداول SQLite",
+                        "refresh": "تحديث",
+                        "gps": "GPS:",
+                        "status": "الحالة:",
+                        "bio": "النبذة:",
+                        "avatar": "الأفاتار:",
+                        "online_offline": "متصل/غير متصل:",
+                        "friend_log_history": "سجل الأصدقاء:",
+                        "notification": "الإشعارات:",
+                        "location": "الموقع:",
+                        "join_leave": "انضمام/مغادرة:",
+                        "portal_spawn": "إنشاء Portal:",
+                        "video_play": "تشغيل الفيديو:",
+                        "event": "الحدث:"
+                    },
+                    "database_cleanup": {
+                        "header": "تنظيف قاعدة البيانات",
+                        "auto_cleanup": "تنظيف بيانات الأفاتار الأقدم من تلقائياً",
+                        "auto_cleanup_description": "يتم التحقق مرة واحدة أسبوعياً عند بدء التشغيل",
+                        "auto_cleanup_off": "إيقاف",
+                        "auto_cleanup_30": "30 يوماً",
+                        "auto_cleanup_90": "90 يوماً",
+                        "auto_cleanup_180": "6 أشهر",
+                        "auto_cleanup_365": "سنة واحدة",
+                        "purge_button": "تنظيف بيانات موجز الأفاتار",
+                        "purge": "تنظيف",
+                        "purge_older_than": "حذف بيانات الأفاتار الأقدم من",
+                        "purge_option_180": "6 أشهر",
+                        "purge_option_365": "سنة واحدة",
+                        "purge_option_730": "سنتان",
+                        "purge_option_all": "كل البيانات",
+                        "purge_confirm_title": "تنظيف بيانات موجز الأفاتار",
+                        "purge_confirm_description_1": "سيؤدي هذا إلى حذف سجلات تغيير الأفاتار نهائياً من قاعدة البيانات واستعادة مساحة القرص.",
+                        "purge_confirm_description_2": "لا يمكن التراجع عن هذا الإجراء!",
+                        "purge_confirm_description_3": "سيُعاد تشغيل VRCX بعد اكتمال العملية.",
+                        "purge_confirm_alert": "نوصي بشدة بإنشاء نسخة احتياطية من ملف قاعدة البيانات قبل المتابعة!",
+                        "purge_confirm_button": "تنظيف وإعادة التشغيل",
+                        "purge_in_progress": "جارٍ تنظيف بيانات الأفاتار...",
+                        "purge_complete": "تم تنظيف بيانات الأفاتار بنجاح. جارٍ إعادة التشغيل...",
+                        "purge_failed": "فشل التنظيف: {error}"
+                    },
+                    "user_generated_content": {
+                        "header": "مجلد المحتوى",
+                        "folder": "فتح المجلد",
+                        "description": "فتح أو تعيين المجلد الخاص بمحتوى VRChat مثل المطبوعات والملصقات.",
+                        "set_folder": "تعيين المجلد",
+                        "reset_override": "إعادة تعيين"
+                    }
+                },
+                "photon": {
+                    "header": "طبقة تسجيل Photon",
+                    "event_hud": {
+                        "header": "HUD أحداث Photon",
+                        "enable": "تمكين",
+                        "enable_tooltip": "يتطلب تمكين طبقة SteamVR",
+                        "filter": "التصفية",
+                        "filter_favorites": "المفضلة",
+                        "filter_friends": "الأصدقاء",
+                        "filter_everyone": "الجميع",
+                        "message_timeout": "مهلة الرسالة"
+                    },
+                    "timeout_hud": {
+                        "header": "HUD مهلة المستخدم",
+                        "enable": "تمكين",
+                        "enable_tooltip": "يتطلب تمكين طبقة SteamVR",
+                        "filter": "التصفية",
+                        "filter_favorites": "المفضلة",
+                        "filter_friends": "الأصدقاء",
+                        "filter_everyone": "الجميع",
+                        "timeout_threshold": "حد المهلة"
+                    }
+                }
+            }
+        }
+    },
+    "dialog": {
+        "alertdialog": {
+            "ok": "موافق",
+            "cancel": "إلغاء",
+            "confirm": "تأكيد"
+        },
+        "prompt": {
+            "input_invalid": "إدخال غير صالح"
+        },
+        "user": {
+            "status": {
+                "active": "نشط",
+                "offline": "غير متصل",
+                "online": "متصل",
+                "join_me": "انضم إلي",
+                "ask_me": "اسألني",
+                "busy": "عدم الإزعاج"
+            },
+            "previous_display_names": "أسماء العرض السابقة:",
+            "pronouns": "الضمائر",
+            "tags": {
+                "friend_number": "رقم الصديق",
+                "vrchat_team": "فريق VRChat",
+                "age_verified": "تم التحقق من العمر",
+                "trust_level": "مستوى الثقة",
+                "mutual_friends": "الأصدقاء المشتركون",
+                "open_in_discord": "فتح في Discord",
+                "discord": "Discord"
+            },
+            "badges": {
+                "assigned": "مُعيّن",
+                "hidden": "مخفي",
+                "showcased": "معروض"
+            },
+            "actions": {
+                "favorites_tooltip": "المفضلة",
+                "refresh": "تحديث",
+                "share": "مشاركة",
+                "invite": "دعوة",
+                "invite_with_message": "دعوة مع رسالة",
+                "request_invite": "طلب دعوة",
+                "request_invite_with_message": "طلب دعوة مع رسالة",
+                "invite_to_group": "دعوة إلى مجموعة",
+                "group_moderation": "إشراف المجموعة",
+                "send_boop": "إرسال بووب",
+                "manage_gallery_inventory_icon": "إدارة صور ومخزون VRC+",
+                "accept_friend_request": "قبول طلب الصداقة",
+                "decline_friend_request": "رفض طلب الصداقة",
+                "cancel_friend_request": "إلغاء طلب الصداقة",
+                "send_friend_request": "إرسال طلب صداقة",
+                "show_avatar_author": "إظهار منشئ الأفاتار",
+                "show_fallback_avatar": "إظهار تفاصيل الأفاتار الاحتياطي",
+                "show_previous_instances": "إظهار Instances السابقة",
+                "moderation_block": "حظر",
+                "moderation_unblock": "إلغاء الحظر",
+                "moderation_mute": "كتم",
+                "moderation_unmute": "إلغاء الكتم",
+                "moderation_hide_avatar": "إخفاء الأفاتار",
+                "moderation_show_avatar": "إظهار الأفاتار",
+                "moderation_enable_avatar_interaction": "تمكين التفاعل مع الأفاتار",
+                "moderation_disable_avatar_interaction": "تعطيل التفاعل مع الأفاتار",
+                "moderation_enable_chatbox": "إلغاء كتم صندوق الدردشة",
+                "moderation_disable_chatbox": "كتم صندوق الدردشة",
+                "edit_status": "تعديل الحالة",
+                "edit_language": "اللغة",
+                "edit_bio": "النبذة",
+                "edit_pronouns": "الضمائر",
+                "report_hacking": "الإبلاغ عن اختراق",
+                "unfriend": "إزالة الصداقة",
+                "unfriend_success_msg": "تمت إزالة الصداقة",
+                "logout": "تسجيل الخروج",
+                "edit_note_memo": "تحرير الملاحظة والمذكرة",
+                "reset_home": "إعادة تعيين العالم الرئيسي"
+            },
+            "info": {
+                "header": "المعلومات",
+                "launch_invite_tooltip": "تشغيل/دعوة",
+                "self_invite_tooltip": "دعوة نفسك",
+                "open_in_vrchat_tooltip": "فتح في VRChat",
+                "refresh_instance_info": "تحديث معلومات Instance",
+                "instance_queue": "الطابور",
+                "instance_users": "المستخدمون:",
+                "instance_friends_tooltip": "الأصدقاء في هذا Instance",
+                "instance_game_version": "إصدار اللعبة:",
+                "last_join": "آخر انضمام",
+                "instance_queuing_enabled": "الاصطفاف مفعّل",
+                "instance_disabled_content": "المحتوى المقيد:",
+                "instance_creator": "منشئ Instance",
+                "note": "ملاحظة",
+                "note_placeholder": "انقر لإضافة ملاحظة",
+                "memo": "مذكرة",
+                "memo_placeholder": "انقر لإضافة مذكرة",
+                "avatar_info": "معلومات الأفاتار",
+                "avatar_info_last_seen": "آخر ظهور لمعلومات الأفاتار",
+                "unknown_avatar": "أفاتار غير معروف",
+                "represented_group": "المجموعة المُمثَّلة",
+                "bio": "النبذة",
+                "last_seen": "آخر ظهور",
+                "join_count": "عدد مرات الانضمام",
+                "time_together": "الوقت معًا",
+                "play_time": "وقت اللعب",
+                "online_for": "متصل منذ",
+                "offline_for": "غير متصل منذ",
+                "last_activity": "آخر نشاط",
+                "last_login": "آخر تسجيل دخول",
+                "date_joined": "تاريخ الانضمام",
+                "friended": "تمت الإضافة كصديق",
+                "unfriended": "تمت إزالة الصداقة",
+                "avatar_cloning": "استنساخ الأفاتار",
+                "booping": "البووب",
+                "avatar_cloning_allow": "مسموح",
+                "avatar_cloning_deny": "غير مسموح",
+                "home_location": "العالم الرئيسي",
+                "id": "معرّف المستخدم",
+                "id_tooltip": "نسخ إلى الحافظة",
+                "copy_id": "نسخ المعرّف",
+                "copy_url": "نسخ URL",
+                "copy_display_name": "نسخ اسم العرض",
+                "vrcplus_hides_avatar": "عند تعيين صورة ملف شخصي في VRC+، يتم إخفاء معلومات الأفاتار. كما يؤدي هذا أيضًا إلى إخفاء تغييرات الأفاتار من الموجز",
+                "instance_full": "ممتلئ",
+                "instance_closed_at": "أُغلق Instance في",
+                "instance_age_restricted": "مقيّد",
+                "instance_age_restricted_tooltip": "في Instance مقيّد بالعمر",
+                "close_instance": "إغلاق Instance",
+                "instance_age_gated": "مقيّد بالعمر",
+                "instance_role_restricted": "مقيّد بالأدوار",
+                "open_previous_instance": "فتح Instances السابقة",
+                "show_mutual_friends": "إظهار الأصدقاء المشتركين",
+                "show_discord_connections": "إظهار اتصالات Discord",
+                "instance_minimum_avatar_performance": "الحد الأدنى لأداء الأفاتار"
+            },
+            "groups": {
+                "header": "المجموعات",
+                "total_count": "الإجمالي {count}",
+                "sort_by": "ترتيب حسب:",
+                "edit_mode": "وضع التحرير",
+                "exit_edit_mode": "الخروج من وضع التحرير",
+                "hold_shift": "اضغط باستمرار على Shift للمغادرة دون تأكيد",
+                "own_groups": "مجموعاتي",
+                "mutual_groups": "المجموعات المشتركة",
+                "groups": "المجموعات",
+                "sorting": {
+                    "alphabetical": "أبجدي",
+                    "members": "الأعضاء",
+                    "in_game": "الترتيب داخل اللعبة"
+                },
+                "leave_group_tooltip": "مغادرة المجموعة"
+            },
+            "worlds": {
+                "header": "العوالم",
+                "total_count": "الإجمالي {count}",
+                "sort_by": "ترتيب حسب:",
+                "order_by": "الترتيب:",
+                "sorting": {
+                    "name": "الاسم",
+                    "updated": "آخر تحديث",
+                    "created": "تاريخ الإنشاء",
+                    "favorites": "المفضلة",
+                    "popularity": "الشعبية"
+                },
+                "order": {
+                    "descending": "تنازلي",
+                    "ascending": "تصاعدي"
+                }
+            },
+            "favorite_worlds": {
+                "header": "العوالم المفضلة"
+            },
+            "avatars": {
+                "header": "الأفاتارات",
+                "total_count": "الإجمالي {count}",
+                "sort_by": "ترتيب حسب:",
+                "sort_by_name": "الاسم",
+                "sort_by_update": "آخر تحديث",
+                "sort_by_uploaded": "تاريخ الرفع",
+                "all": "الكل",
+                "public": "عام",
+                "private": "خاص",
+                "group_by": "تجميع حسب:"
+            },
+            "json": {
+                "header": "JSON"
+            },
+            "mutual_friends": {
+                "header": "الأصدقاء المشتركون",
+                "sorting": {
+                    "alphabetical": "أبجدي",
+                    "last_active": "آخر نشاط",
+                    "friend_order": "ترتيب الأصدقاء"
+                }
+            },
+            "activity": {
+                "header": "النشاط",
+                "load": "تحميل النشاط",
+                "load_hint": "حمّل بيانات النشاط من قاعدة البيانات المحلية عند الحاجة.",
+                "refresh_hint": "تحديث بيانات النشاط",
+                "total_events": "{count} حدث اتصال",
+                "times_online": "مرات الاتصال",
+                "most_active_day": "اليوم الأكثر نشاطًا:",
+                "most_active_time": "ساعات الذروة:",
+                "period": "الفترة:",
+                "period_90": "آخر 90 يومًا",
+                "period_180": "آخر 6 أشهر",
+                "period_365": "آخر سنة",
+                "period_all": "كل الوقت",
+                "building_cache": "يجري حساب جميع بيانات النشاط للنطاقات الزمنية الموسعة...",
+                "period_30": "آخر 30 يومًا",
+                "period_7": "آخر 7 أيام",
+                "minutes_online": "دقيقة اتصال",
+                "no_data_in_period": "لا توجد بيانات نشاط في الفترة المحددة",
+                "days": {
+                    "mon": "الاثنين",
+                    "tue": "الثلاثاء",
+                    "wed": "الأربعاء",
+                    "thu": "الخميس",
+                    "fri": "الجمعة",
+                    "sat": "السبت",
+                    "sun": "الأحد"
+                },
+                "chart_hint": "هل سجّلت نشاطك اليوم؟",
+                "chart_hint_reply": "لا يمكنك تزوير النشاط.",
+                "overlap": {
+                    "header": "تداخل الاتصال",
+                    "peak_overlap": "ذروة التداخل:",
+                    "exclude_hours": "استبعاد الساعات",
+                    "no_data": "لا توجد بيانات كافية لحساب التداخل",
+                    "times_overlap": "مرات التداخل",
+                    "minutes_overlap": "دقيقة تداخل"
+                },
+                "most_visited_worlds": {
+                    "header": "أكثر العوالم زيارة",
+                    "loading": "جارٍ تحميل أكثر العوالم زيارة...",
+                    "exclude_home_world": "استبعاد العالم الرئيسي",
+                    "sort_by_time": "حسب الوقت",
+                    "sort_by_count": "حسب الزيارات",
+                    "visit_count_label": "{count} زيارة"
+                },
+                "preparing_data": "جارٍ إعداد بيانات النشاط...",
+                "preparing_data_hint": "قد يستغرق هذا بعض الوقت عند التحميل لأول مرة.",
+                "data_ready": "بيانات النشاط جاهزة"
+            },
+            "note_memo": {
+                "header": "تحرير الملاحظة والمذكرة",
+                "cancel": "إلغاء",
+                "confirm": "تأكيد"
+            }
+        },
+        "world": {
+            "tags": {
+                "public": "عام",
+                "private": "خاص",
+                "avatar_scaling_disabled": "تعطيل تغيير حجم الأفاتار",
+                "focus_view_disabled": "تعطيل وضع التركيز",
+                "future_proofing": "جاهزية مستقبلية",
+                "labs": "Labs",
+                "cache": "الكاش",
+                "content_horror": "رعب",
+                "content_gore": "دموية",
+                "content_violence": "عنف",
+                "content_adult": "للبالغين",
+                "content_sex": "جنسي"
+            },
+            "actions": {
+                "delete_cache_tooltip": "حذف العالم من الكاش",
+                "favorites_tooltip": "المفضلة",
+                "refresh": "تحديث",
+                "share": "مشاركة",
+                "new_instance": "Instance جديد",
+                "new_instance_and_self_invite": "Instance جديد + دعوة نفسك",
+                "new_instance_and_open_ingame": "Instance جديد + فتح داخل اللعبة",
+                "make_home": "تعيين كعالم رئيسي",
+                "reset_home": "إعادة تعيين العالم الرئيسي",
+                "show_previous_instances": "إظهار Instances السابقة",
+                "rename": "إعادة تسمية",
+                "change_description": "تغيير الوصف",
+                "change_capacity": "تغيير السعة",
+                "change_recommended_capacity": "تغيير السعة الموصى بها",
+                "change_preview": "تغيير معاينة YouTube",
+                "change_warnings_settings_tags": "تغيير تحذيرات المحتوى والإعدادات والوسوم",
+                "change_image": "تغيير الصورة",
+                "change_allowed_video_player_domains": "تغيير النطاقات المسموح بها لمشغّل الفيديو",
+                "download_package": "تنزيل حزمة Unity",
+                "publish_to_labs": "النشر في Labs. يمكنك النشر مرة واحدة فقط كل أسبوع (7 أيام).",
+                "unpublish": "إلغاء النشر",
+                "delete_persistent_data": "حذف البيانات الدائمة",
+                "delete": "حذف"
+            },
+            "instances": {
+                "header": "Instances",
+                "public_count": "العامة {count}",
+                "private_count": "الخاصة {count}",
+                "capacity_count": "السعة {count} ({max})",
+                "refresh_instance_info": "تحديث معلومات Instance",
+                "instance_creator": "منشئ Instance"
+            },
+            "info": {
+                "header": "المعلومات",
+                "memo": "مذكرة",
+                "memo_placeholder": "انقر لإضافة مذكرة",
+                "id": "معرّف العالم",
+                "id_tooltip": "نسخ إلى الحافظة",
+                "copy_id": "نسخ المعرّف",
+                "copy_url": "نسخ URL",
+                "copy_name": "نسخ الاسم",
+                "youtube_preview": "معاينة YouTube",
+                "author_tags": "وسوم المنشئ",
+                "players": "اللاعبون",
+                "favorites": "المفضلة",
+                "visits": "الزيارات",
+                "capacity": "السعة",
+                "heat": "الزخم",
+                "popularity": "الشعبية",
+                "created_at": "تاريخ الإنشاء",
+                "last_updated": "آخر تحديث",
+                "publication_date": "تاريخ النشر",
+                "labs_publication_date": "تاريخ النشر في Labs",
+                "time_in_labs": "المدة في Labs:",
+                "version": "الإصدار",
+                "platform": "المنصة",
+                "last_visited": "آخر زيارة",
+                "visit_count": "عدد الزيارات",
+                "time_spent": "الوقت المستغرق"
+            },
+            "json": {
+                "header": "JSON"
+            }
+        },
+        "avatar": {
+            "tags": {
+                "public": "عام",
+                "private": "خاص",
+                "fallback": "احتياطي",
+                "impostor": "Impostor",
+                "future_proofing": "جاهزية مستقبلية",
+                "cache": "الكاش",
+                "content_horror": "رعب",
+                "content_gore": "دموية",
+                "content_violence": "عنف",
+                "content_adult": "للبالغين",
+                "content_sex": "جنسي",
+                "performanceRating": {
+                    "Excellent": "ممتاز",
+                    "Good": "جيد",
+                    "Medium": "متوسط",
+                    "Poor": "ضعيف",
+                    "VeryPoor": "ضعيف جدًا",
+                    "None": "بدون"
+                }
+            },
+            "labels": {
+                "public": "(عام)",
+                "private": "(خاص)"
+            },
+            "actions": {
+                "delete_cache_tooltip": "حذف الأفاتار من الكاش",
+                "favorite_tooltip": "المفضلة",
+                "refresh": "تحديث",
+                "share": "مشاركة",
+                "select": "اختيار الأفاتار",
+                "select_fallback": "اختيار الأفاتار الاحتياطي",
+                "block": "حظر الأفاتار",
+                "unblock": "إلغاء حظر الأفاتار",
+                "make_public": "جعله عامًا",
+                "make_private": "جعله خاصًا",
+                "rename": "إعادة تسمية",
+                "change_description": "تغيير الوصف",
+                "change_content_tags": "تغيير وسوم المحتوى",
+                "change_styles_author_tags": "تغيير الأنماط ووسوم المنشئ",
+                "change_image": "تغيير الصورة",
+                "download_package": "تنزيل حزمة Unity",
+                "delete": "حذف",
+                "delete_impostor": "حذف Impostor",
+                "regenerate_impostor": "إعادة إنشاء Impostor",
+                "create_impostor": "إنشاء Impostor",
+                "manage_tags": "إدارة الوسوم",
+                "manage_tags_placeholder": "أضف وسمًا...",
+                "manage_tags_hint": "انقر على الوسم لتغيير لونه",
+                "view_details": "عرض التفاصيل"
+            },
+            "info": {
+                "header": "المعلومات",
+                "name": "الاسم",
+                "id": "معرّف الأفاتار",
+                "id_tooltip": "نسخ إلى الحافظة",
+                "copy_id": "نسخ المعرّف",
+                "copy_url": "نسخ URL",
+                "created_at": "تاريخ الإنشاء",
+                "last_updated": "آخر تحديث",
+                "version": "الإصدار",
+                "platform": "المنصة",
+                "pc_performance": "أداء PC",
+                "android_performance": "أداء Android",
+                "ios_performance": "أداء iOS",
+                "time_spent": "الوقت المستغرق",
+                "visibility": "إمكانية الرؤية",
+                "tags": "الوسوم",
+                "memo": "مذكرة",
+                "memo_placeholder": "انقر لإضافة مذكرة",
+                "listings": "القوائم",
+                "gallery": "المعرض"
+            },
+            "json": {
+                "header": "JSON"
+            }
+        },
+        "group": {
+            "tags": {
+                "verified": "موثّق",
+                "public": "عام",
+                "private": "خاص",
+                "open": "مفتوح",
+                "request": "طلب",
+                "invite": "دعوة",
+                "closed": "مغلق",
+                "joined": "منضم",
+                "banned": "محظور",
+                "visible": "مرئي",
+                "friends": "الأصدقاء",
+                "hidden": "مخفي",
+                "subscribed": "مشترك"
+            },
+            "actions": {
+                "represent_tooltip": "تعيين كمجموعة مُمثَّلة",
+                "unrepresent_tooltip": "إيقاف التمثيل",
+                "cancel_join_request_tooltip": "إلغاء طلب الانضمام",
+                "pending_request_tooltip": "دعوة معلّقة",
+                "request_join_tooltip": "طلب الانضمام",
+                "invite_required_tooltip": "تتطلب دعوة",
+                "join_group_tooltip": "الانضمام إلى المجموعة",
+                "refresh": "تحديث",
+                "share": "مشاركة",
+                "unsubscribe": "إلغاء الاشتراك في الإعلانات",
+                "subscribe": "الاشتراك في الإعلانات",
+                "invite_to_group": "دعوة إلى مجموعة",
+                "manage_selected": "إدارة المجموعات المحددة",
+                "select_all": "تحديد الكل",
+                "deselect_all": "إلغاء تحديد الكل",
+                "visibility_everyone": "إتاحة الرؤية للجميع",
+                "visibility_friends": "إتاحة الرؤية للأصدقاء",
+                "visibility_hidden": "إخفاء الرؤية",
+                "create_post": "إنشاء منشور",
+                "moderation_tools": "أدوات الإشراف",
+                "leave": "مغادرة المجموعة",
+                "block": "حظر المجموعة",
+                "unblock": "إلغاء حظر المجموعة",
+                "unsubscribe_event": "إلغاء الاشتراك في إعلانات الفعاليات",
+                "subscribe_event": "الاشتراك في إعلانات الفعاليات"
+            },
+            "info": {
+                "header": "المعلومات",
+                "instances": "Instances",
+                "announcement": "الإعلان",
+                "rules": "القواعد",
+                "members": "الأعضاء",
+                "created_at": "تاريخ الإنشاء",
+                "links": "الروابط",
+                "url": "رابط المجموعة",
+                "url_tooltip": "نسخ URL إلى الحافظة",
+                "id": "معرّف المجموعة",
+                "id_tooltip": "نسخ المعرّف إلى الحافظة",
+                "joined_at": "تاريخ الانضمام",
+                "roles": "الأدوار",
+                "role": "الدور:",
+                "role_description": "الوصف:",
+                "role_updated_at": "آخر تحديث:",
+                "role_created_at": "تاريخ الإنشاء:",
+                "role_permissions": "الأذونات:",
+                "last_visited": "آخر زيارة",
+                "past_events": "الفعاليات السابقة",
+                "upcoming_events": "الفعاليات القادمة"
+            },
+            "posts": {
+                "header": "المنشورات",
+                "visibility": "إمكانية الرؤية:",
+                "edited_at": "عُدّل في:",
+                "created_at": "أُنشئ في:",
+                "edit_tooltip": "تحرير المنشور",
+                "delete_tooltip": "حذف المنشور",
+                "edited_by": "عُدّل بواسطة:",
+                "search_placeholder": "بحث",
+                "posts_count": "المنشورات: "
+            },
+            "members": {
+                "header": "الأعضاء",
+                "all_members": "كل الأعضاء",
+                "friends_only": "الأصدقاء فقط",
+                "load_more": "تحميل المزيد...",
+                "sort_by": "ترتيب حسب:",
+                "sorting": {
+                    "joined_at_asc": "تاريخ الانضمام (تصاعدي)",
+                    "joined_at_desc": "تاريخ الانضمام (تنازلي)"
+                },
+                "filter": "التصفية:",
+                "filters": {
+                    "everyone": "الجميع",
+                    "users_with_no_role": "المستخدمون بلا دور"
+                },
+                "unsubscribed_announcements": "ألغى الاشتراك في الإعلانات",
+                "visibility": "إمكانية الرؤية:",
+                "representing": "يمثّل",
+                "manager_notes": "ملاحظات المدير:",
+                "search": "بحث"
+            },
+            "gallery": {
+                "header": "الصور"
+            },
+            "json": {
+                "header": "JSON"
+            }
+        },
+        "favorite": {
+            "header": "اختر مجموعة",
+            "vrchat_favorites": "مفضلات VRChat",
+            "local_favorites": "المفضلة المحلية",
+            "local_avatar_favorites": "المفضلة المحلية (تتطلب VRC+)"
+        },
+        "social_status": {
+            "header": "الحالة الاجتماعية",
+            "history": "السجل",
+            "status_placeholder": "الحالة",
+            "update": "تحديث",
+            "presets": "الإعدادات المسبقة",
+            "save_preset": "حفظ كإعداد مسبق",
+            "preset_saved": "تم حفظ الإعداد المسبق",
+            "preset_exists": "الإعداد المسبق موجود بالفعل",
+            "preset_limit": "الحد الأقصى {max} من الإعدادات المسبقة"
+        },
+        "language": {
+            "header": "اللغة",
+            "select_language": "اختر اللغة"
+        },
+        "bio": {
+            "header": "النبذة",
+            "bio_placeholder": "يرجى إدخال نبذة",
+            "add_link": "إضافة رابط",
+            "update": "تحديث"
+        },
+        "pronouns": {
+            "header": "الضمائر",
+            "pronouns_placeholder": "يرجى إدخال ضمائرك",
+            "update": "تحديث"
+        },
+        "new_instance": {
+            "header": "Instance جديد",
+            "access_type": "نوع الوصول",
+            "access_type_public": "عام",
+            "access_type_group": "مجموعة",
+            "access_type_friend_plus": "الأصدقاء+",
+            "access_type_friend": "الأصدقاء",
+            "access_type_invite_plus": "دعوة+",
+            "access_type_invite": "دعوة",
+            "group_access_type": "وصول المجموعة",
+            "group_access_type_members": "الأعضاء",
+            "group_access_type_plus": "بلس (Plus)",
+            "group_access_type_public": "عام",
+            "region": "المنطقة",
+            "region_usw": "غرب الولايات المتحدة",
+            "region_use": "شرق الولايات المتحدة",
+            "region_eu": "أوروبا",
+            "region_jp": "اليابان",
+            "content_emoji": "الإيموجي",
+            "content_stickers": "الملصقات",
+            "content_pedestals": "منصات المشاركة",
+            "content_prints": "المطبوعات",
+            "content_drones": "الطائرات المسيّرة",
+            "content_items": "العناصر",
+            "content_third_person": "منظور الشخص الثالث",
+            "content_prop_movement": "عناصر تغيّر حركة اللاعب",
+            "world_id": "معرّف العالم",
+            "instance_id": "معرّف Instance",
+            "instance_id_placeholder": "عشوائي",
+            "instance_creator": "منشئ Instance",
+            "instance_creator_placeholder": "اختر مستخدمًا",
+            "group_placeholder": "اختر مجموعة",
+            "role_placeholder": "اختر أدوارًا",
+            "group_id": "المجموعة",
+            "location": "الموقع",
+            "url": "URL",
+            "copy_url": "نسخ URL",
+            "self_invite": "دعوة نفسك",
+            "invite": "دعوة",
+            "launch": "تشغيل",
+            "create_instance": "إنشاء Instance",
+            "queueEnabled": "الطابور",
+            "ageGate": "تقييد العمر",
+            "normal": "عادي",
+            "group": "مجموعة",
+            "legacy": "قديم",
+            "roles": "الأدوار",
+            "open_ingame": "فتح داخل اللعبة",
+            "display_name": "اسم العرض (VRC+)",
+            "minimum_avatar_performance": "الحد الأدنى لأداء الأفاتار",
+            "quality_none": "بدون",
+            "quality_poor": "ضعيف",
+            "quality_medium": "متوسط",
+            "quality_good": "جيد"
+        },
+        "launch": {
+            "header": "تشغيل",
+            "url": "URL",
+            "short_url": "URL مختصر",
+            "short_url_notice": "تنتهي صلاحية عناوين URL المختصرة بعد فترة زمنية محددة",
+            "location": "الموقع",
+            "copy_tooltip": "نسخ إلى الحافظة",
+            "start_as_desktop": "تشغيل (سطح المكتب)",
+            "invite": "دعوة",
+            "launch": "تشغيل (VR)",
+            "open_ingame": "فتح داخل اللعبة",
+            "self_invite": "دعوة نفسك",
+            "game_running_warning": "هل أنت متأكد من رغبتك في تشغيل Instance ثانٍ من VRChat؟",
+            "confirm_yes": "نعم",
+            "confirm_no": "لا"
+        },
+        "launch_options": {
+            "header": "خيارات تشغيل VRChat",
+            "description": "هذه الخيارات مخصصة للمستخدمين المتقدمين فقط.",
+            "example": "(لتغيير الحد الأقصى لـ fps: ‏--fps=<N> مثلًا)",
+            "path_override": "تجاوز مسار VRChat",
+            "vrchat_docs": "وثائق VRChat",
+            "unity_manual": "دليل Unity",
+            "save": "حفظ"
+        },
+        "invite": {
+            "header": "دعوة",
+            "select_placeholder": "اختر أصدقاء",
+            "add_self": "أضف نفسك",
+            "add_friends_in_instance": "أضف الأصدقاء الموجودين في Instance",
+            "add_favorite_friends": "أضف الأصدقاء المفضلين",
+            "invite_with_message": "دعوة مع رسالة",
+            "invite": "دعوة",
+            "friends_in_instance": "الأصدقاء في Instance"
+        },
+        "invite_to_group": {
+            "header": "دعوة إلى مجموعة",
+            "description": "لا تكثر من دعوة المستخدمين حتى لا تُفرض عليك قيود المعدل.",
+            "choose_group_placeholder": "اختر مجموعة",
+            "groups_with_invite_permission": "المجموعات التي تملك إذن الدعوة",
+            "choose_friends_placeholder": "اختر أصدقاء",
+            "selected_users": "المستخدمون المحددون",
+            "invite": "دعوة",
+            "not_allowed": "ليس لديك صلاحية الدعوة إلى هذه المجموعة"
+        },
+        "invite_message": {
+            "header": "إرسال رسالة دعوة",
+            "confirmation": "هل أنت متأكد من رغبتك في الإرسال؟",
+            "select_image": "اختر صورة",
+            "clear_selected_image": "مسح الصورة المحددة",
+            "cancel": "إلغاء",
+            "refresh": "تحديث",
+            "confirm": "تأكيد"
+        },
+        "invite_request_message": {
+            "header": "إرسال رسالة طلب دعوة",
+            "confirmation": "هل أنت متأكد من رغبتك في الإرسال؟",
+            "cancel": "إلغاء",
+            "refresh": "تحديث"
+        },
+        "invite_response_message": {
+            "header": "إرسال رسالة رد على الدعوة",
+            "confirmation": "هل أنت متأكد من رغبتك في الإرسال؟",
+            "cancel": "إلغاء",
+            "refresh": "تحديث",
+            "confirm": "تأكيد"
+        },
+        "invite_request_response_message": {
+            "header": "إرسال رسالة رد على طلب الدعوة",
+            "cancel": "إلغاء",
+            "refresh": "تحديث"
+        },
+        "edit_invite_messages": {
+            "header": "تحرير رسائل الدعوة",
+            "invite_message_tab": "دعوة",
+            "invite_request_tab": "طلب دعوة",
+            "invite_request_response_tab": "رد على طلب الدعوة",
+            "invite_response_tab": "رد على الدعوة"
+        },
+        "edit_invite_message": {
+            "header": "تحرير رسالة الدعوة",
+            "description": "فترة التهدئة لتعديل الرسالة ساعة واحدة.",
+            "cancel": "إلغاء",
+            "save": "حفظ"
+        },
+        "edit_send_invite_message": {
+            "header": "تحرير رسالة الدعوة وإرسالها",
+            "description": "فترة التهدئة لتعديل الرسالة ساعة واحدة.",
+            "cancel": "إلغاء",
+            "send": "إرسال"
+        },
+        "edit_send_invite_response_message": {
+            "header": "تحرير رسالة الرد على الدعوة وإرسالها",
+            "description": "فترة التهدئة لتعديل الرسالة ساعة واحدة.",
+            "cancel": "إلغاء",
+            "send": "إرسال"
+        },
+        "world_export": {
+            "header": "تصدير مفضلات العوالم",
+            "all_favorites": "جميع المفضلات",
+            "none": "بدون",
+            "select_group": "اختر المجموعة",
+            "id": "المعرّف",
+            "name": "الاسم",
+            "author_id": "معرّف المؤلف",
+            "author_name": "اسم المؤلف",
+            "thumbnail": "الصورة المصغرة",
+            "copied_successfully": "تم النسخ بنجاح!",
+            "copy_failed": "فشل النسخ!"
+        },
+        "world_import": {
+            "header": "استيراد مفضلات العوالم",
+            "description": "أدخل قائمة بمعرّفات العوالم",
+            "process_list": "معالجة القائمة",
+            "process_progress": "التقدّم:",
+            "select_vrchat_group_placeholder": "اختر مجموعة",
+            "select_local_group_placeholder": "اختر مجموعة",
+            "import": "استيراد العوالم",
+            "cancel": "إلغاء",
+            "import_progress": "تقدّم الاستيراد:",
+            "clear_table": "مسح الجدول",
+            "errors": "الأخطاء:",
+            "clear_errors": "مسح الأخطاء"
+        },
+        "avatar_export": {
+            "header": "تصدير مفضلات الأفاتارات",
+            "all_favorites": "جميع المفضلات",
+            "none": "بدون",
+            "select_group": "اختر المجموعة",
+            "id": "المعرّف",
+            "name": "الاسم",
+            "author_id": "معرّف المؤلف",
+            "author_name": "اسم المؤلف",
+            "thumbnail": "الصورة المصغرة",
+            "copied_successfully": "تم النسخ بنجاح!",
+            "copy_failed": "فشل النسخ!"
+        },
+        "avatar_import": {
+            "header": "استيراد مفضلات الأفاتارات",
+            "description": "أدخل قائمة بمعرّفات الأفاتارات",
+            "process_list": "معالجة القائمة",
+            "process_progress": "التقدّم:",
+            "select_group_placeholder": "اختر مجموعة",
+            "import": "استيراد الأفاتارات",
+            "cancel": "إلغاء",
+            "import_progress": "تقدّم الاستيراد:",
+            "clear_table": "مسح الجدول",
+            "errors": "الأخطاء:",
+            "clear_errors": "مسح الأخطاء"
+        },
+        "friend_export": {
+            "header": "تصدير مفضلات الأصدقاء",
+            "all_favorites": "جميع المفضلات",
+            "none": "بدون",
+            "select_group": "اختر المجموعة",
+            "copied_successfully": "تم النسخ بنجاح!",
+            "copy_failed": "فشل النسخ!"
+        },
+        "friend_import": {
+            "header": "استيراد مفضلات الأصدقاء",
+            "description": "أدخل قائمة بمعرّفات المستخدمين",
+            "process_list": "معالجة القائمة",
+            "process_progress": "التقدّم:",
+            "select_group_placeholder": "اختر مجموعة",
+            "import": "استيراد الأصدقاء",
+            "cancel": "إلغاء",
+            "import_progress": "تقدّم الاستيراد:",
+            "clear_table": "مسح الجدول",
+            "errors": "الأخطاء:",
+            "clear_errors": "مسح الأخطاء"
+        },
+        "export_friends_list": {
+            "header": "تصدير قائمة الأصدقاء",
+            "csv": "CSV",
+            "json": "JSON"
+        },
+        "export_own_avatars": {
+            "header": "تصدير أفاتاراتي"
+        },
+        "discord_names": {
+            "header": "أسماء Discord",
+            "description": "انقر على تحميل الإدخالات المفقودة في تبويب قائمة الأصدقاء للبحث في قائمة الأصدقاء كاملةً"
+        },
+        "note_export": {
+            "header": "تصدير الملاحظات",
+            "description1": "ستقوم هذه العملية بتصدير جميع مذكرات VRCX الخاصة بك واستيرادها إلى ملاحظات VRChat.",
+            "description2": "يرجى الانتباه إلى القيود التالية:",
+            "description3": "- لدى نقطة نهاية API حدّ لمعدل الطلبات يفرض تأخيرًا كبيرًا بين الطلبات.",
+            "description4": "- الحد الأقصى لكل ملاحظة هو 256 حرفًا.",
+            "description5": "- يوجد مرشّح للكلمات النابية (لا متعة مسموحة).",
+            "description6": "- لا يُسمح بأسطر جديدة (سيتم استبدالها بمسافة).",
+            "description7": "- سيؤدي هذا إلى استبدال أي ملاحظات VRChat موجودة لهؤلاء المستخدمين.",
+            "description8": "- أي تعديلات تُجرى هنا لن تؤثر في مذكرات VRCX، لكنها ستؤثر في ملاحظات VRChat بعد التصدير.",
+            "refresh": "تحديث",
+            "export": "تصدير",
+            "cancel": "إلغاء",
+            "progress": "التقدّم:",
+            "errors": "الأخطاء:",
+            "clear_errors": "مسح الأخطاء"
+        },
+        "gallery_icons": {
+            "header": "إدارة الصور والأيقونات وEmoji والملصقات",
+            "recommended_image_size": "حجم الصورة الموصى به",
+            "gallery": "الصور",
+            "icons": "الأيقونات",
+            "emojis": "Emoji",
+            "stickers": "الملصقات",
+            "prints": "المطبوعات",
+            "inventory": "المخزون",
+            "refresh": "تحديث",
+            "upload": "رفع",
+            "clear": "مسح",
+            "emoji_animation_styles": "أنماط الحركة",
+            "emoji_animation_type": "Emoji متحرك",
+            "emoji_animation_fps": "FPS:",
+            "emoji_animation_frame_count": "عدد الإطارات:",
+            "emoji_loop_pingpong": "تكرار PingPong",
+            "flipbook_info": "اختر ورقة spritesheet بصيغة PNG بدقة 1024x1024 لاستخدامها كـ Emoji متحرك، وأحجام شبكة الإطارات المتاحة هي: 4 أو 16 أو 64 (الحد الأقصى لـ FPS هو 64، والحد الأقصى للإطارات 64)",
+            "note": "ملاحظة",
+            "crop_print_border": "قصّ حدود الطباعة",
+            "consume_bundle": "استهلاك",
+            "item": "عنصر",
+            "sticker": "ملصق",
+            "drone_skin": "مظهر الطائرة المسيّرة",
+            "emoji": "الإيموجي",
+            "redeem": "استرداد",
+            "create_animated_emoji": "مولّد Emoji المتحرك",
+            "crop_image": "تأكيد الرفع"
+        },
+        "image_crop": {
+            "rotate_left": "تدوير لليسار",
+            "rotate_right": "تدوير لليمين",
+            "flip_h": "قلب أفقي",
+            "flip_v": "قلب عمودي",
+            "zoom_in": "تكبير",
+            "zoom_out": "تصغير",
+            "mode_fit": "التبديل إلى وضع الملاءمة",
+            "mode_free": "التبديل إلى الوضع الحر",
+            "reset": "إعادة تعيين"
+        },
+        "gallery_select": {
+            "header": "اختيار صورة",
+            "gallery": "الصور",
+            "none": "لا شيء",
+            "refresh": "تحديث",
+            "upload": "رفع"
+        },
+        "change_content_image": {
+            "avatar": "تغيير صورة الأفاتار",
+            "world": "تغيير صورة العالم",
+            "description": "حجم الصورة الموصى به: 1200x900px ‏(4:3)",
+            "upload": "رفع صورة",
+            "confirm": "تأكيد القص",
+            "cancel": "إلغاء"
+        },
+        "screenshot_metadata": {
+            "header": "البيانات الوصفية للقطة الشاشة",
+            "drag": "اسحب لقطة شاشة وأفلتها هنا",
+            "browse": "استعراض",
+            "last_screenshot": "آخر لقطة شاشة",
+            "copy_image": "نسخ الصورة",
+            "open_folder": "فتح المجلد",
+            "delete_metadata": "حذف البيانات الوصفية",
+            "upload": "رفع",
+            "search_placeholder": "بحث",
+            "search_type_placeholder": "نوع البحث",
+            "search_types": {
+                "player_name": "اسم اللاعب",
+                "player_id": "معرّف اللاعب",
+                "world_name": "اسم العالم",
+                "world_id": "معرّف العالم"
+            },
+            "no_results": "لم يتم العثور على نتائج",
+            "invalid_file": "تم اختيار ملف غير صالح. يرجى اختيار لقطة شاشة صالحة من VRChat.",
+            "section_location": "الموقع",
+            "section_players": "اللاعبون",
+            "section_file_info": "معلومات الملف",
+            "section_note": "ملاحظة",
+            "section_actions": "الإجراءات",
+            "col_date": "التاريخ",
+            "col_world": "العالم",
+            "col_players": "اللاعبون",
+            "col_resolution": "الدقة",
+            "col_match": "التطابق",
+            "col_author": "المؤلف",
+            "back_to_results": "العودة إلى {count} نتيجة",
+            "result_count": "{count} نتيجة"
+        },
+        "set_world_tags": {
+            "header": "تعيين وسوم العالم",
+            "avatar_scaling_disabled": "تعطيل تحجيم الأفاتار",
+            "focus_view_disabled": "تعطيل عرض التركيز",
+            "enable_debugging": "تمكين تصحيح العالم للآخرين",
+            "author_tags": "وسوم المؤلف (مفصولة بفواصل)",
+            "content_tags": "وسوم تحذير المحتوى",
+            "content_horror": "رعب",
+            "content_gore": "دموية",
+            "content_violence": "عنف",
+            "content_adult": "للبالغين",
+            "content_sex": "جنسي",
+            "default_content_settings": "إعدادات المحتوى الافتراضية",
+            "cancel": "إلغاء",
+            "save": "حفظ"
+        },
+        "set_avatar_tags": {
+            "header": "تعيين وسوم الأفاتار",
+            "content_horror": "رعب",
+            "content_gore": "دموية",
+            "content_violence": "عنف",
+            "content_adult": "للبالغين",
+            "content_sex": "جنسي",
+            "custom_tags_placeholder": "وسوم مخصصة",
+            "select_all": "تحديد الكل",
+            "select_none": "إلغاء تحديد الكل",
+            "cancel": "إلغاء",
+            "save": "حفظ"
+        },
+        "set_avatar_styles": {
+            "header": "تعيين أنماط الأفاتار",
+            "primary_style": "النمط الأساسي",
+            "secondary_style": "النمط الثانوي",
+            "select_style": "اختيار النمط",
+            "save_success": "تم تغيير أنماط الأفاتار بنجاح",
+            "save_failed": "فشل تغيير أنماط الأفاتار",
+            "cancel": "إلغاء",
+            "save": "حفظ"
+        },
+        "allowed_video_player_domains": {
+            "header": "النطاقات المسموح بها لمشغل الفيديو",
+            "add_domain": "إضافة نطاق",
+            "save": "حفظ"
+        },
+        "config_json": {
+            "header": "إعدادات VRChat بصيغة JSON",
+            "description1": "هذه الخيارات للمستخدمين المتقدمين فقط.",
+            "description2": "اترك الحقل فارغًا لاستخدام القيمة الافتراضية، ويتطلب تطبيق الإعدادات إعادة تشغيل اللعبة.",
+            "cache_size": "حجم الكاش:",
+            "refresh": "تحديث",
+            "delete_all_cache": "حذف كل الكاش",
+            "delete_cache": "حذف الكاش",
+            "delete_old_cache": "حذف الإصدارات القديمة من الكاش",
+            "sweep_cache": "تنظيف الكاش",
+            "max_cache_size": "الحد الأقصى للكاش [GB] (الحد الأدنى 30)",
+            "cache_expiry_delay": "مدة بقاء الكاش [أيام] (الحد الأدنى 30)",
+            "cache_directory": "موقع مجلد الكاش المخصص",
+            "picture_directory": "موقع مجلد الصور المخصص",
+            "fpv_steadycam_fov": "مجال الرؤية لكاميرا Steadycam بمنظور الشخص الأول",
+            "camera_resolution": "دقة الكاميرا",
+            "spout_resolution": "دقة Spout",
+            "screenshot_resolution": "دقة لقطة الشاشة",
+            "picture_sort_by_date": "فرز الصور في مجلدات حسب التاريخ",
+            "disable_discord_presence": "تعطيل Discord Rich Presence",
+            "vrchat_docs": "وثائق VRChat",
+            "cancel": "إلغاء",
+            "save": "حفظ"
+        },
+        "youtube_api": {
+            "header": "YouTube API",
+            "description": "أدخل مفتاح YouTube API الخاص بك (اختياري)",
+            "placeholder": "مفتاح YouTube API",
+            "guide": "دليل",
+            "save": "حفظ"
+        },
+        "translation_api": {
+            "header": "API لترجمة النبذة",
+            "description": "أدخل مفتاح Google Translate API الخاص بك",
+            "guide": "دليل",
+            "mode": "المزوّد",
+            "mode_google": "Google Translate",
+            "mode_openai": "OpenAI",
+            "test": "اختبار",
+            "save": "حفظ",
+            "msg_fill_endpoint_model": "يرجى تعبئة نقطة النهاية واسم النموذج",
+            "msg_settings_saved": "تم حفظ إعدادات الترجمة",
+            "msg_test_success": "نجح الاختبار",
+            "msg_test_failed": "فشل الاختبار",
+            "openai": {
+                "endpoint": "نقطة نهاية API",
+                "api_key": "مفتاح API (اختياري)",
+                "model": "اسم النموذج",
+                "prompt_optional": "الموجّه (اختياري)"
+            },
+            "fetch_models": "جلب النماذج",
+            "fetching_models": "جارٍ الجلب...",
+            "msg_endpoint_required": "يرجى إدخال نقطة النهاية أولًا",
+            "msg_models_fetched": "تم العثور على {count} نموذجًا",
+            "msg_no_models_found": "لم يتم العثور على نماذج"
+        },
+        "notification_position": {
+            "header": "موضع الإشعار",
+            "description": "اختر موضع الإشعار.",
+            "ok": "موافق"
+        },
+        "shared_feed_filters": {
+            "notification": "فلاتر الإشعارات",
+            "wrist": "فلاتر موجز المعصم",
+            "on": "تشغيل",
+            "off": "إيقاف",
+            "favorite": "المفضلة",
+            "friends": "الأصدقاء",
+            "everyone": "الجميع",
+            "reset": "إعادة تعيين",
+            "close": "إغلاق"
+        },
+        "previous_instances": {
+            "header": "Instances السابقة",
+            "info": "معلومات Instance السابق",
+            "search_placeholder": "بحث",
+            "table_view": "عرض جدولي",
+            "chart_view": "عرض بياني"
+        },
+        "group_member_moderation": {
+            "header": "إدارة أعضاء المجموعة",
+            "filter_type": "نوع التصفية",
+            "members": "الأعضاء",
+            "bans": "عمليات الحظر",
+            "invites": "الدعوات",
+            "logs": "السجلات",
+            "sent_invites": "الدعوات المرسلة",
+            "join_requests": "طلبات الانضمام",
+            "blocked_requests": "الطلبات المحظورة",
+            "notes": "ملاحظة المدير",
+            "note_placeholder": "انقر لإضافة ملاحظة",
+            "actions": "الإجراءات",
+            "kick": "طرد",
+            "ban": "حظر",
+            "unban": "إلغاء الحظر",
+            "save_note": "حفظ الملاحظة",
+            "delete_sent_invite": "حذف الدعوة المرسلة",
+            "delete_blocked_requests": "حذف الطلبات المحظورة",
+            "accept_join_requests": "قبول طلبات الانضمام",
+            "reject_join_requests": "رفض طلبات الانضمام",
+            "block_join_requests": "حظر طلبات الانضمام",
+            "progress": "التقدم:",
+            "display_name": "الاسم المعروض",
+            "visibility": "مستوى الظهور",
+            "avatar": "الأفاتار",
+            "joined_at": "تاريخ الانضمام",
+            "banned_at": "تاريخ الحظر",
+            "created_at": "تاريخ الإنشاء",
+            "type": "النوع",
+            "description": "الوصف",
+            "data": "البيانات",
+            "note": "ملاحظة",
+            "roles": "الأدوار",
+            "user_id": "معرّف المستخدم",
+            "user_id_placeholder": "أدخل معرّف/معرّفات المستخدم",
+            "select_user": "اختيار مستخدم",
+            "selected_users": "المستخدمون المحددون",
+            "select_all": "تحديد الكل",
+            "user_isnt_in_group": "المستخدم ليس في المجموعة",
+            "cancel": "إلغاء",
+            "choose_roles_placeholder": "اختر الأدوار",
+            "selected_roles": "الأدوار المحددة",
+            "remove_roles": "إزالة الأدوار",
+            "add_roles": "إضافة أدوار",
+            "export_logs": "تصدير السجلات",
+            "export_bans": "تصدير المحظورين",
+            "import_bans": "استيراد المحظورين",
+            "import_bans_description": "ألصق CSV أو معرّفات المستخدمين أدناه. سيُكتشف عمود userId تلقائيًا من رؤوس CSV، أو ستُستخرج جميع معرّفات usr_.",
+            "import_bans_warning": "لا تستورد عددًا كبيرًا دفعةً واحدة. هذه عملية حساسة تخضع للمراقبة والتنفيذ من الجهة الرسمية، واستخدمها على مسؤوليتك الخاصة!",
+            "import_bans_placeholder": "ألصق CSV أو معرّفات المستخدمين هنا (واحد في كل سطر)\nusr_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "import_bans_start": "استيراد وحظر",
+            "import_bans_clear_errors": "مسح الأخطاء"
+        },
+        "group_post_edit": {
+            "header": "إنشاء/تعديل منشور",
+            "title": "العنوان",
+            "message": "الرسالة",
+            "send_notification": "إرسال إشعار",
+            "post_visibility": "ظهور المنشور",
+            "visibility_public": "عام",
+            "visibility_group": "المجموعة",
+            "image": "صورة",
+            "cancel": "إلغاء",
+            "create_post": "إنشاء منشور",
+            "edit_post": "تعديل المنشور"
+        },
+        "group_calendar": {
+            "header": "تقويم المجموعة",
+            "list_view": "عرض قائمة",
+            "calendar_view": "عرض التقويم",
+            "no_events": "لم يتم العثور على أحداث",
+            "search_placeholder": "ابحث عن مجموعات أو أحداث...",
+            "search_no_matching": "لم يتم العثور على أحداث مطابقة",
+            "search_no_this_month": "لا توجد أحداث هذا الشهر",
+            "event_card": {
+                "category": "الفئة",
+                "interested_user": "المستخدمون المهتمون",
+                "close_time": "إغلاق Instance بعد النهاية",
+                "created": "تاريخ الإنشاء",
+                "description": "الوصف",
+                "export_to_calendar": "تصدير إلى التقويم",
+                "download_ics": "تنزيل .ics",
+                "copied_event_link": "تم نسخ URL حدث التقويم إلى الحافظة",
+                "repeating_event_tooltip": "حدث متكرر",
+                "download_ics_error": "فشل في تنزيل ملف .ics، {error}"
+            },
+            "featured_events": "الأحداث المميزة"
+        },
+        "moderate_group": {
+            "header": "الإشراف على عضو المجموعة",
+            "choose_group_placeholder": "اختر مجموعة",
+            "moderation_tools": "أدوات الإشراف"
+        },
+        "boop_dialog": {
+            "header": "بووب",
+            "emoji_manager": "إدارة الإيموجي",
+            "select_default_emoji": "اختيار الإيموجي الافتراضي",
+            "default_emojis": "الإيموجي الافتراضية",
+            "cancel": "إلغاء",
+            "send": "إرسال"
+        },
+        "chatbox_blacklist": {
+            "header": "القائمة السوداء لصندوق الدردشة",
+            "keyword_blacklist": "قائمة الكلمات المحظورة",
+            "user_blacklist": "قائمة المستخدمين المحظورين",
+            "add_item": "إضافة عنصر"
+        },
+        "vrcx_updater": {
+            "header": "محدّث VRCX",
+            "latest_version": "VRCX محدّث إلى أحدث إصدار.",
+            "ready_for_update": "جاهز للتثبيت، أعد تشغيل VRCX للتطبيق.",
+            "branch_stable": "مستقر",
+            "branch_nightly": "ليلي",
+            "nightly_title": "الإصدارات الليلية",
+            "nightly_notice": "الإصدارات الليلية مخصصة للاختبار. للاستقرار، استخدم الإصدار المستقر.",
+            "release": "الإصدار",
+            "download": "تنزيل",
+            "install": "تثبيت",
+            "cancel": "إلغاء"
+        },
+        "change_log": {
+            "header": "سجل التغييرات",
+            "description": "فكّر في التبرع لدعم التطوير المستقبلي لـ VRCX",
+            "close": "إغلاق",
+            "donate": "تبرع",
+            "github": "GitHub"
+        },
+        "open_source": {
+            "header": "إشعار البرامج مفتوحة المصدر",
+            "description": "يعتمد VRCX على برامج مفتوحة المصدر، وقد كان ذلك ممكنًا بفضل مساهماتهم.",
+            "loading": "جارٍ تحميل إشعارات الجهات الخارجية المُنشأة...",
+            "unavailable": "لا يتوفر ملف إشعارات للجهات الخارجية مُنشأ في هذا البناء. نفّذ بناءً إنتاجيًا لإعادة إنشائه.",
+            "search_placeholder": "ابحث عن الحزم أو الإصدارات أو التراخيص",
+            "notice_location_prefix": "موقع ملف الإشعارات الكامل داخل دليل التطبيق:",
+            "open_project": "فتح المشروع",
+            "open_license_url": "فتح URL الترخيص",
+            "notice_unavailable": "لم يُنشأ نص ترخيص محلي لهذا الإدخال. افتح ملف الإشعارات الكامل وراجع هذا المكوّن قبل الإصدار.",
+            "select_package": "حدد حزمة لعرض التفاصيل.",
+            "review_required": "المراجعة مطلوبة",
+            "no_results": "لم يتم العثور على حزم مطابقة.",
+            "no_version": "لا توجد بيانات وصفية للإصدار"
+        },
+        "primary_password": {
+            "header": "كلمة المرور الأساسية مطلوبة",
+            "password_placeholder": "أدخل كلمة المرور الجديدة",
+            "re_input_placeholder": "أعد إدخال كلمة المرور",
+            "ok": "موافق"
+        },
+        "registry_backup": {
+            "header": "نسخة احتياطية لإعدادات VRC في registry",
+            "backup": "نسخ احتياطي",
+            "restore": "استعادة",
+            "save_to_file": "حفظ في ملف",
+            "delete": "حذف",
+            "restore_from_file": "استعادة من ملف",
+            "reset": "إعادة تعيين",
+            "name": "الاسم",
+            "date": "التاريخ",
+            "action": "الإجراء",
+            "auto_backup": "نسخ احتياطي تلقائي كل 3 أيام (يُحذف بعد أسبوعين)",
+            "ask_to_restore": "السؤال عن الاستعادة عند عدم وجود إعدادات VRC في registry",
+            "restore_prompt": "لاحظ VRCX أن النسخ الاحتياطي التلقائي لإعدادات VRChat في registry مفعّل، لكن هذا الكمبيوتر لا يحتوي على أي منها. إذا أردت الاستعادة من نسخة احتياطية، يمكنك فعل ذلك من هنا."
+        },
+        "avatar_database_provider": {
+            "header": "موفّر قاعدة بيانات الأفاتار",
+            "add_provider": "إضافة موفّر"
+        }
+    },
+    "confirm": {
+        "title": "تأكيد",
+        "confirm_button": "تأكيد",
+        "cancel_button": "إلغاء",
+        "message": "هل تريد المتابعة: {command}؟",
+        "logout": "هل تريد تسجيل الخروج؟",
+        "unfriend": "هل تريد إزالة الصداقة؟",
+        "clear_avatar_history": "هل تريد مسح سجل الأفاتارات؟",
+        "select_avatar": "هل تريد اختيار هذا الأفاتار؟",
+        "invite": "هل تريد إرسال دعوة؟",
+        "invite_group": "هل تريد دعوة المستخدم/المستخدمين إلى المجموعة؟",
+        "delete_log": "هل تريد حذف السجل؟",
+        "accept_friend_request": "هل تريد قبول طلب الصداقة؟",
+        "send_invite": "هل تريد إرسال الدعوة؟",
+        "decline_type": "هل تريد رفض {type}؟",
+        "delete_type": "هل تريد {type}؟",
+        "command_question": "هل أنت متأكد أنك تريد {command}؟",
+        "clear_group": "هل تريد مسح المجموعة؟",
+        "delete_group": "هل تريد حذف المجموعة {name}؟",
+        "delete_post": "هل أنت متأكد أنك تريد حذف هذا المنشور؟",
+        "block_group": "هل أنت متأكد أنك تريد حظر هذه المجموعة؟",
+        "unblock_group": "هل أنت متأكد أنك تريد إلغاء حظر هذه المجموعة؟",
+        "leave_group": "هل أنت متأكد أنك تريد مغادرة هذه المجموعة؟",
+        "disable_gamelog": "هل تريد تعطيل GameLog؟",
+        "restore_backup": "هل تريد استعادة النسخة الاحتياطية؟",
+        "delete_vrc_registry": "هل تريد حذف إعدادات سجل VRC؟",
+        "clear_cache": "هل تريد مسح كاش VRChat بالكامل؟",
+        "close_instance": "هل تريد إغلاق Instance؟ لن يتمكن أحد من الانضمام",
+        "bulk_unfavorite_zero": "هل أنت متأكد من إزالة العناصر من المفضلة؟\nلا يمكن التراجع عن هذا الإجراء.",
+        "bulk_unfavorite_one": "هل أنت متأكد من إزالة عنصر واحد من المفضلة؟\nلا يمكن التراجع عن هذا الإجراء.",
+        "bulk_unfavorite_two": "هل أنت متأكد من إزالة عنصرين من المفضلة؟\nلا يمكن التراجع عن هذا الإجراء.",
+        "bulk_unfavorite_few": "هل أنت متأكد من إزالة {count} عناصر من المفضلة؟\nلا يمكن التراجع عن هذا الإجراء.",
+        "bulk_unfavorite_many": "هل أنت متأكد من إزالة {count} عنصرًا من المفضلة؟\nلا يمكن التراجع عن هذا الإجراء.",
+        "bulk_unfavorite_other": "هل أنت متأكد من إزالة {count} عنصر من المفضلة؟\nلا يمكن التراجع عن هذا الإجراء.",
+        "bulk_unfavorite_title_zero": "حذف عناصر المفضلة؟",
+        "bulk_unfavorite_title_one": "حذف عنصر واحد؟",
+        "bulk_unfavorite_title_two": "حذف عنصرين؟",
+        "bulk_unfavorite_title_few": "حذف {count} عناصر؟",
+        "bulk_unfavorite_title_many": "حذف {count} عنصرًا؟",
+        "bulk_unfavorite_title_other": "حذف {count} عنصر؟",
+        "bulk_unfriend_zero": "هل أنت متأكد من حذف الأصدقاء؟\nقد يؤثر هذا سلباً على تصنيف الثقة الخاص بك.\nلا يمكن التراجع عن هذا الإجراء.\n\n{names}",
+        "bulk_unfriend_one": "هل أنت متأكد من حذف صديق واحد؟\nقد يؤثر هذا سلباً على تصنيف الثقة الخاص بك.\nلا يمكن التراجع عن هذا الإجراء.\n\n{names}",
+        "bulk_unfriend_two": "هل أنت متأكد من حذف صديقين؟\nقد يؤثر هذا سلباً على تصنيف الثقة الخاص بك.\nلا يمكن التراجع عن هذا الإجراء.\n\n{names}",
+        "bulk_unfriend_few": "هل أنت متأكد من حذف {count} أصدقاء؟\nقد يؤثر هذا سلباً على تصنيف الثقة الخاص بك.\nلا يمكن التراجع عن هذا الإجراء.\n\n{names}",
+        "bulk_unfriend_many": "هل أنت متأكد من حذف {count} صديقًا؟\nقد يؤثر هذا سلباً على تصنيف الثقة الخاص بك.\nلا يمكن التراجع عن هذا الإجراء.\n\n{names}",
+        "bulk_unfriend_other": "هل أنت متأكد من حذف {count} صديق؟\nقد يؤثر هذا سلباً على تصنيف الثقة الخاص بك.\nلا يمكن التراجع عن هذا الإجراء.\n\n{names}",
+        "bulk_unfriend_title_zero": "حذف الأصدقاء؟",
+        "bulk_unfriend_title_one": "حذف صديق واحد؟",
+        "bulk_unfriend_title_two": "حذف صديقين؟",
+        "bulk_unfriend_title_few": "حذف {count} أصدقاء؟",
+        "bulk_unfriend_title_many": "حذف {count} صديقًا؟",
+        "bulk_unfriend_title_other": "حذف {count} صديق؟",
+        "bulk_unfriend_complete": "اكتملت إزالة الأصدقاء بالجملة",
+        "unfriended_friends_zero": "تمت إزالة صداقة الأصدقاء.",
+        "unfriended_friends_one": "تمت إزالة صداقة صديق واحد.",
+        "unfriended_friends_two": "تمت إزالة صداقة صديقين.",
+        "unfriended_friends_few": "تمت إزالة صداقة {count} أصدقاء.",
+        "unfriended_friends_many": "تمت إزالة صداقة {count} صديقًا.",
+        "unfriended_friends_other": "تمت إزالة صداقة {count} صديق.",
+        "moderation_continue": "هل تريد المتابعة؟ إشراف {type}",
+        "delete_gamelog_instance": "هل تريد المتابعة؟ حذف سجل اللعبة من الـ Instance",
+        "delete_user_gamelog_instance": "هل تريد المتابعة؟ حذف المستخدم من سجل اللعبة في الـ Instance",
+        "restart_required_title": "إعادة التشغيل مطلوبة",
+        "restart_now": "إعادة التشغيل الآن",
+        "restart_later": "لاحقًا"
+    },
+    "prompt": {
+        "totp": {
+            "header": "المصادقة الثنائية",
+            "description": "أدخل رمزًا رقميًا من تطبيق المصادقة",
+            "use_otp": "استخدام OTP",
+            "verify": "تحقق",
+            "input_error": "رمز غير صالح"
+        },
+        "otp": {
+            "header": "المصادقة الثنائية",
+            "description": "أدخل أحد رموز الاسترداد المحفوظة",
+            "use_totp": "استخدام TOTP",
+            "verify": "تحقق",
+            "input_error": "رمز غير صالح"
+        },
+        "email_otp": {
+            "header": "المصادقة الثنائية",
+            "description": "أدخل رمزًا رقميًا أُرسل إلى بريدك الإلكتروني",
+            "resend": "إعادة إرسال البريد الإلكتروني",
+            "verify": "تحقق",
+            "input_error": "رمز غير صالح"
+        },
+        "primary_password": {
+            "header": "كلمة المرور الأساسية مطلوبة",
+            "description": "يرجى إدخال كلمة المرور الأساسية."
+        },
+        "change_favorite_group_name": {
+            "header": "تغيير اسم المجموعة",
+            "description": "أدخل اسمًا جديدًا",
+            "cancel": "إلغاء",
+            "change": "تغيير",
+            "input_error": "الاسم مطلوب",
+            "message": {
+                "success": "تمت إعادة تسمية المجموعة"
+            }
+        },
+        "direct_access_omni": {
+            "header": "وصول مباشر",
+            "description": "أدخل URL أو ID (UUID) لمستخدم/عالم/Instance/أفاتار/مجموعة",
+            "cancel": "إلغاء",
+            "ok": "موافق",
+            "input_error": "URL/ID مطلوب",
+            "message": {
+                "error": "URL/ID غير صالح",
+                "opened_from_clipboard": "تم الفتح من الحافظة"
+            }
+        },
+        "notification_timeout": {
+            "header": "مهلة الإشعار",
+            "description": "أدخل عدد الثواني",
+            "cancel": "إلغاء",
+            "ok": "موافق",
+            "input_error": "مطلوب رقم صالح"
+        },
+        "overlay_message_timeout": {
+            "header": "مهلة رسالة الطبقة",
+            "description": "أدخل عدد الثواني",
+            "cancel": "إلغاء",
+            "ok": "موافق",
+            "input_error": "مطلوب رقم صالح"
+        },
+        "rename_avatar": {
+            "header": "إعادة تسمية الأفاتار",
+            "description": "أدخل اسم الأفاتار",
+            "cancel": "إلغاء",
+            "ok": "موافق",
+            "input_error": "مطلوب اسم صالح",
+            "message": {
+                "success": "تمت إعادة تسمية الأفاتار"
+            }
+        },
+        "change_avatar_description": {
+            "header": "تغيير الوصف",
+            "description": "أدخل وصف الأفاتار",
+            "cancel": "إلغاء",
+            "ok": "موافق",
+            "input_error": "مطلوب وصف صالح",
+            "message": {
+                "success": "تم تغيير وصف الأفاتار"
+            }
+        },
+        "rename_world": {
+            "header": "إعادة تسمية العالم",
+            "description": "أدخل اسم العالم",
+            "cancel": "إلغاء",
+            "ok": "موافق",
+            "input_error": "مطلوب اسم صالح",
+            "message": {
+                "success": "تمت إعادة تسمية العالم"
+            }
+        },
+        "change_world_description": {
+            "header": "تغيير الوصف",
+            "description": "أدخل وصف العالم",
+            "cancel": "إلغاء",
+            "ok": "موافق",
+            "input_error": "مطلوب وصف صالح",
+            "message": {
+                "success": "تم تغيير وصف العالم"
+            }
+        },
+        "change_world_capacity": {
+            "header": "تغيير السعة",
+            "description": "أدخل السعة القصوى للعالم (الحد الصارم)، الحد الأقصى: 80",
+            "cancel": "إلغاء",
+            "ok": "موافق",
+            "input_error": "مطلوب رقم صالح",
+            "message": {
+                "success": "تم تغيير سعة العالم"
+            }
+        },
+        "change_world_recommended_capacity": {
+            "header": "تغيير السعة الموصى بها",
+            "description": "أدخل السعة الموصى بها للعالم (الحد المرن)",
+            "input_error": "مطلوب رقم صالح",
+            "message": {
+                "success": "تم تغيير السعة الموصى بها للعالم"
+            }
+        },
+        "change_world_preview": {
+            "header": "تغيير معاينة YouTube",
+            "description": "أدخل معاينة YouTube للعالم",
+            "cancel": "إلغاء",
+            "ok": "موافق",
+            "input_error": "مطلوب URL صالح لـYouTube",
+            "message": {
+                "error": "URL YouTube غير صالح",
+                "success": "تم تغيير معاينة YouTube للعالم"
+            }
+        },
+        "photon_lobby_timeout": {
+            "header": "حد مهلة المستخدم",
+            "description": "أدخل عدد الثواني (الافتراضي: 3)",
+            "cancel": "إلغاء",
+            "ok": "موافق",
+            "input_error": "مطلوب رقم صالح"
+        },
+        "auto_clear_cache": {
+            "header": "مؤقت مسح كاش VRCX",
+            "description": "أدخل عدد الساعات، قد تؤثر القيم الأكبر في استخدام RAM والأداء (الافتراضي: 24، التعطيل: 0)",
+            "cancel": "إلغاء",
+            "ok": "موافق",
+            "input_error": "مطلوب رقم صالح"
+        },
+        "new_local_favorite_group": {
+            "message": {
+                "error": "توجد مجموعة بهذا الاسم {name} بالفعل"
+            }
+        },
+        "local_favorite_group_rename": {
+            "header": "إعادة تسمية المجموعة",
+            "description": "أدخل اسم مجموعة للعوالم المفضلة",
+            "cancel": "إلغاء",
+            "save": "حفظ",
+            "input_error": "الاسم مطلوب",
+            "message": {
+                "error": "توجد مجموعة بهذا الاسم {name} بالفعل"
+            }
+        },
+        "backup_name": {
+            "header": "اسم النسخة الاحتياطية",
+            "description": "أدخل اسمًا للنسخة الاحتياطية",
+            "input_error": "الاسم مطلوب"
+        },
+        "auto_login_delay": {
+            "header": "تأخير تسجيل الدخول التلقائي",
+            "description": "أدخل مدة التأخير بالثواني (0 للتعطيل، الحد الأقصى 10).",
+            "input_error": "يرجى إدخال عدد صحيح من 0 إلى 10."
+        },
+        "proxy_settings": {
+            "header": "إعدادات الوكيل",
+            "description": "أدخل عنوان خادم الوكيل والمنفذ",
+            "close": "إغلاق",
+            "restart": "إعادة التشغيل"
+        },
+        "redeem": {
+            "header": "استرداد الرمز",
+            "description": "أدخل رمزك للاسترداد",
+            "cancel": "إلغاء",
+            "redeem": "استرداد",
+            "success": "تم استرداد الرمز بنجاح"
+        },
+        "table_entries_settings": {
+            "header": "إعدادات عناصر الجدول",
+            "description": "حدّد عدد العناصر التي يسجّلها VRCX من قاعدة البيانات إلى الواجهة. قد يؤثر العدد الكبير في استخدام RAM والأداء",
+            "table_max_entries": "الحد الأقصى لعناصر الجدول",
+            "table_max_entries_error": "أدخل رقمًا بين {min} و{max}.",
+            "table_max_entries_hint": "النطاق الصالح: {min} – {max}.",
+            "search_limit_returns": "حد نتائج البحث",
+            "search_limit_returns_error": "أدخل رقمًا بين {min} و{max}.",
+            "search_limit_returns_hint": "النطاق الصالح: {min} – {max}.",
+            "search_limit_returns_warning": "قد تؤدي القيم الكبيرة جدًا إلى تجميد التطبيق.",
+            "cancel": "إلغاء",
+            "save": "حفظ"
+        }
+    },
+    "message": {
+        "auto_login_delay_countdown": "تسجيل الدخول التلقائي خلال {seconds}s...",
+        "auth": {
+            "login_greeting": "مرحبًا، {name}!",
+            "logout_greeting": "إلى اللقاء، {name}!",
+            "email_2fa_resent": "تمت إعادة إرسال رسالة المصادقة الثنائية بالبريد الإلكتروني.",
+            "email_2fa_no_credentials": "لا يمكن إرسال بريد 2FA من دون بيانات اعتماد محفوظة. يرجى تسجيل الدخول مرة أخرى.",
+            "incorrect_primary_password": "كلمة المرور الأساسية غير صحيحة",
+            "saved_credentials_invalid": "بيانات الاعتماد المحفوظة لم تعد صالحة.",
+            "account_removed": "تمت إزالة الحساب.",
+            "auto_login_success": "تم تسجيل الدخول تلقائيًا.",
+            "auto_login_failed": "فشل تسجيل الدخول تلقائيًا.",
+            "offline": "أنت غير متصل.",
+            "login_network_issue_hint_title": "هل تواجه مشكلة في تسجيل الدخول؟",
+            "login_network_issue_hint_description": "فشلت عدة محاولات تسجيل دخول مؤخرًا. انقر على فتح لعرض دليل استكشاف الأخطاء وإصلاحها."
+        },
+        "vrcx_updater": {
+            "failed": "فشل التحقق من التحديث، {message}",
+            "failed_install": "فشل تثبيت التحديث",
+            "checking_hash": "جارٍ التحقق من hash..."
+        },
+        "api_handler": {
+            "avatar_private_or_deleted": "الأفاتار خاص أو محذوف"
+        },
+        "badge": {
+            "updated": "تم تحديث الشارة"
+        },
+        "instance": {
+            "closed": "تم إغلاق Instance",
+            "removed_form_queue": "تمت إزالة Instance {worldName} من الطابور",
+            "not_allowed": "غير مسموح لك بالوصول إلى هذا Instance",
+            "create_failed": "فشل إنشاء Instance"
+        },
+        "avatar": {
+            "selected": "تم تغيير الأفاتار",
+            "already_selected": "الأفاتار محدد بالفعل",
+            "change_moderation_failed": "فشل تغيير إشراف الأفاتار",
+            "fallback_changed": "تم تغيير الأفاتار الاحتياطي",
+            "blocked": "تم حظر الأفاتار",
+            "updated_public": "تم تحديث الأفاتار إلى عام",
+            "updated_private": "تم تحديث الأفاتار إلى خاص",
+            "deleted": "تم حذف الأفاتار",
+            "impostor_deleted": "تم حذف الـImposter",
+            "impostor_queued": "تمت إضافة الـImposter إلى طابور الإنشاء",
+            "impostor_regenerated": "تم حذف الـImposter وإضافته إلى طابور الإنشاء"
+        },
+        "avatar_lookup": {
+            "not_found": "لم يتم العثور على الأفاتار في موفري البحث",
+            "failed": "فشل البحث عن الأفاتار",
+            "private_or_not_found": "أفاتار المستخدم خاص أو لم يتم العثور عليه في موفري البحث",
+            "loading": "جارٍ البحث عن الأفاتار باستخدام موفري البحث"
+        },
+        "database": {
+            "upgrade_complete": "اكتملت ترقية قاعدة البيانات",
+            "upgrade_in_progress_title": "ترقية قاعدة البيانات قيد التنفيذ",
+            "upgrade_in_progress_description": "جارٍ تحديث قاعدة البيانات من الإصدار {from} إلى {to}. يُرجى عدم إغلاق VRCX.",
+            "upgrade_in_progress_initializing": "جارٍ تهيئة ترقية قاعدة البيانات. يرجى عدم إغلاق VRCX.",
+            "upgrade_in_progress_wait": "إجراءات المستخدم محظورة مؤقتًا حتى تنتهي الترقية.",
+            "upgrade_failed_title": "فشلت ترقية قاعدة البيانات",
+            "upgrade_failed_description": "فشلت ترقية قاعدة البيانات. تحقّق من وحدة التحكم للتفاصيل.",
+            "disk_space": "يرجى توفير بعض مساحة القرص.",
+            "disk_error": "يرجى فحص القرص بحثًا عن أخطاء."
+        },
+        "file": {
+            "not_image": "الملف ليس صورة",
+            "too_large": "حجم الملف كبير جدًا",
+            "folder_opened": "تم فتح المجلد",
+            "folder_missing": "المجلد غير موجود"
+        },
+        "group": {
+            "load_failed": "فشل تحميل المجموعة",
+            "joined": "تم الانضمام إلى المجموعة",
+            "join_request_sent": "تم إرسال طلب الانضمام إلى المجموعة",
+            "visibility_updated": "تم تحديث ظهور المجموعة",
+            "subscription_updated": "تم تحديث اشتراك المجموعة",
+            "event_announcement_updated": "تم تحديث إعلانات أحداث المجموعة"
+        },
+        "invite": {
+            "self_sent": "تم إرسال دعوة ذاتية",
+            "sent": "تم إرسال الدعوة",
+            "message_update_failed": "لم يحدّث VRChat API الرسالة، حاول مرة أخرى",
+            "message_updated": "تم تحديث رسالة الدعوة",
+            "response_sent": "تم إرسال رسالة الرد على الدعوة",
+            "response_photo_sent": "تم إرسال صورة الرد على الدعوة"
+        },
+        "launch": {
+            "invalid_path": "مسار غير صالح، يجب إدخال مجلد VRChat أو launch.exe"
+        },
+        "gallery": {
+            "uploaded": "تم رفع صورة المعرض",
+            "failed": "فشل رفع صورة المعرض",
+            "profile_pic_changed": "تم تغيير صورة الملف الشخصي",
+            "profile_icon_changed": "تم تغيير أيقونة الملف الشخصي"
+        },
+        "upload": {
+            "loading": "جارٍ الرفع",
+            "success": "اكتمل الرفع",
+            "error": "فشل الرفع"
+        },
+        "world": {
+            "load_failed": "فشل تحميل العالم",
+            "home_updated": "تم تحديث العالم الرئيسي",
+            "home_reset": "تمت إعادة تعيين العالم الرئيسي",
+            "published": "تم نشر العالم",
+            "unpublished": "تم إلغاء نشر العالم",
+            "persistent_data_deleted": "تم حذف البيانات الدائمة",
+            "deleted": "تم حذف العالم",
+            "id_copied": "تم نسخ معرّف العالم إلى الحافظة",
+            "url_copied": "تم نسخ URL العالم إلى الحافظة",
+            "name_copied": "تم نسخ اسم العالم إلى الحافظة"
+        },
+        "user": {
+            "moderated": "تم اتخاذ إجراء إشراف على المستخدم",
+            "load_failed": "فشل تحميل المستخدم",
+            "id_copied": "تم نسخ معرّف المستخدم إلى الحافظة",
+            "url_copied": "تم نسخ URL المستخدم إلى الحافظة",
+            "display_name_copied": "تم نسخ DisplayName المستخدم إلى الحافظة",
+            "home_reset": "تمت إعادة تعيين العالم الرئيسي",
+            "request_invite_sent": "تم إرسال طلب الدعوة",
+            "no_fallback_avatar": "لم يتم تعيين أفاتار احتياطي"
+        },
+        "friend": {
+            "load_failed": "فشل تحميل قائمة الأصدقاء، جارٍ تسجيل الخروج"
+        },
+        "vrcplus": {
+            "required": "يتطلب VRCPlus"
+        },
+        "screenshot_metadata": {
+            "deleted": "تم حذف بيانات لقطة الشاشة الوصفية",
+            "delete_failed": "فشل حذف بيانات لقطة الشاشة الوصفية"
+        },
+        "crash": {
+            "vrcx_reload": "تمت إعادة تحميل VRCX للاستقرار"
+        },
+        "image": {
+            "downloading": "جارٍ تنزيل الصورة...",
+            "copied_to_clipboard": "تم نسخ الصورة إلى الحافظة"
+        },
+        "registry": {
+            "restored": "تمت استعادة إعدادات سجل VRC",
+            "deleted": "تم حذف إعدادات سجل VRC",
+            "restore_failed": "فشل استعادة إعدادات سجل VRC، تحقّق من وحدة التحكم لمعرفة الخطأ الكامل: {error}",
+            "invalid_json": "JSON غير صالح"
+        },
+        "cache": {
+            "deleted": "تم حذف كاش VRChat بالكامل",
+            "delete_error": "خطأ أثناء حذف كاش VRChat: {error}",
+            "invalid_config": "JSON غير صالح في config.json"
+        },
+        "gamelog": {
+            "vrchat_must_be_closed": "يجب إغلاق VRChat قبل تغيير هذا الخيار"
+        },
+        "copy_failed": "فشل النسخ",
+        "error": "خطأ"
+    },
+    "notifications": {
+        "has_joined": "انضم",
+        "has_left": "غادر",
+        "is_joining": "ينضم",
+        "gps": "في {location}",
+        "online_location": "سجّل الدخول إلى {location}",
+        "online": "سجّل الدخول",
+        "offline": "سجّل الخروج",
+        "status_update": "أصبحت الحالة الآن {status} {description}",
+        "invite": "دعاك إلى {location} {message}",
+        "request_invite": "طلب دعوة {message}",
+        "invite_response": "رد على دعوتك {message}",
+        "request_invite_response": "رد على طلب دعوتك {message}",
+        "friend_request": "أرسل لك طلب صداقة",
+        "friend": "أصبح صديقك الآن",
+        "unfriend": "لم يعد صديقك",
+        "trust_level": "أصبح مستوى الثقة {trustLevel}",
+        "display_name": "غيّر اسمه إلى {displayName}",
+        "group_announcement_title": "إعلان المجموعة",
+        "group_event_created_title": "تم إنشاء حدث للمجموعة",
+        "group_event_starting_title": "بدء حدث المجموعة",
+        "group_informative_title": "معلومة من المجموعة",
+        "group_invite_title": "دعوة إلى مجموعة",
+        "group_join_request_title": "طلب انضمام إلى مجموعة",
+        "group_transfer_request_title": "طلب نقل المجموعة",
+        "group_queue_ready_title": "طابور Instance جاهز",
+        "instance_closed_title": "تم إغلاق Instance",
+        "portal_spawn_name": "أنشأ بوابة إلى {location}",
+        "portal_spawn": "قام المستخدم بإنشاء بوابة",
+        "avatar_change": "غيّر الأفاتار إلى {avatar}",
+        "chat_message": "قال: {message}",
+        "blocked_player_joined": "انضم مستخدم محظور",
+        "blocked_player_left": "غادر مستخدم محظور",
+        "muted_player_joined": "انضم مستخدم مكتوم",
+        "muted_player_left": "غادر مستخدم مكتوم",
+        "blocked": "حظرك",
+        "unblocked": "ألغى حظرك",
+        "muted": "كتمك",
+        "unmuted": "ألغى كتمك"
+    },
+    "status": {
+        "title": "حالة VRChat"
+    },
+    "location": {
+        "offline": "غير متصل",
+        "private": "خاص",
+        "traveling": "قيد التنقل"
+    },
+    "table": {
+        "header_menu": {
+            "reset_all": "إعادة تعيين الكل",
+            "lock_column_order": "قفل العمود"
+        },
+        "pagination": {
+            "rows_per_page": "الصفوف لكل صفحة",
+            "first": "الأول",
+            "previous": "السابق",
+            "next": "التالي",
+            "last": "الأخير",
+            "more_pages": "مزيد من الصفحات"
+        },
+        "feed": {
+            "date": "التاريخ",
+            "type": "النوع",
+            "user": "المستخدم",
+            "detail": "التفاصيل"
+        },
+        "gameLog": {
+            "date": "التاريخ",
+            "type": "النوع",
+            "icon": "الأيقونات",
+            "user": "المستخدم",
+            "detail": "التفاصيل",
+            "action": "الإجراء"
+        },
+        "playerList": {
+            "avatar": "الأفاتار",
+            "timer": "المؤقت",
+            "photonId": "معرّف Photon",
+            "icon": "الأيقونات",
+            "platform": "المنصة",
+            "displayName": "الاسم المعروض",
+            "status": "الحالة",
+            "rank": "الرتبة",
+            "language": "اللغة",
+            "bioLink": "روابط النبذة",
+            "note": "ملاحظة",
+            "date": "التاريخ",
+            "user": "المستخدم",
+            "type": "النوع",
+            "detail": "التفاصيل"
+        },
+        "friendLog": {
+            "date": "التاريخ",
+            "type": "النوع",
+            "user": "المستخدم",
+            "action": "الإجراء"
+        },
+        "moderation": {
+            "date": "التاريخ",
+            "type": "النوع",
+            "source": "المصدر",
+            "target": "الهدف",
+            "action": "الإجراء"
+        },
+        "notification": {
+            "date": "التاريخ",
+            "type": "النوع",
+            "user": "المستخدم",
+            "group": "المجموعة",
+            "photo": "الصورة",
+            "message": "الرسالة",
+            "action": "الإجراء"
+        },
+        "friendList": {
+            "no": "رقم",
+            "avatar": "الأفاتار",
+            "displayName": "الاسم المعروض",
+            "rank": "الرتبة",
+            "status": "الحالة",
+            "language": "اللغة",
+            "bioLink": "روابط النبذة",
+            "joinCount": "عدد مرات الانضمام",
+            "timeTogether": "الوقت معًا",
+            "lastSeen": "آخر ظهور",
+            "lastActivity": "آخر نشاط",
+            "lastLogin": "آخر تسجيل دخول",
+            "dateJoined": "تاريخ الإضافة",
+            "unfriend": "إزالة الصداقة",
+            "mutualFriends": "الأصدقاء المشتركون",
+            "mutualOptedOut": "عطّل هذا المستخدم مشاركة الأصدقاء المشتركين. يتم عرض البيانات المخزّنة في الكاش."
+        },
+        "profile": {
+            "invite_messages": {
+                "slot": "الخانة",
+                "message": "الرسالة",
+                "cool_down": "فترة التهدئة",
+                "action": "الإجراء"
+            }
+        },
+        "import": {
+            "image": "الصورة",
+            "name": "الاسم",
+            "author": "المؤلف",
+            "status": "الحالة",
+            "note": "ملاحظة",
+            "skip_export": "تخطي التصدير",
+            "action": "الإجراء"
+        },
+        "previous_instances": {
+            "date": "التاريخ",
+            "display_name": "الاسم المعروض",
+            "world": "العالم",
+            "instance_name": "اسم Instance",
+            "instance_creator": "منشئ Instance",
+            "time": "الوقت",
+            "count": "العدد",
+            "action": "الإجراء"
+        }
+    },
+    "vr": {
+        "status": {
+            "timer": "المؤقت:",
+            "players": "اللاعبون:",
+            "cpu": "CPU:",
+            "online": "متصل:"
+        }
+    },
+    "api": {
+        "status_code": {
+            "100": "متابعة",
+            "101": "تبديل البروتوكولات",
+            "102": "جارٍ المعالجة",
+            "103": "تلميحات مبكرة",
+            "200": "موافق",
+            "201": "تم الإنشاء",
+            "202": "تم القبول",
+            "203": "معلومات غير معتمدة",
+            "204": "لا محتوى",
+            "205": "إعادة تعيين المحتوى",
+            "206": "محتوى جزئي",
+            "207": "حالات متعددة",
+            "208": "تم الإبلاغ مسبقًا",
+            "226": "تم استخدام IM",
+            "300": "خيارات متعددة",
+            "301": "نُقل نهائيًا",
+            "302": "تم العثور",
+            "303": "انظر إلى أخرى",
+            "304": "لم يتم التعديل",
+            "305": "استخدم الوكيل",
+            "306": "تبديل الوكيل",
+            "307": "إعادة توجيه مؤقتة",
+            "308": "إعادة توجيه دائمة",
+            "400": "طلب غير صالح",
+            "401": "غير مصرح",
+            "402": "الدفع مطلوب",
+            "403": "ممنوع",
+            "404": "غير موجود",
+            "405": "الطريقة غير مسموح بها",
+            "406": "غير مقبول",
+            "407": "مصادقة الوكيل مطلوبة",
+            "408": "انتهت مهلة الطلب",
+            "409": "تعارض",
+            "410": "لم يعد متاحًا",
+            "411": "الطول مطلوب",
+            "412": "فشل الشرط المسبق",
+            "413": "الحمولة كبيرة جدًا",
+            "414": "URI طويل جدًا",
+            "415": "نوع الوسائط غير مدعوم",
+            "416": "النطاق غير قابل للتلبية",
+            "417": "فشل التوقع",
+            "418": "أنا إبريق شاي",
+            "421": "طلب موجّه بشكل خاطئ",
+            "422": "كيان غير قابل للمعالجة",
+            "423": "مقفل",
+            "424": "فشل التبعية",
+            "425": "مبكر جدًا",
+            "426": "الترقية مطلوبة",
+            "428": "الشرط المسبق مطلوب",
+            "429": "طلبات كثيرة جدًا",
+            "431": "حقول ترويسة الطلب كبيرة جدًا",
+            "451": "غير متاح لأسباب قانونية",
+            "500": "خطأ داخلي في الخادم",
+            "501": "غير منفذ",
+            "502": "بوابة غير صالحة",
+            "503": "الخدمة غير متاحة",
+            "504": "انتهت مهلة البوابة",
+            "505": "إصدار HTTP غير مدعوم",
+            "506": "المتغير يتفاوض أيضًا",
+            "507": "مساحة التخزين غير كافية",
+            "508": "تم اكتشاف حلقة",
+            "510": "غير موسّع",
+            "511": "مصادقة الشبكة مطلوبة",
+            "520": "خادم الويب يعيد خطأ غير معروف",
+            "521": "خادم الويب متوقف",
+            "522": "انتهت مهلة الاتصال",
+            "523": "المصدر غير قابل للوصول",
+            "524": "حدث انتهاء مهلة",
+            "525": "فشل تفاوض SSL",
+            "526": "شهادة SSL غير صالحة",
+            "527": "خطأ Railgun Listener عند المصدر"
+        },
+        "error": {
+            "message": {
+                "error_message": "رسالة الخطأ",
+                "endpoint": "نقطة النهاية",
+                "missing_credentials": "بيانات الاعتماد مفقودة",
+                "vpn_in_use": "يحظر VRChat حاليًا معظم خدمات VPN. يرجى تعطيل أي VPN متصل ثم المحاولة مرة أخرى.",
+                "login_error": "خطأ تسجيل الدخول",
+                "invalid_json_response": "استجابة JSON غير صالحة",
+                "403_404_bailing_request": "تم إيقاف الطلب بسبب 404/403 حديث",
+                "unavailable": "قد تكون الخدمة غير متاحة بسبب مشكلات داخلية في VRChat"
+            }
+        }
+    },
+    "accessibility": {
+        "toggle_sidebar": "تبديل الشريط الجانبي",
+        "back_to_top": "العودة إلى الأعلى",
+        "toggle_password": "تبديل إظهار كلمة المرور",
+        "clear_input": "مسح الإدخال",
+        "loading": "جارٍ التحميل",
+        "previous_slide": "الشريحة السابقة",
+        "next_slide": "الشريحة التالية",
+        "nothing_found": "لم يتم العثور على شيء",
+        "mobile_sidebar_description": "عرض الشريط الجانبي للجوال",
+        "search_tabs": "علامات التبويب البحثية"
+    },
+    "onboarding": {
+        "welcome": {
+            "title": "مرحبًا بك في VRCX",
+            "subtitle": "إليك بعض الأشياء التي قد لا تكتشفها بنفسك.",
+            "features": {
+                "user_profiles": {
+                    "title": "ملفات المستخدمين الشخصية",
+                    "description": "انقر على أي مستخدم لرؤية الأصدقاء المشتركين وخرائط النشاط الحرارية وسجلات الجلسات مع تفاصيل الانضمام والمغادرة"
+                },
+                "right_click": {
+                    "title": "القوائم السياقية",
+                    "description": "انقر بزر الفأرة الأيمن على العناصر المهمة للحصول على إجراءات سريعة وخيارات إضافية"
+                },
+                "dashboard": {
+                    "title": "لوحات معلومات مخصصة",
+                    "description": "أنشئ مساحة العمل الخاصة بك بدمج اللوحات التي تناسب احتياجاتك"
+                },
+                "quick_search": {
+                    "title": "بحث سريع",
+                    "description": "اضغط Ctrl+K (⌘+K على Mac) للبحث فورًا عن المستخدمين والعوالم والأفاتارات"
+                }
+            },
+            "cta": "ابدأ"
+        },
+        "whatsnew": {
+            "title": "ما الجديد في VRCX",
+            "subtitle": "إليك ما تغيّر في هذا التحديث.",
+            "cta": "فهمت",
+            "common": {
+                "got_it": "فهمت",
+                "view_changelog": "عرض جميع التغييرات",
+                "support": "ادعم VRCX"
+            },
+            "releases": {
+                "2026_05_03": {
+                    "title": "استكشف الميزات الجديدة",
+                    "subtitle": "بعض الميزات المفيدة التي قد لا تلاحظها",
+                    "items": {
+                        "quick_search": {
+                            "title": "بحث سريع",
+                            "description": "اضغط Ctrl+K (⌘K) للعثور على المستخدمين والعوالم والمجموعات والأفاتارات."
+                        },
+                        "local_favorite_groups": {
+                            "title": "المفضلة المحلية",
+                            "description": "أنشئ مجموعات أصدقاء مخصصة غير محدودة تتجاوز حدود VRChat."
+                        },
+                        "auto_status": {
+                            "title": "الحالة التلقائية",
+                            "description": "بدّل الحالة تلقائيًا بناءً على وجود الأصدقاء، مع إمكانية التصفية حسب المجموعة."
+                        },
+                        "right_click_menus": {
+                            "title": "القوائم السياقية",
+                            "description": "انقر بزر الفأرة الأيمن على الأصدقاء والجداول والرؤوس للحصول على إجراءات سريعة."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "status_bar": {
+        "game": "اللعبة",
+        "game_running": "VRChat قيد التشغيل",
+        "game_stopped": "VRChat غير قيد التشغيل",
+        "game_started_at": "بدأت",
+        "game_session_duration": "المدة",
+        "game_last_session": "آخر جلسة",
+        "game_last_offline": "غير متصل منذ",
+        "servers": "الخوادم",
+        "servers_ok": "خوادم VRChat تعمل بشكل طبيعي",
+        "servers_issue": "مشكلات في خوادم VRChat",
+        "steamvr": "SteamVR",
+        "steamvr_running": "SteamVR قيد التشغيل",
+        "steamvr_stopped": "SteamVR غير قيد التشغيل",
+        "proxy": "الوكيل",
+        "ws_connected": "متصل",
+        "ws_disconnected": "غير متصل",
+        "ws_avg_per_minute": "{count} متوسط/دقيقة",
+        "zoom": "التكبير",
+        "zoom_tooltip": "انقر لضبط مستوى التكبير",
+        "app_uptime": "مدة تشغيل التطبيق",
+        "app_uptime_short": "مدة التشغيل",
+        "clocks": "الساعات",
+        "clock": "الساعة",
+        "clocks_label": "الساعات",
+        "clocks_none": "لا شيء",
+        "timezone": "المنطقة الزمنية",
+        "now_playing": "يُشغَّل الآن"
+    },
+    "toast": {
+        "group_visibility_changed": "تم تغيير ظهور المجموعة",
+        "world_added_to_favorites": "تمت إضافة العالم إلى المفضلة",
+        "friend_added_to_favorites": "تمت إضافة الصديق إلى المفضلة",
+        "avatar_added_to_favorites": "تمت إضافة الأفاتار إلى المفضلة",
+        "request_invite_sent": "تم إرسال طلب الدعوة",
+        "status_updated": "تم تحديث الحالة",
+        "image_copied_to_clipboard": "تم نسخ الصورة إلى الحافظة",
+        "opened_image_folder": "تم فتح مجلد الصور",
+        "invite_message_on_cooldown": "رسالة الدعوة هذه في وضع الانتظار ولا يمكن تعديلها بعد.",
+        "invite_message_updated": "تم تحديث رسالة الدعوة",
+        "updated_launch_options": "تم تحديث خيارات التشغيل",
+        "youtube_api_key_removed": "تم إزالة مفتاح YouTube API",
+        "youtube_api_key_invalid": "مفتاح YouTube API غير صالح",
+        "youtube_api_key_valid": "مفتاح YouTube API صالح!",
+        "bio_updated": "تم تحديث السيرة الذاتية",
+        "pronouns_updated": "تم تحديث الضمائر",
+        "favorite_added": "تمت الإضافة إلى المفضلة!",
+        "error_saving_avatar_tags": "خطأ في حفظ وسوم الأفاتار",
+        "invite_message_sent": "تم إرسال رسالة الدعوة",
+        "invite_photo_message_sent": "تم إرسال رسالة الدعوة بالصورة",
+        "request_invite_photo_message_sent": "تم إرسال طلب الدعوة بالصورة",
+        "request_invite_message_sent": "تم إرسال طلب رسالة الدعوة",
+        "instance_copied_to_clipboard": "تم نسخ المثيل إلى الحافظة",
+        "instance_copy_failed": "فشل نسخ المثيل",
+        "title_and_text_required": "العنوان والنص مطلوبان",
+        "group_post_edited": "تم تعديل منشور المجموعة",
+        "group_post_created": "تم إنشاء منشور المجموعة",
+        "allowed_video_domains_updated": "تم تحديث أسماء نطاقات مشغل الفيديو المسموح بها",
+        "tags_updated": "تم تحديث الوسوم",
+        "failed_to_download_image": "فشل تحميل الصورة",
+        "failed_to_save_group_order": "فشل حفظ ترتيب المجموعات في اللعبة",
+        "failed_to_download_ics": "فشل تحميل ملف .ics"
+    }
+}

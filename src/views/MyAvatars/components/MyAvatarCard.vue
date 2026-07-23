@@ -23,7 +23,7 @@
                                 <!-- Platform dots -->
                                 <div
                                     v-if="platformInfo.isQuest || platformInfo.isIos"
-                                    class="absolute top-1 right-1 flex -space-x-1">
+                                    class="absolute top-1 end-1 flex -space-x-1">
                                     <span
                                         v-if="platformInfo.isPC"
                                         class="size-2.5 rounded-full border opacity-70 bg-platform-pc" />

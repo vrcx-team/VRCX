@@ -6,7 +6,7 @@
                     <template v-for="item in virtualItems" :key="String(item.virtualItem.key)">
                         <div
                             v-if="item.row"
-                            class="absolute left-0 top-0 w-full box-border"
+                            class="absolute start-0 top-0 w-full box-border"
                             :data-index="item.virtualItem.index"
                             :ref="virtualizer.measureElement"
                             :style="rowStyle(item)">
@@ -24,7 +24,7 @@
                                         <ChevronDown
                                             class="transition-transform duration-200 ease-in-out"
                                             :class="{ '-rotate-90': item.row.isCollapsed }" />
-                                        <span class="ml-1.5"> {{ item.row.label }} – {{ item.row.count }} </span>
+                                        <span class="ms-1.5"> {{ item.row.label }} – {{ item.row.count }} </span>
                                     </div>
                                 </div>
                             </template>
@@ -36,7 +36,7 @@
                                             class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
                                             @click="showGroupDialog(item.row.ownerId)">
                                             <template v-if="item.row.isVisible">
-                                                <div class="relative inline-block flex-none size-9 mr-2.5">
+                                                <div class="relative inline-block flex-none size-9 me-2.5">
                                                     <Avatar class="size-9">
                                                         <AvatarImage
                                                             :src="getSmallGroupIconUrl(item.row.iconUrl)"
@@ -49,7 +49,7 @@
                                                 <div class="flex-1 overflow-hidden">
                                                     <span class="block truncate font-medium leading-[18px]">
                                                         <span v-text="item.row.name"></span>
-                                                        <span class="ml-1.5 font-normal">
+                                                        <span class="ms-1.5 font-normal">
                                                             ({{ item.row.userCount }}/{{ item.row.capacity }})
                                                         </span>
                                                     </span>

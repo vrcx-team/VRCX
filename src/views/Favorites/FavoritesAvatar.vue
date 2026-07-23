@@ -29,7 +29,7 @@
                     :collapsed-size="0"
                     collapsible
                     :order="1">
-                    <div class="h-full pr-2 overflow-auto flex flex-col gap-3">
+                    <div class="h-full pe-2 overflow-auto flex flex-col gap-3">
                         <div class="flex flex-col gap-2">
                             <div class="flex items-center justify-between font-semibold text-sm mb-[9px]">
                                 <span>{{ t('view.favorite.avatars.vrchat_favorites') }}</span>
@@ -273,7 +273,7 @@
                 </ResizablePanel>
                 <ResizableHandle @dragging="splitterSetDragging" />
                 <ResizablePanel :order="2">
-                    <div class="flex flex-col h-full min-h-0 pl-[26px]">
+                    <div class="flex flex-col h-full min-h-0 ps-[26px]">
                         <FavoritesContentHeader
                             v-model:edit-mode="avatarEditMode"
                             :edit-mode-disabled="isSearchActive || !activeRemoteGroup"
@@ -344,7 +344,7 @@
                                 </div>
                             </template>
                             <template v-else-if="activeRemoteGroup">
-                                <div class="h-full pr-2 overflow-auto">
+                                <div class="h-full pe-2 overflow-auto">
                                     <template v-if="currentRemoteFavorites.length">
                                         <div
                                             class="favorites-card-list"
@@ -365,7 +365,7 @@
                                 </div>
                             </template>
                             <template v-else-if="!remoteAvatarGroupsResolved">
-                                <div class="h-full pr-2 overflow-auto">
+                                <div class="h-full pe-2 overflow-auto">
                                     <div
                                         class="favorites-card-list"
                                         :style="avatarFavoritesGridStyle(avatarGroupPlaceholders.length)">
@@ -377,7 +377,7 @@
                                 </div>
                             </template>
                             <template v-else-if="activeLocalGroupName">
-                                <ScrollArea class="h-full pr-2">
+                                <ScrollArea class="h-full pe-2">
                                     <template v-if="currentLocalFavorites.length">
                                         <div
                                             class="favorites-card-list"
@@ -397,7 +397,7 @@
                                 </ScrollArea>
                             </template>
                             <template v-else-if="isHistorySelected">
-                                <div class="h-full pr-2 overflow-auto">
+                                <div class="h-full pe-2 overflow-auto">
                                     <template v-if="avatarHistory.length">
                                         <div
                                             class="favorites-card-list"
@@ -460,6 +460,7 @@
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { avatarRequest, favoriteRequest } from '../../api';
     import { debounce } from '../../shared/utils';
+    import { localeIncludesCI } from '../../shared/utils/base/string';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
     import { useFavoritesGroupPanel } from './composables/useFavoritesGroupPanel.js';
     import { useFavoritesLocalGroups } from './composables/useFavoritesLocalGroups.js';
@@ -990,7 +991,7 @@
                     favoriteGroupId: args.json.id
                 }
             });
-            toast.success('Group visibility changed');
+            toast.success(t('toast.group_visibility_changed'));
             if (menuKey) {
                 handleGroupMenuVisible(menuKey, false);
             }
@@ -1077,7 +1078,7 @@
         if (typeof value === 'string') {
             avatarFavoriteSearch.value = value;
         }
-        const search = avatarFavoriteSearch.value.trim().toLowerCase();
+        const search = avatarFavoriteSearch.value.trim();
         if (search.length < 3) {
             avatarFavoriteSearchResults.value = [];
             return;
@@ -1098,7 +1099,7 @@
                 ) {
                     return;
                 }
-                if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
+                if (localeIncludesCI(ref.name, search) || localeIncludesCI(ref.authorName, search)) {
                     if (!seen.has(ref.id)) {
                         seen.add(ref.id);
                         results.push(ref);
@@ -1116,7 +1117,7 @@
             ) {
                 return;
             }
-            if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
+            if (localeIncludesCI(ref.name, search) || localeIncludesCI(ref.authorName, search)) {
                 if (!seen.has(ref.id)) {
                     seen.add(ref.id);
                     results.push(ref);

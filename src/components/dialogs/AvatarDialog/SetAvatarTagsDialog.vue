@@ -56,11 +56,11 @@
                         t('dialog.set_avatar_tags.select_all')
                     }}</Button>
                 </template>
-                <span style="margin-left: 6px"
+                <span style="margin-inline-start: 6px"
                     >{{ props.setAvatarTagsDialog.selectedAvatarIds.length }} /
                     {{ setAvatarTagsDialog.ownAvatars.length }}</span
                 >
-                <Spinner v-if="setAvatarTagsDialog.loading" class="inline-block ml-2" />
+                <Spinner v-if="setAvatarTagsDialog.loading" class="inline-block ms-2" />
                 <div
                     class="flex flex-wrap items-start max-h-[300px] overflow-auto"
                     style="margin-top: 8px; min-height: 60px">
@@ -72,7 +72,7 @@
                             'box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:rounded-[25px_5px_5px_25px]'
                         ]"
                         @click="showAvatarDialog(avatar.id)">
-                        <div class="relative inline-block flex-none size-9 mr-2.5">
+                        <div class="relative inline-block flex-none size-9 me-2.5">
                             <img
                                 v-if="avatar.thumbnailImageUrl"
                                 class="size-full rounded-full object-cover"
@@ -92,7 +92,7 @@
                             <span v-else class="block truncate text-xs" v-text="avatar.releaseStatus"></span>
                             <span class="block truncate text-xs" v-text="avatarTagStrings.get(avatar.id)"></span>
                         </div>
-                        <Button size="sm" variant="ghost" style="margin-left: 6px" @click.stop>
+                        <Button size="sm" variant="ghost" style="margin-inline-start: 6px" @click.stop>
                             <Checkbox
                                 :model-value="props.setAvatarTagsDialog.selectedAvatarIds.includes(avatar.id)"
                                 @update:modelValue="(val) => toggleAvatarSelection(avatar.id, val)" />
@@ -102,7 +102,7 @@
             </template>
 
             <DialogFooter>
-                <Button variant="secondary" class="mr-2" @click="closeSetAvatarTagsDialog">{{
+                <Button variant="secondary" class="me-2" @click="closeSetAvatarTagsDialog">{{
                     t('dialog.set_avatar_tags.cancel')
                 }}</Button>
                 <Button @click="saveSetAvatarTagsDialog">{{ t('dialog.set_avatar_tags.save') }}</Button>
@@ -296,7 +296,7 @@
             }
         } catch (err) {
             console.error(err);
-            toast.error('Error saving avatar tags');
+            toast.error(t('toast.error_saving_avatar_tags'));
         } finally {
             D.loading = false;
             D.visible = false;

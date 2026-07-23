@@ -215,7 +215,7 @@
     .calendar-event-badge {
         position: absolute;
         top: -4px;
-        right: -4px;
+        inset-inline-end: -4px;
         min-width: 14px;
         height: 16px;
         border-radius: var(--radius-lg);

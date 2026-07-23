@@ -20,7 +20,7 @@
                     style="flex: none; width: 160px; height: 120px; border-radius: var(--radius-md)">
                     <Image class="size-8 text-muted-foreground" />
                 </div>
-                <div class="ml-2" style="display: flex; flex-direction: column; min-width: 320px; width: 100%">
+                <div class="ms-2" style="display: flex; flex-direction: column; min-width: 320px; width: 100%">
                     <div class="flex items-center">
                         <span
                             class="cursor-pointer"
@@ -49,64 +49,64 @@
                             v-text="currentInstanceWorld.ref.authorName"></span>
                     </div>
                     <div class="mt-1.5">
-                        <Badge class="mr-1.5" v-if="currentInstanceWorld.ref.$isLabs" variant="outline">
+                        <Badge class="me-1.5" v-if="currentInstanceWorld.ref.$isLabs" variant="outline">
                             {{ t('dialog.world.tags.labs') }}
                         </Badge>
                         <Badge
-                            class="mr-1.5"
+                            class="me-1.5"
                             v-else-if="currentInstanceWorld.ref.releaseStatus === 'public'"
                             variant="outline">
                             {{ t('dialog.world.tags.public') }}
                         </Badge>
                         <Badge
-                            class="mr-1.5"
+                            class="me-1.5"
                             v-else-if="currentInstanceWorld.ref.releaseStatus === 'private'"
                             variant="outline">
                             {{ t('dialog.world.tags.private') }}
                         </Badge>
                         <TooltipWrapper v-if="currentInstanceWorld.isPC" side="top" content="PC">
-                            <Badge class="text-platform-pc border-platform-pc! mr-1.5" variant="outline"
+                            <Badge class="text-platform-pc border-platform-pc! me-1.5" variant="outline"
                                 ><Monitor class="h-4 w-4" />
                                 <span
                                     v-if="currentInstanceWorld.fileAnalysis.standalonewindows?._fileSize"
-                                    class="x-grey text-platform-pc border-l-[0.8px] border-solid ml-1.5 pl-1.5 pb-px"
+                                    class="x-grey text-platform-pc border-s-[0.8px] border-solid ms-1.5 ps-1.5 pb-px"
                                     >{{ currentInstanceWorld.fileAnalysis.standalonewindows._fileSize }}</span
                                 >
                             </Badge>
                         </TooltipWrapper>
                         <TooltipWrapper v-if="currentInstanceWorld.isQuest" side="top" content="Android">
-                            <Badge class="text-platform-quest border-platform-quest! mr-1.5" variant="outline"
+                            <Badge class="text-platform-quest border-platform-quest! me-1.5" variant="outline"
                                 ><Smartphone class="h-4 w-4" />
                                 <span
                                     v-if="currentInstanceWorld.fileAnalysis.android?._fileSize"
-                                    class="x-grey text-platform-quest border-l-[0.8px] border-solid ml-1.5 pl-1.5 pb-px"
+                                    class="x-grey text-platform-quest border-s-[0.8px] border-solid ms-1.5 ps-1.5 pb-px"
                                     >{{ currentInstanceWorld.fileAnalysis.android._fileSize }}</span
                                 >
                             </Badge>
                         </TooltipWrapper>
                         <TooltipWrapper v-if="currentInstanceWorld.isIos" side="top" content="iOS">
-                            <Badge class="text-platform-ios border-platform-ios mr-1.5" variant="outline"
+                            <Badge class="text-platform-ios border-platform-ios me-1.5" variant="outline"
                                 ><Apple class="h-4 w-4 text-platform-ios" />
                                 <span
                                     v-if="currentInstanceWorld.fileAnalysis.ios?._fileSize"
-                                    class="x-grey text-platform-ios border-platform-ios border-l-[0.8px] border-solid ml-1.5 pl-1.5 pb-px"
+                                    class="x-grey text-platform-ios border-platform-ios border-s-[0.8px] border-solid ms-1.5 ps-1.5 pb-px"
                                     >{{ currentInstanceWorld.fileAnalysis.ios._fileSize }}</span
                                 >
                             </Badge>
                         </TooltipWrapper>
                         <Badge
-                            class="mr-1.5 mt-1.5"
+                            class="me-1.5 mt-1.5"
                             v-if="currentInstanceWorld.avatarScalingDisabled"
                             variant="outline">
                             {{ t('dialog.world.tags.avatar_scaling_disabled') }}
                         </Badge>
-                        <Badge class="mr-1.5" v-if="currentInstanceWorld.inCache" variant="outline">
+                        <Badge class="me-1.5" v-if="currentInstanceWorld.inCache" variant="outline">
                             <span>{{ currentInstanceWorld.cacheSize }} {{ t('dialog.world.tags.cache') }}</span>
                         </Badge>
                     </div>
                     <div class="mt-1.5">
                         <LocationWorld :locationobject="currentInstanceLocation" :currentuserid="currentUser.id" />
-                        <span class="ml-1.5" v-if="lastLocation.playerList.size > 0">
+                        <span class="ms-1.5" v-if="lastLocation.playerList.size > 0">
                             {{ lastLocation.playerList.size }}
                             <template v-if="lastLocation.friendList.size > 0"
                                 >({{ lastLocation.friendList.size }})</template
@@ -121,7 +121,7 @@
                             v-text="currentInstanceWorld.ref.description"></span>
                     </div>
                 </div>
-                <div class="ml-5" style="display: flex; flex-direction: column">
+                <div class="ms-5" style="display: flex; flex-direction: column">
                     <div class="box-border flex items-center p-1.5 text-[13px] cursor-default">
                         <div class="flex-1 overflow-hidden">
                             <span class="block truncate font-medium leading-[18px]">{{

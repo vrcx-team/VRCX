@@ -22,10 +22,10 @@
 <template>
     <PaginationPrev
         data-slot="pagination-previous"
-        :class="cn(buttonVariants({ variant: 'ghost', size }), 'text-[13px] gap-1 px-2.5 sm:pr-2.5', props.class)"
+        :class="cn(buttonVariants({ variant: 'ghost', size }), 'text-[13px] gap-1 px-2.5 sm:pe-2.5', props.class)"
         v-bind="forwarded">
         <slot>
-            <ChevronLeftIcon />
+            <ChevronLeftIcon class="rtl:scale-x-[-1]" />
             <span class="hidden sm:block">
                 {{ t('table.pagination.previous') }}
             </span>

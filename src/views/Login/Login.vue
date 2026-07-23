@@ -1,14 +1,14 @@
 <template>
     <div class="x-login-container">
-        <div class="m-1.5" style="position: absolute; top: 0; left: 0">
+        <div class="m-1.5" style="position: absolute; top: 0; inset-inline-start: 0">
             <LoginSettingsDialog />
             <TooltipWrapper v-if="!noUpdater" side="top" :content="t('view.login.updater')">
-                <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost" @click="showVRCXUpdateDialog">
+                <Button class="rounded-full me-2 text-xs" size="icon-sm" variant="ghost" @click="showVRCXUpdateDialog">
                     <span class="relative inline-flex items-center justify-center">
                         <ArrowBigDownDash />
                         <span
                             v-if="pendingVRCXUpdate"
-                            class="absolute -top-0.5 -right-1 h-1.5 w-1.5 rounded-full bg-red-500"></span>
+                            class="absolute -top-0.5 -end-1 h-1.5 w-1.5 rounded-full bg-red-500"></span>
                     </span>
                 </Button>
             </TooltipWrapper>
@@ -90,7 +90,7 @@
                                 </Field>
                             </VeeField>
                         </FieldGroup>
-                        <label class="inline-flex items-center gap-2 mr-2 mt-3 text-sm">
+                        <label class="inline-flex items-center gap-2 me-2 mt-3 text-sm">
                             <Checkbox v-model="loginForm.saveCredentials" />
                             <span>{{ t('view.login.field.saveCredentials') }}</span>
                         </label>

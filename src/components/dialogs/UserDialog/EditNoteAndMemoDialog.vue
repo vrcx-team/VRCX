@@ -36,7 +36,7 @@
             </div>
 
             <DialogFooter>
-                <Button variant="secondary" @click="cancel" class="mr-2">{{
+                <Button variant="secondary" @click="cancel" class="me-2">{{
                     t('dialog.user.note_memo.cancel')
                 }}</Button>
                 <Button @click="saveChanges">{{ t('dialog.user.note_memo.confirm') }}</Button>

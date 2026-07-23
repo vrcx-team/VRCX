@@ -35,7 +35,7 @@
                     }">
                     <template v-for="virtualRow in virtualizer.getVirtualItems()" :key="String(virtualRow.key)">
                         <div
-                            class="absolute left-0 top-0 w-full"
+                            class="absolute start-0 top-0 w-full"
                             :style="{ transform: `translateY(${virtualRow.start}px)` }">
                             <template v-if="virtualListEntries[virtualRow.index]?.type === 'group'">
                                 <div
@@ -62,7 +62,7 @@
                                         </span>
                                         <span
                                             v-if="selectedValueSet.has(virtualListEntries[virtualRow.index].value)"
-                                            class="ml-auto opacity-70">
+                                            class="ms-auto opacity-70">
                                             ✓
                                         </span>
                                     </slot>
@@ -72,7 +72,7 @@
                     </template>
 
                     <div v-if="virtualListEntries.length === 0" class="p-3 text-sm opacity-70">
-                        <slot name="empty">Nothing found</slot>
+                        <slot name="empty">{{ t('accessibility.nothing_found') }}</slot>
                     </div>
                 </div>
             </div>
@@ -82,11 +82,14 @@
 
 <script setup>
     import { computed, ref, shallowRef, watch } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { Button } from '@/components/ui/button';
     import { Input } from '@/components/ui/input';
     import { X } from 'lucide-vue-next';
     import { useVirtualizer } from '@tanstack/vue-virtual';
+
+    const { t } = useI18n();
 
     const props = defineProps({
         modelValue: { type: [String, Number, Array, null], default: null },

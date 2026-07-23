@@ -15,13 +15,13 @@
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <span class="name" v-text="feed.displayName"></span>
-                                        <Loader2 v-if="feed.isTraveling" class="is-loading ml-2 h-4 w-4" />
+                                        <Loader2 v-if="feed.isTraveling" class="is-loading ms-2 h-4 w-4" />
                                         <VrLocation
                                             :location="feed.location"
                                             :hint="feed.worldName"
                                             :grouphint="feed.groupName"
                                             :instancedisplayname="feed.instanceDisplayName"
-                                            style="margin-left: 2px"></VrLocation>
+                                            style="margin-inline-start: 2px"></VrLocation>
                                     </span>
                                 </div>
                             </div>
@@ -52,7 +52,7 @@
                                                 :hint="feed.worldName"
                                                 :grouphint="feed.groupName"
                                                 :instancedisplayname="feed.instanceDisplayName"
-                                                style="margin-left: 5px"></VrLocation>
+                                                style="margin-inline-start: 5px"></VrLocation>
                                         </template>
                                     </span>
                                 </div>
@@ -64,7 +64,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="name" v-text="feed.displayName" style="margin-right: 5px"></span>
+                                        <span class="name" v-text="feed.displayName" style="margin-inline-end: 5px"></span>
                                         <template v-if="feed.statusDescription === feed.previousStatusDescription">
                                             <i class="x-user-status" :class="statusClass(feed.previousStatus)"></i>
                                             <ArrowRight class="h-4 w-4 inline-block" />
@@ -84,7 +84,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Play class="mr-5 h-5 w-5" />
+                                        <Play class="me-5 h-5 w-5" />
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -99,7 +99,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Play class="mr-5 h-5 w-5 rotate-180" />
+                                        <Play class="me-5 h-5 w-5 rotate-180" />
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -115,7 +115,7 @@
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <Play class="h-5 w-5" />
-                                        <Loader2 class="is-loading mr-5 h-4 w-4" />
+                                        <Loader2 class="is-loading me-5 h-4 w-4" />
                                         <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
@@ -142,12 +142,12 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <TvMinimalPlay class="mr-5 h-5 w-5" />
+                                        <TvMinimalPlay class="me-5 h-5 w-5" />
                                         <span
                                             v-if="feed.displayName"
                                             class="name"
                                             v-text="feed.displayName"
-                                            style="margin-right: 5px"
+                                            style="margin-inline-end: 5px"
                                             :style="{ color: feed.tagColour }"></span>
                                         <template v-if="feed.videoName">
                                             <span v-text="feed.videoName"></span>
@@ -165,8 +165,8 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Send class="mr-5 h-5 w-5" />
-                                        <span class="name mr-5" v-text="feed.senderUsername"></span>
+                                        <Send class="me-5 h-5 w-5" />
+                                        <span class="name me-5" v-text="feed.senderUsername"></span>
                                         <VrLocation
                                             :location="feed.details.worldId"
                                             :hint="feed.details.worldName"
@@ -182,8 +182,8 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Send class="mr-5 h-5 w-5" />
-                                        <span class="name mr-5" v-text="feed.senderUsername"></span>
+                                        <Send class="me-5 h-5 w-5" />
+                                        <span class="name me-5" v-text="feed.senderUsername"></span>
                                         <span v-text="feed.details.requestMessage"></span>
                                     </span>
                                 </div>
@@ -195,8 +195,8 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Send class="mr-5 h-5 w-5" />
-                                        <span class="name mr-5" v-text="feed.senderUsername"></span>
+                                        <Send class="me-5 h-5 w-5" />
+                                        <span class="name me-5" v-text="feed.senderUsername"></span>
                                         <span v-text="feed.details.responseMessage"></span>
                                     </span>
                                 </div>
@@ -208,8 +208,8 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Send class="mr-5 h-5 w-5" />
-                                        <span class="name mr-5" v-text="feed.senderUsername"></span>
+                                        <Send class="me-5 h-5 w-5" />
+                                        <span class="name me-5" v-text="feed.senderUsername"></span>
                                         <span v-text="feed.details.responseMessage"></span>
                                     </span>
                                 </div>
@@ -221,7 +221,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <HeartPlus class="mr-5 h-5 w-5" />
+                                        <HeartPlus class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.senderUsername"></span>
                                     </span>
                                 </div>
@@ -233,7 +233,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Heart class="mr-5 h-5 w-5" />
+                                        <Heart class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
@@ -245,7 +245,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <ThumbsDown class="mr-5 h-5 w-5" />
+                                        <ThumbsDown class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
@@ -257,9 +257,9 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Pencil class="mr-5 h-5 w-5" />
+                                        <Pencil class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.previousDisplayName"></span>
-                                        <ArrowRight class="mr-5 h-4 w-4 inline-block" />
+                                        <ArrowRight class="me-5 h-4 w-4 inline-block" />
                                         <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
@@ -271,7 +271,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <GraduationCap class="mr-5 h-5 w-5" />
+                                        <GraduationCap class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.displayName"></span>
                                         {{ feed.previousTrustLevel }}
                                         <ArrowRight class="mx-1 inline-block h-4 w-4" />
@@ -286,8 +286,8 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <HeartHandshake class="mr-5 h-5 w-5" />
-                                        <span class="name mr-5" v-text="feed.senderUsername"></span>
+                                        <HeartHandshake class="me-5 h-5 w-5" />
+                                        <span class="name me-5" v-text="feed.senderUsername"></span>
                                         <span v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -299,8 +299,8 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Tag class="mr-5 h-5 w-5" />
-                                        <span class="name mr-5" v-text="feed.senderUsername"></span>
+                                        <Tag class="me-5 h-5 w-5" />
+                                        <span class="name me-5" v-text="feed.senderUsername"></span>
                                         <span v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -312,7 +312,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Megaphone class="mr-5 h-5 w-5" />
+                                        <Megaphone class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -324,7 +324,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <CalendarPlus class="mr-5 h-5 w-5" />
+                                        <CalendarPlus class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -336,7 +336,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <CalendarCheck class="mr-5 h-5 w-5" />
+                                        <CalendarCheck class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -348,7 +348,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Megaphone class="mr-5 h-5 w-5" />
+                                        <Megaphone class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -360,7 +360,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Tag class="mr-5 h-5 w-5" />
+                                        <Tag class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -372,7 +372,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Tag class="mr-5 h-5 w-5" />
+                                        <Tag class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -384,7 +384,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Tag class="mr-5 h-5 w-5" />
+                                        <Tag class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -396,7 +396,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Send class="mr-5 h-5 w-5" />
+                                        <Send class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -408,7 +408,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <XCircle class="mr-5 h-5 w-5" />
+                                        <XCircle class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -421,9 +421,9 @@
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <template v-if="feed.displayName">
-                                            <Music class="mr-5 h-5 w-5" />
+                                            <Music class="me-5 h-5 w-5" />
                                             <span
-                                                class="name mr-5"
+                                                class="name me-5"
                                                 v-text="feed.displayName"
                                                 :style="{ color: feed.tagColour }"></span>
                                             <VrLocation
@@ -432,7 +432,7 @@
                                                 :grouphint="feed.groupName"></VrLocation>
                                         </template>
                                         <template v-else>
-                                            <Music class="mr-1 h-5 w-5 inline-block" /> User has spawned a portal
+                                            <Music class="me-1 h-5 w-5 inline-block" /> {{ t('notifications.portal_spawn') }}
                                         </template>
                                     </span>
                                 </div>
@@ -444,9 +444,9 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Footprints class="mr-5 h-5 w-5" />
+                                        <Footprints class="me-5 h-5 w-5" />
                                         <span
-                                            class="name mr-5"
+                                            class="name me-5"
                                             v-text="feed.displayName"
                                             :style="{ color: feed.tagColour }"></span>
                                         <template v-if="feed.releaseStatus === 'public'">
@@ -469,7 +469,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <MessageSquare class="mr-5 h-5 w-5" />
+                                        <MessageSquare class="me-5 h-5 w-5" />
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -482,7 +482,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <AlertTriangle class="mr-5 h-5 w-5" />
+                                        <AlertTriangle class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.data"></span>
                                     </span>
                                 </div>
@@ -491,9 +491,9 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Info class="mr-5 h-5 w-5" />
+                                        <Info class="me-5 h-5 w-5" />
                                         <span
-                                            class="name mr-5"
+                                            class="name me-5"
                                             v-text="feed.displayName"
                                             :style="{ color: feed.tagColour }"></span>
                                         <span class="name" v-text="feed.message"></span>
@@ -507,7 +507,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Play class="mr-1 h-5 w-5 inline-block" /><Ban class="mr-5 h-5 w-5" />
+                                        <Play class="me-1 h-5 w-5 inline-block" /><Ban class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
@@ -519,8 +519,8 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Play class="mr-1 inline-block h-5 w-5 rotate-180" /><Ban
-                                            class="mr-5 h-5 w-5" />
+                                        <Play class="me-1 inline-block h-5 w-5 rotate-180" /><Ban
+                                            class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
@@ -532,7 +532,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Play class="mr-1 h-5 w-5 inline-block" /><VolumeX class="mr-5 h-5 w-5" />
+                                        <Play class="me-1 h-5 w-5 inline-block" /><VolumeX class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
@@ -544,8 +544,8 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Play class="mr-1 inline-block h-5 w-5 rotate-180" /><VolumeX
-                                            class="mr-5 h-5 w-5" />
+                                        <Play class="me-1 inline-block h-5 w-5 rotate-180" /><VolumeX
+                                            class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
@@ -557,7 +557,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Ban class="mr-5 h-5 w-5" />
+                                        <Ban class="me-5 h-5 w-5" />
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -572,7 +572,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Circle class="mr-5 h-5 w-5" />
+                                        <Circle class="me-5 h-5 w-5" />
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -587,7 +587,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <VolumeX class="mr-5 h-5 w-5" />
+                                        <VolumeX class="me-5 h-5 w-5" />
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -602,7 +602,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Volume2 class="mr-5 h-5 w-5" />
+                                        <Volume2 class="me-5 h-5 w-5" />
                                         <span
                                             class="name"
                                             v-text="feed.displayName"
@@ -624,7 +624,8 @@
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <template v-if="feed.isTraveling">
-                                            <span class="name" v-text="feed.displayName"></span> is traveling to
+                                            <span class="name" v-text="feed.displayName"></span>
+                                            {{ t('notifications.traveling_to', { location: '' }) }}
                                             <VrLocation
                                                 :location="feed.location"
                                                 :hint="feed.worldName"
@@ -632,7 +633,8 @@
                                                 :instancedisplayname="feed.instanceDisplayName"></VrLocation>
                                         </template>
                                         <template v-else>
-                                            <span class="name" v-text="feed.displayName"></span> is in
+                                            <span class="name" v-text="feed.displayName"></span>
+                                            {{ t('notifications.gps', { location: '' }) }}
                                             <VrLocation
                                                 :location="feed.location"
                                                 :hint="feed.worldName"
@@ -649,7 +651,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="name" v-text="feed.displayName"></span> has logged out
+                                        <span class="name" v-text="feed.displayName"></span>
+                                        {{ t('notifications.offline') }}
                                     </span>
                                 </div>
                             </div>
@@ -661,14 +664,16 @@
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         <span class="name" v-text="feed.displayName"></span>
-                                        <span class="vr-mx">has logged in</span>
                                         <template v-if="feed.worldName">
-                                            to
+                                            <span class="vr-mx">{{ t('notifications.online_location', { location: '' }) }}</span>
                                             <VrLocation
                                                 :location="feed.location"
                                                 :hint="feed.worldName"
                                                 :grouphint="feed.groupName"
                                                 :instancedisplayname="feed.instanceDisplayName"></VrLocation>
+                                        </template>
+                                        <template v-else>
+                                            <span class="vr-mx">{{ t('notifications.online') }}</span>
                                         </template>
                                     </span>
                                 </div>
@@ -680,7 +685,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="name" v-text="feed.displayName" style="margin-right: 5px"></span>
+                                        <span class="name" v-text="feed.displayName" style="margin-inline-end: 5px"></span>
                                         <template v-if="feed.statusDescription === feed.previousStatusDescription">
                                             <i class="x-user-status" :class="statusClass(feed.previousStatus)"></i>
                                             <ArrowRight class="inline-block h-4 w-4" />
@@ -704,7 +709,7 @@
                                             class="name"
                                             v-text="feed.displayName"
                                             :style="{ color: feed.tagColour }"></span>
-                                        has joined
+                                        {{ t('notifications.has_joined') }}
                                     </span>
                                 </div>
                             </div>
@@ -719,7 +724,7 @@
                                             class="name"
                                             v-text="feed.displayName"
                                             :style="{ color: feed.tagColour }"></span>
-                                        has left
+                                        {{ t('notifications.has_left') }}
                                     </span>
                                 </div>
                             </div>
@@ -730,7 +735,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="name" v-text="feed.displayName"></span> is joining
+                                        <span class="name" v-text="feed.displayName"></span>
+                                        {{ t('notifications.is_joining') }}
                                     </span>
                                 </div>
                             </div>
@@ -777,7 +783,8 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="name" v-text="feed.senderUsername"></span> has invited you to
+                                        <span class="name" v-text="feed.senderUsername"></span>
+                                        {{ t('notifications.invite', { location: '', message: '' }) }}
                                         <VrLocation
                                             :location="feed.details.worldId"
                                             :hint="feed.details.worldName"
@@ -793,7 +800,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="name" v-text="feed.senderUsername"></span> has requested an invite
+                                        <span class="name" v-text="feed.senderUsername"></span>
+                                        {{ t('notifications.request_invite', { message: '' }) }}
                                         <span v-text="feed.details.requestMessage"></span>
                                     </span>
                                 </div>
@@ -805,8 +813,9 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="name" v-text="feed.senderUsername"></span> has responded to your
-                                        invite <span v-text="feed.details.responseMessage"></span>
+                                        <span class="name" v-text="feed.senderUsername"></span>
+                                        {{ t('notifications.invite_response', { message: '' }) }}
+                                        <span v-text="feed.details.responseMessage"></span>
                                     </span>
                                 </div>
                             </div>
@@ -817,8 +826,9 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="name" v-text="feed.senderUsername"></span> has responded to your
-                                        invite request <span v-text="feed.details.responseMessage"></span>
+                                        <span class="name" v-text="feed.senderUsername"></span>
+                                        {{ t('notifications.request_invite_response', { message: '' }) }}
+                                        <span v-text="feed.details.responseMessage"></span>
                                     </span>
                                 </div>
                             </div>
@@ -829,8 +839,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="name" v-text="feed.senderUsername"></span> has sent you a friend
-                                        request
+                                        <span class="name" v-text="feed.senderUsername"></span>
+                                        {{ t('notifications.friend_request') }}
                                     </span>
                                 </div>
                             </div>
@@ -841,7 +851,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="name" v-text="feed.displayName"></span> is now your friend
+                                        <span class="name" v-text="feed.displayName"></span>
+                                        {{ t('notifications.friend') }}
                                     </span>
                                 </div>
                             </div>
@@ -852,7 +863,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="name" v-text="feed.displayName"></span> is no longer your friend
+                                        <span class="name" v-text="feed.displayName"></span>
+                                        {{ t('notifications.unfriend') }}
                                     </span>
                                 </div>
                             </div>
@@ -863,8 +875,9 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="name" v-text="feed.previousDisplayName"></span> changed their name
-                                        to <span class="name" v-text="feed.displayName"></span>
+                                        <span class="name" v-text="feed.previousDisplayName"></span>
+                                        {{ t('notifications.display_name', { displayName: '' }) }}
+                                        <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
                             </div>
@@ -875,8 +888,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="name" v-text="feed.displayName"></span> trust level is now
-                                        {{ feed.trustLevel }}
+                                        <span class="name" v-text="feed.displayName"></span>
+                                        {{ t('notifications.trust_level', { trustLevel: feed.trustLevel }) }}
                                     </span>
                                 </div>
                             </div>
@@ -922,7 +935,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <CalendarPlus class="mr-5 h-5 w-5" />
+                                        <CalendarPlus class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -934,7 +947,7 @@
                                 <div class="detail">
                                     <span class="extra flex items-center">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <Clock class="mr-5 h-5 w-5" />
+                                        <Clock class="me-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -1017,14 +1030,14 @@
                                                 class="name"
                                                 v-text="feed.displayName"
                                                 :style="{ color: feed.tagColour }"></span>
-                                            has spawned a portal to
+                                            {{ t('notifications.portal_spawn_name', { location: '' }) }}
                                             <VrLocation
                                                 :location="feed.instanceId"
                                                 :hint="feed.worldName"
                                                 :grouphint="feed.groupName"
-                                                style="margin-left: 5px"></VrLocation>
+                                                style="margin-inline-start: 5px"></VrLocation>
                                         </template>
-                                        <template v-else> User has spawned a portal </template>
+                                        <template v-else> {{ t('notifications.portal_spawn') }} </template>
                                     </span>
                                 </div>
                             </div>
@@ -1039,7 +1052,7 @@
                                             class="name"
                                             v-text="feed.displayName"
                                             :style="{ color: feed.tagColour }"></span>
-                                        <span class="vr-mx">changed into avatar</span>
+                                        <span class="vr-mx">{{ t('notifications.avatar_change', { avatar: '' }) }}</span>
                                         <template v-if="feed.releaseStatus === 'public'">
                                             <i class="x-user-status online"></i>
                                         </template>
@@ -1064,7 +1077,7 @@
                                             class="name"
                                             v-text="feed.displayName"
                                             :style="{ color: feed.tagColour }"></span>
-                                        said <span v-text="feed.text"></span>
+                                        {{ t('notifications.chat_message', { message: '' }) }} <span v-text="feed.text"></span>
                                     </span>
                                 </div>
                             </div>
@@ -1096,7 +1109,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        Blocked user <span class="name" v-text="feed.displayName"></span> has joined
+                                        {{ t('notifications.blocked_player_joined') }}
+                                        <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
                             </div>
@@ -1107,7 +1121,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        Blocked user <span class="name" v-text="feed.displayName"></span> has left
+                                        {{ t('notifications.blocked_player_left') }}
+                                        <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
                             </div>
@@ -1118,7 +1133,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        Muted user <span class="name" v-text="feed.displayName"></span> has joined
+                                        {{ t('notifications.muted_player_joined') }}
+                                        <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
                             </div>
@@ -1129,7 +1145,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        Muted user <span class="name" v-text="feed.displayName"></span> has left
+                                        {{ t('notifications.muted_player_left') }}
+                                        <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
                             </div>
@@ -1144,7 +1161,7 @@
                                             class="name"
                                             v-text="feed.displayName"
                                             :style="{ color: feed.tagColour }"></span>
-                                        has blocked you
+                                        {{ t('notifications.blocked') }}
                                     </span>
                                 </div>
                             </div>
@@ -1159,7 +1176,7 @@
                                             class="name"
                                             v-text="feed.displayName"
                                             :style="{ color: feed.tagColour }"></span>
-                                        has unblocked you
+                                        {{ t('notifications.unblocked') }}
                                     </span>
                                 </div>
                             </div>
@@ -1174,7 +1191,7 @@
                                             class="name"
                                             v-text="feed.displayName"
                                             :style="{ color: feed.tagColour }"></span>
-                                        has muted you
+                                        {{ t('notifications.muted') }}
                                     </span>
                                 </div>
                             </div>
@@ -1189,7 +1206,7 @@
                                             class="name"
                                             v-text="feed.displayName"
                                             :style="{ color: feed.tagColour }"></span>
-                                        has unmuted you
+                                        {{ t('notifications.unmuted') }}
                                     </span>
                                 </div>
                             </div>
@@ -1284,48 +1301,48 @@
             </div>
             <div class="x-containerbottom">
                 <template v-if="nowPlaying.playing">
-                    <span style="float: right; padding-left: 10px">{{ nowPlaying.remainingText }}</span>
+                    <span style="float: inline-end; padding-inline-start: 10px">{{ nowPlaying.remainingText }}</span>
                     <MarqueeText>{{ nowPlaying.name }}</MarqueeText>
                     <div
                         class="np-progress-bar"
-                        style="margin-left: 5px"
+                        style="margin-inline-start: 5px"
                         :style="{ width: nowPlaying.percentage + '%' }"></div>
                 </template>
-                <div style="float: right">
-                    <span v-if="!config?.minimalFeed" style="display: inline-block; margin-right: 5px">{{
+                <div style="float: inline-end">
+                    <span v-if="!config?.minimalFeed" style="display: inline-block; margin-inline-end: 5px">{{
                         t('vr.status.timer')
                     }}</span>
-                    <span v-if="lastLocationTimer" style="display: inline-block; margin-right: 5px">{{
+                    <span v-if="lastLocationTimer" style="display: inline-block; margin-inline-end: 5px">{{
                         lastLocationTimer
                     }}</span>
                     <span v-if="lastLocationTimer && (onlineForTimer || pcUptime)" style="display: inline-block">
                         |
                     </span>
-                    <span v-if="onlineForTimer" style="display: inline-block; margin-left: 5px">{{
+                    <span v-if="onlineForTimer" style="display: inline-block; margin-inline-start: 5px">{{
                         onlineForTimer
                     }}</span>
-                    <span v-if="pcUptime && onlineForTimer" style="display: inline-block; margin-left: 5px"> | </span>
-                    <span v-if="pcUptime" style="display: inline-block; margin-left: 5px">{{ pcUptime }}</span>
+                    <span v-if="pcUptime && onlineForTimer" style="display: inline-block; margin-inline-start: 5px"> | </span>
+                    <span v-if="pcUptime" style="display: inline-block; margin-inline-start: 5px">{{ pcUptime }}</span>
                 </div>
                 <template v-if="lastLocation.playerList.length">
-                    <span v-if="!config?.minimalFeed" style="display: inline-block; margin-right: 5px">{{
+                    <span v-if="!config?.minimalFeed" style="display: inline-block; margin-inline-end: 5px">{{
                         t('vr.status.players')
                     }}</span>
                     <span style="display: inline-block">{{ lastLocation.playerList.length }}</span>
                 </template>
                 <span
                     v-if="lastLocation.friendList.length"
-                    style="display: inline-block; font-weight: bold; margin-left: 5px"
+                    style="display: inline-block; font-weight: bold; margin-inline-start: 5px"
                     >({{ lastLocation.friendList.length }})</span
                 >
                 <!-- Bottom row -->
                 <br />
-                <span style="position: absolute; right: 10px">{{ currentTime }}</span>
-                <span v-if="config && cpuUsageEnabled" style="display: inline-block; margin-right: 5px"
+                <span style="position: absolute; inset-inline-end: 10px">{{ currentTime }}</span>
+                <span v-if="config && cpuUsageEnabled" style="display: inline-block; margin-inline-end: 5px"
                     >{{ t('vr.status.cpu') }} {{ cpuUsage }}%</span
                 >
                 <span style="display: inline-block">{{ t('vr.status.online') }} {{ onlineFriendCount }}</span>
-                <span style="display: inline-block; margin-left: 5px">{{ customInfo }}</span>
+                <span style="display: inline-block; margin-inline-start: 5px">{{ customInfo }}</span>
             </div>
         </div>
         <!-- HMD Overlay -->
@@ -1346,29 +1363,29 @@
                         <span v-if="feed.isMaster">👑</span><span v-if="feed.isModerator">⚔️</span
                         ><strong class="name" v-text="feed.displayName" :style="{ color: feed.colour }"></strong>
                         <template v-if="feed.type === 'ChangeAvatar'">
-                            <span style="margin-left: 10px; color: var(--vr-text-secondary)">ChangeAvatar</span>
-                            <span v-if="!feed.inCache" style="color: var(--vr-text-muted); margin-left: 10px"
+                            <span style="margin-inline-start: 10px; color: var(--vr-text-secondary)">ChangeAvatar</span>
+                            <span v-if="!feed.inCache" style="color: var(--vr-text-muted); margin-inline-start: 10px"
                                 ><Loader2 class="is-loading inline-block h-4 w-4" />
                             </span>
-                            <span v-text="feed.avatar.name" style="margin-left: 10px"></span>
+                            <span v-text="feed.avatar.name" style="margin-inline-start: 10px"></span>
                             <span
                                 v-if="feed.avatar.releaseStatus === 'public'"
-                                style="margin-left: 10px; color: var(--status-online)"
+                                style="margin-inline-start: 10px; color: var(--status-online)"
                                 >(Public)</span
                             >
                             <span
                                 v-else-if="feed.avatar.releaseStatus === 'private'"
-                                style="margin-left: 10px; color: var(--status-askme)"
+                                style="margin-inline-start: 10px; color: var(--status-askme)"
                                 >(Private)</span
                             >
                         </template>
                         <template v-else-if="feed.type === 'ChangeStatus'">
-                            <span style="margin-left: 10px; color: var(--vr-text-secondary)">ChangeStatus</span>
+                            <span style="margin-inline-start: 10px; color: var(--vr-text-secondary)">ChangeStatus</span>
                             <span v-if="feed.status !== feed.previousStatus">
                                 <i
                                     class="x-user-status"
                                     :class="statusClass(feed.previousStatus)"
-                                    style="margin-left: 10px; width: 20px; height: 20px"></i>
+                                    style="margin-inline-start: 10px; width: 20px; height: 20px"></i>
                                 <span>
                                     <ArrowRight class="mx-1 inline-block h-4 w-4" />
                                 </span>
@@ -1380,66 +1397,66 @@
                             <span
                                 v-if="feed.statusDescription !== feed.previousStatusDescription"
                                 v-text="feed.statusDescription"
-                                style="margin-left: 10px"></span>
+                                style="margin-inline-start: 10px"></span>
                         </template>
                         <template v-else-if="feed.type === 'ChangeGroup'">
-                            <span style="margin-left: 10px; color: var(--vr-text-secondary)">ChangeGroup</span>
-                            <span v-text="feed.groupName" style="margin-left: 10px"></span>
+                            <span style="margin-inline-start: 10px; color: var(--vr-text-secondary)">ChangeGroup</span>
+                            <span v-text="feed.groupName" style="margin-inline-start: 10px"></span>
                         </template>
                         <template v-else-if="feed.type === 'ChatBoxMessage'">
-                            <span style="margin-left: 10px; color: var(--vr-text-secondary)">ChatBox</span>
-                            <span v-text="feed.text" style="margin-left: 10px; white-space: normal"></span>
+                            <span style="margin-inline-start: 10px; color: var(--vr-text-secondary)">ChatBox</span>
+                            <span v-text="feed.text" style="margin-inline-start: 10px; white-space: normal"></span>
                         </template>
                         <template v-else-if="feed.type === 'PortalSpawn'">
-                            <span style="margin-left: 10px; color: var(--vr-text-secondary)">PortalSpawn</span>
+                            <span style="margin-inline-start: 10px; color: var(--vr-text-secondary)">PortalSpawn</span>
                             <VrLocation
                                 :location="feed.location"
                                 :hint="feed.worldName"
                                 :grouphint="feed.groupName"
                                 :link="false"
-                                style="margin-left: 10px"></VrLocation>
+                                style="margin-inline-start: 10px"></VrLocation>
                         </template>
                         <template v-else-if="feed.type === 'OnPlayerJoined'">
-                            <span style="margin-left: 10px; color: var(--vr-text-secondary)">has joined</span>
+                            <span style="margin-inline-start: 10px; color: var(--vr-text-secondary)">{{ t('notifications.has_joined') }}</span>
                             <span
                                 v-if="feed.platform === 'Desktop'"
-                                style="color: var(--status-joinme); margin-left: 10px"
+                                style="color: var(--status-joinme); margin-inline-start: 10px"
                                 >Desktop</span
                             >
                             <span
                                 v-else-if="feed.platform === 'VR'"
-                                style="color: var(--status-joinme); margin-left: 10px"
+                                style="color: var(--status-joinme); margin-inline-start: 10px"
                                 >VR</span
                             >
                             <span
                                 v-else-if="feed.platform === 'Quest'"
-                                style="color: var(--platform-quest); margin-left: 10px"
+                                style="color: var(--platform-quest); margin-inline-start: 10px"
                                 >Android</span
                             >
                             <span
                                 v-else-if="feed.platform === 'iOS'"
-                                style="color: var(--platform-ios); margin-left: 10px"
+                                style="color: var(--platform-ios); margin-inline-start: 10px"
                                 >iOS</span
                             >
-                            <span v-if="!feed.inCache" style="color: var(--vr-text-muted); margin-left: 10px"
+                            <span v-if="!feed.inCache" style="color: var(--vr-text-muted); margin-inline-start: 10px"
                                 ><Download class="inline-block h-4 w-4" />
                             </span>
-                            <span v-text="feed.avatar.name" style="margin-left: 10px"></span>
+                            <span v-text="feed.avatar.name" style="margin-inline-start: 10px"></span>
                         </template>
                         <template v-else-if="feed.type === 'SpawnEmoji'">
-                            <span style="margin-left: 10px; color: var(--vr-text-secondary)">SpawnEmoji</span>
-                            <span v-text="feed.text" style="margin-left: 10px"></span>
+                            <span style="margin-inline-start: 10px; color: var(--vr-text-secondary)">SpawnEmoji</span>
+                            <span v-text="feed.text" style="margin-inline-start: 10px"></span>
                         </template>
                         <span
                             v-else-if="feed.color === 'yellow'"
                             v-text="feed.text"
-                            style="color: yellow; margin-left: 10px"></span>
+                            style="color: yellow; margin-inline-start: 10px"></span>
                         <span
                             v-else
-                            style="margin-left: 10px; color: var(--vr-text-secondary)"
+                            style="margin-inline-start: 10px; color: var(--vr-text-secondary)"
                             v-text="feed.text"></span>
                         <template v-if="feed.combo > 1">
-                            <span class="combo" style="margin-left: 10px">x{{ feed.combo }}</span>
+                            <span class="combo" style="margin-inline-start: 10px">x{{ feed.combo }}</span>
                         </template>
                     </div>
                 </div>
@@ -1935,64 +1952,64 @@
         }
         switch (noty.type) {
             case 'OnPlayerJoined':
-                text = `<strong>${noty.displayName}</strong> has joined`;
+                text = `<strong>${noty.displayName}</strong> ${t('notifications.has_joined')}`;
                 break;
             case 'OnPlayerLeft':
-                text = `<strong>${noty.displayName}</strong> has left`;
+                text = `<strong>${noty.displayName}</strong> ${t('notifications.has_left')}`;
                 break;
             case 'OnPlayerJoining':
-                text = `<strong>${noty.displayName}</strong> is joining`;
+                text = `<strong>${noty.displayName}</strong> ${t('notifications.is_joining')}`;
                 break;
             case 'GPS':
-                text = `<strong>${noty.displayName}</strong> is in ${displayLocation(
+                text = `<strong>${noty.displayName}</strong> ${t('notifications.gps', { location: displayLocation(
                     noty.location,
                     noty.worldName,
                     noty.groupName
-                )}`;
+                ) })}`;
                 break;
             case 'Online':
-                let locationName = '';
                 if (noty.worldName) {
-                    locationName = ` to ${displayLocation(noty.location, noty.worldName, noty.groupName)}`;
+                    text = `<strong>${noty.displayName}</strong> ${t('notifications.online_location', { location: displayLocation(noty.location, noty.worldName, noty.groupName) })}`;
+                } else {
+                    text = `<strong>${noty.displayName}</strong> ${t('notifications.online')}`;
                 }
-                text = `<strong>${noty.displayName}</strong> has logged in${locationName}`;
                 break;
             case 'Offline':
-                text = `<strong>${noty.displayName}</strong> has logged out`;
+                text = `<strong>${noty.displayName}</strong> ${t('notifications.offline')}`;
                 break;
             case 'Status':
-                text = `<strong>${noty.displayName}</strong> status is now <i>${noty.status}</i> ${noty.statusDescription}`;
+                text = `<strong>${noty.displayName}</strong> ${t('notifications.status_update', { status: `<i>${noty.status}</i>`, description: noty.statusDescription })}`;
                 break;
             case 'invite':
-                text = `<strong>${noty.senderUsername}</strong> has invited you to ${displayLocation(
+                text = `<strong>${noty.senderUsername}</strong> ${t('notifications.invite', { location: displayLocation(
                     noty.details.worldId,
                     noty.details.worldName,
                     ''
-                )}${message}`;
+                ), message: message })}`;
                 break;
             case 'requestInvite':
-                text = `<strong>${noty.senderUsername}</strong> has requested an invite ${message}`;
+                text = `<strong>${noty.senderUsername}</strong> ${t('notifications.request_invite', { message: message })}`;
                 break;
             case 'inviteResponse':
-                text = `<strong>${noty.senderUsername}</strong> has responded to your invite ${message}`;
+                text = `<strong>${noty.senderUsername}</strong> ${t('notifications.invite_response', { message: message })}`;
                 break;
             case 'requestInviteResponse':
-                text = `<strong>${noty.senderUsername}</strong> has responded to your invite request ${message}`;
+                text = `<strong>${noty.senderUsername}</strong> ${t('notifications.request_invite_response', { message: message })}`;
                 break;
             case 'friendRequest':
-                text = `<strong>${noty.senderUsername}</strong> has sent you a friend request`;
+                text = `<strong>${noty.senderUsername}</strong> ${t('notifications.friend_request')}`;
                 break;
             case 'Friend':
-                text = `<strong>${noty.displayName}</strong> is now your friend`;
+                text = `<strong>${noty.displayName}</strong> ${t('notifications.friend')}`;
                 break;
             case 'Unfriend':
-                text = `<strong>${noty.displayName}</strong> is no longer your friend`;
+                text = `<strong>${noty.displayName}</strong> ${t('notifications.unfriend')}`;
                 break;
             case 'TrustLevel':
-                text = `<strong>${noty.displayName}</strong> trust level is now ${noty.trustLevel}`;
+                text = `<strong>${noty.displayName}</strong> ${t('notifications.trust_level', { trustLevel: noty.trustLevel })}`;
                 break;
             case 'DisplayName':
-                text = `<strong>${noty.previousDisplayName}</strong> changed their name to ${noty.displayName}`;
+                text = `<strong>${noty.previousDisplayName}</strong> ${t('notifications.display_name', { displayName: noty.displayName })}`;
                 break;
             case 'boop':
                 text = noty.message;
@@ -2029,20 +2046,20 @@
                 break;
             case 'PortalSpawn':
                 if (noty.displayName) {
-                    text = `<strong>${noty.displayName}</strong> has spawned a portal to ${displayLocation(
+                    text = `<strong>${noty.displayName}</strong> ${t('notifications.portal_spawn_name', { location: displayLocation(
                         noty.instanceId,
                         noty.worldName,
                         noty.groupName
-                    )}`;
+                    ) })}`;
                 } else {
-                    text = 'User has spawned a portal';
+                    text = t('notifications.portal_spawn');
                 }
                 break;
             case 'AvatarChange':
-                text = `<strong>${noty.displayName}</strong> changed into avatar ${noty.name}`;
+                text = `<strong>${noty.displayName}</strong> ${t('notifications.avatar_change', { avatar: noty.name })}`;
                 break;
             case 'ChatBoxMessage':
-                text = `<strong>${noty.displayName}</strong> said ${noty.text}`;
+                text = `<strong>${noty.displayName}</strong> ${t('notifications.chat_message', { message: noty.text })}`;
                 break;
             case 'Event':
                 text = noty.data;
@@ -2054,28 +2071,28 @@
                 text = `<strong>Now playing:</strong> ${noty.notyName}`;
                 break;
             case 'BlockedOnPlayerJoined':
-                text = `Blocked user <strong>${noty.displayName}</strong> has joined`;
+                text = `${t('notifications.blocked_player_joined')} <strong>${noty.displayName}</strong>`;
                 break;
             case 'BlockedOnPlayerLeft':
-                text = `Blocked user <strong>${noty.displayName}</strong> has left`;
+                text = `${t('notifications.blocked_player_left')} <strong>${noty.displayName}</strong>`;
                 break;
             case 'MutedOnPlayerJoined':
-                text = `Muted user <strong>${noty.displayName}</strong> has joined`;
+                text = `${t('notifications.muted_player_joined')} <strong>${noty.displayName}</strong>`;
                 break;
             case 'MutedOnPlayerLeft':
-                text = `Muted user <strong>${noty.displayName}</strong> has left`;
+                text = `${t('notifications.muted_player_left')} <strong>${noty.displayName}</strong>`;
                 break;
             case 'Blocked':
-                text = `<strong>${noty.displayName}</strong> has blocked you`;
+                text = `<strong>${noty.displayName}</strong> ${t('notifications.blocked')}`;
                 break;
             case 'Unblocked':
-                text = `<strong>${noty.displayName}</strong> has unblocked you`;
+                text = `<strong>${noty.displayName}</strong> ${t('notifications.unblocked')}`;
                 break;
             case 'Muted':
-                text = `<strong>${noty.displayName}</strong> has muted you`;
+                text = `<strong>${noty.displayName}</strong> ${t('notifications.muted')}`;
                 break;
             case 'Unmuted':
-                text = `<strong>${noty.displayName}</strong> has unmuted you`;
+                text = `<strong>${noty.displayName}</strong> ${t('notifications.unmuted')}`;
                 break;
             default:
                 break;

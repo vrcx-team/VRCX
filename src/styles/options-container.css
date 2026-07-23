@@ -5,7 +5,8 @@
 
 .options-container {
     margin-top: 10px;
-    padding: 0 8px 8px 8px;
+    padding-block-end: 8px;
+    padding-inline: 8px;
 }
 
 .options-container .header-bar {
@@ -33,4 +34,8 @@
 .options-container-item .name {
     display: inline-block;
     width: 235px;
+}
+
+[dir='rtl'] .options-container-item .name {
+    text-align: start;
 }

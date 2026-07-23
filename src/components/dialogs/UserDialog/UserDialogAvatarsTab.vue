@@ -21,14 +21,14 @@
                 <Spinner v-if="userDialog.isAvatarsLoading" />
                 <RefreshCw v-else />
             </Button>
-            <span class="ml-1.5 text-sm">{{
+            <span class="ms-1.5 text-sm">{{
                 t('dialog.user.avatars.total_count', { count: userDialogAvatars.length })
             }}</span>
         </div>
         <div class="flex items-center">
-            <Input v-model="avatarSearchQuery" class="h-8 w-40 mr-2" placeholder="Search avatars" @click.stop />
+            <Input v-model="avatarSearchQuery" class="h-8 w-40 me-2" placeholder="Search avatars" @click.stop />
             <template v-if="userDialog.ref.id === currentUser.id">
-                <span class="mr-1">{{ t('dialog.user.avatars.sort_by') }}</span>
+                <span class="me-1">{{ t('dialog.user.avatars.sort_by') }}</span>
                 <Select
                     :model-value="userDialog.avatarSorting"
                     :disabled="userDialog.isWorldsLoading"
@@ -42,7 +42,7 @@
                         <SelectItem value="createdAt">{{ t('dialog.user.avatars.sort_by_uploaded') }}</SelectItem>
                     </SelectContent>
                 </Select>
-                <span class="ml-2 mr-1">{{ t('dialog.user.avatars.group_by') }}</span>
+                <span class="ms-2 me-1">{{ t('dialog.user.avatars.group_by') }}</span>
                 <Select
                     :model-value="userDialog.avatarReleaseStatus"
                     :disabled="userDialog.isWorldsLoading"
@@ -66,7 +66,7 @@
                 :key="avatar.id"
                 class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                 @click="showAvatarDialog(avatar.id)">
-                <div class="relative inline-block flex-none size-9 mr-2.5">
+                <div class="relative inline-block flex-none size-9 me-2.5">
                     <Avatar class="size-9">
                         <AvatarImage
                             v-if="avatar.thumbnailImageUrl"
@@ -117,6 +117,7 @@
     import { refreshUserDialogAvatars } from '@/coordinators/userCoordinator';
 
     import { useAdvancedSettingsStore, useAvatarStore, useUserStore } from '../../../stores';
+    import { localeIncludesCI } from '../../../shared/utils/base/string';
 
     const { t } = useI18n();
 
@@ -141,11 +142,11 @@
     const avatarSearchQuery = ref('');
     const filteredUserDialogAvatars = computed(() => {
         const avatars = userDialogAvatars.value;
-        const query = avatarSearchQuery.value.trim().toLowerCase();
+        const query = avatarSearchQuery.value.trim();
         if (!query) {
             return avatars;
         }
-        return avatars.filter((avatar) => (avatar.name || '').toLowerCase().includes(query));
+        return avatars.filter((avatar) => localeIncludesCI(avatar.name, query));
     });
 
     watch(

@@ -22,7 +22,7 @@
 <template>
     <PaginationFirst
         data-slot="pagination-first"
-        :class="cn(buttonVariants({ variant: 'ghost', size }), 'text-[13px] gap-1 px-2.5 sm:pr-2.5', props.class)"
+        :class="cn(buttonVariants({ variant: 'ghost', size }), 'text-[13px] gap-1 px-2.5 sm:pe-2.5', props.class)"
         v-bind="forwarded">
         <slot>
             <ChevronLeftIcon />

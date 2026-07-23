@@ -12,7 +12,7 @@
                         :get-key="(item) => item.id"
                         :get-children="(item) => item.children"
                         :expanded="expandedKeys"
-                        class="gap-0.5 pr-3"
+                        class="gap-0.5 pe-3"
                         @update:expanded="(val) => (expandedKeys = val)">
                         <template #default="{ flattenItems }">
                             <template v-for="(item, idx) in flattenItems" :key="item._id">
@@ -40,14 +40,14 @@
                 </DragDropProvider>
 
                 <template v-if="hiddenItems.length">
-                    <div class="my-3 flex items-center gap-2 pr-3">
+                    <div class="my-3 flex items-center gap-2 pe-3">
                         <Separator class="flex-1" />
                         <span class="text-xs text-muted-foreground">
                             {{ t('nav_menu.custom_nav.hidden_items') }}
                         </span>
                         <Separator class="flex-1" />
                     </div>
-                    <div class="flex flex-col gap-0.5 pr-3">
+                    <div class="flex flex-col gap-0.5 pe-3">
                         <div
                             v-for="item in hiddenItems"
                             :key="item.key"
@@ -60,7 +60,7 @@
                             <Button
                                 size="icon-sm"
                                 variant="ghost"
-                                class="ml-auto size-6 shrink-0 opacity-0 group-hover:opacity-100"
+                                class="ms-auto size-6 shrink-0 opacity-0 group-hover:opacity-100"
                                 @click.stop="handleShowItem(item.key)">
                                 <Minus class="size-3.5" />
                             </Button>

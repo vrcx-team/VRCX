@@ -18,7 +18,7 @@
                         </Badge>
                         <span
                             v-if="!isNotificationExpired(notification) && !isSeen"
-                            class="ml-auto size-2 shrink-0 rounded-full bg-blue-500" />
+                            class="ms-auto size-2 shrink-0 rounded-full bg-blue-500" />
                     </ItemTitle>
                     <ItemDescription
                         v-if="notification.type === 'invite' && notification.details?.worldId"

@@ -10,14 +10,14 @@
                     {{ t('dialog.config_json.description2') }}
                 </div>
                 <br />
-                <span class="mr-1.5">{{ t('dialog.config_json.cache_size') }}</span>
+                <span class="me-1.5">{{ t('dialog.config_json.cache_size') }}</span>
                 <span v-text="VRChatUsedCacheSize"></span>
                 <span>/</span>
                 <span v-text="totalCacheSize"></span>
                 <span>GB</span>
                 <TooltipWrapper side="top" :content="t('dialog.config_json.refresh')">
                     <Button
-                        class="rounded-full ml-1.5"
+                        class="rounded-full ms-1.5"
                         variant="outline"
                         size="icon-sm"
                         :disabled="VRChatCacheSizeLoading"
@@ -29,15 +29,15 @@
                 </TooltipWrapper>
 
                 <div class="mt-2">
-                    <span class="mr-1.5">{{ t('dialog.config_json.delete_all_cache') }}</span>
-                    <Button class="ml-1.5" size="sm" variant="outline" @click="showDeleteAllVRChatCacheConfirm">{{
+                    <span class="me-1.5">{{ t('dialog.config_json.delete_all_cache') }}</span>
+                    <Button class="ms-1.5" size="sm" variant="outline" @click="showDeleteAllVRChatCacheConfirm">{{
                         t('dialog.config_json.delete_cache')
                     }}</Button>
                 </div>
 
                 <div class="mt-2">
-                    <span class="mr-1.5">{{ t('dialog.config_json.delete_old_cache') }}</span>
-                    <Button class="ml-1.5" size="sm" variant="outline" @click="sweepVRChatCache">{{
+                    <span class="me-1.5">{{ t('dialog.config_json.delete_old_cache') }}</span>
+                    <Button class="ms-1.5" size="sm" variant="outline" @click="sweepVRChatCache">{{
                         t('dialog.config_json.sweep_cache')
                     }}</Button>
                 </div>
@@ -158,7 +158,7 @@
                         >
                     </div>
                     <div>
-                        <Button variant="secondary" class="mr-2" @click="closeDialog">{{
+                        <Button variant="secondary" class="me-2" @click="closeDialog">{{
                             t('dialog.config_json.cancel')
                         }}</Button>
                         <Button :disabled="loading" @click="saveVRChatConfigFile">{{

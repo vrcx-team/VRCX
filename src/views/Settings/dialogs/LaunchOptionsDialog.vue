@@ -40,7 +40,7 @@
                     <div>
                         <Button
                             variant="outline"
-                            class="mr-2"
+                            class="me-2"
                             @click="openExternalLink('https://docs.vrchat.com/docs/launch-options')">
                             {{ t('dialog.launch_options.vrchat_docs') }}
                         </Button>
@@ -117,7 +117,7 @@
             return;
         }
         configRepository.setString('vrcLaunchPathOverride', D.vrcLaunchPathOverride);
-        toast.success('Updated launch options');
+        toast.success(t('toast.updated_launch_options'));
         closeDialog();
     }
 

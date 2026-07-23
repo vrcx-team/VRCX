@@ -24,7 +24,7 @@
                     </button>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                    <div class="pl-20 py-0.5 pb-1">
+                    <div class="ps-20 py-0.5 pb-1">
                         <div
                             v-for="(member, idx) in event.members"
                             :key="idx"
@@ -63,7 +63,7 @@
                     </button>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                    <div class="pl-20 py-0.5 pb-1">
+                    <div class="ps-20 py-0.5 pb-1">
                         <div
                             v-for="(member, idx) in event.members"
                             :key="idx"
@@ -92,7 +92,7 @@
                 <span class="flex-1 min-w-0 flex items-center gap-1 truncate cursor-pointer" @click="lookupUser(event)">
                     <LogIn class="shrink-0 text-xs" />
                     {{ event.displayName
-                    }}<span v-if="event.isFriend" class="ml-1"> {{ event.isFavorite ? '⭐' : '💚' }}</span>
+                    }}<span v-if="event.isFriend" class="ms-1"> {{ event.isFavorite ? '⭐' : '💚' }}</span>
                 </span>
             </div>
         </template>
@@ -112,7 +112,7 @@
                 <span class="flex-1 min-w-0 flex items-center gap-1 truncate cursor-pointer" @click="lookupUser(event)">
                     <LogOut class="shrink-0 text-xs" />
                     {{ event.displayName
-                    }}<span v-if="event.isFriend" class="ml-1"> {{ event.isFavorite ? '⭐' : '💚' }}</span>
+                    }}<span v-if="event.isFriend" class="ms-1"> {{ event.isFavorite ? '⭐' : '💚' }}</span>
                 </span>
             </div>
         </template>

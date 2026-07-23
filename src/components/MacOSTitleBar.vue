@@ -31,8 +31,7 @@
     .macos-title-bar {
         position: fixed;
         top: 0;
-        left: 0;
-        right: 0;
+        inset-inline: 0;
         height: 28px;
         z-index: 9999;
         user-select: none;

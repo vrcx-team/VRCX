@@ -39,7 +39,7 @@
 
 <template>
     <Button
-        class="rounded-full mr-2"
+        class="rounded-full me-2"
         size="icon-sm"
         variant="ghost"
         @click="emit('refresh')"

@@ -80,7 +80,7 @@
         class="group select-none cursor-grab active:cursor-grabbing"
         :class="[
             isDragSource ? 'opacity-40' : '',
-            isFolder ? 'bg-muted/50 border-l-primary/60 border-l-2 font-semibold' : '',
+            isFolder ? 'bg-muted/50 border-s-primary/60 border-s-2 font-semibold' : '',
             level > 0 ? 'text-muted-foreground' : '',
             isDropHighlighted ? 'ring-primary/50 bg-primary/10 ring-2' : ''
         ]">
@@ -107,7 +107,7 @@
                         size="icon-sm"
                         variant="ghost"
                         :ariaLabel="t('nav_tooltip.manage')"
-                        class="ml-auto size-6 shrink-0 opacity-0 group-hover:opacity-100"
+                        class="ms-auto size-6 shrink-0 opacity-0 group-hover:opacity-100"
                         @click.stop>
                         <Ellipsis class="size-3.5" />
                     </Button>

@@ -17,7 +17,7 @@
                 placeholder=""
                 show-count />
             <DialogFooter>
-                <Button variant="secondary" class="mr-2" @click="cancelEditAndSendInviteResponse">{{
+                <Button variant="secondary" class="me-2" @click="cancelEditAndSendInviteResponse">{{
                     t('dialog.edit_send_invite_response_message.cancel')
                 }}</Button>
                 <Button

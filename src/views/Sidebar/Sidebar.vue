@@ -1,13 +1,13 @@
 <template>
     <div class="x-aside-container">
         <div style="display: flex; align-items: baseline">
-            <div class="search-container p-2 pl-0" style="flex: 1">
+            <div class="search-container p-2 ps-0" style="flex: 1">
                 <button
                     type="button"
                     class="border-input dark:bg-input/30 flex h-9 w-full items-center gap-2 rounded-md border bg-transparent px-3 shadow-xs transition-[color,box-shadow] hover:border-ring cursor-pointer overflow-hidden"
                     @click="openQuickSearch">
                     <Search class="size-4 shrink-0 opacity-50" />
-                    <span class="search-text flex-1 min-w-0 text-left text-sm text-muted-foreground truncate">{{
+                    <span class="search-text flex-1 min-w-0 text-start text-sm text-muted-foreground truncate">{{
                         t('side_panel.search_placeholder')
                     }}</span>
                     <Kbd class="search-kbd shrink-0">{{ isMac ? '⌘' : 'Ctrl' }}</Kbd>
@@ -38,7 +38,7 @@
                                     :ariaLabel="t('side_panel.notification_center.title')"
                                     @click="isNotificationCenterOpen = !isNotificationCenterOpen">
                                     <Bell />
-                                    <span class="absolute top-1 right-1.25 size-1.5 rounded-full bg-red-500" />
+                                    <span class="absolute top-1 end-1.25 size-1.5 rounded-full bg-red-500" />
                                 </Button>
                             </TooltipWrapper>
                         </ContextMenuTrigger>
@@ -478,12 +478,12 @@
         order: 99;
         height: 100%;
         box-sizing: border-box;
-        padding-left: 8px;
+        padding-inline-start: 8px;
     }
 
     .sidebar-tab-count {
         font-size: 12px;
-        margin-left: 8px;
+        margin-inline-start: 8px;
     }
 
     .search-container {

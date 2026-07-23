@@ -7,7 +7,7 @@
 
             <div v-if="moderateGroupDialog.visible">
                 <div class="box-border flex items-center p-1.5 text-[13px] cursor-default">
-                    <div class="relative inline-block flex-none size-9 mr-2.5">
+                    <div class="relative inline-block flex-none size-9 me-2.5">
                         <img
                             class="size-full rounded-full object-cover"
                             :src="userImage(moderateGroupDialog.userObject)"
@@ -35,7 +35,7 @@
                             <div class="flex w-full items-center gap-2">
                                 <img :src="item.iconUrl" loading="lazy" class="size-5 rounded-sm" />
                                 <span class="truncate text-sm" v-text="item.label"></span>
-                                <span v-if="selected" class="ml-auto opacity-70">✓</span>
+                                <span v-if="selected" class="ms-auto opacity-70">✓</span>
                             </div>
                         </template>
                     </VirtualCombobox>

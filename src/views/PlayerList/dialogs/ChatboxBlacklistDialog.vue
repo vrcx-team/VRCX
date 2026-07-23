@@ -32,12 +32,12 @@
                     v-for="user in chatboxUserBlacklist"
                     :key="user[0]"
                     variant="outline"
-                    style="margin-right: 6px; margin-top: 6px">
+                    style="margin-inline-end: 6px; margin-top: 6px">
                     <span>{{ user[1] }}</span>
                     <button
                         type="button"
                         style="
-                            margin-left: 8px;
+                            margin-inline-start: 8px;
                             border: none;
                             background: transparent;
                             padding: 0;

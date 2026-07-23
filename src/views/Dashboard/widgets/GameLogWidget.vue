@@ -34,7 +34,7 @@
                         v-for="(item, index) in filteredData"
                         :key="`${item.type}-${item.created_at}-${index}`"
                         class="cursor-default hover:bg-transparent"
-                        :class="{ 'border-l-2 border-l-chart-4': item.isFavorite }">
+                        :class="{ 'border-s-2 border-s-chart-4': item.isFavorite }">
                         <TableCell class="w-28 text-[11px] tabular-nums text-muted-foreground">
                             <TooltipWrapper :content="formatExactTime(item.created_at)" side="top">
                                 <span>{{ formatTime(item.created_at) }}</span>
@@ -43,7 +43,7 @@
                         <TableCell class="max-w-0 truncate">
                             <template v-if="item.type === 'Location'">
                                 <div class="flex min-w-0 items-center">
-                                    <MapPin class="mr-1 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                    <MapPin class="me-1 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                     <div class="min-w-0 flex-1 truncate">
                                         <Location
                                             :location="item.location"
@@ -55,7 +55,7 @@
                                 </div>
                             </template>
                             <template v-else-if="item.type === 'OnPlayerJoined'">
-                                <LogIn class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <LogIn class="me-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 <span
                                     class="cursor-pointer"
                                     :style="item.tagColour ? { color: item.tagColour } : null"
@@ -65,7 +65,7 @@
                                 <span v-if="item.isFriend">{{ item.isFavorite ? '⭐' : '💚' }}</span>
                             </template>
                             <template v-else-if="item.type === 'OnPlayerLeft'">
-                                <LogOut class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <LogOut class="me-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 <span
                                     class="cursor-pointer text-muted-foreground/70 hover:underline"
                                     :style="item.tagColour ? { color: item.tagColour } : null"
@@ -75,7 +75,7 @@
                                 <span v-if="item.isFriend">{{ item.isFavorite ? '⭐' : '💚' }}</span>
                             </template>
                             <template v-else-if="item.type === 'VideoPlay'">
-                                <Play class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <Play class="me-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 <TooltipWrapper
                                     :content="
                                         item.videoId
@@ -84,7 +84,7 @@
                                     "
                                     side="top">
                                     <span>
-                                        <span v-if="item.videoId" class="mr-1 text-muted-foreground"
+                                        <span v-if="item.videoId" class="me-1 text-muted-foreground"
                                             >{{ item.videoId }}:</span
                                         >
                                         <span
@@ -98,7 +98,7 @@
                                 </TooltipWrapper>
                             </template>
                             <template v-else-if="item.type === 'PortalSpawn'">
-                                <Waypoints class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <Waypoints class="me-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 <span class="cursor-pointer hover:underline" @click="openUser(item.userId)">{{
                                     item.displayName
                                 }}</span>
@@ -125,7 +125,7 @@
                                 <template v-else>
                                     <span>{{ item.displayName }}</span>
                                     <span class="text-muted-foreground"> {{ item.type }}</span>
-                                    <span v-if="item.data || item.message" class="ml-1 text-muted-foreground"
+                                    <span v-if="item.data || item.message" class="ms-1 text-muted-foreground"
                                         >— {{ item.data || item.message }}</span
                                     >
                                 </template>

@@ -29,7 +29,7 @@
                     :collapsed-size="0"
                     collapsible
                     :order="1">
-                    <div class="h-full pr-2 overflow-auto flex flex-col gap-3">
+                    <div class="h-full pe-2 overflow-auto flex flex-col gap-3">
                         <div class="flex flex-col gap-2">
                             <div class="flex items-center justify-between font-semibold text-sm mb-[9px]">
                                 <span>{{ t('view.favorite.worlds.vrchat_favorites') }}</span>
@@ -208,7 +208,7 @@
                 </ResizablePanel>
                 <ResizableHandle @dragging="splitterSetDragging" />
                 <ResizablePanel :order="2">
-                    <div class="flex flex-col h-full min-h-0 pl-[26px]">
+                    <div class="flex flex-col h-full min-h-0 ps-[26px]">
                         <FavoritesContentHeader
                             v-model:edit-mode="friendEditMode"
                             :edit-mode-disabled="isSearchActive || (!activeRemoteGroup && !activeLocalGroupName)"
@@ -232,12 +232,12 @@
                                     {{ activeLocalGroupName }}
                                     <small>{{ activeLocalGroupCount }}</small>
                                 </span>
-                                <span v-else>No Group Selected</span>
+                                <span v-else>{{ t('view.favorite.no_group_selected') }}</span>
                             </template>
                         </FavoritesContentHeader>
                         <div ref="friendFavoritesContainerRef" class="flex-1 min-h-0">
                             <template v-if="activeRemoteGroup && !isSearchActive">
-                                <div class="h-full pr-2 overflow-auto">
+                                <div class="h-full pe-2 overflow-auto">
                                     <template v-if="currentFriendFavorites.length">
                                         <div
                                             class="favorites-card-list"
@@ -258,7 +258,7 @@
                                 </div>
                             </template>
                             <template v-else-if="!isSearchActive && activeLocalGroupName && isLocalGroupSelected">
-                                <div class="h-full pr-2 overflow-auto">
+                                <div class="h-full pe-2 overflow-auto">
                                     <template v-if="currentLocalFriendFavorites.length">
                                         <div
                                             class="favorites-card-list"
@@ -279,10 +279,10 @@
                                 </div>
                             </template>
                             <template v-else-if="!isSearchActive">
-                                <div class="flex items-center justify-center text-[13px] h-full">No Group Selected</div>
+                                <div class="flex items-center justify-center text-[13px] h-full">{{ t('view.favorite.no_group_selected') }}</div>
                             </template>
                             <template v-else>
-                                <div class="h-full pr-2 overflow-auto">
+                                <div class="h-full pe-2 overflow-auto">
                                     <div
                                         v-if="friendFavoriteSearchResults.length"
                                         class="favorites-search-grid"
@@ -361,6 +361,7 @@
     import { useAppearanceSettingsStore, useFavoriteStore, useModalStore, useUserStore } from '../../stores';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { debounce } from '../../shared/utils';
+    import { localeIncludesCI } from '../../shared/utils/base/string';
     import { useUserDisplay } from '../../composables/useUserDisplay';
     import { favoriteRequest } from '../../api';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
@@ -642,7 +643,7 @@
      * @param searchTerm
      */
     function doSearchFriendFavorites(searchTerm) {
-        const search = searchTerm.trim().toLowerCase();
+        const search = searchTerm.trim();
         if (search.length < 3) {
             friendFavoriteSearchResults.value = [];
             return;
@@ -652,7 +653,7 @@
                 return false;
             }
             const username = ref.username || '';
-            return ref.displayName.toLowerCase().includes(search) || username.toLowerCase().includes(search);
+            return localeIncludesCI(ref.displayName, search) || localeIncludesCI(username, search);
         });
         friendFavoriteSearchResults.value = filtered;
     }
@@ -716,8 +717,8 @@
         const total = selectedFavoriteFriends.value.length;
         modalStore
             .confirm({
-                description: `Are you sure you want to unfavorite ${total} favorites?\n            This action cannot be undone.`,
-                title: `Delete ${total} favorites?`
+                description: t('confirm.bulk_unfavorite', { count: total }),
+                title: t('confirm.bulk_unfavorite_title', { count: total })
             })
             .then(({ ok }) => ok && bulkUnfavoriteSelectedFriends([...selectedFavoriteFriends.value]))
             .catch(() => {});

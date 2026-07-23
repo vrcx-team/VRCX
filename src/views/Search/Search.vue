@@ -3,7 +3,7 @@
         <Tabs
             v-model="activeSearchTab"
             :unmount-on-hide="false"
-            aria-label="Search tabs"
+            :aria-label="t('accessibility.search_tabs')"
             class="flex flex-col min-h-0 flex-1">
             <div class="mt-0 mx-0 mb-2 flex items-center gap-5">
                 <TabsList>
@@ -22,7 +22,7 @@
                         @keyup.enter="search" />
                     <TooltipWrapper side="bottom" :content="t('view.search.clear_results_tooltip')">
                         <Button
-                            class="rounded-full ml-2"
+                            class="rounded-full ms-2"
                             size="icon"
                             variant="ghost"
                             :ariaLabel="t('view.search.clear_results_tooltip')"
@@ -35,11 +35,11 @@
             <TabsContent value="user" class="flex flex-col min-h-0 flex-1">
                 <div class="flex flex-col min-h-0" style="flex: 9">
                     <div class="shrink-0 mb-3 flex justify-end">
-                        <label class="inline-flex items-center gap-2 ml-2">
+                        <label class="inline-flex items-center gap-2 ms-2">
                             <Checkbox v-model="searchUserByBio" />
                             <span>{{ t('view.search.user.search_by_bio') }}</span>
                         </label>
-                        <label class="inline-flex items-center gap-2 ml-2">
+                        <label class="inline-flex items-center gap-2 ms-2">
                             <Checkbox v-model="searchUserSortByLastLoggedIn" />
                             <span>{{ t('view.search.user.sort_by_last_logged_in') }}</span>
                         </label>

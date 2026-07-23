@@ -1,10 +1,13 @@
 <script setup>
     import { Eye, EyeOff, X } from 'lucide-vue-next';
     import { computed, ref, useAttrs } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { cn } from '@/lib/utils';
     import { useVModel } from '@vueuse/core';
 
     import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText } from '.';
+
+    const { t } = useI18n();
 
     defineOptions({ inheritAttrs: false });
 
@@ -137,7 +140,7 @@
             <InputGroupButton size="icon-xs" :disabled="isDisabled" @click="toggleReveal">
                 <Eye v-if="!reveal" class="size-3.5" />
                 <EyeOff v-else class="size-3.5" />
-                <span class="sr-only">Toggle password</span>
+                <span class="sr-only">{{ t('accessibility.toggle_password') }}</span>
             </InputGroupButton>
         </InputGroupAddon>
         <InputGroupAddon v-if="props.clearable && valueLength > 0" align="inline-end">

@@ -34,7 +34,7 @@
                         v-for="(item, index) in filteredData"
                         :key="`${item.type}-${item.created_at}-${index}`"
                         class="cursor-default in-[.is-compact-table]:py-1! in-[.is-comfortable-table]:py-1.5!"
-                        :class="{ 'border-l-2 border-l-chart-4': item.isFavorite }">
+                        :class="{ 'border-s-2 border-s-chart-4': item.isFavorite }">
                         <TableCell class="w-28 text-[11px] tabular-nums text-muted-foreground">
                             <TooltipWrapper :content="formatExactTime(item.created_at)" side="top">
                                 <span>{{ formatTime(item.created_at) }}</span>
@@ -46,7 +46,7 @@
                         <TableCell class="max-w-0 truncate">
                             <template v-if="item.type === 'GPS'">
                                 <div class="flex items-center min-w-0">
-                                    <MapPin class="mr-1 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                    <MapPin class="me-1 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                     <UserContextMenu
                                         :user-id="item.userId"
                                         :state="getFriendState(item.userId)"
@@ -68,7 +68,7 @@
                             </template>
                             <template v-else-if="item.type === 'Online'">
                                 <div class="flex items-center min-w-0">
-                                    <i class="x-user-status online mr-1 shrink-0"></i>
+                                    <i class="x-user-status online me-1 shrink-0"></i>
                                     <UserContextMenu
                                         :user-id="item.userId"
                                         :state="getFriendState(item.userId)"
@@ -91,7 +91,7 @@
                                 </div>
                             </template>
                             <template v-else-if="item.type === 'Offline'">
-                                <i class="x-user-status mr-1"></i>
+                                <i class="x-user-status me-1"></i>
                                 <UserContextMenu
                                     :user-id="item.userId"
                                     :state="getFriendState(item.userId)"
@@ -102,7 +102,7 @@
                                 </UserContextMenu>
                             </template>
                             <template v-else-if="item.type === 'Status'">
-                                <i class="x-user-status mr-1" :class="statusClass(item.status)"></i>
+                                <i class="x-user-status me-1" :class="statusClass(item.status)"></i>
                                 <UserContextMenu
                                     :user-id="item.userId"
                                     :state="getFriendState(item.userId)"
@@ -111,10 +111,10 @@
                                         item.displayName
                                     }}</span>
                                 </UserContextMenu>
-                                <span class="text-muted-foreground ml-1"> {{ item.statusDescription }}</span>
+                                <span class="text-muted-foreground ms-1"> {{ item.statusDescription }}</span>
                             </template>
                             <template v-else-if="item.type === 'Avatar'">
-                                <Box class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <Box class="me-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 <UserContextMenu
                                     :user-id="item.userId"
                                     :state="getFriendState(item.userId)"
@@ -126,7 +126,7 @@
                                 <span class="text-muted-foreground"> → {{ item.avatarName }}</span>
                             </template>
                             <template v-else-if="item.type === 'Bio'">
-                                <Pencil class="mr-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <Pencil class="me-1 inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 <UserContextMenu
                                     :user-id="item.userId"
                                     :state="getFriendState(item.userId)"
@@ -135,7 +135,7 @@
                                         item.displayName
                                     }}</span>
                                 </UserContextMenu>
-                                <span class="ml-1 text-muted-foreground">{{ t('dashboard.widget.feed_bio') }}</span>
+                                <span class="ms-1 text-muted-foreground">{{ t('dashboard.widget.feed_bio') }}</span>
                             </template>
                             <template v-else>
                                 <UserContextMenu

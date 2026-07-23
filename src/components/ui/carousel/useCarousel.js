@@ -1,16 +1,20 @@
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { createInjectionState } from '@vueuse/core';
+import { useDirection } from 'reka-ui';
 
 import emblaCarouselVue from 'embla-carousel-vue';
 
 const [useProvideCarousel, useInjectCarousel] = createInjectionState(
     (props, emits) => {
         const { opts, orientation, plugins } = props;
+        const textDirection = useDirection();
+        const carouselOptions = computed(() => ({
+            ...opts,
+            axis: orientation === 'horizontal' ? 'x' : 'y',
+            direction: textDirection.value
+        }));
         const [emblaNode, emblaApi] = emblaCarouselVue(
-            {
-                ...opts,
-                axis: orientation === 'horizontal' ? 'x' : 'y'
-            },
+            carouselOptions,
             plugins
         );
 

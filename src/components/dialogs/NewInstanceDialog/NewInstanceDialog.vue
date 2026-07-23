@@ -164,16 +164,16 @@
                                     <SelectTrigger size="sm" class="w-full">
                                         <SelectValue>
                                             <span>
-                                                {{ newInstanceDialog.minimumAvatarPerformance || 'None' }}
+                                                {{ newInstanceDialog.minimumAvatarPerformance || t('dialog.new_instance.quality_none') }}
                                             </span>
                                         </SelectValue>
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectItem value="None">None</SelectItem>
-                                            <SelectItem value="Poor">Poor</SelectItem>
-                                            <SelectItem value="Medium">Medium</SelectItem>
-                                            <SelectItem value="Good">Good</SelectItem>
+                                            <SelectItem value="None">{{ t('dialog.new_instance.quality_none') }}</SelectItem>
+                                            <SelectItem value="Poor">{{ t('dialog.new_instance.quality_poor') }}</SelectItem>
+                                            <SelectItem value="Medium">{{ t('dialog.new_instance.quality_medium') }}</SelectItem>
+                                            <SelectItem value="Good">{{ t('dialog.new_instance.quality_good') }}</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -193,7 +193,7 @@
                                     @change="buildInstance">
                                     <template #item="{ item, selected }">
                                         <div class="flex w-full items-center p-1.5 text-[13px]">
-                                            <div class="relative inline-block flex-none size-9 mr-2.5">
+                                            <div class="relative inline-block flex-none size-9 me-2.5">
                                                 <img
                                                     class="size-full rounded-full object-cover"
                                                     :src="item.iconUrl"
@@ -205,7 +205,7 @@
                                                     v-text="item.label"></span>
                                             </div>
                                             <CheckIcon
-                                                :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                                                :class="['ms-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
                                         </div>
                                     </template>
                                 </VirtualCombobox>
@@ -408,7 +408,7 @@
                                         <div class="flex w-full items-center p-1.5 text-[13px]">
                                             <template v-if="item.user">
                                                 <div
-                                                    class="relative inline-block flex-none size-9 mr-2.5"
+                                                    class="relative inline-block flex-none size-9 me-2.5"
                                                     :class="userStatusClass(item.user)">
                                                     <img
                                                         class="size-full rounded-full object-cover"
@@ -427,7 +427,7 @@
                                             </template>
 
                                             <CheckIcon
-                                                :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                                                :class="['ms-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
                                         </div>
                                     </template>
                                 </VirtualCombobox>
@@ -447,7 +447,7 @@
                                     @change="buildLegacyInstance">
                                     <template #item="{ item, selected }">
                                         <div class="flex w-full items-center p-1.5 text-[13px]">
-                                            <div class="relative inline-block flex-none size-9 mr-2.5">
+                                            <div class="relative inline-block flex-none size-9 me-2.5">
                                                 <img
                                                     class="size-full rounded-full object-cover"
                                                     :src="item.iconUrl"
@@ -459,7 +459,7 @@
                                                     v-text="item.label"></span>
                                             </div>
                                             <CheckIcon
-                                                :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                                                :class="['ms-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
                                         </div>
                                     </template>
                                 </VirtualCombobox>
@@ -486,15 +486,15 @@
             </TabsUnderline>
             <DialogFooter v-if="newInstanceDialog.selectedTab === 'Normal'">
                 <template v-if="newInstanceDialog.instanceCreated">
-                    <Button variant="outline" class="mr-2" @click="copyInstanceUrl(newInstanceDialog.location)">{{
+                    <Button variant="outline" class="me-2" @click="copyInstanceUrl(newInstanceDialog.location)">{{
                         t('dialog.new_instance.copy_url')
                     }}</Button>
-                    <Button variant="outline" class="mr-2" @click="selfInvite(newInstanceDialog.location)">{{
+                    <Button variant="outline" class="me-2" @click="selfInvite(newInstanceDialog.location)">{{
                         t('dialog.new_instance.self_invite')
                     }}</Button>
                     <Button
                         variant="outline"
-                        class="mr-2"
+                        class="me-2"
                         :disabled="
                             (newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') &&
                             newInstanceDialog.userId !== currentUser.id
@@ -505,7 +505,7 @@
                     <template v-if="canOpenInstanceInGame">
                         <Button
                             variant="secondary"
-                            class="mr-2"
+                            class="me-2"
                             @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
                             >{{ t('dialog.new_instance.launch') }}</Button
                         >
@@ -524,10 +524,10 @@
                 </template>
             </DialogFooter>
             <DialogFooter v-else-if="newInstanceDialog.selectedTab === 'Legacy'">
-                <Button variant="outline" class="mr-2" @click="copyInstanceUrl(newInstanceDialog.location)">{{
+                <Button variant="outline" class="me-2" @click="copyInstanceUrl(newInstanceDialog.location)">{{
                     t('dialog.new_instance.copy_url')
                 }}</Button>
-                <Button variant="outline" class="mr-2" @click="selfInvite(newInstanceDialog.location)">{{
+                <Button variant="outline" class="me-2" @click="selfInvite(newInstanceDialog.location)">{{
                     t('dialog.new_instance.self_invite')
                 }}</Button>
                 <Button
@@ -542,7 +542,7 @@
                 <template v-if="canOpenInstanceInGame">
                     <Button
                         variant="secondary"
-                        class="mr-2"
+                        class="me-2"
                         @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
                         >{{ t('dialog.new_instance.launch') }}</Button
                     >

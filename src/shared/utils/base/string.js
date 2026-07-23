@@ -32,9 +32,11 @@ function escapeTagRecursive(obj) {
  */
 function textToHex(text) {
     const s = String(text);
-    return s
-        .split('')
-        .map((c) => c.charCodeAt(0).toString(16).toUpperCase())
+    return [...s]
+        .map((c) => {
+            const code = c.codePointAt(0);
+            return code.toString(16).toUpperCase();
+        })
         .join(' ');
 }
 
@@ -88,6 +90,46 @@ function localeIncludes(str, search, comparer) {
         }
     }
     return false;
+}
+
+/**
+ * Locale-aware case-insensitive includes check.
+ * Drop-in replacement for str.toLowerCase().includes(query.toLowerCase()).
+ * Uses Intl.Collator for proper Unicode/Arabic support.
+ *
+ * @param {string} str - The string to search in
+ * @param {string} query - The search query
+ * @param {string} [locale] - The locale for comparison
+ * @returns {boolean}
+ */
+const searchCollators = new Map();
+
+function localeIncludesCI(str, query, locale) {
+    if (
+        str === null ||
+        str === undefined ||
+        query === null ||
+        query === undefined
+    )
+        return false;
+    const s = String(str);
+    const q = String(query);
+    if (q.length === 0) return true;
+    if (q.length > s.length) return false;
+    const resolvedLocale =
+        locale ||
+        (typeof document === 'undefined'
+            ? 'en'
+            : document.documentElement.lang || 'en');
+    let comparer = searchCollators.get(resolvedLocale);
+    if (!comparer) {
+        comparer = new Intl.Collator(resolvedLocale, {
+            usage: 'search',
+            sensitivity: 'base'
+        });
+        searchCollators.set(resolvedLocale, comparer);
+    }
+    return localeIncludes(s, q, comparer);
 }
 
 /**
@@ -168,6 +210,7 @@ export {
     textToHex,
     commaNumber,
     localeIncludes,
+    localeIncludesCI,
     changeLogRemoveLinks,
     replaceBioSymbols,
     removeEmojis

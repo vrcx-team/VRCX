@@ -28,7 +28,7 @@
                 <Image class="size-8 text-muted-foreground" />
             </div>
         </div>
-        <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
+        <div class="ms-4" style="flex: 1; display: flex; align-items: flex-start">
             <div style="flex: 1">
                 <div class="max-h-25 overflow-hidden">
                     <TooltipWrapper v-if="userDialog.ref.status" side="top">
@@ -56,13 +56,13 @@
                     </template>
                     <span
                         class="font-bold break-all"
-                        style="margin-left: 6px; margin-right: 6px; cursor: pointer"
+                        style="margin-inline-start: 6px; margin-inline-end: 6px; cursor: pointer"
                         v-text="userDialog.ref.displayName"
                         @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
                     <TooltipWrapper v-if="userDialog.ref.pronouns" side="top" :content="t('dialog.user.pronouns')">
                         <span
                             class="x-grey font-mono text-xs"
-                            style="margin-right: 6px"
+                            style="margin-inline-end: 6px"
                             v-text="userDialog.ref.pronouns"></span>
                     </TooltipWrapper>
                     <TooltipWrapper v-for="item in userDialog.ref.$languages" :key="item.key" side="top">
@@ -72,13 +72,13 @@
                         <span
                             class="flags"
                             :class="languageClass(item.key)"
-                            style="display: inline-block; margin-right: 6px"></span>
+                            style="display: inline-block; margin-inline-end: 6px"></span>
                     </TooltipWrapper>
                     <template v-if="userDialog.ref.id === currentUser.id">
                         <br />
                         <span
                             class="x-grey font-mono text-xs"
-                            style="margin-right: 8px; cursor: pointer"
+                            style="margin-inline-end: 8px; cursor: pointer"
                             v-text="currentUser.username"
                             @click="copyUserDisplayName(currentUser.username)"></span>
                     </template>
@@ -191,7 +191,7 @@
                                             border-radius: var(--radius-sm);
                                             object-fit: cover;
                                             margin-top: 6px;
-                                            margin-right: 6px;
+                                            margin-inline-end: 6px;
                                         "
                                         :class="{ grayscale: badge.hidden }"
                                         loading="lazy" />
@@ -239,7 +239,7 @@
                 </div>
             </div>
 
-            <div v-if="userDialog.ref.userIcon" style="flex: none; margin-right: 8px">
+            <div v-if="userDialog.ref.userIcon" style="flex: none; margin-inline-end: 8px">
                 <img
                     v-if="!userIconError"
                     class="cursor-pointer"
@@ -256,7 +256,7 @@
                 </div>
             </div>
 
-            <UserActionDropdown class="ml-2 mt-12" :user-dialog-command="userDialogCommand" />
+            <UserActionDropdown class="ms-2 mt-12" :user-dialog-command="userDialogCommand" />
         </div>
     </div>
 </template>

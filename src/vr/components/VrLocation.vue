@@ -4,11 +4,11 @@
             v-if="region"
             class="flags"
             :class="region"
-            style="display: inline-block; margin-right: 5px; margin-top: 3px">
+            style="display: inline-block; margin-inline-end: 5px; margin-top: 3px">
         </span>
         <span>{{ text }}</span>
         <span v-if="groupName">({{ groupName }})</span>
-        <Lock v-if="strict" class="h-4 w-4" style="display: inline-block; margin-left: 5px" />
+        <Lock v-if="strict" class="h-4 w-4" style="display: inline-block; margin-inline-start: 5px" />
     </span>
 </template>
 

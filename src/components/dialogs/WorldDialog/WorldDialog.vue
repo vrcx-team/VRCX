@@ -24,10 +24,10 @@
                         <Image class="size-8 text-muted-foreground" />
                     </div>
                 </div>
-                <div class="ml-4" style="flex: 1; display: flex; align-items: flex-start">
+                <div class="ms-4" style="flex: 1; display: flex; align-items: flex-start">
                     <div style="flex: 1">
                         <div class="max-h-25 overflow-hidden">
-                            <span class="font-bold mr-1.5 break-all" style="cursor: pointer" @click="copyWorldName">
+                            <span class="font-bold me-1.5 break-all" style="cursor: pointer" @click="copyWorldName">
                                 <Home
                                     v-if="
                                         currentUser.$homeLocation &&
@@ -44,24 +44,24 @@
                                 v-text="worldDialog.ref.authorName" />
                         </div>
                         <div class="flex flex-wrap items-center">
-                            <Badge class="mr-1.5 mt-1.5" v-if="worldDialog.ref.$isLabs" variant="outline">
+                            <Badge class="me-1.5 mt-1.5" v-if="worldDialog.ref.$isLabs" variant="outline">
                                 {{ t('dialog.world.tags.labs') }}
                             </Badge>
                             <Badge
-                                class="mr-1.5 mt-1.5"
+                                class="me-1.5 mt-1.5"
                                 v-else-if="worldDialog.ref.releaseStatus === 'public'"
                                 variant="outline">
                                 {{ t('dialog.world.tags.public') }}
                             </Badge>
-                            <Badge class="mr-1.5 mt-1.5" v-else variant="outline">
+                            <Badge class="me-1.5 mt-1.5" v-else variant="outline">
                                 {{ t('dialog.world.tags.private') }}
                             </Badge>
                             <TooltipWrapper v-if="worldDialog.isPC" side="top" content="PC">
-                                <Badge class="text-platform-pc border-platform-pc! mr-1.5 mt-1.5" variant="outline">
+                                <Badge class="text-platform-pc border-platform-pc! me-1.5 mt-1.5" variant="outline">
                                     <Monitor class="h-4 w-4 text-platform-pc" />
                                     <span
                                         v-if="worldDialog.fileAnalysis.standalonewindows?._fileSize"
-                                        class="x-grey text-platform-pc border-l-[0.8px] border-solid ml-1.5 pl-1.5">
+                                        class="x-grey text-platform-pc border-s-[0.8px] border-solid ms-1.5 ps-1.5">
                                         {{ worldDialog.fileAnalysis.standalonewindows._fileSize }}
                                     </span>
                                 </Badge>
@@ -69,41 +69,41 @@
 
                             <TooltipWrapper v-if="worldDialog.isQuest" side="top" content="Quest">
                                 <Badge
-                                    class="text-platform-quest border-platform-quest! mr-1.5 mt-1.5"
+                                    class="text-platform-quest border-platform-quest! me-1.5 mt-1.5"
                                     variant="outline">
                                     <Smartphone class="h-4 w-4 text-platform-quest" />
                                     <span
                                         v-if="worldDialog.fileAnalysis.android?._fileSize"
-                                        class="x-grey text-platform-quest border-l-[0.8px] border-solid ml-1.5 pl-1.5">
+                                        class="x-grey text-platform-quest border-s-[0.8px] border-solid ms-1.5 ps-1.5">
                                         {{ worldDialog.fileAnalysis.android._fileSize }}
                                     </span>
                                 </Badge>
                             </TooltipWrapper>
 
                             <TooltipWrapper v-if="worldDialog.isIos" side="top" content="iOS">
-                                <Badge class="text-platform-ios border-platform-ios mr-1.5 mt-1.5" variant="outline">
+                                <Badge class="text-platform-ios border-platform-ios me-1.5 mt-1.5" variant="outline">
                                     <Apple class="h-4 w-4 text-platform-ios" />
                                     <span
                                         v-if="worldDialog.fileAnalysis.ios?._fileSize"
-                                        class="x-grey text-platform-ios border-platform-ios border-l-[0.8px] border-solid ml-1.5 pl-1.5">
+                                        class="x-grey text-platform-ios border-platform-ios border-s-[0.8px] border-solid ms-1.5 ps-1.5">
                                         {{ worldDialog.fileAnalysis.ios._fileSize }}
                                     </span>
                                 </Badge>
                             </TooltipWrapper>
 
-                            <Badge class="mr-1.5 mt-1.5" v-if="worldDialog.avatarScalingDisabled" variant="outline">
+                            <Badge class="me-1.5 mt-1.5" v-if="worldDialog.avatarScalingDisabled" variant="outline">
                                 {{ t('dialog.world.tags.avatar_scaling_disabled') }}
                             </Badge>
-                            <Badge class="mr-1.5 mt-1.5" v-if="worldDialog.focusViewDisabled" variant="outline">
+                            <Badge class="me-1.5 mt-1.5" v-if="worldDialog.focusViewDisabled" variant="outline">
                                 {{ t('dialog.world.tags.focus_view_disabled') }}
                             </Badge>
-                            <Badge class="mr-1.5 mt-1.5" v-if="worldDialog.ref.unityPackageUrl" variant="outline">
+                            <Badge class="me-1.5 mt-1.5" v-if="worldDialog.ref.unityPackageUrl" variant="outline">
                                 {{ t('dialog.world.tags.future_proofing') }}
                             </Badge>
                             <Badge
                                 v-if="worldDialog.inCache"
                                 variant="outline"
-                                class="cursor-pointer mr-1.5 mt-1.5"
+                                class="cursor-pointer me-1.5 mt-1.5"
                                 @click="openFolderGeneric(worldDialog.cachePath)">
                                 <span v-text="worldDialog.cacheSize" />
                                 | {{ t('dialog.world.tags.cache') }}
@@ -111,7 +111,7 @@
                         </div>
                         <div>
                             <template v-for="tag in worldDialog.ref.tags" :key="tag">
-                                <Badge class="mr-1.5 mt-1.5" v-if="tag.startsWith('content_')" variant="outline">
+                                <Badge class="me-1.5 mt-1.5" v-if="tag.startsWith('content_')" variant="outline">
                                     <span v-if="tag === 'content_horror'">
                                         {{ t('dialog.world.tags.content_horror') }}
                                     </span>
@@ -155,13 +155,13 @@
                             </Button>
                         </div>
                     </div>
-                    <div class="ml-2 mt-12">
+                    <div class="ms-2 mt-12">
                         <TooltipWrapper
                             v-if="worldDialog.inCache"
                             side="top"
                             :content="t('dialog.world.actions.delete_cache_tooltip')">
                             <Button
-                                class="rounded-full mr-2"
+                                class="rounded-full me-2"
                                 size="icon-lg"
                                 variant="outline"
                                 :ariaLabel="t('common.actions.delete')"
@@ -194,7 +194,7 @@
                         </TooltipWrapper>
                         <DropdownMenu>
                             <DropdownMenuTrigger as-child>
-                                <Button variant="outline" size="icon-lg" class="rounded-full ml-2">
+                                <Button variant="outline" size="icon-lg" class="rounded-full ms-2">
                                     <Ellipsis />
                                 </Button>
                             </DropdownMenuTrigger>

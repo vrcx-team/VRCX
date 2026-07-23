@@ -10,7 +10,7 @@
                     <div v-if="worldImportDialog.progress">
                         {{ t('dialog.world_import.process_progress') }}
                         {{ worldImportDialog.progress }} / {{ worldImportDialog.progressTotal }}
-                        <Spinner class="inline-block ml-2 mr-2" />
+                        <Spinner class="inline-block ms-2 me-2" />
                     </div>
                     <Button v-if="worldImportDialog.loading" size="sm" variant="outline" @click="cancelWorldImport">
                         {{ t('dialog.world_import.cancel') }}
@@ -44,7 +44,7 @@
                         </Select>
 
                         <Select
-                            class="ml-2"
+                            class="ms-2"
                             :model-value="worldImportLocalFavoriteGroupSelection"
                             @update:modelValue="handleWorldImportLocalGroupSelect">
                             <SelectTrigger size="sm">
@@ -59,7 +59,7 @@
                             </SelectContent>
                         </Select>
                     </div>
-                    <span class="ml-1.5" v-if="worldImportDialog.worldImportFavoriteGroup">
+                    <span class="ms-1.5" v-if="worldImportDialog.worldImportFavoriteGroup">
                         {{ worldImportTable.data.length }} /
                         {{
                             worldImportDialog.worldImportFavoriteGroup.capacity -
@@ -71,7 +71,7 @@
                     <Button
                         size="sm"
                         variant="secondary"
-                        class="mr-2"
+                        class="me-2"
                         :disabled="worldImportTable.data.length === 0"
                         @click="clearWorldImportTable">
                         {{ t('dialog.world_import.clear_table') }}
@@ -89,7 +89,7 @@
                 </div>
             </div>
             <span class="m-2" v-if="worldImportDialog.importProgress">
-                <Spinner class="inline-block ml-2 mr-2" />
+                <Spinner class="inline-block ms-2 me-2" />
                 {{ t('dialog.world_import.import_progress') }}
                 {{ worldImportDialog.importProgress }}/{{ worldImportDialog.importProgressTotal }}
             </span>
@@ -386,7 +386,7 @@
             })
             .then((args) => {
                 if (message) {
-                    toast.success('World added to favorites');
+                    toast.success(t('toast.world_added_to_favorites'));
                 }
                 return args;
             });

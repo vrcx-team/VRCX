@@ -11,7 +11,7 @@
             </div>
 
             <DialogFooter>
-                <Button variant="secondary" class="mr-2" @click="cancelInviteResponseConfirm">{{
+                <Button variant="secondary" class="me-2" @click="cancelInviteResponseConfirm">{{
                     t('dialog.invite_response_message.cancel')
                 }}</Button>
                 <Button @click="sendInviteResponseConfirm">{{ t('dialog.invite_response_message.confirm') }}</Button>

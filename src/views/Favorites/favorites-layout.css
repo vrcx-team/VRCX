@@ -30,15 +30,15 @@
 }
 
 .group-item--public {
-    border-left: 3px solid var(--visibility-public);
+    border-inline-start: 3px solid var(--visibility-public);
 }
 
 .group-item--friends {
-    border-left: 3px solid var(--visibility-friends);
+    border-inline-start: 3px solid var(--visibility-friends);
 }
 
 .group-item--private {
-    border-left: 3px solid var(--visibility-private);
+    border-inline-start: 3px solid var(--visibility-private);
 }
 
 /* ============ Grid Layouts ============ */

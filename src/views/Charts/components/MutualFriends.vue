@@ -36,7 +36,7 @@
                             <div class="flex w-full items-center p-1.5 text-[13px]">
                                 <template v-if="item.user">
                                     <div
-                                        class="relative inline-block flex-none size-9 mr-2.5"
+                                        class="relative inline-block flex-none size-9 me-2.5"
                                         :class="userStatusClass(item.user)">
                                         <img
                                             class="size-full rounded-full object-cover"
@@ -54,12 +54,12 @@
                                 <template v-else>
                                     <span>{{ item.label }}</span>
                                 </template>
-                                <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                                <CheckIcon :class="['ms-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
                             </div>
                         </template>
                     </VirtualCombobox>
                 </div>
-                <div class="ml-auto flex items-center gap-2">
+                <div class="ms-auto flex items-center gap-2">
                     <Sheet>
                         <SheetTrigger as-child>
                             <div>
@@ -183,7 +183,7 @@
                                                 <div class="flex w-full items-center p-1.5 text-[13px]">
                                                     <template v-if="item.user">
                                                         <div
-                                                            class="relative inline-block flex-none size-9 mr-2.5"
+                                                            class="relative inline-block flex-none size-9 me-2.5"
                                                             :class="userStatusClass(item.user)">
                                                             <img
                                                                 class="size-full rounded-full object-cover"
@@ -203,7 +203,7 @@
                                                     </template>
                                                     <CheckIcon
                                                         :class="[
-                                                            'ml-auto size-4',
+                                                            'ms-auto size-4',
                                                             selected ? 'opacity-100' : 'opacity-0'
                                                         ]" />
                                                 </div>
@@ -228,7 +228,7 @@
                         v-if="isFetching"
                         class="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] items-center rounded-md bg-transparent p-3 w-70">
                         <div class="flex justify-between text-sm mb-1">
-                            <span class="mr-1">{{ t('view.charts.mutual_friend.progress.friends_processed') }}</span>
+                            <span class="me-1">{{ t('view.charts.mutual_friend.progress.friends_processed') }}</span>
                             <strong>{{ fetchState.processedFriends }} / {{ totalFriends }}</strong>
                         </div>
                         <Progress :model-value="progressPercent" class="h-3" />

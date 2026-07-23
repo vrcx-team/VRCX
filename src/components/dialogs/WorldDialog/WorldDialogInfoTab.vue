@@ -136,11 +136,11 @@
                 <span class="block truncate font-medium leading-[18px]" style="display: inline">
                     {{ t('dialog.world.info.last_updated') }}
                 </span>
-                <TooltipWrapper v-if="Object.keys(worldDialog.fileAnalysis).length" side="top" style="margin-left: 6px">
+                <TooltipWrapper v-if="Object.keys(worldDialog.fileAnalysis).length" side="top" style="margin-inline-start: 6px">
                     <template #content>
                         <template v-for="(created_at, platform) in worldDialogPlatformCreatedAt" :key="platform">
                             <div class="flex justify-between w-full">
-                                <span class="mr-1">{{ platform }}:</span>
+                                <span class="me-1">{{ platform }}:</span>
                                 <span>{{ formatDateFilter(created_at, 'long') }}</span>
                             </div>
                         </template>
@@ -171,7 +171,7 @@
                 <span class="block truncate font-medium leading-[18px]" style="display: inline">
                     {{ t('dialog.world.info.publication_date') }}
                 </span>
-                <TooltipWrapper v-if="isTimeInLabVisible" side="top" style="margin-left: 6px">
+                <TooltipWrapper v-if="isTimeInLabVisible" side="top" style="margin-inline-start: 6px">
                     <template #content>
                         <span>
                             {{ t('dialog.world.info.time_in_labs') }}
@@ -244,7 +244,7 @@
                     </div>
 
                     <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
-                        <MoreHorizontal style="margin-right: 16px" />
+                        <MoreHorizontal style="margin-inline-end: 16px" />
                     </TooltipWrapper>
                 </div>
                 <span v-if="worldDialog.visitCount === 0" class="block truncate text-xs">-</span>

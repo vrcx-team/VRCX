@@ -12,7 +12,7 @@
                 <div
                     v-show="sidebarOpen"
                     class="absolute top-0 bottom-0 z-30 w-1 cursor-ew-resize select-none"
-                    :style="{ left: 'var(--sidebar-width)' }"
+                    :style="{ insetInlineStart: 'var(--sidebar-width)' }"
                     @pointerdown.prevent="startNavResize" />
 
                 <SidebarInset class="min-w-0 bg-sidebar">
@@ -37,7 +37,7 @@
                                 with-handle
                                 :class="[
                                     isAsideCollapsed(layout) ? 'opacity-100' : 'opacity-0',
-                                    'z-20 [&>div]:-translate-x-1/2'
+                                    'z-20 [&>div]:-translate-x-1/2 rtl:[&>div]:translate-x-1/2'
                                 ]"></ResizableHandle>
                             <ResizablePanel
                                 ref="asidePanelRef"
@@ -108,7 +108,6 @@
     import FriendImportDialog from '../Favorites/dialogs/FriendImportDialog.vue';
     import FullscreenImagePreview from '../../components/FullscreenImagePreview.vue';
     import GlobalToolsDialogs from '../Tools/components/GlobalToolsDialogs.vue';
-    import GroupMemberModerationDialog from '../../components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
     import InviteGroupDialog from '../../components/dialogs/InviteGroupDialog.vue';
     import LaunchDialog from '../../components/dialogs/LaunchDialog.vue';
     import LaunchOptionsDialog from '../Settings/dialogs/LaunchOptionsDialog.vue';
@@ -142,6 +141,10 @@
             return;
         }
 
+        const wrapperRect = event.currentTarget.parentElement.getBoundingClientRect();
+        const getNavWidth = (clientX) =>
+            document.documentElement.dir === 'rtl' ? wrapperRect.right - clientX : clientX - wrapperRect.left;
+
         isResizingNav = true;
         const prevUserSelect = document.body.style.userSelect;
         const prevCursor = document.body.style.cursor;
@@ -152,7 +155,7 @@
             if (!isResizingNav) {
                 return;
             }
-            appearanceSettingsStore.setNavWidth(e.clientX);
+            appearanceSettingsStore.setNavWidth(getNavWidth(e.clientX));
         };
 
         const handleUp = () => {
@@ -167,7 +170,7 @@
         window.addEventListener('pointermove', handleMove);
         window.addEventListener('pointerup', handleUp);
         cleanupNavResize = handleUp;
-        appearanceSettingsStore.setNavWidth(event.clientX);
+        appearanceSettingsStore.setNavWidth(getNavWidth(event.clientX));
     };
 
     onUnmounted(() => {

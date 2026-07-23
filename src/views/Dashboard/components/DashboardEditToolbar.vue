@@ -9,7 +9,7 @@
             <Button variant="secondary" size="sm" @click="emit('cancel')">{{ t('dashboard.actions.cancel') }}</Button>
             <Button variant="destructive" size="sm" @click="emit('delete')">{{ t('dashboard.actions.delete') }}</Button>
         </div>
-        <Button class="ml-auto" size="sm" @click="emit('save')">{{ t('dashboard.actions.save') }}</Button>
+        <Button class="ms-auto" size="sm" @click="emit('save')">{{ t('dashboard.actions.save') }}</Button>
     </div>
 </template>
 

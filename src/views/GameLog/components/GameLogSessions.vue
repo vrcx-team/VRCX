@@ -30,7 +30,7 @@
                             <Badge
                                 v-if="hasDateFilter"
                                 variant="secondary"
-                                class="ml-0.5 h-4.5 min-w-4.5 rounded-full px-1 text-xs">
+                                class="ms-0.5 h-4.5 min-w-4.5 rounded-full px-1 text-xs">
                                 1
                             </Badge>
                         </Button>
@@ -86,7 +86,7 @@
                 <div v-for="i in 3" :key="i" class="space-y-2">
                     <Skeleton class="h-5 w-48" />
                     <Skeleton class="h-3 w-24" />
-                    <div class="space-y-1.5 pl-2">
+                    <div class="space-y-1.5 ps-2">
                         <Skeleton class="h-4 w-full" />
                         <Skeleton class="h-4 w-3/4" />
                         <Skeleton class="h-4 w-5/6" />
@@ -110,7 +110,7 @@
                     ref="sentinelRef"
                     class="flex items-center justify-center py-4 pb-6 text-[0.8125rem] text-muted-foreground">
                     <template v-if="sessionsLoading">
-                        <Spinner class="mr-2" />
+                        <Spinner class="me-2" />
                         {{ t('common.load_more') }}...
                     </template>
                     <template v-else-if="!sessionsHasMore">

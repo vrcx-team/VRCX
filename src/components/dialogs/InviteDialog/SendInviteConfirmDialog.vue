@@ -128,7 +128,7 @@
                 } else {
                     J.loading = false;
                     J.visible = false;
-                    toast.success('Invite message sent');
+                    toast.success(t('toast.invite_message_sent'));
                 }
             };
             inviteLoop();
@@ -143,7 +143,7 @@
                     })
                     .then((args) => {
                         recordRecentAction(D.userId, 'Invite Photo');
-                        toast.success('Invite photo message sent');
+                        toast.success(t('toast.invite_photo_message_sent'));
                         return args;
                     });
             } else {
@@ -154,7 +154,7 @@
                     })
                     .then((args) => {
                         recordRecentAction(D.userId, 'Invite Message');
-                        toast.success('Invite message sent');
+                        toast.success(t('toast.invite_message_sent'));
                         return args;
                     });
             }
@@ -169,7 +169,7 @@
                     })
                     .then((args) => {
                         recordRecentAction(D.userId, 'Request Invite Photo');
-                        toast.success('Request invite photo message sent');
+                        toast.success(t('toast.request_invite_photo_message_sent'));
                         return args;
                     });
             } else {
@@ -180,7 +180,7 @@
                     })
                     .then((args) => {
                         recordRecentAction(D.userId, 'Request Invite Message');
-                        toast.success('Request invite message sent');
+                        toast.success(t('toast.request_invite_message_sent'));
                         return args;
                     });
             }

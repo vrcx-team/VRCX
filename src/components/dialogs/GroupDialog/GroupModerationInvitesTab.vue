@@ -13,15 +13,15 @@
             :unmount-on-hide="false">
             <template #label-sent>
                 <span class="text-base font-bold">{{ t('dialog.group_member_moderation.sent_invites') }}</span>
-                <span class="text-muted-foreground text-xs ml-1.5">{{ invitesTable.data.length }}</span>
+                <span class="text-muted-foreground text-xs ms-1.5">{{ invitesTable.data.length }}</span>
             </template>
             <template #label-join>
                 <span class="font-bold text-base">{{ t('dialog.group_member_moderation.join_requests') }}</span>
-                <span class="text-muted-foreground text-xs ml-1.5">{{ joinRequestsTable.data.length }}</span>
+                <span class="text-muted-foreground text-xs ms-1.5">{{ joinRequestsTable.data.length }}</span>
             </template>
             <template #label-blocked>
                 <span class="font-bold text-base">{{ t('dialog.group_member_moderation.blocked_requests') }}</span>
-                <span class="text-muted-foreground text-xs ml-1.5">{{ blockedTable.data.length }}</span>
+                <span class="text-muted-foreground text-xs ms-1.5">{{ blockedTable.data.length }}</span>
             </template>
             <template #sent>
                 <Button size="sm" variant="outline" @click="$emit('select-all', invitesTable.data)">{{
@@ -53,14 +53,14 @@
                 <Button
                     variant="outline"
                     :disabled="inviteActionDisabled"
-                    class="mr-2"
+                    class="me-2"
                     @click="$emit('accept-invite-request')"
                     >{{ t('dialog.group_member_moderation.accept_join_requests') }}</Button
                 >
                 <Button
                     variant="outline"
                     :disabled="inviteActionDisabled"
-                    class="mr-2"
+                    class="me-2"
                     @click="$emit('reject-invite-request')"
                     >{{ t('dialog.group_member_moderation.reject_join_requests') }}</Button
                 >

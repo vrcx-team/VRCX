@@ -38,7 +38,7 @@
                                 <i class="ri-settings-3-line text-lg" />
                                 <span
                                     v-if="hasPendingUpdate || hasPendingInstall"
-                                    class="absolute top-0.5 -right-1 h-1.5 w-1.5 rounded-full bg-red-500"></span>
+                                    class="absolute top-0.5 -end-1 h-1.5 w-1.5 rounded-full bg-red-500"></span>
                             </span>
                             <span v-show="!isCollapsed">{{ t('nav_tooltip.manage') }}</span>
                         </SidebarMenuButton>

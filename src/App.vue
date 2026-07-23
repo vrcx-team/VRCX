@@ -1,26 +1,30 @@
 <template>
-    <TooltipProvider>
-        <MacOSTitleBar></MacOSTitleBar>
+    <ConfigProvider :dir="textDirection">
+        <TooltipProvider>
+            <MacOSTitleBar></MacOSTitleBar>
 
-        <div
-            id="x-app"
-            class="flex w-screen h-screen overflow-hidden cursor-default [&>.x-container]:pt-[15px]"
-            :class="{ 'pt-7': isMacOS }">
-            <RouterView></RouterView>
-            <Toaster position="top-center" :theme="theme"></Toaster>
+            <div
+                id="x-app"
+                class="flex w-screen h-screen overflow-hidden cursor-default [&>.x-container]:pt-[15px]"
+                :class="{ 'pt-7': isMacOS }">
+                <RouterView></RouterView>
+                <Toaster position="top-center" :theme="theme" :dir="textDirection"></Toaster>
 
-            <AlertDialogModal></AlertDialogModal>
-            <PromptDialogModal></PromptDialogModal>
-            <OtpDialogModal></OtpDialogModal>
-            <DatabaseUpgradeDialog></DatabaseUpgradeDialog>
+                <AlertDialogModal></AlertDialogModal>
+                <PromptDialogModal></PromptDialogModal>
+                <OtpDialogModal></OtpDialogModal>
+                <DatabaseUpgradeDialog></DatabaseUpgradeDialog>
 
-            <VRCXUpdateDialog></VRCXUpdateDialog>
-        </div>
-        <div id="x-dialog-portal" class="x-dialog-portal"></div>
-    </TooltipProvider>
+                <VRCXUpdateDialog></VRCXUpdateDialog>
+            </div>
+            <div id="x-dialog-portal" class="x-dialog-portal"></div>
+        </TooltipProvider>
+    </ConfigProvider>
 </template>
 
 <script setup>
+    import { useTextDirection } from '@vueuse/core';
+    import { ConfigProvider } from 'reka-ui';
     import { computed, onBeforeMount, onMounted } from 'vue';
 
     import { addGameLogEvent, getGameLogTable } from './coordinators/gameLogCoordinator';
@@ -46,6 +50,7 @@
     console.log(`isLinux: ${LINUX}`);
 
     const isMacOS = computed(() => navigator.platform.includes('Mac'));
+    const textDirection = useTextDirection({ observe: true });
 
     const theme = computed(() => {
         return store.appearanceSettings.isDarkMode ? 'dark' : 'light';

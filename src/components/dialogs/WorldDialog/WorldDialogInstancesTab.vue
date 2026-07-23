@@ -3,13 +3,13 @@
         <div class="flex items-center text-sm">
             <User />
             {{ t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
-            <User style="margin-left: 8px" />
+            <User style="margin-inline-start: 8px" />
             {{
                 t('dialog.world.instances.private_count', {
                     count: worldDialog.ref.privateOccupants
                 })
             }}
-            <Check style="margin-left: 8px" />
+            <Check style="margin-inline-start: 8px" />
             {{
                 t('dialog.world.instances.capacity_count', {
                     count: worldDialog.ref.recommendedCapacity,
@@ -27,7 +27,7 @@
                             :currentuserid="currentUser.id"
                             :worlddialogshortname="worldDialog.$location.shortName" />
                         <InstanceActionBar
-                            class="ml-1 text-sm"
+                            class="ms-1 text-sm"
                             :location="room.$location.tag"
                             :launch-location="room.tag"
                             :instance-location="room.tag"
@@ -51,7 +51,7 @@
                             @click="showUserDialog(room.$location.userId)">
                             <template v-if="room.$location.user">
                                 <div
-                                    class="relative inline-block flex-none size-9 mr-2.5"
+                                    class="relative inline-block flex-none size-9 me-2.5"
                                     :class="userStatusClass(room.$location.user)">
                                     <Avatar class="size-9">
                                         <AvatarImage :src="userImage(room.$location.user, true)" class="object-cover" />
@@ -77,7 +77,7 @@
                             :key="user.id"
                             class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                             @click="showUserDialog(user.id)">
-                            <div class="relative inline-block flex-none size-9 mr-2.5" :class="userStatusClass(user)">
+                            <div class="relative inline-block flex-none size-9 me-2.5" :class="userStatusClass(user)">
                                 <Avatar class="size-9">
                                     <AvatarImage :src="userImage(user, true)" class="object-cover" />
                                     <AvatarFallback>
@@ -91,7 +91,7 @@
                                     :style="{ color: user.$userColour }"
                                     v-text="user.displayName" />
                                 <span v-if="user.location === 'traveling'" class="block truncate text-xs">
-                                    <Spinner class="inline-block mr-1" />
+                                    <Spinner class="inline-block me-1" />
                                     <Timer :epoch="user.$travelingToTime" />
                                 </span>
                                 <span v-else class="block truncate text-xs">

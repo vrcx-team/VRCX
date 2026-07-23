@@ -7,14 +7,14 @@
 
             <div>
                 <div class="my-2 mx-0" v-for="item in currentUser.$languages" :key="item.key">
-                    <Badge class="mr-1.5" variant="outline">
+                    <Badge class="me-1.5" variant="outline">
                         <span
-                            class="flags mr-1.5"
+                            class="flags me-1.5"
                             :class="languageClass(item.key)"
                             style="display: inline-block"></span>
                         {{ item.value }} ({{ item.key.toUpperCase() }})
                         <button
-                            class="ml-2 p-0"
+                            class="ms-2 p-0"
                             type="button"
                             style="
                                 border: none;
@@ -46,7 +46,7 @@
                                 :value="item.key"
                                 :text-value="item.value">
                                 <span
-                                    class="flags mr-1.5"
+                                    class="flags me-1.5"
                                     :class="languageClass(item.key)"
                                     style="display: inline-block"></span>
                                 {{ item.value }} ({{ item.key.toUpperCase() }})

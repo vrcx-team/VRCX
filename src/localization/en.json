@@ -405,7 +405,8 @@
             "delete_tooltip": "Delete",
             "unavailable_tooltip": "Unavailable",
             "private": "Private",
-            "select_avatar_tooltip": "Select Avatar"
+            "select_avatar_tooltip": "Select Avatar",
+            "no_group_selected": "No Group Selected"
         },
         "friend_log": {
             "filter_placeholder": "Filter",
@@ -529,7 +530,9 @@
                     "show_solo_instance": "Show Solo Instance",
                     "show_no_friend_instance": "Show No Friend Instance",
                     "show_detail": "Show Detail"
-                }
+                },
+                "no_data": "No data",
+                "invalid_timestamp": "Invalid timestamp data"
             },
             "mutual_friend": {
                 "tab_label": "Mutual Friend Network",
@@ -622,8 +625,10 @@
                     "cooling": "Cooling"
                 },
                 "stats_line": {
-                    "friends": "{count} friends",
-                    "visits": "{count} visits"
+                    "friends_one": "1 friend",
+                    "friends_other": "{count} friends",
+                    "visits_one": "1 visit",
+                    "visits_other": "{count} visits"
                 },
                 "stats": {
                     "top_friends": "top friends",
@@ -635,7 +640,8 @@
                     "friends_who_visited": "Friends who visited"
                 },
                 "no_friend_data": "No friend visit data",
-                "friend_visits": "{count} visits"
+                "friend_visits_one": "1 visit",
+                "friend_visits_other": "{count} visits"
             }
         },
         "tools": {
@@ -1879,7 +1885,11 @@
             "roles": "Roles",
             "open_ingame": "Open in-game",
             "display_name": "Display Name (VRC+)",
-            "minimum_avatar_performance": "Minimum Avatar Performance"
+            "minimum_avatar_performance": "Minimum Avatar Performance",
+            "quality_none": "None",
+            "quality_poor": "Poor",
+            "quality_medium": "Medium",
+            "quality_good": "Good"
         },
         "launch": {
             "header": "Launch",
@@ -1923,7 +1933,8 @@
             "groups_with_invite_permission": "Groups with Invite Permission",
             "choose_friends_placeholder": "Choose Friends",
             "selected_users": "Selected Users",
-            "invite": "Invite"
+            "invite": "Invite",
+            "not_allowed": "You are not allowed to invite to this group"
         },
         "invite_message": {
             "header": "Send Invite Message",
@@ -1978,7 +1989,17 @@
             "send": "Send"
         },
         "world_export": {
-            "header": "World Favorites Export"
+            "header": "World Favorites Export",
+            "all_favorites": "All Favorites",
+            "none": "None",
+            "select_group": "Select Group",
+            "id": "ID",
+            "name": "Name",
+            "author_id": "Author ID",
+            "author_name": "Author Name",
+            "thumbnail": "Thumbnail",
+            "copied_successfully": "Copied successfully!",
+            "copy_failed": "Copy failed!"
         },
         "world_import": {
             "header": "World Favorites Import",
@@ -1995,7 +2016,17 @@
             "clear_errors": "Clear Errors"
         },
         "avatar_export": {
-            "header": "Avatar Favorites Export"
+            "header": "Avatar Favorites Export",
+            "all_favorites": "All Favorites",
+            "none": "None",
+            "select_group": "Select Group",
+            "id": "ID",
+            "name": "Name",
+            "author_id": "Author ID",
+            "author_name": "Author Name",
+            "thumbnail": "Thumbnail",
+            "copied_successfully": "Copied successfully!",
+            "copy_failed": "Copy failed!"
         },
         "avatar_import": {
             "header": "Avatar Favorites Import",
@@ -2011,7 +2042,12 @@
             "clear_errors": "Clear Errors"
         },
         "friend_export": {
-            "header": "Friend Favorites Export"
+            "header": "Friend Favorites Export",
+            "all_favorites": "All Favorites",
+            "none": "None",
+            "select_group": "Select Group",
+            "copied_successfully": "Copied successfully!",
+            "copy_failed": "Copy failed!"
         },
         "friend_import": {
             "header": "Friend Favorites Import",
@@ -2350,7 +2386,8 @@
                 "export_to_calendar": "Export to Calendar",
                 "download_ics": "Download .ics",
                 "copied_event_link": "Calendar event URL copied to clipboard",
-                "repeating_event_tooltip": "Repeating Event"
+                "repeating_event_tooltip": "Repeating Event",
+                "download_ics_error": "Failed to download .ics file, {error}"
             },
             "featured_events": "Featured Events"
         },
@@ -2462,8 +2499,20 @@
         "delete_vrc_registry": "Continue? Delete VRC Registry Settings",
         "clear_cache": "Continue? Clear all VRChat cache",
         "close_instance": "Continue? Close Instance, nobody will be able to join",
-        "bulk_unfavorite": "Are you sure you want to unfavorite {count} favorites?\nThis action cannot be undone.",
-        "bulk_unfavorite_title": "Delete {count} favorites?",
+        "bulk_unfavorite_one": "Are you sure you want to unfavorite 1 favorite?\nThis action cannot be undone.",
+        "bulk_unfavorite_other": "Are you sure you want to unfavorite {count} favorites?\nThis action cannot be undone.",
+        "bulk_unfavorite_title_one": "Delete 1 favorite?",
+        "bulk_unfavorite_title_other": "Delete {count} favorites?",
+        "bulk_unfriend_one": "Are you sure you want to delete 1 friend?\nThis can negatively affect your trust rank.\nThis action cannot be undone.\n\n{names}",
+        "bulk_unfriend_other": "Are you sure you want to delete {count} friends?\nThis can negatively affect your trust rank.\nThis action cannot be undone.\n\n{names}",
+        "bulk_unfriend_title_one": "Delete 1 friend?",
+        "bulk_unfriend_title_other": "Delete {count} friends?",
+        "bulk_unfriend_complete": "Bulk Unfriend Complete",
+        "unfriended_friends_one": "Unfriended 1 friend.",
+        "unfriended_friends_other": "Unfriended {count} friends.",
+        "moderation_continue": "Continue? Moderation {type}",
+        "delete_gamelog_instance": "Continue? Delete GameLog Instance",
+        "delete_user_gamelog_instance": "Continue? Delete User From GameLog Instance",
         "restart_required_title": "Restart Required",
         "restart_now": "Restart Now",
         "restart_later": "Later"
@@ -2824,6 +2873,7 @@
         "has_left": "has left",
         "is_joining": "is joining",
         "gps": "is in {location}",
+        "traveling_to": "is traveling to {location}",
         "online_location": "has logged in to {location}",
         "online": "has logged in",
         "offline": "has logged out",
@@ -3078,7 +3128,13 @@
         "toggle_sidebar": "Toggle Sidebar",
         "back_to_top": "Back to top",
         "toggle_password": "Toggle password visibility",
-        "clear_input": "Clear input"
+        "clear_input": "Clear input",
+        "loading": "Loading",
+        "previous_slide": "Previous Slide",
+        "next_slide": "Next Slide",
+        "nothing_found": "Nothing found",
+        "mobile_sidebar_description": "Displays the mobile sidebar.",
+        "search_tabs": "Search tabs"
     },
     "onboarding": {
         "welcome": {
@@ -3167,5 +3223,39 @@
         "clocks_none": "None",
         "timezone": "Timezone",
         "now_playing": "Now Playing"
+    },
+    "toast": {
+        "group_visibility_changed": "Group visibility changed",
+        "world_added_to_favorites": "World added to favorites",
+        "friend_added_to_favorites": "Friend added to favorites",
+        "avatar_added_to_favorites": "Avatar added to favorites",
+        "request_invite_sent": "Request invite sent",
+        "status_updated": "Status updated",
+        "image_copied_to_clipboard": "Image copied to clipboard",
+        "opened_image_folder": "Opened image folder",
+        "invite_message_on_cooldown": "This invite message is on cooldown and cannot be edited yet.",
+        "invite_message_updated": "Invite message updated",
+        "updated_launch_options": "Updated launch options",
+        "youtube_api_key_removed": "YouTube API key removed",
+        "youtube_api_key_invalid": "Invalid YouTube API key",
+        "youtube_api_key_valid": "YouTube API key valid!",
+        "bio_updated": "Bio updated",
+        "pronouns_updated": "Pronouns updated",
+        "favorite_added": "Favorite added!",
+        "error_saving_avatar_tags": "Error saving avatar tags",
+        "invite_message_sent": "Invite message sent",
+        "invite_photo_message_sent": "Invite photo message sent",
+        "request_invite_photo_message_sent": "Request invite photo message sent",
+        "request_invite_message_sent": "Request invite message sent",
+        "instance_copied_to_clipboard": "Instance copied to clipboard",
+        "instance_copy_failed": "Instance copy failed",
+        "title_and_text_required": "Title and text are required",
+        "group_post_edited": "Group post edited",
+        "group_post_created": "Group post created",
+        "allowed_video_domains_updated": "Allowed Video Player Domains updated",
+        "tags_updated": "Tags updated",
+        "failed_to_download_image": "Failed to download image",
+        "failed_to_save_group_order": "Failed to save in-game group order",
+        "failed_to_download_ics": "Failed to download .ics file"
     }
 }

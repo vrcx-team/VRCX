@@ -1,7 +1,7 @@
 <template>
     <div class="screenshot-metadata-page x-container flex flex-col overflow-hidden">
-        <div class="flex items-center gap-2 ml-2">
-            <Button variant="ghost" size="sm" class="mr-3" @click="goBack">
+        <div class="flex items-center gap-2 ms-2">
+            <Button variant="ghost" size="sm" class="me-3" @click="goBack">
                 <ArrowLeft />
                 {{ t('nav_tooltip.tools') }}
             </Button>
@@ -57,48 +57,48 @@
                 <thead class="sticky top-0 z-1 bg-background">
                     <tr>
                         <th
-                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground"
+                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-start px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground"
                             @click="toggleSearchSort('dateTime')">
                             {{ t('dialog.screenshot_metadata.col_date') }}
-                            <span v-if="searchSort.key === 'dateTime'" class="ml-1 text-[10px]">{{
+                            <span v-if="searchSort.key === 'dateTime'" class="ms-1 text-[10px]">{{
                                 searchSort.asc ? '↑' : '↓'
                             }}</span>
                         </th>
                         <th
-                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground"
+                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-start px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground"
                             @click="toggleSearchSort('world')">
                             {{ t('dialog.screenshot_metadata.col_world') }}
-                            <span v-if="searchSort.key === 'world'" class="ml-1 text-[10px]">{{
+                            <span v-if="searchSort.key === 'world'" class="ms-1 text-[10px]">{{
                                 searchSort.asc ? '↑' : '↓'
                             }}</span>
                         </th>
                         <th
                             v-if="searchHasMatchColumn"
-                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground"
+                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-start px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground"
                             @click="toggleSearchSort('match')">
                             {{ t('dialog.screenshot_metadata.col_match') }}
-                            <span v-if="searchSort.key === 'match'" class="ml-1 text-[10px]">{{
+                            <span v-if="searchSort.key === 'match'" class="ms-1 text-[10px]">{{
                                 searchSort.asc ? '↑' : '↓'
                             }}</span>
                         </th>
                         <th
-                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground"
+                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-start px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground"
                             @click="toggleSearchSort('author')">
                             {{ t('dialog.screenshot_metadata.col_author') }}
-                            <span v-if="searchSort.key === 'author'" class="ml-1 text-[10px]">{{
+                            <span v-if="searchSort.key === 'author'" class="ms-1 text-[10px]">{{
                                 searchSort.asc ? '↑' : '↓'
                             }}</span>
                         </th>
                         <th
-                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground w-20"
+                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-start px-3 py-2 border-b whitespace-nowrap select-none cursor-pointer hover:text-foreground w-20"
                             @click="toggleSearchSort('players')">
                             {{ t('dialog.screenshot_metadata.col_players') }}
-                            <span v-if="searchSort.key === 'players'" class="ml-1 text-[10px]">{{
+                            <span v-if="searchSort.key === 'players'" class="ms-1 text-[10px]">{{
                                 searchSort.asc ? '↑' : '↓'
                             }}</span>
                         </th>
                         <th
-                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left px-3 py-2 border-b whitespace-nowrap select-none w-[100px]">
+                            class="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-start px-3 py-2 border-b whitespace-nowrap select-none w-[100px]">
                             {{ t('dialog.screenshot_metadata.col_resolution') }}
                         </th>
                         <th class="w-8 border-b"></th>
@@ -110,12 +110,12 @@
                         :key="row.filePath"
                         class="group/row cursor-pointer transition-colors duration-100 hover:bg-accent"
                         :class="
-                            row.filePath === selectedSearchFilePath ? 'bg-accent border-l-[3px] border-l-primary' : ''
+                            row.filePath === selectedSearchFilePath ? 'bg-accent border-s-[3px] border-s-primary' : ''
                         "
                         @click="selectSearchResult(idx)">
                         <td
                             class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis"
-                            :class="row.filePath === selectedSearchFilePath ? 'pl-[9px]' : ''">
+                            :class="row.filePath === selectedSearchFilePath ? 'ps-[9px]' : ''">
                             {{ row.dateFormatted }}
                         </td>
                         <td class="text-sm px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis">
@@ -140,7 +140,7 @@
                             class="text-xs text-muted-foreground px-3 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis">
                             {{ row.resolution }}
                         </td>
-                        <td class="py-2 pr-2 border-b">
+                        <td class="py-2 pe-2 border-b">
                             <ChevronRight
                                 class="size-4 text-muted-foreground opacity-0 group-hover/row:opacity-100 transition-opacity duration-150" />
                         </td>
@@ -161,14 +161,14 @@
                         <Button
                             variant="ghost"
                             size="icon"
-                            class="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity bg-background/50 rounded-full"
+                            class="absolute start-2 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity bg-background/50 rounded-full"
                             @click="navigatePrev">
                             <ChevronLeft />
                         </Button>
                         <Button
                             variant="ghost"
                             size="icon"
-                            class="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity bg-background/50 rounded-full"
+                            class="absolute end-2 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity bg-background/50 rounded-full"
                             @click="navigateNext">
                             <ChevronRight />
                         </Button>
@@ -179,11 +179,11 @@
                     <ButtonGroup class="shadow-lg rounded-lg">
                         <Button variant="outline" size="sm" @click="navigatePrev">
                             <ArrowLeft />
-                            <Kbd class="ml-1">{{ isMac ? '⌥' : 'Alt' }}</Kbd>
+                            <Kbd class="ms-1">{{ isMac ? '⌥' : 'Alt' }}</Kbd>
                             <Kbd>←</Kbd>
                         </Button>
                         <Button variant="outline" size="sm" @click="navigateNext">
-                            <Kbd class="ml-1">{{ isMac ? '⌥' : 'Alt' }}</Kbd>
+                            <Kbd class="ms-1">{{ isMac ? '⌥' : 'Alt' }}</Kbd>
                             <Kbd>→</Kbd>
                             <ArrowRight />
                         </Button>
@@ -191,7 +191,7 @@
                 </div>
             </div>
 
-            <div class="overflow-y-auto pr-1">
+            <div class="overflow-y-auto pe-1">
                 <Button
                     v-if="searchResultsData.length"
                     variant="ghost"
@@ -619,7 +619,7 @@
             return;
         }
         AppApi.CopyImageToClipboard(path).then(() => {
-            toast.success('Image copied to clipboard');
+            toast.success(t('toast.image_copied_to_clipboard'));
         });
     }
     /**
@@ -631,7 +631,7 @@
             return;
         }
         AppApi.OpenFolderAndSelectItem(path).then(() => {
-            toast.success('Opened image folder');
+            toast.success(t('toast.opened_image_folder'));
         });
     }
     /**

@@ -76,7 +76,7 @@
                                 <span
                                     v-for="lang in (player.ref?.$languages || []).slice(0, 2)"
                                     :key="lang.key"
-                                    :class="['flags', 'inline-block', 'mr-0.5', languageClass(lang.key)]">
+                                    :class="['flags', 'inline-block', 'me-0.5', languageClass(lang.key)]">
                                 </span>
                             </TableCell>
 

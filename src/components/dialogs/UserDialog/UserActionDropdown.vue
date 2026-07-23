@@ -26,7 +26,7 @@
         </template>
         <DropdownMenu>
             <DropdownMenuTrigger as-child>
-                <div class="ml-2">
+                <div class="ms-2">
                     <Button
                         :variant="hasRisk ? 'destructive' : 'outline'"
                         size="icon-lg"
@@ -313,7 +313,7 @@
 </script>
 <style scoped>
     .dot-indicator::after {
-        margin-left: 30px;
+        margin-inline-start: 30px;
         margin-bottom: 30px;
         content: '';
         width: 10px;

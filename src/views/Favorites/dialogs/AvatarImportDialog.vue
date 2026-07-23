@@ -10,7 +10,7 @@
                     <div v-if="avatarImportDialog.progress">
                         {{ t('dialog.avatar_import.process_progress') }} {{ avatarImportDialog.progress }} /
                         {{ avatarImportDialog.progressTotal }}
-                        <Spinner class="inline-block ml-2 mr-2" />
+                        <Spinner class="inline-block ms-2 me-2" />
                     </div>
                     <Button v-if="avatarImportDialog.loading" size="sm" variant="secondary" @click="cancelAvatarImport">
                         {{ t('dialog.avatar_import.cancel') }}
@@ -25,7 +25,7 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <Select
-                            class="mr-1.5"
+                            class="me-1.5"
                             :model-value="avatarImportFavoriteGroupSelection"
                             @update:modelValue="handleAvatarImportGroupSelect">
                             <SelectTrigger size="sm">
@@ -45,7 +45,7 @@
                         </Select>
 
                         <Select
-                            class="ml-2"
+                            class="ms-2"
                             :model-value="avatarImportLocalFavoriteGroupSelection"
                             @update:modelValue="handleAvatarImportLocalGroupSelect">
                             <SelectTrigger size="sm">
@@ -60,7 +60,7 @@
                             </SelectContent>
                         </Select>
                     </div>
-                    <span class="ml-1.5" v-if="avatarImportDialog.avatarImportFavoriteGroup">
+                    <span class="ms-1.5" v-if="avatarImportDialog.avatarImportFavoriteGroup">
                         {{ avatarImportTable.data.length }} /
                         {{
                             avatarImportDialog.avatarImportFavoriteGroup.capacity -
@@ -69,7 +69,7 @@
                     </span>
                 </div>
                 <div>
-                    <Button size="sm" variant="secondary" class="mr-2" @click="clearAvatarImportTable">
+                    <Button size="sm" variant="secondary" class="me-2" @click="clearAvatarImportTable">
                         {{ t('dialog.avatar_import.clear_table') }}
                     </Button>
                     <Button
@@ -85,7 +85,7 @@
                 </div>
             </div>
             <span class="m-2" v-if="avatarImportDialog.importProgress">
-                <Spinner class="inline-block ml-2 mr-2" />
+                <Spinner class="inline-block ms-2 me-2" />
                 {{ t('dialog.avatar_import.import_progress') }}
                 {{ avatarImportDialog.importProgress }}/{{ avatarImportDialog.importProgressTotal }}
             </span>
@@ -341,7 +341,7 @@
             })
             .then((args) => {
                 if (message) {
-                    toast.success('Avatar added to favorites');
+                    toast.success(t('toast.avatar_added_to_favorites'));
                 }
                 return args;
             });

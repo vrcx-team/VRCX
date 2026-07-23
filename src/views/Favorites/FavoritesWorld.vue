@@ -32,7 +32,7 @@
                     :collapsed-size="0"
                     collapsible
                     :order="1">
-                    <div class="h-full pr-2 overflow-auto flex flex-col gap-3">
+                    <div class="h-full pe-2 overflow-auto flex flex-col gap-3">
                         <div class="flex flex-col gap-2">
                             <div class="flex items-center justify-between font-semibold text-sm mb-[9px]">
                                 <span>{{ t('view.favorite.worlds.vrchat_favorites') }}</span>
@@ -231,7 +231,7 @@
                 </ResizablePanel>
                 <ResizableHandle @dragging="splitterSetDragging" />
                 <ResizablePanel :order="2">
-                    <div class="flex flex-col h-full min-h-0 pl-[26px]">
+                    <div class="flex flex-col h-full min-h-0 ps-[26px]">
                         <FavoritesContentHeader
                             v-model:edit-mode="worldEditMode"
                             :edit-mode-disabled="isSearchActive"
@@ -255,12 +255,12 @@
                                     {{ activeLocalGroupName }}
                                     <small>{{ activeLocalGroupCount }}</small>
                                 </span>
-                                <span v-else>No Group Selected</span>
+                                <span v-else>{{ t('view.favorite.no_group_selected') }}</span>
                             </template>
                         </FavoritesContentHeader>
                         <div ref="worldFavoritesContainerRef" class="flex-1 min-h-0">
                             <template v-if="isSearchActive">
-                                <div class="h-full pr-2 overflow-auto">
+                                <div class="h-full pe-2 overflow-auto">
                                     <template v-if="worldFavoriteSearchResults.length">
                                         <div
                                             class="favorites-card-list"
@@ -280,7 +280,7 @@
                             <template v-else>
                                 <div
                                     v-if="activeRemoteGroup && isRemoteGroupSelected"
-                                    class="h-full pr-2 overflow-auto">
+                                    class="h-full pe-2 overflow-auto">
                                     <template v-if="currentRemoteFavorites.length">
                                         <div
                                             class="favorites-card-list"
@@ -302,7 +302,7 @@
                                 <div
                                     v-else-if="activeLocalGroupName && isLocalGroupSelected"
                                     ref="localFavoritesViewportRef"
-                                    class="h-full pr-2 overflow-auto favorites-content__scroll--local focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1"
+                                    class="h-full pe-2 overflow-auto favorites-content__scroll--local focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1"
                                     data-reka-scroll-area-viewport=""
                                     data-slot="scroll-area-viewport"
                                     tabindex="0"
@@ -375,6 +375,7 @@
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { favoriteRequest, worldRequest } from '../../api';
     import { debounce } from '../../shared/utils';
+    import { localeIncludesCI } from '../../shared/utils/base/string';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
     import { useFavoritesGroupPanel } from './composables/useFavoritesGroupPanel.js';
     import { useFavoritesLocalGroups } from './composables/useFavoritesLocalGroups.js';
@@ -857,9 +858,8 @@
         const total = selectedFavoriteWorlds.value.length;
         modalStore
             .confirm({
-                description: `Are you sure you want to unfavorite ${total} favorites?
-                This action cannot be undone.`,
-                title: `Delete ${total} favorites?`
+                description: t('confirm.bulk_unfavorite', { count: total }),
+                title: t('confirm.bulk_unfavorite_title', { count: total })
             })
             .then(({ ok }) => {
                 if (ok) {
@@ -999,7 +999,7 @@
      * @param worldFavoriteSearch
      */
     function doSearchWorldFavorites(searchInput) {
-        const search = (searchInput ?? worldFavoriteSearch.value).trim().toLowerCase();
+        const search = (searchInput ?? worldFavoriteSearch.value).trim();
         if (search.length < 3) {
             worldFavoriteSearchResults.value = [];
             return;
@@ -1012,13 +1012,13 @@
             if (isTagMode) {
                 if (Array.isArray(ref.tags)) {
                     return ref.tags.some(
-                        (tag) => tag.startsWith('author_tag_') && tag.substring(11).toLowerCase().includes(search)
+                        (tag) => tag.startsWith('author_tag_') && localeIncludesCI(tag.substring(11), search)
                     );
                 }
                 return false;
             }
             const authorName = ref.authorName || '';
-            return ref.name.toLowerCase().includes(search) || authorName.toLowerCase().includes(search);
+            return localeIncludesCI(ref.name, search) || localeIncludesCI(authorName, search);
         });
         worldFavoriteSearchResults.value = filtered;
     }
@@ -1219,7 +1219,7 @@
     .favorites-card-virtual-row {
         width: 100%;
         position: absolute;
-        left: 0;
+        inset-inline-start: 0;
         top: 0;
         box-sizing: border-box;
         padding-bottom: var(--favorites-card-gap, 12px);

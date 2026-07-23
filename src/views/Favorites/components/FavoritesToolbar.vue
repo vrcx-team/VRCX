@@ -44,7 +44,7 @@
                         :model-value="searchMode"
                         variant="outline"
                         size="xs"
-                        class="mr-0.5"
+                        class="me-0.5"
                         @update:modelValue="$emit('update:searchMode', $event)">
                         <ToggleGroupItem value="name" class="h-5! px-1.5! text-[11px]">
                             {{ t('view.favorite.worlds.search_mode_name') }}

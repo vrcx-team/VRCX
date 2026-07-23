@@ -14,12 +14,12 @@
             <div v-if="inviteDialog.visible" class="overflow-hidden">
                 <Location :location="inviteDialog.worldId" :link="false" class="cursor-default" />
                 <br />
-                <Button size="sm" class="mr-2 mt-2" variant="outline" @click="addSelfToInvite">{{
+                <Button size="sm" class="me-2 mt-2" variant="outline" @click="addSelfToInvite">{{
                     t('dialog.invite.add_self')
                 }}</Button>
                 <Button
                     size="sm"
-                    class="mr-2 mt-2"
+                    class="me-2 mt-2"
                     variant="outline"
                     :disabled="inviteDialog.friendsInInstance.length === 0"
                     @click="addFriendsInInstanceToInvite"
@@ -72,7 +72,7 @@
                             <div class="flex w-full items-center p-1.5 text-[13px]">
                                 <template v-if="item.user">
                                     <div
-                                        class="relative inline-block flex-none size-9 mr-2.5"
+                                        class="relative inline-block flex-none size-9 me-2.5"
                                         :class="userStatusClass(item.user)">
                                         <img
                                             class="size-full rounded-full object-cover"
@@ -91,7 +91,7 @@
                                     <span>{{ item.label }}</span>
                                 </template>
 
-                                <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                                <CheckIcon :class="['ms-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
                             </div>
                         </template>
                     </VirtualCombobox>
@@ -101,7 +101,7 @@
             <DialogFooter>
                 <Button
                     variant="secondary"
-                    class="mr-2"
+                    class="me-2"
                     :disabled="inviteDialog.loading || !inviteDialog.userIds.length"
                     @click="showSendInviteDialog"
                     >{{ t('dialog.invite.invite_with_message') }}</Button
@@ -389,7 +389,7 @@
         modalStore
             .confirm({
                 description: t('confirm.invite'),
-                title: 'Confirm'
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (!ok) return;

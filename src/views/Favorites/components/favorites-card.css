@@ -86,7 +86,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--favorites-card-action-gap, 8px);
-    margin-left: var(--favorites-card-action-margin, 8px);
+    margin-inline-start: var(--favorites-card-action-margin, 8px);
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
@@ -104,7 +104,7 @@
 .favorites-search-card__action--checkbox {
     align-items: center;
     justify-content: flex-end;
-    margin-right: var(--favorites-card-checkbox-margin, 8px);
+    margin-inline-end: var(--favorites-card-checkbox-margin, 8px);
 }
 
 .favorites-search-card__action--checkbox [data-slot='checkbox'] {

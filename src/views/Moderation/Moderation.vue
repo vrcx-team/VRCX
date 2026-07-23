@@ -107,8 +107,8 @@
     function deletePlayerModerationPrompt(row) {
         modalStore
             .confirm({
-                description: `Continue? Moderation ${row.type}`,
-                title: 'Confirm'
+                description: t('confirm.moderation_continue', { type: row.type }),
+                title: t('confirm.title')
             })
             .then(({ ok }) => ok && deletePlayerModeration(row))
             .catch(() => {});

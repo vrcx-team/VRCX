@@ -80,7 +80,7 @@
                 urlList: urlList.value
             })
             .then((args) => {
-                toast.success('Allowed Video Player Domains updated');
+                toast.success(t('toast.allowed_video_domains_updated'));
                 return args;
             });
         D.visible = false;

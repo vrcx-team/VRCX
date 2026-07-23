@@ -13,7 +13,7 @@
                 :on-row-click="handleRowClick">
                 <template #toolbar>
                     <div class="mb-2 flex items-center justify-between">
-                        <div class="flex flex-none mr-2 items-center">
+                        <div class="flex flex-none me-2 items-center">
                             <TooltipWrapper side="bottom" :content="t('view.friend_list.favorites_only_tooltip')">
                                 <div>
                                     <Toggle
@@ -67,14 +67,14 @@
                                 @change="friendsListSearchChange" />
                         </div>
                         <div class="flex items-center">
-                            <div v-if="friendsListBulkUnfriendMode" class="inline-block mr-2">
+                            <div v-if="friendsListBulkUnfriendMode" class="inline-block me-2">
                                 <Button variant="outline" @click="showBulkUnfriendSelectionConfirm">
                                     {{ t('view.friend_list.bulk_unfriend_selection') }}
                                 </Button>
                                 <!-- el-button(size="small" @click="showBulkUnfriendAllConfirm") Bulk Unfriend All-->
                             </div>
-                            <div class="flex items-center mr-2">
-                                <span class="name mr-2 text-xs">{{ t('view.friend_list.bulk_unfriend') }}</span>
+                            <div class="flex items-center me-2">
+                                <span class="name me-2 text-xs">{{ t('view.friend_list.bulk_unfriend') }}</span>
                                 <Switch
                                     v-model="friendsListBulkUnfriendMode"
                                     :ariaLabel="t('view.friend_list.bulk_unfriend')"
@@ -85,7 +85,7 @@
                                     v-if="isMutualFetching"
                                     :content="t('view.friend_list.mutual_loading_hint')">
                                     <span>
-                                        <Button variant="outline" class="mr-2" disabled>
+                                        <Button variant="outline" class="me-2" disabled>
                                             <Loader2 class="h-4 w-4 animate-spin" />
                                             {{ t('view.friend_list.load_mutual_friends') }}
                                         </Button>
@@ -94,7 +94,7 @@
                                 <Button
                                     v-else
                                     variant="outline"
-                                    class="mr-2"
+                                    class="me-2"
                                     :disabled="isMutualOptOut"
                                     @click="loadMutualFriends">
                                     {{ t('view.friend_list.load_mutual_friends') }}
@@ -120,9 +120,9 @@
                     <div style="margin-bottom: 8px" v-text="t('view.friend_list.load_dialog_message')"></div>
                     <div class="flex items-center gap-2">
                         <Progress :model-value="friendsListLoadingPercent" class="h-4 w-full" />
-                        <span class="text-xs w-10 text-right">{{ friendsListLoadingPercent }}%</span>
+                        <span class="text-xs w-10 text-end">{{ friendsListLoadingPercent }}%</span>
                     </div>
-                    <div style="margin-top: 8px; text-align: right">
+                    <div style="margin-top: 8px; text-align: end">
                         <span>{{ friendsListLoadingCurrent }} / {{ friendsListLoadingTotal }}</span>
                     </div>
                     <DialogFooter>
@@ -490,15 +490,12 @@
             .map((item) => item.displayName);
         if (!pending.length) return;
         const description =
-            `Are you sure you want to delete ${pending.length} friends?\n` +
-            'This can negatively affect your trust rank,\n' +
-            'This action cannot be undone.\n\n' +
-            pending.join('\n');
+            t('confirm.bulk_unfriend', { count: pending.length, names: pending.join('\n') });
 
         modalStore
             .confirm({
                 description,
-                title: `Delete ${pending.length} friends?`
+                title: t('confirm.bulk_unfriend_title', { count: pending.length })
             })
             .then(({ ok }) => ok && bulkUnfriendSelection())
             .catch(() => {});
@@ -518,8 +515,8 @@
             }
         }
         modalStore.alert({
-            description: `Unfriended ${selectedFriendsCount} friends.`,
-            title: 'Bulk Unfriend Complete'
+            description: t('confirm.unfriended_friends', { count: selectedFriendsCount }),
+            title: t('confirm.bulk_unfriend_complete')
         });
         selectedFriends.value.clear();
     }

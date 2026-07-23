@@ -13,7 +13,7 @@
                     <!-- toolbar -->
                     <div
                         @click.stop
-                        class="absolute right-3 top-3 z-10 flex items-center gap-2 rounded-md bg-background/70 backdrop-blur px-2 py-1 border">
+                        class="absolute end-3 top-3 z-10 flex items-center gap-2 rounded-md bg-background/70 backdrop-blur px-2 py-1 border">
                         <Button
                             variant="ghost"
                             size="icon"
@@ -316,7 +316,7 @@
             toast.success(t('message.image.copied_to_clipboard'));
         } catch (error) {
             console.error('Error downloading image:', error);
-            toast.error(`Failed to download image. ${url}`);
+            toast.error(`${t('toast.failed_to_download_image')} ${url}`);
         } finally {
             toast.dismiss(msg);
         }
@@ -346,7 +346,7 @@
             document.body.removeChild(link);
         } catch (error) {
             console.error('Error downloading image:', error);
-            toast.error(`Failed to download image. ${url}`);
+            toast.error(`${t('toast.failed_to_download_image')} ${url}`);
         } finally {
             toast.dismiss(msg);
         }

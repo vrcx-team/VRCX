@@ -28,7 +28,7 @@
                     @click="showUserDialog(userDialog.$location.userId)">
                     <template v-if="userDialog.$location.user">
                         <div
-                            class="relative inline-block flex-none size-9 mr-2.5"
+                            class="relative inline-block flex-none size-9 me-2.5"
                             :class="userStatusClass(userDialog.$location.user)">
                             <Avatar class="size-9">
                                 <AvatarImage :src="userImage(userDialog.$location.user, true)" class="object-cover" />
@@ -52,7 +52,7 @@
                     :key="user.id"
                     class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                     @click="showUserDialog(user.id)">
-                    <div class="relative inline-block flex-none size-9 mr-2.5" :class="userStatusClass(user)">
+                    <div class="relative inline-block flex-none size-9 me-2.5" :class="userStatusClass(user)">
                         <Avatar class="size-9">
                             <AvatarImage :src="userImage(user, true)" class="object-cover" />
                             <AvatarFallback>
@@ -66,7 +66,7 @@
                             :style="{ color: user.$userColour }"
                             v-text="user.displayName"></span>
                         <span v-if="user.location === 'traveling'" class="block truncate text-xs">
-                            <Spinner class="inline-block mr-1" />
+                            <Spinner class="inline-block me-1" />
                             <Timer :epoch="user.$travelingToTime" />
                         </span>
                         <span v-else class="block truncate text-xs">
@@ -141,7 +141,7 @@
                         (userDialog.representedGroup && userDialog.representedGroup.isRepresenting)
                     "
                     class="text-xs">
-                    <div style="display: inline-block; flex: none; margin-right: 6px">
+                    <div style="display: inline-block; flex: none; margin-inline-end: 6px">
                         <Avatar
                             class="cursor-pointer size-15! rounded-lg!"
                             :style="{
@@ -161,10 +161,10 @@
                         v-if="userDialog.representedGroup.isRepresenting"
                         style="vertical-align: top; cursor: pointer"
                         @click="showGroupDialog(userDialog.representedGroup.groupId)">
-                        <span v-if="userDialog.representedGroup.ownerId === userDialog.id" style="margin-right: 6px"
+                        <span v-if="userDialog.representedGroup.ownerId === userDialog.id" style="margin-inline-end: 6px"
                             >👑</span
                         >
-                        <span style="margin-right: 6px" v-text="userDialog.representedGroup.name"></span>
+                        <span style="margin-inline-end: 6px" v-text="userDialog.representedGroup.name"></span>
                         <span>({{ userDialog.representedGroup.memberCount }})</span>
                     </span>
                 </div>
@@ -179,10 +179,10 @@
                     style="white-space: pre-wrap; margin: 0 0.5em 0 0; max-height: 210px; overflow-y: auto"
                     >{{ bioCache.translated || userDialog.ref.bio || '-' }}</pre
                 >
-                <div style="float: right">
+                    <div style="float: inline-end">
                     <Button
                         v-if="translationApi && userDialog.ref.bio"
-                        class="w-3 h-6 text-xs mr-0.5"
+                        class="w-3 h-6 text-xs me-0.5"
                         size="icon-sm"
                         variant="ghost"
                         @click="translateBio">
@@ -194,7 +194,7 @@
                         size="icon-sm"
                         variant="ghost"
                         v-if="userDialog.id === currentUser.id"
-                        style="margin-left: 6px; padding: 0"
+                        style="margin-inline-start: 6px; padding: 0"
                         @click="$emit('showBioDialog')"
                         ><Pencil class="h-3 w-3" />
                     </Button>
@@ -211,8 +211,8 @@
                                 width: 16px;
                                 height: 16px;
                                 vertical-align: middle;
-                                margin-right: 6px;
-                                cursor: pointer;
+                                    margin-inline-end: 6px;
+                                    cursor: pointer;
                             "
                             @click.stop="openExternalLink(link)"
                             loading="lazy" />
@@ -242,7 +242,7 @@
                         </div>
 
                         <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
-                            <MoreHorizontal style="margin-right: 16px" />
+                            <MoreHorizontal style="margin-inline-end: 16px" />
                         </TooltipWrapper>
                     </div>
                     <span v-if="userDialog.joinCount === 0" class="block truncate text-xs">-</span>
@@ -432,7 +432,7 @@
                 <span class="block truncate text-xs">
                     <span v-text="userDialog.$homeLocationName"></span>
                     <Button
-                        class="rounded-full ml-1 text-xs"
+                        class="rounded-full ms-1 text-xs"
                         size="icon-sm"
                         variant="ghost"
                         @click.stop="resetHome()"
@@ -451,7 +451,7 @@
                         <DropdownMenu>
                             <DropdownMenuTrigger as-child>
                                 <Button
-                                    class="rounded-full ml-1 text-xs"
+                                    class="rounded-full ms-1 text-xs"
                                     size="icon-sm"
                                     variant="ghost"
                                     @click.stop

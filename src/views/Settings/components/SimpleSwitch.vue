@@ -49,9 +49,9 @@
         align-items: center;
     }
     .simple-switch > .switch {
-        margin-left: 8px;
+        margin-inline-start: 8px;
     }
     .simple-switch .tooltip {
-        margin-left: 3px;
+        margin-inline-start: 3px;
     }
 </style>

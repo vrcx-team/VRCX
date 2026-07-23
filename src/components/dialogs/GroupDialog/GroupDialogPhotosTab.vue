@@ -18,8 +18,8 @@
             :key="`label-${index}`"
             v-slot:[`label-${index}`]>
             <span class="text-base font-bold" v-text="gallery.name" />
-            <i class="x-status-icon" style="margin-left: 6px" :class="groupGalleryStatus(gallery)" />
-            <span class="text-muted-foreground text-xs ml-1.5">{{
+            <i class="x-status-icon" style="margin-inline-start: 6px" :class="groupGalleryStatus(gallery)" />
+            <span class="text-muted-foreground text-xs ms-1.5">{{
                 groupDialog.galleries[gallery.id] ? groupDialog.galleries[gallery.id].length : 0
             }}</span>
         </template>

@@ -8,7 +8,7 @@
                 <div class="flex items-center w-full h-full px-2">
                     <!-- Left section -->
                     <div
-                        class="flex items-center flex-1 min-w-0 overflow-hidden [&>*:first-child]:pl-0.5"
+                        class="flex items-center flex-1 min-w-0 overflow-hidden [&>*:first-child]:ps-0.5"
                         style="
                             mask-image: linear-gradient(to right, black calc(100% - 20px), transparent 100%);
                             -webkit-mask-image: linear-gradient(to right, black calc(100% - 20px), transparent 100%);
@@ -22,7 +22,7 @@
                             "
                             side="top">
                             <div
-                                class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border cursor-pointer hover:bg-accent"
+                                class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-e border-border cursor-pointer hover:bg-accent"
                                 @click="handleProxyClick">
                                 <span
                                     class="inline-block size-2 rounded-full shrink-0"
@@ -41,7 +41,7 @@
                                     : t('status_bar.steamvr_stopped')
                             "
                             side="top">
-                            <div class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
+                            <div class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-e border-border">
                                 <span
                                     class="inline-block size-2 rounded-full shrink-0"
                                     :class="
@@ -58,7 +58,7 @@
                             :close-delay="50">
                             <HoverCardTrigger as-child>
                                 <div
-                                    class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
+                                    class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-e border-border">
                                     <span
                                         class="inline-block size-2 rounded-full shrink-0"
                                         :class="
@@ -121,7 +121,7 @@
                                     :content="t('status_bar.servers_ok')"
                                     side="top">
                                     <div
-                                        class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border cursor-pointer hover:bg-accent"
+                                        class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-e border-border cursor-pointer hover:bg-accent"
                                         @click="vrcStatusStore.openStatusPage()">
                                         <span class="inline-block size-2 rounded-full shrink-0 bg-status-online" />
                                         <span class="text-foreground text-[11px]">{{ t('status_bar.servers') }}</span>
@@ -129,7 +129,7 @@
                                 </TooltipWrapper>
                                 <div
                                     v-else
-                                    class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border cursor-pointer hover:bg-accent"
+                                    class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-e border-border cursor-pointer hover:bg-accent"
                                     @click="vrcStatusStore.openStatusPage()">
                                     <span
                                         class="inline-block size-2 rounded-full shrink-0"
@@ -158,7 +158,7 @@
                         </HoverCard>
 
                         <TooltipWrapper v-if="visibility.ws" :content="wsTooltip" side="top">
-                            <div class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
+                            <div class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-e border-border">
                                 <span
                                     class="inline-block size-2 rounded-full shrink-0"
                                     :class="wsState.connected ? 'bg-status-online' : 'bg-status-offline-alt'" />
@@ -172,7 +172,7 @@
 
                         <div
                             v-if="visibility.nowPlaying && nowPlaying.url"
-                            class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border min-w-0 max-w-[400px]">
+                            class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-e border-border min-w-0 max-w-[400px]">
                             <i v-if="!isYouTubeNowPlaying" class="ri-play-fill text-[10px] shrink-0" />
                             <i v-if="isYouTubeNowPlaying" class="ri-youtube-fill text-[#FF0000] shrink-0 text-[12px]" />
                             <TooltipWrapper v-else :content="nowPlaying.url" side="top">
@@ -191,7 +191,7 @@
                             </TooltipWrapper>
                             <template v-if="nowPlaying.playing">
                                 <div
-                                    class="shrink-0 h-[4px] rounded-full bg-muted overflow-hidden ml-1"
+                                    class="shrink-0 h-[4px] rounded-full bg-muted overflow-hidden ms-1"
                                     style="width: 40px"
                                     :title="`${nowPlayingElapsedText} / ${nowPlayingLengthText}`">
                                     <div
@@ -206,7 +206,7 @@
                     </div>
 
                     <!-- Right section -->
-                    <div class="flex items-center shrink-0 ml-auto [&>*:last-child]:border-r-0 [&>*:last-child]:pr-0.5">
+                    <div class="flex items-center shrink-0 ms-auto [&>*:last-child]:border-e-0 [&>*:last-child]:pe-0.5">
                         <template v-if="visibility.clocks">
                             <Popover
                                 v-for="(clock, idx) in visibleClocks"
@@ -214,7 +214,7 @@
                                 v-model:open="clockPopoverOpen[idx]">
                                 <PopoverTrigger as-child>
                                     <div
-                                        class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border cursor-pointer hover:bg-accent">
+                                        class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-e border-border cursor-pointer hover:bg-accent">
                                         <span class="text-[10px] text-foreground">{{ formatClock(clock) }}</span>
                                     </div>
                                 </PopoverTrigger>
@@ -251,7 +251,7 @@
                             side="top"
                             :disabled="zoomEditing">
                             <div
-                                class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border cursor-pointer hover:bg-accent"
+                                class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-e border-border cursor-pointer hover:bg-accent"
                                 @click="toggleZoomEdit">
                                 <template v-if="zoomEditing">
                                     <span class="text-[10px] text-foreground">{{ t('status_bar.zoom') }}</span>
@@ -279,7 +279,7 @@
                         </TooltipWrapper>
 
                         <TooltipWrapper v-if="visibility.uptime" :content="t('status_bar.app_uptime')" side="top">
-                            <div class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border">
+                            <div class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-e border-border">
                                 <span class="text-[10px] text-foreground">{{ t('status_bar.app_uptime_short') }}</span>
                                 <span class="text-[10px] text-foreground">{{ appUptimeText }}</span>
                             </div>

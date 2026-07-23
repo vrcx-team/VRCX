@@ -5,7 +5,7 @@
                 v-if="showRemove"
                 variant="ghost"
                 size="icon-sm"
-                class="absolute right-1 top-1 z-20"
+                class="absolute end-1 top-1 z-20"
                 @click="emit('remove')">
                 <X class="size-4" />
             </Button>

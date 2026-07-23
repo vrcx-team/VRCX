@@ -1,5 +1,6 @@
 <script setup>
     import { Sheet, SheetContent } from '@/components/ui/sheet';
+    import { useI18n } from 'vue-i18n';
     import { cn } from '@/lib/utils';
 
     import SheetDescription from '@/components/ui/sheet/SheetDescription.vue';
@@ -7,6 +8,8 @@
     import SheetTitle from '@/components/ui/sheet/SheetTitle.vue';
 
     import { SIDEBAR_WIDTH_MOBILE, useSidebar } from './utils';
+
+    const { t } = useI18n();
 
     defineOptions({
         inheritAttrs: false
@@ -55,7 +58,7 @@
             }">
             <SheetHeader class="sr-only">
                 <SheetTitle>Sidebar</SheetTitle>
-                <SheetDescription>Displays the mobile sidebar.</SheetDescription>
+                <SheetDescription>{{ t('accessibility.mobile_sidebar_description') }}</SheetDescription>
             </SheetHeader>
             <div class="flex h-full w-full flex-col">
                 <slot />

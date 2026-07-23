@@ -18,7 +18,7 @@
                 :on-row-click="handleInviteRequestResponseRowClick" />
 
             <DialogFooter>
-                <Button variant="secondary" class="mr-2" @click="cancelSendInviteRequestResponse">
+                <Button variant="secondary" class="me-2" @click="cancelSendInviteRequestResponse">
                     {{ t('dialog.invite_request_response_message.cancel') }}
                 </Button>
                 <Button @click="refreshInviteMessageTableData('requestResponse')">

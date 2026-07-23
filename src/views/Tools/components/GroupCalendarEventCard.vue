@@ -218,7 +218,7 @@
             }
             return response.data;
         } catch (error) {
-            toast.error(`Failed to download .ics file, ${error.message}`);
+            toast.error(t('view.tools.group_calendar.event_card.download_ics_error', { error: error.message }));
             console.error('Failed to download .ics file:', error);
         }
     }
@@ -331,7 +331,7 @@
         display: inline-flex;
         position: absolute;
         top: -8px;
-        right: -9px;
+        inset-inline-end: -9px;
         z-index: 10;
         font-size: 15px;
     }
@@ -344,7 +344,7 @@
         height: 24px;
         gap: 4px;
         cursor: pointer;
-        margin-left: 6px;
+        margin-inline-start: 6px;
     }
 
     .event-card .event-content {

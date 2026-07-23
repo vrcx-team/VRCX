@@ -15,17 +15,17 @@
                 {{ t('dialog.note_export.description8') }} <br />
             </div>
 
-            <Button size="sm" class="mr-2 mt-2" variant="outline" :disabled="loading" @click="updateNoteExportDialog">
+            <Button size="sm" class="me-2 mt-2" variant="outline" :disabled="loading" @click="updateNoteExportDialog">
                 {{ t('dialog.note_export.refresh') }}
             </Button>
-            <Button size="sm" class="mr-2 mt-2" variant="outline" :disabled="loading" @click="exportNoteExport">
+            <Button size="sm" class="me-2 mt-2" variant="outline" :disabled="loading" @click="exportNoteExport">
                 {{ t('dialog.note_export.export') }}
             </Button>
             <Button class="mt-2" v-if="loading" size="sm" variant="outline" @click="cancelNoteExport">
                 {{ t('dialog.note_export.cancel') }}
             </Button>
             <span class="m-2" v-if="loading">
-                <Spinner class="inline-block ml-2 mr-2" />
+                <Spinner class="inline-block ms-2 me-2" />
                 {{ t('dialog.note_export.progress') }} {{ progress }}/{{ progressTotal }}
             </span>
 

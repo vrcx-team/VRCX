@@ -7,7 +7,7 @@
                     <span class="shrink-0">{{ t('view.charts.instance_activity.header') }}</span>
                     <HoverCard>
                         <HoverCardTrigger as-child>
-                            <Info class="ml-1 text-xs opacity-70" />
+                            <Info class="ms-1 text-xs opacity-70" />
                         </HoverCardTrigger>
                         <HoverCardContent side="bottom" align="start" class="w-75">
                             <div>
@@ -27,7 +27,7 @@
 
                 <div class="flex items-center">
                     <TooltipWrapper :content="t('view.charts.instance_activity.refresh')" side="top">
-                        <Button class="rounded-full mr-1.5" size="icon" variant="ghost" @click="reloadData">
+                        <Button class="rounded-full me-1.5" size="icon" variant="ghost" @click="reloadData">
                             <RefreshCcw />
                         </Button>
                     </TooltipWrapper>
@@ -38,7 +38,7 @@
                                 <TooltipWrapper
                                     :content="t('view.charts.instance_activity.settings.header')"
                                     side="top">
-                                    <Button class="rounded-full mr-1.5" size="icon" variant="ghost">
+                                    <Button class="rounded-full me-1.5" size="icon" variant="ghost">
                                         <Settings />
                                     </Button>
                                 </TooltipWrapper>
@@ -50,7 +50,7 @@
                                     <span class="shrink-0">{{
                                         t('view.charts.instance_activity.settings.bar_width')
                                     }}</span>
-                                    <div class="w-40 ml-5">
+                                    <div class="w-40 ms-5">
                                         <Slider
                                             v-model="barWidthDraftValue"
                                             :max="50"
@@ -93,7 +93,7 @@
                             </div>
                         </PopoverContent>
                     </Popover>
-                    <ButtonGroup class="mr-2">
+                    <ButtonGroup class="me-2">
                         <TooltipWrapper :content="t('view.charts.instance_activity.previous_day')" side="top">
                             <Button
                                 variant="ghost"
@@ -120,7 +120,7 @@
                                     variant="outline"
                                     class="w-50 justify-start text-left font-normal"
                                     :disabled="isLoading">
-                                    <CalendarIcon class="mr-2 h-4 w-4" />
+                                    <CalendarIcon class="me-2 h-4 w-4" />
                                     {{ dayjs(selectedDate).format('YYYY-MM-DD') }}
                                 </Button>
                             </div>

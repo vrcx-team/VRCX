@@ -94,11 +94,11 @@
     <DefineMonthTemplate v-slot="{ date }">
         <div class="**:data-[slot=native-select-icon]:right-1">
             <div class="relative">
-                <div class="absolute inset-0 flex h-full items-center text-sm pl-2 pointer-events-none">
+                <div class="absolute inset-0 flex h-full items-center text-sm ps-2 pointer-events-none">
                     {{ formatter.custom(toDate(date), { month: 'short' }) }}
                 </div>
                 <NativeSelect
-                    class="text-xs h-8 pr-6 pl-2 text-transparent relative"
+                    class="text-xs h-8 pe-6 ps-2 text-transparent relative"
                     @change="
                         (e) => {
                             placeholder = placeholder.set({
@@ -121,11 +121,11 @@
     <DefineYearTemplate v-slot="{ date }">
         <div class="**:data-[slot=native-select-icon]:right-1">
             <div class="relative">
-                <div class="absolute inset-0 flex h-full items-center text-sm pl-2 pointer-events-none">
+                <div class="absolute inset-0 flex h-full items-center text-sm ps-2 pointer-events-none">
                     {{ formatter.custom(toDate(date), { year: 'numeric' }) }}
                 </div>
                 <NativeSelect
-                    class="text-xs h-8 pr-6 pl-2 text-transparent relative"
+                    class="text-xs h-8 pe-6 ps-2 text-transparent relative"
                     @change="
                         (e) => {
                             placeholder = placeholder.set({

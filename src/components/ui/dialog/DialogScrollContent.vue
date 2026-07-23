@@ -88,7 +88,7 @@
                     <DialogDescription />
                 </VisuallyHidden>
 
-                <DialogClose class="absolute top-4 right-4 p-0.5 transition-colors rounded-md hover:bg-secondary">
+                <DialogClose class="absolute top-4 end-4 p-0.5 transition-colors rounded-md hover:bg-secondary">
                     <X class="w-4 h-4" />
                     <span class="sr-only">Close</span>
                 </DialogClose>

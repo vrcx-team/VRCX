@@ -3,7 +3,7 @@
         class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
         @click="showUserDialog(friend.id)">
         <template v-if="friend.ref">
-            <div class="relative inline-block flex-none size-9 mr-2.5" :class="friendStatusClass">
+            <div class="relative inline-block flex-none size-9 me-2.5" :class="friendStatusClass">
                 <Avatar class="size-full rounded-full">
                     <AvatarImage :src="userImage(friend.ref, true)" class="object-cover" />
                     <AvatarFallback>
@@ -35,7 +35,7 @@
                     </div>
                     <template v-else-if="isGroupByInstance">
                         <div class="flex items-center">
-                            <Spinner v-if="isFriendTraveling" class="mr-1" />
+                            <Spinner v-if="isFriendTraveling" class="me-1" />
                             <Timer
                                 class="text-xs"
                                 :epoch="epoch"
@@ -58,7 +58,7 @@
             <Button
                 size="sm"
                 variant="ghost"
-                class="mr-1 w-6 h-6 text-xs"
+                class="me-1 w-6 h-6 text-xs"
                 :ariaLabel="t('common.actions.delete')"
                 @click.stop="confirmDeleteFriend(friend.id)"
                 ><Trash2 class="h-4 w-4" />

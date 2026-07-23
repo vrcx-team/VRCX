@@ -4,7 +4,7 @@
 
 .status-icon::after {
     position: absolute;
-    right: 0.75px;
+    inset-inline-end: 0.75px;
     bottom: 0.75px;
     width: 9px;
     height: 9px;
@@ -114,7 +114,7 @@
 }
 
 .status-icon.mobile::after {
-    right: -2px;
+    inset-inline-end: -2px;
     bottom: -0.5px;
     width: 14px;
     height: 14px;

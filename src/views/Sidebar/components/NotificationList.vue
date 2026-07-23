@@ -4,7 +4,7 @@
             <div v-if="allRows.length" class="relative w-full px-1.5 py-2" :style="virtualContainerStyle">
                 <template v-for="item in virtualItems" :key="item.virtualItem.key">
                     <div
-                        class="absolute left-0 top-0 w-full px-0.5 box-border"
+                        class="absolute start-0 top-0 w-full px-0.5 box-border"
                         :data-index="item.virtualItem.index"
                         :ref="virtualizer.measureElement"
                         :style="{ transform: `translateY(${item.virtualItem.start}px)` }">

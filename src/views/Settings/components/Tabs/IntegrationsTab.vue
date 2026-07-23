@@ -115,7 +115,7 @@
 
             <SettingsItem :label="t('view.settings.advanced.advanced.translation_api.translation_api_key')">
                 <Button size="sm" variant="outline" @click="showTranslationApiDialog">
-                    <Languages class="h-4 w-4 mr-1.5" />
+                    <Languages class="h-4 w-4 me-1.5" />
                     {{ t('view.settings.advanced.advanced.translation_api.translation_api_key') }}
                 </Button>
             </SettingsItem>

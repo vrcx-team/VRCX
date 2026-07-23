@@ -15,7 +15,7 @@
                     show-count />
             </div>
             <DialogFooter>
-                <Button variant="secondary" class="mr-2" @click="closeDialog">{{
+                <Button variant="secondary" class="me-2" @click="closeDialog">{{
                     t('dialog.edit_invite_message.cancel')
                 }}</Button>
                 <Button @click="saveEditInviteMessage">{{ t('dialog.edit_invite_message.save') }}</Button>
@@ -74,7 +74,7 @@
                         toast.error(errorMessage);
                         throw new Error(errorMessage);
                     } else {
-                        toast.success('Invite message updated');
+                        toast.success(t('toast.invite_message_updated'));
                         emit('updateInviteMessages', messageType);
                     }
                     return args;

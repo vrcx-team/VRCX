@@ -16,7 +16,7 @@
 </script>
 
 <template>
-    <TagsInputItemDelete v-bind="forwardedProps" :class="cn('flex rounded bg-transparent mr-1', props.class)">
+    <TagsInputItemDelete v-bind="forwardedProps" :class="cn('flex rounded bg-transparent me-1', props.class)">
         <slot>
             <X class="w-4 h-4" />
         </slot>

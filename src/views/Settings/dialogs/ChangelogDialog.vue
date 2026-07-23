@@ -17,7 +17,7 @@
             <DialogFooter>
                 <Button
                     variant="ghost"
-                    class="mr-2"
+                    class="me-2"
                     @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')">
                     {{ t('dialog.change_log.github') }}
                 </Button>
@@ -89,7 +89,7 @@
 
     .changelog-markdown ul,
     .changelog-markdown ol {
-        padding-left: 1.5rem;
+        padding-inline-start: 1.5rem;
         margin: 0.5rem 0 1rem;
         list-style-position: outside;
     }

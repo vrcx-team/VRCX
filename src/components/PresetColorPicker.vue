@@ -67,7 +67,7 @@
                     {{ displayText }}
                 </span>
 
-                <span v-if="clearable && modelValue" class="ml-1 opacity-60">✕</span>
+                <span v-if="clearable && modelValue" class="ms-1 opacity-60">✕</span>
             </Button>
         </PopoverTrigger>
 

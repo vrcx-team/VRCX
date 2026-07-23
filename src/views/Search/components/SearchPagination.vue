@@ -3,11 +3,11 @@
         <ButtonGroup class="shadow-lg rounded-lg">
             <Button variant="outline" size="sm" :disabled="prevDisabled" @click="$emit('prev')">
                 <ArrowLeft />
-                <Kbd class="ml-1">{{ isMac ? '⌥' : 'Alt' }}</Kbd>
+                <Kbd class="ms-1">{{ isMac ? '⌥' : 'Alt' }}</Kbd>
                 <Kbd>←</Kbd>
             </Button>
             <Button variant="outline" size="sm" :disabled="nextDisabled" @click="$emit('next')">
-                <Kbd class="ml-1">{{ isMac ? '⌥' : 'Alt' }}</Kbd>
+                <Kbd class="ms-1">{{ isMac ? '⌥' : 'Alt' }}</Kbd>
                 <Kbd>→</Kbd>
                 <ArrowRight />
             </Button>

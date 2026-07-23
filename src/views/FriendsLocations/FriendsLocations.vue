@@ -18,7 +18,7 @@
                         <Popover>
                             <PopoverTrigger asChild>
                                 <Button
-                                    class="rounded-full mr-2"
+                                    class="rounded-full me-2"
                                     size="icon"
                                     variant="ghost"
                                     :ariaLabel="t('view.charts.instance_activity.settings.header')">
@@ -961,7 +961,7 @@
     }
 
     .friend-view__loading-text {
-        padding-right: 12px;
+        padding-inline-end: 12px;
     }
 
     .friend-view__actions {
@@ -984,8 +984,7 @@
         width: 100%;
         box-sizing: border-box;
         position: absolute;
-        left: 0;
-        top: 0;
+        inset-inline-start: 0;
         padding-bottom: calc(var(--friend-card-gap, 14px) - 4px);
     }
 
@@ -1019,7 +1018,7 @@
     .friend-view__settings-label {
         font-size: 13px;
         font-weight: 500;
-        margin-right: 8px;
+        margin-inline-end: 8px;
     }
 
     .friend-view__settings-row {
@@ -1040,12 +1039,12 @@
         font-size: 12px;
         font-weight: 600;
         min-width: 42px;
-        text-align: right;
+        text-align: end;
     }
 
     .friend-view__slider {
         width: 160px;
-        margin-right: 12px;
+        margin-inline-end: 12px;
     }
 
     .friend-view__search {

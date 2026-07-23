@@ -205,7 +205,7 @@
                                         {{ t('view.settings.general.automation.auto_invite_request_accept_favs') }}
                                     </label>
                                 </div>
-                                <p class="text-xs text-muted-foreground ml-6">
+                                <p class="text-xs text-muted-foreground ms-6">
                                     {{ t('view.settings.general.automation.auto_invite_request_accept_favs_hint') }}
                                 </p>
                             </div>

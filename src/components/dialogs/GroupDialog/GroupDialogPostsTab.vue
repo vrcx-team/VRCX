@@ -1,6 +1,6 @@
 <template>
     <template v-if="groupDialog.visible">
-        <span style="margin-right: 8px; vertical-align: top"
+        <span style="margin-inline-end: 8px; vertical-align: top"
             >{{ t('dialog.group.posts.posts_count') }} {{ groupDialog.posts.length }}</span
         >
         <InputGroupField
@@ -17,7 +17,7 @@
                 class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
                 <div class="flex-1 overflow-hidden">
                     <span style="display: block" v-text="post.title" />
-                    <div v-if="post.imageUrl" style="display: inline-block; margin-right: 6px">
+                    <div v-if="post.imageUrl" style="display: inline-block; margin-inline-end: 6px">
                         <div
                             class="cursor-pointer"
                             style="flex: none; width: 60px; height: 60px"
@@ -43,7 +43,7 @@
                         >{{ post.text || '-' }}</pre
                     >
                     <br />
-                    <div v-if="post.authorId" class="text-xs" style="float: right; margin-left: 6px">
+                    <div v-if="post.authorId" class="text-xs" style="float: inline-end; margin-inline-start: 6px">
                         <TooltipWrapper v-if="post.roleIds.length" side="top">
                             <template #content>
                                 <span>{{ t('dialog.group.posts.visibility') }}</span>
@@ -57,10 +57,10 @@
                                     >
                                 </template>
                             </template>
-                            <Eye style="margin-right: 6px" />
+                            <Eye style="margin-inline-end: 6px" />
                         </TooltipWrapper>
-                        <DisplayName :userid="post.authorId" style="margin-right: 6px" />
-                        <span v-if="post.editorId" style="margin-right: 6px"
+                        <DisplayName :userid="post.authorId" style="margin-inline-end: 6px" />
+                        <span v-if="post.editorId" style="margin-inline-end: 6px"
                             >({{ t('dialog.group.posts.edited_by') }} <DisplayName :userid="post.editorId" />)</span
                         >
                         <TooltipWrapper side="bottom">

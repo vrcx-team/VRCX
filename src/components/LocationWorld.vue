@@ -2,7 +2,7 @@
     <div class="flex items-center gap-2">
         <span v-if="region" :class="cn('flags inline-block shrink-0', region)"></span>
         <span @click="showLaunchDialog" class="cursor-pointer">
-            <Unlock v-if="isUnlocked" :class="['inline-block', 'mr-1.25']" />
+            <Unlock v-if="isUnlocked" :class="['inline-block', 'me-1.25']" />
             <span> {{ accessTypeName }} #{{ instanceName }}</span>
         </span>
         <span v-if="groupName" @click="openLocationGroupDialog" class="cursor-pointer">({{ groupName }})</span>

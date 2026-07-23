@@ -16,7 +16,7 @@
                                     class="inline-flex size-6 items-center justify-center text-lg relative"
                                     ><span
                                         v-if="isNavItemNotified(item)"
-                                        class="notify-dot bg-red-500 -right-1!"
+                                        class="notify-dot bg-red-500 -end-1!"
                                         aria-hidden="true"></span
                                 ></i>
                                 <span v-show="!isCollapsed">{{
@@ -67,8 +67,8 @@
 
                                     <ChevronRight
                                         v-show="!isCollapsed"
-                                        class="ml-auto transition-transform"
-                                        :class="open ? 'rotate-90' : ''" />
+                                        class="ms-auto transition-transform rtl:scale-x-[-1]"
+                                        :class="open ? 'rotate-90 rtl:-rotate-90' : ''" />
                                 </SidebarMenuButton>
                             </CollapsibleTrigger>
                             <CollapsibleContent>
@@ -85,7 +85,7 @@
                                                         class="inline-flex size-5 items-center justify-center text-base relative"
                                                         ><span
                                                             v-if="isEntryNotified(entry)"
-                                                            class="notify-dot bg-red-500 -right-0.5!"
+                                                            class="notify-dot bg-red-500 -end-0.5!"
                                                             aria-hidden="true"></span
                                                     ></i>
                                                     <span v-if="entry.titleIsCustom">{{ entry.label }}</span>
@@ -223,7 +223,7 @@
     .notify-dot {
         position: absolute;
         top: 4px;
-        right: 0;
+        inset-inline-end: 0;
         width: 6px;
         height: 6px;
         border-radius: 50%;

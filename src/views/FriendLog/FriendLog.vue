@@ -37,7 +37,7 @@
                         </SelectContent>
                     </Select>
                     <InputGroupField
-                        class="ml-2"
+                        class="ms-2"
                         v-model="friendLogTable.filters[1].value"
                         :placeholder="t('view.friend_log.search_placeholder')"
                         style="flex: 0.4" />
@@ -159,7 +159,7 @@
         modalStore
             .confirm({
                 description: t('confirm.delete_log'),
-                title: 'Confirm'
+                title: t('confirm.title')
             })
             .then(({ ok }) => ok && deleteFriendLog(row))
             .catch(() => {});

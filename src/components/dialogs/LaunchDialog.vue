@@ -73,7 +73,7 @@
             </FieldGroup>
             <DialogFooter>
                 <Button
-                    class="mr-1.5"
+                    class="me-1.5"
                     variant="outline"
                     :disabled="!checkCanInvite(launchDialog.location)"
                     @click="showInviteDialog(launchDialog.location)">
@@ -89,7 +89,7 @@
                 <Button
                     v-else
                     variant="outline"
-                    class="mr-1.25"
+                    class="me-1.25"
                     :disabled="!launchDialog.secureOrShortName"
                     @click="selfInvite(launchDialog.location, launchDialog.shortName)">
                     {{ t('dialog.launch.self_invite') }}
@@ -416,9 +416,9 @@
     async function copyInstanceMessage(input) {
         try {
             await navigator.clipboard.writeText(input);
-            toast.success('Instance copied to clipboard');
+            toast.success(t('toast.instance_copied_to_clipboard'));
         } catch (error) {
-            toast.error('Instance copied failed');
+            toast.error(t('toast.instance_copy_failed'));
             console.error(error.message);
         }
     }

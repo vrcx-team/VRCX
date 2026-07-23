@@ -177,12 +177,12 @@
     function deleteGameLogInstancePrompt(row) {
         const description =
             props.variant === 'user'
-                ? 'Continue? Delete User From GameLog Instance'
-                : 'Continue? Delete GameLog Instance';
+                ? t('confirm.delete_user_gamelog_instance')
+                : t('confirm.delete_gamelog_instance');
         modalStore
             .confirm({
                 description,
-                title: 'Confirm'
+                title: t('confirm.title')
             })
             .then(({ ok }) => {
                 if (!ok) return;

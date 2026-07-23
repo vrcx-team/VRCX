@@ -189,7 +189,7 @@
             })
             .then(() => {
                 isVisible.value = false;
-                toast.success('Favorite added!');
+                toast.success(t('toast.favorite_added'));
             })
             .finally(() => {
                 loading.value = false;

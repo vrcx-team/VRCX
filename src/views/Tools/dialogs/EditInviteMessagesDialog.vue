@@ -172,7 +172,7 @@
             cooldownEnd.setHours(cooldownEnd.getHours() + 1);
             const now = new Date();
             if (now < cooldownEnd) {
-                toast.warning('This invite message is on cooldown and cannot be edited yet.');
+                toast.warning(t('toast.invite_message_on_cooldown'));
                 return;
             }
         }

@@ -11,6 +11,7 @@
     defineOptions({ name: 'PreviousInstancesInfoChart' });
 
     import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { storeToRefs } from 'pinia';
 
@@ -24,6 +25,7 @@
     import InstanceActivityTooltip from '@/views/Charts/components/InstanceActivityTooltip.jsx';
     import { renderToHtml } from '@/lib/utils';
 
+    const { t } = useI18n();
     const { isDarkMode, dtHour12 } = storeToRefs(useAppearanceSettingsStore());
     const { currentUser } = storeToRefs(useUserStore());
     const { gameLogIsFriend, gameLogIsFavorite } = useGameLogStore();
@@ -218,7 +220,7 @@
         if (data.length === 0) {
             return {
                 title: {
-                    text: 'No data',
+                    text: t('view.charts.instance_activity.no_data'),
                     left: 'center',
                     top: 'middle'
                 }
@@ -228,7 +230,7 @@
         if (!startTimeStamp.value || !endTimeStamp.value) {
             return {
                 title: {
-                    text: 'Invalid timestamp data',
+                    text: t('view.charts.instance_activity.invalid_timestamp'),
                     left: 'center',
                     top: 'middle'
                 }

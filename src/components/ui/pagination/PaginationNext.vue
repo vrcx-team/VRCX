@@ -22,13 +22,13 @@
 <template>
     <PaginationNext
         data-slot="pagination-next"
-        :class="cn(buttonVariants({ variant: 'ghost', size }), 'text-[13px] gap-1 px-2.5 sm:pr-2.5', props.class)"
+        :class="cn(buttonVariants({ variant: 'ghost', size }), 'text-[13px] gap-1 px-2.5 sm:pe-2.5', props.class)"
         v-bind="forwarded">
         <slot>
             <span class="hidden sm:block">
                 {{ t('table.pagination.next') }}
             </span>
-            <ChevronRightIcon />
+            <ChevronRightIcon class="rtl:scale-x-[-1]" />
         </slot>
     </PaginationNext>
 </template>

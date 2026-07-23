@@ -6,11 +6,11 @@
             </DialogHeader>
             <div class="mt-2">
                 <div class="flex items-center justify-between text-xs">
-                    <span class="name mr-6">{{ t('dialog.registry_backup.auto_backup') }}</span>
+                    <span class="name me-6">{{ t('dialog.registry_backup.auto_backup') }}</span>
                     <Switch :model-value="vrcRegistryAutoBackup" @update:modelValue="setVrcRegistryAutoBackup" />
                 </div>
                 <div class="mt-1.5 flex items-center justify-between text-xs">
-                    <span class="name mr-6">{{ t('dialog.registry_backup.ask_to_restore') }}</span>
+                    <span class="name me-6">{{ t('dialog.registry_backup.ask_to_restore') }}</span>
                     <Switch :model-value="vrcRegistryAskRestore" @update:modelValue="setVrcRegistryAskRestore" />
                 </div>
                 <DataTableLayout

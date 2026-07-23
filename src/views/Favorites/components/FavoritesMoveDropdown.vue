@@ -1,8 +1,8 @@
 <template>
-    <DropdownMenu class="ml-1.5" v-model:open="moveDropdownOpen">
+    <DropdownMenu class="ms-1.5" v-model:open="moveDropdownOpen">
         <DropdownMenuTrigger as-child>
             <Button class="rounded-full w-6 h-6 text-xs" size="icon-sm" variant="ghost"
-                ><ArrowLeft class="h-4 w-4"
+                ><ArrowLeft class="h-4 w-4 rtl:scale-x-[-1]"
             /></Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent class="p-2">
@@ -119,7 +119,7 @@
                 tags: groupAPI.name
             })
             .then((args) => {
-                toast.success('Avatar added to favorites');
+                toast.success(t('toast.avatar_added_to_favorites'));
                 return args;
             });
     }
@@ -136,7 +136,7 @@
                 tags: groupAPI.name
             })
             .then((args) => {
-                toast.success('World added to favorites');
+                toast.success(t('toast.world_added_to_favorites'));
                 return args;
             });
     }

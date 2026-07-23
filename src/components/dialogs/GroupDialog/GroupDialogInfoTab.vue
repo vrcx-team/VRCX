@@ -23,7 +23,7 @@
             <div style="margin: 6px 0" class="flex items-center">
                 <Location :location="room.tag" class="text-sm" />
                 <InstanceActionBar
-                    class="ml-1"
+                    class="ms-1"
                     :location="room.tag"
                     :currentlocation="lastLocation.location"
                     :instance="room.ref"
@@ -40,7 +40,7 @@
                     :key="user.id"
                     class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                     @click="showUserDialog(user.id)">
-                    <div class="relative inline-block flex-none size-9 mr-2.5" :class="userStatusClass(user)">
+                    <div class="relative inline-block flex-none size-9 me-2.5" :class="userStatusClass(user)">
                         <Avatar class="size-9">
                             <AvatarImage :src="userImage(user)" class="object-cover" />
                             <AvatarFallback>
@@ -54,7 +54,7 @@
                             :style="{ color: user.$userColour }"
                             v-text="user.displayName" />
                         <span v-if="user.location === 'traveling'" class="block truncate text-xs">
-                            <Spinner class="inline-block mr-1" />
+                            <Spinner class="inline-block me-1" />
                             <Timer :epoch="user.$travelingToTime" />
                         </span>
                         <span v-else class="block truncate text-xs">
@@ -68,7 +68,7 @@
             <div class="flex-1 overflow-hidden">
                 <span class="block truncate font-medium leading-[18px]">{{ t('dialog.group.info.announcement') }}</span>
                 <span style="display: block" v-text="groupDialog.announcement.title" />
-                <div v-if="groupDialog.announcement.imageUrl" style="display: inline-block; margin-right: 6px">
+                <div v-if="groupDialog.announcement.imageUrl" style="display: inline-block; margin-inline-end: 6px">
                     <img
                         v-if="!announcementPhotoError"
                         :src="groupDialog.announcement.imageUrl"
@@ -96,7 +96,7 @@
                     >{{ groupDialog.announcement.text || '-' }}</pre
                 >
                 <br />
-                <div v-if="groupDialog.announcement.id" class="text-xs" style="float: right; margin-left: 6px">
+                <div v-if="groupDialog.announcement.id" class="text-xs" style="float: inline-end; margin-inline-start: 6px">
                     <TooltipWrapper v-if="groupDialog.announcement.roleIds.length" side="top">
                         <template #content>
                             <span>{{ t('dialog.group.posts.visibility') }}</span>
@@ -114,10 +114,10 @@
                                 </span>
                             </template>
                         </template>
-                        <Eye style="margin-right: 6px" />
+                        <Eye style="margin-inline-end: 6px" />
                     </TooltipWrapper>
-                    <DisplayName :userid="groupDialog.announcement.authorId" style="margin-right: 6px" />
-                    <span v-if="groupDialog.announcement.editorId" style="margin-right: 6px">
+                    <DisplayName :userid="groupDialog.announcement.authorId" style="margin-inline-end: 6px" />
+                    <span v-if="groupDialog.announcement.editorId" style="margin-inline-end: 6px">
                         ({{ t('dialog.group.posts.edited_by') }}
                         <DisplayName :userid="groupDialog.announcement.editorId" />)
                     </span>
@@ -143,7 +143,7 @@
                                 size="sm"
                                 variant="ghost"
                                 :ariaLabel="t('dialog.group.posts.edit_tooltip')"
-                                style="margin-left: 6px; padding: 0"
+                                style="margin-inline-start: 6px; padding: 0"
                                 @click="showGroupPostEditDialog(groupDialog.id, groupDialog.announcement)"></Button>
                         </TooltipWrapper>
                         <TooltipWrapper side="top" :content="t('dialog.group.posts.delete_tooltip')">
@@ -151,7 +151,7 @@
                                 size="sm"
                                 variant="ghost"
                                 :ariaLabel="t('dialog.group.posts.delete_tooltip')"
-                                style="margin-left: 6px; padding: 0"
+                                style="margin-inline-start: 6px; padding: 0"
                                 @click="confirmDeleteGroupPost(groupDialog.announcement)"></Button>
                         </TooltipWrapper>
                     </template>
@@ -161,7 +161,7 @@
         <div class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
             <div class="flex-1 overflow-hidden">
                 <span class="block truncate font-medium leading-[18px]">{{ t('dialog.group.info.rules') }}</span>
-                <pre class="text-xs font-[inherit] whitespace-pre-wrap mr-2 my-0 ml-0">{{
+                <pre class="text-xs font-[inherit] whitespace-pre-wrap me-2 my-0 ms-0">{{
                     groupDialog.ref.rules || '-'
                 }}</pre>
             </div>
@@ -230,7 +230,7 @@
                         {{ t('dialog.group.info.last_visited') }}
                     </span>
                     <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
-                        <MoreHorizontal style="margin-right: 16px" />
+                        <MoreHorizontal style="margin-inline-end: 16px" />
                     </TooltipWrapper>
                 </div>
                 <span class="block truncate text-xs">{{ formatDateFilter(groupDialog.lastVisit, 'long') }}</span>
@@ -254,7 +254,7 @@
                                     width: 16px;
                                     height: 16px;
                                     vertical-align: middle;
-                                    margin-right: 6px;
+                                    margin-inline-end: 6px;
                                     cursor: pointer;
                                 "
                                 @click.stop="openExternalLink(link)"
@@ -273,7 +273,7 @@
                         >{{ groupDialog.ref.$url }}
                         <TooltipWrapper side="top" :content="t('dialog.group.info.url_tooltip')">
                             <Button
-                                class="rounded-full ml-1 text-xs"
+                                class="rounded-full ms-1 text-xs"
                                 size="icon-sm"
                                 variant="ghost"
                                 :ariaLabel="t('dialog.group.info.url_tooltip')"
@@ -290,7 +290,7 @@
                         >{{ groupDialog.id }}
                         <TooltipWrapper side="top" :content="t('dialog.group.info.id_tooltip')">
                             <Button
-                                class="rounded-full ml-1 text-xs"
+                                class="rounded-full ms-1 text-xs"
                                 size="icon-sm"
                                 variant="ghost"
                                 :ariaLabel="t('dialog.group.info.id_tooltip')"

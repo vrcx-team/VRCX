@@ -4,6 +4,23 @@ import { getLocalizedStrings } from '../localization';
 
 const FALLBACK_LOCALE = 'en';
 
+// Arabic pluralization rules
+// Arabic has 6 plural forms: zero, one, two, few, many, other
+function arPluralizationRule(choice, _choicesLength) {
+    if (choice === 0) return 0; // zero
+    if (choice === 1) return 1; // one
+    if (choice === 2) return 2; // two
+    const absoluteChoice = Math.abs(choice);
+    const mod100 = absoluteChoice % 100;
+    if (mod100 >= 3 && mod100 <= 10) return 3; // few
+    if (mod100 >= 11 && mod100 <= 99) return 4; // many
+    return 5; // other
+}
+
+const pluralRules = {
+    ar: arPluralizationRule
+};
+
 const i18n = createI18n({
     locale: FALLBACK_LOCALE,
     fallbackLocale: FALLBACK_LOCALE,
@@ -11,7 +28,8 @@ const i18n = createI18n({
     globalInjection: false,
     missingWarn: false,
     warnHtmlMessage: false,
-    fallbackWarn: false
+    fallbackWarn: false,
+    pluralRules
 });
 
 async function loadLocalizedStrings(code) {

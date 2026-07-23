@@ -1,6 +1,6 @@
 <template>
     <div class="flex items-center justify-between gap-3 mb-3">
-        <div class="flex flex-col gap-0.5 text-base font-semibold pl-0.5 [&_small]:text-xs [&_small]:font-normal">
+        <div class="flex flex-col gap-0.5 text-base font-semibold ps-0.5 [&_small]:text-xs [&_small]:font-normal">
             <slot name="title" />
         </div>
         <div class="flex items-center gap-2 text-[13px]">

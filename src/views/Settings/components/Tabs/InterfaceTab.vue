@@ -21,7 +21,7 @@
                     <DropdownMenuTrigger as-child>
                         <Button variant="outline" size="sm" class="min-w-[180px] justify-between font-normal">
                             <span class="truncate">{{ fontDropdownDisplayText }}</span>
-                            <ChevronDown class="ml-2 size-4 shrink-0 opacity-50" />
+                            <ChevronDown class="ms-2 size-4 shrink-0 opacity-50" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -239,7 +239,7 @@
                                             <Button
                                                 size="icon-sm"
                                                 variant="ghost"
-                                                class="order-last ml-auto self-start">
+                                                class="order-last ms-auto self-start">
                                                 <ChevronDown class="size-3.5" />
                                             </Button>
                                         </PopoverTrigger>
@@ -261,7 +261,7 @@
                                             <span>{{ size }}</span>
 
                                             <ListboxItemIndicator
-                                                class="ml-auto inline-flex items-center justify-center">
+                                                class="ms-auto inline-flex items-center justify-center">
                                                 <CheckIcon />
                                             </ListboxItemIndicator>
                                         </ListboxItem>

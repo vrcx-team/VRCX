@@ -18,7 +18,7 @@
                     :maxHeight="230">
                     <template #item="{ item, selected }">
                         <span v-text="item.label"></span>
-                        <CheckIcon :class="['ml-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
+                        <CheckIcon :class="['ms-auto size-4', selected ? 'opacity-100' : 'opacity-0']" />
                     </template>
                 </VirtualCombobox>
             </div>
@@ -53,10 +53,10 @@
             </div>
 
             <DialogFooter>
-                <Button size="sm" variant="outline" class="mr-2" @click="showGalleryPage">{{
+                <Button size="sm" variant="outline" class="me-2" @click="showGalleryPage">{{
                     t('dialog.boop_dialog.emoji_manager')
                 }}</Button>
-                <Button size="sm" variant="secondary" class="mr-2" @click="closeDialog">{{
+                <Button size="sm" variant="secondary" class="me-2" @click="closeDialog">{{
                     t('dialog.boop_dialog.cancel')
                 }}</Button>
                 <Button size="sm" :disabled="!sendBoopDialog.userId" @click="sendBoop">{{

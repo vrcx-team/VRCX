@@ -2,7 +2,7 @@
     <Dialog v-model:open="open">
         <DialogTrigger as-child>
             <TooltipWrapper side="top" :content="t('view.login.settings')">
-                <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost"><Settings /></Button>
+                <Button class="rounded-full me-2 text-xs" size="icon-sm" variant="ghost"><Settings /></Button>
             </TooltipWrapper>
         </DialogTrigger>
         <DialogContent class="max-w-md">

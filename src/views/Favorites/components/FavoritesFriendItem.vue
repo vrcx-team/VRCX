@@ -214,7 +214,7 @@
 
     function friendRequestInvite() {
         notificationRequest.sendRequestInvite({ platform: 'standalonewindows' }, props.favorite.id).then(() => {
-            toast.success('Request invite sent');
+            toast.success(t('toast.request_invite_sent'));
         });
     }
 

@@ -8,11 +8,11 @@
                 :model-value="friendExportFavoriteGroupSelection"
                 @update:modelValue="handleFriendExportGroupSelect">
                 <SelectTrigger size="sm">
-                    <SelectValue placeholder="All Favorites" />
+                    <SelectValue :placeholder="t('dialog.friend_export.all_favorites')" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        <SelectItem :value="FRIEND_EXPORT_ALL_VALUE">None</SelectItem>
+                        <SelectItem :value="FRIEND_EXPORT_ALL_VALUE">{{ t('dialog.friend_export.none') }}</SelectItem>
                         <SelectItem
                             v-for="groupAPI in favoriteFriendGroups"
                             :key="groupAPI.name"
@@ -28,11 +28,11 @@
                 :model-value="friendExportLocalFavoriteGroupSelection"
                 @update:modelValue="handleFriendExportLocalGroupSelect">
                 <SelectTrigger size="sm">
-                    <SelectValue placeholder="Select Group" />
+                    <SelectValue :placeholder="t('dialog.friend_export.select_group')" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        <SelectItem :value="FRIEND_EXPORT_NONE_VALUE">None</SelectItem>
+                        <SelectItem :value="FRIEND_EXPORT_NONE_VALUE">{{ t('dialog.friend_export.none') }}</SelectItem>
                         <SelectItem v-for="group in localFriendFavoriteGroups" :key="group" :value="group">
                             {{ group }} ({{ localFriendFavorites[group].length }})
                         </SelectItem>
@@ -158,11 +158,11 @@
         navigator.clipboard
             .writeText(friendExportContent.value)
             .then(() => {
-                toast.success('Copied successfully!', { duration: 2000 });
+                toast.success(t('dialog.friend_export.copied_successfully'), { duration: 2000 });
             })
             .catch((err) => {
                 console.error('Copy failed:', err);
-                toast.error('Copy failed!');
+                toast.error(t('dialog.friend_export.copy_failed'));
             });
     }
 

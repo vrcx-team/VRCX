@@ -334,7 +334,7 @@
                 disabledPropAbilities
             })
             .then((args) => {
-                toast.success('Tags updated');
+                toast.success(t('toast.tags_updated'));
                 emit('update:isSetWorldTagsDialogVisible', false);
                 if (props.isWorldDialogVisible) {
                     showWorldDialog(args.json.id);

@@ -19,11 +19,11 @@
                     :model-value="worldExportFavoriteGroupSelection"
                     @update:modelValue="handleWorldExportGroupSelect">
                     <SelectTrigger size="sm">
-                        <SelectValue placeholder="All Favorites" />
+                        <SelectValue :placeholder="t('dialog.world_export.all_favorites')" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem :value="WORLD_EXPORT_ALL_VALUE">None</SelectItem>
+                            <SelectItem :value="WORLD_EXPORT_ALL_VALUE">{{ t('dialog.world_export.none') }}</SelectItem>
                             <SelectItem
                                 v-for="groupAPI in favoriteWorldGroups"
                                 :key="groupAPI.name"
@@ -35,15 +35,15 @@
                 </Select>
 
                 <Select
-                    class="ml-2"
+                    class="ms-2"
                     :model-value="worldExportLocalFavoriteGroupSelection"
                     @update:modelValue="handleWorldExportLocalGroupSelect">
                     <SelectTrigger size="sm">
-                        <SelectValue placeholder="Select Group" />
+                        <SelectValue :placeholder="t('dialog.world_export.select_group')" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem :value="WORLD_EXPORT_NONE_VALUE">None</SelectItem>
+                            <SelectItem :value="WORLD_EXPORT_NONE_VALUE">{{ t('dialog.world_export.none') }}</SelectItem>
                             <SelectItem v-for="group in localWorldFavoriteGroups" :key="group" :value="group">
                                 {{ group }} ({{ localWorldFavorites[group].length }})
                             </SelectItem>
@@ -108,13 +108,13 @@
     const worldExportFavoriteGroupSelection = ref(WORLD_EXPORT_ALL_VALUE);
     const worldExportLocalFavoriteGroupSelection = ref(WORLD_EXPORT_NONE_VALUE);
     // Storage of selected filtering options for model and world export
-    const exportSelectedOptions = ref(['ID', 'Name']);
+    const exportSelectedOptions = ref([t('dialog.world_export.id'), t('dialog.world_export.name')]);
     const exportSelectOptions = ref([
-        { label: 'ID', value: 'id' },
-        { label: 'Name', value: 'name' },
-        { label: 'Author ID', value: 'authorId' },
-        { label: 'Author Name', value: 'authorName' },
-        { label: 'Thumbnail', value: 'thumbnailImageUrl' }
+        { label: t('dialog.world_export.id'), value: 'id' },
+        { label: t('dialog.world_export.name'), value: 'name' },
+        { label: t('dialog.world_export.author_id'), value: 'authorId' },
+        { label: t('dialog.world_export.author_name'), value: 'authorName' },
+        { label: t('dialog.world_export.thumbnail'), value: 'thumbnailImageUrl' }
     ]);
 
     /**
@@ -200,11 +200,11 @@
         navigator.clipboard
             .writeText(worldExportContent.value)
             .then(() => {
-                toast.success('Copied successfully!', { duration: 2000 });
+                toast.success(t('dialog.world_export.copied_successfully'), { duration: 2000 });
             })
             .catch((err) => {
                 console.error('Copy failed:', err);
-                toast.error('Copy failed!');
+                toast.error(t('dialog.world_export.copy_failed'));
             });
     }
 

@@ -195,7 +195,7 @@ html {
 }
 
 .aside-collapsed .x-container {
-    margin-right: 8px;
+    margin-inline-end: 8px;
 }
 
 html.dark .x-container {
@@ -215,8 +215,8 @@ html.dark .x-container {
 body {
     @apply bg-background text-foreground;
     font-family:
-        var(--font-western), var(--font-symbol), var(--font-primary-cjk),
-        var(--font-fallback-cjk);
+        var(--font-western), var(--font-symbol), var(--font-primary-ar),
+        var(--font-primary-cjk), var(--font-fallback-cjk);
     margin: 0;
 }
 
@@ -291,4 +291,18 @@ body {
     transition:
         background-color 0.1s ease,
         color 0.1s ease;
+}
+
+/* RTL is inherited from <html dir="rtl">. Component geometry and keyboard
+ * behavior are handled by logical utilities and Reka UI's ConfigProvider. */
+[dir='rtl'] code,
+[dir='rtl'] pre,
+[dir='rtl'] kbd,
+[dir='rtl'] [dir='ltr'] {
+    direction: ltr;
+    text-align: left;
+}
+
+[dir='rtl'] .noty_layout {
+    direction: rtl;
 }

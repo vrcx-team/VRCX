@@ -46,7 +46,7 @@
             </TagsInput>
 
             <DialogFooter>
-                <Button variant="secondary" class="mr-2" @click="dialogOpen = false">
+                <Button variant="secondary" class="me-2" @click="dialogOpen = false">
                     {{ t('prompt.rename_avatar.cancel') }}
                 </Button>
                 <Button @click="save">

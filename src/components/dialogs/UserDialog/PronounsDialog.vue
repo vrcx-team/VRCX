@@ -55,7 +55,7 @@
             })
             .then((args) => {
                 D.visible = false;
-                toast.success('Pronouns updated');
+                toast.success(t('toast.pronouns_updated'));
                 return args;
             });
     }

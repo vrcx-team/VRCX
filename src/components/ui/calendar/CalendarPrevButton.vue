@@ -29,7 +29,7 @@
         "
         v-bind="forwardedProps">
         <slot>
-            <ChevronLeft class="size-4" />
+            <ChevronLeft class="size-4 rtl:scale-x-[-1]" />
         </slot>
     </CalendarPrev>
 </template>

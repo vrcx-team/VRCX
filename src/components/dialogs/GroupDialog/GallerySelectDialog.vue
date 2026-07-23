@@ -7,7 +7,7 @@
 
             <div>
                 <span>{{ t('dialog.gallery_select.gallery') }}</span>
-                <span class="ml-1.5 text-muted-foreground text-xs">{{ galleryTable.length }}/64</span>
+                <span class="ms-1.5 text-muted-foreground text-xs">{{ galleryTable.length }}/64</span>
                 <br />
                 <input
                     id="GalleryUploadButton"

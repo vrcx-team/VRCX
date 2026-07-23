@@ -31,7 +31,7 @@
                 </div>
 
                 <div v-else class="grid gap-4 md:grid-cols-[minmax(0,18rem)_minmax(0,1fr)]">
-                    <div class="h-[28rem] space-y-3 overflow-y-auto pr-1">
+                    <div class="h-[28rem] space-y-3 overflow-y-auto pe-1">
                         <Card
                             v-for="entry in filteredEntries"
                             :key="entry.id"

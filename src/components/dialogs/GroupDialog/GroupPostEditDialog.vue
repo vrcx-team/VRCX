@@ -83,7 +83,7 @@
                         <FieldLabel>{{ t('dialog.group_post_edit.image') }}</FieldLabel>
                         <FieldContent>
                             <template v-if="gallerySelectDialog.selectedFileId">
-                                <div class="mr-1.5" style="display: inline-block; flex: none">
+                                <div class="me-1.5" style="display: inline-block; flex: none">
                                     <img
                                         :src="gallerySelectDialog.selectedImageUrl"
                                         style="
@@ -234,7 +234,7 @@
             return;
         }
         if (!D.title || !D.text) {
-            toast.warning('Title and text are required');
+            toast.warning(t('toast.title_and_text_required'));
             return;
         }
         const params = {
@@ -251,7 +251,7 @@
         }
         groupRequest.editGroupPost(params).then((args) => {
             handleGroupPost(args);
-            toast.success('Group post edited');
+            toast.success(t('toast.group_post_edited'));
         });
         D.visible = false;
     }
@@ -261,7 +261,7 @@
     function createGroupPost() {
         const D = groupPostEditDialog.value;
         if (!D.title || !D.text) {
-            toast.warning('Title and text are required');
+            toast.warning(t('toast.title_and_text_required'));
             return;
         }
         const params = {
@@ -278,7 +278,7 @@
         }
         groupRequest.createGroupPost(params).then((args) => {
             handleGroupPost(args);
-            toast.success('Group post created');
+            toast.success(t('toast.group_post_created'));
         });
         D.visible = false;
     }

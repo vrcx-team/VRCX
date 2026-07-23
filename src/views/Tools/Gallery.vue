@@ -1,7 +1,7 @@
 <template>
     <div class="gallery-page x-container">
-        <div class="flex items-center gap-2 ml-2">
-            <Button variant="ghost" size="sm" class="mr-3" @click="goBack">
+        <div class="flex items-center gap-2 ms-2">
+            <Button variant="ghost" size="sm" class="me-3" @click="goBack">
                 <ArrowLeft />
                 {{ t('nav_tooltip.tools') }}
             </Button>
@@ -11,25 +11,25 @@
             <template #label-gallery>
                 <span>
                     {{ t('dialog.gallery_icons.gallery') }}
-                    <span class="text-xs ml-[5px]"> {{ galleryTable.length }}/64 </span>
+                    <span class="text-xs ms-[5px]"> {{ galleryTable.length }}/64 </span>
                 </span>
             </template>
             <template #label-icons>
                 <span>
                     {{ t('dialog.gallery_icons.icons') }}
-                    <span class="text-xs ml-[5px]"> {{ VRCPlusIconsTable.length }}/64 </span>
+                    <span class="text-xs ms-[5px]"> {{ VRCPlusIconsTable.length }}/64 </span>
                 </span>
             </template>
             <template #label-emojis>
                 <span>
                     {{ t('dialog.gallery_icons.emojis') }}
-                    <span class="text-xs ml-[5px]"> {{ emojiTable.length }}/{{ cachedConfigTyped.maxUserEmoji }} </span>
+                    <span class="text-xs ms-[5px]"> {{ emojiTable.length }}/{{ cachedConfigTyped.maxUserEmoji }} </span>
                 </span>
             </template>
             <template #label-stickers>
                 <span>
                     {{ t('dialog.gallery_icons.stickers') }}
-                    <span class="text-xs ml-[5px]">
+                    <span class="text-xs ms-[5px]">
                         {{ stickerTable.length }}/{{ cachedConfigTyped.maxUserStickers }}
                     </span>
                 </span>
@@ -37,13 +37,13 @@
             <template #label-prints>
                 <span>
                     {{ t('dialog.gallery_icons.prints') }}
-                    <span class="text-xs ml-[5px]"> {{ printTable.length }}/64 </span>
+                    <span class="text-xs ms-[5px]"> {{ printTable.length }}/64 </span>
                 </span>
             </template>
             <template #label-inventory>
                 <span>
                     {{ t('dialog.gallery_icons.inventory') }}
-                    <span class="text-xs ml-[5px]">
+                    <span class="text-xs ms-[5px]">
                         {{ inventoryTable.length }}
                     </span>
                 </span>
@@ -249,7 +249,7 @@
                                                     loading="lazy" />
                                             </div>
                                             <span class="truncate text-sm" v-text="item.label"></span>
-                                            <span v-if="selected" class="ml-auto opacity-70">✓</span>
+                                            <span v-if="selected" class="ms-auto opacity-70">✓</span>
                                         </div>
                                     </template>
                                 </VirtualCombobox>
@@ -445,10 +445,10 @@
                             v-model="printUploadNote"
                             :rows="1"
                             :maxlength="32"
-                            style="margin-left: 8px; width: 300px"
+                            style="margin-inline-start: 8px; width: 300px"
                             :placeholder="t('dialog.gallery_icons.note')"
                             input-class="resize-none min-h-0" />
-                        <label class="inline-flex items-center gap-2" style="margin-left: 8px; margin-right: 8px">
+                        <label class="inline-flex items-center gap-2" style="margin-inline: 8px">
                             <Checkbox v-model="printCropBorder" />
                             <span>{{ t('dialog.gallery_icons.crop_print_border') }}</span>
                         </label>

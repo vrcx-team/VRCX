@@ -9,7 +9,7 @@
             :on-page-size-change="handlePageSizeChange">
             <template #toolbar>
                 <div class="mt-0 mx-0 mb-2" style="display: flex; align-items: center">
-                    <div style="flex: none; display: flex; align-items: center" class="mr-2">
+                    <div style="flex: none; display: flex; align-items: center" class="me-2">
                         <Popover v-model:open="popoverOpen">
                             <PopoverTrigger as-child>
                                 <Button variant="outline" size="sm" class="mx-2 h-8 gap-1.5">
@@ -18,7 +18,7 @@
                                     <Badge
                                         v-if="activeFilterCount"
                                         variant="secondary"
-                                        class="ml-0.5 h-4.5 min-w-4.5 rounded-full px-1 text-xs">
+                                        class="ms-0.5 h-4.5 min-w-4.5 rounded-full px-1 text-xs">
                                         {{ activeFilterCount }}
                                     </Badge>
                                 </Button>
@@ -75,7 +75,7 @@
                         </ToggleGroupItem>
                     </ToggleGroup>
                     <InputGroupField
-                        class="ml-2"
+                        class="ms-2"
                         v-model="feedTable.search"
                         :placeholder="t('view.feed.search_placeholder')"
                         clearable

@@ -21,7 +21,7 @@
                     :key="world.favoriteId"
                     class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                     @click="showWorldDialog(world.id)">
-                    <div class="relative inline-block flex-none size-9 mr-2.5">
+                    <div class="relative inline-block flex-none size-9 me-2.5">
                         <Avatar class="size-9">
                             <AvatarImage :src="world.thumbnailImageUrl" class="object-cover" />
                             <AvatarFallback>
@@ -48,9 +48,9 @@
                 :key="`favorite-worlds-label-${index}`"
                 v-slot:[`label-${index}`]>
                 <span>
-                    <i class="x-status-icon" style="margin-right: 8px" :class="userFavoriteWorldsStatus(list[1])"> </i>
+                    <i class="x-status-icon" style="margin-inline-end: 8px" :class="userFavoriteWorldsStatus(list[1])"> </i>
                     <span class="font-bold text-sm" v-text="list[0]"></span>
-                    <span style="font-size: 10px; margin-left: 6px"
+                    <span style="font-size: 10px; margin-inline-start: 6px"
                         >{{ list[2].length }}/{{ favoriteLimits.maxFavoritesPerGroup.world }}</span
                     >
                 </span>
@@ -67,7 +67,7 @@
                         :key="world.favoriteId"
                         class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
                         @click="showWorldDialog(world.id)">
-                        <div class="relative inline-block flex-none size-9 mr-2.5">
+                        <div class="relative inline-block flex-none size-9 me-2.5">
                             <Avatar class="size-9">
                                 <AvatarImage :src="world.thumbnailImageUrl" class="object-cover" />
                                 <AvatarFallback>
@@ -102,6 +102,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useFavoriteStore, useUserStore } from '../../../stores';
+    import { localeIncludesCI } from '../../../shared/utils/base/string';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { handleFavoriteWorldList } from '../../../coordinators/favoriteCoordinator';
     import { favoriteRequest } from '../../../api';
@@ -124,11 +125,11 @@
     const searchQuery = ref('');
     const searchActive = computed(() => searchQuery.value.trim().length > 0);
     const allFilteredFavoriteWorlds = computed(() => {
-        const query = searchQuery.value.trim().toLowerCase();
+        const query = searchQuery.value.trim();
         if (!query) return [];
         const lists = userDialog.value.userFavoriteWorlds || [];
         const all = lists.flatMap((list) => list[2] || []);
-        return all.filter((w) => (w.name || '').toLowerCase().includes(query));
+        return all.filter((w) => localeIncludesCI(w.name, query));
     });
     watch(
         () => userDialog.value.id,
