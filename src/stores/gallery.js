@@ -7,7 +7,8 @@ import {
     getEmojiFileName,
     getPrintFileName,
     getPrintLocalDate,
-    openExternalLink
+    openExternalLink,
+    parseLocation
 } from '../shared/utils';
 import {
     inventoryRequest,
@@ -20,14 +21,17 @@ import { handleImageUploadInput } from '../coordinators/imageUploadCoordinator';
 import { router } from '../plugins/router';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useModalStore } from './modal';
+import { useLocationStore } from './location';
 import { watchState } from '../services/watchState';
 
 import * as workerTimers from 'worker-timers';
+import { VRCX_IMAGE_METADATA_VERSION } from '../shared/constants/metadata';
 
 export const useGalleryStore = defineStore('Gallery', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
     const { t } = useI18n();
     const modalStore = useModalStore();
+    const locationStore = useLocationStore();
 
     const state = reactive({
         printCache: [],
@@ -261,7 +265,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
      * @param userId
      * @param inventoryId
      */
-    async function trySaveStickerToFile(displayName, userId, inventoryId) {
+    async function trySaveStickerToFile(displayName, userId, inventoryId, dt) {
         if (instanceStickersCache.value.includes(inventoryId)) {
             return;
         }
@@ -281,6 +285,26 @@ export const useGalleryStore = defineStore('Gallery', () => {
             // Not a sticker or ugc, skipping
             return;
         }
+
+        const loc = locationStore.lastLocation;
+        const L = parseLocation(loc.location);
+        const metadata = JSON.stringify({
+            application: 'VRCX',
+            version: VRCX_IMAGE_METADATA_VERSION,
+            author: { id: userId, displayName: displayName },
+            spawnTime: dt,
+            inventoryId: inventoryId,
+            world: {
+                name: loc.name,
+                groupId: L.groupId,
+                id: L.worldId,
+                instanceName: L.instanceName,
+                accessType: L.accessTypeName,
+                userId: L.userId,
+                region: L.region,
+                ageGate: L.ageGate
+            }
+        });
         const imageUrl = args.json.metadata?.imageUrl ?? args.json.imageUrl;
         const createdAt = args.json.created_at;
         const monthFolder = createdAt.slice(0, 7);
@@ -293,7 +317,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
             imageUrl,
             advancedSettingsStore.ugcFolderPath,
             monthFolder,
-            fileName
+            fileName,
+            metadata
         );
         if (filePath) {
             console.log(`Sticker saved to file: ${monthFolder}\\${fileName}`);
