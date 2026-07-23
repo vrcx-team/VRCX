@@ -87,7 +87,7 @@ export function applyUser(json) {
     } = userStore;
 
     let ref = cachedUsers.get(json.id);
-    let previousDisplayName = '';
+    let previousDisplayName;
     let hasPropChanged = false;
     let changedProps = {};
     sanitizeUserJson(json, getRobotUrl());
@@ -701,7 +701,7 @@ export function handleConfig(args) {
 
 /**
  * @param {import('../types/api/user').GetCurrentUserResponse} json
- * @returns {import('../types/api/user').GetCurrentUserResponse}
+ * @returns {import('../types/api/user').VrcxCurrentUser}
  */
 export function applyCurrentUser(json) {
     const userStore = useUserStore();
@@ -711,7 +711,9 @@ export function applyCurrentUser(json) {
     const locationStore = useLocationStore();
 
     authStore.setAttemptingAutoLogin(false);
-    let ref = userStore.currentUser;
+    let ref = /** @type {import('../types/api/user').VrcxCurrentUser} */ (
+        userStore.currentUser
+    );
     runAvatarSwapFlow({
         json,
         ref,
@@ -724,7 +726,7 @@ export function applyCurrentUser(json) {
             }
         }
     } else {
-        ref = {
+        ref = /** @type {import('../types/api/user').VrcxCurrentUser} */ ({
             acceptedPrivacyVersion: 0,
             acceptedTOSVersion: 0,
             accountDeletionDate: null,
@@ -733,9 +735,15 @@ export function applyCurrentUser(json) {
             ageVerificationStatus: '',
             ageVerified: false,
             allowAvatarCopying: false,
+            appleDetails: {},
+            appleId: '',
             badges: [],
+            bannerColor: '',
+            bannerType: 'none',
+            bannerUrl: '',
             bio: '',
             bioLinks: [],
+            completedTutorials: [],
             currentAvatar: '',
             currentAvatarImageUrl: '',
             currentAvatarTags: [],
@@ -753,7 +761,9 @@ export function applyCurrentUser(json) {
             friendGroupNames: [],
             friendKey: '',
             friends: [],
+            googleDetails: {},
             googleId: '',
+            hasAcceptedDiscordSocialSDKPerms: false,
             hasBirthday: false,
             hasDiscordFriendsOptOut: false,
             hasEmail: false,
@@ -765,11 +775,16 @@ export function applyCurrentUser(json) {
             id: '',
             isAdult: true,
             isBoopingEnabled: false,
+            isEconomyCreator: false,
             isFriend: false,
+            isTemporary: false,
+            iconFrame: '',
+            iconUrl: '',
             last_activity: '',
             last_login: '',
             last_mobile: null,
             last_platform: '',
+            nameplateEffect: '',
             obfuscatedEmail: '',
             obfuscatedPendingEmail: '',
             oculusId: '',
@@ -777,6 +792,7 @@ export function applyCurrentUser(json) {
             onlineFriends: [],
             pastDisplayNames: [],
             picoId: '',
+            platform_history: [],
             presence: {
                 avatarThumbnail: '',
                 currentAvatarTags: '',
@@ -795,10 +811,13 @@ export function applyCurrentUser(json) {
                 world: '',
                 ...json.presence
             },
+            profileEffect: '',
             profilePicOverride: '',
             profilePicOverrideThumbnail: '',
             pronouns: '',
+            pronounsHistory: [],
             queuedInstance: '',
+            receiveMobileInvitations: false,
             state: '',
             status: '',
             statusDescription: '',
@@ -807,6 +826,7 @@ export function applyCurrentUser(json) {
             steamDetails: {},
             steamId: '',
             tags: [],
+            temporaryExpiryDate: null,
             twoFactorAuthEnabled: false,
             twoFactorAuthEnabledDate: null,
             unsubscribe: false,
@@ -815,6 +835,7 @@ export function applyCurrentUser(json) {
             userLanguage: '',
             userLanguageCode: '',
             username: '',
+            usesGeneratedPassword: false,
             viveId: '',
             // VRCX
             $online_for: null,
@@ -835,7 +856,7 @@ export function applyCurrentUser(json) {
             $locationTag: '',
             $travelingToLocation: '',
             ...json
-        };
+        });
         runFirstLoginFlow(ref);
     }
 
@@ -878,6 +899,9 @@ export function applyCurrentUser(json) {
         ageVerified: json.ageVerified,
         allowAvatarCopying: json.allowAvatarCopying,
         badges: json.badges,
+        bannerColor: json.bannerColor,
+        bannerType: json.bannerType,
+        bannerUrl: json.bannerUrl,
         bio: json.bio,
         bioLinks: json.bioLinks,
         currentAvatarImageUrl: json.currentAvatarImageUrl,
@@ -888,12 +912,18 @@ export function applyCurrentUser(json) {
         discordId: json.discordId,
         displayName: json.displayName,
         friendKey: json.friendKey,
+        iconFrame: json.iconFrame,
+        iconUrl: json.iconUrl,
         id: json.id,
+        isEconomyCreator: json.isEconomyCreator,
         isFriend: json.isFriend,
         last_activity: json.last_activity,
         last_login: json.last_login,
         last_mobile: json.last_mobile,
         last_platform: json.last_platform,
+        nameplateEffect: json.nameplateEffect,
+        platform: json.platform,
+        profileEffect: json.profileEffect,
         profilePicOverride: json.profilePicOverride,
         profilePicOverrideThumbnail: json.profilePicOverrideThumbnail,
         pronouns: json.pronouns,
