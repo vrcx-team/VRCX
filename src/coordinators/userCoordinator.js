@@ -688,15 +688,6 @@ export function handleConfig(args) {
         return;
     }
     userStore.setSubsetOfLanguages(languages);
-    const data = [];
-    for (const key in languages) {
-        const value = languages[key];
-        data.push({
-            key,
-            value
-        });
-    }
-    userStore.setLanguageDialogLanguages(data);
 }
 
 /**

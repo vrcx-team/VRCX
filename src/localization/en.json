@@ -1360,7 +1360,8 @@
                 "unfriend_success_msg": "Unfriended",
                 "logout": "Logout",
                 "edit_note_memo": "Edit Note and Memo",
-                "reset_home": "Reset Home"
+                "reset_home": "Reset Home",
+                "edit_profile": "Edit Profile"
             },
             "info": {
                 "header": "Info",

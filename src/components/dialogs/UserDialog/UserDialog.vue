@@ -21,7 +21,7 @@
             fill
             @update:modelValue="userDialogTabClick">
             <template #Info>
-                <UserDialogInfoTab ref="infoTabRef" @show-bio-dialog="showBioDialog" />
+                <UserDialogInfoTab ref="infoTabRef" @show-edit-profile-dialog="showEditProfileDialog" />
             </template>
 
             <template v-if="userDialog.id !== currentUser.id && !currentUser.hasSharedConnectionsOptOut" #mutual>
@@ -65,12 +65,6 @@
             v-model:sendInviteRequestDialogVisible="sendInviteRequestDialogVisible"
             v-model:sendInviteDialog="sendInviteDialog"
             @closeInviteDialog="closeInviteDialog" />
-        <SocialStatusDialog
-            :social-status-dialog="socialStatusDialog"
-            :social-status-history-table="socialStatusHistoryTable" />
-        <LanguageDialog />
-        <BioDialog :bio-dialog="bioDialog" />
-        <PronounsDialog :pronouns-dialog="pronounsDialog" />
         <ModerateGroupDialog />
     </div>
 </template>
@@ -115,12 +109,8 @@
     import UserDialogWorldsTab from './UserDialogWorldsTab.vue';
     import UserSummaryHeader from './UserSummaryHeader.vue';
 
-    import BioDialog from './BioDialog.vue';
-    import LanguageDialog from './LanguageDialog.vue';
     import ModerateGroupDialog from '../ModerateGroupDialog.vue';
-    import PronounsDialog from './PronounsDialog.vue';
     import SendInviteRequestDialog from './SendInviteRequestDialog.vue';
-    import SocialStatusDialog from './SocialStatusDialog.vue';
 
     const props = defineProps({
         previousIds: {
@@ -162,8 +152,8 @@
     const modalStore = useModalStore();
     const instanceStore = useInstanceStore();
 
-    const { userDialog, languageDialog, currentUser } = storeToRefs(useUserStore());
-    const { cachedUsers, showSendBoopDialog } = useUserStore();
+    const { userDialog, currentUser } = storeToRefs(useUserStore());
+    const { cachedUsers, showSendBoopDialog, showEditProfileDialog } = useUserStore();
     const { showFavoriteDialog } = useFavoriteStore();
     const { showModerateGroupDialog } = useGroupStore();
     const { inviteGroupDialog } = storeToRefs(useGroupStore());
@@ -204,7 +194,8 @@
         refreshInviteMessageTableData,
         clearInviteImageUpload,
         instanceStore,
-        useNotificationStore
+        useNotificationStore,
+        showEditProfileDialog
     });
 
     watch(
@@ -225,30 +216,6 @@
         }
     );
 
-    const socialStatusDialog = ref({
-        visible: false,
-        loading: false,
-        status: '',
-        statusDescription: ''
-    });
-    const socialStatusHistoryTable = ref({
-        data: [],
-
-        layout: 'table'
-    });
-
-    const bioDialog = ref({
-        visible: false,
-        loading: false,
-        bio: '',
-        bioLinks: []
-    });
-
-    const pronounsDialog = ref({
-        visible: false,
-        loading: false,
-        pronouns: ''
-    });
     const treeData = ref({});
 
     /**
@@ -379,53 +346,10 @@
         handleUserDialogTab(tabName);
     }
 
-    /**
-     *
-     */
-    function showPronounsDialog() {
-        const D = pronounsDialog.value;
-        D.pronouns = currentUser.value.pronouns;
-        D.visible = true;
-    }
-
-    /**
-     *
-     */
-    function showLanguageDialog() {
-        const D = languageDialog.value;
-        D.visible = true;
-    }
-
     // Register simple dialog openers as callbacks for the command composable
     registerCallbacks({
-        showSocialStatusDialog,
-        showLanguageDialog,
-        showBioDialog,
-        showPronounsDialog,
-        showEditNoteAndMemoDialog: () => {
-            infoTabRef.value?.showEditNoteAndMemoDialog();
-        }
+        showEditProfileDialog
     });
-
-    /**
-     *
-     */
-    function showSocialStatusDialog() {
-        const D = socialStatusDialog.value;
-        const { statusHistory } = currentUser.value;
-        const statusHistoryArray = [];
-        for (let i = 0; i < statusHistory.length; ++i) {
-            const addStatus = {
-                no: i + 1,
-                status: statusHistory[i]
-            };
-            statusHistoryArray.push(addStatus);
-        }
-        socialStatusHistoryTable.value.data = statusHistoryArray;
-        D.status = currentUser.value.status;
-        D.statusDescription = currentUser.value.statusDescription;
-        D.visible = true;
-    }
 
     /**
      *
@@ -467,16 +391,6 @@
         if (args.json) {
             toast.success(t('message.badge.updated'));
         }
-    }
-
-    /**
-     *
-     */
-    function showBioDialog() {
-        const D = bioDialog.value;
-        D.bio = currentUser.value.bio;
-        D.bioLinks = currentUser.value.bioLinks.slice();
-        D.visible = true;
     }
 
     /**

@@ -127,6 +127,9 @@
                                                 </ContextMenuItem>
                                             </ContextMenuSubContent>
                                         </ContextMenuSub>
+                                        <ContextMenuItem @click="openEditProfileFromSidebar">
+                                            {{ t('dialog.user.actions.edit_profile') }}
+                                        </ContextMenuItem>
                                     </ContextMenuContent>
                                 </ContextMenu>
                             </template>
@@ -199,6 +202,7 @@
             </div>
         </div>
         <BackToTop :virtualizer="virtualizer" :target="scrollViewportRef" :tooltip="false" />
+        <EditProfileDialog :edit-profile-dialog="editProfileDialog" />
     </div>
 </template>
 
@@ -245,6 +249,7 @@
     import BackToTop from '../../../components/BackToTop.vue';
     import FriendItem from './FriendItem.vue';
     import Location from '../../../components/Location.vue';
+    import EditProfileDialog from '../../../components/dialogs/UserDialog/EditProfileDialog.vue';
     import configRepository from '../../../services/config';
     import { useStatusPresets } from '../../../components/dialogs/UserDialog/composables/useStatusPresets';
 
@@ -273,13 +278,14 @@
         sidebarSortMethods
     } = storeToRefs(appearanceSettingsStore);
     const { gameLogDisabled } = storeToRefs(useAdvancedSettingsStore());
-    const { showSendBoopDialog } = useUserStore();
+    const userStore = useUserStore();
+    const { showSendBoopDialog, showEditProfileDialog } = userStore;
     const launchStore = useLaunchStore();
     const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends, localFriendFavorites } =
         storeToRefs(useFavoriteStore());
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
     const { isGameRunning } = storeToRefs(useGameStore());
-    const { currentUser } = storeToRefs(useUserStore());
+    const { currentUser, editProfileDialog } = storeToRefs(userStore);
     const { checkCanInvite, checkCanInviteSelf } = useInviteChecks();
     const { userImage, userStatusClass } = useUserDisplay();
     const { presets: statusPresets, getStatusClass: presetStatusClass } = useStatusPresets();
@@ -782,6 +788,10 @@
             .then(() => {
                 toast.success('Status updated');
             });
+    }
+
+    function openEditProfileFromSidebar() {
+        showEditProfileDialog();
     }
 
     const canInviteToMyLocation = computed(() => checkCanInvite(lastLocation.value.location));

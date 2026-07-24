@@ -86,8 +86,7 @@
                     v-if="userDialog.note"
                     class="text-xs font-[inherit]"
                     style="white-space: pre-wrap; margin: 0 0.5em 0 0; max-height: 210px; overflow-y: auto"
-                    >{{ userDialog.note }}</pre
-                >
+                    >{{ userDialog.note }}</pre>
                 <pre class="text-xs font-[inherit] text-muted-foreground" v-else>—</pre>
             </div>
         </div>
@@ -98,8 +97,7 @@
                     v-if="userDialog.memo"
                     class="text-xs font-[inherit]"
                     style="white-space: pre-wrap; margin: 0 0.5em 0 0; max-height: 210px; overflow-y: auto"
-                    >{{ userDialog.memo }}</pre
-                >
+                    >{{ userDialog.memo }}</pre>
                 <pre class="text-xs font-[inherit] text-muted-foreground" v-else>—</pre>
             </div>
         </div>
@@ -177,8 +175,7 @@
                 <pre
                     class="text-xs truncate font-[inherit]"
                     style="white-space: pre-wrap; margin: 0 0.5em 0 0; max-height: 210px; overflow-y: auto"
-                    >{{ bioCache.translated || userDialog.ref.bio || '-' }}</pre
-                >
+                    >{{ bioCache.translated || userDialog.ref.bio || '-' }}</pre>
                 <div style="float: right">
                     <Button
                         v-if="translationApi && userDialog.ref.bio"
@@ -195,7 +192,7 @@
                         variant="ghost"
                         v-if="userDialog.id === currentUser.id"
                         style="margin-left: 6px; padding: 0"
-                        @click="$emit('showBioDialog')"
+                        @click="showEditProfileDialog()"
                         ><Pencil class="h-3 w-3" />
                     </Button>
                 </div>
@@ -526,8 +523,6 @@
 
     import EditNoteAndMemoDialog from './EditNoteAndMemoDialog.vue';
 
-    defineEmits(['showBioDialog']);
-
     const { t } = useI18n();
 
     const modalStore = useModalStore();
@@ -537,7 +532,7 @@
     const { bioLanguage, translationApi, translationApiType } = storeToRefs(useAdvancedSettingsStore());
     const { translateText } = useAdvancedSettingsStore();
     const { userDialog, currentUser } = storeToRefs(useUserStore());
-    const { toggleSharedConnectionsOptOut, toggleDiscordFriendsOptOut } = useUserStore();
+    const { toggleSharedConnectionsOptOut, toggleDiscordFriendsOptOut, showEditProfileDialog } = useUserStore();
 
     const { lastLocation } = storeToRefs(useLocationStore());
     const { showFullscreenImageDialog } = useGalleryStore();

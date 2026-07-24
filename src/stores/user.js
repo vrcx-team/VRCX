@@ -247,14 +247,19 @@ export const useUserStore = defineStore('User', () => {
         isMutualFriendsLoading: false
     });
 
-    const currentTravelers = reactive(new Map());
-    const subsetOfLanguages = ref([]);
-    const languageDialog = ref({
+    const editProfileDialog = ref({
         visible: false,
         loading: false,
-        languageChoice: false,
-        languages: []
+        status: '',
+        statusDescription: '',
+        pronouns: '',
+        bio: '',
+        bioLinks: [],
+        socialStatusHistoryTable: []
     });
+
+    const currentTravelers = reactive(new Map());
+    const subsetOfLanguages = ref([]);
     const sendBoopDialog = ref({
         visible: false,
         userId: ''
@@ -749,11 +754,23 @@ export const useUserStore = defineStore('User', () => {
         subsetOfLanguages.value = value;
     }
 
-    /**
-     * @param {Array} value
-     */
-    function setLanguageDialogLanguages(value) {
-        languageDialog.value.languages = value;
+    function showEditProfileDialog() {
+        const D = editProfileDialog.value;
+        const statusHistory = currentUser.value?.statusHistory || [];
+        const statusHistoryArray = [];
+        for (let i = 0; i < statusHistory.length; ++i) {
+            statusHistoryArray.push({
+                no: i + 1,
+                status: statusHistory[i]
+            });
+        }
+        D.socialStatusHistoryTable = statusHistoryArray;
+        D.status = currentUser.value.status;
+        D.statusDescription = currentUser.value.statusDescription;
+        D.pronouns = currentUser.value.pronouns;
+        D.bio = currentUser.value.bio;
+        D.bioLinks = currentUser.value.bioLinks.slice();
+        D.visible = true;
     }
 
     /**
@@ -809,8 +826,8 @@ export const useUserStore = defineStore('User', () => {
         currentUser,
         currentTravelers,
         userDialog,
+        editProfileDialog,
         subsetOfLanguages,
-        languageDialog,
         sendBoopDialog,
         showUserDialogHistory,
         customUserTags,
@@ -828,6 +845,7 @@ export const useUserStore = defineStore('User', () => {
         sortUserDialogAvatars,
         initUserNotes,
         showSendBoopDialog,
+        showEditProfileDialog,
         setUserDialogMemo,
         setUserDialogVisible,
         setUserDialogIsFavorite,
@@ -836,7 +854,6 @@ export const useUserStore = defineStore('User', () => {
         setCurrentUserTravelingToTime,
         setCurrentUser,
         setSubsetOfLanguages,
-        setLanguageDialogLanguages,
         markCurrentUserGameStarted,
         markCurrentUserGameStopped,
         checkNote,

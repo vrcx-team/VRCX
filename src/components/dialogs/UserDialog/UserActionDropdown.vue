@@ -55,22 +55,9 @@
                         <User class="size-4" />
                         {{ t('dialog.user.actions.show_fallback_avatar') }}
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem @click="onCommand('Edit Social Status')">
+                    <DropdownMenuItem @click="onCommand('Edit Profile')">
                         <Pencil class="size-4" />
-                        {{ t('dialog.user.actions.edit_status') }}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem @click="onCommand('Edit Language')">
-                        <Pencil class="size-4" />
-                        {{ t('dialog.user.actions.edit_language') }}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem @click="onCommand('Edit Bio')">
-                        <Pencil class="size-4" />
-                        {{ t('dialog.user.actions.edit_bio') }}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem @click="onCommand('Edit Pronouns')">
-                        <Pencil class="size-4" />
-                        {{ t('dialog.user.actions.edit_pronouns') }}
+                        {{ t('dialog.user.actions.edit_profile') }}
                     </DropdownMenuItem>
                 </template>
                 <template v-else>

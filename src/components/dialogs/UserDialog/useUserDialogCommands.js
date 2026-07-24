@@ -41,6 +41,7 @@ import { recordRecentAction } from '../../../composables/useRecentActions';
  * @param deps.clearInviteImageUpload
  * @param deps.instanceStore
  * @param deps.useNotificationStore
+ * @param deps.showEditProfileDialog
  * @returns {object} command composable API
  */
 export function useUserDialogCommands(
@@ -69,7 +70,8 @@ export function useUserDialogCommands(
         refreshInviteMessageTableData,
         clearInviteImageUpload,
         instanceStore,
-        useNotificationStore
+        useNotificationStore,
+        showEditProfileDialog
     }
 ) {
     // --- Invite dialog state ---
@@ -241,10 +243,9 @@ export function useUserDialogCommands(
             'Add Favorite': () => {
                 showFavoriteDialog('friend', D().id);
             },
-            'Edit Social Status': 'showSocialStatusDialog',
-            'Edit Language': 'showLanguageDialog',
-            'Edit Bio': 'showBioDialog',
-            'Edit Pronouns': 'showPronounsDialog',
+            'Edit Profile': () => {
+                showEditProfileDialog();
+            },
             'Request Invite': () => {
                 notificationRequest
                     .sendRequestInvite(

@@ -61,12 +61,7 @@ async function registerSentryPiniaPlugin() {
                     // @ts-ignore
                     ...state.User,
                     currentUser: null,
-                    subsetOfLanguages: null,
-                    languageDialog: {
-                        // @ts-ignore
-                        ...state.User.languageDialog,
-                        languages: null
-                    }
+                    subsetOfLanguages: null
                 },
                 GameLog: {
                     // @ts-ignore
