@@ -186,6 +186,38 @@ const userReq = {
             };
             return args;
         });
+    },
+
+    /**
+     * @param {{ userId: string }} params
+     * @returns {Promise<{json: import('../types/api/profile').publicProfile, params: { userId: string }}>}
+     */
+    getPublicProfile(params) {
+        return request(`profile/${params.userId}`, {
+            method: 'GET'
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    /**
+     * @param {{ userId: string }} params
+     * @returns {Promise<{json: import('../types/api/profile').privateProfile, params: { userId: string }}>}
+     */
+    getPrivateProfile(params) {
+        return request(`profile/${params.userId}/private`, {
+            method: 'GET'
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
     }
 };
 
