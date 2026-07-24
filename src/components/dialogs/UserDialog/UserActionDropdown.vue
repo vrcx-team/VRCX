@@ -1,6 +1,6 @@
 <template>
     <div style="flex: none" class="flex items-center">
-        <template v-if="(currentUser.id !== userDialog.ref.id && userDialog.isFriend) || userDialog.isFavorite">
+        <template v-if="currentUser.id !== userDialog.ref.id">
             <TooltipWrapper
                 v-if="userDialog.isFavorite"
                 side="top"

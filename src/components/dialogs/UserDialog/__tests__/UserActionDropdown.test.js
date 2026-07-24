@@ -90,4 +90,24 @@ describe('UserActionDropdown.vue', () => {
 
         expect(userDialogCommand).toHaveBeenCalled();
     });
+
+    it('shows the favorite star button for a non-friend, non-favorite user', () => {
+        // mocked userDialog is isFriend: false, isFavorite: false, ref.id !== currentUser.id
+        const wrapper = mount(UserActionDropdown, {
+            props: { userDialogCommand: vi.fn() }
+        });
+
+        expect(wrapper.find('[data-testid="btn"]').exists()).toBe(true);
+    });
+
+    it('sends the Add Favorite command when the star button is clicked', async () => {
+        const userDialogCommand = vi.fn();
+        const wrapper = mount(UserActionDropdown, {
+            props: { userDialogCommand }
+        });
+
+        await wrapper.find('[data-testid="btn"]').trigger('click');
+
+        expect(userDialogCommand).toHaveBeenCalledWith('Add Favorite');
+    });
 });
