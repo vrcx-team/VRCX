@@ -197,6 +197,9 @@ export async function getAvatarHistory() {
  * @param {string} avatarId
  */
 export function addAvatarToHistory(avatarId) {
+    if (!avatarId) {
+        return;
+    }
     const avatarStore = useAvatarStore();
     const userStore = useUserStore();
 
