@@ -36,7 +36,7 @@
             </Select>
         </div>
     </div>
-    <ul class="flex flex-wrap items-start" style="margin-top: 8px; overflow: auto; max-height: 250px; min-width: 130px">
+    <ul class="flex flex-wrap items-start" style="margin-top: 8px; overflow: auto; min-width: 130px">
         <li
             v-for="user in filteredMutualFriends"
             :key="user.id"

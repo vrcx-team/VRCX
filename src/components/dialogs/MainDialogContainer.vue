@@ -130,12 +130,8 @@
 
     const dialogClass = computed(() => {
         switch (activeType.value) {
-            case 'world':
-                return 'x-dialog translate-y-0 sm:max-w-235 overflow-hidden flex flex-col';
-            case 'avatar':
-                return 'x-dialog sm:max-w-235 translate-y-0 overflow-hidden flex flex-col';
-            case 'group':
-                return 'x-dialog translate-y-0 sm:max-w-235 overflow-hidden flex flex-col';
+            case 'user':
+                return 'x-dialog translate-y-0 sm:max-w-270 overflow-hidden flex flex-col';
             case 'group-member-moderation':
                 return 'x-dialog translate-y-0 max-w-none flex flex-col sm:min-w-[90vw] sm:max-w-[90vw] sm:min-h-[80vh] sm:max-h-[80vh]';
             case 'previous-instances-info':
@@ -143,9 +139,11 @@
             case 'previous-instances-world':
             case 'previous-instances-group':
                 return 'x-dialog translate-y-0 sm:max-w-250';
-            case 'user':
+            case 'world':
+            case 'avatar':
+            case 'group':
             default:
-                return 'x-dialog sm:max-w-235 translate-y-0 overflow-hidden flex flex-col';
+                return 'x-dialog translate-y-0 sm:max-w-235 overflow-hidden flex flex-col';
         }
     });
 

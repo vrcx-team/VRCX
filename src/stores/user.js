@@ -33,116 +33,137 @@ export const useUserStore = defineStore('User', () => {
     const instanceStore = useInstanceStore();
     const uiStore = useUiStore();
 
-    const currentUser = ref({
-        acceptedPrivacyVersion: 0,
-        acceptedTOSVersion: 0,
-        accountDeletionDate: null,
-        accountDeletionLog: null,
-        activeFriends: [],
-        ageVerificationStatus: '',
-        ageVerified: false,
-        allowAvatarCopying: false,
-        badges: [],
-        bio: '',
-        bioLinks: [],
-        currentAvatar: '',
-        currentAvatarImageUrl: '',
-        currentAvatarTags: [],
-        currentAvatarThumbnailImageUrl: '',
-        date_joined: '',
-        developerType: '',
-        discordDetails: {
-            global_name: '',
-            id: ''
-        },
-        discordId: '',
-        displayName: '',
-        emailVerified: false,
-        fallbackAvatar: '',
-        friendGroupNames: [],
-        friendKey: '',
-        friends: [],
-        googleId: '',
-        hasBirthday: false,
-        hasDiscordFriendsOptOut: false,
-        hasEmail: false,
-        hasLoggedInFromClient: false,
-        hasPendingEmail: false,
-        hasSharedConnectionsOptOut: false,
-        hideContentFilterSettings: false,
-        homeLocation: '',
-        id: '',
-        isAdult: true,
-        isBoopingEnabled: false,
-        isFriend: false,
-        last_activity: '',
-        last_login: '',
-        last_mobile: null,
-        last_platform: '',
-        obfuscatedEmail: '',
-        obfuscatedPendingEmail: '',
-        oculusId: '',
-        offlineFriends: [],
-        onlineFriends: [],
-        pastDisplayNames: [],
-        picoId: '',
-        presence: {
-            avatarThumbnail: '',
-            currentAvatarTags: '',
-            debugflag: '',
+    const currentUser = ref(
+        /** @type {import('../types/api/user').VrcxCurrentUser} */ ({
+            acceptedPrivacyVersion: 0,
+            acceptedTOSVersion: 0,
+            accountDeletionDate: null,
+            accountDeletionLog: null,
+            activeFriends: [],
+            ageVerificationStatus: '',
+            ageVerified: false,
+            allowAvatarCopying: false,
+            appleDetails: {},
+            appleId: '',
+            badges: [],
+            bannerColor: '',
+            bannerType: 'color',
+            bannerUrl: '',
+            bio: '',
+            bioLinks: [],
+            completedTutorials: [],
+            currentAvatar: '',
+            currentAvatarImageUrl: '',
+            currentAvatarTags: [],
+            currentAvatarThumbnailImageUrl: '',
+            date_joined: '',
+            developerType: '',
+            discordDetails: {
+                global_name: '',
+                id: ''
+            },
+            discordId: '',
             displayName: '',
-            groups: [],
+            emailVerified: false,
+            fallbackAvatar: '',
+            friendGroupNames: [],
+            friendKey: '',
+            friends: [],
+            googleDetails: {},
+            googleId: '',
+            hasAcceptedDiscordSocialSDKPerms: false,
+            hasBirthday: false,
+            hasDiscordFriendsOptOut: false,
+            hasEmail: false,
+            hasLoggedInFromClient: false,
+            hasPendingEmail: false,
+            hasSharedConnectionsOptOut: false,
+            hideContentFilterSettings: false,
+            homeLocation: '',
             id: '',
-            instance: '',
-            instanceType: '',
-            platform: '',
+            isAdult: true,
+            isBoopingEnabled: false,
+            isEconomyCreator: false,
+            isFriend: false,
+            isTemporary: false,
+            iconFrame: '',
+            iconUrl: '',
+            last_activity: '',
+            last_login: '',
+            last_mobile: null,
+            last_platform: '',
+            nameplateEffect: '',
+            obfuscatedEmail: '',
+            obfuscatedPendingEmail: '',
+            oculusId: '',
+            offlineFriends: [],
+            onlineFriends: [],
+            pastDisplayNames: [],
+            picoId: '',
+            platform_history: [],
+            presence: {
+                avatarThumbnail: '',
+                currentAvatarTags: '',
+                debugflag: '',
+                displayName: '',
+                groups: [],
+                id: '',
+                instance: '',
+                instanceType: '',
+                platform: '',
+                profilePicOverride: '',
+                status: '',
+                travelingToInstance: '',
+                travelingToWorld: '',
+                userIcon: '',
+                world: ''
+            },
+            profileEffect: '',
             profilePicOverride: '',
+            profilePicOverrideThumbnail: '',
+            pronouns: '',
+            pronounsHistory: [],
+            queuedInstance: '',
+            receiveMobileInvitations: false,
+            state: '',
             status: '',
-            travelingToInstance: '',
-            travelingToWorld: '',
+            statusDescription: '',
+            statusFirstTime: false,
+            statusHistory: [],
+            steamDetails: {},
+            steamId: '',
+            tags: [],
+            temporaryExpiryDate: null,
+            twoFactorAuthEnabled: false,
+            twoFactorAuthEnabledDate: null,
+            unsubscribe: false,
+            updated_at: '',
             userIcon: '',
-            world: ''
-        },
-        profilePicOverride: '',
-        profilePicOverrideThumbnail: '',
-        pronouns: '',
-        queuedInstance: '',
-        state: '',
-        status: '',
-        statusDescription: '',
-        statusFirstTime: false,
-        statusHistory: [],
-        steamDetails: {},
-        steamId: '',
-        tags: [],
-        twoFactorAuthEnabled: false,
-        twoFactorAuthEnabledDate: null,
-        unsubscribe: false,
-        updated_at: '',
-        userIcon: '',
-        userLanguage: '',
-        userLanguageCode: '',
-        username: '',
-        viveId: '',
-        // VRCX
-        $online_for: Date.now(),
-        $offline_for: null,
-        $location_at: Date.now(),
-        $travelingToTime: Date.now(),
-        $previousAvatarSwapTime: null,
-        $homeLocation: {},
-        $isVRCPlus: false,
-        $isModerator: false,
-        $isTroll: false,
-        $isProbableTroll: false,
-        $trustLevel: 'Visitor',
-        $trustClass: 'x-tag-untrusted',
-        $userColour: '',
-        $trustSortNum: 1,
-        $languages: [],
-        $locationTag: '',
-        $travelingToLocation: ''
-    });
+            userLanguage: '',
+            userLanguageCode: '',
+            username: '',
+            usesGeneratedPassword: false,
+            viveId: '',
+            // VRCX
+            $online_for: Date.now(),
+            $offline_for: null,
+            $location_at: Date.now(),
+            $travelingToTime: Date.now(),
+            $previousAvatarSwapTime: null,
+            $homeLocation: {},
+            $isVRCPlus: false,
+            $isModerator: false,
+            $isTroll: false,
+            $isProbableTroll: false,
+            $trustLevel: 'Visitor',
+            $trustClass: 'x-tag-untrusted',
+            $userColour: '',
+            $trustSortNum: 1,
+            $languages: [],
+            $locationTag: '',
+            $travelingToLocation: ''
+        })
+    );
 
     const userDialog = ref({
         visible: false,
@@ -255,7 +276,10 @@ export const useUserStore = defineStore('User', () => {
         pronouns: '',
         bio: '',
         bioLinks: [],
-        socialStatusHistoryTable: []
+        socialStatusHistoryTable: [],
+        bannerColor: '',
+        bannerUrl: '',
+        bannerType: ''
     });
 
     const currentTravelers = reactive(new Map());
@@ -770,6 +794,9 @@ export const useUserStore = defineStore('User', () => {
         D.pronouns = currentUser.value.pronouns;
         D.bio = currentUser.value.bio;
         D.bioLinks = currentUser.value.bioLinks.slice();
+        D.bannerColor = currentUser.value.bannerColor;
+        D.bannerUrl = currentUser.value.bannerUrl;
+        D.bannerType = currentUser.value.bannerType;
         D.visible = true;
     }
 
@@ -777,7 +804,7 @@ export const useUserStore = defineStore('User', () => {
      */
     function markCurrentUserGameStarted() {
         currentUser.value.$online_for = Date.now();
-        currentUser.value.$offline_for = '';
+        currentUser.value.$offline_for = null;
         currentUser.value.$previousAvatarSwapTime = Date.now();
     }
 
@@ -787,6 +814,22 @@ export const useUserStore = defineStore('User', () => {
         currentUser.value.$online_for = 0;
         currentUser.value.$offline_for = Date.now();
         currentUser.value.$previousAvatarSwapTime = null;
+    }
+
+    /**
+     */
+    function toggleAvatarCopying() {
+        userRequest.saveCurrentUser({
+            allowAvatarCopying: !currentUser.value.allowAvatarCopying
+        });
+    }
+
+    /**
+     */
+    function toggleAllowBooping() {
+        userRequest.saveCurrentUser({
+            isBoopingEnabled: !currentUser.value.isBoopingEnabled
+        });
     }
 
     /**
@@ -859,6 +902,8 @@ export const useUserStore = defineStore('User', () => {
         checkNote,
         toggleSharedConnectionsOptOut,
         toggleDiscordFriendsOptOut,
+        toggleAllowBooping,
+        toggleAvatarCopying,
         changePassword,
         changeContentFilterSettings
     };

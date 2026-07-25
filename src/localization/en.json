@@ -1365,6 +1365,8 @@
             },
             "info": {
                 "header": "Info",
+                "vrcx_info": "VRCX Info",
+                "vrcx_info_tooltip": "VRCX info may be inaccurate",
                 "launch_invite_tooltip": "Launch/Invite",
                 "self_invite_tooltip": "Invite Yourself",
                 "open_in_vrchat_tooltip": "Open in VRChat",
@@ -1830,6 +1832,13 @@
             "header": "Pronouns",
             "pronouns_placeholder": "Please input your pronouns",
             "update": "Update"
+        },
+        "edit_profile": {
+            "banner": "Banner",
+            "banner_color": "Banner Color",
+            "banner_type_color": "Color",
+            "banner_type_avatar_banner": "Avatar Image",
+            "banner_type_custom_image": "Custom Image"
         },
         "new_instance": {
             "header": "New Instance",

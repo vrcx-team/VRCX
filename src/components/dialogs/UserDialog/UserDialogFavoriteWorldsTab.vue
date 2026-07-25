@@ -11,78 +11,85 @@
             @click="getUserFavoriteWorlds(userDialog.id)">
         </Button> -->
     <template v-if="userDialog.userFavoriteWorlds && userDialog.userFavoriteWorlds.length > 0">
-        <Input v-model="searchQuery" class="h-8 w-40 mt-2" placeholder="Search worlds" @click.stop />
-        <template v-if="searchActive">
-            <div
-                class="flex flex-wrap items-start"
-                style="margin-top: 8px; min-height: 60px; max-height: 50vh; overflow: auto">
-                <div
-                    v-for="world in allFilteredFavoriteWorlds"
-                    :key="world.favoriteId"
-                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                    @click="showWorldDialog(world.id)">
-                    <div class="relative inline-block flex-none size-9 mr-2.5">
-                        <Avatar class="size-9">
-                            <AvatarImage :src="world.thumbnailImageUrl" class="object-cover" />
-                            <AvatarFallback>
-                                <Image class="size-4 text-muted-foreground" />
-                            </AvatarFallback>
-                        </Avatar>
-                    </div>
-                    <div class="flex-1 overflow-hidden">
-                        <span class="block truncate font-medium leading-[18px]" v-text="world.name"></span>
-                        <span v-if="world.occupants" class="block truncate text-xs">({{ world.occupants }})</span>
-                    </div>
-                </div>
-            </div>
-        </template>
-        <TabsUnderline
-            v-else
-            v-model="favoriteWorldsTab"
-            :items="favoriteWorldTabs"
-            :unmount-on-hide="false"
-            class="zero-margin-tabs"
-            style="margin-top: 8px; height: 50vh">
-            <template
-                v-for="(list, index) in userDialog.userFavoriteWorlds"
-                :key="`favorite-worlds-label-${index}`"
-                v-slot:[`label-${index}`]>
-                <span>
-                    <i class="x-status-icon" style="margin-right: 8px" :class="userFavoriteWorldsStatus(list[1])"> </i>
-                    <span class="font-bold text-sm" v-text="list[0]"></span>
-                    <span style="font-size: 10px; margin-left: 6px"
-                        >{{ list[2].length }}/{{ favoriteLimits.maxFavoritesPerGroup.world }}</span
-                    >
-                </span>
-            </template>
-            <template
-                v-for="(list, index) in userDialog.userFavoriteWorlds"
-                :key="`favorite-worlds-content-${index}`"
-                v-slot:[String(index)]>
-                <div
-                    class="flex flex-wrap items-start"
-                    style="margin-top: 8px; margin-bottom: 16px; min-height: 60px; max-height: none">
-                    <div
-                        v-for="world in list[2]"
-                        :key="world.favoriteId"
-                        class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                        @click="showWorldDialog(world.id)">
-                        <div class="relative inline-block flex-none size-9 mr-2.5">
-                            <Avatar class="size-9">
-                                <AvatarImage :src="world.thumbnailImageUrl" class="object-cover" />
-                                <AvatarFallback>
-                                    <Image class="size-4 text-muted-foreground" />
-                                </AvatarFallback>
-                            </Avatar>
-                        </div>
-                        <div class="flex-1 overflow-hidden">
-                            <span class="block truncate font-medium leading-[18px]" v-text="world.name"></span>
-                            <span v-if="world.occupants" class="block truncate text-xs">({{ world.occupants }})</span>
+        <div class="mt-2 flex h-[50vh] min-h-0 flex-col">
+            <Input v-model="searchQuery" class="h-8 w-40 shrink-0" placeholder="Search worlds" @click.stop />
+            <template v-if="searchActive">
+                <div class="mt-2 min-h-0 flex-1 overflow-auto">
+                    <div class="flex flex-wrap items-start pb-4">
+                        <div
+                            v-for="world in allFilteredFavoriteWorlds"
+                            :key="world.favoriteId"
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
+                            @click="showWorldDialog(world.id)">
+                            <div class="relative inline-block flex-none size-9 mr-2.5">
+                                <Avatar class="size-9">
+                                    <AvatarImage :src="world.thumbnailImageUrl" class="object-cover" />
+                                    <AvatarFallback>
+                                        <Image class="size-4 text-muted-foreground" />
+                                    </AvatarFallback>
+                                </Avatar>
+                            </div>
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]" v-text="world.name"></span>
+                                <span v-if="world.occupants" class="block truncate text-xs"
+                                    >({{ world.occupants }})</span
+                                >
+                            </div>
                         </div>
                     </div>
                 </div>
             </template>
-        </TabsUnderline>
+            <TabsUnderline
+                v-else
+                v-model="favoriteWorldsTab"
+                :items="favoriteWorldTabs"
+                :unmount-on-hide="false"
+                variant="equal"
+                fill
+                class="zero-margin-tabs mt-2 min-h-0 flex-1">
+                <template
+                    v-for="(list, index) in userDialog.userFavoriteWorlds"
+                    :key="`favorite-worlds-label-${index}`"
+                    v-slot:[`label-${index}`]>
+                    <span class="inline-flex min-w-0 max-w-full flex-col leading-tight">
+                        <span class="inline-flex min-w-0 max-w-full items-center">
+                            <span class="font-bold text-sm truncate" v-text="list[0]"></span>
+                        </span>
+                        <span class="pl-4.5 text-[10px] text-muted-foreground inline-flex items-center">
+                            <i class="x-status-icon mr-1 shrink-0" :class="userFavoriteWorldsStatus(list[1])"></i>
+                            {{ list[2].length }}/{{ favoriteLimits.maxFavoritesPerGroup.world }}</span
+                        >
+                    </span>
+                </template>
+                <template
+                    v-for="(list, index) in userDialog.userFavoriteWorlds"
+                    :key="`favorite-worlds-content-${index}`"
+                    v-slot:[String(index)]>
+                    <div class="flex flex-wrap items-start pb-4">
+                        <div
+                            v-for="world in list[2]"
+                            :key="world.favoriteId"
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
+                            @click="showWorldDialog(world.id)">
+                            <div class="relative inline-block flex-none size-9 mr-2.5">
+                                <Avatar class="size-9">
+                                    <AvatarImage :src="world.thumbnailImageUrl" class="object-cover" />
+                                    <AvatarFallback>
+                                        <Image class="size-4 text-muted-foreground" />
+                                    </AvatarFallback>
+                                </Avatar>
+                            </div>
+                            <div class="flex-1 overflow-hidden">
+                                <span class="block truncate font-medium leading-[18px]" v-text="world.name"></span>
+                                <span v-if="world.occupants" class="block truncate text-xs"
+                                    >({{ world.occupants }})</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </TabsUnderline>
+        </div>
     </template>
     <template v-else-if="!userDialog.isFavoriteWorldsLoading">
         <div style="display: flex; justify-content: center; align-items: center; height: 100%">
@@ -99,16 +106,13 @@
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n';
 
     import { useFavoriteStore, useUserStore } from '../../../stores';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { handleFavoriteWorldList } from '../../../coordinators/favoriteCoordinator';
     import { favoriteRequest } from '../../../api';
 
-    const { t } = useI18n();
-
-    const { userDialog, currentUser } = storeToRefs(useUserStore());
+    const { userDialog } = storeToRefs(useUserStore());
     const { favoriteLimits } = storeToRefs(useFavoriteStore());
 
     const favoriteWorldsTab = ref('0');
@@ -211,3 +215,16 @@
 
     defineExpose({ getUserFavoriteWorlds });
 </script>
+
+<style scoped>
+    .zero-margin-tabs :deep([role='tab']) {
+        padding-left: 0;
+        padding-right: 0;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .zero-margin-tabs :deep([role='tablist']) {
+        gap: 0;
+    }
+</style>

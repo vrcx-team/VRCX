@@ -140,6 +140,14 @@ export function request(endpoint, options) {
                 const tag = `[API ${init.method}]`;
                 if (!parsed.data) {
                     logWebRequest(tag, endpoint, `(${parsed.status}) no data`);
+                } else if (init.method === 'PUT' || init.method === 'POST') {
+                    logWebRequest(
+                        tag,
+                        endpoint,
+                        `(${parsed.status})`,
+                        init.params,
+                        parsed.data
+                    );
                 } else {
                     logWebRequest(
                         tag,

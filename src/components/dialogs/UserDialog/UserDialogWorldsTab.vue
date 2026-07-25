@@ -15,7 +15,9 @@
             }}</span>
         </div>
         <div style="display: flex; align-items: center">
-            <Input v-model="searchQuery" class="h-8 w-40 mr-2" placeholder="Search worlds" @click.stop />
+            <Input v-model="searchQuery" class="h-8 mr-2 w-32" placeholder="Search worlds" @click.stop />
+        </div>
+        <div style="display: flex; align-items: center">
             <span class="mr-1">{{ t('dialog.user.worlds.sort_by') }}</span>
             <Select
                 :model-value="userDialogWorldSortingKey"
@@ -33,6 +35,8 @@
                     </SelectItem>
                 </SelectContent>
             </Select>
+        </div>
+        <div style="display: flex; align-items: center">
             <span class="ml-2 mr-1">{{ t('dialog.user.worlds.order_by') }}</span>
             <Select
                 :model-value="userDialogWorldOrderKey"

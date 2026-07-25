@@ -41,7 +41,7 @@
                     <template v-if="image.versions && image.versions.length > 0">
                         <div
                             v-if="image.versions[image.versions.length - 1].file.url"
-                            class="h-[200px] w-[200px] rounded-[20px] cursor-pointer overflow-hidden"
+                            class="h-[200px] w-[200px] rounded-[20px] cursor-pointer overflow-hidden mr-5"
                             @click="
                                 selectImageGallerySelect(image.versions[image.versions.length - 1].file.url, image.id)
                             ">
@@ -81,6 +81,7 @@
             required: true
         }
     });
+    const emit = defineEmits(['select-image']);
 
     /**
      *
@@ -91,6 +92,7 @@
         const D = props.gallerySelectDialog;
         D.selectedFileId = fileId;
         D.selectedImageUrl = imageUrl;
+        emit('select-image', { imageUrl, fileId });
         D.visible = false;
     }
 

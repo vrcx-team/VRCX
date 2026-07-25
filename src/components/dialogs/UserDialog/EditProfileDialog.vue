@@ -97,6 +97,115 @@
                 </section>
 
                 <section class="space-y-3">
+                    <h3 class="text-sm font-semibold">{{ t('dialog.edit_profile.banner') }}</h3>
+
+                    <Select
+                        :model-value="selectedBannerType"
+                        :disabled="editProfileDialog.loading"
+                        @update:modelValue="handleBannerTypeChange">
+                        <SelectTrigger size="sm" class="w-42">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="option in bannerTypeOptions"
+                                    :key="option.value"
+                                    :value="option.value"
+                                    :text-value="option.label">
+                                    {{ option.label }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+
+                    <div v-if="selectedBannerType === 'color'" class="flex items-center gap-1">
+                        <input
+                            type="color"
+                            class="h-8 w-12 cursor-pointer appearance-none rounded-md border-0 bg-transparent p-0 disabled:cursor-not-allowed [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-md [&::-webkit-color-swatch]:border-0 [&::-moz-color-swatch]:rounded-md [&::-moz-color-swatch]:border-0"
+                            :value="bannerColorValue"
+                            :disabled="editProfileDialog.loading"
+                            @input="handleBannerColorInput" />
+                        <span class="w-20 text-xs font-mono text-muted-foreground uppercase">
+                            {{ bannerColorValue }}
+                        </span>
+                    </div>
+                    <div v-else-if="selectedBannerType === 'avatarBanner'">
+                        <img
+                            :src="currentUser.currentAvatarThumbnailImageUrl"
+                            class="inline-block h-16 aspect-17/6 rounded-md object-cover"
+                            :alt="t('dialog.edit_profile.banner_type_avatar_banner')" />
+                    </div>
+                    <div v-else-if="selectedBannerType === 'customImage'">
+                        <div>
+                            <Button size="sm" variant="outline" @click="showGallerySelectDialog">
+                                {{ t('dialog.invite_message.select_image') }}
+                            </Button>
+                        </div>
+                        <img
+                            v-if="props.editProfileDialog.bannerUrl"
+                            :src="props.editProfileDialog.bannerUrl"
+                            class="inline-block h-16 aspect-17/6 rounded-md object-cover mt-2"
+                            :alt="t('dialog.edit_profile.banner_type_custom_image')" />
+                    </div>
+                </section>
+
+                <section class="space-y-3">
+                    <h3 class="text-sm font-semibold">{{ t('dialog.pronouns.header') }}</h3>
+                    <InputGroupTextareaField
+                        v-model="editProfileDialog.pronouns"
+                        :maxlength="32"
+                        :rows="1"
+                        input-class="min-h-0 py-2"
+                        :placeholder="t('dialog.pronouns.pronouns_placeholder')"
+                        show-count />
+                </section>
+
+                <section class="space-y-3">
+                    <h3 class="text-sm font-semibold">{{ t('dialog.bio.header') }}</h3>
+
+                    <InputGroupTextareaField
+                        v-model="editProfileDialog.bio"
+                        :maxlength="512"
+                        :rows="5"
+                        :placeholder="t('dialog.bio.bio_placeholder')"
+                        show-count
+                        autosize />
+
+                    <InputGroupAction
+                        v-for="(link, index) in editProfileDialog.bioLinks"
+                        :key="index"
+                        v-model="editProfileDialog.bioLinks[index]"
+                        :maxlength="1000"
+                        size="sm">
+                        <template #leading>
+                            <img
+                                v-if="link"
+                                :src="getFaviconUrl(link)"
+                                style="width: 16px; height: 16px; vertical-align: middle" />
+                            <div v-else style="width: 16px; height: 16px" />
+                        </template>
+                        <template #actions>
+                            <Button
+                                variant="ghost"
+                                size="icon-sm"
+                                @click="editProfileDialog.bioLinks.splice(index, 1)"
+                                :ariaLabel="t('common.actions.delete')">
+                                <Trash2 class="size-4" />
+                            </Button>
+                        </template>
+                    </InputGroupAction>
+
+                    <Button
+                        variant="outline"
+                        :disabled="editProfileDialog.bioLinks.length >= 3 || editProfileDialog.loading"
+                        size="sm"
+                        @click="editProfileDialog.bioLinks.push('')">
+                        {{ t('dialog.bio.add_link') }}
+                    </Button>
+                </section>
+
+                <section class="space-y-3">
                     <h3 class="text-sm font-semibold">{{ t('dialog.language.header') }}</h3>
 
                     <div class="my-2" v-for="item in currentLanguages" :key="item.key">
@@ -147,60 +256,6 @@
                         </SelectContent>
                     </Select>
                 </section>
-
-                <section class="space-y-3">
-                    <h3 class="text-sm font-semibold">{{ t('dialog.pronouns.header') }}</h3>
-                    <InputGroupTextareaField
-                        v-model="editProfileDialog.pronouns"
-                        :maxlength="32"
-                        :rows="2"
-                        :placeholder="t('dialog.pronouns.pronouns_placeholder')"
-                        show-count />
-                </section>
-
-                <section class="space-y-3">
-                    <h3 class="text-sm font-semibold">{{ t('dialog.bio.header') }}</h3>
-
-                    <InputGroupTextareaField
-                        v-model="editProfileDialog.bio"
-                        :maxlength="512"
-                        :rows="5"
-                        :placeholder="t('dialog.bio.bio_placeholder')"
-                        show-count
-                        autosize />
-
-                    <InputGroupAction
-                        v-for="(link, index) in editProfileDialog.bioLinks"
-                        :key="index"
-                        v-model="editProfileDialog.bioLinks[index]"
-                        :maxlength="1000"
-                        size="sm">
-                        <template #leading>
-                            <img
-                                v-if="link"
-                                :src="getFaviconUrl(link)"
-                                style="width: 16px; height: 16px; vertical-align: middle" />
-                            <div v-else style="width: 16px; height: 16px" />
-                        </template>
-                        <template #actions>
-                            <Button
-                                variant="ghost"
-                                size="icon-sm"
-                                @click="editProfileDialog.bioLinks.splice(index, 1)"
-                                :ariaLabel="t('common.actions.delete')">
-                                <Trash2 class="size-4" />
-                            </Button>
-                        </template>
-                    </InputGroupAction>
-
-                    <Button
-                        variant="outline"
-                        :disabled="editProfileDialog.bioLinks.length >= 3 || editProfileDialog.loading"
-                        size="sm"
-                        @click="editProfileDialog.bioLinks.push('')">
-                        {{ t('dialog.bio.add_link') }}
-                    </Button>
-                </section>
             </div>
 
             <DialogFooter class="px-6 py-4">
@@ -214,6 +269,10 @@
                     {{ t('dialog.bio.update') }}
                 </Button>
             </DialogFooter>
+
+            <GallerySelectDialog
+                :gallery-select-dialog="gallerySelectDialog"
+                @select-image="handleGalleryImageSelect" />
         </DialogContent>
     </Dialog>
 </template>
@@ -245,12 +304,15 @@
 
     import { userRequest } from '../../../api';
     import { languageClass, getFaviconUrl, arraysMatch } from '../../../shared/utils';
-    import { useUserStore, useAuthStore } from '../../../stores';
+    import { useUserStore, useAuthStore, useGalleryStore } from '../../../stores';
     import { useStatusPresets } from './composables/useStatusPresets';
+    import GallerySelectDialog from '../GroupDialog/GallerySelectDialog.vue';
 
     const { t } = useI18n();
     const { currentUser } = storeToRefs(useUserStore());
     const authStore = useAuthStore();
+    const { refreshGalleryTable } = useGalleryStore();
+    const { presets, addPreset, removePreset, getStatusClass, MAX_PRESETS } = useStatusPresets();
 
     const props = defineProps({
         editProfileDialog: {
@@ -260,7 +322,11 @@
     });
 
     const selectedLanguageToAdd = ref('');
-    const { presets, addPreset, removePreset, getStatusClass, MAX_PRESETS } = useStatusPresets();
+    const gallerySelectDialog = ref({
+        visible: false,
+        selectedFileId: '',
+        selectedImageUrl: ''
+    });
 
     const currentLanguages = computed(() => currentUser.value?.$languages ?? []);
     const availableLanguages = computed(() => {
@@ -268,6 +334,30 @@
         return Object.entries(options).map(([key, value]) => ({ key, value }));
     });
     const historyItems = computed(() => props.editProfileDialog.socialStatusHistoryTable ?? []);
+    const bannerTypeOptions = [
+        { value: 'color', label: t('dialog.edit_profile.banner_type_color') },
+        { value: 'avatarBanner', label: t('dialog.edit_profile.banner_type_avatar_banner') },
+        { value: 'customImage', label: t('dialog.edit_profile.banner_type_custom_image') }
+    ];
+
+    const selectedBannerType = computed(() => {
+        const type = props.editProfileDialog.bannerType;
+        return bannerTypeOptions.some((option) => option.value === type) ? type : 'color';
+    });
+    const bannerColorValue = computed(() => {
+        if (!props.editProfileDialog.bannerColor) {
+            return '#555555';
+        }
+        return `#${props.editProfileDialog.bannerColor}`;
+    });
+
+    function normalizeBannerColor(value) {
+        const hex = String(value ?? '')
+            .trim()
+            .replace(/^#/, '')
+            .toLowerCase();
+        return /^[0-9a-f]{6}$/.test(hex) ? hex : '';
+    }
 
     const statusOptions = computed(() => {
         const options = [
@@ -343,6 +433,35 @@
         props.editProfileDialog.statusDescription = val.status;
     }
 
+    function handleBannerColorInput(event) {
+        const normalized = normalizeBannerColor(event?.target?.value);
+        if (!normalized) {
+            return;
+        }
+        const D = props.editProfileDialog;
+        D.bannerColor = normalized;
+        D.bannerType = 'color';
+    }
+
+    function handleBannerTypeChange(value) {
+        if (!bannerTypeOptions.some((option) => option.value === value)) {
+            return;
+        }
+        const D = props.editProfileDialog;
+        D.bannerType = value;
+    }
+
+    function showGallerySelectDialog() {
+        const D = gallerySelectDialog.value;
+        D.visible = true;
+        refreshGalleryTable();
+    }
+
+    function handleGalleryImageSelect({ imageUrl }) {
+        const D = props.editProfileDialog;
+        D.bannerUrl = imageUrl;
+    }
+
     function handleAddUserLanguage(language) {
         addUserLanguage(language);
         selectedLanguageToAdd.value = '';
@@ -378,43 +497,58 @@
             });
     }
 
-    function saveProfile() {
+    async function saveProfile() {
         const D = props.editProfileDialog;
         if (D.loading) {
             return;
         }
 
-        const payload = {};
+        /** @type {Partial<import("../../../types/api/user").GetCurrentUserResponse>} */
+        const userPayload = {};
         if (D.status !== currentUser.value.status) {
-            payload.status = D.status;
+            userPayload.status = D.status;
         }
         if (D.statusDescription !== currentUser.value.statusDescription) {
-            payload.statusDescription = D.statusDescription;
+            userPayload.statusDescription = D.statusDescription;
         }
         if (D.pronouns !== currentUser.value.pronouns) {
-            payload.pronouns = D.pronouns;
+            userPayload.pronouns = D.pronouns;
         }
         if (D.bio !== currentUser.value.bio) {
-            payload.bio = D.bio;
+            userPayload.bio = D.bio;
         }
         if (!arraysMatch(D.bioLinks, currentUser.value.bioLinks)) {
-            payload.bioLinks = D.bioLinks;
+            userPayload.bioLinks = D.bioLinks;
         }
-        if (!Object.keys(payload).length) {
+
+        /** @type {Partial<import("../../../types/api/profile").selfProfile>} */
+        const profilePayload = {};
+        if (D.bannerColor !== currentUser.value.bannerColor) {
+            profilePayload.bannerColor = D.bannerColor;
+        }
+        if (D.bannerUrl !== currentUser.value.bannerUrl) {
+            profilePayload.bannerCustomUrl = D.bannerUrl;
+        }
+        if (D.bannerType !== currentUser.value.bannerType) {
+            profilePayload.bannerType = D.bannerType;
+        }
+        if (!Object.keys(userPayload).length && !Object.keys(profilePayload).length) {
             D.visible = false;
             return;
         }
 
         D.loading = true;
-        userRequest
-            .saveCurrentUser(payload)
-            .finally(() => {
-                D.loading = false;
-            })
-            .then((args) => {
-                D.visible = false;
-                toast.success('Profile updated');
-                return args;
-            });
+        try {
+            if (Object.keys(profilePayload).length) {
+                await userRequest.saveProfile(profilePayload);
+            }
+            if (Object.keys(userPayload).length) {
+                await userRequest.saveCurrentUser(userPayload);
+            }
+            D.visible = false;
+            toast.success('Profile updated');
+        } finally {
+            D.loading = false;
+        }
     }
 </script>

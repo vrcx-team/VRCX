@@ -113,35 +113,61 @@
                     <div style="margin-right: 3px; margin-left: 6px" @click.stop>
                         <Button
                             size="icon-sm"
-                            variant="ghost"
+                            variant="outline"
                             :ariaLabel="t('dialog.vrcx_updater.download')"
-                            style="display: block; padding: 7px; font-size: 9px; margin-left: 0; rotate: 180deg"
+                            style="
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                padding: 7px;
+                                margin-left: 0;
+                            "
                             @click="moveGroupTop(group.id)">
-                            <DownloadIcon />
+                            <DownloadIcon class="size-3.5 shrink-0" style="transform: rotate(180deg)" />
                         </Button>
                         <Button
                             size="icon-sm"
-                            variant="ghost"
+                            variant="outline"
                             :ariaLabel="t('dialog.vrcx_updater.download')"
-                            style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
+                            style="
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                padding: 7px;
+                                margin-left: 0;
+                                margin-top: 4px;
+                            "
                             @click="moveGroupBottom(group.id)">
-                            <DownloadIcon />
+                            <DownloadIcon class="size-3.5 shrink-0" />
                         </Button>
                     </div>
                     <div style="margin-right: 8px" @click.stop>
                         <Button
                             size="icon-sm"
                             variant="outline"
-                            style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
+                            style="
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                padding: 7px;
+                                margin-left: 0;
+                            "
                             @click="moveGroupUp(group.id)">
-                            <ArrowUp />
+                            <ArrowUp class="size-3.5 shrink-0" />
                         </Button>
                         <Button
                             size="icon-sm"
                             variant="outline"
-                            style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
+                            style="
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                padding: 7px;
+                                margin-left: 0;
+                                margin-top: 4px;
+                            "
                             @click="moveGroupDown(group.id)">
-                            <ArrowDown />
+                            <ArrowDown class="size-3.5 shrink-0" />
                         </Button>
                     </div>
                     <div class="relative inline-block flex-none size-9 mr-2.5">

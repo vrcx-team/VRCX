@@ -168,7 +168,7 @@
                 <span class="sr-only">Clear</span>
             </InputGroupButton>
         </InputGroupAddon>
-        <InputGroupAddon v-if="showCount && valueLength > 0" align="block-end">
+        <InputGroupAddon v-if="showCount" align="block-end">
             <InputGroupText class="gap-1 tabular-nums text-xs">
                 <span>{{ valueLength }}</span>
                 <span class="text-muted-foreground/70">/ {{ maxLength }}</span>
