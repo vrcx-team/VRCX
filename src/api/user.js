@@ -218,6 +218,23 @@ const userReq = {
             };
             return args;
         });
+    },
+
+    /**
+     * @param {Partial<import('../types/api/profile').publicProfile>} params
+     * @returns {Promise<{json: import('../types/api/profile').publicProfile, params: Partial<import('../types/api/profile').publicProfile>}>}
+     */
+    saveProfile(params) {
+        return request(`profile/${getCurrentUserId()}`, {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
     }
 };
 
