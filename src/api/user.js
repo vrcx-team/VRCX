@@ -221,6 +221,24 @@ const userReq = {
     },
 
     /**
+     * @returns {Promise<{json: import('../types/api/profile').selfProfile, params: {}}>}
+     */
+    getSelfProfile() {
+        return request(`profile/${getCurrentUserId()}`, {
+            method: 'GET',
+            params: {
+                asSelf: true
+            }
+        }).then((json) => {
+            const args = {
+                json,
+                params: {}
+            };
+            return args;
+        });
+    },
+
+    /**
      * @param {Partial<import('../types/api/profile').publicProfile>} params
      * @returns {Promise<{json: import('../types/api/profile').publicProfile, params: Partial<import('../types/api/profile').publicProfile>}>}
      */

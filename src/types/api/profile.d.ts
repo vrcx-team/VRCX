@@ -1,6 +1,7 @@
 export interface publicProfile {
     ageVerificationStatus: string;
     ageVerified: boolean;
+    backgroundTextureId: string;
     backgroundType: string;
     badges: {
         badgeDescription: string;
@@ -11,6 +12,7 @@ export interface publicProfile {
     }[];
     bannerColor: string;
     bannerType: 'avatarBanner' | 'color' | 'customImage';
+    bannerUrl: string;
     bio: string;
     bioLinks: string[];
     displayName: string;
@@ -29,7 +31,10 @@ export interface publicProfile {
         id: string;
         name: string;
     } | null;
+    themeButtonColor: string;
+    themeIconColor: string;
     themeId: string;
+    themeSubtextColor: string;
     trustTags: string[];
 }
 
@@ -51,4 +56,32 @@ export interface privateProfile {
     note: string;
     status: string;
     statusDescription: string;
+}
+
+export interface selfProfile extends publicProfile {
+    backgroundGradientBottom: string;
+    backgroundGradientTop: string;
+    backgroundTemplateId: string;
+    backgroundTextureId: string;
+    bannerCustomUrl: string;
+    currentAvatar: string;
+    currentAvatarAuthorName: string;
+    currentAvatarImageUrl: string;
+    currentAvatarName: string;
+    currentAvatarTags: string[];
+    currentAvatarThumbnailImageUrl: string;
+    status: string;
+    statusDescription: string;
+    themeButtonColor: string;
+    themeIconColor: string;
+    themeId: string;
+    themeSubtextColor: string;
+    themes: {
+        buttonColor: string;
+        iconColor: string;
+        id: string;
+        name: string;
+        subtextColor: string;
+    }[];
+    userIcon: string;
 }
