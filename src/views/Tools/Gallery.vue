@@ -511,7 +511,7 @@
 
             <template #inventory>
                 <div>
-                    <div class="flex items-center">
+                    <div class="flex items-center gap-2 flex-wrap">
                         <ButtonGroup>
                             <Button variant="outline" size="sm" @click="getInventory">
                                 <RefreshCw />
@@ -522,16 +522,29 @@
                                 {{ t('dialog.gallery_icons.redeem') }}
                             </Button>
                         </ButtonGroup>
+                        <Select v-model="inventoryTypeFilter">
+                            <SelectTrigger size="sm" class="w-44">
+                                <SelectValue placeholder="All types" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="all">All types</SelectItem>
+                                    <SelectItem v-for="type in inventoryTypeOptions" :key="type" :value="type">
+                                        {{ type }}
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                     </div>
                     <ItemGroup
                         class="grid gap-3 mt-3"
                         style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr))">
                         <Item
-                            v-for="item in inventoryTable"
+                            v-for="item in filteredInventoryTable"
                             :key="item.id"
                             variant="outline"
                             size="sm"
-                            class="p-0 x-hover-card hover:bg-accent hover:shadow-sm"
+                            class="p-0 pb-4 x-hover-card hover:bg-accent hover:shadow-sm"
                             as-child>
                             <div class="overflow-hidden">
                                 <ItemHeader class="cursor-pointer" @click="showFullscreenImageDialog(item.imageUrl)">
@@ -550,21 +563,9 @@
                                     <ItemDescription class="text-[11px] truncate font-mono">
                                         {{ formatDateFilter(item.created_at, 'long') }}
                                     </ItemDescription>
-                                    <ItemDescription class="text-xs">
-                                        <span v-if="item.itemType === 'prop'">{{
-                                            t('dialog.gallery_icons.item')
-                                        }}</span>
-                                        <span v-else-if="item.itemType === 'sticker'">{{
-                                            t('dialog.gallery_icons.sticker')
-                                        }}</span>
-                                        <span v-else-if="item.itemType === 'droneskin'">{{
-                                            t('dialog.gallery_icons.drone_skin')
-                                        }}</span>
-                                        <span v-else-if="item.itemType === 'emoji'">{{
-                                            t('dialog.gallery_icons.emoji')
-                                        }}</span>
-                                        <span v-else v-text="item.itemTypeLabel"></span>
-                                    </ItemDescription>
+                                    <ItemDescription class="text-xs">{{
+                                        item.itemTypeLabel || item.itemType
+                                    }}</ItemDescription>
                                 </ItemContent>
                                 <ItemFooter v-if="item.itemType === 'bundle'" class="p-2">
                                     <Button size="sm" @click="consumeInventoryBundle(item.id)">
@@ -602,6 +603,7 @@
     import { ButtonGroup } from '@/components/ui/button-group';
     import { Checkbox } from '@/components/ui/checkbox';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { VirtualCombobox } from '@/components/ui/virtual-combobox';
     import {
@@ -683,6 +685,7 @@
     const emojiAnimType = ref(false);
     const emojiAnimationStyle = ref('Stop');
     const emojiAnimLoopPingPong = ref(false);
+    const inventoryTypeFilter = ref('all');
 
     const emojiStylePickerGroups = computed(() => [
         {
@@ -699,6 +702,26 @@
 
     const pendingUploads = ref(0);
     const isUploading = computed(() => pendingUploads.value > 0);
+
+    const inventoryTypeOptions = computed(() => {
+        const optionsByType = new Set();
+        for (const item of inventoryTable.value) {
+            if (optionsByType.has(item.itemTypeLabel)) {
+                continue;
+            }
+            optionsByType.add(item.itemTypeLabel);
+        }
+        return Array.from(optionsByType.values()).sort((a, b) => a.localeCompare(b));
+    });
+
+    const filteredInventoryTable = computed(() => {
+        const selectedType = inventoryTypeFilter.value;
+        if (selectedType === 'all') {
+            return inventoryTable.value;
+        }
+
+        return inventoryTable.value.filter((item) => item.itemTypeLabel === selectedType);
+    });
 
     const cropDialogOpen = ref(false);
     const cropDialogTitle = ref('');
