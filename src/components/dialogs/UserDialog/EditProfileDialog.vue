@@ -97,6 +97,30 @@
                 </section>
 
                 <section class="space-y-3">
+                    <h3 class="text-sm font-semibold">{{ t('dialog.edit_profile.icon') }}</h3>
+
+                    <div class="flex items-center gap-2">
+                        <img
+                            :src="editProfileDialog.userIcon || currentUser.currentAvatarThumbnailImageUrl"
+                            class="inline-block h-16 aspect-square rounded-md object-cover"
+                            :alt="t('dialog.edit_profile.icon')"
+                            loading="lazy" />
+                        <Button
+                            v-if="editProfileDialog.userIcon"
+                            size="sm"
+                            variant="outline"
+                            :disabled="editProfileDialog.loading"
+                            @click="clearUserIcon"
+                            :ariaLabel="t('common.actions.delete')">
+                            <X class="size-4" />
+                        </Button>
+                        <Button size="sm" variant="outline" @click="showIconSelectDialog">
+                            {{ t('dialog.invite_message.select_image') }}
+                        </Button>
+                    </div>
+                </section>
+
+                <section class="space-y-3">
                     <h3 class="text-sm font-semibold">{{ t('dialog.edit_profile.banner') }}</h3>
 
                     <Select
@@ -137,16 +161,16 @@
                             :alt="t('dialog.edit_profile.banner_type_avatar_banner')" />
                     </div>
                     <div v-else-if="selectedBannerType === 'customImage'">
-                        <div>
+                        <div class="flex items-center gap-2 mt-2">
+                            <img
+                                v-if="props.editProfileDialog.bannerUrl"
+                                :src="props.editProfileDialog.bannerUrl"
+                                class="inline-block h-16 aspect-17/6 rounded-md object-cover"
+                                :alt="t('dialog.edit_profile.banner_type_custom_image')" />
                             <Button size="sm" variant="outline" @click="showGallerySelectDialog">
                                 {{ t('dialog.invite_message.select_image') }}
                             </Button>
                         </div>
-                        <img
-                            v-if="props.editProfileDialog.bannerUrl"
-                            :src="props.editProfileDialog.bannerUrl"
-                            class="inline-block h-16 aspect-17/6 rounded-md object-cover mt-2"
-                            :alt="t('dialog.edit_profile.banner_type_custom_image')" />
                     </div>
                 </section>
 
@@ -325,7 +349,8 @@
     const gallerySelectDialog = ref({
         visible: false,
         selectedFileId: '',
-        selectedImageUrl: ''
+        selectedImageUrl: '',
+        isIconGallerySelectDialog: false
     });
 
     const currentLanguages = computed(() => currentUser.value?.$languages ?? []);
@@ -454,12 +479,29 @@
     function showGallerySelectDialog() {
         const D = gallerySelectDialog.value;
         D.visible = true;
+        D.isIconGallerySelectDialog = false;
+        refreshGalleryTable();
+    }
+
+    function showIconSelectDialog() {
+        const D = gallerySelectDialog.value;
+        D.visible = true;
+        D.isIconGallerySelectDialog = true;
         refreshGalleryTable();
     }
 
     function handleGalleryImageSelect({ imageUrl }) {
         const D = props.editProfileDialog;
-        D.bannerUrl = imageUrl;
+        if (gallerySelectDialog.value.isIconGallerySelectDialog) {
+            D.userIcon = imageUrl;
+        } else {
+            D.bannerUrl = imageUrl;
+        }
+    }
+
+    function clearUserIcon() {
+        const D = props.editProfileDialog;
+        D.userIcon = '';
     }
 
     function handleAddUserLanguage(language) {
@@ -531,6 +573,9 @@
         }
         if (D.bannerType !== currentUser.value.bannerType) {
             profilePayload.bannerType = D.bannerType;
+        }
+        if (D.userIcon !== currentUser.value.userIcon) {
+            profilePayload.userIcon = D.userIcon;
         }
         if (!Object.keys(userPayload).length && !Object.keys(profilePayload).length) {
             D.visible = false;

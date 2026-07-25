@@ -128,10 +128,7 @@
                 </div>
             </DialogFooter>
 
-            <GallerySelectDialog
-                :gallery-select-dialog="gallerySelectDialog"
-                :gallery-table="galleryTable"
-                @refresh-gallery-table="refreshGalleryTable" />
+            <GallerySelectDialog :gallery-select-dialog="gallerySelectDialog" />
         </DialogContent>
     </Dialog>
 </template>
@@ -171,7 +168,8 @@
     const gallerySelectDialog = ref({
         visible: false,
         selectedFileId: '',
-        selectedImageUrl: ''
+        selectedImageUrl: '',
+        isIconGallerySelectDialog: false
     });
     const galleryTable = ref([]);
 
@@ -209,7 +207,6 @@
     function showGallerySelectDialog() {
         const D = gallerySelectDialog.value;
         D.visible = true;
-        refreshGalleryTable();
     }
     /**
      *

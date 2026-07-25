@@ -1838,7 +1838,8 @@
             "banner_color": "Banner Color",
             "banner_type_color": "Color",
             "banner_type_avatar_banner": "Avatar Image",
-            "banner_type_custom_image": "Custom Image"
+            "banner_type_custom_image": "Custom Image",
+            "icon": "Icon"
         },
         "new_instance": {
             "header": "New Instance",

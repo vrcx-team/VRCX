@@ -279,7 +279,8 @@ export const useUserStore = defineStore('User', () => {
         socialStatusHistoryTable: [],
         bannerColor: '',
         bannerUrl: '',
-        bannerType: ''
+        bannerType: '',
+        userIcon: ''
     });
 
     const currentTravelers = reactive(new Map());
@@ -797,6 +798,7 @@ export const useUserStore = defineStore('User', () => {
         D.bannerColor = currentUser.value.bannerColor;
         D.bannerUrl = currentUser.value.bannerUrl;
         D.bannerType = currentUser.value.bannerType;
+        D.userIcon = currentUser.value.userIcon;
         D.visible = true;
     }
 
