@@ -62,7 +62,6 @@ export interface selfProfile extends publicProfile {
     backgroundGradientBottom: string;
     backgroundGradientTop: string;
     backgroundTemplateId: string;
-    backgroundTextureId: string;
     bannerCustomUrl: string;
     currentAvatar: string;
     currentAvatarAuthorName: string;
