@@ -10,18 +10,20 @@
                 <DialogTitle>{{ t('view.login.settings') }}</DialogTitle>
             </DialogHeader>
             <FieldGroup class="gap-3">
-                <Field>
-                    <FieldLabel for="login-settings-proxy">{{ t('view.login.proxy_settings') }}</FieldLabel>
-                    <FieldContent>
-                        <InputGroupField
-                            id="login-settings-proxy"
-                            v-model="proxyServerLocal"
-                            autocomplete="off"
-                            name="proxy"
-                            :placeholder="t('prompt.proxy_settings.description')"
-                            clearable />
-                    </FieldContent>
-                </Field>
+                <template v-if="!isLinux">
+                    <Field>
+                        <FieldLabel for="login-settings-proxy">{{ t('view.login.proxy_settings') }}</FieldLabel>
+                        <FieldContent>
+                            <InputGroupField
+                                id="login-settings-proxy"
+                                v-model="proxyServerLocal"
+                                autocomplete="off"
+                                name="proxy"
+                                :placeholder="t('prompt.proxy_settings.description')"
+                                clearable />
+                        </FieldContent>
+                    </Field>
+                </template>
                 <label class="inline-flex items-center gap-2 text-sm">
                     <Checkbox v-model="enableCustomEndpoint" @update:modelValue="handleCustomEndpointToggle" />
                     <span>{{ t('view.login.field.devEndpoint') }}</span>
@@ -71,7 +73,7 @@
         DialogTrigger
     } from '@/components/ui/dialog';
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
-    import { ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Checkbox } from '@/components/ui/checkbox';
     import { InputGroupField } from '@/components/ui/input-group';
@@ -90,6 +92,7 @@
 
     const open = ref(false);
     const proxyServerLocal = ref('');
+    const isLinux = computed(() => LINUX);
 
     watch(open, (isOpen) => {
         if (isOpen) {
