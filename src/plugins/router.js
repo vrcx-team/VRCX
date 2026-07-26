@@ -7,6 +7,7 @@ import FavoritesFriend from './../views/Favorites/FavoritesFriend.vue';
 import FavoritesWorld from './../views/Favorites/FavoritesWorld.vue';
 import Feed from './../views/Feed/Feed.vue';
 import FriendList from './../views/FriendList/FriendList.vue';
+import FriendInsight from './../views/FriendInsight/FriendInsight.vue';
 import FriendLog from './../views/FriendLog/FriendLog.vue';
 import FriendsLocations from './../views/FriendsLocations/FriendsLocations.vue';
 import Dashboard from './../views/Dashboard/Dashboard.vue';
@@ -66,6 +67,11 @@ const routes = [
                 path: 'favorites/avatars',
                 name: 'favorite-avatars',
                 component: FavoritesAvatar
+            },
+            {
+                path: 'social/friend-insight',
+                name: 'friend-insight',
+                component: FriendInsight
             },
             {
                 path: 'social/friend-log',

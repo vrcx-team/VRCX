@@ -3,6 +3,7 @@ import { avatarFavorites } from './avatarFavorites.js';
 import { avatarTags } from './avatarTags.js';
 import { feed } from './feed.js';
 import { friendFavorites } from './friendFavorites.js';
+import { friendInsight } from './friendInsight.js';
 import { friendLogCurrent } from './friendLogCurrent.js';
 import { friendLogHistory } from './friendLogHistory.js';
 import { gameLog } from './gameLog.js';
@@ -36,6 +37,7 @@ const database = {
     ...avatarFavorites,
     ...avatarTags,
     ...friendFavorites,
+    ...friendInsight,
     ...worldFavorites,
     ...tableAlter,
     ...tableFixes,
@@ -74,6 +76,18 @@ const database = {
         );
         await sqliteService.executeNonQuery(
             `CREATE INDEX IF NOT EXISTS ${dbVars.userPrefix}_feed_online_offline_user_created_idx ON ${dbVars.userPrefix}_feed_online_offline (user_id, created_at)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE INDEX IF NOT EXISTS ${dbVars.userPrefix}_feed_gps_user_created_idx ON ${dbVars.userPrefix}_feed_gps (user_id, created_at)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE INDEX IF NOT EXISTS ${dbVars.userPrefix}_feed_status_user_created_idx ON ${dbVars.userPrefix}_feed_status (user_id, created_at)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE INDEX IF NOT EXISTS ${dbVars.userPrefix}_feed_bio_user_created_idx ON ${dbVars.userPrefix}_feed_bio (user_id, created_at)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE INDEX IF NOT EXISTS ${dbVars.userPrefix}_feed_avatar_user_created_idx ON ${dbVars.userPrefix}_feed_avatar (user_id, created_at)`
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_activity_sync_state_v2 (

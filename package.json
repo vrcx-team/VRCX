@@ -38,7 +38,9 @@
         "start-electron": "electron . --hot-reload"
     },
     "dependencies": {
+        "dompurify": "^3.4.12",
         "hazardous": "^0.3.0",
+        "marked": "^18.0.7",
         "node-api-dotnet": "^0.9.21"
     },
     "devDependencies": {

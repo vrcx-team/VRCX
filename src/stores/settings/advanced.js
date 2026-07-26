@@ -1,4 +1,4 @@
-import { reactive, ref, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -71,6 +71,31 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const vrcRegistryAutoBackup = ref(true);
     const vrcRegistryAskRestore = ref(true);
     const sentryErrorReporting = ref(false);
+    const friendInsightEnabled = ref(false);
+    const friendInsightEndpoint = ref(
+        'https://api.openai.com/v1/chat/completions'
+    );
+    const friendInsightApiKey = ref('');
+    const friendInsightModel = ref('gpt-4o-mini');
+    const friendInsightDataLocation = ref(true);
+    const friendInsightDataStatus = ref(true);
+    const friendInsightDataBio = ref(true);
+    const friendInsightDataAvatar = ref(true);
+    const friendInsightDataPresence = ref(true);
+    const friendInsightDataRelationship = ref(true);
+    const friendInsightDataMutuals = ref(true);
+
+    const friendInsightAllowedDataTypes = computed(() => {
+        const types = [];
+        if (friendInsightDataLocation.value) types.push('location');
+        if (friendInsightDataStatus.value) types.push('status');
+        if (friendInsightDataBio.value) types.push('bio');
+        if (friendInsightDataAvatar.value) types.push('avatar');
+        if (friendInsightDataPresence.value) types.push('presence');
+        if (friendInsightDataRelationship.value) types.push('relationship');
+        if (friendInsightDataMutuals.value) types.push('mutuals');
+        return types;
+    });
 
     watch(
         () => watchState.isLoggedIn,
@@ -118,7 +143,18 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             saveInstanceEmojiConfig,
             vrcRegistryAutoBackupConfig,
             vrcRegistryAskRestoreConfig,
-            sentryErrorReportingConfig
+            sentryErrorReportingConfig,
+            friendInsightEnabledConfig,
+            friendInsightEndpointConfig,
+            friendInsightApiKeyConfig,
+            friendInsightModelConfig,
+            friendInsightDataLocationConfig,
+            friendInsightDataStatusConfig,
+            friendInsightDataBioConfig,
+            friendInsightDataAvatarConfig,
+            friendInsightDataPresenceConfig,
+            friendInsightDataRelationshipConfig,
+            friendInsightDataMutualsConfig
         ] = await Promise.all([
             configRepository.getBool('enablePrimaryPassword', false),
             configRepository.getString('VRCX_bioLanguage'),
@@ -167,7 +203,21 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             configRepository.getBool('VRCX_saveInstanceEmoji', false),
             configRepository.getBool('VRCX_vrcRegistryAutoBackup', true),
             configRepository.getBool('VRCX_vrcRegistryAskRestore', true),
-            configRepository.getString('VRCX_SentryEnabled', '')
+            configRepository.getString('VRCX_SentryEnabled', ''),
+            configRepository.getBool('VRCX_friendInsightEnabled', false),
+            configRepository.getString(
+                'VRCX_friendInsightEndpoint',
+                'https://api.openai.com/v1/chat/completions'
+            ),
+            configRepository.getString('VRCX_friendInsightApiKey', ''),
+            configRepository.getString('VRCX_friendInsightModel', 'gpt-4o-mini'),
+            configRepository.getBool('VRCX_friendInsightDataLocation', true),
+            configRepository.getBool('VRCX_friendInsightDataStatus', true),
+            configRepository.getBool('VRCX_friendInsightDataBio', true),
+            configRepository.getBool('VRCX_friendInsightDataAvatar', true),
+            configRepository.getBool('VRCX_friendInsightDataPresence', true),
+            configRepository.getBool('VRCX_friendInsightDataRelationship', true),
+            configRepository.getBool('VRCX_friendInsightDataMutuals', true)
         ]);
 
         if (!bioLanguageConfig || !languageCodes.includes(bioLanguageConfig)) {
@@ -215,6 +265,17 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         vrcRegistryAutoBackup.value = vrcRegistryAutoBackupConfig;
         vrcRegistryAskRestore.value = vrcRegistryAskRestoreConfig;
         sentryErrorReporting.value = sentryErrorReportingConfig === 'true';
+        friendInsightEnabled.value = friendInsightEnabledConfig;
+        friendInsightEndpoint.value = friendInsightEndpointConfig;
+        friendInsightApiKey.value = friendInsightApiKeyConfig;
+        friendInsightModel.value = friendInsightModelConfig;
+        friendInsightDataLocation.value = friendInsightDataLocationConfig;
+        friendInsightDataStatus.value = friendInsightDataStatusConfig;
+        friendInsightDataBio.value = friendInsightDataBioConfig;
+        friendInsightDataAvatar.value = friendInsightDataAvatarConfig;
+        friendInsightDataPresence.value = friendInsightDataPresenceConfig;
+        friendInsightDataRelationship.value = friendInsightDataRelationshipConfig;
+        friendInsightDataMutuals.value = friendInsightDataMutualsConfig;
 
         handleSetAppLauncherSettings();
 
@@ -402,6 +463,85 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         await configRepository.setString(
             'VRCX_translationAPIPrompt',
             translationApiPrompt.value
+        );
+    }
+
+    async function setFriendInsightEnabled() {
+        friendInsightEnabled.value = !friendInsightEnabled.value;
+        await configRepository.setBool(
+            'VRCX_friendInsightEnabled',
+            friendInsightEnabled.value
+        );
+    }
+    async function setFriendInsightEndpoint(value) {
+        friendInsightEndpoint.value = value;
+        await configRepository.setString(
+            'VRCX_friendInsightEndpoint',
+            friendInsightEndpoint.value
+        );
+    }
+    async function setFriendInsightApiKey(value) {
+        friendInsightApiKey.value = value;
+        await configRepository.setString(
+            'VRCX_friendInsightApiKey',
+            friendInsightApiKey.value
+        );
+    }
+    async function setFriendInsightModel(value) {
+        friendInsightModel.value = value;
+        await configRepository.setString(
+            'VRCX_friendInsightModel',
+            friendInsightModel.value
+        );
+    }
+    async function setFriendInsightDataLocation() {
+        friendInsightDataLocation.value = !friendInsightDataLocation.value;
+        await configRepository.setBool(
+            'VRCX_friendInsightDataLocation',
+            friendInsightDataLocation.value
+        );
+    }
+    async function setFriendInsightDataStatus() {
+        friendInsightDataStatus.value = !friendInsightDataStatus.value;
+        await configRepository.setBool(
+            'VRCX_friendInsightDataStatus',
+            friendInsightDataStatus.value
+        );
+    }
+    async function setFriendInsightDataBio() {
+        friendInsightDataBio.value = !friendInsightDataBio.value;
+        await configRepository.setBool(
+            'VRCX_friendInsightDataBio',
+            friendInsightDataBio.value
+        );
+    }
+    async function setFriendInsightDataAvatar() {
+        friendInsightDataAvatar.value = !friendInsightDataAvatar.value;
+        await configRepository.setBool(
+            'VRCX_friendInsightDataAvatar',
+            friendInsightDataAvatar.value
+        );
+    }
+    async function setFriendInsightDataPresence() {
+        friendInsightDataPresence.value = !friendInsightDataPresence.value;
+        await configRepository.setBool(
+            'VRCX_friendInsightDataPresence',
+            friendInsightDataPresence.value
+        );
+    }
+    async function setFriendInsightDataRelationship() {
+        friendInsightDataRelationship.value =
+            !friendInsightDataRelationship.value;
+        await configRepository.setBool(
+            'VRCX_friendInsightDataRelationship',
+            friendInsightDataRelationship.value
+        );
+    }
+    async function setFriendInsightDataMutuals() {
+        friendInsightDataMutuals.value = !friendInsightDataMutuals.value;
+        await configRepository.setBool(
+            'VRCX_friendInsightDataMutuals',
+            friendInsightDataMutuals.value
         );
     }
 
@@ -1138,6 +1278,18 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         vrcRegistryAutoBackup,
         vrcRegistryAskRestore,
         sentryErrorReporting,
+        friendInsightEnabled,
+        friendInsightEndpoint,
+        friendInsightApiKey,
+        friendInsightModel,
+        friendInsightDataLocation,
+        friendInsightDataStatus,
+        friendInsightDataBio,
+        friendInsightDataAvatar,
+        friendInsightDataPresence,
+        friendInsightDataRelationship,
+        friendInsightDataMutuals,
+        friendInsightAllowedDataTypes,
 
         setEnablePrimaryPassword,
         setEnablePrimaryPasswordConfigRepository,
@@ -1164,6 +1316,17 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         setTranslationApiEndpoint,
         setTranslationApiModel,
         setTranslationApiPrompt,
+        setFriendInsightEnabled,
+        setFriendInsightEndpoint,
+        setFriendInsightApiKey,
+        setFriendInsightModel,
+        setFriendInsightDataLocation,
+        setFriendInsightDataStatus,
+        setFriendInsightDataBio,
+        setFriendInsightDataAvatar,
+        setFriendInsightDataPresence,
+        setFriendInsightDataRelationship,
+        setFriendInsightDataMutuals,
         setProgressPie,
         setProgressPieFilter,
         setShowConfirmationOnSwitchAvatar,

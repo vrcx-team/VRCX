@@ -21,16 +21,16 @@ const bundledDotNetPath = path.join(process.resourcesPath, 'dotnet-runtime');
 if (fs.existsSync(bundledDotNetPath)) {
     // Include bundled .NET runtime
     process.env.DOTNET_ROOT = bundledDotNetPath;
-    process.env.PATH = `${bundledDotNetPath}:${process.env.PATH}`;
+    process.env.PATH = `${bundledDotNetPath}${path.delimiter}${process.env.PATH}`;
 } else if (process.platform === 'darwin') {
     const dotnetPath = path.join('/usr/local/share/dotnet');
     const dotnetPathArm = path.join('/usr/local/share/dotnet/x64');
     if (fs.existsSync(dotnetPathArm)) {
         process.env.DOTNET_ROOT = dotnetPathArm;
-        process.env.PATH = `${dotnetPathArm}:${process.env.PATH}`;
+        process.env.PATH = `${dotnetPathArm}${path.delimiter}${process.env.PATH}`;
     } else if (fs.existsSync(dotnetPath)) {
         process.env.DOTNET_ROOT = dotnetPath;
-        process.env.PATH = `${dotnetPath}:${process.env.PATH}`;
+        process.env.PATH = `${dotnetPath}${path.delimiter}${process.env.PATH}`;
     }
 }
 
@@ -338,7 +338,7 @@ function createWindow() {
     const indexPath = path.join(rootDir, 'build/html/index.html');
     mainWindow.loadFile(indexPath);
     if (debug) {
-        mainWindow.loadURL('http://localhost:9000/index.html');
+        mainWindow.loadURL('http://localhost:9002/index.html');
         mainWindow.webContents.openDevTools();
     }
 
@@ -468,7 +468,7 @@ function createOverlayWindowOffscreen() {
 
     let fileUrl = `file://${path.join(rootDir, 'build/html/vr.html')}`;
     if (debug) {
-        fileUrl = 'http://localhost:9000/vr.html';
+        fileUrl = 'http://localhost:9002/vr.html';
     }
     overlayWindow.loadURL(fileUrl, { userAgent: version });
     // Use paint event for offscreen rendering
@@ -824,8 +824,12 @@ function isDotNetInstalled() {
     let dotnetPath;
 
     if (process.env.DOTNET_ROOT) {
-        dotnetPath = path.join(process.env.DOTNET_ROOT, 'dotnet');
-        if (!fs.existsSync(dotnetPath)) {
+        const barePath = path.join(process.env.DOTNET_ROOT, 'dotnet');
+        if (fs.existsSync(barePath)) {
+            dotnetPath = barePath;
+        } else if (fs.existsSync(barePath + '.exe')) {
+            dotnetPath = barePath + '.exe';
+        } else {
             // fallback to command
             dotnetPath = 'dotnet';
         }
@@ -844,7 +848,10 @@ function isDotNetInstalled() {
         console.error('Error checking .NET runtimes:', result.error);
         return false;
     }
-    return result.stdout?.includes('.NETCore.App 9.0');
+    const hasRequiredRuntime =
+        result.stdout?.includes('.NETCore.App 9.0') ||
+        result.stdout?.includes('.NETCore.App 10.0');
+    return hasRequiredRuntime;
 }
 
 function tryCopyFromWinePrefix() {

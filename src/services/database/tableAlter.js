@@ -101,6 +101,31 @@ const tableAlter = {
                 console.error(e);
             }
         }
+
+        // Per-user feed indexes keep agent insight queries fast for existing
+        // databases as well as freshly initialized accounts.
+        const feedSuffixes = [
+            'feed_gps',
+            'feed_status',
+            'feed_bio',
+            'feed_avatar',
+            'feed_online_offline'
+        ];
+        for (const suffix of feedSuffixes) {
+            const feedTables = [];
+            await sqliteService.execute((dbRow) => {
+                feedTables.push(dbRow[0]);
+            }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_${suffix}'`);
+            for (const feedTable of feedTables) {
+                try {
+                    await sqliteService.executeNonQuery(
+                        `CREATE INDEX IF NOT EXISTS ${feedTable}_user_created_idx ON ${feedTable} (user_id, created_at)`
+                    );
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+        }
     }
 };
 

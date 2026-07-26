@@ -58,6 +58,13 @@ const navDefinitions = [
         routeName: 'favorite-avatars'
     },
     {
+        key: 'friend-insight',
+        icon: 'ri-brain-line',
+        tooltip: 'nav_tooltip.friend_insight',
+        labelKey: 'nav_tooltip.friend_insight',
+        routeName: 'friend-insight'
+    },
+    {
         key: 'friend-log',
         icon: 'ri-contacts-line',
         tooltip: 'nav_tooltip.friend_log',

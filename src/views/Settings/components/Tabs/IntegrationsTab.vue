@@ -157,6 +157,93 @@
             </SettingsItem>
         </SettingsGroup>
 
+        <!-- Friend Insight -->
+        <SettingsGroup :title="t('view.settings.advanced.advanced.friend_insight.header')">
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.friend_insight.enable')"
+                :description="t('view.settings.advanced.advanced.friend_insight.enable_tooltip')">
+                <Switch
+                    :model-value="friendInsightEnabled"
+                    @update:modelValue="advancedSettingsStore.setFriendInsightEnabled()" />
+            </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.advanced.advanced.friend_insight.api_config')">
+                <Button
+                    size="sm"
+                    variant="outline"
+                    :disabled="!friendInsightEnabled"
+                    @click="showFriendInsightApiDialog">
+                    <Brain class="h-4 w-4 mr-1.5" />
+                    {{ t('view.settings.advanced.advanced.friend_insight.api_config') }}
+                </Button>
+            </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.friend_insight.data_location')"
+                :description="t('view.settings.advanced.advanced.friend_insight.data_location_tooltip')">
+                <Switch
+                    :model-value="friendInsightDataLocation"
+                    :disabled="!friendInsightEnabled"
+                    @update:modelValue="advancedSettingsStore.setFriendInsightDataLocation()" />
+            </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.friend_insight.data_status')"
+                :description="t('view.settings.advanced.advanced.friend_insight.data_status_tooltip')">
+                <Switch
+                    :model-value="friendInsightDataStatus"
+                    :disabled="!friendInsightEnabled"
+                    @update:modelValue="advancedSettingsStore.setFriendInsightDataStatus()" />
+            </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.friend_insight.data_bio')"
+                :description="t('view.settings.advanced.advanced.friend_insight.data_bio_tooltip')">
+                <Switch
+                    :model-value="friendInsightDataBio"
+                    :disabled="!friendInsightEnabled"
+                    @update:modelValue="advancedSettingsStore.setFriendInsightDataBio()" />
+            </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.friend_insight.data_avatar')"
+                :description="t('view.settings.advanced.advanced.friend_insight.data_avatar_tooltip')">
+                <Switch
+                    :model-value="friendInsightDataAvatar"
+                    :disabled="!friendInsightEnabled"
+                    @update:modelValue="advancedSettingsStore.setFriendInsightDataAvatar()" />
+            </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.friend_insight.data_presence')"
+                :description="t('view.settings.advanced.advanced.friend_insight.data_presence_tooltip')">
+                <Switch
+                    :model-value="friendInsightDataPresence"
+                    :disabled="!friendInsightEnabled"
+                    @update:modelValue="advancedSettingsStore.setFriendInsightDataPresence()" />
+            </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.friend_insight.data_relationship')"
+                :description="t('view.settings.advanced.advanced.friend_insight.data_relationship_tooltip')">
+                <Switch
+                    :model-value="friendInsightDataRelationship"
+                    :disabled="!friendInsightEnabled"
+                    @update:modelValue="advancedSettingsStore.setFriendInsightDataRelationship()" />
+            </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.advanced.advanced.friend_insight.data_mutuals')"
+                :description="t('view.settings.advanced.advanced.friend_insight.data_mutuals_tooltip')">
+                <Switch
+                    :model-value="friendInsightDataMutuals"
+                    :disabled="!friendInsightEnabled"
+                    @update:modelValue="advancedSettingsStore.setFriendInsightDataMutuals()" />
+            </SettingsItem>
+        </SettingsGroup>
+
+        <FriendInsightApiDialog v-model:isVisible="isFriendInsightApiDialogVisible" />
+
         <TranslationApiDialog v-model:isTranslationApiDialogVisible="isTranslationApiDialogVisible" />
         <YouTubeApiDialog v-model:isYouTubeApiDialogVisible="isYouTubeApiDialogVisible" />
         <AvatarProviderDialog v-model:isAvatarProviderDialogVisible="isAvatarProviderDialogVisible" />
@@ -165,7 +252,7 @@
 
 <script setup>
     import { ref } from 'vue';
-    import { Languages } from 'lucide-vue-next';
+    import { Brain, Languages } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { Switch } from '@/components/ui/switch';
     import { storeToRefs } from 'pinia';
@@ -179,6 +266,7 @@
     } from '@/stores';
 
     import AvatarProviderDialog from '../../dialogs/AvatarProviderDialog.vue';
+    import FriendInsightApiDialog from '../../dialogs/FriendInsightApiDialog.vue';
     import TranslationApiDialog from '../../dialogs/TranslationApiDialog.vue';
     import YouTubeApiDialog from '../../dialogs/YouTubeApiDialog.vue';
     import SettingsGroup from '../SettingsGroup.vue';
@@ -214,7 +302,19 @@
 
     const { showVRChatConfig } = advancedSettingsStore;
 
-    const { avatarRemoteDatabase, youTubeApi, translationApi } = storeToRefs(advancedSettingsStore);
+    const {
+        avatarRemoteDatabase,
+        youTubeApi,
+        translationApi,
+        friendInsightEnabled,
+        friendInsightDataLocation,
+        friendInsightDataStatus,
+        friendInsightDataBio,
+        friendInsightDataAvatar,
+        friendInsightDataPresence,
+        friendInsightDataRelationship,
+        friendInsightDataMutuals
+    } = storeToRefs(advancedSettingsStore);
 
     const { setAvatarRemoteDatabase } = advancedSettingsStore;
 
@@ -223,6 +323,7 @@
 
     const isYouTubeApiDialogVisible = ref(false);
     const isTranslationApiDialogVisible = ref(false);
+    const isFriendInsightApiDialogVisible = ref(false);
 
     /**
      *
@@ -258,5 +359,9 @@
         if (configKey === 'VRCX_translationAPI') {
             advancedSettingsStore.setTranslationApi();
         }
+    }
+
+    function showFriendInsightApiDialog() {
+        isFriendInsightApiDialogVisible.value = true;
     }
 </script>

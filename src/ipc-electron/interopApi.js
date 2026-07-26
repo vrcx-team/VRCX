@@ -2,7 +2,7 @@ class InteropApi {
     constructor() {
         return new Proxy(this, {
             get(target, prop) {
-                if (WINDOWS) {
+                if (WINDOWS && !IS_ELECTRON) {
                     return undefined;
                 }
                 // If the property is not a method of InteropApi,

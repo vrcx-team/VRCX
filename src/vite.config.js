@@ -166,6 +166,9 @@ export default defineConfig(({ mode }) => {
         define: {
             LINUX: JSON.stringify(process.env.PLATFORM === 'linux'),
             WINDOWS: JSON.stringify(process.env.PLATFORM === 'windows'),
+            IS_ELECTRON: JSON.stringify(
+                process.env.VITE_ELECTRON_HOT_RELOAD === '1'
+            ),
             VERSION: JSON.stringify(version),
             NIGHTLY: JSON.stringify(nightly)
         },
