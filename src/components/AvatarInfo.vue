@@ -1,16 +1,16 @@
 <template>
-    <div @click="confirm" class="cursor-pointer w-fit align-top flex items-center">
+    <div @click="confirm" class="cursor-pointer align-top flex min-w-0 items-center">
         <span v-if="avatarName" class="flex items-center mr-1"
             >{{ avatarName }} <Lock v-if="avatarType && avatarType === '(own)'" class="h-4 w-4 ml-1"
         /></span>
         <span v-else class="flex items-center mr-1 text-muted-foreground">{{
             t('dialog.user.info.unknown_avatar')
         }}</span>
-        <TooltipWrapper v-if="avatarTags">
+        <TooltipWrapper v-if="avatarTags" class="min-w-0 flex-1">
             <template #content>
-                <span class="truncate">{{ avatarTags }}</span>
+                <span class="block max-w-80 truncate">{{ avatarTags }}</span>
             </template>
-            <span class="truncate text-xs text-muted-foreground">{{ avatarTags }}</span>
+            <span class="block truncate text-xs text-muted-foreground">{{ avatarTags }}</span>
         </TooltipWrapper>
     </div>
 </template>

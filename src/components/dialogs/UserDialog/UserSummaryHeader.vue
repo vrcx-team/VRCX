@@ -24,9 +24,7 @@
                 style="
                     width: 96px;
                     height: 96px;
-                    filter:
-                        drop-shadow(0 0 1px rgb(0 0 0 / 0.95))
-                        drop-shadow(0 0 4px rgb(0 0 0 / 0.75))
+                    filter: drop-shadow(0 0 1px rgb(0 0 0 / 0.95)) drop-shadow(0 0 4px rgb(0 0 0 / 0.75))
                         drop-shadow(0 2px 8px rgb(0 0 0 / 0.55));
                 ">
                 <Image
@@ -332,6 +330,45 @@
     <div class="rounded-xl bg-muted/40 p-3 flex flex-col mt-2">
         <div
             class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2 pb-2 border-b border-border">
+            {{
+                userDialog.id !== currentUser.id &&
+                userDialog.ref.profilePicOverride &&
+                userDialog.ref.currentAvatarImageUrl
+                    ? t('dialog.user.info.avatar_info_last_seen')
+                    : t('dialog.user.info.avatar_info')
+            }}
+            <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                <TooltipWrapper
+                    v-if="userDialog.ref.profilePicOverride && !userDialog.ref.currentAvatarImageUrl"
+                    side="top"
+                    :content="t('dialog.user.info.vrcplus_hides_avatar')">
+                    <Info class="inline-block h-3 w-3 align-middle" />
+                </TooltipWrapper>
+            </span>
+        </div>
+        <div class="text-xs flex justify-between gap-2">
+            <AvatarInfo
+                :key="userDialog.id"
+                :imageurl="userDialog.ref.currentAvatarImageUrl"
+                :userid="userDialog.id"
+                :avatartags="userDialog.ref.currentAvatarTags"
+                style="display: inline-block" />
+            <img
+                v-if="userDialog.ref.currentAvatarThumbnailImageUrl"
+                class="h-12 w-16 rounded-lg object-cover cursor-pointer flex-none"
+                :src="userDialog.ref.currentAvatarThumbnailImageUrl"
+                @click="
+                    showFullscreenImageDialog(
+                        userDialog.ref.currentAvatarImageUrl || userDialog.ref.currentAvatarThumbnailImageUrl
+                    )
+                "
+                loading="lazy" />
+        </div>
+    </div>
+
+    <div class="rounded-xl bg-muted/40 p-3 flex flex-col mt-2">
+        <div
+            class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2 pb-2 border-b border-border">
             {{ t('dialog.user.info.represented_group') }}
         </div>
         <div
@@ -371,45 +408,6 @@
                 class="w-full rounded-lg object-cover cursor-pointer h-[80px] aspect-6/1"
                 :src="userDialog.representedGroup.bannerUrl"
                 @click="showFullscreenImageDialog(userDialog.representedGroup.bannerUrl)"
-                loading="lazy" />
-        </div>
-    </div>
-
-    <div class="rounded-xl bg-muted/40 p-3 flex flex-col mt-2">
-        <div
-            class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2 pb-2 border-b border-border">
-            {{
-                userDialog.id !== currentUser.id &&
-                userDialog.ref.profilePicOverride &&
-                userDialog.ref.currentAvatarImageUrl
-                    ? t('dialog.user.info.avatar_info_last_seen')
-                    : t('dialog.user.info.avatar_info')
-            }}
-            <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                <TooltipWrapper
-                    v-if="userDialog.ref.profilePicOverride && !userDialog.ref.currentAvatarImageUrl"
-                    side="top"
-                    :content="t('dialog.user.info.vrcplus_hides_avatar')">
-                    <Info class="inline-block h-3 w-3 align-middle" />
-                </TooltipWrapper>
-            </span>
-        </div>
-        <div class="text-xs flex justify-between gap-2">
-            <AvatarInfo
-                :key="userDialog.id"
-                :imageurl="userDialog.ref.currentAvatarImageUrl"
-                :userid="userDialog.id"
-                :avatartags="userDialog.ref.currentAvatarTags"
-                style="display: inline-block" />
-            <img
-                v-if="userDialog.ref.currentAvatarThumbnailImageUrl"
-                class="h-12 w-16 rounded-lg object-cover cursor-pointer flex-none"
-                :src="userDialog.ref.currentAvatarThumbnailImageUrl"
-                @click="
-                    showFullscreenImageDialog(
-                        userDialog.ref.currentAvatarImageUrl || userDialog.ref.currentAvatarThumbnailImageUrl
-                    )
-                "
                 loading="lazy" />
         </div>
     </div>

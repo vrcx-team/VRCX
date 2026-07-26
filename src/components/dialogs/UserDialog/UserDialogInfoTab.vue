@@ -363,7 +363,7 @@
 </template>
 
 <script setup>
-    import { Image, Info, Languages, Pencil, Trash2, User } from 'lucide-vue-next';
+    import { Info, Languages, Pencil, Trash2, User } from 'lucide-vue-next';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
@@ -373,7 +373,6 @@
     import { useI18n } from 'vue-i18n';
 
     import {
-        copyToClipboard,
         formatDateFilter,
         getFaviconUrl,
         isFriendOnline,
@@ -388,7 +387,6 @@
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
-        useGalleryStore,
         useInstanceStore,
         useLocationStore,
         useModalStore,
@@ -399,7 +397,6 @@
 
     import InstanceActionBar from '../../InstanceActionBar.vue';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
-    import { showGroupDialog } from '../../../coordinators/groupCoordinator';
 
     import EditNoteAndMemoDialog from './EditNoteAndMemoDialog.vue';
 
@@ -415,7 +412,6 @@
     const { showEditProfileDialog } = useUserStore();
 
     const { lastLocation } = storeToRefs(useLocationStore());
-    const { showFullscreenImageDialog } = useGalleryStore();
     const { userImage, userStatusClass } = useUserDisplay();
 
     const bioCache = ref({
