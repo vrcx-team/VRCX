@@ -278,9 +278,7 @@
                 },
                 "header": "Фотографии",
                 "screenshot": "Управление скриншотами",
-                "screenshot_description": "Управление скриншотами и просмотр метаданных",
-                "inventory": "VRC+ Управление изображениями и инвентарем",
-                "inventory_description": "Управление изображениями и инвентарем VRC+"
+                "screenshot_description": "Управление скриншотами и просмотр метаданных"
             }
         },
         "profile": {
@@ -359,7 +357,6 @@
                     "instance_type_placeholder": "Все типы инстанцевs",
                     "auto_invite_request_accept": "Автоматическое принятие запросов на приглашение",
                     "auto_invite_request_accept_tooltip": "Автоматически принимать запросы на приглашение от избранных друзей",
-                    "auto_invite_request_accept_off": "Выкл",
                     "auto_invite_request_accept_favs": "Все избранные",
                     "auto_invite_request_accept_selected_favs": "Выбранные избранные"
                 },
@@ -408,7 +405,6 @@
                     "force_iso_date_format": "Принудительный формат даты ISO"
                 },
                 "side_panel": {
-                    "header": "Боковая панель",
                     "sorting": {
                         "header": "Сортировка",
                         "alphabetical": "По алфавиту",
@@ -419,13 +415,7 @@
                         "last_seen": "Последнее посещение",
                         "time_in_instance": "По времени в инстансе",
                         "placeholder": "Порядок сортировки"
-                    },
-                    "group_by_instance": "Группировка по Инстансам",
-                    "group_by_instance_tooltip": "Если включить эту функцию, друзья будут группироваться по инстансам, когда в одном инстансе находится несколько друзей.",
-                    "hide_friends_in_same_instance": "Скрыть друзей в одном и том же инстансе",
-                    "hide_friends_in_same_instance_tooltip": "Скрыть друзей из списка друзей, если они находятся в одном и том же инстансе.",
-                    "split_favorite_friends": "Разделить избранных друзей",
-                    "split_favorite_friends_tooltip": "Разделите избранных друзей на отдельные группы."
+                    }
                 },
                 "user_dialog": {
                     "header": "Меню пользователя",
@@ -560,8 +550,6 @@
                 "showcased": "Представленный"
             },
             "actions": {
-                "favorite_tooltip": "Добавить в избранное",
-                "unfavorite_tooltip": "Убрать из избранного",
                 "refresh": "Обновить",
                 "share": "Поделиться",
                 "invite": "Пригласить",
@@ -640,7 +628,6 @@
                 "copy_display_name": "Скопировать имя",
                 "vrcplus_hides_avatar": "Когда установлена фотография профиля VRC+, информация об аватаре скрывается. Это также скрывает изменения аватара в ленте",
                 "instance_full": "заполнен",
-                "instance_closed": "закрыт",
                 "close_instance": "Закрыть инстанс",
                 "instance_age_gated": "ограничение по возросту",
                 "open_previous_instance": "Открыть предыдущий инстанс"

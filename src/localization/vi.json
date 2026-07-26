@@ -212,7 +212,6 @@
                     "auto_state_change_tooltip": "Tự động thay đổi status khi có người khác trong world instance (Một mình / Cùng mọi người)",
                     "auto_invite_request_accept": "Auto Accept Invite Requests",
                     "auto_invite_request_accept_tooltip": "Automatically accept invite requests from favorite friends",
-                    "auto_invite_request_accept_off": "Tắt",
                     "auto_invite_request_accept_favs": "All Favorites",
                     "auto_invite_request_accept_selected_favs": "VRCX Favorites"
                 },
@@ -257,7 +256,6 @@
                     "force_iso_date_format": "Bắt buộc định dạng ngày ISO"
                 },
                 "side_panel": {
-                    "header": "Bẳng điều khiển bên cạnh",
                     "sorting": {
                         "header": "Sắp xếp"
                     }
@@ -475,8 +473,6 @@
                 "vrchat_team": "VRChat Team"
             },
             "actions": {
-                "favorite_tooltip": "Thêm vào yêu thích",
-                "unfavorite_tooltip": "Bỏ khỏi yêu thích",
                 "refresh": "Làm mới",
                 "invite": "Gửi lời mời",
                 "invite_with_message": "Gửi lời mời với tin nhắn",
@@ -549,7 +545,6 @@
                 "copy_url": "Copy URL",
                 "copy_display_name": "Copy DisplayName",
                 "instance_full": "đầu",
-                "instance_closed": "closed",
                 "close_instance": "Close Instance"
             },
             "groups": {

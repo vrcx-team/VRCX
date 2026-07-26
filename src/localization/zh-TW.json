@@ -38,7 +38,11 @@
             "thursday": "星期四",
             "friday": "星期五",
             "saturday": "星期六"
-        }
+        },
+        "duration": "持續時間",
+        "load_more": "載入更多",
+        "no_more": "沒有更多條目",
+        "current_session": "當前會話"
     },
     "nav_tooltip": {
         "friends_locations": "好友位置",
@@ -279,6 +283,15 @@
                 "External": "外部",
                 "StringLoad": "字串載入",
                 "ImageLoad": "圖片載入"
+            },
+            "sessions": {
+                "switch_to_table": "表格檢視",
+                "switch_to_sessions": "會話檢視",
+                "date_range": "日期範圍",
+                "players_joined": "{count} 用戶加入",
+                "players_left": "{count} 用戶離開",
+                "play_count": "×{count}",
+                "no_data": "無紀錄"
             }
         },
         "player_list": {
@@ -886,8 +899,6 @@
                     "table_page_sizes_error": "每頁筆數必須為 1 到 1000 之間的數字",
                     "show_notification_icon_dot": "顯示系統匣通知紅點",
                     "striped_data_table_mode": "表格條紋模式",
-                    "toggle_pointer_on_hover": "滑鼠懸停時強制顯示指標",
-                    "toggle_pointer_on_hover_description": "對所有可點擊的元素始終顯示指標游標。",
                     "accessible_status_indicators": "無障礙狀態指示器",
                     "accessible_status_indicators_description": "除了顏色外，也使用形狀來區分不同狀態。",
                     "table_density": "表格密度",
@@ -1388,11 +1399,11 @@
                 "copy_display_name": "複製顯示名稱",
                 "vrcplus_hides_avatar": "設定 VRC+ 個人檔案照片時，會隱藏角色資訊。 這也會隱藏 feed 中的角色變更",
                 "instance_full": "已滿",
-                "instance_closed": "已關閉",
                 "instance_age_restricted": "年齡限制",
                 "instance_age_restricted_tooltip": "在有年齡限制的房間中",
                 "close_instance": "關閉房間",
                 "instance_age_gated": "年齡限制",
+                "instance_role_restricted": "身分限制",
                 "open_previous_instance": "開啟過去的房間",
                 "show_mutual_friends": "顯示共同好友",
                 "show_discord_connections": "顯示 Discord 連結"
@@ -1601,7 +1612,15 @@
                 "content_gore": "血腥",
                 "content_violence": "暴力",
                 "content_adult": "成人",
-                "content_sex": "色情"
+                "content_sex": "色情",
+                "performanceRating": {
+                    "Excellent": "Excellent",
+                    "Good": "Good",
+                    "Medium": "Medium",
+                    "Poor": "Poor",
+                    "VeryPoor": "Very Poor",
+                    "None": "無"
+                }
             },
             "labels": {
                 "public": "（公開）",
@@ -1819,6 +1838,7 @@
             "content_drones": "無人機",
             "content_items": "物件",
             "content_third_person": "第三人稱",
+            "content_prop_movement": "改變用戶移動方式的道具",
             "world_id": "世界 ID",
             "instance_id": "房間 ID",
             "instance_id_placeholder": "亂數",

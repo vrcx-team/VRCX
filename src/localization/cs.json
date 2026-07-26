@@ -230,7 +230,6 @@
                     "instance_type_placeholder": "Všechny typy instancí",
                     "auto_invite_request_accept": "Automaticky přijímat žádosti o pozvání",
                     "auto_invite_request_accept_tooltip": "Automaticky přijímat žádosti o pozvání od oblíbených přátel",
-                    "auto_invite_request_accept_off": "Vypnuto",
                     "auto_invite_request_accept_favs": "Všichni oblíbení",
                     "auto_invite_request_accept_selected_favs": "VRCX oblíbení"
                 },
@@ -275,7 +274,6 @@
                     "force_iso_date_format": "Vynutit formát data ISO"
                 },
                 "side_panel": {
-                    "header": "Postranní panel",
                     "sorting": {
                         "header": "Řazení",
                         "alphabetical": "Abecedně",
@@ -526,8 +524,6 @@
                 "showcased": "Showcased"
             },
             "actions": {
-                "favorite_tooltip": "Add to favorites",
-                "unfavorite_tooltip": "Remove from favorites",
                 "refresh": "Refresh",
                 "share": "Share",
                 "invite": "Invite",
@@ -603,7 +599,6 @@
                 "copy_url": "Copy URL",
                 "copy_display_name": "Copy DisplayName",
                 "instance_full": "full",
-                "instance_closed": "closed",
                 "close_instance": "Close Instance",
                 "instance_age_gated": "age gated"
             },

@@ -479,7 +479,6 @@
                     "instance_type_placeholder": "Choisir des types d'instances",
                     "auto_invite_request_accept": "Accepter automatiquement les demandes d'invitation",
                     "auto_invite_request_accept_tooltip": "Accepter automatiquement les demandes d'invitation des amis favoris",
-                    "auto_invite_request_accept_off": "Désactivé",
                     "auto_invite_request_accept_favs": "Tous les favoris",
                     "auto_invite_request_accept_selected_favs": "Favoris sélectionnés"
                 },
@@ -524,7 +523,6 @@
                     "force_iso_date_format": "Forcer le format ISO des dates"
                 },
                 "side_panel": {
-                    "header": "Panneau latéral",
                     "sorting": {
                         "header": "Comportement du tri",
                         "alphabetical": "Alphabétique",
@@ -776,8 +774,6 @@
                 "showcased": "Mise en avant"
             },
             "actions": {
-                "favorite_tooltip": "Ajouter aux favoris",
-                "unfavorite_tooltip": "Supprimer des favoris",
                 "refresh": "Actualiser",
                 "share": "Partager",
                 "invite": "Inviter",
@@ -853,7 +849,6 @@
                 "copy_url": "Copier l'URL",
                 "copy_display_name": "Copier le pseudonyme",
                 "instance_full": "Complète",
-                "instance_closed": "Instance fermée",
                 "close_instance": "Fermer l'instance",
                 "instance_age_gated": "Limitation d'âge"
             },
