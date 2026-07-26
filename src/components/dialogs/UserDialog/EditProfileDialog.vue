@@ -175,6 +175,119 @@
                 </section>
 
                 <section class="space-y-3">
+                    <h3 class="text-sm font-semibold">{{ t('dialog.edit_profile.profile_theme') }}</h3>
+                    <div class="flex items-center gap-2">
+                        <Select
+                            :model-value="editProfileDialog.themeId"
+                            :disabled="editProfileDialog.loading"
+                            @update:modelValue="handleThemeChange">
+                            <SelectTrigger size="sm" class="w-42">
+                                <SelectValue :placeholder="t('dialog.edit_profile.theme_name_placeholder')">
+                                    {{ editProfileDialog.themeName }}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem
+                                        v-for="option in editProfileDialog.themes"
+                                        :key="option.id"
+                                        :value="option.id"
+                                        :text-value="option.name">
+                                        <div class="flex w-full items-center justify-between gap-3">
+                                            <span class="inline-flex shrink-0 items-center gap-1">
+                                                <span
+                                                    class="size-3 rounded-sm border"
+                                                    :style="{ backgroundColor: getThemeHexColor(option.buttonColor) }"
+                                                    title="Button color"></span>
+                                                <span
+                                                    class="size-3 rounded-sm border"
+                                                    :style="{ backgroundColor: getThemeHexColor(option.iconColor) }"
+                                                    title="Icon color"></span>
+                                                <span
+                                                    class="size-3 rounded-sm border"
+                                                    :style="{ backgroundColor: getThemeHexColor(option.subtextColor) }"
+                                                    title="Subtext color"></span>
+                                            </span>
+                                            <span class="truncate">{{ option.name }}</span>
+                                        </div>
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            :disabled="editProfileDialog.loading"
+                            @click="handleCreateNewTheme">
+                            {{ t('dialog.edit_profile.create_theme') }}
+                        </Button>
+
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            :disabled="editProfileDialog.loading || !editProfileDialog.themeId"
+                            @click="deleteTheme">
+                            {{ t('dialog.edit_profile.delete_theme') }}
+                        </Button>
+                    </div>
+
+                    <InputGroupField
+                        class="min-w-0 flex-1 mb-1"
+                        v-model="editProfileDialog.themeName"
+                        @input="handleThemeInput"
+                        :maxlength="12"
+                        :placeholder="t('dialog.edit_profile.theme_name_placeholder')">
+                    </InputGroupField>
+                    <div class="grid gap-2 sm:grid-cols-3">
+                        <label class="space-y-1">
+                            <span class="text-xs text-muted-foreground">Button</span>
+                            <div class="flex items-center gap-1">
+                                <input
+                                    type="color"
+                                    class="h-8 w-12 cursor-pointer appearance-none rounded-md border-0 bg-transparent p-0 disabled:cursor-not-allowed [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-md [&::-webkit-color-swatch]:border-0 [&::-moz-color-swatch]:rounded-md [&::-moz-color-swatch]:border-0"
+                                    :value="themeButtonColorValue"
+                                    :disabled="editProfileDialog.loading"
+                                    @input="handleThemeButtonColorInput" />
+                                <span class="w-20 text-xs font-mono text-muted-foreground uppercase">
+                                    {{ themeButtonColorValue }}
+                                </span>
+                            </div>
+                        </label>
+
+                        <label class="space-y-1">
+                            <span class="text-xs text-muted-foreground">Icon</span>
+                            <div class="flex items-center gap-1">
+                                <input
+                                    type="color"
+                                    class="h-8 w-12 cursor-pointer appearance-none rounded-md border-0 bg-transparent p-0 disabled:cursor-not-allowed [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-md [&::-webkit-color-swatch]:border-0 [&::-moz-color-swatch]:rounded-md [&::-moz-color-swatch]:border-0"
+                                    :value="themeIconColorValue"
+                                    :disabled="editProfileDialog.loading"
+                                    @input="handleThemeIconColorInput" />
+                                <span class="w-20 text-xs font-mono text-muted-foreground uppercase">
+                                    {{ themeIconColorValue }}
+                                </span>
+                            </div>
+                        </label>
+
+                        <label class="space-y-1">
+                            <span class="text-xs text-muted-foreground">Subtext</span>
+                            <div class="flex items-center gap-1">
+                                <input
+                                    type="color"
+                                    class="h-8 w-12 cursor-pointer appearance-none rounded-md border-0 bg-transparent p-0 disabled:cursor-not-allowed [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-md [&::-webkit-color-swatch]:border-0 [&::-moz-color-swatch]:rounded-md [&::-moz-color-swatch]:border-0"
+                                    :value="themeSubtextColorValue"
+                                    :disabled="editProfileDialog.loading"
+                                    @input="handleThemeSubtextColorInput" />
+                                <span class="w-20 text-xs font-mono text-muted-foreground uppercase">
+                                    {{ themeSubtextColorValue }}
+                                </span>
+                            </div>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="space-y-3">
                     <h3 class="text-sm font-semibold">{{ t('dialog.pronouns.header') }}</h3>
                     <InputGroupTextareaField
                         v-model="editProfileDialog.pronouns"
@@ -327,14 +440,16 @@
     import { Badge } from '../../ui/badge';
 
     import { userRequest } from '../../../api';
-    import { languageClass, getFaviconUrl, arraysMatch } from '../../../shared/utils';
-    import { useUserStore, useAuthStore, useGalleryStore } from '../../../stores';
+    import { languageClass, getFaviconUrl, arraysMatch, debounce } from '../../../shared/utils';
+    import { useUserStore, useAuthStore, useGalleryStore, useModalStore } from '../../../stores';
     import { useStatusPresets } from './composables/useStatusPresets';
     import GallerySelectDialog from '../GroupDialog/GallerySelectDialog.vue';
+    import { updateUserDialogProfile } from '@/coordinators/userCoordinator';
 
     const { t } = useI18n();
     const { currentUser } = storeToRefs(useUserStore());
     const authStore = useAuthStore();
+    const modalStore = useModalStore();
     const { refreshGalleryTable } = useGalleryStore();
     const { presets, addPreset, removePreset, getStatusClass, MAX_PRESETS } = useStatusPresets();
 
@@ -369,19 +484,23 @@
         const type = props.editProfileDialog.bannerType;
         return bannerTypeOptions.some((option) => option.value === type) ? type : 'color';
     });
-    const bannerColorValue = computed(() => {
-        if (!props.editProfileDialog.bannerColor) {
-            return '#555555';
-        }
-        return `#${props.editProfileDialog.bannerColor}`;
-    });
+    const bannerColorValue = computed(() => getThemeHexColor(props.editProfileDialog.bannerColor));
+    const themeButtonColorValue = computed(() => getThemeHexColor(props.editProfileDialog.themeButtonColor));
+    const themeIconColorValue = computed(() => getThemeHexColor(props.editProfileDialog.themeIconColor));
+    const themeSubtextColorValue = computed(() => getThemeHexColor(props.editProfileDialog.themeSubtextColor));
+    const saveThemeDebounced = debounce(saveTheme, 300);
 
-    function normalizeBannerColor(value) {
+    function normalizeColor(value) {
         const hex = String(value ?? '')
             .trim()
             .replace(/^#/, '')
             .toLowerCase();
         return /^[0-9a-f]{6}$/.test(hex) ? hex : '';
+    }
+
+    function getThemeHexColor(value) {
+        const normalized = normalizeColor(value);
+        return normalized ? `#${normalized}` : '#ffffff';
     }
 
     const statusOptions = computed(() => {
@@ -459,7 +578,7 @@
     }
 
     function handleBannerColorInput(event) {
-        const normalized = normalizeBannerColor(event?.target?.value);
+        const normalized = normalizeColor(event?.target?.value);
         if (!normalized) {
             return;
         }
@@ -474,6 +593,155 @@
         }
         const D = props.editProfileDialog;
         D.bannerType = value;
+    }
+
+    function handleThemeChange(value) {
+        const D = props.editProfileDialog;
+        D.themeId = value;
+        const selectedTheme = D.themes.find((option) => option.id === D.themeId);
+        if (!selectedTheme) {
+            return;
+        }
+        D.themeName = selectedTheme.name;
+        D.themeButtonColor = normalizeColor(selectedTheme.buttonColor);
+        D.themeIconColor = normalizeColor(selectedTheme.iconColor);
+        D.themeSubtextColor = normalizeColor(selectedTheme.subtextColor);
+    }
+
+    function handleThemeButtonColorInput(event) {
+        const D = props.editProfileDialog;
+        D.themeButtonColor = normalizeColor(event?.target?.value);
+        handleThemeInput();
+    }
+
+    function handleThemeIconColorInput(event) {
+        const D = props.editProfileDialog;
+        D.themeIconColor = normalizeColor(event?.target?.value);
+        handleThemeInput();
+    }
+
+    function handleThemeSubtextColorInput(event) {
+        const D = props.editProfileDialog;
+        D.themeSubtextColor = normalizeColor(event?.target?.value);
+        handleThemeInput();
+    }
+
+    function handleThemeInput() {
+        const D = props.editProfileDialog;
+        if (D.themeId) {
+            const selectedTheme = D.themes.find((option) => option.id === D.themeId);
+            if (selectedTheme) {
+                selectedTheme.name = D.themeName;
+            }
+            saveThemeDebounced();
+        }
+    }
+
+    function createTheme() {
+        const D = props.editProfileDialog;
+        const payload = {
+            name: D.themeName,
+            buttonColor: '064b5c',
+            iconColor: '6ae3f9',
+            subtextColor: 'a9a9a9'
+        };
+        userRequest
+            .createProfileTheme(payload)
+            .then((args) => {
+                const newTheme = args.json;
+                if (newTheme?.id) {
+                    D.themes.push(newTheme);
+                    D.themeId = newTheme.id;
+                    D.themeName = newTheme.name;
+                    D.themeButtonColor = newTheme.buttonColor;
+                    D.themeIconColor = newTheme.iconColor;
+                    D.themeSubtextColor = newTheme.subtextColor;
+                }
+            })
+            .catch((error) => {
+                console.error('Failed to create profile theme:', error);
+            });
+    }
+
+    function saveTheme() {
+        const D = props.editProfileDialog;
+        const payload = {
+            themeId: D.themeId,
+            name: D.themeName,
+            buttonColor: D.themeButtonColor,
+            iconColor: D.themeIconColor,
+            subtextColor: D.themeSubtextColor
+        };
+        userRequest
+            .saveProfileTheme(payload)
+            .then(() => {
+                // useless response
+                const index = D.themes.findIndex((option) => option.id === payload.themeId);
+                if (index !== -1) {
+                    D.themes[index] = {
+                        id: payload.themeId, // why are you like this
+                        name: payload.name,
+                        buttonColor: payload.buttonColor,
+                        iconColor: payload.iconColor,
+                        subtextColor: payload.subtextColor
+                    };
+                }
+            })
+            .catch((error) => {
+                console.error('Failed to update profile theme:', error);
+            });
+    }
+
+    function deleteTheme() {
+        const D = props.editProfileDialog;
+        userRequest
+            .deleteProfileTheme({ id: D.themeId })
+            .then(() => {
+                const index = D.themes.findIndex((option) => option.id === D.themeId);
+                if (index !== -1) {
+                    D.themes.splice(index, 1);
+                    if (D.themeId === D.themeId) {
+                        D.themeId = '';
+                        D.themeName = '';
+                        D.themeButtonColor = '';
+                        D.themeIconColor = '';
+                        D.themeSubtextColor = '';
+                        if (D.themes.length) {
+                            handleThemeChange(D.themes[D.themes.length - 1].id);
+                        }
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error('Failed to delete profile theme:', error);
+            });
+    }
+
+    function handleCreateNewTheme() {
+        const D = props.editProfileDialog;
+
+        modalStore
+            .prompt({
+                title: t('dialog.edit_profile.profile_theme'),
+                description: 'Enter a theme name (1-12 characters).',
+                confirmText: 'Create',
+                cancelText: t('dialog.alertdialog.cancel'),
+                pattern: /^.{1,12}$/,
+                errorMessage: 'Theme name must be between 1 and 12 characters.'
+            })
+            .then(({ ok, value }) => {
+                if (!ok) {
+                    return;
+                }
+
+                D.themeId = '';
+                D.themeName = value;
+                D.themeButtonColor = '';
+                D.themeIconColor = '';
+                D.themeSubtextColor = '';
+                createTheme();
+            })
+            .catch(() => {});
     }
 
     function showGallerySelectDialog() {
@@ -582,6 +850,9 @@
         if (D.userIcon !== currentUser.value.userIcon) {
             profilePayload.userIcon = D.userIcon;
         }
+        if (D.themeId !== D.selfProfileRef.themeId) {
+            profilePayload.themeId = D.themeId;
+        }
         if (!Object.keys(userPayload).length && !Object.keys(profilePayload).length) {
             D.visible = false;
             return;
@@ -596,6 +867,7 @@
                 await userRequest.saveCurrentUser(userPayload);
             }
             D.visible = false;
+            updateUserDialogProfile();
             toast.success('Profile updated');
         } finally {
             D.loading = false;

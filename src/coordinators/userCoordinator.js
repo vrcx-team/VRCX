@@ -374,7 +374,7 @@ export function showUserDialog(userId) {
     D.mutualGroupCount = 0;
     D.theme = {
         iconColor: 'var(--muted-foreground)',
-        buttonColor: 'var(--muted-foreground)',
+        buttonColor: 'var(--primary)',
         subtextColor: 'var(--muted-foreground)'
     };
     if (userId === currentUser.id) {
@@ -533,41 +533,49 @@ export function showUserDialog(userId) {
                     .then((args1) => {
                         handleGroupRepresented(args1);
                     });
-                userRequest
-                    .getPublicProfile({ userId })
-                    .then((args1) => {
-                        D.publicProfileRef = args1.json;
-                        if (appearanceSettingsStore.displayVRCProfileThemes) {
-                            D.theme = {
-                                iconColor: getReadableProfileThemeColor(
-                                    args1.json.themeIconColor,
-                                    'var(--muted-foreground)',
-                                    appearanceSettingsStore.isDarkMode
-                                ),
-                                buttonColor: getReadableProfileThemeColor(
-                                    args1.json.themeButtonColor,
-                                    'var(--foreground)',
-                                    appearanceSettingsStore.isDarkMode
-                                ),
-                                subtextColor: getReadableProfileThemeColor(
-                                    args1.json.themeSubtextColor,
-                                    'var(--muted-foreground)',
-                                    appearanceSettingsStore.isDarkMode
-                                )
-                            };
-                        }
-                    })
-                    .catch((err) => {
-                        console.error('Failed to fetch public profile', err);
-                        D.publicProfileRef = {};
-                    });
-
+                updateUserDialogProfile();
                 D.visible = true;
                 userStore.applyUserDialogLocation(true);
             }
         });
     showUserDialogHistory.delete(userId);
     showUserDialogHistory.add(userId);
+}
+
+export function updateUserDialogProfile() {
+    const D = useUserStore().userDialog;
+    const appearanceSettingsStore = useAppearanceSettingsStore();
+    userRequest
+        .getPublicProfile({ userId: D.id })
+        .then((args1) => {
+            if (args1.params.userId !== D.id) {
+                return;
+            }
+            D.publicProfileRef = args1.json;
+            if (appearanceSettingsStore.displayVRCProfileThemes) {
+                D.theme = {
+                    iconColor: getReadableProfileThemeColor(
+                        args1.json.themeIconColor,
+                        'var(--muted-foreground)',
+                        appearanceSettingsStore.isDarkMode
+                    ),
+                    buttonColor: getReadableProfileThemeColor(
+                        args1.json.themeButtonColor,
+                        'var(--primary)',
+                        appearanceSettingsStore.isDarkMode
+                    ),
+                    subtextColor: getReadableProfileThemeColor(
+                        args1.json.themeSubtextColor,
+                        'var(--muted-foreground)',
+                        appearanceSettingsStore.isDarkMode
+                    )
+                };
+            }
+        })
+        .catch((err) => {
+            console.error('Failed to fetch public profile', err);
+            D.publicProfileRef = {};
+        });
 }
 
 /**

@@ -1840,7 +1840,11 @@
             "banner_type_color": "Color",
             "banner_type_avatar_banner": "Avatar Image",
             "banner_type_custom_image": "Custom Image",
-            "icon": "Icon"
+            "icon": "Icon",
+            "profile_theme": "Profile Theme",
+            "theme_name_placeholder": "Theme name",
+            "create_theme": "Create Theme",
+            "delete_theme": "Delete Theme"
         },
         "new_instance": {
             "header": "New Instance",

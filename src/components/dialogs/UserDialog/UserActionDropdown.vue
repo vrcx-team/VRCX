@@ -11,7 +11,8 @@
                         color:
                             userDialog.theme.iconColor === 'var(--muted-foreground)'
                                 ? 'var(--foreground)'
-                                : userDialog.theme.iconColor
+                                : userDialog.theme.iconColor,
+                        backgroundColor: userDialog.theme.buttonColor
                     }"
                     size="icon-lg"
                     @click="userDialogCommand('Add Favorite')"

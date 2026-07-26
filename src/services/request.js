@@ -192,6 +192,9 @@ export function request(endpoint, options) {
                 );
             }
             if (parsed.parseError) {
+                if (parsed.data === 'ok') {
+                    return parsed;
+                }
                 console.error('JSON parse error for', endpoint);
                 if (parsed.status === 200) {
                     $throw(

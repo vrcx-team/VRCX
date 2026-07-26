@@ -277,6 +277,7 @@ export const useUserStore = defineStore('User', () => {
     const editProfileDialog = ref({
         visible: false,
         loading: false,
+        selfProfileRef: {},
         status: '',
         statusDescription: '',
         pronouns: '',
@@ -286,7 +287,13 @@ export const useUserStore = defineStore('User', () => {
         bannerColor: '',
         bannerUrl: '',
         bannerType: '',
-        userIcon: ''
+        userIcon: '',
+        themes: [],
+        themeId: '',
+        themeName: '',
+        themeButtonColor: '',
+        themeIconColor: '',
+        themeSubtextColor: ''
     });
 
     const currentTravelers = reactive(new Map());
@@ -796,6 +803,7 @@ export const useUserStore = defineStore('User', () => {
             });
         }
         D.socialStatusHistoryTable = statusHistoryArray;
+
         D.status = currentUser.value.status;
         D.statusDescription = currentUser.value.statusDescription;
         D.pronouns = currentUser.value.pronouns;
@@ -805,6 +813,39 @@ export const useUserStore = defineStore('User', () => {
         D.bannerUrl = currentUser.value.bannerUrl;
         D.bannerType = currentUser.value.bannerType;
         D.userIcon = currentUser.value.userIcon;
+
+        D.themeId = '';
+        D.themes = [];
+        D.themeName = '';
+        D.themeButtonColor = '';
+        D.themeIconColor = '';
+        D.themeSubtextColor = '';
+
+        userRequest.getSelfProfile().then((args) => {
+            const ref = args.json;
+            D.selfProfileRef = ref;
+
+            D.status = ref.status;
+            D.statusDescription = ref.statusDescription;
+            D.pronouns = ref.pronouns;
+            D.bio = ref.bio;
+            D.bioLinks = ref.bioLinks.slice();
+            D.bannerColor = ref.bannerColor;
+            D.bannerUrl = ref.bannerUrl;
+            D.bannerType = ref.bannerType;
+            D.userIcon = ref.userIcon;
+
+            D.themes = ref.themes;
+            D.themeId = ref.themeId;
+            const selectedTheme = ref.themes.find(
+                (theme) => theme.id === ref.themeId
+            );
+            D.themeName = selectedTheme?.name ?? '';
+            D.themeButtonColor = ref.themeButtonColor;
+            D.themeIconColor = ref.themeIconColor;
+            D.themeSubtextColor = ref.themeSubtextColor;
+        });
+
         D.visible = true;
     }
 

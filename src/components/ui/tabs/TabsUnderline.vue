@@ -22,11 +22,13 @@
         variant: { type: String, default: 'fit' },
         unmountOnHide: { type: Boolean, default: false },
         fill: { type: Boolean, default: false },
-        sticky: { type: Boolean, default: false }
+        sticky: { type: Boolean, default: false },
+        tabColor: { type: String, default: '' }
     });
 
     const emit = defineEmits(['update:modelValue']);
-    const { modelValue, defaultValue, items, ariaLabel, variant, unmountOnHide, fill, sticky } = toRefs(props);
+    const { modelValue, defaultValue, items, ariaLabel, variant, unmountOnHide, fill, sticky, tabColor } =
+        toRefs(props);
 
     const itemsList = computed(() => (Array.isArray(items.value) ? items.value : []));
 
@@ -60,6 +62,20 @@
         emit('update:modelValue', v);
     }
 
+    const triggerStyle = computed(() => {
+        if (!tabColor.value) {
+            return undefined;
+        }
+        return { color: tabColor.value };
+    });
+
+    const indicatorStyle = computed(() => {
+        if (!tabColor.value) {
+            return undefined;
+        }
+        return { backgroundColor: tabColor.value };
+    });
+
     const triggerClass = computed(() => {
         return [
             'relative inline-flex cursor-pointer h-10 items-center justify-center px-3 text-sm font-medium',
@@ -91,7 +107,7 @@
         <TabsList :class="listClass" :aria-label="ariaLabel || undefined">
             <TabsIndicator
                 class="pointer-events-none absolute left-0 bottom-0 h-0.5 w-(--reka-tabs-indicator-size) translate-x-(--reka-tabs-indicator-position) transition-[width,translate] duration-200 ease-out">
-                <div class="h-full w-full rounded-full bg-primary" />
+                <div class="h-full w-full rounded-full bg-primary" :style="indicatorStyle" />
             </TabsIndicator>
 
             <TabsTrigger
@@ -99,7 +115,8 @@
                 :key="it.value"
                 :value="it.value"
                 :disabled="it.disabled"
-                :class="triggerClass">
+                :class="triggerClass"
+                :style="triggerStyle">
                 <slot :name="`label-${it.value}`">{{ it.label }}</slot>
             </TabsTrigger>
         </TabsList>

@@ -253,6 +253,53 @@ const userReq = {
             };
             return args;
         });
+    },
+
+    /**
+     * @param {{ buttonColor: string; iconColor: string; themeId: string; name: string; subtextColor: string; }} params
+     */
+    saveProfileTheme(params) {
+        return request(`profile/theme/${params.themeId}`, {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    /**
+     * @param {{ buttonColor?: string; iconColor?: string; name: string; subtextColor?: string; }} params
+     */
+    createProfileTheme(params) {
+        return request(`profile/theme`, {
+            method: 'POST',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    /**
+     * @param {{ id: string }} params
+     */
+    deleteProfileTheme(params) {
+        return request(`profile/theme/${params.id}`, {
+            method: 'DELETE'
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
     }
 };
 
