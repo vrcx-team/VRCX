@@ -495,6 +495,11 @@
         if (gallerySelectDialog.value.isIconGallerySelectDialog) {
             D.userIcon = imageUrl;
         } else {
+            if (!imageUrl) {
+                D.bannerType = 'color';
+                D.bannerUrl = '';
+                return;
+            }
             D.bannerUrl = imageUrl;
         }
     }

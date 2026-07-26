@@ -172,6 +172,12 @@ export const useUserStore = defineStore('User', () => {
         lastActiveTab: 'Info',
         id: '',
         ref: {},
+        publicProfileRef: {},
+        theme: {
+            iconColor: '',
+            buttonColor: '',
+            subtextColor: ''
+        },
         friend: {},
         isFriend: false,
         note: '',

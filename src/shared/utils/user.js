@@ -4,6 +4,11 @@ import { languageMappings } from '../constants';
 import { removeEmojis } from './base/string';
 import { timeToText } from './base/format';
 
+const THEME_COLOR_LIMITS = Object.freeze({
+    darkMinLuminance: 0.42,
+    lightMaxLuminance: 0.74
+});
+
 /**
  *
  * @param {object} ctx
@@ -45,6 +50,126 @@ function languageClass(language) {
 async function getNameColour(userId, isDarkMode) {
     const hue = await AppApi.GetColourFromUserID(userId);
     return HueToHex(hue, isDarkMode);
+}
+
+/**
+ * @param {string} value
+ * @returns {string | null}
+ */
+function normalizeProfileHex(value) {
+    const hex = String(value || '')
+        .trim()
+        .replace(/^#/, '')
+        .toLowerCase();
+    if (!/^[0-9a-f]{6}$/.test(hex)) {
+        return null;
+    }
+    return `#${hex}`;
+}
+
+/**
+ * @param {string} hex
+ * @returns {{ r: number, g: number, b: number } | null}
+ */
+function hexToRgb(hex) {
+    const match = /^#?([0-9a-f]{6})$/i.exec(hex);
+    if (!match) {
+        return null;
+    }
+    const value = match[1];
+    return {
+        r: parseInt(value.slice(0, 2), 16),
+        g: parseInt(value.slice(2, 4), 16),
+        b: parseInt(value.slice(4, 6), 16)
+    };
+}
+
+/**
+ * @param {{ r: number, g: number, b: number }} rgb
+ * @returns {string}
+ */
+function rgbToHex(rgb) {
+    const toHex = (value) => {
+        const n = Math.max(0, Math.min(255, Math.round(value)));
+        return n.toString(16).padStart(2, '0');
+    };
+    return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
+}
+
+/**
+ * @param {{ r: number, g: number, b: number }} rgb
+ * @returns {number}
+ */
+function getRelativeLuminance(rgb) {
+    const channel = (value) => {
+        const normalized = value / 255;
+        if (normalized <= 0.03928) {
+            return normalized / 12.92;
+        }
+        return ((normalized + 0.055) / 1.055) ** 2.4;
+    };
+    const r = channel(rgb.r);
+    const g = channel(rgb.g);
+    const b = channel(rgb.b);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/**
+ * @param {{ r: number, g: number, b: number }} from
+ * @param {{ r: number, g: number, b: number }} to
+ * @param {number} weight
+ * @returns {{ r: number, g: number, b: number }}
+ */
+function mixRgb(from, to, weight) {
+    return {
+        r: from.r + (to.r - from.r) * weight,
+        g: from.g + (to.g - from.g) * weight,
+        b: from.b + (to.b - from.b) * weight
+    };
+}
+
+/**
+ * @param {string} colorValue
+ * @param {string} fallback
+ * @param {boolean} isDarkMode
+ * @returns {string}
+ */
+function getReadableProfileThemeColor(colorValue, fallback, isDarkMode) {
+    const normalized = normalizeProfileHex(colorValue);
+    if (!normalized) {
+        return fallback;
+    }
+    let rgb = hexToRgb(normalized);
+    if (!rgb) {
+        return fallback;
+    }
+
+    const luminanceThreshold = isDarkMode
+        ? THEME_COLOR_LIMITS.darkMinLuminance
+        : THEME_COLOR_LIMITS.lightMaxLuminance;
+    let luminance = getRelativeLuminance(rgb);
+    const requiresAdjustment = isDarkMode
+        ? luminance < luminanceThreshold
+        : luminance > luminanceThreshold;
+    if (!requiresAdjustment) {
+        return normalized;
+    }
+
+    // Nudge only extreme values so profile colors remain recognizable.
+    const targetRgb = isDarkMode
+        ? { r: 255, g: 255, b: 255 }
+        : { r: 0, g: 0, b: 0 };
+    for (let i = 0; i < 14; i++) {
+        rgb = mixRgb(rgb, targetRgb, 0.18);
+        luminance = getRelativeLuminance(rgb);
+        if (
+            (isDarkMode && luminance >= luminanceThreshold) ||
+            (!isDarkMode && luminance <= luminanceThreshold)
+        ) {
+            break;
+        }
+    }
+    return rgbToHex(rgb);
 }
 
 /**
@@ -321,6 +446,7 @@ export {
     userOnlineForTimestamp,
     languageClass,
     getNameColour,
+    getReadableProfileThemeColor,
     removeEmojis,
     userStatusClass,
     statusClass,

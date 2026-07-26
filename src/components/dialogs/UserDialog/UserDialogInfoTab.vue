@@ -83,7 +83,9 @@
             <div class="flex flex-col gap-2.5">
                 <div class="rounded-xl bg-muted/40 p-3">
                     <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
-                        <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                        <span
+                            class="text-[10px] font-bold uppercase tracking-wide"
+                            :style="{ color: userDialog.theme.subtextColor }">
                             {{ t('dialog.user.info.bio') }}
                         </span>
                         <div class="flex items-center gap-1">
@@ -94,7 +96,7 @@
                                 variant="ghost"
                                 @click="translateBio">
                                 <Spinner v-if="translateLoading" class="size-3" />
-                                <Languages v-else class="h-3 w-3 text-muted-foreground" />
+                                <Languages v-else class="h-3 w-3" :style="{ color: userDialog.theme.iconColor }" />
                             </Button>
                             <Button
                                 v-if="userDialog.id === currentUser.id"
@@ -102,7 +104,7 @@
                                 size="icon-sm"
                                 variant="ghost"
                                 @click="showEditProfileDialog()">
-                                <Pencil class="h-3 w-3 text-muted-foreground" />
+                                <Pencil class="h-3 w-3" :style="{ color: userDialog.theme.iconColor }" />
                             </Button>
                         </div>
                     </div>
@@ -131,11 +133,13 @@
                     class="rounded-xl bg-muted/40 p-3 cursor-pointer"
                     @click="isEditNoteAndMemoDialogVisible = true">
                     <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
-                        <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                        <span
+                            class="text-[10px] font-bold uppercase tracking-wide"
+                            :style="{ color: userDialog.theme.subtextColor }">
                             {{ t('dialog.user.info.note') }}
                         </span>
                         <Button class="h-5 w-5" size="icon-sm" variant="ghost">
-                            <Pencil class="h-3 w-3 text-muted-foreground" />
+                            <Pencil class="h-3 w-3" :style="{ color: userDialog.theme.iconColor }" />
                         </Button>
                     </div>
                     <pre
@@ -151,11 +155,13 @@
                     class="rounded-xl bg-muted/40 p-3 cursor-pointer"
                     @click="isEditNoteAndMemoDialogVisible = true">
                     <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
-                        <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                        <span
+                            class="text-[10px] font-bold uppercase tracking-wide"
+                            :style="{ color: userDialog.theme.subtextColor }">
                             {{ t('dialog.user.info.memo') }}
                         </span>
                         <Button class="h-5 w-5" size="icon-sm" variant="ghost">
-                            <Pencil class="h-3 w-3 text-muted-foreground" />
+                            <Pencil class="h-3 w-3" :style="{ color: userDialog.theme.iconColor }" />
                         </Button>
                     </div>
                     <pre
@@ -170,14 +176,17 @@
             <div class="flex flex-col gap-2.5">
                 <div class="rounded-xl bg-muted/40 p-3">
                     <div
-                        class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2 pb-2 border-b border-border">
+                        class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-border"
+                        :style="{ color: userDialog.theme.subtextColor }">
                         {{ t('dialog.user.info.vrcx_info') }}
                         <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
                             <TooltipWrapper
                                 v-if="userDialog.ref.profilePicOverride && !userDialog.ref.currentAvatarImageUrl"
                                 side="top"
                                 :content="t('dialog.user.info.vrcx_info_tooltip')">
-                                <Info class="inline-block h-3 w-3 align-middle" />
+                                <Info
+                                    class="inline-block h-3 w-3 align-middle"
+                                    :style="{ color: userDialog.theme.iconColor }" />
                             </TooltipWrapper>
                         </span>
                     </div>
@@ -272,7 +281,8 @@
 
                 <div class="rounded-xl bg-muted/40 p-3">
                     <div
-                        class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2 pb-2 border-b border-border">
+                        class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-border"
+                        :style="{ color: userDialog.theme.subtextColor }">
                         {{ t('dialog.user.info.header') }}
                     </div>
                     <div class="flex flex-col gap-1.5">
@@ -340,7 +350,8 @@
                     v-if="userDialog.ref.id === currentUser.id && currentUser.homeLocation"
                     class="rounded-xl bg-muted/40 p-3">
                     <div
-                        class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2 pb-2 border-b border-border">
+                        class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-border"
+                        :style="{ color: userDialog.theme.subtextColor }">
                         {{ t('dialog.user.info.home_location') }}
                     </div>
                     <div
@@ -352,7 +363,7 @@
                             size="icon-sm"
                             variant="ghost"
                             @click.stop="resetHome()">
-                            <Trash2 class="h-3 w-3" />
+                            <Trash2 class="h-3 w-3" :style="{ color: userDialog.theme.iconColor }" />
                         </Button>
                     </div>
                 </div>

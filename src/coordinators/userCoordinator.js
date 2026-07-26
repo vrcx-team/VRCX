@@ -13,7 +13,8 @@ import {
     getWorldName,
     isRealInstance,
     parseLocation,
-    sanitizeUserJson
+    sanitizeUserJson,
+    getReadableProfileThemeColor
 } from '../shared/utils';
 import { getUserMemo } from './memoCoordinator';
 import {
@@ -527,6 +528,41 @@ export function showUserDialog(userId) {
                     .then((args1) => {
                         handleGroupRepresented(args1);
                     });
+                userRequest
+                    .getPublicProfile({ userId })
+                    .then((args1) => {
+                        D.publicProfileRef = args1.json;
+                        const isDarkMode = Boolean(
+                            appearanceSettingsStore.isDarkMode
+                        );
+                        D.theme = {
+                            iconColor: getReadableProfileThemeColor(
+                                args1.json.themeIconColor,
+                                'var(--muted-foreground)',
+                                isDarkMode
+                            ),
+                            buttonColor: getReadableProfileThemeColor(
+                                args1.json.themeButtonColor,
+                                'var(--foreground)',
+                                isDarkMode
+                            ),
+                            subtextColor: getReadableProfileThemeColor(
+                                args1.json.themeSubtextColor,
+                                'var(--muted-foreground)',
+                                isDarkMode
+                            )
+                        };
+                    })
+                    .catch((err) => {
+                        console.error('Failed to fetch public profile', err);
+                        D.publicProfileRef = {};
+                        D.theme = {
+                            iconColor: 'var(--muted-foreground)',
+                            buttonColor: 'var(--muted-foreground)',
+                            subtextColor: 'var(--muted-foreground)'
+                        };
+                    });
+
                 D.visible = true;
                 userStore.applyUserDialogLocation(true);
             }

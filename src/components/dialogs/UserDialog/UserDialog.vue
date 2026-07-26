@@ -20,6 +20,8 @@
             <TabsUnderline
                 v-model="userDialog.activeTab"
                 :items="userDialogTabs"
+                class="user-dialog-tabs"
+                :style="userDialogTabStyle"
                 :unmount-on-hide="false"
                 fill
                 @update:modelValue="userDialogTabClick">
@@ -157,6 +159,13 @@
     const instanceStore = useInstanceStore();
 
     const { userDialog, currentUser } = storeToRefs(useUserStore());
+    const userDialogTabStyle = computed(() => {
+        const color = userDialog.value.theme?.buttonColor;
+        if (!color || color === 'var(--muted-foreground)') {
+            return { '--user-dialog-tab-color': 'var(--foreground)' };
+        }
+        return { '--user-dialog-tab-color': color };
+    });
     const { cachedUsers, showSendBoopDialog, showEditProfileDialog } = useUserStore();
     const { showFavoriteDialog } = useFavoriteStore();
     const { showModerateGroupDialog } = useGroupStore();
@@ -412,3 +421,21 @@
         clearInviteImageUpload();
     }
 </script>
+
+<style scoped>
+    .user-dialog-tabs :deep([class*='--reka-tabs-indicator-size'] > div) {
+        background-color: var(--user-dialog-tab-color);
+    }
+
+    .user-dialog-tabs :deep([role='tab']) {
+        color: var(--user-dialog-tab-color);
+    }
+
+    .user-dialog-tabs :deep([role='tab']:hover) {
+        color: var(--user-dialog-tab-color);
+    }
+
+    .user-dialog-tabs :deep([role='tab'][data-state='active']) {
+        color: var(--user-dialog-tab-color);
+    }
+</style>

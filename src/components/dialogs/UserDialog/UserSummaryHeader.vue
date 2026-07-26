@@ -329,7 +329,8 @@
 
     <div class="rounded-xl bg-muted/40 p-3 flex flex-col mt-2">
         <div
-            class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2 pb-2 border-b border-border">
+            class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-border"
+            :style="{ color: userDialog.theme.subtextColor }">
             {{
                 userDialog.id !== currentUser.id &&
                 userDialog.ref.profilePicOverride &&
@@ -368,7 +369,8 @@
 
     <div class="rounded-xl bg-muted/40 p-3 flex flex-col mt-2">
         <div
-            class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2 pb-2 border-b border-border">
+            class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-border"
+            :style="{ color: userDialog.theme.subtextColor }">
             {{ t('dialog.user.info.represented_group') }}
         </div>
         <div

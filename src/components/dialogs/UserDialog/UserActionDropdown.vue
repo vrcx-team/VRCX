@@ -7,6 +7,12 @@
                 :content="t('dialog.user.actions.favorites_tooltip')">
                 <Button
                     class="rounded-full"
+                    :style="{
+                        color:
+                            userDialog.theme.iconColor === 'var(--muted-foreground)'
+                                ? 'var(--foreground)'
+                                : userDialog.theme.iconColor
+                    }"
                     size="icon-lg"
                     @click="userDialogCommand('Add Favorite')"
                     :ariaLabel="t('dialog.user.actions.favorites_tooltip')"
@@ -16,6 +22,12 @@
             <TooltipWrapper v-else side="top" :content="t('dialog.user.actions.favorites_tooltip')">
                 <Button
                     class="rounded-full"
+                    :style="{
+                        color:
+                            userDialog.theme.iconColor === 'var(--muted-foreground)'
+                                ? 'var(--foreground)'
+                                : userDialog.theme.iconColor
+                    }"
                     size="icon-lg"
                     variant="outline"
                     @click="userDialogCommand('Add Favorite')"
@@ -31,6 +43,7 @@
                         :variant="hasRisk ? 'destructive' : 'outline'"
                         size="icon-lg"
                         class="rounded-full"
+                        :style="{ color: userDialog.theme.iconColor }"
                         :class="{ 'dot-indicator': hasRequest }"
                         :ariaLabel="t('nav_tooltip.manage')">
                         <MoreHorizontal />
