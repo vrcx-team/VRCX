@@ -1,86 +1,90 @@
 <template>
-    <div style="display: flex; align-items: center; justify-content: space-between">
-        <div style="display: flex; align-items: center">
-            <Button
-                class="rounded-full"
-                variant="ghost"
-                size="icon-sm"
-                :disabled="userDialog.isWorldsLoading"
-                @click="refreshUserDialogWorlds()">
-                <Spinner v-if="userDialog.isWorldsLoading" />
-                <RefreshCw v-else />
-            </Button>
-            <span class="ml-1.5 text-sm">{{
-                t('dialog.user.worlds.total_count', { count: userDialog.worlds.length })
-            }}</span>
+    <div class="flex h-full min-h-0 flex-col overflow-hidden pt-2">
+        <div class="shrink-0" style="display: flex; align-items: center; justify-content: space-between">
+            <div style="display: flex; align-items: center">
+                <Button
+                    class="rounded-full"
+                    variant="ghost"
+                    size="icon-sm"
+                    :disabled="userDialog.isWorldsLoading"
+                    @click="refreshUserDialogWorlds()">
+                    <Spinner v-if="userDialog.isWorldsLoading" />
+                    <RefreshCw v-else />
+                </Button>
+                <span class="ml-1.5 text-sm">{{
+                    t('dialog.user.worlds.total_count', { count: userDialog.worlds.length })
+                }}</span>
+            </div>
+            <div style="display: flex; align-items: center">
+                <Input v-model="searchQuery" class="h-8 mr-2 w-32" placeholder="Search worlds" @click.stop />
+            </div>
+            <div style="display: flex; align-items: center">
+                <span class="mr-1">{{ t('dialog.user.worlds.sort_by') }}</span>
+                <Select
+                    :model-value="userDialogWorldSortingKey"
+                    :disabled="userDialog.isWorldsLoading"
+                    @update:modelValue="setUserDialogWorldSortingByKey">
+                    <SelectTrigger size="sm" @click.stop>
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem
+                            v-for="(item, key) in userDialogWorldSortingOptions"
+                            :key="String(key)"
+                            :value="String(key)">
+                            {{ t(item.name) }}
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+            <div style="display: flex; align-items: center">
+                <span class="ml-2 mr-1">{{ t('dialog.user.worlds.order_by') }}</span>
+                <Select
+                    :model-value="userDialogWorldOrderKey"
+                    :disabled="userDialog.isWorldsLoading"
+                    @update:modelValue="setUserDialogWorldOrderByKey">
+                    <SelectTrigger size="sm" @click.stop>
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem
+                            v-for="(item, key) in userDialogWorldOrderOptions"
+                            :key="String(key)"
+                            :value="String(key)">
+                            {{ t(item.name) }}
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
         </div>
-        <div style="display: flex; align-items: center">
-            <Input v-model="searchQuery" class="h-8 mr-2 w-32" placeholder="Search worlds" @click.stop />
-        </div>
-        <div style="display: flex; align-items: center">
-            <span class="mr-1">{{ t('dialog.user.worlds.sort_by') }}</span>
-            <Select
-                :model-value="userDialogWorldSortingKey"
-                :disabled="userDialog.isWorldsLoading"
-                @update:modelValue="setUserDialogWorldSortingByKey">
-                <SelectTrigger size="sm" @click.stop>
-                    <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem
-                        v-for="(item, key) in userDialogWorldSortingOptions"
-                        :key="String(key)"
-                        :value="String(key)">
-                        {{ t(item.name) }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
-        </div>
-        <div style="display: flex; align-items: center">
-            <span class="ml-2 mr-1">{{ t('dialog.user.worlds.order_by') }}</span>
-            <Select
-                :model-value="userDialogWorldOrderKey"
-                :disabled="userDialog.isWorldsLoading"
-                @update:modelValue="setUserDialogWorldOrderByKey">
-                <SelectTrigger size="sm" @click.stop>
-                    <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem
-                        v-for="(item, key) in userDialogWorldOrderOptions"
-                        :key="String(key)"
-                        :value="String(key)">
-                        {{ t(item.name) }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
-        </div>
-    </div>
-    <div class="flex flex-wrap items-start" style="margin-top: 8px; min-height: 60px">
-        <template v-if="userDialog.worlds.length">
-            <div
-                v-for="world in filteredWorlds"
-                :key="world.id"
-                class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                @click="showWorldDialog(world.id)">
-                <div class="relative inline-block flex-none size-9 mr-2.5">
-                    <Avatar class="size-9">
-                        <AvatarImage :src="world.thumbnailImageUrl" class="object-cover" />
-                        <AvatarFallback>
-                            <Image class="size-4 text-muted-foreground" />
-                        </AvatarFallback>
-                    </Avatar>
-                </div>
-                <div class="flex-1 overflow-hidden">
-                    <span class="block truncate font-medium leading-[18px]" v-text="world.name"></span>
-                    <span v-if="world.occupants" class="block truncate text-xs">({{ world.occupants }})</span>
+        <div class="min-h-0 flex-1 overflow-auto">
+            <div class="flex flex-wrap items-start" style="margin-top: 8px; min-height: 60px">
+                <template v-if="userDialog.worlds.length">
+                    <div
+                        v-for="world in filteredWorlds"
+                        :key="world.id"
+                        class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
+                        @click="showWorldDialog(world.id)">
+                        <div class="relative inline-block flex-none size-9 mr-2.5">
+                            <Avatar class="size-9">
+                                <AvatarImage :src="world.thumbnailImageUrl" class="object-cover" />
+                                <AvatarFallback>
+                                    <Image class="size-4 text-muted-foreground" />
+                                </AvatarFallback>
+                            </Avatar>
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <span class="block truncate font-medium leading-[18px]" v-text="world.name"></span>
+                            <span v-if="world.occupants" class="block truncate text-xs">({{ world.occupants }})</span>
+                        </div>
+                    </div>
+                </template>
+                <div
+                    v-else-if="!userDialog.isWorldsLoading"
+                    style="display: flex; justify-content: center; align-items: center; min-height: 120px; width: 100%">
+                    <DataTableEmpty type="nodata" />
                 </div>
             </div>
-        </template>
-        <div
-            v-else-if="!userDialog.isWorldsLoading"
-            style="display: flex; justify-content: center; align-items: center; min-height: 120px; width: 100%">
-            <DataTableEmpty type="nodata" />
         </div>
     </div>
 </template>

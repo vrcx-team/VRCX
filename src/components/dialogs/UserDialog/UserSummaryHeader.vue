@@ -343,7 +343,7 @@
                     v-if="userDialog.ref.profilePicOverride && !userDialog.ref.currentAvatarImageUrl"
                     side="top"
                     :content="t('dialog.user.info.vrcplus_hides_avatar')">
-                    <Info class="inline-block h-3 w-3 align-middle" />
+                    <Info class="inline-block h-3 w-3 align-middle" :style="{ color: userDialog.theme.iconColor }" />
                 </TooltipWrapper>
             </span>
         </div>
@@ -416,7 +416,18 @@
 </template>
 
 <script setup>
-    import { Apple, ChevronDown, IdCard, Image, Monitor, Shield, Smartphone, UserPlus, Users } from 'lucide-vue-next';
+    import {
+        Apple,
+        ChevronDown,
+        IdCard,
+        Image,
+        Info,
+        Monitor,
+        Shield,
+        Smartphone,
+        UserPlus,
+        Users
+    } from 'lucide-vue-next';
     import { ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
