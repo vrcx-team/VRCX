@@ -372,6 +372,11 @@ export function showUserDialog(userId) {
     D.dateFriendedInfo = [];
     D.mutualFriendCount = 0;
     D.mutualGroupCount = 0;
+    D.theme = {
+        iconColor: 'var(--muted-foreground)',
+        buttonColor: 'var(--muted-foreground)',
+        subtextColor: 'var(--muted-foreground)'
+    };
     if (userId === currentUser.id) {
         getWorldName(currentUser.homeLocation).then((worldName) => {
             D.$homeLocationName = worldName;
@@ -532,35 +537,29 @@ export function showUserDialog(userId) {
                     .getPublicProfile({ userId })
                     .then((args1) => {
                         D.publicProfileRef = args1.json;
-                        const isDarkMode = Boolean(
-                            appearanceSettingsStore.isDarkMode
-                        );
-                        D.theme = {
-                            iconColor: getReadableProfileThemeColor(
-                                args1.json.themeIconColor,
-                                'var(--muted-foreground)',
-                                isDarkMode
-                            ),
-                            buttonColor: getReadableProfileThemeColor(
-                                args1.json.themeButtonColor,
-                                'var(--foreground)',
-                                isDarkMode
-                            ),
-                            subtextColor: getReadableProfileThemeColor(
-                                args1.json.themeSubtextColor,
-                                'var(--muted-foreground)',
-                                isDarkMode
-                            )
-                        };
+                        if (appearanceSettingsStore.displayVRCProfileThemes) {
+                            D.theme = {
+                                iconColor: getReadableProfileThemeColor(
+                                    args1.json.themeIconColor,
+                                    'var(--muted-foreground)',
+                                    appearanceSettingsStore.isDarkMode
+                                ),
+                                buttonColor: getReadableProfileThemeColor(
+                                    args1.json.themeButtonColor,
+                                    'var(--foreground)',
+                                    appearanceSettingsStore.isDarkMode
+                                ),
+                                subtextColor: getReadableProfileThemeColor(
+                                    args1.json.themeSubtextColor,
+                                    'var(--muted-foreground)',
+                                    appearanceSettingsStore.isDarkMode
+                                )
+                            };
+                        }
                     })
                     .catch((err) => {
                         console.error('Failed to fetch public profile', err);
                         D.publicProfileRef = {};
-                        D.theme = {
-                            iconColor: 'var(--muted-foreground)',
-                            buttonColor: 'var(--muted-foreground)',
-                            subtextColor: 'var(--muted-foreground)'
-                        };
                     });
 
                 D.visible = true;

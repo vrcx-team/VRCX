@@ -891,6 +891,7 @@
                     "zoom": "Zoom",
                     "vrcplus_profile_icons": "VRChat+ Profile Icons",
                     "vrcplus_profile_icons_description": "Use VRChat+ exclusive profile icons when available.",
+                    "vrc_profile_themes": "VRChat Profile Themes",
                     "show_instance_id": "Show Instance ID",
                     "show_status_bar": "Show Status Bar",
                     "age_gated_instances": "Show Age-Gated Instances",
