@@ -6,7 +6,19 @@ const TIME_UNIT_KEYS = {
     d: 'common.time_units.d',
     h: 'common.time_units.h',
     m: 'common.time_units.m',
-    s: 'common.time_units.s'
+    s: 'common.time_units.s',
+    year: 'common.time_units.year',
+    month: 'common.time_units.month',
+    day: 'common.time_units.day',
+    hour: 'common.time_units.hour',
+    minute: 'common.time_units.minute',
+    second: 'common.time_units.second',
+    years: 'common.time_units.years',
+    months: 'common.time_units.months',
+    days: 'common.time_units.days',
+    hours: 'common.time_units.hours',
+    minutes: 'common.time_units.minutes',
+    seconds: 'common.time_units.seconds'
 };
 
 function getTimeUnitLabel(unit) {
@@ -56,6 +68,53 @@ function timeToText(sec, isNeedSeconds = false) {
         arr.push(`${n}${getTimeUnitLabel('s')}`);
     }
     return arr.join(' ');
+}
+
+function timeAgo(datetime) {
+    if (!datetime) {
+        return '—';
+    }
+    let n;
+    if (typeof datetime === 'number') {
+        n = Math.floor((Date.now() - datetime) / 1000);
+    } else {
+        n = Date.now() - Date.parse(datetime);
+    }
+    if (isNaN(n)) {
+        return escapeTag(datetime);
+    }
+    n = Math.floor(n / 1000);
+    if (n < 0) {
+        n = -n;
+    }
+    if (n == 0) {
+        return '—';
+    }
+    if (n >= 31536000) {
+        const value = Math.floor(n / 31536000);
+        return `${value} ${getTimeUnitLabel(value === 1 ? 'year' : 'years')}`;
+    }
+    if (n >= 2592000) {
+        const value = Math.floor(n / 2592000);
+        return `${value} ${getTimeUnitLabel(value === 1 ? 'month' : 'months')}`;
+    }
+    if (n >= 86400) {
+        const value = Math.floor(n / 86400);
+        return `${value} ${getTimeUnitLabel(value === 1 ? 'day' : 'days')}`;
+    }
+    if (n >= 3600) {
+        const value = Math.floor(n / 3600);
+        return `${value} ${getTimeUnitLabel(value === 1 ? 'hour' : 'hours')}`;
+    }
+    if (n >= 60) {
+        const value = Math.floor(n / 60);
+        return `${value} ${getTimeUnitLabel(value === 1 ? 'minute' : 'minutes')}`;
+    }
+    if (n < 60) {
+        // round to 5 seconds
+        n = Math.floor((n + 2.5) / 5) * 5;
+        return `${n} ${getTimeUnitLabel(n === 1 ? 'second' : 'seconds')}`;
+    }
 }
 
 /**
@@ -118,4 +177,4 @@ function convertYoutubeTime(duration) {
     return length;
 }
 
-export { timeToText, formatSeconds, convertYoutubeTime };
+export { timeToText, timeAgo, formatSeconds, convertYoutubeTime };

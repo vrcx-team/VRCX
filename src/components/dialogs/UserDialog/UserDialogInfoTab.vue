@@ -191,52 +191,10 @@
                         </span>
                     </div>
                     <div class="flex flex-col gap-1.5">
-                        <template v-if="currentUser.id !== userDialog.id">
-                            <div class="flex justify-between items-start gap-2 text-xs">
-                                <span class="text-muted-foreground shrink-0">{{
-                                    t('dialog.user.info.last_seen')
-                                }}</span>
-                                <span class="text-right text-muted-foreground">{{
-                                    formatDateFilter(userDialog.lastSeen, 'long')
-                                }}</span>
-                            </div>
-                            <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
-                                <div
-                                    class="flex justify-between items-start gap-2 text-xs cursor-pointer hover:text-foreground"
-                                    @click="showPreviousInstancesListDialog(userDialog.ref)">
-                                    <span class="text-muted-foreground shrink-0">{{
-                                        t('dialog.user.info.join_count')
-                                    }}</span>
-                                    <span class="text-right text-muted-foreground">{{
-                                        userDialog.joinCount || '—'
-                                    }}</span>
-                                </div>
-                            </TooltipWrapper>
-                            <div class="flex justify-between items-start gap-2 text-xs">
-                                <span class="text-muted-foreground shrink-0">{{
-                                    t('dialog.user.info.time_together')
-                                }}</span>
-                                <span class="text-right text-muted-foreground">{{
-                                    userDialog.timeSpent ? timeToText(userDialog.timeSpent) : '—'
-                                }}</span>
-                            </div>
-                        </template>
-                        <template v-else>
-                            <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
-                                <div
-                                    class="flex justify-between items-start gap-2 text-xs cursor-pointer hover:text-foreground"
-                                    @click="showPreviousInstancesListDialog(userDialog.ref)">
-                                    <span class="text-muted-foreground shrink-0">{{
-                                        t('dialog.user.info.play_time')
-                                    }}</span>
-                                    <span class="text-right text-muted-foreground">{{
-                                        userDialog.timeSpent ? timeToText(userDialog.timeSpent) : '—'
-                                    }}</span>
-                                </div>
-                            </TooltipWrapper>
-                        </template>
-
-                        <TooltipWrapper :side="currentUser.id !== userDialog.id ? 'bottom' : 'top'">
+                        <TooltipWrapper
+                            :side="currentUser.id !== userDialog.id ? 'bottom' : 'top'"
+                            :content="formatDateFilter(userOnlineForTimestamp(userDialog), 'long')"
+                            :disabled="!userOnlineForTimestamp(userDialog)">
                             <template #content>
                                 <span>{{ formatDateFilter(userOnlineForTimestamp(userDialog), 'short') }}</span>
                             </template>
@@ -249,17 +207,35 @@
                                     }}
                                 </span>
                                 <span class="text-right text-muted-foreground">{{
-                                    userOnlineFor(userDialog.ref)
+                                    timeAgo(userOnlineForTimestamp(userDialog))
                                 }}</span>
                             </div>
                         </TooltipWrapper>
 
                         <template v-if="currentUser.id !== userDialog.id">
-                            <TooltipWrapper side="top" :disabled="userDialog.dateFriendedInfo.length < 2">
+                            <TooltipWrapper
+                                side="top"
+                                :disabled="!userDialog.lastSeen"
+                                :content="formatDateFilter(userDialog.lastSeen, 'long')">
+                                <div class="flex justify-between items-start gap-2 text-xs">
+                                    <span class="text-muted-foreground shrink-0">{{
+                                        t('dialog.user.info.last_seen')
+                                    }}</span>
+                                    <span class="text-right text-muted-foreground">{{
+                                        timeAgo(userDialog.lastSeen)
+                                    }}</span>
+                                </div>
+                            </TooltipWrapper>
+                            <TooltipWrapper side="top" :disabled="userDialog.dateFriendedInfo.length === 0">
                                 <template #content>
-                                    <template v-for="ref in userDialog.dateFriendedInfo" :key="ref.type">
-                                        <span>{{ ref.type }}: {{ formatDateFilter(ref.created_at, 'long') }}</span
-                                        ><br />
+                                    <template v-if="userDialog.dateFriendedInfo.length === 1">
+                                        {{ formatDateFilter(userDialog.dateFriended, 'long') }}
+                                    </template>
+                                    <template v-else>
+                                        <template v-for="ref in userDialog.dateFriendedInfo" :key="ref.type">
+                                            <span>{{ ref.type }}: {{ formatDateFilter(ref.created_at, 'long') }}</span
+                                            ><br />
+                                        </template>
                                     </template>
                                 </template>
                                 <div class="flex justify-between items-start gap-2 text-xs">
@@ -271,7 +247,46 @@
                                         }}
                                     </span>
                                     <span class="text-right text-muted-foreground">{{
-                                        formatDateFilter(userDialog.dateFriended, 'long')
+                                        timeAgo(userDialog.dateFriended)
+                                    }}</span>
+                                </div>
+                            </TooltipWrapper>
+                            <TooltipWrapper
+                                side="top"
+                                :content="timeToText(userDialog.timeSpent)"
+                                :disabled="!userDialog.timeSpent">
+                                <div class="flex justify-between items-start gap-2 text-xs">
+                                    <span class="text-muted-foreground shrink-0">{{
+                                        t('dialog.user.info.time_together')
+                                    }}</span>
+                                    <span class="text-right text-muted-foreground">{{
+                                        timeAgo(Date.now() - userDialog.timeSpent * 1000)
+                                    }}</span>
+                                </div>
+                            </TooltipWrapper>
+                            <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
+                                <div
+                                    class="flex justify-between items-start gap-2 text-xs cursor-pointer hover:text-foreground"
+                                    @click="showPreviousInstancesListDialog(userDialog.ref)">
+                                    <span class="text-muted-foreground shrink-0">{{
+                                        t('dialog.user.info.join_count')
+                                    }}</span>
+                                    <span class="text-right text-muted-foreground">{{
+                                        userDialog.joinCount || '—'
+                                    }}</span>
+                                </div>
+                            </TooltipWrapper>
+                        </template>
+                        <template v-else>
+                            <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
+                                <div
+                                    class="flex justify-between items-start gap-2 text-xs cursor-pointer hover:text-foreground"
+                                    @click="showPreviousInstancesListDialog(userDialog.ref)">
+                                    <span class="text-muted-foreground shrink-0">{{
+                                        t('dialog.user.info.play_time')
+                                    }}</span>
+                                    <span class="text-right text-muted-foreground">{{
+                                        timeAgo(Date.now() - userDialog.timeSpent * 1000)
                                     }}</span>
                                 </div>
                             </TooltipWrapper>
@@ -303,18 +318,16 @@
                                     t('dialog.user.info.last_activity')
                                 }}</span>
                                 <span class="text-right text-muted-foreground">
-                                    {{
-                                        userDialog.ref.last_activity
-                                            ? timeToText(Date.now() - Date.parse(userDialog.ref.last_activity))
-                                            : '—'
-                                    }}
+                                    {{ timeAgo(userDialog.ref.last_activity) }}
                                 </span>
                             </div>
                         </TooltipWrapper>
 
                         <div class="flex justify-between items-start gap-2 text-xs">
                             <span class="text-muted-foreground shrink-0">{{ t('dialog.user.info.date_joined') }}</span>
-                            <span class="text-right text-muted-foreground" v-text="userDialog.ref.date_joined"></span>
+                            <span
+                                class="text-right text-muted-foreground"
+                                v-text="formatDateFilter(userDialog.ref.date_joined, 'date')"></span>
                         </div>
 
                         <template v-if="currentUser.id === userDialog.id">
@@ -390,8 +403,8 @@
         isRealInstance,
         openExternalLink,
         timeToText,
-        userOnlineFor,
-        userOnlineForTimestamp
+        userOnlineForTimestamp,
+        timeAgo
     } from '../../../shared/utils';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { refreshInstancePlayerCount } from '../../../coordinators/instanceCoordinator';

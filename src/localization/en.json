@@ -28,7 +28,19 @@
             "d": "d",
             "h": "h",
             "m": "m",
-            "s": "s"
+            "s": "s",
+            "year": "year",
+            "month": "month",
+            "day": "day",
+            "hour": "hour",
+            "minute": "minute",
+            "second": "second",
+            "years": "years",
+            "months": "months",
+            "days": "days",
+            "hours": "hours",
+            "minutes": "minutes",
+            "seconds": "seconds"
         },
         "days": {
             "sunday": "Sunday",
