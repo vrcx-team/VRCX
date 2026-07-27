@@ -443,6 +443,29 @@ const friendInsight = {
                   }
                 : null
         };
+    },
+
+    /**
+     * Resolves a batch of user IDs to display names, using local cache only.
+     * Returns found results plus a list of unresolved IDs for follow-up API lookup.
+     *
+     * @param {string[]} userIds
+     * @returns {Promise<{resolved: Array<{userId: string, displayName: string}>, unresolved: string[]}>}
+     */
+    async resolveFriendInsightUsers(userIds) {
+        const ids = [...new Set(userIds.filter((id) => typeof id === 'string' && id.length > 0))];
+        if (!ids.length) return { resolved: [], unresolved: [] };
+
+        // Check local friend cache first
+        const currentFriends = await getCurrentFriends(ids);
+        const foundIds = new Set(currentFriends.map((f) => f.userId));
+        const resolved = currentFriends.map((f) => ({
+            userId: f.userId,
+            displayName: f.displayName
+        }));
+        const unresolved = ids.filter((id) => !foundIds.has(id));
+
+        return { resolved, unresolved };
     }
 };
 

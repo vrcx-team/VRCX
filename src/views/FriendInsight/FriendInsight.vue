@@ -87,18 +87,83 @@
                 </div>
 
                 <div>
-                    <label class="text-sm font-medium">{{ t('view.friend_insight.preset_questions') }}</label>
-                    <div class="mt-1 flex flex-col gap-1">
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-medium">{{ t('view.friend_insight.preset_questions') }}</label>
                         <Button
-                            v-for="preset in presets"
-                            :key="preset.question"
                             size="sm"
                             variant="ghost"
-                            class="justify-start text-left h-auto py-2"
-                            :disabled="!selectedFriends.length || loading"
-                            @click="askQuestion(preset.question)">
-                            {{ preset.label }}
+                            class="h-6 w-6 p-0"
+                            :disabled="editingPresetIndex >= 0 || isAddingPreset"
+                            @click="startAddPreset">
+                            <Plus class="h-3.5 w-3.5" />
                         </Button>
+                    </div>
+                    <div class="mt-1 flex flex-col gap-1">
+                        <template v-for="(preset, pi) in presets" :key="pi">
+                            <!-- Editing form -->
+                            <div v-if="editingPresetIndex === pi" class="flex flex-col gap-1 p-1.5 rounded border border-border">
+                                <input
+                                    v-model="editLabel"
+                                    type="text"
+                                    class="h-7 w-full rounded border border-input bg-transparent px-2 text-xs outline-none"
+                                    :placeholder="t('view.friend_insight.preset_label_placeholder')" />
+                                <textarea
+                                    v-model="editQuestion"
+                                    rows="2"
+                                    class="w-full rounded border border-input bg-transparent px-2 py-1 text-xs outline-none resize-none"
+                                    :placeholder="t('view.friend_insight.preset_question_placeholder')" />
+                                <div class="flex gap-1">
+                                    <Button size="sm" class="h-6 text-xs" @click="savePreset">{{ t('view.friend_insight.save') }}</Button>
+                                    <Button size="sm" variant="ghost" class="h-6 text-xs" @click="cancelEditPreset">{{ t('view.friend_insight.cancel') }}</Button>
+                                </div>
+                            </div>
+                            <!-- Preset row -->
+                            <div
+                                v-else
+                                class="flex items-center gap-1 group/preset rounded hover:bg-accent/50 pr-0.5">
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    class="justify-start text-left h-auto py-1.5 flex-1 min-w-0"
+                                    :disabled="!selectedFriends.length || loading"
+                                    @click="askQuestion(preset.question)">
+                                    <span class="text-xs truncate">{{ preset.label }}</span>
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    class="h-5 w-5 p-0 opacity-0 group-hover/preset:opacity-50 hover:opacity-100! shrink-0"
+                                    :disabled="loading"
+                                    @click="startEditPreset(pi)">
+                                    <Pencil class="h-3 w-3" />
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    class="h-5 w-5 p-0 opacity-0 group-hover/preset:opacity-50 hover:opacity-100! hover:text-destructive shrink-0"
+                                    :disabled="loading"
+                                    @click="deletePreset(pi)">
+                                    <Trash2 class="h-3 w-3" />
+                                </Button>
+                            </div>
+                        </template>
+                        <!-- Add form -->
+                        <div v-if="isAddingPreset" class="flex flex-col gap-1 p-1.5 rounded border border-border">
+                            <input
+                                v-model="editLabel"
+                                type="text"
+                                class="h-7 w-full rounded border border-input bg-transparent px-2 text-xs outline-none"
+                                :placeholder="t('view.friend_insight.preset_label_placeholder')" />
+                            <textarea
+                                v-model="editQuestion"
+                                rows="2"
+                                class="w-full rounded border border-input bg-transparent px-2 py-1 text-xs outline-none resize-none"
+                                :placeholder="t('view.friend_insight.preset_question_placeholder')" />
+                            <div class="flex gap-1">
+                                <Button size="sm" class="h-6 text-xs" @click="addPreset">{{ t('view.friend_insight.add') }}</Button>
+                                <Button size="sm" variant="ghost" class="h-6 text-xs" @click="cancelAddPreset">{{ t('view.friend_insight.cancel') }}</Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -326,6 +391,7 @@
     import { useRouter } from 'vue-router';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+    import { i18n } from '@/plugins/i18n';
     import { marked } from 'marked';
     import DOMPurify from 'dompurify';
     import {
@@ -334,6 +400,8 @@
         Eye,
         FileText,
         Loader2,
+        Pencil,
+        Plus,
         Search,
         Send,
         Settings2,
@@ -354,6 +422,7 @@
     import { InputGroupField } from '@/components/ui/input-group';
     import { useAdvancedSettingsStore } from '@/stores';
     import { database } from '@/services/database';
+    import configRepository from '@/services/config';
 
     const { t } = useI18n();
     const router = useRouter();
@@ -409,14 +478,130 @@
 
     let abortController = null;
 
-    const presets = [
-        { label: t('view.friend_insight.preset_what_doing'), question: () => t('view.friend_insight.preset_what_doing_question') },
-        { label: t('view.friend_insight.preset_online_frequency'), question: () => t('view.friend_insight.preset_online_frequency_question') },
-        { label: t('view.friend_insight.preset_status_changes'), question: () => t('view.friend_insight.preset_status_changes_question') },
-        { label: t('view.friend_insight.preset_relationship'), question: () => t('view.friend_insight.preset_relationship_question') },
-        { label: t('view.friend_insight.preset_same_world'), question: () => t('view.friend_insight.preset_same_world_question') },
-        { label: t('view.friend_insight.preset_deep_analysis'), question: () => t('view.friend_insight.preset_deep_analysis_question') }
-    ];
+    const DEFAULT_PRESETS = {
+        en: [
+            { label: 'Weekly Activity', question: 'What has [friends] been up to this week?' },
+            { label: 'Online Frequency', question: 'Compare the online frequency of [friends] over the last 30 days.' },
+            { label: 'Status Patterns', question: 'What patterns are there in [friends]\'s status changes?' },
+            { label: 'Friendship History', question: 'When did my friendship with [friends] begin? What changes have occurred?' },
+            { label: 'Shared Worlds', question: 'Do [friends] often appear in the same worlds recently?' },
+            { label: 'Frequent Peers', question: 'Based on [friends]\'s common worlds, mutual friends, and online time overlap, who are the people they most frequently spend time with? Use resolve_users to identify any unknown user IDs found in the data.' },
+            { label: 'Deep Analysis', question: 'Please perform a deep mental state and behavioral pattern analysis for [friends]. Follow these steps:\n\nStep 1 — Bio Timeline Analysis:\nRetrieve all historical bio records and analyze how this individual\'s self-description has changed over time. Focus on: shifts in tone and content of self-description, changes in role positioning, signs of self-negation or exaggerated expression, and social intent reflected in bios.\n\nStep 2 — Behavioral Pattern & Personality Assessment:\nSynthesize all timeline data and analyze from these dimensions:\n- Emotional Fluctuation: Identify alternating active and low periods from online frequency and duration changes.\n- Habits & Regularity: Analyze consistency in active times and frequently visited worlds.\n- Stress & Change Signals: Whether major bio and status changes correlate with real-life events.\n- Mental State Stability: Synthesize all factors to assess stability vs fluctuation.\n\nGenerate a complete report with detailed timeline evidence and in-depth behavioral insights.' }
+        ],
+        'zh-CN': [
+            { label: '本周动态', question: '[friends]这周都在做什么？' },
+            { label: '上线频率', question: '[friends]最近30天的上线频率如何？' },
+            { label: '状态变化规律', question: '[friends]最近的状态变化有什么规律？' },
+            { label: '好友关系历史', question: '我和[friends]的好友关系是什么时候建立的？有哪些变化？' },
+            { label: '共同世界', question: '[friends]最近是否常出现在相同世界？' },
+            { label: '常一起玩的人', question: '根据[friends]的共同世界、共同好友和在线时间重叠情况，分析他们最常和哪些人一起玩？遇到未知用户ID请使用resolve_users查询。' },
+            { label: '深度分析', question: '请对[friends]进行一次深度的精神状态和行为模式分析。按以下步骤进行：\n\n步骤1 — 自我介绍（bio）时间线解析：\n获取全部历史bio记录，按时间顺序分析个体在不同时间段的自我介绍变化。重点关注：自我描述的语气和内容转变、角色定位的变化、是否出现自我否定或过度夸大的表达、bio中透露的社交意图。\n\n步骤2 — 行为模式与性格评估：\n综合所有时间线数据，从以下维度进行深入分析：\n- 情感波动：从在线频率和时长变化中识别活跃期与低谷期的交替模式\n- 习惯与规律性：分析活跃时间和常去世界的一致性\n- 压力与变化信号：bio和状态的重大变化是否与现实生活事件相关\n- 精神状态的稳定性：综合以上因素评估稳定性或波动性\n\n请生成完整报告，包含详细的时间线证据和深入的行为洞察。' }
+        ],
+        ja: [
+            { label: '今週のアクティビティ', question: '[friends]は今週何をしていましたか？' },
+            { label: 'オンライン頻度', question: '[friends]の過去30日間のオンライン頻度を比較してください。' },
+            { label: 'ステータスパターン', question: '[friends]のステータス変化にはどのようなパターンがありますか？' },
+            { label: 'フレンド関係の履歴', question: '[friends]とのフレンド関係はいつ始まりましたか？どのような変化がありましたか？' },
+            { label: '共通ワールド', question: '[friends]は最近同じワールドによく出現しますか？' },
+            { label: 'よく遊ぶ人', question: '[friends]の共通ワールド、共通フレンド、オンライン時間の重なりから、最も頻繁に一緒に過ごしている人を分析してください。未知のユーザーIDはresolve_usersで調べてください。' },
+            { label: '深層分析', question: '[friends]について深層的な精神状態と行動パターン分析を行ってください。以下の手順で進めてください：\n\n手順1 — 自己紹介（bio）タイムライン解析：\nすべての履歴bioレコードを取得し、時系列で個人の自己紹介の変化を分析します。注目ポイント：自己記述のトーンと内容の変化、役割定位の変化、自己否定や過度な誇張表現の有無、bioに表れる社会的意図。\n\n手順2 — 行動パターンと性格評価：\nすべてのタイムラインデータを総合し、以下の次元から深く分析します：\n- 感情の変動：オンライン頻度と時間の変化から、活発期と低調期の交互パターンを識別\n- 習慣と規則性：アクティブ時間とよく訪れるワールドの一貫性を分析\n- ストレスと変化のシグナル：bioとステータスの大きな変化が現実の生活イベントと関連しているか\n- 精神状態の安定性：上記の要因を総合して安定性を評価\n\n詳細なタイムラインの証拠と深い行動洞察を含む完全なレポートを生成してください。' }
+        ]
+    };
+
+    const presets = ref([]);
+    const editingPresetIndex = ref(-1);
+    const isAddingPreset = ref(false);
+    const editLabel = ref('');
+    const editQuestion = ref('');
+    const PRESETS_CONFIG_KEY = 'VRCX_friendInsightPresets';
+
+    function currentLang() {
+        return i18n.global.locale.value || 'en';
+    }
+
+    function getPresetsForLang(allPresets, lang) {
+        return allPresets[lang] || allPresets.en || [];
+    }
+
+    async function loadPresets() {
+        const saved = await configRepository.getObject(PRESETS_CONFIG_KEY, null);
+        const lang = currentLang();
+        if (saved && saved[lang] && saved[lang].length) {
+            presets.value = saved[lang].map((p) => ({ label: p.label, question: p.question }));
+        } else {
+            presets.value = DEFAULT_PRESETS[lang]
+                ? DEFAULT_PRESETS[lang].map((p) => ({ ...p }))
+                : DEFAULT_PRESETS.en.map((p) => ({ ...p }));
+        }
+    }
+
+    function resetToBuiltinPresets() {
+        const lang = currentLang();
+        presets.value = DEFAULT_PRESETS[lang]
+            ? DEFAULT_PRESETS[lang].map((p) => ({ ...p }))
+            : DEFAULT_PRESETS.en.map((p) => ({ ...p }));
+    }
+
+    async function savePresets() {
+        const lang = currentLang();
+        const allPresets = (await configRepository.getObject(PRESETS_CONFIG_KEY, null)) || {};
+        allPresets[lang] = presets.value.map((p) => ({ label: p.label, question: p.question }));
+        await configRepository.setObject(PRESETS_CONFIG_KEY, allPresets);
+    }
+
+    function startAddPreset() {
+        isAddingPreset.value = true;
+        editLabel.value = '';
+        editQuestion.value = '';
+    }
+
+    function cancelAddPreset() {
+        isAddingPreset.value = false;
+        editLabel.value = '';
+        editQuestion.value = '';
+    }
+
+    async function addPreset() {
+        const label = editLabel.value.trim();
+        const question = editQuestion.value.trim();
+        if (!label || !question) return;
+        presets.value = [...presets.value, { label, question }];
+        isAddingPreset.value = false;
+        editLabel.value = '';
+        editQuestion.value = '';
+        await savePresets();
+    }
+
+    function startEditPreset(index) {
+        editingPresetIndex.value = index;
+        editLabel.value = presets.value[index].label;
+        editQuestion.value = presets.value[index].question;
+    }
+
+    function cancelEditPreset() {
+        editingPresetIndex.value = -1;
+        editLabel.value = '';
+        editQuestion.value = '';
+    }
+
+    async function savePreset() {
+        const label = editLabel.value.trim();
+        const question = editQuestion.value.trim();
+        if (!label || !question) return;
+        const idx = editingPresetIndex.value;
+        presets.value = presets.value.map((p, i) =>
+            i === idx ? { label, question } : p
+        );
+        editingPresetIndex.value = -1;
+        editLabel.value = '';
+        editQuestion.value = '';
+        await savePresets();
+    }
+
+    async function deletePreset(index) {
+        presets.value = presets.value.filter((_, i) => i !== index);
+        await savePresets();
+    }
 
     const dataPreviewText = computed(() => {
         if (!selectedFriends.value.length) {
@@ -465,6 +650,7 @@
     // ─── Lifecycle ──────────────────────────────────────────────────
     onMounted(async () => {
         resetThrottle();
+        await loadPresets();
         try {
             friends.value = await database.getFriendLogCurrent();
         } catch (err) {
@@ -562,8 +748,7 @@
 
     // ─── Ask question ───────────────────────────────────────────────
     async function askQuestion(raw) {
-        const rawQuestion = typeof raw === 'function' ? raw() : raw;
-        const question = buildQuestion(rawQuestion || currentQuestion.value);
+        const question = buildQuestion(raw || currentQuestion.value);
         if (!question.trim() || !selectedFriends.value.length) return;
 
         currentQuestion.value = '';

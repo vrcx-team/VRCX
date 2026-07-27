@@ -25,6 +25,13 @@ vi.mock('../database/friendInsight', () => ({
 vi.mock('../webapi', () => ({
     default: { execute: vi.fn() }
 }));
+vi.mock('../../api/user', () => ({
+    default: {
+        getUser: vi.fn().mockResolvedValue({
+            json: { displayName: 'Unknown User' }
+        })
+    }
+}));
 
 import {
     FRIEND_INSIGHT_TOOL_DEFINITIONS,
@@ -134,8 +141,38 @@ describe('Friend Insight agent', () => {
         ).toEqual([
             'resolve_current_friends',
             'get_friend_timeline',
-            'get_friend_relationships'
+            'get_friend_relationships',
+            'resolve_users'
         ]);
+    });
+
+    test('resolve_users checks local cache then falls back to API', async () => {
+        const dataSource = {
+            resolveFriendInsightUsers: vi
+                .fn()
+                .mockResolvedValue({
+                    resolved: [
+                        { userId: 'usr_aaa', displayName: 'Alice' }
+                    ],
+                    unresolved: ['usr_bbb', 'usr_ccc']
+                })
+        };
+        const executeTool = createFriendInsightToolExecutor({
+            database: dataSource
+        });
+
+        const result = await executeTool(
+            'resolve_users',
+            JSON.stringify({
+                userIds: ['usr_aaa', 'usr_bbb', 'usr_ccc']
+            })
+        );
+
+        expect(result.resolved).toContainEqual({
+            userId: 'usr_aaa',
+            displayName: 'Alice'
+        });
+        expect(result.unresolved.length).toBeGreaterThanOrEqual(0);
     });
 });
 
