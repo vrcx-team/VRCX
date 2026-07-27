@@ -547,7 +547,7 @@
     }
 
     function goToSettings() {
-        router.push({ name: 'settings' });
+        router.push({ name: 'settings', query: { tab: 'integrations' } });
     }
 
     function pushMessage(msg) {

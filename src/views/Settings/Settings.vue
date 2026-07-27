@@ -3,7 +3,7 @@
         <div class="shrink-0 p-1.5">
             <span class="text-lg font-semibold text-foreground">{{ t('view.settings.header') }}</span>
         </div>
-        <TabsUnderline default-value="system" :items="settingsTabs" :unmount-on-hide="false" fill>
+        <TabsUnderline :default-value="activeTab" :items="settingsTabs" :unmount-on-hide="false" fill>
             <template #system>
                 <SystemTab />
             </template>
@@ -33,7 +33,8 @@
 </template>
 
 <script setup>
-    import { computed, onBeforeMount } from 'vue';
+    import { computed, onBeforeMount, ref } from 'vue';
+    import { useRoute } from 'vue-router';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { useI18n } from 'vue-i18n';
 
@@ -47,6 +48,8 @@
     import VrTab from './components/Tabs/VrTab.vue';
 
     const { t } = useI18n();
+    const route = useRoute();
+    const activeTab = ref(route.query?.tab || 'system');
     const settingsTabs = computed(() => [
         { value: 'system', label: t('view.settings.category.system') },
         { value: 'interface', label: t('view.settings.category.interface') },
