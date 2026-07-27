@@ -262,7 +262,7 @@
                             <div
                                 v-else-if="item.type === 'content'"
                                 :ref="(el) => { streamContentDom = el }"
-                                class="text-sm whitespace-pre-wrap"></div>
+                                class="text-sm whitespace-pre-wrap streaming-cursor"></div>
                         </template>
 
                         <!-- Loading spinner if no timeline items yet -->
@@ -561,7 +561,7 @@
             if (!domDirty) return;
             domDirty = false;
             if (streamContentDom && finalContent) {
-                streamContentDom.textContent = finalContent + '█';
+                streamContentDom.textContent = finalContent;
             }
             throttledScroll();
         }
@@ -834,5 +834,15 @@
     border: none;
     border-top: 1px solid hsl(var(--border));
     margin: 1em 0;
+}
+
+.streaming-cursor::after {
+    content: '█';
+    animation: cursor-blink 1s step-end infinite;
+}
+
+@keyframes cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 </style>
