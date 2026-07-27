@@ -145,7 +145,8 @@
                         <!-- Assistant message with timeline -->
                         <div
                             v-else-if="msg.role === 'assistant'"
-                            class="rounded-lg p-3 max-w-[85%] bg-muted">
+                            class="rounded-lg p-3 max-w-[85%] bg-muted"
+                            style="content-visibility: auto; contain-intrinsic-size: auto 200px">
                             <template v-for="(item, ti) in msg.timeline" :key="ti">
                                 <!-- Thinking block -->
                                 <details v-if="item.type === 'thinking'" class="mb-2">
@@ -310,7 +311,7 @@
 </template>
 
 <script setup>
-    import { computed, nextTick, onMounted, reactive, ref } from 'vue';
+    import { computed, markRaw, nextTick, onMounted, reactive, ref, shallowRef } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { marked } from 'marked';
@@ -375,8 +376,8 @@
         friends.value.filter((f) => selectedFriendIds.value.includes(f.userId))
     );
 
-    // Chat state
-    const messages = ref([]);
+    // Chat state — shallowRef to avoid deep reactivity on large message objects
+    const messages = shallowRef([]);
     const streamingMsg = ref(null);
     const currentQuestion = ref('');
     const loading = ref(false);
@@ -499,6 +500,15 @@
         }
     }
 
+    let lastScrollTime = 0;
+    function throttledScroll() {
+        const now = performance.now();
+        if (now - lastScrollTime > 80) {
+            lastScrollTime = now;
+            scrollToBottom();
+        }
+    }
+
     function cancelRequest() {
         if (abortController) {
             abortController.abort();
@@ -514,6 +524,10 @@
         error.value = '';
     }
 
+    function pushMessage(msg) {
+        messages.value = [...messages.value, markRaw(msg)];
+    }
+
     // ─── Ask question ───────────────────────────────────────────────
     async function askQuestion(raw) {
         const question = buildQuestion(raw || currentQuestion.value);
@@ -524,7 +538,7 @@
         loading.value = true;
 
         // Add user message
-        messages.value.push({
+        pushMessage({
             role: 'user',
             content: question
         });
@@ -549,7 +563,7 @@
             if (streamContentDom && finalContent) {
                 streamContentDom.textContent = finalContent + '█';
             }
-            scrollToBottom();
+            throttledScroll();
         }
         let flushRAF = 0;
         function scheduleFlush() {
@@ -712,7 +726,7 @@
                                 )
                             ]
                         };
-                        messages.value.push(finalMsg);
+                        pushMessage(finalMsg);
                         streamingMsg.value = null;
                         loading.value = false;
                         streamContentDom = null;

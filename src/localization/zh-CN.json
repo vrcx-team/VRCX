@@ -455,7 +455,9 @@
             "clear": "清空对话",
             "message_count": "{count} 条消息",
             "thinking_title": "思考过程",
-            "draft": "草稿"
+            "draft": "草稿",
+            "tool_args": "参数",
+            "tool_result": "结果"
         },
         "moderation": {
             "filter_placeholder": "筛选管理操作",

@@ -455,7 +455,9 @@
             "clear": "Clear Chat",
             "message_count": "{count} messages",
             "thinking_title": "Thinking",
-            "draft": "Draft"
+            "draft": "Draft",
+            "tool_args": "Arguments",
+            "tool_result": "Result"
         },
         "moderation": {
             "filter_placeholder": "Filter",
