@@ -369,7 +369,7 @@
                             @keydown.enter="askQuestion(currentQuestion)" />
                     </div>
                     <Button
-                        :disabled="!currentQuestion.trim() || !selectedFriends.length || loading"
+                        :disabled="!currentQuestion.trim() || loading"
                         @click="askQuestion(currentQuestion)">
                         <Send class="h-4 w-4 mr-1.5" />
                         {{ t('view.friend_insight.ask') }}
@@ -749,7 +749,7 @@
     // ─── Ask question ───────────────────────────────────────────────
     async function askQuestion(raw) {
         const question = buildQuestion(raw || currentQuestion.value);
-        if (!question.trim() || !selectedFriends.value.length) return;
+        if (!question.trim()) return;
 
         currentQuestion.value = '';
         error.value = '';
@@ -807,14 +807,20 @@
                 })
             });
 
-            const contextualQuestion = [
-                question,
-                '',
-                `[Context: friend IDs = ${friendIds.join(', ')}`,
-                timeRangeISO.from ? `from = ${timeRangeISO.from}` : '',
-                timeRangeISO.to ? `to = ${timeRangeISO.to}` : '',
-                `allowed data types = ${allowedTypes.join(', ')}]`
-            ].join(' ');
+            const contextParts = [];
+            if (friendIds.length) {
+                contextParts.push(`friend IDs = ${friendIds.join(', ')}`);
+            }
+            if (timeRangeISO.from) {
+                contextParts.push(`from = ${timeRangeISO.from}`);
+            }
+            if (timeRangeISO.to) {
+                contextParts.push(`to = ${timeRangeISO.to}`);
+            }
+            contextParts.push(`allowed data types = ${allowedTypes.join(', ')}`);
+            const contextualQuestion = contextParts.length
+                ? `${question} [Context: ${contextParts.join(', ')}]`
+                : question;
 
             await agent.askStream(
                 {
