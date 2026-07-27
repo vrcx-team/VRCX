@@ -338,7 +338,7 @@ function createWindow() {
     const indexPath = path.join(rootDir, 'build/html/index.html');
     mainWindow.loadFile(indexPath);
     if (debug) {
-        mainWindow.loadURL('http://localhost:9002/index.html');
+        mainWindow.loadURL('http://localhost:9000/index.html');
         mainWindow.webContents.openDevTools();
     }
 
@@ -468,7 +468,7 @@ function createOverlayWindowOffscreen() {
 
     let fileUrl = `file://${path.join(rootDir, 'build/html/vr.html')}`;
     if (debug) {
-        fileUrl = 'http://localhost:9002/vr.html';
+        fileUrl = 'http://localhost:9000/vr.html';
     }
     overlayWindow.loadURL(fileUrl, { userAgent: version });
     // Use paint event for offscreen rendering

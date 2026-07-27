@@ -18,6 +18,7 @@
     "main": "src-electron/main.js",
     "scripts": {
         "dev": "cross-env PLATFORM=windows vite serve src",
+        "dev:electron": "cross-env PLATFORM=windows VITE_ELECTRON_HOT_RELOAD=1 vite serve src",
         "dev-linux": "cross-env PLATFORM=linux vite serve src",
         "localization": "node ./src/shared/utils/localizationHelperCLI.js",
         "format": "oxfmt src src-electron eslint.config.mjs vitest.config.js vitest.setup.js",
