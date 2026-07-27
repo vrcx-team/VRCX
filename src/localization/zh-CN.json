@@ -439,6 +439,8 @@
             "preset_relationship": "我们的好友关系是什么时候建立的？",
             "preset_same_world": "他们是否常出现在相同世界？",
             "empty_state": "选择上方好友并提出问题即可开始。",
+            "not_configured": "好友洞察尚未配置。请在设置中配置 API 端点和模型后开始使用。",
+            "go_to_settings": "前往设置",
             "evidence": "数据来源（{count} 次工具调用）",
             "thinking": "思考中...",
             "question_placeholder": "询问关于你的好友...",

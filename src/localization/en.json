@@ -439,6 +439,8 @@
             "preset_relationship": "When did our friendship start?",
             "preset_same_world": "Do they appear in the same worlds?",
             "empty_state": "Select friends above and ask a question to get started.",
+            "not_configured": "Friend Insight is not configured yet. Set up your API endpoint and model in Settings to get started.",
+            "go_to_settings": "Open Settings",
             "evidence": "Data sources ({count} tool calls)",
             "thinking": "Thinking...",
             "question_placeholder": "Ask about your friends...",

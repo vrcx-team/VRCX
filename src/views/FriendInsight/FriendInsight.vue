@@ -129,7 +129,18 @@
                     </Button>
                 </div>
                 <div ref="chatContainer" class="flex-1 overflow-y-auto mb-3 space-y-3 pr-2">
-                    <div v-if="!messages.length && !loading" class="text-center text-muted-foreground py-12">
+                    <!-- Not configured prompt -->
+                    <div v-if="!isConfigured && !messages.length && !loading" class="text-center py-12">
+                        <Settings2 class="h-12 w-12 mx-auto mb-3 opacity-30" />
+                        <p class="text-sm text-muted-foreground mb-4">{{ t('view.friend_insight.not_configured') }}</p>
+                        <Button variant="outline" size="sm" @click="goToSettings">
+                            <Settings2 class="h-4 w-4 mr-1.5" />
+                            {{ t('view.friend_insight.go_to_settings') }}
+                        </Button>
+                    </div>
+
+                    <!-- Normal empty state -->
+                    <div v-else-if="!messages.length && !loading" class="text-center text-muted-foreground py-12">
                         <Brain class="h-12 w-12 mx-auto mb-3 opacity-30" />
                         <p>{{ t('view.friend_insight.empty_state') }}</p>
                     </div>
@@ -312,6 +323,7 @@
 
 <script setup>
     import { computed, markRaw, nextTick, onMounted, reactive, ref, shallowRef } from 'vue';
+    import { useRouter } from 'vue-router';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { marked } from 'marked';
@@ -324,6 +336,7 @@
         Loader2,
         Search,
         Send,
+        Settings2,
         Trash2,
         Wrench,
         X
@@ -343,9 +356,11 @@
     import { database } from '@/services/database';
 
     const { t } = useI18n();
+    const router = useRouter();
     const advancedSettingsStore = useAdvancedSettingsStore();
 
     const {
+        friendInsightEnabled,
         friendInsightEndpoint,
         friendInsightApiKey,
         friendInsightModel,
@@ -371,6 +386,13 @@
                 f.userId.toLowerCase().includes(query)
         ).slice(0, 50);
     });
+
+    const isConfigured = computed(
+        () =>
+            friendInsightEnabled.value &&
+            friendInsightEndpoint.value &&
+            friendInsightModel.value
+    );
 
     const selectedFriends = computed(() =>
         friends.value.filter((f) => selectedFriendIds.value.includes(f.userId))
@@ -522,6 +544,10 @@
         cancelRequest();
         messages.value = [];
         error.value = '';
+    }
+
+    function goToSettings() {
+        router.push({ name: 'settings' });
     }
 
     function pushMessage(msg) {
