@@ -410,11 +410,12 @@
     let abortController = null;
 
     const presets = [
-        { label: t('view.friend_insight.preset_what_doing'), question: '{{friends}}这周都在做什么？' },
-        { label: t('view.friend_insight.preset_online_frequency'), question: '{{friends}}最近30天的上线频率如何？' },
-        { label: t('view.friend_insight.preset_status_changes'), question: '{{friends}}最近的状态变化有什么规律？' },
-        { label: t('view.friend_insight.preset_relationship'), question: '我和{{friends}}的好友关系是什么时候建立的？' },
-        { label: t('view.friend_insight.preset_same_world'), question: '{{friends}}最近是否常出现在相同世界？' }
+        { label: t('view.friend_insight.preset_what_doing'), question: () => t('view.friend_insight.preset_what_doing_question') },
+        { label: t('view.friend_insight.preset_online_frequency'), question: () => t('view.friend_insight.preset_online_frequency_question') },
+        { label: t('view.friend_insight.preset_status_changes'), question: () => t('view.friend_insight.preset_status_changes_question') },
+        { label: t('view.friend_insight.preset_relationship'), question: () => t('view.friend_insight.preset_relationship_question') },
+        { label: t('view.friend_insight.preset_same_world'), question: () => t('view.friend_insight.preset_same_world_question') },
+        { label: t('view.friend_insight.preset_deep_analysis'), question: () => t('view.friend_insight.preset_deep_analysis_question') }
     ];
 
     const dataPreviewText = computed(() => {
@@ -463,6 +464,7 @@
 
     // ─── Lifecycle ──────────────────────────────────────────────────
     onMounted(async () => {
+        resetThrottle();
         try {
             friends.value = await database.getFriendLogCurrent();
         } catch (err) {
@@ -513,7 +515,7 @@
 
     function buildQuestion(raw) {
         const names = selectedFriends.value.map((f) => f.displayName).join('、');
-        return raw.replaceAll('{{friends}}', names || t('view.friend_insight.selected_friends'));
+        return raw.replaceAll('[friends]', names || t('view.friend_insight.selected_friends'));
     }
 
     function scrollToBottom() {
@@ -523,6 +525,9 @@
     }
 
     let lastScrollTime = 0;
+    function resetThrottle() {
+        lastScrollTime = 0;
+    }
     function throttledScroll() {
         const now = performance.now();
         if (now - lastScrollTime > 80) {
@@ -544,6 +549,7 @@
         cancelRequest();
         messages.value = [];
         error.value = '';
+        resetThrottle();
     }
 
     function goToSettings() {
@@ -556,7 +562,8 @@
 
     // ─── Ask question ───────────────────────────────────────────────
     async function askQuestion(raw) {
-        const question = buildQuestion(raw || currentQuestion.value);
+        const rawQuestion = typeof raw === 'function' ? raw() : raw;
+        const question = buildQuestion(rawQuestion || currentQuestion.value);
         if (!question.trim() || !selectedFriends.value.length) return;
 
         currentQuestion.value = '';
@@ -708,6 +715,15 @@
                         }
                         finalContent = '';
                         tl.push({ type: 'tool', name, _done: false, _args: args });
+                        // Push content placeholder so cursor blinks during tool execution
+                        // (only once — subsequent onToken calls reuse this item)
+                        if (!tl.some((t) => t.type === 'content' && !t._done)) {
+                            tl.push({
+                                type: 'content',
+                                text: '',
+                                _done: false
+                            });
+                        }
                         scheduleFlush();
                     },
                     onToolDone(name, result) {
