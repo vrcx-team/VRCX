@@ -29,8 +29,8 @@
 
     import * as echarts from 'echarts';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
-    import InstanceActivityTooltip from './InstanceActivityTooltip.jsx';
-    import { renderToHtml } from '@/lib/utils';
+    import { vueToHtml } from '@/lib/utils';
+    import InstanceActivityTooltip from './InstanceActivityTooltip.vue';
 
     const { isDarkMode, dtHour12 } = storeToRefs(useAppearanceSettingsStore());
 
@@ -349,16 +349,14 @@
             if (!instanceData) return '';
 
             const format = dtHour12.value ? 'hh:mm:ss A' : 'HH:mm:ss';
-            return renderToHtml(
-                InstanceActivityTooltip({
-                    color: params.color,
-                    displayName: instanceData.display_name,
-                    icon: friendOrFavIcon(instanceData.display_name),
-                    joinTime: dayjs(instanceData.joinTime).format(format),
-                    leaveTime: dayjs(instanceData.leaveTime).format(format),
-                    duration: timeToText(instanceData.time, true)
-                })
-            );
+            return vueToHtml(InstanceActivityTooltip, {
+                color: params.color,
+                displayName: instanceData.display_name,
+                icon: friendOrFavIcon(instanceData.display_name),
+                joinTime: dayjs(instanceData.joinTime).format(format),
+                leaveTime: dayjs(instanceData.leaveTime).format(format),
+                duration: timeToText(instanceData.time, true)
+            });
         };
 
         const format = dtHour12.value ? 'hh:mm A' : 'HH:mm';
