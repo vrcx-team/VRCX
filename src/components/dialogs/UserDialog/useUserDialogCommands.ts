@@ -225,7 +225,7 @@ export function useUserDialogCommands(
      *
      */
     function buildCommandMap() {
-        const D = () => userDialog.value;
+        const D = () => userDialog;
 
         return {
             // --- Direct commands ---
@@ -234,10 +234,19 @@ export function useUserDialogCommands(
                 D().id = '';
                 showUserDialog(userId);
             },
-            Share: () => {
+            'Copy ID': () => {
+                copyToClipboard(`${D().id}`, t('message.user.id_copied'));
+            },
+            'Copy URL': () => {
                 copyToClipboard(
                     `https://vrchat.com/home/user/${D().id}`,
                     t('message.user.url_copied')
+                );
+            },
+            'Copy DisplayName': () => {
+                copyToClipboard(
+                    `${D().ref?.displayName}`,
+                    t('message.user.display_name_copied')
                 );
             },
             'Add Favorite': () => {
@@ -666,7 +675,7 @@ export function useUserDialogCommands(
      * @param {string} command
      */
     function userDialogCommand(command) {
-        const D = userDialog.value;
+        const D = userDialog;
         if (D.visible === false) {
             return;
         }
@@ -713,3 +722,4 @@ export function useUserDialogCommands(
         registerCallbacks
     };
 }
+

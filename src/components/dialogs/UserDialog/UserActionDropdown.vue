@@ -56,10 +56,30 @@
                     <RefreshCw class="size-4" />
                     {{ t('dialog.user.actions.refresh') }}
                 </DropdownMenuItem>
-                <DropdownMenuItem @click="onCommand('Share')">
-                    <Share2 class="size-4" />
-                    {{ t('dialog.user.actions.share') }}
-                </DropdownMenuItem>
+
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                        <!-- FIXME(kube):   im not happy about this, but no idea why this
+                                            does not have a margin by default, inset did 
+                                            not work. this works but makes this the odd 
+                                            one out -->
+                        <Copy class="size-4 mr-2" />
+                        {{ t('dialog.user.actions.copy') }}
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                        <DropdownMenuItem @click="onCommand('Copy ID')">
+                            {{ t('dialog.user.actions.copy_id') }}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="onCommand('Copy URL')">
+                            {{ t('dialog.user.actions.copy_url') }}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="onCommand('Copy DisplayName')">
+                            {{ t('dialog.user.actions.copy_displayname') }}
+                        </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuSub>
                 <template v-if="userDialog.ref.id === currentUser.id">
                     <DropdownMenuItem @click="onCommand('Edit Profile')">
                         <Pencil class="size-4" />
@@ -258,6 +278,7 @@
         Check,
         CheckCircle,
         Clock,
+        Copy,
         Flag,
         LineChart,
         Mail,

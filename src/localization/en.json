@@ -1362,7 +1362,12 @@
                 "logout": "Logout",
                 "edit_note_memo": "Edit Note and Memo",
                 "reset_home": "Reset Home",
-                "edit_profile": "Edit Profile"
+                "edit_profile": "Edit Profile",
+                "copy": "Copy",
+                "copy_id": "ID",
+                "copy_url": "URL",
+                "copy_displayname": "DisplayName",
+                "delete_favorite": "Delete Favorite"
             },
             "info": {
                 "header": "Info",
@@ -2799,7 +2804,8 @@
             "display_name_copied": "User DisplayName copied to clipboard",
             "home_reset": "Home world has been reset",
             "request_invite_sent": "Request invite sent",
-            "no_fallback_avatar": "No fallback avatar set"
+            "no_fallback_avatar": "No fallback avatar set",
+            "avatar_id_copied": "Avatar ID copied to clipboard"
         },
         "friend": {
             "load_failed": "Failed to load friends list, logging out"

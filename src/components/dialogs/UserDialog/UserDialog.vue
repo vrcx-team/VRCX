@@ -74,7 +74,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
     import { computed, ref, watch } from 'vue';
     import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { TabsUnderline } from '@/components/ui/tabs';
@@ -138,7 +138,7 @@
             { value: 'Avatars', label: t('dialog.user.avatars.header') },
             { value: 'JSON', label: t('dialog.user.json.header') }
         ];
-        if (userDialog.value.id !== currentUser.value.id && !currentUser.value.hasSharedConnectionsOptOut) {
+        if (userDialog.id !== currentUser.id && !currentUser.hasSharedConnectionsOptOut) {
             tabs.splice(1, 0, { value: 'mutual', label: t('dialog.user.mutual_friends.header') });
         }
         // Insert Activity before JSON
@@ -157,9 +157,9 @@
     const modalStore = useModalStore();
     const instanceStore = useInstanceStore();
 
-    const { userDialog, currentUser } = storeToRefs(useUserStore());
+    const { userDialog, currentUser } = useUserStore();
     const userDialogTabColor = computed(() => {
-        const color = userDialog.value.theme?.buttonColor;
+        const color = userDialog.theme?.buttonColor;
         if (!color) {
             return 'var(--primary)';
         }
@@ -211,18 +211,18 @@
     });
 
     watch(
-        () => userDialog.value.loading,
+        () => userDialog.loading,
         () => {
-            if (userDialog.value.visible) {
-                !userDialog.value.loading && loadLastActiveTab();
+            if (userDialog.visible) {
+                !userDialog.loading && loadLastActiveTab();
             }
         }
     );
 
     watch(
-        () => userDialog.value.visible,
+        () => userDialog.visible,
         (visible) => {
-            if (visible && !userDialog.value.loading) {
+            if (visible && !userDialog.loading) {
                 loadLastActiveTab();
             }
         }
@@ -273,10 +273,10 @@
      *
      */
     function refreshUserDialogTreeData() {
-        const D = userDialog.value;
-        if (D.id === currentUser.value.id) {
+        const D = userDialog;
+        if (D.id === currentUser.id) {
             treeData.value = formatJsonVars({
-                ...currentUser.value,
+                ...currentUser,
                 ...D.ref
             });
             return;
@@ -289,14 +289,14 @@
      * @param tabName
      */
     function handleUserDialogTab(tabName) {
-        userDialog.value.lastActiveTab = tabName;
-        const userId = userDialog.value.id;
+        userDialog.lastActiveTab = tabName;
+        const userId = userDialog.id;
         if (tabName === 'Info') {
             infoTabRef.value?.onTabActivated();
         } else if (tabName === 'mutual') {
-            if (userId === currentUser.value.id) {
-                userDialog.value.activeTab = 'Info';
-                userDialog.value.lastActiveTab = 'Info';
+            if (userId === currentUser.id) {
+                userDialog.activeTab = 'Info';
+                userDialog.lastActiveTab = 'Info';
                 return;
             }
             if (props.previousIds.mutualFriend !== userId) {
@@ -312,8 +312,9 @@
             avatarsTabRef.value?.setUserDialogAvatars(userId);
             if (props.previousIds.avatar !== userId) {
                 props.updatePreviousId('avatar', userId);
-                if (userId === currentUser.value.id) {
-                    refreshUserDialogAvatars();
+                if (userId === currentUser.id) {
+                    // FIXME: shit the file id of the current image here
+                    refreshUserDialogAvatars(null);
                 } else {
                     avatarsTabRef.value?.setUserDialogAvatarsRemote(userId);
                 }
@@ -340,7 +341,7 @@
      *
      */
     function loadLastActiveTab() {
-        const tab = userDialog.value.lastActiveTab;
+        const tab = userDialog.lastActiveTab;
         handleUserDialogTab(tab);
     }
 
@@ -349,7 +350,7 @@
      * @param tabName
      */
     function userDialogTabClick(tabName) {
-        if (tabName === userDialog.value.lastActiveTab) {
+        if (tabName === userDialog.lastActiveTab) {
             if (tabName === 'JSON') {
                 refreshUserDialogTreeData();
             }
