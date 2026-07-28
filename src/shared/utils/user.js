@@ -2,7 +2,6 @@ import { HueToHex } from './base/ui';
 import { convertFileUrlToImageUrl } from './common';
 import { languageMappings } from '../constants';
 import { removeEmojis } from './base/string';
-import { timeAgo, timeToText } from './base/format';
 
 const THEME_COLOR_LIMITS = Object.freeze({
     darkMinLuminance: 0.42,

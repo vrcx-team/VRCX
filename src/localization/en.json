@@ -1433,7 +1433,8 @@
                 "open_previous_instance": "Open Previous Instances",
                 "show_mutual_friends": "Show Mutual Friends",
                 "show_discord_connections": "Show Discord Connections",
-                "instance_minimum_avatar_performance": "Minimum Avatar Performance"
+                "instance_minimum_avatar_performance": "Minimum Avatar Performance",
+                "current_instance": "Current Instance"
             },
             "groups": {
                 "header": "Groups",

@@ -1,77 +1,91 @@
 <template>
     <template v-if="isFriendOnline(userDialog.friend) || currentUser.id === userDialog.id">
-        <div
-            class="mb-2.5 pb-2.5 border-b border-border"
-            v-if="userDialog.ref.location"
-            style="display: flex; flex-direction: column">
-            <div style="flex: none">
-                <template v-if="isRealInstance(userDialog.$location.tag)">
-                    <InstanceActionBar
-                        class="mb-1"
-                        :location="userDialog.$location.tag"
-                        :shortname="userDialog.$location.shortName"
-                        :currentlocation="lastLocation.location"
-                        :instance="userDialog.instance.ref"
-                        :friendcount="userDialog.instance.friendCount"
-                        :refresh-tooltip="t('dialog.user.info.refresh_instance_info')"
-                        :on-refresh="() => refreshInstancePlayerCount(userDialog.$location.tag)" />
-                </template>
-                <Location
-                    class="text-sm"
-                    :location="userDialog.ref.location"
-                    :traveling="userDialog.ref.travelingToLocation" />
-            </div>
-            <div class="flex flex-wrap items-start" style="flex: 1; margin-top: 8px; max-height: 150px; overflow: auto">
-                <div
-                    v-if="userDialog.$location.userId"
-                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                    @click="showUserDialog(userDialog.$location.userId)">
-                    <template v-if="userDialog.$location.user">
-                        <div
-                            class="relative inline-block flex-none size-9 mr-2.5"
-                            :class="userStatusClass(userDialog.$location.user)">
-                            <Avatar class="size-9">
-                                <AvatarImage :src="userImage(userDialog.$location.user, true)" class="object-cover" />
-                                <AvatarFallback>
-                                    <User class="size-4 text-muted-foreground" />
-                                </AvatarFallback>
-                            </Avatar>
-                        </div>
-                        <div class="flex-1 overflow-hidden">
-                            <span
-                                class="block truncate font-medium leading-[18px]"
-                                :style="{ color: userDialog.$location.user.$userColour }"
-                                v-text="userDialog.$location.user.displayName"></span>
-                            <span class="block truncate text-xs">{{ t('dialog.user.info.instance_creator') }}</span>
-                        </div>
-                    </template>
-                    <span v-else v-text="userDialog.$location.userId"></span>
+        <div class="flex flex-col gap-2.5 mb-2.5">
+            <div class="rounded-xl bg-muted/40 p-3">
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
+                    <span
+                        class="text-[10px] font-bold uppercase tracking-wide"
+                        :style="{ color: userDialog.theme.subtextColor }">
+                        {{ t('dialog.user.info.current_instance') }}
+                    </span>
                 </div>
-                <div
-                    v-for="user in userDialog.users"
-                    :key="user.id"
-                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                    @click="showUserDialog(user.id)">
-                    <div class="relative inline-block flex-none size-9 mr-2.5" :class="userStatusClass(user)">
-                        <Avatar class="size-9">
-                            <AvatarImage :src="userImage(user, true)" class="object-cover" />
-                            <AvatarFallback>
-                                <User class="size-4 text-muted-foreground" />
-                            </AvatarFallback>
-                        </Avatar>
+                <div v-if="userDialog.ref.location" style="display: flex; flex-direction: column">
+                    <div style="flex: none">
+                        <template v-if="isRealInstance(userDialog.$location.tag)">
+                            <InstanceActionBar
+                                class="mb-1"
+                                :location="userDialog.$location.tag"
+                                :shortname="userDialog.$location.shortName"
+                                :currentlocation="lastLocation.location"
+                                :instance="userDialog.instance.ref"
+                                :friendcount="userDialog.instance.friendCount"
+                                :refresh-tooltip="t('dialog.user.info.refresh_instance_info')"
+                                :on-refresh="() => refreshInstancePlayerCount(userDialog.$location.tag)" />
+                        </template>
+                        <Location
+                            class="text-sm"
+                            :location="userDialog.ref.location"
+                            :traveling="userDialog.ref.travelingToLocation" />
                     </div>
-                    <div class="flex-1 overflow-hidden">
-                        <span
-                            class="block truncate font-medium leading-[18px]"
-                            :style="{ color: user.$userColour }"
-                            v-text="user.displayName"></span>
-                        <span v-if="user.location === 'traveling'" class="block truncate text-xs">
-                            <Spinner class="inline-block mr-1" />
-                            <Timer :epoch="user.$travelingToTime" />
-                        </span>
-                        <span v-else class="block truncate text-xs">
-                            <Timer :epoch="user.$location_at" />
-                        </span>
+                    <div
+                        class="flex flex-wrap items-start"
+                        style="flex: 1; margin-top: 8px; max-height: 150px; overflow: auto">
+                        <div
+                            v-if="userDialog.$location.userId"
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
+                            @click="showUserDialog(userDialog.$location.userId)">
+                            <template v-if="userDialog.$location.user">
+                                <div
+                                    class="relative inline-block flex-none size-9 mr-2.5"
+                                    :class="userStatusClass(userDialog.$location.user)">
+                                    <Avatar class="size-9">
+                                        <AvatarImage
+                                            :src="userImage(userDialog.$location.user, true)"
+                                            class="object-cover" />
+                                        <AvatarFallback>
+                                            <User class="size-4 text-muted-foreground" />
+                                        </AvatarFallback>
+                                    </Avatar>
+                                </div>
+                                <div class="flex-1 overflow-hidden">
+                                    <span
+                                        class="block truncate font-medium leading-[18px]"
+                                        :style="{ color: userDialog.$location.user.$userColour }"
+                                        v-text="userDialog.$location.user.displayName"></span>
+                                    <span class="block truncate text-xs">{{
+                                        t('dialog.user.info.instance_creator')
+                                    }}</span>
+                                </div>
+                            </template>
+                            <span v-else v-text="userDialog.$location.userId"></span>
+                        </div>
+                        <div
+                            v-for="user in userDialog.users"
+                            :key="user.id"
+                            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
+                            @click="showUserDialog(user.id)">
+                            <div class="relative inline-block flex-none size-9 mr-2.5" :class="userStatusClass(user)">
+                                <Avatar class="size-9">
+                                    <AvatarImage :src="userImage(user, true)" class="object-cover" />
+                                    <AvatarFallback>
+                                        <User class="size-4 text-muted-foreground" />
+                                    </AvatarFallback>
+                                </Avatar>
+                            </div>
+                            <div class="flex-1 overflow-hidden">
+                                <span
+                                    class="block truncate font-medium leading-[18px]"
+                                    :style="{ color: user.$userColour }"
+                                    v-text="user.displayName"></span>
+                                <span v-if="user.location === 'traveling'" class="block truncate text-xs">
+                                    <Spinner class="inline-block mr-1" />
+                                    <Timer :epoch="user.$travelingToTime" />
+                                </span>
+                                <span v-else class="block truncate text-xs">
+                                    <Timer :epoch="user.$location_at" />
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -175,19 +189,21 @@
 
             <div class="flex flex-col gap-2.5">
                 <div class="rounded-xl bg-muted/40 p-3">
-                    <div
-                        class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-border"
-                        :style="{ color: userDialog.theme.subtextColor }">
-                        {{ t('dialog.user.info.vrcx_info') }}
-                        <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                            <TooltipWrapper
-                                v-if="userDialog.ref.profilePicOverride && !userDialog.ref.currentAvatarImageUrl"
-                                side="top"
-                                :content="t('dialog.user.info.vrcx_info_tooltip')">
-                                <Info
-                                    class="inline-block h-3 w-3 align-middle"
-                                    :style="{ color: userDialog.theme.iconColor }" />
-                            </TooltipWrapper>
+                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
+                        <span
+                            class="text-[10px] font-bold uppercase tracking-wide"
+                            :style="{ color: userDialog.theme.subtextColor }">
+                            {{ t('dialog.user.info.vrcx_info') }}
+                            <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                                <TooltipWrapper
+                                    v-if="userDialog.ref.profilePicOverride && !userDialog.ref.currentAvatarImageUrl"
+                                    side="top"
+                                    :content="t('dialog.user.info.vrcx_info_tooltip')">
+                                    <Info
+                                        class="inline-block h-3 w-3 align-middle"
+                                        :style="{ color: userDialog.theme.iconColor }" />
+                                </TooltipWrapper>
+                            </span>
                         </span>
                     </div>
                     <div class="flex flex-col gap-1.5">

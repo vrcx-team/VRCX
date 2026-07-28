@@ -1,6 +1,6 @@
 <template>
     <div class="flex row-auto gap-2" v-bind="$attrs">
-        <div id="standart-actions" class="flex row-auto gap-2">
+        <div class="flex row-auto gap-2">
             <div v-if="showLaunchButton" class="inline-block">
                 <TooltipWrapper side="top" :content="t('dialog.user.info.launch_invite_tooltip')">
                     <Button
