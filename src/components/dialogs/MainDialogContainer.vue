@@ -8,7 +8,15 @@
         BreadcrumbPage,
         BreadcrumbSeparator
     } from '@/components/ui/breadcrumb';
-    import { useAvatarStore, useGroupStore, useInstanceStore, useUiStore, useUserStore, useWorldStore } from '@/stores';
+    import {
+        useAvatarStore,
+        useGroupStore,
+        useInstanceStore,
+        useUiStore,
+        useUserStore,
+        useWorldStore,
+        useAppearanceSettingsStore
+    } from '@/stores';
     import {
         DropdownMenu,
         DropdownMenuContent,
@@ -29,6 +37,8 @@
     import UserDialog from './UserDialog/UserDialog.vue';
     import WorldDialog from './WorldDialog/WorldDialog.vue';
     import GroupMemberModerationDialog from './GroupDialog/GroupMemberModerationDialog.vue';
+    import { getReadableProfileThemeColor } from '@/shared/utils/user';
+    import { profileBackgrounds } from '@/shared/constants/backgrounds';
 
     const avatarStore = useAvatarStore();
     const groupStore = useGroupStore();
@@ -36,6 +46,7 @@
     const uiStore = useUiStore();
     const userStore = useUserStore();
     const worldStore = useWorldStore();
+    const appearanceSettingsStore = useAppearanceSettingsStore();
 
     const { previousInstancesInfoDialog, previousInstancesListDialog } = storeToRefs(instanceStore);
 
@@ -166,11 +177,48 @@
     function handleBreadcrumbClick(index) {
         uiStore.handleBreadcrumbClick(index);
     }
+
+    const dialogStyle = computed(() => {
+        if (activeType.value !== 'user') {
+            return {};
+        }
+
+        if (userStore.userDialog.publicProfileRef?.backgroundType === 'gradient') {
+            const bgTopColor = getReadableProfileThemeColor(
+                `#${userStore.userDialog.publicProfileRef?.backgroundGradientTop}`,
+                'var(--background)',
+                !appearanceSettingsStore.isDarkMode
+            );
+            const bgBottomColor = getReadableProfileThemeColor(
+                `#${userStore.userDialog.publicProfileRef?.backgroundGradientBottom}`,
+                'var(--background)',
+                !appearanceSettingsStore.isDarkMode
+            );
+            return {
+                backgroundImage: `linear-gradient(180deg, ${bgTopColor}, ${bgBottomColor})`
+            };
+        }
+        if (userStore.userDialog.publicProfileRef?.backgroundType === 'texture') {
+            const bg = profileBackgrounds.find(
+                (b) => b.id === userStore.userDialog.publicProfileRef?.backgroundTextureId
+            );
+            if (bg) {
+                const textureOverlay = appearanceSettingsStore.isDarkMode
+                    ? 'rgba(0, 0, 0, 0.5)'
+                    : 'rgba(255, 255, 255, 0.5)';
+                return {
+                    backgroundImage: `linear-gradient(${textureOverlay}, ${textureOverlay}), url(${bg.url})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                };
+            }
+        }
+    });
 </script>
 
 <template>
     <Dialog v-if="isOpen" v-model:open="isOpen">
-        <DialogContent :class="dialogClass" style="top: 10vh" :show-close-button="false">
+        <DialogContent :class="dialogClass" style="top: 10vh" :show-close-button="false" :style="dialogStyle">
             <Breadcrumb v-if="shouldShowBreadcrumbs" class="mb-2 flex-shrink-0">
                 <BreadcrumbList>
                     <TooltipWrapper :content="backCrumbLabel" :disabled="!backCrumbLabel" :delayDuration="500">

@@ -638,12 +638,13 @@
     }
 
     function createTheme() {
+        const profileDefaults = authStore.cachedConfig?.profileDefaults;
         const D = props.editProfileDialog;
         const payload = {
             name: D.themeName,
-            buttonColor: '064b5c',
-            iconColor: '6ae3f9',
-            subtextColor: 'a9a9a9'
+            buttonColor: profileDefaults?.themeButtonColor ?? '064b5c',
+            iconColor: profileDefaults?.themeIconColor ?? '6ae3f9',
+            subtextColor: profileDefaults?.themeSubtextColor ?? 'a9a9a9'
         };
         userRequest
             .createProfileTheme(payload)
