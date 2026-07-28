@@ -18,6 +18,7 @@
                     @click="userDialogCommand('Add Favorite')"
                     :ariaLabel="t('dialog.user.actions.favorites_tooltip')"
                     ><Star
+                        class="[filter:drop-shadow(0_0_1px_rgba(255,255,255,0.95))_drop-shadow(0_0_1px_rgba(0,0,0,0.95))_drop-shadow(0_1px_1px_rgba(0,0,0,0.6))]"
                 /></Button>
             </TooltipWrapper>
             <TooltipWrapper v-else side="top" :content="t('dialog.user.actions.favorites_tooltip')">
@@ -34,6 +35,7 @@
                     @click="userDialogCommand('Add Favorite')"
                     :ariaLabel="t('dialog.user.actions.favorites_tooltip')"
                     ><Star
+                        class="[filter:drop-shadow(0_0_1px_rgba(255,255,255,0.95))_drop-shadow(0_0_1px_rgba(0,0,0,0.95))_drop-shadow(0_1px_1px_rgba(0,0,0,0.6))]"
                 /></Button>
             </TooltipWrapper>
         </template>
@@ -56,10 +58,26 @@
                     <RefreshCw class="size-4" />
                     {{ t('dialog.user.actions.refresh') }}
                 </DropdownMenuItem>
-                <DropdownMenuItem @click="onCommand('Share')">
-                    <Share2 class="size-4" />
-                    {{ t('dialog.user.actions.share') }}
-                </DropdownMenuItem>
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger @click="onCommand('Copy Profile URL')">
+                        <Share2 class="size-4 mr-2" />
+                        <span>{{ t('dialog.user.actions.share') }}</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent side="right" align="start" class="w-56">
+                        <DropdownMenuItem @click="onCommand('Copy Profile URL')">
+                            <Copy class="size-4" />
+                            {{ t('dialog.user.info.copy_url') }}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="onCommand('Copy DisplayName')">
+                            <Copy class="size-4" />
+                            {{ t('dialog.user.info.copy_display_name') }}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="onCommand('Copy UserId')">
+                            <Copy class="size-4" />
+                            {{ t('dialog.user.info.copy_id') }}
+                        </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                </DropdownMenuSub>
                 <template v-if="userDialog.ref.id === currentUser.id">
                     <DropdownMenuItem @click="onCommand('Edit Profile')">
                         <Pencil class="size-4" />
@@ -258,6 +276,7 @@
         Check,
         CheckCircle,
         Clock,
+        Copy,
         Flag,
         LineChart,
         Mail,

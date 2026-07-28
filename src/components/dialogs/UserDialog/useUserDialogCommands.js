@@ -234,11 +234,20 @@ export function useUserDialogCommands(
                 D().id = '';
                 showUserDialog(userId);
             },
-            Share: () => {
+            'Copy Profile URL': () => {
                 copyToClipboard(
                     `https://vrchat.com/home/user/${D().id}`,
                     t('message.user.url_copied')
                 );
+            },
+            'Copy DisplayName': () => {
+                copyToClipboard(
+                    D().ref.displayName,
+                    t('message.user.display_name_copied')
+                );
+            },
+            'Copy UserId': () => {
+                copyToClipboard(D().id, t('message.user.id_copied'));
             },
             'Add Favorite': () => {
                 showFavoriteDialog('friend', D().id);
