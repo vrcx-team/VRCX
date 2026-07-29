@@ -293,7 +293,11 @@ export const useUserStore = defineStore('User', () => {
         themeName: '',
         themeButtonColor: '',
         themeIconColor: '',
-        themeSubtextColor: ''
+        themeSubtextColor: '',
+        backgroundType: 'default',
+        backgroundTextureId: '',
+        backgroundGradientBottom: '',
+        backgroundGradientTop: ''
     });
 
     const currentTravelers = reactive(new Map());
@@ -844,6 +848,10 @@ export const useUserStore = defineStore('User', () => {
             D.themeButtonColor = ref.themeButtonColor;
             D.themeIconColor = ref.themeIconColor;
             D.themeSubtextColor = ref.themeSubtextColor;
+            D.backgroundType = ref.backgroundType || 'default';
+            D.backgroundTextureId = ref.backgroundTextureId;
+            D.backgroundGradientBottom = ref.backgroundGradientBottom;
+            D.backgroundGradientTop = ref.backgroundGradientTop;
         });
 
         D.visible = true;

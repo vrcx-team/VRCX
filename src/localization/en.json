@@ -1859,7 +1859,13 @@
             "profile_theme": "Profile Theme",
             "theme_name_placeholder": "Theme name",
             "create_theme": "Create Theme",
-            "delete_theme": "Delete Theme"
+            "delete_theme": "Delete Theme",
+            "profile_background": "Profile Background",
+            "profile_background_type_none": "None",
+            "profile_background_type_image": "Image",
+            "profile_background_type_gradient": "Gradient",
+            "gradient_top": "Gradient Top",
+            "gradient_bottom": "Gradient Bottom"
         },
         "new_instance": {
             "header": "New Instance",

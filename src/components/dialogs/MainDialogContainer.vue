@@ -202,19 +202,21 @@
             const bg = profileBackgrounds.find(
                 (b) => b.id === userStore.userDialog.publicProfileRef?.backgroundTextureId
             );
-            if (bg) {
-                const opacity = -appearanceSettingsStore.profileBackgroundOpacity + 1; // Invert the opacity value
-                const textureOverlay = appearanceSettingsStore.isDarkMode
-                    ? `rgba(0, 0, 0, ${opacity})`
-                    : `rgba(255, 255, 255, ${opacity})`;
-                return {
-                    backgroundImage: `linear-gradient(${textureOverlay}, ${textureOverlay}), url(${bg.url})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'top center',
-                    backgroundRepeat: 'no-repeat'
-                };
+            if (!bg) {
+                return {};
             }
+            const opacity = -appearanceSettingsStore.profileBackgroundOpacity + 1; // Invert the opacity value
+            const textureOverlay = appearanceSettingsStore.isDarkMode
+                ? `rgba(0, 0, 0, ${opacity})`
+                : `rgba(255, 255, 255, ${opacity})`;
+            return {
+                backgroundImage: `linear-gradient(${textureOverlay}, ${textureOverlay}), url(${bg.url})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'top center',
+                backgroundRepeat: 'no-repeat'
+            };
         }
+        return {};
     });
 </script>
 

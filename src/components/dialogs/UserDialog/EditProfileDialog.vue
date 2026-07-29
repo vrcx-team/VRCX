@@ -288,6 +288,110 @@
                 </section>
 
                 <section class="space-y-3">
+                    <h3 class="text-sm font-semibold">{{ t('dialog.edit_profile.profile_background') }}</h3>
+                    <div class="flex items-center gap-2">
+                        <Select
+                            :model-value="props.editProfileDialog.backgroundType"
+                            :disabled="editProfileDialog.loading"
+                            @update:modelValue="handleProfileBackgroundTypeChange">
+                            <SelectTrigger size="sm" class="w-42">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem
+                                        v-for="option in profileBackgroundTypeOptions"
+                                        :key="option.value"
+                                        :value="option.value"
+                                        :text-value="option.label">
+                                        {{ option.label }}
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div v-if="editProfileDialog.backgroundType === 'gradient'" class="grid gap-2 sm:grid-cols-3">
+                        <label class="space-y-1">
+                            <span class="text-xs text-muted-foreground">{{
+                                t('dialog.edit_profile.gradient_top')
+                            }}</span>
+                            <div class="flex items-center gap-1">
+                                <input
+                                    type="color"
+                                    class="h-8 w-12 cursor-pointer appearance-none rounded-md border-0 bg-transparent p-0 disabled:cursor-not-allowed [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-md [&::-webkit-color-swatch]:border-0 [&::-moz-color-swatch]:rounded-md [&::-moz-color-swatch]:border-0"
+                                    :value="backgroundGradientTopColorValue"
+                                    :disabled="editProfileDialog.loading"
+                                    @input="handleBackgroundGradientTopColorInput" />
+                                <span class="w-20 text-xs font-mono text-muted-foreground uppercase">
+                                    {{ backgroundGradientTopColorValue }}
+                                </span>
+                            </div>
+                        </label>
+
+                        <label class="space-y-1">
+                            <span class="text-xs text-muted-foreground">{{
+                                t('dialog.edit_profile.gradient_bottom')
+                            }}</span>
+                            <div class="flex items-center gap-1">
+                                <input
+                                    type="color"
+                                    class="h-8 w-12 cursor-pointer appearance-none rounded-md border-0 bg-transparent p-0 disabled:cursor-not-allowed [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-md [&::-webkit-color-swatch]:border-0 [&::-moz-color-swatch]:rounded-md [&::-moz-color-swatch]:border-0"
+                                    :value="backgroundGradientBottomColorValue"
+                                    :disabled="editProfileDialog.loading"
+                                    @input="handleBackgroundGradientBottomColorInput" />
+                                <span class="w-20 text-xs font-mono text-muted-foreground uppercase">
+                                    {{ backgroundGradientBottomColorValue }}
+                                </span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div v-if="editProfileDialog.backgroundType === 'texture'" class="space-y-2">
+                        <Select
+                            :model-value="props.editProfileDialog.backgroundTextureId"
+                            :disabled="editProfileDialog.loading"
+                            @update:modelValue="handleBackgroundTextureChange">
+                            <SelectTrigger size="sm" class="h-14! w-80">
+                                <SelectValue :placeholder="t('dialog.edit_profile.profile_background_type_image')">
+                                    <template v-if="selectedProfileBackgroundTextureOption">
+                                        <span class="inline-flex min-w-0 items-center gap-2">
+                                            <img
+                                                :src="selectedProfileBackgroundTextureOption.thumbnail"
+                                                class="h-9 w-16 shrink-0 rounded-sm object-cover"
+                                                :alt="selectedProfileBackgroundTextureOption.label"
+                                                loading="lazy" />
+                                            <span class="truncate">{{
+                                                selectedProfileBackgroundTextureOption.label
+                                            }}</span>
+                                        </span>
+                                    </template>
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent class="w-80">
+                                <SelectGroup>
+                                    <SelectItem
+                                        v-for="option in profileBackgrounds"
+                                        :key="option.id"
+                                        :value="option.id"
+                                        :text-value="option.label"
+                                        :disabled="!isLocalUserVrcPlusSupporter && option.isVRCPlus">
+                                        <div class="flex items-center gap-2">
+                                            <img
+                                                :src="option.thumbnail"
+                                                class="h-9 w-16 shrink-0 rounded-sm object-cover"
+                                                :alt="option.label"
+                                                loading="lazy" />
+                                            <span>{{ option.label }}</span>
+                                        </div>
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </section>
+
+                <section class="space-y-3">
                     <h3 class="text-sm font-semibold">{{ t('dialog.pronouns.header') }}</h3>
                     <InputGroupTextareaField
                         v-model="editProfileDialog.pronouns"
@@ -445,9 +549,10 @@
     import { useStatusPresets } from './composables/useStatusPresets';
     import GallerySelectDialog from '../GroupDialog/GallerySelectDialog.vue';
     import { updateUserDialogProfile } from '@/coordinators/userCoordinator';
+    import { profileBackgrounds } from '@/shared/constants/backgrounds';
 
     const { t } = useI18n();
-    const { currentUser } = storeToRefs(useUserStore());
+    const { currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const authStore = useAuthStore();
     const modalStore = useModalStore();
     const { refreshGalleryTable } = useGalleryStore();
@@ -474,11 +579,20 @@
         return Object.entries(options).map(([key, value]) => ({ key, value }));
     });
     const historyItems = computed(() => props.editProfileDialog.socialStatusHistoryTable ?? []);
+
     const bannerTypeOptions = [
         { value: 'color', label: t('dialog.edit_profile.banner_type_color') },
         { value: 'avatarBanner', label: t('dialog.edit_profile.banner_type_avatar_banner') },
         { value: 'customImage', label: t('dialog.edit_profile.banner_type_custom_image') }
     ];
+    const profileBackgroundTypeOptions = [
+        { value: 'default', label: t('dialog.edit_profile.profile_background_type_none') },
+        { value: 'texture', label: t('dialog.edit_profile.profile_background_type_image') },
+        { value: 'gradient', label: t('dialog.edit_profile.profile_background_type_gradient') }
+    ];
+    const selectedProfileBackgroundTextureOption = computed(() =>
+        profileBackgrounds.find((option) => option.id === props.editProfileDialog.backgroundTextureId)
+    );
 
     const selectedBannerType = computed(() => {
         const type = props.editProfileDialog.bannerType;
@@ -488,6 +602,13 @@
     const themeButtonColorValue = computed(() => getThemeHexColor(props.editProfileDialog.themeButtonColor));
     const themeIconColorValue = computed(() => getThemeHexColor(props.editProfileDialog.themeIconColor));
     const themeSubtextColorValue = computed(() => getThemeHexColor(props.editProfileDialog.themeSubtextColor));
+    const backgroundGradientBottomColorValue = computed(() =>
+        getThemeHexColor(props.editProfileDialog.backgroundGradientBottom)
+    );
+    const backgroundGradientTopColorValue = computed(() =>
+        getThemeHexColor(props.editProfileDialog.backgroundGradientTop)
+    );
+
     const saveThemeDebounced = debounce(saveTheme, 300);
 
     function normalizeColor(value) {
@@ -593,6 +714,51 @@
         }
         const D = props.editProfileDialog;
         D.bannerType = value;
+    }
+
+    function handleProfileBackgroundTypeChange(value) {
+        if (!profileBackgroundTypeOptions.some((option) => option.value === value)) {
+            return;
+        }
+        const D = props.editProfileDialog;
+        D.backgroundType = value;
+        if (value === 'texture' && !profileBackgrounds.some((option) => option.id === D.backgroundTextureId)) {
+            D.backgroundTextureId = profileBackgrounds[0]?.id ?? '';
+        }
+        if (value === 'gradient') {
+            const profileDefaults = authStore.cachedConfig?.profileDefaults;
+            D.backgroundGradientTop = profileDefaults?.backgroundGradientTop ?? '000000';
+            D.backgroundGradientBottom = profileDefaults?.backgroundGradientBottom ?? '000000';
+        }
+    }
+
+    function handleBackgroundTextureChange(value) {
+        if (!profileBackgrounds.some((option) => option.id === value)) {
+            return;
+        }
+        const D = props.editProfileDialog;
+        D.backgroundTextureId = value;
+        D.backgroundType = 'texture';
+    }
+
+    function handleBackgroundGradientTopColorInput(event) {
+        const normalized = normalizeColor(event?.target?.value);
+        if (!normalized) {
+            return;
+        }
+        const D = props.editProfileDialog;
+        D.backgroundGradientTop = normalized;
+        D.backgroundType = 'gradient';
+    }
+
+    function handleBackgroundGradientBottomColorInput(event) {
+        const normalized = normalizeColor(event?.target?.value);
+        if (!normalized) {
+            return;
+        }
+        const D = props.editProfileDialog;
+        D.backgroundGradientBottom = normalized;
+        D.backgroundType = 'gradient';
     }
 
     function handleThemeChange(value) {
@@ -853,6 +1019,18 @@
         }
         if (D.themeId !== D.selfProfileRef.themeId) {
             profilePayload.themeId = D.themeId;
+        }
+        if (D.backgroundType !== D.selfProfileRef.backgroundType) {
+            profilePayload.backgroundType = D.backgroundType;
+        }
+        if (D.backgroundTextureId !== D.selfProfileRef.backgroundTextureId) {
+            profilePayload.backgroundTextureId = D.backgroundTextureId;
+        }
+        if (D.backgroundGradientBottom !== D.selfProfileRef.backgroundGradientBottom) {
+            profilePayload.backgroundGradientBottom = D.backgroundGradientBottom;
+        }
+        if (D.backgroundGradientTop !== D.selfProfileRef.backgroundGradientTop) {
+            profilePayload.backgroundGradientTop = D.backgroundGradientTop;
         }
         if (!Object.keys(userPayload).length && !Object.keys(profilePayload).length) {
             D.visible = false;
