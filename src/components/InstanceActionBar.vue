@@ -1,6 +1,6 @@
 <template>
     <div class="flex row-auto gap-2" v-bind="$attrs">
-        <div class="flex row-auto gap-2">
+        <div v-if="showButtons" class="flex row-auto gap-2">
             <div v-if="showLaunchButton" class="inline-block">
                 <TooltipWrapper side="top" :content="t('dialog.user.info.launch_invite_tooltip')">
                     <Button
@@ -69,7 +69,9 @@
             </TooltipWrapper>
         </div>
 
-        <div v-if="showInstanceInfo" class="flex items-center gap-1.5 text-muted-foreground">
+        <div
+            v-if="showInstanceInfo"
+            class="flex items-center gap-1.5 text-muted-foreground rounded-full border border-muted-foreground/10 py-0.5 px-2">
             <TooltipWrapper v-if="instanceInfoState.isValidInstance" side="top">
                 <template #content>
                     <div class="flex flex-col flex-wrap items-center gap-x-6 gap-y-2">
@@ -143,33 +145,35 @@
                     </span>
                 </TooltipWrapper>
             </span>
-        </div>
 
-        <div v-if="hasInstanceMetadata" class="flex items-center row-auto gap-2">
-            <TooltipWrapper side="top" :content="t('dialog.user.info.instance_queue')">
-                <span v-if="instance?.queueSize" class="flex items-center gap-0.5">
-                    <SquareStack class="h-4 w-4" />
-                    {{ instance.queueSize }}
-                </span>
-            </TooltipWrapper>
-            <TooltipWrapper side="top" :content="t('dialog.user.info.instance_age_gated')">
-                <span v-if="instanceInfoState.isAgeGated" class="flex items-center gap-0.5 text-red-500">
-                    <IdCard class="h-4 w-4" />
-                </span>
-            </TooltipWrapper>
-            <TooltipWrapper side="top" :content="t('dialog.user.info.instance_role_restricted')">
-                <span v-if="instanceInfoState.isRoleRestricted" class="flex items-center gap-0.5 text-red-500">
-                    <UserLock class="h-4 w-4" />
-                </span>
-            </TooltipWrapper>
-            <TooltipWrapper
-                v-if="instance?.minimumAvatarPerformance && instance.minimumAvatarPerformance !== 'None'"
-                side="top"
-                :content="
-                    t('dialog.user.info.instance_minimum_avatar_performance') + ': ' + instance.minimumAvatarPerformance
-                ">
-                <img :src="performanceIcon" class="h-4 w-4" />
-            </TooltipWrapper>
+            <template v-if="hasInstanceMetadata">
+                <TooltipWrapper side="top" :content="t('dialog.user.info.instance_queue')">
+                    <span v-if="instance?.queueSize" class="flex items-center gap-0.5">
+                        <SquareStack class="h-4 w-4" />
+                        {{ instance.queueSize }}
+                    </span>
+                </TooltipWrapper>
+                <TooltipWrapper side="top" :content="t('dialog.user.info.instance_age_gated')">
+                    <span v-if="instanceInfoState.isAgeGated" class="flex items-center gap-0.5 text-red-500">
+                        <IdCard class="h-4 w-4" />
+                    </span>
+                </TooltipWrapper>
+                <TooltipWrapper side="top" :content="t('dialog.user.info.instance_role_restricted')">
+                    <span v-if="instanceInfoState.isRoleRestricted" class="flex items-center gap-0.5 text-red-500">
+                        <UserLock class="h-4 w-4" />
+                    </span>
+                </TooltipWrapper>
+                <TooltipWrapper
+                    v-if="instance?.minimumAvatarPerformance && instance.minimumAvatarPerformance !== 'None'"
+                    side="top"
+                    :content="
+                        t('dialog.user.info.instance_minimum_avatar_performance') +
+                        ': ' +
+                        instance.minimumAvatarPerformance
+                    ">
+                    <img :src="performanceIcon" class="h-4 w-4" />
+                </TooltipWrapper>
+            </template>
         </div>
     </div>
 </template>
@@ -286,6 +290,10 @@
             default: true
         },
         showInstanceInfo: {
+            type: Boolean,
+            default: true
+        },
+        showButtons: {
             type: Boolean,
             default: true
         },

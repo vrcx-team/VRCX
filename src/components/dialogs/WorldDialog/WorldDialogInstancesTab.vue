@@ -27,7 +27,7 @@
                             :currentuserid="currentUser.id"
                             :worlddialogshortname="worldDialog.$location.shortName" />
                         <InstanceActionBar
-                            class="ml-1 text-sm"
+                            class="ml-2 text-sm"
                             :location="room.$location.tag"
                             :launch-location="room.tag"
                             :instance-location="room.tag"

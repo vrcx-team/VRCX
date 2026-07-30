@@ -2,30 +2,65 @@
     <template v-if="isFriendOnline(userDialog.friend) || currentUser.id === userDialog.id">
         <div class="flex flex-col gap-2.5 mb-2.5">
             <div class="rounded-xl bg-muted/80 p-3">
-                <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
+                <div class="flex items-center justify-between mb-2 border-b border-background-muted">
                     <span
                         class="text-[10px] font-bold uppercase tracking-wide"
                         :style="{ color: userDialog.theme.subtextColor }">
                         {{ t('dialog.user.info.current_instance') }}
                     </span>
+                    <span v-if="isRealInstance(userDialog.$location.tag)">
+                        <InstanceActionBar
+                            class="mb-1"
+                            :showButtons="true"
+                            :showInstanceInfo="false"
+                            :location="userDialog.$location.tag"
+                            :shortname="userDialog.$location.shortName"
+                            :currentlocation="lastLocation.location"
+                            :instance="userDialog.instance.ref"
+                            :friendcount="userDialog.instance.friendCount"
+                            :refresh-tooltip="t('dialog.user.info.refresh_instance_info')"
+                            :on-refresh="() => refreshInstancePlayerCount(userDialog.$location.tag)" />
+                    </span>
                 </div>
-                <div v-if="userDialog.ref.location" style="display: flex; flex-direction: column">
-                    <div style="flex: none">
-                        <template v-if="isRealInstance(userDialog.$location.tag)">
-                            <InstanceActionBar
-                                class="mb-1"
-                                :location="userDialog.$location.tag"
-                                :shortname="userDialog.$location.shortName"
-                                :currentlocation="lastLocation.location"
-                                :instance="userDialog.instance.ref"
-                                :friendcount="userDialog.instance.friendCount"
-                                :refresh-tooltip="t('dialog.user.info.refresh_instance_info')"
-                                :on-refresh="() => refreshInstancePlayerCount(userDialog.$location.tag)" />
-                        </template>
-                        <Location
-                            class="text-sm"
-                            :location="userDialog.ref.location"
-                            :traveling="userDialog.ref.travelingToLocation" />
+                <div v-if="userDialog.$location.isOffline">
+                    <span class="text-sm text-muted-foreground">{{ t('location.offline') }}</span>
+                </div>
+                <div v-if="userDialog.$location.isPrivate">
+                    <span class="text-sm text-muted-foreground">{{ t('location.private') }}</span>
+                </div>
+                <div class="flex flex-col">
+                    <div v-if="isRealInstance(userDialog.$location.tag)" class="flex justify-between">
+                        <div class="flex flex-col justify-between">
+                            <span
+                                class="text-md text-foreground cursor-pointer"
+                                @click="showWorldDialog(userDialog.$location.tag)"
+                                >{{ userDialog.instance?.ref?.world?.name }}</span
+                            >
+                            <div class="flex gap-1.5">
+                                <LocationWorld
+                                    class="text-sm inline-flex w-fit max-w-full"
+                                    :locationobject="userDialog.$location"
+                                    :currentuserid="currentUser.id" />
+                                <InstanceActionBar
+                                    class="text-sm inline-flex w-fit max-w-full"
+                                    :showButtons="false"
+                                    :showInstanceInfo="true"
+                                    :location="userDialog.$location.tag"
+                                    :shortname="userDialog.$location.shortName"
+                                    :currentlocation="lastLocation.location"
+                                    :instance="userDialog.instance.ref"
+                                    :friendcount="userDialog.instance.friendCount"
+                                    :refresh-tooltip="t('dialog.user.info.refresh_instance_info')"
+                                    :on-refresh="() => refreshInstancePlayerCount(userDialog.$location.tag)" />
+                            </div>
+                        </div>
+                        <img
+                            v-if="!userDialog.loading"
+                            :src="userDialog.instance?.ref?.world?.thumbnailImageUrl"
+                            class="cursor-pointer"
+                            style="width: 80px; height: 60px; border-radius: var(--radius-xl)"
+                            @click="showFullscreenImageDialog(userDialog.instance?.ref?.world?.imageUrl)"
+                            loading="lazy" />
                     </div>
                     <div
                         class="flex flex-wrap items-start"
@@ -430,7 +465,8 @@
         useInstanceStore,
         useLocationStore,
         useModalStore,
-        useUserStore
+        useUserStore,
+        useGalleryStore
     } from '../../../stores';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { queryRequest, userRequest } from '../../../api';
@@ -450,6 +486,7 @@
     const { translateText } = useAdvancedSettingsStore();
     const { userDialog, currentUser } = storeToRefs(useUserStore());
     const { showEditProfileDialog } = useUserStore();
+    const { fullscreenImageDialog } = storeToRefs(useGalleryStore());
 
     const { lastLocation } = storeToRefs(useLocationStore());
     const { userImage, userStatusClass } = useUserDisplay();
@@ -573,8 +610,24 @@
         queryRequest.fetch('vrchatCredits').then((args) => (vrchatCredit.value = args.json?.balance));
     }
 
+    /**
+     *
+     * @param imageUrl
+     * @param fileName
+     */
+    function showFullscreenImageDialog(imageUrl, fileName) {
+        if (!imageUrl) {
+            return;
+        }
+        const D = fullscreenImageDialog.value;
+        D.imageUrl = imageUrl;
+        D.fileName = fileName;
+        D.visible = true;
+    }
+
     defineExpose({
         onTabActivated,
-        showEditNoteAndMemoDialog
+        showEditNoteAndMemoDialog,
+        showFullscreenImageDialog
     });
 </script>

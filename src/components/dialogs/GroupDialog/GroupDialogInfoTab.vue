@@ -21,9 +21,11 @@
         </span>
         <div v-for="room in groupDialog.instances" :key="room.tag" style="width: 100%">
             <div style="margin: 6px 0" class="flex items-center">
-                <Location :location="room.tag" class="text-sm" />
+                <Location
+                    :location="room.tag"
+                    class="text-sm text-muted-foreground rounded-full border border-muted-foreground/10 py-0.5 px-2" />
                 <InstanceActionBar
-                    class="ml-1"
+                    class="ml-2 text-sm"
                     :location="room.tag"
                     :currentlocation="lastLocation.location"
                     :instance="room.ref"
@@ -93,8 +95,7 @@
                 <pre
                     class="text-xs font-[inherit]"
                     style="display: inline-block; vertical-align: top; white-space: pre-wrap; margin: 0"
-                    >{{ groupDialog.announcement.text || '-' }}</pre
-                >
+                    >{{ groupDialog.announcement.text || '-' }}</pre>
                 <br />
                 <div v-if="groupDialog.announcement.id" class="text-xs" style="float: right; margin-left: 6px">
                     <TooltipWrapper v-if="groupDialog.announcement.roleIds.length" side="top">
