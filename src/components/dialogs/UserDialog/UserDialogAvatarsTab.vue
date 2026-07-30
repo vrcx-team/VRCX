@@ -1,102 +1,104 @@
 <template>
-    <div style="display: flex; align-items: center; justify-content: space-between">
-        <div style="display: flex; align-items: center">
-            <Button
-                v-if="userDialog.ref.id === currentUser.id"
-                class="rounded-full"
-                variant="ghost"
-                size="icon-sm"
-                :disabled="userDialog.isAvatarsLoading"
-                @click="refreshUserDialogAvatars()">
-                <Spinner v-if="userDialog.isAvatarsLoading" />
-                <RefreshCw v-else />
-            </Button>
-            <Button
-                v-else
-                class="rounded-full"
-                variant="ghost"
-                size="icon-sm"
-                :disabled="userDialog.isAvatarsLoading"
-                @click="setUserDialogAvatarsRemote(userDialog.id)">
-                <Spinner v-if="userDialog.isAvatarsLoading" />
-                <RefreshCw v-else />
-            </Button>
-            <span class="ml-1.5 text-sm">{{
-                t('dialog.user.avatars.total_count', { count: userDialogAvatars.length })
-            }}</span>
-        </div>
-        <div class="flex items-center">
-            <Input v-model="avatarSearchQuery" class="h-8 w-40 mr-2" placeholder="Search avatars" @click.stop />
-            <template v-if="userDialog.ref.id === currentUser.id">
-                <span class="mr-1">{{ t('dialog.user.avatars.sort_by') }}</span>
-                <Select
-                    :model-value="userDialog.avatarSorting"
-                    :disabled="userDialog.isWorldsLoading"
-                    @update:modelValue="changeUserDialogAvatarSorting">
-                    <SelectTrigger size="sm" @click.stop>
-                        <SelectValue :placeholder="t(`dialog.user.avatars.sort_by_${userDialog.avatarSorting}`)" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="name">{{ t('dialog.user.avatars.sort_by_name') }}</SelectItem>
-                        <SelectItem value="update">{{ t('dialog.user.avatars.sort_by_update') }}</SelectItem>
-                        <SelectItem value="createdAt">{{ t('dialog.user.avatars.sort_by_uploaded') }}</SelectItem>
-                    </SelectContent>
-                </Select>
-                <span class="ml-2 mr-1">{{ t('dialog.user.avatars.group_by') }}</span>
-                <Select
-                    :model-value="userDialog.avatarReleaseStatus"
-                    :disabled="userDialog.isWorldsLoading"
-                    @update:modelValue="(value) => (userDialog.avatarReleaseStatus = value)">
-                    <SelectTrigger size="sm" @click.stop>
-                        <SelectValue :placeholder="t(`dialog.user.avatars.${userDialog.avatarReleaseStatus}`)" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">{{ t('dialog.user.avatars.all') }}</SelectItem>
-                        <SelectItem value="public">{{ t('dialog.user.avatars.public') }}</SelectItem>
-                        <SelectItem value="private">{{ t('dialog.user.avatars.private') }}</SelectItem>
-                    </SelectContent>
-                </Select>
-            </template>
-        </div>
-    </div>
-    <div class="flex flex-wrap items-start" style="margin-top: 8px; min-height: 60px; max-height: 50vh; overflow: auto">
-        <template v-if="filteredUserDialogAvatars.length">
-            <div
-                v-for="avatar in filteredUserDialogAvatars"
-                :key="avatar.id"
-                class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                @click="showAvatarDialog(avatar.id)">
-                <div class="relative inline-block flex-none size-9 mr-2.5">
-                    <Avatar class="size-9">
-                        <AvatarImage
-                            v-if="avatar.thumbnailImageUrl"
-                            :src="avatar.thumbnailImageUrl"
-                            class="object-cover" />
-                        <AvatarFallback>
-                            <Image class="size-4 text-muted-foreground" />
-                        </AvatarFallback>
-                    </Avatar>
-                </div>
-                <div class="flex-1 overflow-hidden">
-                    <span class="block truncate font-medium leading-[18px]" v-text="avatar.name"></span>
-                    <span
-                        v-if="avatar.releaseStatus === 'public'"
-                        class="block truncate text-xs"
-                        v-text="avatar.releaseStatus">
-                    </span>
-                    <span
-                        v-else-if="avatar.releaseStatus === 'private'"
-                        class="block truncate text-xs"
-                        v-text="avatar.releaseStatus">
-                    </span>
-                    <span v-else class="block truncate text-xs" v-text="avatar.releaseStatus"></span>
-                </div>
+    <div class="flex h-full min-h-0 flex-col overflow-hidden p-2 rounded-xl bg-muted/80">
+        <div style="display: flex; align-items: center; justify-content: space-between">
+            <div style="display: flex; align-items: center">
+                <Button
+                    v-if="userDialog.ref.id === currentUser.id"
+                    class="rounded-full"
+                    variant="ghost"
+                    size="icon-sm"
+                    :disabled="userDialog.isAvatarsLoading"
+                    @click="refreshUserDialogAvatars()">
+                    <Spinner v-if="userDialog.isAvatarsLoading" />
+                    <RefreshCw v-else />
+                </Button>
+                <Button
+                    v-else
+                    class="rounded-full"
+                    variant="ghost"
+                    size="icon-sm"
+                    :disabled="userDialog.isAvatarsLoading"
+                    @click="setUserDialogAvatarsRemote(userDialog.id)">
+                    <Spinner v-if="userDialog.isAvatarsLoading" />
+                    <RefreshCw v-else />
+                </Button>
+                <span class="ml-1.5 text-sm">{{
+                    t('dialog.user.avatars.total_count', { count: userDialogAvatars.length })
+                }}</span>
             </div>
-        </template>
-        <div
-            v-else-if="!userDialog.isAvatarsLoading"
-            style="display: flex; justify-content: center; align-items: center; min-height: 120px; width: 100%">
-            <DataTableEmpty type="nodata" />
+            <div class="flex items-center">
+                <Input v-model="avatarSearchQuery" class="h-8 w-40 mr-2" placeholder="Search avatars" @click.stop />
+                <template v-if="userDialog.ref.id === currentUser.id">
+                    <span class="mr-1">{{ t('dialog.user.avatars.sort_by') }}</span>
+                    <Select
+                        :model-value="userDialog.avatarSorting"
+                        :disabled="userDialog.isWorldsLoading"
+                        @update:modelValue="changeUserDialogAvatarSorting">
+                        <SelectTrigger size="sm" @click.stop>
+                            <SelectValue :placeholder="t(`dialog.user.avatars.sort_by_${userDialog.avatarSorting}`)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="name">{{ t('dialog.user.avatars.sort_by_name') }}</SelectItem>
+                            <SelectItem value="update">{{ t('dialog.user.avatars.sort_by_update') }}</SelectItem>
+                            <SelectItem value="createdAt">{{ t('dialog.user.avatars.sort_by_uploaded') }}</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <span class="ml-2 mr-1">{{ t('dialog.user.avatars.group_by') }}</span>
+                    <Select
+                        :model-value="userDialog.avatarReleaseStatus"
+                        :disabled="userDialog.isWorldsLoading"
+                        @update:modelValue="(value) => (userDialog.avatarReleaseStatus = value)">
+                        <SelectTrigger size="sm" @click.stop>
+                            <SelectValue :placeholder="t(`dialog.user.avatars.${userDialog.avatarReleaseStatus}`)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">{{ t('dialog.user.avatars.all') }}</SelectItem>
+                            <SelectItem value="public">{{ t('dialog.user.avatars.public') }}</SelectItem>
+                            <SelectItem value="private">{{ t('dialog.user.avatars.private') }}</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </template>
+            </div>
+        </div>
+        <div class="flex flex-wrap items-start" style="margin-top: 8px; min-height: 60px; overflow: auto">
+            <template v-if="filteredUserDialogAvatars.length">
+                <div
+                    v-for="avatar in filteredUserDialogAvatars"
+                    :key="avatar.id"
+                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
+                    @click="showAvatarDialog(avatar.id)">
+                    <div class="relative inline-block flex-none size-9 mr-2.5">
+                        <Avatar class="size-9">
+                            <AvatarImage
+                                v-if="avatar.thumbnailImageUrl"
+                                :src="avatar.thumbnailImageUrl"
+                                class="object-cover" />
+                            <AvatarFallback>
+                                <Image class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
+                    </div>
+                    <div class="flex-1 overflow-hidden">
+                        <span class="block truncate font-medium leading-[18px]" v-text="avatar.name"></span>
+                        <span
+                            v-if="avatar.releaseStatus === 'public'"
+                            class="block truncate text-xs"
+                            v-text="avatar.releaseStatus">
+                        </span>
+                        <span
+                            v-else-if="avatar.releaseStatus === 'private'"
+                            class="block truncate text-xs"
+                            v-text="avatar.releaseStatus">
+                        </span>
+                        <span v-else class="block truncate text-xs" v-text="avatar.releaseStatus"></span>
+                    </div>
+                </div>
+            </template>
+            <div
+                v-else-if="!userDialog.isAvatarsLoading"
+                style="display: flex; justify-content: center; align-items: center; min-height: 120px; width: 100%">
+                <DataTableEmpty type="nodata" />
+            </div>
         </div>
     </div>
 </template>

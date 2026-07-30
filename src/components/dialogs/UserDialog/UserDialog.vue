@@ -7,7 +7,7 @@
             <DialogDescription>{{ getUserStateText(userDialog.ref || {}) }}</DialogDescription>
         </DialogHeader>
 
-        <div class="flex-none w-80 pr-4 overflow-y-auto">
+        <div class="flex-none w-80 overflow-y-auto">
             <UserSummaryHeader
                 :get-user-state-text="getUserStateText"
                 :copy-user-display-name="copyUserDisplayName"
@@ -16,13 +16,14 @@
                 :user-dialog-command="userDialogCommand" />
         </div>
 
-        <div class="flex-1 min-w-0 flex flex-col min-h-0 pl-4">
+        <div class="flex-1 min-w-0 flex flex-col min-h-0 pl-2">
             <TabsUnderline
                 v-model="userDialog.activeTab"
                 :items="userDialogTabs"
                 :tab-color="userDialogTabColor"
                 :unmount-on-hide="false"
                 fill
+                :background="true"
                 @update:modelValue="userDialogTabClick">
                 <template #Info>
                     <UserDialogInfoTab ref="infoTabRef" />
@@ -54,6 +55,7 @@
 
                 <template #JSON>
                     <DialogJsonTab
+                        class="rounded-xl bg-muted/80 p-2"
                         :tree-data="treeData"
                         :tree-data-key="treeData?.id"
                         :dialog-id="userDialog.id"

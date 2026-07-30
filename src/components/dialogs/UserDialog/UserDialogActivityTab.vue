@@ -1,5 +1,5 @@
 <template>
-    <div class="flex min-w-0 flex-col overflow-x-hidden" style="min-height: 200px">
+    <div class="flex h-full min-h-0 min-w-0 flex-col overflow-y-auto overflow-x-hidden p-2 rounded-xl bg-muted/80">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="display: flex; align-items: center">
                 <Button

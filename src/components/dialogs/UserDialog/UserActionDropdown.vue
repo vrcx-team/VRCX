@@ -10,7 +10,7 @@
                     :style="{
                         color:
                             userDialog.theme.iconColor === 'var(--muted-foreground)'
-                                ? 'var(--foreground)'
+                                ? 'var(--background)'
                                 : userDialog.theme.iconColor,
                         backgroundColor: userDialog.theme.buttonColor
                     }"
@@ -18,7 +18,7 @@
                     @click="userDialogCommand('Add Favorite')"
                     :ariaLabel="t('dialog.user.actions.favorites_tooltip')"
                     ><Star
-                        class="[filter:drop-shadow(0_0_1px_rgba(255,255,255,0.95))_drop-shadow(0_0_1px_rgba(0,0,0,0.95))_drop-shadow(0_1px_1px_rgba(0,0,0,0.6))]"
+                        class="[filter:drop-shadow(0_0_1px_rgba(255,255,255,0.95))_drop-shadow(0_0_1px_rgba(0,0,0,0.95))]"
                 /></Button>
             </TooltipWrapper>
             <TooltipWrapper v-else side="top" :content="t('dialog.user.actions.favorites_tooltip')">
@@ -35,7 +35,7 @@
                     @click="userDialogCommand('Add Favorite')"
                     :ariaLabel="t('dialog.user.actions.favorites_tooltip')"
                     ><Star
-                        class="[filter:drop-shadow(0_0_1px_rgba(255,255,255,0.95))_drop-shadow(0_0_1px_rgba(0,0,0,0.95))_drop-shadow(0_1px_1px_rgba(0,0,0,0.6))]"
+                        class="[filter:drop-shadow(0_0_1px_rgba(255,255,255,0.95))_drop-shadow(0_0_1px_rgba(0,0,0,0.95))]"
                 /></Button>
             </TooltipWrapper>
         </template>
@@ -49,7 +49,7 @@
                         :style="{ color: userDialog.theme.iconColor }"
                         :class="{ 'dot-indicator': hasRequest }"
                         :ariaLabel="t('nav_tooltip.manage')">
-                        <MoreHorizontal />
+                        <MoreHorizontal class="[filter:drop-shadow(0_0_1px_rgba(0,0,0,0.95))]" />
                     </Button>
                 </div>
             </DropdownMenuTrigger>

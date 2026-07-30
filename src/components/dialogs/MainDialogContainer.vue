@@ -183,6 +183,11 @@
             return {};
         }
 
+        const userDialogBaseStyle = {
+            overflow: 'hidden',
+            backgroundClip: 'padding-box'
+        };
+
         if (userStore.userDialog.publicProfileRef?.backgroundType === 'gradient') {
             const bgTopColor = getReadableProfileThemeColor(
                 `#${userStore.userDialog.publicProfileRef?.backgroundGradientTop}`,
@@ -195,6 +200,7 @@
                 !appearanceSettingsStore.isDarkMode
             );
             return {
+                ...userDialogBaseStyle,
                 backgroundImage: `linear-gradient(180deg, ${bgTopColor}, ${bgBottomColor})`
             };
         }
@@ -203,20 +209,21 @@
                 (b) => b.id === userStore.userDialog.publicProfileRef?.backgroundTextureId
             );
             if (!bg) {
-                return {};
+                return userDialogBaseStyle;
             }
             const opacity = -appearanceSettingsStore.profileBackgroundOpacity + 1; // Invert the opacity value
             const textureOverlay = appearanceSettingsStore.isDarkMode
                 ? `rgba(0, 0, 0, ${opacity})`
                 : `rgba(255, 255, 255, ${opacity})`;
             return {
+                ...userDialogBaseStyle,
                 backgroundImage: `linear-gradient(${textureOverlay}, ${textureOverlay}), url(${bg.url})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'top center',
                 backgroundRepeat: 'no-repeat'
             };
         }
-        return {};
+        return userDialogBaseStyle;
     });
 </script>
 

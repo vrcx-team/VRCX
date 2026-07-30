@@ -1,5 +1,5 @@
 <template>
-    <div class="rounded-xl bg-muted/40 overflow-hidden flex flex-col">
+    <div class="rounded-xl bg-muted/80 overflow-hidden flex flex-col">
         <div class="relative aspect-17/6">
             <div
                 v-if="
@@ -217,8 +217,8 @@
                     :key="item.key"
                     variant="outline"
                     class="h-5 px-1.5 inline-flex items-center gap-1 text-[11px] leading-none">
-                    <span class="flags" :class="languageClass(item.key)" style="display: inline-block"></span>
-                    <span>{{ item.value }} ({{ item.key }})</span>
+                    <span class="flags inline-block shrink-0 self-center" :class="languageClass(item.key)"></span>
+                    <span class="inline-flex items-center leading-none">{{ item.value }} ({{ item.key }})</span>
                 </Badge>
             </div>
 
@@ -327,7 +327,7 @@
         </div>
     </div>
 
-    <div class="rounded-xl bg-muted/40 p-3 flex flex-col mt-2">
+    <div class="rounded-xl bg-muted/80 p-3 flex flex-col mt-2">
         <div
             class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-border"
             :style="{ color: userDialog.theme.subtextColor }">
@@ -367,7 +367,7 @@
         </div>
     </div>
 
-    <div class="rounded-xl bg-muted/40 p-3 flex flex-col mt-2">
+    <div class="rounded-xl bg-muted/80 p-3 flex flex-col mt-2">
         <div
             class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-border"
             :style="{ color: userDialog.theme.subtextColor }">

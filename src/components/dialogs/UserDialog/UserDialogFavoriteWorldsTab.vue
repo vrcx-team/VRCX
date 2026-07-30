@@ -11,7 +11,7 @@
             @click="getUserFavoriteWorlds(userDialog.id)">
         </Button> -->
     <template v-if="userDialog.userFavoriteWorlds && userDialog.userFavoriteWorlds.length > 0">
-        <div class="flex h-full min-h-0 flex-col overflow-hidden pt-2">
+        <div class="flex h-full min-h-0 flex-col overflow-hidden p-2 rounded-xl bg-muted/80">
             <div class="pb-2">
                 <Input v-model="searchQuery" class="h-8 w-40 shrink-0" placeholder="Search worlds" @click.stop />
             </div>
