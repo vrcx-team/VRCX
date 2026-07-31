@@ -27,6 +27,7 @@
         "lint:oxlint": "oxlint .",
         "typecheck:js": "tsc -p tsconfig.checkjs.json",
         "typecheck:vue": "vue-tsc -p tsconfig.checkjs.json",
+        "typecheck:node": "tsc -p tsconfig.node.json",
         "typebuild": "vue-tsc --declaration --emitDeclarationOnly",
         "test": "vitest run",
         "test:coverage": "vitest run --coverage",

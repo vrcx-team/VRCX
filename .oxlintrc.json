@@ -871,7 +871,8 @@
                 "**/jest.config.js",
                 "src-electron/*.js",
                 "src/localization/*.js",
-                "src/shared/utils/localizationHelperCLI.js"
+                "src/shared/utils/localizationHelperCLI.js",
+                "build-scripts/generate-third-party-licenses.js"
             ],
             "env": {
                 "node": true
