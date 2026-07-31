@@ -1,4 +1,5 @@
 {
+    "dotnet.defaultSolution": "VRCX.slnx",
     "i18n-ally.localesPaths": ["src/localization"],
     "i18n-ally.enabledFrameworks": ["vue"],
     "i18n-ally.keystyle": "nested",
@@ -8,7 +9,6 @@
     "i18n-ally.sourceLanguage": "en",
     "i18n-ally.indent": 4,
     "oxc.fmt.configPath": ".oxfmtrc.json",
-    "editor.defaultFormatter": "oxc.oxc-vscode",
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "oxc.oxc-vscode",
     "omnisharp.useModernNet": false,

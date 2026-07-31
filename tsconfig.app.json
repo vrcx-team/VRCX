@@ -6,6 +6,7 @@
         "allowJs": true,
         "checkJs": true,
         "jsx": "preserve",
+        "jsxImportSource": "vue",
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
