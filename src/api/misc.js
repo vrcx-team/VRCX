@@ -85,7 +85,7 @@ const miscReq = {
     },
 
     getVRChatCredits() {
-        return request(`user/${getCurrentUserId()}/balance`, {
+        return request(`user/${getCurrentUserId()}/economy/balance`, {
             method: 'GET'
         }).then((json) => {
             const args = {
