@@ -28,7 +28,19 @@
             "d": "天",
             "h": "小时",
             "m": "分钟",
-            "s": "秒"
+            "s": "秒",
+            "year": "年",
+            "month": "月",
+            "day": "天",
+            "hour": "小时",
+            "minute": "分钟",
+            "second": "秒",
+            "years": "年",
+            "months": "月",
+            "days": "天",
+            "hours": "小时",
+            "minutes": "分钟",
+            "seconds": "秒"
         },
         "days": {
             "sunday": "星期日",
@@ -891,6 +903,7 @@
                     "zoom": "界面缩放",
                     "vrcplus_profile_icons": "VRC+ 个人资料图标",
                     "vrcplus_profile_icons_description": "当可用时显示 VRChat+ 专属个人资料图标。",
+                    "vrc_profile_themes": "VRChat 个人资料主题",
                     "show_instance_id": "显示房间 ID",
                     "show_status_bar": "显示底部状态栏",
                     "age_gated_instances": "显示具有年龄限制的房间",
@@ -915,7 +928,9 @@
                     "table_density_comfortable": "舒适",
                     "table_density_compact": "紧凑",
                     "table_entries_settings": "条目读取设置",
-                    "table_entries_settings_description": "控制读取列表和进行搜索时加载的条目数量"
+                    "table_entries_settings_description": "控制读取列表和进行搜索时加载的条目数量",
+                    "vrc_profile_backgrounds": "VRChat 个人主页背景",
+                    "vrc_profile_backgrounds_opacity": "个人主页背景不透明度"
                 },
                 "display": {
                     "header": "显示设置"
@@ -1360,10 +1375,13 @@
                 "unfriend_success_msg": "已成功删除好友",
                 "logout": "退出登录",
                 "edit_note_memo": "编辑备注",
-                "reset_home": "重置出生点"
+                "reset_home": "重置出生点",
+                "edit_profile": "编辑个人主页"
             },
             "info": {
                 "header": "信息",
+                "vrcx_info": "VRCX 信息",
+                "vrcx_info_tooltip": "VRCX 的信息可能不准确",
                 "launch_invite_tooltip": "启动 / 邀请",
                 "self_invite_tooltip": "邀请自己",
                 "open_in_vrchat_tooltip": "在 VRChat 中打开",
@@ -1417,7 +1435,8 @@
                 "open_previous_instance": "打开之前加入的房间的列表",
                 "show_mutual_friends": "是否允许查看共同好友",
                 "show_discord_connections": "是否允许查看绑定的 Discord 账号信息",
-                "instance_minimum_avatar_performance": "模型性能评级限制"
+                "instance_minimum_avatar_performance": "模型性能评级限制",
+                "current_instance": "当前房间"
             },
             "groups": {
                 "header": "群组",
@@ -1829,6 +1848,24 @@
             "header": "人称代词",
             "pronouns_placeholder": "请输入你的人称代词（例如武装直升机）",
             "update": "更新"
+        },
+        "edit_profile": {
+            "banner": "横幅",
+            "banner_color": "横幅颜色",
+            "banner_type_color": "颜色",
+            "banner_type_avatar_banner": "模型图片",
+            "banner_type_custom_image": "自定义图片",
+            "icon": "头像",
+            "profile_theme": "个人主页主题",
+            "theme_name_placeholder": "主题名称",
+            "create_theme": "创建主题",
+            "delete_theme": "删除主题",
+            "profile_background": "个人主页背景",
+            "profile_background_type_none": "无",
+            "profile_background_type_image": "图片",
+            "profile_background_type_gradient": "渐变",
+            "gradient_top": "渐变顶部",
+            "gradient_bottom": "渐变底部"
         },
         "new_instance": {
             "header": "新房间",
@@ -2838,6 +2875,8 @@
         "trust_level": "信誉等级变更为 {trustLevel}",
         "display_name": "已改名为 {displayName}",
         "group_announcement_title": "群组公告",
+        "group_event_created_title": "群组活动已创建",
+        "group_event_starting_title": "群组活动已开始",
         "group_informative_title": "群组信息",
         "group_invite_title": "群组邀请",
         "group_join_request_title": "群组加入请求",

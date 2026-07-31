@@ -28,7 +28,19 @@
             "d": "天",
             "h": "時",
             "m": "分",
-            "s": "秒"
+            "s": "秒",
+            "year": "年",
+            "month": "月",
+            "day": "天",
+            "hour": "時",
+            "minute": "分",
+            "second": "秒",
+            "years": "年",
+            "months": "月",
+            "days": "天",
+            "hours": "時",
+            "minutes": "分",
+            "seconds": "秒"
         },
         "days": {
             "sunday": "星期日",
@@ -466,7 +478,8 @@
                     "transfer": "轉移",
                     "queueReady": "排隊準備",
                     "event": {
-                        "created": "群組活動已建立"
+                        "created": "群組活動已建立",
+                        "starting": "群組活動已開始"
                     }
                 },
                 "moderation": {
@@ -880,8 +893,9 @@
                     "theme_mode_pink": "粉色",
                     "theme_mode_material3": "Material 3",
                     "zoom": "介面縮放",
-                    "vrcplus_profile_icons": "VRChat+ 個人資料圖示",
+                    "vrcplus_profile_icons": "VRChat+ 個人檔案圖示",
                     "vrcplus_profile_icons_description": "在可用的情況下，使用 VRChat+ 獨家設定檔圖示。",
+                    "vrc_profile_themes": "VRChat 個人檔案主題",
                     "show_instance_id": "顯示房間 ID",
                     "show_status_bar": "顯示狀態列",
                     "age_gated_instances": "年齡限制房間",
@@ -1351,10 +1365,13 @@
                 "unfriend_success_msg": "已解除好友",
                 "logout": "登出",
                 "edit_note_memo": "編輯註釋與備忘錄",
-                "reset_home": "重設預設世界"
+                "reset_home": "重設預設世界",
+                "edit_profile": "編輯個人檔案"
             },
             "info": {
                 "header": "資訊",
+                "vrcx_info": "VRCX 資訊",
+                "vrcx_info_tooltip": "VRCX 的資訊可能不準確",
                 "launch_invite_tooltip": "啟動 / 邀請",
                 "self_invite_tooltip": "自我邀請",
                 "open_in_vrchat_tooltip": "在 VRChat 中開啟",
@@ -1406,7 +1423,8 @@
                 "instance_role_restricted": "身分限制",
                 "open_previous_instance": "開啟過去的房間",
                 "show_mutual_friends": "顯示共同好友",
-                "show_discord_connections": "顯示 Discord 連結"
+                "show_discord_connections": "顯示 Discord 連結",
+                "current_instance": "當前房間"
             },
             "groups": {
                 "header": "群組",
@@ -1812,6 +1830,24 @@
             "header": "代稱",
             "pronouns_placeholder": "請輸入你的代稱",
             "update": "更新"
+        },
+        "edit_profile": {
+            "banner": "橫幅",
+            "banner_color": "橫幅顏色",
+            "banner_type_color": "顏色",
+            "banner_type_avatar_banner": "模型圖片",
+            "banner_type_custom_image": "自訂圖片",
+            "icon": "頭像",
+            "profile_theme": "個人檔案主題",
+            "theme_name_placeholder": "主題名稱",
+            "create_theme": "創建主題",
+            "delete_theme": "刪除主題",
+            "profile_background": "個人檔案背景",
+            "profile_background_type_none": "無",
+            "profile_background_type_image": "圖片",
+            "profile_background_type_gradient": "漸變",
+            "gradient_top": "漸變頂部",
+            "gradient_bottom": "漸變底部"
         },
         "new_instance": {
             "header": "新房間",
@@ -2735,8 +2771,8 @@
         "gallery": {
             "uploaded": "相簿圖片已上傳",
             "failed": "上傳相簿圖片失敗",
-            "profile_pic_changed": "變更個人資料圖片",
-            "profile_icon_changed": "已變更個人資料圖片"
+            "profile_pic_changed": "變更個人檔案圖片",
+            "profile_icon_changed": "已變更個人檔案圖片"
         },
         "upload": {
             "loading": "上傳中",
@@ -2818,6 +2854,8 @@
         "trust_level": "的信任等級現在是 {trustLevel}",
         "display_name": "變更名稱為 {displayName}",
         "group_announcement_title": "群組公告",
+        "group_event_created_title": "群組活動已建立",
+        "group_event_starting_title": "群組活動已開始",
         "group_informative_title": "群組資訊",
         "group_invite_title": "群組邀請",
         "group_join_request_title": "群組加入請求",
@@ -2951,7 +2989,7 @@
             "display_name": "顯示名稱",
             "world": "世界",
             "instance_name": "房間名稱",
-            "instance_creator": "房間創建者",
+            "instance_creator": "房間建立者",
             "time": "時間",
             "count": "次數",
             "action": "動作"
