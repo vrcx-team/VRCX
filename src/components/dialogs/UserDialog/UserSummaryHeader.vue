@@ -282,7 +282,9 @@
                 </TooltipWrapper>
             </div>
 
-            <div v-if="currentUser.id === userDialog.id" class="border-t border-border flex flex-col gap-1.5">
+            <div
+                v-if="currentUser.id === userDialog.id"
+                class="border-t border-muted-foreground/20 flex flex-col gap-1.5">
                 <div
                     class="flex justify-between items-center text-xs cursor-pointer hover:text-foreground mt-1.5"
                     @click="toggleAvatarCopying">
@@ -329,7 +331,7 @@
 
     <div class="rounded-xl bg-muted/80 p-3 flex flex-col mt-2">
         <div
-            class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-border"
+            class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-muted-foreground/20"
             :style="{ color: userDialog.theme.subtextColor }">
             {{
                 userDialog.id !== currentUser.id &&
@@ -369,7 +371,7 @@
 
     <div class="rounded-xl bg-muted/80 p-3 flex flex-col mt-2">
         <div
-            class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-border"
+            class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-muted-foreground/20"
             :style="{ color: userDialog.theme.subtextColor }">
             {{ t('dialog.user.info.represented_group') }}
         </div>

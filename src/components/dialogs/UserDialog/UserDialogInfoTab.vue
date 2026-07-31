@@ -2,7 +2,7 @@
     <template v-if="isFriendOnline(userDialog.friend) || currentUser.id === userDialog.id">
         <div class="flex flex-col gap-2.5 mb-2.5">
             <div class="rounded-xl bg-muted/80 p-3">
-                <div class="flex items-center justify-between mb-2 border-b border-border">
+                <div class="flex items-center justify-between mb-2 border-b border-muted-foreground/20">
                     <span
                         class="text-[10px] font-bold uppercase tracking-wide"
                         :style="{ color: userDialog.theme.subtextColor }">
@@ -131,7 +131,7 @@
         <div class="grid gap-2.5 grid-cols-1 @[560px]:grid-cols-[minmax(0,1fr)_230px]" style="align-items: start">
             <div class="flex flex-col gap-2.5">
                 <div class="rounded-xl bg-muted/80 p-3">
-                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
+                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-muted-foreground/20">
                         <span
                             class="text-[10px] font-bold uppercase tracking-wide"
                             :style="{ color: userDialog.theme.subtextColor }">
@@ -181,7 +181,7 @@
                     v-if="!hideUserNotes"
                     class="rounded-xl bg-muted/80 p-3 cursor-pointer"
                     @click="isEditNoteAndMemoDialogVisible = true">
-                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
+                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-muted-foreground/20">
                         <span
                             class="text-[10px] font-bold uppercase tracking-wide"
                             :style="{ color: userDialog.theme.subtextColor }">
@@ -203,7 +203,7 @@
                     v-if="!hideUserMemos"
                     class="rounded-xl bg-muted/80 p-3 cursor-pointer"
                     @click="isEditNoteAndMemoDialogVisible = true">
-                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
+                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-muted-foreground/20">
                         <span
                             class="text-[10px] font-bold uppercase tracking-wide"
                             :style="{ color: userDialog.theme.subtextColor }">
@@ -224,7 +224,7 @@
 
             <div class="flex flex-col gap-2.5">
                 <div class="rounded-xl bg-muted/80 p-3">
-                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
+                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-muted-foreground/20">
                         <span
                             class="text-[10px] font-bold uppercase tracking-wide"
                             :style="{ color: userDialog.theme.subtextColor }">
@@ -347,7 +347,7 @@
 
                 <div class="rounded-xl bg-muted/80 p-3">
                     <div
-                        class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-border"
+                        class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-muted-foreground/20"
                         :style="{ color: userDialog.theme.subtextColor }">
                         {{ t('dialog.user.info.header') }}
                     </div>
@@ -414,7 +414,7 @@
                     v-if="userDialog.ref.id === currentUser.id && currentUser.homeLocation"
                     class="rounded-xl bg-muted/80 p-3">
                     <div
-                        class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-border"
+                        class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-muted-foreground/20"
                         :style="{ color: userDialog.theme.subtextColor }">
                         {{ t('dialog.user.info.home_location') }}
                     </div>
