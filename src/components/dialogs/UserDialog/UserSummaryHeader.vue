@@ -179,18 +179,21 @@
                     {{ t('dialog.user.tags.vrchat_team') }}
                 </Badge>
                 <TooltipWrapper v-if="userDialog.ref.$platform === 'standalonewindows'" side="top" content="PC">
-                    <Badge variant="outline" class="h-5 w-5 p-0 text-platform-pc border-platform-pc!">
+                    <Badge variant="outline" class="h-5 px-1.5 text-[11px] text-platform-pc border-platform-pc!">
                         <Monitor class="h-3 w-3 text-platform-pc" />
+                        PC
                     </Badge>
                 </TooltipWrapper>
                 <TooltipWrapper v-else-if="userDialog.ref.$platform === 'android'" side="top" content="Android">
-                    <Badge variant="outline" class="h-5 w-5 p-0 text-platform-quest border-platform-quest!">
+                    <Badge variant="outline" class="h-5 px-1.5 text-[11px] text-platform-quest border-platform-quest!">
                         <Smartphone class="h-3 w-3 text-platform-quest" />
+                        Android
                     </Badge>
                 </TooltipWrapper>
                 <TooltipWrapper v-else-if="userDialog.ref.$platform === 'ios'" side="top" content="iOS">
-                    <Badge variant="outline" class="h-5 w-5 p-0 text-platform-ios border-platform-ios">
+                    <Badge variant="outline" class="h-5 px-1.5 text-[11px] text-platform-ios border-platform-ios">
                         <Apple class="h-3 w-3 text-platform-ios" />
+                        iOS
                     </Badge>
                 </TooltipWrapper>
                 <Badge
@@ -216,7 +219,7 @@
                     v-for="item in userDialog.ref.$languages"
                     :key="item.key"
                     variant="outline"
-                    class="h-5 px-1.5 inline-flex items-center gap-1 text-[11px] leading-none border-muted-foreground">
+                    class="h-5 px-1.5 inline-flex items-center gap-1 text-[11px] leading-none border-muted-foreground/30">
                     <span class="flags inline-block shrink-0 self-center" :class="languageClass(item.key)"></span>
                     <span class="inline-flex items-center leading-none">{{ item.value }} ({{ item.key }})</span>
                 </Badge>

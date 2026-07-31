@@ -12,6 +12,7 @@
                         <InstanceActionBar
                             class="mb-1"
                             :showButtons="true"
+                            :buttonStyle="{ color: userDialog.theme.iconColor }"
                             :showInstanceInfo="false"
                             :location="userDialog.$location.tag"
                             :shortname="userDialog.$location.shortName"
@@ -29,20 +30,20 @@
                     <span class="text-sm text-muted-foreground">{{ t('location.private') }}</span>
                 </div>
                 <div class="flex flex-col">
-                    <div v-if="isRealInstance(userDialog.$location.tag)" class="flex justify-between">
+                    <div v-if="isRealInstance(userDialog.$location.tag)" class="flex gap-1.5 justify-between">
                         <div class="flex flex-col justify-between">
                             <span
                                 class="text-md text-foreground cursor-pointer"
                                 @click="showWorldDialog(userDialog.$location.tag)"
                                 >{{ userDialog.instance?.ref?.world?.name }}</span
                             >
-                            <div class="flex gap-1.5">
+                            <div class="flex flex-wrap gap-1.5 whitespace-nowrap overflow-hidden text-ellipsis">
                                 <LocationWorld
-                                    class="text-sm inline-flex w-fit max-w-full border-muted-foreground"
+                                    class="text-sm inline-flex w-fit max-w-full border-muted-foreground/30"
                                     :locationobject="userDialog.$location"
                                     :currentuserid="currentUser.id" />
                                 <InstanceActionBar
-                                    class="text-sm inline-flex w-fit max-w-full border-muted-foreground"
+                                    class="text-sm inline-flex w-fit max-w-full border-muted-foreground/30"
                                     :showButtons="false"
                                     :showInstanceInfo="true"
                                     :location="userDialog.$location.tag"

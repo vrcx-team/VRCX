@@ -179,7 +179,7 @@
     }
 
     const dialogStyle = computed(() => {
-        if (activeType.value !== 'user') {
+        if (activeType.value !== 'user' || !appearanceSettingsStore.displayVRCProfileBackgrounds) {
             return {};
         }
 

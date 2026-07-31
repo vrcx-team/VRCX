@@ -5,6 +5,7 @@
                 <TooltipWrapper side="top" :content="t('dialog.user.info.launch_invite_tooltip')">
                     <Button
                         class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                        :style="buttonStyle"
                         size="icon-sm"
                         variant="outline"
                         :ariaLabel="t('dialog.user.info.launch_invite_tooltip')"
@@ -20,6 +21,7 @@
                     :content="t('dialog.user.info.self_invite_tooltip')">
                     <Button
                         class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                        :style="buttonStyle"
                         size="icon-sm"
                         variant="outline"
                         :ariaLabel="t('dialog.user.info.self_invite_tooltip')"
@@ -30,6 +32,7 @@
                 <TooltipWrapper v-else side="top" :content="t('dialog.user.info.open_in_vrchat_tooltip')">
                     <Button
                         class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                        :style="buttonStyle"
                         size="icon-sm"
                         variant="outline"
                         :ariaLabel="t('dialog.user.info.open_in_vrchat_tooltip')"
@@ -38,6 +41,7 @@
                     </Button>
                     <Button
                         class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                        :style="buttonStyle"
                         size="icon-sm"
                         variant="outline"
                         :ariaLabel="t('dialog.user.info.open_in_vrchat_tooltip')"
@@ -50,6 +54,7 @@
             <TooltipWrapper v-if="showRefreshButton" side="top" :content="refreshTooltip">
                 <Button
                     class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                    :style="buttonStyle"
                     size="icon"
                     variant="outline"
                     :ariaLabel="t('common.actions.refresh')"
@@ -60,6 +65,7 @@
             <TooltipWrapper v-if="showHistoryButton" side="top" :content="historyTooltip">
                 <Button
                     class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
+                    :style="buttonStyle"
                     size="icon-sm"
                     variant="outline"
                     :ariaLabel="t('dialog.social_status.history')"
@@ -317,6 +323,10 @@
         onHistory: {
             type: Function,
             default: null
+        },
+        buttonStyle: {
+            type: Object,
+            default: () => ({})
         },
         class: { type: null, required: false }
     });

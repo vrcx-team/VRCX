@@ -4,8 +4,8 @@ import { languageMappings } from '../constants';
 import { removeEmojis } from './base/string';
 
 const THEME_COLOR_LIMITS = Object.freeze({
-    darkMinLuminance: 0.42,
-    lightMaxLuminance: 0.74
+    darkMinLuminance: 0.016,
+    lightMaxLuminance: 0.93
 });
 
 /**
@@ -169,6 +169,27 @@ function getReadableProfileThemeColor(colorValue, fallback, isDarkMode) {
         }
     }
     return rgbToHex(rgb);
+}
+
+/**
+ * @param {string} colorValue
+ * @returns {string}
+ */
+function invertHexColor(colorValue) {
+    const normalized = normalizeProfileHex(colorValue);
+    if (!normalized) {
+        return colorValue;
+    }
+    const rgb = hexToRgb(normalized);
+    if (!rgb) {
+        return colorValue;
+    }
+    const invertedRgb = {
+        r: 255 - rgb.r,
+        g: 255 - rgb.g,
+        b: 255 - rgb.b
+    };
+    return rgbToHex(invertedRgb);
 }
 
 /**
@@ -430,6 +451,7 @@ export {
     languageClass,
     getNameColour,
     getReadableProfileThemeColor,
+    invertHexColor,
     removeEmojis,
     userStatusClass,
     statusClass,

@@ -63,7 +63,7 @@ export const useAppearanceSettingsStore = defineStore(
         const displayVRCPlusIconsAsAvatar = ref(false);
         const displayVRCProfileThemes = ref(false);
         const displayVRCProfileBackgrounds = ref(false);
-        const profileBackgroundOpacity = ref(0.2);
+        const profileBackgroundOpacity = ref(0.5);
         const hideNicknames = ref(false);
         const showInstanceIdInLocation = ref(false);
         const isAgeGatedInstancesVisible = ref(false);
@@ -197,7 +197,7 @@ export const useAppearanceSettingsStore = defineStore(
                     'VRCX_displayVRCProfileBackgrounds',
                     false
                 ),
-                configRepository.getFloat('VRCX_profileBackgroundOpacity', 0.2),
+                configRepository.getFloat('VRCX_profileBackgroundOpacity', 0.5),
                 configRepository.getBool('VRCX_hideNicknames', false),
                 configRepository.getBool(
                     'VRCX_showInstanceIdInLocation',

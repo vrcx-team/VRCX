@@ -1,5 +1,6 @@
 <template>
-    <div class="flex h-full min-h-0 min-w-0 flex-col overflow-y-auto overflow-x-hidden p-2 rounded-xl bg-muted/80">
+    <div
+        class="flex h-full min-h-0 min-w-0 flex-col overflow-y-auto overflow-x-hidden p-2 rounded-xl bg-(--profile-card)/80">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="display: flex; align-items: center">
                 <Button
@@ -70,7 +71,7 @@
         <div
             v-show="filteredEventCount > 0"
             ref="activityChartRef"
-            class="min-w-0 overflow-hidden"
+            class="min-w-0"
             style="width: 100%; height: 240px"
             @contextmenu.prevent="onChartRightClick" />
 
@@ -136,7 +137,7 @@
             <div
                 v-show="hasOverlapData || isOverlapLoadingVisible"
                 ref="overlapChartRef"
-                class="min-w-0 overflow-hidden"
+                class="min-w-0"
                 style="width: 100%; height: 240px"
                 @contextmenu.prevent="onOverlapChartRightClick" />
 
@@ -199,7 +200,7 @@
                     v-for="(world, index) in sortedTopWorlds"
                     :key="world.worldId"
                     type="button"
-                    class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent cursor-pointer"
+                    class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent/50 cursor-pointer"
                     :class="index === 0 ? 'bg-primary/4' : ''"
                     @click="openWorld(world.worldId)">
                     <span
