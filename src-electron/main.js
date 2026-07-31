@@ -38,7 +38,7 @@ if (!isDotNetInstalled()) {
     app.whenReady().then(() => {
         dialog.showErrorBox(
             'VRCX',
-            'Please install .NET 9.0 Runtime "dotnet-runtime-9.0" to run VRCX.'
+            'Please install .NET 10.0 Runtime "dotnet-runtime-10.0" to run VRCX.'
         );
         app.quit();
     });
@@ -844,7 +844,7 @@ function isDotNetInstalled() {
         console.error('Error checking .NET runtimes:', result.error);
         return false;
     }
-    return result.stdout?.includes('.NETCore.App 9.0');
+    return result.stdout?.includes('.NETCore.App 10.0');
 }
 
 function tryCopyFromWinePrefix() {
