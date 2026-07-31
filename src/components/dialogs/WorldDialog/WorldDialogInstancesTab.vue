@@ -22,12 +22,12 @@
                 <div style="margin: 6px 0">
                     <div class="flex items-center">
                         <LocationWorld
-                            class="text-sm"
+                            class="text-sm mr-2"
                             :locationobject="room.$location"
                             :currentuserid="currentUser.id"
                             :worlddialogshortname="worldDialog.$location.shortName" />
                         <InstanceActionBar
-                            class="ml-2 text-sm"
+                            class="text-sm"
                             :location="room.$location.tag"
                             :launch-location="room.tag"
                             :instance-location="room.tag"

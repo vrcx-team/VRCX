@@ -23,9 +23,9 @@
             <div style="margin: 6px 0" class="flex items-center">
                 <Location
                     :location="room.tag"
-                    class="text-sm text-muted-foreground rounded-full border border-muted-foreground py-0.5 px-2" />
+                    class="text-sm text-muted-foreground rounded-full border py-0.5 px-2 mr-2" />
                 <InstanceActionBar
-                    class="ml-2 text-sm"
+                    class="text-sm"
                     :location="room.tag"
                     :currentlocation="lastLocation.location"
                     :instance="room.ref"
