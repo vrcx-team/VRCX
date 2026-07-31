@@ -216,7 +216,7 @@
                     v-for="item in userDialog.ref.$languages"
                     :key="item.key"
                     variant="outline"
-                    class="h-5 px-1.5 inline-flex items-center gap-1 text-[11px] leading-none">
+                    class="h-5 px-1.5 inline-flex items-center gap-1 text-[11px] leading-none border-muted-foreground">
                     <span class="flags inline-block shrink-0 self-center" :class="languageClass(item.key)"></span>
                     <span class="inline-flex items-center leading-none">{{ item.value }} ({{ item.key }})</span>
                 </Badge>

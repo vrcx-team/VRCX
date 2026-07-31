@@ -23,7 +23,7 @@
             <div style="margin: 6px 0" class="flex items-center">
                 <Location
                     :location="room.tag"
-                    class="text-sm text-muted-foreground rounded-full border border-muted-foreground/10 py-0.5 px-2" />
+                    class="text-sm text-muted-foreground rounded-full border border-muted-foreground py-0.5 px-2" />
                 <InstanceActionBar
                     class="ml-2 text-sm"
                     :location="room.tag"

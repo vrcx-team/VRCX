@@ -2,7 +2,7 @@
     <template v-if="isFriendOnline(userDialog.friend) || currentUser.id === userDialog.id">
         <div class="flex flex-col gap-2.5 mb-2.5">
             <div class="rounded-xl bg-muted/80 p-3">
-                <div class="flex items-center justify-between mb-2 border-b border-background-muted">
+                <div class="flex items-center justify-between mb-2 border-b border-border">
                     <span
                         class="text-[10px] font-bold uppercase tracking-wide"
                         :style="{ color: userDialog.theme.subtextColor }">
@@ -38,11 +38,11 @@
                             >
                             <div class="flex gap-1.5">
                                 <LocationWorld
-                                    class="text-sm inline-flex w-fit max-w-full"
+                                    class="text-sm inline-flex w-fit max-w-full border-muted-foreground"
                                     :locationobject="userDialog.$location"
                                     :currentuserid="currentUser.id" />
                                 <InstanceActionBar
-                                    class="text-sm inline-flex w-fit max-w-full"
+                                    class="text-sm inline-flex w-fit max-w-full border-muted-foreground"
                                     :showButtons="false"
                                     :showInstanceInfo="true"
                                     :location="userDialog.$location.tag"

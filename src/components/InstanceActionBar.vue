@@ -71,7 +71,12 @@
 
         <div
             v-if="showInstanceInfo"
-            class="flex items-center gap-1.5 text-muted-foreground rounded-full border border-muted-foreground/10 py-0.5 px-2">
+            :class="
+                cn(
+                    'flex items-center gap-1.5 text-muted-foreground rounded-full border border-muted-foreground/10 py-0.5 px-2',
+                    props.class
+                )
+            ">
             <TooltipWrapper v-if="instanceInfoState.isValidInstance" side="top">
                 <template #content>
                     <div class="flex flex-col flex-wrap items-center gap-x-6 gap-y-2">
@@ -312,7 +317,8 @@
         onHistory: {
             type: Function,
             default: null
-        }
+        },
+        class: { type: null, required: false }
     });
 
     const resolvedLaunchLocation = computed(() => props.launchLocation || props.location);
