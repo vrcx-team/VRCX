@@ -55,7 +55,7 @@
 
                 <template #JSON>
                     <DialogJsonTab
-                        class="rounded-xl bg-muted/80 p-2"
+                        class="rounded-xl bg-(--profile-card)/80 p-2"
                         :tree-data="treeData"
                         :tree-data-key="treeData?.id"
                         :dialog-id="userDialog.id"

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex h-full min-h-0 flex-col overflow-hidden p-2 rounded-xl bg-muted/80">
+    <div class="flex h-full min-h-0 flex-col overflow-hidden p-2 rounded-xl bg-(--profile-card)/80">
         <div class="shrink-0" style="display: flex; align-items: center; justify-content: space-between">
             <div style="display: flex; align-items: center">
                 <Button

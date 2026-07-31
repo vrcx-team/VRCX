@@ -94,7 +94,7 @@
             'relative flex w-full items-center gap-1 border-b border-border',
             variant.value === 'pill' ? 'rounded-full bg-muted p-1' : '',
             sticky.value ? 'sticky top-0 z-10 bg-background' : '',
-            background.value ? 'pl-2 rounded-xl bg-muted/80 overflow-hidden' : ''
+            background.value ? 'pl-2 rounded-xl bg-(--profile-card)/80 overflow-hidden' : ''
         ].join(' ');
     });
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <div class="rounded-xl bg-muted/80 p-2">
+    <div class="rounded-xl bg-(--profile-card)/80 p-2">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="display: flex; align-items: center">
                 <Button
