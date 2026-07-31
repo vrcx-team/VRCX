@@ -5,9 +5,9 @@
             "type": "shell",
             "label": "build-all",
             "command": "${workspaceFolder}/build-scripts/build-all.ps1",
+            "args": ["-NoCI"],
             "options": { "cwd": "${workspaceFolder}/build-scripts" },
-            "problemMatcher": [],
-            "dependsOn": ["Toggle OxLint"]
+            "problemMatcher": []
         },
         {
             "type": "shell",
@@ -15,13 +15,7 @@
             "command": "Remove-Item",
             "args": ["-Path", "${workspaceFolder}/build/*", "-Recurse"],
             "problemMatcher": []
-        },
-        {
-            "label": "Toggle OxLint",
-            "detail": "Toggles the OxLint server; to stop it to release file locks, or restart it.",
-            "type": "shell",
-            "command": "if (Get-Command oxlint -ErrorAction SilentlyContinue) { code --command oxc.toggleEnable --wait; Sleep(500) }",
-            "problemMatcher": []
         }
     ]
 }
+

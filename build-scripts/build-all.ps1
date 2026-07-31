@@ -1,6 +1,24 @@
 #!/usr/bin/env pwsh
 
+using namespace System.Runtime.InteropServices
+
+[CmdletBinding()]
+param (
+    [Parameter()]
+    [Switch]
+    $NoCI,
+    [Parameter()]
+    [Switch]
+    $BuildArm64
+)
+
 $ErrorActionPreference = "Stop"
+
+$IsArm64 = [RuntimeInformation]::ProcessArchitecture -eq [Architecture]::Arm64
+
+if ($IsArm64) {
+    $BuildArm64 = $true
+}
 
 cd "$PSScriptRoot/.."
 
@@ -13,42 +31,47 @@ $SetupName = "VRCX_" + $Date + "_Setup.exe"
 Write-Host "Building .Net..." -ForegroundColor Green
 
 if ($IsWindows) {
-    dotnet build Dotnet\VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
+    dotnet build Dotnet\VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -t:"Restore;Clean;Build" -maxcpucount --self-contained
 }
 
 if ($IsLinux -or $IsMacOS) {
-    dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64
-
-    # dotnet build 'Dotnet/VRCX-Electron-arm64.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64
+    if ($BuildArm64) {
+        dotnet build 'Dotnet/VRCX-Electron-arm64.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -t:"Restore;Clean;Build" -maxcpucount --arch arm64
+    }
+    else {
+        dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -t:"Restore;Clean;Build" -maxcpucount --arch x64
+    }
 }
 
 Write-Host "Building Node.js..." -ForegroundColor Green
 Remove-Item -Path "node_modules" -Force -Recurse -ErrorAction SilentlyContinue
-npm ci --loglevel=error
-$ErrorActionPreference = "Continue"
 
+if ($NoCI) {
+    npm install --package-lock-only=false --no-save
+}
+else {
+    npm ci --loglevel=error
+}
+
+$ErrorActionPreference = "Continue"
 
 if ($IsWindows) {
     npm run prod
 }
-if ($IsLinux) {
-    npm run prod-linux
-    # npm run prod-linux --arch=arm64
-
-    npm run build-electron
-    # npm run build-electron-arm64
-} 
-if ($IsMacOS) {
-    npm run prod-linux --arch=x64
-    # npm run prod-linux --arch=arm64
-
-    npm run build-electron
-    # npm run build-electron-arm64
+if ($IsLinux -or $IsMacOS) {
+    if ($BuildArm64) {
+        npm run prod-linux
+        npm run build-electron-arm64
+    }
+    else {
+        npm run prod-linux
+        npm run build-electron
+    }
 }
 
+$ErrorActionPreference = "Stop"
 
 if ($IsWindows) {
-    $ErrorActionPreference = "Stop"
     Remove-Item -Path "build\Cef\html" -Force -Recurse -ErrorAction SilentlyContinue
     New-Item -ItemType Junction -Path "$root\build\Cef\html" -Target "$root\build\html"
 
