@@ -3,6 +3,7 @@ import { i18n } from '@/plugins';
 import { formatDateFilter } from '@/shared/utils';
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-vue-next';
+import { TooltipWrapper } from '@/components/ui/tooltip';
 
 const { t } = i18n.global;
 
@@ -133,11 +134,19 @@ export const createColumns = ({
                 column,
                 label: t('dialog.group_member_moderation.notes')
             }),
-        cell: ({ row }) => (
-            <span onClick={(e) => e.stopPropagation()}>
-                {row.original?.managerNotes}
-            </span>
-        )
+        cell: ({ row }) => {
+            const managerNotes = row.original?.managerNotes ?? '';
+            return (
+                <TooltipWrapper content={managerNotes} disabled={!managerNotes}>
+                    <span
+                        class="inline-block max-w-full truncate align-middle"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {managerNotes}
+                    </span>
+                </TooltipWrapper>
+            );
+        }
     },
     {
         accessorKey: 'joinedAt',
