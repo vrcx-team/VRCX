@@ -237,6 +237,13 @@ interface GetCurrentUserResponse extends GetUserResponse {
     steamDetails: object;
     steamId: string;
     temporaryExpiryDate: string | null;
+    twitchDetails: {
+        display_name: string;
+        id: string;
+        login: string;
+        profile_image_url: string;
+    };
+    twitchId: string;
     twoFactorAuthEnabled: boolean;
     twoFactorAuthEnabledDate: string | null;
     unsubscribe: boolean;

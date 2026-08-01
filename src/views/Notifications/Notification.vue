@@ -46,7 +46,8 @@
                                         'moderation.report.closed',
                                         'moderation.contentrestriction',
                                         'instance.closed',
-                                        'economy.alert'
+                                        'economy.alert',
+                                        'twitchdrop.fulfilled'
                                     ]"
                                     :key="type"
                                     :value="type">

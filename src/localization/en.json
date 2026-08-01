@@ -506,6 +506,9 @@
                         "gift": "Gift Received"
                     },
                     "alert": "Economy Alert"
+                },
+                "twitchdrop": {
+                    "fulfilled": "Twitch Drop Fulfilled"
                 }
             }
         },
