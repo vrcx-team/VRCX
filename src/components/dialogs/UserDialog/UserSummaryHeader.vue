@@ -67,6 +67,12 @@
                             class="font-bold cursor-pointer wrap-anywhere"
                             v-text="userDialog.ref.displayName"
                             @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
+                        <TooltipWrapper
+                            v-if="userDialog.publicProfileRef?.isEconomyCreator"
+                            side="top"
+                            :content="t('dialog.user.info.economy_creator')">
+                            <BadgeCheck class="h-3.5 w-3.5 text-[#3b82f6]" />
+                        </TooltipWrapper>
                         <TooltipWrapper v-if="userDialog.ref.pronouns" side="top" :content="t('dialog.user.pronouns')">
                             <span class="x-grey font-mono text-xs" v-text="userDialog.ref.pronouns"></span>
                         </TooltipWrapper>
@@ -423,6 +429,7 @@
 <script setup>
     import {
         Apple,
+        BadgeCheck,
         ChevronDown,
         IdCard,
         Image,
