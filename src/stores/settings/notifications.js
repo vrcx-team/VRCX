@@ -146,7 +146,7 @@ export const useNotificationsSettingsStore = defineStore(
             ] = await Promise.all([
                 configRepository.getString('VRCX_overlayToast', 'Game Running'),
                 configRepository.getBool('VRCX_overlayNotifications', true),
-                configRepository.getBool('openVR'),
+                configRepository.getBool('openVR', false),
                 configRepository.getBool('VRCX_xsNotifications', true),
                 configRepository.getBool('VRCX_ovrtHudNotifications', true),
                 configRepository.getBool('VRCX_ovrtWristNotifications', false),

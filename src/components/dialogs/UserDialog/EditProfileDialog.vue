@@ -996,25 +996,35 @@
         if (D.pronouns !== currentUser.value.pronouns) {
             userPayload.pronouns = D.pronouns;
         }
-        if (D.bio !== currentUser.value.bio) {
-            userPayload.bio = D.bio;
-        }
-        if (!arraysMatch(D.bioLinks, currentUser.value.bioLinks)) {
-            userPayload.bioLinks = D.bioLinks;
-        }
 
         /** @type {Partial<import("../../../types/api/profile").selfProfile>} */
         const profilePayload = {};
-        if (D.bannerColor !== currentUser.value.bannerColor) {
+        if (D.bio !== D.selfProfileRef.bio) {
+            profilePayload.bio = D.bio;
+        }
+        if (!arraysMatch(D.bioLinks, D.selfProfileRef.bioLinks)) {
+            profilePayload.bioLinks = D.bioLinks;
+        }
+        if (D.bannerColor !== D.selfProfileRef.bannerColor) {
             profilePayload.bannerColor = D.bannerColor;
         }
-        if (D.bannerUrl !== currentUser.value.bannerUrl) {
+        if (D.bannerUrl !== D.selfProfileRef.bannerUrl) {
             profilePayload.bannerCustomUrl = D.bannerUrl;
         }
-        if (D.bannerType !== currentUser.value.bannerType) {
+        if (D.bannerType !== D.selfProfileRef.bannerType) {
             profilePayload.bannerType = D.bannerType;
+            if (D.bannerType === 'avatarBanner') {
+                profilePayload.bannerCustomUrl = undefined;
+                profilePayload.bannerColor = undefined;
+            }
+            if (D.bannerType === 'color') {
+                profilePayload.bannerCustomUrl = undefined;
+            }
+            if (D.bannerType === 'customImage') {
+                profilePayload.bannerColor = undefined;
+            }
         }
-        if (D.userIcon !== currentUser.value.userIcon) {
+        if (D.userIcon !== D.selfProfileRef.userIcon) {
             profilePayload.userIcon = D.userIcon;
         }
         if (D.themeId !== D.selfProfileRef.themeId) {
@@ -1040,9 +1050,11 @@
         D.loading = true;
         try {
             if (Object.keys(profilePayload).length) {
+                console.log('Saving profile with payload:', profilePayload);
                 await userRequest.saveProfile(profilePayload);
             }
             if (Object.keys(userPayload).length) {
+                console.log('Saving user with payload:', userPayload);
                 await userRequest.saveCurrentUser(userPayload);
             }
             D.visible = false;

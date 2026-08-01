@@ -836,14 +836,14 @@ export const useUserStore = defineStore('User', () => {
             const ref = args.json;
             D.selfProfileRef = ref;
 
-            D.status = ref.status;
-            D.statusDescription = ref.statusDescription;
+            // D.status = ref.status;
+            // D.statusDescription = ref.statusDescription;
             D.pronouns = ref.pronouns;
             D.bio = ref.bio;
             D.bioLinks = ref.bioLinks.slice();
             D.bannerColor = ref.bannerColor;
             D.bannerUrl = ref.bannerUrl;
-            D.bannerType = ref.bannerType;
+            D.bannerType = ref.bannerType || 'color';
             D.userIcon = ref.userIcon;
 
             D.themes = ref.themes;
