@@ -51,7 +51,6 @@ export const useInviteStore = defineStore('Invite', () => {
 
     const canOpenInstanceInGame = computed(() => {
         return (
-            !LINUX &&
             gameStore.isGameRunning &&
             !advancedSettingsStore.selfInviteOverride
         );
