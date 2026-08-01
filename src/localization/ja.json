@@ -28,7 +28,19 @@
             "d": "日",
             "h": "時間",
             "m": "分",
-            "s": "秒"
+            "s": "秒",
+            "year": "年",
+            "month": "か月",
+            "day": "日",
+            "hour": "時間",
+            "minute": "分",
+            "second": "秒",
+            "years": "年",
+            "months": "か月",
+            "days": "日",
+            "hours": "時間",
+            "minutes": "分",
+            "seconds": "秒"
         },
         "days": {
             "sunday": "日曜日",
@@ -915,7 +927,10 @@
                     "table_density_comfortable": "やや低め",
                     "table_density_compact": "低め",
                     "table_entries_settings": "最大読み込み件数",
-                    "table_entries_settings_description": "表示や検索で読み込む、最大エントリ数を設定します"
+                    "table_entries_settings_description": "表示や検索で読み込む、最大エントリ数を設定します",
+                    "vrc_profile_themes": "VRChat プロフィールテーマ",
+                    "vrc_profile_backgrounds": "VRChat プロフィール背景",
+                    "vrc_profile_backgrounds_opacity": "プロフィール背景の不透明度"
                 },
                 "display": {
                     "header": "表示"
@@ -1360,10 +1375,13 @@
                 "unfriend_success_msg": "フレンドを解除しました。",
                 "logout": "ログアウト",
                 "edit_note_memo": "ノートとメモを編集",
-                "reset_home": "ホームをリセット"
+                "reset_home": "ホームをリセット",
+                "edit_profile": "プロフィールを編集"
             },
             "info": {
                 "header": "情報",
+                "vrcx_info": "VRCX 情報",
+                "vrcx_info_tooltip": "VRCX の情報は正確でない可能性があります",
                 "launch_invite_tooltip": "起動/招待",
                 "self_invite_tooltip": "自分を招待",
                 "open_in_vrchat_tooltip": "VRChat で開く",
@@ -1416,7 +1434,9 @@
                 "open_previous_instance": "前回のインスタンスを開く",
                 "show_mutual_friends": "共通のフレンドを公開",
                 "show_discord_connections": "連携した Discord を公開",
-                "instance_minimum_avatar_performance": "最低アバターパフォーマンスランク"
+                "instance_minimum_avatar_performance": "最低アバターパフォーマンスランク",
+                "instance_role_restricted": "ロール制限",
+                "current_instance": "現在のインスタンス"
             },
             "groups": {
                 "header": "グループ",
@@ -1731,7 +1751,9 @@
                 "moderation_tools": "管理用ツール",
                 "leave": "グループから抜ける",
                 "block": "グループをブロック",
-                "unblock": "グループのブロックを解除"
+                "unblock": "グループのブロックを解除",
+                "unsubscribe_event": "イベントお知らせの受信を停止",
+                "subscribe_event": "イベントお知らせを受け取る"
             },
             "info": {
                 "header": "情報",
@@ -1827,6 +1849,24 @@
             "pronouns_placeholder": "代名詞を入力してください。",
             "update": "更新"
         },
+        "edit_profile": {
+            "banner": "バナー",
+            "banner_color": "バナーカラー",
+            "banner_type_color": "カラー",
+            "banner_type_avatar_banner": "アバター画像",
+            "banner_type_custom_image": "カスタム画像",
+            "icon": "アイコン",
+            "profile_theme": "プロフィールテーマ",
+            "theme_name_placeholder": "テーマ名",
+            "create_theme": "テーマを作成",
+            "delete_theme": "テーマを削除",
+            "profile_background": "プロフィール背景",
+            "profile_background_type_none": "なし",
+            "profile_background_type_image": "画像",
+            "profile_background_type_gradient": "グラデーション",
+            "gradient_top": "グラデーション (上)",
+            "gradient_bottom": "グラデーション (下)"
+        },
         "new_instance": {
             "header": "新しいインスタンス",
             "access_type": "アクセスタイプ",
@@ -1852,6 +1892,7 @@
             "content_drones": "ドローン",
             "content_items": "アイテム",
             "content_third_person": "三人称視点",
+            "content_prop_movement": "プレイヤーの動きを変更する小道具",
             "world_id": "ワールドID",
             "instance_id": "インスタンスID",
             "instance_id_placeholder": "ランダム",
@@ -2345,7 +2386,8 @@
                 "description": "このイベントについて",
                 "export_to_calendar": "カレンダーにエクスポート",
                 "download_ics": ".ics ファイルをダウンロード",
-                "copied_event_link": "イベント URL をクリップボードにコピー"
+                "copied_event_link": "イベント URL をクリップボードにコピー",
+                "repeating_event_tooltip": "繰り返しイベント"
             },
             "featured_events": "注目のイベント"
         },
@@ -2733,7 +2775,8 @@
             "joined": "グループに参加しました",
             "join_request_sent": "グループ参加リクエストが送信されました",
             "visibility_updated": "グループの可視性が更新されました",
-            "subscription_updated": "グループの購読が更新されました"
+            "subscription_updated": "グループの通知設定を更新しました",
+            "event_announcement_updated": "グループイベントの通知設定を更新しました"
         },
         "invite": {
             "self_sent": "自分を招待しました",
@@ -2832,6 +2875,8 @@
         "trust_level": "トラストレベルが {trustLevel} になりました",
         "display_name": "の表示名が {displayName} に変更されました",
         "group_announcement_title": "グループのお知らせ",
+        "group_event_created_title": "グループイベントが作成されました",
+        "group_event_starting_title": "グループイベントが開始されます",
         "group_informative_title": "グループのインフォメーション",
         "group_invite_title": "グループへの招待",
         "group_join_request_title": "グループ参加リクエスト",
@@ -3113,6 +3158,18 @@
                         "quick_search": {
                             "title": "クイック検索",
                             "description": "ユーザー、ワールド、およびアバターをすぐに検索できます。"
+                        },
+                        "local_favorite_groups": {
+                            "title": "ローカルお気に入り",
+                            "description": "VRChat の制限を超えて、無制限のカスタムフレンドグループを作成できます。"
+                        },
+                        "auto_status": {
+                            "title": "自動ステータス変更",
+                            "description": "フレンドのいる状況に基づいて、グループでフィルタリングしてステータスを自動切り替え。"
+                        },
+                        "right_click_menus": {
+                            "title": "コンテキストメニュー",
+                            "description": "フレンド、テーブル、ヘッダーを右クリックしてクイックアクションを実行。"
                         }
                     }
                 }
