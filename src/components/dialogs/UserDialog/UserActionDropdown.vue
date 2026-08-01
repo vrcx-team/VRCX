@@ -6,7 +6,7 @@
                 side="top"
                 :content="t('dialog.user.actions.favorites_tooltip')">
                 <Button
-                    class="rounded-full"
+                    class="rounded-full border-muted-foreground/30!"
                     :style="{
                         color:
                             userDialog.theme.buttonColor === 'var(--primary)'
@@ -22,7 +22,7 @@
             </TooltipWrapper>
             <TooltipWrapper v-else side="top" :content="t('dialog.user.actions.favorites_tooltip')">
                 <Button
-                    class="rounded-full"
+                    class="rounded-full border-muted-foreground/30!"
                     :style="{
                         color:
                             userDialog.theme.iconColor === 'var(--muted-foreground)'
@@ -43,7 +43,7 @@
                     <Button
                         :variant="hasRisk ? 'destructive' : 'outline'"
                         size="icon-lg"
-                        class="rounded-full"
+                        class="rounded-full border-muted-foreground/30!"
                         :style="{
                             color:
                                 userDialog.theme.iconColor === 'var(--muted-foreground)'

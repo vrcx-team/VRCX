@@ -1,6 +1,5 @@
 <template>
-    <div
-        class="flex h-full min-h-0 min-w-0 flex-col overflow-y-auto overflow-x-hidden p-2 rounded-xl bg-(--profile-card)/80">
+    <div class="flex h-full min-h-0 min-w-0 flex-col overflow-hidden p-2 rounded-xl bg-(--profile-card)/80">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="display: flex; align-items: center">
                 <Button
@@ -41,211 +40,216 @@
             </div>
         </div>
 
-        <div v-if="isSelf && !fullCacheReady" class="text-xs text-muted-foreground mb-1">
-            {{ t('dialog.user.activity.building_cache') }}
-        </div>
-
-        <div v-if="peakDayText || peakTimeText" class="mt-2 mb-1 text-sm flex gap-4">
-            <div v-if="peakDayText">
-                <span class="text-muted-foreground">{{ t('dialog.user.activity.most_active_day') }}</span>
-                <span class="font-medium ml-1">{{ peakDayText }}</span>
-            </div>
-            <div v-if="peakTimeText">
-                <span class="text-muted-foreground">{{ t('dialog.user.activity.most_active_time') }}</span>
-                <span class="font-medium ml-1">{{ peakTimeText }}</span>
-            </div>
-        </div>
-
-        <div
-            v-if="isLoading && filteredEventCount === 0"
-            class="flex flex-col items-center justify-center flex-1 mt-8 gap-2">
-            <Spinner class="h-5 w-5" />
-            <span class="text-sm text-muted-foreground">{{ t('dialog.user.activity.preparing_data') }}</span>
-            <span class="text-xs text-muted-foreground">{{ t('dialog.user.activity.preparing_data_hint') }}</span>
-        </div>
-
-        <div v-if="!isLoading && filteredEventCount === 0" class="flex items-center justify-center flex-1 mt-8">
-            <span class="text-muted-foreground text-sm">{{ t('dialog.user.activity.no_data_in_period') }}</span>
-        </div>
-
-        <div
-            v-show="filteredEventCount > 0"
-            ref="activityChartRef"
-            class="min-w-0"
-            style="width: 100%; height: 240px"
-            @contextmenu.prevent="onChartRightClick" />
-
-        <DailyPlaytime v-if="isSelf" :sessions="cachedSessions" :range-days="currentRangeDays" />
-
-        <div v-if="!isSelf" v-show="filteredEventCount > 0" class="mt-4 border-t border-border pt-3">
-            <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium">{{ t('dialog.user.activity.overlap.header') }}</span>
-                    <Spinner v-if="isOverlapLoadingVisible" class="h-3.5 w-3.5" />
-                </div>
-                <div class="flex items-center gap-1.5 shrink-0">
-                    <Switch :model-value="excludeHoursEnabled" class="scale-75" @update:model-value="onExcludeToggle" />
-                    <span class="text-sm text-muted-foreground whitespace-nowrap">
-                        {{ t('dialog.user.activity.overlap.exclude_hours') }}
-                    </span>
-                    <Select v-model="excludeStartHour" @update:model-value="onExcludeRangeChange">
-                        <SelectTrigger size="sm" class="w-[78px] h-6 text-sm px-2" @click.stop>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem v-for="h in 24" :key="h - 1" :value="String(h - 1)">
-                                {{ String(h - 1).padStart(2, '0') }}:00
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <span class="text-xs text-muted-foreground">–</span>
-                    <Select v-model="excludeEndHour" @update:model-value="onExcludeRangeChange">
-                        <SelectTrigger size="sm" class="w-[78px] h-6 text-sm px-2" @click.stop>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem v-for="h in 24" :key="h - 1" :value="String(h - 1)">
-                                {{ String(h - 1).padStart(2, '0') }}:00
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
+        <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+            <div v-if="isSelf && !fullCacheReady" class="text-xs text-muted-foreground mb-1">
+                {{ t('dialog.user.activity.building_cache') }}
             </div>
 
-            <div v-if="!isOverlapLoadingVisible && hasOverlapData" class="flex flex-col gap-1 mb-2">
-                <div class="flex items-center gap-2">
-                    <span
-                        class="text-sm font-medium"
-                        :class="overlapPercent > 0 ? 'text-accent-foreground' : 'text-muted-foreground'">
-                        {{ overlapPercent }}%
-                    </span>
-                    <div class="flex-1 h-2 rounded-full bg-muted overflow-hidden">
-                        <div
-                            class="h-full rounded-full transition-all duration-500"
-                            :style="{
-                                width: `${overlapPercent}%`,
-                                backgroundColor: isDarkMode ? 'hsl(260, 60%, 55%)' : 'hsl(260, 55%, 50%)'
-                            }" />
-                    </div>
+            <div v-if="peakDayText || peakTimeText" class="mt-2 mb-1 text-sm flex gap-4">
+                <div v-if="peakDayText">
+                    <span class="text-muted-foreground">{{ t('dialog.user.activity.most_active_day') }}</span>
+                    <span class="font-medium ml-1">{{ peakDayText }}</span>
                 </div>
-                <div v-if="bestOverlapTime" class="text-sm">
-                    <span class="text-muted-foreground">{{ t('dialog.user.activity.overlap.peak_overlap') }}</span>
-                    <span class="font-medium ml-1">{{ bestOverlapTime }}</span>
+                <div v-if="peakTimeText">
+                    <span class="text-muted-foreground">{{ t('dialog.user.activity.most_active_time') }}</span>
+                    <span class="font-medium ml-1">{{ peakTimeText }}</span>
                 </div>
             </div>
 
             <div
-                v-show="hasOverlapData || isOverlapLoadingVisible"
-                ref="overlapChartRef"
+                v-if="isLoading && filteredEventCount === 0"
+                class="flex flex-col items-center justify-center flex-1 mt-8 gap-2">
+                <Spinner class="h-5 w-5" />
+                <span class="text-sm text-muted-foreground">{{ t('dialog.user.activity.preparing_data') }}</span>
+                <span class="text-xs text-muted-foreground">{{ t('dialog.user.activity.preparing_data_hint') }}</span>
+            </div>
+
+            <div v-if="!isLoading && filteredEventCount === 0" class="flex items-center justify-center flex-1 mt-8">
+                <span class="text-muted-foreground text-sm">{{ t('dialog.user.activity.no_data_in_period') }}</span>
+            </div>
+
+            <div
+                v-show="filteredEventCount > 0"
+                ref="activityChartRef"
                 class="min-w-0"
                 style="width: 100%; height: 240px"
-                @contextmenu.prevent="onOverlapChartRightClick" />
+                @contextmenu.prevent="onChartRightClick" />
 
-            <div v-if="!isOverlapLoading && !hasOverlapData" class="text-sm text-muted-foreground py-2">
-                {{ t('dialog.user.activity.overlap.no_data') }}
-            </div>
-        </div>
+            <DailyPlaytime v-if="isSelf" :sessions="cachedSessions" :range-days="currentRangeDays" />
 
-        <div v-if="isSelf && filteredEventCount > 0" class="mt-4 border-t border-border pt-3">
-            <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium">
-                        {{ t('dialog.user.activity.most_visited_worlds.header') }}
-                    </span>
-                    <Spinner v-if="topWorldsLoadingVisible" class="h-3.5 w-3.5" />
-                </div>
-                <div class="flex items-center gap-4">
-                    <div
-                        v-if="isSelf && currentHomeWorldId"
-                        class="flex items-center gap-1.5 text-sm text-muted-foreground">
-                        <Switch
-                            :model-value="excludeHomeWorldEnabled"
-                            class="scale-75"
-                            @update:model-value="onExcludeHomeWorldToggle" />
-                        <span class="whitespace-nowrap">
-                            {{ t('dialog.user.activity.most_visited_worlds.exclude_home_world') }}
-                        </span>
+            <div v-if="!isSelf" v-show="filteredEventCount > 0" class="mt-4 border-t border-border pt-3">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium">{{ t('dialog.user.activity.overlap.header') }}</span>
+                        <Spinner v-if="isOverlapLoadingVisible" class="h-3.5 w-3.5" />
                     </div>
-                    <div v-if="topWorlds.length > 0" class="flex items-center gap-2">
-                        <span class="text-muted-foreground text-sm">{{ t('common.sort_by') }}</span>
-                        <Select v-model="topWorldsSortBy" :disabled="topWorldsLoading">
-                            <SelectTrigger size="sm" class="w-32" @click.stop>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <Switch
+                            :model-value="excludeHoursEnabled"
+                            class="scale-75"
+                            @update:model-value="onExcludeToggle" />
+                        <span class="text-sm text-muted-foreground whitespace-nowrap">
+                            {{ t('dialog.user.activity.overlap.exclude_hours') }}
+                        </span>
+                        <Select v-model="excludeStartHour" @update:model-value="onExcludeRangeChange">
+                            <SelectTrigger size="sm" class="w-[78px] h-6 text-sm px-2" @click.stop>
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="time">{{
-                                    t('dialog.user.activity.most_visited_worlds.sort_by_time')
-                                }}</SelectItem>
-                                <SelectItem value="count">{{
-                                    t('dialog.user.activity.most_visited_worlds.sort_by_count')
-                                }}</SelectItem>
+                                <SelectItem v-for="h in 24" :key="h - 1" :value="String(h - 1)">
+                                    {{ String(h - 1).padStart(2, '0') }}:00
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <span class="text-xs text-muted-foreground">–</span>
+                        <Select v-model="excludeEndHour" @update:model-value="onExcludeRangeChange">
+                            <SelectTrigger size="sm" class="w-[78px] h-6 text-sm px-2" @click.stop>
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="h in 24" :key="h - 1" :value="String(h - 1)">
+                                    {{ String(h - 1).padStart(2, '0') }}:00
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                 </div>
-            </div>
-            <div
-                v-if="topWorldsLoadingVisible && topWorlds.length === 0"
-                class="flex items-center gap-2 text-sm text-muted-foreground py-2">
-                <Spinner class="h-4 w-4" />
-                <span>{{ t('dialog.user.activity.most_visited_worlds.loading') }}</span>
-            </div>
-            <div
-                v-else-if="topWorlds.length === 0 && !isLoading && !topWorldsLoading"
-                class="text-sm text-muted-foreground py-2">
-                {{ t('dialog.user.activity.no_data_in_period') }}
-            </div>
-            <div v-else class="flex flex-col gap-0.5">
-                <button
-                    v-for="(world, index) in sortedTopWorlds"
-                    :key="world.worldId"
-                    type="button"
-                    class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent/50 cursor-pointer"
-                    :class="index === 0 ? 'bg-primary/4' : ''"
-                    @click="openWorld(world.worldId)">
-                    <span
-                        class="mt-1 w-5 shrink-0 text-right font-mono text-xs font-bold"
-                        :class="index === 0 ? 'text-primary' : 'text-muted-foreground'">
-                        #{{ index + 1 }}
-                    </span>
-                    <Avatar class="rounded-sm size-8 mt-0.5 shrink-0">
-                        <AvatarImage
-                            v-if="getWorldThumbnail(world.worldId)"
-                            :src="getWorldThumbnail(world.worldId)"
-                            loading="lazy"
-                            decoding="async"
-                            class="rounded-sm object-cover" />
-                        <AvatarFallback class="rounded-sm">
-                            <ImageIcon class="size-3.5 text-muted-foreground" />
-                        </AvatarFallback>
-                    </Avatar>
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-baseline justify-between gap-2">
-                            <span class="truncate text-sm font-medium">{{ world.worldName }}</span>
-                            <span class="shrink-0 text-xs tabular-nums text-muted-foreground">
-                                {{
-                                    topWorldsSortBy === 'time'
-                                        ? formatWorldTime(world.totalTime)
-                                        : t('dialog.user.activity.most_visited_worlds.visit_count_label', {
-                                              count: world.visitCount
-                                          })
-                                }}
-                            </span>
-                        </div>
-                        <div
-                            class="mt-1 h-1.5 w-full overflow-hidden rounded-full"
-                            :class="isDarkMode ? 'bg-white/8' : 'bg-black/6'">
+
+                <div v-if="!isOverlapLoadingVisible && hasOverlapData" class="flex flex-col gap-1 mb-2">
+                    <div class="flex items-center gap-2">
+                        <span
+                            class="text-sm font-medium"
+                            :class="overlapPercent > 0 ? 'text-accent-foreground' : 'text-muted-foreground'">
+                            {{ overlapPercent }}%
+                        </span>
+                        <div class="flex-1 h-2 rounded-full bg-muted overflow-hidden">
                             <div
                                 class="h-full rounded-full transition-all duration-500"
-                                :class="isDarkMode ? 'bg-white/45' : 'bg-black/25'"
                                 :style="{
-                                    width: getTopWorldBarWidth(
-                                        topWorldsSortBy === 'time' ? world.totalTime : world.visitCount
-                                    )
+                                    width: `${overlapPercent}%`,
+                                    backgroundColor: isDarkMode ? 'hsl(260, 60%, 55%)' : 'hsl(260, 55%, 50%)'
                                 }" />
                         </div>
                     </div>
-                </button>
+                    <div v-if="bestOverlapTime" class="text-sm">
+                        <span class="text-muted-foreground">{{ t('dialog.user.activity.overlap.peak_overlap') }}</span>
+                        <span class="font-medium ml-1">{{ bestOverlapTime }}</span>
+                    </div>
+                </div>
+
+                <div
+                    v-show="hasOverlapData || isOverlapLoadingVisible"
+                    ref="overlapChartRef"
+                    class="min-w-0"
+                    style="width: 100%; height: 240px"
+                    @contextmenu.prevent="onOverlapChartRightClick" />
+
+                <div v-if="!isOverlapLoading && !hasOverlapData" class="text-sm text-muted-foreground py-2">
+                    {{ t('dialog.user.activity.overlap.no_data') }}
+                </div>
+            </div>
+
+            <div v-if="isSelf && filteredEventCount > 0" class="mt-4 border-t border-border pt-3">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium">
+                            {{ t('dialog.user.activity.most_visited_worlds.header') }}
+                        </span>
+                        <Spinner v-if="topWorldsLoadingVisible" class="h-3.5 w-3.5" />
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div
+                            v-if="isSelf && currentHomeWorldId"
+                            class="flex items-center gap-1.5 text-sm text-muted-foreground">
+                            <Switch
+                                :model-value="excludeHomeWorldEnabled"
+                                class="scale-75"
+                                @update:model-value="onExcludeHomeWorldToggle" />
+                            <span class="whitespace-nowrap">
+                                {{ t('dialog.user.activity.most_visited_worlds.exclude_home_world') }}
+                            </span>
+                        </div>
+                        <div v-if="topWorlds.length > 0" class="flex items-center gap-2">
+                            <span class="text-muted-foreground text-sm">{{ t('common.sort_by') }}</span>
+                            <Select v-model="topWorldsSortBy" :disabled="topWorldsLoading">
+                                <SelectTrigger size="sm" class="w-32" @click.stop>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="time">{{
+                                        t('dialog.user.activity.most_visited_worlds.sort_by_time')
+                                    }}</SelectItem>
+                                    <SelectItem value="count">{{
+                                        t('dialog.user.activity.most_visited_worlds.sort_by_count')
+                                    }}</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    v-if="topWorldsLoadingVisible && topWorlds.length === 0"
+                    class="flex items-center gap-2 text-sm text-muted-foreground py-2">
+                    <Spinner class="h-4 w-4" />
+                    <span>{{ t('dialog.user.activity.most_visited_worlds.loading') }}</span>
+                </div>
+                <div
+                    v-else-if="topWorlds.length === 0 && !isLoading && !topWorldsLoading"
+                    class="text-sm text-muted-foreground py-2">
+                    {{ t('dialog.user.activity.no_data_in_period') }}
+                </div>
+                <div v-else class="flex flex-col gap-0.5">
+                    <button
+                        v-for="(world, index) in sortedTopWorlds"
+                        :key="world.worldId"
+                        type="button"
+                        class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent/50 cursor-pointer"
+                        :class="index === 0 ? 'bg-primary/4' : ''"
+                        @click="openWorld(world.worldId)">
+                        <span
+                            class="mt-1 w-5 shrink-0 text-right font-mono text-xs font-bold"
+                            :class="index === 0 ? 'text-primary' : 'text-muted-foreground'">
+                            #{{ index + 1 }}
+                        </span>
+                        <Avatar class="rounded-sm size-8 mt-0.5 shrink-0">
+                            <AvatarImage
+                                v-if="getWorldThumbnail(world.worldId)"
+                                :src="getWorldThumbnail(world.worldId)"
+                                loading="lazy"
+                                decoding="async"
+                                class="rounded-sm object-cover" />
+                            <AvatarFallback class="rounded-sm">
+                                <ImageIcon class="size-3.5 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-baseline justify-between gap-2">
+                                <span class="truncate text-sm font-medium">{{ world.worldName }}</span>
+                                <span class="shrink-0 text-xs tabular-nums text-muted-foreground">
+                                    {{
+                                        topWorldsSortBy === 'time'
+                                            ? formatWorldTime(world.totalTime)
+                                            : t('dialog.user.activity.most_visited_worlds.visit_count_label', {
+                                                  count: world.visitCount
+                                              })
+                                    }}
+                                </span>
+                            </div>
+                            <div
+                                class="mt-1 h-1.5 w-full overflow-hidden rounded-full"
+                                :class="isDarkMode ? 'bg-white/8' : 'bg-black/6'">
+                                <div
+                                    class="h-full rounded-full transition-all duration-500"
+                                    :class="isDarkMode ? 'bg-white/45' : 'bg-black/25'"
+                                    :style="{
+                                        width: getTopWorldBarWidth(
+                                            topWorldsSortBy === 'time' ? world.totalTime : world.visitCount
+                                        )
+                                    }" />
+                            </div>
+                        </div>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

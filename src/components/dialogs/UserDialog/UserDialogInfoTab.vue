@@ -231,10 +231,7 @@
                             :style="{ color: userDialog.theme.subtextColor }">
                             {{ t('dialog.user.info.vrcx_info') }}
                             <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                                <TooltipWrapper
-                                    v-if="userDialog.ref.profilePicOverride && !userDialog.ref.currentAvatarImageUrl"
-                                    side="top"
-                                    :content="t('dialog.user.info.vrcx_info_tooltip')">
+                                <TooltipWrapper side="top" :content="t('dialog.user.info.vrcx_info_tooltip')">
                                     <Info
                                         class="inline-block h-3 w-3 align-middle"
                                         :style="{ color: userDialog.theme.iconColor }" />

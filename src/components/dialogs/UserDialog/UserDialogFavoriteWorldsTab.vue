@@ -45,6 +45,7 @@
                 v-else
                 v-model="favoriteWorldsTab"
                 :items="favoriteWorldTabs"
+                :tab-color="userDialogTabColor"
                 :unmount-on-hide="false"
                 variant="equal"
                 fill
@@ -144,6 +145,14 @@
             searchQuery.value = '';
         }
     );
+
+    const userDialogTabColor = computed(() => {
+        const color = userDialog.value.theme?.buttonColor;
+        if (!color) {
+            return 'var(--primary)';
+        }
+        return color;
+    });
 
     /**
      *

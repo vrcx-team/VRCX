@@ -1,6 +1,6 @@
 <template>
-    <div class="rounded-xl bg-(--profile-card)/80 p-2">
-        <div style="display: flex; align-items: center; justify-content: space-between">
+    <div class="flex h-full min-h-0 flex-col overflow-hidden rounded-xl bg-(--profile-card)/80 p-2">
+        <div class="shrink-0" style="display: flex; align-items: center; justify-content: space-between">
             <div style="display: flex; align-items: center">
                 <Button
                     class="rounded-full"
@@ -37,28 +37,30 @@
                 </Select>
             </div>
         </div>
-        <ul class="flex flex-wrap items-start" style="margin-top: 8px; overflow: auto; min-width: 130px">
-            <li
-                v-for="user in filteredMutualFriends"
-                :key="user.id"
-                class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-                @click="showUserDialog(user.id)">
-                <div class="relative inline-block flex-none size-9 mr-2.5">
-                    <Avatar class="size-9">
-                        <AvatarImage :src="userImage(user)" class="object-cover" />
-                        <AvatarFallback>
-                            <User class="size-4 text-muted-foreground" />
-                        </AvatarFallback>
-                    </Avatar>
-                </div>
-                <div class="flex-1 overflow-hidden">
-                    <span
-                        class="block truncate font-medium leading-[18px]"
-                        :style="{ color: user.$userColour }"
-                        v-text="user.displayName"></span>
-                </div>
-            </li>
-        </ul>
+        <div class="min-h-0 flex-1 overflow-auto">
+            <ul class="flex flex-wrap items-start" style="margin-top: 8px; min-width: 130px">
+                <li
+                    v-for="user in filteredMutualFriends"
+                    :key="user.id"
+                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
+                    @click="showUserDialog(user.id)">
+                    <div class="relative inline-block flex-none size-9 mr-2.5">
+                        <Avatar class="size-9">
+                            <AvatarImage :src="userImage(user)" class="object-cover" />
+                            <AvatarFallback>
+                                <User class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
+                    </div>
+                    <div class="flex-1 overflow-hidden">
+                        <span
+                            class="block truncate font-medium leading-[18px]"
+                            :style="{ color: user.$userColour }"
+                            v-text="user.displayName"></span>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 

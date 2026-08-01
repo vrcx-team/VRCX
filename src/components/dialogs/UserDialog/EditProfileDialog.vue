@@ -175,6 +175,113 @@
                 </section>
 
                 <section class="space-y-3">
+                    <h3 class="text-sm font-semibold">{{ t('dialog.pronouns.header') }}</h3>
+                    <InputGroupTextareaField
+                        v-model="editProfileDialog.pronouns"
+                        :maxlength="32"
+                        :rows="1"
+                        input-class="min-h-0 py-2"
+                        :placeholder="t('dialog.pronouns.pronouns_placeholder')"
+                        show-count />
+                </section>
+
+                <section class="space-y-3">
+                    <h3 class="text-sm font-semibold">{{ t('dialog.bio.header') }}</h3>
+
+                    <InputGroupTextareaField
+                        v-model="editProfileDialog.bio"
+                        :maxlength="512"
+                        :rows="5"
+                        :placeholder="t('dialog.bio.bio_placeholder')"
+                        show-count
+                        autosize />
+
+                    <InputGroupAction
+                        v-for="(link, index) in editProfileDialog.bioLinks"
+                        :key="index"
+                        v-model="editProfileDialog.bioLinks[index]"
+                        :maxlength="1000"
+                        size="sm">
+                        <template #leading>
+                            <img
+                                v-if="link"
+                                :src="getFaviconUrl(link)"
+                                style="width: 16px; height: 16px; vertical-align: middle" />
+                            <div v-else style="width: 16px; height: 16px" />
+                        </template>
+                        <template #actions>
+                            <Button
+                                variant="ghost"
+                                size="icon-sm"
+                                @click="editProfileDialog.bioLinks.splice(index, 1)"
+                                :ariaLabel="t('common.actions.delete')">
+                                <Trash2 class="size-4" />
+                            </Button>
+                        </template>
+                    </InputGroupAction>
+
+                    <Button
+                        variant="outline"
+                        :disabled="editProfileDialog.bioLinks.length >= 3 || editProfileDialog.loading"
+                        size="sm"
+                        @click="editProfileDialog.bioLinks.push('')">
+                        {{ t('dialog.bio.add_link') }}
+                    </Button>
+                </section>
+
+                <section class="space-y-3">
+                    <h3 class="text-sm font-semibold">{{ t('dialog.language.header') }}</h3>
+
+                    <div class="my-2" v-for="item in currentLanguages" :key="item.key">
+                        <Badge class="mr-1.5" variant="outline">
+                            <span
+                                class="flags mr-1.5"
+                                :class="languageClass(item.key)"
+                                style="display: inline-block"></span>
+                            {{ item.value }} ({{ item.key.toUpperCase() }})
+                            <button
+                                class="ml-2 p-0"
+                                type="button"
+                                style="
+                                    border: none;
+                                    background: transparent;
+                                    display: inline-flex;
+                                    align-items: center;
+                                    color: inherit;
+                                    cursor: pointer;
+                                "
+                                @click="removeUserLanguage(item.key)">
+                                <X class="h-3 w-3" />
+                            </button>
+                        </Badge>
+                    </div>
+
+                    <Select
+                        :model-value="selectedLanguageToAdd"
+                        :disabled="editProfileDialog.loading || currentLanguages.length === 3"
+                        @update:modelValue="handleAddUserLanguage">
+                        <SelectTrigger size="sm">
+                            <SelectValue :placeholder="t('dialog.language.select_language')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="item in availableLanguages"
+                                    :key="item.key"
+                                    :value="item.key"
+                                    :text-value="item.value">
+                                    <span
+                                        class="flags mr-1.5"
+                                        :class="languageClass(item.key)"
+                                        style="display: inline-block"></span>
+                                    {{ item.value }} ({{ item.key.toUpperCase() }})
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </section>
+
+                <section class="space-y-3">
                     <h3 class="text-sm font-semibold">{{ t('dialog.edit_profile.profile_theme') }}</h3>
                     <div class="flex items-center gap-2">
                         <Select
@@ -389,113 +496,6 @@
                             </SelectContent>
                         </Select>
                     </div>
-                </section>
-
-                <section class="space-y-3">
-                    <h3 class="text-sm font-semibold">{{ t('dialog.pronouns.header') }}</h3>
-                    <InputGroupTextareaField
-                        v-model="editProfileDialog.pronouns"
-                        :maxlength="32"
-                        :rows="1"
-                        input-class="min-h-0 py-2"
-                        :placeholder="t('dialog.pronouns.pronouns_placeholder')"
-                        show-count />
-                </section>
-
-                <section class="space-y-3">
-                    <h3 class="text-sm font-semibold">{{ t('dialog.bio.header') }}</h3>
-
-                    <InputGroupTextareaField
-                        v-model="editProfileDialog.bio"
-                        :maxlength="512"
-                        :rows="5"
-                        :placeholder="t('dialog.bio.bio_placeholder')"
-                        show-count
-                        autosize />
-
-                    <InputGroupAction
-                        v-for="(link, index) in editProfileDialog.bioLinks"
-                        :key="index"
-                        v-model="editProfileDialog.bioLinks[index]"
-                        :maxlength="1000"
-                        size="sm">
-                        <template #leading>
-                            <img
-                                v-if="link"
-                                :src="getFaviconUrl(link)"
-                                style="width: 16px; height: 16px; vertical-align: middle" />
-                            <div v-else style="width: 16px; height: 16px" />
-                        </template>
-                        <template #actions>
-                            <Button
-                                variant="ghost"
-                                size="icon-sm"
-                                @click="editProfileDialog.bioLinks.splice(index, 1)"
-                                :ariaLabel="t('common.actions.delete')">
-                                <Trash2 class="size-4" />
-                            </Button>
-                        </template>
-                    </InputGroupAction>
-
-                    <Button
-                        variant="outline"
-                        :disabled="editProfileDialog.bioLinks.length >= 3 || editProfileDialog.loading"
-                        size="sm"
-                        @click="editProfileDialog.bioLinks.push('')">
-                        {{ t('dialog.bio.add_link') }}
-                    </Button>
-                </section>
-
-                <section class="space-y-3">
-                    <h3 class="text-sm font-semibold">{{ t('dialog.language.header') }}</h3>
-
-                    <div class="my-2" v-for="item in currentLanguages" :key="item.key">
-                        <Badge class="mr-1.5" variant="outline">
-                            <span
-                                class="flags mr-1.5"
-                                :class="languageClass(item.key)"
-                                style="display: inline-block"></span>
-                            {{ item.value }} ({{ item.key.toUpperCase() }})
-                            <button
-                                class="ml-2 p-0"
-                                type="button"
-                                style="
-                                    border: none;
-                                    background: transparent;
-                                    display: inline-flex;
-                                    align-items: center;
-                                    color: inherit;
-                                    cursor: pointer;
-                                "
-                                @click="removeUserLanguage(item.key)">
-                                <X class="h-3 w-3" />
-                            </button>
-                        </Badge>
-                    </div>
-
-                    <Select
-                        :model-value="selectedLanguageToAdd"
-                        :disabled="editProfileDialog.loading || currentLanguages.length === 3"
-                        @update:modelValue="handleAddUserLanguage">
-                        <SelectTrigger size="sm">
-                            <SelectValue :placeholder="t('dialog.language.select_language')" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem
-                                    v-for="item in availableLanguages"
-                                    :key="item.key"
-                                    :value="item.key"
-                                    :text-value="item.value">
-                                    <span
-                                        class="flags mr-1.5"
-                                        :class="languageClass(item.key)"
-                                        style="display: inline-block"></span>
-                                    {{ item.value }} ({{ item.key.toUpperCase() }})
-                                </SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
                 </section>
             </div>
 

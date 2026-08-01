@@ -85,8 +85,8 @@
             ">
             <TooltipWrapper v-if="instanceInfoState.isValidInstance" side="top">
                 <template #content>
-                    <div class="flex flex-col flex-wrap items-center gap-x-6 gap-y-2">
-                        <div class="flex gap-1">
+                    <div class="flex flex-col flex-wrap gap-x-6 gap-y-2">
+                        <div class="flex flex-col gap-1">
                             <span>
                                 <span class="text-platform-pc border-platform-pc!">PC: </span>
                                 {{ instance?.platforms?.standalonewindows }}
