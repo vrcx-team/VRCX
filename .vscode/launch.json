@@ -1,0 +1,75 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        },
+        {
+            "name": "C#: Cef/Electron Debug",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/Dotnet/VRCX-Cef.csproj",
+            "linux": {
+                "projectPath": "${workspaceFolder}/Dotnet/VRCX-Electron.csproj"
+            },
+            "preLaunchTask": "dotnet: build"
+        },
+        {
+            "name": "Debug Electron (Main Process)",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "exec",
+                "electron",
+                "--",
+                "--remote-debugging-port=9229",
+                "--ozone-platform-hint=auto",
+                ".",
+                "--no-sandbox"
+                //"--hot-reload"
+            ],
+            "env": {
+                "ELECTRON_ENABLE_LOGGING": "1",
+                "ELECTRON_ENABLE_STACK_DUMPING": "1",
+                "DISPLAY": ":0"
+            },
+            "windows": {
+                "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+            },
+            "autoAttachChildProcesses": true,
+            "outputCapture": "std"
+
+            //"preLaunchTask": "npm: build-electron"
+        },
+        {
+            "name": "Debug Nodejs",
+            "type": "node",
+            "request": "launch",
+            "program": "${file}",
+            "skipFiles": ["<node_internals>/**"],
+            "env": {
+                "DEBUG": "*",
+                "ELECTRON_ENABLE_LOGGING": "1",
+                "ELECTRON_ENABLE_STACK_DUMPING": "1"
+            },
+            "outputCapture": "std"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "VRCX App",
+            "configurations": [
+                "C#: Cef/Electron Debug",
+                "Debug Electron (Main Process)"
+            ]
+        }
+    ]
+}
+
