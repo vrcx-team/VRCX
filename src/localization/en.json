@@ -492,7 +492,8 @@
                     "contentrestriction": "Moderation Content Restriction"
                 },
                 "instance": {
-                    "closed": "Instance Closed"
+                    "closed": "Instance Closed",
+                    "announcement": "Instance Announcement"
                 },
                 "badge": {
                     "earned": "Badge Earned"
@@ -933,7 +934,9 @@
                     "table_entries_settings": "Table Entries Settings",
                     "table_entries_settings_description": "Control how many items are loaded for lists and searches.",
                     "vrc_profile_backgrounds": "VRChat Profile Backgrounds",
-                    "vrc_profile_backgrounds_opacity": "Profile Background Opacity"
+                    "vrc_profile_backgrounds_description": "Show profile backgrounds in user dialog, e.g. color gradient or VRC+ background.",
+                    "vrc_profile_backgrounds_opacity": "Profile Background Opacity",
+                    "vrc_profile_backgrounds_opacity_description": "Higher values will impact text readability."
                 },
                 "display": {
                     "header": "Display"

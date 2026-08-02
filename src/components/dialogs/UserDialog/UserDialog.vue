@@ -7,7 +7,7 @@
             <DialogDescription>{{ getUserStateText(userDialog.ref || {}) }}</DialogDescription>
         </DialogHeader>
 
-        <div class="flex-none w-80 overflow-y-auto">
+        <div class="flex-none w-77 overflow-y-auto">
             <UserSummaryHeader
                 :get-user-state-text="getUserStateText"
                 :copy-user-display-name="copyUserDisplayName"
@@ -278,12 +278,16 @@
         const D = userDialog.value;
         if (D.id === currentUser.value.id) {
             treeData.value = formatJsonVars({
-                ...currentUser.value,
-                ...D.ref
+                currentUser: currentUser.value,
+                user: D.ref,
+                profile: D.publicProfileRef
             });
             return;
         }
-        treeData.value = formatJsonVars(D.ref);
+        treeData.value = formatJsonVars({
+            user: D.ref,
+            profile: D.publicProfileRef
+        });
     }
 
     /**

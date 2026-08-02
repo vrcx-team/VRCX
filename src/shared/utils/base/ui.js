@@ -460,6 +460,14 @@ function formatJsonVars(ref) {
             ...sortedRef
         };
     }
+    if (sortedRef.user?.displayName) {
+        // add _hexDisplayName to top
+        return {
+            // @ts-ignore
+            _hexDisplayName: textToHex(sortedRef.user.displayName),
+            ...sortedRef
+        };
+    }
     if ('name' in sortedRef) {
         // add _hexName to top
         return {

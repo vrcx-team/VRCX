@@ -118,7 +118,9 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.appearance.appearance.vrc_profile_backgrounds')">
+            <SettingsItem
+                :label="t('view.settings.appearance.appearance.vrc_profile_backgrounds')"
+                :description="t('view.settings.appearance.appearance.vrc_profile_backgrounds_description')">
                 <Switch
                     :model-value="displayVRCProfileBackgrounds"
                     :ariaLabel="t('view.settings.appearance.appearance.vrc_profile_backgrounds')"
@@ -129,7 +131,9 @@
             </SettingsItem>
 
             <template v-if="displayVRCProfileBackgrounds">
-                <SettingsItem :label="t('view.settings.appearance.appearance.vrc_profile_backgrounds_opacity')">
+                <SettingsItem
+                    :label="t('view.settings.appearance.appearance.vrc_profile_backgrounds_opacity')"
+                    :description="t('view.settings.appearance.appearance.vrc_profile_backgrounds_opacity_description')">
                     <NumberField
                         v-model="profileBackgroundOpacity"
                         :step="0.1"

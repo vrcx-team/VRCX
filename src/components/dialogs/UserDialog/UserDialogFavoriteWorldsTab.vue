@@ -97,7 +97,7 @@
         </div>
     </template>
     <template v-else-if="!userDialog.isFavoriteWorldsLoading">
-        <div style="display: flex; justify-content: center; align-items: center; height: 100%">
+        <div class="flex justify-center items-center h-full p-2 rounded-xl bg-(--profile-card)">
             <DataTableEmpty type="nodata" />
         </div>
     </template>
