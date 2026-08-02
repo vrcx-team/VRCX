@@ -169,7 +169,7 @@ namespace VRCX
             return null;
         }
 
-        public Task<bool> TryOpenInstanceInVrc(string launchUrl)
+        public virtual Task<bool> TryOpenInstanceInVrc(string launchUrl)
         {
             return VRCIPC.Send(launchUrl);
         }
