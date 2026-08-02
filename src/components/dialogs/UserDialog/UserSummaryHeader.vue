@@ -1,5 +1,5 @@
 <template>
-    <div class="rounded-xl bg-(--profile-card)/80 overflow-hidden flex flex-col">
+    <div class="rounded-xl bg-(--profile-card) overflow-hidden flex flex-col">
         <div class="relative aspect-17/6">
             <div
                 v-if="
@@ -338,7 +338,7 @@
         </div>
     </div>
 
-    <div class="rounded-xl bg-(--profile-card)/80 p-3 flex flex-col mt-2">
+    <div class="rounded-xl bg-(--profile-card) p-3 flex flex-col mt-2">
         <div
             class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-muted-foreground/20"
             :style="{ color: userDialog.theme.subtextColor }">
@@ -378,7 +378,7 @@
         </div>
     </div>
 
-    <div class="rounded-xl bg-(--profile-card)/80 p-3 flex flex-col mt-2">
+    <div class="rounded-xl bg-(--profile-card) p-3 flex flex-col mt-2">
         <div
             class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-muted-foreground/20"
             :style="{ color: userDialog.theme.subtextColor }">
