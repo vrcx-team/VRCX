@@ -5,7 +5,7 @@ import { removeEmojis } from './base/string';
 
 const THEME_COLOR_LIMITS = Object.freeze({
     darkMinLuminance: 0.06,
-    lightMaxLuminance: 0.93
+    lightMaxLuminance: 0.74
 });
 
 /**

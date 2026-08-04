@@ -58,13 +58,13 @@
 
             <div
                 v-if="isLoading && filteredEventCount === 0"
-                class="flex flex-col items-center justify-center flex-1 mt-8 gap-2">
+                class="flex flex-col items-center justify-center flex-1 my-8 gap-2">
                 <Spinner class="h-5 w-5" />
                 <span class="text-sm text-muted-foreground">{{ t('dialog.user.activity.preparing_data') }}</span>
                 <span class="text-xs text-muted-foreground">{{ t('dialog.user.activity.preparing_data_hint') }}</span>
             </div>
 
-            <div v-if="!isLoading && filteredEventCount === 0" class="flex items-center justify-center flex-1 mt-8">
+            <div v-if="!isLoading && filteredEventCount === 0" class="flex items-center justify-center flex-1 my-8">
                 <span class="text-muted-foreground text-sm">{{ t('dialog.user.activity.no_data_in_period') }}</span>
             </div>
 
