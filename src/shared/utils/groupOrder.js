@@ -1,4 +1,4 @@
-import { moveArrayItem } from '../../../shared/utils/base/array';
+import { moveArrayItem } from './base/array';
 
 /**
  * Keep valid saved group IDs in their existing order, then append groups that

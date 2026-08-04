@@ -375,7 +375,7 @@
     import { groupRequest } from '../../../api';
     import { useOptionKeySelect } from '../../../composables/useOptionKeySelect';
     import { userDialogGroupSortingOptions } from '../../../shared/constants';
-    import { moveGroupInOrder, normalizeGroupOrder } from './groupOrderUtils';
+    import { moveGroupInOrder, normalizeGroupOrder } from '../../../shared/utils/groupOrder';
 
     const { t } = useI18n();
 
