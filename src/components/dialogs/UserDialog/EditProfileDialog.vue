@@ -1042,10 +1042,6 @@
         if (D.backgroundGradientTop !== D.selfProfileRef.backgroundGradientTop) {
             profilePayload.backgroundGradientTop = D.backgroundGradientTop;
         }
-        if (!Object.keys(userPayload).length && !Object.keys(profilePayload).length) {
-            D.visible = false;
-            return;
-        }
 
         D.loading = true;
         try {

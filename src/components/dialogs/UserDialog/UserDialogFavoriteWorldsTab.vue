@@ -45,7 +45,7 @@
                 v-else
                 v-model="favoriteWorldsTab"
                 :items="favoriteWorldTabs"
-                :tab-color="userDialogTabColor"
+                :activeColor="userDialogTabColor"
                 :unmount-on-hide="false"
                 variant="equal"
                 fill

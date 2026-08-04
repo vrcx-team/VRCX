@@ -141,7 +141,7 @@ function sortStatus(a, b) {
  * @returns {boolean}
  */
 function isFriendOnline(friend) {
-    if (typeof friend === 'undefined' || typeof friend.ref === 'undefined') {
+    if (typeof friend === 'undefined' || typeof friend?.ref === 'undefined') {
         return false;
     }
     if (friend.state === 'online') {

@@ -23,13 +23,23 @@
         unmountOnHide: { type: Boolean, default: false },
         fill: { type: Boolean, default: false },
         sticky: { type: Boolean, default: false },
-        tabColor: { type: String, default: '' },
+        activeColor: { type: String, default: '' },
         background: { type: Boolean, default: false }
     });
 
     const emit = defineEmits(['update:modelValue']);
-    const { modelValue, defaultValue, items, ariaLabel, variant, unmountOnHide, fill, sticky, tabColor, background } =
-        toRefs(props);
+    const {
+        modelValue,
+        defaultValue,
+        items,
+        ariaLabel,
+        variant,
+        unmountOnHide,
+        fill,
+        sticky,
+        activeColor,
+        background
+    } = toRefs(props);
 
     const itemsList = computed(() => (Array.isArray(items.value) ? items.value : []));
 
@@ -64,17 +74,17 @@
     }
 
     const triggerStyle = computed(() => {
-        if (!tabColor.value) {
+        if (!activeColor.value) {
             return undefined;
         }
-        return { color: tabColor.value };
+        return { color: activeColor.value };
     });
 
     const indicatorStyle = computed(() => {
-        if (!tabColor.value) {
+        if (!activeColor.value) {
             return undefined;
         }
-        return { backgroundColor: tabColor.value };
+        return { backgroundColor: activeColor.value };
     });
 
     const triggerClass = computed(() => {
@@ -118,7 +128,7 @@
                 :value="it.value"
                 :disabled="it.disabled"
                 :class="triggerClass"
-                :style="triggerStyle">
+                :style="innerValue === it.value ? triggerStyle : undefined">
                 <slot :name="`label-${it.value}`">{{ it.label }}</slot>
             </TabsTrigger>
         </TabsList>

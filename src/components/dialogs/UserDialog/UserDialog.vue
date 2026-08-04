@@ -20,7 +20,7 @@
             <TabsUnderline
                 v-model="userDialog.activeTab"
                 :items="userDialogTabs"
-                :tab-color="userDialogTabColor"
+                :activeColor="userDialogTabColor"
                 :unmount-on-hide="false"
                 fill
                 :background="true"
@@ -166,6 +166,12 @@
             return 'var(--primary)';
         }
         return color;
+    });
+    const scrollbarThumbColor = computed(() => {
+        const color = userDialog.value.theme?.buttonColor;
+        return color === 'var(--primary)'
+            ? 'color-mix(in oklab, var(--foreground) 30%, transparent)'
+            : `color-mix(in oklab, ${color} 50%, transparent)`;
     });
     const { cachedUsers, showSendBoopDialog, showEditProfileDialog } = useUserStore();
     const { showFavoriteDialog } = useFavoriteStore();
@@ -429,7 +435,7 @@
 
 <style scoped>
     .user-dialog-scrollbars {
-        --user-dialog-scrollbar-thumb: color-mix(in oklab, var(--foreground) 30%, transparent);
+        --user-dialog-scrollbar-thumb: v-bind(scrollbarThumbColor);
         --user-dialog-scrollbar-track: transparent;
     }
 
