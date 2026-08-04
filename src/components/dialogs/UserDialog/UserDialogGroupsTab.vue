@@ -375,6 +375,7 @@
     import { groupRequest } from '../../../api';
     import { useOptionKeySelect } from '../../../composables/useOptionKeySelect';
     import { userDialogGroupSortingOptions } from '../../../shared/constants';
+    import { moveGroupInOrder, normalizeGroupOrder } from './groupOrderUtils';
 
     const { t } = useI18n();
 
@@ -547,6 +548,10 @@
     async function editModeCurrentUserGroups() {
         await updateInGameGroupOrder();
         userDialogGroupEditGroups.value = Array.from(currentUserGroups.value.values());
+        inGameGroupOrder.value = normalizeGroupOrder(
+            inGameGroupOrder.value,
+            userDialogGroupEditGroups.value.map((group) => group.id)
+        );
         userDialogGroupEditGroups.value.sort(sortGroupsByInGame);
         userDialogGroupEditMode.value = true;
     }
@@ -648,9 +653,7 @@
      */
     function moveGroupUp(groupId) {
         const index = inGameGroupOrder.value.indexOf(groupId);
-        if (index > 0) {
-            inGameGroupOrder.value.splice(index, 1);
-            inGameGroupOrder.value.splice(index - 1, 0, groupId);
+        if (moveGroupInOrder(inGameGroupOrder.value, groupId, index - 1)) {
             saveInGameGroupOrder();
         }
     }
@@ -661,9 +664,7 @@
      */
     function moveGroupDown(groupId) {
         const index = inGameGroupOrder.value.indexOf(groupId);
-        if (index < inGameGroupOrder.value.length - 1) {
-            inGameGroupOrder.value.splice(index, 1);
-            inGameGroupOrder.value.splice(index + 1, 0, groupId);
+        if (moveGroupInOrder(inGameGroupOrder.value, groupId, index + 1)) {
             saveInGameGroupOrder();
         }
     }
@@ -673,10 +674,7 @@
      * @param groupId
      */
     function moveGroupTop(groupId) {
-        const index = inGameGroupOrder.value.indexOf(groupId);
-        if (index > 0) {
-            inGameGroupOrder.value.splice(index, 1);
-            inGameGroupOrder.value.unshift(groupId);
+        if (moveGroupInOrder(inGameGroupOrder.value, groupId, 0)) {
             saveInGameGroupOrder();
         }
     }
@@ -686,10 +684,7 @@
      * @param groupId
      */
     function moveGroupBottom(groupId) {
-        const index = inGameGroupOrder.value.indexOf(groupId);
-        if (index < inGameGroupOrder.value.length - 1) {
-            inGameGroupOrder.value.splice(index, 1);
-            inGameGroupOrder.value.push(groupId);
+        if (moveGroupInOrder(inGameGroupOrder.value, groupId, inGameGroupOrder.value.length - 1)) {
             saveInGameGroupOrder();
         }
     }
