@@ -1,61 +1,226 @@
 {
     "language": "Français (fr)",
-    "translator": "Hactazia",
+    "translator": "Hactazia, Deuchnord",
     "common": {
-        "no_data": "No data",
-        "no_matching_records": "No matching records",
+        "no_data": "Aucune donnée",
+        "no_matching_records": "Aucun résultat",
+        "feature_relocated": {
+            "title": "Information de dépréciation",
+            "description": "Cette fonction sera supprimée dans une version à venir. Utilisez {feature} à la place."
+        },
         "actions": {
             "open": "Ouvert",
             "confirm": "Confirmer",
             "clear": "Nettoyer",
-            "reset": "Réinitialiser"
+            "delete": "Supprimer",
+            "remove": "Supprimer",
+            "reset": "Réinitialiser",
+            "view_details": "Voir les details",
+            "configure": "Configurer",
+            "refresh": "Rafraîchir",
+            "cancel": "Annuler",
+            "copy": "Copier",
+            "open_link": "Ouvrir le lien"
         },
+        "sort_by": "Trier par :",
         "time_units": {
-            "y": "y",
-            "d": "d",
+            "y": "ans",
+            "d": "jours",
             "h": "h",
-            "m": "m",
+            "m": "min",
             "s": "s"
-        }
+        },
+        "days": {
+            "sunday": "dimanche",
+            "monday": "lundi",
+            "tuesday": "mardi",
+            "wednesday": "mercredi",
+            "thursday": "jeudi",
+            "friday": "vendredi",
+            "saturday": "samedi"
+        },
+        "duration": "Durée",
+        "load_more": "Charger plus",
+        "no_more": "Pas d'entrée supplémentaire",
+        "current_session": "Current"
     },
     "nav_tooltip": {
         "friends_locations": "Position des amis",
-        "feed": "Actualité",
+        "feed": "Fil d'actualité",
         "game_log": "Historique de jeu",
         "player_list": "Liste des joueurs",
         "search": "Rechercher",
         "favorites": "Favoris",
-        "favorite_friends": "Ami préféré",
-        "favorite_worlds": "Monde favoris",
-        "favorite_avatars": "Avatar favoris",
+        "favorite_friends": "Amis favoris",
+        "favorite_worlds": "Mondes favoris",
+        "favorite_avatars": "Avatars favoris",
+        "my_avatars": "Mes avatars",
         "social": "Social",
         "friend_log": "Historique des amis",
         "moderation": "Modération",
-        "notification": "Notification",
+        "notification": "Notifications",
         "friend_list": "Liste des amis",
-        "charts": "Charts",
+        "charts": "Graphiques",
         "tools": "Outils",
-        "settings": "Paramètre",
-        "manage": "Manage",
+        "settings": "Paramètres",
+        "manage": "Gestion",
         "help_support": "Aide & Support",
-        "expand_menu": "Agrandire le Menu",
-        "collapse_menu": "Collapse Menu",
-        "toggle_theme": "Changer le theme"
+        "expand_menu": "Agrandir le menu",
+        "collapse_menu": "Rétracter le menu",
+        "toggle_theme": "Changer le thème"
+    },
+    "nav_menu": {
+        "resources": "RESSOURCES",
+        "wiki": "Wiki",
+        "get_help": "OBTENIR DE L'AIDE",
+        "github": "VRCX sur GitHub",
+        "discord": "Rejoindre notre Discord",
+        "changelog": "Historique des modifications",
+        "update_available": "Mise à jour disponible",
+        "update": "Mettre à jour",
+        "mark_all_read": "Marquer tout comme lu",
+        "edit_dashboard": "Éditer le tableau de bord",
+        "delete_dashboard": "Supprimer le tableau de bord",
+        "custom_nav": {
+            "header": "Personnaliser la navigation",
+            "dialog_title": "Menu de navigation",
+            "new_folder": "Nouveau dossier",
+            "folder_name_placeholder": "Nom du dossier",
+            "folder_icon_placeholder": "Classe d'icône (exemple : ri-menu-fold-line)",
+            "edit_folder": "Modifier le dossier",
+            "delete_folder": "Supprimer le dossier",
+            "edit_dashboard": "Éditer le tableau de bord",
+            "delete_dashboard": "Supprimer le tableau de bord",
+            "folder_empty": "Ce dossier est vide",
+            "folder_drop_here": "Déplacer des éléments ici",
+            "hide": "Cacher",
+            "show": "Montrer",
+            "hidden_items": "Éléments cachés",
+            "pin_to_nav": "Épingler à la navigation",
+            "unpin_from_nav": "Désépingler",
+            "pinned": "Épinglé à la navigation",
+            "unpinned": "Désépinglé de la navigation",
+            "confirm": "Confirmer",
+            "cancel": "Annuler",
+            "restore_default": "Paramètres par défaut",
+            "restore_default_confirm": "Restaurer la navigation aux paramètres par défaut ?"
+        }
+    },
+    "dashboard": {
+        "default_name": "Tableau de bord",
+        "new_dashboard": "Nouveau tableau de bord",
+        "empty": "Ce tableau de bord est vide",
+        "actions": {
+            "start_editing": "Commencer l'édition",
+            "add_row": "Ajouter une ligne",
+            "add_full_row": "Ajouter une ligne simple",
+            "add_split_row": "Ajouter une ligne à deux colonnes",
+            "add_vertical_row": "Ajouter une ligne à éléments verticaux",
+            "cancel": "Annuler",
+            "save": "Enregistrer",
+            "delete": "Supprimer"
+        },
+        "toolbar": {
+            "name_placeholder": "Nom du tableau de bord",
+            "icon_placeholder": "Classe d'icônes (optionnel)"
+        },
+        "panel": {
+            "not_selected": "Aucun panneau sélectionné",
+            "select": "Sélectionner un panneau",
+            "not_configured": "Panneau non configuré"
+        },
+        "selector": {
+            "title": "Sélectionner le contenu du panneau",
+            "clear": "Effacer le panneau",
+            "widgets": "Widgets",
+            "pages": "Pages entières"
+        },
+        "widget": {
+            "feed": "Widget de flux",
+            "game_log": "Widget d'historique de jeu",
+            "instance": "Widget d'instance",
+            "config": {
+                "filters": "Types d'événements",
+                "columns": "Colonne",
+                "detail": "Détails",
+                "show_type": "Montrer le type"
+            },
+            "no_data": "Aucune donnée",
+            "unknown_world": "Monde inconnu",
+            "feed_online": "En ligne",
+            "feed_offline": "Hors ligne",
+            "feed_avatar": "→",
+            "feed_bio": "Bio mise à jour",
+            "instance_players": "joueurs",
+            "instance_not_in_game": "Pas en jeu",
+            "time_ago": "il y a {time}"
+        },
+        "first_save_tip": "Vous pouvez masquer le bouton \"Nouveau tableau de bord\" dans les paramètres > Interface > Navigation.",
+        "confirmations": {
+            "delete_title": "Supprimer le tableau de bord",
+            "delete_description": "Voulez-vous vraiment supprimer ce tableau de bord ? Cela ne peut pas être annulé."
+        }
     },
     "side_panel": {
-        "search_placeholder": "Rechercher",
+        "search_placeholder": "Recherche rapide...",
+        "search_no_results": "Aucun résultat",
+        "search_min_chars": "Tapez au moins 2 caractères",
+        "search_categories": "Rechercher...",
+        "search_scope_all": "Nom, mémo et note",
+        "search_scope_avatars": "Les miens et mes favoris",
+        "search_scope_worlds": "Les miens et mes favoris",
+        "search_scope_joined": "Les miens et ceux que j'ai rejoint",
+        "search_friends": "Amis",
+        "search_avatars": "Avatars",
+        "search_own_avatars": "Mes avatars",
+        "search_fav_avatars": "Avatars favoris",
+        "search_worlds": "Mondes",
+        "search_own_worlds": "Mes mondes",
+        "search_fav_worlds": "Mondes favoris",
+        "search_groups": "Groupes",
+        "search_own_groups": "Mes groups",
+        "search_joined_groups": "Groupes rejoints",
         "search_result_active": "En ligne",
         "search_result_offline": "Hors ligne",
-        "search_result_more": "Plus de recherche :",
+        "search_result_more": "Plus de recherche :",
         "refresh_tooltip": "Actualiser les amis",
-        "groups": "GROUPES",
-        "friends": "AMIS",
+        "groups": "Groupes",
+        "friends": "Amis",
         "me": "MOI",
         "favorite": "FAVORIS",
+        "same_instance": "MÊME INSTANCE",
         "online": "EN LIGNE",
         "active": "ACTIF",
         "offline": "HORS LIGNE",
-        "pending_offline": "En attendant l'hors ligne"
+        "pending_offline": "En attendant l'hors ligne",
+        "settings": {
+            "display": "Affichage",
+            "sort": "Ordonner",
+            "advanced": "Advanced",
+            "sorting": "Ordre d'affichage",
+            "favorites_section": "Favoris",
+            "group_by_instance": "Grouper par instance",
+            "split_favorite_friends": "Montrer les groupes favoris",
+            "hide_friends_in_same_instance": "Masquer les amis en groupe",
+            "same_instance_above_favorites": "Prioriser les amis dans la même instance",
+            "sort_primary": "Ordonner par",
+            "sort_secondary": "Puis par",
+            "sort_tertiary": "Enfin par",
+            "favorite_groups": "Groupes favoris",
+            "favorite_groups_placeholder": "Tous les groupes",
+            "edit_group_order": "Éditer l'ordre des groupes"
+        },
+        "notifications": "Notifications",
+        "notification_center": {
+            "title": "Centre de notifications",
+            "view_more": "Voir plus",
+            "tab_friend": "Amis",
+            "tab_group": "Groupes",
+            "tab_other": "Autres",
+            "past_notifications": "Dernières 24 heures",
+            "no_new_notifications": "Pas de nouvelle notifications ces dernières 24 heures",
+            "no_unseen_notifications": "Pas de notifications non lues"
+        }
     },
     "view": {
         "login": {
@@ -65,41 +230,43 @@
             "forgotPassword": "Mot de passe oublié ?",
             "updater": "Updater",
             "proxy_settings": "Paramètres du proxy",
+            "settings": "Paramètres",
+            "language": "Languee",
             "field": {
-                "username": "Nom d'utilisateur ou Email",
+                "username": "Nom d'utilisateur ou e-mail",
                 "password": "Mot de passe",
                 "saveCredentials": "Sauvegarder les identifiants",
-                "devEndpoint": "Dev Endpoint",
-                "endpoint": "Endpoint",
+                "devEndpoint": "API de développement",
+                "endpoint": "Adresse",
                 "websocket": "WebSocket"
             },
             "language_detect": {
                 "title": "Langue détectée",
-                "description": "La langue de votre système semble être {language}. Souhaitez-vous y passer ?"
+                "description": "La langue de votre système semble être {language}. Souhaitez-vous l'utiliser ?"
             }
         },
         "feed": {
             "favorites_only_tooltip": "Filtrer les favoris seulement",
             "search_placeholder": "Rechercher",
             "filters": {
-                "GPS": "GPS",
+                "GPS": "Monde",
                 "Online": "En ligne",
                 "Offline": "Hors ligne",
                 "Status": "Statut",
                 "Avatar": "Avatar",
                 "Bio": "Bio"
             },
-            "photon_event_logging": "Photon Event Logging"
+            "photon_event_logging": "Historiser les évènements Photon"
         },
         "friends_locations": {
             "online": "En ligne",
             "favorite": "Favoris",
-            "same_instance": "Instance actuel",
-            "active": "Active",
-            "offline": "Offline",
-            "spacing": "Spacing",
-            "scale": "Scale",
-            "separate_same_instance_friends": "Separate Same Instance Friends",
+            "same_instance": "Instance actuelle",
+            "active": "Actif",
+            "offline": "Hors ligne",
+            "spacing": "Espacement",
+            "scale": "Taille des vignettes",
+            "separate_same_instance_friends": "Grouper les amis dans les mêmes instances",
             "loading_more": "Charger plus..."
         },
         "game_log": {
@@ -110,22 +277,37 @@
                 "OnPlayerJoined": "Rejoint",
                 "OnPlayerLeft": "Quitté",
                 "PortalSpawn": "Portail",
-                "VideoPlay": "Vidéo",
-                "Event": "Événement",
+                "VideoPlay": "Vidéo lancée",
+                "Event": "Évènement",
                 "External": "Externe",
                 "StringLoad": "Texte téléchargé",
                 "ImageLoad": "Image téléchargée"
+            },
+            "sessions": {
+                "switch_to_table": "Vue en tableau",
+                "switch_to_sessions": "Vue en sessions",
+                "date_range": "Plage de dates",
+                "players_joined": "{count} joueurs ont rejoint",
+                "players_left": "{count} joueurs ont quitté",
+                "play_count": "×{count}",
+                "no_data": "Aucun historique de jeu"
             }
         },
         "player_list": {
             "photon": {
                 "current": "Actuel",
-                "previous": "Précédant",
+                "previous": "Précédent",
                 "search_placeholder": "Rechercher",
                 "filter_placeholder": "Filtrer",
                 "chatbox_blacklist": "Liste noire des boîtes de dialogue",
                 "status_tooltip": "Statut du Compagnon VRCX"
             }
+        },
+        "my_avatars": {
+            "filter": "Filtrer",
+            "clear_filters": "Effacer les filtres",
+            "table_view": "Vue en tableauTable View",
+            "grid_view": "Vue en grilles"
         },
         "search": {
             "search_placeholder": "Rechercher",
@@ -133,19 +315,23 @@
             "user": {
                 "header": "Utilisateur",
                 "search_by_bio": "Rechercher dans la bio",
-                "sort_by_last_logged_in": "dernière personne connecté"
+                "sort_by_last_logged_in": "Ordonner par date de dernière connexion"
             },
             "world": {
                 "header": "Monde",
                 "category": "Rechercher par catégorie",
-                "community_lab": "Inclure les « Community labs »"
+                "community_lab": "Inclure les « Community labs »"
             },
             "avatar": {
                 "header": "Avatar",
                 "search_provider": "Gestionnaire de recherche",
-                "refresh_tooltip": "Rafraîchir ses propres avatars",
-                "result_count": "{count} Résultats",
+                "no_provider": "Aucun gestionnaire de recherche d'avatar configuré",
+                "search_placeholder_avatar": "Tapez au moins 3 caractères",
+                "min_chars_warning": "Veuillez entrer au moins 3 charactères",
+                "refresh_tooltip": "Rafraîchir mes avatars",
+                "result_count": "{count} résultats",
                 "all": "Tout",
+                "all_tags": "Tous les tags",
                 "public": "Publique",
                 "private": "Privé",
                 "local": "Locale",
@@ -164,39 +350,40 @@
                 "vrchat_favorites": "Favoris VRChat",
                 "local_favorites": "Favoris locaux",
                 "new_group": "Nouveau groupe",
-                "cancel_refresh": "Annuler la réactualisation"
+                "cancel_refresh": "Annuler le rafraîchissement"
             },
             "avatars": {
                 "search": "Rechercher",
                 "vrchat_favorites": "Favoris VRChat",
-                "local_favorites": "Favoris locaux (Requires VRC+)",
+                "local_favorites": "Favoris locaux (VRC+ requis)",
                 "new_group": "Nouveau groupe",
-                "cancel_refresh": "Annuler la réactualisation",
-                "check_invalid": "Check for deleted/private avatars",
-                "check_description": "Detect and remove invalid avatars from this group",
-                "checking": "Checking for invalid avatars...",
-                "removed_list_header": "Avatars pending deletion:",
-                "copy_removed_ids": "Copy Avatar IDs",
-                "copied_ids": "Avatar IDs copied to clipboard",
-                "copy_failed": "Failed to copy to clipboard",
-                "dismiss": "Dismiss",
-                "checking_progress": "Checking avatar ({current}/{total})...",
-                "confirm_delete_invalid": "Delete Invalid Avatars?",
-                "confirm_delete_description": "Found {count} invalid avatars, delete them?",
-                "delete_summary": "Successfully deleted {removed} invalid avatars",
-                "no_invalid_found": "No invalid avatars found",
-                "delete_cancelled": "Delete operation cancelled",
-                "local_history": "Local History",
-                "no_group_selected": "Aucun groupe selectionner",
+                "cancel_refresh": "Annuler le rafraîchissement",
+                "check_invalid": "Rechercher les avatars supprimés/privés",
+                "check_description": "Détecter et supprimer les avatars invalides de ce groupe",
+                "checking": "Recherche des avatars invalides...",
+                "removed_list_header": "Avatars en attente de suppression :",
+                "copy_removed_ids": "Copier les identifiants des avatars",
+                "copied_ids": "Identifiants des avatar copiés",
+                "copy_failed": "La copie a échoué",
+                "dismiss": "Masquer",
+                "checking_progress": "Vérification de l'avatar ({current}/{total})...",
+                "confirm_delete_invalid": "Supprimer l'avatar invalide ?",
+                "confirm_delete_description": "{count} avatars invalides trouvés, faut-il les supprimer ?",
+                "delete_summary": "{removed} avatars invalides supprimés avec succès",
+                "no_invalid_found": "Aucun avatar invalide trouvé",
+                "delete_cancelled": "Suppression annulée",
+                "local_history": "Historique local",
+                "no_group_selected": "Aucun groupe selectionné",
                 "styles": "Styles",
                 "almost_nuisance": "Almost Nuisance"
             },
             "edit_mode": "Mode édition",
             "copy": "Copier",
             "clear": "Vider",
-            "select_all": "Selectionner tous",
-            "deselect_all": "Deslectionner tous",
-            "bulk_unfavorite": "Mode suppression des favoris",
+            "select_all": "Tout sélectionner",
+            "deselect_all": "Tout désélectionner",
+            "bulk_unfavorite": "Suppression en masse",
+            "refresh_favorites_tooltip": "Rafraîchir les favoris VRChat",
             "export": "Exporter",
             "import": "Importer",
             "move_tooltip": "Déplacer",
@@ -206,7 +393,7 @@
             "visibility": {
                 "public": "Public",
                 "friends": "Amis",
-                "private": "Privée"
+                "private": "Privé"
             },
             "rename_tooltip": "Renommer",
             "clear_tooltip": "Vider",
@@ -238,7 +425,8 @@
                 "unmute": "Son rétabli",
                 "interactOn": "Interaction activée",
                 "interactOff": "Interaction désactivée",
-                "muteChat": "Boîtes de dialogue désactivées"
+                "muteChat": "Boîtes de dialogue désactivées",
+                "unmuteChat": "Boîtes de dialogue activées"
             }
         },
         "notification": {
