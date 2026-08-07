@@ -1,6 +1,6 @@
 {
     "name": "vrcx",
-    "version": "2026.05.03",
+    "version": "2026.07.18",
     "private": true,
     "description": "Friendship management tool for VRChat",
     "keywords": [
@@ -18,8 +18,7 @@
     },
     "main": "src-electron/main.js",
     "scripts": {
-        "dev": "cross-env PLATFORM=windows vite serve src",
-        "dev-linux": "cross-env PLATFORM=linux vite serve src",
+        "dev": "vite serve src",
         "localization": "node ./src/shared/utils/localizationHelperCLI.js",
         "format": "oxfmt src src-electron eslint.config.mjs vitest.config.js vitest.setup.js",
         "format:check": "oxfmt --check src src-electron eslint.config.mjs vitest.config.js vitest.setup.js",
@@ -32,10 +31,9 @@
         "test": "vitest run",
         "test:coverage": "vitest run --coverage",
         "build:licenses": "node ./build-scripts/generate-third-party-licenses.js",
-        "prod": "cross-env PLATFORM=windows vite build src && npm run build:licenses",
-        "prod-linux": "cross-env PLATFORM=linux vite build src && npm run build:licenses",
-        "build-electron": "node ./build-scripts/download-dotnet-runtime.js --arch=x64 && node ./build-scripts/patch-package-version.js && electron-builder --x64 --publish never",
-        "build-electron-arm64": "node ./build-scripts/download-dotnet-runtime.js --arch=arm64 && node ./build-scripts/patch-package-version.js && electron-builder --arm64 --publish never",
+        "prod": "vite build src && npm run build:licenses",
+        "build-electron": "node ./build-scripts/download-dotnet-runtime.js --arch=x64 && node ./build-scripts/patch-package-version.js && cross-env DEBUG=electron-builder electron-builder --config electron-builder.config.js --x64 --publish never",
+        "build-electron-arm64": "node ./build-scripts/download-dotnet-runtime.js --arch=arm64 && node ./build-scripts/patch-package-version.js && electron-builder --config electron-builder.config.js --arm64 --publish never",
         "postbuild-electron": "node ./build-scripts/patch-node-api-dotnet.js --arch=x64 && node ./build-scripts/rename-builds.js --arch=x64",
         "postbuild-electron-arm64": "node ./build-scripts/patch-node-api-dotnet.js --arch=arm64 && node ./build-scripts/rename-builds.js --arch=arm64",
         "start-electron": "electron . --hot-reload"
@@ -75,7 +73,7 @@
         "dayjs": "^1.11.21",
         "echarts": "^6.1.0",
         "electron": "^40.4.1",
-        "electron-builder": "^26.8.1",
+        "electron-builder": "^26.15.7",
         "embla-carousel-vue": "^8.6.0",
         "eslint": "^10.8.0",
         "eslint-plugin-jsdoc": "^63.2.2",
@@ -120,7 +118,7 @@
     "overrides": {
         "js-cookie": ">=3.0.7",
         "tmp": ">=0.2.6",
-        "yauzl": "^3.3.1"
+        "yauzl": ">=3.3.1"
     },
     "engines": {
         "node": ">=24.15.0",
@@ -132,93 +130,6 @@
         "electron-winstaller": true,
         "vue-demi": true,
         "electron": true
-    },
-    "build": {
-        "appId": "app.vrcx",
-        "productName": "VRCX",
-        "icon": "images/VRCX.png",
-        "files": [
-            "build/html/**/*",
-            "src-electron/*",
-            "images/VRCX.png",
-            "images/VRCX.ico",
-            "images/VRCX_notify.png",
-            "images/VRCX_notify.ico",
-            "Version",
-            "src-electron/libs/linux/libopenvr_api.so",
-            ".no-updater"
-        ],
-        "asarUnpack": [
-            "node_modules/node-api-dotnet/**/*",
-            "node_modules/node-api-dotnet/net10.0/**/*",
-            "build/Electron/*",
-            "build/Electron/**",
-            "build/Electron/dotnet-runtime/**/*",
-            "src-electron/libs/linux/libopenvr_api.so"
-        ],
-        "extraResources": [
-            {
-                "from": "build/Electron/",
-                "to": "app.asar.unpacked/build/Electron/"
-            },
-            {
-                "from": "node_modules/node-api-dotnet/net10.0/Microsoft.JavaScript.NodeApi.dll",
-                "to": "app.asar.unpacked/node_modules/node-api-dotnet/net10.0/Microsoft.JavaScript.NodeApi.dll"
-            },
-            {
-                "from": "node_modules/node-api-dotnet/net10.0/Microsoft.JavaScript.NodeApi.DotNetHost.dll",
-                "to": "app.asar.unpacked/node_modules/node-api-dotnet/net10.0/Microsoft.JavaScript.NodeApi.DotNetHost.dll"
-            },
-            {
-                "from": "build/Electron/dotnet-runtime/",
-                "to": "dotnet-runtime/"
-            },
-            {
-                "from": "src-electron/libs/linux/libopenvr_api.so",
-                "to": "bin/libopenvr_api.so"
-            },
-            {
-                "from": "src-electron/libs/linux/libopenvr_api.so",
-                "to": "app.asar.unpacked/build/Electron/openvr_api.so"
-            }
-        ],
-        "directories": {
-            "output": "build"
-        },
-        "linux": {
-            "artifactName": "VRCX_Version.${ext}",
-            "target": [
-                "AppImage"
-            ],
-            "icon": "images/VRCX.png",
-            "category": "Utility",
-            "executableName": "vrcx",
-            "desktop": {
-                "entry": {
-                    "Name": "VRCX",
-                    "Comment": "Friendship management tool for VRChat",
-                    "Icon": "VRCX",
-                    "Terminal": "false",
-                    "Type": "Application",
-                    "Categories": "Utility;Application;"
-                }
-            },
-            "maintainer": "rs189 <35667100+rs189@users.noreply.github.com>",
-            "description": "Friendship management tool for VRChat",
-            "syncDesktopName": true
-        },
-        "mac": {
-            "artifactName": "VRCX_Version.${ext}",
-            "target": [
-                "dmg"
-            ],
-            "icon": "images/VRCX.png",
-            "category": "public.app-category.utilities",
-            "executableName": "VRCX"
-        },
-        "toolsets": {
-            "appimage": "1.0.3"
-        }
     },
     "desktopName": "VRCX"
 }

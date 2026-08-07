@@ -12,6 +12,20 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 
 import { languageCodes } from './localization/locales';
 
+/** what platform we are on */
+const isLinux = process.platform === 'linux';
+const isWindows = process.platform === 'win32';
+
+/* what platform we are building for */
+const buildLinux =
+    process.env.PLATFORM != undefined
+        ? process.env.PLATFORM === 'linux'
+        : isLinux;
+const buildWindows =
+    process.env.PLATFORM != undefined
+        ? process.env.PLATFORM === 'windows'
+        : isWindows;
+
 /**
  * Vite plugin to remove legacy remixicon font files (eot, woff, ttf, svg)
  * from the build output, keeping only woff2. Saves ~4.5 MB.
@@ -92,6 +106,10 @@ function getAssetFilename({ name }) {
     return 'assets/i18n/[name][extname]';
 }
 
+/**
+ * @param ConfigEnv configEnv
+ * @returns {import('vite').UserConfig}
+ */
 export default defineConfig(({ mode }) => {
     const { SENTRY_AUTH_TOKEN: sentryAuthToken } = loadEnv(
         mode,
@@ -108,6 +126,7 @@ export default defineConfig(({ mode }) => {
     const nightly =
         mode === 'development' || version.split('-').at(-1).length === 7;
 
+    /** @type {import('vite').UserConfig} */
     return {
         base: '',
         plugins: [
@@ -164,8 +183,8 @@ export default defineConfig(({ mode }) => {
             ]
         },
         define: {
-            LINUX: JSON.stringify(process.env.PLATFORM === 'linux'),
-            WINDOWS: JSON.stringify(process.env.PLATFORM === 'windows'),
+            LINUX: JSON.stringify(buildLinux),
+            WINDOWS: JSON.stringify(buildWindows),
             VERSION: JSON.stringify(version),
             NIGHTLY: JSON.stringify(nightly)
         },
@@ -182,10 +201,10 @@ export default defineConfig(({ mode }) => {
             reportCompressedSize: false,
             chunkSizeWarningLimit: 5000,
             sourcemap: buildAndUploadSourceMaps ? 'hidden' : false,
-            assetsInlineLimit(filePath) {
-                if (isFont(filePath)) return 0;
-                if (filePath.endsWith('.json')) return 0;
-                return 40960;
+            assetsInlineLimit(filePath, content) {
+                if (isFont(filePath)) return false;
+                if (filePath.endsWith('.json')) return false;
+                return content.length <= 40960;
             },
             rolldownOptions: {
                 preserveEntrySignatures: false,
