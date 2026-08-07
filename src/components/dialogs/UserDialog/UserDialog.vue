@@ -372,7 +372,8 @@
 
     // Register simple dialog openers as callbacks for the command composable
     registerCallbacks({
-        showEditProfileDialog
+        showEditProfileDialog,
+        showEditNoteAndMemoDialog: () => infoTabRef.value?.showEditNoteAndMemoDialog()
     });
 
     /**
