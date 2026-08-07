@@ -251,7 +251,7 @@ jobs:
             - name: Build Electron-html
               env:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SentryAuthToken }}
-              run: npm run prod-linux
+              run: npm run prod
             - name: Download Electron x64 dotnet artifacts
               uses: actions/download-artifact@v8
               with:
@@ -305,7 +305,7 @@ jobs:
             - name: Restore dependencies
               run: npm ci
             - name: Build Electron-html
-              run: npm run prod-linux --arch=x64
+              run: npm run prod --arch=x64
 
             - name: Download x64 Electron dotnet artifacts
               uses: actions/download-artifact@v8
@@ -325,7 +325,7 @@ jobs:
                   rm -R build/Electron
 
             - name: Build Electron-html
-              run: npm run prod-linux --arch=arm64
+              run: npm run prod --arch=arm64
 
             - name: Download arm64 Electron dotnet artifacts
               uses: actions/download-artifact@v8

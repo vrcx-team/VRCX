@@ -2,11 +2,12 @@ const fs = require('fs');
 const path = require('path');
 
 const rootDir = path.join(__dirname, '..');
-const versionFilePath = path.join(rootDir, 'Version');
-const packageJsonPath = path.join(rootDir, 'package.json');
+const versionFilePath = path.resolve(rootDir, 'Version');
+const packageJsonPath = path.resolve(rootDir, 'package.json');
 
 let version = '';
 try {
+    console.log(`Reading Version from ${versionFilePath}`);
     version = fs.readFileSync(versionFilePath, 'utf8').trim();
     var index = version.indexOf('T');
     if (index > 0) {
@@ -23,6 +24,7 @@ try {
 
 let packageJson = {};
 try {
+    console.log(`Reading package.json from ${packageJsonPath}`);
     const packageData = fs.readFileSync(packageJsonPath, 'utf8');
     packageJson = JSON.parse(packageData);
 } catch (err) {

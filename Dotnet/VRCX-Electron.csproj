@@ -9,6 +9,8 @@
     <OutputType>Library</OutputType>
     <Configurations>Debug;Release</Configurations>
     <Platforms>x64;ARM64</Platforms>
+    <RuntimeIdentifiers>linux-x64;linux-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <AssemblyTitle>VRCX</AssemblyTitle>
