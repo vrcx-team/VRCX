@@ -19,6 +19,35 @@
                 @click="showFullscreenImageDialog(userDialog.ref.bannerUrl)"
                 @error="profileImageError = true"
                 loading="lazy" />
+            <div class="absolute bottom-0 pt-10 right-2.5 z-10 translate-y-1/2 flex gap-1.5">
+                <TooltipWrapper
+                    v-if="userDialog.isBlock"
+                    :content="t('dialog.user.actions.moderation_block')"
+                    side="top">
+                    <XCircle class="h-6 w-6 text-red-400" />
+                </TooltipWrapper>
+                <TooltipWrapper v-if="userDialog.isMute" :content="t('dialog.user.actions.moderation_mute')" side="top">
+                    <VolumeX class="h-6 w-6 text-red-400" />
+                </TooltipWrapper>
+                <TooltipWrapper
+                    v-if="userDialog.isMuteChat"
+                    :content="t('dialog.user.actions.moderation_disable_chatbox')"
+                    side="top">
+                    <MessageCircle class="h-6 w-6 text-red-400" />
+                </TooltipWrapper>
+                <TooltipWrapper
+                    v-if="userDialog.isHideAvatar"
+                    :content="t('dialog.user.actions.moderation_hide_avatar')"
+                    side="top">
+                    <User class="h-6 w-6 text-red-400" />
+                </TooltipWrapper>
+                <TooltipWrapper
+                    v-if="userDialog.isInteractOff"
+                    :content="t('dialog.user.actions.moderation_disable_avatar_interaction')"
+                    side="top">
+                    <Hand class="h-6 w-6 text-red-400" />
+                </TooltipWrapper>
+            </div>
             <div
                 class="absolute bottom-0 left-3 z-10 translate-y-1/2 overflow-hidden rounded-lg"
                 style="
@@ -437,8 +466,13 @@
         Monitor,
         Shield,
         Smartphone,
+        Hand,
         UserPlus,
-        Users
+        Users,
+        XCircle,
+        VolumeX,
+        MessageCircle,
+        User
     } from 'lucide-vue-next';
     import { ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';

@@ -129,7 +129,7 @@
                             </DropdownMenuItem>
                         </template>
                         <DropdownMenuItem :disabled="!currentUser.isBoopingEnabled" @click="onCommand('Send Boop')">
-                            <MousePointer class="size-4" />
+                            <Hand class="size-4" />
                             {{ t('dialog.user.actions.send_boop') }}
                         </DropdownMenuItem>
                     </template>
@@ -219,7 +219,7 @@
                                 v-if="userDialog.isInteractOff"
                                 variant="destructive"
                                 @click="onCommand('Moderation Enable Avatar Interaction')">
-                                <MousePointer class="size-4" />
+                                <Hand class="size-4" />
                                 {{ t('dialog.user.actions.moderation_enable_avatar_interaction') }}
                             </DropdownMenuItem>
                             <DropdownMenuItem v-else @click="onCommand('Moderation Disable Avatar Interaction')">
@@ -287,7 +287,7 @@
         MessageSquare,
         Mic,
         MoreHorizontal,
-        MousePointer,
+        Hand,
         Pencil,
         Plus,
         RefreshCw,
