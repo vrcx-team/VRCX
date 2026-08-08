@@ -13,6 +13,12 @@ const DOTNET_RUNTIME_DIR = path.join(
     'dotnet-runtime'
 );
 
+/**
+ * Downloads a file from a URL and saves it to a target path
+ * @param {string} url
+ * @param {string} targetPath
+ * @returns {Promise< NodeJS.ErrnoException | null | undefined >} A promise that resolves when the file is downloaded and saved
+ */
 async function downloadFile(url, targetPath) {
     return new Promise((resolve, reject) => {
         const file = fs.createWriteStream(targetPath);
@@ -37,6 +43,12 @@ async function downloadFile(url, targetPath) {
     });
 }
 
+/**
+ * Extracts a tar.gz file to a target directory
+ * @param {string} tarGzPath
+ * @param {string} extractDir
+ * @returns {Promise<void>} A promise that resolves when the file is extracted
+ */
 async function extractTarGz(tarGzPath, extractDir) {
     return new Promise((resolve, reject) => {
         const tar = spawnSync(
@@ -57,6 +69,12 @@ async function extractTarGz(tarGzPath, extractDir) {
     });
 }
 
+/**
+ * Downloads the .NET runtime for the specified architecture and platform
+ * @param {string} arch
+ * @param {string} platform
+ * @returns {Promise<void>} A promise that resolves when the .NET runtime is downloaded and extracted
+ */
 async function downloadDotnetRuntime(arch, platform) {
     if (!arch || !platform) {
         throw new Error('Architecture and platform must be specified');

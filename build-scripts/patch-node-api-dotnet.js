@@ -2,6 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const { getArchAndPlatform } = require('./utils');
 
+/**
+ * Patches a file with the specified path
+ * @param {string} filePath
+ * @returns {boolean} True if the file was patched, false otherwise
+ */
 function patchFile(filePath) {
     if (!fs.existsSync(filePath)) {
         console.error(`Error: ${filePath} does not exist.`);
@@ -31,6 +36,12 @@ managedHostPath = managedHostPath.indexOf('app.asar.unpacked') < 0 ?
     return false;
 }
 
+/**
+ * Patches the node-api-dotnet module for the specified architecture and platform
+ * @param {string} arch
+ * @param {string} platform
+ * @returns {void}
+ */
 function patchNodeApiDotNet(arch, platform) {
     let platformName = '';
     switch (platform) {

@@ -23,7 +23,7 @@
         "src/vite.config.js",
         "src/shared/utils/localizationHelperCLI.js",
         "src/localization/*.js",
-        "build-scripts/generate-third-party-licenses.js"
+        "build-scripts/*.js"
     ],
     "exclude": ["node_modules", "build"]
 }
