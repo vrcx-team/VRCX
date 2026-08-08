@@ -3,7 +3,13 @@
     "compilerOptions": {
         "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.checkjs.tsbuildinfo"
     },
-    "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.vue", "src/types/**/*.d.ts"],
+    "include": [
+        "src/**/*.js",
+        "src/**/*.jsx",
+        "src/**/*.vue",
+        "src/types/**/*.d.ts",
+        "src-electron/**/*.js"
+    ],
     "exclude": [
         "node_modules",
         "build",
