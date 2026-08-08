@@ -203,10 +203,26 @@
                                     <RefreshCw class="size-4" />
                                     {{ t('dialog.world.actions.refresh') }}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem @click="worldDialogCommand('Share')">
-                                    <Share2 class="size-4" />
-                                    {{ t('dialog.world.actions.share') }}
-                                </DropdownMenuItem>
+                                <DropdownMenuSub>
+                                    <DropdownMenuSubTrigger @click="worldDialogCommand('Share')">
+                                        <Share2 class="size-4 mr-2" />
+                                        <span>{{ t('dialog.world.actions.share') }}</span>
+                                    </DropdownMenuSubTrigger>
+                                    <DropdownMenuSubContent side="right" align="start" class="w-56">
+                                        <DropdownMenuItem @click="worldDialogCommand('Share')">
+                                            <Copy class="size-4" />
+                                            {{ t('dialog.world.info.copy_url') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem @click="worldDialogCommand('Copy World Name')">
+                                            <Copy class="size-4" />
+                                            {{ t('dialog.world.info.copy_name') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem @click="worldDialogCommand('Copy World ID')">
+                                            <Copy class="size-4" />
+                                            {{ t('dialog.world.info.copy_id') }}
+                                        </DropdownMenuItem>
+                                    </DropdownMenuSubContent>
+                                </DropdownMenuSub>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem @click="worldDialogCommand('New Instance')">
                                     <Flag class="size-4" />
@@ -370,6 +386,7 @@
 <script setup>
     import {
         Apple,
+        Copy,
         Download,
         Ellipsis,
         Eye,
@@ -416,6 +433,9 @@
         DropdownMenuContent,
         DropdownMenuItem,
         DropdownMenuSeparator,
+        DropdownMenuSub,
+        DropdownMenuSubContent,
+        DropdownMenuSubTrigger,
         DropdownMenuTrigger
     } from '../../ui/dropdown-menu';
     import { deleteVRChatCache, openFolderGeneric } from '../../../shared/utils';

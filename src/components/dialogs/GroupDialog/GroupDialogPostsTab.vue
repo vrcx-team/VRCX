@@ -1,22 +1,48 @@
-<template>
-    <template v-if="groupDialog.visible">
-        <span style="margin-right: 8px; vertical-align: top"
-            >{{ t('dialog.group.posts.posts_count') }} {{ groupDialog.posts.length }}</span
-        >
-        <InputGroupField
-            v-model="groupDialog.postsSearch"
-            clearable
-            size="sm"
-            :placeholder="t('dialog.group.posts.search_placeholder')"
-            style="width: 89%; margin-bottom: 8px"
-            @input="updateGroupPostSearch" />
-        <div class="flex flex-wrap items-start">
+<template v-if="groupDialog.visible">
+    <div class="flex h-full min-h-0 flex-col p-2 rounded-xl bg-(--profile-card)">
+        <div class="sticky flex items-center gap-2 top-0 z-10 p-2">
+            <span style="margin-right: 8px; vertical-align: top"
+                >{{ t('dialog.group.posts.posts_count') }} {{ groupDialog.posts.length }}</span
+            >
+            <InputGroupField
+                v-model="groupDialog.postsSearch"
+                clearable
+                size="sm"
+                :placeholder="t('dialog.group.posts.search_placeholder')"
+                class="flex-1"
+                @input="updateGroupPostSearch" />
+        </div>
+        <div class="flex flex-1 min-h-0 flex-wrap items-start overflow-y-auto">
             <div
                 v-for="post in groupDialog.postsFiltered"
                 :key="post.id"
-                class="box-border flex items-center p-1.5 text-[13px] w-full cursor-default">
-                <div class="flex-1 overflow-hidden">
-                    <span style="display: block" v-text="post.title" />
+                class="box-border flex items-start pb-2 text-[13px] w-full cursor-default">
+                <div class="relative flex-1 overflow-hidden rounded-lg border border-border/60 bg-background p-2">
+                    <template v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
+                        <div class="absolute top-0 right-0 flex items-center">
+                            <TooltipWrapper side="top" :content="t('dialog.group.posts.edit_tooltip')">
+                                <Button
+                                    size="icon-sm"
+                                    class="h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                                    variant="ghost"
+                                    :ariaLabel="t('dialog.group.posts.edit_tooltip')"
+                                    @click="showGroupPostEditDialog(groupDialog.id, post)"
+                                    ><Pencil class="h-4 w-4" />
+                                </Button>
+                            </TooltipWrapper>
+                            <TooltipWrapper side="top" :content="t('dialog.group.posts.delete_tooltip')">
+                                <Button
+                                    size="icon-sm"
+                                    class="h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                                    variant="ghost"
+                                    :ariaLabel="t('dialog.group.posts.delete_tooltip')"
+                                    @click="confirmDeleteGroupPost(post)"
+                                    ><Trash2 class="h-4 w-4" />
+                                </Button>
+                            </TooltipWrapper>
+                        </div>
+                    </template>
+                    <span class="block pr-15" v-text="post.title" />
                     <div v-if="post.imageUrl" style="display: inline-block; margin-right: 6px">
                         <div
                             class="cursor-pointer"
@@ -25,10 +51,6 @@
                             <img
                                 :src="post.imageUrl"
                                 style="width: 60px; height: 60px; border-radius: var(--radius-md); object-fit: cover"
-                                @error="
-                                    $event.target.style.display = 'none';
-                                    $event.target.nextElementSibling.style.display = 'flex';
-                                "
                                 loading="lazy" />
                             <div
                                 class="items-center justify-center bg-muted"
@@ -40,10 +62,8 @@
                     <pre
                         class="text-xs font-[inherit]"
                         style="display: inline-block; vertical-align: top; white-space: pre-wrap; margin: 0"
-                        >{{ post.text || '-' }}</pre
-                    >
-                    <br />
-                    <div v-if="post.authorId" class="text-xs" style="float: right; margin-left: 6px">
+                        >{{ post.text || '-' }}</pre>
+                    <div v-if="post.authorId" class="mt-1 clear-both flex w-full items-center justify-end text-xs">
                         <TooltipWrapper v-if="post.roleIds.length" side="top">
                             <template #content>
                                 <span>{{ t('dialog.group.posts.visibility') }}</span>
@@ -79,33 +99,11 @@
                             </template>
                             <Timer :epoch="Date.parse(post.updatedAt)" />
                         </TooltipWrapper>
-                        <template v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
-                            <TooltipWrapper side="top" :content="t('dialog.group.posts.edit_tooltip')">
-                                <Button
-                                    size="icon-sm"
-                                    class="h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
-                                    variant="ghost"
-                                    :ariaLabel="t('dialog.group.posts.edit_tooltip')"
-                                    @click="showGroupPostEditDialog(groupDialog.id, post)"
-                                    ><Pencil class="h-4 w-4" />
-                                </Button>
-                            </TooltipWrapper>
-                            <TooltipWrapper side="top" :content="t('dialog.group.posts.delete_tooltip')">
-                                <Button
-                                    size="icon-sm"
-                                    class="h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
-                                    variant="ghost"
-                                    :ariaLabel="t('dialog.group.posts.delete_tooltip')"
-                                    @click="confirmDeleteGroupPost(post)"
-                                    ><Trash2 class="h-4 w-4" />
-                                </Button>
-                            </TooltipWrapper>
-                        </template>
                     </div>
                 </div>
             </div>
         </div>
-    </template>
+    </div>
 </template>
 
 <script setup>

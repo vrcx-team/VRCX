@@ -1,81 +1,83 @@
 <template>
-    <template v-if="groupDialog.visible">
-        <span v-if="hasGroupPermission(groupDialog.ref, 'group-members-viewall')" class="text-base font-bold">{{
-            t('dialog.group.members.all_members')
-        }}</span>
-        <span v-else class="text-base font-bold">{{ t('dialog.group.members.friends_only') }}</span>
-        <div style="margin-top: 8px">
-            <Button
-                class="rounded-full h-6 w-6"
-                variant="ghost"
-                size="icon-sm"
-                :loading="isGroupMembersLoading"
-                circle
-                @click="loadAllGroupMembers">
-                <Spinner v-if="isGroupMembersLoading" /><RefreshCcw v-else
-            /></Button>
-            <Button
-                class="rounded-full h-6 w-6 ml-2"
-                size="icon-sm"
-                variant="ghost"
-                style="margin-left: 6px"
-                @click="downloadAndSaveJson(`${groupDialog.id}_members`, groupDialog.members)">
-                <Download class="h-4 w-4" />
-            </Button>
-            <span v-if="groupDialog.memberSearch.length" class="text-sm mx-1.5"
-                >{{ groupDialog.memberSearchResults.length }}/{{ groupDialog.ref.memberCount }}</span
-            >
-            <span v-else class="text-sm mx-1.5"
-                >{{ groupDialog.members.length }}/{{ groupDialog.ref.memberCount }}</span
-            >
-            <div
-                v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')"
-                style="float: right"
-                class="flex items-center">
-                <span style="margin-right: 6px">{{ t('dialog.group.members.sort_by') }}</span>
-                <Select
-                    v-model="groupDialogMemberSortValue"
-                    :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0">
-                    <SelectTrigger class="h-8 w-45 mr-1">
-                        <SelectValue :placeholder="t('dialog.group.members.sort_by')" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem v-for="item in groupDialogSortingOptions" :key="item.value" :value="item.value">
-                            {{ t(item.name) }}
-                        </SelectItem>
-                    </SelectContent>
-                </Select>
-                <span class="ml-2 mr-1">{{ t('dialog.group.members.filter') }}</span>
-                <div style="display: inline-block; width: 220px">
-                    <VirtualCombobox
-                        v-model="groupDialogMemberFilterKey"
-                        :groups="groupDialogMemberFilterGroups"
-                        :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0"
-                        :placeholder="t('dialog.group.members.filter')"
-                        :search-placeholder="t('dialog.group.members.search')"
-                        :clearable="false"
-                        :close-on-select="true">
-                        <template #trigger="{ text }">
-                            <span class="truncate">
-                                {{ text || t('dialog.group.members.filter') }}
-                            </span>
-                        </template>
-                    </VirtualCombobox>
+    <div v-if="groupDialog.visible" class="flex h-full min-h-0 flex-col p-2 rounded-xl bg-(--profile-card)">
+        <div class="sticky top-0 z-10 pb-2">
+            <span v-if="hasGroupPermission(groupDialog.ref, 'group-members-viewall')" class="text-base font-bold p-1">{{
+                t('dialog.group.members.all_members')
+            }}</span>
+            <span v-else class="text-base font-bold">{{ t('dialog.group.members.friends_only') }}</span>
+            <div style="margin-top: 8px">
+                <Button
+                    class="rounded-full h-6 w-6"
+                    variant="ghost"
+                    size="icon-sm"
+                    :loading="isGroupMembersLoading"
+                    circle
+                    @click="loadAllGroupMembers">
+                    <Spinner v-if="isGroupMembersLoading" /><RefreshCcw v-else
+                /></Button>
+                <Button
+                    class="rounded-full h-6 w-6 ml-2"
+                    size="icon-sm"
+                    variant="ghost"
+                    style="margin-left: 6px"
+                    @click="downloadAndSaveJson(`${groupDialog.id}_members`, groupDialog.members)">
+                    <Download class="h-4 w-4" />
+                </Button>
+                <span v-if="groupDialog.memberSearch.length" class="text-sm mx-1.5"
+                    >{{ groupDialog.memberSearchResults.length }}/{{ groupDialog.ref.memberCount }}</span
+                >
+                <span v-else class="text-sm mx-1.5"
+                    >{{ groupDialog.members.length }}/{{ groupDialog.ref.memberCount }}</span
+                >
+                <div
+                    v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')"
+                    style="float: right"
+                    class="flex items-center">
+                    <span style="margin-right: 6px">{{ t('dialog.group.members.sort_by') }}</span>
+                    <Select
+                        v-model="groupDialogMemberSortValue"
+                        :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0">
+                        <SelectTrigger class="h-8 w-45 mr-1">
+                            <SelectValue :placeholder="t('dialog.group.members.sort_by')" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem v-for="item in groupDialogSortingOptions" :key="item.value" :value="item.value">
+                                {{ t(item.name) }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <span class="ml-2 mr-1">{{ t('dialog.group.members.filter') }}</span>
+                    <div style="display: inline-block; width: 220px">
+                        <VirtualCombobox
+                            v-model="groupDialogMemberFilterKey"
+                            :groups="groupDialogMemberFilterGroups"
+                            :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0"
+                            :placeholder="t('dialog.group.members.filter')"
+                            :search-placeholder="t('dialog.group.members.search')"
+                            :clearable="false"
+                            :close-on-select="true">
+                            <template #trigger="{ text }">
+                                <span class="truncate">
+                                    {{ text || t('dialog.group.members.filter') }}
+                                </span>
+                            </template>
+                        </VirtualCombobox>
+                    </div>
                 </div>
+                <InputGroupField
+                    v-model="groupDialog.memberSearch"
+                    :disabled="!hasGroupPermission(groupDialog.ref, 'group-members-manage')"
+                    clearable
+                    size="sm"
+                    :placeholder="t('dialog.group.members.search')"
+                    class="flex-1"
+                    @input="groupMembersSearch" />
             </div>
-            <InputGroupField
-                v-model="groupDialog.memberSearch"
-                :disabled="!hasGroupPermission(groupDialog.ref, 'group-members-manage')"
-                clearable
-                size="sm"
-                :placeholder="t('dialog.group.members.search')"
-                style="margin-top: 8px; margin-bottom: 8px"
-                @input="groupMembersSearch" />
         </div>
         <div
             v-if="groupDialog.memberSearch.length"
-            class="flex flex-wrap items-start"
-            style="margin-top: 8px; overflow: auto; max-height: 250px; min-width: 130px">
+            class="min-h-0 flex-1 overflow-y-auto overflow-x-hidden flex flex-wrap items-start pt-2"
+            style="min-width: 130px">
             <div
                 v-for="user in groupDialog.memberSearchResults"
                 :key="user.id"
@@ -123,21 +125,17 @@
                                 <Pencil style="margin-right: 6px" />
                             </TooltipWrapper>
                         </template>
-                        <template v-for="roleId in user.roleIds" :key="roleId">
-                            <template v-for="role in groupDialog.ref.roles" :key="role.id + roleId"
-                                ><span v-if="role.id === roleId" v-text="role.name" /></template
-                            ><template v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
-                                ><span>,&nbsp;</span></template
-                            >
-                        </template>
+                        <span :title="getUserRoleNamesText(user.roleIds)">
+                            {{ getUserRoleNamesText(user.roleIds) }}
+                        </span>
                     </span>
                 </div>
             </div>
         </div>
         <ul
             v-else-if="groupDialog.members.length > 0"
-            class="infinite-list flex flex-wrap items-start"
-            style="margin-top: 8px; overflow: auto; max-height: 250px; min-width: 130px">
+            class="infinite-list min-h-0 flex-1 overflow-y-auto overflow-x-hidden flex flex-wrap items-start pt-2"
+            style="min-width: 130px">
             <li
                 v-for="user in groupDialog.members"
                 :key="user.id"
@@ -185,13 +183,9 @@
                                 <Pencil style="margin-right: 6px" />
                             </TooltipWrapper>
                         </template>
-                        <template v-for="roleId in user.roleIds" :key="roleId">
-                            <template v-for="role in groupDialog.ref.roles" :key="roleId + role.id"
-                                ><span v-if="role.id === roleId" v-text="role.name" /></template
-                            ><template v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
-                                ><span>&nbsp;</span></template
-                            >
-                        </template>
+                        <span :title="getUserRoleNamesText(user.roleIds)">
+                            {{ getUserRoleNamesText(user.roleIds) }}
+                        </span>
                     </span>
                 </div>
             </li>
@@ -207,7 +201,7 @@
                 </div>
             </div>
         </ul>
-    </template>
+    </div>
 </template>
 
 <script setup>
@@ -246,6 +240,16 @@
         loadMoreGroupMembers,
         loadAllGroupMembers
     } = useGroupMembers(groupDialog, { currentUser, applyGroupMember, handleGroupMember, t });
+
+    function getUserRoleNamesText(roleIds = []) {
+        const groupRoles = groupDialog.value?.ref?.roles ?? [];
+        const roleNameById = new Map(groupRoles.map((role) => [role.id, role.name]));
+
+        return roleIds
+            .map((roleId) => roleNameById.get(roleId))
+            .filter((roleName) => typeof roleName === 'string' && roleName.length > 0)
+            .join(', ');
+    }
 
     defineExpose({
         getGroupDialogGroupMembers

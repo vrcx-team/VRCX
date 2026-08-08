@@ -51,6 +51,12 @@ export function useGroupDialogCommands(
             Share: () => {
                 copyToClipboard(D().ref.$url);
             },
+            'Copy Group Name': () => {
+                copyToClipboard(D().ref.name);
+            },
+            'Copy Group ID': () => {
+                copyToClipboard(D().id);
+            },
             'Create Post': () => {
                 showGroupPostEditDialog(D().id, null);
             },

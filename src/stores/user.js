@@ -1,5 +1,6 @@
 import { computed, reactive, ref, shallowReactive, watch } from 'vue';
 import { defineStore } from 'pinia';
+import { useI18n } from 'vue-i18n';
 
 import {
     compareByCreatedAt,
@@ -20,6 +21,7 @@ import { useAppearanceSettingsStore } from './settings/appearance';
 import { useFriendStore } from './friend';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
+import { useModalStore } from './modal';
 import { syncFriendSearchIndex } from '../coordinators/searchIndexCoordinator';
 import { useUiStore } from './ui';
 import { watchState } from '../services/watchState';
@@ -31,7 +33,9 @@ export const useUserStore = defineStore('User', () => {
     const friendStore = useFriendStore();
     const locationStore = useLocationStore();
     const instanceStore = useInstanceStore();
+    const modalStore = useModalStore();
     const uiStore = useUiStore();
+    const { t } = useI18n();
 
     const currentUser = ref(
         /** @type {import('../types/api/user').VrcxCurrentUser} */ ({
@@ -881,8 +885,33 @@ export const useUserStore = defineStore('User', () => {
     }
 
     /**
+     * @param {string} command
      */
-    function toggleAvatarCopying() {
+    async function confirmCurrentUserToggle(command, isEnableAction) {
+        const action = isEnableAction
+            ? t('confirm.enable_action')
+            : t('confirm.disable_action');
+        const { ok } = await modalStore.confirm({
+            title: t('confirm.title'),
+            description: t('confirm.command_question_toggle', {
+                action,
+                command
+            })
+        });
+        return ok;
+    }
+
+    /**
+     */
+    async function toggleAvatarCopying() {
+        if (
+            !(await confirmCurrentUserToggle(
+                t('dialog.user.info.avatar_cloning'),
+                !currentUser.value.allowAvatarCopying
+            ))
+        ) {
+            return;
+        }
         userRequest.saveCurrentUser({
             allowAvatarCopying: !currentUser.value.allowAvatarCopying
         });
@@ -890,7 +919,15 @@ export const useUserStore = defineStore('User', () => {
 
     /**
      */
-    function toggleAllowBooping() {
+    async function toggleAllowBooping() {
+        if (
+            !(await confirmCurrentUserToggle(
+                t('dialog.user.info.booping'),
+                !currentUser.value.isBoopingEnabled
+            ))
+        ) {
+            return;
+        }
         userRequest.saveCurrentUser({
             isBoopingEnabled: !currentUser.value.isBoopingEnabled
         });
@@ -898,7 +935,15 @@ export const useUserStore = defineStore('User', () => {
 
     /**
      */
-    function toggleSharedConnectionsOptOut() {
+    async function toggleSharedConnectionsOptOut() {
+        if (
+            !(await confirmCurrentUserToggle(
+                t('dialog.user.info.show_mutual_friends'),
+                currentUser.value.hasSharedConnectionsOptOut
+            ))
+        ) {
+            return;
+        }
         userRequest.saveCurrentUser({
             hasSharedConnectionsOptOut:
                 !currentUser.value.hasSharedConnectionsOptOut
@@ -907,7 +952,15 @@ export const useUserStore = defineStore('User', () => {
 
     /**
      */
-    function toggleDiscordFriendsOptOut() {
+    async function toggleDiscordFriendsOptOut() {
+        if (
+            !(await confirmCurrentUserToggle(
+                t('dialog.user.info.show_discord_connections'),
+                currentUser.value.hasDiscordFriendsOptOut
+            ))
+        ) {
+            return;
+        }
         userRequest.saveCurrentUser({
             hasDiscordFriendsOptOut: !currentUser.value.hasDiscordFriendsOptOut
         });

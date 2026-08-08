@@ -154,6 +154,21 @@ export function useWorldDialogCommands(
     /**
      *
      */
+    function copyWorldId() {
+        navigator.clipboard
+            .writeText(worldDialog.value.id)
+            .then(() => {
+                toast.success(t('message.world.id_copied'));
+            })
+            .catch((err) => {
+                console.error('copy failed:', err);
+                toast.error(t('message.copy_failed'));
+            });
+    }
+
+    /**
+     *
+     */
     function showWorldAllowedDomainsDialog() {
         const D = worldAllowedDomainsDialog.value;
         D.worldId = worldDialog.value.id;
@@ -387,6 +402,12 @@ export function useWorldDialogCommands(
             },
             Share: () => {
                 copyWorldUrl();
+            },
+            'Copy World Name': () => {
+                copyWorldName();
+            },
+            'Copy World ID': () => {
+                copyWorldId();
             },
             'Previous Instances': () => {
                 showPreviousInstancesListDialog(D().ref);
@@ -622,6 +643,7 @@ export function useWorldDialogCommands(
         showNewInstanceDialog,
         copyWorldUrl,
         copyWorldName,
+        copyWorldId,
         showWorldAllowedDomainsDialog,
         showPreviousInstancesListDialog,
         showFullscreenImageDialog,

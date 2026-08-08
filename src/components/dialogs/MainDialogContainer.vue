@@ -142,6 +142,7 @@
     const dialogClass = computed(() => {
         switch (activeType.value) {
             case 'user':
+            case 'group':
                 return 'x-dialog translate-y-0 sm:max-w-270 overflow-hidden flex flex-col';
             case 'group-member-moderation':
                 return 'x-dialog translate-y-0 max-w-none flex flex-col sm:min-w-[90vw] sm:max-w-[90vw] sm:min-h-[80vh] sm:max-h-[80vh]';
@@ -152,7 +153,6 @@
                 return 'x-dialog translate-y-0 sm:max-w-250';
             case 'world':
             case 'avatar':
-            case 'group':
             default:
                 return 'x-dialog translate-y-0 sm:max-w-235 overflow-hidden flex flex-col';
         }
