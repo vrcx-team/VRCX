@@ -546,6 +546,9 @@ export const useInstanceStore = defineStore('Instance', () => {
                     return args;
                 });
         }
+        if (ref?.world?.name) {
+            ref.world.name = replaceBioSymbols(ref.world.name);
+        }
         ref.$disabledContentSettings = computeDisabledContentSettings(
             json.contentSettings,
             instanceContentSettings

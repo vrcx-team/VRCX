@@ -105,7 +105,10 @@
                         </Badge>
                     </div>
                     <div class="mt-1.5">
-                        <LocationWorld :locationobject="currentInstanceLocation" :currentuserid="currentUser.id" />
+                        <LocationWorld
+                            :locationobject="currentInstanceLocation"
+                            :currentuserid="currentUser.id"
+                            class="w-fit" />
                         <span class="ml-1.5" v-if="lastLocation.playerList.size > 0">
                             {{ lastLocation.playerList.size }}
                             <template v-if="lastLocation.friendList.size > 0"
