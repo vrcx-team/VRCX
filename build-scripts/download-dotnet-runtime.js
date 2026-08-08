@@ -1,8 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
+const os = require('os');
 const { spawnSync } = require('child_process');
 const { getArchAndPlatform } = require('./utils');
+const { pipeline } = require('stream/promises');
+const { unlink, copyFile, rename } = require('node:fs/promises');
 
 const DOTNET_VERSION = '10.0.8';
 const DOTNET_RUNTIME_DIR = path.join(
@@ -13,34 +15,51 @@ const DOTNET_RUNTIME_DIR = path.join(
     'dotnet-runtime'
 );
 
+const DOTNET_CACHE_DIR = path.join(
+    os.homedir(),
+    '.cache',
+    'vrcx-build',
+    'dotnet-cache'
+);
+
 /**
  * Downloads a file from a URL and saves it to a target path
  * @param {string} url
  * @param {string} targetPath
- * @returns {Promise< NodeJS.ErrnoException | null | undefined >} A promise that resolves when the file is downloaded and saved
+ * @returns {Promise<void>} A promise that resolves when the file is downloaded and saved
  */
 async function downloadFile(url, targetPath) {
-    return new Promise((resolve, reject) => {
-        const file = fs.createWriteStream(targetPath);
-        https
-            .get(url, (response) => {
-                if (response.statusCode !== 200) {
-                    reject(
-                        new Error(
-                            `Failed to download, url: ${url} status code: ${response.statusCode}`
-                        )
-                    );
-                    return;
-                }
-                response.pipe(file);
-                file.on('finish', () => {
-                    file.close(resolve);
-                });
-            })
-            .on('error', (err) => {
-                fs.unlink(targetPath, () => reject(err));
-            });
-    });
+    const tempPath = `${targetPath}.tmp-${process.pid}-${Date.now()}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(
+                `Failed to download, url: ${url} status code: ${response.status}`
+            );
+        }
+
+        const fileStream = fs.createWriteStream(tempPath);
+        // @ts-ignore response.ok is true here, so response.body is not null
+        await pipeline(response.body, fileStream);
+
+        // Atomically publish the completed download.
+        await rename(tempPath, targetPath);
+    } catch (error) {
+        const error2 = /** @type {Error} */ (error);
+        console.error('Error downloading file:', error2.message);
+
+        try {
+            await unlink(tempPath);
+        } catch (error) {
+            const unlinkError = /** @type {NodeJS.ErrnoException} */ (error);
+            if (unlinkError.code !== 'ENOENT') {
+                console.error('Error cleaning up temporary file:', unlinkError);
+            }
+        }
+
+        throw error;
+    }
 }
 
 /**
@@ -94,19 +113,33 @@ async function downloadDotnetRuntime(arch, platform) {
         throw new Error(`Unsupported platform: ${platform}`);
     }
 
+    if (!fs.existsSync(DOTNET_CACHE_DIR)) {
+        fs.mkdirSync(DOTNET_CACHE_DIR, { recursive: true });
+    }
+
     if (!fs.existsSync(DOTNET_RUNTIME_DIR)) {
         fs.mkdirSync(DOTNET_RUNTIME_DIR, { recursive: true });
     }
 
-    console.log(
-        `Downloading .NET ${DOTNET_VERSION}-${dotnetPlatform}-${arch} runtime...`
-    );
-    const tarGzPath = path.join(DOTNET_RUNTIME_DIR, 'dotnet-runtime.tar.gz');
-    const dotnetRuntimeUrl = `https://builds.dotnet.microsoft.com/dotnet/Runtime/${DOTNET_VERSION}/dotnet-runtime-${DOTNET_VERSION}-${dotnetPlatform}-${arch}.tar.gz`;
+    const fileName = `dotnet-runtime-${DOTNET_VERSION}-${dotnetPlatform}-${arch}.tar.gz`;
+    const tarGzPath = path.join(DOTNET_RUNTIME_DIR, fileName);
+    const dotnetRuntimeUrl = `https://builds.dotnet.microsoft.com/dotnet/Runtime/${DOTNET_VERSION}/${fileName}`;
+    const cacheFilePath = path.join(DOTNET_CACHE_DIR, fileName);
 
-    // Download .NET runtime
-    await downloadFile(dotnetRuntimeUrl, tarGzPath);
-    console.log('Download completed');
+    // Download .NET runtime if it doesn't exist in the cache
+    if (!fs.existsSync(cacheFilePath)) {
+        console.log(
+            `Downloading .NET ${DOTNET_VERSION}-${dotnetPlatform}-${arch} runtime...`
+        );
+        await downloadFile(dotnetRuntimeUrl, cacheFilePath);
+        console.log(`Downloaded ${dotnetRuntimeUrl} to ${cacheFilePath}`);
+    } else {
+        console.log(`Using cached .NET runtime at ${cacheFilePath}`);
+    }
+
+    // copy the cached file to the target directory
+    await copyFile(cacheFilePath, tarGzPath);
+    console.log(`Copied ${cacheFilePath} to ${tarGzPath}`);
 
     // Extract .NET runtime to a temporary directory first
     const tempExtractDir = path.join(DOTNET_RUNTIME_DIR, 'temp');
