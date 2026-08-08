@@ -384,20 +384,29 @@
                             {{ groupDialog.ref.onlineMemberCount }}
                         </span>
                     </div>
-                    <div class="flex justify-between items-start gap-2 text-xs">
-                        <span class="text-muted-foreground shrink-0">{{ t('dialog.group.info.created_at') }}</span>
-                        <span class="text-right text-muted-foreground">
-                            {{ formatDateFilter(groupDialog.ref.createdAt, 'long') }}
-                        </span>
-                    </div>
-                    <div
-                        class="flex justify-between items-start gap-2 text-xs cursor-pointer hover:text-foreground"
-                        @click="showPreviousInstancesListDialog(groupDialog.ref)">
-                        <span class="text-muted-foreground shrink-0">{{ t('dialog.group.info.last_visited') }}</span>
-                        <span class="text-right text-muted-foreground">
-                            {{ formatDateFilter(groupDialog.lastVisit, 'long') }}
-                        </span>
-                    </div>
+                    <TooltipWrapper
+                        side="top"
+                        :content="formatDateFilter(groupDialog.ref.createdAt, 'long')"
+                        :disabled="!groupDialog.ref.createdAt">
+                        <div class="flex justify-between items-start gap-2 text-xs">
+                            <span class="text-muted-foreground shrink-0">{{ t('dialog.group.info.created') }}</span>
+                            <span class="text-right text-muted-foreground">{{
+                                timeAgo(groupDialog.ref.createdAt)
+                            }}</span>
+                        </div>
+                    </TooltipWrapper>
+                    <TooltipWrapper
+                        side="top"
+                        :content="t('dialog.user.info.open_previous_instance')"
+                        @click="showPreviousInstancesListDialog(groupDialog.ref)"
+                        :disabled="!groupDialog.lastVisit">
+                        <div class="flex justify-between items-start gap-2 text-xs cursor-pointer">
+                            <span class="text-muted-foreground shrink-0">{{
+                                t('dialog.group.info.last_visited')
+                            }}</span>
+                            <span class="text-right text-muted-foreground">{{ timeAgo(groupDialog.lastVisit) }}</span>
+                        </div>
+                    </TooltipWrapper>
                     <div v-if="groupDialog.ref.links?.length" class="flex justify-between items-start gap-2 text-xs">
                         <span class="text-muted-foreground shrink-0">{{ t('dialog.group.info.links') }}</span>
                         <div class="flex gap-1">
@@ -430,7 +439,7 @@
                         <span class="text-muted-foreground shrink-0">{{ t('dialog.group.info.visibility') }}</span>
                         <span class="text-right text-muted-foreground">
                             <template v-if="groupDialog.ref.myMember.visibility === 'visible'">
-                                {{ t('dialog.group.tags.visible') }}
+                                {{ t('dialog.group.tags.everyone') }}
                             </template>
                             <template v-else-if="groupDialog.ref.myMember.visibility === 'friends'">
                                 {{ t('dialog.group.tags.friends') }}
@@ -440,12 +449,17 @@
                             </template>
                         </span>
                     </div>
-                    <div class="flex justify-between items-start gap-2 text-xs">
-                        <span class="text-muted-foreground shrink-0">{{ t('dialog.group.info.joined_at') }}</span>
-                        <span class="text-right text-muted-foreground">
-                            {{ formatDateFilter(groupDialog.ref.myMember.joinedAt, 'long') }}
-                        </span>
-                    </div>
+                    <TooltipWrapper
+                        side="top"
+                        :content="formatDateFilter(groupDialog.ref.myMember.joinedAt, 'long')"
+                        @click="showPreviousInstancesListDialog(groupDialog.ref)">
+                        <div class="flex justify-between items-start gap-2 text-xs cursor-pointer">
+                            <span class="text-muted-foreground shrink-0">{{ t('dialog.group.info.joined_at') }}</span>
+                            <span class="text-right text-muted-foreground">{{
+                                timeAgo(groupDialog.ref.myMember.joinedAt)
+                            }}</span>
+                        </div>
+                    </TooltipWrapper>
                     <div class="flex justify-between items-start gap-2 text-xs">
                         <span class="text-muted-foreground shrink-0">{{ t('dialog.group.info.roles') }}</span>
                         <span v-if="groupDialog.memberRoles.length === 0" class="text-right text-muted-foreground"
@@ -577,7 +591,9 @@
         hasGroupPermission,
         languageClass,
         openExternalLink,
-        removeFromArray
+        removeFromArray,
+        timeAgo,
+        timeToText
     } from '../../../shared/utils';
     import { useGalleryStore, useGroupStore, useInstanceStore, useModalStore, useUserStore } from '../../../stores';
     import {
