@@ -18,6 +18,11 @@ try {
     process.exit(1);
 }
 
+/**
+ * Renames the build files for the specified architecture and platform
+ * @param {string} arch
+ * @param {string} platform
+ */
 function renameBuild(arch, platform) {
     if (platform === 'linux') {
         const oldAppImage = path.join(buildDir, `VRCX_Version.AppImage`);

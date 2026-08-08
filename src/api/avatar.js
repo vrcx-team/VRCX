@@ -1,6 +1,5 @@
 import { patchAndRefetchActiveQuery, queryKeys } from '../queries';
 import { request } from '../services/request';
-import { useUserStore } from '../stores';
 import { applyCurrentUser } from '../coordinators/userCoordinator';
 
 const avatarReq = {
@@ -227,10 +226,9 @@ const avatarReq = {
     },
 
     /**
-     * @param {{ imageData: string, avatarId: string }}
-     * @param imageData
-     * @param avatarId
-     * @returns {Promise<{json: any, params}>}
+     * @param {string} imageData
+     * @param {string} avatarId
+     * @returns {Promise<{json: any; params: any;}>}
      */
     uploadAvatarGalleryImage(imageData, avatarId) {
         const params = {
@@ -253,7 +251,7 @@ const avatarReq = {
 
     /**
      * @param {string[]} order
-     * @returns {Promise<{json: any, params}>}
+     * @returns {Promise<{json: any; params: any;}>}
      */
     setAvatarGalleryOrder(order) {
         const params = {
@@ -272,8 +270,8 @@ const avatarReq = {
     },
 
     /**
-     * @param {{n: number, offset: number}} params
-     * @returns {Promise<{json: any, params}>}
+     * @param {{n: number; offset: number;}} params
+     * @returns {Promise<{json: any; params: any}>}
      */
     getLicensedAvatars(params) {
         return request('avatars/licensed', {

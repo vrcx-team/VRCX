@@ -49,8 +49,13 @@ let isOverlayActive = false;
 let appIsQuitting = false;
 const rootDir = app.getAppPath();
 
+/** @type {Electron.Tray} */
 let tray = null;
+
+/** @type {Electron.NativeImage | string} */
 let trayIcon = null;
+
+/** @type {Electron.NativeImage | string} */
 let trayIconNotify = null;
 
 // Get launch arguments
@@ -503,6 +508,7 @@ function destroyTray() {
         tray = null;
     }
 }
+
 function createTray() {
     if (process.platform === 'darwin') {
         const image = nativeImage.createFromPath(
@@ -561,6 +567,10 @@ function createTray() {
     });
 }
 
+/**
+ *
+ * @param {Boolean} notify
+ */
 function setTrayIconNotification(notify) {
     if (tray) {
         tray.setImage(notify ? trayIconNotify : trayIcon);
@@ -731,6 +741,12 @@ async function createDesktopFile() {
     }
 }
 
+/**
+ * Downloads an icon from a URL and saves it to a target path
+ * @param {string} url - The URL of the icon to download
+ * @param {string} targetPath - The path where the icon should be saved
+ * @returns {Promise<NodeJS.ErrnoException>} A promise that resolves when the icon is downloaded and saved
+ */
 function downloadIcon(url, targetPath) {
     return new Promise((resolve, reject) => {
         const file = fs.createWriteStream(targetPath);

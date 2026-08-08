@@ -329,6 +329,7 @@ export function shouldIgnoreError(code, endpoint) {
  * @param {number} code
  * @param {string|object} [error]
  * @param {string} [endpoint]
+ * @returns {never}
  */
 export function $throw(code, error, endpoint) {
     let message = [];
