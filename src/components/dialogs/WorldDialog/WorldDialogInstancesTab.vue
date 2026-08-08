@@ -20,9 +20,9 @@
         <div v-for="room in worldDialog.rooms" :key="room.id">
             <template v-if="isAgeGatedInstancesVisible || !(room.ageGate || room.location?.includes('~ageGate'))">
                 <div style="margin: 6px 0">
-                    <div class="flex items-center">
+                    <div class="flex flex-wrap gap-2 whitespace-nowrap overflow-hidden text-ellipsis">
                         <LocationWorld
-                            class="text-sm mr-2"
+                            class="text-sm"
                             :locationobject="room.$location"
                             :currentuserid="currentUser.id"
                             :worlddialogshortname="worldDialog.$location.shortName" />
