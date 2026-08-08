@@ -30,20 +30,23 @@
                     <span class="text-sm text-muted-foreground">{{ t('location.private') }}</span>
                 </div>
                 <div class="flex flex-col">
-                    <div v-if="isRealInstance(userDialog.$location.tag)" class="flex gap-1.5 justify-between">
-                        <div class="flex flex-col justify-between">
+                    <div
+                        v-if="isRealInstance(userDialog.$location.tag)"
+                        class="flex items-start gap-1.5 justify-between">
+                        <div class="flex min-w-0 flex-1 flex-col justify-between">
                             <span
-                                class="text-md text-foreground cursor-pointer"
+                                class="text-md text-foreground cursor-pointer block truncate"
                                 @click="showWorldDialog(userDialog.$location.tag)"
+                                :title="userDialog.instance?.ref?.world?.name"
                                 >{{ userDialog.instance?.ref?.world?.name }}</span
                             >
-                            <div class="flex flex-wrap gap-1.5 whitespace-nowrap overflow-hidden text-ellipsis">
+                            <div class="flex min-w-0 flex-wrap items-start gap-1.5">
                                 <LocationWorld
-                                    class="text-sm inline-flex w-fit max-w-full border-muted-foreground/30"
+                                    class="text-sm inline-flex min-w-0 w-fit max-w-full border-muted-foreground/30"
                                     :locationobject="userDialog.$location"
                                     :currentuserid="currentUser.id" />
                                 <InstanceActionBar
-                                    class="text-sm inline-flex w-fit max-w-full border-muted-foreground/30"
+                                    class="text-sm inline-flex max-w-full shrink-0 border-muted-foreground/30"
                                     :showButtons="false"
                                     :showInstanceInfo="true"
                                     :location="userDialog.$location.tag"

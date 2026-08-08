@@ -2,16 +2,25 @@
     <div
         :class="
             cn(
-                'flex items-center gap-2 text-muted-foreground rounded-full border border-muted-foreground/10 py-0.5 px-2',
+                'flex min-w-0 items-center gap-2 overflow-hidden text-muted-foreground rounded-full border border-muted-foreground/10 py-0.5 px-2',
                 props.class
             )
         ">
         <span v-if="region" :class="cn('flags inline-block shrink-0', region)"></span>
-        <span @click="showLaunchDialog" class="cursor-pointer text-muted-foreground">
+        <span
+            @click="showLaunchDialog"
+            class="min-w-0 flex-1 cursor-pointer truncate text-muted-foreground"
+            :title="`${accessTypeName} ⋅ #${instanceName}`">
             <Unlock v-if="isUnlocked" :class="['inline-block', 'mr-1.25']" />
             <span>{{ accessTypeName }} ⋅ #{{ instanceName }}</span>
         </span>
-        <span v-if="groupName" @click="openLocationGroupDialog" class="cursor-pointer">({{ groupName }})</span>
+        <span
+            v-if="groupName"
+            @click="openLocationGroupDialog"
+            class="min-w-0 shrink cursor-pointer truncate"
+            :title="groupName"
+            >({{ groupName }})</span
+        >
         <div v-if="closedAt">
             <TooltipWrapper side="top">
                 <template #content>
