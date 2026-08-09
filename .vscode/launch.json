@@ -30,7 +30,6 @@
                 "electron",
                 "--",
                 "--remote-debugging-port=9229",
-                "--ozone-platform-hint=auto",
                 ".",
                 "--no-sandbox"
                 //"--hot-reload"
@@ -38,7 +37,10 @@
             "env": {
                 "ELECTRON_ENABLE_LOGGING": "1",
                 "ELECTRON_ENABLE_STACK_DUMPING": "1",
-                "DISPLAY": ":0"
+                "DISPLAY": ":0",
+                "WAYLAND_DISPLAY": "wayland-0",
+                "QT_QPA_PLATFORM": "xcb",
+                "GDK_BACKEND": "x11"
             },
             "windows": {
                 "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
@@ -72,4 +74,3 @@
         }
     ]
 }
-

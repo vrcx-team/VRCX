@@ -60,6 +60,7 @@ module.exports = {
         icon: 'images/VRCX.png',
         category: 'Utility',
         executableName: 'vrcx',
+        mimeTypes: ['x-scheme-handler/vrcx'],
         desktop: {
             entry: {
                 Name: 'VRCX',
@@ -67,7 +68,9 @@ module.exports = {
                 Icon: 'VRCX',
                 Terminal: 'false',
                 Type: 'Application',
-                Categories: 'Utility;Application;'
+                Categories: 'Utility;Application;',
+                StartupWMClass: 'VRCX',
+                MimeType: 'x-scheme-handler/vrcx;'
             }
         },
         maintainer: 'rs189 <35667100+rs189@users.noreply.github.com>',
