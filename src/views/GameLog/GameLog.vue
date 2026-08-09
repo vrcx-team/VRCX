@@ -146,7 +146,6 @@
     import { TooltipWrapper } from '../../components/ui/tooltip';
     import { createColumns } from './columns.jsx';
     import { database } from '../../services/database';
-    import { removeFromArray } from '../../shared/utils';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
     import GameLogSessions from './components/GameLogSessions.vue';
 
@@ -196,7 +195,13 @@
      * @param row
      */
     function deleteGameLogEntry(row) {
-        removeFromArray(gameLogTableData.value, row);
+        const index = gameLogTableData.value.findIndex((entry) => entry === row);
+        if (index !== -1) {
+            gameLogTableData.value = [
+                ...gameLogTableData.value.slice(0, index),
+                ...gameLogTableData.value.slice(index + 1)
+            ];
+        }
         database.deleteGameLogEntry(row);
     }
 
