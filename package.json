@@ -112,6 +112,7 @@
         "vue-showdown": "^4.2.0",
         "vue-sonner": "^2.0.9",
         "vue-tsc": "^3.3.8",
+        "vue3-colorpicker": "^2.3.0",
         "worker-timers": "^8.0.34",
         "yargs": "^18.1.0",
         "zod": "^3.25.76"
@@ -123,6 +124,13 @@
     "engines": {
         "node": ">=24.15.0",
         "npm": ">=11.5.0"
+    },
+    "allowScripts": {
+        "@sentry/cli": true,
+        "core-js": true,
+        "electron-winstaller": true,
+        "vue-demi": true,
+        "electron": true
     },
     "build": {
         "appId": "app.vrcx",
@@ -206,12 +214,5 @@
             "category": "public.app-category.utilities",
             "executableName": "VRCX"
         }
-    },
-    "allowScripts": {
-        "@sentry/cli": true,
-        "core-js": true,
-        "electron-winstaller": true,
-        "vue-demi": true,
-        "electron": true
     }
 }

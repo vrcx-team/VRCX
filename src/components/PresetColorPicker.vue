@@ -1,24 +1,17 @@
 <script setup>
-    import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { Button } from '@/components/ui/button';
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
+    import ColorPickerButton from '@/components/ColorPickerButton.vue';
 
     const { t } = useI18n();
 
     const props = defineProps({
         modelValue: { type: String, default: '' },
-
-        presets: {
-            type: Array,
-            default: () => []
-        },
-
+        presets: { type: Array, default: () => [] },
         disabled: { type: Boolean, default: false },
-
         clearable: { type: Boolean, default: false },
         emptyValue: { type: String, default: '' },
-
         cols: { type: Number, default: 6 }
     });
 
@@ -41,10 +34,9 @@
         emit('change', color);
     }
 
-    function onInput(e) {
+    function onInput(val) {
         if (props.disabled) return;
-        const v = e?.target?.value;
-        setColor(String(v || ''));
+        setColor(String(val || ''));
     }
 
     function clear() {
@@ -59,20 +51,13 @@
 </script>
 
 <template>
-    <Popover>
-        <PopoverTrigger as-child>
-            <Button variant="outline" size="sm" class="flex items-center gap-2 px-2" :disabled="disabled">
-                <span class="h-4 w-4 rounded" :style="{ backgroundColor: safeValue }" />
-                <span class="text-xs opacity-80">
-                    {{ displayText }}
-                </span>
+    <ColorPickerButton :model-value="safeValue" :label="displayText" :disabled="disabled" @update:model-value="onInput">
+        <template #trigger-suffix>
+            <span v-if="clearable && modelValue" class="ml-1 opacity-60">✕</span>
+        </template>
 
-                <span v-if="clearable && modelValue" class="ml-1 opacity-60">✕</span>
-            </Button>
-        </PopoverTrigger>
-
-        <PopoverContent class="w-56 p-3">
-            <div class="mb-3 grid gap-2" :style="gridStyle">
+        <template #presets>
+            <div class="mt-3 pl-3 pb-3 grid gap-2 border-b" :style="gridStyle">
                 <button
                     v-for="color in presets"
                     :key="color"
@@ -83,23 +68,18 @@
                     :aria-disabled="disabled ? 'true' : 'false'"
                     :class="[
                         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-                        safeValue === String(color).toLowerCase() ? 'ring-2 ring-offset-2' : ''
+                        safeValue === String(color).toLowerCase() ? 'ring-[1.5px] ring-offset-[1.5px]' : ''
                     ]"
                     @click="setColor(color)" />
             </div>
+        </template>
 
-            <input
-                type="color"
-                class="h-8 w-full cursor-pointer border-none bg-transparent p-0"
-                :value="safeValue"
-                :disabled="disabled"
-                @input="onInput" />
-
+        <template #footer>
             <div v-if="clearable" class="mt-3 flex justify-end">
                 <Button variant="ghost" size="sm" :disabled="disabled" @click="clear">
                     {{ t('view.favorite.clear') }}
                 </Button>
             </div>
-        </PopoverContent>
-    </Popover>
+        </template>
+    </ColorPickerButton>
 </template>
