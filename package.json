@@ -111,6 +111,7 @@
         "vue-showdown": "^4.2.0",
         "vue-sonner": "^2.0.9",
         "vue-tsc": "^3.3.8",
+        "vue3-colorpicker": "^2.3.0",
         "worker-timers": "^8.0.34",
         "yargs": "^18.1.0",
         "zod": "^3.25.76"
