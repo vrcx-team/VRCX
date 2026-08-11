@@ -43,20 +43,22 @@
                 <!-- Card content -->
                 <div class="flex flex-col p-3 mt-10">
                     <!-- Name and buttons -->
-                    <div class="flex justify-between gap-1 min-w-0">
-                        <div class="flex flex-col">
+                    <div class="flex w-full min-w-0 max-w-full items-start justify-between gap-2">
+                        <div class="flex min-w-0 flex-1 flex-col">
                             <span
-                                class="font-bold truncate cursor-pointer flex-1 min-w-0"
+                                class="font-bold cursor-pointer block min-w-0"
                                 @click="copyToClipboard(groupDialog.ref.name)">
-                                <span v-if="groupDialog.ref.ownerId === currentUser.id" class="flex-none">👑</span
-                                >{{ groupDialog.ref.name }}
+                                <span class="flex min-w-0 items-center gap-1">
+                                    <span v-if="groupDialog.ref.ownerId === currentUser.id" class="shrink-0">👑</span>
+                                    <span class="truncate">{{ groupDialog.ref.name }}</span>
+                                </span>
                             </span>
                             <span
-                                class="x-grey font-mono text-xs truncate block cursor-pointer"
+                                class="x-grey font-mono text-xs truncate block min-w-0 cursor-pointer"
                                 @click="showUserDialog(groupDialog.ref.ownerId)"
                                 v-text="groupDialog.ownerDisplayName"></span>
                         </div>
-                        <div class="flex-none flex items-center gap-2">
+                        <div class="ml-2 flex shrink-0 items-center justify-end gap-2">
                             <template v-if="groupDialog.inGroup && groupDialog.ref?.myMember">
                                 <TooltipWrapper
                                     v-if="groupDialog.ref.myMember?.isRepresenting"

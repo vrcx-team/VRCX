@@ -33,7 +33,7 @@
                     <div
                         v-if="isRealInstance(userDialog.$location.tag)"
                         class="flex items-start gap-1.5 justify-between">
-                        <div class="flex min-w-0 flex-1 flex-col justify-between">
+                        <div class="flex min-w-0 flex-1 flex-col justify-between gap-1.5">
                             <span
                                 class="text-md text-foreground cursor-pointer block truncate"
                                 @click="showWorldDialog(userDialog.$location.tag)"
