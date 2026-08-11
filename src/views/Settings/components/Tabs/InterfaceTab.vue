@@ -427,7 +427,7 @@
                 <div class="flex flex-col gap-2 py-2">
                     <div v-for="colorEntry in trustColorEntries" :key="colorEntry.key" class="flex items-center gap-3">
                         <span :class="colorEntry.tagClass">{{ t(colorEntry.labelKey) }}</span>
-                        <PresetColorPicker
+                        <ColorPickerButton
                             :model-value="trustColor[colorEntry.key]"
                             :presets="colorEntry.presets"
                             @change="updateTrustColor(colorEntry.key, $event)" />
@@ -486,7 +486,7 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import PresetColorPicker from '@/components/PresetColorPicker.vue';
+    import ColorPickerButton from '@/components/ColorPickerButton.vue';
     import TableLimitsDialog from '@/components/dialogs/TableLimitsDialog.vue';
     import { saveSortFavoritesOption } from '@/coordinators/favoriteCoordinator';
 
