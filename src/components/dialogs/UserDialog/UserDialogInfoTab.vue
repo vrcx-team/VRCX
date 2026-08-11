@@ -66,9 +66,7 @@
                             @click="showFullscreenImageDialog(userDialog.instance?.ref?.world?.imageUrl)"
                             loading="lazy" />
                     </div>
-                    <div
-                        class="flex flex-wrap items-start"
-                        style="flex: 1; margin-top: 8px; max-height: 150px; overflow: auto">
+                    <div class="flex flex-wrap items-start" style="flex: 1; max-height: 150px; overflow: auto">
                         <div
                             v-if="userDialog.$location.userId"
                             class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
