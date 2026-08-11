@@ -399,7 +399,6 @@
                     </div>
 
                     <div v-if="editProfileDialog.backgroundType === 'gradient'" class="grid gap-2 sm:grid-cols-3">
-                        <!-- Gradient Top Color -->
                         <div class="space-y-1">
                             <span class="text-xs text-muted-foreground">
                                 {{ t('dialog.edit_profile.gradient_top') }}
@@ -412,7 +411,6 @@
                             </div>
                         </div>
 
-                        <!-- Gradient Bottom Color -->
                         <div class="space-y-1">
                             <span class="text-xs text-muted-foreground">
                                 {{ t('dialog.edit_profile.gradient_bottom') }}
