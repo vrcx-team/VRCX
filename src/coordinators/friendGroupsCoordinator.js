@@ -93,25 +93,41 @@ async function runSync(force) {
                 });
                 const entries = [];
                 for (const member of json || []) {
-                    const group = member?.group;
-                    if (!group || !group.id) {
+                    if (!member || !member.groupId) {
                         continue;
                     }
-                    // 需求只统计好友加入的 Public 群组
-                    if (group.privacy !== 'public') {
-                        continue;
-                    }
+                    // API 只返回对请求者可见的群组，不再额外按 privacy 过滤
                     entries.push({
-                        groupId: group.id,
-                        joinedAt: member.joinedAt,
-                        membershipStatus: member.membershipStatus,
-                        visibility: member.visibility
+                        groupId: member.groupId,
+                        joinedAt: member.joinedAt || '',
+                        membershipStatus: member.membershipStatus || 'member',
+                        visibility: member.visibility || member.memberVisibility || ''
                     });
-                    if (!groupIdsSeen.has(group.id)) {
-                        groupIdsSeen.add(group.id);
-                        groupsToCache.push(group);
+                    if (!groupIdsSeen.has(member.groupId)) {
+                        groupIdsSeen.add(member.groupId);
+                        groupsToCache.push({
+                            id: member.groupId,
+                            name: member.name,
+                            shortCode: member.shortCode,
+                            discriminator: member.discriminator,
+                            description: member.description,
+                            iconUrl: member.iconUrl,
+                            bannerUrl: member.bannerUrl,
+                            privacy: member.privacy,
+                            memberCount: member.memberCount
+                        });
                     }
-                    applyGroup(group);
+                    applyGroup({
+                        id: member.groupId,
+                        name: member.name,
+                        shortCode: member.shortCode,
+                        discriminator: member.discriminator,
+                        description: member.description,
+                        iconUrl: member.iconUrl,
+                        bannerUrl: member.bannerUrl,
+                        privacy: member.privacy,
+                        memberCount: member.memberCount
+                    });
                 }
                 await database.replaceFriendGroups(friendId, entries);
                 consecutiveFailures = 0;
@@ -128,24 +144,41 @@ async function runSync(force) {
                         });
                         const entries = [];
                         for (const member of json || []) {
-                            const group = member?.group;
-                            if (!group || !group.id) {
+                            if (!member || !member.groupId) {
                                 continue;
                             }
-                            if (group.privacy !== 'public') {
-                                continue;
-                            }
+                            // API 只返回对请求者可见的群组，不再额外按 privacy 过滤
                             entries.push({
-                                groupId: group.id,
-                                joinedAt: member.joinedAt,
-                                membershipStatus: member.membershipStatus,
-                                visibility: member.visibility
+                                groupId: member.groupId,
+                                joinedAt: member.joinedAt || '',
+                                membershipStatus: member.membershipStatus || 'member',
+                                visibility: member.visibility || member.memberVisibility || ''
                             });
-                            if (!groupIdsSeen.has(group.id)) {
-                                groupIdsSeen.add(group.id);
-                                groupsToCache.push(group);
+                            if (!groupIdsSeen.has(member.groupId)) {
+                                groupIdsSeen.add(member.groupId);
+                                groupsToCache.push({
+                                    id: member.groupId,
+                                    name: member.name,
+                                    shortCode: member.shortCode,
+                                    discriminator: member.discriminator,
+                                    description: member.description,
+                                    iconUrl: member.iconUrl,
+                                    bannerUrl: member.bannerUrl,
+                                    privacy: member.privacy,
+                                    memberCount: member.memberCount
+                                });
                             }
-                            applyGroup(group);
+                            applyGroup({
+                                id: member.groupId,
+                                name: member.name,
+                                shortCode: member.shortCode,
+                                discriminator: member.discriminator,
+                                description: member.description,
+                                iconUrl: member.iconUrl,
+                                bannerUrl: member.bannerUrl,
+                                privacy: member.privacy,
+                                memberCount: member.memberCount
+                            });
                         }
                         await database.replaceFriendGroups(friendId, entries);
                         consecutiveFailures = 0;

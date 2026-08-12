@@ -23,9 +23,9 @@ const friendGroups = {
             await sqliteService.executeNonQuery(
                 `DELETE FROM ${table} WHERE friend_id = '${safeFriendId}'`
             );
+            const now = new Date().toISOString();
             if (entries && entries.length > 0) {
                 let values = '';
-                const now = new Date().toISOString();
                 for (const entry of entries) {
                     if (!entry || !entry.groupId) {
                         continue;
@@ -38,6 +38,15 @@ const friendGroups = {
                         `INSERT OR REPLACE INTO ${table} (friend_id, group_id, joined_at, membership_status, visibility, fetched_at) VALUES ${values}`
                     );
                 }
+            } else {
+                // 无可见群的好友：写标记行记录已检查时间（供增量同步跳过）
+                await sqliteService.executeNonQuery(
+                    `INSERT OR REPLACE INTO ${table} (friend_id, group_id, joined_at, membership_status, visibility, fetched_at) VALUES (@friend_id, '', '', '', '', @now)`,
+                    {
+                        '@friend_id': friendId,
+                        '@now': now
+                    }
+                );
             }
             await sqliteService.executeNonQuery('COMMIT');
         } catch (err) {
@@ -119,24 +128,39 @@ const friendGroups = {
             return;
         }
         const table = `${dbVars.userPrefix}_cache_group`;
-        let values = '';
         const now = new Date().toISOString();
-        for (const group of groups) {
-            if (!group || !group.id) {
-                continue;
+        await sqliteService.executeNonQuery('BEGIN');
+        try {
+            for (const group of groups) {
+                if (!group || !group.id) {
+                    continue;
+                }
+                const memberCount =
+                    typeof group.memberCount === 'number' &&
+                    Number.isFinite(group.memberCount)
+                        ? group.memberCount
+                        : 0;
+                await sqliteService.executeNonQuery(
+                    `INSERT OR REPLACE INTO ${table} (id, added_at, updated_at, name, short_code, discriminator, description, icon_url, banner_url, privacy, member_count) VALUES (@id, @added_at, @updated_at, @name, @short_code, @discriminator, @description, @icon_url, @banner_url, @privacy, @member_count)`,
+                    {
+                        '@id': group.id,
+                        '@added_at': now,
+                        '@updated_at': now,
+                        '@name': group.name || '',
+                        '@short_code': group.shortCode || '',
+                        '@discriminator': group.discriminator || '',
+                        '@description': group.description || '',
+                        '@icon_url': group.iconUrl || '',
+                        '@banner_url': group.bannerUrl || '',
+                        '@privacy': group.privacy || '',
+                        '@member_count': memberCount
+                    }
+                );
             }
-            const memberCount =
-                typeof group.memberCount === 'number' &&
-                Number.isFinite(group.memberCount)
-                    ? group.memberCount
-                    : 0;
-            values += `('${escapeSql(group.id)}', '${now}', '${now}', '${escapeSql(group.name || '')}', '${escapeSql(group.shortCode || '')}', '${escapeSql(group.discriminator || '')}', '${escapeSql(group.description || '')}', '${escapeSql(group.iconUrl || '')}', '${escapeSql(group.bannerUrl || '')}', '${escapeSql(group.privacy || '')}', ${memberCount}),`;
-        }
-        if (values) {
-            values = values.slice(0, -1);
-            await sqliteService.executeNonQuery(
-                `INSERT OR REPLACE INTO ${table} (id, added_at, updated_at, name, short_code, discriminator, description, icon_url, banner_url, privacy, member_count) VALUES ${values}`
-            );
+            await sqliteService.executeNonQuery('COMMIT');
+        } catch (err) {
+            await sqliteService.executeNonQuery('ROLLBACK');
+            throw err;
         }
     },
 
@@ -227,7 +251,7 @@ const friendGroups = {
                     : [];
                 map.set(dbRow[0], friendIds);
             }
-        }, `SELECT group_id, GROUP_CONCAT(friend_id) FROM ${linkTable} GROUP BY group_id HAVING COUNT(friend_id) >= ${minFriends}`);
+        }, `SELECT group_id, GROUP_CONCAT(friend_id) FROM ${linkTable} WHERE group_id != '' GROUP BY group_id HAVING COUNT(friend_id) >= ${minFriends}`);
         return map;
     }
 };

@@ -66,14 +66,17 @@ describe('friendGroups.replaceFriendGroups', () => {
         expect(insertCall.split('),').length).toBeGreaterThanOrEqual(1);
     });
 
-    test('deletes only when entries are empty', async () => {
+    test('writes a marker row when entries are empty', async () => {
         await friendGroups.replaceFriendGroups('usr_1', []);
 
-        expect(mocks.executeNonQuery).toHaveBeenCalledTimes(3); // BEGIN, DELETE, COMMIT
-        const calls = mocks.executeNonQuery.mock.calls.map((c) => c[0]);
-        expect(calls.some((sql) => sql.includes('INSERT OR REPLACE'))).toBe(
-            false
+        // BEGIN, DELETE, INSERT(marker), COMMIT
+        expect(mocks.executeNonQuery).toHaveBeenCalledTimes(4);
+        const markerCall = mocks.executeNonQuery.mock.calls[2];
+        expect(markerCall[0]).toContain(
+            `INSERT OR REPLACE INTO testuser_friend_groups (friend_id, group_id, joined_at, membership_status, visibility, fetched_at) VALUES (@friend_id, '', '', '', '', @now)`
         );
+        expect(markerCall[1]['@friend_id']).toBe('usr_1');
+        expect(mocks.executeNonQuery.mock.calls[3][0]).toBe('COMMIT');
     });
 
     test('rolls back on error', async () => {
@@ -164,11 +167,11 @@ describe('friendGroups.getFriendGroupFetchTimes', () => {
 });
 
 describe('friendGroups.upsertCacheGroups', () => {
-    test('bulk upserts group cache rows', async () => {
+    test('parameterized upsert per group, emoji-safe', async () => {
         await friendGroups.upsertCacheGroups([
             {
                 id: 'grp_1',
-                name: "Dance O'Club",
+                name: "Dance O'Club ❤️",
                 shortCode: 'DNC',
                 discriminator: '1234',
                 description: 'desc',
@@ -179,21 +182,38 @@ describe('friendGroups.upsertCacheGroups', () => {
             }
         ]);
 
-        const sql = mocks.executeNonQuery.mock.calls[0][0];
+        expect(mocks.executeNonQuery).toHaveBeenNthCalledWith(1, 'BEGIN');
+        const [sql, args] = mocks.executeNonQuery.mock.calls[1];
         expect(sql).toContain(
             'INSERT OR REPLACE INTO testuser_cache_group (id, added_at, updated_at, name, short_code, discriminator, description, icon_url, banner_url, privacy, member_count) VALUES'
         );
-        expect(sql).toContain("'Dance O''Club'");
-        expect(sql).toContain('500');
-        expect(sql).toContain("'public'");
+        // 参数化：emoji/引号原样传参，不做字符串拼接
+        expect(sql).not.toContain("O'Club");
+        expect(args['@id']).toBe('grp_1');
+        expect(args['@name']).toBe("Dance O'Club ❤️");
+        expect(args['@member_count']).toBe(500);
+        expect(args['@privacy']).toBe('public');
+        expect(mocks.executeNonQuery).toHaveBeenLastCalledWith('COMMIT');
+    });
+
+    test('rolls back on parameterized insert error', async () => {
+        mocks.executeNonQuery.mockImplementationOnce(() => Promise.resolve()); // BEGIN
+        mocks.executeNonQuery.mockImplementationOnce(() => {
+            throw new Error('boom');
+        }); // INSERT 失败
+
+        await expect(
+            friendGroups.upsertCacheGroups([{ id: 'grp_2', name: 'x' }])
+        ).rejects.toThrow('boom');
+        expect(mocks.executeNonQuery).toHaveBeenLastCalledWith('ROLLBACK');
     });
 
     test('coerces missing memberCount to 0', async () => {
         await friendGroups.upsertCacheGroups([{ id: 'grp_2' }]);
 
-        const sql = mocks.executeNonQuery.mock.calls[0][0];
-        expect(sql).toContain("'grp_2'");
-        expect(sql).toMatch(/, 0\)$/);
+        const args = mocks.executeNonQuery.mock.calls[1][1];
+        expect(args['@id']).toBe('grp_2');
+        expect(args['@member_count']).toBe(0);
     });
 
     test('is a no-op for empty input', async () => {
