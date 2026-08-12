@@ -135,7 +135,8 @@ export const useGroupStore = defineStore('Group', () => {
             currentUserGroups.clear();
             if (isLoggedIn) {
                 initUserGroups();
-                syncFriendGroups();
+                // 登录/启动时自动全量刷新，无需在页面内手动点击
+                syncFriendGroups({ force: true });
             } else {
                 useFriendGroupsStore().resetSyncState();
             }

@@ -527,7 +527,9 @@
         "groups": {
             "title": "熱門群組",
             "refresh": "重新整理",
-            "syncing": "同步中… {done}/{total}",
+
+
+            "syncing_progress": "{percent} · 剩餘約 {remaining} 分鐘 · 預計共 {total} 分鐘",
             "last_synced": "上次同步",
             "friends_joined": "位好友已加入此群組",
             "empty": "尚無資料，點擊重新整理同步好友群組"

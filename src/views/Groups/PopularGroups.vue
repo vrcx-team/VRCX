@@ -6,8 +6,14 @@
                     <span class="shrink-0 text-lg font-semibold">
                         {{ t('view.groups.title') }}
                     </span>
-                    <span v-if="syncStore.isSyncing" class="text-xs text-muted-foreground">
-                        {{ t('view.groups.syncing', { done: syncStore.done, total: syncStore.total }) }}
+                    <span v-if="syncStore.isSyncing && syncProgress" class="text-xs text-muted-foreground">
+                        {{
+                            t('view.groups.syncing_progress', {
+                                percent: `${syncProgress.percent}%`,
+                                remaining: syncProgress.remaining,
+                                total: syncProgress.total
+                            })
+                        }}
                     </span>
                     <span v-else-if="syncStore.lastSyncedAt" class="text-xs text-muted-foreground">
                         {{ t('view.groups.last_synced') }}: {{ formatTime(syncStore.lastSyncedAt) }}
@@ -114,6 +120,28 @@
     const { t } = useI18n();
     const userStore = useUserStore();
     const syncStore = useFriendGroupsStore();
+
+    /**
+     * 同步进度估算：百分比 + 剩余/预计总时长（分钟，向上取整）。
+     * 基于已用时长/已处理好友数推算单好友耗时，随进度自适应。
+     */
+    const syncProgress = computed(() => {
+        if (!syncStore.isSyncing || syncStore.total === 0) {
+            return null;
+        }
+        const percent = Math.min(100, Math.floor((syncStore.done / syncStore.total) * 100));
+        const elapsedSec = syncStore.startedAt > 0 ? (Date.now() - syncStore.startedAt) / 1000 : 0;
+        if (!elapsedSec || syncStore.done === 0) {
+            return { percent, remaining: 0, total: 0 };
+        }
+        const perFriendSec = elapsedSec / syncStore.done;
+        const toMin = (sec) => Math.max(1, Math.ceil(sec / 60));
+        return {
+            percent,
+            remaining: toMin((syncStore.total - syncStore.done) * perFriendSec),
+            total: toMin(syncStore.total * perFriendSec)
+        };
+    });
 
     const { data: popularGroups, isLoading } = usePopularFriendGroupsQuery();
     const { data: friendIdsMap } = usePopularFriendGroupIdsQuery();

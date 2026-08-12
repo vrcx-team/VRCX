@@ -527,7 +527,9 @@
         "groups": {
             "title": "热门群组",
             "refresh": "刷新",
-            "syncing": "同步中… {done}/{total}",
+
+
+            "syncing_progress": "{percent} · 剩余约 {remaining} 分钟 · 预计共 {total} 分钟",
             "last_synced": "上次同步",
             "friends_joined": "位好友已加入此群组",
             "empty": "暂无数据，点击刷新同步好友群组"

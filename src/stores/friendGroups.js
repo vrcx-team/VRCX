@@ -11,6 +11,8 @@ export const useFriendGroupsStore = defineStore('FriendGroups', () => {
     const done = ref(0);
     const failed = ref(0);
     const lastSyncedAt = ref('');
+    /** 本轮同步的开始时间戳（毫秒），用于估算剩余时间 */
+    const startedAt = ref(0);
 
     function resetSyncState() {
         isSyncing.value = false;
@@ -18,6 +20,7 @@ export const useFriendGroupsStore = defineStore('FriendGroups', () => {
         done.value = 0;
         failed.value = 0;
         lastSyncedAt.value = '';
+        startedAt.value = 0;
     }
 
     return {
@@ -26,6 +29,7 @@ export const useFriendGroupsStore = defineStore('FriendGroups', () => {
         done,
         failed,
         lastSyncedAt,
+        startedAt,
         resetSyncState
     };
 });

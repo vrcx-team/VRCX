@@ -55,6 +55,7 @@ async function runSync(force) {
     store.isSyncing = true;
     store.done = 0;
     store.failed = 0;
+    store.startedAt = Date.now();
 
     try {
         const friends = await database.getFriendLogCurrent();
@@ -101,7 +102,8 @@ async function runSync(force) {
                         groupId: member.groupId,
                         joinedAt: member.joinedAt || '',
                         membershipStatus: member.membershipStatus || 'member',
-                        visibility: member.visibility || member.memberVisibility || ''
+                        visibility:
+                            member.visibility || member.memberVisibility || ''
                     });
                     if (!groupIdsSeen.has(member.groupId)) {
                         groupIdsSeen.add(member.groupId);
@@ -151,8 +153,12 @@ async function runSync(force) {
                             entries.push({
                                 groupId: member.groupId,
                                 joinedAt: member.joinedAt || '',
-                                membershipStatus: member.membershipStatus || 'member',
-                                visibility: member.visibility || member.memberVisibility || ''
+                                membershipStatus:
+                                    member.membershipStatus || 'member',
+                                visibility:
+                                    member.visibility ||
+                                    member.memberVisibility ||
+                                    ''
                             });
                             if (!groupIdsSeen.has(member.groupId)) {
                                 groupIdsSeen.add(member.groupId);

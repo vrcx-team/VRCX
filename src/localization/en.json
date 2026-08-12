@@ -531,7 +531,9 @@
         "groups": {
             "title": "Popular Groups",
             "refresh": "Refresh",
-            "syncing": "Syncing… {done}/{total}",
+
+
+            "syncing_progress": "{percent} · ~{remaining} min left · ~{total} min total",
             "last_synced": "Last synced",
             "friends_joined": "friends have joined this group",
             "empty": "No data yet. Click Refresh to sync your friends' groups."
