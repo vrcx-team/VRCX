@@ -124,7 +124,8 @@
         /** @type {Map<string, Array<string>>} */
         const idsMap = /** @type {any} */ (friendIdsMap.value) || new Map();
         return groups.map((group) => {
-            const friendIds = (idsMap.get(group.groupId) || []).slice(0, 5);
+            // 不截断：溢出气泡需显示真实剩余好友数
+            const friendIds = idsMap.get(group.groupId) || [];
             const friends = friendIds.map((friendId) => {
                 const ref = userStore.cachedUsers.get(friendId);
                 return {
