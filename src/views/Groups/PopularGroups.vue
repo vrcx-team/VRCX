@@ -6,7 +6,9 @@
                     <span class="shrink-0 text-lg font-semibold">
                         {{ t('view.groups.title') }}
                     </span>
-                    <span v-if="syncStore.isSyncing && syncProgress" class="text-xs text-muted-foreground">
+                    <span
+                        v-if="syncStore.isSyncing && syncProgress"
+                        class="flex items-center gap-2 text-xs text-muted-foreground">
                         {{
                             t('view.groups.syncing_progress', {
                                 percent: `${syncProgress.percent}%`,
@@ -14,6 +16,7 @@
                                 total: syncProgress.total
                             })
                         }}
+                        <Progress :model-value="syncProgress.percent" class="h-1.5 w-32" />
                     </span>
                     <span v-else-if="syncStore.lastSyncedAt" class="text-xs text-muted-foreground">
                         {{ t('view.groups.last_synced') }}: {{ formatTime(syncStore.lastSyncedAt) }}
@@ -25,8 +28,18 @@
                 </Button>
             </div>
 
-            <div v-if="isLoading" class="mt-24 flex items-center justify-center">
-                <RefreshCcw class="size-6 animate-spin text-muted-foreground" />
+            <div v-if="isLoading" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                <div v-for="i in 6" :key="i" class="rounded-xl border bg-card p-4" aria-hidden="true">
+                    <div class="flex items-start gap-3">
+                        <Skeleton class="size-10 rounded-lg" />
+                        <div class="min-w-0 flex-1 space-y-2">
+                            <Skeleton class="h-4 w-2/3" />
+                            <Skeleton class="h-3 w-1/3" />
+                        </div>
+                    </div>
+                    <Skeleton class="mt-3 h-3 w-full" />
+                    <Skeleton class="mt-2 h-3 w-4/5" />
+                </div>
             </div>
 
             <div
@@ -41,7 +54,8 @@
                     v-for="card in cards"
                     :key="card.groupId"
                     type="button"
-                    class="group flex cursor-pointer flex-col rounded-xl border bg-card p-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+                    class="group flex cursor-pointer flex-col rounded-xl border bg-card p-4 text-left shadow-sm outline-none transition-all hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring/50"
+                    :aria-label="`${card.name}: ${card.friendCount} ${t('view.groups.friends_joined')}`"
                     @click="showGroupDialog(card.groupId)">
                     <div class="flex items-start gap-3">
                         <img
@@ -111,6 +125,8 @@
     import { RefreshCcw, Users } from 'lucide-vue-next';
 
     import { Button } from '@/components/ui/button';
+    import { Progress } from '@/components/ui/progress';
+    import { Skeleton } from '@/components/ui/skeleton';
     import { showGroupDialog } from '@/coordinators/groupCoordinator';
     import { syncFriendGroups } from '@/coordinators/friendGroupsCoordinator';
     import { usePopularFriendGroupIdsQuery, usePopularFriendGroupsQuery } from '@/queries/useEntityQueries';
