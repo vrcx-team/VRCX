@@ -72,6 +72,7 @@
         "moderation": "Moderation",
         "notification": "Notification",
         "friend_list": "Friend List",
+        "groups": "Groups",
         "charts": "Charts",
         "tools": "Tools",
         "settings": "Settings",
@@ -526,6 +527,14 @@
             "filter_placeholder": "Filter",
             "load_mutual_friends": "Load Mutual Friends",
             "mutual_loading_hint": "View progress on the Mutual Friend Graph page"
+        },
+        "groups": {
+            "title": "Popular Groups",
+            "refresh": "Refresh",
+            "syncing": "Syncing… {done}/{total}",
+            "last_synced": "Last synced",
+            "friends_joined": "friends have joined this group",
+            "empty": "No data yet. Click Refresh to sync your friends' groups."
         },
         "charts": {
             "instance_activity": {

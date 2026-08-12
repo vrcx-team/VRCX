@@ -72,6 +72,7 @@
         "moderation": "玩家管理",
         "notification": "通知",
         "friend_list": "好友列表",
+        "groups": "热门群组",
         "charts": "图表",
         "tools": "工具",
         "settings": "设置",
@@ -522,6 +523,14 @@
             "filter_placeholder": "筛选好友",
             "load_mutual_friends": "查看关系网",
             "mutual_loading_hint": "跳转到好友关系网页面"
+        },
+        "groups": {
+            "title": "热门群组",
+            "refresh": "刷新",
+            "syncing": "同步中… {done}/{total}",
+            "last_synced": "上次同步",
+            "friends_joined": "位好友已加入此群组",
+            "empty": "暂无数据，点击刷新同步好友群组"
         },
         "charts": {
             "instance_activity": {

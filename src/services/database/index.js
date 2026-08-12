@@ -3,6 +3,7 @@ import { avatarFavorites } from './avatarFavorites.js';
 import { avatarTags } from './avatarTags.js';
 import { feed } from './feed.js';
 import { friendFavorites } from './friendFavorites.js';
+import { friendGroups } from './friendGroups.js';
 import { friendLogCurrent } from './friendLogCurrent.js';
 import { friendLogHistory } from './friendLogHistory.js';
 import { gameLog } from './gameLog.js';
@@ -36,6 +37,7 @@ const database = {
     ...avatarFavorites,
     ...avatarTags,
     ...friendFavorites,
+    ...friendGroups,
     ...worldFavorites,
     ...tableAlter,
     ...tableFixes,
@@ -149,6 +151,18 @@ const database = {
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_mutual_graph_meta (friend_id TEXT PRIMARY KEY, last_fetched_at TEXT, opted_out INTEGER DEFAULT 0)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_friend_groups (friend_id TEXT NOT NULL, group_id TEXT NOT NULL, joined_at TEXT DEFAULT '', membership_status TEXT DEFAULT '', visibility TEXT DEFAULT '', fetched_at TEXT DEFAULT '', PRIMARY KEY (friend_id, group_id))`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE INDEX IF NOT EXISTS ${dbVars.userPrefix}_friend_groups_group_idx ON ${dbVars.userPrefix}_friend_groups (group_id)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${dbVars.userPrefix}_cache_group (id TEXT PRIMARY KEY, added_at TEXT, updated_at TEXT, name TEXT, short_code TEXT, discriminator TEXT, description TEXT, icon_url TEXT, banner_url TEXT, privacy TEXT, member_count INTEGER)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE INDEX IF NOT EXISTS ${dbVars.userPrefix}_cache_group_member_count_idx ON ${dbVars.userPrefix}_cache_group (member_count)`
         );
     },
 

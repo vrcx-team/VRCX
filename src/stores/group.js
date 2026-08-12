@@ -5,6 +5,8 @@ import { useI18n } from 'vue-i18n';
 import { hasGroupPermission, replaceBioSymbols } from '../shared/utils';
 import { groupRequest, queryRequest } from '../api';
 import { initUserGroups } from '../coordinators/groupCoordinator';
+import { syncFriendGroups } from '../coordinators/friendGroupsCoordinator';
+import { useFriendGroupsStore } from './friendGroups';
 import { watchState } from '../services/watchState';
 
 export const useGroupStore = defineStore('Group', () => {
@@ -133,6 +135,9 @@ export const useGroupStore = defineStore('Group', () => {
             currentUserGroups.clear();
             if (isLoggedIn) {
                 initUserGroups();
+                syncFriendGroups();
+            } else {
+                useFriendGroupsStore().resetSyncState();
             }
         },
         { flush: 'sync' }

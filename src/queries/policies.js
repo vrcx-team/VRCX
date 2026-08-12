@@ -104,6 +104,12 @@ export const entityQueryPolicies = Object.freeze({
         retry: 1,
         refetchOnWindowFocus: false
     }),
+    friendGroupsPopular: Object.freeze({
+        staleTime: 30 * SECOND,
+        gcTime: 300 * SECOND,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
     vrchatCredits: Object.freeze({
         staleTime: 120 * SECOND,
         gcTime: 600 * SECOND,

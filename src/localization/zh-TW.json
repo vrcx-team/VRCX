@@ -72,6 +72,7 @@
         "moderation": "用戶處置",
         "notification": "通知",
         "friend_list": "好友列表",
+        "groups": "熱門群組",
         "charts": "圖表",
         "tools": "工具",
         "settings": "設定",
@@ -522,6 +523,14 @@
             "filter_placeholder": "篩選好友",
             "load_mutual_friends": "載入共同好友",
             "mutual_loading_hint": "在共同好友圖表頁面查看進度"
+        },
+        "groups": {
+            "title": "熱門群組",
+            "refresh": "重新整理",
+            "syncing": "同步中… {done}/{total}",
+            "last_synced": "上次同步",
+            "friends_joined": "位好友已加入此群組",
+            "empty": "尚無資料，點擊重新整理同步好友群組"
         },
         "charts": {
             "instance_activity": {

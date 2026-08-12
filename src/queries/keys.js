@@ -90,5 +90,7 @@ export const queryKeys = Object.freeze({
     file: (fileId) => ['file', fileId],
     avatarStyles: () => ['avatar', 'styles'],
     representedGroup: (userId) => ['user', userId, 'representedGroup'],
+    friendGroupsPopular: () => ['friendGroups', 'popular'],
+    friendGroupsFriendIds: () => ['friendGroups', 'friendIds'],
     vrchatCredits: () => ['credits']
 });
