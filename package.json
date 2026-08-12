@@ -116,7 +116,12 @@
         "zod": "^3.25.76"
     },
     "overrides": {
+        "brace-expansion": ">=5.0.9",
+        "fast-uri": ">=3.1.5",
         "js-cookie": ">=3.0.7",
+        "js-yaml": ">=4.3.1",
+        "nanoid": ">=3.3.17",
+        "postcss": ">8.5.22",
         "tmp": ">=0.2.6",
         "yauzl": ">=3.3.1"
     },
