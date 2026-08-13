@@ -7,11 +7,12 @@ import { applyGroup } from './groupCoordinator';
 /** 好友群组数据的新鲜度窗口（TTL），超过则增量刷新 */
 const FRIEND_GROUPS_TTL_MS = 24 * 60 * 60 * 1000;
 
-/** 请求间隔（自适应）：初始约 37/min，无 429 时逐步提速 */
-const BASE_INTERVAL_MS = 1600;
+/** 请求间隔（自适应）：初始约 30/min（VRChat 文档限流值内），给关系网等共享配额的
+ *  功能留余量；无 429 时逐步提速 */
+const BASE_INTERVAL_MS = 2000;
 
-/** 提速下限（约 46/min），高于此不再加速 */
-const MIN_INTERVAL_MS = 1300;
+/** 提速下限（约 37/min），高于此不再加速 */
+const MIN_INTERVAL_MS = 1600;
 
 /** 连续成功 N 次后缩短一步间隔 */
 const ADAPT_STEP_MS = 100;
