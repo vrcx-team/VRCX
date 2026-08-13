@@ -15,6 +15,7 @@ const mocks = vi.hoisted(() => ({
     selectAvatarWithoutConfirmation: vi.fn(),
     showAvatarDialog: vi.fn(),
     getAllAvatarTags: vi.fn(),
+    getAllAvatarTimeSpent: vi.fn(),
     getAvatarTimeSpent: vi.fn(),
     virtualMeasure: vi.fn()
 }));
@@ -107,6 +108,8 @@ vi.mock('../../../api', () => ({
 vi.mock('../../../services/database', () => ({
     database: {
         getAllAvatarTags: (...args) => mocks.getAllAvatarTags(...args),
+        getAllAvatarTimeSpent: (...args) =>
+            mocks.getAllAvatarTimeSpent(...args),
         getAvatarTimeSpent: (...args) => mocks.getAvatarTimeSpent(...args),
         addAvatarTag: vi.fn(),
         removeAvatarTag: vi.fn(),
@@ -295,6 +298,7 @@ describe('MyAvatars.vue', () => {
         mocks.getAllAvatarTags.mockResolvedValue(
             new Map([['avtr_1', [{ tag: 'fun', color: null }]]])
         );
+        mocks.getAllAvatarTimeSpent.mockResolvedValue(new Map());
         mocks.getAvatarTimeSpent.mockResolvedValue({ timeSpent: 1000 });
         mocks.processBulk.mockImplementation(async ({ handle, done }) => {
             handle({
