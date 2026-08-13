@@ -120,7 +120,7 @@ const friendGroups = {
     },
 
     /**
-     * 批量写入/更新群实体缓存。
+     * 批量写入/更新群实体缓存（分批参数化，免疫 emoji 等特殊字符且远快于逐条）。
      * @param {Array<{id: string, name?: string, shortCode?: string, discriminator?: string, description?: string, iconUrl?: string, bannerUrl?: string, privacy?: string, memberCount?: number}>} groups
      */
     async upsertCacheGroups(groups) {
@@ -129,33 +129,45 @@ const friendGroups = {
         }
         const table = `${dbVars.userPrefix}_cache_group`;
         const now = new Date().toISOString();
+        // System.Data.SQLite 参数上限约 999，每行 11 个参数 → 每批 80 行
+        const BATCH_SIZE = 80;
         await sqliteService.executeNonQuery('BEGIN');
         try {
-            for (const group of groups) {
-                if (!group || !group.id) {
-                    continue;
-                }
-                const memberCount =
-                    typeof group.memberCount === 'number' &&
-                    Number.isFinite(group.memberCount)
-                        ? group.memberCount
-                        : 0;
-                await sqliteService.executeNonQuery(
-                    `INSERT OR REPLACE INTO ${table} (id, added_at, updated_at, name, short_code, discriminator, description, icon_url, banner_url, privacy, member_count) VALUES (@id, @added_at, @updated_at, @name, @short_code, @discriminator, @description, @icon_url, @banner_url, @privacy, @member_count)`,
-                    {
-                        '@id': group.id,
-                        '@added_at': now,
-                        '@updated_at': now,
-                        '@name': group.name || '',
-                        '@short_code': group.shortCode || '',
-                        '@discriminator': group.discriminator || '',
-                        '@description': group.description || '',
-                        '@icon_url': group.iconUrl || '',
-                        '@banner_url': group.bannerUrl || '',
-                        '@privacy': group.privacy || '',
-                        '@member_count': memberCount
+            for (let i = 0; i < groups.length; i += BATCH_SIZE) {
+                const batch = groups.slice(i, i + BATCH_SIZE);
+                const rows = [];
+                const args = {};
+                for (let r = 0; r < batch.length; r++) {
+                    const group = batch[r];
+                    if (!group || !group.id) {
+                        continue;
                     }
-                );
+                    const memberCount =
+                        typeof group.memberCount === 'number' &&
+                        Number.isFinite(group.memberCount)
+                            ? group.memberCount
+                            : 0;
+                    rows.push(
+                        `(@id${r}, @added_at${r}, @updated_at${r}, @name${r}, @short_code${r}, @discriminator${r}, @description${r}, @icon_url${r}, @banner_url${r}, @privacy${r}, @member_count${r})`
+                    );
+                    args[`@id${r}`] = group.id;
+                    args[`@added_at${r}`] = now;
+                    args[`@updated_at${r}`] = now;
+                    args[`@name${r}`] = group.name || '';
+                    args[`@short_code${r}`] = group.shortCode || '';
+                    args[`@discriminator${r}`] = group.discriminator || '';
+                    args[`@description${r}`] = group.description || '';
+                    args[`@icon_url${r}`] = group.iconUrl || '';
+                    args[`@banner_url${r}`] = group.bannerUrl || '';
+                    args[`@privacy${r}`] = group.privacy || '';
+                    args[`@member_count${r}`] = memberCount;
+                }
+                if (rows.length > 0) {
+                    await sqliteService.executeNonQuery(
+                        `INSERT OR REPLACE INTO ${table} (id, added_at, updated_at, name, short_code, discriminator, description, icon_url, banner_url, privacy, member_count) VALUES ${rows.join(',')}`,
+                        args
+                    );
+                }
             }
             await sqliteService.executeNonQuery('COMMIT');
         } catch (err) {

@@ -7,8 +7,18 @@ import { applyGroup } from './groupCoordinator';
 /** 好友群组数据的新鲜度窗口（TTL），超过则增量刷新 */
 const FRIEND_GROUPS_TTL_MS = 24 * 60 * 60 * 1000;
 
-/** 请求间隔：VRChat API 限流约 30 req/min，留余量按 ~27/min 串行 */
-const REQUEST_INTERVAL_MS = 2100;
+/** 请求间隔（自适应）：初始约 37/min，无 429 时逐步提速 */
+const BASE_INTERVAL_MS = 1600;
+
+/** 提速下限（约 46/min），高于此不再加速 */
+const MIN_INTERVAL_MS = 1300;
+
+/** 连续成功 N 次后缩短一步间隔 */
+const ADAPT_STEP_MS = 100;
+const ADAPT_EVERY_SUCCESS = 30;
+
+/** 429 后降速到的保守间隔 */
+const RATE_LIMIT_INTERVAL_MS = 2500;
 
 /** 429 后等待重试的时长 */
 const RATE_LIMIT_RETRY_MS = 30 * 1000;
@@ -81,6 +91,8 @@ async function runSync(force) {
         const groupsToCache = [];
         const groupIdsSeen = new Set();
         let consecutiveFailures = 0;
+        let requestInterval = BASE_INTERVAL_MS;
+        let adaptCounter = 0;
         const dueCount = dueFriendIds.length;
 
         for (let i = 0; i < dueCount; i++) {
@@ -133,12 +145,22 @@ async function runSync(force) {
                 }
                 await database.replaceFriendGroups(friendId, entries);
                 consecutiveFailures = 0;
+                // 自适应提速：连续成功 N 次后缩短间隔（不触发 429 的前提下）
+                adaptCounter += 1;
+                if (
+                    adaptCounter >= ADAPT_EVERY_SUCCESS &&
+                    requestInterval > MIN_INTERVAL_MS
+                ) {
+                    requestInterval -= ADAPT_STEP_MS;
+                    adaptCounter = 0;
+                }
             } catch (err) {
                 console.error(`Failed to fetch groups for ${friendId}:`, err);
                 store.failed += 1;
-                consecutiveFailures += 1;
                 if (isRateLimitError(err)) {
-                    // 限流：等待后重试当前好友一次
+                    // 限流是暂时的：降速 + 退避后重试，不计入连续失败（否则会误中止整轮）
+                    requestInterval = RATE_LIMIT_INTERVAL_MS;
+                    adaptCounter = 0;
                     await sleep(RATE_LIMIT_RETRY_MS);
                     try {
                         const { json } = await groupRequest.getGroups({
@@ -194,12 +216,15 @@ async function runSync(force) {
                             retryErr
                         );
                     }
+                } else {
+                    // 非限流错误才计入连续失败（连续过多则中止，避免带病空转）
+                    consecutiveFailures += 1;
                 }
             }
             store.done += 1;
             // 限流间隔（最后一个好友不必等待）
             if (i < dueCount - 1) {
-                await sleep(REQUEST_INTERVAL_MS);
+                await sleep(requestInterval);
             }
         }
 

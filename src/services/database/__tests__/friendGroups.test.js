@@ -167,7 +167,7 @@ describe('friendGroups.getFriendGroupFetchTimes', () => {
 });
 
 describe('friendGroups.upsertCacheGroups', () => {
-    test('parameterized upsert per group, emoji-safe', async () => {
+    test('batched parameterized upsert, emoji-safe', async () => {
         await friendGroups.upsertCacheGroups([
             {
                 id: 'grp_1',
@@ -189,11 +189,29 @@ describe('friendGroups.upsertCacheGroups', () => {
         );
         // 参数化：emoji/引号原样传参，不做字符串拼接
         expect(sql).not.toContain("O'Club");
-        expect(args['@id']).toBe('grp_1');
-        expect(args['@name']).toBe("Dance O'Club ❤️");
-        expect(args['@member_count']).toBe(500);
-        expect(args['@privacy']).toBe('public');
+        expect(sql).toContain('(@id0, @added_at0, @updated_at0, @name0');
+        expect(args['@id0']).toBe('grp_1');
+        expect(args['@name0']).toBe("Dance O'Club ❤️");
+        expect(args['@member_count0']).toBe(500);
+        expect(args['@privacy0']).toBe('public');
         expect(mocks.executeNonQuery).toHaveBeenLastCalledWith('COMMIT');
+    });
+
+    test('batches large inputs into chunks of 80', async () => {
+        const groups = Array.from({ length: 165 }, (_, i) => ({
+            id: `grp_${i}`,
+            name: `群 ${i}`
+        }));
+        await friendGroups.upsertCacheGroups(groups);
+
+        const inserts = mocks.executeNonQuery.mock.calls
+            .map((c) => c[0])
+            .filter((sql) => sql.includes('INSERT OR REPLACE'));
+        // 165 行 → 2 批（80 + 80）+ 尾部 5
+        expect(inserts.length).toBe(3);
+        expect(inserts[0].match(/@id\d/g)).toHaveLength(80);
+        expect(inserts[1].match(/@id\d/g)).toHaveLength(80);
+        expect(inserts[2].match(/@id\d/g)).toHaveLength(5);
     });
 
     test('rolls back on parameterized insert error', async () => {
@@ -212,8 +230,8 @@ describe('friendGroups.upsertCacheGroups', () => {
         await friendGroups.upsertCacheGroups([{ id: 'grp_2' }]);
 
         const args = mocks.executeNonQuery.mock.calls[1][1];
-        expect(args['@id']).toBe('grp_2');
-        expect(args['@member_count']).toBe(0);
+        expect(args['@id0']).toBe('grp_2');
+        expect(args['@member_count0']).toBe(0);
     });
 
     test('is a no-op for empty input', async () => {
