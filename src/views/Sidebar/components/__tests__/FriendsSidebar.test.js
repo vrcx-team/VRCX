@@ -25,6 +25,14 @@ const mocks = vi.hoisted(() => ({
     },
     userStore: {
         showSendBoopDialog: vi.fn(),
+        editProfileDialog: {
+            value: {
+                visible: false,
+                status: '',
+                statusDescription: '',
+                loading: false
+            }
+        },
         currentUser: {
             value: {
                 id: 'usr_me',
@@ -59,6 +67,11 @@ const mocks = vi.hoisted(() => ({
     instanceStore: {
         cachedInstances: new Map()
     },
+    authStore: {},
+    modalStore: {
+        editProfileDialog: { visible: false }
+    },
+    galleryStore: {},
     configRepository: {
         getBool: vi.fn(),
         setBool: vi.fn(),
@@ -118,7 +131,10 @@ vi.mock('../../../../stores', () => ({
     useLaunchStore: () => mocks.launchStore,
     useLocationStore: () => mocks.locationStore,
     useInstanceStore: () => mocks.instanceStore,
-    useUserStore: () => mocks.userStore
+    useUserStore: () => mocks.userStore,
+    useAuthStore: () => mocks.authStore,
+    useModalStore: () => mocks.modalStore,
+    useGalleryStore: () => mocks.galleryStore
 }));
 
 vi.mock('../../../../coordinators/userCoordinator', () => ({
@@ -129,6 +145,7 @@ vi.mock('../../../../shared/utils', () => ({
     getFriendsSortFunction: () => (a, b) => a.id.localeCompare(b.id),
     isRealInstance: (location) =>
         typeof location === 'string' && location.startsWith('wrld_'),
+    debounce: (fn) => fn,
     userImage: vi.fn(() => 'https://example.com/avatar.png'),
     userStatusClass: vi.fn(() => ''),
     parseLocation: vi.fn((location) => ({
