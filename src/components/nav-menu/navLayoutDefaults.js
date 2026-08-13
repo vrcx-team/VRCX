@@ -21,7 +21,7 @@ export function createBaseDefaultNavLayout(t) {
             nameKey: 'nav_tooltip.social',
             name: t('nav_tooltip.social'),
             icon: 'ri-group-line',
-            items: ['friend-log', 'friend-list', 'moderation']
+            items: ['friend-log', 'friend-list', 'groups', 'moderation']
         },
         { type: 'item', key: 'notification' },
         { type: 'item', key: 'my-avatars' },
@@ -31,12 +31,7 @@ export function createBaseDefaultNavLayout(t) {
             nameKey: 'nav_tooltip.charts',
             name: t('nav_tooltip.charts'),
             icon: 'ri-pie-chart-line',
-            items: [
-                'charts-instance',
-                'charts-mutual',
-                'charts-hot-worlds',
-                'groups'
-            ]
+            items: ['charts-instance', 'charts-mutual', 'charts-hot-worlds']
         },
         { type: 'item', key: 'tools' },
         { type: 'item', key: 'direct-access' }
