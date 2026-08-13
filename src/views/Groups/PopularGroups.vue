@@ -1,5 +1,5 @@
 <template>
-    <div class="x-container x-container--auto-height">
+    <div class="x-container">
         <div class="pt-4">
             <div class="mb-4 flex items-center justify-between">
                 <div class="flex items-center gap-2">
