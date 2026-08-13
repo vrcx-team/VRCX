@@ -1137,7 +1137,7 @@
                 "announcement": "Ogłoszenie",
                 "rules": "Zasady",
                 "members": "Członkowie",
-                "created_at": "Data utworzenia",
+                "created": "Data utworzenia",
                 "links": "Linki",
                 "url": "URL grupy",
                 "url_tooltip": "Kopiuj adres URL do schowka",
