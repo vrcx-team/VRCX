@@ -72,7 +72,7 @@
         "moderation": "Moderation",
         "notification": "Notification",
         "friend_list": "Friend List",
-        "groups": "Groups",
+        "groups": "Popular Groups",
         "charts": "Charts",
         "tools": "Tools",
         "settings": "Settings",
@@ -531,8 +531,6 @@
         "groups": {
             "title": "Popular Groups",
             "refresh": "Refresh",
-
-
             "syncing_progress": "{percent} · ~{remaining} min left · ~{total} min total",
             "last_synced": "Last synced",
             "friends_joined": "friends have joined this group",
