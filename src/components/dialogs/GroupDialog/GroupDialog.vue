@@ -281,6 +281,10 @@
                                                 </DropdownMenuItem>
                                             </template>
                                             <DropdownMenuSeparator />
+                                            <DropdownMenuItem @click="groupDialogCommand('Previous Instances')">
+                                                <LineChart class="size-4" />
+                                                {{ t('dialog.world.actions.show_previous_instances') }}
+                                            </DropdownMenuItem>
                                             <DropdownMenuItem
                                                 variant="destructive"
                                                 @click="groupDialogCommand('Leave Group')">
@@ -290,6 +294,11 @@
                                         </template>
                                     </template>
                                     <template v-else>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem @click="groupDialogCommand('Previous Instances')">
+                                            <LineChart class="size-4" />
+                                            {{ t('dialog.world.actions.show_previous_instances') }}
+                                        </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
                                             v-if="groupDialog.ref.membershipStatus === 'userblocked'"
@@ -557,6 +566,7 @@
         Copy,
         Eye,
         Image,
+        LineChart,
         MessageSquare,
         MoreHorizontal,
         RefreshCw,
@@ -652,6 +662,7 @@
         setGroupVisibility,
         setGroupSubscription,
         setGroupEventAnnouncements,
+        showPreviousInstancesListDialog,
         showGroupMemberModerationDialog,
         showInviteGroupDialog: (groupId, userId) => {
             if (groupId) {

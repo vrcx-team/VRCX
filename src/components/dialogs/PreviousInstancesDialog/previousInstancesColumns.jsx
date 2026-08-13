@@ -185,6 +185,7 @@ export const createPreviousInstancesColumns = (variant, config) => {
                 },
                 cell: ({ row }) => (
                     <LocationWorld
+                        class="w-fit"
                         locationobject={row.original?.$location}
                         grouphint={row.original?.groupName}
                         currentuserid={config.currentUserId}
