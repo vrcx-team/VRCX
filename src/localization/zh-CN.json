@@ -473,7 +473,7 @@
                 "group": {
                     "announcement": "群组公告",
                     "informative": "群组消息",
-                    "invite": "邀请",
+                    "invite": "群组邀请",
                     "joinRequest": "加入申请",
                     "transfer": "转让",
                     "queueReady": "队列准备就绪",

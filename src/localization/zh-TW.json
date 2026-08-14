@@ -471,9 +471,9 @@
                     "announcement": "活動通知"
                 },
                 "group": {
-                    "announcement": "公告",
-                    "informative": "資訊",
-                    "invite": "邀請",
+                    "announcement": "群組公告",
+                    "informative": "群組資訊",
+                    "invite": "群組邀請",
                     "joinRequest": "加入請求",
                     "transfer": "轉移",
                     "queueReady": "排隊準備",
