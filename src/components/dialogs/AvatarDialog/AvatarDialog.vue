@@ -187,8 +187,8 @@
                             side="top"
                             :content="t('dialog.avatar.actions.delete_cache_tooltip')">
                             <Button
-                                class="rounded-full mr-2"
-                                size="icon-lg"
+                                class="rounded-lg mr-2"
+                                size="icon"
                                 variant="outline"
                                 :disabled="isGameRunning && avatarDialog.cacheLocked"
                                 @click="deleteVRChatCache(avatarDialog.ref)"
@@ -202,8 +202,8 @@
                             side="top"
                             :content="t('dialog.avatar.actions.favorite_tooltip')">
                             <Button
-                                class="rounded-full"
-                                size="icon-lg"
+                                class="rounded-lg"
+                                size="icon"
                                 @click="avatarDialogCommand('Add Favorite')"
                                 :ariaLabel="t('dialog.avatar.actions.favorite_tooltip')"
                                 ><Star
@@ -211,8 +211,8 @@
                         </TooltipWrapper>
                         <TooltipWrapper v-else side="top" :content="t('dialog.avatar.actions.favorite_tooltip')">
                             <Button
-                                class="rounded-full"
-                                size="icon-lg"
+                                class="rounded-lg"
+                                size="icon"
                                 variant="outline"
                                 @click="avatarDialogCommand('Add Favorite')"
                                 :ariaLabel="t('dialog.avatar.actions.favorite_tooltip')"
@@ -222,8 +222,8 @@
 
                         <TooltipWrapper side="top" :content="t('dialog.avatar.actions.select')">
                             <Button
-                                class="rounded-full ml-2"
-                                size="icon-lg"
+                                class="rounded-lg ml-2"
+                                size="icon"
                                 variant="outline"
                                 :disabled="currentUser.currentAvatar === avatarDialog.id"
                                 @click="selectAvatarWithoutConfirmation(avatarDialog.id)"
@@ -234,9 +234,9 @@
                         <DropdownMenu>
                             <DropdownMenuTrigger as-child>
                                 <Button
-                                    class="rounded-full ml-2"
+                                    class="rounded-lg ml-2"
                                     :variant="avatarDialog.isBlocked ? 'destructive' : 'outline'"
-                                    size="icon-lg"
+                                    size="icon"
                                     :ariaLabel="t('nav_tooltip.manage')">
                                     <Ellipsis />
                                 </Button>

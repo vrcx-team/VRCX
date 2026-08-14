@@ -65,9 +65,9 @@
                                     side="top"
                                     :content="t('dialog.group.actions.unrepresent_tooltip')">
                                     <Button
-                                        class="rounded-full"
+                                        class="rounded-lg"
                                         variant="secondary"
-                                        size="icon-lg"
+                                        size="icon"
                                         style="margin-left: 6px"
                                         :ariaLabel="t('dialog.group.actions.unrepresent_tooltip')"
                                         @click="clearGroupRepresentation(groupDialog.id)">
@@ -80,9 +80,9 @@
                                     :content="t('dialog.group.actions.represent_tooltip')">
                                     <span>
                                         <Button
-                                            class="rounded-full"
+                                            class="rounded-lg"
                                             variant="outline"
-                                            size="icon-lg"
+                                            size="icon"
                                             :ariaLabel="t('dialog.group.actions.represent_tooltip')"
                                             :disabled="groupDialog.ref.privacy === 'private'"
                                             @click="setGroupRepresentation(groupDialog.id)">
@@ -97,9 +97,9 @@
                                     :content="t('dialog.group.actions.cancel_join_request_tooltip')">
                                     <span>
                                         <Button
-                                            class="rounded-full"
+                                            class="rounded-lg"
                                             variant="outline"
-                                            size="icon-lg"
+                                            size="icon"
                                             :ariaLabel="t('dialog.group.actions.cancel_join_request_tooltip')"
                                             @click="cancelGroupRequest(groupDialog.id)">
                                             <X />
@@ -111,9 +111,9 @@
                                 <TooltipWrapper side="top" :content="t('dialog.group.actions.pending_request_tooltip')">
                                     <span>
                                         <Button
-                                            class="rounded-full"
+                                            class="rounded-lg"
                                             variant="outline"
-                                            size="icon-lg"
+                                            size="icon"
                                             :ariaLabel="t('dialog.group.actions.pending_request_tooltip')"
                                             @click="joinGroup(groupDialog.id)">
                                             <Check />
@@ -127,9 +127,9 @@
                                     side="top"
                                     :content="t('dialog.group.actions.request_join_tooltip')">
                                     <Button
-                                        class="rounded-full"
+                                        class="rounded-lg"
                                         variant="outline"
-                                        size="icon-lg"
+                                        size="icon"
                                         :ariaLabel="t('dialog.group.actions.request_join_tooltip')"
                                         @click="joinGroup(groupDialog.id)">
                                         <MessageSquare />
@@ -141,9 +141,9 @@
                                     :content="t('dialog.group.actions.invite_required_tooltip')">
                                     <span>
                                         <Button
-                                            class="rounded-full"
+                                            class="rounded-lg"
                                             variant="outline"
-                                            size="icon-lg"
+                                            size="icon"
                                             :ariaLabel="t('dialog.group.actions.invite_required_tooltip')"
                                             disabled>
                                             <MessageSquare />
@@ -155,9 +155,9 @@
                                     side="top"
                                     :content="t('dialog.group.actions.join_group_tooltip')">
                                     <Button
-                                        class="rounded-full"
+                                        class="rounded-lg"
                                         variant="outline"
-                                        size="icon-lg"
+                                        size="icon"
                                         :ariaLabel="t('dialog.group.actions.join_group_tooltip')"
                                         @click="joinGroup(groupDialog.id)">
                                         <Check />
@@ -167,13 +167,13 @@
                             <DropdownMenu>
                                 <DropdownMenuTrigger as-child>
                                     <Button
-                                        class="rounded-full"
+                                        class="rounded-lg"
                                         :variant="
                                             groupDialog.ref.membershipStatus === 'userblocked'
                                                 ? 'destructive'
                                                 : 'outline'
                                         "
-                                        size="icon-lg"
+                                        size="icon"
                                         :ariaLabel="t('nav_tooltip.manage')">
                                         <MoreHorizontal />
                                     </Button>

@@ -231,11 +231,10 @@
                             class="text-[10px] font-bold uppercase tracking-wide"
                             :style="{ color: userDialog.theme.subtextColor }">
                             {{ t('dialog.user.info.vrcx_info') }}
-                            <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                            <span
+                                class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
                                 <TooltipWrapper side="top" :content="t('dialog.user.info.vrcx_info_tooltip')">
-                                    <Info
-                                        class="inline-block h-3 w-3 align-middle"
-                                        :style="{ color: userDialog.theme.iconColor }" />
+                                    <Info class="h-3 w-3 shrink-0" :style="{ color: userDialog.theme.iconColor }" />
                                 </TooltipWrapper>
                             </span>
                         </span>
