@@ -770,7 +770,7 @@
                 "announcement": "공지사항",
                 "rules": "규칙",
                 "members": "회원",
-                "created_at": "설립일",
+                "created": "설립일",
                 "links": "링크",
                 "url": "그룹 URL",
                 "url_tooltip": "URL 복사",

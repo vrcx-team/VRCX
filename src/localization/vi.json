@@ -759,7 +759,7 @@
                 "announcement": "Thông báo",
                 "rules": "Luật lệ",
                 "members": "Thành viên",
-                "created_at": "Tạo lúc",
+                "created": "Tạo lúc",
                 "links": "Đường dẫn",
                 "url": "URL nhóm",
                 "url_tooltip": "Sao chép URL đến clipboard",

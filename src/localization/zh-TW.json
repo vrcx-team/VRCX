@@ -471,9 +471,9 @@
                     "announcement": "活動通知"
                 },
                 "group": {
-                    "announcement": "公告",
-                    "informative": "資訊",
-                    "invite": "邀請",
+                    "announcement": "群組公告",
+                    "informative": "群組資訊",
+                    "invite": "群組邀請",
                     "joinRequest": "加入請求",
                     "transfer": "轉移",
                     "queueReady": "排隊準備",
@@ -492,7 +492,8 @@
                     "contentrestriction": "內容審核與限制"
                 },
                 "instance": {
-                    "closed": "房間關閉"
+                    "closed": "房間關閉",
+                    "announcement": "房間公告"
                 },
                 "badge": {
                     "earned": "徽章獲取"
@@ -506,6 +507,9 @@
                         "gift": "已接收禮物"
                     },
                     "alert": "經濟提醒"
+                },
+                "twitchdrop": {
+                    "fulfilled": "Twitch Drop 已發放"
                 }
             }
         },
@@ -893,8 +897,8 @@
                     "theme_mode_pink": "粉色",
                     "theme_mode_material3": "Material 3",
                     "zoom": "介面縮放",
-                    "vrcplus_profile_icons": "VRChat+ 個人檔案圖示",
-                    "vrcplus_profile_icons_description": "在可用的情況下，使用 VRChat+ 獨家設定檔圖示。",
+                    "vrcplus_profile_icons": "VRC+ 個人檔案圖示",
+                    "vrcplus_profile_icons_description": "在可用的情況下，使用 VRC+ 獨家設定檔圖示。",
                     "vrc_profile_themes": "VRChat 個人檔案主題",
                     "show_instance_id": "顯示房間 ID",
                     "show_status_bar": "顯示狀態列",
@@ -920,7 +924,11 @@
                     "table_density_comfortable": "舒適",
                     "table_density_compact": "緊湊",
                     "table_entries_settings": "表格最大列數",
-                    "table_entries_settings_description": "控制清單與搜尋載入的項目數量。"
+                    "table_entries_settings_description": "控制清單與搜尋載入的項目數量。",
+                    "vrc_profile_backgrounds": "VRChat 個人檔案背景",
+                    "vrc_profile_backgrounds_description": "在玩家資訊中顯示個人檔案背景，例如漸變或 VRC+ 背景。",
+                    "vrc_profile_backgrounds_opacity": "個人檔案背景不透明度",
+                    "vrc_profile_backgrounds_opacity_description": "較高的值會影響文字的可讀性。"
                 },
                 "display": {
                     "header": "顯示"
@@ -1424,7 +1432,9 @@
                 "open_previous_instance": "開啟過去的房間",
                 "show_mutual_friends": "顯示共同好友",
                 "show_discord_connections": "顯示 Discord 連結",
-                "current_instance": "當前房間"
+                "instance_minimum_avatar_performance": "角色性能評級限制",
+                "current_instance": "當前房間",
+                "economy_creator": "商業創作者"
             },
             "groups": {
                 "header": "群組",
@@ -1707,6 +1717,7 @@
                 "closed": "關閉",
                 "joined": "已加入",
                 "banned": "已封鎖",
+                "everyone": "能見度：所有人",
                 "visible": "能見度：所有人",
                 "friends": "能見度：好友",
                 "hidden": "能見度：隱藏",
@@ -1743,7 +1754,8 @@
                 "announcement": "公告",
                 "rules": "規則",
                 "members": "成員",
-                "created_at": "創建時間",
+                "online_members": "在綫成員",
+                "created": "創建時間",
                 "links": "連結",
                 "url": "群組連結",
                 "url_tooltip": "複製連結到剪貼簿",
@@ -1758,7 +1770,10 @@
                 "role_permissions": "權限：",
                 "last_visited": "上次造訪",
                 "past_events": "過去的活動",
-                "upcoming_events": "即將到來的活動"
+                "upcoming_events": "即將到來的活動",
+                "member_info": "成員資訊",
+                "visibility": "能見度",
+                "short_code": "群組代碼"
             },
             "posts": {
                 "header": "貼文",
@@ -2468,6 +2483,9 @@
         "decline_type": "確定要拒絕 {type} 嗎？",
         "delete_type": "確定要刪除 {type} 嗎？",
         "command_question": "確定要執行 {command} 嗎？",
+        "command_question_toggle": "確定要執行 {action}{command} 吗？",
+        "enable_action": "啟用",
+        "disable_action": "禁用",
         "clear_group": "確定要清空群組嗎？",
         "delete_group": "確定要刪除群組 {name} 嗎？",
         "delete_post": "確定要刪除這則貼文嗎？",

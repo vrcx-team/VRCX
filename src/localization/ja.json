@@ -1761,7 +1761,7 @@
                 "announcement": "お知らせ",
                 "rules": "ルール",
                 "members": "メンバー数",
-                "created_at": "作成日時",
+                "created": "作成日時",
                 "links": "リンク",
                 "url": "グループURL",
                 "url_tooltip": "URLをコピー",

@@ -828,7 +828,7 @@
                 "announcement": "Announcement",
                 "rules": "Rules",
                 "members": "Members",
-                "created_at": "Created At",
+                "created": "Created",
                 "links": "Links",
                 "url": "Group URL",
                 "url_tooltip": "Copy URL to clipboard",
