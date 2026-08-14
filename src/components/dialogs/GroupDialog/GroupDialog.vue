@@ -406,6 +406,37 @@
                             }}</span>
                         </div>
                     </TooltipWrapper>
+                    <div v-if="groupDialog.ref.links?.length" class="flex justify-between items-start gap-2 text-xs">
+                        <span class="text-muted-foreground shrink-0">{{ t('dialog.group.info.links') }}</span>
+                        <div class="flex gap-1">
+                            <template v-for="(link, index) in groupDialog.ref.links" :key="index">
+                                <TooltipWrapper v-if="link">
+                                    <template #content>
+                                        <span v-text="link" />
+                                    </template>
+                                    <img
+                                        :src="getFaviconUrl(link)"
+                                        style="width: 16px; height: 16px; vertical-align: middle; cursor: pointer"
+                                        @click.stop="openExternalLink(link)"
+                                        loading="lazy" />
+                                </TooltipWrapper>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-xl bg-(--profile-card) p-3 mt-2.5">
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-muted-foreground/20">
+                    <span
+                        class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                        {{ t('dialog.user.info.vrcx_info') }}
+                        <TooltipWrapper side="top" :content="t('dialog.user.info.vrcx_info_tooltip')">
+                            <Info class="h-3 w-3 shrink-0" />
+                        </TooltipWrapper>
+                    </span>
+                </div>
+                <div class="flex flex-col gap-1.5">
                     <TooltipWrapper
                         side="top"
                         :content="formatDateFilter(groupDialog.lastVisit, 'long')"
@@ -425,23 +456,6 @@
                             <span class="text-right text-muted-foreground">{{ groupDialog.joinCount || '—' }}</span>
                         </div>
                     </TooltipWrapper>
-                    <div v-if="groupDialog.ref.links?.length" class="flex justify-between items-start gap-2 text-xs">
-                        <span class="text-muted-foreground shrink-0">{{ t('dialog.group.info.links') }}</span>
-                        <div class="flex gap-1">
-                            <template v-for="(link, index) in groupDialog.ref.links" :key="index">
-                                <TooltipWrapper v-if="link">
-                                    <template #content>
-                                        <span v-text="link" />
-                                    </template>
-                                    <img
-                                        :src="getFaviconUrl(link)"
-                                        style="width: 16px; height: 16px; vertical-align: middle; cursor: pointer"
-                                        @click.stop="openExternalLink(link)"
-                                        loading="lazy" />
-                                </TooltipWrapper>
-                            </template>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -572,6 +586,7 @@
         CheckCircle,
         Copy,
         Eye,
+        Info,
         Image,
         LineChart,
         MessageSquare,
