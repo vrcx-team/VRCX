@@ -20,6 +20,7 @@
         shape: { type: String, default: undefined },
         useType: { type: String, default: undefined },
         pickerType: { type: String, default: undefined },
+        hideToggle: { type: Boolean, default: false },
         buttonClass: { type: [String, Array, Object], default: '' },
         popoverClass: { type: [String, Array, Object], default: '' },
         presets: { type: Array, default: () => [] },
@@ -68,15 +69,20 @@
         setColor(props.emptyValue);
     }
 
-    function onOpenAutoFocus(event) {
+    function onOpen(event) {
         event.preventDefault();
         nextTick(() => {
-            const root = contentBodyRef.value;
-            const input = root?.querySelector('.vc-color-input input, .vc-colorpicker input[type="text"]');
-            if (input) {
-                input.focus();
-                input.select();
+            const input = contentBodyRef.value?.querySelector(
+                '.vc-color-input input, .vc-colorpicker input[type="text"]'
+            );
+            if (!input) return;
+
+            if (props.disableAlpha) {
+                input.maxLength = 6;
             }
+
+            input.focus();
+            input.select();
         });
     }
 </script>
@@ -108,12 +114,8 @@
             </slot>
         </PopoverTrigger>
 
-        <PopoverContent
-            class="w-auto p-0 z-10000 [&_.vc-colorpicker]:!shadow-none [&_.vc-colorpicker]:!bg-popover dark:[&_.vc-input-toggle,&_.vc-color-input_input]:!text-muted-foreground"
-            :class="popoverClass"
-            :align="align"
-            @open-auto-focus="onOpenAutoFocus">
-            <div ref="contentBodyRef">
+        <PopoverContent class="w-auto p-0 z-10000" :class="popoverClass" :align="align" @click="onOpen">
+            <div ref="contentBodyRef" :class="[{ 'no-alpha': disableAlpha }, { 'hide-toggle': hideToggle }]">
                 <div v-if="hasPresets" class="mt-3 pl-3 pb-3 grid gap-2 border-b" :style="gridStyle">
                     <button
                         v-for="color in presets"
@@ -146,3 +148,51 @@
         </PopoverContent>
     </Popover>
 </template>
+
+<style scoped>
+    :deep(.vc-colorpicker) {
+        box-shadow: none !important;
+        background-color: var(--popover) !important;
+    }
+
+    :deep(.vc-input-toggle) {
+        width: 4ch !important;
+        padding-inline: 0 !important;
+        font-family: monospace;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    :global(html.dark :is(.vc-color-input input, .vc-input-toggle, .vc-alpha-input, .vc-alpha-input__inner)) {
+        color: var(--muted-foreground) !important;
+    }
+
+    .hide-toggle :deep(.vc-input-toggle) {
+        display: none !important;
+    }
+
+    .no-alpha {
+        :deep(.vc-compact__row:last-child .vc-compact__color-cube--wrap:first-child),
+        :deep(.vc-color-input:nth-child(4)) {
+            display: none !important;
+        }
+
+        :deep(.vc-input-toggle) {
+            width: 3ch !important;
+            overflow: hidden !important;
+        }
+
+        :deep(.vc-compact__row:last-child > .vc-compact__color-cube--wrap:nth-child(2)) {
+            width: 54px !important;
+        }
+
+        :deep(.vc-colorPicker__record .color-list) {
+            cursor: not-allowed;
+        }
+
+        :deep(.color-item.transparent:has(.color-item__display[style*='rgba'])) {
+            pointer-events: none !important;
+            opacity: 0.5 !important;
+        }
+    }
+</style>
