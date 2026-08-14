@@ -655,7 +655,7 @@
         isFriendsGroupMe.value = await configRepository.getBool('VRCX_isFriendsGroupMe', true);
         isVIPFriends.value = await configRepository.getBool('VRCX_isFriendsGroupFavorites', true);
         isOnlineFriends.value = await configRepository.getBool('VRCX_isFriendsGroupOnline', true);
-        isActiveFriends.value = await configRepository.getBool('VRCX_isFriendsGroupActive', false);
+        isActiveFriends.value = await configRepository.getBool('VRCX_isFriendsGroupActive', true);
         isOfflineFriends.value = await configRepository.getBool('VRCX_isFriendsGroupOffline', true);
         isSidebarGroupByInstanceCollapsed.value = await configRepository.getBool(
             'VRCX_sidebarGroupByInstanceCollapsed',
