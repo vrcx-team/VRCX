@@ -315,6 +315,7 @@ export function showGroupDialog(groupId, options = {}) {
     D.instances = [];
     D.memberRoles = [];
     D.lastVisit = '';
+    D.joinCount = 0;
     D.memberSearch = '';
     D.memberSearchResults = [];
     D.galleries = {};
@@ -354,6 +355,11 @@ export function showGroupDialog(groupId, options = {}) {
                 database.getLastGroupVisit(D.id).then((r) => {
                     if (D.id === ref.id) {
                         D.lastVisit = r.created_at;
+                    }
+                });
+                database.getGroupJoinCount(D.id).then((r) => {
+                    if (D.id === ref.id) {
+                        D.joinCount = r.joinCount;
                     }
                 });
                 instanceStore.applyGroupDialogInstances();

@@ -408,14 +408,21 @@
                     </TooltipWrapper>
                     <TooltipWrapper
                         side="top"
-                        :content="t('dialog.user.info.open_previous_instance')"
-                        @click="showPreviousInstancesListDialog(groupDialog.ref)"
+                        :content="formatDateFilter(groupDialog.lastVisit, 'long')"
                         :disabled="!groupDialog.lastVisit">
-                        <div class="flex justify-between items-start gap-2 text-xs cursor-pointer">
+                        <div class="flex justify-between items-start gap-2 text-xs">
                             <span class="text-muted-foreground shrink-0">{{
                                 t('dialog.group.info.last_visited')
                             }}</span>
                             <span class="text-right text-muted-foreground">{{ timeAgo(groupDialog.lastVisit) }}</span>
+                        </div>
+                    </TooltipWrapper>
+                    <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
+                        <div
+                            class="flex justify-between items-start gap-2 text-xs cursor-pointer hover:text-foreground"
+                            @click="showPreviousInstancesListDialog(groupDialog.ref)">
+                            <span class="text-muted-foreground shrink-0">{{ t('dialog.user.info.join_count') }}</span>
+                            <span class="text-right text-muted-foreground">{{ groupDialog.joinCount || '—' }}</span>
                         </div>
                     </TooltipWrapper>
                     <div v-if="groupDialog.ref.links?.length" class="flex justify-between items-start gap-2 text-xs">
