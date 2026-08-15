@@ -21,6 +21,17 @@ const cosmeticsReq = {
             };
             return args;
         });
+    },
+
+    gatNameplateEffects() {
+        return request('cosmetics/index/nameplateEffect', {
+            method: 'GET'
+        }).then((json) => {
+            const args = {
+                json
+            };
+            return args;
+        });
     }
 };
 

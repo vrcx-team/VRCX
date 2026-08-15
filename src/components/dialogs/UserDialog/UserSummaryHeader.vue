@@ -97,7 +97,17 @@
             </div>
         </div>
 
-        <div class="flex flex-col gap-2 px-3 pb-3 pt-15 z-10">
+        <template v-if="displayVRCProfileCosmetics">
+            <div class="absolute right-0 top-[105px] h-[50px] w-full">
+                <div class="absolute inset-0 rounded-b-lg" :style="nameplateStyle"></div>
+                <img
+                    v-if="nameplateEffectUrl"
+                    :src="nameplateEffectUrl"
+                    class="absolute right-0 top-0 h-full w-auto object-contain object-right opacity-100 transition-opacity rounded-b-lg" />
+            </div>
+        </template>
+
+        <div class="relative isolate flex flex-col gap-2 px-3 pb-3 pt-15 z-10">
             <div class="flex items-start gap-1.5">
                 <div class="flex-1 min-w-0">
                     <div class="flex flex-wrap items-center gap-x-1 leading-snug">
@@ -138,28 +148,29 @@
                             v-text="currentUser.username"
                             @click="copyToClipboard(currentUser.username)"></span>
                     </template>
-                    <div
-                        v-if="userDialog.ref.status || userDialog.ref.statusDescription"
-                        class="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground"
-                        :class="{ 'cursor-pointer hover:text-foreground': userDialog.ref.id === currentUser.id }"
-                        @click="userDialog.ref.id === currentUser.id ? showEditProfileDialog() : undefined">
-                        <TooltipWrapper v-if="userDialog.ref.status" side="top">
-                            <template #content>
-                                <span>{{ getUserStateText(userDialog.ref) }}</span>
-                            </template>
-                            <i class="x-user-status mt-0.5 flex-none" :class="userStatusClass(userDialog.ref)"></i>
-                        </TooltipWrapper>
-                        <div class="min-w-0">
-                            <span v-if="!userDialog.ref.statusDescription" class="block wrap-anywhere">{{
-                                getUserStateText(userDialog.ref)
-                            }}</span>
-                            <span v-if="userDialog.ref.statusDescription" class="block wrap-anywhere">{{
-                                userDialog.ref.statusDescription
-                            }}</span>
-                        </div>
-                    </div>
                 </div>
                 <UserActionDropdown class="flex-none mt-0.5" :user-dialog-command="userDialogCommand" />
+            </div>
+
+            <div
+                v-if="userDialog.ref.status || userDialog.ref.statusDescription"
+                class="flex items-center gap-1.5 text-xs text-muted-foreground"
+                :class="{ 'cursor-pointer hover:text-foreground': userDialog.ref.id === currentUser.id }"
+                @click="userDialog.ref.id === currentUser.id ? showEditProfileDialog() : undefined">
+                <TooltipWrapper v-if="userDialog.ref.status" side="top">
+                    <template #content>
+                        <span>{{ getUserStateText(userDialog.ref) }}</span>
+                    </template>
+                    <i class="x-user-status mt-0.5 flex-none" :class="userStatusClass(userDialog.ref)"></i>
+                </TooltipWrapper>
+                <div class="min-w-0">
+                    <span v-if="!userDialog.ref.statusDescription" class="block wrap-anywhere">{{
+                        getUserStateText(userDialog.ref)
+                    }}</span>
+                    <span v-if="userDialog.ref.statusDescription" class="block wrap-anywhere">{{
+                        userDialog.ref.statusDescription
+                    }}</span>
+                </div>
             </div>
 
             <div class="flex flex-wrap gap-1 text-[11px]" v-show="!userDialog.loading">
@@ -540,7 +551,8 @@
 
     const { t } = useI18n();
 
-    const { userDialog, currentUser, cachedProfileEffects, cachedIconFrames } = storeToRefs(useUserStore());
+    const { userDialog, currentUser, cachedProfileEffects, cachedIconFrames, cachedNameplateEffects } =
+        storeToRefs(useUserStore());
     const { toggleSharedConnectionsOptOut, toggleDiscordFriendsOptOut, toggleAvatarCopying, toggleAllowBooping } =
         useUserStore();
 
@@ -563,6 +575,9 @@
     const iconFrameIntroActive = ref(false);
     const iconFrameIntroDuration = ref(null);
     const iconFrameTimer = ref(null);
+
+    const nameplateEffectUrl = ref(null);
+    const nameplateStyle = ref(null);
 
     function startProfileEffectTimer() {
         clearTimeout(profileEffectTimer.value);
@@ -618,6 +633,25 @@
                 iconFrameIntroUrl.value = introAsset.url;
                 iconFrameIntroDuration.value = introAsset.totalDurationMs;
             }
+        },
+        { immediate: true }
+    );
+
+    watch(
+        () => userDialog.value.ref.nameplateEffect,
+        (newNameplateEffect) => {
+            const effect = cachedNameplateEffects.value.get(newNameplateEffect);
+            const mainAsset = effect?.metadata?.assets.find((asset) => asset.type === 'mainAnimation');
+            nameplateEffectUrl.value = mainAsset ? mainAsset.url : null;
+            const gradientStart = effect?.metadata?.gradientStart;
+            const gradientEnd = effect?.metadata?.gradientEnd;
+            if (!gradientStart || !gradientEnd) {
+                nameplateStyle.value = null;
+                return;
+            }
+            nameplateStyle.value = {
+                backgroundImage: `linear-gradient(90deg, #${gradientStart}, #${gradientEnd})`
+            };
         },
         { immediate: true }
     );

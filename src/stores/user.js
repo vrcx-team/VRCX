@@ -332,6 +332,7 @@ export const useUserStore = defineStore('User', () => {
 
     const cachedProfileEffects = shallowReactive(new Map());
     const cachedIconFrames = shallowReactive(new Map());
+    const cachedNameplateEffects = shallowReactive(new Map());
 
     function addCachedUserDisplayNameEntry(displayName, userId) {
         if (!displayName || !userId) {
@@ -1004,6 +1005,11 @@ export const useUserStore = defineStore('User', () => {
                 cachedIconFrames.set(frame.id, frame);
             });
         });
+        cosmeticsRequest.gatNameplateEffects().then(({ json }) => {
+            json.forEach((effect) => {
+                cachedNameplateEffects.set(effect.id, effect);
+            });
+        });
     }
 
     return {
@@ -1022,6 +1028,7 @@ export const useUserStore = defineStore('User', () => {
         isLocalUserVrcPlusSupporter,
         cachedProfileEffects,
         cachedIconFrames,
+        cachedNameplateEffects,
         applyUserLanguage,
         applyPresenceLocation,
         applyUserDialogLocation,
