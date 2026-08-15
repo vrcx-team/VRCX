@@ -1,5 +1,16 @@
 <template>
-    <div class="rounded-xl bg-(--profile-card) overflow-hidden flex flex-col">
+    <div class="rounded-xl bg-(--profile-card) overflow-hidden flex flex-col relative">
+        <img
+            v-if="profileEffectMainUrl"
+            v-show="!showProfileEffectIntro"
+            :src="profileEffectMainUrl"
+            class="absolute inset-0 block h-full w-full object-cover object-top pointer-events-none"
+            style="z-index: 1;" />
+        <img
+            v-if="profileEffectIntroUrl && showProfileEffectIntro"
+            :src="profileEffectIntroUrl"
+            class="absolute inset-0 block h-full w-full object-cover object-top pointer-events-none"
+            style="z-index: 1;" />
         <div class="relative aspect-17/6">
             <div
                 v-if="
@@ -49,29 +60,42 @@
                 </TooltipWrapper>
             </div>
             <div
-                class="absolute bottom-0 left-3 z-10 translate-y-1/2 overflow-hidden rounded-lg"
-                style="
-                    width: 96px;
-                    height: 96px;
-                    filter: drop-shadow(0 0 1px rgb(0 0 0 / 0.95)) drop-shadow(0 0 4px rgb(0 0 0 / 0.75))
-                        drop-shadow(0 2px 8px rgb(0 0 0 / 0.55));
-                ">
-                <Image
-                    v-if="userDialog.loading || userIconError"
-                    class="w-full! h-full! object-cover text-muted-foreground bg-accent" />
+                class="absolute bottom-0 left-3 z-10 translate-y-1/2"
+                style="width: 96px; height: 96px;">
+                <div
+                    class="w-full h-full overflow-hidden rounded-full"
+                    style="
+                        filter: drop-shadow(0 0 1px rgb(0 0 0 / 0.95)) drop-shadow(0 0 4px rgb(0 0 0 / 0.75))
+                            drop-shadow(0 2px 8px rgb(0 0 0 / 0.55));
+                    ">
+                    <Image
+                        v-if="userDialog.loading || userIconError"
+                        class="w-full! h-full! object-cover text-muted-foreground bg-accent" />
+                    <img
+                        v-else
+                        class="w-full h-full object-cover cursor-pointer"
+                        :src="userImage(userDialog.ref, true, '256', true)"
+                        @click.stop="
+                            showFullscreenImageDialog(userDialog.ref.userIcon || userDialog.ref.currentAvatarImageUrl)
+                        "
+                        @error="userIconError = true"
+                        loading="lazy" />
+                </div>
                 <img
-                    v-else
-                    class="w-full h-full object-cover cursor-pointer"
-                    :src="userImage(userDialog.ref, true, '256', true)"
-                    @click.stop="
-                        showFullscreenImageDialog(userDialog.ref.userIcon || userDialog.ref.currentAvatarImageUrl)
-                    "
-                    @error="userIconError = true"
-                    loading="lazy" />
+                    v-if="iconFrameMainUrl"
+                    v-show="!showIconFrameIntro"
+                    :src="iconFrameMainUrl"
+                    class="absolute pointer-events-none max-w-none"
+                    style="top: -15%; left: -15%; width: 130%; height: 130%; z-index: 20;" />
+                <img
+                    v-if="iconFrameIntroUrl && showIconFrameIntro"
+                    :src="iconFrameIntroUrl"
+                    class="absolute pointer-events-none max-w-none"
+                    style="top: -15%; left: -15%; width: 130%; height: 130%; z-index: 21;" />
             </div>
         </div>
 
-        <div class="flex flex-col gap-2 px-3 pb-3 pt-15">
+        <div class="flex flex-col gap-2 px-3 pb-3 pt-15 relative z-10">
             <div class="flex items-start gap-1.5">
                 <div class="flex-1 min-w-0">
                     <div class="flex flex-wrap items-center gap-x-1 leading-snug">
@@ -488,6 +512,7 @@
 
     import UserActionDropdown from './UserActionDropdown.vue';
     import { showGroupDialog } from '@/coordinators/groupCoordinator';
+    import { request } from '../../../services/request';
 
     const props = defineProps({
         getUserStateText: {
@@ -525,12 +550,130 @@
     const profileImageError = ref(false);
     const userIconError = ref(false);
 
-    watch(
-        () => userDialog.value.id,
-        () => {
-            profileImageError.value = false;
-            userIconError.value = false;
+    const profileEffectMainUrl = ref(null);
+    const profileEffectIntroUrl = ref(null);
+    const showProfileEffectIntro = ref(false);
+
+    const iconFrameMainUrl = ref(null);
+    const iconFrameIntroUrl = ref(null);
+    const showIconFrameIntro = ref(false);
+
+    let profileEffectTimeout = null;
+    let iconFrameTimeout = null;
+
+    let profileEffectsPromise = null;
+    let iconFramesPromise = null;
+
+    let applyProfileEffectSeq = 0;
+    let applyIconFrameSeq = 0;
+
+    function getCosmeticsList(type) {
+        if (type === 'profileEffect') {
+            if (!profileEffectsPromise) {
+                profileEffectsPromise = request('cosmetics/index/profileEffect', { method: 'GET' }).catch(e => {
+                    profileEffectsPromise = null;
+                    throw e;
+                });
+            }
+            return profileEffectsPromise;
+        } else if (type === 'iconFrame') {
+            if (!iconFramesPromise) {
+                iconFramesPromise = request('cosmetics/index/iconFrame', { method: 'GET' }).catch(e => {
+                    iconFramesPromise = null;
+                    throw e;
+                });
+            }
+            return iconFramesPromise;
         }
+    }
+
+    async function applyCosmetic(val, type) {
+        const isProfile = type === 'profileEffect';
+        
+        let currentSeq = 0;
+
+        if (isProfile) {
+            applyProfileEffectSeq++;
+            currentSeq = applyProfileEffectSeq;
+            profileEffectMainUrl.value = null;
+            profileEffectIntroUrl.value = null;
+            showProfileEffectIntro.value = false;
+            if (profileEffectTimeout) clearTimeout(profileEffectTimeout);
+        } else {
+            applyIconFrameSeq++;
+            currentSeq = applyIconFrameSeq;
+            iconFrameMainUrl.value = null;
+            iconFrameIntroUrl.value = null;
+            showIconFrameIntro.value = false;
+            if (iconFrameTimeout) clearTimeout(iconFrameTimeout);
+        }
+        
+        if (!val) return;
+
+        try {
+            const list = await getCosmeticsList(type);
+            
+            // Abort if a new request was started while waiting
+            if (isProfile && currentSeq !== applyProfileEffectSeq) return;
+            if (!isProfile && currentSeq !== applyIconFrameSeq) return;
+            const item = list?.find(x => x.id === val);
+            if (item) {
+                const mainAnim = item.metadata?.assets?.find(a => a.type === 'mainAnimation');
+                const introAnim = item.metadata?.assets?.find(a => a.type === 'introAnimation');
+                
+                if (isProfile) {
+                    if (mainAnim) profileEffectMainUrl.value = mainAnim.url;
+                    if (introAnim && mainAnim) {
+                        profileEffectIntroUrl.value = introAnim.url + '?t=' + Date.now();
+                        showProfileEffectIntro.value = true;
+                        profileEffectTimeout = setTimeout(() => {
+                            showProfileEffectIntro.value = false;
+                        }, introAnim.totalDurationMs);
+                    }
+                } else {
+                    if (mainAnim) iconFrameMainUrl.value = mainAnim.url;
+                    if (introAnim && mainAnim) {
+                        iconFrameIntroUrl.value = introAnim.url + '?t=' + Date.now();
+                        showIconFrameIntro.value = true;
+                        iconFrameTimeout = setTimeout(() => {
+                            showIconFrameIntro.value = false;
+                        }, introAnim.totalDurationMs);
+                    }
+                }
+            }
+        } catch (e) {
+            console.error(`Failed to fetch ${type} cosmetics:`, e);
+        }
+    }
+
+    watch(
+        () => [userDialog.value.ref?.profileEffect, userDialog.value.visible],
+        ([newVal, newVisible]) => {
+            if (!newVisible) {
+                profileEffectMainUrl.value = null;
+                profileEffectIntroUrl.value = null;
+                showProfileEffectIntro.value = false;
+                if (profileEffectTimeout) clearTimeout(profileEffectTimeout);
+                return;
+            }
+            applyCosmetic(newVal, 'profileEffect');
+        },
+        { immediate: true }
+    );
+
+    watch(
+        () => [userDialog.value.ref?.iconFrame, userDialog.value.visible],
+        ([newVal, newVisible]) => {
+            if (!newVisible) {
+                iconFrameMainUrl.value = null;
+                iconFrameIntroUrl.value = null;
+                showIconFrameIntro.value = false;
+                if (iconFrameTimeout) clearTimeout(iconFrameTimeout);
+                return;
+            }
+            applyCosmetic(newVal, 'iconFrame');
+        },
+        { immediate: true }
     );
 
     const getUserStateText = props.getUserStateText;
