@@ -108,7 +108,7 @@
         </template>
 
         <div class="relative isolate flex flex-col gap-2 px-3 pb-3 pt-15 z-10">
-            <div class="flex items-start gap-1.5">
+            <div class="flex gap-1.5 items-center">
                 <div class="flex-1 min-w-0">
                     <div class="flex flex-wrap items-center gap-x-1 leading-snug">
                         <template v-if="userDialog.previousDisplayNames.length > 0">
@@ -129,7 +129,7 @@
                             </TooltipWrapper>
                         </template>
                         <span
-                            class="font-bold cursor-pointer wrap-anywhere"
+                            class="font-bold cursor-pointer flex flex-wrap"
                             v-text="userDialog.ref.displayName"
                             @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
                         <TooltipWrapper
@@ -138,6 +138,7 @@
                             :content="t('dialog.user.info.economy_creator')">
                             <BadgeCheck class="h-3.5 w-3.5 text-[#3b82f6]" />
                         </TooltipWrapper>
+                        <span v-if="userDialog.ref.pronouns" class="basis-full h-0"></span>
                         <TooltipWrapper v-if="userDialog.ref.pronouns" side="top" :content="t('dialog.user.pronouns')">
                             <span class="x-grey font-mono text-xs" v-text="userDialog.ref.pronouns"></span>
                         </TooltipWrapper>
