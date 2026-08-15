@@ -1661,7 +1661,7 @@
                 "announcement": "Anúncio",
                 "rules": "Regras",
                 "members": "Membros",
-                "created_at": "Criado em",
+                "created": "Criado em",
                 "links": "Links",
                 "url": "URL do Grupo",
                 "url_tooltip": "Copiar URL para a área de transferência",

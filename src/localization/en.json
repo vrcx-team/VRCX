@@ -905,8 +905,8 @@
                     "theme_mode_pink": "Pink",
                     "theme_mode_material3": "Material 3",
                     "zoom": "Zoom",
-                    "vrcplus_profile_icons": "VRChat+ Profile Icons",
-                    "vrcplus_profile_icons_description": "Use VRChat+ exclusive profile icons when available.",
+                    "vrcplus_profile_icons": "VRC+ Profile Icons",
+                    "vrcplus_profile_icons_description": "Use VRC+ exclusive profile icons when available.",
                     "vrc_profile_themes": "VRChat Profile Themes",
                     "show_instance_id": "Show Instance ID",
                     "show_status_bar": "Show Status Bar",
@@ -936,7 +936,9 @@
                     "vrc_profile_backgrounds": "VRChat Profile Backgrounds",
                     "vrc_profile_backgrounds_description": "Show profile backgrounds in user dialog, e.g. color gradient or VRC+ background.",
                     "vrc_profile_backgrounds_opacity": "Profile Background Opacity",
-                    "vrc_profile_backgrounds_opacity_description": "Higher values will impact text readability."
+                    "vrc_profile_backgrounds_opacity_description": "Higher values will impact text readability.",
+                    "vrc_profile_cosmetics": "Profile Cosmetics",
+                    "cosmetics_description": "Shows icon frame and profile effects"
                 },
                 "display": {
                     "header": "Display"

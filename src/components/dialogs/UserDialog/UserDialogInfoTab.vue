@@ -33,7 +33,7 @@
                     <div
                         v-if="isRealInstance(userDialog.$location.tag)"
                         class="flex items-start gap-1.5 justify-between">
-                        <div class="flex min-w-0 flex-1 flex-col justify-between">
+                        <div class="flex min-w-0 flex-1 flex-col justify-between gap-1.5">
                             <span
                                 class="text-md text-foreground cursor-pointer block truncate"
                                 @click="showWorldDialog(userDialog.$location.tag)"
@@ -66,9 +66,7 @@
                             @click="showFullscreenImageDialog(userDialog.instance?.ref?.world?.imageUrl)"
                             loading="lazy" />
                     </div>
-                    <div
-                        class="flex flex-wrap items-start"
-                        style="flex: 1; margin-top: 8px; max-height: 150px; overflow: auto">
+                    <div class="flex flex-wrap items-start" style="flex: 1; max-height: 150px; overflow: auto">
                         <div
                             v-if="userDialog.$location.userId"
                             class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
@@ -233,11 +231,10 @@
                             class="text-[10px] font-bold uppercase tracking-wide"
                             :style="{ color: userDialog.theme.subtextColor }">
                             {{ t('dialog.user.info.vrcx_info') }}
-                            <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                            <span
+                                class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
                                 <TooltipWrapper side="top" :content="t('dialog.user.info.vrcx_info_tooltip')">
-                                    <Info
-                                        class="inline-block h-3 w-3 align-middle"
-                                        :style="{ color: userDialog.theme.iconColor }" />
+                                    <Info class="h-3 w-3 shrink-0" :style="{ color: userDialog.theme.iconColor }" />
                                 </TooltipWrapper>
                             </span>
                         </span>

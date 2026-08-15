@@ -1,11 +1,16 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 
 const mocks = vi.hoisted(() => ({
+    asideInitiallyCollapsed: false,
+    collapseAside: vi.fn(),
+    expandAside: vi.fn(),
     replace: vi.fn(),
     setNavCollapsed: vi.fn(),
-    setNavWidth: vi.fn()
+    setNavWidth: vi.fn(),
+    setSideBarTabShow: null,
+    watchState: { isLoggedIn: false }
 }));
 
 vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
@@ -17,7 +22,7 @@ vi.mock('vue-router', async (importOriginal) => {
     };
 });
 vi.mock('../../../services/watchState', () => ({
-    watchState: { isLoggedIn: false }
+    watchState: mocks.watchState
 }));
 vi.mock('../../../stores', () => ({
     useAppearanceSettingsStore: () => ({
@@ -28,20 +33,39 @@ vi.mock('../../../stores', () => ({
     })
 }));
 vi.mock('../../../composables/useMainLayoutResizable', () => ({
-    useMainLayoutResizable: () => ({
-        asideDefaultSize: 30,
-        asideMinSize: 0,
-        asideMaxPx: 480,
-        mainDefaultSize: 70,
-        handleLayout: vi.fn(),
-        isAsideCollapsed: () => false,
-        isAsideCollapsedStatic: false,
-        isSideBarTabShow: ref(true)
-    })
+    useMainLayoutResizable: () => {
+        const isSideBarTabShow = ref(true);
+        mocks.setSideBarTabShow = (show) => {
+            isSideBarTabShow.value = show;
+        };
+        return {
+            asideDefaultSize: 30,
+            asideMinSize: 0,
+            asideMaxPx: 480,
+            mainDefaultSize: 70,
+            handleLayout: vi.fn(),
+            isAsideCollapsed: () => false,
+            isAsideCollapsedStatic: false,
+            isSideBarTabShow
+        };
+    }
 }));
 vi.mock('../../../components/ui/resizable', () => ({
     ResizablePanelGroup: { template: '<div><slot :layout="[]" /></div>' },
-    ResizablePanel: { template: '<div><slot /></div>' },
+    ResizablePanel: {
+        data: () => ({ isCollapsed: mocks.asideInitiallyCollapsed }),
+        methods: {
+            collapse() {
+                this.isCollapsed = true;
+                mocks.collapseAside();
+            },
+            expand() {
+                this.isCollapsed = false;
+                mocks.expandAside();
+            }
+        },
+        template: '<div><slot /></div>'
+    },
     ResizableHandle: { template: '<div />' }
 }));
 vi.mock('../../../components/ui/sidebar', () => ({
@@ -97,22 +121,72 @@ vi.mock('../../Settings/dialogs/PrimaryPasswordDialog.vue', () => ({
 vi.mock('../../../components/dialogs/SendBoopDialog.vue', () => ({
     default: { template: '<div />' }
 }));
+vi.mock('../../Tools/components/GlobalToolsDialogs.vue', () => ({
+    default: { template: '<div />' }
+}));
 vi.mock('../../Settings/dialogs/ChangelogDialog.vue', () => ({
+    default: { template: '<div />' }
+}));
+vi.mock('../../../components/onboarding/WhatsNewDialog.vue', () => ({
+    default: { template: '<div />' }
+}));
+vi.mock('../../../components/onboarding/SpotlightDialog.vue', () => ({
     default: { template: '<div />' }
 }));
 
 import MainLayout from '../MainLayout.vue';
 
-describe('MainLayout.vue', () => {
-    it('redirects to login when not logged in', () => {
-        mount(MainLayout, {
-            global: {
-                stubs: {
-                    RouterView: { template: '<div />' },
-                    KeepAlive: { template: '<div><slot /></div>' }
-                }
+const mountLayout = () =>
+    mount(MainLayout, {
+        global: {
+            stubs: {
+                RouterView: { template: '<div />' },
+                KeepAlive: { template: '<div><slot /></div>' }
             }
-        });
+        }
+    });
+
+describe('MainLayout.vue', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        mocks.asideInitiallyCollapsed = false;
+        mocks.setSideBarTabShow = null;
+        mocks.watchState.isLoggedIn = false;
+    });
+
+    it('redirects to login when not logged in', () => {
+        mountLayout();
         expect(mocks.replace).toHaveBeenCalledWith({ name: 'login' });
+    });
+
+    it('keeps the friends sidebar collapsed after routes that hide it', async () => {
+        mocks.watchState.isLoggedIn = true;
+        mocks.asideInitiallyCollapsed = true;
+        mountLayout();
+
+        mocks.setSideBarTabShow(false);
+        await nextTick();
+        await nextTick();
+        expect(mocks.collapseAside).toHaveBeenCalledTimes(1);
+
+        mocks.setSideBarTabShow(true);
+        await nextTick();
+        await nextTick();
+        expect(mocks.expandAside).not.toHaveBeenCalled();
+    });
+
+    it('restores the friends sidebar when it was open before a hidden route', async () => {
+        mocks.watchState.isLoggedIn = true;
+        mountLayout();
+
+        mocks.setSideBarTabShow(false);
+        await nextTick();
+        await nextTick();
+        expect(mocks.collapseAside).toHaveBeenCalledTimes(1);
+
+        mocks.setSideBarTabShow(true);
+        await nextTick();
+        await nextTick();
+        expect(mocks.expandAside).toHaveBeenCalledTimes(1);
     });
 });

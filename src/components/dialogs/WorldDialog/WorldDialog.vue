@@ -161,8 +161,8 @@
                             side="top"
                             :content="t('dialog.world.actions.delete_cache_tooltip')">
                             <Button
-                                class="rounded-full mr-2"
-                                size="icon-lg"
+                                class="rounded-lg mr-2"
+                                size="icon"
                                 variant="outline"
                                 :ariaLabel="t('common.actions.delete')"
                                 :disabled="isGameRunning && worldDialog.cacheLocked"
@@ -175,8 +175,8 @@
                             side="top"
                             :content="t('dialog.world.actions.favorites_tooltip')">
                             <Button
-                                class="rounded-full"
-                                size="icon-lg"
+                                class="rounded-lg"
+                                size="icon"
                                 @click="worldDialogCommand('Add Favorite')"
                                 :ariaLabel="t('dialog.world.actions.favorites_tooltip')"
                                 ><Star
@@ -184,8 +184,8 @@
                         </TooltipWrapper>
                         <TooltipWrapper v-else side="top" :content="t('dialog.world.actions.favorites_tooltip')">
                             <Button
-                                class="rounded-full"
-                                size="icon-lg"
+                                class="rounded-lg"
+                                size="icon"
                                 variant="outline"
                                 :ariaLabel="t('dialog.world.actions.favorites_tooltip')"
                                 @click="worldDialogCommand('Add Favorite')"
@@ -194,7 +194,7 @@
                         </TooltipWrapper>
                         <DropdownMenu>
                             <DropdownMenuTrigger as-child>
-                                <Button variant="outline" size="icon-lg" class="rounded-full ml-2">
+                                <Button variant="outline" size="icon" class="rounded-lg ml-2">
                                     <Ellipsis />
                                 </Button>
                             </DropdownMenuTrigger>

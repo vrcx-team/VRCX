@@ -940,7 +940,7 @@
                 "announcement": "Anuncio",
                 "rules": "Reglas",
                 "members": "Miembros",
-                "created_at": "Creado el",
+                "created": "Creado el",
                 "links": "Enlaces",
                 "url": "URL del Grupo",
                 "url_tooltip": "Copiar URL al portapapeles",

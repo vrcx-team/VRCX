@@ -43,29 +43,31 @@
                 <!-- Card content -->
                 <div class="flex flex-col p-3 mt-10">
                     <!-- Name and buttons -->
-                    <div class="flex justify-between gap-1 min-w-0">
-                        <div class="flex flex-col">
+                    <div class="flex w-full min-w-0 max-w-full items-start justify-between gap-2">
+                        <div class="flex min-w-0 flex-1 flex-col">
                             <span
-                                class="font-bold truncate cursor-pointer flex-1 min-w-0"
+                                class="font-bold cursor-pointer block min-w-0"
                                 @click="copyToClipboard(groupDialog.ref.name)">
-                                <span v-if="groupDialog.ref.ownerId === currentUser.id" class="flex-none">👑</span
-                                >{{ groupDialog.ref.name }}
+                                <span class="flex min-w-0 items-center gap-1">
+                                    <span v-if="groupDialog.ref.ownerId === currentUser.id" class="shrink-0">👑</span>
+                                    <span class="truncate">{{ groupDialog.ref.name }}</span>
+                                </span>
                             </span>
                             <span
-                                class="x-grey font-mono text-xs truncate block cursor-pointer"
+                                class="x-grey font-mono text-xs truncate block min-w-0 cursor-pointer"
                                 @click="showUserDialog(groupDialog.ref.ownerId)"
                                 v-text="groupDialog.ownerDisplayName"></span>
                         </div>
-                        <div class="flex-none flex items-center gap-2">
+                        <div class="ml-2 flex shrink-0 items-center justify-end gap-2">
                             <template v-if="groupDialog.inGroup && groupDialog.ref?.myMember">
                                 <TooltipWrapper
                                     v-if="groupDialog.ref.myMember?.isRepresenting"
                                     side="top"
                                     :content="t('dialog.group.actions.unrepresent_tooltip')">
                                     <Button
-                                        class="rounded-full"
+                                        class="rounded-lg"
                                         variant="secondary"
-                                        size="icon-lg"
+                                        size="icon"
                                         style="margin-left: 6px"
                                         :ariaLabel="t('dialog.group.actions.unrepresent_tooltip')"
                                         @click="clearGroupRepresentation(groupDialog.id)">
@@ -78,9 +80,9 @@
                                     :content="t('dialog.group.actions.represent_tooltip')">
                                     <span>
                                         <Button
-                                            class="rounded-full"
+                                            class="rounded-lg"
                                             variant="outline"
-                                            size="icon-lg"
+                                            size="icon"
                                             :ariaLabel="t('dialog.group.actions.represent_tooltip')"
                                             :disabled="groupDialog.ref.privacy === 'private'"
                                             @click="setGroupRepresentation(groupDialog.id)">
@@ -95,9 +97,9 @@
                                     :content="t('dialog.group.actions.cancel_join_request_tooltip')">
                                     <span>
                                         <Button
-                                            class="rounded-full"
+                                            class="rounded-lg"
                                             variant="outline"
-                                            size="icon-lg"
+                                            size="icon"
                                             :ariaLabel="t('dialog.group.actions.cancel_join_request_tooltip')"
                                             @click="cancelGroupRequest(groupDialog.id)">
                                             <X />
@@ -109,9 +111,9 @@
                                 <TooltipWrapper side="top" :content="t('dialog.group.actions.pending_request_tooltip')">
                                     <span>
                                         <Button
-                                            class="rounded-full"
+                                            class="rounded-lg"
                                             variant="outline"
-                                            size="icon-lg"
+                                            size="icon"
                                             :ariaLabel="t('dialog.group.actions.pending_request_tooltip')"
                                             @click="joinGroup(groupDialog.id)">
                                             <Check />
@@ -125,9 +127,9 @@
                                     side="top"
                                     :content="t('dialog.group.actions.request_join_tooltip')">
                                     <Button
-                                        class="rounded-full"
+                                        class="rounded-lg"
                                         variant="outline"
-                                        size="icon-lg"
+                                        size="icon"
                                         :ariaLabel="t('dialog.group.actions.request_join_tooltip')"
                                         @click="joinGroup(groupDialog.id)">
                                         <MessageSquare />
@@ -139,9 +141,9 @@
                                     :content="t('dialog.group.actions.invite_required_tooltip')">
                                     <span>
                                         <Button
-                                            class="rounded-full"
+                                            class="rounded-lg"
                                             variant="outline"
-                                            size="icon-lg"
+                                            size="icon"
                                             :ariaLabel="t('dialog.group.actions.invite_required_tooltip')"
                                             disabled>
                                             <MessageSquare />
@@ -153,9 +155,9 @@
                                     side="top"
                                     :content="t('dialog.group.actions.join_group_tooltip')">
                                     <Button
-                                        class="rounded-full"
+                                        class="rounded-lg"
                                         variant="outline"
-                                        size="icon-lg"
+                                        size="icon"
                                         :ariaLabel="t('dialog.group.actions.join_group_tooltip')"
                                         @click="joinGroup(groupDialog.id)">
                                         <Check />
@@ -165,13 +167,13 @@
                             <DropdownMenu>
                                 <DropdownMenuTrigger as-child>
                                     <Button
-                                        class="rounded-full"
+                                        class="rounded-lg"
                                         :variant="
                                             groupDialog.ref.membershipStatus === 'userblocked'
                                                 ? 'destructive'
                                                 : 'outline'
                                         "
-                                        size="icon-lg"
+                                        size="icon"
                                         :ariaLabel="t('nav_tooltip.manage')">
                                         <MoreHorizontal />
                                     </Button>
@@ -279,6 +281,10 @@
                                                 </DropdownMenuItem>
                                             </template>
                                             <DropdownMenuSeparator />
+                                            <DropdownMenuItem @click="groupDialogCommand('Previous Instances')">
+                                                <LineChart class="size-4" />
+                                                {{ t('dialog.world.actions.show_previous_instances') }}
+                                            </DropdownMenuItem>
                                             <DropdownMenuItem
                                                 variant="destructive"
                                                 @click="groupDialogCommand('Leave Group')">
@@ -288,6 +294,11 @@
                                         </template>
                                     </template>
                                     <template v-else>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem @click="groupDialogCommand('Previous Instances')">
+                                            <LineChart class="size-4" />
+                                            {{ t('dialog.world.actions.show_previous_instances') }}
+                                        </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
                                             v-if="groupDialog.ref.membershipStatus === 'userblocked'"
@@ -395,18 +406,6 @@
                             }}</span>
                         </div>
                     </TooltipWrapper>
-                    <TooltipWrapper
-                        side="top"
-                        :content="t('dialog.user.info.open_previous_instance')"
-                        @click="showPreviousInstancesListDialog(groupDialog.ref)"
-                        :disabled="!groupDialog.lastVisit">
-                        <div class="flex justify-between items-start gap-2 text-xs cursor-pointer">
-                            <span class="text-muted-foreground shrink-0">{{
-                                t('dialog.group.info.last_visited')
-                            }}</span>
-                            <span class="text-right text-muted-foreground">{{ timeAgo(groupDialog.lastVisit) }}</span>
-                        </div>
-                    </TooltipWrapper>
                     <div v-if="groupDialog.ref.links?.length" class="flex justify-between items-start gap-2 text-xs">
                         <span class="text-muted-foreground shrink-0">{{ t('dialog.group.info.links') }}</span>
                         <div class="flex gap-1">
@@ -424,6 +423,39 @@
                             </template>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="rounded-xl bg-(--profile-card) p-3 mt-2.5">
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-muted-foreground/20">
+                    <span
+                        class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                        {{ t('dialog.user.info.vrcx_info') }}
+                        <TooltipWrapper side="top" :content="t('dialog.user.info.vrcx_info_tooltip')">
+                            <Info class="h-3 w-3 shrink-0" />
+                        </TooltipWrapper>
+                    </span>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <TooltipWrapper
+                        side="top"
+                        :content="formatDateFilter(groupDialog.lastVisit, 'long')"
+                        :disabled="!groupDialog.lastVisit">
+                        <div class="flex justify-between items-start gap-2 text-xs">
+                            <span class="text-muted-foreground shrink-0">{{
+                                t('dialog.group.info.last_visited')
+                            }}</span>
+                            <span class="text-right text-muted-foreground">{{ timeAgo(groupDialog.lastVisit) }}</span>
+                        </div>
+                    </TooltipWrapper>
+                    <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
+                        <div
+                            class="flex justify-between items-start gap-2 text-xs cursor-pointer hover:text-foreground"
+                            @click="showPreviousInstancesListDialog(groupDialog.ref)">
+                            <span class="text-muted-foreground shrink-0">{{ t('dialog.user.info.join_count') }}</span>
+                            <span class="text-right text-muted-foreground">{{ groupDialog.joinCount || '—' }}</span>
+                        </div>
+                    </TooltipWrapper>
                 </div>
             </div>
 
@@ -554,7 +586,9 @@
         CheckCircle,
         Copy,
         Eye,
+        Info,
         Image,
+        LineChart,
         MessageSquare,
         MoreHorizontal,
         RefreshCw,
@@ -650,6 +684,7 @@
         setGroupVisibility,
         setGroupSubscription,
         setGroupEventAnnouncements,
+        showPreviousInstancesListDialog,
         showGroupMemberModerationDialog,
         showInviteGroupDialog: (groupId, userId) => {
             if (groupId) {

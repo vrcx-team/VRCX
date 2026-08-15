@@ -13,6 +13,7 @@ import { copyToClipboard } from '../../../shared/utils';
  * @param deps.setGroupVisibility
  * @param deps.setGroupSubscription
  * @param deps.setGroupEventAnnouncements
+ * @param deps.showPreviousInstancesListDialog
  * @param deps.showGroupMemberModerationDialog
  * @param deps.showInviteGroupDialog
  * @param deps.showGroupPostEditDialog
@@ -30,6 +31,7 @@ export function useGroupDialogCommands(
         setGroupVisibility,
         setGroupSubscription,
         setGroupEventAnnouncements,
+        showPreviousInstancesListDialog,
         showGroupMemberModerationDialog,
         showInviteGroupDialog,
         showGroupPostEditDialog,
@@ -68,6 +70,9 @@ export function useGroupDialogCommands(
             },
             Refresh: () => {
                 showGroupDialog(D().id, { forceRefresh: true });
+            },
+            'Previous Instances': () => {
+                showPreviousInstancesListDialog(D().ref);
             },
             'Leave Group': () => {
                 leaveGroupPrompt(D().id);

@@ -473,7 +473,7 @@
                 "group": {
                     "announcement": "群组公告",
                     "informative": "群组消息",
-                    "invite": "邀请",
+                    "invite": "群组邀请",
                     "joinRequest": "加入申请",
                     "transfer": "转让",
                     "queueReady": "队列准备就绪",
@@ -492,7 +492,8 @@
                     "contentrestriction": "内容限制"
                 },
                 "instance": {
-                    "closed": "房间关闭"
+                    "closed": "房间关闭",
+                    "announcement": "房间公告"
                 },
                 "badge": {
                     "earned": "获得徽章"
@@ -506,6 +507,9 @@
                         "gift": "礼物已接收"
                     },
                     "alert": "创作者经济警告"
+                },
+                "twitchdrop": {
+                    "fulfilled": "Twitch Drop 已发放"
                 }
             }
         },
@@ -902,7 +906,7 @@
                     "theme_mode_material3": "Material 3",
                     "zoom": "界面缩放",
                     "vrcplus_profile_icons": "VRC+ 个人资料图标",
-                    "vrcplus_profile_icons_description": "当可用时显示 VRChat+ 专属个人资料图标。",
+                    "vrcplus_profile_icons_description": "当可用时显示 VRC+ 专属个人资料图标。",
                     "vrc_profile_themes": "VRChat 个人资料主题",
                     "show_instance_id": "显示房间 ID",
                     "show_status_bar": "显示底部状态栏",
@@ -930,7 +934,9 @@
                     "table_entries_settings": "条目读取设置",
                     "table_entries_settings_description": "控制读取列表和进行搜索时加载的条目数量",
                     "vrc_profile_backgrounds": "VRChat 个人主页背景",
-                    "vrc_profile_backgrounds_opacity": "个人主页背景不透明度"
+                    "vrc_profile_backgrounds_description": "在玩家信息中显示个人主页背景，例如渐变或 VRC+ 背景。",
+                    "vrc_profile_backgrounds_opacity": "个人主页背景不透明度",
+                    "vrc_profile_backgrounds_opacity_description": "较高的值会影响文本的可读性。"
                 },
                 "display": {
                     "header": "显示设置"
@@ -1436,7 +1442,8 @@
                 "show_mutual_friends": "是否允许查看共同好友",
                 "show_discord_connections": "是否允许查看绑定的 Discord 账号信息",
                 "instance_minimum_avatar_performance": "模型性能评级限制",
-                "current_instance": "当前房间"
+                "current_instance": "当前房间",
+                "economy_creator": "商业创作者"
             },
             "groups": {
                 "header": "群组",
@@ -1723,6 +1730,7 @@
                 "closed": "不允许任何人加入",
                 "joined": "已加入",
                 "banned": "被屏蔽/封禁",
+                "everyone": "可见性：所有人",
                 "visible": "可见性：所有人",
                 "friends": "可见性：好友",
                 "hidden": "可见性：隐藏",
@@ -1761,7 +1769,8 @@
                 "announcement": "公告",
                 "rules": "规则",
                 "members": "成员",
-                "created_at": "创建时间",
+                "online_members": "在线成员",
+                "created": "创建时间",
                 "links": "链接",
                 "url": "群组链接",
                 "url_tooltip": "复制链接到剪贴板",
@@ -1776,7 +1785,10 @@
                 "role_permissions": "权限：",
                 "last_visited": "最后访问时间",
                 "past_events": "之前举办的活动",
-                "upcoming_events": "即将到来的活动"
+                "upcoming_events": "即将到来的活动",
+                "member_info": "成员信息",
+                "visibility": "可见性",
+                "short_code": "群组代码"
             },
             "posts": {
                 "header": "帖子",
@@ -2487,7 +2499,10 @@
         "send_invite": "要发送邀请吗？",
         "decline_type": "确定要拒绝{type}吗？",
         "delete_type": "确定要删除{type}吗？",
-        "command_question": "继续？{command}",
+        "command_question": "确定要{command}吗？",
+        "command_question_toggle": "确定要{action}{command}吗？",
+        "enable_action": "启用",
+        "disable_action": "禁用",
         "clear_group": "确定要清空群组吗？",
         "delete_group": "确定要删除群组 {name} 吗？",
         "delete_post": "确定要删除这个公告吗？",

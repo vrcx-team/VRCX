@@ -107,7 +107,9 @@
                         saveOpenVROption();
                     " />
             </SettingsItem>
+        </SettingsGroup>
 
+        <SettingsGroup :title="t('view.settings.appearance.user_dialog.header')">
             <SettingsItem :label="t('view.settings.appearance.appearance.vrc_profile_themes')">
                 <Switch
                     :model-value="displayVRCProfileThemes"
@@ -150,6 +152,36 @@
                     </NumberField>
                 </SettingsItem>
             </template>
+
+            <SettingsItem
+                :label="t('view.settings.appearance.appearance.vrc_profile_cosmetics')"
+                :description="t('view.settings.appearance.appearance.cosmetics_description')">
+                <Switch
+                    :model-value="displayVRCProfileCosmetics"
+                    :ariaLabel="t('view.settings.appearance.appearance.vrc_profile_cosmetics')"
+                    @update:modelValue="
+                        setDisplayVRCProfileCosmetics();
+                        saveOpenVROption();
+                    " />
+            </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.appearance.user_dialog.vrchat_notes')"
+                :description="t('view.settings.appearance.user_dialog.vrchat_notes_description')">
+                <Switch
+                    :model-value="!hideUserNotes"
+                    :ariaLabel="t('view.settings.appearance.user_dialog.vrchat_notes')"
+                    @update:modelValue="setHideUserNotes" />
+            </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.appearance.user_dialog.vrcx_memos')"
+                :description="t('view.settings.appearance.user_dialog.vrcx_memos_description')">
+                <Switch
+                    :model-value="!hideUserMemos"
+                    :ariaLabel="t('view.settings.appearance.user_dialog.vrcx_memos')"
+                    @update:modelValue="setHideUserMemos" />
+            </SettingsItem>
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.appearance.display.header')">
@@ -373,26 +405,6 @@
             </SettingsItem>
         </SettingsGroup>
 
-        <SettingsGroup :title="t('view.settings.appearance.user_dialog.header')">
-            <SettingsItem
-                :label="t('view.settings.appearance.user_dialog.vrchat_notes')"
-                :description="t('view.settings.appearance.user_dialog.vrchat_notes_description')">
-                <Switch
-                    :model-value="!hideUserNotes"
-                    :ariaLabel="t('view.settings.appearance.user_dialog.vrchat_notes')"
-                    @update:modelValue="setHideUserNotes" />
-            </SettingsItem>
-
-            <SettingsItem
-                :label="t('view.settings.appearance.user_dialog.vrcx_memos')"
-                :description="t('view.settings.appearance.user_dialog.vrcx_memos_description')">
-                <Switch
-                    :model-value="!hideUserMemos"
-                    :ariaLabel="t('view.settings.appearance.user_dialog.vrcx_memos')"
-                    @update:modelValue="setHideUserMemos" />
-            </SettingsItem>
-        </SettingsGroup>
-
         <SettingsGroup :title="t('view.settings.appearance.friend_log.header')">
             <SettingsItem :label="t('view.settings.appearance.friend_log.hide_unfriends')">
                 <Switch
@@ -492,6 +504,7 @@
         displayVRCProfileThemes,
         displayVRCProfileBackgrounds,
         profileBackgroundOpacity,
+        displayVRCProfileCosmetics,
         appFontFamily,
         customFontFamily,
         appCjkFontPack,
@@ -522,6 +535,7 @@
         setDisplayVRCProfileThemes,
         setDisplayVRCProfileBackgrounds,
         setProfileBackgroundOpacity,
+        setDisplayVRCProfileCosmetics,
         setHideNicknames,
         setShowInstanceIdInLocation,
         setIsAgeGatedInstancesVisible,

@@ -325,6 +325,26 @@ const gameLog = {
         return ref;
     },
 
+    async getGroupJoinCount(groupId) {
+        var ref = {
+            joinCount: 0,
+            groupId
+        };
+        await sqliteService.execute(
+            (row) => {
+                ref = {
+                    joinCount: row[0] || 0,
+                    groupId
+                };
+            },
+            `SELECT COUNT(DISTINCT location) FROM gamelog_location WHERE location LIKE @groupId`,
+            {
+                '@groupId': `%${groupId}%`
+            }
+        );
+        return ref;
+    },
+
     async getPreviousInstancesByGroupId(groupId) {
         const data = new Map();
         await sqliteService.execute(

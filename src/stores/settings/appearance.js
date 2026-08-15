@@ -64,6 +64,7 @@ export const useAppearanceSettingsStore = defineStore(
         const displayVRCProfileThemes = ref(false);
         const displayVRCProfileBackgrounds = ref(false);
         const profileBackgroundOpacity = ref(0.5);
+        const displayVRCProfileCosmetics = ref(false);
         const hideNicknames = ref(false);
         const showInstanceIdInLocation = ref(false);
         const isAgeGatedInstancesVisible = ref(false);
@@ -155,6 +156,7 @@ export const useAppearanceSettingsStore = defineStore(
                 displayVRCProfileThemesConfig,
                 displayVRCProfileBackgroundsConfig,
                 profileBackgroundOpacityConfig,
+                displayVRCProfileCosmeticsConfig,
                 hideNicknamesConfig,
                 showInstanceIdInLocationConfig,
                 isAgeGatedInstancesVisibleConfig,
@@ -198,6 +200,10 @@ export const useAppearanceSettingsStore = defineStore(
                     false
                 ),
                 configRepository.getFloat('VRCX_profileBackgroundOpacity', 0.5),
+                configRepository.getBool(
+                    'VRCX_displayVRCProfileCosmetics',
+                    false
+                ),
                 configRepository.getBool('VRCX_hideNicknames', false),
                 configRepository.getBool(
                     'VRCX_showInstanceIdInLocation',
@@ -318,6 +324,7 @@ export const useAppearanceSettingsStore = defineStore(
             displayVRCProfileBackgrounds.value =
                 displayVRCProfileBackgroundsConfig;
             profileBackgroundOpacity.value = profileBackgroundOpacityConfig;
+            displayVRCProfileCosmetics.value = displayVRCProfileCosmeticsConfig;
             hideNicknames.value = hideNicknamesConfig;
             showInstanceIdInLocation.value = showInstanceIdInLocationConfig;
             isAgeGatedInstancesVisible.value = isAgeGatedInstancesVisibleConfig;
@@ -653,6 +660,18 @@ export const useAppearanceSettingsStore = defineStore(
         function setProfileBackgroundOpacity(value) {
             profileBackgroundOpacity.value = value;
             configRepository.setFloat('VRCX_profileBackgroundOpacity', value);
+        }
+
+        /**
+         *
+         */
+        function setDisplayVRCProfileCosmetics() {
+            displayVRCProfileCosmetics.value =
+                !displayVRCProfileCosmetics.value;
+            configRepository.setBool(
+                'VRCX_displayVRCProfileCosmetics',
+                displayVRCProfileCosmetics.value
+            );
         }
 
         /**
@@ -1217,6 +1236,7 @@ export const useAppearanceSettingsStore = defineStore(
             displayVRCProfileThemes,
             displayVRCProfileBackgrounds,
             profileBackgroundOpacity,
+            displayVRCProfileCosmetics,
             hideNicknames,
             showInstanceIdInLocation,
             isAgeGatedInstancesVisible,
@@ -1262,6 +1282,7 @@ export const useAppearanceSettingsStore = defineStore(
             setDisplayVRCProfileThemes,
             setDisplayVRCProfileBackgrounds,
             setProfileBackgroundOpacity,
+            setDisplayVRCProfileCosmetics,
             setHideNicknames,
             setShowInstanceIdInLocation,
             setIsAgeGatedInstancesVisible,
