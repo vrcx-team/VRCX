@@ -186,11 +186,18 @@
     } = useMainLayoutResizable();
 
     const asidePanelRef = ref(null);
+    let restoreAsideAfterHiddenRoute = false;
 
     watch(isSideBarTabShow, async (show) => {
+        if (!show) {
+            restoreAsideAfterHiddenRoute = asidePanelRef.value?.isCollapsed === false;
+        }
+
         await nextTick();
         if (show) {
-            asidePanelRef.value?.expand();
+            if (restoreAsideAfterHiddenRoute) {
+                asidePanelRef.value?.expand();
+            }
         } else {
             asidePanelRef.value?.collapse();
         }
