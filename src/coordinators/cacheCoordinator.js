@@ -13,6 +13,7 @@ import {
     extractVariantVersion
 } from '../shared/utils/fileUtils';
 import { compareUnityVersion } from '../shared/utils/avatar';
+import { formatFileSize } from '../shared/utils/base/format';
 import { queryRequest } from '../api';
 
 async function deleteVRChatCache(ref) {
@@ -164,13 +165,15 @@ async function getBundleDateSize(ref) {
 
         const json = args.json;
         if (typeof json.fileSize !== 'undefined') {
-            json._fileSize = `${(json.fileSize / 1048576).toFixed(2)} MB`;
+            json._fileSize = formatFileSize(json.fileSize);
         }
         if (typeof json.uncompressedSize !== 'undefined') {
-            json._uncompressedSize = `${(json.uncompressedSize / 1048576).toFixed(2)} MB`;
+            json._uncompressedSize = formatFileSize(json.uncompressedSize);
         }
         if (typeof json.avatarStats?.totalTextureUsage !== 'undefined') {
-            json._totalTextureUsage = `${(json.avatarStats.totalTextureUsage / 1048576).toFixed(2)} MB`;
+            json._totalTextureUsage = formatFileSize(
+                json.avatarStats.totalTextureUsage
+            );
         }
         bundleJson[platform] = json;
 

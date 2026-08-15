@@ -1,7 +1,7 @@
 import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 
-import { checkVRChatCache } from '../shared/utils';
+import { checkVRChatCache, formatFileSize } from '../shared/utils';
 import { queryRequest } from '../api';
 import {
     getAvatarHistory,
@@ -171,7 +171,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
             checkVRChatCache(D.ref).then((cacheInfo) => {
                 if (cacheInfo.Item1 > 0) {
                     D.inCache = true;
-                    D.cacheSize = `${(cacheInfo.Item1 / 1048576).toFixed(2)} MB`;
+                    D.cacheSize = formatFileSize(cacheInfo.Item1);
                     D.cachePath = cacheInfo.Item3;
                 }
                 D.cacheLocked = cacheInfo.Item2;

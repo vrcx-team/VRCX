@@ -13,6 +13,7 @@ import {
     debounce,
     displayLocation,
     evictMapCache,
+    formatFileSize,
     getAvailablePlatforms,
     getBundleDateSize,
     getGroupName,
@@ -449,9 +450,8 @@ export const useInstanceStore = defineStore('Instance', () => {
                         .then((cacheInfo) => {
                             if (cacheInfo.Item1 > 0) {
                                 currentInstanceWorld.value.inCache = true;
-                                currentInstanceWorld.value.cacheSize = `${(
-                                    cacheInfo.Item1 / 1048576
-                                ).toFixed(2)} MB`;
+                                currentInstanceWorld.value.cacheSize =
+                                    formatFileSize(cacheInfo.Item1);
                             }
                         })
                         .catch((error) => {
@@ -482,9 +482,8 @@ export const useInstanceStore = defineStore('Instance', () => {
                     checkVRChatCache(args.ref).then((cacheInfo) => {
                         if (cacheInfo.Item1 > 0) {
                             currentInstanceWorld.value.inCache = true;
-                            currentInstanceWorld.value.cacheSize = `${(
-                                cacheInfo.Item1 / 1048576
-                            ).toFixed(2)} MB`;
+                            currentInstanceWorld.value.cacheSize =
+                                formatFileSize(cacheInfo.Item1);
                         }
                     });
                 });

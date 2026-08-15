@@ -539,6 +539,7 @@
         <div class="flex-1 min-w-0 flex flex-col min-h-0 pl-4">
             <TabsUnderline
                 v-model="groupDialog.activeTab"
+                :background="true"
                 :items="groupDialogTabs"
                 :unmount-on-hide="false"
                 fill

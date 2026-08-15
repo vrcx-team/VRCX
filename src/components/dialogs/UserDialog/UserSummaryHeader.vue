@@ -32,7 +32,7 @@
                 @click="showFullscreenImageDialog(userDialog.ref.bannerUrl)"
                 @error="profileImageError = true"
                 loading="lazy" />
-            <div class="absolute bottom-0 pt-10 right-2.5 z-10 translate-y-1/2 flex gap-1.5">
+            <div class="absolute bottom-0 pt-10 right-2.5 z-30 translate-y-1/2 flex gap-1.5">
                 <TooltipWrapper
                     v-if="userDialog.isBlock"
                     :content="t('dialog.user.actions.moderation_block')"

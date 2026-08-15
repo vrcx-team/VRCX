@@ -1622,13 +1622,14 @@
                 "copy_name": "Copy Name",
                 "youtube_preview": "Youtube Preview",
                 "author_tags": "Author Tags",
+                "more_info": "More Info",
                 "players": "Players",
                 "favorites": "Favorites",
                 "visits": "Visits",
                 "capacity": "Capacity",
                 "heat": "Heat",
                 "popularity": "Popularity",
-                "created_at": "Created At",
+                "created": "Created",
                 "last_updated": "Last Updated",
                 "publication_date": "Publication Date",
                 "labs_publication_date": "Labs Publication Date",
@@ -1637,7 +1638,8 @@
                 "platform": "Platform",
                 "last_visited": "Last Visited",
                 "visit_count": "Visit Count",
-                "time_spent": "Time Spent"
+                "time_spent": "Time Spent",
+                "description": "Description"
             },
             "json": {
                 "header": "JSON"

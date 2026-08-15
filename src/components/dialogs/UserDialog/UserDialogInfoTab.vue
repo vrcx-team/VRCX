@@ -241,7 +241,7 @@
                     </div>
                     <div class="flex flex-col gap-1.5">
                         <TooltipWrapper
-                            :side="currentUser.id !== userDialog.id ? 'bottom' : 'top'"
+                            side="top"
                             :content="formatDateFilter(userOnlineForTimestamp(userDialog), 'long')"
                             :disabled="!userOnlineForTimestamp(userDialog)">
                             <template #content>
@@ -350,7 +350,7 @@
                         {{ t('dialog.user.info.header') }}
                     </div>
                     <div class="flex flex-col gap-1.5">
-                        <TooltipWrapper :side="currentUser.id !== userDialog.id ? 'bottom' : 'top'">
+                        <TooltipWrapper side="top">
                             <template #content>
                                 <span
                                     >{{ t('dialog.user.info.last_login') }}
