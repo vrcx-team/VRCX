@@ -5,15 +5,13 @@
                 v-if="profileEffectMainUrl"
                 v-show="!profileEffectIntroActive"
                 :src="profileEffectMainUrl"
-                class="absolute inset-0 block h-full w-full object-cover object-top pointer-events-none"
-                style="z-index: 1" />
+                class="absolute z-1 inset-0 block h-full w-full object-cover object-top pointer-events-none" />
             <img
                 v-if="profileEffectIntroUrl"
                 v-show="profileEffectIntroActive"
                 :src="profileEffectIntroUrl"
                 @load="startProfileEffectTimer"
-                class="absolute inset-0 block h-full w-full object-cover object-top pointer-events-none"
-                style="z-index: 1" />
+                class="absolute z-1 inset-0 block h-full w-full object-cover object-top pointer-events-none" />
         </template>
         <div class="relative aspect-17/6">
             <div
@@ -63,7 +61,7 @@
                     <Hand class="h-6 w-6 text-red-400" />
                 </TooltipWrapper>
             </div>
-            <div class="absolute bottom-0 left-3 z-10 translate-y-1/2" style="width: 96px; height: 96px">
+            <div class="absolute bottom-0 left-3 z-20 size-24 translate-y-1/2">
                 <div
                     class="w-full h-full overflow-hidden rounded-full"
                     style="
@@ -88,20 +86,18 @@
                         v-if="iconFrameMainUrl"
                         v-show="!iconFrameIntroActive"
                         :src="iconFrameMainUrl"
-                        class="absolute pointer-events-none max-w-none"
-                        style="top: -15%; left: -15%; width: 130%; height: 130%; z-index: 2" />
+                        class="absolute top-[-15%] left-[-15%] z-2 h-[130%] w-[130%] max-w-none pointer-events-none" />
                     <img
                         v-if="iconFrameIntroUrl"
                         v-show="iconFrameIntroActive"
                         :src="iconFrameIntroUrl"
                         @load="startIconFrameTimer"
-                        class="absolute pointer-events-none max-w-none"
-                        style="top: -15%; left: -15%; width: 130%; height: 130%; z-index: 2" />
+                        class="absolute top-[-15%] left-[-15%] z-2 h-[130%] w-[130%] max-w-none pointer-events-none" />
                 </template>
             </div>
         </div>
 
-        <div class="flex flex-col gap-2 px-3 pb-3 pt-15 relative z-10">
+        <div class="flex flex-col gap-2 px-3 pb-3 pt-15 z-10">
             <div class="flex items-start gap-1.5">
                 <div class="flex-1 min-w-0">
                     <div class="flex flex-wrap items-center gap-x-1 leading-snug">
