@@ -13,7 +13,7 @@ import {
     replaceBioSymbols
 } from '../shared/utils';
 import { getAllUserMemos } from '../coordinators/memoCoordinator';
-import { instanceRequest, userRequest } from '../api';
+import { instanceRequest, userRequest, cosmeticsRequest } from '../api';
 import { AppDebug } from '../services/appConfig';
 import { database } from '../services/database';
 import { runUpdateCurrentUserLocationFlow } from '../coordinators/locationCoordinator';
@@ -329,6 +329,9 @@ export const useUserStore = defineStore('User', () => {
 
     const cachedUsers = shallowReactive(new Map());
     const cachedUserIdsByDisplayName = shallowReactive(new Map());
+
+    const cachedProfileEffects = shallowReactive(new Map());
+    const cachedIconFrames = shallowReactive(new Map());
 
     function addCachedUserDisplayNameEntry(displayName, userId) {
         if (!displayName || !userId) {
@@ -980,6 +983,29 @@ export const useUserStore = defineStore('User', () => {
         });
     }
 
+    watch(
+        () => watchState.isLoggedIn,
+        (isLoggedIn) => {
+            if (isLoggedIn) {
+                getCosmetics();
+            }
+        },
+        { flush: 'sync' }
+    );
+
+    function getCosmetics() {
+        cosmeticsRequest.getProfileEffects().then(({ json }) => {
+            json.forEach((effect) => {
+                cachedProfileEffects.set(effect.id, effect);
+            });
+        });
+        cosmeticsRequest.getIconFrames().then(({ json }) => {
+            json.forEach((frame) => {
+                cachedIconFrames.set(frame.id, frame);
+            });
+        });
+    }
+
     return {
         state,
 
@@ -994,6 +1020,8 @@ export const useUserStore = defineStore('User', () => {
         cachedUsers,
         cachedUserIdsByDisplayName,
         isLocalUserVrcPlusSupporter,
+        cachedProfileEffects,
+        cachedIconFrames,
         applyUserLanguage,
         applyPresenceLocation,
         applyUserDialogLocation,
@@ -1022,6 +1050,7 @@ export const useUserStore = defineStore('User', () => {
         toggleAllowBooping,
         toggleAvatarCopying,
         changePassword,
-        changeContentFilterSettings
+        changeContentFilterSettings,
+        getCosmetics
     };
 });
