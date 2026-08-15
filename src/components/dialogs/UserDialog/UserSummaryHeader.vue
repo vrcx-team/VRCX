@@ -1,5 +1,18 @@
 <template>
-    <div class="rounded-xl bg-(--profile-card) overflow-hidden flex flex-col">
+    <div class="rounded-xl bg-(--profile-card) overflow-hidden flex flex-col relative">
+        <template v-if="displayVRCProfileCosmetics">
+            <img
+                v-if="profileEffectMainUrl"
+                v-show="!profileEffectIntroActive"
+                :src="profileEffectMainUrl"
+                class="absolute z-1 inset-0 block h-full w-full object-cover object-top pointer-events-none" />
+            <img
+                v-if="profileEffectIntroUrl"
+                v-show="profileEffectIntroActive"
+                :src="profileEffectIntroUrl"
+                @load="startProfileEffectTimer"
+                class="absolute z-1 inset-0 block h-full w-full object-cover object-top pointer-events-none" />
+        </template>
         <div class="relative aspect-17/6">
             <div
                 v-if="
@@ -48,30 +61,43 @@
                     <Hand class="h-6 w-6 text-red-400" />
                 </TooltipWrapper>
             </div>
-            <div
-                class="absolute bottom-0 left-3 z-10 translate-y-1/2 overflow-hidden rounded-lg"
-                style="
-                    width: 96px;
-                    height: 96px;
-                    filter: drop-shadow(0 0 1px rgb(0 0 0 / 0.95)) drop-shadow(0 0 4px rgb(0 0 0 / 0.75))
-                        drop-shadow(0 2px 8px rgb(0 0 0 / 0.55));
-                ">
-                <Image
-                    v-if="userDialog.loading || userIconError"
-                    class="w-full! h-full! object-cover text-muted-foreground bg-accent" />
-                <img
-                    v-else
-                    class="w-full h-full object-cover cursor-pointer"
-                    :src="userImage(userDialog.ref, true, '256', true)"
-                    @click.stop="
-                        showFullscreenImageDialog(userDialog.ref.userIcon || userDialog.ref.currentAvatarImageUrl)
-                    "
-                    @error="userIconError = true"
-                    loading="lazy" />
+            <div class="absolute bottom-0 left-3 z-20 size-24 translate-y-1/2">
+                <div
+                    class="w-full h-full overflow-hidden rounded-full"
+                    style="
+                        filter: drop-shadow(0 0 1px rgb(0 0 0 / 0.95)) drop-shadow(0 0 4px rgb(0 0 0 / 0.75))
+                            drop-shadow(0 2px 8px rgb(0 0 0 / 0.55));
+                    ">
+                    <Image
+                        v-if="userDialog.loading || userIconError"
+                        class="w-full! h-full! object-cover text-muted-foreground bg-accent" />
+                    <img
+                        v-else
+                        class="w-full h-full object-cover cursor-pointer"
+                        :src="userImage(userDialog.ref, true, '256', true)"
+                        @click.stop="
+                            showFullscreenImageDialog(userDialog.ref.userIcon || userDialog.ref.currentAvatarImageUrl)
+                        "
+                        @error="userIconError = true"
+                        loading="lazy" />
+                </div>
+                <template v-if="displayVRCProfileCosmetics">
+                    <img
+                        v-if="iconFrameMainUrl"
+                        v-show="!iconFrameIntroActive"
+                        :src="iconFrameMainUrl"
+                        class="absolute top-[-15%] left-[-15%] z-2 h-[130%] w-[130%] max-w-none pointer-events-none" />
+                    <img
+                        v-if="iconFrameIntroUrl"
+                        v-show="iconFrameIntroActive"
+                        :src="iconFrameIntroUrl"
+                        @load="startIconFrameTimer"
+                        class="absolute top-[-15%] left-[-15%] z-2 h-[130%] w-[130%] max-w-none pointer-events-none" />
+                </template>
             </div>
         </div>
 
-        <div class="flex flex-col gap-2 px-3 pb-3 pt-15">
+        <div class="flex flex-col gap-2 px-3 pb-3 pt-15 z-10">
             <div class="flex items-start gap-1.5">
                 <div class="flex-1 min-w-0">
                     <div class="flex flex-wrap items-center gap-x-1 leading-snug">
@@ -482,7 +508,7 @@
     import { copyToClipboard, formatDateFilter, languageClass, openDiscordProfile } from '../../../shared/utils';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover';
-    import { useGalleryStore, useUserStore } from '../../../stores';
+    import { useAppearanceSettingsStore, useGalleryStore, useUserStore } from '../../../stores';
     import { Badge } from '../../ui/badge';
     import { Checkbox } from '../../ui/checkbox';
 
@@ -514,16 +540,87 @@
 
     const { t } = useI18n();
 
-    const { userDialog, currentUser } = storeToRefs(useUserStore());
+    const { userDialog, currentUser, cachedProfileEffects, cachedIconFrames } = storeToRefs(useUserStore());
     const { toggleSharedConnectionsOptOut, toggleDiscordFriendsOptOut, toggleAvatarCopying, toggleAllowBooping } =
         useUserStore();
 
     const { showFullscreenImageDialog } = useGalleryStore();
     const { userImage, userStatusClass } = useUserDisplay();
     const { showEditProfileDialog } = useUserStore();
+    const { displayVRCProfileCosmetics } = storeToRefs(useAppearanceSettingsStore());
 
     const profileImageError = ref(false);
     const userIconError = ref(false);
+
+    const profileEffectMainUrl = ref(null);
+    const profileEffectIntroUrl = ref(null);
+    const profileEffectIntroActive = ref(false);
+    const profileEffectIntroDuration = ref(null);
+    const profileEffectTimer = ref(null);
+
+    const iconFrameMainUrl = ref(null);
+    const iconFrameIntroUrl = ref(null);
+    const iconFrameIntroActive = ref(false);
+    const iconFrameIntroDuration = ref(null);
+    const iconFrameTimer = ref(null);
+
+    function startProfileEffectTimer() {
+        clearTimeout(profileEffectTimer.value);
+        profileEffectTimer.value = setTimeout(() => {
+            profileEffectIntroActive.value = false;
+        }, profileEffectIntroDuration.value);
+    }
+
+    function startIconFrameTimer() {
+        clearTimeout(iconFrameTimer.value);
+        iconFrameTimer.value = setTimeout(() => {
+            iconFrameIntroActive.value = false;
+        }, iconFrameIntroDuration.value);
+    }
+
+    watch(
+        () => userDialog.value.ref.profileEffect,
+        (newProfileEffect) => {
+            clearTimeout(profileEffectTimer.value);
+            profileEffectIntroUrl.value = null;
+            profileEffectMainUrl.value = null;
+            profileEffectIntroActive.value = false;
+            profileEffectIntroDuration.value = null;
+            const effect = cachedProfileEffects.value.get(newProfileEffect);
+            const introAsset = effect?.metadata?.assets.find((asset) => asset.type === 'introAnimation');
+            const mainAsset = effect?.metadata?.assets.find((asset) => asset.type === 'mainAnimation');
+
+            profileEffectMainUrl.value = mainAsset ? mainAsset.url : null;
+            if (introAsset) {
+                profileEffectIntroActive.value = true;
+                profileEffectIntroUrl.value = introAsset.url;
+                profileEffectIntroDuration.value = introAsset.totalDurationMs;
+            }
+        },
+        { immediate: true }
+    );
+
+    watch(
+        () => userDialog.value.ref.iconFrame,
+        (newIconFrame) => {
+            clearTimeout(iconFrameTimer.value);
+            iconFrameIntroUrl.value = null;
+            iconFrameMainUrl.value = null;
+            iconFrameIntroActive.value = false;
+            iconFrameIntroDuration.value = null;
+            const frame = cachedIconFrames.value.get(newIconFrame);
+            const introAsset = frame?.metadata?.assets.find((asset) => asset.type === 'introAnimation');
+            const mainAsset = frame?.metadata?.assets.find((asset) => asset.type === 'mainAnimation');
+
+            iconFrameMainUrl.value = mainAsset ? mainAsset.url : null;
+            if (introAsset) {
+                iconFrameIntroActive.value = true;
+                iconFrameIntroUrl.value = introAsset.url;
+                iconFrameIntroDuration.value = introAsset.totalDurationMs;
+            }
+        },
+        { immediate: true }
+    );
 
     watch(
         () => userDialog.value.id,
