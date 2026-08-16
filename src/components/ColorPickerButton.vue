@@ -1,5 +1,5 @@
 <script setup>
-    import { computed, nextTick, ref } from 'vue';
+    import { computed, ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { Button } from '@/components/ui/button';
@@ -58,23 +58,6 @@
         if (props.disabled || !props.clearable) return;
         setColor(props.emptyValue);
     }
-
-    function onOpen(event) {
-        event.preventDefault();
-        nextTick(() => {
-            const input = contentBodyRef.value?.querySelector(
-                '.vc-color-input input, .vc-colorpicker input[type="text"]'
-            );
-            if (!input) return;
-
-            if (props.disableAlpha) {
-                input.maxLength = 6;
-            }
-
-            input.focus();
-            input.select();
-        });
-    }
 </script>
 
 <template>
@@ -99,8 +82,8 @@
             </slot>
         </PopoverTrigger>
 
-        <PopoverContent class="w-auto p-0 z-10000" align="start" @click="onOpen">
-            <div ref="contentBodyRef" :class="[{ 'disable-alpha': disableAlpha }, { 'hide-toggle': hideToggle }]">
+        <PopoverContent class="w-auto p-0 z-10000" align="start">
+            <div ref="contentBodyRef" :class="[{ 'disable-alpha': disableAlpha }]">
                 <div v-if="hasPresets" class="mt-3 pl-3 pb-3 grid gap-2 border-b" :style="gridStyle">
                     <button
                         v-for="color in presets"
@@ -135,6 +118,10 @@
     :deep(.vc-colorpicker) {
         box-shadow: none !important;
         background-color: var(--popover) !important;
+    }
+
+    :deep(.vc-display .vc-color-input input) {
+        cursor: text !important;
     }
 
     :deep(.vc-input-toggle) {

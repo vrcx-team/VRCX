@@ -341,7 +341,7 @@
                         :maxlength="12"
                         :placeholder="t('dialog.edit_profile.theme_name_placeholder')">
                     </InputGroupField>
-                    <div class="grid gap-2 sm:grid-cols-3">
+                    <div class="flex gap-2">
                         <div class="space-y-1">
                             <span class="text-xs text-muted-foreground">{{ t('dialog.edit_profile.button') }}</span>
                             <div class="flex items-center gap-2">
@@ -398,7 +398,7 @@
                         </Select>
                     </div>
 
-                    <div v-if="editProfileDialog.backgroundType === 'gradient'" class="grid gap-2 sm:grid-cols-3">
+                    <div v-if="editProfileDialog.backgroundType === 'gradient'" class="flex gap-2">
                         <div class="space-y-1">
                             <span class="text-xs text-muted-foreground">
                                 {{ t('dialog.edit_profile.gradient_top') }}
