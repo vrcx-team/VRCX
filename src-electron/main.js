@@ -8,67 +8,66 @@ const {
     Tray,
     Menu,
     dialog,
-    Notification,
+    Notification: ElectronNotification,
     nativeImage
 } = require('electron');
-const { spawn, spawnSync } = require('child_process');
+const { spawnSync } = require('child_process');
 const fs = require('fs');
-const https = require('https');
 
 //app.disableHardwareAcceleration();
 
-const bundledDotNetPath = path.join(process.resourcesPath, 'dotnet-runtime');
-if (fs.existsSync(bundledDotNetPath)) {
-    // Include bundled .NET runtime
-    process.env.DOTNET_ROOT = bundledDotNetPath;
-    process.env.PATH = `${bundledDotNetPath}:${process.env.PATH}`;
-} else if (process.platform === 'darwin') {
-    const dotnetPath = path.join('/usr/local/share/dotnet');
-    const dotnetPathArm = path.join('/usr/local/share/dotnet/x64');
-    if (fs.existsSync(dotnetPathArm)) {
-        process.env.DOTNET_ROOT = dotnetPathArm;
-        process.env.PATH = `${dotnetPathArm}:${process.env.PATH}`;
-    } else if (fs.existsSync(dotnetPath)) {
-        process.env.DOTNET_ROOT = dotnetPath;
-        process.env.PATH = `${dotnetPath}:${process.env.PATH}`;
+function dotnetSetup() {
+    const bundledDotNetPath = path.join(process.resourcesPath, 'dotnet-runtime');
+    if (fs.existsSync(bundledDotNetPath)) {
+        // Include bundled .NET runtime
+        process.env.DOTNET_ROOT = bundledDotNetPath;
+        process.env.PATH = `${bundledDotNetPath}:${process.env.PATH}`;
+    } else if (process.platform === 'darwin') {
+        const dotnetPath = path.join('/usr/local/share/dotnet');
+        const dotnetPathArm = path.join('/usr/local/share/dotnet/x64');
+        if (fs.existsSync(dotnetPathArm)) {
+            process.env.DOTNET_ROOT = dotnetPathArm;
+            process.env.PATH = `${dotnetPathArm}:${process.env.PATH}`;
+        } else if (fs.existsSync(dotnetPath)) {
+            process.env.DOTNET_ROOT = dotnetPath;
+            process.env.PATH = `${dotnetPath}:${process.env.PATH}`;
+        }
+    }
+
+    if (!isDotNetInstalled()) {
+        app.whenReady().then(() => {
+            dialog.showErrorBox('VRCX', 'Please install .NET 10.0 Runtime "dotnet-runtime-10.0" to run VRCX.');
+            app.quit();
+        });
     }
 }
-
-if (!isDotNetInstalled()) {
-    app.whenReady().then(() => {
-        dialog.showErrorBox(
-            'VRCX',
-            'Please install .NET 10.0 Runtime "dotnet-runtime-10.0" to run VRCX.'
-        );
-        app.quit();
-    });
-}
+dotnetSetup();
 
 const VRCX_URI_PREFIX = 'vrcx';
 let isOverlayActive = false;
 let appIsQuitting = false;
 const rootDir = app.getAppPath();
 
+/** @type {Electron.Tray} */
 let tray = null;
+
+/** @type {Electron.NativeImage | string} */
 let trayIcon = null;
+
+/** @type {Electron.NativeImage | string} */
 let trayIconNotify = null;
 
 // Get launch arguments
 let appImagePath = process.env.APPIMAGE;
 const args = process.argv.slice(1);
 const noInstall = args.includes('--no-install');
-const x11 = args.includes('--x11');
 const noDesktop = args.includes('--no-desktop');
 const startup = args.includes('--startup');
 const debug = args.includes('--hot-reload');
-const noUpdater =
-    args.includes('--no-updater') ||
-    fs.existsSync(path.join(rootDir, '.no-updater'));
-if (process.defaultApp && process.platform !== 'win32') {
+const noUpdater = args.includes('--no-updater') || fs.existsSync(path.join(rootDir, '.no-updater'));
+if (app.isPackaged && process.defaultApp && process.platform !== 'win32') {
     if (process.argv.length >= 2) {
-        app.setAsDefaultProtocolClient(VRCX_URI_PREFIX, process.execPath, [
-            path.resolve(process.argv[1])
-        ]);
+        app.setAsDefaultProtocolClient(VRCX_URI_PREFIX, process.execPath, [path.resolve(process.argv[1])]);
     } else {
         app.setAsDefaultProtocolClient(VRCX_URI_PREFIX);
     }
@@ -76,7 +75,6 @@ if (process.defaultApp && process.platform !== 'win32') {
 
 const version = getVersion();
 const homePath = getHomePath();
-tryRelaunchWithArgs(args);
 tryCopyFromWinePrefix();
 const userDataPath = getElectronUserDataPath();
 console.log('Electron userData path:', userDataPath);
@@ -99,12 +97,8 @@ const OVERLAY_WRIST_FRAME_WIDTH = 512;
 const OVERLAY_WRIST_FRAME_HEIGHT = 512;
 const OVERLAY_HMD_FRAME_WIDTH = 1024;
 const OVERLAY_HMD_FRAME_HEIGHT = 1024;
-const OVERLAY_SHARED_HEIGHT =
-    OVERLAY_WRIST_FRAME_HEIGHT + OVERLAY_HMD_FRAME_HEIGHT;
-const OVERLAY_SHARED_WIDTH = Math.max(
-    OVERLAY_WRIST_FRAME_WIDTH,
-    OVERLAY_HMD_FRAME_WIDTH
-);
+const OVERLAY_SHARED_HEIGHT = OVERLAY_WRIST_FRAME_HEIGHT + OVERLAY_HMD_FRAME_HEIGHT;
+const OVERLAY_SHARED_WIDTH = Math.max(OVERLAY_WRIST_FRAME_WIDTH, OVERLAY_HMD_FRAME_WIDTH);
 const OVERLAY_FRAME_SIZE = OVERLAY_SHARED_WIDTH * OVERLAY_SHARED_HEIGHT * 4;
 const OVERLAY_SHM_PATH = '/dev/shm/vrcx_overlay';
 const overlayFrameBuffer = Buffer.alloc(OVERLAY_FRAME_SIZE + 1);
@@ -126,7 +120,7 @@ interopApi.getDotNetObject('LogWatcher').Init();
 interopApi.getDotNetObject('SystemMonitorElectron').Init();
 interopApi.getDotNetObject('AppApiVrElectron').Init();
 
-ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {
+ipcMain.handle('callDotNetMethod', (_event, className, methodName, args) => {
     return interopApi.callMethod(className, methodName, args);
 });
 
@@ -134,8 +128,7 @@ ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {
 let mainWindow = undefined;
 
 const VRCXStorage = interopApi.getDotNetObject('VRCXStorage');
-const hasAskedToMoveAppImage =
-    VRCXStorage.Get('VRCX_HasAskedToMoveAppImage') === 'true';
+const hasAskedToMoveAppImage = VRCXStorage.Get('VRCX_HasAskedToMoveAppImage') === 'true';
 
 function getCloseToTray() {
     if (process.platform === 'darwin') {
@@ -151,15 +144,12 @@ if (!gotTheLock) {
     console.log('Another instance is already running. Exiting.');
     app.quit();
 } else {
-    app.on('second-instance', (event, commandLine, workingDirectory) => {
+    app.on('second-instance', (_event, commandLine, _workingDirectory) => {
         if (mainWindow && commandLine.length >= 2) {
             try {
                 mainWindow.webContents.send(
                     'launch-command',
-                    commandLine
-                        .pop()
-                        .trim()
-                        .replace(strip_vrcx_prefix_regex, '')
+                    commandLine.pop().trim().replace(strip_vrcx_prefix_regex, '')
                 );
             } catch (err) {
                 console.error('Error processing second-instance command:', err);
@@ -167,12 +157,9 @@ if (!gotTheLock) {
         }
     });
 
-    app.on('open-url', (event, url) => {
+    app.on('open-url', (_event, url) => {
         if (mainWindow && url) {
-            mainWindow.webContents.send(
-                'launch-command',
-                url.replace(strip_vrcx_prefix_regex, '')
-            );
+            mainWindow.webContents.send('launch-command', url.replace(strip_vrcx_prefix_regex, ''));
         }
     });
 }
@@ -200,12 +187,12 @@ ipcMain.handle('dialog:openDirectory', async () => {
     return null;
 });
 
-ipcMain.handle('notification:showNotification', (event, title, body, icon) => {
+ipcMain.handle('notification:showNotification', (_event, title, body, icon) => {
     if (activeNotification) {
         activeNotification.close();
     }
 
-    const notification = new Notification({
+    const notification = new ElectronNotification({
         title,
         body,
         icon
@@ -228,9 +215,6 @@ ipcMain.handle('app:restart', () => {
         };
         if (appImagePath) {
             options.execPath = appImagePath;
-            if (!x11 && !options.args.includes('--appimage-extract-and-run')) {
-                options.args.unshift('--appimage-extract-and-run');
-            }
         }
         app.relaunch(options);
         destroyTray();
@@ -243,30 +227,24 @@ ipcMain.handle('app:restart', () => {
 
 ipcMain.handle('app:getOverlayWindow', () => {
     if (overlayWindow && overlayWindow.webContents) {
-        return (
-            !overlayWindow.webContents.isLoading() &&
-            overlayWindow.webContents.isPainting()
-        );
+        return !overlayWindow.webContents.isLoading() && overlayWindow.webContents.isPainting();
     }
     return false;
 });
 
-ipcMain.handle(
-    'app:updateVr',
-    (event, active, hmdOverlay, wristOverlay, menuButton, overlayHand) => {
-        if (!active || (!hmdOverlay && !wristOverlay)) {
-            disposeOverlay();
-            return;
-        }
-        if (active && !overlayWindow) {
-            try {
-                createOverlayWindowOffscreen();
-            } catch (err) {
-                console.error('Error creating overlay windows:', err);
-            }
+ipcMain.handle('app:updateVr', (_event, active, hmdOverlay, wristOverlay, _menuButton, _overlayHand) => {
+    if (!active || (!hmdOverlay && !wristOverlay)) {
+        disposeOverlay();
+        return;
+    }
+    if (active && !overlayWindow) {
+        try {
+            createOverlayWindowOffscreen();
+        } catch (err) {
+            console.error('Error creating overlay windows:', err);
         }
     }
-);
+});
 
 ipcMain.handle('app:getArch', () => {
     return process.arch.toString();
@@ -279,42 +257,17 @@ ipcMain.handle('app:getNoUpdater', () => {
     return noUpdater;
 });
 
-ipcMain.handle('app:setTrayIconNotification', (event, notify) => {
+ipcMain.handle('app:setTrayIconNotification', (_event, notify) => {
     setTrayIconNotification(notify);
 });
 
-function tryRelaunchWithArgs(args) {
-    if (
-        process.platform !== 'linux' ||
-        x11 ||
-        args.includes('--ozone-platform-hint=auto')
-    ) {
-        return;
-    }
-
-    const fullArgs = ['--ozone-platform-hint=auto', ...args];
-
-    let execPath = process.execPath;
-
-    if (appImagePath) {
-        execPath = appImagePath;
-        fullArgs.unshift('--appimage-extract-and-run');
-    }
-
-    console.log('Relaunching with args:', fullArgs);
-
-    const child = spawn(execPath, fullArgs, {
-        detached: true,
-        stdio: 'inherit'
-    });
-
-    child.unref();
-
-    destroyTray();
-    app.exit(0);
-}
-
 function createWindow() {
+    console.log('Creating main window');
+
+    if (mainWindow) {
+        console.log('Main window already exists.');
+    }
+
     app.commandLine.appendSwitch('enable-speech-dispatcher');
 
     const x = parseInt(VRCXStorage.Get('VRCX_LocationX')) || 0;
@@ -363,20 +316,16 @@ function createWindow() {
         mainWindow.webContents.setZoomLevel(zoomLevel);
     });
 
-    mainWindow.webContents.on('before-input-event', (event, input) => {
+    mainWindow.webContents.on('before-input-event', (_event, input) => {
         if (input.control && input.key === '=') {
-            mainWindow.webContents.setZoomLevel(
-                mainWindow.webContents.getZoomLevel() + 1
-            );
+            mainWindow.webContents.setZoomLevel(mainWindow.webContents.getZoomLevel() + 1);
         }
         if (input.control && input.key === '-') {
-            mainWindow.webContents.setZoomLevel(
-                mainWindow.webContents.getZoomLevel() - 1
-            );
+            mainWindow.webContents.setZoomLevel(mainWindow.webContents.getZoomLevel() - 1);
         }
     });
 
-    mainWindow.webContents.on('zoom-changed', (event, zoomDirection) => {
+    mainWindow.webContents.on('zoom-changed', (_event, zoomDirection) => {
         let currentZoom = mainWindow.webContents.getZoomLevel();
         if (zoomDirection === 'in') {
             mainWindow.webContents.setZoomLevel(++currentZoom);
@@ -387,9 +336,11 @@ function createWindow() {
     });
     mainWindow.webContents.setVisualZoomLevelLimits(1, 5);
 
-    mainWindow.on('close', (event) => {
+    mainWindow.on('close', (closeEvent) => {
+        //console.log("mainWindow.on('close')");
+
         if (getCloseToTray() && !appIsQuitting) {
-            event.preventDefault();
+            closeEvent.preventDefault();
             mainWindow.hide();
         } else {
             app.quit();
@@ -397,16 +348,12 @@ function createWindow() {
     });
 
     mainWindow.on('resize', () => {
-        const [width, height] = mainWindow
-            .getSize()
-            .map((size) => size.toString());
+        const [width, height] = mainWindow.getSize().map((size) => size.toString());
         mainWindow.webContents.send('setWindowSize', { width, height });
     });
 
     mainWindow.on('move', () => {
-        const [x, y] = mainWindow
-            .getPosition()
-            .map((coord) => coord.toString());
+        const [x, y] = mainWindow.getPosition().map((coord) => coord.toString());
         mainWindow.webContents.send('setWindowPosition', { x, y });
     });
 
@@ -472,7 +419,7 @@ function createOverlayWindowOffscreen() {
     }
     overlayWindow.loadURL(fileUrl, { userAgent: version });
     // Use paint event for offscreen rendering
-    overlayWindow.webContents.on('paint', (event, dirty, image) => {
+    overlayWindow.webContents.on('paint', (_event, _dirty, image) => {
         const buffer = image.toBitmap();
         //console.log('Captured frame via paint event, size:', buffer.length);
         writeOverlayFrame(buffer);
@@ -503,26 +450,19 @@ function destroyTray() {
         tray = null;
     }
 }
+
 function createTray() {
     if (process.platform === 'darwin') {
-        const image = nativeImage.createFromPath(
-            path.join(rootDir, 'images/VRCX.png')
-        );
+        const image = nativeImage.createFromPath(path.join(rootDir, 'images/VRCX.png'));
         trayIcon = image.resize({ width: 16, height: 16 });
 
-        const imageNotify = nativeImage.createFromPath(
-            path.join(rootDir, 'images/VRCX_notify.png')
-        );
+        const imageNotify = nativeImage.createFromPath(path.join(rootDir, 'images/VRCX_notify.png'));
         trayIconNotify = imageNotify.resize({ width: 16, height: 16 });
     } else if (process.platform === 'linux') {
-        const image = nativeImage.createFromPath(
-            path.join(rootDir, 'images/VRCX.png')
-        );
+        const image = nativeImage.createFromPath(path.join(rootDir, 'images/VRCX.png'));
         trayIcon = image.resize({ width: 64, height: 64 });
 
-        const imageNotify = nativeImage.createFromPath(
-            path.join(rootDir, 'images/VRCX_notify.png')
-        );
+        const imageNotify = nativeImage.createFromPath(path.join(rootDir, 'images/VRCX_notify.png'));
         trayIconNotify = imageNotify.resize({ width: 64, height: 64 });
     } else {
         trayIcon = path.join(rootDir, 'images/VRCX.ico');
@@ -561,6 +501,10 @@ function createTray() {
     });
 }
 
+/**
+ *
+ * @param {Boolean} notify
+ */
 function setTrayIconNotification(notify) {
     if (tray) {
         tray.setImage(notify ? trayIconNotify : trayIcon);
@@ -631,13 +575,10 @@ async function installVRCX() {
                 fs.renameSync(appImagePath, appImageHomePath);
                 appImagePath = appImageHomePath;
                 console.log('AppImage moved to:', appImageHomePath);
-                await createDesktopFile();
+                await updateDesktopFile();
             } catch (err) {
                 console.error(`Error moving AppImage ${appImageHomePath}`, err);
-                dialog.showErrorBox(
-                    'VRCX',
-                    `Failed to move AppImage ${appImageHomePath}`
-                );
+                dialog.showErrorBox('VRCX', `Failed to move AppImage ${appImageHomePath}`);
                 return;
             }
         }
@@ -647,81 +588,55 @@ async function installVRCX() {
     interopApi.getDotNetObject('Update').Init(appImagePath);
 }
 
-async function createDesktopFile() {
+/**
+ * Create or update VRCX desktop file.
+ *
+ * If the --no-desktop flag is set this function does nothing.
+ * If there is an existing .desktop file, it will be updated with the current AppImage path.
+ * If there is no .desktop file, the one inside the current AppImage will be copied to applications dir and
+ * updated to the path of the AppImage.
+ * @returns void
+ */
+function updateDesktopFile() {
     if (noDesktop) {
         console.log('Skipping desktop file creation.');
         return;
     }
 
-    // Download the icon and save it to the target directory
-    const iconPath = path.join(homePath, '.local/share/icons/VRCX.png');
-    if (!fs.existsSync(iconPath) || fs.statSync(iconPath).size === 0) {
-        const iconDir = path.dirname(iconPath);
-        if (!fs.existsSync(iconDir)) {
-            fs.mkdirSync(iconDir, { recursive: true });
-        }
-        const iconUrl =
-            'https://raw.githubusercontent.com/vrcx-team/VRCX/master/images/VRCX.png';
-        await downloadIcon(iconUrl, iconPath)
-            .then(() => {
-                console.log('Icon downloaded and saved to:', iconPath);
-            })
-            .catch((err) => {
-                console.error('Error downloading icon:', err);
-                dialog.showErrorBox('VRCX', 'Failed to download the icon.');
-            });
-    }
+    const applicationsDir = path.join(homePath, '.local/share/applications');
+    const existingDesktopFilePath = path.join(applicationsDir, 'VRCX.desktop');
 
-    // Create the desktop file
-    const desktopFilePath = path.join(
-        homePath,
-        '.local/share/applications/VRCX.desktop'
-    );
-
-    const dotDesktop = {
-        Name: 'VRCX',
-        Version: version,
-        Comment: 'Friendship management tool for VRChat',
-        Exec: `${appImagePath} --ozone-platform-hint=auto %U`,
-        Icon: 'VRCX',
-        Type: 'Application',
-        Categories: 'Network;InstantMessaging;Game;',
-        Terminal: 'false',
-        StartupWMClass: 'VRCX',
-        MimeType: 'x-scheme-handler/vrcx;'
-    };
-    const desktopFile =
-        '[Desktop Entry]\n' +
-        Object.entries(dotDesktop)
-            .map(([key, value]) => `${key}=${value}`)
-            .join('\n');
+    // note that when using spawnSync you DO NOT quote any paths as they are passed directly to the process
     try {
-        // Create the applications directory if it doesn't exist
-        const desktopDir = path.dirname(desktopFilePath);
-        if (!fs.existsSync(desktopDir)) {
-            fs.mkdirSync(desktopDir, { recursive: true });
-        }
-
         // Create/update the desktop file when needed
-        let existingDesktopFile = '';
-        if (fs.existsSync(desktopFilePath)) {
-            existingDesktopFile = fs.readFileSync(desktopFilePath, 'utf8');
-        }
-        if (existingDesktopFile !== desktopFile) {
-            fs.writeFileSync(desktopFilePath, desktopFile);
-            console.log('Desktop file created at:', desktopFilePath);
+        if (fs.existsSync(existingDesktopFilePath)) {
+            var editResult = spawnSync('desktop-file-edit', [
+                '--set-key=Exec',
+                `--set-value=${appImagePath}`,
+                existingDesktopFilePath
+            ]);
 
-            const result = spawnSync(
-                'xdg-mime',
-                ['default', 'VRCX.desktop', 'x-scheme-handler/vrcx'],
-                {
-                    encoding: 'utf-8'
-                }
-            );
-            if (result.error) {
-                console.error('Error setting MIME type:', result.error);
+            if (editResult.error) {
+                console.log('Error trying to update VRCX.desktop file: ', editResult.error.message);
             } else {
-                console.log('MIME type set x-scheme-handler/vrcx');
+                console.log(`Updated desktop file: ${existingDesktopFilePath} to exec ${appImagePath}`);
+            }
+        } else {
+            const exeDir = path.dirname(app.getPath('exe'));
+            const packageAppImagePath = path.join(exeDir, 'VRCX.desktop');
+
+            var installResult = spawnSync('desktop-file-install', [
+                '--set-key=Exec',
+                `--set-value=${appImagePath}`,
+                `--dir=${applicationsDir}`,
+                '--rebuild-mime-info-cache',
+                packageAppImagePath
+            ]);
+
+            if (installResult.error) {
+                console.log('Error trying to install VRCX.desktop file: ', installResult.error.message);
+            } else {
+                console.log(`Installed desktop file to: ${applicationsDir} using exec ${appImagePath}`);
             }
         }
     } catch (err) {
@@ -731,41 +646,13 @@ async function createDesktopFile() {
     }
 }
 
-function downloadIcon(url, targetPath) {
-    return new Promise((resolve, reject) => {
-        const file = fs.createWriteStream(targetPath);
-        https
-            .get(url, (response) => {
-                if (response.statusCode !== 200) {
-                    reject(
-                        new Error(
-                            `Failed to download icon, status code: ${response.statusCode}`
-                        )
-                    );
-                    return;
-                }
-                response.pipe(file);
-                file.on('finish', () => {
-                    file.close(resolve);
-                });
-            })
-            .on('error', (err) => {
-                fs.unlink(targetPath, () => reject(err)); // Delete the file if error occurs
-            });
-    });
-}
-
 function getElectronUserDataPath() {
     const electronUserData = 'ElectronUserData';
     if (process.platform === 'win32') {
         return path.join(getVRCXPath(), electronUserData);
     }
     if (process.platform === 'darwin') {
-        return path.join(
-            process.env.HOME,
-            'Library/Caches/VRCX',
-            electronUserData
-        );
+        return path.join(process.env.HOME, 'Library/Caches/VRCX', electronUserData);
     }
     // Linux or other
     let cacheHome = process.env.XDG_CACHE_HOME;
@@ -802,9 +689,7 @@ function getHomePath() {
 
 function getVersion() {
     try {
-        const versionFile = fs
-            .readFileSync(path.join(rootDir, 'Version'), 'utf8')
-            .trim();
+        const versionFile = fs.readFileSync(path.join(rootDir, 'Version'), 'utf8').trim();
 
         // look for trailing git hash "-22bcd96" to indicate nightly build
         const version = versionFile.split('-');
@@ -852,12 +737,7 @@ function tryCopyFromWinePrefix() {
         if (!fs.existsSync(getVRCXPath())) {
             // try copy from old wine path
             const userName = process.env.USER || process.env.USERNAME;
-            const oldPath = path.join(
-                homePath,
-                '.local/share/vrcx/drive_c/users',
-                userName,
-                'AppData/Roaming/VRCX'
-            );
+            const oldPath = path.join(homePath, '.local/share/vrcx/drive_c/users', userName, 'AppData/Roaming/VRCX');
             const newPath = getVRCXPath();
             if (fs.existsSync(oldPath)) {
                 fs.mkdirSync(newPath, { recursive: true });
@@ -874,10 +754,7 @@ function tryCopyFromWinePrefix() {
         }
     } catch (err) {
         console.error('Error copying from wine prefix:', err);
-        dialog.showErrorBox(
-            'VRCX',
-            'Failed to copy database from wine prefix.'
-        );
+        dialog.showErrorBox('VRCX', 'Failed to copy database from wine prefix.');
     }
 }
 
@@ -911,6 +788,7 @@ app.whenReady().then(() => {
     createTray();
     installVRCX();
 
+    // only initialise when the app is ready otherwise it could get called early and crash the app
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow();
@@ -943,13 +821,18 @@ function disposeOverlay() {
 }
 
 app.on('before-quit', function () {
+    //console.log('before-quit');
+
     // Mark it as a quitting state to make macOS Dock's "Quit" action take effect.
     appIsQuitting = true;
     disposeOverlay();
     destroyTray();
+
+    app.exit(0);
 });
 
 app.on('window-all-closed', function () {
+    //console.log('window-all-closed');
     disposeOverlay();
 
     if (process.platform !== 'darwin') {

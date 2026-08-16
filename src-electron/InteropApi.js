@@ -9,6 +9,7 @@ class InteropApi {
     getDotNetObject(className) {
         if (!this.createdObjects[className]) {
             console.log(`Creating new instance of ${className}`);
+            // @ts-ignore
             this.createdObjects[className] = new dotnet.VRCX[className]();
         }
         return this.createdObjects[className];

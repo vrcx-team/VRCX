@@ -1,7 +1,7 @@
 ﻿// Because this isn't a package (just a loose js file), we have to use require
 // statements
 
-const process = require('node:process');
+const nodeprocess = require('node:process');
 const fs = require('node:fs');
 const path = require('node:path');
 const yargs = require('yargs/yargs');
@@ -18,7 +18,7 @@ const getLocalizationObjects = function* () {
         );
     for (const file of files) {
         const filePath = path.join(localeFolder, file.name);
-        const jsonStr = fs.readFileSync(filePath);
+        const jsonStr = fs.readFileSync(filePath).toString('utf8');
         yield [filePath, JSON.parse(jsonStr)];
     }
 };
@@ -212,7 +212,7 @@ const Validate = function () {
     }
 };
 
-const cliParser = yargs(hideBin(process.argv))
+const cliParser = yargs(hideBin(nodeprocess.argv))
     .command({
         command: 'add <key> <value> [above_key]',
         aliases: ['a', 'replace', 'r'],

@@ -14,7 +14,7 @@ export default defineConfig([
         extends: ['js/recommended']
     },
     {
-        files: ['**/*.{js,mjs,cjs,vue}'],
+        files: ['src/**/*.{js,mjs,cjs,vue}'],
         languageOptions: {
             globals: {
                 ...globals.browser,
@@ -44,7 +44,8 @@ export default defineConfig([
             '**/jest.config.js',
             'src-electron/*.js',
             'src/localization/*.js',
-            'src/shared/utils/localizationHelperCLI.js'
+            'src/shared/utils/localizationHelperCLI.js',
+            'build-scripts/**/*.js'
         ],
         languageOptions: {
             sourceType: 'commonjs',

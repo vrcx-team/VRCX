@@ -9,6 +9,8 @@
     <OutputType>Library</OutputType>
     <Configurations>Debug;Release</Configurations>
     <Platforms>x64;ARM64</Platforms>
+    <RuntimeIdentifiers>linux-x64;linux-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <AssemblyTitle>VRCX</AssemblyTitle>
@@ -86,7 +88,7 @@
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
     <PackageReference Include="SourceGear.sqlite3" Version="3.53.4" />
     <PackageReference Include="System.Drawing.Common" Version="10.0.10" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.119" /> <!--DO NOT UPGRADE-->
+    <PackageReference Include="System.Data.SQLite" Version="2.0.3" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
     <PackageReference Include="System.Management" Version="10.0.10" />
     <PackageReference Include="Websocket.Client" Version="5.5.0" />
