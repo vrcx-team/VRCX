@@ -222,7 +222,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
      */
     async function updateDatabaseVersion() {
         // requires dbVars.userPrefix to be already set
-        const databaseVersion = 16;
+        const databaseVersion = 17;
         if (state.databaseVersion < databaseVersion) {
             databaseUpgradeState.value = {
                 visible: state.databaseVersion > 0,
