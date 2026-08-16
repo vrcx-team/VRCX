@@ -346,7 +346,7 @@
     const showLastJoinIndicator = computed(() => props.showLastJoin && lastJoin.value);
     const hasInstanceMetadata = computed(() => {
         return !!(
-            props.instance.value?.queueSize ||
+            props.instance?.queueSize ||
             instanceInfoState.isAgeGated ||
             instanceInfoState.isRoleRestricted ||
             (props.instance.minimumAvatarPerformance && props.instance.minimumAvatarPerformance !== 'None')
