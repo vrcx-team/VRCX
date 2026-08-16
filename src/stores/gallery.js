@@ -21,6 +21,7 @@ import { router } from '../plugins/router';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useModalStore } from './modal';
 import { watchState } from '../services/watchState';
+import { database } from '../services/database';
 
 import * as workerTimers from 'worker-timers';
 
@@ -69,6 +70,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
     const instanceStickersCache = ref([]);
 
     const printTable = ref([]);
+
+    const favoritePrintIds = ref(new Set());
 
     const emojiTable = ref([]);
 
@@ -150,6 +153,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         refreshEmojiTable();
         refreshStickerTable();
         refreshPrintTable();
+        refreshPrintFavorites(),
         getInventory();
     }
 
@@ -322,6 +326,14 @@ export const useGalleryStore = defineStore('Gallery', () => {
         } finally {
             galleryDialogPrintsLoading.value = false;
         }
+    }
+
+    async function refreshPrintFavorites() {
+        const favorites = await database.getPrintFavorites();
+
+        favoritePrintIds.value = new Set(
+            favorites.map((favorite) => favorite.printId)
+    );
     }
 
     /**
@@ -651,6 +663,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         stickerTable,
         instanceStickersCache,
         printTable,
+        favoritePrintIds,
         emojiTable,
         inventoryTable,
         fullscreenImageDialog,
@@ -665,6 +678,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         refreshStickerTable,
         trySaveStickerToFile,
         refreshPrintTable,
+        refreshPrintFavorites,
         queueSavePrintToFile,
         refreshEmojiTable,
         getInventory,
