@@ -1,11 +1,8 @@
 <template>
     <!-- Instances -->
-    <template v-if="groupDialog.instances.length">
-        <div
-            v-for="room in groupDialog.instances"
-            :key="room.tag"
-            class="rounded-xl bg-(--profile-card) p-3 mb-2.5 flex flex-col gap-2">
-            <div class="flex items-center justify-between gap-2">
+    <div v-if="groupDialog.instances.length" class="rounded-xl bg-(--profile-card) p-3 mb-2.5">
+        <div v-for="room in groupDialog.instances" :key="room.tag" class="flex flex-col gap-2">
+            <div class="flex items-center gap-2">
                 <Location :location="room.tag" class="text-sm text-muted-foreground rounded-full border py-0.5 px-2" />
                 <InstanceActionBar
                     class="text-sm"
@@ -46,7 +43,7 @@
                 </div>
             </div>
         </div>
-    </template>
+    </div>
 
     <!-- Info cards -->
     <div class="flex flex-col gap-2.5">
