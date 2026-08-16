@@ -74,8 +74,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.JavaScript.NodeApi" Version="0.9.21" />
-    <PackageReference Include="Microsoft.JavaScript.NodeApi.Generator" Version="0.9.21" />
+    <PackageReference Include="Microsoft.JavaScript.NodeApi" Version="0.9.25" />
+    <PackageReference Include="Microsoft.JavaScript.NodeApi.Generator" Version="0.9.25" />
     <PackageReference Include="DiscordRichPresence" Version="1.6.1.70" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="NLog" Version="6.1.4" />
@@ -83,7 +83,7 @@
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
     <PackageReference Include="SourceGear.sqlite3" Version="3.53.4" />
     <PackageReference Include="System.Data.SQLite" Version="2.0.3" />
-    <PackageReference Include="System.Management" Version="10.0.10" />
+    <PackageReference Include="System.Management" Version="10.0.11" />
     <PackageReference Include="Websocket.Client" Version="5.5.0" />
   </ItemGroup>
 
