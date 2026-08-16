@@ -588,19 +588,56 @@ async function installVRCX() {
     interopApi.getDotNetObject('Update').Init(appImagePath);
 }
 
+/**
+ * Create or update VRCX desktop file.
+ *
+ * If the --no-desktop flag is set this function does nothing.
+ * If there is an existing .desktop file, it will be updated with the current AppImage path.
+ * If there is no .desktop file, the one inside the current AppImage will be copied to applications dir and
+ * updated to the path of the AppImage.
+ * @returns void
+ */
 function updateDesktopFile() {
     if (noDesktop) {
         console.log('Skipping desktop file creation.');
         return;
     }
 
-    // Create the desktop file
-    const desktopFilePath = path.join(homePath, '.local/share/applications/VRCX.desktop');
+    const applicationsDir = path.join(homePath, '.local/share/applications');
+    const existingDesktopFilePath = path.join(applicationsDir, 'VRCX.desktop');
 
+    // note that when using spawnSync you DO NOT quote any paths as they are passed directly to the process
     try {
         // Create/update the desktop file when needed
-        if (fs.existsSync(desktopFilePath)) {
-            spawnSync('desktop-file-edit', ['--set-key=Exec', `--set-value="${appImagePath}"`, desktopFilePath]);
+        if (fs.existsSync(existingDesktopFilePath)) {
+            var editResult = spawnSync('desktop-file-edit', [
+                '--set-key=Exec',
+                `--set-value=${appImagePath}`,
+                existingDesktopFilePath
+            ]);
+
+            if (editResult.error) {
+                console.log('Error trying to update VRCX.desktop file: ', editResult.error.message);
+            } else {
+                console.log(`Updated desktop file: ${existingDesktopFilePath} to exec ${appImagePath}`);
+            }
+        } else {
+            const exeDir = path.dirname(app.getPath('exe'));
+            const packageAppImagePath = path.join(exeDir, 'VRCX.desktop');
+
+            var installResult = spawnSync('desktop-file-install', [
+                '--set-key=Exec',
+                `--set-value=${appImagePath}`,
+                `--dir=${applicationsDir}`,
+                '--rebuild-mime-info-cache',
+                packageAppImagePath
+            ]);
+
+            if (installResult.error) {
+                console.log('Error trying to install VRCX.desktop file: ', installResult.error.message);
+            } else {
+                console.log(`Installed desktop file to: ${applicationsDir} using exec ${appImagePath}`);
+            }
         }
     } catch (err) {
         console.error('Error creating desktop file:', err);

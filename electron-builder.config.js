@@ -59,8 +59,7 @@ module.exports = {
         artifactName: 'VRCX_Version.${ext}',
         target: ['AppImage'],
         icon: 'images/VRCX.png',
-        category: 'Utility',
-        executableName: 'vrcx',
+        executableName: 'VRCX',
         mimeTypes: ['x-scheme-handler/vrcx'],
         desktop: {
             entry: {
