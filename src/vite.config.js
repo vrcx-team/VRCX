@@ -12,20 +12,6 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 
 import { languageCodes } from './localization/locales';
 
-/** what platform we are on */
-const isLinux = process.platform === 'linux';
-const isWindows = process.platform === 'win32';
-
-/* what platform we are building for */
-const buildLinux =
-    process.env.PLATFORM != undefined
-        ? process.env.PLATFORM === 'linux'
-        : isLinux;
-const buildWindows =
-    process.env.PLATFORM != undefined
-        ? process.env.PLATFORM === 'windows'
-        : isWindows;
-
 /**
  * Vite plugin to remove legacy remixicon font files (eot, woff, ttf, svg)
  * from the build output, keeping only woff2. Saves ~4.5 MB.
@@ -111,20 +97,13 @@ function getAssetFilename({ name }) {
  * @returns {import('vite').UserConfig}
  */
 export default defineConfig(({ mode }) => {
-    const { SENTRY_AUTH_TOKEN: sentryAuthToken } = loadEnv(
-        mode,
-        process.cwd(),
-        ''
-    );
+    const { SENTRY_AUTH_TOKEN: sentryAuthToken } = loadEnv(mode, process.cwd(), '');
 
     const buildAndUploadSourceMaps = !!sentryAuthToken;
 
-    const version = fs
-        .readFileSync(new URL('../Version', import.meta.url), 'utf-8')
-        .trim();
+    const version = fs.readFileSync(new URL('../Version', import.meta.url), 'utf-8').trim();
 
-    const nightly =
-        mode === 'development' || version.split('-').at(-1).length === 7;
+    const nightly = mode === 'development' || version.split('-').at(-1).length === 7;
 
     /** @type {import('vite').UserConfig} */
     return {
@@ -146,8 +125,7 @@ export default defineConfig(({ mode }) => {
                         },
                         sourcemaps: {
                             assets: './build/html/**',
-                            filesToDeleteAfterUpload:
-                                './build/html/**/*.js.map',
+                            filesToDeleteAfterUpload: './build/html/**/*.js.map',
                             ignore: []
                         }
                     })
@@ -183,8 +161,6 @@ export default defineConfig(({ mode }) => {
             ]
         },
         define: {
-            LINUX: JSON.stringify(buildLinux),
-            WINDOWS: JSON.stringify(buildWindows),
             VERSION: JSON.stringify(version),
             NIGHTLY: JSON.stringify(nightly)
         },

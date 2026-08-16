@@ -90,11 +90,11 @@ jobs:
                       ${{ github.workspace }}\build\Cef\VRCX.dll
                       ${{ github.workspace }}\build\Cef\VRCX.exe
 
-            - name: Download Cef-html artifacts
+            - name: Download html artifacts
               uses: actions/download-artifact@v8
               with:
-                  name: Cef-html
-                  path: build/Cef/html
+                  name: html
+                  path: build/html
             - name: Install NSIS
               run: choco install nsis -y
             - name: Create NSIS installer
@@ -238,20 +238,16 @@ jobs:
                       ${{ runner.os }}-node-
             - name: Restore dependencies
               run: npm ci
-            - name: Build Cef-html
+            - name: Build html
               env:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SentryAuthToken }}
               run: npm run prod
-            - name: Upload Cef-html artifacts
+            - name: Upload html artifacts
               uses: actions/upload-artifact@v7
               with:
-                  name: Cef-html
+                  name: html
                   path: build/html
 
-            - name: Build Electron-html
-              env:
-                  SENTRY_AUTH_TOKEN: ${{ secrets.SentryAuthToken }}
-              run: npm run prod
             - name: Download Electron x64 dotnet artifacts
               uses: actions/download-artifact@v8
               with:
@@ -304,7 +300,7 @@ jobs:
                       ${{ runner.os }}-node-
             - name: Restore dependencies
               run: npm ci
-            - name: Build Electron-html
+            - name: Build html x64
               run: npm run prod --arch=x64
 
             - name: Download x64 Electron dotnet artifacts
@@ -324,7 +320,7 @@ jobs:
               run: |
                   rm -R build/Electron
 
-            - name: Build Electron-html
+            - name: Build html arm64
               run: npm run prod --arch=arm64
 
             - name: Download arm64 Electron dotnet artifacts
@@ -361,10 +357,10 @@ jobs:
               with:
                   name: Cef-Release
                   path: build/Cef
-            - name: Download Cef-html artifacts
+            - name: Download html artifacts
               uses: actions/download-artifact@v8
               with:
-                  name: Cef-html
+                  name: html
                   path: build/Cef/html
 
             - name: Make zip
