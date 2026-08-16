@@ -21,8 +21,7 @@ const mocks = vi.hoisted(() => ({
     configGetString: vi.fn(),
     configGetBool: vi.fn(),
     configSetString: vi.fn(),
-    configSetBool: vi.fn(),
-    virtualMeasure: vi.fn()
+    configSetBool: vi.fn()
 }));
 
 mocks.onlineFriends = mocks.makeRef([]);
@@ -103,22 +102,6 @@ vi.mock('../../../shared/utils', () => ({
     },
     getFriendsSortFunction: () => (a, b) =>
         String(a?.displayName ?? '').localeCompare(String(b?.displayName ?? ''))
-}));
-
-vi.mock('@tanstack/vue-virtual', () => ({
-    useVirtualizer: (optionsRef) => ({
-        value: {
-            getVirtualItems: () =>
-                Array.from({ length: optionsRef.value.count }, (_, index) => ({
-                    index,
-                    key: index,
-                    start: index * 64
-                })),
-            getTotalSize: () => optionsRef.value.count * 64,
-            measure: (...args) => mocks.virtualMeasure(...args),
-            measureElement: vi.fn()
-        }
-    })
 }));
 
 vi.mock('lucide-vue-next', () => ({
@@ -251,7 +234,6 @@ describe('FriendsLocations.vue', () => {
         mocks.configGetBool.mockReset();
         mocks.configSetString.mockReset();
         mocks.configSetBool.mockReset();
-        mocks.virtualMeasure.mockReset();
 
         mocks.configGetString.mockImplementation((_key, defaultValue) =>
             Promise.resolve(defaultValue ?? '1')
@@ -323,19 +305,6 @@ describe('FriendsLocations.vue', () => {
             true
         );
         vi.useRealTimers();
-    });
-
-    test('coalesces repeated virtualizer measure requests in the same tick', async () => {
-        const wrapper = mount(FriendsLocations);
-        await flushSettings();
-        mocks.virtualMeasure.mockClear();
-
-        wrapper.vm.searchTerm = 'alice';
-        wrapper.vm.activeSegment = 'offline';
-        await nextTick();
-        await nextTick();
-
-        expect(mocks.virtualMeasure).toHaveBeenCalledTimes(1);
     });
 
     test('renders empty state when no rows match', async () => {
