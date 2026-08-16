@@ -5,7 +5,7 @@
                 <DialogTitle>{{ t('dialog.favorite.header') }}</DialogTitle>
             </DialogHeader>
             <div>
-                <span style="display: block; text-align: center">{{ t('dialog.favorite.vrchat_favorites') }}</span>
+                <span style="display: block">{{ t('dialog.favorite.vrchat_favorites') }}</span>
                 <template v-if="favoriteDialog.currentGroup && favoriteDialog.currentGroup.key">
                     <Button
                         variant="outline"

@@ -1,19 +1,25 @@
 <template>
     <div>
-        <div class="flex gap-1 items-center text-muted-foreground text-sm rounded-xl bg-(--profile-card) p-3">
-            <Globe2 />
-            {{ t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
-            <LockKeyhole style="margin-left: 8px" />
-            {{
-                t('dialog.world.instances.private_count', {
-                    count: worldDialog.ref.privateOccupants
-                })
-            }}
-        </div>
-        <div v-if="worldDialog.rooms.length" class="my-2 rounded-xl bg-(--profile-card) p-3">
-            <div
-                class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2 pb-2 border-b border-border">
-                {{ t('dialog.world.instances.header') }}
+        <div class="my-2 rounded-xl bg-(--profile-card) p-3">
+            <div class="flex justify-between items-start">
+                <div
+                    class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2 pb-2 border-b border-border">
+                    {{ t('dialog.world.instances.header') }}
+                </div>
+                <div class="flex gap-1 items-center text-muted-foreground text-[12px]">
+                    <span class="inline-flex items-center gap-1 leading-none">
+                        <Globe2 class="size-3" />
+                        {{ t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
+                    </span>
+                    <span class="ml-2 inline-flex items-center gap-1 leading-none">
+                        <LockKeyhole class="size-3" />
+                        {{
+                            t('dialog.world.instances.private_count', {
+                                count: worldDialog.ref.privateOccupants
+                            })
+                        }}
+                    </span>
+                </div>
             </div>
             <div v-for="room in worldDialog.rooms" :key="room.id">
                 <template v-if="isAgeGatedInstancesVisible || !(room.ageGate || room.location?.includes('~ageGate'))">

@@ -55,10 +55,6 @@ export function useWorldDialogInfo(worldDialog, { t, toast, sdkUnityVersion }) {
             .join(', ');
     });
 
-    const timeSpent = computed(() => {
-        return timeToText(worldDialog.value.timeSpent);
-    });
-
     const worldDialogPlatform = computed(() => {
         const { ref } = worldDialog.value;
         const platforms = [];
@@ -167,7 +163,6 @@ export function useWorldDialogInfo(worldDialog, { t, toast, sdkUnityVersion }) {
         timeInLab,
         favoriteRate,
         worldTags,
-        timeSpent,
         worldDialogPlatform,
         worldDialogPlatformCreatedAt,
         onWorldMemoChange,

@@ -182,7 +182,7 @@
                 <div class="flex items-start justify-between gap-2 text-xs">
                     <span class="text-muted-foreground shrink-0">{{ t('dialog.world.info.time_spent') }}</span>
                     <span class="text-right text-muted-foreground">
-                        {{ worldDialog.timeSpent === 0 ? '—' : timeSpent }}
+                        {{ worldDialog.timeSpent === 0 ? '—' : timeToText(worldDialog.timeSpent) }}
                     </span>
                 </div>
             </div>
@@ -200,7 +200,7 @@
 
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../ui/dropdown-menu';
     import { useAuthStore, useInstanceStore, useWorldStore } from '../../../stores';
-    import { openExternalLink, timeAgo } from '../../../shared/utils';
+    import { openExternalLink, timeAgo, timeToText } from '../../../shared/utils';
     import { useWorldDialogInfo } from './useWorldDialogInfo';
 
     const { t } = useI18n();
@@ -215,7 +215,6 @@
         timeInLab,
         favoriteRate,
         worldTags,
-        timeSpent,
         worldDialogPlatform,
         worldDialogPlatformCreatedAt,
         copyWorldId,
