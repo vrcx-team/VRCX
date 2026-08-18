@@ -62,7 +62,8 @@ function openExternalLink(link) {
             description: `${link}`,
             title: 'Open External Link',
             confirmText: 'Open',
-            cancelText: 'Copy'
+            cancelText: 'Copy',
+            cancelShortcut: 'c'
         })
         .then(({ ok, reason }) => {
             if (reason === 'cancel') {

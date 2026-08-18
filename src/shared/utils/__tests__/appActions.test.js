@@ -117,6 +117,9 @@ describe('appActions utils', () => {
             reason: 'cancel'
         });
         openExternalLink('https://example.com');
+        expect(mocks.modalStore.confirm).toHaveBeenCalledWith(
+            expect.objectContaining({ cancelShortcut: 'c' })
+        );
         await flushPromises();
         await flushPromises();
         expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
