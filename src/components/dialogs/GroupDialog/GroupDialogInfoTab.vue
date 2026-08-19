@@ -1,6 +1,11 @@
 <template>
     <!-- Instances -->
     <div v-if="groupDialog.instances.length" class="rounded-xl bg-(--profile-card) p-3 mb-2.5">
+        <div class="flex justify-between items-start mb-2 pb-2 border-b border-border">
+            <div class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                {{ t('dialog.world.instances.header') }}
+            </div>
+        </div>
         <div v-for="room in groupDialog.instances" :key="room.tag" class="flex flex-col gap-2">
             <div class="flex items-center gap-2">
                 <Location :location="room.tag" class="text-sm text-muted-foreground rounded-full border py-0.5 px-2" />
