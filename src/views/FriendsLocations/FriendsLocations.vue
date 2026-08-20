@@ -82,41 +82,45 @@
             <span class="friend-view__loading-text">{{ t('view.friends_locations.loading_more') }}</span>
         </div>
         <div v-if="settingsReady" ref="scrollbarRef" class="friend-view__scroll">
-            <div v-if="virtualRows.length" class="friend-view__virtual" :style="virtualListStyle">
-                <template v-for="row in virtualRows" :key="row.key">
+            <div v-if="virtualRows.length" class="friend-view__virtual" :style="virtualContainerStyle">
+                <template v-for="item in virtualItems" :key="String(item.virtualItem.key)">
                     <div
+                        v-if="item.row"
                         class="friend-view__virtual-row"
-                        :class="`friend-view__virtual-row--${row.type}`">
-                        <template v-if="row.type === 'header'">
+                        :class="`friend-view__virtual-row--${item.row.type}`"
+                        :data-index="item.virtualItem.index"
+                        :ref="virtualizer.measureElement"
+                        :style="{ transform: `translateY(${item.virtualItem.start}px)` }">
+                        <template v-if="item.row.type === 'header'">
                             <header class="friend-view__instance-header">
                                 <Location
                                     class="text-xs"
-                                    :location="getRowInstanceId(row)"
+                                    :location="getRowInstanceId(item.row)"
                                     style="display: inline" />
-                                <span class="friend-view__instance-count">({{ getRowCount(row) }})</span>
+                                <span class="friend-view__instance-count">({{ getRowCount(item.row) }})</span>
                             </header>
                         </template>
 
-                        <template v-else-if="row.type === 'group-header'">
+                        <template v-else-if="item.row.type === 'group-header'">
                             <div
                                 class="flex cursor-pointer select-none items-center gap-1.5 px-1 py-1.5 text-[13px] font-semibold hover:opacity-80"
-                                @click="toggleGroupCollapse(row.groupKey)">
+                                @click="toggleGroupCollapse(item.row.groupKey)">
                                 <ChevronDown
                                     class="size-4 shrink-0 transition-transform duration-200 ease-in-out"
-                                    :class="{ '-rotate-90': row.collapsed }" />
-                                <span class="flex-none">{{ row.label }}</span>
-                                <span class="text-xs font-normal opacity-70">({{ row.count }})</span>
+                                    :class="{ '-rotate-90': item.row.collapsed }" />
+                                <span class="flex-none">{{ item.row.label }}</span>
+                                <span class="text-xs font-normal opacity-70">({{ item.row.count }})</span>
                             </div>
                         </template>
 
-                        <template v-else-if="row.type === 'divider'">
+                        <template v-else-if="item.row.type === 'divider'">
                             <div class="friend-view__divider"><span class="friend-view__divider-text"></span></div>
                         </template>
 
                         <template v-else>
                             <div class="friend-view__row">
                                 <FriendLocationCard
-                                    v-for="card in getRowItems(row)"
+                                    v-for="card in getRowItems(item.row)"
                                     :key="card.key"
                                     :friend="card.friend"
                                     :card-scale="cardScale"
@@ -148,6 +152,8 @@
     import { InputGroupSearch } from '@/components/ui/input-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
+    import { useVirtualizer } from '@tanstack/vue-virtual';
+
     import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
     import { useAppearanceSettingsStore, useFavoriteStore, useFriendStore, useLocationStore } from '../../stores';
     import { Slider } from '../../components/ui/slider';
@@ -259,7 +265,8 @@
 
     const scrollbarRef = ref();
     const gridWidth = ref(0);
-    let gridUpdateScheduled = false;
+    let measureScheduled = false;
+    let pendingGridWidthUpdate = false;
 
     const updateGridWidth = () => {
         const wrap = scrollbarRef.value;
@@ -299,15 +306,22 @@
 
     const getEntryIdentity = (entry) => entry?.id ?? getFriendIdentity(entry?.friend);
 
-    const scheduleGridUpdate = () => {
-        if (gridUpdateScheduled) {
+    const scheduleVirtualMeasure = ({ updateGridWidth: shouldUpdateGridWidth = false } = {}) => {
+        pendingGridWidthUpdate = pendingGridWidthUpdate || shouldUpdateGridWidth;
+        if (measureScheduled) {
             return;
         }
 
-        gridUpdateScheduled = true;
+        measureScheduled = true;
         nextTick(() => {
-            gridUpdateScheduled = false;
-            updateGridWidth();
+            measureScheduled = false;
+
+            if (pendingGridWidthUpdate) {
+                pendingGridWidthUpdate = false;
+                updateGridWidth();
+            }
+
+            virtualizer.value?.measure?.();
         });
     };
 
@@ -777,12 +791,61 @@
         };
     });
 
+    const estimateRowSize = (row) => {
+        if (!row) {
+            return 48;
+        }
+        if (row.type === 'header') {
+            return 32;
+        }
+        if (row.type === 'group-header') {
+            return 40;
+        }
+        if (row.type === 'divider') {
+            return 36;
+        }
+
+        const itemCount = Array.isArray(row.items) ? row.items.length : 0;
+        const { columns, gap } = computeGridLayout(itemCount, { matchMaxColumnWidth: true });
+        const safeColumns = Math.max(1, columns || 1);
+        const rows = Math.max(1, Math.ceil(itemCount / safeColumns));
+        const scale = cardScale.value;
+        const spacing = cardSpacing.value;
+        const baseCardHeight = 150;
+        const cardHeight = baseCardHeight * scale * spacing;
+        const rowGap = Math.max(0, gap - 4);
+
+        return rows * cardHeight + (rows - 1) * rowGap + 8;
+    };
+
+    const virtualizer = useVirtualizer(
+        computed(() => ({
+            count: virtualRows.value.length,
+            getScrollElement: () => scrollbarRef.value,
+            estimateSize: (index) => estimateRowSize(virtualRows.value[index]),
+            overscan: 5
+        }))
+    );
+
+    const virtualItems = computed(() => {
+        const items = virtualizer.value?.getVirtualItems?.() ?? [];
+        return items.map((virtualItem) => ({
+            virtualItem,
+            row: virtualRows.value[virtualItem.index]
+        }));
+    });
+
+    const virtualContainerStyle = computed(() => ({
+        ...virtualListStyle.value,
+        height: `${virtualizer.value?.getTotalSize?.() ?? 0}px`
+    }));
+
     const getRowItems = (row) => (row && Array.isArray(row.items) ? row.items : []);
     const getRowInstanceId = (row) => (row && row.type === 'header' ? row.instanceId : '');
     const getRowCount = (row) => (row && row.type === 'header' ? row.count : 0);
 
     watch([searchTerm, activeSegment], () => {
-        scheduleGridUpdate();
+        scheduleVirtualMeasure({ updateGridWidth: true });
     });
 
     watch(showSameInstance, (value) => {
@@ -793,13 +856,13 @@
             activeSegment.value = 'online';
         }
 
-        scheduleGridUpdate();
+        scheduleVirtualMeasure({ updateGridWidth: true });
     });
 
     watch(
         () => filteredFriends.value.length,
         () => {
-            scheduleGridUpdate();
+            scheduleVirtualMeasure({ updateGridWidth: true });
         }
     );
 
@@ -807,13 +870,17 @@
         if (!settingsReady.value) {
             return;
         }
-        scheduleGridUpdate();
+        scheduleVirtualMeasure({ updateGridWidth: true });
+    });
+
+    watch(virtualRows, () => {
+        scheduleVirtualMeasure();
     });
 
     onMounted(() => {
         nextTick(() => {
             setupResizeHandling();
-            scheduleGridUpdate();
+            scheduleVirtualMeasure({ updateGridWidth: true });
         });
     });
 
@@ -847,7 +914,7 @@
             settingsReady.value = true;
             nextTick(() => {
                 setupResizeHandling();
-                scheduleGridUpdate();
+                scheduleVirtualMeasure({ updateGridWidth: true });
             });
         }
     }
@@ -910,11 +977,15 @@
         width: 100%;
         padding: 2px;
         box-sizing: border-box;
+        position: relative;
     }
 
     .friend-view__virtual-row {
         width: 100%;
         box-sizing: border-box;
+        position: absolute;
+        left: 0;
+        top: 0;
         padding-bottom: calc(var(--friend-card-gap, 14px) - 4px);
     }
 
