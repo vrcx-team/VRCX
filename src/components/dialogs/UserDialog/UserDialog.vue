@@ -57,7 +57,7 @@
                     <DialogJsonTab
                         class="rounded-xl bg-(--profile-card) p-2"
                         :tree-data="treeData"
-                        :tree-data-key="treeData?.id"
+                        :tree-data-key="treeData?.user?.id"
                         :dialog-id="userDialog.id"
                         :dialog-ref="userDialog.ref"
                         @refresh="refreshUserDialogTreeData()" />

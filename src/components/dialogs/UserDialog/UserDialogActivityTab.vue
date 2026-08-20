@@ -144,7 +144,9 @@
                     style="width: 100%; height: 240px"
                     @contextmenu.prevent="onOverlapChartRightClick" />
 
-                <div v-if="!isOverlapLoading && !hasOverlapData" class="text-sm text-muted-foreground py-2">
+                <div
+                    v-if="!isOverlapLoading && !hasOverlapData"
+                    class="flex text-sm items-center justify-center text-muted-foreground my-8">
                     {{ t('dialog.user.activity.overlap.no_data') }}
                 </div>
             </div>

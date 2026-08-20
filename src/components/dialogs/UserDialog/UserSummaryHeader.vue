@@ -5,13 +5,13 @@
                 v-if="profileEffectMainUrl"
                 v-show="!profileEffectIntroActive"
                 :src="profileEffectMainUrl"
-                class="absolute z-1 inset-0 block h-full w-full object-cover object-top pointer-events-none" />
+                class="absolute z-1 inset-0 block h-full w-full object-fit object-top pointer-events-none" />
             <img
                 v-if="profileEffectIntroUrl"
                 v-show="profileEffectIntroActive"
                 :src="profileEffectIntroUrl"
                 @load="startProfileEffectTimer"
-                class="absolute z-1 inset-0 block h-full w-full object-cover object-top pointer-events-none" />
+                class="absolute z-1 inset-0 block h-full w-full object-fit object-top pointer-events-none" />
         </template>
         <div class="relative aspect-17/6">
             <div
