@@ -12,6 +12,7 @@
                             <User class="text-muted-foreground" :size="Math.max(16, 20 * cardScale)" />
                         </AvatarFallback>
                     </Avatar>
+                    <IconFrame :icon-frame="friend.ref.iconFrame" />
                 </div>
                 <span
                     class="friend-card__status-dot absolute rounded-full pointer-events-none"
@@ -48,6 +49,7 @@
 
 <script setup>
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+    import IconFrame from '@/components/IconFrame.vue';
     import { Card } from '@/components/ui/card';
     import { Pencil, User } from 'lucide-vue-next';
     import { computed } from 'vue';

@@ -54,13 +54,14 @@
                                 :key="user.id"
                                 class="cursor-pointer hover:bg-muted x-hover-list rounded-none"
                                 @click="showUserDialog(user.id)">
-                                <ItemMedia variant="image">
-                                    <Avatar>
+                                <ItemMedia class="relative size-10">
+                                    <Avatar class="size-full">
                                         <AvatarImage :src="userImage(user, true)" loading="lazy" />
                                         <AvatarFallback>
                                             <User class="size-5 text-muted-foreground" />
                                         </AvatarFallback>
                                     </Avatar>
+                                    <IconFrame :icon-frame="user.iconFrame" />
                                 </ItemMedia>
                                 <ItemContent class="min-w-0">
                                     <ItemTitle class="flex items-center gap-1.5 max-w-full">
@@ -305,6 +306,7 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Settings, Trash2, User, Users } from 'lucide-vue-next';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+    import IconFrame from '@/components/IconFrame.vue';
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { Spinner } from '@/components/ui/spinner';
     import AvatarProviderDialog from '../Settings/dialogs/AvatarProviderDialog.vue';

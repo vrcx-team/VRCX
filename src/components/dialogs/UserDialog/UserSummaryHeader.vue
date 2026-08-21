@@ -81,19 +81,7 @@
                         @error="userIconError = true"
                         loading="lazy" />
                 </div>
-                <template v-if="displayVRCProfileCosmetics">
-                    <img
-                        v-if="iconFrameMainUrl"
-                        v-show="!iconFrameIntroActive"
-                        :src="iconFrameMainUrl"
-                        class="absolute top-[-15%] left-[-15%] z-2 h-[130%] w-[130%] max-w-none pointer-events-none" />
-                    <img
-                        v-if="iconFrameIntroUrl"
-                        v-show="iconFrameIntroActive"
-                        :src="iconFrameIntroUrl"
-                        @load="startIconFrameTimer"
-                        class="absolute top-[-15%] left-[-15%] z-2 h-[130%] w-[130%] max-w-none pointer-events-none" />
-                </template>
+                <IconFrame :icon-frame="userDialog.ref.iconFrame" class="z-2" />
             </div>
         </div>
 
@@ -523,6 +511,7 @@
     import { useAppearanceSettingsStore, useGalleryStore, useUserStore } from '../../../stores';
     import { Badge } from '../../ui/badge';
     import { Checkbox } from '../../ui/checkbox';
+    import IconFrame from '../../IconFrame.vue';
 
     import UserActionDropdown from './UserActionDropdown.vue';
     import { showGroupDialog } from '@/coordinators/groupCoordinator';
@@ -552,8 +541,7 @@
 
     const { t } = useI18n();
 
-    const { userDialog, currentUser, cachedProfileEffects, cachedIconFrames, cachedNameplateEffects } =
-        storeToRefs(useUserStore());
+    const { userDialog, currentUser, cachedProfileEffects, cachedNameplateEffects } = storeToRefs(useUserStore());
     const { toggleSharedConnectionsOptOut, toggleDiscordFriendsOptOut, toggleAvatarCopying, toggleAllowBooping } =
         useUserStore();
 
@@ -571,12 +559,6 @@
     const profileEffectIntroDuration = ref(null);
     const profileEffectTimer = ref(null);
 
-    const iconFrameMainUrl = ref(null);
-    const iconFrameIntroUrl = ref(null);
-    const iconFrameIntroActive = ref(false);
-    const iconFrameIntroDuration = ref(null);
-    const iconFrameTimer = ref(null);
-
     const nameplateEffectUrl = ref(null);
     const nameplateStyle = ref(null);
 
@@ -585,13 +567,6 @@
         profileEffectTimer.value = setTimeout(() => {
             profileEffectIntroActive.value = false;
         }, profileEffectIntroDuration.value);
-    }
-
-    function startIconFrameTimer() {
-        clearTimeout(iconFrameTimer.value);
-        iconFrameTimer.value = setTimeout(() => {
-            iconFrameIntroActive.value = false;
-        }, iconFrameIntroDuration.value);
     }
 
     watch(
@@ -611,28 +586,6 @@
                 profileEffectIntroActive.value = true;
                 profileEffectIntroUrl.value = introAsset.url;
                 profileEffectIntroDuration.value = introAsset.totalDurationMs;
-            }
-        },
-        { immediate: true }
-    );
-
-    watch(
-        () => userDialog.value.ref.iconFrame,
-        (newIconFrame) => {
-            clearTimeout(iconFrameTimer.value);
-            iconFrameIntroUrl.value = null;
-            iconFrameMainUrl.value = null;
-            iconFrameIntroActive.value = false;
-            iconFrameIntroDuration.value = null;
-            const frame = cachedIconFrames.value.get(newIconFrame);
-            const introAsset = frame?.metadata?.assets.find((asset) => asset.type === 'introAnimation');
-            const mainAsset = frame?.metadata?.assets.find((asset) => asset.type === 'mainAnimation');
-
-            iconFrameMainUrl.value = mainAsset ? mainAsset.url : null;
-            if (introAsset) {
-                iconFrameIntroActive.value = true;
-                iconFrameIntroUrl.value = introAsset.url;
-                iconFrameIntroDuration.value = introAsset.totalDurationMs;
             }
         },
         { immediate: true }

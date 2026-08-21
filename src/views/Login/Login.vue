@@ -121,13 +121,14 @@
                                 :key="user.user.id"
                                 class="cursor-pointer hover:bg-muted p-2 border-0"
                                 @click="clickSavedLogin(user)">
-                                <ItemMedia variant="image">
-                                    <Avatar class="rounded-full">
+                                <ItemMedia class="relative size-10">
+                                    <Avatar class="size-full rounded-full">
                                         <AvatarImage :src="userImage(user.user)" />
                                         <AvatarFallback>
                                             <User class="size-5 text-muted-foreground" />
                                         </AvatarFallback>
                                     </Avatar>
+                                    <IconFrame :icon-frame="user.user.iconFrame" />
                                 </ItemMedia>
                                 <ItemContent class="min-w-0">
                                     <ItemTitle class="truncate max-w-full">{{ user.user.displayName }}</ItemTitle>
@@ -190,6 +191,7 @@
     } from '@/components/ui/dropdown-menu';
     import { onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+    import IconFrame from '@/components/IconFrame.vue';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
     import { ArrowBigDownDash, Languages, Trash2, TriangleAlert, User } from 'lucide-vue-next';
     import { Field as VeeField, useForm } from 'vee-validate';

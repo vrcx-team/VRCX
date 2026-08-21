@@ -15,13 +15,14 @@
                 class="favorites-item cursor-pointer hover:bg-muted x-hover-list"
                 :style="itemStyle"
                 @click="handleOpenProfile">
-                <ItemMedia variant="image">
-                    <Avatar>
+                <ItemMedia class="relative size-10">
+                    <Avatar class="size-full">
                         <AvatarImage :src="userImage(favorite.ref, true)" loading="lazy" />
                         <AvatarFallback>
                             <User class="size-4 text-muted-foreground" />
                         </AvatarFallback>
                     </Avatar>
+                    <IconFrame :icon-frame="favorite.ref.iconFrame" />
                 </ItemMedia>
                 <ItemContent class="min-w-0">
                     <ItemTitle class="truncate max-w-full" :style="displayNameStyle">{{ displayName }}</ItemTitle>
@@ -144,6 +145,7 @@
 
     import Location from '../../../components/Location.vue';
     import UserContextMenu from '../../../components/UserContextMenu.vue';
+    import IconFrame from '../../../components/IconFrame.vue';
 
     const { userImage } = useUserDisplay();
     const props = defineProps({
