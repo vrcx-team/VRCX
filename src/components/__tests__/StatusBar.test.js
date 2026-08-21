@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { createI18n } from 'vue-i18n';
 import { createTestingPinia } from '@pinia/testing';
 import { mount } from '@vue/test-utils';
-import { nextTick, ref } from 'vue';
+import { ref } from 'vue';
 
 import StatusBar from '../StatusBar.vue';
 import en from '../../localization/en.json';

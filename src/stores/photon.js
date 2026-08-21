@@ -19,7 +19,7 @@ import { instanceRequest, userRequest } from '../api';
 import { photonEmojis, photonEventType } from '../shared/constants/photon';
 import { AppDebug } from '../services/appConfig';
 import { database } from '../services/database';
-import { useAvatarStore } from './avatar';
+
 import { applyAvatar } from '../coordinators/avatarCoordinator';
 import {
     showUserDialog,
@@ -51,7 +51,7 @@ export const usePhotonStore = defineStore('Photon', () => {
     const notificationStore = useNotificationStore();
     const locationStore = useLocationStore();
     const sharedFeedStore = useSharedFeedStore();
-    const avatarStore = useAvatarStore();
+    
     const favoriteStore = useFavoriteStore();
     const { t } = useI18n();
 
@@ -707,7 +707,7 @@ export const usePhotonStore = defineStore('Photon', () => {
         return userId;
     }
 
-    function getPhotonIdFromDisplayName(displayName) {
+    function _getPhotonIdFromDisplayName(displayName) {
         let photonId = '';
         if (displayName) {
             photonLobby.value.forEach((ref, id) => {
@@ -1140,7 +1140,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                 } else if (data.Parameters[245][0] === 21) {
                     const portalId = data.Parameters[245][1];
                     const portalUserId = data.Parameters[245][2];
-                    const playerCount = data.Parameters[245][3];
+                    
                     const shortName = data.Parameters[245][5];
                     const portalWorldName = '';
                     addPhotonPortalSpawn(

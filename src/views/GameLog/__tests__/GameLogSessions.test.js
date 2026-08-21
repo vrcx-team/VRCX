@@ -1,7 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { ref } from 'vue';
-
 const mocks = vi.hoisted(() => ({
     makeRef: (value) => ({ value, __v_isRef: true }),
     handleSessionsEventFilterChange: vi.fn(),

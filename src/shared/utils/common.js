@@ -3,7 +3,7 @@ import {
     extractFileVersion,
     extractVariantVersion
 } from './fileUtils';
-import { escapeTag, replaceBioSymbols } from './base/string';
+import { replaceBioSymbols } from './base/string';
 import { getFaviconUrl, replaceVrcPackageUrl } from './urlUtils';
 import { AppDebug } from '../../services/appConfig.js';
 import { getAvailablePlatforms } from './platformUtils';

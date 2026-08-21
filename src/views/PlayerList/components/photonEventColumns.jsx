@@ -33,7 +33,6 @@ function DetailCell({
     onShowAvatar,
     onShowGroup,
     onShowWorld,
-    onShowUser,
     onShowImage
 }) {
     const r = row;

@@ -2,7 +2,6 @@ import {
     compareByLastActive,
     compareByLastSeen,
     compareByLocation,
-    compareByLocationAt,
     compareByName,
     compareByPrivate,
     compareByStatus,
