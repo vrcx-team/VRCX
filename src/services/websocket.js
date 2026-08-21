@@ -2,11 +2,9 @@ import { reactive } from 'vue';
 import { toast } from 'vue-sonner';
 
 import {
-    useFriendStore,
     useGalleryStore,
     useGroupStore,
     useInstanceStore,
-    useLocationStore,
     useNotificationStore,
     useSharedFeedStore,
     useUiStore,
@@ -187,11 +185,11 @@ export function reconnectWebSocket() {
  */
 function handlePipeline(args) {
     const userStore = useUserStore();
-    const locationStore = useLocationStore();
+    
     const galleryStore = useGalleryStore();
     const notificationStore = useNotificationStore();
     const sharedFeedStore = useSharedFeedStore();
-    const friendStore = useFriendStore();
+    
     const groupStore = useGroupStore();
     const uiStore = useUiStore();
     const instanceStore = useInstanceStore();

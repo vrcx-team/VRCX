@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import {
     buildSessionsFromEvents,
     buildSessionsFromGamelog,

@@ -121,6 +121,12 @@ function deduplicateVideoPlay(events) {
     }
 }
 
+/**
+ *
+ * @param {{ id: any; created_at: any; location: any; worldId: any; worldName: any; groupName: any; time: any; }[]} locationSegments
+ * @param {{ type: any; created_at: any; userId: any; location: any; videoUrl: any; }[]} flatEvents
+ * @returns {{ segments: { id: any; created_at: any; location: any; worldId: any; worldName: any; groupName: any; duration?: any; events: any[]; }[] }}
+ */
 export function buildGameLogSessions(locationSegments, flatEvents) {
     if (!locationSegments || locationSegments.length === 0) {
         return { segments: [] };
@@ -228,7 +234,7 @@ export function buildGameLogSessions(locationSegments, flatEvents) {
         deduplicateVideoPlay(seg.events);
     }
     for (const seg of segmentsAsc) seg.events.reverse();
-    const segments = segmentsAsc.reverse().map(({ epoch, ...rest }) => rest);
+    const segments = segmentsAsc.reverse().map(({ epoch: _epoch, ...rest }) => rest);
 
     return { segments };
 }

@@ -133,7 +133,7 @@ export function useToolNavPinning() {
     ];
 
     // Tool nav items are add/remove only; they do not use hidden state anymore.
-    const getDefaultHiddenKeys = () => [];
+    
 
     const buildDefaultLayout = () =>
         insertDashboardEntries(
@@ -158,7 +158,7 @@ export function useToolNavPinning() {
     };
 
     const refreshPinnedState = async () => {
-        const { layout, hiddenKeys } = await loadConfig();
+        const { layout } = await loadConfig();
         const layoutKeys = collectLayoutKeys(layout);
         const nextPinned = new Set();
 

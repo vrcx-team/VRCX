@@ -94,7 +94,6 @@ function createMockDeps(overrides = {}) {
             )
         },
         userDialog: ref({ id: 'usr_author' }),
-        currentUser: ref({ id: 'usr_current', currentAvatar: 'avtr_other' }),
         cachedAvatars: new Map([
             ['avtr_test123', { id: 'avtr_test123', authorId: 'usr_author' }]
         ]),

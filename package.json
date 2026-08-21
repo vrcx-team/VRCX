@@ -24,6 +24,7 @@
         "format:check": "oxfmt --check src src-electron eslint.config.mjs vitest.config.js vitest.setup.js",
         "lint": "oxlint",
         "lint:fix": "oxlint --fix --fix-suggestions",
+        "lint:fix-danger": "oxlint --fix --fix-suggestions --fix-dangerously",
         "typecheck:js": "tsc -p tsconfig.checkjs.json",
         "typecheck:vue": "vue-tsc -p tsconfig.checkjs.json",
         "typecheck:node": "tsc -p tsconfig.node.json",

@@ -412,7 +412,7 @@ async function lookupAvatarByFileId(providerUrl, fileId) {
         } else {
             return null;
         }
-    } catch (err) {
+    } catch {
         // ignore errors for now, not all providers support this lookup type
         return null;
     }
