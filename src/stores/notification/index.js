@@ -280,6 +280,12 @@ export const useNotificationStore = defineStore('Notification', () => {
     function handlePipelineNotification(args) {
         const ref = args.json;
         if (
+            ref.type === 'friendRequest' &&
+            generalSettingsStore.autoDeclineFriendRequests
+        ) {
+            handleAutoDeclineFriendRequest(ref);
+        }
+        if (
             ref.type !== 'requestInvite' ||
             generalSettingsStore.autoAcceptInviteRequests === 'Off'
         ) {
@@ -389,6 +395,22 @@ export const useNotificationStore = defineStore('Notification', () => {
                         console.error(err);
                     });
             });
+    }
+
+    async function handleAutoDeclineFriendRequest(ref) {
+        const joinInfo = await database.getJoinCount({
+            id: ref.senderUserId,
+            displayName: ref.senderUsername
+        });
+
+        if (Number(joinInfo.joinCount) !== 0) {
+            return;
+        }
+
+        await notificationRequest.hideNotification({
+            notificationId: ref.id
+        });
+        handleNotificationHide(ref.id);
     }
 
     /**
