@@ -6,21 +6,15 @@ trim_trailing_whitespace = true
 insert_final_newline = true
 indent_style = space
 indent_size = 4
+max_line_length = 120
 
 [*.{cs,csx}]
 dotnet_sort_system_directives_first = true
 dotnet_separate_import_directive_groups = false
 dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
-end_of_line = crlf
-indent_style = space
-indent_size = 4
-max_line_length = 100
 
 [*.{config,csproj,props,slnx,targets,xaml,xml}]
-indent_style = space
 indent_size = 2
-max_line_length = 100
 
-[.github/workflows/*.{yml,yaml}]
-indent_style = space
+[*.{yml,yaml}]
 indent_size = 2

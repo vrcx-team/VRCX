@@ -3,11 +3,13 @@ import { defineConfig } from 'oxlint';
 export default defineConfig({
     options: {
         typeAware: true
+        // this fails too much stuff, needs better function types or typescript
         //typeCheck: true
     },
     plugins: ['vue', 'vitest', 'promise', 'node', 'jsdoc', 'import', 'oxc', 'unicorn', 'typescript', 'eslint'],
     jsPlugins: [
         {
+            // this is used only for eslint-js/no-restricted-syntax, replacing it would be great
             name: 'eslint-js',
             specifier: 'oxlint-plugin-eslint'
         }
@@ -15,11 +17,9 @@ export default defineConfig({
     categories: {
         correctness: 'off'
     },
-    ignorePatterns: ['build/**', 'node_modules/**'],
+    ignorePatterns: ['build/**', 'Dotnet/**'],
     env: {
-        //builtin: true,
-        //vue: true,
-        //browser: true
+        // specified in overrides
     },
     rules: {
         'no-unused-vars': 'warn',
@@ -105,7 +105,9 @@ export default defineConfig({
     },
     overrides: [
         {
-            files: ['src/**/*.{js,mjs,cjs,vue}'],
+            // front end that uses browser and vue, with custom globals
+            files: ['src/**'],
+            excludeFiles: ['**/__tests__/**', '**/*.spec.*', '**/*.test.*'],
             env: {
                 browser: true,
                 vue: true
@@ -131,24 +133,26 @@ export default defineConfig({
             }
         },
         {
+            // electron build, and util and build scripts that run on node
             files: [
-                'src-electron/*.js',
-                'src/localization/*.js',
-                'src/shared/utils/localizationHelperCLI.js',
-                'build-scripts/*.js'
+                'src-electron/**',
+                'src/localization/**',
+                'src/shared/utils/localizationHelperCLI.*',
+                'build-scripts/**'
             ],
+            excludeFiles: ['**/__tests__/**', '**/*.spec.*', '**/*.test.*'],
             env: {
                 node: true
             }
         },
         {
-            files: ['**/__tests__/**/*.{js,mjs,cjs,vue}', '**/*.spec.{js,mjs,cjs,vue}', '**/*.test.{js,mjs,cjs,vue}'],
-            globals: {
-                vi: 'readonly',
-                vitest: 'readonly'
-            },
+            // tests using vitest through node
+            files: ['**/__tests__/**', '**/*.spec.*', '**/*.test.*'],
+            plugins: ['vue', 'vitest', 'promise', 'node', 'jsdoc', 'import', 'oxc', 'unicorn', 'eslint'],
             env: {
-                node: true
+                node: true,
+                vitest: true,
+                vue: true
             }
         }
     ]
