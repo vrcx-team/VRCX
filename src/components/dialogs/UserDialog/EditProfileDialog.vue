@@ -5,7 +5,8 @@
                 <DialogTitle>{{ t('dialog.user.actions.edit_profile') }}</DialogTitle>
             </DialogHeader>
 
-            <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-6 py-2 space-y-6">
+            <div
+                class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-6 py-2 space-y-4 [&>section]:rounded-lg [&>section]:border [&>section]:border-border [&>section]:bg-muted/20 [&>section]:p-4">
                 <section class="space-y-3">
                     <h3 class="text-sm font-semibold">{{ t('dialog.social_status.header') }}</h3>
 
@@ -467,6 +468,200 @@
                         </Select>
                     </div>
                 </section>
+
+                <section class="space-y-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <h3 class="text-sm font-semibold">{{ t('dialog.edit_profile.nameplate_effect') }}</h3>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            :disabled="editProfileDialog.loading || !editProfileDialog.nameplateEffect"
+                            @click="editProfileDialog.nameplateEffect = ''">
+                            <X class="size-4" />
+                            {{ t('common.actions.clear') }}
+                        </Button>
+                    </div>
+                    <Popover v-model:open="nameplateEffectsOpen">
+                        <PopoverTrigger as-child>
+                            <Button
+                                variant="outline"
+                                class="h-16 w-full justify-between px-3"
+                                :disabled="editProfileDialog.loading">
+                                <span v-if="selectedNameplateEffect" class="flex min-w-0 items-center gap-3">
+                                    <img
+                                        :src="selectedNameplateEffect.imageUrl"
+                                        :alt="selectedNameplateEffect.name"
+                                        class="size-12 shrink-0 rounded-sm object-cover"
+                                        loading="lazy" />
+                                    <span class="truncate">{{ selectedNameplateEffect.name }}</span>
+                                </span>
+                                <span v-else class="text-muted-foreground">{{
+                                    t('dialog.edit_profile.select_effect')
+                                }}</span>
+                                <ChevronDown class="size-4 shrink-0" />
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent class="w-130 max-w-[calc(100vw-2rem)] p-3" align="start">
+                            <div
+                                v-if="nameplateEffects.length"
+                                class="grid max-h-105 grid-cols-2 gap-3 overflow-y-auto">
+                                <button
+                                    v-for="item in nameplateEffects"
+                                    :key="item.templateId"
+                                    type="button"
+                                    class="relative min-w-0 overflow-hidden rounded-md border bg-background text-left transition-colors hover:bg-accent"
+                                    :class="{
+                                        'border-primary ring-2 ring-inset ring-primary/40':
+                                            editProfileDialog.nameplateEffect === item.templateId
+                                    }"
+                                    :aria-label="item.name"
+                                    :aria-pressed="editProfileDialog.nameplateEffect === item.templateId"
+                                    @click="selectNameplateEffect(item.templateId)">
+                                    <img
+                                        :src="item.imageUrl"
+                                        :alt="item.name"
+                                        class="aspect-square w-full object-cover"
+                                        loading="lazy" />
+                                    <span class="block truncate px-3 py-2 text-sm font-medium">{{ item.name }}</span>
+                                    <span
+                                        v-if="editProfileDialog.nameplateEffect === item.templateId"
+                                        class="absolute right-2 top-2 flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                                        <Check class="size-4" />
+                                    </span>
+                                </button>
+                            </div>
+                            <p v-else class="text-sm text-muted-foreground">{{ t('common.no_data') }}</p>
+                        </PopoverContent>
+                    </Popover>
+                </section>
+
+                <section class="space-y-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <h3 class="text-sm font-semibold">{{ t('dialog.edit_profile.profile_effect') }}</h3>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            :disabled="editProfileDialog.loading || !editProfileDialog.profileEffect"
+                            @click="editProfileDialog.profileEffect = ''">
+                            <X class="size-4" />
+                            {{ t('common.actions.clear') }}
+                        </Button>
+                    </div>
+                    <Popover v-model:open="profileEffectsOpen">
+                        <PopoverTrigger as-child>
+                            <Button
+                                variant="outline"
+                                class="h-16 w-full justify-between px-3"
+                                :disabled="editProfileDialog.loading">
+                                <span v-if="selectedProfileEffect" class="flex min-w-0 items-center gap-3">
+                                    <img
+                                        :src="selectedProfileEffect.imageUrl"
+                                        :alt="selectedProfileEffect.name"
+                                        class="size-12 shrink-0 rounded-sm object-cover"
+                                        loading="lazy" />
+                                    <span class="truncate">{{ selectedProfileEffect.name }}</span>
+                                </span>
+                                <span v-else class="text-muted-foreground">{{
+                                    t('dialog.edit_profile.select_effect')
+                                }}</span>
+                                <ChevronDown class="size-4 shrink-0" />
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent class="w-130 max-w-[calc(100vw-2rem)] p-3" align="start">
+                            <div v-if="profileEffects.length" class="grid max-h-105 grid-cols-2 gap-3 overflow-y-auto">
+                                <button
+                                    v-for="item in profileEffects"
+                                    :key="item.id"
+                                    type="button"
+                                    class="relative min-w-0 overflow-hidden rounded-md border bg-background text-left transition-colors hover:bg-accent"
+                                    :class="{
+                                        'border-primary ring-2 ring-inset ring-primary/40':
+                                            editProfileDialog.profileEffect === item.templateId
+                                    }"
+                                    :aria-label="item.name"
+                                    :aria-pressed="editProfileDialog.profileEffect === item.templateId"
+                                    @click="selectProfileEffect(item.templateId)">
+                                    <img
+                                        :src="item.imageUrl"
+                                        :alt="item.name"
+                                        class="aspect-square w-full object-cover"
+                                        loading="lazy" />
+                                    <span class="block truncate px-3 py-2 text-sm font-medium">{{ item.name }}</span>
+                                    <span
+                                        v-if="editProfileDialog.profileEffect === item.templateId"
+                                        class="absolute right-2 top-2 flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                                        <Check class="size-4" />
+                                    </span>
+                                </button>
+                            </div>
+                            <p v-else class="text-sm text-muted-foreground">{{ t('common.no_data') }}</p>
+                        </PopoverContent>
+                    </Popover>
+                </section>
+
+                <section class="space-y-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <h3 class="text-sm font-semibold">{{ t('dialog.edit_profile.icon_frame') }}</h3>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            :disabled="editProfileDialog.loading || !editProfileDialog.iconFrame"
+                            @click="editProfileDialog.iconFrame = ''">
+                            <X class="size-4" />
+                            {{ t('common.actions.clear') }}
+                        </Button>
+                    </div>
+                    <Popover v-model:open="iconFramesOpen">
+                        <PopoverTrigger as-child>
+                            <Button
+                                variant="outline"
+                                class="h-16 w-full justify-between px-3"
+                                :disabled="editProfileDialog.loading">
+                                <span v-if="selectedIconFrame" class="flex min-w-0 items-center gap-3">
+                                    <img
+                                        :src="selectedIconFrame.imageUrl"
+                                        :alt="selectedIconFrame.name"
+                                        class="size-12 shrink-0 rounded-sm object-cover"
+                                        loading="lazy" />
+                                    <span class="truncate">{{ selectedIconFrame.name }}</span>
+                                </span>
+                                <span v-else class="text-muted-foreground">{{
+                                    t('dialog.edit_profile.select_effect')
+                                }}</span>
+                                <ChevronDown class="size-4 shrink-0" />
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent class="w-130 max-w-[calc(100vw-2rem)] p-3" align="start">
+                            <div v-if="iconFrames.length" class="grid max-h-105 grid-cols-2 gap-3 overflow-y-auto">
+                                <button
+                                    v-for="item in iconFrames"
+                                    :key="item.templateId"
+                                    type="button"
+                                    class="relative min-w-0 overflow-hidden rounded-md border bg-background text-left transition-colors hover:bg-accent"
+                                    :class="{
+                                        'border-primary ring-2 ring-inset ring-primary/40':
+                                            editProfileDialog.iconFrame === item.templateId
+                                    }"
+                                    :aria-label="item.name"
+                                    :aria-pressed="editProfileDialog.iconFrame === item.templateId"
+                                    @click="selectIconFrame(item.templateId)">
+                                    <img
+                                        :src="item.imageUrl"
+                                        :alt="item.name"
+                                        class="aspect-square w-full object-cover"
+                                        loading="lazy" />
+                                    <span class="block truncate px-3 py-2 text-sm font-medium">{{ item.name }}</span>
+                                    <span
+                                        v-if="editProfileDialog.iconFrame === item.templateId"
+                                        class="absolute right-2 top-2 flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                                        <Check class="size-4" />
+                                    </span>
+                                </button>
+                            </div>
+                            <p v-else class="text-sm text-muted-foreground">{{ t('common.no_data') }}</p>
+                        </PopoverContent>
+                    </Popover>
+                </section>
             </div>
 
             <DialogFooter class="px-6 py-4">
@@ -489,14 +684,15 @@
 </template>
 
 <script setup>
-    import { computed, ref } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
-    import { Bookmark, History, Trash2, X } from 'lucide-vue-next';
+    import { Bookmark, Check, ChevronDown, History, Trash2, X } from 'lucide-vue-next';
 
     import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Button } from '@/components/ui/button';
+    import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import ColorPickerButton from '@/components/ColorPickerButton.vue';
     import {
         InputGroupAction,
@@ -526,8 +722,9 @@
     const { currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const authStore = useAuthStore();
     const modalStore = useModalStore();
-    const { refreshGalleryTable } = useGalleryStore();
+    const { refreshGalleryTable, getInventory } = useGalleryStore();
     const { presets, addPreset, removePreset, getStatusClass, MAX_PRESETS } = useStatusPresets();
+    const { inventoryTable } = storeToRefs(useGalleryStore());
 
     const props = defineProps({
         editProfileDialog: {
@@ -537,12 +734,42 @@
     });
 
     const selectedLanguageToAdd = ref('');
+    const nameplateEffectsOpen = ref(false);
+    const profileEffectsOpen = ref(false);
+    const iconFramesOpen = ref(false);
     const gallerySelectDialog = ref({
         visible: false,
         selectedFileId: '',
         selectedImageUrl: '',
         isIconGallerySelectDialog: false
     });
+
+    watch(
+        () => props.editProfileDialog.visible,
+        (visible) => {
+            if (visible) {
+                getInventory();
+            }
+        },
+        { immediate: true }
+    );
+
+    const nameplateEffects = computed(
+        () => inventoryTable.value?.filter((item) => item.itemType === 'nameplateEffect') ?? []
+    );
+    const profileEffects = computed(
+        () => inventoryTable.value?.filter((item) => item.itemType === 'profileEffect') ?? []
+    );
+    const iconFrames = computed(() => inventoryTable.value?.filter((item) => item.itemType === 'iconFrame') ?? []);
+    const selectedNameplateEffect = computed(() =>
+        nameplateEffects.value.find((item) => item.templateId === props.editProfileDialog.nameplateEffect)
+    );
+    const selectedProfileEffect = computed(() =>
+        profileEffects.value.find((item) => item.templateId === props.editProfileDialog.profileEffect)
+    );
+    const selectedIconFrame = computed(() =>
+        iconFrames.value.find((item) => item.templateId === props.editProfileDialog.iconFrame)
+    );
 
     const currentLanguages = computed(() => currentUser.value?.$languages ?? []);
     const availableLanguages = computed(() => {
@@ -660,6 +887,21 @@
 
     function handleSocialStatusChange(value) {
         props.editProfileDialog.status = String(value);
+    }
+
+    function selectNameplateEffect(id) {
+        props.editProfileDialog.nameplateEffect = id;
+        nameplateEffectsOpen.value = false;
+    }
+
+    function selectProfileEffect(id) {
+        props.editProfileDialog.profileEffect = id;
+        profileEffectsOpen.value = false;
+    }
+
+    function selectIconFrame(id) {
+        props.editProfileDialog.iconFrame = id;
+        iconFramesOpen.value = false;
     }
 
     function setSocialStatusFromHistory(val) {
@@ -1012,6 +1254,15 @@
         }
         if (D.backgroundGradientTop !== D.selfProfileRef.backgroundGradientTop) {
             profilePayload.backgroundGradientTop = D.backgroundGradientTop;
+        }
+        if (D.nameplateEffect !== D.selfProfileRef.nameplateEffect) {
+            profilePayload.nameplateEffect = D.nameplateEffect;
+        }
+        if (D.profileEffect !== D.selfProfileRef.profileEffect) {
+            profilePayload.profileEffect = D.profileEffect;
+        }
+        if (D.iconFrame !== D.selfProfileRef.iconFrame) {
+            profilePayload.iconFrame = D.iconFrame;
         }
 
         D.loading = true;

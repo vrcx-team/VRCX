@@ -1883,7 +1883,11 @@
             "profile_background_type_image": "Image",
             "profile_background_type_gradient": "Gradient",
             "gradient_top": "Gradient Top",
-            "gradient_bottom": "Gradient Bottom"
+            "gradient_bottom": "Gradient Bottom",
+            "nameplate_effect": "Nameplate Effect",
+            "profile_effect": "Profile Effect",
+            "icon_frame": "Icon Frame",
+            "select_effect": "Select an effect"
         },
         "new_instance": {
             "header": "New Instance",
