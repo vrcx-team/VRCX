@@ -948,7 +948,9 @@
             try {
                 const cam = sigmaInstance.getCamera?.();
                 cameraState = cam?.getState?.() || null;
-            } catch (e) {}
+            } catch {
+                // do nothing
+            }
             sigmaInstance.kill();
             sigmaInstance = null;
         }
@@ -1030,7 +1032,9 @@
             try {
                 const cam = sigmaInstance.getCamera?.();
                 cam?.setState?.(cameraState);
-            } catch (e) {}
+            } catch {
+                // do nothing
+            }
         }
 
         let hovered = null;

@@ -927,7 +927,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
             const translated = data?.choices?.[0]?.message?.content;
             return typeof translated === 'string' ? translated.trim() : null;
-        } catch (err) {
+        } catch {
             toast.error(`Translation failed`);
             return null;
         }

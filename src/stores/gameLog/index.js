@@ -18,7 +18,7 @@ import { useAdvancedSettingsStore } from '../settings/advanced';
 import { useFriendStore } from '../friend';
 import { useNotificationStore } from '../notification';
 import { useDashboardStore } from '../dashboard';
-import { useUiStore } from '../ui';
+
 import { useUserStore } from '../user';
 import { useVrStore } from '../vr';
 import { useVrcxStore } from '../vrcx';
@@ -43,7 +43,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     const vrStore = useVrStore();
     const friendStore = useFriendStore();
     const userStore = useUserStore();
-    const uiStore = useUiStore();
+    
     const vrcxStore = useVrcxStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
     const dashboardStore = useDashboardStore();

@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0
       - uses: oxc-project/oxlint-action@v2.0.1
         with:
-          config: .oxlintrc.json
+          config: oxlint.config.mts
         continue-on-error: true
 
   format_js:
@@ -46,8 +46,60 @@ jobs:
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: "10.0.x"
       - name: Run Dotnet format
         run: |
           dotnet format whitespace --no-restore --verify-no-changes
           dotnet format style --no-restore --verify-no-changes
+
+  test_build_dotnet_windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "10.0.x"
+      - name: Set version
+        run: |
+          echo "1900.0.0" > Version
+          cat Version
+      - uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Cef.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+      - name: Build Cef .NET Application
+        run: dotnet build Dotnet/VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -t:"Clean;Build" -maxcpucount --runtime win-x64 --self-contained
+
+  test_javascript:
+    name: Run tests using Vitest
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+      - name: Get npm cache directory
+        id: npm-cache-dir
+        shell: bash
+        run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+      - uses: actions/cache@v6
+        id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
+        with:
+          path: ${{ steps.npm-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Restore dependencies
+        run: npm ci
+      - name: Run vitest
+        run: npm test # by default will output special github annotations and summary
