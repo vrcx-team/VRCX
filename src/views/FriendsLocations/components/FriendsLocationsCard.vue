@@ -4,6 +4,7 @@
             class="friend-card x-hover-card hover:bg-muted relative"
             :style="cardStyle"
             @click="showUserDialog(friend.id)">
+            <ProfileEffect :profile-effect="friend.ref.profileEffect" class="object-cover rounded-lg" />
             <div class="friend-card__header grid items-center mb-1.75">
                 <div class="relative inline-block flex-none size-9 mr-2.5">
                     <Avatar class="size-full rounded-full">
@@ -50,6 +51,7 @@
 <script setup>
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import IconFrame from '@/components/IconFrame.vue';
+    import ProfileEffect from '@/components/ProfileEffect.vue';
     import { Card } from '@/components/ui/card';
     import { Pencil, User } from 'lucide-vue-next';
     import { computed } from 'vue';

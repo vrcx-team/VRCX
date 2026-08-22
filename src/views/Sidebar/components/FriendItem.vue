@@ -1,6 +1,6 @@
 <template>
     <div
-        class="box-border flex items-center p-1.5 text-[13px] cursor-pointer hover:bg-muted/50 hover:rounded-lg"
+        class="relative isolate box-border flex items-center overflow-hidden rounded-lg p-1.5 text-[13px] cursor-pointer hover:bg-muted/50"
         @click="showUserDialog(friend.id)">
         <template v-if="friend.ref">
             <div class="relative inline-block flex-none size-9 mr-2.5" :class="friendStatusClass">
@@ -10,6 +10,7 @@
                         <User class="size-5 text-muted-foreground" />
                     </AvatarFallback>
                 </Avatar>
+                <IconFrame :icon-frame="friend.ref.iconFrame" />
             </div>
             <div class="flex-1 overflow-hidden h-9 flex flex-col justify-between">
                 <span
@@ -78,6 +79,7 @@
 
     import Location from '@/components/Location.vue';
     import Timer from '@/components/Timer.vue';
+    import IconFrame from '@/components/IconFrame.vue';
 
     import { useAppearanceSettingsStore, useFriendStore } from '../../../stores';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
