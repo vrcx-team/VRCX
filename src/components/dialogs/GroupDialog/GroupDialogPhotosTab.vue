@@ -10,7 +10,7 @@
             <RefreshCw v-else />
         </Button>
         <TabsUnderline
-            v-if="groupDialog.ref.galleries.length"
+            v-if="groupDialog.ref.galleries?.length"
             v-model="groupDialogGalleryCurrentName"
             :items="groupGalleryTabs"
             :unmount-on-hide="false"

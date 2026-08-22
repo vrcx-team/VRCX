@@ -97,11 +97,11 @@
             </SettingsItem>
 
             <SettingsItem
-                :label="t('view.settings.appearance.appearance.vrcplus_profile_icons')"
-                :description="t('view.settings.appearance.appearance.vrcplus_profile_icons_description')">
+                :label="t('view.settings.appearance.appearance.profile_icons')"
+                :description="t('view.settings.appearance.appearance.profile_icons_description')">
                 <Switch
                     :model-value="displayVRCPlusIconsAsAvatar"
-                    :ariaLabel="t('view.settings.appearance.appearance.vrcplus_profile_icons')"
+                    :ariaLabel="t('view.settings.appearance.appearance.profile_icons')"
                     @update:modelValue="
                         setDisplayVRCPlusIconsAsAvatar();
                         saveOpenVROption();

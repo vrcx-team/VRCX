@@ -136,11 +136,13 @@
     .friend-card__header {
         grid-template-columns: auto minmax(0, 1fr);
         gap: calc(10px * var(--card-scale) * var(--card-spacing));
+        padding-top: calc(3px * var(--card-scale));
+        padding-left: calc(4px * var(--card-scale));
     }
 
     .friend-card__status-dot {
-        top: calc(8px * var(--card-scale));
-        right: calc(8px * var(--card-scale));
+        top: calc(16px * var(--card-scale));
+        right: calc(16px * var(--card-scale));
         inline-size: calc(12px * var(--card-scale));
         block-size: calc(12px * var(--card-scale));
     }
