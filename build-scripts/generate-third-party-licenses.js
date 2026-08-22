@@ -3,24 +3,27 @@
 // use by frontend open source software notice dialog
 
 /**
- * @typedef {{
- *  name: string;
- *  version: string;
- *  sourceType: string;
- *  projects?: string[]
- *  }} PackageReference
- *
- * @typedef {PackageReference & {
- *  id: string,
- *  license: string|null,
- *  sourceLabel: string,
- *  noticeText?: string|null,
- *  needsReview: boolean,
- *  projectUrl?: string|null,
- *  licenseUrl?: string|null,
- *  filePath?: string|null,
- * }} ProjectLicense
- *
+ * @typedef {Object} PackageReference
+ * @property {string} name - The name of the package.
+ * @property {string} version - The package version.
+ * @property {string} sourceType - Where the package is sourced from.
+ * @property {string[]} [projects] - Optional list of project names.
+ */
+
+/**
+ * @typedef {Object} ProjectLicenseFields
+ * @property {string} id - Unique identifier.
+ * @property {string | null} license - The license identifier.
+ * @property {string} sourceLabel - Label indicating the source origin.
+ * @property {string | null} [noticeText] - Optional legal notice text.
+ * @property {boolean} needsReview - Indicates if manual review is required.
+ * @property {string | null} [projectUrl] - Optional URL to the project homepage.
+ * @property {string | null} [licenseUrl] - Optional URL to the license text.
+ * @property {string | null} [filePath] - Optional local file path.
+ */
+
+/**
+ * @typedef {PackageReference & ProjectLicenseFields} ProjectLicense
  */
 
 const fs = require('fs');
