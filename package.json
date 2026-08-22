@@ -20,8 +20,8 @@
     "scripts": {
         "dev": "vite serve src",
         "localization": "node ./src/shared/utils/localizationHelperCLI.js",
-        "format": "oxfmt src src-electron eslint.config.mjs vitest.config.js vitest.setup.js",
-        "format:check": "oxfmt --check src src-electron eslint.config.mjs vitest.config.js vitest.setup.js",
+        "format": "oxfmt",
+        "format:check": "oxfmt --check",
         "lint": "oxlint",
         "lint:fix": "oxlint --fix --fix-suggestions",
         "lint:fix-danger": "oxlint --fix --fix-suggestions --fix-dangerously",
