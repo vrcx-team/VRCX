@@ -35,6 +35,7 @@ import * as workerTimers from 'worker-timers';
 
 let webSocket = null;
 let lastWebSocketMessage = '';
+let webSocketClosedGracefully = true;
 
 /**
  * Reactive WebSocket state for status bar telemetry.
@@ -76,19 +77,28 @@ export function initWebsocket() {
  */
 function connectWebSocket(token) {
     const userStore = useUserStore();
+    const notificationStore = useNotificationStore();
+    const friendStore = useFriendStore();
     if (webSocket !== null) {
         return;
     }
     const socket = new WebSocket(`${AppDebug.websocketDomain}/?auth=${token}`);
     socket.onopen = () => {
         wsState.connected = true;
+        if (!webSocketClosedGracefully) {
+            console.warn('WebSocket reconnected after unexpected closure');
+            webSocketClosedGracefully = true;
+            notificationStore.refreshNotifications();
+            friendStore.refreshFriends();
+        }
         if (AppDebug.debugWebSocket) {
             console.log('WebSocket connected');
         }
     };
-    socket.onclose = () => {
+    socket.onclose = ({ code, reason }) => {
         wsState.connected = false;
-        if (webSocket === socket) {
+        const isCurrentSocket = webSocket === socket;
+        if (isCurrentSocket) {
             webSocket = null;
         }
         try {
@@ -96,8 +106,9 @@ function connectWebSocket(token) {
         } catch (err) {
             console.error('Error closing WebSocket:', err);
         }
-        if (AppDebug.debugWebSocket) {
-            console.log('WebSocket closed');
+        webSocketClosedGracefully = code === 1000;
+        if (isCurrentSocket || AppDebug.debugWebSocket) {
+            console.log('WebSocket closed', { code, reason });
         }
         workerTimers.setTimeout(() => {
             if (
