@@ -1,5 +1,5 @@
 <template>
-    <template v-if="displayVRCProfileCosmetics">
+    <template v-if="typeof enabled !== 'undefined' ? enabled : displayVRCProfileCosmetics">
         <img
             v-if="mainUrl"
             v-show="!introActive"
@@ -25,7 +25,8 @@
     defineOptions({ inheritAttrs: false });
 
     const props = defineProps({
-        iconFrame: { type: String, default: '' }
+        iconFrame: { type: String, default: '' },
+        enabled: { type: Boolean, default: undefined }
     });
 
     const { cachedIconFrames } = storeToRefs(useUserStore());

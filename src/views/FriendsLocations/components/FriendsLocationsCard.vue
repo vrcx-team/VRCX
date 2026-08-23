@@ -4,7 +4,10 @@
             class="friend-card x-hover-card hover:bg-muted relative"
             :style="cardStyle"
             @click="showUserDialog(friend.id)">
-            <ProfileEffect :profile-effect="friend.ref.profileEffect" class="object-cover rounded-lg" />
+            <ProfileEffect
+                v-if="showCosmetics"
+                :profile-effect="friend.ref.profileEffect"
+                class="object-cover rounded-lg" />
             <div class="friend-card__header grid items-center mb-1.75">
                 <div class="relative inline-block flex-none size-9 mr-2.5">
                     <Avatar class="size-full rounded-full">
@@ -13,7 +16,7 @@
                             <User class="text-muted-foreground" :size="Math.max(16, 20 * cardScale)" />
                         </AvatarFallback>
                     </Avatar>
-                    <IconFrame :icon-frame="friend.ref.iconFrame" />
+                    <IconFrame v-if="showCosmetics" :icon-frame="friend.ref.iconFrame" />
                 </div>
                 <span
                     class="friend-card__status-dot absolute rounded-full pointer-events-none"
@@ -74,6 +77,10 @@
             default: 1
         },
         displayInstanceInfo: {
+            type: Boolean,
+            default: true
+        },
+        showCosmetics: {
             type: Boolean,
             default: true
         },

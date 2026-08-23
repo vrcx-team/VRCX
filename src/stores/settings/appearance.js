@@ -90,6 +90,7 @@ export const useAppearanceSettingsStore = defineStore(
         const isSidebarDivideByFriendGroup = ref(false);
         const sidebarFavoriteGroups = ref([]);
         const sidebarFavoriteGroupOrder = ref([]);
+        const sidebarCosmetics = ref(false);
         const hideUserNotes = ref(false);
         const hideUserMemos = ref(false);
         const hideUnfriends = ref(false);
@@ -175,6 +176,7 @@ export const useAppearanceSettingsStore = defineStore(
                 isSidebarDivideByFriendGroupConfig,
                 sidebarFavoriteGroupsConfig,
                 sidebarFavoriteGroupOrderConfig,
+                sidebarCosmeticsConfig,
                 hideUserNotesConfig,
                 hideUserMemosConfig,
                 hideUnfriendsConfig,
@@ -253,6 +255,7 @@ export const useAppearanceSettingsStore = defineStore(
                     'VRCX_sidebarFavoriteGroupOrder',
                     '[]'
                 ),
+                configRepository.getBool('VRCX_sidebarCosmetics', false),
                 configRepository.getBool('VRCX_hideUserNotes', false),
                 configRepository.getBool('VRCX_hideUserMemos', false),
                 configRepository.getBool('VRCX_hideUnfriends', false),
@@ -374,6 +377,7 @@ export const useAppearanceSettingsStore = defineStore(
             sidebarFavoriteGroupOrder.value = JSON.parse(
                 sidebarFavoriteGroupOrderConfig
             );
+            sidebarCosmetics.value = sidebarCosmeticsConfig;
             hideUserNotes.value = hideUserNotesConfig;
             hideUserMemos.value = hideUserMemosConfig;
             hideUnfriends.value = hideUnfriendsConfig;
@@ -930,6 +934,13 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          *
          */
+        function setSidebarCosmetics() {
+            sidebarCosmetics.value = !sidebarCosmetics.value;
+            configRepository.setBool('VRCX_sidebarCosmetics', sidebarCosmetics.value);
+        }
+        /**
+         *
+         */
         function setHideUserNotes() {
             hideUserNotes.value = !hideUserNotes.value;
             configRepository.setBool('VRCX_hideUserNotes', hideUserNotes.value);
@@ -1258,6 +1269,7 @@ export const useAppearanceSettingsStore = defineStore(
             isSidebarDivideByFriendGroup,
             sidebarFavoriteGroups,
             sidebarFavoriteGroupOrder,
+            sidebarCosmetics,
             hideUserNotes,
             hideUserMemos,
             hideUnfriends,
@@ -1304,6 +1316,7 @@ export const useAppearanceSettingsStore = defineStore(
             setIsSidebarDivideByFriendGroup,
             setSidebarFavoriteGroups,
             setSidebarFavoriteGroupOrder,
+            setSidebarCosmetics,
             setHideUserNotes,
             setHideUserMemos,
             setHideUnfriends,

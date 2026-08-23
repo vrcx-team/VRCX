@@ -938,7 +938,8 @@
                     "vrc_profile_backgrounds_opacity": "Profile Background Opacity",
                     "vrc_profile_backgrounds_opacity_description": "Higher values will impact text readability.",
                     "vrc_profile_cosmetics": "Profile Cosmetics",
-                    "cosmetics_description": "Shows icon frame and profile effects"
+                    "cosmetics_description": "Shows icon frame and profile effects",
+                    "show_cosmetics": "Show Cosmetics"
                 },
                 "display": {
                     "header": "Display"
