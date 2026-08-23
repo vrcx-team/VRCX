@@ -28,7 +28,7 @@ module.exports = {
     ],
     extraResources: [
         {
-            from: 'build/Electron/${os}-${arch}/',
+            from: 'build/Electron/',
             to: 'app.asar.unpacked/build/Electron/'
         },
         {
