@@ -50,7 +50,7 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-nuget-
             - name: Build Cef .NET Application
-              run: dotnet build Dotnet/VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -t:"Clean;Build" -maxcpucount --runtime win-x64 --self-contained
+              run: dotnet build Dotnet/VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
             - name: Check if we want to sign
               id: check_sign
               run: |
@@ -153,9 +153,9 @@ jobs:
                   key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Electron.csproj') }}) }}
                   restore-keys: |
                       ${{ runner.os }}-nuget-
-            - name: Build Electron linux x64 .NET Application
-              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -t:"Clean;Build" -maxcpucount --runtime linux-x64
-            - name: Upload Electron linux x64 dotnet artifacts
+            - name: Build Electron x64 .NET Application
+              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64
+            - name: Upload Electron x64 dotnet artifacts
               uses: actions/upload-artifact@v7
               with:
                   name: Electron-Release-Linux-x64
@@ -165,9 +165,9 @@ jobs:
               run: |
                   rm -R build/Electron
 
-            - name: Build Electron linux arm64 .NET Application
-              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -t:"Clean;Build" -maxcpucount --runtime linux-arm64
-            - name: Upload Electron linux arm64 dotnet artifacts
+            - name: Build Electron arm64 .NET Application
+              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64
+            - name: Upload Electron arm64 dotnet artifacts
               uses: actions/upload-artifact@v7
               with:
                   name: Electron-Release-Linux-arm64
@@ -192,9 +192,9 @@ jobs:
                   key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Electron.csproj') }}
                   restore-keys: |
                       ${{ runner.os }}-nuget-
-            - name: Build Electron osx x64 .NET Application
-              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -t:"Clean;Build" -maxcpucount --runtime osx-x64
-            - name: Upload Electron osx x64 .NET artifacts
+            - name: Build Electron x64 .NET Application
+              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64
+            - name: Upload Electron x64 .NET artifacts
               uses: actions/upload-artifact@v7
               with:
                   name: Electron-Release-macOS-x64
@@ -204,9 +204,9 @@ jobs:
               run: |
                   rm -R build/Electron
 
-            - name: Build Electron osx arm64 .NET Application
-              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -t:"Clean;Build" -maxcpucount --runtime osx-arm64
-            - name: Upload Electron osx arm64 dotnet artifacts
+            - name: Build Electron arm64 .NET Application
+              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64
+            - name: Upload Electron arm64 dotnet artifacts
               uses: actions/upload-artifact@v7
               with:
                   name: Electron-Release-macOS-arm64
