@@ -50,21 +50,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex flex-none flex-wrap items-center justify-end gap-2">
-                                <TooltipWrapper
-                                    v-if="worldDialog.inCache"
-                                    side="top"
-                                    :content="t('dialog.world.actions.delete_cache_tooltip')">
-                                    <Button
-                                        class="rounded-lg"
-                                        size="icon"
-                                        variant="outline"
-                                        :ariaLabel="t('common.actions.delete')"
-                                        :disabled="isGameRunning && worldDialog.cacheLocked"
-                                        @click="deleteVRChatCache(worldDialog.ref)"
-                                        ><Trash2
-                                    /></Button>
-                                </TooltipWrapper>
+                            <div class="grid grid-cols-2 flex-none items-center justify-end gap-2 self-start">
                                 <TooltipWrapper
                                     v-if="worldDialog.isFavorite"
                                     side="top"
@@ -229,6 +215,21 @@
                                         </template>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
+                                <TooltipWrapper
+                                    v-if="worldDialog.inCache"
+                                    class="col-start-1 row-start-2"
+                                    side="top"
+                                    :content="t('dialog.world.actions.delete_cache_tooltip')">
+                                    <Button
+                                        class="rounded-lg"
+                                        size="icon"
+                                        variant="outline"
+                                        :ariaLabel="t('common.actions.delete')"
+                                        :disabled="isGameRunning && worldDialog.cacheLocked"
+                                        @click="deleteVRChatCache(worldDialog.ref)"
+                                        ><Trash2
+                                    /></Button>
+                                </TooltipWrapper>
                             </div>
                         </div>
                         <div class="flex flex-wrap items-center gap-1 mt-2">

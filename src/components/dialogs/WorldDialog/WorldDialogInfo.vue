@@ -191,14 +191,13 @@
 </template>
 
 <script setup>
-    import { ChevronDown, Copy, MoreHorizontal } from 'lucide-vue-next';
+    import { ChevronDown } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
 
-    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../ui/dropdown-menu';
     import { useAuthStore, useInstanceStore, useWorldStore } from '../../../stores';
     import { openExternalLink, timeAgo, timeToText } from '../../../shared/utils';
     import { useWorldDialogInfo } from './useWorldDialogInfo';
@@ -217,9 +216,6 @@
         worldTags,
         worldDialogPlatform,
         worldDialogPlatformCreatedAt,
-        copyWorldId,
-        copyWorldUrl,
-        copyWorldName,
         commaNumber,
         formatDateFilter
     } = useWorldDialogInfo(worldDialog, { t, toast, sdkUnityVersion: authStore.cachedConfig.sdkUnityVersion });
