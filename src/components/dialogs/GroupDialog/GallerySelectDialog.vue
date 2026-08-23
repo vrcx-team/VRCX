@@ -153,7 +153,7 @@
         const r = new FileReader();
         r.onload = function () {
             const base64Body = btoa(r.result.toString());
-            if (isLocalUserVrcPlusSupporter.value) {
+            if (props.gallerySelectDialog.isIconGallerySelectDialog) {
                 vrcPlusIconRequest.uploadVRCPlusIcon(base64Body).then((args) => {
                     handleGalleryImageAdd(args);
                     toast.success(t('message.gallery.uploaded'));
@@ -162,7 +162,6 @@
                     }
                     return args;
                 });
-
                 return;
             }
             vrcPlusImageRequest.uploadGalleryImage(base64Body).then((args) => {

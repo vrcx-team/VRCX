@@ -16,6 +16,7 @@ import { copyToClipboard } from '../../../shared/utils';
  * @param deps.showPreviousInstancesListDialog
  * @param deps.showGroupMemberModerationDialog
  * @param deps.showInviteGroupDialog
+ * @param deps.showGroupTransferDialog
  * @param deps.showGroupPostEditDialog
  * @param deps.groupRequest
  * @returns {object} command composable API
@@ -34,6 +35,7 @@ export function useGroupDialogCommands(
         showPreviousInstancesListDialog,
         showGroupMemberModerationDialog,
         showInviteGroupDialog,
+        showGroupTransferDialog,
         showGroupPostEditDialog,
         groupRequest
     }
@@ -67,6 +69,9 @@ export function useGroupDialogCommands(
             },
             'Invite To Group': () => {
                 showInviteGroupDialog(D().id, '');
+            },
+            'Transfer Group': () => {
+                showGroupTransferDialog(D().id, D().ref.name, D().ref.ownerId);
             },
             Refresh: () => {
                 showGroupDialog(D().id, { forceRefresh: true });

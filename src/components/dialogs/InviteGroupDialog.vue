@@ -115,7 +115,10 @@
         () => inviteGroupDialog.value.visible,
         async (value) => {
             if (value) {
-                inviteGroupDialog.value.groupId = await configRepository.getString('inviteGroupLastGroup', '');
+                const lastGroupId = await configRepository.getString('inviteGroupLastGroup', '');
+                if (!inviteGroupDialog.value.groupId) {
+                    inviteGroupDialog.value.groupId = lastGroupId;
+                }
                 initDialog();
             } else {
                 await configRepository.setString('inviteGroupLastGroup', inviteGroupDialog.value.groupId);

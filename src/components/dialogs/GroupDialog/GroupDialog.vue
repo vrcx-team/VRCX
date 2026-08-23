@@ -203,6 +203,41 @@
                                             </DropdownMenuItem>
                                         </DropdownMenuSubContent>
                                     </DropdownMenuSub>
+
+                                    <template v-if="hasGroupModerationPermission(groupDialog.ref)">
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem
+                                            v-if="hasGroupPermission(groupDialog.ref, 'group-data-manage')"
+                                            @click="showEditGroupDialog(groupDialog.ref)">
+                                            <Pencil class="size-4" />
+                                            {{ t('dialog.group_edit.edit_header') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            :disabled="!hasGroupModerationPermission(groupDialog.ref)"
+                                            @click="groupDialogCommand('Moderation Tools')">
+                                            <Settings class="size-4" />
+                                            {{ t('dialog.group.actions.moderation_tools') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            v-if="hasGroupPermission(groupDialog.ref, 'group-invites-manage')"
+                                            @click="groupDialogCommand('Invite To Group')">
+                                            <MessageSquare class="size-4" />
+                                            {{ t('dialog.group.actions.invite_to_group') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')"
+                                            @click="groupDialogCommand('Create Post')">
+                                            <Ticket class="size-4" />
+                                            {{ t('dialog.group.actions.create_post') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            v-if="groupDialog.ref.ownerId === currentUser.id"
+                                            @click="groupDialogCommand('Transfer Group')">
+                                            <ArrowRightLeft class="size-4" />
+                                            {{ t('dialog.group.actions.transfer') }}
+                                        </DropdownMenuItem>
+                                    </template>
+
                                     <template v-if="groupDialog.inGroup">
                                         <template v-if="groupDialog.ref.myMember">
                                             <DropdownMenuSeparator />
@@ -233,25 +268,6 @@
                                                 @click="groupDialogCommand('Subscribe To Event Announcements')">
                                                 <MessageCircle class="size-4" />
                                                 {{ t('dialog.group.actions.subscribe_event') }}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                                v-if="hasGroupPermission(groupDialog.ref, 'group-invites-manage')"
-                                                @click="groupDialogCommand('Invite To Group')">
-                                                <MessageSquare class="size-4" />
-                                                {{ t('dialog.group.actions.invite_to_group') }}
-                                            </DropdownMenuItem>
-                                            <template
-                                                v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
-                                                <DropdownMenuItem @click="groupDialogCommand('Create Post')">
-                                                    <Ticket class="size-4" />
-                                                    {{ t('dialog.group.actions.create_post') }}
-                                                </DropdownMenuItem>
-                                            </template>
-                                            <DropdownMenuItem
-                                                :disabled="!hasGroupModerationPermission(groupDialog.ref)"
-                                                @click="groupDialogCommand('Moderation Tools')">
-                                                <Settings class="size-4" />
-                                                {{ t('dialog.group.actions.moderation_tools') }}
                                             </DropdownMenuItem>
                                             <template
                                                 v-if="
@@ -289,7 +305,11 @@
                                                 variant="destructive"
                                                 @click="groupDialogCommand('Leave Group')">
                                                 <Trash2 class="size-4" />
-                                                {{ t('dialog.group.actions.leave') }}
+                                                {{
+                                                    isSoleGroupOwner(groupDialog.ref, currentUser.id)
+                                                        ? t('dialog.group.actions.delete')
+                                                        : t('dialog.group.actions.leave')
+                                                }}
                                             </DropdownMenuItem>
                                         </template>
                                     </template>
@@ -572,6 +592,7 @@
             </TabsUnderline>
         </div>
         <GroupPostEditDialog :dialog-data="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
+        <GroupTransferDialog :dialog-data="groupTransferDialog" @close="groupTransferDialog.visible = false" />
     </div>
 </template>
 
@@ -579,6 +600,7 @@
     import {
         Bell,
         BellOff,
+        ArrowRightLeft,
         MessageCircle,
         MessageCircleOff,
         Bookmark,
@@ -592,6 +614,7 @@
         LineChart,
         MessageSquare,
         MoreHorizontal,
+        Pencil,
         RefreshCw,
         Settings,
         Share2,
@@ -633,6 +656,7 @@
     import { useGalleryStore, useGroupStore, useInstanceStore, useModalStore, useUserStore } from '../../../stores';
     import {
         getGroupDialogGroup,
+        isSoleGroupOwner,
         showGroupDialog,
         leaveGroupPrompt,
         setGroupVisibility,
@@ -651,6 +675,7 @@
     import GroupDialogPhotosTab from './GroupDialogPhotosTab.vue';
     import GroupDialogPostsTab from './GroupDialogPostsTab.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
+    import GroupTransferDialog from './GroupTransferDialog.vue';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
     import { showGroupMemberModerationDialog } from '../../../coordinators/groupCoordinator';
 
@@ -667,7 +692,7 @@
 
     const { currentUser } = storeToRefs(useUserStore());
     const { groupDialog, inviteGroupDialog } = storeToRefs(useGroupStore());
-    const { updateGroupPostSearch } = useGroupStore();
+    const { showEditGroupDialog, updateGroupPostSearch } = useGroupStore();
 
     const { showFullscreenImageDialog } = useGalleryStore();
     const instanceStore = useInstanceStore();
@@ -696,8 +721,15 @@
             }
             inviteGroupDialog.value.visible = true;
         },
+        showGroupTransferDialog,
         showGroupPostEditDialog,
         groupRequest
+    });
+    const groupTransferDialog = reactive({
+        visible: false,
+        groupId: '',
+        groupName: '',
+        ownerId: ''
     });
 
     const groupDialogTabCurrentName = ref('0');
@@ -898,6 +930,13 @@
             D.groupRef = args.ref;
         });
         D.visible = true;
+    }
+
+    function showGroupTransferDialog(groupId, groupName, ownerId) {
+        groupTransferDialog.groupId = groupId;
+        groupTransferDialog.groupName = groupName;
+        groupTransferDialog.ownerId = ownerId;
+        groupTransferDialog.visible = true;
     }
 
     function refreshGroupDialogTreeData() {

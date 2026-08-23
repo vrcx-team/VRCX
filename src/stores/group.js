@@ -45,6 +45,29 @@ export const useGroupStore = defineStore('Group', () => {
         galleries: {}
     });
 
+    const groupEditDialog = ref({
+        visible: false,
+        loading: false,
+        roleTemplatesLoading: false,
+        mode: 'create',
+        groupId: '',
+        name: '',
+        shortCode: '',
+        description: '',
+        joinState: 'open',
+        privacy: 'public',
+        roleTemplate: 'default',
+        roleTemplates: [],
+        languages: [],
+        rules: '',
+        links: [],
+        bannerId: '',
+        bannerUrl: '',
+        iconId: '',
+        iconUrl: '',
+        allowGroupJoinPrompt: false
+    });
+
     const currentUserGroups = reactive(new Map());
 
     const inviteGroupDialog = ref({
@@ -126,6 +149,7 @@ export const useGroupStore = defineStore('Group', () => {
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
             groupDialog.value.visible = false;
+            groupEditDialog.value.visible = false;
             inviteGroupDialog.value.visible = false;
             moderateGroupDialog.value.visible = false;
             groupMemberModeration.value.visible = false;
@@ -326,8 +350,81 @@ export const useGroupStore = defineStore('Group', () => {
         groupInstances.value = value;
     }
 
+    function resetGroupEditDialog() {
+        groupEditDialog.value = {
+            visible: false,
+            loading: false,
+            roleTemplatesLoading: false,
+            mode: 'create',
+            groupId: '',
+            name: '',
+            shortCode: '',
+            description: '',
+            joinState: 'open',
+            privacy: 'public',
+            roleTemplate: 'default',
+            roleTemplates: [],
+            languages: [],
+            rules: '',
+            links: [],
+            bannerId: '',
+            bannerUrl: '',
+            iconId: '',
+            iconUrl: '',
+            allowGroupJoinPrompt: false
+        };
+    }
+
+    async function showCreateGroupDialog() {
+        resetGroupEditDialog();
+        const D = groupEditDialog.value;
+        D.visible = true;
+        D.roleTemplatesLoading = true;
+        try {
+            const args = await groupRequest.getRoleTemplates();
+            D.roleTemplates = Array.isArray(args.json)
+                ? args.json
+                : Object.entries(args.json ?? {}).map(([value, template]) => ({
+                      value,
+                      ...(typeof template === 'object' && template !== null ? template : {})
+                  }));
+        } finally {
+            D.roleTemplatesLoading = false;
+        }
+    }
+
+    /**
+     * @param {object} group
+     */
+    function showEditGroupDialog(group) {
+        resetGroupEditDialog();
+        groupEditDialog.value = {
+            visible: true,
+            loading: false,
+            roleTemplatesLoading: false,
+            mode: 'edit',
+            groupId: group.id,
+            name: group.name,
+            shortCode: group.shortCode,
+            description: group.description,
+            joinState: group.joinState ?? 'open',
+            privacy: group.privacy ?? 'public',
+            roleTemplate: group.roleTemplate ?? 'default',
+            roleTemplates: Array.isArray(group.roleTemplates) ? [...group.roleTemplates] : [],
+            languages: Array.isArray(group.languages) ? [...group.languages] : [],
+            rules: group.rules,
+            links: Array.isArray(group.links) ? [...group.links] : [],
+            bannerId: group.bannerId,
+            bannerUrl: group.bannerUrl,
+            iconId: group.iconId,
+            iconUrl: group.iconUrl,
+            allowGroupJoinPrompt: !!group.allowGroupJoinPrompt
+        };
+    }
+
     return {
         groupDialog,
+        groupEditDialog,
         currentUserGroups,
         inviteGroupDialog,
         moderateGroupDialog,
@@ -347,6 +444,8 @@ export const useGroupStore = defineStore('Group', () => {
         setGroupMemberModerationVisible,
         setCurrentUserGroupsInit,
         setInGameGroupOrder,
-        setGroupInstances
+        setGroupInstances,
+        showCreateGroupDialog,
+        showEditGroupDialog
     };
 });

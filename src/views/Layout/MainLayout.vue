@@ -57,37 +57,23 @@
         </div>
 
         <!-- ## Dialogs ## -->
-        <MainDialogContainer></MainDialogContainer>
-
-        <InviteGroupDialog></InviteGroupDialog>
-
-        <FullscreenImagePreview></FullscreenImagePreview>
-
-        <LaunchDialog></LaunchDialog>
-
-        <LaunchOptionsDialog></LaunchOptionsDialog>
-
-        <FriendImportDialog></FriendImportDialog>
-
-        <WorldImportDialog></WorldImportDialog>
-
-        <AvatarImportDialog></AvatarImportDialog>
-
-        <ChooseFavoriteGroupDialog></ChooseFavoriteGroupDialog>
-
-        <VRChatConfigDialog></VRChatConfigDialog>
-
-        <PrimaryPasswordDialog></PrimaryPasswordDialog>
-
-        <SendBoopDialog></SendBoopDialog>
-
-        <GlobalToolsDialogs></GlobalToolsDialogs>
-
-        <ChangelogDialog></ChangelogDialog>
-
-        <WhatsNewDialog></WhatsNewDialog>
-
-        <SpotlightDialog></SpotlightDialog>
+        <MainDialogContainer />
+        <InviteGroupDialog />
+        <GroupEditDialog />
+        <FullscreenImagePreview />
+        <LaunchDialog />
+        <LaunchOptionsDialog />
+        <FriendImportDialog />
+        <WorldImportDialog />
+        <AvatarImportDialog />
+        <ChooseFavoriteGroupDialog />
+        <VRChatConfigDialog />
+        <PrimaryPasswordDialog />
+        <SendBoopDialog />
+        <GlobalToolsDialogs />
+        <ChangelogDialog />
+        <WhatsNewDialog />
+        <SpotlightDialog />
     </template>
 </template>
 
@@ -108,7 +94,7 @@
     import FriendImportDialog from '../Favorites/dialogs/FriendImportDialog.vue';
     import FullscreenImagePreview from '../../components/FullscreenImagePreview.vue';
     import GlobalToolsDialogs from '../Tools/components/GlobalToolsDialogs.vue';
-    import GroupMemberModerationDialog from '../../components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
+    import GroupEditDialog from '../../components/dialogs/GroupDialog/GroupEditDialog.vue';
     import InviteGroupDialog from '../../components/dialogs/InviteGroupDialog.vue';
     import LaunchDialog from '../../components/dialogs/LaunchDialog.vue';
     import LaunchOptionsDialog from '../Settings/dialogs/LaunchOptionsDialog.vue';

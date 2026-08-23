@@ -7,6 +7,14 @@ export type GetGroup = (params: {
     params: { groupId: string; includeRoles?: boolean };
 }>;
 
+export type CheckTransferGroup = (params: {
+    groupId: string;
+    transferTargetId: string;
+}) => Promise<{
+    json: CheckTransferGroupResponse;
+    params: { groupId: string; transferTargetId: string };
+}>;
+
 export type GetCalendars = (params: {
     date: string;
 }) => Promise<CalendarResponse>;
@@ -46,6 +54,16 @@ interface GetGroupResponse {
     rules: string;
     shortCode: string;
     tags: string[];
+}
+
+interface CheckTransferGroupResponse {
+    requirements: {
+        groupNotMonetized: boolean;
+        hasVRCPlus: boolean;
+        hasVerifiedEmail: boolean;
+        targetCanOwnMoreGroups: boolean;
+        targetIsGroupMember: boolean;
+    };
 }
 
 // Exported interfaces

@@ -1453,6 +1453,8 @@
                 "sort_by": "Sort by:",
                 "edit_mode": "Edit Mode",
                 "exit_edit_mode": "Exit Edit Mode",
+                "create_requires_vrc_plus": "Creating a group requires VRC+",
+                "create_limit_reached": "You have reached the owned group limit",
                 "hold_shift": "Hold shift to leave without confirmation",
                 "own_groups": "Own Groups",
                 "mutual_groups": "Mutual Groups",
@@ -1723,6 +1725,33 @@
                 "header": "JSON"
             }
         },
+        "group_edit": {
+            "create_header": "Create Group",
+            "edit_header": "Edit Group",
+            "name": "Name",
+            "short_code": "Short Code",
+            "description": "Description",
+            "join_state": "Join State",
+            "privacy": "Privacy",
+            "role_template": "Role Template",
+            "loading_role_templates": "Loading role templates...",
+            "language": "Languages",
+            "no_language": "No languages",
+            "rules": "Rules",
+            "links": "Links",
+            "add_link": "Add Link",
+            "allow_join_prompt": "Automatic Group Invites",
+            "allow_join_prompt_description": "Automatically send group invites to non-members who’ve spent over 5 minutes in this group’s instances or made a friend there. Only available to Open groups.",
+            "banner": "Banner",
+            "icon": "Icon",
+            "select_image": "Select Image",
+            "clear_image": "Clear Image",
+            "saving": "Saving...",
+            "save": "Save Changes",
+            "create": "Create Group",
+            "create_success": "Group created",
+            "edit_success": "Group updated"
+        },
         "group": {
             "tags": {
                 "verified": "Verified",
@@ -1761,6 +1790,8 @@
                 "visibility_hidden": "Visibility Hidden",
                 "create_post": "Create Post",
                 "moderation_tools": "Moderation Tools",
+                "transfer": "Transfer Group",
+                "delete": "Delete Group",
                 "leave": "Leave Group",
                 "block": "Block Group",
                 "unblock": "Unblock Group",
@@ -1825,6 +1856,26 @@
                 "representing": "Representing",
                 "manager_notes": "Manager Notes:",
                 "search": "Search"
+            },
+            "transfer": {
+                "header": "Transfer Group",
+                "description": "Search for a member to transfer ownership of {groupName} to.",
+                "search_placeholder": "Search group members",
+                "search_minimum": "Enter at least {count} characters to search.",
+                "no_results": "No matching members found.",
+                "cancel": "Cancel",
+                "submit": "Transfer Group",
+                "requirements_title": "Unable to Transfer Group",
+                "requirements_description": "{displayName} does not meet all requirements to own this group. Requirements not met: {requirements}.",
+                "requirements": {
+                    "group_not_monetized": "the group must not be monetized",
+                    "has_vrc_plus": "the member must have VRC+",
+                    "has_verified_email": "the member must have a verified email address",
+                    "can_own_more_groups": "the member must not exceed the maximum number of groups they can own",
+                    "is_group_member": "the user must be a member of the group"
+                },
+                "confirm_title": "Transfer Group Ownership",
+                "confirm_description": "Send a request to transfer ownership of {groupName} to {displayName}?"
             },
             "gallery": {
                 "header": "Photos"
@@ -2801,7 +2852,8 @@
             "join_request_sent": "Group join request sent",
             "visibility_updated": "Group visibility updated",
             "subscription_updated": "Group subscription updated",
-            "event_announcement_updated": "Group event announcements updated"
+            "event_announcement_updated": "Group event announcements updated",
+            "transfer_requested": "Group transfer request sent"
         },
         "invite": {
             "self_sent": "Self invite sent",

@@ -1,5 +1,5 @@
 <template>
-    <div class="rounded-xl bg-(--profile-card) overflow-hidden flex flex-col relative">
+    <div class="rounded-b-lg rounded-t-[15px] bg-(--profile-card) overflow-hidden flex flex-col relative">
         <ProfileEffect :profile-effect="userDialog.ref.profileEffect" class="z-1" />
         <div class="relative aspect-17/6">
             <div

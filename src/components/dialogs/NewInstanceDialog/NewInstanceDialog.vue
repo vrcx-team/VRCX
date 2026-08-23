@@ -89,7 +89,7 @@
                                             !hasGroupPermission(
                                                 newInstanceDialog.groupRef,
                                                 'group-instance-public-create'
-                                            ) || newInstanceDialog.groupRef.privacy === 'private'
+                                            ) || newInstanceDialog.groupRef.privacy === 'default'
                                         "
                                         >{{ t('dialog.new_instance.group_access_type_public') }}</ToggleGroupItem
                                     >
