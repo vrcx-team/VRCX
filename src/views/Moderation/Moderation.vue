@@ -24,6 +24,29 @@
                 v-model="playerModerationTable.filters[1].value"
                 :placeholder="t('view.moderation.search_placeholder')"
                 class="w-[150px] mx-2.5 flex-[0.4]" />
+            <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                    <Button
+                        class="rounded-full mr-2.5"
+                        variant="ghost"
+                        size="icon-sm"
+                        :disabled="playerModerationTable.loading">
+                        <Trash2 class="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" class="w-[220px]">
+                    <DropdownMenuLabel>
+                        {{ t('view.moderation.clear_type_placeholder') }}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                        v-for="item in moderationTypes"
+                        :key="item"
+                        @click="clearPlayerModerationsByType(item)">
+                        {{ t('view.moderation.filters.' + item) }}
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
             <TooltipWrapper side="bottom" :content="t('view.moderation.refresh_tooltip')">
                 <Button
                     class="rounded-full"
@@ -49,15 +72,23 @@
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { computed, ref, watch } from 'vue';
+    import {
+        DropdownMenu,
+        DropdownMenuContent,
+        DropdownMenuItem,
+        DropdownMenuLabel,
+        DropdownMenuSeparator,
+        DropdownMenuTrigger
+    } from '@/components/ui/dropdown-menu';
+    import { computed } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupField } from '@/components/ui/input-group';
-    import { RefreshCw } from 'lucide-vue-next';
+    import { RefreshCw, Trash2 } from 'lucide-vue-next';
     import { Spinner } from '@/components/ui/spinner';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useAppearanceSettingsStore, useModalStore, useModerationStore, useVrcxStore } from '../../stores';
+    import { useAppearanceSettingsStore, useModalStore, useModerationStore } from '../../stores';
     import { runRefreshPlayerModerationsFlow as refreshPlayerModerations } from '../../coordinators/moderationCoordinator';
     import { DataTableLayout } from '../../components/ui/data-table';
     import { createColumns } from './columns.jsx';
@@ -71,10 +102,7 @@
     const { playerModerationTable } = storeToRefs(useModerationStore());
     const { handlePlayerModerationDelete } = useModerationStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const vrcxStore = useVrcxStore();
     const modalStore = useModalStore();
-
-    const moderationRef = ref(null);
 
     async function init() {
         playerModerationTable.value.filters[0].value = JSON.parse(
@@ -102,6 +130,24 @@
             type: row.type
         });
         handlePlayerModerationDelete(args);
+    }
+
+    async function clearPlayerModerationsByType(type) {
+        const { ok } = await modalStore.confirm({
+            title: t('view.moderation.clear_confirm_title'),
+            description: t('view.moderation.clear_confirm_description', {
+                type
+            }),
+            confirmText: t('view.moderation.clear_all'),
+            destructive: true
+        });
+        if (!ok) {
+            return;
+        }
+        await playerModerationRequest.deletePlayerModerations({
+            type
+        });
+        await refreshPlayerModerations();
     }
 
     function deletePlayerModerationPrompt(row) {

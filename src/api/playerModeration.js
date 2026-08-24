@@ -46,6 +46,23 @@ const playerModerationReq = {
             };
             return args;
         });
+    },
+
+    /**
+     * @param {{ type: string }} params
+     * @returns { Promise<{json: any, params}> }
+     */
+    deletePlayerModerations(params) {
+        return request('auth/user/unplayermoderate', {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
     }
 };
 

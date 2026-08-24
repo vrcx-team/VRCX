@@ -435,6 +435,10 @@
             "filter_placeholder": "Filter",
             "search_placeholder": "Search",
             "refresh_tooltip": "Refresh",
+            "clear_type_placeholder": "Clear all moderations",
+            "clear_all": "Clear All",
+            "clear_confirm_title": "Clear Moderations",
+            "clear_confirm_description": "WARNING: This will remove all \"{type}\" moderations from your account and cannot be undone. Continue?",
             "filters": {
                 "block": "Block",
                 "unblock": "Unblock",
