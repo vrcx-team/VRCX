@@ -85,7 +85,7 @@ function connectWebSocket(token) {
     const socket = new WebSocket(`${AppDebug.websocketDomain}/?auth=${token}`);
     socket.onopen = () => {
         wsState.connected = true;
-        if (!webSocketClosedGracefully) {
+        if (!webSocketClosedGracefully && watchState.isLoggedIn && watchState.isFriendsLoaded) {
             console.warn('WebSocket reconnected after unexpected closure');
             webSocketClosedGracefully = true;
             notificationStore.refreshNotifications();
