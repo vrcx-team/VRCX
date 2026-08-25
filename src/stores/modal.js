@@ -14,7 +14,6 @@ import { useI18n } from 'vue-i18n';
  * @property {string} description
  * @property {string=} confirmText
  * @property {string=} cancelText
- * @property {string=} cancelShortcut
  * @property {boolean=} dismissible  // true: allow esc/outside, false: block
  * @property {boolean=} destructive  // true: use destructive variant for confirm button
  */
@@ -67,7 +66,6 @@ export const useModalStore = defineStore('Modal', () => {
     const alertDescription = ref('');
     const alertOkText = ref('');
     const alertCancelText = ref('');
-    const alertCancelShortcut = ref('');
     const alertDismissible = ref(true);
     const alertDestructive = ref(false);
 
@@ -166,13 +164,11 @@ export const useModalStore = defineStore('Modal', () => {
             alertOkText.value =
                 options.confirmText || t('dialog.alertdialog.ok');
             alertCancelText.value = '';
-            alertCancelShortcut.value = '';
         } else {
             alertOkText.value =
                 options.confirmText || t('dialog.alertdialog.confirm');
             alertCancelText.value =
                 options.cancelText || t('dialog.alertdialog.cancel');
-            alertCancelShortcut.value = options.cancelShortcut || '';
         }
 
         alertOpen.value = true;
@@ -388,7 +384,6 @@ export const useModalStore = defineStore('Modal', () => {
         alertDescription,
         alertOkText,
         alertCancelText,
-        alertCancelShortcut,
         alertDismissible,
         alertDestructive,
         promptOpen,

@@ -22,24 +22,11 @@
         alertDescription,
         alertOkText,
         alertCancelText,
-        alertCancelShortcut,
         alertDismissible,
         alertDestructive
     } = storeToRefs(modalStore);
 
     const actionRef = ref(null);
-
-    function onKeyDown(event) {
-        const shortcut = alertCancelShortcut.value;
-        if (!shortcut || !(event.metaKey || event.ctrlKey)) {
-            return;
-        }
-        if (event.key.toLowerCase() !== shortcut.toLowerCase()) {
-            return;
-        }
-        event.preventDefault();
-        modalStore.handleCancel();
-    }
 
     function onEscapeKeyDown(event) {
         if (!alertDismissible.value) {
@@ -77,7 +64,6 @@
 <template>
     <AlertDialog :open="alertOpen" @update:open="modalStore.setAlertOpen">
         <AlertDialogContent
-            @keydown="onKeyDown"
             @escapeKeyDown="onEscapeKeyDown"
             @pointerDownOutside="onPointerDownOutside"
             @interactOutside="onInteractOutside">
