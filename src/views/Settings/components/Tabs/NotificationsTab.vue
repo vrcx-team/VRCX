@@ -31,37 +31,37 @@
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.notifications.notifications.desktop_notifications.header')">
-            <SettingsItem :label="t('view.settings.notifications.notifications.desktop_notifications.when_to_display')">
-                <ToggleGroup
-                    type="single"
-                    required
-                    variant="outline"
-                    size="sm"
-                    :model-value="desktopToast"
-                    @update:model-value="setDesktopToast(String($event))">
-                    <ToggleGroupItem value="Never">{{
-                        t('view.settings.notifications.notifications.conditions.never')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Desktop Mode">{{
-                        t('view.settings.notifications.notifications.conditions.desktop')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Inside VR">{{
-                        t('view.settings.notifications.notifications.conditions.inside_vr')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Outside VR">{{
-                        t('view.settings.notifications.notifications.conditions.outside_vr')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Game Running">{{
-                        t('view.settings.notifications.notifications.conditions.inside_vrchat')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Game Closed">{{
-                        t('view.settings.notifications.notifications.conditions.outside_vrchat')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Always">{{
-                        t('view.settings.notifications.notifications.conditions.always')
-                    }}</ToggleGroupItem>
-                </ToggleGroup>
-            </SettingsItem>
+            <SettingsItem
+                :label="t('view.settings.notifications.notifications.desktop_notifications.when_to_display')" />
+            <ToggleGroup
+                type="single"
+                required
+                variant="outline"
+                size="sm"
+                :model-value="desktopToast"
+                @update:model-value="setDesktopToast(String($event))">
+                <ToggleGroupItem value="Never">{{
+                    t('view.settings.notifications.notifications.conditions.never')
+                }}</ToggleGroupItem>
+                <ToggleGroupItem value="Desktop Mode">{{
+                    t('view.settings.notifications.notifications.conditions.desktop')
+                }}</ToggleGroupItem>
+                <ToggleGroupItem value="Inside VR">{{
+                    t('view.settings.notifications.notifications.conditions.inside_vr')
+                }}</ToggleGroupItem>
+                <ToggleGroupItem value="Outside VR">{{
+                    t('view.settings.notifications.notifications.conditions.outside_vr')
+                }}</ToggleGroupItem>
+                <ToggleGroupItem value="Game Running">{{
+                    t('view.settings.notifications.notifications.conditions.inside_vrchat')
+                }}</ToggleGroupItem>
+                <ToggleGroupItem value="Game Closed">{{
+                    t('view.settings.notifications.notifications.conditions.outside_vrchat')
+                }}</ToggleGroupItem>
+                <ToggleGroupItem value="Always">{{
+                    t('view.settings.notifications.notifications.conditions.always')
+                }}</ToggleGroupItem>
+            </ToggleGroup>
 
             <SettingsItem
                 :label="

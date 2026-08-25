@@ -1,34 +1,36 @@
 <template>
-    <div class="x-container flex flex-col overflow-hidden!">
-        <div class="shrink-0 p-1.5">
-            <span class="text-lg font-semibold text-foreground">{{ t('view.settings.header') }}</span>
+    <div class="x-container flex w-full flex-col">
+        <div class="mx-auto flex w-full max-w-2xl flex-col">
+            <div class="shrink-0 p-1.5">
+                <span class="text-lg font-semibold text-foreground">{{ t('view.settings.header') }}</span>
+            </div>
+            <TabsUnderline default-value="system" :items="settingsTabs" :unmount-on-hide="false" fill>
+                <template #system>
+                    <SystemTab />
+                </template>
+                <template #interface>
+                    <InterfaceTab />
+                </template>
+                <template #social>
+                    <SocialTab />
+                </template>
+                <template #notifications>
+                    <NotificationsTab />
+                </template>
+                <template #vr>
+                    <VrTab />
+                </template>
+                <template #media>
+                    <MediaTab />
+                </template>
+                <template #integrations>
+                    <IntegrationsTab />
+                </template>
+                <template #advanced>
+                    <AdvancedTab />
+                </template>
+            </TabsUnderline>
         </div>
-        <TabsUnderline default-value="system" :items="settingsTabs" :unmount-on-hide="false" fill>
-            <template #system>
-                <SystemTab />
-            </template>
-            <template #interface>
-                <InterfaceTab />
-            </template>
-            <template #social>
-                <SocialTab />
-            </template>
-            <template #notifications>
-                <NotificationsTab />
-            </template>
-            <template #vr>
-                <VrTab />
-            </template>
-            <template #media>
-                <MediaTab />
-            </template>
-            <template #integrations>
-                <IntegrationsTab />
-            </template>
-            <template #advanced>
-                <AdvancedTab />
-            </template>
-        </TabsUnderline>
     </div>
 </template>
 
