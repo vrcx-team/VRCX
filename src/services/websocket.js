@@ -106,8 +106,8 @@ function connectWebSocket(token) {
         } catch (err) {
             console.error('Error closing WebSocket:', err);
         }
-        webSocketClosedGracefully = code === 1000;
-        if (isCurrentSocket || AppDebug.debugWebSocket) {
+        webSocketClosedGracefully = code === 1000 || code === 1001; // Normal Closure or Going Away
+        if (!webSocketClosedGracefully || AppDebug.debugWebSocket) {
             console.log('WebSocket closed', { code, reason });
         }
         workerTimers.setTimeout(() => {
@@ -174,7 +174,9 @@ export function closeWebSocket() {
     if (socket === null) {
         return;
     }
+    socket.onclose = null;
     webSocket = null;
+    wsState.connected = false;
     try {
         socket.close();
     } catch (err) {
