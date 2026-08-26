@@ -1457,7 +1457,7 @@
                 "capacity": "ความจุ",
                 "heat": "ความร้อนแรง",
                 "popularity": "ความนิยม",
-                "created_at": "สร้างเมื่อ",
+                "created": "สร้างเมื่อ",
                 "last_updated": "อัปเดตล่าสุด",
                 "publication_date": "วันที่เผยแพร่",
                 "labs_publication_date": "วันที่เผยแพร่ในห้องทดลองชุมชน",

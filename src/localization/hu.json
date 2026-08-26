@@ -1599,7 +1599,7 @@
                 "capacity": "Kapacitás",
                 "heat": "Népszerűség (heat)",
                 "popularity": "Népszerűség",
-                "created_at": "Létrehozva",
+                "created": "Létrehozva",
                 "last_updated": "Utoljára frissítve",
                 "publication_date": "Közzététel dátuma",
                 "labs_publication_date": "Labor közzététel dátuma",

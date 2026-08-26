@@ -1015,7 +1015,7 @@
                 "capacity": "Pojemność",
                 "heat": "Zainteresowanie",
                 "popularity": "Popularność",
-                "created_at": "Data utworzenia",
+                "created": "Data utworzenia",
                 "last_updated": "Ostatnia aktualizacja",
                 "publication_date": "Data publikacji",
                 "labs_publication_date": "Data publikacji w Laboratoriach",

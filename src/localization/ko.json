@@ -656,7 +656,7 @@
                 "capacity": "인원 제한",
                 "heat": "히트",
                 "popularity": "인기",
-                "created_at": "최초 업로드",
+                "created": "최초 업로드",
                 "last_updated": "마지막 업데이트",
                 "publication_date": "Publication Date",
                 "labs_publication_date": "Labs Publication Date",

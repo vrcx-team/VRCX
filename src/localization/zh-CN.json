@@ -435,6 +435,10 @@
             "filter_placeholder": "筛选管理操作",
             "search_placeholder": "搜索",
             "refresh_tooltip": "刷新",
+            "clear_type_placeholder": "清除全部管理操作",
+            "clear_all": "清除全部",
+            "clear_confirm_title": "清除管理操作",
+            "clear_confirm_description": "警告：这将会从你的账号中删除所有“{type}”管理操作且无法撤销。你确定吗？",
             "filters": {
                 "block": "屏蔽",
                 "unblock": "取消屏蔽",
@@ -905,6 +909,8 @@
                     "theme_mode_pink": "粉色",
                     "theme_mode_material3": "Material 3",
                     "zoom": "界面缩放",
+                    "profile_icons": "个人主页头像",
+                    "profile_icons_description": "在可用时使用个人主页头像。",
                     "vrcplus_profile_icons": "VRC+ 个人资料图标",
                     "vrcplus_profile_icons_description": "当可用时显示 VRC+ 专属个人资料图标。",
                     "vrc_profile_themes": "VRChat 个人资料主题",
@@ -936,7 +942,10 @@
                     "vrc_profile_backgrounds": "VRChat 个人主页背景",
                     "vrc_profile_backgrounds_description": "在玩家信息中显示个人主页背景，例如渐变或 VRC+ 背景。",
                     "vrc_profile_backgrounds_opacity": "个人主页背景不透明度",
-                    "vrc_profile_backgrounds_opacity_description": "较高的值会影响文本的可读性。"
+                    "vrc_profile_backgrounds_opacity_description": "较高的值会影响文本的可读性。",
+                    "vrc_profile_cosmetics": "个人主页外观",
+                    "cosmetics_description": "显示头像边框和个人主页特效",
+                    "show_cosmetics": "显示外观"
                 },
                 "display": {
                     "header": "显示设置"
@@ -1451,6 +1460,8 @@
                 "sort_by": "排序方式：",
                 "edit_mode": "编辑模式",
                 "exit_edit_mode": "退出编辑模式",
+                "create_requires_vrc_plus": "创建群组需要 VRC+",
+                "create_limit_reached": "你已达到最大群组拥有数",
                 "hold_shift": "按住Shift键可在不确认的情况下退出",
                 "own_groups": "创建的群组",
                 "mutual_groups": "共同群组",
@@ -1620,13 +1631,14 @@
                 "copy_name": "复制名称",
                 "youtube_preview": "YouTube 预览链接",
                 "author_tags": "作者添加的标签",
+                "more_info": "更多信息",
                 "players": "地图内总在线人数",
                 "favorites": "收藏人数",
                 "visits": "总游玩人次",
                 "capacity": "推荐人数",
                 "heat": "热度",
                 "popularity": "知名度",
-                "created_at": "创建时间",
+                "created": "创建时间",
                 "last_updated": "最后更新时间",
                 "publication_date": "正式公开于",
                 "labs_publication_date": "进入实验室的日期",
@@ -1635,7 +1647,8 @@
                 "platform": "支持的平台",
                 "last_visited": "最后游玩时间",
                 "visit_count": "游玩次数",
-                "time_spent": "总停留时长"
+                "time_spent": "总停留时长",
+                "description": "描述"
             },
             "json": {
                 "header": "原始 JSON 信息"
@@ -1719,6 +1732,33 @@
                 "header": "原始 JSON 信息"
             }
         },
+        "group_edit": {
+            "create_header": "创建群组",
+            "edit_header": "编辑群组",
+            "name": "名称",
+            "short_code": "群组代码",
+            "description": "描述",
+            "join_state": "加入状态",
+            "privacy": "私密",
+            "role_template": "身份组模板",
+            "loading_role_templates": "正在加载身份组模板...",
+            "language": "语言",
+            "no_language": "无语言",
+            "rules": "规则",
+            "links": "链接",
+            "add_link": "添加链接",
+            "allow_join_prompt": "自动群组邀请",
+            "allow_join_prompt_description": "自动向在此群组房间中停留超过 5 分钟或在其中添加好友的非成员玩家发送邀请。仅适用于公开群组。",
+            "banner": "横幅",
+            "icon": "头像",
+            "select_image": "选择图片",
+            "clear_image": "清除图片",
+            "saving": "保存中...",
+            "save": "保存更改",
+            "create": "创建群组",
+            "create_success": "群组已创建",
+            "edit_success": "群组已更新"
+        },
         "group": {
             "tags": {
                 "verified": "已认证",
@@ -1757,6 +1797,8 @@
                 "visibility_hidden": "可见性：隐藏",
                 "create_post": "创建群组帖子",
                 "moderation_tools": "成员管理",
+                "transfer": "转让群组",
+                "delete": "删除群组",
                 "leave": "离开群组",
                 "block": "屏蔽该群组",
                 "unblock": "取消屏蔽该群组",
@@ -1822,6 +1864,26 @@
                 "manager_notes": "群组内备注：",
                 "search": "搜索"
             },
+            "transfer": {
+                "header": "转让群组",
+                "description": "搜索将接受 {groupName} 的所有权移交的成员。",
+                "search_placeholder": "搜索群组成员",
+                "search_minimum": "至少输入 {count} 个字符进行搜索。",
+                "no_results": "未找到匹配的成员。",
+                "cancel": "取消",
+                "submit": "转让群组",
+                "requirements_title": "无法转移群组",
+                "requirements_description": "{displayName} 未满足拥有此群组的所有要求。未满足的要求：{requirements}。",
+                "requirements": {
+                    "group_not_monetized": "该群组不能被商业化",
+                    "has_vrc_plus": "该成员必须拥有 VRC+",
+                    "has_verified_email": "该成员必须有一个已验证的电子邮箱地址",
+                    "can_own_more_groups": "该成员不能超出最大群组拥有数",
+                    "is_group_member": "该用户必须是该组成员"
+                },
+                "confirm_title": "转让群组所有权",
+                "confirm_description": "确定要发送将 {groupName} 的所有权移交至 {displayName} 的请求吗？"
+            },
             "gallery": {
                 "header": "相册"
             },
@@ -1867,7 +1929,9 @@
             "banner_type_color": "颜色",
             "banner_type_avatar_banner": "模型图片",
             "banner_type_custom_image": "自定义图片",
+            "button": "按钮",
             "icon": "头像",
+            "subtext": "次要文本",
             "profile_theme": "个人主页主题",
             "theme_name_placeholder": "主题名称",
             "create_theme": "创建主题",
@@ -1877,7 +1941,11 @@
             "profile_background_type_image": "图片",
             "profile_background_type_gradient": "渐变",
             "gradient_top": "渐变顶部",
-            "gradient_bottom": "渐变底部"
+            "gradient_bottom": "渐变底部",
+            "nameplate_effect": "名牌特效",
+            "profile_effect": "个人主页特效",
+            "icon_frame": "头像边框",
+            "select_effect": "选择一个特效"
         },
         "new_instance": {
             "header": "新房间",
@@ -2791,7 +2859,8 @@
             "join_request_sent": "已发送加入申请",
             "visibility_updated": "群组可见性已更新",
             "subscription_updated": "群组通知订阅状态已更新",
-            "event_announcement_updated": "群组活动公告已更新"
+            "event_announcement_updated": "群组活动公告已更新",
+            "transfer_requested": "已发送群组转让请求"
         },
         "invite": {
             "self_sent": "已发送自我邀请",
