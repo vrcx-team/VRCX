@@ -1,6 +1,6 @@
 import { toast } from 'vue-sonner';
 
-import { useModalStore, useSearchStore } from '../../stores';
+import { useExternalLinkStore, useSearchStore } from '../../stores';
 import { escapeTag } from './base/string';
 import { i18n } from '../../plugins/i18n';
 
@@ -56,24 +56,8 @@ function openExternalLink(link) {
         return;
     }
 
-    const modalStore = useModalStore();
-    modalStore
-        .confirm({
-            description: `${link}`,
-            title: 'Open External Link',
-            confirmText: 'Open',
-            cancelText: 'Copy'
-        })
-        .then(({ ok, reason }) => {
-            if (reason === 'cancel') {
-                copyToClipboard(link, 'Link copied to clipboard!');
-                return;
-            }
-            if (ok) {
-                AppApi.OpenLink(link);
-                return;
-            }
-        });
+    const externalLinkStore = useExternalLinkStore();
+    externalLinkStore.showExternalLinkDialog(link);
 }
 
 function openDiscordProfile(discordId) {
