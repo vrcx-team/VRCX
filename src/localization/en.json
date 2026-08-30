@@ -753,6 +753,9 @@
                 },
                 "favorites": {
                     "header": "Favorites"
+                },
+                "friend_requests": {
+                    "header": "Friend Reqeusts"
                 }
             },
             "vr": {
@@ -873,6 +876,10 @@
                 },
                 "contributors": {
                     "header": "Contributors"
+                },
+                "friend_requests": {
+                    "header": "Auto-decline Spam Friend Requests",
+                    "header_tooltip": "Auto-decline requests from users you haven't met (never been in the same instance)."
                 }
             },
             "appearance": {
