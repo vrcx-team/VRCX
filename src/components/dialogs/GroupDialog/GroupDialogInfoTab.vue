@@ -8,7 +8,10 @@
         </div>
         <div v-for="room in groupDialog.instances" :key="room.tag" class="flex flex-col gap-2 mb-4">
             <div class="flex flex-wrap gap-2 whitespace-nowrap overflow-hidden text-ellipsis">
-                <Location :location="room.tag" class="text-sm text-muted-foreground rounded-full border py-0.5 px-2" />
+                <Location
+                    :location="room.tag"
+                    exclude-group-name
+                    class="text-sm text-muted-foreground rounded-full border py-0.5 px-2" />
                 <InstanceActionBar
                     class="text-sm"
                     :location="room.tag"

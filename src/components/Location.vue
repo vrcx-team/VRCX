@@ -30,12 +30,9 @@
                                 <span class="min-w-0 flex-1 truncate">
                                     <span>{{ text }}</span>
                                     <span v-if="showInstanceIdInLocation && instanceName" class="ml-1">{{
-                                        ` · #${instanceName}`
+                                        `· #${instanceName}`
                                     }}</span>
-                                    <span
-                                        v-if="groupName"
-                                        class="ml-0.5 cursor-pointer"
-                                        @click.stop="handleShowGroupDialog">
+                                    <span v-if="groupName" class="cursor-pointer" @click.stop="handleShowGroupDialog">
                                         ({{ groupName }})
                                     </span>
                                 </span>
@@ -129,6 +126,10 @@
             type: String,
             default: ''
         },
+        excludeGroupName: {
+            type: Boolean,
+            default: false
+        },
         link: {
             type: Boolean,
             default: true
@@ -176,7 +177,9 @@
         isDisposed = true;
     });
 
-    watch(() => [props.location, props.traveling, props.hint, props.grouphint], parse, { immediate: true });
+    watch(() => [props.location, props.traveling, props.hint, props.grouphint, props.excludeGroupName], parse, {
+        immediate: true
+    });
 
     watch(
         () => lastInstanceApplied.value,
@@ -265,6 +268,9 @@
      * @param instanceId
      */
     function updateGroupName(L, instanceId) {
+        if (props.excludeGroupName) {
+            return;
+        }
         if (props.grouphint) {
             groupName.value = props.grouphint;
             return;
