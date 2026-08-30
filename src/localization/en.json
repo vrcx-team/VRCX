@@ -33,14 +33,14 @@
             "month": "month",
             "day": "day",
             "hour": "hour",
-            "minute": "minute",
-            "second": "second",
+            "min": "min",
+            "sec": "sec",
             "years": "years",
             "months": "months",
             "days": "days",
             "hours": "hours",
-            "minutes": "minutes",
-            "seconds": "seconds"
+            "mins": "mins",
+            "secs": "secs"
         },
         "days": {
             "sunday": "Sunday",

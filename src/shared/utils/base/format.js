@@ -11,14 +11,14 @@ const TIME_UNIT_KEYS = {
     month: 'common.time_units.month',
     day: 'common.time_units.day',
     hour: 'common.time_units.hour',
-    minute: 'common.time_units.minute',
-    second: 'common.time_units.second',
+    min: 'common.time_units.min',
+    sec: 'common.time_units.sec',
     years: 'common.time_units.years',
     months: 'common.time_units.months',
     days: 'common.time_units.days',
     hours: 'common.time_units.hours',
-    minutes: 'common.time_units.minutes',
-    seconds: 'common.time_units.seconds'
+    mins: 'common.time_units.mins',
+    secs: 'common.time_units.secs'
 };
 
 function getTimeUnitLabel(unit) {
@@ -28,6 +28,10 @@ function getTimeUnitLabel(unit) {
     }
     const t = i18n?.global?.t;
     return typeof t === 'function' ? t(key) : unit;
+}
+
+function formatTimeUnit(value, unit) {
+    return `${value} ${getTimeUnitLabel(value === 1 ? unit : `${unit}s`)}`;
 }
 
 /**
@@ -76,7 +80,7 @@ function timeAgo(datetime) {
     }
     let n;
     if (typeof datetime === 'number') {
-        n = Math.floor((Date.now() - datetime) / 1000);
+        n = Date.now() - datetime;
     } else {
         n = Date.now() - Date.parse(datetime);
     }
@@ -91,29 +95,49 @@ function timeAgo(datetime) {
         return '—';
     }
     if (n >= 31536000) {
-        const value = Math.floor(n / 31536000);
-        return `${value} ${getTimeUnitLabel(value === 1 ? 'year' : 'years')}`;
+        const years = Math.floor(n / 31536000);
+        const months = Math.floor((n % 31536000) / 2592000);
+        const result = [formatTimeUnit(years, 'year')];
+        if (months > 0) {
+            result.push(formatTimeUnit(months, 'month'));
+        }
+        return result.join(', ');
     }
     if (n >= 2592000) {
-        const value = Math.floor(n / 2592000);
-        return `${value} ${getTimeUnitLabel(value === 1 ? 'month' : 'months')}`;
+        const months = Math.floor(n / 2592000);
+        const days = Math.floor((n % 2592000) / 86400);
+        const result = [formatTimeUnit(months, 'month')];
+        if (days > 0) {
+            result.push(formatTimeUnit(days, 'day'));
+        }
+        return result.join(', ');
     }
     if (n >= 86400) {
-        const value = Math.floor(n / 86400);
-        return `${value} ${getTimeUnitLabel(value === 1 ? 'day' : 'days')}`;
+        const days = Math.floor(n / 86400);
+        const hours = Math.floor((n % 86400) / 3600);
+        const result = [formatTimeUnit(days, 'day')];
+        if (hours > 0) {
+            result.push(formatTimeUnit(hours, 'hour'));
+        }
+        return result.join(', ');
     }
     if (n >= 3600) {
-        const value = Math.floor(n / 3600);
-        return `${value} ${getTimeUnitLabel(value === 1 ? 'hour' : 'hours')}`;
+        const hours = Math.floor(n / 3600);
+        const minutes = Math.floor((n % 3600) / 60);
+        const result = [formatTimeUnit(hours, 'hour')];
+        if (minutes > 0) {
+            result.push(formatTimeUnit(minutes, 'min'));
+        }
+        return result.join(', ');
     }
     if (n >= 60) {
         const value = Math.floor(n / 60);
-        return `${value} ${getTimeUnitLabel(value === 1 ? 'minute' : 'minutes')}`;
+        return `${value} ${getTimeUnitLabel(value === 1 ? 'min' : 'mins')}`;
     }
     if (n < 60) {
         // round to 5 seconds
         n = Math.floor((n + 2.5) / 5) * 5;
-        return `${n} ${getTimeUnitLabel(n === 1 ? 'second' : 'seconds')}`;
+        return `${n} ${getTimeUnitLabel(n === 1 ? 'sec' : 'secs')}`;
     }
 }
 
@@ -161,21 +185,13 @@ function formatFileSize(bytes) {
  */
 function convertYoutubeTime(duration) {
     let a = duration.match(/\d+/g);
-    if (
-        duration.indexOf('M') >= 0 &&
-        duration.indexOf('H') === -1 &&
-        duration.indexOf('S') === -1
-    ) {
+    if (duration.indexOf('M') >= 0 && duration.indexOf('H') === -1 && duration.indexOf('S') === -1) {
         a = [0, a[0], 0];
     }
     if (duration.indexOf('H') >= 0 && duration.indexOf('M') === -1) {
         a = [a[0], 0, a[1]];
     }
-    if (
-        duration.indexOf('H') >= 0 &&
-        duration.indexOf('M') === -1 &&
-        duration.indexOf('S') === -1
-    ) {
+    if (duration.indexOf('H') >= 0 && duration.indexOf('M') === -1 && duration.indexOf('S') === -1) {
         a = [a[0], 0, 0];
     }
     let length = 0;
@@ -194,10 +210,4 @@ function convertYoutubeTime(duration) {
     return length;
 }
 
-export {
-    timeToText,
-    timeAgo,
-    formatSeconds,
-    formatFileSize,
-    convertYoutubeTime
-};
+export { timeToText, timeAgo, formatSeconds, formatFileSize, convertYoutubeTime };

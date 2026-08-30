@@ -179,12 +179,17 @@
                         </span>
                     </div>
                 </TooltipWrapper>
-                <div class="flex items-start justify-between gap-2 text-xs">
-                    <span class="text-muted-foreground shrink-0">{{ t('dialog.world.info.time_spent') }}</span>
-                    <span class="text-right text-muted-foreground">
-                        {{ worldDialog.timeSpent === 0 ? '—' : timeToText(worldDialog.timeSpent) }}
-                    </span>
-                </div>
+                <TooltipWrapper
+                    side="top"
+                    :content="timeToText(worldDialog.timeSpent, true)"
+                    :disabled="!worldDialog.lastVisit">
+                    <div class="flex items-start justify-between gap-2 text-xs">
+                        <span class="text-muted-foreground shrink-0">{{ t('dialog.world.info.time_spent') }}</span>
+                        <span class="text-right text-muted-foreground">
+                            {{ timeAgo(Date.now() - worldDialog.timeSpent) }}
+                        </span>
+                    </div>
+                </TooltipWrapper>
             </div>
         </div>
     </div>

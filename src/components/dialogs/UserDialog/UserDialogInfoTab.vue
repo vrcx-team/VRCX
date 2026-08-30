@@ -247,7 +247,7 @@
                             :content="formatDateFilter(userOnlineForTimestamp(userDialog), 'long')"
                             :disabled="!userOnlineForTimestamp(userDialog)">
                             <template #content>
-                                <span>{{ formatDateFilter(userOnlineForTimestamp(userDialog), 'short') }}</span>
+                                <span>{{ formatDateFilter(userOnlineForTimestamp(userDialog), 'long') }}</span>
                             </template>
                             <div class="flex justify-between items-start gap-2 text-xs">
                                 <span class="text-muted-foreground shrink-0">
@@ -304,14 +304,14 @@
                             </TooltipWrapper>
                             <TooltipWrapper
                                 side="top"
-                                :content="timeToText(userDialog.timeSpent)"
+                                :content="timeToText(userDialog.timeSpent, true)"
                                 :disabled="!userDialog.timeSpent">
                                 <div class="flex justify-between items-start gap-2 text-xs">
                                     <span class="text-muted-foreground shrink-0">{{
                                         t('dialog.user.info.time_together')
                                     }}</span>
                                     <span class="text-right text-muted-foreground">{{
-                                        timeAgo(Date.now() - userDialog.timeSpent * 1000)
+                                        timeAgo(Date.now() - userDialog.timeSpent)
                                     }}</span>
                                 </div>
                             </TooltipWrapper>
@@ -337,7 +337,7 @@
                                         t('dialog.user.info.play_time')
                                     }}</span>
                                     <span class="text-right text-muted-foreground">{{
-                                        timeAgo(Date.now() - userDialog.timeSpent * 1000)
+                                        timeAgo(Date.now() - userDialog.timeSpent)
                                     }}</span>
                                 </div>
                             </TooltipWrapper>
@@ -374,12 +374,19 @@
                             </div>
                         </TooltipWrapper>
 
-                        <div class="flex justify-between items-start gap-2 text-xs">
-                            <span class="text-muted-foreground shrink-0">{{ t('dialog.user.info.date_joined') }}</span>
-                            <span
-                                class="text-right text-muted-foreground"
-                                v-text="formatDateFilter(userDialog.ref.date_joined, 'date')"></span>
-                        </div>
+                        <TooltipWrapper
+                            side="top"
+                            :content="formatDateFilter(userDialog.ref.date_joined, 'date')"
+                            :disabled="!userDialog.ref.date_joined">
+                            <div class="flex justify-between items-start gap-2 text-xs">
+                                <span class="text-muted-foreground shrink-0">{{
+                                    t('dialog.user.info.date_joined')
+                                }}</span>
+                                <span
+                                    class="text-right text-muted-foreground"
+                                    v-text="timeAgo(userDialog.ref.date_joined)"></span>
+                            </div>
+                        </TooltipWrapper>
 
                         <template v-if="currentUser.id === userDialog.id">
                             <TooltipWrapper side="top">
