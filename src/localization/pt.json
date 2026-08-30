@@ -1529,7 +1529,7 @@
                 "capacity": "Capacidade",
                 "heat": "Calor",
                 "popularity": "Popularidade",
-                "created_at": "Criado em",
+                "created": "Criado em",
                 "last_updated": "Última Atualização",
                 "publication_date": "Data de Publicação",
                 "labs_publication_date": "Data de Publicação nos Labs",

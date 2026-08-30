@@ -824,7 +824,7 @@
                 "capacity": "Capacidad",
                 "heat": "Calor",
                 "popularity": "Popularidad",
-                "created_at": "Creado el",
+                "created": "Creado el",
                 "last_updated": "Última Actualización",
                 "publication_date": "Fecha de Publicación",
                 "labs_publication_date": "Fecha de Publicación en Laboratorios",

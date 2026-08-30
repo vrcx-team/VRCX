@@ -748,7 +748,7 @@
                 "capacity": "Вместимость",
                 "heat": "Нагрев",
                 "popularity": "Популярность",
-                "created_at": "Дата и время создания",
+                "created": "Дата и время создания",
                 "last_updated": "Последнее обновление",
                 "publication_date": "Дата публикации",
                 "labs_publication_date": "Дата публикации в Labs",

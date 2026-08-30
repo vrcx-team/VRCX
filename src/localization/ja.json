@@ -1619,7 +1619,7 @@
                 "capacity": "最大人数",
                 "heat": "ヒート",
                 "popularity": "人気度",
-                "created_at": "作成日時",
+                "created": "作成日時",
                 "last_updated": "最終更新日時",
                 "publication_date": "公開日時",
                 "labs_publication_date": "ラボへの公開日時",

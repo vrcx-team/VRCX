@@ -897,6 +897,8 @@
                     "theme_mode_pink": "粉色",
                     "theme_mode_material3": "Material 3",
                     "zoom": "介面縮放",
+                    "profile_icons": "個人檔案圖示",
+                    "profile_icons_description": "在可用時使用個人檔案圖示。",
                     "vrcplus_profile_icons": "VRC+ 個人檔案圖示",
                     "vrcplus_profile_icons_description": "在可用的情況下，使用 VRC+ 獨家設定檔圖示。",
                     "vrc_profile_themes": "VRChat 個人檔案主題",
@@ -928,7 +930,10 @@
                     "vrc_profile_backgrounds": "VRChat 個人檔案背景",
                     "vrc_profile_backgrounds_description": "在玩家資訊中顯示個人檔案背景，例如漸變或 VRC+ 背景。",
                     "vrc_profile_backgrounds_opacity": "個人檔案背景不透明度",
-                    "vrc_profile_backgrounds_opacity_description": "較高的值會影響文字的可讀性。"
+                    "vrc_profile_backgrounds_opacity_description": "較高的值會影響文字的可讀性。",
+                    "vrc_profile_cosmetics": "個人檔案外觀",
+                    "cosmetics_description": "顯示頭像邊框和個人檔案特效",
+                    "show_cosmetics": "顯示外觀"
                 },
                 "display": {
                     "header": "顯示"
@@ -1613,7 +1618,7 @@
                 "capacity": "最大用戶上限",
                 "heat": "熱度",
                 "popularity": "熱門度",
-                "created_at": "創建時間",
+                "created": "創建時間",
                 "last_updated": "最後更新",
                 "publication_date": "發佈日期",
                 "labs_publication_date": "實驗室發佈日期",
@@ -1852,7 +1857,9 @@
             "banner_type_color": "顏色",
             "banner_type_avatar_banner": "模型圖片",
             "banner_type_custom_image": "自訂圖片",
+            "button": "按鈕",
             "icon": "頭像",
+            "subtext": "次要文字",
             "profile_theme": "個人檔案主題",
             "theme_name_placeholder": "主題名稱",
             "create_theme": "創建主題",
@@ -1862,7 +1869,11 @@
             "profile_background_type_image": "圖片",
             "profile_background_type_gradient": "漸變",
             "gradient_top": "漸變頂部",
-            "gradient_bottom": "漸變底部"
+            "gradient_bottom": "漸變底部",
+            "nameplate_effect": "名牌特效",
+            "profile_effect": "個人檔案特效",
+            "icon_frame": "頭像邊框",
+            "select_effect": "選擇一個特效"
         },
         "new_instance": {
             "header": "新房間",

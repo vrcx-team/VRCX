@@ -645,7 +645,7 @@
                 "capacity": "Sức chứa",
                 "heat": "Độ nóng",
                 "popularity": "Độ nổi tiếng",
-                "created_at": "Tạo lúc",
+                "created": "Tạo lúc",
                 "last_updated": "Lần cập nhật cuối",
                 "publication_date": "Publication Date",
                 "labs_publication_date": "Labs Publication Date",

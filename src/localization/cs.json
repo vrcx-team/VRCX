@@ -715,7 +715,7 @@
                 "capacity": "Capacity",
                 "heat": "Heat",
                 "popularity": "Popularity",
-                "created_at": "Created At",
+                "created": "Created",
                 "last_updated": "Last Updated",
                 "publication_date": "Publication Date",
                 "labs_publication_date": "Labs Publication Date",
