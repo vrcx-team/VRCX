@@ -405,11 +405,16 @@ export const useNotificationStore = defineStore('Notification', () => {
             id: ref.senderUserId,
             displayName: ref.senderUsername
         });
-
         if (Number(joinInfo.joinCount) !== 0) {
             return;
         }
 
+        const text = `Auto declined friend request from ${ref.senderUsername}`;
+        if (AppDebug.errorNoty) {
+            toast.dismiss(AppDebug.errorNoty);
+        }
+        AppDebug.errorNoty = toast.info(text);
+        console.log(text);
         await notificationRequest.hideNotification({
             notificationId: ref.id
         });
