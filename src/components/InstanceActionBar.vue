@@ -158,19 +158,25 @@
             </span>
 
             <template v-if="hasInstanceMetadata">
-                <TooltipWrapper side="top" :content="t('dialog.user.info.instance_queue')">
-                    <span v-if="instance?.queueSize" class="flex items-center gap-0.5">
+                <TooltipWrapper v-if="instance?.queueSize" side="top" :content="t('dialog.user.info.instance_queue')">
+                    <span class="flex items-center gap-0.5">
                         <SquareStack class="h-4 w-4" />
                         {{ instance.queueSize }}
                     </span>
                 </TooltipWrapper>
-                <TooltipWrapper side="top" :content="t('dialog.user.info.instance_age_gated')">
-                    <span v-if="instanceInfoState.isAgeGated" class="flex items-center gap-0.5 text-red-500">
+                <TooltipWrapper
+                    v-if="instanceInfoState.isAgeGated"
+                    side="top"
+                    :content="t('dialog.user.info.instance_age_gated')">
+                    <span class="flex items-center gap-0.5 text-red-500">
                         <IdCard class="h-4 w-4" />
                     </span>
                 </TooltipWrapper>
-                <TooltipWrapper side="top" :content="t('dialog.user.info.instance_role_restricted')">
-                    <span v-if="instanceInfoState.isRoleRestricted" class="flex items-center gap-0.5 text-red-500">
+                <TooltipWrapper
+                    v-if="instanceInfoState.isRoleRestricted"
+                    side="top"
+                    :content="t('dialog.user.info.instance_role_restricted')">
+                    <span class="flex items-center gap-0.5 text-red-500">
                         <UserLock class="h-4 w-4" />
                     </span>
                 </TooltipWrapper>
