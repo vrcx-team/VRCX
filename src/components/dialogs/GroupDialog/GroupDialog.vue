@@ -231,6 +231,12 @@
                                             {{ t('dialog.group.actions.create_post') }}
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
+                                            v-if="hasGroupPermission(groupDialog.ref, 'group-calendar-manage')"
+                                            @click="showCreateGroupEventDialog(groupDialog.ref)">
+                                            <CalendarPlus class="size-4" />
+                                            {{ t('dialog.group.actions.create_event') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
                                             v-if="groupDialog.ref.ownerId === currentUser.id"
                                             @click="groupDialogCommand('Transfer Group')">
                                             <ArrowRightLeft class="size-4" />
@@ -600,6 +606,7 @@
     import {
         Bell,
         BellOff,
+        CalendarPlus,
         ArrowRightLeft,
         MessageCircle,
         MessageCircleOff,
@@ -661,7 +668,8 @@
         leaveGroupPrompt,
         setGroupVisibility,
         setGroupSubscription,
-        setGroupEventAnnouncements
+        setGroupEventAnnouncements,
+        getGroupDialogCalendar
     } from '../../../coordinators/groupCoordinator';
     import { groupRequest, queryRequest } from '../../../api';
     import { queryKeys, refetchActiveEntityQuery } from '../../../queries';
@@ -692,7 +700,8 @@
 
     const { currentUser } = storeToRefs(useUserStore());
     const { groupDialog, inviteGroupDialog } = storeToRefs(useGroupStore());
-    const { showEditGroupDialog, updateGroupPostSearch } = useGroupStore();
+    const { showCreateGroupEventDialog, showEditGroupDialog, updateGroupPostSearch } = useGroupStore();
+    const { groupEventRevision } = storeToRefs(useGroupStore());
 
     const { showFullscreenImageDialog } = useGalleryStore();
     const instanceStore = useInstanceStore();
@@ -771,6 +780,12 @@
             }
         }
     );
+
+    watch(groupEventRevision, () => {
+        if (groupDialog.value.visible) {
+            void getGroupDialogCalendar(groupDialog.value.id);
+        }
+    });
 
     function setGroupRepresentation(groupId) {
         handleGroupRepresentationChange(groupId, true);

@@ -30,6 +30,7 @@
                                         v-for="value in timeGroup.events"
                                         :key="value.id"
                                         :event="value"
+                                        :group-ref="groupRefsCache.get(value.ownerId)"
                                         mode="timeline"
                                         :is-following="isEventFollowing(value.id)"
                                         :card-class="{ 'grouped-card': timeGroup.events.length > 1 }"
@@ -72,6 +73,7 @@
                                         v-for="event in group.events"
                                         :key="event.id"
                                         :event="event"
+                                        :group-ref="groupRefsCache.get(event.ownerId)"
                                         mode="grid"
                                         :is-following="isEventFollowing(event.id)"
                                         @update-following-calendar-data="updateFollowingCalendarData"
@@ -97,6 +99,7 @@
 <script setup>
     import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { computed, onMounted, ref, watch } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { Button } from '@/components/ui/button';
     import { ChevronDown } from 'lucide-vue-next';
     import { InputGroupSearch } from '@/components/ui/input-group';
@@ -104,9 +107,9 @@
 
     import dayjs from 'dayjs';
 
-    import { formatDateFilter, getGroupName, replaceBioSymbols } from '../../../shared/utils';
+    import { formatDateFilter, replaceBioSymbols } from '../../../shared/utils';
     import { Switch } from '../../../components/ui/switch';
-    import { groupRequest } from '../../../api';
+    import { groupRequest, queryRequest } from '../../../api';
     import { processBulk } from '../../../services/request';
     import { useGroupStore } from '../../../stores';
     import { showGroupDialog } from '@/coordinators/groupCoordinator';
@@ -115,7 +118,9 @@
     import GroupCalendarMonth from '../components/GroupCalendarMonth.vue';
     import configRepository from '../../../services/config';
 
-    const { applyGroupEvent } = useGroupStore();
+    const groupStore = useGroupStore();
+    const { applyGroupEvent } = groupStore;
+    const { groupEventRevision } = storeToRefs(groupStore);
 
     const { t } = useI18n();
 
@@ -138,6 +143,7 @@
     const groupCollapsed = ref({});
     const showFeaturedEvents = ref(false);
     const groupNamesCache = new Map();
+    const groupRefsCache = new Map();
 
     onMounted(async () => {
         showFeaturedEvents.value = await configRepository.getBool('VRCX_groupCalendarShowFeaturedEvents', false);
@@ -174,6 +180,12 @@
             }
         }
     );
+
+    watch(groupEventRevision, () => {
+        if (props.visible) {
+            updateCalenderData();
+        }
+    });
 
     /**
      *
@@ -345,7 +357,14 @@
      */
     async function getGroupNameFromCache(groupId) {
         if (!groupNamesCache.has(groupId)) {
-            groupNamesCache.set(groupId, await getGroupName(groupId));
+            try {
+                const args = await queryRequest.fetch('group.dialog', { groupId, includeRoles: true });
+                groupNamesCache.set(groupId, args.ref.name);
+                groupRefsCache.set(groupId, args.ref);
+            } catch (error) {
+                console.error('Failed to load calendar event group:', error);
+                groupNamesCache.set(groupId, '');
+            }
         }
     }
 

@@ -421,6 +421,34 @@ export function showGroupMemberModerationDialog(groupId, userId = '') {
 }
 
 /**
+ * @param groupId
+ */
+export function getGroupDialogCalendar(groupId) {
+    const groupStore = useGroupStore();
+    const D = groupStore.groupDialog;
+    queryRequest.fetch('groupCalendar', { groupId }).then((args) => {
+        if (D.id === args.params.groupId) {
+            D.calendar = args.json.results;
+            for (const event of D.calendar) {
+                Object.assign(event, groupStore.applyGroupEvent(event));
+                // fetch again for isFollowing
+                queryRequest
+                    .fetch('groupCalendarEvent', {
+                        groupId,
+                        eventId: event.id
+                    })
+                    .then((args) => {
+                        Object.assign(
+                            event,
+                            groupStore.applyGroupEvent(args.json)
+                        );
+                    });
+            }
+        }
+    });
+}
+
+/**
  *
  * @param groupId
  * @param {object} [existingRef]
@@ -489,33 +517,7 @@ export function getGroupDialogGroup(groupId, existingRef) {
                             });
                         }
                     });
-                queryRequest
-                    .fetch('groupCalendar', { groupId })
-                    .then((args) => {
-                        if (groupStore.groupDialog.id === args.params.groupId) {
-                            D.calendar = args.json.results;
-                            for (const event of D.calendar) {
-                                Object.assign(
-                                    event,
-                                    groupStore.applyGroupEvent(event)
-                                );
-                                // fetch again for isFollowing
-                                queryRequest
-                                    .fetch('groupCalendarEvent', {
-                                        groupId,
-                                        eventId: event.id
-                                    })
-                                    .then((args) => {
-                                        Object.assign(
-                                            event,
-                                            groupStore.applyGroupEvent(
-                                                args.json
-                                            )
-                                        );
-                                    });
-                            }
-                        }
-                    });
+                getGroupDialogCalendar(groupId);
             }
             nextTick(() => (D.isGetGroupDialogGroupLoading = false));
             return result.args || result;

@@ -68,6 +68,33 @@ export const useGroupStore = defineStore('Group', () => {
         allowGroupJoinPrompt: false
     });
 
+    const groupEventEditDialog = ref({
+        visible: false,
+        loading: false,
+        mode: 'create',
+        groupId: '',
+        eventId: '',
+        groupRef: {},
+        startsAt: '',
+        endsAt: '',
+        title: '',
+        accessType: 'group',
+        description: '',
+        category: 'other',
+        tags: [],
+        imageId: '',
+        imageUrl: '',
+        roleIds: [],
+        parentId: null,
+        platforms: [],
+        languages: [],
+        sendCreationNotification: false,
+        hostEarlyJoinMinutes: 60,
+        guestEarlyJoinMinutes: 5,
+        closeInstanceAfterEndMinutes: 5
+    });
+    const groupEventRevision = ref(0);
+
     const currentUserGroups = reactive(new Map());
 
     const inviteGroupDialog = ref({
@@ -150,6 +177,7 @@ export const useGroupStore = defineStore('Group', () => {
         (isLoggedIn) => {
             groupDialog.value.visible = false;
             groupEditDialog.value.visible = false;
+            groupEventEditDialog.value.visible = false;
             inviteGroupDialog.value.visible = false;
             moderateGroupDialog.value.visible = false;
             groupMemberModeration.value.visible = false;
@@ -422,9 +450,94 @@ export const useGroupStore = defineStore('Group', () => {
         };
     }
 
+    function resetGroupEventEditDialog() {
+        const startsAt = new Date();
+        startsAt.setMinutes(0, 0, 0);
+        startsAt.setHours(startsAt.getHours() + 1);
+        const endsAt = new Date(startsAt);
+        endsAt.setHours(endsAt.getHours() + 2);
+        groupEventEditDialog.value = {
+            visible: false,
+            loading: false,
+            mode: 'create',
+            groupId: '',
+            eventId: '',
+            groupRef: {},
+            startsAt: startsAt.toISOString(),
+            endsAt: endsAt.toISOString(),
+            title: '',
+            accessType: 'group',
+            description: '',
+            category: 'other',
+            tags: [],
+            imageId: '',
+            imageUrl: '',
+            roleIds: [],
+            parentId: null,
+            platforms: [],
+            languages: [],
+            sendCreationNotification: false,
+            hostEarlyJoinMinutes: 60,
+            guestEarlyJoinMinutes: 5,
+            closeInstanceAfterEndMinutes: 5
+        };
+    }
+
+    /**
+     * @param {object} group
+     */
+    function showCreateGroupEventDialog(group) {
+        resetGroupEventEditDialog();
+        groupEventEditDialog.value = {
+            ...groupEventEditDialog.value,
+            visible: true,
+            groupId: group.id,
+            groupRef: group
+        };
+    }
+
+    /**
+     * @param {object} event
+     * @param {object} group
+     */
+    function showEditGroupEventDialog(event, group) {
+        resetGroupEventEditDialog();
+        groupEventEditDialog.value = {
+            ...groupEventEditDialog.value,
+            visible: true,
+            mode: 'edit',
+            groupId: event.ownerId,
+            eventId: event.id,
+            groupRef: group,
+            startsAt: event.startsAt,
+            endsAt: event.endsAt,
+            title: event.title ?? '',
+            accessType: event.accessType ?? 'group',
+            description: event.description ?? '',
+            category: event.category ?? 'other',
+            tags: Array.isArray(event.tags) ? [...event.tags] : [],
+            imageId: event.imageId ?? '',
+            imageUrl: event.imageUrl ?? '',
+            roleIds: Array.isArray(event.roleIds) ? [...event.roleIds] : [],
+            parentId: null,
+            platforms: Array.isArray(event.platforms) ? [...event.platforms] : [],
+            languages: Array.isArray(event.languages) ? [...event.languages] : [],
+            sendCreationNotification: false,
+            hostEarlyJoinMinutes: event.hostEarlyJoinMinutes ?? 60,
+            guestEarlyJoinMinutes: event.guestEarlyJoinMinutes ?? 5,
+            closeInstanceAfterEndMinutes: event.closeInstanceAfterEndMinutes ?? 5
+        };
+    }
+
+    function markGroupEventMutation() {
+        groupEventRevision.value++;
+    }
+
     return {
         groupDialog,
         groupEditDialog,
+        groupEventEditDialog,
+        groupEventRevision,
         currentUserGroups,
         inviteGroupDialog,
         moderateGroupDialog,
@@ -446,6 +559,9 @@ export const useGroupStore = defineStore('Group', () => {
         setInGameGroupOrder,
         setGroupInstances,
         showCreateGroupDialog,
-        showEditGroupDialog
+        showEditGroupDialog,
+        showCreateGroupEventDialog,
+        showEditGroupEventDialog,
+        markGroupEventMutation
     };
 });

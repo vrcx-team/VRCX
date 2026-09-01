@@ -32,7 +32,6 @@
     const valueLength = computed(() => String(modelValue.value ?? '').length);
     const maxLength = computed(() => props.maxlength ?? attrs.maxlength);
     const wrapperClass = computed(() => cn(props.class, attrs.class, props.size === 'sm' && 'h-8', 'flex-nowrap'));
-    const inputClass = computed(() => cn(props.inputClass));
 
     const wrapperStyle = computed(() => {
         const raw = attrs.style;
@@ -77,6 +76,13 @@
         }
         return rawType;
     });
+    const inputClass = computed(() =>
+        cn(
+            props.inputClass,
+            ['date', 'datetime-local', 'month', 'time', 'week'].includes(inputType.value) &&
+                'dark:[color-scheme:dark] [&::-webkit-calendar-picker-indicator]:cursor-pointer'
+        )
+    );
 
     const inputAttrs = computed(() => {
         const rest = { ...(attrs ?? {}) };
