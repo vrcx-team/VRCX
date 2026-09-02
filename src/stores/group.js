@@ -92,7 +92,8 @@ export const useGroupStore = defineStore('Group', () => {
         hostEarlyJoinMinutes: 60,
         guestEarlyJoinMinutes: 5,
         closeInstanceAfterEndMinutes: 5,
-        seriesId: null
+        seriesId: null,
+        recurrence: null
     });
     const groupEventRevision = ref(0);
 
@@ -481,7 +482,8 @@ export const useGroupStore = defineStore('Group', () => {
             hostEarlyJoinMinutes: 60,
             guestEarlyJoinMinutes: 5,
             closeInstanceAfterEndMinutes: 5,
-            seriesId: null
+            seriesId: null,
+            recurrence: null
         };
     }
 
@@ -505,8 +507,8 @@ export const useGroupStore = defineStore('Group', () => {
     function showEditGroupEventDialog(event, group) {
         resetGroupEventEditDialog();
         groupEventEditDialog.value = {
-            ...groupEventEditDialog.value,
             visible: true,
+            loading: false,
             mode: 'edit',
             groupId: event.ownerId,
             eventId: event.id,
@@ -528,7 +530,8 @@ export const useGroupStore = defineStore('Group', () => {
             hostEarlyJoinMinutes: event.hostEarlyJoinMinutes ?? 60,
             guestEarlyJoinMinutes: event.guestEarlyJoinMinutes ?? 5,
             closeInstanceAfterEndMinutes: event.closeInstanceAfterEndMinutes ?? 5,
-            seriesId: event.seriesId
+            seriesId: event.seriesId,
+            recurrence: event.recurrence
         };
     }
 

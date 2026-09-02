@@ -79,8 +79,10 @@
     const inputClass = computed(() =>
         cn(
             props.inputClass,
+            ['date', 'datetime-local', 'month', 'number', 'time', 'week'].includes(inputType.value) &&
+                'dark:[color-scheme:dark]',
             ['date', 'datetime-local', 'month', 'time', 'week'].includes(inputType.value) &&
-                'dark:[color-scheme:dark] [&::-webkit-calendar-picker-indicator]:cursor-pointer'
+                '[&::-webkit-calendar-picker-indicator]:cursor-pointer'
         )
     );
 

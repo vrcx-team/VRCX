@@ -63,6 +63,172 @@
                         </Field>
                     </div>
 
+                    <template v-if="!groupEventEditDialog.seriesId">
+                        <div class="rounded-md border p-4 space-y-4">
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <Field>
+                                    <FieldLabel>{{ t('dialog.group_event_edit.repeat') }}</FieldLabel>
+                                    <FieldContent>
+                                        <Select
+                                            :model-value="repeatFrequencySelection"
+                                            :disabled="groupEventEditDialog.loading"
+                                            @update:model-value="handleRepeatFrequencyChange">
+                                            <SelectTrigger size="sm" class="w-full">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="none" :disabled="!canReturnToNever">
+                                                    {{ t('dialog.group_event_edit.repeat_values.none') }}
+                                                </SelectItem>
+                                                <SelectItem value="weekly">
+                                                    {{ t('dialog.group_event_edit.repeat_values.weekly') }}
+                                                </SelectItem>
+                                                <SelectItem value="monthly">
+                                                    {{ t('dialog.group_event_edit.repeat_values.monthly') }}
+                                                </SelectItem>
+                                                <SelectItem value="yearly">
+                                                    {{ t('dialog.group_event_edit.repeat_values.yearly') }}
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </FieldContent>
+                                </Field>
+                                <Field v-if="groupEventEditDialog.recurrence">
+                                    <FieldLabel>{{ t('dialog.group_event_edit.repeat_every') }}</FieldLabel>
+                                    <FieldContent>
+                                        <InputGroupField
+                                            v-model.number="groupEventEditDialog.recurrence.interval"
+                                            type="number"
+                                            min="1"
+                                            step="1"
+                                            size="sm"
+                                            :disabled="groupEventEditDialog.loading" />
+                                    </FieldContent>
+                                </Field>
+                            </div>
+
+                            <template v-if="groupEventEditDialog.recurrence">
+                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                    <Field v-if="groupEventEditDialog.recurrence.frequency === 'weekly'">
+                                        <FieldLabel>{{ t('dialog.group_event_edit.weekly_pattern') }}</FieldLabel>
+                                        <FieldContent>
+                                            <Select
+                                                :model-value="weeklyPatternSelection"
+                                                :disabled="groupEventEditDialog.loading"
+                                                @update:model-value="handleWeeklyPatternChange">
+                                                <SelectTrigger size="sm" class="w-full">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="everyWeek">
+                                                        {{
+                                                            t(
+                                                                'dialog.group_event_edit.weekly_pattern_values.every_week'
+                                                            )
+                                                        }}
+                                                    </SelectItem>
+                                                    <SelectItem value="weekdays">
+                                                        {{
+                                                            t('dialog.group_event_edit.weekly_pattern_values.weekdays')
+                                                        }}
+                                                    </SelectItem>
+                                                    <SelectItem value="weekend">
+                                                        {{ t('dialog.group_event_edit.weekly_pattern_values.weekend') }}
+                                                    </SelectItem>
+                                                    <SelectItem value="custom">
+                                                        {{ t('dialog.group_event_edit.weekly_pattern_values.custom') }}
+                                                    </SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </FieldContent>
+                                    </Field>
+                                    <Field
+                                        v-if="
+                                            groupEventEditDialog.recurrence.frequency === 'weekly' &&
+                                            weeklyPatternSelection === 'custom'
+                                        ">
+                                        <FieldLabel>{{ t('dialog.group_event_edit.custom_days') }}</FieldLabel>
+                                        <FieldContent>
+                                            <Select
+                                                multiple
+                                                :model-value="groupEventEditDialog.recurrence.daysOfWeek"
+                                                :disabled="groupEventEditDialog.loading"
+                                                @update:model-value="handleCustomDaysChange">
+                                                <SelectTrigger size="sm" class="w-full">
+                                                    <SelectValue>
+                                                        <span class="truncate">
+                                                            {{
+                                                                selectedCustomDaysSummary ||
+                                                                t('dialog.group_event_edit.none_selected')
+                                                            }}
+                                                        </span>
+                                                    </SelectValue>
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem
+                                                        v-for="day in weekDayOptions"
+                                                        :key="day.value"
+                                                        :value="day.value">
+                                                        {{ day.label }}
+                                                    </SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </FieldContent>
+                                    </Field>
+                                </div>
+
+                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                    <Field>
+                                        <FieldLabel>{{ t('dialog.group_event_edit.ends') }}</FieldLabel>
+                                        <FieldContent>
+                                            <Select
+                                                v-model="recurrenceEndType"
+                                                :disabled="groupEventEditDialog.loading">
+                                                <SelectTrigger size="sm" class="w-full">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="never">
+                                                        {{ t('dialog.group_event_edit.ends_values.never') }}
+                                                    </SelectItem>
+                                                    <SelectItem value="afterOccurrences">
+                                                        {{ t('dialog.group_event_edit.ends_values.after_occurrences') }}
+                                                    </SelectItem>
+                                                    <SelectItem value="afterDate">
+                                                        {{ t('dialog.group_event_edit.ends_values.after_date') }}
+                                                    </SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </FieldContent>
+                                    </Field>
+                                    <Field v-if="recurrenceEndType === 'afterOccurrences'">
+                                        <FieldLabel>{{ t('dialog.group_event_edit.occurrence_count') }}</FieldLabel>
+                                        <FieldContent>
+                                            <InputGroupField
+                                                v-model.number="groupEventEditDialog.recurrence.end.count"
+                                                type="number"
+                                                min="1"
+                                                step="1"
+                                                size="sm"
+                                                :disabled="groupEventEditDialog.loading" />
+                                        </FieldContent>
+                                    </Field>
+
+                                    <Field v-if="recurrenceEndType === 'afterDate'">
+                                        <FieldLabel>{{ t('dialog.group_event_edit.end_date') }}</FieldLabel>
+                                        <FieldContent>
+                                            <InputGroupField
+                                                v-model="groupEventEditDialog.recurrence.end.date"
+                                                type="datetime-local"
+                                                size="sm"
+                                                :disabled="groupEventEditDialog.loading" />
+                                        </FieldContent>
+                                    </Field>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <Field>
                             <FieldLabel>{{ t('dialog.group_event_edit.access_type') }}</FieldLabel>
@@ -327,7 +493,7 @@
 </template>
 
 <script setup>
-    import { computed, ref } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { Repeat, Trash2 } from 'lucide-vue-next';
     import { toast } from 'vue-sonner';
@@ -373,6 +539,17 @@
         selectedImageUrl: '',
         isIconGallerySelectDialog: false
     });
+    const canReturnToNever = ref(true);
+
+    watch(
+        () => groupEventEditDialog.value,
+        (dialog) => {
+            if (dialog.visible) {
+                canReturnToNever.value = !dialog.recurrence;
+            }
+        },
+        { immediate: true }
+    );
 
     const isEditMode = computed(() => groupEventEditDialog.value.mode === 'edit');
     const startsAtLocal = computed({
@@ -419,11 +596,61 @@
             .map((roleId) => roles.find((role) => role.id === roleId)?.name ?? roleId)
             .join(', ');
     });
+    const weekDayOptions = [
+        { value: 'MO', label: t('dialog.group_event_edit.weekday_values.MO') },
+        { value: 'TU', label: t('dialog.group_event_edit.weekday_values.TU') },
+        { value: 'WE', label: t('dialog.group_event_edit.weekday_values.WE') },
+        { value: 'TH', label: t('dialog.group_event_edit.weekday_values.TH') },
+        { value: 'FR', label: t('dialog.group_event_edit.weekday_values.FR') },
+        { value: 'SA', label: t('dialog.group_event_edit.weekday_values.SA') },
+        { value: 'SU', label: t('dialog.group_event_edit.weekday_values.SU') }
+    ];
     const hasInvalidDateRange = computed(() => {
         const startsAt = Date.parse(groupEventEditDialog.value.startsAt);
         const endsAt = Date.parse(groupEventEditDialog.value.endsAt);
         return Number.isFinite(startsAt) && Number.isFinite(endsAt) && endsAt <= startsAt;
     });
+    const repeatFrequencySelection = computed(() => groupEventEditDialog.value.recurrence?.frequency ?? 'none');
+    const recurrenceEndType = computed({
+        get: () => groupEventEditDialog.value.recurrence?.end?.type ?? 'never',
+        set: (value) => {
+            const recurrence = groupEventEditDialog.value.recurrence;
+            if (!recurrence) {
+                return;
+            }
+            if (value === 'never') {
+                recurrence.end = null;
+            } else if (value === 'afterOccurrences') {
+                recurrence.end = {
+                    type: value,
+                    count: recurrence.end?.type === value ? recurrence.end.count : 1
+                };
+            } else if (value === 'afterDate') {
+                recurrence.end = {
+                    type: value,
+                    date: recurrence.end?.type === value ? recurrence.end.date : ''
+                };
+            }
+        }
+    });
+    const weeklyPatternSelection = computed(() => {
+        const days = groupEventEditDialog.value.recurrence?.daysOfWeek ?? [];
+        if (days.length === 5 && ['MO', 'TU', 'WE', 'TH', 'FR'].every((day) => days.includes(day))) {
+            return 'weekdays';
+        }
+        if (days.length === 2 && ['SA', 'SU'].every((day) => days.includes(day))) {
+            return 'weekend';
+        }
+        if (days.length > 0) {
+            return 'custom';
+        }
+        return 'everyWeek';
+    });
+    const selectedCustomDaysSummary = computed(() =>
+        (groupEventEditDialog.value.recurrence?.daysOfWeek ?? [])
+            .map((day) => weekDayOptions.find((option) => option.value === day)?.label ?? day)
+            .join(', ')
+    );
     const canSubmit = computed(() => {
         const D = groupEventEditDialog.value;
         return (
@@ -468,6 +695,49 @@
 
     function handleRoleIdsChange(value) {
         groupEventEditDialog.value.roleIds = Array.isArray(value) ? value : [];
+    }
+
+    function handleRepeatFrequencyChange(value) {
+        if (value === 'none') {
+            if (!canReturnToNever.value) {
+                return;
+            }
+            groupEventEditDialog.value.recurrence = null;
+            return;
+        }
+        if (!groupEventEditDialog.value.recurrence) {
+            groupEventEditDialog.value.recurrence = {
+                interval: 1
+            };
+        }
+        const recurrence = groupEventEditDialog.value.recurrence;
+        recurrence.frequency = value;
+        if (value !== 'weekly') {
+            recurrence.daysOfWeek = [];
+        }
+    }
+
+    function handleWeeklyPatternChange(value) {
+        if (value === 'weekdays') {
+            groupEventEditDialog.value.recurrence.daysOfWeek = ['MO', 'TU', 'WE', 'TH', 'FR'];
+            return;
+        }
+        if (value === 'weekend') {
+            groupEventEditDialog.value.recurrence.daysOfWeek = ['SA', 'SU'];
+            return;
+        }
+        if (value === 'custom') {
+            groupEventEditDialog.value.recurrence.daysOfWeek = ['SA'];
+            return;
+        }
+        groupEventEditDialog.value.recurrence.daysOfWeek = [];
+    }
+
+    function handleCustomDaysChange(value) {
+        const validDays = weekDayOptions.map((option) => option.value);
+        groupEventEditDialog.value.recurrence.daysOfWeek = Array.isArray(value)
+            ? value.filter((day) => validDays.includes(day))
+            : [];
     }
 
     function showGallerySelectDialog() {
@@ -551,6 +821,29 @@
             closeInstanceAfterEndMinutes: Number(D.closeInstanceAfterEndMinutes),
             groupId: D.groupId
         };
+        if (!D.seriesId && D.recurrence) {
+            params.occurrenceKind = 'series';
+            params.recurrence = {
+                frequency: D.recurrence.frequency,
+                interval: Number(D.recurrence.interval) || 1,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+            };
+            if (D.recurrence.frequency === 'weekly' && D.recurrence.daysOfWeek.length) {
+                params.recurrence.daysOfWeek = [...D.recurrence.daysOfWeek];
+            }
+            if (D.recurrence.end?.type === 'afterOccurrences') {
+                params.recurrence.end = {
+                    type: 'afterOccurrences',
+                    count: Number(D.recurrence.end.count) || 1
+                };
+            } else if (D.recurrence.end?.type === 'afterDate') {
+                params.recurrence.end = {
+                    type: 'afterDate',
+                    date: toLocalDateTime(D.recurrence.end?.date)
+                };
+            }
+        }
+        console.log('Saving group event with params:', params);
         try {
             if (isEditMode.value) {
                 await groupRequest.editGroupEvent({ ...params, eventId: D.eventId });

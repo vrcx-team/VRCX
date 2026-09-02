@@ -1810,6 +1810,39 @@
             "guest_early_join": "Guest Early Join (minutes)",
             "close_after_end": "Close After End (minutes)",
             "send_notification": "Send creation notification",
+            "repeat": "Repeat",
+            "repeat_every": "Repeat every",
+            "repeat_values": {
+                "none": "Never",
+                "weekly": "Week",
+                "monthly": "Month",
+                "yearly": "Year"
+            },
+            "weekly_pattern": "Weekly repeat pattern",
+            "weekly_pattern_values": {
+                "every_week": "Every week",
+                "weekdays": "Every weekday",
+                "weekend": "Every weekend",
+                "custom": "Custom days"
+            },
+            "custom_days": "Select days",
+            "weekday_values": {
+                "MO": "Monday",
+                "TU": "Tuesday",
+                "WE": "Wednesday",
+                "TH": "Thursday",
+                "FR": "Friday",
+                "SA": "Saturday",
+                "SU": "Sunday"
+            },
+            "ends": "Ends",
+            "ends_values": {
+                "never": "Never",
+                "after_occurrences": "After occurrences",
+                "after_date": "On date"
+            },
+            "occurrence_count": "Number of occurrences",
+            "end_date": "End date",
             "saving": "Saving...",
             "save": "Save Changes",
             "edit_parent": "Edit Parent Event",
