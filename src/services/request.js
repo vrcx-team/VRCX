@@ -322,6 +322,9 @@ export function shouldIgnoreError(code, endpoint) {
     if (endpoint?.endsWith('/mutuals') && (code === 403 || code === -1)) {
         return true;
     }
+    if (endpoint?.endsWith('/see') && (code === 429 || code === -1)) {
+        return true;
+    }
     return false;
 }
 
