@@ -1812,6 +1812,7 @@
             "send_notification": "Send creation notification",
             "saving": "Saving...",
             "save": "Save Changes",
+            "edit_parent": "Edit Parent Event",
             "create": "Create Event",
             "create_success": "Group event created",
             "edit_success": "Group event updated",

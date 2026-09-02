@@ -291,15 +291,20 @@
             </div>
 
             <DialogFooter class="px-6 py-4">
-                <Button
-                    v-if="isEditMode"
-                    variant="destructive"
-                    class="mr-auto"
-                    :disabled="groupEventEditDialog.loading"
-                    @click="deleteEvent">
-                    <Trash2 />
-                    {{ t('common.actions.delete') }}
-                </Button>
+                <div v-if="isEditMode" class="mr-auto flex gap-2">
+                    <Button variant="destructive" :disabled="groupEventEditDialog.loading" @click="deleteEvent">
+                        <Trash2 />
+                        {{ t('common.actions.delete') }}
+                    </Button>
+                    <Button
+                        v-if="groupEventEditDialog.seriesId"
+                        variant="outline"
+                        :disabled="groupEventEditDialog.loading"
+                        @click="editParentEvent">
+                        <Repeat />
+                        {{ t('dialog.group_event_edit.edit_parent') }}
+                    </Button>
+                </div>
                 <Button variant="secondary" :disabled="groupEventEditDialog.loading" @click="closeDialog">
                     {{ t('common.actions.cancel') }}
                 </Button>
@@ -324,7 +329,7 @@
 <script setup>
     import { computed, ref } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { Trash2 } from 'lucide-vue-next';
+    import { Repeat, Trash2 } from 'lucide-vue-next';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
@@ -335,7 +340,7 @@
     import { InputGroupField, InputGroupTextareaField } from '@/components/ui/input-group';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-    import { groupRequest } from '../../../api';
+    import { groupRequest, queryRequest } from '../../../api';
     import { useGroupStore, useModalStore, useUserStore } from '../../../stores';
     import GallerySelectDialog from './GallerySelectDialog.vue';
 
@@ -495,6 +500,30 @@
         if (!open) {
             closeDialog();
         }
+    }
+
+    async function editParentEvent() {
+        const D = groupEventEditDialog.value;
+        if (!isEditMode.value || !D.seriesId || D.loading) {
+            return;
+        }
+
+        const groupRef = D.groupRef;
+        D.loading = true;
+        let args;
+        try {
+            args = await queryRequest.fetch('groupCalendarEvent', {
+                groupId: D.groupId,
+                eventId: D.seriesId
+            });
+        } catch (error) {
+            D.loading = false;
+            console.error('Failed to load parent group event for editing:', error);
+            toast.error(t('dialog.group_event_edit.load_error'));
+            return;
+        }
+
+        groupStore.showEditGroupEventDialog(args.json, groupRef);
     }
 
     async function saveEvent() {

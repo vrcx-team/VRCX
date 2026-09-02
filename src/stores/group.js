@@ -91,7 +91,8 @@ export const useGroupStore = defineStore('Group', () => {
         sendCreationNotification: false,
         hostEarlyJoinMinutes: 60,
         guestEarlyJoinMinutes: 5,
-        closeInstanceAfterEndMinutes: 5
+        closeInstanceAfterEndMinutes: 5,
+        seriesId: null
     });
     const groupEventRevision = ref(0);
 
@@ -479,7 +480,8 @@ export const useGroupStore = defineStore('Group', () => {
             sendCreationNotification: false,
             hostEarlyJoinMinutes: 60,
             guestEarlyJoinMinutes: 5,
-            closeInstanceAfterEndMinutes: 5
+            closeInstanceAfterEndMinutes: 5,
+            seriesId: null
         };
     }
 
@@ -525,7 +527,8 @@ export const useGroupStore = defineStore('Group', () => {
             sendCreationNotification: false,
             hostEarlyJoinMinutes: event.hostEarlyJoinMinutes ?? 60,
             guestEarlyJoinMinutes: event.guestEarlyJoinMinutes ?? 5,
-            closeInstanceAfterEndMinutes: event.closeInstanceAfterEndMinutes ?? 5
+            closeInstanceAfterEndMinutes: event.closeInstanceAfterEndMinutes ?? 5,
+            seriesId: event.seriesId
         };
     }
 
