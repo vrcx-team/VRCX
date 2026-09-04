@@ -153,7 +153,7 @@
                     <div class="box-border flex items-center p-1.5 text-[13px] cursor-default">
                         <div class="flex-1 overflow-hidden">
                             <span class="block truncate font-medium leading-[18px]">{{
-                                t('dialog.world.info.created_at')
+                                t('dialog.world.info.created')
                             }}</span>
                             <span class="block truncate text-xs">{{
                                 formatDateFilter(currentInstanceWorld.ref.created_at, 'long')
