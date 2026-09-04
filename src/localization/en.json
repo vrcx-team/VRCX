@@ -1457,7 +1457,8 @@
                 "show_discord_connections": "Show Discord Connections",
                 "instance_minimum_avatar_performance": "Minimum Avatar Performance",
                 "current_instance": "Current Instance",
-                "economy_creator": "Economy Creator"
+                "economy_creator": "Economy Creator",
+                "instance_announcement_tooltip": "Send Instance Announcement"
             },
             "groups": {
                 "header": "Groups",
@@ -2646,6 +2647,15 @@
         "avatar_database_provider": {
             "header": "Avatar Database Provider",
             "add_provider": "Add Provider"
+        },
+        "instance_announcement": {
+            "header": "Send Instance Announcement",
+            "message": "Message",
+            "image": "Image (optional)",
+            "clear_image": "Clear Image",
+            "select_image": "Select Image",
+            "sending": "Sending...",
+            "send": "Send Announcement"
         }
     },
     "confirm": {
@@ -2912,7 +2922,8 @@
             "closed": "Instance closed",
             "removed_form_queue": "Removed instance {worldName} from queue",
             "not_allowed": "You're not allowed to access this instance",
-            "create_failed": "Failed to create instance"
+            "create_failed": "Failed to create instance",
+            "announcement_sent": "Instance announcement sent"
         },
         "avatar": {
             "selected": "Avatar changed",

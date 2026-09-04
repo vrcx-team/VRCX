@@ -48,13 +48,10 @@ const instanceReq = {
         if (instance.shortName) {
             params.shortName = instance.shortName;
         }
-        return request(
-            `instances/${instance.worldId}:${instance.instanceId}/shortName`,
-            {
-                method: 'GET',
-                params
-            }
-        ).then((json) => {
+        return request(`instances/${instance.worldId}:${instance.instanceId}/shortName`, {
+            method: 'GET',
+            params
+        }).then((json) => {
             const args = {
                 json,
                 instance,
@@ -95,13 +92,10 @@ const instanceReq = {
         if (instance.shortName) {
             params.shortName = instance.shortName;
         }
-        return request(
-            `invite/myself/to/${instance.worldId}:${instance.instanceId}`,
-            {
-                method: 'POST',
-                params
-            }
-        )
+        return request(`invite/myself/to/${instance.worldId}:${instance.instanceId}`, {
+            method: 'POST',
+            params
+        })
             .then((json) => {
                 return {
                     json,
@@ -117,6 +111,22 @@ const instanceReq = {
                 toast.error(i18n.global.t('message.instance.not_allowed'));
                 throw err;
             });
+    },
+
+    /**
+     * Send instance announcement
+     * @type {import('../types/api/instance').InstanceAnnouncement}
+     */
+    instanceAnnouncement(params) {
+        return request(`instances/${params.location}/announce`, {
+            method: 'POST',
+            params
+        }).then((json) => {
+            return {
+                json,
+                params
+            };
+        });
     }
 };
 
