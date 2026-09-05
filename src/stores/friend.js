@@ -127,7 +127,12 @@ export const useFriendStore = defineStore('Friend', () => {
                 set.add(ref.favoriteId);
             }
         }
-        for (const groupName in favoriteStore.localFriendFavorites) {
+        const groups = generalSettingsStore.localFavoriteFriendsGroups;
+        let localGroups = groups.filter((key) => key.startsWith('local:')).map((key) => key.replace('local:', ''));
+        if (localGroups.length === 0) {
+            localGroups = Object.keys(favoriteStore.localFriendFavorites);
+        }
+        for (const groupName of localGroups) {
             const userIds = favoriteStore.localFriendFavorites[groupName];
             if (userIds) {
                 for (const id of userIds) {
@@ -453,8 +458,12 @@ export const useFriendStore = defineStore('Friend', () => {
                 localFavoriteFriends.add(ref.favoriteId);
             }
         }
-        // Local favorites: always include all
-        for (const groupName in favoriteStore.localFriendFavorites) {
+        // Local favorites
+        let localGroups = groups.filter((key) => key.startsWith('local:')).map((key) => key.replace('local:', ''));
+        if (localGroups.length === 0) {
+            localGroups = Object.keys(favoriteStore.localFriendFavorites);
+        }
+        for (const groupName of localGroups) {
             const userIds = favoriteStore.localFriendFavorites[groupName];
             if (userIds) {
                 for (let i = 0; i < userIds.length; ++i) {
