@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 
+// allow modifying stores directly since they are mocks
+// oxlint-disable eslint-js/no-restricted-syntax
+
 // ------------------------------------------------------------------
 // Mocks
 // ------------------------------------------------------------------

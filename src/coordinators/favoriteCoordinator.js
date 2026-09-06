@@ -176,7 +176,7 @@ export function handleFavoriteGroupClear(args) {
  * @returns {void}
  */
 export function handleFavoriteWorldList(args) {
-    const worldStore = useWorldStore();
+    
     for (const json of args.json) {
         if (json.id === '???') {
             continue;
@@ -190,7 +190,7 @@ export function handleFavoriteWorldList(args) {
  * @param {object} args
  */
 export function handleFavoriteAvatarList(args) {
-    const avatarStore = useAvatarStore();
+    
     for (const json of args.json) {
         if (json.releaseStatus === 'hidden') {
             continue;

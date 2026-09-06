@@ -1,14 +1,14 @@
 import { reactive, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
-import { useI18n } from 'vue-i18n';
 
-import { hasGroupPermission, replaceBioSymbols } from '../shared/utils';
-import { groupRequest, queryRequest } from '../api';
+
+import { replaceBioSymbols } from '../shared/utils';
+import { groupRequest } from '../api';
 import { initUserGroups } from '../coordinators/groupCoordinator';
 import { watchState } from '../services/watchState';
 
 export const useGroupStore = defineStore('Group', () => {
-    const { t } = useI18n();
+    
 
     let cachedGroups = new Map();
 

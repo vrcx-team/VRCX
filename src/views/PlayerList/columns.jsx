@@ -251,7 +251,7 @@ export const createColumns = ({
                 class: 'text-center',
                 label: () => t('table.playerList.icon')
             },
-            sortingFn: (rowA, rowB, columnId) => {
+            sortingFn: (rowA, rowB, _columnId) => {
                 const a = rowA.original;
                 const b = rowB.original;
                 return -sortInstanceIcon(a, b);

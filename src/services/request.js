@@ -4,8 +4,7 @@ import {
     useAuthStore,
     useModalStore,
     useNotificationStore,
-    useUpdateLoopStore,
-    useUserStore
+    useUpdateLoopStore
 } from '../stores';
 import { getCurrentUser } from '../coordinators/userCoordinator';
 import { AppDebug, isApiLogSuppressed, logWebRequest } from './appConfig.js';

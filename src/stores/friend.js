@@ -47,7 +47,7 @@ export const useFriendStore = defineStore('Friend', () => {
     const dashboardStore = useDashboardStore();
 
     const router = useRouter();
-    const t = i18n.global.t;
+    
 
     const state = reactive({
         friendNumber: 0
@@ -1124,7 +1124,7 @@ export const useFriendStore = defineStore('Friend', () => {
     /**
      * @deprecated We might need this again one day
      */
-    async function tryRestoreFriendNumber() {
+    async function _tryRestoreFriendNumber() {
         const lastUpdate = await configRepository.getString(
             `VRCX_lastStoreTime_${userStore.currentUser.id}`
         );
@@ -1132,7 +1132,7 @@ export const useFriendStore = defineStore('Friend', () => {
             // this means the backup was already applied
             return;
         }
-        var status = false;
+        var _status = false;
         state.friendNumber = 0;
         for (const ref of friendLog.values()) {
             ref.friendNumber = 0;
@@ -1140,7 +1140,7 @@ export const useFriendStore = defineStore('Friend', () => {
         try {
             if (lastUpdate) {
                 // backup ready to try apply
-                status = await restoreFriendNumber();
+                _status = await restoreFriendNumber();
             }
             // needs to be in reverse because we don't know the starting number
             applyFriendLogFriendOrderInReverse();
@@ -1304,7 +1304,7 @@ export const useFriendStore = defineStore('Friend', () => {
         let currentMatches = 0;
         let backupIndex = 0;
         for (i = 0; i < friendLogTable.length; i++) {
-            var isMatch = false;
+            var _isMatch = false;
             const ref = friendLogTable[i];
             if (backupIndex <= 0) {
                 backupIndex = backupTable.findIndex((x) => x.id === ref.id);
@@ -1313,7 +1313,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 }
             } else if (backupTable[backupIndex].id === ref.id) {
                 currentMatches++;
-                isMatch = true;
+                _isMatch = true;
             } else {
                 backupIndex = backupTable.findIndex((x) => x.id === ref.id);
                 if (backupIndex !== -1) {

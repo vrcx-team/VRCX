@@ -3,6 +3,7 @@
  * @returns {boolean}
  */
 export function needsCsvQuotes(text) {
+    // oxlint-disable-next-line no-control-regex
     return /[\x00-\x1f,"]/.test(text);
 }
 

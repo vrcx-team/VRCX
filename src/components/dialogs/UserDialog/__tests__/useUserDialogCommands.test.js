@@ -51,7 +51,6 @@ const { copyToClipboard } = await import('../../../../shared/utils');
 const {
     favoriteRequest,
     friendRequest,
-    notificationRequest,
     playerModerationRequest,
     miscRequest
 } = await import('../../../../api');
