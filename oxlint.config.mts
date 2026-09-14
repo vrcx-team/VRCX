@@ -84,28 +84,15 @@ export default defineConfig({
         'vue/no-lifecycle-after-await': 'error',
         'vue/prefer-import-from-vue': 'error',
         'vue/valid-define-emits': 'error',
-        'vue/valid-define-props': 'error',
+        'vue/valid-define-props': 'error'
         //'vue/no-mutating-props': 'warn',
         //'vue/multi-word-component-names': 'off',
         //'vue/no-v-text-v-html-on-component': 'off',
         //'vue/no-use-v-if-with-v-for': 'warn',
-        'eslint-js/no-restricted-syntax': [
-            'error',
-            {
-                selector:
-                    "AssignmentExpression[left.type='MemberExpression'][left.object.type='Identifier'][left.object.name=/Store$/]",
-                message: 'Do not mutate store state directly via *Store.* assignment. Use owner-store actions.'
-            },
-            {
-                selector:
-                    "UpdateExpression[argument.type='MemberExpression'][argument.object.type='Identifier'][argument.object.name=/Store$/]",
-                message: 'Do not mutate store state directly via *Store.* update operators. Use owner-store actions.'
-            }
-        ]
     },
     overrides: [
         {
-            // front end that uses browser and vue, with custom globals
+            // front end that uses browser and vue, with custom globals, excluding tests
             files: ['src/**'],
             excludeFiles: ['**/__tests__/**', '**/*.spec.*', '**/*.test.*'],
             env: {
@@ -130,10 +117,26 @@ export default defineConfig({
                 webApiService: 'readonly',
                 process: 'readonly',
                 AppDebug: 'readonly'
+            },
+            rules: {
+                'eslint-js/no-restricted-syntax': [
+                    'error',
+                    {
+                        selector:
+                            "AssignmentExpression[left.type='MemberExpression'][left.object.type='Identifier'][left.object.name=/Store$/]",
+                        message: 'Do not mutate store state directly via *Store.* assignment. Use owner-store actions.'
+                    },
+                    {
+                        selector:
+                            "UpdateExpression[argument.type='MemberExpression'][argument.object.type='Identifier'][argument.object.name=/Store$/]",
+                        message:
+                            'Do not mutate store state directly via *Store.* update operators. Use owner-store actions.'
+                    }
+                ]
             }
         },
         {
-            // electron build, and util and build scripts that run on node
+            // electron build, and util and build scripts that run on node, excluding tests
             files: [
                 'src-electron/**',
                 'src/localization/**',
@@ -148,7 +151,6 @@ export default defineConfig({
         {
             // tests using vitest through node
             files: ['**/__tests__/**', '**/*.spec.*', '**/*.test.*'],
-            plugins: ['vue', 'vitest', 'promise', 'node', 'jsdoc', 'import', 'oxc', 'unicorn', 'eslint'],
             env: {
                 node: true,
                 vitest: true,
