@@ -21,3 +21,12 @@ indent_size = 2
 
 [*.md]
 indent_size = 2
+
+[*.{sh,ps1}]
+end_of_line = crlf ;lf
+
+[*.{js,mjs,cjs,jsx,ts,mts,tsx}]
+end_of_line = crlf ;lf
+
+[*.{html,vue,css}]
+end_of_line = crlf ;lf
