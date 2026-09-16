@@ -791,12 +791,9 @@ export const useUserStore = defineStore('User', () => {
         D.status = currentUser.value.status;
         D.statusDescription = currentUser.value.statusDescription;
         D.pronouns = currentUser.value.pronouns;
-        D.bio = currentUser.value.bio;
-        D.bioLinks = currentUser.value.bioLinks.slice();
         D.bannerColor = currentUser.value.bannerColor;
         D.bannerUrl = currentUser.value.bannerUrl;
         D.bannerType = currentUser.value.bannerType;
-        D.userIcon = currentUser.value.userIcon;
         D.iconUrl = currentUser.value.iconUrl;
 
         D.themeId = '';
@@ -810,8 +807,8 @@ export const useUserStore = defineStore('User', () => {
             const ref = args.json;
             D.selfProfileRef = ref;
 
-            // D.status = ref.status;
-            // D.statusDescription = ref.statusDescription;
+            D.status = ref.status;
+            D.statusDescription = ref.statusDescription;
             D.pronouns = ref.pronouns;
             D.bio = ref.bio;
             D.bioLinks = ref.bioLinks.slice();

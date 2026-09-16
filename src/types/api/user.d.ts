@@ -120,21 +120,9 @@ interface GetUserResponse {
     ageVerificationStatus: string;
     ageVerified: boolean;
     allowAvatarCopying: boolean;
-    badges: {
-        badgeDescription: string;
-        badgeId: string;
-        badgeImageUrl: string;
-        badgeName: string;
-        showcased: boolean;
-    }[];
     bannerColor: string;
     bannerType: 'avatarBanner' | 'color' | 'customImage';
     bannerUrl: string;
-    bio: string;
-    bioLinks: string[];
-    currentAvatarImageUrl: string;
-    currentAvatarTags: string[];
-    currentAvatarThumbnailImageUrl: string;
     date_joined: string;
     developerType: string;
     discordId: string;
@@ -156,8 +144,6 @@ interface GetUserResponse {
     note?: string;
     platform?: string;
     profileEffect: string;
-    profilePicOverride: string;
-    profilePicOverrideThumbnail: string;
     pronouns: string;
     state: string;
     status: string;
@@ -166,7 +152,6 @@ interface GetUserResponse {
     travelingToInstance?: string;
     travelingToLocation?: string;
     travelingToWorld?: string;
-    userIcon: string;
     worldId?: string;
 }
 
@@ -180,6 +165,9 @@ interface GetCurrentUserResponse extends GetUserResponse {
     appleId: string;
     completedTutorials: string[];
     currentAvatar: string;
+    currentAvatarImageUrl: string;
+    currentAvatarTags: string[];
+    currentAvatarThumbnailImageUrl: string;
     discordDetails: { global_name: string; id: string };
     emailVerified: boolean;
     fallbackAvatar: string;
