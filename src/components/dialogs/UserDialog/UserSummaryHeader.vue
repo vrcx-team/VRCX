@@ -62,10 +62,8 @@
                     <img
                         v-else
                         class="w-full h-full object-cover cursor-pointer"
-                        :src="userImage(userDialog.ref, true, '256', true)"
-                        @click.stop="
-                            showFullscreenImageDialog(userDialog.ref.userIcon || userDialog.ref.currentAvatarImageUrl)
-                        "
+                        :src="userImage(userDialog.publicProfileRef, true, '256')"
+                        @click.stop="showFullscreenImageDialog(userDialog.publicProfileRef?.iconUrl)"
                         @error="userIconError = true"
                         loading="lazy" />
                 </div>
@@ -266,8 +264,10 @@
                 </Badge>
             </div>
 
-            <div v-if="userDialog.ref.badges && userDialog.ref.badges.length" class="flex flex-wrap gap-1.5">
-                <TooltipWrapper v-for="badge in userDialog.ref.badges" :key="badge.badgeId" side="top">
+            <div
+                v-if="userDialog.publicProfileRef?.badges && userDialog.publicProfileRef?.badges.length"
+                class="flex flex-wrap gap-1.5">
+                <TooltipWrapper v-for="badge in userDialog.publicProfileRef?.badges" :key="badge.badgeId" side="top">
                     <template #content>
                         <span>{{ badge.badgeName }}</span>
                         <span v-if="badge.hidden">&nbsp;(Hidden)</span>

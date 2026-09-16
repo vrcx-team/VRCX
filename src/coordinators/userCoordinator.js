@@ -359,6 +359,7 @@ export function showUserDialog(userId) {
             D.$homeLocationName = worldName;
         });
     }
+    updateUserDialogProfile();
     AppApi.SendIpc('ShowUserDialog', userId);
     queryRequest
         .fetch('user', {
@@ -485,7 +486,6 @@ export function showUserDialog(userId) {
                 queryRequest.fetch('representedGroup', { userId }).then((args1) => {
                     handleGroupRepresented(args1);
                 });
-                updateUserDialogProfile();
                 D.visible = true;
                 userStore.applyUserDialogLocation(true);
             }

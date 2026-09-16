@@ -60,7 +60,6 @@ export const useAppearanceSettingsStore = defineStore(
         const appFontFamily = ref('inter');
         const customFontFamily = ref('');
         const appCjkFontPack = ref(APP_CJK_FONT_PACK_DEFAULT_KEY);
-        const displayVRCPlusIconsAsAvatar = ref(false);
         const displayVRCProfileThemes = ref(false);
         const displayVRCProfileBackgrounds = ref(false);
         const profileBackgroundOpacity = ref(0.5);
@@ -140,7 +139,6 @@ export const useAppearanceSettingsStore = defineStore(
             const fallbackDarkTheme = THEME_CONFIG[initThemeMode]?.isDark === true ? initThemeMode : 'dark';
             const [
                 appLanguageConfig,
-                displayVRCPlusIconsAsAvatarConfig,
                 displayVRCProfileThemesConfig,
                 displayVRCProfileBackgroundsConfig,
                 profileBackgroundOpacityConfig,
@@ -182,7 +180,6 @@ export const useAppearanceSettingsStore = defineStore(
                 lastDarkThemeConfig
             ] = await Promise.all([
                 configRepository.getString('VRCX_appLanguage'),
-                configRepository.getBool('displayVRCPlusIconsAsAvatar', true),
                 configRepository.getBool('VRCX_displayVRCProfileThemes', true),
                 configRepository.getBool('VRCX_displayVRCProfileBackgrounds', false),
                 configRepository.getFloat('VRCX_profileBackgroundOpacity', 0.5),
@@ -251,7 +248,6 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.setString('VRCX_fontFamily', normalizedAppFontFamily);
             }
 
-            displayVRCPlusIconsAsAvatar.value = displayVRCPlusIconsAsAvatarConfig;
             displayVRCProfileThemes.value = displayVRCProfileThemesConfig;
             displayVRCProfileBackgrounds.value = displayVRCProfileBackgroundsConfig;
             profileBackgroundOpacity.value = profileBackgroundOpacityConfig;
@@ -506,11 +502,6 @@ export const useAppearanceSettingsStore = defineStore(
             appCjkFontPack.value = normalized;
             configRepository.setString('VRCX_cjkFontPack', normalized);
             applyAppCjkFontPack(normalized);
-        }
-
-        function setDisplayVRCPlusIconsAsAvatar() {
-            displayVRCPlusIconsAsAvatar.value = !displayVRCPlusIconsAsAvatar.value;
-            configRepository.setBool('displayVRCPlusIconsAsAvatar', displayVRCPlusIconsAsAvatar.value);
         }
 
         function setDisplayVRCProfileThemes() {
@@ -909,7 +900,6 @@ export const useAppearanceSettingsStore = defineStore(
             isDarkMode,
             appFontFamily,
             appCjkFontPack,
-            displayVRCPlusIconsAsAvatar,
             displayVRCProfileThemes,
             displayVRCProfileBackgrounds,
             profileBackgroundOpacity,
@@ -956,7 +946,6 @@ export const useAppearanceSettingsStore = defineStore(
             SEARCH_LIMIT_MAX,
 
             setAppLanguage,
-            setDisplayVRCPlusIconsAsAvatar,
             setDisplayVRCProfileThemes,
             setDisplayVRCProfileBackgrounds,
             setProfileBackgroundOpacity,

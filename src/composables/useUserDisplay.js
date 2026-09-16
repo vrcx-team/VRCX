@@ -1,4 +1,4 @@
-import { useAppearanceSettingsStore, useUserStore } from '../stores';
+import { useUserStore } from '../stores';
 import {
     userImage as userImagePure,
     userImageFull as userImageFullPure,
@@ -11,18 +11,17 @@ import {
  */
 export function useUserDisplay() {
     const userStore = useUserStore();
-    const appearanceStore = useAppearanceSettingsStore();
 
     function userStatusClass(user, pendingOffline = false) {
         return userStatusClassPure(user, pendingOffline, userStore.currentUser);
     }
 
-    function userImage(user, isIcon = false, resolution = '128', isUserDialogIcon = false) {
-        return userImagePure(user, isIcon, resolution, isUserDialogIcon, appearanceStore.displayVRCPlusIconsAsAvatar);
+    function userImage(user, isIcon = false, resolution = '128') {
+        return userImagePure(user, isIcon, resolution);
     }
 
     function userImageFull(user) {
-        return userImageFullPure(user, appearanceStore.displayVRCPlusIconsAsAvatar);
+        return userImageFullPure(user);
     }
 
     return { userStatusClass, userImage, userImageFull };

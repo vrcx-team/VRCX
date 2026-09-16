@@ -95,18 +95,6 @@
                         saveOpenVROption();
                     " />
             </SettingsItem>
-
-            <SettingsItem
-                :label="t('view.settings.appearance.appearance.profile_icons')"
-                :description="t('view.settings.appearance.appearance.profile_icons_description')">
-                <Switch
-                    :model-value="displayVRCPlusIconsAsAvatar"
-                    :ariaLabel="t('view.settings.appearance.appearance.profile_icons')"
-                    @update:modelValue="
-                        setDisplayVRCPlusIconsAsAvatar();
-                        saveOpenVROption();
-                    " />
-            </SettingsItem>
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.appearance.user_dialog.header')">
@@ -500,7 +488,6 @@
 
     const {
         appLanguage,
-        displayVRCPlusIconsAsAvatar,
         displayVRCProfileThemes,
         displayVRCProfileBackgrounds,
         profileBackgroundOpacity,
@@ -531,7 +518,6 @@
     const appLanguageDisplayName = computed(() => getLanguageName(String(appLanguage.value)));
 
     const {
-        setDisplayVRCPlusIconsAsAvatar,
         setDisplayVRCProfileThemes,
         setDisplayVRCProfileBackgrounds,
         setProfileBackgroundOpacity,

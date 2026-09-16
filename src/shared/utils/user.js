@@ -308,27 +308,19 @@ function statusClass(status) {
 
 /**
  * @param {object} user - User Ref Object
- * @param {boolean} isIcon - Is use for icon (about 40x40)
- * @param {string} resolution - Requested icon resolution (default 128),
- * @param {boolean} isUserDialogIcon - Is use for user dialog icon
- * @param {boolean} displayVRCPlusIconsAsAvatar - From appearance settings store
- * @returns {string} - Img url
+ * @param {boolean} isIcon - is use for icon (about 40x40)
+ * @param {string} resolution - requested icon resolution (default 128),
+ * @returns {string} - img url
  */
-function userImage(
-    user,
-    isIcon = false,
-    resolution = '128',
-    isUserDialogIcon = false,
-    displayVRCPlusIconsAsAvatar = false
-) {
+function userImage(user, isIcon = false, resolution = '128') {
     if (!user) {
         return '';
     }
-    if ((isUserDialogIcon && user.userIcon) || (displayVRCPlusIconsAsAvatar && user.userIcon)) {
+    if (user.iconUrl) {
         if (isIcon) {
-            return convertFileUrlToImageUrl(user.userIcon);
+            return convertFileUrlToImageUrl(user.iconUrl);
         }
-        return user.userIcon;
+        return user.iconUrl;
     }
 
     if (user.profilePicOverrideThumbnail) {
@@ -360,15 +352,14 @@ function userImage(
 
 /**
  * @param {object} user
- * @param {boolean} displayVRCPlusIconsAsAvatar - From appearance settings store
- * @returns {string | any}
+ * @returns {string|*}
  */
-function userImageFull(user, displayVRCPlusIconsAsAvatar = false) {
+function userImageFull(user) {
     if (!user) {
         return '';
     }
-    if (displayVRCPlusIconsAsAvatar && user.userIcon) {
-        return user.userIcon;
+    if (user.iconUrl) {
+        return user.iconUrl;
     }
     if (user.profilePicOverride) {
         return user.profilePicOverride;
