@@ -36,10 +36,6 @@
                 <div class="flex flex-col min-h-0" style="flex: 9">
                     <div class="shrink-0 mb-3 flex justify-end">
                         <label class="inline-flex items-center gap-2 ml-2">
-                            <Checkbox v-model="searchUserByBio" />
-                            <span>{{ t('view.search.user.search_by_bio') }}</span>
-                        </label>
-                        <label class="inline-flex items-center gap-2 ml-2">
                             <Checkbox v-model="searchUserSortByLastLoggedIn" />
                             <span>{{ t('view.search.user.sort_by_last_logged_in') }}</span>
                         </label>
@@ -384,7 +380,6 @@
 
     const {
         searchUserParams,
-        searchUserByBio,
         searchUserSortByLastLoggedIn,
         isSearchUserLoading,
         searchUser,

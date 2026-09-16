@@ -12,7 +12,6 @@ export function useSearchUser() {
     const { moreSearchUser } = useSearchStore();
 
     const searchUserParams = ref({});
-    const searchUserByBio = ref(false);
     const searchUserSortByLastLoggedIn = ref(false);
     const isSearchUserLoading = ref(false);
 
@@ -21,7 +20,7 @@ export function useSearchUser() {
             n: 10,
             offset: 0,
             search: searchText.value,
-            customFields: searchUserByBio.value ? 'bio' : 'displayName',
+            customFields: 'displayName',
             sort: searchUserSortByLastLoggedIn.value ? 'last_login' : 'relevance'
         };
         await handleMoreSearchUser();
@@ -42,7 +41,6 @@ export function useSearchUser() {
 
     return {
         searchUserParams,
-        searchUserByBio,
         searchUserSortByLastLoggedIn,
         isSearchUserLoading,
         searchUser,
