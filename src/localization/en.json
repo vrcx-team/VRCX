@@ -839,7 +839,6 @@
                 "logging": {
                     "header": "Logging",
                     "resource_load": "Log Udon String/Image Load",
-                    "empty_avatar": "Log Avatars in Feed Without Names",
                     "auto_login_delay": "Auto-Login Delay",
                     "auto_login_delay_button": "Set Delay Seconds"
                 },

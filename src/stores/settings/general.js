@@ -27,7 +27,6 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     const localFavoriteFriendsGroups = ref([]);
     const udonExceptionLogging = ref(false);
     const logResourceLoad = ref(false);
-    const logEmptyAvatars = ref(false);
     const autoLoginDelayEnabled = ref(false);
     const autoLoginDelaySeconds = ref(0);
     const autoStateChangeEnabled = ref(false);
@@ -57,7 +56,6 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             localFavoriteFriendsGroupsStrConfig,
             udonExceptionLoggingConfig,
             logResourceLoadConfig,
-            logEmptyAvatarsConfig,
             autoLoginDelayEnabledConfig,
             autoLoginDelaySecondsConfig,
             autoStateChangeEnabledConfig,
@@ -85,7 +83,6 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             configRepository.getString('VRCX_localFavoriteFriendsGroups', '[]'),
             configRepository.getBool('VRCX_udonExceptionLogging', false),
             configRepository.getBool('VRCX_logResourceLoad', false),
-            configRepository.getBool('VRCX_logEmptyAvatars', false),
             configRepository.getBool('VRCX_autoLoginDelayEnabled', false),
             configRepository.getInt('VRCX_autoLoginDelaySeconds', 0),
             configRepository.getBool('VRCX_autoStateChangeEnabled', false),
@@ -122,7 +119,6 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         localFavoriteFriendsGroups.value = JSON.parse(localFavoriteFriendsGroupsStrConfig);
         udonExceptionLogging.value = udonExceptionLoggingConfig;
         logResourceLoad.value = logResourceLoadConfig;
-        logEmptyAvatars.value = logEmptyAvatarsConfig;
         autoLoginDelayEnabled.value = autoLoginDelayEnabledConfig;
         autoLoginDelaySeconds.value = autoLoginDelaySecondsConfig;
         autoStateChangeEnabled.value = autoStateChangeEnabledConfig;
@@ -180,10 +176,6 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     function setLogResourceLoad() {
         logResourceLoad.value = !logResourceLoad.value;
         configRepository.setBool('VRCX_logResourceLoad', logResourceLoad.value);
-    }
-    function setLogEmptyAvatars() {
-        logEmptyAvatars.value = !logEmptyAvatars.value;
-        configRepository.setBool('VRCX_logEmptyAvatars', logEmptyAvatars.value);
     }
     function setAutoLoginDelayEnabled() {
         autoLoginDelayEnabled.value = !autoLoginDelayEnabled.value;
@@ -352,7 +344,6 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         localFavoriteFriendsGroups,
         udonExceptionLogging,
         logResourceLoad,
-        logEmptyAvatars,
         autoLoginDelayEnabled,
         autoLoginDelaySeconds,
         autoStateChangeEnabled,
@@ -379,7 +370,6 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         setLocalFavoriteFriendsGroups,
         setUdonExceptionLogging,
         setLogResourceLoad,
-        setLogEmptyAvatars,
         setAutoLoginDelayEnabled,
         promptAutoLoginDelaySeconds,
         setAutoStateChangeEnabled,
