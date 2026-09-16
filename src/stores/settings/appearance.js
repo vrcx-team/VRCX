@@ -504,9 +504,6 @@ export const useAppearanceSettingsStore = defineStore(
             applyAppCjkFontPack(normalized);
         }
 
-        /**
-         *
-         */
         function setDisplayVRCProfileThemes() {
             displayVRCProfileThemes.value = !displayVRCProfileThemes.value;
             configRepository.setBool('VRCX_displayVRCProfileThemes', displayVRCProfileThemes.value);
