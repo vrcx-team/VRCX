@@ -3,13 +3,13 @@ using System;
 // (like help text)
 using System.CommandLine;
 using System.CommandLine.Parsing;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using NLog;
 using NLog.Targets;
-using System.Data.SQLite;
 
 namespace DBMerger;
 

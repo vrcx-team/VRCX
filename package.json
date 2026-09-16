@@ -22,6 +22,8 @@
         "localization": "node ./src/shared/utils/localizationHelperCLI.js",
         "format": "oxfmt",
         "format:check": "oxfmt --check",
+        "dotnet_format": "dotnet format",
+        "dotnet_format:check": "dotnet format --verify-no-changes --verbosity diagnostic",
         "lint": "oxlint",
         "lint:fix": "oxlint --fix --fix-suggestions",
         "lint:fix-danger": "oxlint --fix --fix-suggestions --fix-dangerously",
