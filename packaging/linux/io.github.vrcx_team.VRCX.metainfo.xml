@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.vrcx_team.VRCX</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+
+  <name>VRCX</name>
+  <summary>Manage your VRChat social life</summary>
+
+  <developer id="app.vrcx">
+    <name>VRCX Team</name>
+  </developer>
+
+  <description>
+    <p>
+      VRCX is a companion for VRChat that helps you manage friends, worlds,
+      avatars, groups, invitations, and activity history outside the game.
+    </p>
+    <p>
+      VRCX is not endorsed by VRChat Inc. and does not modify the game.
+    </p>
+  </description>
+
+  <categories>
+    <category>Utility</category>
+  </categories>
+
+  <keywords>
+    <keyword>VRChat</keyword>
+    <keyword>friends</keyword>
+    <keyword>worlds</keyword>
+    <keyword>avatars</keyword>
+  </keywords>
+
+  <launchable type="desktop-id">io.github.vrcx_team.VRCX.desktop</launchable>
+
+  <url type="homepage">https://vrcx.app/</url>
+  <url type="bugtracker">https://github.com/vrcx-team/VRCX/issues</url>
+  <url type="vcs-browser">https://github.com/vrcx-team/VRCX</url>
+  <url type="help">https://github.com/vrcx-team/VRCX/wiki</url>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251987020-9839a2c9-47db-4271-b1bf-8e07669a7056.png</image>
+      <caption>Review recent VRChat activity</caption>
+    </screenshot>
+  </screenshots>
+
+  <releases>
+    <release version="2026.07.18" date="2026-07-18">
+      <url type="details">https://github.com/vrcx-team/VRCX/releases/tag/v2026.07.18</url>
+    </release>
+  </releases>
+
+  <content_rating type="oars-1.1">
+    <content_attribute id="social-chat">intense</content_attribute>
+    <content_attribute id="social-info">intense</content_attribute>
+  </content_rating>
+</component>
