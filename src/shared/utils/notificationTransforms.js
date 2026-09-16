@@ -3,8 +3,9 @@ import { replaceBioSymbols } from './base/string';
 /**
  * Remove null/undefined keys from a notification JSON object
  * and sanitize message/title fields with replaceBioSymbols.
- * @param {object} json - notification data (mutated in place)
- * @returns {object} the same json reference
+ *
+ * @param {object} json - Notification data (mutated in place)
+ * @returns {object} The same json reference
  */
 export function sanitizeNotificationJson(json) {
     for (const key in json) {
@@ -23,8 +24,9 @@ export function sanitizeNotificationJson(json) {
 
 /**
  * Parse a notification's details field from string to object if needed.
- * @param {*} details - raw details value
- * @returns {object} parsed details object
+ *
+ * @param {any} details - Raw details value
+ * @returns {object} Parsed details object
  */
 export function parseNotificationDetails(details) {
     if (details === Object(details)) {
@@ -47,8 +49,9 @@ export function parseNotificationDetails(details) {
  * Build a default V1 notification ref from JSON data.
  * Does NOT perform cache lookup — caller is responsible for
  * checking existing refs and merging.
- * @param {object} json - sanitized notification JSON
- * @returns {object} default notification ref
+ *
+ * @param {object} json - Sanitized notification JSON
+ * @returns {object} Default notification ref
  */
 export function createDefaultNotificationRef(json) {
     const ref = {
@@ -72,9 +75,10 @@ export function createDefaultNotificationRef(json) {
 /**
  * Build a default V2 notification ref from JSON data.
  * Handles boop legacy formatting.
- * @param {object} json - sanitized notification JSON
+ *
+ * @param {object} json - Sanitized notification JSON
  * @param {string} endpointDomain - API endpoint domain for emoji URLs
- * @returns {object} default notification V2 ref
+ * @returns {object} Default notification V2 ref
  */
 export function createDefaultNotificationV2Ref(json) {
     return {
@@ -102,7 +106,8 @@ export function createDefaultNotificationV2Ref(json) {
 /**
  * Apply legacy boop formatting to a V2 notification ref.
  * Mutates the ref in place.
- * @param {object} ref - notification V2 ref
+ *
+ * @param {object} ref - Notification V2 ref
  * @param {string} endpointDomain - API endpoint domain for emoji URLs
  */
 export function applyBoopLegacyHandling(ref, endpointDomain) {

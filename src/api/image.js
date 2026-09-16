@@ -13,9 +13,7 @@ const imageReq = {
             const fileVersion = json.versions[json.versions.length - 1].version;
             request(`file/${fileId}/${fileVersion}/signature/finish`, {
                 method: 'PUT'
-            }).catch((err) =>
-                console.error('Failed to finish signature:', err)
-            );
+            }).catch((err) => console.error('Failed to finish signature:', err));
             request(`file/${fileId}/${fileVersion}/file/finish`, {
                 method: 'PUT'
             }).catch((err) => console.error('Failed to finish file:', err));
@@ -47,12 +45,9 @@ const imageReq = {
 
     async uploadAvatarImageFileStart(params) {
         try {
-            return await request(
-                `file/${params.fileId}/${params.fileVersion}/file/start`,
-                {
-                    method: 'PUT'
-                }
-            ).then((json) => {
+            return await request(`file/${params.fileId}/${params.fileVersion}/file/start`, {
+                method: 'PUT'
+            }).then((json) => {
                 const args = {
                     json,
                     params
@@ -66,16 +61,13 @@ const imageReq = {
     },
 
     uploadAvatarImageFileFinish(params) {
-        return request(
-            `file/${params.fileId}/${params.fileVersion}/file/finish`,
-            {
-                method: 'PUT',
-                params: {
-                    maxParts: 0,
-                    nextPartNumber: 0
-                }
+        return request(`file/${params.fileId}/${params.fileVersion}/file/finish`, {
+            method: 'PUT',
+            params: {
+                maxParts: 0,
+                nextPartNumber: 0
             }
-        ).then((json) => {
+        }).then((json) => {
             const args = {
                 json,
                 params
@@ -86,12 +78,9 @@ const imageReq = {
 
     async uploadAvatarImageSigStart(params) {
         try {
-            return await request(
-                `file/${params.fileId}/${params.fileVersion}/signature/start`,
-                {
-                    method: 'PUT'
-                }
-            ).then((json) => {
+            return await request(`file/${params.fileId}/${params.fileVersion}/signature/start`, {
+                method: 'PUT'
+            }).then((json) => {
                 const args = {
                     json,
                     params
@@ -105,16 +94,13 @@ const imageReq = {
     },
 
     uploadAvatarImageSigFinish(params) {
-        return request(
-            `file/${params.fileId}/${params.fileVersion}/signature/finish`,
-            {
-                method: 'PUT',
-                params: {
-                    maxParts: 0,
-                    nextPartNumber: 0
-                }
+        return request(`file/${params.fileId}/${params.fileVersion}/signature/finish`, {
+            method: 'PUT',
+            params: {
+                maxParts: 0,
+                nextPartNumber: 0
             }
-        ).then((json) => {
+        }).then((json) => {
             const args = {
                 json,
                 params
@@ -146,9 +132,7 @@ const imageReq = {
             const fileVersion = json.versions[json.versions.length - 1].version;
             request(`file/${fileId}/${fileVersion}/signature/finish`, {
                 method: 'PUT'
-            }).catch((err) =>
-                console.error('Failed to finish signature:', err)
-            );
+            }).catch((err) => console.error('Failed to finish signature:', err));
             request(`file/${fileId}/${fileVersion}/file/finish`, {
                 method: 'PUT'
             }).catch((err) => console.error('Failed to finish file:', err));
@@ -180,12 +164,9 @@ const imageReq = {
 
     async uploadWorldImageFileStart(params) {
         try {
-            return await request(
-                `file/${params.fileId}/${params.fileVersion}/file/start`,
-                {
-                    method: 'PUT'
-                }
-            ).then((json) => {
+            return await request(`file/${params.fileId}/${params.fileVersion}/file/start`, {
+                method: 'PUT'
+            }).then((json) => {
                 const args = {
                     json,
                     params
@@ -200,16 +181,13 @@ const imageReq = {
     },
 
     uploadWorldImageFileFinish(params) {
-        return request(
-            `file/${params.fileId}/${params.fileVersion}/file/finish`,
-            {
-                method: 'PUT',
-                params: {
-                    maxParts: 0,
-                    nextPartNumber: 0
-                }
+        return request(`file/${params.fileId}/${params.fileVersion}/file/finish`, {
+            method: 'PUT',
+            params: {
+                maxParts: 0,
+                nextPartNumber: 0
             }
-        ).then((json) => {
+        }).then((json) => {
             const args = {
                 json,
                 params
@@ -220,12 +198,9 @@ const imageReq = {
 
     async uploadWorldImageSigStart(params) {
         try {
-            return await request(
-                `file/${params.fileId}/${params.fileVersion}/signature/start`,
-                {
-                    method: 'PUT'
-                }
-            ).then((json) => {
+            return await request(`file/${params.fileId}/${params.fileVersion}/signature/start`, {
+                method: 'PUT'
+            }).then((json) => {
                 const args = {
                     json,
                     params
@@ -240,16 +215,13 @@ const imageReq = {
     },
 
     uploadWorldImageSigFinish(params) {
-        return request(
-            `file/${params.fileId}/${params.fileVersion}/signature/finish`,
-            {
-                method: 'PUT',
-                params: {
-                    maxParts: 0,
-                    nextPartNumber: 0
-                }
+        return request(`file/${params.fileId}/${params.fileVersion}/signature/finish`, {
+            method: 'PUT',
+            params: {
+                maxParts: 0,
+                nextPartNumber: 0
             }
-        ).then((json) => {
+        }).then((json) => {
             const args = {
                 json,
                 params
@@ -259,7 +231,6 @@ const imageReq = {
     },
 
     setWorldImage(params) {
-        
         return request(`worlds/${params.id}`, {
             method: 'PUT',
             params

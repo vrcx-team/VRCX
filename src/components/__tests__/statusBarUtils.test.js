@@ -164,10 +164,7 @@ describe('loadVisibility', () => {
     });
 
     test('merges saved values with defaults', () => {
-        storage.setItem(
-            'VRCX_statusBarVisibility',
-            JSON.stringify({ vrchat: false, ws: false })
-        );
+        storage.setItem('VRCX_statusBarVisibility', JSON.stringify({ vrchat: false, ws: false }));
         const result = loadVisibility(storage);
         expect(result.vrchat).toBe(false);
         expect(result.ws).toBe(false);
@@ -205,22 +202,12 @@ describe('loadClocks', () => {
     });
 
     test('loads valid saved clocks', () => {
-        storage.setItem(
-            'VRCX_statusBarClocks',
-            JSON.stringify([{ offset: 1 }, { offset: 2 }, { offset: 3 }])
-        );
-        expect(loadClocks(storage, defaults)).toEqual([
-            { offset: 1 },
-            { offset: 2 },
-            { offset: 3 }
-        ]);
+        storage.setItem('VRCX_statusBarClocks', JSON.stringify([{ offset: 1 }, { offset: 2 }, { offset: 3 }]));
+        expect(loadClocks(storage, defaults)).toEqual([{ offset: 1 }, { offset: 2 }, { offset: 3 }]);
     });
 
     test('returns defaults for wrong array length', () => {
-        storage.setItem(
-            'VRCX_statusBarClocks',
-            JSON.stringify([{ offset: 1 }])
-        );
+        storage.setItem('VRCX_statusBarClocks', JSON.stringify([{ offset: 1 }]));
         expect(loadClocks(storage, defaults)).toEqual(defaults);
     });
 
@@ -237,11 +224,7 @@ describe('loadClocks', () => {
     test('normalises clock entries from storage', () => {
         storage.setItem(
             'VRCX_statusBarClocks',
-            JSON.stringify([
-                { offset: '5' },
-                { timezone: 'UTC+3' },
-                { offset: 99 }
-            ])
+            JSON.stringify([{ offset: '5' }, { timezone: 'UTC+3' }, { offset: 99 }])
         );
         expect(loadClocks(storage, defaults)).toEqual([
             { offset: 5 },

@@ -1,10 +1,6 @@
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger
-} from '../../components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { ArrowRight, ArrowUpDown, Trash2, X } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
@@ -33,12 +29,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             size: 120,
             meta: { label: () => t('table.friendLog.date') },
             header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === 'asc')
-                    }
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     {t('table.friendLog.date')}
                     <ArrowUpDown class="ml-1 h-4 w-4" />
                 </Button>
@@ -86,8 +77,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             },
             cell: ({ row }) => {
                 const original = row.original;
-                const displayName =
-                    original.displayName || original.userId || '';
+                const displayName = original.displayName || original.userId || '';
                 return (
                     <span class="block w-full whitespace-normal wrap-break-word cursor-pointer">
                         {original.type === 'DisplayName' ? (
@@ -96,10 +86,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
                                 <ArrowRight class="mx-1 inline h-3 w-3" />
                             </span>
                         ) : null}
-                        <span
-                            class="cursor-pointer pr-2.5"
-                            onClick={() => showUserDialog(original.userId)}
-                        >
+                        <span class="cursor-pointer pr-2.5" onClick={() => showUserDialog(original.userId)}>
                             {displayName}
                         </span>
                         {original.type === 'TrustLevel' ? (
@@ -130,17 +117,9 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
                         <button
                             type="button"
                             class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
-                            onClick={() =>
-                                shiftHeld.value
-                                    ? onDelete(original)
-                                    : onDeletePrompt(original)
-                            }
+                            onClick={() => (shiftHeld.value ? onDelete(original) : onDeletePrompt(original))}
                         >
-                            {shiftHeld.value ? (
-                                <X class="h-4 w-4 text-red-600" />
-                            ) : (
-                                <Trash2 class="h-4 w-4" />
-                            )}
+                            {shiftHeld.value ? <X class="h-4 w-4 text-red-600" /> : <Trash2 class="h-4 w-4" />}
                         </button>
                     </div>
                 );

@@ -78,9 +78,6 @@
         }
     );
 
-    /**
-     *
-     */
     function initExportFriendsListDialog() {
         const { friends } = currentUser.value;
         if (Array.isArray(friends) === false) {

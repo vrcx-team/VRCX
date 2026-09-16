@@ -8,8 +8,7 @@ vi.mock('vue-i18n', () => {
     const { ref } = require('vue');
     return {
         useI18n: () => ({
-            t: (key, params) =>
-                params ? `${key}:${JSON.stringify(params)}` : key,
+            t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
             locale: ref('en')
         }),
         createI18n: () => ({
@@ -96,10 +95,7 @@ vi.mock('../../../../coordinators/worldCoordinator', async (importOriginal) => {
 
 import UserDialogWorldsTab from '../UserDialogWorldsTab.vue';
 import { useUserStore } from '../../../../stores';
-import {
-    userDialogWorldSortingOptions,
-    userDialogWorldOrderOptions
-} from '../../../../shared/constants';
+import { userDialogWorldSortingOptions, userDialogWorldOrderOptions } from '../../../../shared/constants';
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 
@@ -128,7 +124,6 @@ const MOCK_WORLDS = [
 ];
 
 /**
- *
  * @param overrides
  */
 function mountComponent(overrides = {}) {
@@ -243,9 +238,7 @@ describe('UserDialogWorldsTab.vue', () => {
         test('calls showWorldDialog when a world is clicked', async () => {
             const pinia = createTestingPinia({ stubActions: false });
             const userStore = useUserStore(pinia);
-            const showWorldDialogSpy = vi
-                .spyOn(worldCoordinatorModule, 'showWorldDialog')
-                .mockImplementation(() => {});
+            const showWorldDialogSpy = vi.spyOn(worldCoordinatorModule, 'showWorldDialog').mockImplementation(() => {});
 
             userStore.$patch({
                 userDialog: {

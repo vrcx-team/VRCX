@@ -1642,6 +1642,7 @@
 
     /**
      * VR overlay config payload (passed as JSON string).
+     *
      * @typedef {object} VrConfigVarsPayload
      * @property {boolean} overlayNotifications
      * @property {boolean} hideDevicesFromFeed
@@ -1691,7 +1692,6 @@
     }
 
     /**
-     *
      * @param count
      */
     function updateOnlineFriendCount(count) {
@@ -1699,7 +1699,6 @@
     }
 
     /**
-     *
      * @param json
      */
     function nowPlayingUpdate(json) {
@@ -1720,7 +1719,6 @@
     }
 
     /**
-     *
      * @param json
      */
     function lastLocationUpdate(json) {
@@ -1728,7 +1726,6 @@
     }
 
     /**
-     *
      * @param json
      */
     function wristFeedUpdate(json) {
@@ -1736,9 +1733,6 @@
         updateFeedLength();
     }
 
-    /**
-     *
-     */
     function updateFeedLength() {
         if (vrState.wristFeed.length === 0) {
             return;
@@ -1758,9 +1752,6 @@
         }
     }
 
-    /**
-     *
-     */
     async function refreshCustomScript() {
         if (document.contains(document.getElementById('vr-custom-script'))) {
             document.getElementById('vr-custom-script').remove();
@@ -1777,7 +1768,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function setNotyOpacity(value) {
@@ -1793,9 +1783,6 @@
         element.innerHTML = `.noty_layout { opacity: ${opacity}; }`;
     }
 
-    /**
-     *
-     */
     async function updateStatsLoop() {
         try {
             vrState.currentTime = new Date()
@@ -1888,9 +1875,6 @@
         updateStatsLoopTimeoutId = workerTimers.setTimeout(() => updateStatsLoop(), 500);
     }
 
-    /**
-     *
-     */
     async function updateVrElectronLoop() {
         try {
             const overlayQueue = await AppApiVr.GetExecuteVrOverlayFunctionQueue();
@@ -1917,7 +1901,6 @@
     }
 
     /**
-     *
      * @param json
      */
     function playNoty(json) {
@@ -2092,7 +2075,6 @@
     }
 
     /**
-     *
      * @param status
      */
     function statusClass(status) {
@@ -2116,16 +2098,10 @@
         return style;
     }
 
-    /**
-     *
-     */
     function notyClear() {
         Noty.closeAll();
     }
 
-    /**
-     *
-     */
     function cleanHudFeedLoop() {
         if (!vrState.cleanHudFeedLoopStatus) {
             return;
@@ -2141,9 +2117,6 @@
         cleanHudFeedLoopTimeoutId = workerTimers.setTimeout(() => cleanHudFeedLoop(), 500);
     }
 
-    /**
-     *
-     */
     function cleanHudFeed() {
         const dt = Date.now();
         vrState.hudFeed.forEach((item) => {
@@ -2161,7 +2134,6 @@
     }
 
     /**
-     *
      * @param json
      */
     function addEntryHudFeed(json) {
@@ -2182,7 +2154,6 @@
     }
 
     /**
-     *
      * @param json
      */
     function updateHudFeedTag(json) {
@@ -2195,16 +2166,12 @@
     }
 
     /**
-     *
      * @param json
      */
     function updateHudTimeout(json) {
         vrState.hudTimeout = JSON.parse(json);
     }
 
-    /**
-     *
-     */
     async function setDatetimeFormat() {
         vrState.currentCulture = await AppApiVr.CurrentCulture();
     }
@@ -2225,7 +2192,6 @@
     };
 
     /**
-     *
      * @param appLanguage
      */
     async function setAppLanguage(appLanguage) {
@@ -2240,7 +2206,6 @@
     }
 
     /**
-     *
      * @param deviceStatus
      */
     function trackingResultToClass(deviceStatus) {

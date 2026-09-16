@@ -1,6 +1,7 @@
 /**
  * Convert an audit log type string to a human-readable name.
  * e.g. 'group.member.ban' → 'Member Ban'
+ *
  * @param {string} auditLogType
  * @returns {string}
  */
@@ -14,8 +15,9 @@ export function getAuditLogTypeName(auditLogType) {
 
 /**
  * Resolve an array of role IDs to a comma-separated string of role names.
- * @param {Array<string>} roleIds
- * @param {Array<{id: string, name: string}>} roles - available roles
+ *
+ * @param {string[]} roleIds
+ * @param {{ id: string; name: string }[]} roles - Available roles
  * @returns {string}
  */
 export function resolveRoleNames(roleIds, roles) {

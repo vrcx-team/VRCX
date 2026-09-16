@@ -1,8 +1,7 @@
 /**
- *
  * @param {string} location
  * @param {string} worldName
- * @param {string?} groupName
+ * @param {string | null} groupName
  * @returns {string}
  */
 function displayLocation(location, worldName, groupName = '') {
@@ -25,7 +24,6 @@ function displayLocation(location, worldName, groupName = '') {
 }
 
 /**
- *
  * @param {string} tag
  * @returns
  */
@@ -67,9 +65,7 @@ function parseLocation(tag) {
         const shortNameQualifier = '&shortName=';
         const shortNameIndex = _tag.indexOf(shortNameQualifier);
         if (shortNameIndex >= 0) {
-            ctx.shortName = _tag.substr(
-                shortNameIndex + shortNameQualifier.length
-            );
+            ctx.shortName = _tag.substr(shortNameIndex + shortNameQualifier.length);
             _tag = _tag.substr(0, shortNameIndex);
         }
         if (sep >= 0) {
@@ -143,7 +139,7 @@ function parseLocation(tag) {
 
 /**
  * @param {object} L - A parsed location object from parseLocation()
- * @returns {string} region code (e.g. 'us', 'eu', 'jp') or empty string
+ * @returns {string} Region code (e.g. 'us', 'eu', 'jp') or empty string
  */
 function resolveRegion(L) {
     if (L.isOffline || L.isPrivate || L.isTraveling) {

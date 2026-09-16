@@ -67,10 +67,7 @@
     "compounds": [
         {
             "name": "VRCX App",
-            "configurations": [
-                "C#: Cef/Electron Debug",
-                "Debug Electron (Main Process)"
-            ]
+            "configurations": ["C#: Cef/Electron Debug", "Debug Electron (Main Process)"]
         }
     ]
 }

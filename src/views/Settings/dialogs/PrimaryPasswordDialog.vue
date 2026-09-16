@@ -47,9 +47,6 @@
     const { enablePrimaryPasswordDialog } = storeToRefs(authStore);
     const { setPrimaryPassword } = authStore;
 
-    /**
-     *
-     */
     function handleSetPrimaryPassword() {
         setPrimaryPassword(enablePrimaryPasswordDialog.value.password);
         enablePrimaryPasswordDialog.value.visible = false;

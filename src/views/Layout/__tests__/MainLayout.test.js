@@ -105,10 +105,9 @@ vi.mock('../../Favorites/dialogs/WorldImportDialog.vue', () => ({
 vi.mock('../../Favorites/dialogs/AvatarImportDialog.vue', () => ({
     default: { template: '<div />' }
 }));
-vi.mock(
-    '../../../components/dialogs/GroupDialog/GroupMemberModerationDialog.vue',
-    () => ({ default: { template: '<div />' } })
-);
+vi.mock('../../../components/dialogs/GroupDialog/GroupMemberModerationDialog.vue', () => ({
+    default: { template: '<div />' }
+}));
 vi.mock('../../../components/dialogs/InviteGroupDialog.vue', () => ({
     default: { template: '<div />' }
 }));

@@ -40,8 +40,7 @@ vi.mock('../../../../coordinators/worldCoordinator', () => ({
     removeWorldFromCache: vi.fn()
 }));
 
-const { favoriteRequest, miscRequest, userRequest, worldRequest } =
-    await import('../../../../api');
+const { favoriteRequest, miscRequest, userRequest, worldRequest } = await import('../../../../api');
 const { openExternalLink } = await import('../../../../shared/utils');
 
 function createWorldDialog(overrides = {}) {
@@ -121,10 +120,7 @@ describe('useWorldDialogCommands', () => {
         test('returns early when dialog is not visible', () => {
             const worldDialog = createWorldDialog({ visible: false });
             const deps = createDeps();
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Refresh');
             expect(deps.showWorldDialog).not.toHaveBeenCalled();
@@ -133,10 +129,7 @@ describe('useWorldDialogCommands', () => {
         test('Refresh command calls showWorldDialog with forceRefresh', () => {
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Refresh');
             expect(deps.showWorldDialog).toHaveBeenCalledWith(
@@ -149,25 +142,16 @@ describe('useWorldDialogCommands', () => {
         test('Add Favorite command calls showFavoriteDialog', () => {
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Add Favorite');
-            expect(deps.showFavoriteDialog).toHaveBeenCalledWith(
-                'world',
-                'wrld_123'
-            );
+            expect(deps.showFavoriteDialog).toHaveBeenCalledWith('world', 'wrld_123');
         });
 
         test('New Instance and Self Invite calls newInstanceSelfInvite', () => {
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('New Instance and Self Invite');
             expect(deps.newInstanceSelfInvite).toHaveBeenCalledWith('wrld_123');
@@ -176,26 +160,19 @@ describe('useWorldDialogCommands', () => {
         test('Previous Instances calls showPreviousInstancesListDialog', () => {
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Previous Instances');
-            expect(deps.showPreviousInstancesListDialog).toHaveBeenCalledWith(
-                'world',
-                worldDialog.value.ref
-            );
+            expect(deps.showPreviousInstancesListDialog).toHaveBeenCalledWith('world', worldDialog.value.ref);
         });
 
         test('Change Tags sets isSetWorldTagsDialogVisible to true', () => {
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const {
-                worldDialogCommand,
-                isSetWorldTagsDialogVisible,
-                registerCallbacks
-            } = useWorldDialogCommands(worldDialog, deps);
+            const { worldDialogCommand, isSetWorldTagsDialogVisible, registerCallbacks } = useWorldDialogCommands(
+                worldDialog,
+                deps
+            );
 
             registerCallbacks({
                 showSetWorldTagsDialog: () => {
@@ -210,10 +187,7 @@ describe('useWorldDialogCommands', () => {
         test('Download Unity Package opens external link', () => {
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Download Unity Package');
             expect(openExternalLink).toHaveBeenCalled();
@@ -227,26 +201,17 @@ describe('useWorldDialogCommands', () => {
             });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Share');
-            expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-                'https://vrchat.com/home/world/wrld_123'
-            );
+            expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://vrchat.com/home/world/wrld_123');
         });
 
         test('Change Allowed Domains opens the allowed domains dialog', () => {
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const {
-                worldDialogCommand,
-                worldAllowedDomainsDialog,
-                showWorldAllowedDomainsDialog,
-                registerCallbacks
-            } = useWorldDialogCommands(worldDialog, deps);
+            const { worldDialogCommand, worldAllowedDomainsDialog, showWorldAllowedDomainsDialog, registerCallbacks } =
+                useWorldDialogCommands(worldDialog, deps);
 
             registerCallbacks({
                 showWorldAllowedDomainsDialog: () => {
@@ -264,10 +229,7 @@ describe('useWorldDialogCommands', () => {
         test('Delete Favorite shows confirm then calls API', async () => {
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Delete Favorite');
             await vi.waitFor(() => {
@@ -282,10 +244,7 @@ describe('useWorldDialogCommands', () => {
             userRequest.saveCurrentUser.mockResolvedValue({ ok: true });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Make Home');
             await vi.waitFor(() => {
@@ -299,10 +258,7 @@ describe('useWorldDialogCommands', () => {
             userRequest.saveCurrentUser.mockResolvedValue({ ok: true });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Reset Home');
             await vi.waitFor(() => {
@@ -316,10 +272,7 @@ describe('useWorldDialogCommands', () => {
             worldRequest.publishWorld.mockResolvedValue({ ok: true });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Publish');
             await vi.waitFor(() => {
@@ -333,10 +286,7 @@ describe('useWorldDialogCommands', () => {
             worldRequest.unpublishWorld.mockResolvedValue({ ok: true });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Unpublish');
             await vi.waitFor(() => {
@@ -352,16 +302,11 @@ describe('useWorldDialogCommands', () => {
             });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Delete Persistent Data');
             await vi.waitFor(() => {
-                expect(miscRequest.deleteWorldPersistData).toHaveBeenCalledWith(
-                    { worldId: 'wrld_123' }
-                );
+                expect(miscRequest.deleteWorldPersistData).toHaveBeenCalledWith({ worldId: 'wrld_123' });
             });
         });
 
@@ -369,10 +314,7 @@ describe('useWorldDialogCommands', () => {
             const worldDialog = createWorldDialog();
             const deps = createDeps();
             deps.modalStore.confirm.mockResolvedValue({ ok: false });
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Make Home');
             await vi.waitFor(() => {
@@ -391,10 +333,7 @@ describe('useWorldDialogCommands', () => {
                 ok: true,
                 value: 'New Name'
             });
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Rename');
             await vi.waitFor(() => {
@@ -413,10 +352,7 @@ describe('useWorldDialogCommands', () => {
                 ok: true,
                 value: 'New Desc'
             });
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Change Description');
             await vi.waitFor(() => {
@@ -432,10 +368,7 @@ describe('useWorldDialogCommands', () => {
             const worldDialog = createWorldDialog();
             const deps = createDeps();
             deps.modalStore.prompt.mockResolvedValue({ ok: true, value: '30' });
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Change Capacity');
             await vi.waitFor(() => {
@@ -451,10 +384,7 @@ describe('useWorldDialogCommands', () => {
             const worldDialog = createWorldDialog();
             const deps = createDeps();
             deps.modalStore.prompt.mockResolvedValue({ ok: true, value: '15' });
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Change Recommended Capacity');
             await vi.waitFor(() => {
@@ -469,10 +399,7 @@ describe('useWorldDialogCommands', () => {
             const worldDialog = createWorldDialog();
             const deps = createDeps();
             deps.modalStore.prompt.mockResolvedValue({ ok: false });
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Rename');
             await vi.waitFor(() => {
@@ -491,10 +418,7 @@ describe('useWorldDialogCommands', () => {
                 ok: true,
                 value: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
             });
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Change YouTube Preview');
             await vi.waitFor(() => {
@@ -513,10 +437,7 @@ describe('useWorldDialogCommands', () => {
                 ok: true,
                 value: 'dQw4w9WgXcQ'
             });
-            const { worldDialogCommand } = useWorldDialogCommands(
-                worldDialog,
-                deps
-            );
+            const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
 
             worldDialogCommand('Change YouTube Preview');
             await vi.waitFor(() => {
@@ -544,9 +465,7 @@ describe('useWorldDialogCommands', () => {
 
             copyWorldUrl();
             await vi.waitFor(() => {
-                expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-                    'https://vrchat.com/home/world/wrld_123'
-                );
+                expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://vrchat.com/home/world/wrld_123');
             });
         });
 
@@ -557,9 +476,7 @@ describe('useWorldDialogCommands', () => {
 
             copyWorldName();
             await vi.waitFor(() => {
-                expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-                    'Test World'
-                );
+                expect(navigator.clipboard.writeText).toHaveBeenCalledWith('Test World');
             });
         });
     });

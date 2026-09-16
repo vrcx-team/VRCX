@@ -30,9 +30,7 @@ describe('evictMapCache', () => {
             ['evict_2', 'evictable'],
             ['evict_3', 'evictable']
         ]);
-        const result = evictMapCache(cache, 2, (_value, key) =>
-            key.startsWith('keep_')
-        );
+        const result = evictMapCache(cache, 2, (_value, key) => key.startsWith('keep_'));
         // Should have evicted evictable entries but retained keep entries
         expect(cache.has('keep_1')).toBe(true);
         expect(cache.has('keep_2')).toBe(true);
@@ -63,9 +61,7 @@ describe('evictMapCache', () => {
             ['c', 3]
         ]);
         evictMapCache(cache, 1, () => false, { logLabel: 'Test cleanup' });
-        expect(spy).toHaveBeenCalledWith(
-            expect.stringContaining('Test cleanup')
-        );
+        expect(spy).toHaveBeenCalledWith(expect.stringContaining('Test cleanup'));
         spy.mockRestore();
     });
 

@@ -28,10 +28,7 @@ export function useStatusPresets() {
         if (presets.value.length >= MAX_PRESETS) {
             return 'limit';
         }
-        const exists = presets.value.some(
-            (p) =>
-                p.status === status && p.statusDescription === statusDescription
-        );
+        const exists = presets.value.some((p) => p.status === status && p.statusDescription === statusDescription);
         if (exists) {
             return 'exists';
         }

@@ -35,7 +35,6 @@ function remixiconWoff2Only() {
 }
 
 /**
- *
  * @param assetId
  */
 function getAssetLanguage(assetId) {
@@ -60,7 +59,6 @@ function getAssetLanguage(assetId) {
 }
 
 /**
- *
  * @param moduleId
  */
 function getManualChunk(moduleId) {
@@ -81,7 +79,6 @@ function isFont(name) {
 }
 
 /**
- *
  * @param {import('rolldown').PreRenderedAsset} assetInfo
  */
 function getAssetFilename({ name }) {
@@ -93,7 +90,7 @@ function getAssetFilename({ name }) {
 }
 
 /**
- * @param ConfigEnv configEnv
+ * @param ConfigEnv ConfigEnv
  * @returns {import('vite').UserConfig}
  */
 export default defineConfig(({ mode }) => {

@@ -21,33 +21,23 @@ describe('buildLegacyInstanceTag', () => {
     });
 
     test('public instance with US East region', () => {
-        expect(buildLegacyInstanceTag({ ...base, region: 'US East' })).toBe(
-            '12345~region(use)'
-        );
+        expect(buildLegacyInstanceTag({ ...base, region: 'US East' })).toBe('12345~region(use)');
     });
 
     test('public instance with Europe region', () => {
-        expect(buildLegacyInstanceTag({ ...base, region: 'Europe' })).toBe(
-            '12345~region(eu)'
-        );
+        expect(buildLegacyInstanceTag({ ...base, region: 'Europe' })).toBe('12345~region(eu)');
     });
 
     test('public instance with Japan region', () => {
-        expect(buildLegacyInstanceTag({ ...base, region: 'Japan' })).toBe(
-            '12345~region(jp)'
-        );
+        expect(buildLegacyInstanceTag({ ...base, region: 'Japan' })).toBe('12345~region(jp)');
     });
 
     test('friends+ adds hidden tag', () => {
-        expect(
-            buildLegacyInstanceTag({ ...base, accessType: 'friends+' })
-        ).toBe('12345~hidden(usr_test)~region(us)');
+        expect(buildLegacyInstanceTag({ ...base, accessType: 'friends+' })).toBe('12345~hidden(usr_test)~region(us)');
     });
 
     test('friends adds friends tag', () => {
-        expect(buildLegacyInstanceTag({ ...base, accessType: 'friends' })).toBe(
-            '12345~friends(usr_test)~region(us)'
-        );
+        expect(buildLegacyInstanceTag({ ...base, accessType: 'friends' })).toBe('12345~friends(usr_test)~region(us)');
     });
 
     test('invite adds private tag and canRequestInvite', () => {
@@ -57,9 +47,7 @@ describe('buildLegacyInstanceTag', () => {
     });
 
     test('invite (no +) adds private tag without canRequestInvite', () => {
-        expect(buildLegacyInstanceTag({ ...base, accessType: 'invite' })).toBe(
-            '12345~private(usr_test)~region(us)'
-        );
+        expect(buildLegacyInstanceTag({ ...base, accessType: 'invite' })).toBe('12345~private(usr_test)~region(us)');
     });
 
     test('group adds group and groupAccessType tags', () => {
@@ -82,15 +70,11 @@ describe('buildLegacyInstanceTag', () => {
                 groupAccessType: 'members',
                 ageGate: true
             })
-        ).toBe(
-            '12345~group(grp_abc)~groupAccessType(members)~ageGate~region(us)'
-        );
+        ).toBe('12345~group(grp_abc)~groupAccessType(members)~ageGate~region(us)');
     });
 
     test('ageGate ignored for non-group access types', () => {
-        expect(buildLegacyInstanceTag({ ...base, ageGate: true })).toBe(
-            '12345~region(us)'
-        );
+        expect(buildLegacyInstanceTag({ ...base, ageGate: true })).toBe('12345~region(us)');
     });
 
     test('strict appended for invite access type', () => {
@@ -114,9 +98,7 @@ describe('buildLegacyInstanceTag', () => {
     });
 
     test('strict ignored for public access type', () => {
-        expect(buildLegacyInstanceTag({ ...base, strict: true })).toBe(
-            '12345~region(us)'
-        );
+        expect(buildLegacyInstanceTag({ ...base, strict: true })).toBe('12345~region(us)');
     });
 
     test('strict ignored for friends+ access type', () => {
@@ -130,14 +112,10 @@ describe('buildLegacyInstanceTag', () => {
     });
 
     test('empty instanceName produces no leading segment', () => {
-        expect(buildLegacyInstanceTag({ ...base, instanceName: '' })).toBe(
-            '~region(us)'
-        );
+        expect(buildLegacyInstanceTag({ ...base, instanceName: '' })).toBe('~region(us)');
     });
 
     test('unknown region produces no region tag', () => {
-        expect(buildLegacyInstanceTag({ ...base, region: 'Mars' })).toBe(
-            '12345'
-        );
+        expect(buildLegacyInstanceTag({ ...base, region: 'Mars' })).toBe('12345');
     });
 });

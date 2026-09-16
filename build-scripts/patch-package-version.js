@@ -35,11 +35,7 @@ try {
 packageJson.version = version;
 
 try {
-    fs.writeFileSync(
-        packageJsonPath,
-        JSON.stringify(packageJson, null, 4),
-        'utf8'
-    );
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 4), 'utf8');
     console.log(`Updated version in package.json to: ${version}`);
 } catch (err) {
     console.error('Error writing to package.json:', err);

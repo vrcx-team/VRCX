@@ -26,9 +26,7 @@ describe('useGroupCalendarEvents', () => {
         });
 
         test('returns empty array when no past events exist', () => {
-            const groupDialog = createGroupDialog([
-                { id: '1', endsAt: FUTURE_DATE }
-            ]);
+            const groupDialog = createGroupDialog([{ id: '1', endsAt: FUTURE_DATE }]);
             const { pastCalenderEvents } = useGroupCalendarEvents(groupDialog);
             expect(pastCalenderEvents.value).toEqual([]);
         });
@@ -41,10 +39,7 @@ describe('useGroupCalendarEvents', () => {
             ]);
             const { pastCalenderEvents } = useGroupCalendarEvents(groupDialog);
             expect(pastCalenderEvents.value).toHaveLength(2);
-            expect(pastCalenderEvents.value.map((e) => e.id)).toEqual([
-                '1',
-                '3'
-            ]);
+            expect(pastCalenderEvents.value.map((e) => e.id)).toEqual(['1', '3']);
         });
 
         test('is reactive to calendar changes', () => {
@@ -60,17 +55,13 @@ describe('useGroupCalendarEvents', () => {
     describe('upcomingCalenderEvents', () => {
         test('returns empty array when calendar is null', () => {
             const groupDialog = ref({ calendar: null });
-            const { upcomingCalenderEvents } =
-                useGroupCalendarEvents(groupDialog);
+            const { upcomingCalenderEvents } = useGroupCalendarEvents(groupDialog);
             expect(upcomingCalenderEvents.value).toEqual([]);
         });
 
         test('returns empty array when no upcoming events exist', () => {
-            const groupDialog = createGroupDialog([
-                { id: '1', endsAt: PAST_DATE }
-            ]);
-            const { upcomingCalenderEvents } =
-                useGroupCalendarEvents(groupDialog);
+            const groupDialog = createGroupDialog([{ id: '1', endsAt: PAST_DATE }]);
+            const { upcomingCalenderEvents } = useGroupCalendarEvents(groupDialog);
             expect(upcomingCalenderEvents.value).toEqual([]);
         });
 
@@ -80,13 +71,9 @@ describe('useGroupCalendarEvents', () => {
                 { id: '2', endsAt: FUTURE_DATE },
                 { id: '3', endsAt: FUTURE_DATE }
             ]);
-            const { upcomingCalenderEvents } =
-                useGroupCalendarEvents(groupDialog);
+            const { upcomingCalenderEvents } = useGroupCalendarEvents(groupDialog);
             expect(upcomingCalenderEvents.value).toHaveLength(2);
-            expect(upcomingCalenderEvents.value.map((e) => e.id)).toEqual([
-                '2',
-                '3'
-            ]);
+            expect(upcomingCalenderEvents.value.map((e) => e.id)).toEqual(['2', '3']);
         });
 
         test('past and upcoming are mutually exclusive', () => {
@@ -95,8 +82,7 @@ describe('useGroupCalendarEvents', () => {
                 { id: '2', endsAt: FUTURE_DATE }
             ];
             const groupDialog = createGroupDialog(events);
-            const { pastCalenderEvents, upcomingCalenderEvents } =
-                useGroupCalendarEvents(groupDialog);
+            const { pastCalenderEvents, upcomingCalenderEvents } = useGroupCalendarEvents(groupDialog);
 
             const allIds = [
                 ...pastCalenderEvents.value.map((e) => e.id),
@@ -113,8 +99,7 @@ describe('useGroupCalendarEvents', () => {
                 { id: '1', title: 'Old Title', endsAt: FUTURE_DATE },
                 { id: '2', title: 'Other', endsAt: FUTURE_DATE }
             ]);
-            const { updateFollowingCalendarData } =
-                useGroupCalendarEvents(groupDialog);
+            const { updateFollowingCalendarData } = useGroupCalendarEvents(groupDialog);
 
             updateFollowingCalendarData({ id: '1', title: 'New Title' });
 
@@ -127,8 +112,7 @@ describe('useGroupCalendarEvents', () => {
                 { id: '1', title: 'Event 1', endsAt: FUTURE_DATE },
                 { id: '2', title: 'Event 2', endsAt: FUTURE_DATE }
             ]);
-            const { updateFollowingCalendarData } =
-                useGroupCalendarEvents(groupDialog);
+            const { updateFollowingCalendarData } = useGroupCalendarEvents(groupDialog);
 
             updateFollowingCalendarData({ id: '1', title: 'Updated' });
 
@@ -138,8 +122,7 @@ describe('useGroupCalendarEvents', () => {
         test('does nothing when event id is not found', () => {
             const events = [{ id: '1', title: 'Event 1', endsAt: FUTURE_DATE }];
             const groupDialog = createGroupDialog([...events]);
-            const { updateFollowingCalendarData } =
-                useGroupCalendarEvents(groupDialog);
+            const { updateFollowingCalendarData } = useGroupCalendarEvents(groupDialog);
 
             updateFollowingCalendarData({
                 id: 'nonexistent',
@@ -150,11 +133,8 @@ describe('useGroupCalendarEvents', () => {
         });
 
         test('merges new properties into the event', () => {
-            const groupDialog = createGroupDialog([
-                { id: '1', title: 'Event', endsAt: FUTURE_DATE }
-            ]);
-            const { updateFollowingCalendarData } =
-                useGroupCalendarEvents(groupDialog);
+            const groupDialog = createGroupDialog([{ id: '1', title: 'Event', endsAt: FUTURE_DATE }]);
+            const { updateFollowingCalendarData } = useGroupCalendarEvents(groupDialog);
 
             updateFollowingCalendarData({
                 id: '1',
@@ -162,9 +142,7 @@ describe('useGroupCalendarEvents', () => {
             });
 
             expect(groupDialog.value.calendar[0].title).toBe('Event');
-            expect(groupDialog.value.calendar[0].userInterest.isFollowing).toBe(
-                true
-            );
+            expect(groupDialog.value.calendar[0].userInterest.isFollowing).toBe(true);
         });
     });
 });

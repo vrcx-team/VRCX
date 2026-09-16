@@ -108,13 +108,7 @@ function createPrints(count) {
     for (let i = 0; i < count; i++) {
         prints.push({
             id: `prnt_${i}`,
-            timestamp: new Date(
-                2026,
-                0,
-                1,
-                0,
-                i
-            ).toISOString()
+            timestamp: new Date(2026, 0, 1, 0, i).toISOString()
         });
     }
 
@@ -179,10 +173,7 @@ describe('automatic old print deletion', () => {
             json: createPrints(64)
         });
 
-        getPrintFavorites.mockResolvedValue([
-            { printId: 'prnt_0' },
-            { printId: 'prnt_1' }
-        ]);
+        getPrintFavorites.mockResolvedValue([{ printId: 'prnt_0' }, { printId: 'prnt_1' }]);
 
         const galleryStore = useGalleryStore();
 
@@ -190,23 +181,13 @@ describe('automatic old print deletion', () => {
 
         expect(deletePrint).toHaveBeenCalledTimes(2);
 
-        expect(deletePrint).toHaveBeenNthCalledWith(
-            1,
-            'prnt_2'
-        );
+        expect(deletePrint).toHaveBeenNthCalledWith(1, 'prnt_2');
 
-        expect(deletePrint).toHaveBeenNthCalledWith(
-            2,
-            'prnt_3'
-        );
+        expect(deletePrint).toHaveBeenNthCalledWith(2, 'prnt_3');
 
-        expect(deletePrint).not.toHaveBeenCalledWith(
-            'prnt_0'
-        );
+        expect(deletePrint).not.toHaveBeenCalledWith('prnt_0');
 
-        expect(deletePrint).not.toHaveBeenCalledWith(
-            'prnt_1'
-        );
+        expect(deletePrint).not.toHaveBeenCalledWith('prnt_1');
     });
 
     test('never automatically deletes favorite prints', async () => {
@@ -214,27 +195,17 @@ describe('automatic old print deletion', () => {
             json: createPrints(64)
         });
 
-        getPrintFavorites.mockResolvedValue([
-            { printId: 'prnt_0' },
-            { printId: 'prnt_1' },
-            { printId: 'prnt_2' }
-        ]);
+        getPrintFavorites.mockResolvedValue([{ printId: 'prnt_0' }, { printId: 'prnt_1' }, { printId: 'prnt_2' }]);
 
         const galleryStore = useGalleryStore();
 
         await galleryStore.tryDeleteOldPrints();
 
-        expect(deletePrint).not.toHaveBeenCalledWith(
-            'prnt_0'
-        );
+        expect(deletePrint).not.toHaveBeenCalledWith('prnt_0');
 
-        expect(deletePrint).not.toHaveBeenCalledWith(
-            'prnt_1'
-        );
+        expect(deletePrint).not.toHaveBeenCalledWith('prnt_1');
 
-        expect(deletePrint).not.toHaveBeenCalledWith(
-            'prnt_2'
-        );
+        expect(deletePrint).not.toHaveBeenCalledWith('prnt_2');
     });
 
     test('logs a warning when all prints are favorites', async () => {
@@ -250,9 +221,7 @@ describe('automatic old print deletion', () => {
             }))
         );
 
-        const logSpy = vi
-            .spyOn(console, 'log')
-            .mockImplementation(() => {});
+        const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
         const galleryStore = useGalleryStore();
 
@@ -286,18 +255,14 @@ describe('automatic old print deletion', () => {
                 }))
         );
 
-        const logSpy = vi
-            .spyOn(console, 'log')
-            .mockImplementation(() => {});
+        const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
         const galleryStore = useGalleryStore();
 
         await galleryStore.tryDeleteOldPrints();
 
         expect(deletePrint).toHaveBeenCalledTimes(1);
-        expect(deletePrint).toHaveBeenCalledWith(
-            'prnt_63'
-        );
+        expect(deletePrint).toHaveBeenCalledWith('prnt_63');
 
         expect(logSpy).toHaveBeenCalledWith(
             'Unable to automatically delete enough old prints because 1 print(s) are protected by favorites.'

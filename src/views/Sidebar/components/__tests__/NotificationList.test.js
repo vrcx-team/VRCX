@@ -29,8 +29,7 @@ vi.mock('vue-i18n', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="view-more" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="view-more" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -70,9 +69,7 @@ describe('NotificationList.vue', () => {
             }
         });
 
-        expect(wrapper.text()).toContain(
-            'side_panel.notification_center.no_new_notifications'
-        );
+        expect(wrapper.text()).toContain('side_panel.notification_center.no_new_notifications');
     });
 
     test('sorts unseen notifications desc and renders recent section header', () => {
@@ -82,21 +79,13 @@ describe('NotificationList.vue', () => {
                     makeNoty('old', '2026-03-08T00:00:00.000Z'),
                     makeNoty('new', '2026-03-09T00:00:00.000Z')
                 ],
-                recentNotifications: [
-                    makeNoty('recent1', '2026-03-07T00:00:00.000Z')
-                ]
+                recentNotifications: [makeNoty('recent1', '2026-03-07T00:00:00.000Z')]
             }
         });
 
         const items = wrapper.findAll('[data-testid="notification-item"]');
-        expect(items.map((x) => x.attributes('data-id'))).toEqual([
-            'new',
-            'old',
-            'recent1'
-        ]);
-        expect(wrapper.text()).toContain(
-            'side_panel.notification_center.past_notifications'
-        );
+        expect(items.map((x) => x.attributes('data-id'))).toEqual(['new', 'old', 'recent1']);
+        expect(wrapper.text()).toContain('side_panel.notification_center.past_notifications');
     });
 
     test('emits navigate-to-table when view-more button is clicked', async () => {
@@ -119,12 +108,8 @@ describe('NotificationList.vue', () => {
             }
         });
 
-        await wrapper
-            .get('[data-testid="emit-invite-response"]')
-            .trigger('click');
-        await wrapper
-            .get('[data-testid="emit-invite-request-response"]')
-            .trigger('click');
+        await wrapper.get('[data-testid="emit-invite-response"]').trigger('click');
+        await wrapper.get('[data-testid="emit-invite-request-response"]').trigger('click');
 
         expect(wrapper.emitted('show-invite-response')).toBeTruthy();
         expect(wrapper.emitted('show-invite-request-response')).toBeTruthy();

@@ -158,7 +158,6 @@
     );
 
     /**
-     *
      * @param userId
      */
     function setUserDialogAvatars(userId) {
@@ -175,7 +174,6 @@
     }
 
     /**
-     *
      * @param userId
      */
     async function setUserDialogAvatarsRemote(userId) {
@@ -203,7 +201,6 @@
     }
 
     /**
-     *
      * @param sortOption
      */
     function changeUserDialogAvatarSorting(sortOption) {

@@ -1,30 +1,21 @@
-import {
-    extractFileId,
-    extractFileVersion,
-    extractVariantVersion
-} from './fileUtils';
+import { extractFileId, extractFileVersion, extractVariantVersion } from './fileUtils';
 import { replaceBioSymbols } from './base/string';
 import { getFaviconUrl, replaceVrcPackageUrl } from './urlUtils';
 import { AppDebug } from '../../services/appConfig.js';
 import { getAvailablePlatforms } from './platformUtils';
 
 /**
- *
  * @param {string} url
  * @param {number} resolution
  * @param endpointDomain
  * @returns {string}
  */
-function convertFileUrlToImageUrl(
-    url,
-    resolution = 128,
-    endpointDomain = AppDebug.endpointDomain
-) {
+function convertFileUrlToImageUrl(url, resolution = 128, endpointDomain = AppDebug.endpointDomain) {
     if (!url) {
         return '';
     }
     /**
-     * possible patterns?
+     * Possible patterns?
      * /file/file_fileId/version
      * /file/file_fileId/version/
      * /file/file_fileId/version/file
@@ -43,7 +34,6 @@ function convertFileUrlToImageUrl(
 }
 
 /**
- *
  * @param func
  * @param delay
  */
@@ -67,11 +57,7 @@ export {
     openFolderGeneric
 } from './appActions';
 
-export {
-    deleteVRChatCache,
-    checkVRChatCache,
-    getBundleDateSize
-} from '../../coordinators/cacheCoordinator';
+export { deleteVRChatCache, checkVRChatCache, getBundleDateSize } from '../../coordinators/cacheCoordinator';
 
 export {
     getAvailablePlatforms,

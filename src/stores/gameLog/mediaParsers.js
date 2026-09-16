@@ -1,27 +1,17 @@
-import {
-    convertYoutubeTime,
-    findUserByDisplayName,
-    isRpcWorld,
-    replaceBioSymbols
-} from '../../shared/utils';
+import { convertYoutubeTime, findUserByDisplayName, isRpcWorld, replaceBioSymbols } from '../../shared/utils';
 
 /**
  * Creates the media parser functions for the GameLog store.
+ *
  * @param {object} deps
  * @param {import('vue').Ref} deps.nowPlaying
  * @param {Function} deps.setNowPlaying
  * @param {Function} deps.clearNowPlaying
- * @param {object} deps.userStore      – needs `.cachedUsers`
+ * @param {object} deps.userStore – needs `.cachedUsers`
  * @param {object} deps.advancedSettingsStore – needs `.youTubeApi`, `.lookupYouTubeVideo()`
  * @returns {object} The media parser functions
  */
-export function createMediaParsers({
-    nowPlaying,
-    setNowPlaying,
-    clearNowPlaying,
-    userStore,
-    advancedSettingsStore
-}) {
+export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying, userStore, advancedSettingsStore }) {
     async function addGameLogVideo(gameLog, location, userId) {
         let url;
         const videoUrl = gameLog.videoUrl;
@@ -67,16 +57,11 @@ export function createMediaParsers({
                     youtubeVideoId = id2;
                 }
                 if (advancedSettingsStore.youTubeApi && youtubeVideoId) {
-                    const data =
-                        await advancedSettingsStore.lookupYouTubeVideo(
-                            youtubeVideoId
-                        );
+                    const data = await advancedSettingsStore.lookupYouTubeVideo(youtubeVideoId);
                     if (data || data.pageInfo.totalResults !== 0) {
                         videoId = 'YouTube';
                         videoName = data.items[0].snippet.title;
-                        videoLength = convertYoutubeTime(
-                            data.items[0].contentDetails.duration
-                        );
+                        videoLength = convertYoutubeTime(data.items[0].contentDetails.duration);
                     }
                 }
             } catch {
@@ -99,10 +84,7 @@ export function createMediaParsers({
     }
 
     function addGameLogPyPyDance(gameLog, location) {
-        const data =
-            /VideoPlay\(PyPyDance\) "(.+?)",([\d.]+),([\d.]+),"(.*)"/g.exec(
-                gameLog.data
-            );
+        const data = /VideoPlay\(PyPyDance\) "(.+?)",([\d.]+),([\d.]+),"(.*)"/g.exec(gameLog.data);
         if (!data) {
             console.error('failed to parse', gameLog.data);
             return;
@@ -139,11 +121,8 @@ export function createMediaParsers({
         let userId = '';
         if (displayName) {
             userId =
-                findUserByDisplayName(
-                    userStore.cachedUsers,
-                    displayName,
-                    userStore.cachedUserIdsByDisplayName
-                )?.id ?? '';
+                findUserByDisplayName(userStore.cachedUsers, displayName, userStore.cachedUserIdsByDisplayName)?.id ??
+                '';
         }
         if (videoId === 'YouTube') {
             const entry1 = {
@@ -172,10 +151,7 @@ export function createMediaParsers({
     }
 
     function addGameLogVRDancing(gameLog, location) {
-        const data =
-            /VideoPlay\(VRDancing\) "(.+?)",([\d.]+),([\d.]+),(-?[\d.]+),"(.+?)","(.+?)"/g.exec(
-                gameLog.data
-            );
+        const data = /VideoPlay\(VRDancing\) "(.+?)",([\d.]+),([\d.]+),(-?[\d.]+),"(.+?)","(.+?)"/g.exec(gameLog.data);
         if (!data) {
             console.error('failed to parse', gameLog.data);
             return;
@@ -210,11 +186,8 @@ export function createMediaParsers({
         let userId = '';
         if (displayName) {
             userId =
-                findUserByDisplayName(
-                    userStore.cachedUsers,
-                    displayName,
-                    userStore.cachedUserIdsByDisplayName
-                )?.id ?? '';
+                findUserByDisplayName(userStore.cachedUsers, displayName, userStore.cachedUserIdsByDisplayName)?.id ??
+                '';
         }
         if (videoId === 'YouTube') {
             const entry1 = {
@@ -243,10 +216,9 @@ export function createMediaParsers({
     }
 
     function addGameLogZuwaZuwaDance(gameLog, location) {
-        const data =
-            /VideoPlay\(ZuwaZuwaDance\) "(.+?)",([\d.]+),([\d.]+),(-?[\d.]+),"(.+?)","(.+?)"/g.exec(
-                gameLog.data
-            );
+        const data = /VideoPlay\(ZuwaZuwaDance\) "(.+?)",([\d.]+),([\d.]+),(-?[\d.]+),"(.+?)","(.+?)"/g.exec(
+            gameLog.data
+        );
         if (!data) {
             console.error('failed to parse', gameLog.data);
             return;
@@ -276,11 +248,8 @@ export function createMediaParsers({
         let userId = '';
         if (displayName) {
             userId =
-                findUserByDisplayName(
-                    userStore.cachedUsers,
-                    displayName,
-                    userStore.cachedUserIdsByDisplayName
-                )?.id ?? '';
+                findUserByDisplayName(userStore.cachedUsers, displayName, userStore.cachedUserIdsByDisplayName)?.id ??
+                '';
         }
         if (videoId === 'YouTube') {
             const entry1 = {
@@ -311,9 +280,7 @@ export function createMediaParsers({
     function addGameLogLSMedia(gameLog, location) {
         // [VRCX] LSMedia 0,4268.981,Natsumi-sama,,
         // [VRCX] LSMedia 0,6298.292,Natsumi-sama,The Outfit (2022), 1080p
-        const data = /LSMedia ([\d.]+),([\d.]+),(.+?),(.+?),(?=[^,]*$)/g.exec(
-            gameLog.data
-        );
+        const data = /LSMedia ([\d.]+),([\d.]+),(.+?),(.+?),(?=[^,]*$)/g.exec(gameLog.data);
         if (!data) {
             return;
         }
@@ -336,11 +303,8 @@ export function createMediaParsers({
         let userId = '';
         if (displayName) {
             userId =
-                findUserByDisplayName(
-                    userStore.cachedUsers,
-                    displayName,
-                    userStore.cachedUserIdsByDisplayName
-                )?.id ?? '';
+                findUserByDisplayName(userStore.cachedUsers, displayName, userStore.cachedUserIdsByDisplayName)?.id ??
+                '';
         }
         const entry1 = {
             created_at: gameLog.dt,
@@ -396,11 +360,8 @@ export function createMediaParsers({
         let userId = '';
         if (displayName) {
             userId =
-                findUserByDisplayName(
-                    userStore.cachedUsers,
-                    displayName,
-                    userStore.cachedUserIdsByDisplayName
-                )?.id ?? '';
+                findUserByDisplayName(userStore.cachedUsers, displayName, userStore.cachedUserIdsByDisplayName)?.id ??
+                '';
         }
         const entry1 = {
             created_at: gameLog.dt,

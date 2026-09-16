@@ -12,10 +12,7 @@ import { useAuthStore } from './auth';
 import { useDiscordPresenceSettingsStore } from './settings/discordPresence';
 import { useFriendStore } from './friend';
 import { handleGroupUserInstances } from '../coordinators/groupCoordinator';
-import {
-    getCurrentUser,
-    updateAutoStateChange
-} from '../coordinators/userCoordinator';
+import { getCurrentUser, updateAutoStateChange } from '../coordinators/userCoordinator';
 import { useUserStore } from './user';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
 import { useVrStore } from './vr';
@@ -64,9 +61,6 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
 
     const ipcTimeout = state.ipcTimeout;
 
-    /**
-     *
-     */
     async function updateLoop() {
         try {
             if (watchState.isLoggedIn) {
@@ -80,8 +74,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                     authStore.updateStoredUser(userStore.currentUser);
                     if (
                         userStore.currentUser.last_activity &&
-                        new Date(userStore.currentUser.last_activity) >
-                            new Date(Date.now() - 3600 * 1000) // 1hour
+                        new Date(userStore.currentUser.last_activity) > new Date(Date.now() - 3600 * 1000) // 1hour
                     ) {
                         runRefreshPlayerModerationsFlow();
                     }
@@ -89,8 +82,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 if (--state.nextGroupInstanceRefresh <= 0) {
                     if (watchState.isFriendsLoaded) {
                         state.nextGroupInstanceRefresh = 300; // 5min
-                        const args =
-                            await groupRequest.getUsersGroupInstances();
+                        const args = await groupRequest.getUsersGroupInstances();
                         handleGroupUserInstances(args);
                     }
                     AppApi.CheckGameRunning();
@@ -105,12 +97,8 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 if (--state.ipcTimeout <= 0) {
                     vrcxStore.setIpcEnabled(false);
                 }
-                if (
-                    --state.nextClearVRCXCacheCheck <= 0 &&
-                    vrcxStore.clearVRCXCacheFrequency > 0
-                ) {
-                    state.nextClearVRCXCacheCheck =
-                        vrcxStore.clearVRCXCacheFrequency / 2;
+                if (--state.nextClearVRCXCacheCheck <= 0 && vrcxStore.clearVRCXCacheFrequency > 0) {
+                    state.nextClearVRCXCacheCheck = vrcxStore.clearVRCXCacheFrequency / 2;
                     clearVRCXCache();
                 }
                 if (--state.nextDiscordUpdate <= 0) {
@@ -134,10 +122,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 }
                 if (LINUX && --state.nextGameRunningCheck <= 0) {
                     state.nextGameRunningCheck = 1;
-                    await runUpdateIsGameRunningFlow(
-                        await AppApi.IsGameRunning(),
-                        await AppApi.IsSteamVRRunning()
-                    );
+                    await runUpdateIsGameRunningFlow(await AppApi.IsGameRunning(), await AppApi.IsSteamVRRunning());
                     vrStore.vrInit(); // TODO: make this event based
                 }
                 if (--state.nextDatabaseOptimize <= 0) {
@@ -153,7 +138,6 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     }
 
     /**
-     *
      * @param value
      */
     function setNextClearVRCXCacheCheck(value) {
@@ -161,7 +145,6 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     }
 
     /**
-     *
      * @param value
      */
     function setNextGroupInstanceRefresh(value) {
@@ -169,7 +152,6 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     }
 
     /**
-     *
      * @param value
      */
     function setNextDiscordUpdate(value) {
@@ -177,7 +159,6 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     }
 
     /**
-     *
      * @param value
      */
     function setIpcTimeout(value) {
@@ -185,7 +166,6 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     }
 
     /**
-     *
      * @param value
      */
     function setNextCurrentUserRefresh(value) {

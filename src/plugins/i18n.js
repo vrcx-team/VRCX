@@ -15,8 +15,7 @@ const i18n = createI18n({
 });
 
 async function loadLocalizedStrings(code) {
-    const localesToLoad =
-        code === FALLBACK_LOCALE ? [FALLBACK_LOCALE] : [FALLBACK_LOCALE, code];
+    const localesToLoad = code === FALLBACK_LOCALE ? [FALLBACK_LOCALE] : [FALLBACK_LOCALE, code];
 
     for (const locale of localesToLoad) {
         const messages = await getLocalizedStrings(locale);

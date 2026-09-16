@@ -14,11 +14,7 @@ class InteropApi {
                             get(_, methodName) {
                                 // Return a method that calls the .NET method dynamically
                                 return async (...args) => {
-                                    return await target.callMethod(
-                                        prop,
-                                        methodName,
-                                        ...args
-                                    );
+                                    return await target.callMethod(prop, methodName, ...args);
                                 };
                             }
                         }
@@ -30,11 +26,9 @@ class InteropApi {
     }
 
     async callMethod(className, methodName, ...args) {
-        return window.interopApi
-            .callDotNetMethod(className, methodName, args)
-            .then((result) => {
-                return result;
-            });
+        return window.interopApi.callDotNetMethod(className, methodName, args).then((result) => {
+            return result;
+        });
     }
 }
 

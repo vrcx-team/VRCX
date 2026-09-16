@@ -12,9 +12,7 @@ describe('getAuditLogTypeName', () => {
     });
 
     it('handles multiple segments', () => {
-        expect(getAuditLogTypeName('group.role.member.add')).toBe(
-            'Role Member Add'
-        );
+        expect(getAuditLogTypeName('group.role.member.add')).toBe('Role Member Add');
     });
 
     it('returns empty string for falsy input', () => {
@@ -32,9 +30,7 @@ describe('resolveRoleNames', () => {
     ];
 
     it('resolves role IDs to comma-separated names', () => {
-        expect(resolveRoleNames(['role_1', 'role_3'], roles)).toBe(
-            'Admin, Member'
-        );
+        expect(resolveRoleNames(['role_1', 'role_3'], roles)).toBe('Admin, Member');
     });
 
     it('returns empty string for empty roleIds', () => {
@@ -42,9 +38,7 @@ describe('resolveRoleNames', () => {
     });
 
     it('skips unknown role IDs', () => {
-        expect(resolveRoleNames(['role_1', 'role_unknown'], roles)).toBe(
-            'Admin'
-        );
+        expect(resolveRoleNames(['role_1', 'role_unknown'], roles)).toBe('Admin');
     });
 
     it('handles non-array roleIds gracefully', () => {

@@ -138,9 +138,7 @@ describe('views/PlayerList/columns.jsx', () => {
         });
         expect(mocks.onBlockChatbox).toHaveBeenCalledWith(row.original.ref);
 
-        const blockedMap = new Map([
-            [row.original.ref.id, row.original.ref.displayName]
-        ]);
+        const blockedMap = new Map([[row.original.ref.id, row.original.ref.displayName]]);
         const colsBlocked = createColumns({
             randomUserColours: { value: false, __v_isRef: true },
             chatboxUserBlacklist: { value: blockedMap, __v_isRef: true },
@@ -192,8 +190,6 @@ describe('views/PlayerList/columns.jsx', () => {
             stopPropagation: vi.fn()
         });
 
-        expect(mocks.openExternalLink).toHaveBeenCalledWith(
-            'https://example.com'
-        );
+        expect(mocks.openExternalLink).toHaveBeenCalledWith('https://example.com');
     });
 });

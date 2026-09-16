@@ -47,10 +47,7 @@
     display: grid;
     grid-template-columns: repeat(
         var(--favorites-grid-columns, 1),
-        minmax(
-            var(--favorites-card-min-width, 240px),
-            var(--favorites-card-target-width, 1fr)
-        )
+        minmax(var(--favorites-card-min-width, 240px), var(--favorites-card-target-width, 1fr))
     );
     gap: var(--favorites-card-gap, 12px);
     justify-content: start;
@@ -61,10 +58,7 @@
     display: grid;
     grid-template-columns: repeat(
         var(--favorites-grid-columns, 1),
-        minmax(
-            var(--favorites-card-min-width, 260px),
-            var(--favorites-card-target-width, 1fr)
-        )
+        minmax(var(--favorites-card-min-width, 260px), var(--favorites-card-target-width, 1fr))
     );
     gap: var(--favorites-card-gap, 12px);
     justify-content: start;

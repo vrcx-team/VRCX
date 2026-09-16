@@ -7,12 +7,11 @@ import { useAuthStore } from '../stores/auth';
 
 /**
  * Runs the full auto-login orchestration flow.
+ *
  * @param {object} [options] Test seams.
  * @param {function} [options.isOnline] Online-check provider.
  */
-export async function runHandleAutoLoginFlow({
-    isOnline = () => navigator.onLine
-} = {}) {
+export async function runHandleAutoLoginFlow({ isOnline = () => navigator.onLine } = {}) {
     const authStore = useAuthStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
     const t = i18n.global.t;
@@ -22,9 +21,7 @@ export async function runHandleAutoLoginFlow({
         return;
     }
     authStore.setAttemptingAutoLogin(true);
-    const user = await authStore.getSavedCredentials(
-        authStore.loginForm.lastUserLoggedIn
-    );
+    const user = await authStore.getSavedCredentials(authStore.loginForm.lastUserLoggedIn);
     if (!user) {
         console.log('No saved credentials found for auto login.');
         authStore.setAttemptingAutoLogin(false);
@@ -56,9 +53,7 @@ export async function runHandleAutoLoginFlow({
         if (AppDebug.errorNoty) {
             toast.dismiss(AppDebug.errorNoty);
         }
-        AppDebug.errorNoty = toast.success(
-            t('message.auth.auto_login_success')
-        );
+        AppDebug.errorNoty = toast.success(t('message.auth.auto_login_success'));
         console.log('Automatically logged in.');
     } catch (err) {
         if (AppDebug.errorNoty) {

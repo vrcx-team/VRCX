@@ -53,9 +53,7 @@ body {
     --vr-font-lg: 20px;
 }
 body {
-    font-family:
-        var(--font-western), var(--font-symbol), var(--font-primary-cjk),
-        var(--font-fallback-cjk);
+    font-family: var(--font-western), var(--font-symbol), var(--font-primary-cjk), var(--font-fallback-cjk);
 }
 
 .noty_body {
@@ -215,9 +213,7 @@ input,
 textarea,
 select,
 button {
-    font-family:
-        var(--font-western), var(--font-symbol), var(--font-primary-cjk),
-        var(--font-fallback-cjk);
+    font-family: var(--font-western), var(--font-symbol), var(--font-primary-cjk), var(--font-fallback-cjk);
     line-height: normal;
     text-shadow:
         #000 0px 0px 3px,
@@ -311,11 +307,7 @@ button {
 .np-progress-bar {
     width: 0%;
     height: 3px;
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.6),
-        rgba(255, 255, 255, 0.9)
-    );
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.9));
     border-radius: 2px;
 }
 

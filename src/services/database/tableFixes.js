@@ -64,9 +64,7 @@ const tableFixes = {
             gpsTables.push(dbRow[0]);
         }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_gps'`);
         for (const tableName of gpsTables) {
-            await sqliteService.executeNonQuery(
-                `UPDATE ${tableName} SET time = 0 WHERE time < 0`
-            );
+            await sqliteService.executeNonQuery(`UPDATE ${tableName} SET time = 0 WHERE time < 0`);
         }
     },
 
@@ -97,9 +95,7 @@ const tableFixes = {
             }
         });
 
-        await sqliteService.executeNonQuery(
-            `UPDATE gamelog_join_leave SET time = 0 WHERE id IN (${badEntriesList})`
-        );
+        await sqliteService.executeNonQuery(`UPDATE gamelog_join_leave SET time = 0 WHERE id IN (${badEntriesList})`);
     },
 
     async fixBrokenGroupInvites() {
@@ -108,9 +104,7 @@ const tableFixes = {
             notificationTables.push(dbRow[0]);
         }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_notifications'`);
         for (const tableName of notificationTables) {
-            await sqliteService.executeNonQuery(
-                `DELETE FROM ${tableName} WHERE type LIKE '%.%'`
-            );
+            await sqliteService.executeNonQuery(`DELETE FROM ${tableName} WHERE type LIKE '%.%'`);
         }
     },
 

@@ -4,9 +4,7 @@ import { getFaviconUrl, replaceVrcPackageUrl } from '../urlUtils';
 
 describe('getFaviconUrl', () => {
     it('returns favicon URL for valid URL', () => {
-        expect(getFaviconUrl('https://vrchat.com/home')).toBe(
-            'https://icons.duckduckgo.com/ip2/vrchat.com.ico'
-        );
+        expect(getFaviconUrl('https://vrchat.com/home')).toBe('https://icons.duckduckgo.com/ip2/vrchat.com.ico');
     });
 
     it('extracts host from complex URL', () => {
@@ -28,15 +26,13 @@ describe('getFaviconUrl', () => {
 
 describe('replaceVrcPackageUrl', () => {
     it('replaces api.vrchat.cloud with vrchat.com', () => {
-        expect(
-            replaceVrcPackageUrl('https://api.vrchat.cloud/api/1/file/123')
-        ).toBe('https://vrchat.com/api/1/file/123');
+        expect(replaceVrcPackageUrl('https://api.vrchat.cloud/api/1/file/123')).toBe(
+            'https://vrchat.com/api/1/file/123'
+        );
     });
 
     it('returns URL unchanged if no match', () => {
-        expect(replaceVrcPackageUrl('https://example.com/test')).toBe(
-            'https://example.com/test'
-        );
+        expect(replaceVrcPackageUrl('https://example.com/test')).toBe('https://example.com/test');
     });
 
     it('returns empty string for empty/null input', () => {

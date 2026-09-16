@@ -23,9 +23,6 @@ vi.mock('../../shared/utils', () => ({
     openExternalLink: (...args) => mocks.openExternalLink(...args)
 }));
 
-/**
- *
- */
 function flushPromises() {
     return new Promise((resolve) => setTimeout(resolve, 0));
 }
@@ -91,9 +88,7 @@ describe('useVrcStatusStore.getVrcStatus', () => {
         await flushPromises();
 
         expect(mocks.execute).toHaveBeenCalledTimes(2);
-        expect(mocks.execute.mock.calls[1][0].url).toBe(
-            'https://status.vrchat.com/api/v2/summary.json'
-        );
+        expect(mocks.execute.mock.calls[1][0].url).toBe('https://status.vrchat.com/api/v2/summary.json');
         expect(store.lastStatus).toBe('Partial System Outage');
         expect(store.statusText).toBe('Partial System Outage: API, CDN');
         expect(store.hasIssue).toBe(true);

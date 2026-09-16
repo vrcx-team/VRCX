@@ -109,9 +109,6 @@
         }
     );
 
-    /**
-     *
-     */
     function closeDialog() {
         sendBoopDialog.value.visible = false;
     }
@@ -124,7 +121,6 @@
     });
 
     /**
-     *
      * @param emojiName
      */
     function getEmojiValue(emojiName) {
@@ -146,9 +142,6 @@
         }
     ]);
 
-    /**
-     *
-     */
     function sendBoop() {
         const D = sendBoopDialog.value;
         dismissBoop(D.userId);
@@ -163,7 +156,6 @@
     }
 
     /**
-     *
      * @param userId
      */
     function dismissBoop(userId) {

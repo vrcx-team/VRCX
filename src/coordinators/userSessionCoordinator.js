@@ -1,8 +1,5 @@
 import { getWorldName, parseLocation } from '../shared/utils';
-import {
-    runUpdateFriendshipsFlow,
-    updateUserCurrentStatus
-} from './friendRelationshipCoordinator';
+import { runUpdateFriendshipsFlow, updateUserCurrentStatus } from './friendRelationshipCoordinator';
 import { useAuthStore } from '../stores/auth';
 import { addAvatarToHistory, addAvatarWearTime } from './avatarCoordinator';
 import { useGameStore } from '../stores/game';
@@ -12,6 +9,7 @@ import { useUserStore } from '../stores/user';
 
 /**
  * Runs avatar transition side effects for current user updates.
+ *
  * @param {object} args Avatar transition context.
  * @param {object} args.json Current user payload.
  * @param {object} args.ref Current user state reference.
@@ -19,10 +17,7 @@ import { useUserStore } from '../stores/user';
  * @param {object} [options] Test seams.
  * @param {function} [options.now] Timestamp provider.
  */
-export function runAvatarSwapFlow(
-    { json, ref, isLoggedIn },
-    { now = Date.now } = {}
-) {
+export function runAvatarSwapFlow({ json, ref, isLoggedIn }, { now = Date.now } = {}) {
     const gameStore = useGameStore();
 
     if (!isLoggedIn) {
@@ -39,6 +34,7 @@ export function runAvatarSwapFlow(
 
 /**
  * Runs one-time side effects for first current-user hydration after login.
+ *
  * @param {object} ref Current user state reference.
  * @param {object} [options] Test seams.
  * @param {function} [options.now] Timestamp provider.
@@ -58,6 +54,7 @@ export function runFirstLoginFlow(ref, { now = Date.now } = {}) {
 
 /**
  * Runs cross-store synchronization after current-user data is applied.
+ *
  * @param {object} ref Current user state reference.
  */
 export function runPostApplySyncFlow(ref) {
@@ -73,6 +70,7 @@ export function runPostApplySyncFlow(ref) {
 
 /**
  * Syncs home location derived state and visible dialog display name.
+ *
  * @param {object} ref Current user state reference.
  */
 export function runHomeLocationSyncFlow(ref) {

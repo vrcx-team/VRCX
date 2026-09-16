@@ -1,25 +1,20 @@
 const UPLOAD_TIMEOUT_MS = 30_000;
 
 /**
- *
  * @param promise
  */
 export function withUploadTimeout(promise) {
     return Promise.race([
         promise,
-        new Promise((_, reject) =>
-            setTimeout(
-                () => reject(new Error('Upload timed out')),
-                UPLOAD_TIMEOUT_MS
-            )
-        )
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Upload timed out')), UPLOAD_TIMEOUT_MS))
     ]);
 }
 
 /**
  * File -> base64
- * @param {Blob|File} blob
- * @returns {Promise<string>} base64 encoded string
+ *
+ * @param {Blob | File} blob
+ * @returns {Promise<string>} Base64 encoded string
  */
 export function readFileAsBase64(blob) {
     return new Promise((resolve, reject) => {

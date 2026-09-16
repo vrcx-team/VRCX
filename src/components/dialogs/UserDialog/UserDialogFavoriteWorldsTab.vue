@@ -155,7 +155,6 @@
     });
 
     /**
-     *
      * @param visibility
      */
     function userFavoriteWorldsStatus(visibility) {
@@ -171,7 +170,6 @@
     }
 
     /**
-     *
      * @param userId
      */
     async function getUserFavoriteWorlds(userId) {

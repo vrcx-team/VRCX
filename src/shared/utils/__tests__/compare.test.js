@@ -467,12 +467,8 @@ describe('Compare Functions', () => {
         });
 
         test('handles undefined inputs', () => {
-            expect(compareByFriendOrder(undefined, { $friendNumber: 1 })).toBe(
-                0
-            );
-            expect(compareByFriendOrder({ $friendNumber: 1 }, undefined)).toBe(
-                0
-            );
+            expect(compareByFriendOrder(undefined, { $friendNumber: 1 })).toBe(0);
+            expect(compareByFriendOrder({ $friendNumber: 1 }, undefined)).toBe(0);
         });
     });
 

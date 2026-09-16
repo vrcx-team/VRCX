@@ -53,16 +53,10 @@
 
     const emit = defineEmits(['update:isAvatarProviderDialogVisible']);
 
-    /**
-     *
-     */
     function closeDialog() {
         emit('update:isAvatarProviderDialogVisible', false);
     }
 
-    /**
-     *
-     */
     function addProvider() {
         avatarRemoteDatabaseProviderList.value.push('');
     }

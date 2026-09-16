@@ -41,9 +41,7 @@ describe('gameLog.getMyTopWorlds', () => {
             }
         ]);
         expect(mocks.execute).toHaveBeenCalledTimes(1);
-        expect(mocks.execute.mock.calls[0][1]).toContain(
-            'AND world_id != @excludeWorldId'
-        );
+        expect(mocks.execute.mock.calls[0][1]).toContain('AND world_id != @excludeWorldId');
         expect(mocks.execute.mock.calls[0][2]).toMatchObject({
             '@limit': 5,
             '@daysOffset': '-30 days',

@@ -174,7 +174,6 @@
     }
 
     /**
-     *
      * @param {object} group
      * @returns {void}
      */

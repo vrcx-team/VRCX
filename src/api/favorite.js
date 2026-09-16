@@ -1,22 +1,12 @@
 import { useUserStore } from '../stores';
-import {
-    handleFavoriteAdd,
-    handleFavoriteDelete,
-    handleFavoriteGroupClear
-} from '../coordinators/favoriteCoordinator';
+import { handleFavoriteAdd, handleFavoriteDelete, handleFavoriteGroupClear } from '../coordinators/favoriteCoordinator';
 import { queryClient } from '../queries';
 import { request } from '../services/request';
 
-/**
- *
- */
 function getCurrentUserId() {
     return useUserStore().currentUser.id;
 }
 
-/**
- *
- */
 function refetchActiveFavoriteQueries() {
     queryClient
         .invalidateQueries({
@@ -76,7 +66,7 @@ const favoriteReq = {
 
     /**
      * @param {{ objectId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     deleteFavorite(params) {
         return request(`favorites/${params.objectId}`, {
@@ -93,8 +83,8 @@ const favoriteReq = {
     },
 
     /**
-     * @param {{ n: number, offset: number, type: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @param {{ n: number; offset: number; type: string }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     getFavoriteGroups(params) {
         return request('favorite/groups', {
@@ -110,18 +100,14 @@ const favoriteReq = {
     },
 
     /**
-     *
-     * @param {{ type: string, group: string, displayName?: string, visibility?: string }} params group is a name
-     * @returns { Promise<{json: any, params}> }
+     * @param {{ type: string; group: string; displayName?: string; visibility?: string }} params Group is a name
+     * @returns {Promise<{ json: any; params }>}
      */
     saveFavoriteGroup(params) {
-        return request(
-            `favorite/group/${params.type}/${params.group}/${getCurrentUserId()}`,
-            {
-                method: 'PUT',
-                params
-            }
-        ).then((json) => {
+        return request(`favorite/group/${params.type}/${params.group}/${getCurrentUserId()}`, {
+            method: 'PUT',
+            params
+        }).then((json) => {
             const args = {
                 json,
                 params
@@ -133,19 +119,16 @@ const favoriteReq = {
 
     /**
      * @param {{
-     *    type: string,
-     *    group: string
+     *     type: string;
+     *     group: string;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     clearFavoriteGroup(params) {
-        return request(
-            `favorite/group/${params.type}/${params.group}/${getCurrentUserId()}`,
-            {
-                method: 'DELETE',
-                params
-            }
-        ).then((json) => {
+        return request(`favorite/group/${params.type}/${params.group}/${getCurrentUserId()}`, {
+            method: 'DELETE',
+            params
+        }).then((json) => {
             const args = {
                 json,
                 params

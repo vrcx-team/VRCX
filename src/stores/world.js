@@ -68,9 +68,6 @@ export const useWorldStore = defineStore('World', () => {
         worldDialog.isFavorite = value;
     }
 
-    /**
-     *
-     */
     function updateVRChatWorldCache() {
         const D = worldDialog;
         if (D.visible) {

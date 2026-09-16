@@ -41,9 +41,7 @@ describe('memos utils', () => {
     let consoleErrorSpy;
 
     beforeEach(() => {
-        consoleErrorSpy = vi
-            .spyOn(console, 'error')
-            .mockImplementation(() => {});
+        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
         mocks.friends = new Map();
         mocks.setUserDialogMemo.mockReset();
         mocks.database.getUserMemo.mockReset();

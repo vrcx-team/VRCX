@@ -33,8 +33,7 @@ vi.mock('@/components/ui/dialog', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 vi.mock('@/components/ui/hover-card', () => ({
@@ -59,10 +58,7 @@ vi.mock('@dnd-kit/vue', () => ({
     DragDropProvider: { template: '<div><slot /></div>' }
 }));
 vi.mock('@dnd-kit/vue/sortable', () => ({ isSortable: () => false }));
-vi.mock(
-    'lucide-vue-next',
-    () => new Proxy({}, { get: () => ({ template: '<i />' }) })
-);
+vi.mock('lucide-vue-next', () => new Proxy({}, { get: () => ({ template: '<i />' }) }));
 vi.mock('../SortableTreeNode.vue', () => ({
     default: { template: '<div />' }
 }));
@@ -92,12 +88,8 @@ describe('CustomNavDialog.vue', () => {
         });
 
         const buttons = wrapper.findAll('[data-testid="btn"]');
-        const resetButton = buttons.find((button) =>
-            button.text().includes('nav_menu.custom_nav.restore_default')
-        );
-        const saveButton = buttons.find((button) =>
-            button.text().includes('common.actions.confirm')
-        );
+        const resetButton = buttons.find((button) => button.text().includes('nav_menu.custom_nav.restore_default'));
+        const saveButton = buttons.find((button) => button.text().includes('common.actions.confirm'));
 
         await resetButton.trigger('click');
         await saveButton.trigger('click');

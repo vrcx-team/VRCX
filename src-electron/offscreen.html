@@ -23,8 +23,7 @@
         <img id="mirror" src="" alt="Main Window Mirror" />
         <script>
             window.electronAPI.onUpdateImage((base64) => {
-                document.getElementById('mirror').src =
-                    `data:image/png;base64,${base64}`;
+                document.getElementById('mirror').src = `data:image/png;base64,${base64}`;
             });
         </script>
     </body>

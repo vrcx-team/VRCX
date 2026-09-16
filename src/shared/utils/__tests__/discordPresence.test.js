@@ -1,11 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import {
-    getPlatformLabel,
-    getStatusInfo,
-    getRpcWorldConfig,
-    isPopcornPalaceWorld
-} from '../discordPresence';
+import { getPlatformLabel, getStatusInfo, getRpcWorldConfig, isPopcornPalaceWorld } from '../discordPresence';
 import { ActivityType, StatusDisplayType } from '../../constants/discord';
 
 const t = (key) => key;
@@ -26,9 +21,7 @@ describe('getPlatformLabel', () => {
     });
 
     test('returns (PC) for standalonewindows', () => {
-        expect(getPlatformLabel('standalonewindows', false, false, t)).toBe(
-            ' (PC)'
-        );
+        expect(getPlatformLabel('standalonewindows', false, false, t)).toBe(' (PC)');
     });
 
     test('returns (Android) for android', () => {
@@ -116,9 +109,7 @@ describe('getStatusInfo', () => {
 
 describe('getRpcWorldConfig', () => {
     test('returns PyPyDance config for known PyPyDance world', () => {
-        const config = getRpcWorldConfig(
-            'wrld_f20326da-f1ac-45fc-a062-609723b097b1'
-        );
+        const config = getRpcWorldConfig('wrld_f20326da-f1ac-45fc-a062-609723b097b1');
         expect(config).toEqual({
             activityType: ActivityType.Listening,
             statusDisplayType: StatusDisplayType.Details,
@@ -128,9 +119,7 @@ describe('getRpcWorldConfig', () => {
     });
 
     test('returns VR Dancing config', () => {
-        const config = getRpcWorldConfig(
-            'wrld_42377cf1-c54f-45ed-8996-5875b0573a83'
-        );
+        const config = getRpcWorldConfig('wrld_42377cf1-c54f-45ed-8996-5875b0573a83');
         expect(config).toEqual({
             activityType: ActivityType.Listening,
             statusDisplayType: StatusDisplayType.Details,
@@ -140,9 +129,7 @@ describe('getRpcWorldConfig', () => {
     });
 
     test('returns ZuwaZuwa Dance config', () => {
-        const config = getRpcWorldConfig(
-            'wrld_52bdcdab-11cd-4325-9655-0fb120846945'
-        );
+        const config = getRpcWorldConfig('wrld_52bdcdab-11cd-4325-9655-0fb120846945');
         expect(config).toEqual({
             activityType: ActivityType.Listening,
             statusDisplayType: StatusDisplayType.Details,
@@ -152,9 +139,7 @@ describe('getRpcWorldConfig', () => {
     });
 
     test('returns LS Media config', () => {
-        const config = getRpcWorldConfig(
-            'wrld_74970324-58e8-4239-a17b-2c59dfdf00db'
-        );
+        const config = getRpcWorldConfig('wrld_74970324-58e8-4239-a17b-2c59dfdf00db');
         expect(config).toEqual({
             activityType: ActivityType.Watching,
             statusDisplayType: StatusDisplayType.Details,
@@ -164,9 +149,7 @@ describe('getRpcWorldConfig', () => {
     });
 
     test('returns Popcorn Palace config', () => {
-        const config = getRpcWorldConfig(
-            'wrld_266523e8-9161-40da-acd0-6bd82e075833'
-        );
+        const config = getRpcWorldConfig('wrld_266523e8-9161-40da-acd0-6bd82e075833');
         expect(config).toEqual({
             activityType: ActivityType.Watching,
             statusDisplayType: StatusDisplayType.Details,
@@ -184,12 +167,8 @@ describe('getRpcWorldConfig', () => {
     });
 
     test('returns a copy, not the original object', () => {
-        const a = getRpcWorldConfig(
-            'wrld_f20326da-f1ac-45fc-a062-609723b097b1'
-        );
-        const b = getRpcWorldConfig(
-            'wrld_f20326da-f1ac-45fc-a062-609723b097b1'
-        );
+        const a = getRpcWorldConfig('wrld_f20326da-f1ac-45fc-a062-609723b097b1');
+        const b = getRpcWorldConfig('wrld_f20326da-f1ac-45fc-a062-609723b097b1');
         expect(a).toEqual(b);
         expect(a).not.toBe(b);
     });
@@ -224,18 +203,12 @@ describe('getRpcWorldConfig', () => {
 
 describe('isPopcornPalaceWorld', () => {
     test('returns true for Popcorn Palace worlds', () => {
-        expect(
-            isPopcornPalaceWorld('wrld_266523e8-9161-40da-acd0-6bd82e075833')
-        ).toBe(true);
-        expect(
-            isPopcornPalaceWorld('wrld_27c7e6b2-d938-447e-a270-3d1a873e2cf3')
-        ).toBe(true);
+        expect(isPopcornPalaceWorld('wrld_266523e8-9161-40da-acd0-6bd82e075833')).toBe(true);
+        expect(isPopcornPalaceWorld('wrld_27c7e6b2-d938-447e-a270-3d1a873e2cf3')).toBe(true);
     });
 
     test('returns false for non-Popcorn Palace worlds', () => {
-        expect(
-            isPopcornPalaceWorld('wrld_f20326da-f1ac-45fc-a062-609723b097b1')
-        ).toBe(false);
+        expect(isPopcornPalaceWorld('wrld_f20326da-f1ac-45fc-a062-609723b097b1')).toBe(false);
         expect(isPopcornPalaceWorld('wrld_unknown')).toBe(false);
     });
 });

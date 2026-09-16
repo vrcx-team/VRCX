@@ -30,6 +30,7 @@ export async function runRefreshFriendsListFlow() {
 
 /**
  * Runs full friend list initialization orchestration.
+ *
  * @param t
  */
 export async function runInitFriendsListFlow(t) {

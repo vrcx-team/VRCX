@@ -3,11 +3,12 @@ import { computed } from 'vue';
 /**
  * Composable for filtering group calendar events into past and upcoming,
  * and updating follow state on individual events.
- * @param {import('vue').Ref} groupDialog - reactive ref to the group dialog state
+ *
+ * @param {import('vue').Ref} groupDialog - Reactive ref to the group dialog state
  * @returns {{
- *   pastCalenderEvents: import('vue').ComputedRef<Array>,
- *   upcomingCalenderEvents: import('vue').ComputedRef<Array>,
- *   updateFollowingCalendarData: (event: Object) => void
+ *     pastCalenderEvents: import('vue').ComputedRef<Array>;
+ *     upcomingCalenderEvents: import('vue').ComputedRef<Array>;
+ *     updateFollowingCalendarData: (event: Object) => void;
  * }}
  */
 export function useGroupCalendarEvents(groupDialog) {
@@ -17,9 +18,7 @@ export function useGroupCalendarEvents(groupDialog) {
         }
         const now = Date.now();
         const series = new Set();
-        const sortedEvents = [...groupDialog.value.calendar].sort((a, b) =>
-            a.startsAt.localeCompare(b.startsAt)
-        );
+        const sortedEvents = [...groupDialog.value.calendar].sort((a, b) => a.startsAt.localeCompare(b.startsAt));
         return sortedEvents.filter((event) => {
             const eventEnd = new Date(event.endsAt).getTime();
             if (event.seriesId) {
@@ -40,9 +39,7 @@ export function useGroupCalendarEvents(groupDialog) {
         }
         const now = Date.now();
         const series = new Set();
-        const sortedEvents = [...groupDialog.value.calendar].sort((a, b) =>
-            a.startsAt.localeCompare(b.startsAt)
-        );
+        const sortedEvents = [...groupDialog.value.calendar].sort((a, b) => a.startsAt.localeCompare(b.startsAt));
         return sortedEvents.filter((event) => {
             const eventEnd = new Date(event.endsAt).getTime();
             if (event.seriesId) {

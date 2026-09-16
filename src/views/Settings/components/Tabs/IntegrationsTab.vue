@@ -224,22 +224,15 @@
     const isYouTubeApiDialogVisible = ref(false);
     const isTranslationApiDialogVisible = ref(false);
 
-    /**
-     *
-     */
     function showYouTubeApiDialog() {
         isYouTubeApiDialogVisible.value = true;
     }
 
-    /**
-     *
-     */
     function showTranslationApiDialog() {
         isTranslationApiDialogVisible.value = true;
     }
 
     /**
-     *
      * @param configKey
      */
     async function changeYouTubeApi(configKey = '') {
@@ -251,7 +244,6 @@
     }
 
     /**
-     *
      * @param configKey
      */
     async function changeTranslationAPI(configKey = '') {

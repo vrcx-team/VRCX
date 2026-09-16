@@ -43,14 +43,8 @@ describe('useSearchAvatar', () => {
         await api.searchAvatar();
 
         expect(mocks.lookupAvatars).toHaveBeenCalledWith('search', 'alice');
-        expect(api.searchAvatarResults.value.map((x) => x.id)).toEqual([
-            'avtr_1',
-            'avtr_2'
-        ]);
-        expect(api.searchAvatarPage.value.map((x) => x.id)).toEqual([
-            'avtr_1',
-            'avtr_2'
-        ]);
+        expect(api.searchAvatarResults.value.map((x) => x.id)).toEqual(['avtr_1', 'avtr_2']);
+        expect(api.searchAvatarPage.value.map((x) => x.id)).toEqual(['avtr_1', 'avtr_2']);
         expect(api.searchAvatarPageNum.value).toBe(0);
     });
 
@@ -79,8 +73,6 @@ describe('useSearchAvatar', () => {
 
         api.moreSearchAvatar(-1);
         expect(api.searchAvatarPageNum.value).toBe(0);
-        expect(api.searchAvatarPage.value.map((x) => x.id)).toEqual(
-            Array.from({ length: 10 }, (_, i) => `avtr_${i}`)
-        );
+        expect(api.searchAvatarPage.value.map((x) => x.id)).toEqual(Array.from({ length: 10 }, (_, i) => `avtr_${i}`));
     });
 });

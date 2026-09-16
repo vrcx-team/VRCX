@@ -15,10 +15,7 @@ export async function runRefreshPlayerModerationsFlow() {
     }
     moderationStore.playerModerationTable.loading = true;
     moderationStore.expirePlayerModerations();
-    Promise.all([
-        playerModerationRequest.getPlayerModerations(),
-        avatarModerationRequest.getAvatarModerations()
-    ])
+    Promise.all([playerModerationRequest.getPlayerModerations(), avatarModerationRequest.getAvatarModerations()])
         .then((res) => {
             avatarStore.resetCachedAvatarModerations();
             if (res[1]?.json) {

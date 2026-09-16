@@ -51,10 +51,7 @@ describe('useSearchGroup', () => {
             offset: 0,
             query: 'group name'
         });
-        expect(api.searchGroupResults.value.map((x) => x.id)).toEqual([
-            'grp_1',
-            'grp_2'
-        ]);
+        expect(api.searchGroupResults.value.map((x) => x.id)).toEqual(['grp_1', 'grp_2']);
     });
 
     it('moves backward paging offset without going below zero', async () => {

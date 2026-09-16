@@ -76,15 +76,11 @@ vi.mock('../../../components/ui/tooltip', () => ({
 import Tools from '../Tools.vue';
 
 function findToolItemByTitle(wrapper, titleKey) {
-    return wrapper
-        .findAllComponents({ name: 'ToolItem' })
-        .find((component) => component.text().includes(titleKey));
+    return wrapper.findAllComponents({ name: 'ToolItem' }).find((component) => component.text().includes(titleKey));
 }
 
 function findCategoryHeaderByTitle(wrapper, titleKey) {
-    return wrapper
-        .findAll('div.cursor-pointer')
-        .find((node) => node.text().includes(titleKey));
+    return wrapper.findAll('div.cursor-pointer').find((node) => node.text().includes(titleKey));
 }
 
 describe('Tools.vue', () => {
@@ -98,10 +94,7 @@ describe('Tools.vue', () => {
         const wrapper = mount(Tools);
         await flushPromises();
 
-        const screenshotItem = findToolItemByTitle(
-            wrapper,
-            'view.tools.pictures.screenshot'
-        );
+        const screenshotItem = findToolItemByTitle(wrapper, 'view.tools.pictures.screenshot');
 
         expect(screenshotItem).toBeTruthy();
         await screenshotItem.trigger('click');
@@ -113,10 +106,7 @@ describe('Tools.vue', () => {
         const wrapper = mount(Tools);
         await flushPromises();
 
-        const galleryItem = findToolItemByTitle(
-            wrapper,
-            'view.tools.pictures.gallery'
-        );
+        const galleryItem = findToolItemByTitle(wrapper, 'view.tools.pictures.gallery');
 
         expect(galleryItem).toBeTruthy();
         await galleryItem.trigger('click');
@@ -128,18 +118,12 @@ describe('Tools.vue', () => {
         const wrapper = mount(Tools);
         await flushPromises();
 
-        const imageCategoryHeader = findCategoryHeaderByTitle(
-            wrapper,
-            'view.tools.pictures.header'
-        );
+        const imageCategoryHeader = findCategoryHeaderByTitle(wrapper, 'view.tools.pictures.header');
 
         expect(imageCategoryHeader).toBeTruthy();
         await imageCategoryHeader.trigger('click');
 
-        expect(setString).toHaveBeenCalledWith(
-            'VRCX_toolsCategoryCollapsed',
-            expect.stringContaining('"image":true')
-        );
+        expect(setString).toHaveBeenCalledWith('VRCX_toolsCategoryCollapsed', expect.stringContaining('"image":true'));
     });
 
     test('loads stored collapsed state before toggling category', async () => {
@@ -148,17 +132,11 @@ describe('Tools.vue', () => {
         const wrapper = mount(Tools);
         await flushPromises();
 
-        const imageCategoryHeader = findCategoryHeaderByTitle(
-            wrapper,
-            'view.tools.pictures.header'
-        );
+        const imageCategoryHeader = findCategoryHeaderByTitle(wrapper, 'view.tools.pictures.header');
 
         expect(imageCategoryHeader).toBeTruthy();
         await imageCategoryHeader.trigger('click');
 
-        expect(setString).toHaveBeenCalledWith(
-            'VRCX_toolsCategoryCollapsed',
-            expect.stringContaining('"image":false')
-        );
+        expect(setString).toHaveBeenCalledWith('VRCX_toolsCategoryCollapsed', expect.stringContaining('"image":false'));
     });
 });

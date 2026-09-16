@@ -535,17 +535,11 @@
         worldToolbarMenuOpen.value = false;
     };
 
-    /**
-     *
-     */
     function handleWorldImportClick() {
         closeWorldToolbarMenu();
         showWorldImportDialog();
     }
 
-    /**
-     *
-     */
     function handleWorldExportClick() {
         closeWorldToolbarMenu();
         showExportDialog();
@@ -689,7 +683,6 @@
     const getLocalRowItems = (row) => (row && Array.isArray(row.items) ? row.items : []);
 
     /**
-     *
      * @param value
      */
     function handleSortValueChange(value) {
@@ -761,7 +754,6 @@
     onMounted(() => {});
 
     /**
-     *
      * @param type
      * @param key
      */
@@ -774,7 +766,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function formatVisibility(value) {
@@ -784,9 +775,6 @@
         return value.charAt(0).toUpperCase() + value.slice(1);
     }
 
-    /**
-     *
-     */
     const {
         isCreatingLocalGroup,
         newLocalGroupName,
@@ -800,7 +788,6 @@
     });
 
     /**
-     *
      * @param id
      * @param value
      */
@@ -814,16 +801,10 @@
         }
     }
 
-    /**
-     *
-     */
     function clearSelectedWorlds() {
         selectedFavoriteWorlds.value = [];
     }
 
-    /**
-     *
-     */
     function toggleSelectAllWorlds() {
         if (!activeRemoteGroup.value) {
             return;
@@ -835,9 +816,6 @@
         }
     }
 
-    /**
-     *
-     */
     function copySelectedWorlds() {
         if (!selectedFavoriteWorlds.value.length) {
             return;
@@ -847,9 +825,6 @@
         showWorldImportDialog();
     }
 
-    /**
-     *
-     */
     function showWorldBulkUnfavoriteSelectionConfirm() {
         if (!selectedFavoriteWorlds.value.length) {
             return;
@@ -870,7 +845,6 @@
     }
 
     /**
-     *
      * @param ids
      */
     function bulkUnfavoriteSelectedWorlds(ids) {
@@ -883,23 +857,16 @@
         worldEditMode.value = false;
     }
 
-    /**
-     *
-     */
     function showExportDialog() {
         worldExportDialogVisible.value = true;
     }
 
-    /**
-     *
-     */
     function handleRefreshFavorites() {
         refreshFavorites();
         getLocalWorldFavorites();
     }
 
     /**
-     *
      * @param group
      * @param visibility
      * @param menuKey
@@ -927,7 +894,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function promptLocalWorldFavoriteGroupRename(group) {
@@ -956,7 +922,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function promptLocalWorldFavoriteGroupDelete(group) {
@@ -974,7 +939,6 @@
     }
 
     /**
-     *
      * @param ctx
      */
     function clearFavoriteGroup(ctx) {
@@ -995,7 +959,6 @@
     }
 
     /**
-     *
      * @param worldFavoriteSearch
      */
     function doSearchWorldFavorites(searchInput) {
@@ -1025,7 +988,6 @@
     const searchWorldFavorites = debounce(doSearchWorldFavorites, 200);
 
     /**
-     *
      * @param group
      * @param visibility
      */
@@ -1035,7 +997,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function handleRemoteRename(group) {
@@ -1044,7 +1005,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function handleRemoteClear(group) {
@@ -1053,7 +1013,6 @@
     }
 
     /**
-     *
      * @param groupName
      */
     function handleLocalRename(groupName) {
@@ -1062,7 +1021,6 @@
     }
 
     /**
-     *
      * @param groupName
      */
     function handleLocalDelete(groupName) {
@@ -1071,7 +1029,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function changeFavoriteGroupName(group) {
@@ -1112,9 +1069,6 @@
             .catch(() => {});
     }
 
-    /**
-     *
-     */
     async function refreshLocalWorldFavorites() {
         if (refreshingLocalFavorites.value) {
             return;
@@ -1160,9 +1114,6 @@
         }
     }
 
-    /**
-     *
-     */
     function cancelLocalWorldRefresh() {
         if (!refreshingLocalFavorites.value) {
             return;

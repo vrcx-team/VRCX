@@ -130,7 +130,6 @@
     );
 
     /**
-     *
      * @param userId
      */
     function setUserDialogWorlds(userId) {
@@ -143,9 +142,6 @@
         userDialog.value.worlds = worlds;
     }
 
-    /**
-     *
-     */
     function refreshUserDialogWorlds() {
         const D = userDialog.value;
         if (D.isWorldsLoading) {
@@ -204,7 +200,6 @@
     }
 
     /**
-     *
      * @param sortOrder
      */
     async function setUserDialogWorldSorting(sortOrder) {
@@ -223,7 +218,6 @@
     );
 
     /**
-     *
      * @param order
      */
     async function setUserDialogWorldOrder(order) {

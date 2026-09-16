@@ -4,7 +4,7 @@ import { handleConfig } from '../coordinators/userCoordinator';
 const loginReq = {
     /**
      * @param {{ code: string }} params One-time password
-     * @returns {Promise<{json: any, params: { code: string }}>}
+     * @returns {Promise<{ json: any; params: { code: string } }>}
      */
     verifyOTP(params) {
         return request('auth/twofactorauth/otp/verify', {
@@ -21,7 +21,7 @@ const loginReq = {
 
     /**
      * @param {{ code: string }} params One-time token
-     * @returns {Promise<{json: any, params: { code: string }}>}
+     * @returns {Promise<{ json: any; params: { code: string } }>}
      */
     verifyTOTP(params) {
         return request('auth/twofactorauth/totp/verify', {
@@ -38,7 +38,7 @@ const loginReq = {
 
     /**
      * @param {{ code: string }} params One-time token
-     * @returns {Promise<{json: any, params: { code: string }}>}
+     * @returns {Promise<{ json: any; params: { code: string } }>}
      */
     verifyEmailOTP(params) {
         return request('auth/twofactorauth/emailotp/verify', {
@@ -54,7 +54,7 @@ const loginReq = {
     },
 
     /**
-     * @returns {Promise<{json: any}>}
+     * @returns {Promise<{ json: any }>}
      */
     getConfig() {
         return request('config', {

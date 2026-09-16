@@ -115,11 +115,11 @@
         autoDeclineFriendRequests
     } = storeToRefs(generalSettingsStore);
 
-    const { 
-        setRecentActionCooldownEnabled, 
+    const {
+        setRecentActionCooldownEnabled,
         setRecentActionCooldownMinutes,
         setLocalFavoriteFriendsGroups,
-        setAutoDeclineFriendRequests 
+        setAutoDeclineFriendRequests
     } = generalSettingsStore;
 
     const { favoriteFriendGroups, localFriendFavoriteGroups } = storeToRefs(favoriteStore);

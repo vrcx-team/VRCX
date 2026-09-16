@@ -3,7 +3,7 @@ import { request } from '../services/request';
 const propReq = {
     /**
      * @param {{ propId: string }} params
-     * @returns {Promise<{json: any, params}>}
+     * @returns {Promise<{ json: any; params }>}
      */
     getProp(params) {
         return request(`props/${params.propId}`, {

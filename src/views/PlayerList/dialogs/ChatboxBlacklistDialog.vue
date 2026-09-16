@@ -82,7 +82,6 @@
     const emit = defineEmits(['deleteChatboxUserBlacklist']);
 
     /**
-     *
      * @param userId
      */
     function deleteChatboxUserBlacklist(userId) {

@@ -171,9 +171,6 @@
         }
     );
 
-    /**
-     *
-     */
     function showSetWorldTagsDialog() {
         const D = setWorldTagsDialog.value;
 
@@ -247,9 +244,6 @@
         D.contentTags = contentTags.toString();
     }
 
-    /**
-     *
-     */
     function saveSetWorldTagsDialog() {
         const D = setWorldTagsDialog.value;
         const authorTags = D.authorTags.trim().split(',');

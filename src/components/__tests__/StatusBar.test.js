@@ -12,21 +12,13 @@ import en from '../../localization/en.json';
 vi.mock('../../services/config', () => ({
     default: {
         init: vi.fn(),
-        getString: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? '{}'),
+        getString: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? '{}'),
         setString: vi.fn(),
-        getBool: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? false),
+        getBool: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? false),
         setBool: vi.fn(),
-        getInt: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? 0),
+        getInt: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? 0),
         setInt: vi.fn(),
-        getFloat: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? 0),
+        getFloat: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? 0),
         setFloat: vi.fn(),
         getObject: vi.fn().mockReturnValue(null),
         setObject: vi.fn(),
@@ -117,13 +109,7 @@ const i18n = createI18n({
 const stubs = {
     TooltipWrapper: {
         template: '<span data-testid="tooltip"><slot /></span>',
-        props: [
-            'content',
-            'disabled',
-            'delayDuration',
-            'delay-duration',
-            'side'
-        ]
+        props: ['content', 'disabled', 'delayDuration', 'delay-duration', 'side']
     },
     ContextMenu: { template: '<div><slot /></div>' },
     ContextMenuTrigger: { template: '<div><slot /></div>' },
@@ -175,7 +161,6 @@ const stubs = {
 };
 
 /**
- *
  * @param storeOverrides
  */
 function mountStatusBar(storeOverrides = {}) {

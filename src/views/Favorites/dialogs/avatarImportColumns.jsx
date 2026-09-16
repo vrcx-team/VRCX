@@ -5,12 +5,7 @@ import { i18n } from '../../../plugins';
 
 const { t } = i18n.global;
 
-export const createColumns = ({
-    onShowAvatar,
-    onShowUser,
-    onDelete,
-    onShowFullscreenImage
-}) => [
+export const createColumns = ({ onShowAvatar, onShowUser, onDelete, onShowFullscreenImage }) => [
     {
         id: 'image',
         header: () => t('table.import.image'),
@@ -87,15 +82,9 @@ export const createColumns = ({
         enableSorting: false,
         cell: ({ row }) => {
             const status = String(row.original?.releaseStatus ?? '');
-            const label = status
-                ? status.charAt(0).toUpperCase() + status.slice(1)
-                : '';
+            const label = status ? status.charAt(0).toUpperCase() + status.slice(1) : '';
             const colorClass =
-                status === 'public'
-                    ? 'text-status-online'
-                    : status === 'private'
-                      ? 'text-destructive'
-                      : '';
+                status === 'public' ? 'text-status-online' : status === 'private' ? 'text-destructive' : '';
             return <span class={colorClass}>{label}</span>;
         }
     },

@@ -49,9 +49,7 @@ export function insertDashboardEntries(layout, dashboardDefinitions) {
         return nextLayout;
     }
 
-    const directAccessIdx = nextLayout.findIndex(
-        (entry) => entry.type === 'item' && entry.key === 'direct-access'
-    );
+    const directAccessIdx = nextLayout.findIndex((entry) => entry.type === 'item' && entry.key === 'direct-access');
 
     if (directAccessIdx !== -1) {
         nextLayout.splice(directAccessIdx, 0, ...dashboardEntries);

@@ -31,11 +31,7 @@ declare global {
         sqliteService: any;
         isVrOverlay: boolean;
         interopApi: {
-            callDotNetMethod: (
-                className: any,
-                methodName: any,
-                args: any
-            ) => Promise<any>;
+            callDotNetMethod: (className: any, methodName: any, args: any) => Promise<any>;
         };
         electron: {
             getArch: () => Promise<string>;
@@ -44,26 +40,12 @@ declare global {
             setTrayIconNotification: (notify: boolean) => Promise<void>;
             openFileDialog: () => Promise<string>;
             openDirectoryDialog: () => Promise<string>;
-            desktopNotification: (
-                displayName: string,
-                body?: string,
-                image?: string
-            ) => Promise<void>;
-            onWindowPositionChanged: (
-                Function: (
-                    event: any,
-                    position: { x: number; y: number }
-                ) => void
-            ) => () => void;
+            desktopNotification: (displayName: string, body?: string, image?: string) => Promise<void>;
+            onWindowPositionChanged: (Function: (event: any, position: { x: number; y: number }) => void) => () => void;
             onWindowSizeChanged: (
-                Function: (
-                    event: any,
-                    size: { width: number; height: number }
-                ) => void
+                Function: (event: any, size: { width: number; height: number }) => void
             ) => () => void;
-            onWindowStateChange: (
-                Function: (event: any, state: { windowState: any }) => void
-            ) => () => void;
+            onWindowStateChange: (Function: (event: any, state: { windowState: any }) => void) => () => void;
             onBrowserFocus: (Function: (event: any) => void) => () => void;
             restartApp: () => Promise<void>;
             getOverlayWindow: () => Promise<boolean>;
@@ -75,10 +57,7 @@ declare global {
                 overlayHand: number
             ) => Promise<void>;
             ipcRenderer: {
-                on(
-                    channel: String,
-                    func: (...args: unknown[]) => void
-                ): (() => void) | undefined;
+                on(channel: String, func: (...args: unknown[]) => void): (() => void) | undefined;
             };
         };
     }
@@ -174,11 +153,7 @@ declare global {
         ): Promise<void>;
         SetZoom(zoomLevel: number): Promise<void>;
         GetZoom(): Promise<number>;
-        DesktopNotification(
-            boldText: string,
-            text?: string,
-            image?: string
-        ): Promise<void>;
+        DesktopNotification(boldText: string, text?: string, image?: string): Promise<void>;
         RestartApplication(isUpgrade: boolean): Promise<void>;
         CheckForUpdateExe(): Promise<boolean>;
         ExecuteVrOverlayFunction(key: string, json: string): Promise<void>;
@@ -207,11 +182,7 @@ declare global {
         GetVersion(): Promise<string>;
         VrcClosedGracefully(): Promise<boolean>;
         GetColourBulk(userIds: string[]): Promise<Record<string, number>>;
-        SetAppLauncherSettings(
-            enabled: boolean,
-            killOnExit: boolean,
-            runProcessOnce: boolean
-        ): Promise<void>;
+        SetAppLauncherSettings(enabled: boolean, killOnExit: boolean, runProcessOnce: boolean): Promise<void>;
         GetFileBase64(path: string): Promise<string | null>;
         TryOpenInstanceInVrc(launchUrl: string): Promise<boolean>;
 
@@ -233,16 +204,9 @@ declare global {
         OpenVrcScreenshotsFolder(): Promise<boolean>;
         OpenCrashVrcCrashDumps(): Promise<boolean>;
         OpenShortcutFolder(): Promise<void>;
-        OpenFolderAndSelectItem(
-            path: string,
-            isFolder?: boolean
-        ): Promise<void>;
+        OpenFolderAndSelectItem(path: string, isFolder?: boolean): Promise<void>;
         OpenFolderSelectorDialog(defaultPath?: string): Promise<string>;
-        OpenFileSelectorDialog(
-            defaultPath?: string,
-            defaultExt?: string,
-            defaultFilter?: string
-        ): Promise<string>;
+        OpenFileSelectorDialog(defaultPath?: string, defaultExt?: string, defaultFilter?: string): Promise<string>;
 
         // Game Handler
         OnProcessStateChanged(monitoredProcess: any): Promise<void>;
@@ -256,11 +220,7 @@ declare global {
         // Registry
         GetVRChatRegistryKey(key: string): Promise<any>;
         GetVRChatRegistryKeyString(key: string): Promise<string>;
-        SetVRChatRegistryKey(
-            key: string,
-            value: any,
-            typeInt: number
-        ): Promise<boolean>;
+        SetVRChatRegistryKey(key: string, value: any, typeInt: number): Promise<boolean>;
         GetVRChatRegistry(): Promise<Record<string, Record<string, any>>>;
         SetVRChatRegistry(json: string): Promise<void>;
         HasVRChatRegistryFolder(): Promise<boolean>;
@@ -274,24 +234,9 @@ declare global {
         ResizeImageToFitLimits(base64data: string): Promise<string>;
         CropAllPrints(ugcFolderPath: string): Promise<void>;
         CropPrintImage(path: string): Promise<boolean>;
-        SavePrintToFile(
-            url: string,
-            ugcFolderPath: string,
-            monthFolder: string,
-            fileName: string
-        ): Promise<string>;
-        SaveStickerToFile(
-            url: string,
-            ugcFolderPath: string,
-            monthFolder: string,
-            fileName: string
-        ): Promise<string>;
-        SaveEmojiToFile(
-            url: string,
-            ugcFolderPath: string,
-            monthFolder: string,
-            fileName: string
-        ): Promise<string>;
+        SavePrintToFile(url: string, ugcFolderPath: string, monthFolder: string, fileName: string): Promise<string>;
+        SaveStickerToFile(url: string, ugcFolderPath: string, monthFolder: string, fileName: string): Promise<string>;
+        SaveEmojiToFile(url: string, ugcFolderPath: string, monthFolder: string, fileName: string): Promise<string>;
 
         // Screenshot
         AddScreenshotMetadata(
@@ -300,32 +245,17 @@ declare global {
             worldId: string,
             changeFilename?: boolean
         ): Promise<string>;
-        GetExtraScreenshotData(
-            path: string,
-            carouselCache: boolean
-        ): Promise<string>;
+        GetExtraScreenshotData(path: string, carouselCache: boolean): Promise<string>;
         GetScreenshotMetadata(path: string): Promise<string>;
-        FindScreenshotsBySearch(
-            searchQuery: string,
-            searchType?: number
-        ): Promise<string>;
+        FindScreenshotsBySearch(searchQuery: string, searchType?: number): Promise<string>;
         GetLastScreenshot(): Promise<string>;
         DeleteScreenshotMetadata(path: string): Promise<boolean>;
         DeleteAllScreenshotMetadata(): Promise<void>;
 
         // Moderations
-        GetVRChatModerations(
-            currentUserId: string
-        ): Promise<Record<string, number> | null>;
-        GetVRChatUserModeration(
-            currentUserId: string,
-            userId: string
-        ): Promise<number>;
-        SetVRChatUserModeration(
-            currentUserId: string,
-            userId: string,
-            type: number
-        ): Promise<boolean>;
+        GetVRChatModerations(currentUserId: string): Promise<Record<string, number> | null>;
+        GetVRChatUserModeration(currentUserId: string, userId: string): Promise<number>;
+        SetVRChatUserModeration(currentUserId: string, userId: string, type: number): Promise<boolean>;
 
         // VRC Config
         ReadConfigFile(): Promise<string>;
@@ -333,22 +263,12 @@ declare global {
         WriteConfigFile(json: string): Promise<void>;
 
         // Update
-        DownloadUpdate(
-            fileUrl: string,
-            hashString: string,
-            downloadSize: number
-        ): Promise<void>;
+        DownloadUpdate(fileUrl: string, hashString: string, downloadSize: number): Promise<void>;
         CancelUpdate(): Promise<void>;
         CheckUpdateProgress(): Promise<number>;
 
         // Notifications
-        XSNotification(
-            title: string,
-            content: string,
-            timeout: number,
-            opacity: number,
-            image?: string
-        ): Promise<void>;
+        XSNotification(title: string, content: string, timeout: number, opacity: number, image?: string): Promise<void>;
         OVRTNotification(
             hudNotification: boolean,
             wristNotification: boolean,
@@ -395,12 +315,7 @@ declare global {
             variant: string,
             variantVersion: number
         ): Promise<{ Item1: number; Item2: boolean; Item3: string }>;
-        DeleteCache(
-            fileId: string,
-            fileVersion: number,
-            variant: string,
-            variantVersion: number
-        ): Promise<void>;
+        DeleteCache(fileId: string, fileVersion: number, variant: string, variantVersion: number): Promise<void>;
         DeleteAllCache: () => Promise<void>;
     };
 

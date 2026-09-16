@@ -1,10 +1,3 @@
-const instanceContentSettings = [
-    'emoji',
-    'stickers',
-    'pedestals',
-    'prints',
-    'drones',
-    'props'
-];
+const instanceContentSettings = ['emoji', 'stickers', 'pedestals', 'prints', 'drones', 'props'];
 
 export { instanceContentSettings };

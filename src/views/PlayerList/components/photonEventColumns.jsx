@@ -27,14 +27,7 @@ const avatarStatusClass = (status) => {
     return null;
 };
 
-function DetailCell({
-    row,
-    isPrevious,
-    onShowAvatar,
-    onShowGroup,
-    onShowWorld,
-    onShowImage
-}) {
+function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, onShowImage }) {
     const r = row;
     if (!r) return null;
 
@@ -62,9 +55,7 @@ function DetailCell({
                         {avatarStatusLabel(r.avatar.releaseStatus)}
                     </span>
                 ) : null}
-                {isPrevious &&
-                r.avatar?.description &&
-                r.avatar?.name !== r.avatar?.description ? (
+                {isPrevious && r.avatar?.description && r.avatar?.name !== r.avatar?.description ? (
                     <>
                         {' | - '}
                         {r.avatar.description}
@@ -82,17 +73,10 @@ function DetailCell({
                         <TooltipWrapper
                             side="top"
                             v-slots={{
-                                content: () => (
-                                    <span>{statusLabel(r.previousStatus)}</span>
-                                )
+                                content: () => <span>{statusLabel(r.previousStatus)}</span>
                             }}
                         >
-                            <i
-                                class={[
-                                    'x-user-status',
-                                    statusClass(r.previousStatus)
-                                ]}
-                            ></i>
+                            <i class={['x-user-status', statusClass(r.previousStatus)]}></i>
                         </TooltipWrapper>
                         <span>
                             <ArrowRight />
@@ -100,21 +84,14 @@ function DetailCell({
                         <TooltipWrapper
                             side="top"
                             v-slots={{
-                                content: () => (
-                                    <span>{statusLabel(r.status)}</span>
-                                )
+                                content: () => <span>{statusLabel(r.status)}</span>
                             }}
                         >
-                            <i
-                                class={['x-user-status', statusClass(r.status)]}
-                                style="margin-right: 5px"
-                            ></i>
+                            <i class={['x-user-status', statusClass(r.status)]} style="margin-right: 5px"></i>
                         </TooltipWrapper>
                     </>
                 ) : null}
-                {r.statusDescription !== r.previousStatusDescription ? (
-                    <span>{r.statusDescription}</span>
-                ) : null}
+                {r.statusDescription !== r.previousStatusDescription ? <span>{r.statusDescription}</span> : null}
             </>
         );
     }
@@ -158,12 +135,7 @@ function DetailCell({
                     onShowWorld?.(r.location, r.shortName);
                 }}
             >
-                <Location
-                    location={r.location}
-                    hint={r.worldName}
-                    grouphint={r.groupName}
-                    link={false}
-                />
+                <Location location={r.location} hint={r.worldName} grouphint={r.groupName} link={false} />
             </span>
         );
     }
@@ -240,14 +212,7 @@ function DetailCell({
     return <span>{r.text}</span>;
 }
 
-export const createColumns = ({
-    isPrevious,
-    onShowUser,
-    onShowAvatar,
-    onShowGroup,
-    onShowWorld,
-    onShowImage
-}) => [
+export const createColumns = ({ isPrevious, onShowUser, onShowAvatar, onShowGroup, onShowWorld, onShowImage }) => [
     {
         id: 'created_at',
         accessorFn: (row) => (row?.created_at ? Date.parse(row.created_at) : 0),
@@ -257,16 +222,10 @@ export const createColumns = ({
             <TooltipWrapper
                 side="right"
                 v-slots={{
-                    content: () => (
-                        <span>
-                            {formatDateFilter(row.original?.created_at, 'long')}
-                        </span>
-                    )
+                    content: () => <span>{formatDateFilter(row.original?.created_at, 'long')}</span>
                 }}
             >
-                <span>
-                    {formatDateFilter(row.original?.created_at, 'short')}
-                </span>
+                <span>{formatDateFilter(row.original?.created_at, 'short')}</span>
             </TooltipWrapper>
         )
     },

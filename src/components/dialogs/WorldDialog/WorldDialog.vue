@@ -529,7 +529,6 @@
     );
 
     /**
-     *
      * @param tabName
      */
     function handleWorldDialogTab(tabName) {
@@ -539,15 +538,11 @@
         }
     }
 
-    /**
-     *
-     */
     function loadLastActiveTab() {
         handleWorldDialogTab(worldDialog.value.lastActiveTab);
     }
 
     /**
-     *
      * @param tabName
      */
     function worldDialogTabClick(tabName) {
@@ -560,16 +555,10 @@
         handleWorldDialogTab(tabName);
     }
 
-    /**
-     *
-     */
     function handleDialogOpen() {
         treeData.value = {};
     }
 
-    /**
-     *
-     */
     function refreshWorldDialogTreeData() {
         treeData.value = formatJsonVars(worldDialog.value.ref);
     }

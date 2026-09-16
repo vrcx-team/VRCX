@@ -148,13 +148,7 @@ export const useActivityStore = defineStore('Activity', () => {
 
     async function loadActivity(
         userId,
-        {
-            isSelf = false,
-            rangeDays = 30,
-            normalizeConfig,
-            dayLabels,
-            forceRefresh = false
-        }
+        { isSelf = false, rangeDays = 30, normalizeConfig, dayLabels, forceRefresh = false }
     ) {
         const snapshot = await ensureSnapshot(userId, {
             isSelf,
@@ -222,13 +216,7 @@ export const useActivityStore = defineStore('Activity', () => {
     async function loadOverlap(
         currentUserId,
         targetUserId,
-        {
-            rangeDays = 30,
-            dayLabels,
-            normalizeConfig,
-            excludeHours,
-            forceRefresh = false
-        }
+        { rangeDays = 30, dayLabels, normalizeConfig, excludeHours, forceRefresh = false }
     ) {
         const [selfSnapshot, targetSnapshot] = await Promise.all([
             ensureSnapshot(currentUserId, {
@@ -245,10 +233,7 @@ export const useActivityStore = defineStore('Activity', () => {
 
         const excludeKey = overlapExcludeKey(excludeHours);
         const cacheKey = `${targetUserId}:${rangeDays}:${excludeKey}`;
-        const cursor = pairCursor(
-            selfSnapshot.sync.sourceLastCreatedAt,
-            targetSnapshot.sync.sourceLastCreatedAt
-        );
+        const cursor = pairCursor(selfSnapshot.sync.sourceLastCreatedAt, targetSnapshot.sync.sourceLastCreatedAt);
 
         let view = targetSnapshot.overlapViews.get(cacheKey);
         if (!forceRefresh && view?.builtFromCursor === cursor) {
@@ -310,30 +295,16 @@ export const useActivityStore = defineStore('Activity', () => {
         return view;
     }
 
-    async function loadTopWorlds(
-        userId,
-        { rangeDays = 30, limit = 5, sortBy = 'time', excludeWorldId = '' }
-    ) {
+    async function loadTopWorlds(userId, { rangeDays = 30, limit = 5, sortBy = 'time', excludeWorldId = '' }) {
         void userId;
-        return database.getMyTopWorlds(
-            rangeDays,
-            limit,
-            sortBy,
-            excludeWorldId
-        );
+        return database.getMyTopWorlds(rangeDays, limit, sortBy, excludeWorldId);
     }
 
     async function refreshActivity(userId, options) {
         return loadActivity(userId, { ...options, forceRefresh: true });
     }
 
-    async function loadActivityView({
-        userId,
-        isSelf = false,
-        rangeDays = 30,
-        dayLabels,
-        forceRefresh = false
-    }) {
+    async function loadActivityView({ userId, isSelf = false, rangeDays = 30, dayLabels, forceRefresh = false }) {
         const response = await loadActivity(userId, {
             isSelf,
             rangeDays,
@@ -375,13 +346,7 @@ export const useActivityStore = defineStore('Activity', () => {
         };
     }
 
-    async function loadTopWorldsView({
-        userId,
-        rangeDays = 30,
-        limit = 5,
-        sortBy = 'time',
-        excludeWorldId = ''
-    }) {
+    async function loadTopWorldsView({ userId, rangeDays = 30, limit = 5, sortBy = 'time', excludeWorldId = '' }) {
         return loadTopWorlds(userId, {
             rangeDays,
             limit,
@@ -429,16 +394,11 @@ export const useActivityStore = defineStore('Activity', () => {
             }
 
             const earliestDate = new Date(probeItems[0].created_at);
-            const totalDays = Math.ceil(
-                (Date.now() - earliestDate.getTime()) / 86400000
-            );
+            const totalDays = Math.ceil((Date.now() - earliestDate.getTime()) / 86400000);
 
             let targetDays = currentDays;
             while (targetDays < totalDays && !fullCacheBuildAborted) {
-                targetDays = Math.min(
-                    targetDays + FULL_CACHE_BATCH_DAYS,
-                    totalDays
-                );
+                targetDays = Math.min(targetDays + FULL_CACHE_BATCH_DAYS, totalDays);
                 const nextTarget = targetDays;
 
                 await new Promise((resolve) => {
@@ -446,10 +406,7 @@ export const useActivityStore = defineStore('Activity', () => {
                         try {
                             await expandRange(snapshot, nextTarget);
                         } catch (error) {
-                            console.error(
-                                '[Activity] full cache batch failed:',
-                                error
-                            );
+                            console.error('[Activity] full cache batch failed:', error);
                         }
                         resolve();
                     };
@@ -476,7 +433,7 @@ export const useActivityStore = defineStore('Activity', () => {
     }
 
     /**
-     * @returns {Promise<Array<{date: string, totalMs: number}>>}
+     * @returns {Promise<{ date: string; totalMs: number }[]>}
      */
     async function getDailySummary(userId) {
         const snapshot = await hydrateSnapshot(userId, true);
@@ -541,10 +498,7 @@ async function hydrateSnapshot(userId, isSelf) {
         snapshot.sync = {
             ...snapshot.sync,
             ...syncState,
-            isSelf:
-                typeof syncState.isSelf === 'boolean'
-                    ? syncState.isSelf
-                    : snapshot.isSelf
+            isSelf: typeof syncState.isSelf === 'boolean' ? syncState.isSelf : snapshot.isSelf
         };
     }
     if (sessions.length > 0) {
@@ -553,10 +507,7 @@ async function hydrateSnapshot(userId, isSelf) {
     return snapshot;
 }
 
-async function ensureSnapshot(
-    userId,
-    { isSelf, rangeDays, forceRefresh = false }
-) {
+async function ensureSnapshot(userId, { isSelf, rangeDays, forceRefresh = false }) {
     const jobKey = `${userId}:${isSelf}:${rangeDays}:${forceRefresh ? 'force' : 'normal'}`;
     const existingJob = inFlightJobs.get(jobKey);
     if (existingJob) {
@@ -588,10 +539,7 @@ async function fullRefresh(snapshot, rangeDays) {
         isSelf: snapshot.isSelf,
         fromDays: rangeDays
     });
-    const sourceLastCreatedAt =
-        sourceItems.length > 0
-            ? sourceItems[sourceItems.length - 1].created_at
-            : '';
+    const sourceLastCreatedAt = sourceItems.length > 0 ? sourceItems[sourceItems.length - 1].created_at : '';
     const result = await workerCall('computeSessionsSnapshot', {
         sourceType: snapshot.isSelf ? 'self_gamelog' : 'friend_presence',
         rows: snapshot.isSelf ? sourceItems : undefined,
@@ -613,9 +561,7 @@ async function fullRefresh(snapshot, rangeDays) {
     };
     clearDerivedViews(snapshot);
 
-    deferWrite(() =>
-        database.replaceActivitySessionsV2(snapshot.userId, snapshot.sessions)
-    );
+    deferWrite(() => database.replaceActivitySessionsV2(snapshot.userId, snapshot.sessions));
     deferWrite(() => database.upsertActivitySyncStateV2(snapshot.sync));
 }
 
@@ -641,18 +587,14 @@ async function incrementalRefresh(snapshot) {
         sourceType: snapshot.isSelf ? 'self_gamelog' : 'friend_presence',
         rows: snapshot.isSelf ? sourceItems : undefined,
         events: snapshot.isSelf ? undefined : sourceItems,
-        initialStart: snapshot.isSelf
-            ? null
-            : snapshot.sync.pendingSessionStartAt,
+        initialStart: snapshot.isSelf ? null : snapshot.sync.pendingSessionStartAt,
         nowMs: Date.now(),
         mayHaveOpenTail: snapshot.isSelf,
         sourceRevision: sourceLastCreatedAt
     });
 
     const replaceFromStartAt =
-        snapshot.sessions.length > 0
-            ? snapshot.sessions[Math.max(snapshot.sessions.length - 1, 0)].start
-            : null;
+        snapshot.sessions.length > 0 ? snapshot.sessions[Math.max(snapshot.sessions.length - 1, 0)].start : null;
     const merged = mergeSessions(snapshot.sessions, result.sessions);
     snapshot.sessions = merged;
     snapshot.sync = {
@@ -664,9 +606,7 @@ async function incrementalRefresh(snapshot) {
     clearDerivedViews(snapshot);
 
     const tailSessions =
-        replaceFromStartAt === null
-            ? merged
-            : merged.filter((session) => session.start >= replaceFromStartAt);
+        replaceFromStartAt === null ? merged : merged.filter((session) => session.start >= replaceFromStartAt);
     deferWrite(() =>
         database.appendActivitySessionsV2({
             userId: snapshot.userId,
@@ -701,12 +641,7 @@ async function expandRange(snapshot, rangeDays) {
 
     if (result.sessions.length > 0) {
         snapshot.sessions = mergeSessions(result.sessions, snapshot.sessions);
-        deferWrite(() =>
-            database.replaceActivitySessionsV2(
-                snapshot.userId,
-                snapshot.sessions
-            )
-        );
+        deferWrite(() => database.replaceActivitySessionsV2(snapshot.userId, snapshot.sessions));
     }
     snapshot.sync.cachedRangeDays = rangeDays;
     snapshot.sync.updatedAt = new Date().toISOString();

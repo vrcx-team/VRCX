@@ -686,7 +686,6 @@
     initGetZoomLevel();
 
     /**
-     *
      * @param value
      */
     function handleSortFavoritesRadio(value) {
@@ -697,7 +696,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function handleInstanceUsersSortAlphabeticalRadio(value) {
@@ -708,7 +706,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function handleDtHour12Radio(value) {
@@ -720,7 +717,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function handleWeekStartsOnChange(value) {
@@ -765,9 +761,6 @@
         }
     });
 
-    /**
-     *
-     */
     async function initGetZoomLevel() {
         const handleWheel = (event) => {
             if (event.ctrlKey) {
@@ -781,16 +774,10 @@
         getZoomLevel();
     }
 
-    /**
-     *
-     */
     async function getZoomLevel() {
         zoomLevel.value = ((await AppApi.GetZoom()) + 10) * 10;
     }
 
-    /**
-     *
-     */
     function setZoomLevel() {
         AppApi.SetZoom(zoomLevel.value / 10 - 10);
     }

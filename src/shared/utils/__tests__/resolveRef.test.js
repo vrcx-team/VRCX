@@ -62,10 +62,7 @@ describe('resolveRef', () => {
         mockFetchFn.mockResolvedValue({
             ref: { id: 'usr_789', displayName: 'Charlie' }
         });
-        const result = await resolveRef(
-            { id: 'usr_789' },
-            { emptyDefault, idAlias, nameKey, fetchFn: mockFetchFn }
-        );
+        const result = await resolveRef({ id: 'usr_789' }, { emptyDefault, idAlias, nameKey, fetchFn: mockFetchFn });
         expect(mockFetchFn).toHaveBeenCalledWith('usr_789');
         expect(result.displayName).toBe('Charlie');
     });

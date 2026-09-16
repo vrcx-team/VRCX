@@ -19,38 +19,33 @@
     --font-cjk-kr-primary: 'Noto Sans KR Variable';
     --font-cjk-tc-primary: 'Noto Sans TC Variable';
     --font-western:
-        'ellipsis-font', -apple-system, var(--font-western-primary), 'Segoe UI',
-        'Roboto', 'Ubuntu', 'Cantarell', 'DejaVu Sans';
+        'ellipsis-font', -apple-system, var(--font-western-primary), 'Segoe UI', 'Roboto', 'Ubuntu', 'Cantarell',
+        'DejaVu Sans';
     --font-symbol: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
     --font-fallback-cjk: sans-serif;
     --font-primary-cjk:
-        var(--font-cjk-jp-primary), var(--font-cjk-sc-primary),
-        var(--font-cjk-kr-primary), var(--font-cjk-tc-primary);
+        var(--font-cjk-jp-primary), var(--font-cjk-sc-primary), var(--font-cjk-kr-primary), var(--font-cjk-tc-primary);
     --font-mono-cjk:
-        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-        'Liberation Mono', 'Courier New', var(--font-primary-cjk), monospace;
+        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+        var(--font-primary-cjk), monospace;
 }
 
 :root[lang='zh-CN'] {
     --font-primary-cjk:
-        var(--font-cjk-sc-primary), var(--font-cjk-jp-primary),
-        var(--font-cjk-kr-primary), var(--font-cjk-tc-primary);
+        var(--font-cjk-sc-primary), var(--font-cjk-jp-primary), var(--font-cjk-kr-primary), var(--font-cjk-tc-primary);
 }
 
 :root[lang='ja'] {
     --font-primary-cjk:
-        var(--font-cjk-jp-primary), var(--font-cjk-kr-primary),
-        var(--font-cjk-tc-primary), var(--font-cjk-sc-primary);
+        var(--font-cjk-jp-primary), var(--font-cjk-kr-primary), var(--font-cjk-tc-primary), var(--font-cjk-sc-primary);
 }
 
 :root[lang='ko'] {
     --font-primary-cjk:
-        var(--font-cjk-kr-primary), var(--font-cjk-jp-primary),
-        var(--font-cjk-tc-primary), var(--font-cjk-sc-primary);
+        var(--font-cjk-kr-primary), var(--font-cjk-jp-primary), var(--font-cjk-tc-primary), var(--font-cjk-sc-primary);
 }
 
 :root[lang='zh-TW'] {
     --font-primary-cjk:
-        var(--font-cjk-tc-primary), var(--font-cjk-jp-primary),
-        var(--font-cjk-kr-primary), var(--font-cjk-sc-primary);
+        var(--font-cjk-tc-primary), var(--font-cjk-jp-primary), var(--font-cjk-kr-primary), var(--font-cjk-sc-primary);
 }

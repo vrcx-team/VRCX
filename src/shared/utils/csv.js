@@ -8,7 +8,7 @@ export function needsCsvQuotes(text) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {string}
  */
 export function formatCsvField(value) {

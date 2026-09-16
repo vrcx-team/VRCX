@@ -89,30 +89,21 @@ describe('computeTrustLevel', () => {
     });
 
     it('detects troll status', () => {
-        const result = computeTrustLevel(
-            ['system_troll', 'system_trust_known'],
-            ''
-        );
+        const result = computeTrustLevel(['system_troll', 'system_trust_known'], '');
         expect(result.isTroll).toBe(true);
         expect(result.trustColorKey).toBe('troll');
         expect(result.trustSortNum).toBeCloseTo(3.1); // 3 + 0.1
     });
 
     it('detects probable troll when not already troll', () => {
-        const result = computeTrustLevel(
-            ['system_probable_troll', 'system_trust_basic'],
-            ''
-        );
+        const result = computeTrustLevel(['system_probable_troll', 'system_trust_basic'], '');
         expect(result.isProbableTroll).toBe(true);
         expect(result.isTroll).toBe(false);
         expect(result.trustColorKey).toBe('troll');
     });
 
     it('probable troll is not set when already troll', () => {
-        const result = computeTrustLevel(
-            ['system_troll', 'system_probable_troll'],
-            ''
-        );
+        const result = computeTrustLevel(['system_troll', 'system_probable_troll'], '');
         expect(result.isTroll).toBe(true);
         expect(result.isProbableTroll).toBe(false);
     });
@@ -125,10 +116,7 @@ describe('computeTrustLevel', () => {
     });
 
     it('detects moderator from admin_moderator tag', () => {
-        const result = computeTrustLevel(
-            ['admin_moderator', 'system_trust_veteran'],
-            ''
-        );
+        const result = computeTrustLevel(['admin_moderator', 'system_trust_veteran'], '');
         expect(result.isModerator).toBe(true);
         expect(result.trustColorKey).toBe('vip');
     });
@@ -141,9 +129,7 @@ describe('computeTrustLevel', () => {
 
 describe('computeUserPlatform', () => {
     it('returns platform when valid', () => {
-        expect(computeUserPlatform('standalonewindows', 'android')).toBe(
-            'standalonewindows'
-        );
+        expect(computeUserPlatform('standalonewindows', 'android')).toBe('standalonewindows');
     });
 
     it('falls back to last_platform when platform is "offline"', () => {
@@ -155,9 +141,7 @@ describe('computeUserPlatform', () => {
     });
 
     it('falls back to last_platform when platform is empty', () => {
-        expect(computeUserPlatform('', 'standalonewindows')).toBe(
-            'standalonewindows'
-        );
+        expect(computeUserPlatform('', 'standalonewindows')).toBe('standalonewindows');
     });
 
     it('returns empty string when both are empty', () => {
@@ -166,8 +150,7 @@ describe('computeUserPlatform', () => {
 });
 
 describe('diffObjectProps', () => {
-    const arraysMatch = (a, b) =>
-        a.length === b.length && a.every((v, i) => v === b[i]);
+    const arraysMatch = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
 
     it('detects changed primitive props', () => {
         const ref = { name: 'old', id: '1' };

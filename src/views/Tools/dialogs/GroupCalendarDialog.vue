@@ -149,9 +149,6 @@
         showFeaturedEvents.value = await configRepository.getBool('VRCX_groupCalendarShowFeaturedEvents', false);
     });
 
-    /**
-     *
-     */
     function toggleFeaturedEvents() {
         configRepository.setBool('VRCX_groupCalendarShowFeaturedEvents', showFeaturedEvents.value);
         updateCalenderData();
@@ -187,9 +184,6 @@
         }
     });
 
-    /**
-     *
-     */
     async function updateCalenderData() {
         isLoading.value = true;
         let fetchPromises = [getCalendarData(), getFollowingCalendarData()];
@@ -352,7 +346,6 @@
     const formatDateKey = (date) => dayjs(date).format('YYYY-MM-DD');
 
     /**
-     *
      * @param groupId
      */
     async function getGroupNameFromCache(groupId) {
@@ -368,9 +361,6 @@
         }
     }
 
-    /**
-     *
-     */
     async function getCalendarData() {
         calendar.value = [];
         try {
@@ -397,9 +387,6 @@
         }
     }
 
-    /**
-     *
-     */
     async function getFollowingCalendarData() {
         followingCalendar.value = [];
         try {
@@ -424,9 +411,6 @@
         }
     }
 
-    /**
-     *
-     */
     async function getFeaturedCalendarData() {
         featuredCalendar.value = [];
         try {
@@ -452,7 +436,6 @@
     }
 
     /**
-     *
      * @param updatedEvent
      */
     function updateFollowingCalendarData(updatedEvent) {
@@ -466,22 +449,17 @@
     }
 
     /**
-     *
      * @param eventId
      */
     function isEventFollowing(eventId) {
         return followingCalendar.value.some((item) => item.id === eventId);
     }
 
-    /**
-     *
-     */
     function toggleViewMode() {
         viewMode.value = viewMode.value === 'timeline' ? 'grid' : 'timeline';
     }
 
     /**
-     *
      * @param groupId
      */
     function toggleGroup(groupId) {
@@ -491,9 +469,6 @@
         };
     }
 
-    /**
-     *
-     */
     function closeDialog() {
         emit('close');
     }

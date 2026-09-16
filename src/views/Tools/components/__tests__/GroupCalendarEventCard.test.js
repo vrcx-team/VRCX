@@ -15,8 +15,7 @@ Object.assign(globalThis, {
 vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
 vi.mock('../../../../stores', () => ({
     useGalleryStore: () => ({
-        showFullscreenImageDialog: (...a) =>
-            mocks.showFullscreenImageDialog(...a)
+        showFullscreenImageDialog: (...a) => mocks.showFullscreenImageDialog(...a)
     }),
     useGroupStore: () => ({
         cachedGroups: new Map([
@@ -53,8 +52,7 @@ vi.mock('@/components/ui/card', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 vi.mock('lucide-vue-next', () => ({
@@ -103,9 +101,7 @@ describe('GroupCalendarEventCard.vue', () => {
         await buttons[1].trigger('click');
         await Promise.resolve();
 
-        expect(mocks.writeText).toHaveBeenCalledWith(
-            'https://vrchat.com/home/group/grp_1/calendar/evt_1'
-        );
+        expect(mocks.writeText).toHaveBeenCalledWith('https://vrchat.com/home/group/grp_1/calendar/evt_1');
         expect(mocks.followGroupEvent).toHaveBeenCalledWith({
             groupId: 'grp_1',
             eventId: 'evt_1',

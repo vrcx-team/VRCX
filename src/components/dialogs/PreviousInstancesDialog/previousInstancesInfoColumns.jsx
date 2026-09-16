@@ -94,16 +94,14 @@ export const createColumns = ({ onLookupUser }) => [
         id: 'time',
         accessorFn: (row) => row?.time ?? 0,
         size: 100,
-        header: ({ column }) =>
-            sortButton({ column, label: t('table.previous_instances.time') }),
+        header: ({ column }) => sortButton({ column, label: t('table.previous_instances.time') }),
         cell: ({ row }) => <span>{row.original?.timer ?? ''}</span>
     },
     {
         id: 'count',
         accessorFn: (row) => row?.count ?? 0,
         size: 100,
-        header: ({ column }) =>
-            sortButton({ column, label: t('table.previous_instances.count') }),
+        header: ({ column }) => sortButton({ column, label: t('table.previous_instances.count') }),
         cell: ({ row }) => <span>{row.original?.count ?? ''}</span>
     }
 ];

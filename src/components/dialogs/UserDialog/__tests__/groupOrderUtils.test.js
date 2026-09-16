@@ -3,38 +3,27 @@ import { moveGroupInOrder, normalizeGroupOrder } from '../groupOrderUtils';
 describe('groupOrderUtils', () => {
     describe('normalizeGroupOrder', () => {
         test('appends groups missing from the saved registry order', () => {
-            expect(
-                normalizeGroupOrder(
-                    ['group-b'],
-                    ['group-a', 'group-b', 'group-c']
-                )
-            ).toEqual(['group-b', 'group-a', 'group-c']);
+            expect(normalizeGroupOrder(['group-b'], ['group-a', 'group-b', 'group-c'])).toEqual([
+                'group-b',
+                'group-a',
+                'group-c'
+            ]);
         });
 
         test('removes stale and duplicate group IDs', () => {
-            expect(
-                normalizeGroupOrder(
-                    ['stale', 'group-b', 'group-b', 'group-a'],
-                    ['group-a', 'group-b']
-                )
-            ).toEqual(['group-b', 'group-a']);
+            expect(normalizeGroupOrder(['stale', 'group-b', 'group-b', 'group-a'], ['group-a', 'group-b'])).toEqual([
+                'group-b',
+                'group-a'
+            ]);
         });
     });
 
     describe('moveGroupInOrder', () => {
         test('preserves every group when moving one missing from the saved order', () => {
-            const order = normalizeGroupOrder(
-                ['group-a', 'group-b'],
-                ['group-a', 'group-b', 'group-new', 'group-c']
-            );
+            const order = normalizeGroupOrder(['group-a', 'group-b'], ['group-a', 'group-b', 'group-new', 'group-c']);
 
             expect(moveGroupInOrder(order, 'group-new', 3)).toBe(true);
-            expect(order).toEqual([
-                'group-a',
-                'group-b',
-                'group-c',
-                'group-new'
-            ]);
+            expect(order).toEqual(['group-a', 'group-b', 'group-c', 'group-new']);
         });
 
         test('moves a known group to the requested index', () => {

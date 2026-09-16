@@ -16,9 +16,7 @@ export const useToolsStore = defineStore('Tools', () => {
 
     function setDialogVisible(dialogKey, value) {
         if (!(dialogKey in dialogs)) {
-            console.warn(
-                `[toolsStore] Unknown dialog key "${dialogKey}" passed to setDialogVisible`
-            );
+            console.warn(`[toolsStore] Unknown dialog key "${dialogKey}" passed to setDialogVisible`);
             return;
         }
         dialogs[dialogKey] = value;

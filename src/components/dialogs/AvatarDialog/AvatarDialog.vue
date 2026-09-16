@@ -794,7 +794,6 @@
     );
 
     /**
-     *
      * @param tabName
      */
     function handleAvatarDialogTab(tabName) {
@@ -804,15 +803,11 @@
         }
     }
 
-    /**
-     *
-     */
     function loadLastActiveTab() {
         handleAvatarDialogTab(avatarDialog.value.lastActiveTab);
     }
 
     /**
-     *
      * @param tabName
      */
     function avatarDialogTabClick(tabName) {
@@ -826,16 +821,12 @@
     }
 
     /**
-     *
      * @param imageId
      */
     function getImageUrlFromImageId(imageId) {
         return `${AppDebug.endpointDomain}/file/${imageId}/1/`;
     }
 
-    /**
-     *
-     */
     function handleDialogOpen() {
         setAvatarTagsDialog.value.visible = false;
         avatarDialog.value.timeSpent = 0;
@@ -845,9 +836,6 @@
         getAvatarMemo();
     }
 
-    /**
-     *
-     */
     function getAvatarTimeSpent() {
         const D = avatarDialog.value;
         avatarDialog.value.timeSpent = 0;
@@ -861,9 +849,6 @@
         });
     }
 
-    /**
-     *
-     */
     function getAvatarMemo() {
         const D = avatarDialog.value;
         database.getAvatarMemoDB(D.id).then((res) => {
@@ -874,7 +859,6 @@
     }
 
     /**
-     *
      * @param command
      */
     // Register component callbacks for the command composable
@@ -883,9 +867,6 @@
         showSetAvatarStylesDialog
     });
 
-    /**
-     *
-     */
     function onAvatarMemoChange() {
         if (memo.value) {
             database.setAvatarMemo({
@@ -899,22 +880,17 @@
     }
 
     /**
-     *
      * @param id
      */
     function copyAvatarId(id) {
         copyToClipboard(id);
     }
 
-    /**
-     *
-     */
     function refreshAvatarDialogTreeData() {
         treeData.value = formatJsonVars(avatarDialog.value.ref);
     }
 
     /**
-     *
      * @param avatarId
      */
     function showSetAvatarTagsDialog(avatarId) {
@@ -965,9 +941,6 @@
         });
     }
 
-    /**
-     *
-     */
     function showSetAvatarStylesDialog() {
         const D = setAvatarStylesDialog.value;
         D.visible = true;
@@ -992,15 +965,11 @@
         });
     }
 
-    /**
-     *
-     */
     function displayAvatarGalleryUpload() {
         document.getElementById('AvatarGalleryUploadButton').click();
     }
 
     /**
-     *
      * @param e
      */
     function onFileChangeAvatarGallery(e) {

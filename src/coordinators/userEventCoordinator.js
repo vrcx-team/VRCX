@@ -14,6 +14,7 @@ import { useWorldStore } from '../stores/world';
 
 /**
  * Handles user diff events and applies cross-store side effects.
+ *
  * @param {object} ref Updated user reference.
  * @param {object} props Changed props with [new, old] tuples.
  * @param {object} [options] Test seams.
@@ -21,11 +22,7 @@ import { useWorldStore } from '../stores/world';
  * @param {function} [options.nowIso] ISO timestamp provider.
  * @returns {Promise<void>}
  */
-export async function runHandleUserUpdateFlow(
-    ref,
-    props,
-    { now = Date.now, nowIso = () => new Date().toJSON() } = {}
-) {
+export async function runHandleUserUpdateFlow(ref, props, { now = Date.now, nowIso = () => new Date().toJSON() } = {}) {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
     const worldStore = useWorldStore();
@@ -67,10 +64,7 @@ export async function runHandleUserUpdateFlow(
 
         const previousLocationL = parseLocation(previousLocation);
         const newLocationL = parseLocation(newLocation);
-        if (
-            previousLocationL.tag === userDialog.$location.tag ||
-            newLocationL.tag === userDialog.$location.tag
-        ) {
+        if (previousLocationL.tag === userDialog.$location.tag || newLocationL.tag === userDialog.$location.tag) {
             // update user dialog instance occupants
             applyUserDialogLocation(true);
         }
@@ -109,9 +103,7 @@ export async function runHandleUserUpdateFlow(
             }
         }
         if (AppDebug.debugFriendState && previousLocation) {
-            console.log(
-                `${ref.displayName} GPS ${previousLocation} -> ${newLocation}`
-            );
+            console.log(`${ref.displayName} GPS ${previousLocation} -> ${newLocation}`);
         }
         if (previousLocation === 'offline') {
             previousLocation = '';
@@ -119,11 +111,7 @@ export async function runHandleUserUpdateFlow(
         if (!previousLocation) {
             // no previous location
             if (AppDebug.debugFriendState) {
-                console.log(
-                    ref.displayName,
-                    'Ignoring GPS, no previous location',
-                    newLocation
-                );
+                console.log(ref.displayName, 'Ignoring GPS, no previous location', newLocation);
             }
         } else if (ref.$previousLocation === newLocation) {
             // location traveled to is the same
@@ -151,11 +139,7 @@ export async function runHandleUserUpdateFlow(
             ref.$travelingToTime = now();
         }
     }
-    if (
-        props.location &&
-        props.location[0] === 'traveling' &&
-        props.location[1] !== 'traveling'
-    ) {
+    if (props.location && props.location[0] === 'traveling' && props.location[1] !== 'traveling') {
         // store previous location when user is traveling
         ref.$previousLocation = props.location[1];
         ref.$travelingToTime = now();
@@ -165,15 +149,12 @@ export async function runHandleUserUpdateFlow(
         props.currentAvatarThumbnailImageUrl &&
         props.currentAvatarThumbnailImageUrl[0] &&
         props.currentAvatarThumbnailImageUrl[1] &&
-        props.currentAvatarThumbnailImageUrl[0] ===
-            props.currentAvatarThumbnailImageUrl[1]
+        props.currentAvatarThumbnailImageUrl[0] === props.currentAvatarThumbnailImageUrl[1]
     ) {
         imageMatches = true;
     }
     if (
-        (((props.currentAvatarImageUrl ||
-            props.currentAvatarThumbnailImageUrl) &&
-            !ref.profilePicOverride) ||
+        (((props.currentAvatarImageUrl || props.currentAvatarThumbnailImageUrl) && !ref.profilePicOverride) ||
             props.currentAvatarTags) &&
         !imageMatches
     ) {
@@ -191,22 +172,16 @@ export async function runHandleUserUpdateFlow(
             previousCurrentAvatarImageUrl = ref.currentAvatarImageUrl;
         }
         if (props.currentAvatarThumbnailImageUrl) {
-            currentAvatarThumbnailImageUrl =
-                props.currentAvatarThumbnailImageUrl[0];
-            previousCurrentAvatarThumbnailImageUrl =
-                props.currentAvatarThumbnailImageUrl[1];
+            currentAvatarThumbnailImageUrl = props.currentAvatarThumbnailImageUrl[0];
+            previousCurrentAvatarThumbnailImageUrl = props.currentAvatarThumbnailImageUrl[1];
         } else {
             currentAvatarThumbnailImageUrl = ref.currentAvatarThumbnailImageUrl;
-            previousCurrentAvatarThumbnailImageUrl =
-                ref.currentAvatarThumbnailImageUrl;
+            previousCurrentAvatarThumbnailImageUrl = ref.currentAvatarThumbnailImageUrl;
         }
         if (props.currentAvatarTags) {
             currentAvatarTags = props.currentAvatarTags[0];
             previousCurrentAvatarTags = props.currentAvatarTags[1];
-            if (
-                ref.profilePicOverride &&
-                !props.currentAvatarThumbnailImageUrl
-            ) {
+            if (ref.profilePicOverride && !props.currentAvatarThumbnailImageUrl) {
                 // forget last seen avatar
                 ref.currentAvatarImageUrl = '';
                 ref.currentAvatarThumbnailImageUrl = '';
@@ -230,9 +205,7 @@ export async function runHandleUserUpdateFlow(
                 avatarName: ''
             };
             try {
-                previousAvatarInfo = await getAvatarName(
-                    previousCurrentAvatarImageUrl
-                );
+                previousAvatarInfo = await getAvatarName(previousCurrentAvatarImageUrl);
             } catch (err) {
                 console.log(err);
             }
@@ -260,9 +233,7 @@ export async function runHandleUserUpdateFlow(
     }
     // if status is offline, ignore status and statusDescription
     if (
-        (props.status &&
-            props.status[0] !== 'offline' &&
-            props.status[1] !== 'offline') ||
+        (props.status && props.status[0] !== 'offline' && props.status[1] !== 'offline') ||
         (!props.status && props.statusDescription)
     ) {
         let status = '';
@@ -328,11 +299,7 @@ export async function runHandleUserUpdateFlow(
         feedStore.addFeedEntry(feed);
         database.addBioToDatabase(feed);
     }
-    if (
-        props.note &&
-        props.note[0] !== null &&
-        props.note[0] !== props.note[1]
-    ) {
+    if (props.note && props.note[0] !== null && props.note[0] !== props.note[1]) {
         checkNote(ref.id, props.note[0]);
     }
 }

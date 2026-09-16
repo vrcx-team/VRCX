@@ -5,11 +5,12 @@ import { i18n } from '../../plugins/i18n';
  * Extracts the notification title and body from a notification object.
  * This is the single source of truth for notification message content,
  * used by desktop toast, XS overlay, OVRT overlay, and TTS.
+ *
  * @param {object} noty - The notification object
  * @param {string} message - Pre-built invite/request message string
  * @param {string} [displayNameOverride] - Optional override for the display
  *   name used in the title (e.g. a nickname from user memo for TTS).
- * @returns {{ title: string, body: string } | null}
+ * @returns {{ title: string; body: string } | null}
  */
 export function getNotificationMessage(noty, message, displayNameOverride) {
     const name = displayNameOverride || noty.displayName;
@@ -27,11 +28,7 @@ export function getNotificationMessage(noty, message, displayNameOverride) {
             return {
                 title: name,
                 body: t('notifications.gps', {
-                    location: displayLocation(
-                        noty.location,
-                        noty.worldName,
-                        noty.groupName
-                    )
+                    location: displayLocation(noty.location, noty.worldName, noty.groupName)
                 })
             };
         case 'Online': {
@@ -39,11 +36,7 @@ export function getNotificationMessage(noty, message, displayNameOverride) {
                 return {
                     title: name,
                     body: t('notifications.online_location', {
-                        location: displayLocation(
-                            noty.location,
-                            noty.worldName,
-                            noty.groupName
-                        )
+                        location: displayLocation(noty.location, noty.worldName, noty.groupName)
                     })
                 };
             }
@@ -66,10 +59,7 @@ export function getNotificationMessage(noty, message, displayNameOverride) {
             return {
                 title: sender,
                 body: t('notifications.invite', {
-                    location: displayLocation(
-                        noty.details.worldId,
-                        noty.details.worldName
-                    ),
+                    location: displayLocation(noty.details.worldId, noty.details.worldName),
                     message
                 })
             };
@@ -120,20 +110,17 @@ export function getNotificationMessage(noty, message, displayNameOverride) {
             return { title: sender, body: noty.message };
         case 'group.announcement':
             return {
-                title:
-                    noty.title || t('notifications.group_announcement_title'),
+                title: noty.title || t('notifications.group_announcement_title'),
                 body: noty.message
             };
         case 'group.event.created':
             return {
-                title:
-                    noty.title || t('notifications.group_event_created_title'),
+                title: noty.title || t('notifications.group_event_created_title'),
                 body: noty.message
             };
         case 'group.event.starting':
             return {
-                title:
-                    noty.title || t('notifications.group_event_starting_title'),
+                title: noty.title || t('notifications.group_event_starting_title'),
                 body: noty.message
             };
         case 'group.informative':
@@ -148,15 +135,12 @@ export function getNotificationMessage(noty, message, displayNameOverride) {
             };
         case 'group.joinRequest':
             return {
-                title:
-                    noty.title || t('notifications.group_join_request_title'),
+                title: noty.title || t('notifications.group_join_request_title'),
                 body: noty.message
             };
         case 'group.transfer':
             return {
-                title:
-                    noty.title ||
-                    t('notifications.group_transfer_request_title'),
+                title: noty.title || t('notifications.group_transfer_request_title'),
                 body: noty.message
             };
         case 'group.queueReady':
@@ -174,11 +158,7 @@ export function getNotificationMessage(noty, message, displayNameOverride) {
                 return {
                     title: name,
                     body: t('notifications.portal_spawn_name', {
-                        location: displayLocation(
-                            noty.instanceId,
-                            noty.worldName,
-                            noty.groupName
-                        )
+                        location: displayLocation(noty.instanceId, noty.worldName, noty.groupName)
                     })
                 };
             }
@@ -268,6 +248,7 @@ const CUSTOM_FORMAT_MESSAGES = {
 /**
  * Combines title and body into a single notification text string.
  * Handles per-type formatting differences for XS/OVRT overlays.
+ *
  * @param {string} title
  * @param {string} body
  * @param {string} type - The notification type
@@ -291,6 +272,7 @@ export function toNotificationText(title, body, type) {
  * Extract a userId from a notification object by checking common fields.
  * Does NOT perform display-name-based lookups - the caller should handle
  * that fallback when a cached user map is available.
+ *
  * @param {object} noty
  * @returns {string}
  */

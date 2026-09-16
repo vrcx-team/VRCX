@@ -179,7 +179,6 @@
     });
 
     /**
-     *
      * @param userId
      */
     function resolveUserDisplayName(userId) {
@@ -262,9 +261,6 @@
         }
     );
 
-    /**
-     *
-     */
     function initDialog() {
         const D = inviteGroupDialog.value;
         if (D.groupId) {
@@ -288,9 +284,6 @@
             });
         }
     }
-    /**
-     *
-     */
     function isAllowedToInviteToGroup() {
         const D = inviteGroupDialog.value;
         const groupId = D.groupId;
@@ -314,9 +307,6 @@
                 inviteGroupDialog.value.loading = false;
             });
     }
-    /**
-     *
-     */
     function sendGroupInvite() {
         modalStore
             .confirm({

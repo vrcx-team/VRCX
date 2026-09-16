@@ -200,7 +200,6 @@
     const { saveOpenVROption } = useVrStore();
 
     /**
-     *
      * @param value
      */
     function handleOverlayButtonRadio(value) {

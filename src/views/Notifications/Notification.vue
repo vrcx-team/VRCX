@@ -139,7 +139,6 @@
     const notificationsRef = ref(null);
 
     /**
-     *
      * @param row
      */
     function getNotificationCreatedAt(row) {
@@ -153,7 +152,6 @@
     }
 
     /**
-     *
      * @param row
      */
     function getNotificationCreatedAtTs(row) {
@@ -270,9 +268,6 @@
 
     const sendInviteRequestResponseDialogVisible = ref(false);
 
-    /**
-     *
-     */
     function saveTableFilters() {
         configRepository.setString(
             'VRCX_notificationTableFilters',
@@ -281,7 +276,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function handleNotificationFilterChange(value) {
@@ -290,7 +284,6 @@
     }
 
     /**
-     *
      * @param url
      */
     function getSmallThumbnailUrl(url) {
@@ -298,7 +291,6 @@
     }
 
     /**
-     *
      * @param invite
      */
     function showSendInviteResponseDialog(invite) {
@@ -310,7 +302,6 @@
     }
 
     /**
-     *
      * @param invite
      */
     function showSendInviteRequestResponseDialog(invite) {

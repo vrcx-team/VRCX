@@ -502,7 +502,6 @@ function createTray() {
 }
 
 /**
- *
  * @param {Boolean} notify
  */
 function setTrayIconNotification(notify) {
@@ -595,7 +594,8 @@ async function installVRCX() {
  * If there is an existing .desktop file, it will be updated with the current AppImage path.
  * If there is no .desktop file, the one inside the current AppImage will be copied to applications dir and
  * updated to the path of the AppImage.
- * @returns void
+ *
+ * @returns Void
  */
 function updateDesktopFile() {
     if (noDesktop) {

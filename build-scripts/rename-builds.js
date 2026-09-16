@@ -20,16 +20,14 @@ try {
 
 /**
  * Renames the build files for the specified architecture and platform
+ *
  * @param {string} arch
  * @param {string} platform
  */
 function renameBuild(arch, platform) {
     if (platform === 'linux') {
         const oldAppImage = path.join(buildDir, `VRCX_Version.AppImage`);
-        const newAppImage = path.join(
-            buildDir,
-            `VRCX_${version}_${arch}.AppImage`
-        );
+        const newAppImage = path.join(buildDir, `VRCX_${version}_${arch}.AppImage`);
         try {
             if (fs.existsSync(oldAppImage)) {
                 fs.renameSync(oldAppImage, newAppImage);

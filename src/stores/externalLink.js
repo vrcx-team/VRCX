@@ -9,6 +9,7 @@ export const useExternalLinkStore = defineStore('ExternalLink', () => {
 
     /**
      * Shows the external-link confirmation for the supplied URL.
+     *
      * @param {string} link
      */
     function showExternalLinkDialog(link) {

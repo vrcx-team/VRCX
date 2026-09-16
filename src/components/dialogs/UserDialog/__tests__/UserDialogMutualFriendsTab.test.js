@@ -118,7 +118,6 @@ const MOCK_MUTUAL_FRIENDS = [
 ];
 
 /**
- *
  * @param overrides
  */
 function mountComponent(overrides = {}) {
@@ -132,8 +131,7 @@ function mountComponent(overrides = {}) {
             id: 'usr_target',
             ref: { id: 'usr_target' },
             mutualFriends: [...MOCK_MUTUAL_FRIENDS],
-            mutualFriendSorting:
-                userDialogMutualFriendSortingOptions.alphabetical,
+            mutualFriendSorting: userDialogMutualFriendSortingOptions.alphabetical,
             isMutualFriendsLoading: false,
             ...overrides
         },
@@ -223,15 +221,12 @@ describe('UserDialogMutualFriendsTab.vue', () => {
                     id: 'usr_target',
                     ref: { id: 'usr_target' },
                     mutualFriends: [...MOCK_MUTUAL_FRIENDS],
-                    mutualFriendSorting:
-                        userDialogMutualFriendSortingOptions.alphabetical,
+                    mutualFriendSorting: userDialogMutualFriendSortingOptions.alphabetical,
                     isMutualFriendsLoading: false
                 },
                 currentUser: { id: 'usr_me' }
             });
-            const showUserDialogSpy = vi
-                .spyOn(userCoordinatorModule, 'showUserDialog')
-                .mockImplementation(() => {});
+            const showUserDialogSpy = vi.spyOn(userCoordinatorModule, 'showUserDialog').mockImplementation(() => {});
 
             const wrapper = mount(UserDialogMutualFriendsTab, {
                 global: {

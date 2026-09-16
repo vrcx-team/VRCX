@@ -12,15 +12,11 @@ export function useInstanceActivityData() {
     const worldNameArray = ref([]);
 
     async function getAllDateOfActivity() {
-        const utcDateStrings =
-            (await database.getDateOfInstanceActivity()) || [];
+        const utcDateStrings = (await database.getDateOfInstanceActivity()) || [];
         const uniqueDates = new Set();
 
         for (const utcString of utcDateStrings) {
-            const formattedDate = dayjs
-                .utc(utcString)
-                .tz()
-                .format('YYYY-MM-DD');
+            const formattedDate = dayjs.utc(utcString).tz().format('YYYY-MM-DD');
             uniqueDates.add(formattedDate);
         }
 
@@ -35,25 +31,10 @@ export function useInstanceActivityData() {
         );
     }
 
-    async function getActivityData(
-        selectedDate,
-        currentUser,
-        friends,
-        localFavoriteFriends,
-        onActivityDetailReady
-    ) {
-        const localStartDate = dayjs
-            .tz(selectedDate.value)
-            .startOf('day')
-            .toISOString();
-        const localEndDate = dayjs
-            .tz(selectedDate.value)
-            .endOf('day')
-            .toISOString();
-        const dbData = await database.getInstanceActivity(
-            localStartDate,
-            localEndDate
-        );
+    async function getActivityData(selectedDate, currentUser, friends, localFavoriteFriends, onActivityDetailReady) {
+        const localStartDate = dayjs.tz(selectedDate.value).startOf('day').toISOString();
+        const localEndDate = dayjs.tz(selectedDate.value).endOf('day').toISOString();
+        const dbData = await database.getInstanceActivity(localStartDate, localEndDate);
 
         const transformData = (item) => ({
             ...item,
@@ -63,47 +44,30 @@ export function useInstanceActivityData() {
             isFriend:
                 item.user_id === currentUser.value.id
                     ? null
-                    : friends.value.has(item.user_id) ||
-                      localFavoriteFriends.value.has(item.user_id),
-            isFavorite:
-                item.user_id === currentUser.value.id
-                    ? null
-                    : localFavoriteFriends.value.has(item.user_id)
+                    : friends.value.has(item.user_id) || localFavoriteFriends.value.has(item.user_id),
+            isFavorite: item.user_id === currentUser.value.id ? null : localFavoriteFriends.value.has(item.user_id)
         });
 
         activityData.value = dbData.currentUserData.map(transformData);
 
         const transformAndSort = (arr) => {
             return arr.map(transformData).sort((a, b) => {
-                const timeDiff = Math.abs(
-                    a.joinTime.diff(b.joinTime, 'second')
-                );
+                const timeDiff = Math.abs(a.joinTime.diff(b.joinTime, 'second'));
                 // recording delay, under 3s is considered the same time entry, beautify the chart
-                return timeDiff < 3
-                    ? a.leaveTime - b.leaveTime
-                    : a.joinTime - b.joinTime;
+                return timeDiff < 3 ? a.leaveTime - b.leaveTime : a.joinTime - b.joinTime;
             });
         };
 
         const filterByLocation = (innerArray, locationSet) => {
-            return innerArray.every((innerObject) =>
-                locationSet.has(innerObject.location)
-            );
+            return innerArray.every((innerObject) => locationSet.has(innerObject.location));
         };
-        const locationSet = new Set(
-            activityData.value.map((item) => item.location)
-        );
+        const locationSet = new Set(activityData.value.map((item) => item.location));
 
-        const preSplitActivityDetailData = Array.from(
-            dbData.detailData.values()
-        )
+        const preSplitActivityDetailData = Array.from(dbData.detailData.values())
             .map(transformAndSort)
             .filter((innerArray) => filterByLocation(innerArray, locationSet));
 
-        activityDetailData.value = handleSplitActivityDetailData(
-            preSplitActivityDetailData,
-            currentUser.value.id
-        );
+        activityDetailData.value = handleSplitActivityDetailData(preSplitActivityDetailData, currentUser.value.id);
 
         if (activityDetailData.value.length && onActivityDetailReady) {
             nextTick(() => {
@@ -124,18 +88,9 @@ export function useInstanceActivityData() {
         }
 
         function areIntervalsOverlapping(objA, objB) {
-            const isObj1EndTimeBeforeObj2StartTime = objA.leaveTime.isBefore(
-                objB.joinTime,
-                'second'
-            );
-            const isObj2EndTimeBeforeObj1StartTime = objB.leaveTime.isBefore(
-                objA.joinTime,
-                'second'
-            );
-            return !(
-                isObj1EndTimeBeforeObj2StartTime ||
-                isObj2EndTimeBeforeObj1StartTime
-            );
+            const isObj1EndTimeBeforeObj2StartTime = objA.leaveTime.isBefore(objB.joinTime, 'second');
+            const isObj2EndTimeBeforeObj1StartTime = objB.leaveTime.isBefore(objA.joinTime, 'second');
+            return !(isObj1EndTimeBeforeObj2StartTime || isObj2EndTimeBeforeObj1StartTime);
         }
 
         function buildOverlapGraph(innerArray) {
@@ -181,23 +136,13 @@ export function useInstanceActivityData() {
             let i = 0;
             while (i < outerArray.length) {
                 let currentInnerArray = outerArray[i];
-                let targetIdCount = countTargetIdOccurrences(
-                    currentInnerArray,
-                    targetId
-                );
+                let targetIdCount = countTargetIdOccurrences(currentInnerArray, targetId);
                 if (targetIdCount > 1) {
                     let graph = buildOverlapGraph(currentInnerArray);
-                    let connectedComponents = findConnectedComponents(
-                        graph,
-                        currentInnerArray.length
-                    );
-                    let newInnerArrays = connectedComponents.map(
-                        (componentIndices) => {
-                            return componentIndices.map(
-                                (index) => currentInnerArray[index]
-                            );
-                        }
-                    );
+                    let connectedComponents = findConnectedComponents(graph, currentInnerArray.length);
+                    let newInnerArrays = connectedComponents.map((componentIndices) => {
+                        return componentIndices.map((index) => currentInnerArray[index]);
+                    });
                     outerArray.splice(i, 1, ...newInnerArrays);
                     i += newInnerArrays.length;
                 } else {

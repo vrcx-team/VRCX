@@ -193,7 +193,6 @@
     });
 
     /**
-     *
      * @param url
      */
     function getSmallGroupIconUrl(url) {
@@ -201,7 +200,6 @@
     }
 
     /**
-     *
      * @param groupId
      */
     function toggleGroupSidebarCollapse(groupId) {

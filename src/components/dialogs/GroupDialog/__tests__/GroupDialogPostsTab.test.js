@@ -8,8 +8,7 @@ vi.mock('vue-i18n', () => {
     const { ref } = require('vue');
     return {
         useI18n: () => ({
-            t: (key, params) =>
-                params ? `${key}:${JSON.stringify(params)}` : key,
+            t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
             locale: ref('en')
         }),
         createI18n: () => ({
@@ -210,11 +209,7 @@ describe('GroupDialogPostsTab.vue', () => {
         test('renders post image when imageUrl exists', () => {
             const wrapper = mountComponent();
             const images = wrapper.findAll('img');
-            expect(
-                images.some(
-                    (img) => img.attributes('src') === 'https://img/post1.png'
-                )
-            ).toBe(true);
+            expect(images.some((img) => img.attributes('src') === 'https://img/post1.png')).toBe(true);
         });
 
         test('does not render image for posts without imageUrl', () => {
@@ -227,9 +222,7 @@ describe('GroupDialogPostsTab.vue', () => {
 
         test('renders search input', () => {
             const wrapper = mountComponent();
-            expect(
-                wrapper.findComponent({ name: 'InputGroupField' }).exists()
-            ).toBe(true);
+            expect(wrapper.findComponent({ name: 'InputGroupField' }).exists()).toBe(true);
         });
 
         test('renders empty state when no posts', () => {

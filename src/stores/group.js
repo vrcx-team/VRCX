@@ -1,15 +1,12 @@
 import { reactive, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 
-
 import { replaceBioSymbols } from '../shared/utils';
 import { groupRequest } from '../api';
 import { initUserGroups } from '../coordinators/groupCoordinator';
 import { watchState } from '../services/watchState';
 
 export const useGroupStore = defineStore('Group', () => {
-    
-
     let cachedGroups = new Map();
 
     const groupDialog = ref({
@@ -194,9 +191,8 @@ export const useGroupStore = defineStore('Group', () => {
     );
 
     /**
-     *
      * @param {{ groupId: string }} params
-     * @returns { Promise<{posts: any, params}> }
+     * @returns {Promise<{ posts: any; params }>}
      */
     async function getAllGroupPosts(params) {
         const n = 100;
@@ -238,7 +234,6 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     /**
-     *
      * @param event
      */
     function applyGroupEvent(event) {
@@ -255,7 +250,6 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     /**
-     *
      * @param a
      * @param b
      */
@@ -274,9 +268,6 @@ export const useGroupStore = defineStore('Group', () => {
         return aIndex - bIndex;
     }
 
-    /**
-     *
-     */
     function updateGroupPostSearch() {
         const D = groupDialog.value;
         const search = D.postsSearch.toLowerCase();
@@ -295,7 +286,6 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     /**
-     *
      * @param {object} args
      */
     function handleGroupPost(args) {
@@ -327,9 +317,6 @@ export const useGroupStore = defineStore('Group', () => {
         updateGroupPostSearch();
     }
 
-    /**
-     *
-     */
     function clearGroupInstances() {
         groupInstances.value = [];
     }
@@ -342,7 +329,6 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     /**
-     *
      * @param userId
      */
     function showModerateGroupDialog(userId) {

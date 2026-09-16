@@ -118,8 +118,7 @@ const stubs = {
         props: ['modelValue']
     },
     Button: {
-        template:
-            '<button :type="type || \'button\'" :id="id"><slot /></button>',
+        template: '<button :type="type || \'button\'" :id="id"><slot /></button>',
         props: ['type', 'variant', 'size', 'id']
     },
     Checkbox: { template: '<input type="checkbox" />', props: ['modelValue'] },
@@ -129,18 +128,8 @@ const stubs = {
     FieldGroup: { template: '<div><slot /></div>' },
     FieldLabel: { template: '<label><slot /></label>', props: ['for'] },
     InputGroupField: {
-        template:
-            '<input :id="id" :value="modelValue" :placeholder="placeholder" />',
-        props: [
-            'id',
-            'modelValue',
-            'type',
-            'autocomplete',
-            'name',
-            'placeholder',
-            'ariaInvalid',
-            'clearable'
-        ],
+        template: '<input :id="id" :value="modelValue" :placeholder="placeholder" />',
+        props: ['id', 'modelValue', 'type', 'autocomplete', 'name', 'placeholder', 'ariaInvalid', 'clearable'],
         emits: ['update:modelValue', 'blur']
     },
     ArrowBigDownDash: { template: '<span />' },
@@ -149,7 +138,6 @@ const stubs = {
 };
 
 /**
- *
  * @param storeOverrides
  */
 function mountLogin(storeOverrides = {}) {
@@ -203,9 +191,7 @@ describe('Login.vue', () => {
         test('renders a register button', () => {
             const wrapper = mountLogin();
             const buttons = wrapper.findAll('button');
-            const registerBtn = buttons.find(
-                (b) => b.text() === en.view.login.register
-            );
+            const registerBtn = buttons.find((b) => b.text() === en.view.login.register);
             expect(registerBtn).toBeTruthy();
         });
 

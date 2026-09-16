@@ -143,8 +143,7 @@ function feedFiltersOptions() {
             key: 'group.joinRequest',
             name: 'Group Join Request',
             options: getOptions(['Off', 'On']),
-            tooltip:
-                "When someone requests to join a group you're a moderator for"
+            tooltip: "When someone requests to join a group you're a moderator for"
         },
         {
             key: 'group.transfer',
@@ -160,8 +159,7 @@ function feedFiltersOptions() {
             key: 'instance.closed',
             name: 'Instance Closed',
             options: getOptions(['Off', 'On']),
-            tooltip:
-                "When the instance you're in has been closed preventing anyone from joining"
+            tooltip: "When the instance you're in has been closed preventing anyone from joining"
         },
         {
             key: 'VideoPlay',

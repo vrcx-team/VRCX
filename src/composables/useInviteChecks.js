@@ -1,9 +1,4 @@
-import {
-    useFriendStore,
-    useInstanceStore,
-    useLocationStore,
-    useUserStore
-} from '../stores';
+import { useFriendStore, useInstanceStore, useLocationStore, useUserStore } from '../stores';
 import {
     checkCanInvite as checkCanInvitePure,
     checkCanInviteSelf as checkCanInviteSelfPure

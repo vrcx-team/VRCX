@@ -7,8 +7,8 @@ export function cn(...inputs) {
 }
 
 /**
- * Turn a sth into a vnode (nonconsentually)
- * stolen from here: https://github.com/TanStack/table/blob/70dbd624e5866ec56e10ba0659749e9bb3de9a92/packages/vue-table/src/FlexRender.ts#L12
+ * Turn a sth into a vnode (nonconsentually) stolen from here:
+ * https://github.com/TanStack/table/blob/70dbd624e5866ec56e10ba0659749e9bb3de9a92/packages/vue-table/src/FlexRender.ts#L12
  */
 function toVNode(renderable, props) {
     if (typeof renderable === 'function') {

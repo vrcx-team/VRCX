@@ -226,7 +226,6 @@
     } = useWorldDialogInfo(worldDialog, { t, toast, sdkUnityVersion: authStore.cachedConfig.sdkUnityVersion });
 
     /**
-     *
      * @param worldRef
      */
     function showPreviousInstancesListDialog(worldRef) {

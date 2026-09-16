@@ -474,7 +474,6 @@
     );
 
     /**
-     *
      * @param groupKey
      */
     function toggleGroupCollapse(groupKey) {
@@ -902,9 +901,6 @@
         });
     });
 
-    /**
-     *
-     */
     async function loadInitialSettings() {
         try {
             const [storedScale, storedSpacing, storedShowSameInstance, storedShowCosmetics] = await Promise.all([

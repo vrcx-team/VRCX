@@ -210,9 +210,6 @@
         }
     );
 
-    /**
-     *
-     */
     async function processAvatarImportList() {
         const D = avatarImportDialog.value;
         D.loading = true;
@@ -255,7 +252,6 @@
     }
 
     /**
-     *
      * @param ref
      */
     function deleteItemAvatarImport(ref) {
@@ -263,24 +259,17 @@
         avatarImportDialog.value.avatarIdList.delete(ref.id);
     }
 
-    /**
-     *
-     */
     function resetAvatarImport() {
         avatarImportDialog.value.input = '';
         avatarImportDialog.value.errors = '';
     }
 
-    /**
-     *
-     */
     function clearAvatarImportTable() {
         avatarImportTable.value.data = [];
         avatarImportDialog.value.avatarIdList = new Set();
     }
 
     /**
-     *
      * @param group
      */
     function selectAvatarImportGroup(group) {
@@ -291,7 +280,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function selectAvatarImportLocalGroup(group) {
@@ -302,7 +290,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function handleAvatarImportGroupSelect(value) {
@@ -312,7 +299,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function handleAvatarImportLocalGroupSelect(value) {
@@ -320,14 +306,10 @@
         selectAvatarImportLocalGroup(value || null);
     }
 
-    /**
-     *
-     */
     function cancelAvatarImport() {
         avatarImportDialog.value.loading = false;
     }
     /**
-     *
      * @param ref
      * @param group
      * @param message
@@ -346,9 +328,6 @@
                 return args;
             });
     }
-    /**
-     *
-     */
     async function importAvatarImportTable() {
         const D = avatarImportDialog.value;
         if (!D.avatarImportFavoriteGroup && !D.avatarImportLocalFavoriteGroup) {

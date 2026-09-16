@@ -2,25 +2,11 @@ import { useEventListener } from '@vueuse/core';
 import { computed, ref, watch } from 'vue';
 
 import configRepository from '../../../services/config';
-import {
-    DASHBOARD_NAV_KEY_PREFIX,
-    isToolNavKey,
-    navDefinitions
-} from '../../../shared/constants';
+import { DASHBOARD_NAV_KEY_PREFIX, isToolNavKey, navDefinitions } from '../../../shared/constants';
 import { triggerNavEntryAction } from '../navActionUtils';
-import {
-    buildMenuItems,
-    findFirstNavEntry,
-    findFirstNavKey
-} from '../navLayoutHelpers';
-import {
-    createBaseDefaultNavLayout,
-    insertDashboardEntries
-} from '../navLayoutDefaults';
-import {
-    dispatchNavLayoutUpdated,
-    NAV_LAYOUT_UPDATED_EVENT
-} from '../navLayoutEvents';
+import { buildMenuItems, findFirstNavEntry, findFirstNavKey } from '../navLayoutHelpers';
+import { createBaseDefaultNavLayout, insertDashboardEntries } from '../navLayoutDefaults';
+import { dispatchNavLayoutUpdated, NAV_LAYOUT_UPDATED_EVENT } from '../navLayoutEvents';
 import {
     buildNavDefinitionsForLayout,
     createNavDefinitionMap,
@@ -32,24 +18,13 @@ import { normalizeHiddenKeys, sanitizeLayout } from '../navMenuUtils';
 
 import { useNotificationsSettingsStore } from '../../../stores/settings/notifications';
 
-export function useNavLayout({
-    t,
-    locale,
-    router,
-    dashboardStore,
-    dashboards,
-    directAccessPaste,
-    triggerTool
-}) {
+export function useNavLayout({ t, locale, router, dashboardStore, dashboards, directAccessPaste, triggerTool }) {
     const navLayout = ref([]);
     const navLayoutReady = ref(false);
     const navHiddenKeys = ref([]);
     const notificationsSettingsStore = useNotificationsSettingsStore();
 
-    const allNavDefinitions = computed(() => [
-        ...navDefinitions,
-        ...dashboardStore.getDashboardNavDefinitions()
-    ]);
+    const allNavDefinitions = computed(() => [...navDefinitions, ...dashboardStore.getDashboardNavDefinitions()]);
 
     const navDefinitionMap = computed(() => {
         const map = createNavDefinitionMap(allNavDefinitions.value);
@@ -65,15 +40,8 @@ export function useNavLayout({
     const createDefaultNavLayout = () => createBaseDefaultNavLayout(t);
 
     const menuItems = computed(() => {
-        const items = buildMenuItems(
-            navLayout.value,
-            navDefinitionMap.value,
-            t
-        );
-        if (
-            notificationsSettingsStore.notificationLayout ===
-            'notification-center'
-        ) {
+        const items = buildMenuItems(navLayout.value, navDefinitionMap.value, t);
+        if (notificationsSettingsStore.notificationLayout === 'notification-center') {
             return items.filter((item) => {
                 if (item.children) {
                     return item.children.length > 0;
@@ -115,9 +83,7 @@ export function useNavLayout({
                 return entry.key;
             }
             if (entry.type === 'folder') {
-                const matchedKey = navKeys.find((key) =>
-                    entry.items?.includes(key)
-                );
+                const matchedKey = navKeys.find((key) => entry.items?.includes(key));
                 if (matchedKey) {
                     return matchedKey;
                 }
@@ -147,10 +113,7 @@ export function useNavLayout({
     };
 
     const defaultNavLayout = computed(() => {
-        const base = insertDashboardEntries(
-            createDefaultNavLayout(),
-            dashboardStore.getDashboardNavDefinitions()
-        );
+        const base = insertDashboardEntries(createDefaultNavLayout(), dashboardStore.getDashboardNavDefinitions());
         return sanitizeLayoutLocal(base, getDefaultHiddenKeys(base));
     });
 
@@ -208,9 +171,7 @@ export function useNavLayout({
         hasNavigatedToInitialRoute = true;
         if (
             router.currentRoute.value?.name !== firstEntry.routeName ||
-            (firstEntry.routeParams?.id &&
-                router.currentRoute.value?.params?.id !==
-                    firstEntry.routeParams.id)
+            (firstEntry.routeParams?.id && router.currentRoute.value?.params?.id !== firstEntry.routeParams.id)
         ) {
             triggerNavAction(firstEntry);
         }
@@ -220,37 +181,24 @@ export function useNavLayout({
         let layoutData = null;
         let hiddenKeysData = [];
         try {
-            const loaded = await loadStoredNavConfig(
-                configRepository,
-                createDefaultNavLayout(),
-                {
-                    configKey: NAV_CONFIG_KEY,
-                    filterHiddenKey: (key) => !isToolNavKey(key)
-                }
-            );
+            const loaded = await loadStoredNavConfig(configRepository, createDefaultNavLayout(), {
+                configKey: NAV_CONFIG_KEY,
+                filterHiddenKey: (key) => !isToolNavKey(key)
+            });
             layoutData = loaded.layout;
             hiddenKeysData = loaded.hiddenKeys;
         } catch (error) {
             console.error('Failed to load custom nav', error);
         } finally {
-            const fallbackLayout = layoutData?.length
-                ? layoutData
-                : createDefaultNavLayout();
-            const normalizedHiddenKeys = normalizeHiddenKeys(
-                hiddenKeysData,
-                navDefinitionMap.value
-            );
-            const sanitized = sanitizeLayoutLocal(
-                fallbackLayout,
-                normalizedHiddenKeys
-            );
+            const fallbackLayout = layoutData?.length ? layoutData : createDefaultNavLayout();
+            const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeysData, navDefinitionMap.value);
+            const sanitized = sanitizeLayoutLocal(fallbackLayout, normalizedHiddenKeys);
             navLayout.value = sanitized;
             navHiddenKeys.value = normalizedHiddenKeys;
             if (
                 layoutData?.length &&
                 (JSON.stringify(sanitized) !== JSON.stringify(fallbackLayout) ||
-                    JSON.stringify(normalizedHiddenKeys) !==
-                        JSON.stringify(hiddenKeysData))
+                    JSON.stringify(normalizedHiddenKeys) !== JSON.stringify(hiddenKeysData))
             ) {
                 await saveNavLayout(sanitized, normalizedHiddenKeys);
             }
@@ -263,10 +211,7 @@ export function useNavLayout({
         const normalized = [];
         layout.forEach((entry) => {
             if (entry.type === 'item') {
-                if (
-                    entry.key?.startsWith(DASHBOARD_NAV_KEY_PREFIX) &&
-                    !dashboardKeys.has(entry.key)
-                ) {
+                if (entry.key?.startsWith(DASHBOARD_NAV_KEY_PREFIX) && !dashboardKeys.has(entry.key)) {
                     return;
                 }
                 normalized.push(entry);
@@ -313,20 +258,13 @@ export function useNavLayout({
             if (!navLayoutReady.value) {
                 return;
             }
-            const cleanedLayout = cleanDashboardEntries(
-                navLayout.value,
-                dashboardStore.dashboardNavKeys
-            );
+            const cleanedLayout = cleanDashboardEntries(navLayout.value, dashboardStore.dashboardNavKeys);
             const cleanedHidden = navHiddenKeys.value.filter(
-                (key) =>
-                    !key?.startsWith(DASHBOARD_NAV_KEY_PREFIX) ||
-                    dashboardStore.dashboardNavKeys.has(key)
+                (key) => !key?.startsWith(DASHBOARD_NAV_KEY_PREFIX) || dashboardStore.dashboardNavKeys.has(key)
             );
             if (
-                JSON.stringify(cleanedLayout) !==
-                    JSON.stringify(navLayout.value) ||
-                JSON.stringify(cleanedHidden) !==
-                    JSON.stringify(navHiddenKeys.value)
+                JSON.stringify(cleanedLayout) !== JSON.stringify(navLayout.value) ||
+                JSON.stringify(cleanedHidden) !== JSON.stringify(navHiddenKeys.value)
             ) {
                 await applyCustomNavLayout(cleanedLayout, cleanedHidden);
             }
@@ -348,9 +286,7 @@ export function useNavLayout({
         navLayout,
         navLayoutReady,
         navHiddenKeys,
-        defaultHiddenKeys: computed(() =>
-            getDefaultHiddenKeys(defaultNavLayout.value)
-        ),
+        defaultHiddenKeys: computed(() => getDefaultHiddenKeys(defaultNavLayout.value)),
         menuItems,
         activeMenuIndex,
         allNavDefinitions,

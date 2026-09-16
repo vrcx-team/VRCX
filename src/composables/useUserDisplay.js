@@ -17,26 +17,12 @@ export function useUserDisplay() {
         return userStatusClassPure(user, pendingOffline, userStore.currentUser);
     }
 
-    function userImage(
-        user,
-        isIcon = false,
-        resolution = '128',
-        isUserDialogIcon = false
-    ) {
-        return userImagePure(
-            user,
-            isIcon,
-            resolution,
-            isUserDialogIcon,
-            appearanceStore.displayVRCPlusIconsAsAvatar
-        );
+    function userImage(user, isIcon = false, resolution = '128', isUserDialogIcon = false) {
+        return userImagePure(user, isIcon, resolution, isUserDialogIcon, appearanceStore.displayVRCPlusIconsAsAvatar);
     }
 
     function userImageFull(user) {
-        return userImageFullPure(
-            user,
-            appearanceStore.displayVRCPlusIconsAsAvatar
-        );
+        return userImageFullPure(user, appearanceStore.displayVRCPlusIconsAsAvatar);
     }
 
     return { userStatusClass, userImage, userImageFull };

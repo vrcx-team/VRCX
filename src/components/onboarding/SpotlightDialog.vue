@@ -76,9 +76,6 @@
         }
     });
 
-    /**
-     *
-     */
     async function handleDismiss() {
         isOpen.value = false;
         await configRepository.setBool('VRCX_onboarding_welcome_seen', true);

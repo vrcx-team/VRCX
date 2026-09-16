@@ -29,28 +29,19 @@ const notifications = {
         return notifications;
     },
 
-    async lookupNotificationDatabase(
-        search,
-        filters,
-        vipList,
-        maxEntries = dbVars.maxTableSize
-    ) {
+    async lookupNotificationDatabase(search, filters, vipList, maxEntries = dbVars.maxTableSize) {
         search = search.replaceAll("'", "''");
         let notifications = [];
 
         let vipQuery = '';
         if (vipList.length > 0) {
-            const vipIds = vipList.map(
-                (userId) => `'${userId.replaceAll("'", "''")}'`
-            );
+            const vipIds = vipList.map((userId) => `'${userId.replaceAll("'", "''")}'`);
             vipQuery = `AND sender_user_id IN (${vipIds.join(',')})`;
         }
 
         let filterQuery = '';
         if (filters.length > 0) {
-            const filterTypes = filters.map(
-                (type) => `'${type.replaceAll("'", "''")}'`
-            );
+            const filterTypes = filters.map((type) => `'${type.replaceAll("'", "''")}'`);
             filterQuery = `AND type IN (${filterTypes.join(',')})`;
         }
 
@@ -131,12 +122,9 @@ const notifications = {
     },
 
     deleteNotification(rowId) {
-        sqliteService.executeNonQuery(
-            `DELETE FROM ${dbVars.userPrefix}_notifications WHERE id = @row_id`,
-            {
-                '@row_id': rowId
-            }
-        );
+        sqliteService.executeNonQuery(`DELETE FROM ${dbVars.userPrefix}_notifications WHERE id = @row_id`, {
+            '@row_id': rowId
+        });
     },
 
     updateNotificationExpired(entry) {
@@ -219,21 +207,15 @@ const notifications = {
     },
 
     seenNotificationV2(id) {
-        sqliteService.executeNonQuery(
-            `UPDATE ${dbVars.userPrefix}_notifications_v2 SET seen = 1 WHERE id = @id`,
-            {
-                '@id': id
-            }
-        );
+        sqliteService.executeNonQuery(`UPDATE ${dbVars.userPrefix}_notifications_v2 SET seen = 1 WHERE id = @id`, {
+            '@id': id
+        });
     },
 
     deleteNotificationV2(id) {
-        sqliteService.executeNonQuery(
-            `DELETE FROM ${dbVars.userPrefix}_notifications_v2 WHERE id = @id`,
-            {
-                '@id': id
-            }
-        );
+        sqliteService.executeNonQuery(`DELETE FROM ${dbVars.userPrefix}_notifications_v2 WHERE id = @id`, {
+            '@id': id
+        });
     }
 };
 

@@ -26,9 +26,7 @@ describe('executeWithBackoff', () => {
     test('throws after exhausting retries', async () => {
         const fn = vi.fn().mockRejectedValue(new Error('always fails'));
 
-        await expect(
-            executeWithBackoff(fn, { maxRetries: 2, baseDelay: 1 })
-        ).rejects.toThrow('always fails');
+        await expect(executeWithBackoff(fn, { maxRetries: 2, baseDelay: 1 })).rejects.toThrow('always fails');
         expect(fn).toHaveBeenCalledTimes(3); // initial + 2 retries
     });
 

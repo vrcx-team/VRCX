@@ -193,7 +193,6 @@
     });
 
     /**
-     *
      * @param value
      */
     function handleRoleIdsChange(value) {
@@ -201,16 +200,10 @@
         groupPostEditDialog.value.roleIds = next;
     }
 
-    /**
-     *
-     */
     function showGallerySelectDialog() {
         const D = gallerySelectDialog.value;
         D.visible = true;
     }
-    /**
-     *
-     */
     async function refreshGalleryTable() {
         const params = {
             n: 100,
@@ -222,9 +215,6 @@
             galleryTable.value = args.json.reverse();
         }
     }
-    /**
-     *
-     */
     function editGroupPost() {
         const D = groupPostEditDialog.value;
         if (!D.groupId || !D.postId) {
@@ -252,9 +242,6 @@
         });
         D.visible = false;
     }
-    /**
-     *
-     */
     function createGroupPost() {
         const D = groupPostEditDialog.value;
         if (!D.title || !D.text) {
@@ -279,9 +266,6 @@
         });
         D.visible = false;
     }
-    /**
-     *
-     */
     function clearImageGallerySelect() {
         const D = gallerySelectDialog.value;
         D.selectedFileId = '';

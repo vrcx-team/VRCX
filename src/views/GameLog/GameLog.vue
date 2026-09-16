@@ -156,7 +156,6 @@
     const modalStore = useModalStore();
 
     /**
-     *
      * @param row
      */
     function getGameLogCreatedAt(row) {
@@ -177,7 +176,6 @@
     const gameLogRef = ref(null);
 
     /**
-     *
      * @param row
      */
     function deleteGameLogEntryPrompt(row) {
@@ -191,7 +189,6 @@
     }
 
     /**
-     *
      * @param row
      */
     function deleteGameLogEntry(row) {
@@ -212,7 +209,6 @@
     });
 
     /**
-     *
      * @param value
      */
     function handleGameLogFilterChange(value) {
@@ -223,7 +219,6 @@
     const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
 
     /**
-     *
      * @param row
      */
     function getGameLogRowId(row) {
@@ -270,7 +265,7 @@
     };
 
     /**
-     * @param {'sessions'|'table'|undefined} mode
+     * @param {'sessions' | 'table' | undefined} mode
      */
     function handleViewModeChange(mode) {
         if (mode === 'sessions' || mode === 'table') {

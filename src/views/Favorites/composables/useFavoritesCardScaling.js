@@ -41,11 +41,7 @@ export function useFavoritesCardScaling(options = {}) {
     const baseCheckboxMargin = options.baseCheckboxMargin ?? 10;
     const minGap = options.minGap ?? 4;
     const minPadding = options.minPadding ?? 4;
-    const defaultSpacing = clamp(
-        options.defaultSpacing ?? 1,
-        spacingSlider.min,
-        spacingSlider.max
-    );
+    const defaultSpacing = clamp(options.defaultSpacing ?? 1, spacingSlider.min, spacingSlider.max);
 
     const cardScaleBase = ref(1);
     const cardSpacingBase = ref(defaultSpacing);
@@ -58,10 +54,7 @@ export function useFavoritesCardScaling(options = {}) {
             containerWidth.value = 0;
             return;
         }
-        containerWidth.value = Math.max(
-            element.clientWidth ?? element.offsetWidth ?? 0,
-            0
-        );
+        containerWidth.value = Math.max(element.clientWidth ?? element.offsetWidth ?? 0, 0);
     };
 
     const cardScale = computed({
@@ -78,11 +71,7 @@ export function useFavoritesCardScaling(options = {}) {
     const cardSpacing = computed({
         get: () => cardSpacingBase.value,
         set: (value) => {
-            const nextValue = clamp(
-                Number(value) || 1,
-                spacingSlider.min,
-                spacingSlider.max
-            );
+            const nextValue = clamp(Number(value) || 1, spacingSlider.min, spacingSlider.max);
             cardSpacingBase.value = nextValue;
             if (spacingConfigKey) {
                 configRepository.setString(spacingConfigKey, String(nextValue));
@@ -95,79 +84,39 @@ export function useFavoritesCardScaling(options = {}) {
         const spacing = cardSpacing.value;
         const adjustedGapBase = baseGap + (cardScale.value - 1) * gapStep;
         const gap = Math.max(minGap, adjustedGapBase * spacing);
-        const paddingY = Math.max(
-            minPadding,
-            basePaddingY * cardScale.value * spacing
-        );
-        const paddingX = Math.max(
-            minPadding,
-            basePaddingX * cardScale.value * spacing
-        );
-        const contentGap = Math.max(
-            minPadding,
-            baseContentGap * cardScale.value * spacing
-        );
-        const actionsGap = Math.max(
-            minPadding,
-            baseActionGap * cardScale.value * spacing
-        );
-        const actionsGroupGap = Math.max(
-            minPadding,
-            baseActionGroupGap * cardScale.value * spacing
-        );
-        const actionsMargin = Math.max(
-            0,
-            baseActionMargin * cardScale.value * spacing
-        );
-        const checkboxMargin = Math.max(
-            0,
-            baseCheckboxMargin * cardScale.value * spacing
-        );
+        const paddingY = Math.max(minPadding, basePaddingY * cardScale.value * spacing);
+        const paddingX = Math.max(minPadding, basePaddingX * cardScale.value * spacing);
+        const contentGap = Math.max(minPadding, baseContentGap * cardScale.value * spacing);
+        const actionsGap = Math.max(minPadding, baseActionGap * cardScale.value * spacing);
+        const actionsGroupGap = Math.max(minPadding, baseActionGroupGap * cardScale.value * spacing);
+        const actionsMargin = Math.max(0, baseActionMargin * cardScale.value * spacing);
+        const checkboxMargin = Math.max(0, baseCheckboxMargin * cardScale.value * spacing);
 
         return (count = 1, options = {}) => {
             const width = Math.max(containerWidth.value ?? 0, 0);
             const itemCount = Math.max(Number(count) || 0, 0);
             const safeCount = itemCount > 0 ? itemCount : 1;
-            const maxColumns =
-                width > 0
-                    ? Math.max(
-                          1,
-                          Math.floor((width + gap) / (minWidth + gap)) || 1
-                      )
-                    : 1;
+            const maxColumns = width > 0 ? Math.max(1, Math.floor((width + gap) / (minWidth + gap)) || 1) : 1;
             const preferredColumns = options?.preferredColumns;
             const requestedColumns = preferredColumns
-                ? Math.max(
-                      1,
-                      Math.min(Math.round(preferredColumns), maxColumns)
-                  )
+                ? Math.max(1, Math.min(Math.round(preferredColumns), maxColumns))
                 : maxColumns;
             const columns = Math.max(1, Math.min(safeCount, requestedColumns));
             const forceStretch = Boolean(options?.forceStretch);
             const disableAutoStretch = Boolean(options?.disableAutoStretch);
             const matchMaxColumnWidth = Boolean(options?.matchMaxColumnWidth);
-            const shouldStretch =
-                !disableAutoStretch &&
-                (forceStretch || itemCount >= maxColumns);
+            const shouldStretch = !disableAutoStretch && (forceStretch || itemCount >= maxColumns);
 
             let cardWidth = minWidth;
-            const maxColumnWidth =
-                maxColumns > 0
-                    ? (width - gap * (maxColumns - 1)) / maxColumns
-                    : minWidth;
+            const maxColumnWidth = maxColumns > 0 ? (width - gap * (maxColumns - 1)) / maxColumns : minWidth;
 
             if (shouldStretch && columns > 0) {
                 const columnsWidth = width - gap * (columns - 1);
-                const rawWidth =
-                    columnsWidth > 0 ? columnsWidth / columns : minWidth;
+                const rawWidth = columnsWidth > 0 ? columnsWidth / columns : minWidth;
                 if (Number.isFinite(rawWidth) && rawWidth > 0) {
                     cardWidth = Math.max(minWidth, rawWidth);
                 }
-            } else if (
-                matchMaxColumnWidth &&
-                Number.isFinite(maxColumnWidth) &&
-                maxColumnWidth > 0
-            ) {
+            } else if (matchMaxColumnWidth && Number.isFinite(maxColumnWidth) && maxColumnWidth > 0) {
                 cardWidth = Math.max(minWidth, maxColumnWidth);
             }
 
@@ -204,40 +153,25 @@ export function useFavoritesCardScaling(options = {}) {
 
     useResizeObserver(containerRef, (entries) => {
         const [entry] = entries;
-        const width =
-            entry?.contentRect?.width ?? containerRef.value?.clientWidth ?? 0;
+        const width = entry?.contentRect?.width ?? containerRef.value?.clientWidth ?? 0;
         containerWidth.value = Math.max(width, 0);
     });
 
     onBeforeMount(async () => {
         try {
             if (configKey) {
-                const storedScale = await configRepository.getString(
-                    configKey,
-                    '1'
-                );
+                const storedScale = await configRepository.getString(configKey, '1');
                 const parsedScale = parseFloat(storedScale);
                 if (!Number.isNaN(parsedScale)) {
-                    cardScaleBase.value = clamp(
-                        parsedScale,
-                        slider.min,
-                        slider.max
-                    );
+                    cardScaleBase.value = clamp(parsedScale, slider.min, slider.max);
                 }
             }
 
             if (spacingConfigKey) {
-                const storedSpacing = await configRepository.getString(
-                    spacingConfigKey,
-                    String(defaultSpacing)
-                );
+                const storedSpacing = await configRepository.getString(spacingConfigKey, String(defaultSpacing));
                 const parsedSpacing = parseFloat(storedSpacing);
                 if (!Number.isNaN(parsedSpacing)) {
-                    cardSpacingBase.value = clamp(
-                        parsedSpacing,
-                        spacingSlider.min,
-                        spacingSlider.max
-                    );
+                    cardSpacingBase.value = clamp(parsedSpacing, spacingSlider.min, spacingSlider.max);
                 }
             }
         } catch (error) {

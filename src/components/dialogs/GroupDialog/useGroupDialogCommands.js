@@ -3,8 +3,9 @@ import { copyToClipboard } from '../../../shared/utils';
 /**
  * Composable for GroupDialog command dispatch.
  * Uses a command map pattern consistent with Avatar/World/User dialogs.
- * @param {import('vue').Ref} groupDialog - reactive ref to the group dialog state
- * @param {object} deps - external dependencies
+ *
+ * @param {import('vue').Ref} groupDialog - Reactive ref to the group dialog state
+ * @param {object} deps - External dependencies
  * @param deps.t
  * @param deps.modalStore
  * @param deps.currentUser
@@ -19,7 +20,7 @@ import { copyToClipboard } from '../../../shared/utils';
  * @param deps.showGroupTransferDialog
  * @param deps.showGroupPostEditDialog
  * @param deps.groupRequest
- * @returns {object} command composable API
+ * @returns {object} Command composable API
  */
 export function useGroupDialogCommands(
     groupDialog,
@@ -44,9 +45,6 @@ export function useGroupDialogCommands(
     // Direct commands: function
     // Confirmed commands: { confirm: () => ({title, description, ...}), handler: fn }
 
-    /**
-     *
-     */
     function buildCommandMap() {
         const D = () => groupDialog.value;
 
@@ -113,10 +111,7 @@ export function useGroupDialogCommands(
                 }),
                 handler: (id) => {
                     groupRequest.blockGroup({ groupId: id }).then((args) => {
-                        if (
-                            groupDialog.value.visible &&
-                            groupDialog.value.id === args.params.groupId
-                        ) {
+                        if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
                             showGroupDialog(args.params.groupId);
                         }
                     });
@@ -134,10 +129,7 @@ export function useGroupDialogCommands(
                             userId: currentUser.value.id
                         })
                         .then((args) => {
-                            if (
-                                groupDialog.value.visible &&
-                                groupDialog.value.id === args.params.groupId
-                            ) {
+                            if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
                                 showGroupDialog(args.params.groupId);
                             }
                         });
@@ -150,6 +142,7 @@ export function useGroupDialogCommands(
 
     /**
      * Dispatch a group dialog command.
+     *
      * @param {string} command
      */
     function groupDialogCommand(command) {

@@ -22,7 +22,6 @@ export function useSearchWorld() {
     const isSearchWorldLoading = ref(false);
 
     /**
-     *
      * @param ref
      */
     function searchWorld(ref) {
@@ -95,19 +94,15 @@ export function useSearchWorld() {
     }
 
     /**
-     *
      * @param index
      */
     function handleSearchWorldCategorySelect(index) {
         searchWorldCategoryIndex.value = index;
-        const row = cachedConfig.value?.dynamicWorldRows?.find(
-            (r) => r.index === index
-        );
+        const row = cachedConfig.value?.dynamicWorldRows?.find((r) => r.index === index);
         searchWorld(row || {});
     }
 
     /**
-     *
      * @param go
      */
     function moreSearchWorld(go) {
@@ -137,9 +132,6 @@ export function useSearchWorld() {
             });
     }
 
-    /**
-     *
-     */
     function clearWorldSearch() {
         searchWorldParams.value = {};
         searchWorldResults.value = [];

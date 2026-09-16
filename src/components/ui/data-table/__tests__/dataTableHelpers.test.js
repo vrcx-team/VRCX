@@ -47,9 +47,7 @@ describe('isStretch', () => {
 
 describe('resolveHeaderLabel', () => {
     it('returns string label from meta', () => {
-        expect(resolveHeaderLabel(mockCol('name', { label: 'Name' }))).toBe(
-            'Name'
-        );
+        expect(resolveHeaderLabel(mockCol('name', { label: 'Name' }))).toBe('Name');
     });
 
     it('calls function label and returns result', () => {
@@ -77,19 +75,13 @@ describe('getToggleableColumns', () => {
     });
 
     it('excludes spacer columns', () => {
-        const cols = [
-            mockCol('name', { label: 'Name' }),
-            { id: '__spacer', columnDef: { meta: { label: 'Spacer' } } }
-        ];
+        const cols = [mockCol('name', { label: 'Name' }), { id: '__spacer', columnDef: { meta: { label: 'Spacer' } } }];
         expect(getToggleableColumns(cols)).toHaveLength(1);
         expect(getToggleableColumns(cols)[0].id).toBe('name');
     });
 
     it('includes stretch columns', () => {
-        const cols = [
-            mockCol('name', { label: 'Name' }),
-            mockCol('detail', { stretch: true, label: 'Detail' })
-        ];
+        const cols = [mockCol('name', { label: 'Name' }), mockCol('detail', { stretch: true, label: 'Detail' })];
         expect(getToggleableColumns(cols)).toHaveLength(2);
     });
 
@@ -105,11 +97,7 @@ describe('getToggleableColumns', () => {
     });
 
     it('excludes columns without meta.label', () => {
-        const cols = [
-            mockCol('name', { label: 'Name' }),
-            mockCol('icon'),
-            mockCol('expand', {})
-        ];
+        const cols = [mockCol('name', { label: 'Name' }), mockCol('icon'), mockCol('expand', {})];
         expect(getToggleableColumns(cols)).toHaveLength(1);
     });
 
@@ -118,10 +106,7 @@ describe('getToggleableColumns', () => {
     });
 
     it('returns empty array when all columns are excluded', () => {
-        const cols = [
-            { id: '__spacer', columnDef: { meta: {} } },
-            mockCol('icon')
-        ];
+        const cols = [{ id: '__spacer', columnDef: { meta: {} } }, mockCol('icon')];
         expect(getToggleableColumns(cols)).toEqual([]);
     });
 });

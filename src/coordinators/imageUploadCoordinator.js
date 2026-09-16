@@ -61,10 +61,7 @@ export function handleImageUploadInput(event, options = {}) {
 
     let acceptRegex = null;
     if (acceptPattern) {
-        acceptRegex =
-            acceptPattern instanceof RegExp
-                ? acceptPattern
-                : new RegExp(acceptPattern);
+        acceptRegex = acceptPattern instanceof RegExp ? acceptPattern : new RegExp(acceptPattern);
     }
 
     if (acceptRegex && !acceptRegex.test(file.type)) {
@@ -79,8 +76,8 @@ export function handleImageUploadInput(event, options = {}) {
 }
 
 /**
- * @param {string} base64Data - base64 encoded image
- * @returns {Promise<string>} resized base64 encoded image
+ * @param {string} base64Data - Base64 encoded image
+ * @returns {Promise<string>} Resized base64 encoded image
  */
 export async function resizeImageToFitLimits(base64Data) {
     // frontend limit check = 20MB
@@ -89,17 +86,15 @@ export async function resizeImageToFitLimits(base64Data) {
 
 /**
  * Upload image through AWS
- * @param {'avatar'|'world'} type
+ *
+ * @param {'avatar' | 'world'} type
  * @param {object} opts
- * @param {string} opts.entityId - avatar or world id
- * @param {string} opts.imageUrl - current imageUrl on the entity
- * @param {string} opts.base64File - base64 encoded image data
- * @param {Blob}   opts.blob - the original blob (used for file size)
+ * @param {string} opts.entityId - Avatar or world id
+ * @param {string} opts.imageUrl - Current imageUrl on the entity
+ * @param {string} opts.base64File - Base64 encoded image data
+ * @param {Blob} opts.blob - The original blob (used for file size)
  */
-export async function uploadImageLegacy(
-    type,
-    { entityId, imageUrl, base64File, blob }
-) {
+export async function uploadImageLegacy(type, { entityId, imageUrl, base64File, blob }) {
     const apiMap = {
         avatar: {
             uploadImage: imageRequest.uploadAvatarImage,
@@ -124,20 +119,13 @@ export async function uploadImageLegacy(
     const fileSizeInBytes = parseInt(blob.size, 10);
     const base64SignatureFile = await AppApi.SignFile(base64File);
     const signatureMd5 = await AppApi.MD5File(base64SignatureFile);
-    const signatureSizeInBytes = parseInt(
-        await AppApi.FileLength(base64SignatureFile),
-        10
-    );
+    const signatureSizeInBytes = parseInt(await AppApi.FileLength(base64SignatureFile), 10);
     const fileId = extractFileId(imageUrl);
 
     // imageInit
-    const uploadRes = await api.uploadImage(
-        { fileMd5, fileSizeInBytes, signatureMd5, signatureSizeInBytes },
-        fileId
-    );
+    const uploadRes = await api.uploadImage({ fileMd5, fileSizeInBytes, signatureMd5, signatureSizeInBytes }, fileId);
     const uploadedFileId = uploadRes.json.id;
-    const fileVersion =
-        uploadRes.json.versions[uploadRes.json.versions.length - 1].version;
+    const fileVersion = uploadRes.json.versions[uploadRes.json.versions.length - 1].version;
 
     // imageFileStart
     const fileStartRes = await api.fileStart({
@@ -154,11 +142,7 @@ export async function uploadImageLegacy(
         fileMD5: fileMd5
     });
     if (fileAwsRes.status !== 200) {
-        $throw(
-            fileAwsRes.status,
-            `${type} image upload failed`,
-            fileStartRes.json.url
-        );
+        $throw(fileAwsRes.status, `${type} image upload failed`, fileStartRes.json.url);
     }
 
     // imageFileFinish
@@ -179,11 +163,7 @@ export async function uploadImageLegacy(
         fileMD5: signatureMd5
     });
     if (sigAwsRes.status !== 200) {
-        $throw(
-            sigAwsRes.status,
-            `${type} image upload failed`,
-            sigStartRes.json.url
-        );
+        $throw(sigAwsRes.status, `${type} image upload failed`, sigStartRes.json.url);
     }
 
     // imageSigFinish

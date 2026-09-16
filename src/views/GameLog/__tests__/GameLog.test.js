@@ -39,8 +39,7 @@ vi.mock('../../../components/ui/input-group', () => ({
 vi.mock('@/components/ui/select', () => ({
     Select: {
         emits: ['update:modelValue'],
-        template:
-            '<button data-testid="sel" @click="$emit(\'update:modelValue\', [\'Event\'])"><slot /></button>'
+        template: '<button data-testid="sel" @click="$emit(\'update:modelValue\', [\'Event\'])"><slot /></button>'
     },
     SelectTrigger: { template: '<div><slot /></div>' },
     SelectValue: { template: '<div><slot /></div>' },

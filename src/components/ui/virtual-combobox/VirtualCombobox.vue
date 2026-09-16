@@ -115,7 +115,7 @@
     const searchText = ref('');
     const scrollContainerRef = shallowRef(null);
 
-    const normalizedGroups = computed(() => /** @type {Array<any>} */ (props.groups ?? []));
+    const normalizedGroups = computed(() => /** @type {any[]} */ (props.groups ?? []));
 
     const selectedValueSet = computed(() => {
         if (props.multiple) {

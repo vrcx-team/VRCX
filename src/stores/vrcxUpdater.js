@@ -5,10 +5,7 @@ import { useI18n } from 'vue-i18n';
 
 import { logWebRequest } from '../services/appConfig';
 import { branches } from '../shared/constants';
-import {
-    getWhatsNewRelease,
-    normalizeReleaseVersion
-} from '../shared/constants/whatsNewReleases';
+import { getWhatsNewRelease, normalizeReleaseVersion } from '../shared/constants/whatsNewReleases';
 import { changeLogRemoveLinks } from '../shared/utils';
 
 import configRepository from '../services/config';
@@ -99,17 +96,12 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         } else {
             await syncCurrentVersionState();
         }
-        if (
-            autoUpdateVRCX.value !== 'Off' &&
-            !checkedForUpdatesDuringAnnouncement
-        ) {
+        if (autoUpdateVRCX.value !== 'Off' && !checkedForUpdatesDuringAnnouncement) {
             await checkForVRCXUpdate();
         }
     }
 
-    const currentVersion = computed(() =>
-        appVersion.value.replace(' (Linux)', '')
-    );
+    const currentVersion = computed(() => appVersion.value.replace(' (Linux)', ''));
 
     /**
      * @param {string} value
@@ -148,18 +140,12 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     }
 
     async function hasVersionChanged() {
-        const lastVersion = await configRepository.getString(
-            'VRCX_lastVRCXVersion',
-            ''
-        );
+        const lastVersion = await configRepository.getString('VRCX_lastVRCXVersion', '');
         return lastVersion !== currentVersion.value;
     }
 
     async function markCurrentVersionAsSeen() {
-        await configRepository.setString(
-            'VRCX_lastVRCXVersion',
-            currentVersion.value
-        );
+        await configRepository.setString('VRCX_lastVRCXVersion', currentVersion.value);
     }
 
     async function syncCurrentVersionState() {
@@ -174,10 +160,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         if (branch.value !== 'Stable' || !isRecognizedStableReleaseVersion()) {
             return false;
         }
-        const lastVersion = await configRepository.getString(
-            'VRCX_lastVRCXVersion',
-            ''
-        );
+        const lastVersion = await configRepository.getString('VRCX_lastVRCXVersion', '');
         return Boolean(lastVersion) && lastVersion !== currentVersion.value;
     }
 
@@ -229,10 +212,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
 
     async function openChangeLogDialogOnly() {
         changeLogDialog.value.visible = true;
-        if (
-            !changeLogDialog.value.buildName ||
-            !changeLogDialog.value.changeLog
-        ) {
+        if (!changeLogDialog.value.buildName || !changeLogDialog.value.changeLog) {
             await checkForVRCXUpdate();
         }
     }
@@ -337,9 +317,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                 // update already downloaded
                 VRCXUpdateDialog.value.updatePendingIsLatest = true;
             } else if (releaseName > currentVersion.value) {
-                const { downloadUrl, hashString, size } = getAssetOfInterest(
-                    json.assets
-                );
+                const { downloadUrl, hashString, size } = getAssetOfInterest(json.assets);
                 if (!downloadUrl) {
                     return true;
                 }
@@ -358,12 +336,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                 if (autoUpdateVRCX.value === 'Notify') {
                     // this.showVRCXUpdateDialog();
                 } else if (autoUpdateVRCX.value === 'Auto Download') {
-                    await downloadVRCXUpdate(
-                        downloadUrl,
-                        hashString,
-                        size,
-                        releaseName
-                    );
+                    await downloadVRCXUpdate(downloadUrl, hashString, size, releaseName);
                 }
             }
             return true;
@@ -440,12 +413,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
         setBranch(branch.value);
     }
-    async function downloadVRCXUpdate(
-        downloadUrl,
-        hashString,
-        size,
-        releaseName
-    ) {
+    async function downloadVRCXUpdate(downloadUrl, hashString, size, releaseName) {
         if (updateInProgress.value) {
             return;
         }
@@ -473,9 +441,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             if (release.name !== VRCXUpdateDialog.value.release) {
                 continue;
             }
-            const { downloadUrl, hashString, size } = getAssetOfInterest(
-                release.assets
-            );
+            const { downloadUrl, hashString, size } = getAssetOfInterest(release.assets);
             if (!downloadUrl) {
                 return;
             }
@@ -502,10 +468,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     }
 
     async function ensureChangeLogReady() {
-        if (
-            changeLogDialog.value.buildName &&
-            changeLogDialog.value.changeLog
-        ) {
+        if (changeLogDialog.value.buildName && changeLogDialog.value.changeLog) {
             return true;
         }
         return checkForVRCXUpdate();

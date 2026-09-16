@@ -19,17 +19,11 @@ class InteropApi {
         try {
             const obj = this.getDotNetObject(className);
             if (typeof obj[methodName] !== 'function') {
-                throw new Error(
-                    `Method ${methodName} does not exist on class ${className}`
-                );
+                throw new Error(`Method ${methodName} does not exist on class ${className}`);
             }
             return obj[methodName](...args);
         } catch (e) {
-            console.error(
-                'Error calling .NET method',
-                `${className}.${methodName}`,
-                e
-            );
+            console.error('Error calling .NET method', `${className}.${methodName}`, e);
             throw e;
         }
     }

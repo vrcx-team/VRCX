@@ -54,12 +54,8 @@ describe('SimpleSwitch.vue', () => {
             }
         });
 
-        expect(wrapper.get('.name').attributes('style')).toContain(
-            'width: 300px'
-        );
+        expect(wrapper.get('.name').attributes('style')).toContain('width: 300px');
         expect(wrapper.find('[data-testid="tooltip"]').exists()).toBe(true);
-        expect(
-            wrapper.get('[data-testid="switch"]').attributes('data-disabled')
-        ).toBe('true');
+        expect(wrapper.get('[data-testid="switch"]').attributes('data-disabled')).toBe('true');
     });
 });

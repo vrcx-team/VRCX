@@ -1,9 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import {
-    normalizeFavoriteGroupsChange,
-    resolveFavoriteGroups
-} from '../sidebarSettingsUtils';
+import { normalizeFavoriteGroupsChange, resolveFavoriteGroups } from '../sidebarSettingsUtils';
 
 // ─── resolveFavoriteGroups ───────────────────────────────────────────
 
@@ -42,15 +39,11 @@ describe('normalizeFavoriteGroupsChange', () => {
     });
 
     test('returns [] when all groups are selected', () => {
-        expect(normalizeFavoriteGroupsChange([...allKeys], allKeys)).toEqual(
-            []
-        );
+        expect(normalizeFavoriteGroupsChange([...allKeys], allKeys)).toEqual([]);
     });
 
     test('returns [] when value is superset of allKeys', () => {
-        expect(
-            normalizeFavoriteGroupsChange([...allKeys, 'extra'], allKeys)
-        ).toEqual([]);
+        expect(normalizeFavoriteGroupsChange([...allKeys, 'extra'], allKeys)).toEqual([]);
     });
 
     test('returns filter subset when not all selected', () => {

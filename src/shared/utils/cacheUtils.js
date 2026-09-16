@@ -2,11 +2,12 @@
  * Evict entries from a Map cache when it exceeds maxSize.
  * Entries matching isRetainedFn are kept; the rest are evicted oldest-first
  * (or by the provided sortFn).
+ *
  * @param {Map} cache - The cache Map to evict from
  * @param {number} maxSize - Maximum allowed size
  * @param {(value: any, key: string) => boolean} isRetainedFn - Return true to keep the entry
  * @param {object} [opts] - Options
- * @param {(a: {key: string, value: any}, b: {key: string, value: any}) => number} [opts.sortFn] -
+ * @param {(a: { key: string; value: any }, b: { key: string; value: any }) => number} [opts.sortFn] -
  *   Custom sort for eviction order (entries sorted ascending; first entries evicted first).
  *   If not provided, entries are evicted in insertion order.
  * @param {string} [opts.logLabel] - Label for console.log output
@@ -35,9 +36,7 @@ export function evictMapCache(cache, maxSize, isRetainedFn, opts = {}) {
             cache.delete(removable[i].key);
         }
         if (logLabel) {
-            console.log(
-                `${logLabel}: Deleted ${toDelete}. Current cache size: ${cache.size}`
-            );
+            console.log(`${logLabel}: Deleted ${toDelete}. Current cache size: ${cache.size}`);
         }
         return { deletedCount: toDelete };
     }
@@ -59,9 +58,7 @@ export function evictMapCache(cache, maxSize, isRetainedFn, opts = {}) {
         cache.delete(key);
     }
     if (logLabel) {
-        console.log(
-            `${logLabel}: Deleted ${deletedCount}. Current cache size: ${cache.size}`
-        );
+        console.log(`${logLabel}: Deleted ${deletedCount}. Current cache size: ${cache.size}`);
     }
     return { deletedCount };
 }

@@ -25,9 +25,7 @@ export const createColumns = ({ onEdit }) => [
         meta: {
             tdClass: 'text-right'
         },
-        cell: ({ row }) => (
-            <CountdownTimer datetime={row.original?.updatedAt} hours={1} />
-        )
+        cell: ({ row }) => <CountdownTimer datetime={row.original?.updatedAt} hours={1} />
     },
     {
         id: 'action',

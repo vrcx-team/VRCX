@@ -190,9 +190,6 @@
         }
     );
 
-    /**
-     *
-     */
     function currentInstanceId() {
         if (typeof props.traveling !== 'undefined' && props.location === 'traveling') {
             return props.traveling;
@@ -200,9 +197,6 @@
         return props.location;
     }
 
-    /**
-     *
-     */
     function resetState() {
         text.value = '';
         region.value = '';
@@ -214,9 +208,6 @@
         instanceName.value = '';
     }
 
-    /**
-     *
-     */
     function parse() {
         if (isDisposed) {
             return;
@@ -263,7 +254,6 @@
     }
 
     /**
-     *
      * @param L
      * @param instanceId
      */
@@ -287,7 +277,6 @@
     }
 
     /**
-     *
      * @param L
      */
     function updateRegion(L) {
@@ -295,7 +284,6 @@
     }
 
     /**
-     *
      * @param accessTypeName
      */
     function getAccessTypeLabel(accessTypeName) {
@@ -303,7 +291,6 @@
     }
 
     /**
-     *
      * @param L
      */
     function setText(L) {
@@ -332,9 +319,6 @@
         }
     }
 
-    /**
-     *
-     */
     function handleShowWorldDialog() {
         if (props.link) {
             let instanceId = currentInstanceId();
@@ -350,9 +334,6 @@
         }
     }
 
-    /**
-     *
-     */
     function handleShowGroupDialog() {
         let location = currentInstanceId();
         if (!location) {
@@ -365,36 +346,24 @@
         showGroupDialog(L.groupId);
     }
 
-    /**
-     *
-     */
     function handleShareLocation() {
         const L = parsedLocation.value;
         if (!L.worldId) return;
         copyToClipboard(`https://vrchat.com/home/world/${L.worldId}`, t('message.world.url_copied'));
     }
 
-    /**
-     *
-     */
     function handleNewInstance() {
         const L = parsedLocation.value;
         if (!L.worldId) return;
         showWorldDialog(L.tag, L.shortName);
     }
 
-    /**
-     *
-     */
     function handleNewInstanceSelfInvite() {
         const L = parsedLocation.value;
         if (!L.worldId) return;
         runNewInstanceSelfInviteFlow(L.worldId);
     }
 
-    /**
-     *
-     */
     function handleShowPreviousInstances() {
         const instanceId = currentInstanceId();
         if (!instanceId) return;

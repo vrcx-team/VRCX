@@ -606,7 +606,6 @@
     const historyGroupMenuKey = 'history';
 
     /**
-     *
      * @param value
      */
     function handleSortFavoritesChange(value) {
@@ -624,17 +623,11 @@
         avatarToolbarMenuOpen.value = false;
     };
 
-    /**
-     *
-     */
     function handleAvatarImportClick() {
         closeAvatarToolbarMenu();
         showAvatarImportDialog();
     }
 
-    /**
-     *
-     */
     function handleAvatarExportClick() {
         closeAvatarToolbarMenu();
         showAvatarExportDialog();
@@ -715,7 +708,6 @@
     );
 
     /**
-     *
      * @param type
      * @param key
      */
@@ -727,9 +719,6 @@
         selectGroup(type, key, { userInitiated: true });
     }
 
-    /**
-     *
-     */
     const {
         isCreatingLocalGroup,
         newLocalGroupName,
@@ -744,7 +733,6 @@
     });
 
     /**
-     *
      * @param id
      * @param value
      */
@@ -758,30 +746,20 @@
         }
     }
 
-    /**
-     *
-     */
     function clearSelectedAvatars() {
         selectedFavoriteAvatars.value = [];
     }
 
-    /**
-     *
-     */
     function showAvatarExportDialog() {
         avatarExportDialogVisible.value = true;
     }
 
-    /**
-     *
-     */
     function handleRefreshFavorites() {
         refreshFavorites();
         getLocalAvatarFavorites();
     }
 
     /**
-     *
      * @param group
      * @param visibility
      */
@@ -791,7 +769,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function handleRemoteRename(group) {
@@ -800,7 +777,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function handleRemoteClear(group) {
@@ -809,7 +785,6 @@
     }
 
     /**
-     *
      * @param groupName
      */
     function handleLocalRename(groupName) {
@@ -818,7 +793,6 @@
     }
 
     /**
-     *
      * @param groupName
      */
     function handleLocalDelete(groupName) {
@@ -827,7 +801,6 @@
     }
 
     /**
-     *
      * @param groupName
      */
     async function handleCheckInvalidAvatars(groupName) {
@@ -921,16 +894,12 @@
         }
     }
 
-    /**
-     *
-     */
     function handleHistoryClear() {
         handleGroupMenuVisible(historyGroupMenuKey, false);
         promptClearAvatarHistory();
     }
 
     /**
-     *
      * @param group
      */
     function changeFavoriteGroupName(group) {
@@ -972,7 +941,6 @@
     }
 
     /**
-     *
      * @param name
      * @param visibility
      * @param menuKey
@@ -1000,7 +968,6 @@
     }
 
     /**
-     *
      * @param ctx
      */
     function clearFavoriteGroup(ctx) {
@@ -1022,7 +989,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function promptLocalAvatarFavoriteGroupRename(group) {
@@ -1051,7 +1017,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function promptLocalAvatarFavoriteGroupDelete(group) {
@@ -1070,7 +1035,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function doSearchAvatarFavorites(value) {
@@ -1127,9 +1091,6 @@
     }
     const searchAvatarFavorites = debounce(doSearchAvatarFavorites, 200);
 
-    /**
-     *
-     */
     async function refreshLocalAvatarFavorites() {
         if (refreshingLocalFavorites.value) {
             return;
@@ -1176,9 +1137,6 @@
         }
     }
 
-    /**
-     *
-     */
     function cancelLocalAvatarRefresh() {
         if (!refreshingLocalFavorites.value) {
             return;
@@ -1196,9 +1154,6 @@
         refreshingLocalFavorites.value = false;
     }
 
-    /**
-     *
-     */
     function toggleSelectAllAvatars() {
         if (!activeRemoteGroup.value) {
             return;
@@ -1210,9 +1165,6 @@
         }
     }
 
-    /**
-     *
-     */
     function copySelectedAvatars() {
         if (!selectedFavoriteAvatars.value.length) {
             return;
@@ -1222,9 +1174,6 @@
         showAvatarImportDialog();
     }
 
-    /**
-     *
-     */
     function showAvatarBulkUnfavoriteSelectionConfirm() {
         if (!selectedFavoriteAvatars.value.length) {
             return;
@@ -1245,7 +1194,6 @@
     }
 
     /**
-     *
      * @param ids
      */
     function bulkUnfavoriteSelectedAvatars(ids) {
@@ -1263,7 +1211,6 @@
     });
 
     /**
-     *
      * @param value
      */
     function formatVisibility(value) {

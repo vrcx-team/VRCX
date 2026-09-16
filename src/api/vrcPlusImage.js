@@ -2,16 +2,10 @@ import { queryClient } from '../queries';
 import { request } from '../services/request';
 import { useUserStore } from '../stores';
 
-/**
- *
- */
 function getCurrentUserId() {
     return useUserStore().currentUser.id;
 }
 
-/**
- *
- */
 function refetchActiveGalleryQueries() {
     queryClient
         .invalidateQueries({

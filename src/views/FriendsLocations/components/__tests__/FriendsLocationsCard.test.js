@@ -51,21 +51,13 @@ vi.mock('../../../../services/database', () => ({
 vi.mock('../../../../services/config', () => ({
     default: {
         init: vi.fn(),
-        getString: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? '{}'),
+        getString: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? '{}'),
         setString: vi.fn(),
-        getBool: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? false),
+        getBool: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? false),
         setBool: vi.fn(),
-        getInt: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? 0),
+        getInt: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? 0),
         setInt: vi.fn(),
-        getFloat: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? 0),
+        getFloat: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? 0),
         setFloat: vi.fn(),
         getObject: vi.fn().mockReturnValue(null),
         setObject: vi.fn(),
@@ -111,9 +103,7 @@ const {
     mockShowUserDialog: vi.fn(),
     mockCheckCanInvite: vi.fn().mockReturnValue(true),
     mockCheckCanInviteSelf: vi.fn().mockReturnValue(true),
-    mockUserStatusClass: vi
-        .fn()
-        .mockReturnValue({ online: true, joinme: false, active: false }),
+    mockUserStatusClass: vi.fn().mockReturnValue({ online: true, joinme: false, active: false }),
     mockUserImage: vi.fn().mockReturnValue('https://example.com/avatar.png'),
     mockToastSuccess: vi.fn(),
     mockToastError: vi.fn(),
@@ -221,8 +211,7 @@ const stubs = {
         template: '<hr data-testid="context-menu-separator" />'
     },
     Card: {
-        template:
-            '<div data-testid="card" v-bind="$attrs" @click="$emit(\'click\')"><slot /></div>',
+        template: '<div data-testid="card" v-bind="$attrs" @click="$emit(\'click\')"><slot /></div>',
         props: ['class', 'style'],
         emits: ['click']
     },
@@ -242,7 +231,6 @@ const stubs = {
 };
 
 /**
- *
  * @param overrides
  */
 function makeFriend(overrides = {}) {
@@ -264,7 +252,6 @@ function makeFriend(overrides = {}) {
 }
 
 /**
- *
  * @param props
  * @param storeState
  */
@@ -285,8 +272,7 @@ function mountCard(props = {}, storeState = {}) {
                             lastLocation: storeState.lastLocation ?? {
                                 location: 'wrld_abc:123~region(us)'
                             },
-                            lastLocationDestination:
-                                storeState.lastLocationDestination ?? ''
+                            lastLocationDestination: storeState.lastLocationDestination ?? ''
                         },
                         User: {
                             currentUser: storeState.currentUser ?? {
@@ -308,7 +294,6 @@ function mountCard(props = {}, storeState = {}) {
 }
 
 /**
- *
  * @param wrapper
  */
 function getMenuItems(wrapper) {
@@ -316,7 +301,6 @@ function getMenuItems(wrapper) {
 }
 
 /**
- *
  * @param wrapper
  */
 function getMenuItemTexts(wrapper) {
@@ -324,7 +308,6 @@ function getMenuItemTexts(wrapper) {
 }
 
 /**
- *
  * @param wrapper
  * @param text
  */
@@ -410,10 +393,7 @@ describe('FriendsLocationsCard.vue', () => {
         });
 
         test('always shows Send Boop', () => {
-            const wrapper = mountCard(
-                { friend: makeFriend({ state: 'active' }) },
-                { isGameRunning: false }
-            );
+            const wrapper = mountCard({ friend: makeFriend({ state: 'active' }) }, { isGameRunning: false });
             const texts = getMenuItemTexts(wrapper);
             expect(texts).toContain('Send Boop');
         });
@@ -461,9 +441,7 @@ describe('FriendsLocationsCard.vue', () => {
                     ref: { location: 'wrld_12345:67890~region(us)' }
                 })
             });
-            expect(
-                wrapper.find('[data-testid="context-menu-separator"]').exists()
-            ).toBe(true);
+            expect(wrapper.find('[data-testid="context-menu-separator"]').exists()).toBe(true);
         });
 
         test('hides separator when friend has no real location', () => {
@@ -473,9 +451,7 @@ describe('FriendsLocationsCard.vue', () => {
                     ref: { location: 'private' }
                 })
             });
-            expect(
-                wrapper.find('[data-testid="context-menu-separator"]').exists()
-            ).toBe(false);
+            expect(wrapper.find('[data-testid="context-menu-separator"]').exists()).toBe(false);
         });
 
         test('shows Invite but disabled when cannot invite to my location', () => {
@@ -493,41 +469,23 @@ describe('FriendsLocationsCard.vue', () => {
                     ref: { location: 'wrld_12345:67890~region(us)' }
                 })
             });
-            const launchInviteItem = getMenuItemByText(
-                wrapper,
-                'Launch/Invite'
-            );
-            const inviteYourselfItem = getMenuItemByText(
-                wrapper,
-                'Invite Yourself'
-            );
+            const launchInviteItem = getMenuItemByText(wrapper, 'Launch/Invite');
+            const inviteYourselfItem = getMenuItemByText(wrapper, 'Invite Yourself');
             expect(launchInviteItem?.attributes('data-disabled')).toBe('true');
-            expect(inviteYourselfItem?.attributes('data-disabled')).toBe(
-                'true'
-            );
+            expect(inviteYourselfItem?.attributes('data-disabled')).toBe('true');
         });
     });
 
     describe('context menu disabled states', () => {
         test('Send Boop is disabled when booping is not enabled', () => {
-            const wrapper = mountCard(
-                {},
-                { currentUser: { isBoopingEnabled: false } }
-            );
-            const boopItem = getMenuItems(wrapper).find(
-                (item) => item.text().trim() === 'Send Boop'
-            );
+            const wrapper = mountCard({}, { currentUser: { isBoopingEnabled: false } });
+            const boopItem = getMenuItems(wrapper).find((item) => item.text().trim() === 'Send Boop');
             expect(boopItem?.attributes('data-disabled')).toBe('true');
         });
 
         test('Send Boop is enabled when booping is enabled', () => {
-            const wrapper = mountCard(
-                {},
-                { currentUser: { isBoopingEnabled: true } }
-            );
-            const boopItem = getMenuItems(wrapper).find(
-                (item) => item.text().trim() === 'Send Boop'
-            );
+            const wrapper = mountCard({}, { currentUser: { isBoopingEnabled: true } });
+            const boopItem = getMenuItems(wrapper).find((item) => item.text().trim() === 'Send Boop');
             expect(boopItem?.attributes('data-disabled')).toBe('false');
         });
     });
@@ -537,15 +495,9 @@ describe('FriendsLocationsCard.vue', () => {
             const wrapper = mountCard({
                 friend: makeFriend({ state: 'online' })
             });
-            const requestInviteItem = getMenuItemByText(
-                wrapper,
-                'Request Invite'
-            );
+            const requestInviteItem = getMenuItemByText(wrapper, 'Request Invite');
             await requestInviteItem.trigger('click');
-            expect(mockSendRequestInvite).toHaveBeenCalledWith(
-                { platform: 'standalonewindows' },
-                'usr_test123'
-            );
+            expect(mockSendRequestInvite).toHaveBeenCalledWith({ platform: 'standalonewindows' }, 'usr_test123');
         });
 
         test('friendInvite resolves traveling location and calls sendInvite API', async () => {
@@ -577,10 +529,7 @@ describe('FriendsLocationsCard.vue', () => {
                     ref: { location: 'wrld_12345:67890~region(us)' }
                 })
             });
-            const selfInviteItem = getMenuItemByText(
-                wrapper,
-                'Invite Yourself'
-            );
+            const selfInviteItem = getMenuItemByText(wrapper, 'Invite Yourself');
             await selfInviteItem.trigger('click');
             expect(mockSelfInvite).toHaveBeenCalledWith({
                 instanceId: '67890~region(us)',
@@ -603,9 +552,7 @@ describe('FriendsLocationsCard.vue', () => {
                 active: false
             });
             const wrapper = mountCard();
-            expect(
-                wrapper.find('.friend-card__status-dot').classes()
-            ).toContain('friend-card__status-dot--join');
+            expect(wrapper.find('.friend-card__status-dot').classes()).toContain('friend-card__status-dot--join');
         });
 
         test('shows active busy status class when active + busy', () => {
@@ -617,9 +564,9 @@ describe('FriendsLocationsCard.vue', () => {
             const wrapper = mountCard({
                 friend: makeFriend({ status: 'busy' })
             });
-            expect(
-                wrapper.find('.friend-card__status-dot').classes()
-            ).toContain('friend-card__status-dot--active-busy');
+            expect(wrapper.find('.friend-card__status-dot').classes()).toContain(
+                'friend-card__status-dot--active-busy'
+            );
         });
     });
 });

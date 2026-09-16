@@ -108,9 +108,6 @@
 
     const emit = defineEmits(['update:isNotificationPositionDialogVisible']);
 
-    /**
-     *
-     */
     function closeDialog() {
         emit('update:isNotificationPositionDialogVisible', false);
     }

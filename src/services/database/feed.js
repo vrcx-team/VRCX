@@ -57,12 +57,9 @@ const feed = {
                 '@owner_id': entry.ownerId,
                 '@avatar_name': entry.avatarName,
                 '@current_avatar_image_url': entry.currentAvatarImageUrl,
-                '@current_avatar_thumbnail_image_url':
-                    entry.currentAvatarThumbnailImageUrl,
-                '@previous_current_avatar_image_url':
-                    entry.previousCurrentAvatarImageUrl,
-                '@previous_current_avatar_thumbnail_image_url':
-                    entry.previousCurrentAvatarThumbnailImageUrl
+                '@current_avatar_thumbnail_image_url': entry.currentAvatarThumbnailImageUrl,
+                '@previous_current_avatar_image_url': entry.previousCurrentAvatarImageUrl,
+                '@previous_current_avatar_thumbnail_image_url': entry.previousCurrentAvatarThumbnailImageUrl
             }
         );
     },
@@ -70,7 +67,9 @@ const feed = {
     /**
      * Purges avatar feed data from the database.
      * !!!!
-     * @param {string|null} cutoffDate - ISO date string. Deletes records older than this date. If null, deletes all records.
+     *
+     * @param {string | null} cutoffDate - ISO date string. Deletes records older than this date. If null, deletes all
+     *   records.
      */
     async purgeAvatarFeedData(cutoffDate) {
         if (cutoffDate) {
@@ -81,9 +80,7 @@ const feed = {
                 }
             );
         } else {
-            await sqliteService.executeNonQuery(
-                `DELETE FROM ${dbVars.userPrefix}_feed_avatar`
-            );
+            await sqliteService.executeNonQuery(`DELETE FROM ${dbVars.userPrefix}_feed_avatar`);
         }
     },
 
@@ -303,11 +300,7 @@ const feed = {
         return feedDatabase;
     },
 
-    async lookupFeedDatabase(
-        filters,
-        vipList,
-        maxEntries = dbVars.maxTableSize
-    ) {
+    async lookupFeedDatabase(filters, vipList, maxEntries = dbVars.maxTableSize) {
         let vipQuery = '';
         const vipArgs = {};
         if (vipList.length > 0) {

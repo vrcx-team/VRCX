@@ -92,7 +92,6 @@
     ]);
 
     /**
-     *
      * @param value
      */
     function setGroupId(value) {
@@ -110,9 +109,6 @@
         }
     );
 
-    /**
-     *
-     */
     function initDialog() {
         const D = moderateGroupDialog.value;
         if (D.groupId) {

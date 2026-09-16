@@ -13,18 +13,16 @@ import * as workerTimers from 'worker-timers';
 
 /**
  * Composable for managing group member loading, searching, sorting, and filtering.
- * @param {import('vue').Ref} groupDialog - reactive ref to the group dialog state
- * @param {object} deps - external dependencies
- * @param {import('vue').Ref} deps.currentUser - reactive ref to the current user
- * @param {Function} deps.applyGroupMember - function to apply group member data
- * @param {Function} deps.handleGroupMember - function to handle group member updates
- * @param {Function} deps.t - i18n translation function
- * @returns {object} members composable API
+ *
+ * @param {import('vue').Ref} groupDialog - Reactive ref to the group dialog state
+ * @param {object} deps - External dependencies
+ * @param {import('vue').Ref} deps.currentUser - Reactive ref to the current user
+ * @param {Function} deps.applyGroupMember - Function to apply group member data
+ * @param {Function} deps.handleGroupMember - Function to handle group member updates
+ * @param {Function} deps.t - I18n translation function
+ * @returns {object} Members composable API
  */
-export function useGroupMembers(
-    groupDialog,
-    { currentUser, applyGroupMember, handleGroupMember, t }
-) {
+export function useGroupMembers(groupDialog, { currentUser, applyGroupMember, handleGroupMember, t }) {
     const isGroupMembersDone = ref(false);
     const isGroupMembersLoading = ref(false);
 
@@ -41,9 +39,7 @@ export function useGroupMembers(
             return groupDialog.value?.memberSortOrder?.value ?? '';
         },
         set(value) {
-            const option = groupDialogSortingOptions.find(
-                (item) => item.value === value
-            );
+            const option = groupDialogSortingOptions.find((item) => item.value === value);
             if (option) {
                 setGroupMemberSortOrder(option);
             }
@@ -73,9 +69,7 @@ export function useGroupMembers(
 
             if (key.startsWith('role:')) {
                 const roleId = key.slice('role:'.length);
-                const role = groupDialog.value?.ref?.roles?.find(
-                    (r) => r.id === roleId
-                );
+                const role = groupDialog.value?.ref?.roles?.find((r) => r.id === roleId);
                 if (role) {
                     setGroupMemberFilter(role);
                 }
@@ -85,12 +79,7 @@ export function useGroupMembers(
 
     const groupDialogMemberFilterGroups = computed(() => {
         const filterItems = groupDialogFilterOptions.map((item) => ({
-            value:
-                item.id === null
-                    ? 'everyone'
-                    : item.id === ''
-                      ? 'usersWithNoRole'
-                      : `role:${item.id}`,
+            value: item.id === null ? 'everyone' : item.id === '' ? 'usersWithNoRole' : `role:${item.id}`,
             label: t(item.name),
             search: t(item.name)
         }));
@@ -117,9 +106,6 @@ export function useGroupMembers(
         ].filter((group) => group.items.length);
     });
 
-    /**
-     *
-     */
     function groupMembersSearch() {
         if (groupDialog.value.memberSearch.length < 3) {
             groupDialog.value.memberSearchResults = [];
@@ -129,9 +115,6 @@ export function useGroupMembers(
         debounce(groupMembersSearchDebounced, 200)();
     }
 
-    /**
-     *
-     */
     function groupMembersSearchDebounced() {
         const D = groupDialog.value;
         const search = D.memberSearch;
@@ -165,9 +148,6 @@ export function useGroupMembers(
             });
     }
 
-    /**
-     *
-     */
     async function getGroupDialogGroupMembers() {
         const D = groupDialog.value;
         D.members = [];
@@ -206,9 +186,6 @@ export function useGroupMembers(
         await loadMoreGroupMembers();
     }
 
-    /**
-     *
-     */
     async function loadMoreGroupMembers() {
         if (isGroupMembersDone.value || isGroupMembersLoading.value) {
             return;
@@ -237,10 +214,7 @@ export function useGroupMembers(
                 for (let i = 0; i < args.json.length; i++) {
                     const member = args.json[i];
                     if (member.userId === currentUser.value.id) {
-                        if (
-                            D.members.length > 0 &&
-                            D.members[0].userId === currentUser.value.id
-                        ) {
+                        if (D.members.length > 0 && D.members[0].userId === currentUser.value.id) {
                             // remove duplicate and keep sort order
                             D.members.splice(0, 1);
                         }
@@ -260,9 +234,6 @@ export function useGroupMembers(
             });
     }
 
-    /**
-     *
-     */
     async function loadAllGroupMembers() {
         if (isGroupMembersLoading.value) {
             return;

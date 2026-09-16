@@ -1,7 +1,4 @@
-import {
-    computeDisabledContentSettings,
-    createDefaultInstanceRef
-} from '../instanceTransforms';
+import { computeDisabledContentSettings, createDefaultInstanceRef } from '../instanceTransforms';
 
 describe('computeDisabledContentSettings', () => {
     const settingsList = ['gore', 'nudity', 'violence'];
@@ -15,18 +12,12 @@ describe('computeDisabledContentSettings', () => {
     });
 
     it('returns disabled settings (false values)', () => {
-        const result = computeDisabledContentSettings(
-            { gore: false, nudity: true, violence: false },
-            settingsList
-        );
+        const result = computeDisabledContentSettings({ gore: false, nudity: true, violence: false }, settingsList);
         expect(result).toEqual(['gore', 'violence']);
     });
 
     it('skips undefined settings', () => {
-        const result = computeDisabledContentSettings(
-            { gore: true },
-            settingsList
-        );
+        const result = computeDisabledContentSettings({ gore: true }, settingsList);
         expect(result).toEqual([]);
     });
 });

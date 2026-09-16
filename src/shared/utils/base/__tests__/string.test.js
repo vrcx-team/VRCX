@@ -32,9 +32,7 @@ describe('String Utils', () => {
                 data: { value: 'Hello & world' }
             };
             const result = escapeTagRecursive(input);
-            expect(result.name).toBe(
-                '&#60;script&#62;alert(&#34;xss&#34;)&#60;/script&#62;'
-            );
+            expect(result.name).toBe('&#60;script&#62;alert(&#34;xss&#34;)&#60;/script&#62;');
             expect(result.data.value).toBe('Hello &#38; world');
         });
 
@@ -91,9 +89,7 @@ describe('String Utils', () => {
 
     describe('changeLogRemoveLinks', () => {
         test('removes markdown links', () => {
-            expect(
-                changeLogRemoveLinks('Hello [world](http://example.com)')
-            ).toBe('Hello ');
+            expect(changeLogRemoveLinks('Hello [world](http://example.com)')).toBe('Hello ');
         });
 
         test('preserves image links', () => {

@@ -1,9 +1,4 @@
-import {
-    removeFromArray,
-    arraysMatch,
-    moveArrayItem,
-    replaceReactiveObject
-} from '../array';
+import { removeFromArray, arraysMatch, moveArrayItem, replaceReactiveObject } from '../array';
 
 describe('Array Utils', () => {
     describe('removeFromArray', () => {

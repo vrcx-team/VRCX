@@ -2,18 +2,8 @@ import AvatarInfo from '../../components/AvatarInfo.vue';
 import Location from '../../components/Location.vue';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger
-} from '../../components/ui/tooltip';
-import {
-    ArrowDown,
-    ArrowRight,
-    ArrowUpDown,
-    ChevronDown,
-    ChevronRight
-} from 'lucide-vue-next';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
+import { ArrowDown, ArrowRight, ArrowUpDown, ChevronDown, ChevronRight } from 'lucide-vue-next';
 import { formatDateFilter, statusClass, timeToText } from '../../shared/utils';
 import { i18n } from '../../plugins/i18n';
 import { useGalleryStore, useFriendStore } from '../../stores';
@@ -39,11 +29,7 @@ const expandedRow = ({ row }) => {
             <div class="pl-5 text-sm">
                 {original.previousLocation ? (
                     <>
-                        <Location
-                            location={original.previousLocation}
-                            class="inline-block"
-                            enableContextMenu
-                        />
+                        <Location location={original.previousLocation} class="inline-block" enableContextMenu />
                         <Badge variant="secondary" class="ml-1 w-fit">
                             {timeToText(original.time)}
                         </Badge>
@@ -102,28 +88,18 @@ const expandedRow = ({ row }) => {
                         {original.previousCurrentAvatarThumbnailImageUrl ? (
                             <>
                                 <img
-                                    src={
-                                        original.previousCurrentAvatarThumbnailImageUrl
-                                    }
+                                    src={original.previousCurrentAvatarThumbnailImageUrl}
                                     class="cursor-pointer h-30 w-40 rounded pointer"
                                     loading="lazy"
-                                    onClick={() =>
-                                        showFullscreenImageDialog(
-                                            original.previousCurrentAvatarImageUrl
-                                        )
-                                    }
+                                    onClick={() => showFullscreenImageDialog(original.previousCurrentAvatarImageUrl)}
                                 />
                                 <br />
                                 <AvatarInfo
-                                    imageurl={
-                                        original.previousCurrentAvatarThumbnailImageUrl
-                                    }
+                                    imageurl={original.previousCurrentAvatarThumbnailImageUrl}
                                     userid={original.userId}
                                     hintownerid={original.previousOwnerId}
                                     hintavatarname={original.previousAvatarName}
-                                    avatartags={
-                                        original.previousCurrentAvatarTags
-                                    }
+                                    avatartags={original.previousCurrentAvatarTags}
                                 />
                             </>
                         ) : null}
@@ -135,22 +111,14 @@ const expandedRow = ({ row }) => {
                         {original.currentAvatarThumbnailImageUrl ? (
                             <>
                                 <img
-                                    src={
-                                        original.currentAvatarThumbnailImageUrl
-                                    }
+                                    src={original.currentAvatarThumbnailImageUrl}
                                     class="cursor-pointer h-30 w-40 rounded pointer"
                                     loading="lazy"
-                                    onClick={() =>
-                                        showFullscreenImageDialog(
-                                            original.currentAvatarImageUrl
-                                        )
-                                    }
+                                    onClick={() => showFullscreenImageDialog(original.currentAvatarImageUrl)}
                                 />
                                 <br />
                                 <AvatarInfo
-                                    imageurl={
-                                        original.currentAvatarThumbnailImageUrl
-                                    }
+                                    imageurl={original.currentAvatarThumbnailImageUrl}
                                     userid={original.userId}
                                     hintownerid={original.ownerId}
                                     hintavatarname={original.avatarName}
@@ -167,24 +135,13 @@ const expandedRow = ({ row }) => {
     if (type === 'Status') {
         return (
             <div class="flex items-center pl-5 text-sm">
-                <i
-                    class={[
-                        'x-user-status',
-                        statusClass(original.previousStatus)
-                    ]}
-                ></i>
+                <i class={['x-user-status', statusClass(original.previousStatus)]}></i>
                 <span class="ml-1">{original.previousStatusDescription}</span>
                 <br />
                 <span class="mx-2">
                     <ArrowRight />
                 </span>
-                <i
-                    class={[
-                        'x-user-status',
-                        statusClass(original.status),
-                        'mx-1'
-                    ]}
-                ></i>
+                <i class={['x-user-status', statusClass(original.status), 'mx-1']}></i>
                 <span>{original.statusDescription}</span>
             </div>
         );
@@ -195,10 +152,7 @@ const expandedRow = ({ row }) => {
             <div class="pl-5 text-sm">
                 <pre
                     class="text-xs leading-5.5 whitespace-pre-wrap font-[inherit]"
-                    innerHTML={formatDifference(
-                        original.previousBio,
-                        original.bio
-                    )}
+                    innerHTML={formatDifference(original.previousBio, original.bio)}
                 ></pre>
             </div>
         );
@@ -241,13 +195,7 @@ export const columns = [
         size: 140,
         meta: { label: () => t('table.feed.date') },
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                class="pl-0!"
-                onClick={() =>
-                    column.toggleSorting(column.getIsSorted() === 'asc')
-                }
-            >
+            <Button variant="ghost" class="pl-0!" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('table.feed.date')}
                 <ArrowUpDown class="ml-1 h-4 w-4" />
             </Button>
@@ -299,10 +247,7 @@ export const columns = [
                     state={friend?.state ?? ''}
                     location={friend?.ref?.location ?? ''}
                 >
-                    <span
-                        class="cursor-pointer pr-2.5"
-                        onClick={() => showUserDialog(original.userId)}
-                    >
+                    <span class="cursor-pointer pr-2.5" onClick={() => showUserDialog(original.userId)}>
                         {original.displayName}
                     </span>
                 </UserContextMenu>
@@ -350,27 +295,14 @@ export const columns = [
             }
 
             if (type === 'Status') {
-                if (
-                    original.statusDescription ===
-                    original.previousStatusDescription
-                ) {
+                if (original.statusDescription === original.previousStatusDescription) {
                     return (
                         <div class="flex items-center">
-                            <i
-                                class={[
-                                    'x-user-status',
-                                    statusClass(original.previousStatus)
-                                ]}
-                            ></i>
+                            <i class={['x-user-status', statusClass(original.previousStatus)]}></i>
                             <span class="mx-2">
                                 <ArrowRight />
                             </span>
-                            <i
-                                class={[
-                                    'x-user-status',
-                                    statusClass(original.status)
-                                ]}
-                            ></i>
+                            <i class={['x-user-status', statusClass(original.status)]}></i>
                         </div>
                     );
                 }
@@ -379,15 +311,9 @@ export const columns = [
                     <div class="w-full min-w-0 truncate">
                         <i
                             style="display:-webkit-inline-box"
-                            class={[
-                                'x-user-status',
-                                'mr-2',
-                                statusClass(original.status)
-                            ]}
+                            class={['x-user-status', 'mr-2', statusClass(original.status)]}
                         ></i>
-                        <span style="display:-webkit-inline-box">
-                            {original.statusDescription}
-                        </span>
+                        <span style="display:-webkit-inline-box">{original.statusDescription}</span>
                     </div>
                 );
             }
@@ -407,11 +333,7 @@ export const columns = [
             }
 
             if (type === 'Bio') {
-                return (
-                    <span class="block w-full min-w-0 truncate">
-                        {original.bio}
-                    </span>
-                );
+                return <span class="block w-full min-w-0 truncate">{original.bio}</span>;
             }
 
             return null;
@@ -420,12 +342,13 @@ export const columns = [
 ];
 
 /**
- * Function that format the differences between two strings with HTML tags
- * markerStartTag and markerEndTag are optional, if emitted, the differences will be highlighted with yellow and underlined.
- * @param {*} s1
- * @param {*} s2
- * @param {*} markerStartTag
- * @param {*} markerEndTag
+ * Function that format the differences between two strings with HTML tags markerStartTag and markerEndTag are optional,
+ * if emitted, the differences will be highlighted with yellow and underlined.
+ *
+ * @param {any} s1
+ * @param {any} s2
+ * @param {any} markerStartTag
+ * @param {any} markerEndTag
  * @returns An array that contains both the string 1 and string 2, which the differences are formatted with HTML tags
  */
 
@@ -446,12 +369,8 @@ function formatDifference(
             .replaceAll(/\n/g, '<br>')
     );
 
-    const oldWords = oldString
-        .split(/\s+/)
-        .flatMap((word) => word.split(/(<br>)/));
-    const newWords = newString
-        .split(/\s+/)
-        .flatMap((word) => word.split(/(<br>)/));
+    const oldWords = oldString.split(/\s+/).flatMap((word) => word.split(/(<br>)/));
+    const newWords = newString.split(/\s+/).flatMap((word) => word.split(/(<br>)/));
 
     function findLongestMatch(oldStart, oldEnd, newStart, newEnd) {
         let bestOldStart = oldStart;
@@ -471,11 +390,7 @@ function formatDifference(
 
             for (const i of lookup.get(word)) {
                 let size = 0;
-                while (
-                    i + size < oldEnd &&
-                    j + size < newEnd &&
-                    oldWords[i + size] === newWords[j + size]
-                ) {
+                while (i + size < oldEnd && j + size < newEnd && oldWords[i + size] === newWords[j + size]) {
                     size++;
                 }
                 if (size > bestSize) {
@@ -500,36 +415,15 @@ function formatDifference(
         if (match.size > 0) {
             // Handle differences before the match
             if (oldStart < match.oldStart || newStart < match.newStart) {
-                result.push(
-                    ...buildDiff(
-                        oldStart,
-                        match.oldStart,
-                        newStart,
-                        match.newStart
-                    )
-                );
+                result.push(...buildDiff(oldStart, match.oldStart, newStart, match.newStart));
             }
 
             // Add the matched words
-            result.push(
-                oldWords
-                    .slice(match.oldStart, match.oldStart + match.size)
-                    .join(' ')
-            );
+            result.push(oldWords.slice(match.oldStart, match.oldStart + match.size).join(' '));
 
             // Handle differences after the match
-            if (
-                match.oldStart + match.size < oldEnd ||
-                match.newStart + match.size < newEnd
-            ) {
-                result.push(
-                    ...buildDiff(
-                        match.oldStart + match.size,
-                        oldEnd,
-                        match.newStart + match.size,
-                        newEnd
-                    )
-                );
+            if (match.oldStart + match.size < oldEnd || match.newStart + match.size < newEnd) {
+                result.push(...buildDiff(match.oldStart + match.size, oldEnd, match.newStart + match.size, newEnd));
             }
         } else {
             function build(words, start, end, pattern) {
@@ -548,16 +442,10 @@ function formatDifference(
             }
 
             // Add deletions
-            if (oldStart < oldEnd)
-                result.push(
-                    ...build(oldWords, oldStart, oldEnd, markerDeletion)
-                );
+            if (oldStart < oldEnd) result.push(...build(oldWords, oldStart, oldEnd, markerDeletion));
 
             // Add insertions
-            if (newStart < newEnd)
-                result.push(
-                    ...build(newWords, newStart, newEnd, markerAddition)
-                );
+            if (newStart < newEnd) result.push(...build(newWords, newStart, newEnd, markerAddition));
         }
 
         return result;

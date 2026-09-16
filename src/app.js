@@ -1,13 +1,7 @@
 import { VueQueryPlugin } from '@tanstack/vue-query';
 import { createApp } from 'vue';
 
-import {
-    i18n,
-    initComponents,
-    initPlugins,
-    initRouter,
-    initSentry
-} from './plugins';
+import { i18n, initComponents, initPlugins, initRouter, initSentry } from './plugins';
 import { initPiniaPlugins, pinia } from './stores';
 import { queryClient } from './queries';
 

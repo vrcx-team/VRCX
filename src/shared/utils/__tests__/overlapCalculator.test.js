@@ -89,9 +89,7 @@ describe('buildSessionsFromEvents', () => {
     });
 
     test('does not close session if no Offline follows', () => {
-        const events = [
-            { created_at: utc('2025-01-06T10:00:00Z'), type: 'Online' }
-        ];
+        const events = [{ created_at: utc('2025-01-06T10:00:00Z'), type: 'Online' }];
         const result = buildSessionsFromEvents(events);
         expect(result).toEqual([]);
     });

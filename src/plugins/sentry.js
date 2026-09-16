@@ -30,11 +30,7 @@ export async function initSentry(app) {
             }
         });
         if (response.status !== 200) {
-            console.error(
-                'Failed to get Sentry DSN:',
-                response.status,
-                response.data
-            );
+            console.error('Failed to get Sentry DSN:', response.status, response.data);
             return;
         }
         const dsn = atob(response.data);
@@ -57,24 +53,14 @@ export async function initSentry(app) {
                         error.message.includes('500') ||
                         error.message.includes('503') ||
                         error.message.includes('No such host is known') ||
-                        error.message.includes(
-                            'The SSL connection could not be established'
-                        ) ||
+                        error.message.includes('The SSL connection could not be established') ||
                         error.message.includes('A connection attempt failed') ||
-                        error.message.includes(
-                            'no data of the requested type was found'
-                        ) ||
-                        error.message.includes(
-                            'An error occurred while sending the request'
-                        ) ||
+                        error.message.includes('no data of the requested type was found') ||
+                        error.message.includes('An error occurred while sending the request') ||
                         error.message.includes('database or disk is full') ||
                         error.message.includes('disk I/O error') ||
-                        error.message.includes(
-                            'There is not enough space on the disk.'
-                        ) ||
-                        error.message.includes(
-                            'The requested address is not valid in its context.'
-                        )
+                        error.message.includes('There is not enough space on the disk.') ||
+                        error.message.includes('The requested address is not valid in its context.')
                     ) {
                         return null;
                     }

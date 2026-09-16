@@ -238,14 +238,10 @@
 
     getConfig();
 
-    /**
-     *
-     */
     function closeInviteDialog() {
         inviteDialog.value.visible = false;
     }
     /**
-     *
      * @param tag
      */
     function showInviteDialog(tag) {
@@ -275,7 +271,6 @@
             });
     }
     /**
-     *
      * @param location
      * @param shortName
      * @param desktop
@@ -302,7 +297,6 @@
     }
 
     /**
-     *
      * @param location
      * @param shortName
      */
@@ -311,7 +305,6 @@
     }
 
     /**
-     *
      * @param command
      * @param location
      * @param shortName
@@ -326,7 +319,6 @@
         }, 500);
     }
     /**
-     *
      * @param location
      * @param shortName
      */
@@ -335,7 +327,6 @@
         isVisible.value = false;
     }
     /**
-     *
      * @param location
      * @param shortName
      */
@@ -356,15 +347,9 @@
             });
     }
 
-    /**
-     *
-     */
     function getConfig() {
         configRepository.getBool('launchAsDesktop').then((value) => (launchDialog.value.desktop = value));
     }
-    /**
-     *
-     */
     async function initLaunchDialog() {
         const { tag, shortName } = launchDialogData.value;
         if (!isRealInstance(tag)) {
@@ -410,7 +395,6 @@
         }
     }
     /**
-     *
      * @param input
      */
     async function copyInstanceMessage(input) {

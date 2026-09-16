@@ -48,12 +48,7 @@ vi.mock('../../../../composables/useRecentActions', () => ({
 
 // Import mocks after vi.mock
 const { copyToClipboard } = await import('../../../../shared/utils');
-const {
-    favoriteRequest,
-    friendRequest,
-    playerModerationRequest,
-    miscRequest
-} = await import('../../../../api');
+const { favoriteRequest, friendRequest, playerModerationRequest, miscRequest } = await import('../../../../api');
 const { database } = await import('../../../../services/database');
 
 function createMockUserDialog() {
@@ -90,9 +85,7 @@ function createMockDeps(overrides = {}) {
             confirm: vi.fn(() => Promise.resolve({ ok: true }))
         },
         currentUser: ref({ id: 'usr_current', isBoopingEnabled: true }),
-        cachedUsers: new Map([
-            ['usr_test123', { id: 'usr_test123', displayName: 'TestUser' }]
-        ]),
+        cachedUsers: new Map([['usr_test123', { id: 'usr_test123', displayName: 'TestUser' }]]),
         friendLogTable: ref({ data: [] }),
         lastLocation: ref({ location: 'wrld_test~123' }),
         lastLocationDestination: ref('wrld_dest~456'),
@@ -134,29 +127,20 @@ describe('useUserDialogCommands', () => {
     describe('userDialogCommand — direct commands', () => {
         it('should not execute when dialog is not visible', () => {
             userDialog.value.visible = false;
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Refresh');
             expect(deps.showUserDialog).not.toHaveBeenCalled();
         });
 
         it('Refresh: should reset id and reopen dialog', () => {
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Refresh');
             expect(userDialog.value.id).toBe('');
             expect(deps.showUserDialog).toHaveBeenCalledWith('usr_test123');
         });
 
         it('Share: should copy user URL', () => {
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Share');
             expect(copyToClipboard).toHaveBeenCalledWith(
                 'https://vrchat.com/home/user/usr_test123',
@@ -165,22 +149,13 @@ describe('useUserDialogCommands', () => {
         });
 
         it('Add Favorite: should call showFavoriteDialog', () => {
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Add Favorite');
-            expect(deps.showFavoriteDialog).toHaveBeenCalledWith(
-                'friend',
-                'usr_test123'
-            );
+            expect(deps.showFavoriteDialog).toHaveBeenCalledWith('friend', 'usr_test123');
         });
 
         it('Show Avatar Author: should call showAvatarAuthorDialog', () => {
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Show Avatar Author');
             expect(deps.showAvatarAuthorDialog).toHaveBeenCalledWith(
                 'usr_test123',
@@ -190,72 +165,48 @@ describe('useUserDialogCommands', () => {
         });
 
         it('Show Fallback Avatar Details: should call showAvatarDialog with fallback', () => {
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Show Fallback Avatar Details');
             expect(deps.showAvatarDialog).toHaveBeenCalledWith('avtr_fallback');
         });
 
         it('Show Fallback Avatar Details: should toast error when no fallback', () => {
             userDialog.value.ref.fallbackAvatar = null;
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Show Fallback Avatar Details');
-            expect(deps.toast.error).toHaveBeenCalledWith(
-                'message.user.no_fallback_avatar'
-            );
+            expect(deps.toast.error).toHaveBeenCalledWith('message.user.no_fallback_avatar');
         });
 
         it('Send Boop: should call showSendBoopDialog', () => {
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Send Boop');
             expect(deps.showSendBoopDialog).toHaveBeenCalledWith('usr_test123');
         });
 
         it('Group Moderation: should call showModerateGroupDialog', () => {
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Group Moderation');
-            expect(deps.showModerateGroupDialog).toHaveBeenCalledWith(
-                'usr_test123'
-            );
+            expect(deps.showModerateGroupDialog).toHaveBeenCalledWith('usr_test123');
         });
 
         it('Manage Gallery: should hide dialog and show gallery', () => {
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Manage Gallery');
             expect(userDialog.value.visible).toBe(false);
             expect(deps.showGalleryPage).toHaveBeenCalled();
         });
 
         it('Previous Instances: should call instanceStore', () => {
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Previous Instances');
-            expect(
-                deps.instanceStore.showPreviousInstancesListDialog
-            ).toHaveBeenCalledWith('user', userDialog.value.ref);
+            expect(deps.instanceStore.showPreviousInstancesListDialog).toHaveBeenCalledWith(
+                'user',
+                userDialog.value.ref
+            );
         });
 
         it('Invite To Group: should set invite group dialog state', () => {
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Invite To Group');
             expect(deps.inviteGroupDialog.value.groupId).toBe('');
             expect(deps.inviteGroupDialog.value.userId).toBe('usr_test123');
@@ -266,28 +217,21 @@ describe('useUserDialogCommands', () => {
     describe('userDialogCommand — string callback commands', () => {
         it('should delegate string-type commands to registered callbacks', () => {
             const showSocialStatusDialog = vi.fn();
-            const { userDialogCommand, registerCallbacks } =
-                useUserDialogCommands(userDialog, deps);
+            const { userDialogCommand, registerCallbacks } = useUserDialogCommands(userDialog, deps);
             registerCallbacks({ showSocialStatusDialog });
             userDialogCommand('Edit Social Status');
             expect(showSocialStatusDialog).toHaveBeenCalled();
         });
 
         it('should not throw when callback is not registered', () => {
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             expect(() => userDialogCommand('Edit Bio')).not.toThrow();
         });
     });
 
     describe('userDialogCommand — confirmed commands', () => {
         it('Delete Favorite: should confirm then delete', async () => {
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Delete Favorite');
             await vi.waitFor(() => {
                 expect(deps.modalStore.confirm).toHaveBeenCalled();
@@ -300,13 +244,8 @@ describe('useUserDialogCommands', () => {
         });
 
         it('confirmed command should not execute when user cancels', async () => {
-            deps.modalStore.confirm = vi.fn(() =>
-                Promise.resolve({ ok: false })
-            );
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            deps.modalStore.confirm = vi.fn(() => Promise.resolve({ ok: false }));
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Delete Favorite');
             await vi.waitFor(() => {
                 expect(deps.modalStore.confirm).toHaveBeenCalled();
@@ -319,10 +258,7 @@ describe('useUserDialogCommands', () => {
                 params: { userId: 'usr_test123' },
                 json: { success: true }
             });
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Send Friend Request');
             await vi.waitFor(() => {
                 expect(friendRequest.sendFriendRequest).toHaveBeenCalledWith({
@@ -336,10 +272,7 @@ describe('useUserDialogCommands', () => {
                 params: { userId: 'usr_test123' },
                 json: {}
             });
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Cancel Friend Request');
             await vi.waitFor(() => {
                 expect(friendRequest.cancelFriendRequest).toHaveBeenCalledWith({
@@ -356,15 +289,10 @@ describe('useUserDialogCommands', () => {
                     type: 'block'
                 }
             });
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Moderation Block');
             await vi.waitFor(() => {
-                expect(
-                    playerModerationRequest.sendPlayerModeration
-                ).toHaveBeenCalledWith({
+                expect(playerModerationRequest.sendPlayerModeration).toHaveBeenCalledWith({
                     moderated: 'usr_test123',
                     type: 'block'
                 });
@@ -372,18 +300,11 @@ describe('useUserDialogCommands', () => {
         });
 
         it('Moderation Unblock: should confirm then delete moderation', async () => {
-            playerModerationRequest.deletePlayerModeration.mockResolvedValue(
-                {}
-            );
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            playerModerationRequest.deletePlayerModeration.mockResolvedValue({});
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Moderation Unblock');
             await vi.waitFor(() => {
-                expect(
-                    playerModerationRequest.deletePlayerModeration
-                ).toHaveBeenCalledWith({
+                expect(playerModerationRequest.deletePlayerModeration).toHaveBeenCalledWith({
                     moderated: 'usr_test123',
                     type: 'block'
                 });
@@ -391,10 +312,7 @@ describe('useUserDialogCommands', () => {
         });
 
         it('Report Hacking: should confirm then report', async () => {
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Report Hacking');
             await vi.waitFor(() => {
                 expect(miscRequest.reportUser).toHaveBeenCalledWith({
@@ -408,10 +326,7 @@ describe('useUserDialogCommands', () => {
 
         it('Unfriend: should confirm then delete friend', async () => {
             friendRequest.deleteFriend.mockResolvedValue({});
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Unfriend');
             await vi.waitFor(() => {
                 expect(friendRequest.deleteFriend).toHaveBeenCalledWith(
@@ -424,17 +339,14 @@ describe('useUserDialogCommands', () => {
 
     describe('invite dialog state', () => {
         it('Request Invite Message: should open send invite request dialog', () => {
-            const {
-                userDialogCommand,
-                sendInviteRequestDialogVisible,
-                sendInviteDialog
-            } = useUserDialogCommands(userDialog, deps);
+            const { userDialogCommand, sendInviteRequestDialogVisible, sendInviteDialog } = useUserDialogCommands(
+                userDialog,
+                deps
+            );
             userDialogCommand('Request Invite Message');
             expect(sendInviteRequestDialogVisible.value).toBe(true);
             expect(sendInviteDialog.value.userId).toBe('usr_test123');
-            expect(deps.refreshInviteMessageTableData).toHaveBeenCalledWith(
-                'request'
-            );
+            expect(deps.refreshInviteMessageTableData).toHaveBeenCalledWith('request');
             expect(deps.clearInviteImageUpload).toHaveBeenCalled();
         });
     });
@@ -445,10 +357,7 @@ describe('useUserDialogCommands', () => {
                 params: { userId: 'usr_test123' },
                 json: { success: true }
             });
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Send Friend Request');
             await vi.waitFor(() => {
                 expect(database.addFriendLogHistory).toHaveBeenCalled();
@@ -461,10 +370,7 @@ describe('useUserDialogCommands', () => {
                 params: { userId: 'usr_test123' },
                 json: { success: false }
             });
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Send Friend Request');
             await vi.waitFor(() => {
                 expect(database.addFriendLogHistory).toHaveBeenCalled();
@@ -487,10 +393,7 @@ describe('useUserDialogCommands', () => {
                     type: 'block'
                 }
             });
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Moderation Block');
             await vi.waitFor(() => {
                 expect(userDialog.value.isBlock).toBe(true);
@@ -510,10 +413,7 @@ describe('useUserDialogCommands', () => {
                     type: 'mute'
                 }
             });
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Moderation Mute');
             await vi.waitFor(() => {
                 expect(userDialog.value.isMute).toBe(true);
@@ -523,10 +423,7 @@ describe('useUserDialogCommands', () => {
 
     describe('unknown command', () => {
         it('should do nothing for unknown commands', () => {
-            const { userDialogCommand } = useUserDialogCommands(
-                userDialog,
-                deps
-            );
+            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             expect(() => userDialogCommand('NonExistentCommand')).not.toThrow();
             expect(deps.modalStore.confirm).not.toHaveBeenCalled();
         });

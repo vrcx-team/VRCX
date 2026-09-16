@@ -1,11 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import {
-    displayLocation,
-    parseLocation,
-    resolveRegion,
-    translateAccessType
-} from '../locationParser';
+import { displayLocation, parseLocation, resolveRegion, translateAccessType } from '../locationParser';
 
 // ─── parseLocation ───────────────────────────────────────────────────
 
@@ -50,9 +45,7 @@ describe('parseLocation', () => {
     });
 
     test('parses friends instance', () => {
-        const ctx = parseLocation(
-            'wrld_abc:12345~friends(usr_owner)~region(eu)'
-        );
+        const ctx = parseLocation('wrld_abc:12345~friends(usr_owner)~region(eu)');
         expect(ctx.accessType).toBe('friends');
         expect(ctx.friendsId).toBe('usr_owner');
         expect(ctx.userId).toBe('usr_owner');
@@ -73,17 +66,13 @@ describe('parseLocation', () => {
     });
 
     test('parses invite+ instance', () => {
-        const ctx = parseLocation(
-            'wrld_abc:12345~private(usr_owner)~canRequestInvite'
-        );
+        const ctx = parseLocation('wrld_abc:12345~private(usr_owner)~canRequestInvite');
         expect(ctx.accessType).toBe('invite+');
         expect(ctx.canRequestInvite).toBe(true);
     });
 
     test('parses group instance', () => {
-        const ctx = parseLocation(
-            'wrld_abc:12345~group(grp_xyz)~groupAccessType(public)'
-        );
+        const ctx = parseLocation('wrld_abc:12345~group(grp_xyz)~groupAccessType(public)');
         expect(ctx.accessType).toBe('group');
         expect(ctx.groupId).toBe('grp_xyz');
         expect(ctx.groupAccessType).toBe('public');
@@ -91,9 +80,7 @@ describe('parseLocation', () => {
     });
 
     test('parses group plus access type', () => {
-        const ctx = parseLocation(
-            'wrld_abc:12345~group(grp_xyz)~groupAccessType(plus)'
-        );
+        const ctx = parseLocation('wrld_abc:12345~group(grp_xyz)~groupAccessType(plus)');
         expect(ctx.accessTypeName).toBe('groupPlus');
     });
 
@@ -104,9 +91,7 @@ describe('parseLocation', () => {
     });
 
     test('extracts shortName from URL', () => {
-        const ctx = parseLocation(
-            'wrld_abc:12345~friends(usr_a)&shortName=myShort'
-        );
+        const ctx = parseLocation('wrld_abc:12345~friends(usr_a)&shortName=myShort');
         expect(ctx.shortName).toBe('myShort');
         expect(ctx.accessType).toBe('friends');
     });
@@ -148,19 +133,12 @@ describe('displayLocation', () => {
     });
 
     test('shows world name with access type', () => {
-        const result = displayLocation(
-            'wrld_abc:12345~friends(usr_a)',
-            'My World'
-        );
+        const result = displayLocation('wrld_abc:12345~friends(usr_a)', 'My World');
         expect(result).toBe('My World friends');
     });
 
     test('includes group name when provided', () => {
-        const result = displayLocation(
-            'wrld_abc:12345~group(grp_xyz)~groupAccessType(public)',
-            'My World',
-            'My Group'
-        );
+        const result = displayLocation('wrld_abc:12345~group(grp_xyz)~groupAccessType(public)', 'My World', 'My Group');
         expect(result).toBe('My World groupPublic(My Group)');
     });
 
@@ -177,9 +155,7 @@ describe('resolveRegion', () => {
     });
 
     test('returns region from tag', () => {
-        expect(resolveRegion(parseLocation('wrld_abc:12345~region(eu)'))).toBe(
-            'eu'
-        );
+        expect(resolveRegion(parseLocation('wrld_abc:12345~region(eu)'))).toBe('eu');
     });
 
     test('defaults to us when instance has no region', () => {
@@ -205,9 +181,7 @@ describe('translateAccessType', () => {
     };
 
     test('translates simple access type', () => {
-        expect(translateAccessType('friends', t, keyMap)).toBe(
-            'translated_access.friends'
-        );
+        expect(translateAccessType('friends', t, keyMap)).toBe('translated_access.friends');
     });
 
     test('translates groupPublic with group prefix', () => {
@@ -217,9 +191,7 @@ describe('translateAccessType', () => {
     });
 
     test('translates groupPlus with group prefix', () => {
-        expect(translateAccessType('groupPlus', t, keyMap)).toBe(
-            'translated_access.group translated_access.groupPlus'
-        );
+        expect(translateAccessType('groupPlus', t, keyMap)).toBe('translated_access.group translated_access.groupPlus');
     });
 
     test('returns raw name when not in keyMap', () => {

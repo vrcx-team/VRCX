@@ -42,10 +42,7 @@ export function buildGroupItemRow(ref, index, groupId, isAgeGatedVisible) {
         userCount: ref?.instance?.userCount ?? 0,
         capacity: ref?.instance?.capacity ?? 0,
         location: ref?.instance?.location ?? '',
-        isVisible: Boolean(
-            isAgeGatedVisible ||
-            !(ref?.ageGate || ref?.location?.includes('~ageGate'))
-        )
+        isVisible: Boolean(isAgeGatedVisible || !(ref?.ageGate || ref?.location?.includes('~ageGate')))
     };
 }
 

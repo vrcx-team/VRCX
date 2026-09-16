@@ -20,9 +20,6 @@
 
     const username = ref(props.userid);
 
-    /**
-     *
-     */
     async function parse() {
         username.value = props.userid;
         if (props.hint) {
@@ -35,9 +32,6 @@
         }
     }
 
-    /**
-     *
-     */
     function openUserDialog() {
         showUserDialog(props.userid);
     }

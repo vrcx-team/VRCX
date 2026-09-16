@@ -1,13 +1,12 @@
 import { localeIncludes } from './base/string';
-import removeConfusables, {
-    removeWhitespace
-} from '../../services/confusables';
+import removeConfusables, { removeWhitespace } from '../../services/confusables';
 
 /**
  * Tests whether a name matches a query using locale-aware comparison.
  * Handles confusable-character normalization and whitespace stripping.
- * @param {string} name     - The display name to test
- * @param {string} query    - The raw user query (may contain whitespace)
+ *
+ * @param {string} name - The display name to test
+ * @param {string} query - The raw user query (may contain whitespace)
  * @param {Intl.Collator} comparer - Locale collator for comparison
  * @returns {boolean}
  */
@@ -29,6 +28,7 @@ export function matchName(name, query, comparer) {
 
 /**
  * Check whether a query starts the name (for prioritizing prefix matches).
+ *
  * @param {string} name
  * @param {string} query
  * @param {Intl.Collator} comparer
@@ -42,18 +42,17 @@ export function isPrefixMatch(name, query, comparer) {
     if (!cleanQuery) {
         return false;
     }
-    return (
-        comparer.compare(name.substring(0, cleanQuery.length), cleanQuery) === 0
-    );
+    return comparer.compare(name.substring(0, cleanQuery.length), cleanQuery) === 0;
 }
 
 /**
  * Search friends from the friends Map.
+ *
  * @param {string} query
- * @param {Map} friends        - friendStore.friends Map
+ * @param {Map} friends - FriendStore.friends Map
  * @param {Intl.Collator} comparer
  * @param {number} [limit]
- * @returns {Array<{id: string, name: string, type: string, imageUrl: string, ref: object}>}
+ * @returns {{ id: string; name: string; type: string; imageUrl: string; ref: object }[]}
  */
 export function searchFriends(query, friends, comparer, limit = 10) {
     if (!query || !friends) {
@@ -104,20 +103,15 @@ export function searchFriends(query, friends, comparer, limit = 10) {
 
 /**
  * Search avatars from a Map (cachedAvatars or favorite avatars).
+ *
  * @param {string} query
  * @param {Map} avatarMap
  * @param {Intl.Collator} comparer
- * @param {string|null} [authorId] - If provided, only match avatars by this author
+ * @param {string | null} [authorId] - If provided, only match avatars by this author
  * @param {number} [limit]
- * @returns {Array<{id: string, name: string, type: string, imageUrl: string}>}
+ * @returns {{ id: string; name: string; type: string; imageUrl: string }[]}
  */
-export function searchAvatars(
-    query,
-    avatarMap,
-    comparer,
-    authorId = null,
-    limit = 10
-) {
+export function searchAvatars(query, avatarMap, comparer, authorId = null, limit = 10) {
     if (!query || !avatarMap) {
         return [];
     }
@@ -153,20 +147,15 @@ export function searchAvatars(
 
 /**
  * Search worlds from a Map (cachedWorlds or favorite worlds).
+ *
  * @param {string} query
  * @param {Map} worldMap
  * @param {Intl.Collator} comparer
- * @param {string|null} [ownerId] - If provided, only match worlds owned by this user
+ * @param {string | null} [ownerId] - If provided, only match worlds owned by this user
  * @param {number} [limit]
- * @returns {Array<{id: string, name: string, type: string, imageUrl: string}>}
+ * @returns {{ id: string; name: string; type: string; imageUrl: string }[]}
  */
-export function searchWorlds(
-    query,
-    worldMap,
-    comparer,
-    ownerId = null,
-    limit = 10
-) {
+export function searchWorlds(query, worldMap, comparer, ownerId = null, limit = 10) {
     if (!query || !worldMap) {
         return [];
     }
@@ -202,20 +191,15 @@ export function searchWorlds(
 
 /**
  * Search groups from a Map (currentUserGroups).
+ *
  * @param {string} query
  * @param {Map} groupMap
  * @param {Intl.Collator} comparer
- * @param {string|null} [ownerId] - If provided, only match groups owned by this user
+ * @param {string | null} [ownerId] - If provided, only match groups owned by this user
  * @param {number} [limit]
- * @returns {Array<{id: string, name: string, type: string, imageUrl: string}>}
+ * @returns {{ id: string; name: string; type: string; imageUrl: string }[]}
  */
-export function searchGroups(
-    query,
-    groupMap,
-    comparer,
-    ownerId = null,
-    limit = 10
-) {
+export function searchGroups(query, groupMap, comparer, ownerId = null, limit = 10) {
     if (!query || !groupMap) {
         return [];
     }
@@ -251,18 +235,14 @@ export function searchGroups(
 
 /**
  * Search favorite avatars from the favoriteStore array.
+ *
  * @param {string} query
- * @param {Array} favoriteAvatars - favoriteStore.favoriteAvatars array of { name, ref }
+ * @param {Array} favoriteAvatars - FavoriteStore.favoriteAvatars array of { name, ref }
  * @param {Intl.Collator} comparer
  * @param {number} [limit]
- * @returns {Array<{id: string, name: string, type: string, imageUrl: string}>}
+ * @returns {{ id: string; name: string; type: string; imageUrl: string }[]}
  */
-export function searchFavoriteAvatars(
-    query,
-    favoriteAvatars,
-    comparer,
-    limit = 10
-) {
+export function searchFavoriteAvatars(query, favoriteAvatars, comparer, limit = 10) {
     if (!query || !favoriteAvatars) {
         return [];
     }
@@ -295,18 +275,14 @@ export function searchFavoriteAvatars(
 
 /**
  * Search favorite worlds from the favoriteStore array.
+ *
  * @param {string} query
- * @param {Array} favoriteWorlds - favoriteStore.favoriteWorlds array of { name, ref }
+ * @param {Array} favoriteWorlds - FavoriteStore.favoriteWorlds array of { name, ref }
  * @param {Intl.Collator} comparer
  * @param {number} [limit]
- * @returns {Array<{id: string, name: string, type: string, imageUrl: string}>}
+ * @returns {{ id: string; name: string; type: string; imageUrl: string }[]}
  */
-export function searchFavoriteWorlds(
-    query,
-    favoriteWorlds,
-    comparer,
-    limit = 10
-) {
+export function searchFavoriteWorlds(query, favoriteWorlds, comparer, limit = 10) {
     if (!query || !favoriteWorlds) {
         return [];
     }

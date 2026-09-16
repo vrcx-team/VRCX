@@ -64,8 +64,7 @@ vi.mock('@/components/ui/avatar', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="delete-button" @click="$emit(\'click\', $event)"><slot /></button>'
+        template: '<button data-testid="delete-button" @click="$emit(\'click\', $event)"><slot /></button>'
     }
 }));
 
@@ -78,8 +77,7 @@ vi.mock('@/components/ui/spinner', () => ({
 vi.mock('@/components/Location.vue', () => ({
     default: {
         props: ['location', 'traveling', 'link'],
-        template:
-            '<span data-testid="location">{{ location }}|{{ traveling }}</span>'
+        template: '<span data-testid="location">{{ location }}|{{ traveling }}</span>'
     }
 }));
 

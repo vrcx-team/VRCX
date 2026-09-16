@@ -13,8 +13,7 @@ const APP_FONT_CONFIG = Object.freeze({
     },
     geist: {
         cssName: "'Geist'",
-        cssImport:
-            "@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');"
+        cssImport: "@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');"
     },
     nunito_sans: {
         cssName: "'Nunito Sans'",
@@ -33,8 +32,7 @@ const APP_FONT_CONFIG = Object.freeze({
     },
     fantasque_sans_mono: {
         cssName: "'Fantasque Sans Mono'",
-        cssImport:
-            "@import url('https://fonts.cdnfonts.com/css/fantasque-sans-mono');"
+        cssImport: "@import url('https://fonts.cdnfonts.com/css/fantasque-sans-mono');"
     },
     system_ui: {
         cssName: 'system-ui',

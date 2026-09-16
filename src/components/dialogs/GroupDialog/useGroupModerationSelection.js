@@ -6,40 +6,26 @@ export function useGroupModerationSelection(groupMemberModeration) {
     function setSelectedUsers(userId, user) {
         if (!user) return;
         groupMemberModeration.selectedUsers[userId] = user;
-        groupMemberModeration.selectedUsersArray = Object.values(
-            groupMemberModeration.selectedUsers
-        );
+        groupMemberModeration.selectedUsersArray = Object.values(groupMemberModeration.selectedUsers);
     }
 
     /**
-     * @param {string|null} userId
+     * @param {string | null} userId
      * @param {boolean} isAll
      */
     function deselectedUsers(userId, isAll = false) {
         if (isAll) {
             for (const id in groupMemberModeration.selectedUsers) {
-                if (
-                    Object.prototype.hasOwnProperty.call(
-                        groupMemberModeration.selectedUsers,
-                        id
-                    )
-                ) {
+                if (Object.prototype.hasOwnProperty.call(groupMemberModeration.selectedUsers, id)) {
                     delete groupMemberModeration.selectedUsers[id];
                 }
             }
         } else {
-            if (
-                Object.prototype.hasOwnProperty.call(
-                    groupMemberModeration.selectedUsers,
-                    userId
-                )
-            ) {
+            if (Object.prototype.hasOwnProperty.call(groupMemberModeration.selectedUsers, userId)) {
                 delete groupMemberModeration.selectedUsers[userId];
             }
         }
-        groupMemberModeration.selectedUsersArray = Object.values(
-            groupMemberModeration.selectedUsers
-        );
+        groupMemberModeration.selectedUsersArray = Object.values(groupMemberModeration.selectedUsers);
     }
 
     /**
@@ -48,17 +34,15 @@ export function useGroupModerationSelection(groupMemberModeration) {
     function onSelectionChange(row) {
         if (row.$selected && !groupMemberModeration.selectedUsers[row.userId]) {
             setSelectedUsers(row.userId, row);
-        } else if (
-            !row.$selected &&
-            groupMemberModeration.selectedUsers[row.userId]
-        ) {
+        } else if (!row.$selected && groupMemberModeration.selectedUsers[row.userId]) {
             deselectedUsers(row.userId);
         }
     }
 
     /**
      * Deselect a user across all tables.
-     * @param {string} [userId] - if omitted, deselects all rows in all tables
+     *
+     * @param {string} [userId] - If omitted, deselects all rows in all tables
      */
     function deselectInTables(userId) {
         const allTables = [
@@ -93,9 +77,6 @@ export function useGroupModerationSelection(groupMemberModeration) {
         deselectInTables(user.userId);
     }
 
-    /**
-     *
-     */
     function clearAllSelected() {
         deselectedUsers(null, true);
         deselectInTables();
@@ -103,6 +84,7 @@ export function useGroupModerationSelection(groupMemberModeration) {
 
     /**
      * Select all rows in a given table data array.
+     *
      * @param {Array} tableData
      */
     function selectAll(tableData) {

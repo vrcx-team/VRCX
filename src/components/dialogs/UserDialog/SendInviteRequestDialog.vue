@@ -115,7 +115,6 @@
     });
 
     /**
-     *
      * @param row
      */
     function handleInviteRequestMessageRowClick(row) {
@@ -123,7 +122,6 @@
     }
 
     /**
-     *
      * @param row
      */
     function showSendInviteConfirmDialog(row) {
@@ -132,7 +130,6 @@
     }
 
     /**
-     *
      * @param row
      */
     function showEditAndSendInviteDialog(row) {
@@ -142,16 +139,10 @@
             visible: true
         };
     }
-    /**
-     *
-     */
     function cancelSendInviteRequest() {
         emit('update:sendInviteRequestDialogVisible', false);
     }
 
-    /**
-     *
-     */
     function closeInviteDialog() {
         cancelSendInviteRequest();
     }

@@ -219,9 +219,6 @@
         markAllAsSeen();
     });
 
-    /**
-     *
-     */
     function showNotyFeedFiltersDialog() {
         feedFiltersDialogMode.value = 'noty';
     }
