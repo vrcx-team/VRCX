@@ -43,7 +43,7 @@ import { useFriendStore } from '../friend';
 import { handleFriendAdd } from '../../coordinators/friendRelationshipCoordinator';
 import { useGameStore } from '../game';
 import { useGeneralSettingsStore } from '../settings/general';
-import { useGroupStore } from '../group';
+
 import { showGroupDialog } from '../../coordinators/groupCoordinator';
 import { showUserDialog } from '../../coordinators/userCoordinator';
 import { useInstanceStore } from '../instance';
@@ -500,7 +500,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                             (err?.message || '').includes('429')
                     }
                 );
-            } catch (err) {
+            } catch {
                 console.warn('Failed to mark notification as seen:', id);
                 if (version >= 2) {
                     handleNotificationV2Hide(id);

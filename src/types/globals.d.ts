@@ -250,8 +250,8 @@ declare global {
         IsGameRunning(): Promise<boolean>;
         IsSteamVRRunning(): Promise<boolean>;
         QuitGame(): Promise<number>;
-        StartGame(arguments: string): Promise<boolean>;
-        StartGameFromPath(path: string, arguments: string): Promise<boolean>;
+        StartGame(args: string): Promise<boolean>;
+        StartGameFromPath(path: string, args: string): Promise<boolean>;
 
         // Registry
         GetVRChatRegistryKey(key: string): Promise<any>;

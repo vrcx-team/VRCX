@@ -30,7 +30,6 @@ import {
  * @param deps.toast
  * @param deps.modalStore
  * @param deps.userDialog
- * @param deps.currentUser
  * @param deps.cachedAvatars
  * @param deps.cachedAvatarModerations
  * @param deps.showAvatarDialog
@@ -48,7 +47,6 @@ export function useAvatarDialogCommands(
         toast,
         modalStore,
         userDialog,
-        currentUser,
         cachedAvatars,
         cachedAvatarModerations,
         showAvatarDialog,

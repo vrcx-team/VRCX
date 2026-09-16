@@ -8,7 +8,6 @@
     "i18n-ally.pathMatcher": "{locale}.json",
     "i18n-ally.sourceLanguage": "en",
     "i18n-ally.indent": 4,
-    "oxc.fmt.configPath": ".oxfmtrc.json",
     "editor.formatOnSave": true,
     "omnisharp.useModernNet": false,
     "[javascript]": {
@@ -40,4 +39,3 @@
     },
     "eslint.validate": ["javascript", "vue", "html"]
 }
-

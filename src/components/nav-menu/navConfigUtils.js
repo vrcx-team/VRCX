@@ -46,10 +46,19 @@ export function buildNavDefinitionsForLayout(
     return [...visibleBaseDefinitions, ...visibleDashboardDefinitions];
 }
 
+/**
+ * 
+ * @param {*} repository 
+ * @param {*} fallbackLayout 
+ * @param {object} config 
+ * @param {string} config.configKey
+ * @param {(key: string) => boolean} config.filterHiddenKey
+ * @returns {Promise<{ layout: any, hiddenKeys: any[] }>}
+ */
 export async function loadStoredNavConfig(
     repository,
     fallbackLayout,
-    { configKey = NAV_CONFIG_KEY, filterHiddenKey = () => true } = {}
+    { configKey = NAV_CONFIG_KEY, filterHiddenKey = (_key) => true }
 ) {
     let layout = fallbackLayout;
     let hiddenKeys = [];

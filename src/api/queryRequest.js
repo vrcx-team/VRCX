@@ -6,13 +6,13 @@ import {
 
 import avatarRequest from './avatar';
 import favoriteRequest from './favorite';
-import friendRequest from './friend';
+
 import groupRequest from './group';
 import inventoryRequest from './inventory';
 import miscRequest from './misc';
 import userRequest from './user';
-import vrcPlusIconRequest from './vrcPlusIcon';
-import vrcPlusImageRequest from './vrcPlusImage';
+
+
 import worldRequest from './world';
 
 const registry = Object.freeze({

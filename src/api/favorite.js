@@ -1,4 +1,4 @@
-import { useFavoriteStore, useUserStore } from '../stores';
+import { useUserStore } from '../stores';
 import {
     handleFavoriteAdd,
     handleFavoriteDelete,

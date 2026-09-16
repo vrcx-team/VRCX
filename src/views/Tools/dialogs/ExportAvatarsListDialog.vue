@@ -94,6 +94,7 @@
                 }
                 const lines = ['AvatarID,AvatarName'];
                 const _ = function (str) {
+                    // oxlint-disable-next-line no-control-regex
                     if (/[\x00-\x1f,"]/.test(str) === true) {
                         return `"${str.replace(/"/g, '""')}"`;
                     }

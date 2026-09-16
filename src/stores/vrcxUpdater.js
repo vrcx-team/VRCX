@@ -6,7 +6,6 @@ import { useI18n } from 'vue-i18n';
 import { logWebRequest } from '../services/appConfig';
 import { branches } from '../shared/constants';
 import {
-    getLatestWhatsNewRelease,
     getWhatsNewRelease,
     normalizeReleaseVersion
 } from '../shared/constants/whatsNewReleases';

@@ -1,4 +1,4 @@
-import { AppDebug, logWebRequest, withQueryLog } from '../services/appConfig';
+import { logWebRequest, withQueryLog } from '../services/appConfig';
 import { queryClient } from './client';
 import { queryKeys } from './keys';
 import { toQueryOptions } from './policies';
