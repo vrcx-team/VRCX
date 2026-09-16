@@ -299,6 +299,7 @@ export const useUserStore = defineStore('User', () => {
         bannerUrl: '',
         bannerType: '',
         userIcon: '',
+        iconUrl: '',
         themes: [],
         themeId: '',
         themeName: '',
@@ -311,7 +312,7 @@ export const useUserStore = defineStore('User', () => {
         backgroundGradientTop: '',
         nameplateEffect: '',
         profileEffect: '',
-        iconFrame: '',
+        iconFrame: ''
     });
 
     const currentTravelers = reactive(new Map());
@@ -373,11 +374,7 @@ export const useUserStore = defineStore('User', () => {
         addCachedUserDisplayNameEntry(ref.displayName, ref.id);
     }
 
-    function setCachedUser(
-        ref,
-        previousDisplayName = '',
-        { skipIndex = false } = {}
-    ) {
+    function setCachedUser(ref, previousDisplayName = '', { skipIndex = false } = {}) {
         if (!ref?.id) {
             return;
         }
@@ -408,9 +405,7 @@ export const useUserStore = defineStore('User', () => {
         }
     }
 
-    const isLocalUserVrcPlusSupporter = computed(
-        () => currentUser.value.$isVRCPlus || AppDebug.debugVrcPlus
-    );
+    const isLocalUserVrcPlusSupporter = computed(() => currentUser.value.$isVRCPlus || AppDebug.debugVrcPlus);
 
     watch(
         () => watchState.isLoggedIn,
@@ -531,10 +526,7 @@ export const useUserStore = defineStore('User', () => {
             }
         }
         // dont use gamelog when using api location
-        if (
-            locationStore.lastLocation.location === L.tag &&
-            playersInInstance.size > 0
-        ) {
+        if (locationStore.lastLocation.location === L.tag && playersInInstance.size > 0) {
             const friendsInInstance = locationStore.lastLocation.friendList;
             for (friend of friendsInInstance.values()) {
                 // if friend isn't in instance add them
@@ -555,17 +547,12 @@ export const useUserStore = defineStore('User', () => {
                 if (typeof friend.ref === 'undefined') {
                     continue;
                 }
-                if (
-                    friend.ref.location === locationStore.lastLocation.location
-                ) {
+                if (friend.ref.location === locationStore.lastLocation.location) {
                     // don't add friends to currentUser gameLog instance (except when traveling)
                     continue;
                 }
                 if (friend.ref.$location.tag === L.tag) {
-                    if (
-                        friend.state !== 'online' &&
-                        friend.ref.location === 'private'
-                    ) {
+                    if (friend.state !== 'online' && friend.ref.location === 'private') {
                         // don't add offline friends to private instances
                         continue;
                     }
@@ -586,12 +573,7 @@ export const useUserStore = defineStore('User', () => {
             users.sort(compareByLocationAt);
         }
         D.users = users;
-        if (
-            (L.worldId &&
-                currentLocation === L.tag &&
-                playersInInstance.size > 0) ||
-            !L.isRealInstance
-        ) {
+        if ((L.worldId && currentLocation === L.tag && playersInInstance.size > 0) || !L.isRealInstance) {
             D.instance = {
                 id: L.instanceId,
                 tag: L.tag,
@@ -641,10 +623,7 @@ export const useUserStore = defineStore('User', () => {
                         syncFriendSearchIndex(friendCtx);
                     }
                 }
-                if (
-                    !state.lastDbNoteDate ||
-                    state.lastDbNoteDate < note.createdAt
-                ) {
+                if (!state.lastDbNoteDate || state.lastDbNoteDate < note.createdAt) {
                     state.lastDbNoteDate = note.createdAt;
                 }
             }
@@ -669,16 +648,10 @@ export const useUserStore = defineStore('User', () => {
                 params.offset = i * params.n;
                 const args = await userRequest.getUserNotes(params);
                 for (const note of args.json) {
-                    if (
-                        state.lastDbNoteDate &&
-                        state.lastDbNoteDate > note.createdAt
-                    ) {
+                    if (state.lastDbNoteDate && state.lastDbNoteDate > note.createdAt) {
                         done = true;
                     }
-                    if (
-                        !state.lastDbNoteDate ||
-                        state.lastDbNoteDate < note.createdAt
-                    ) {
+                    if (!state.lastDbNoteDate || state.lastDbNoteDate < note.createdAt) {
                         state.lastDbNoteDate = note.createdAt;
                     }
                     note.note = replaceBioSymbols(note.note);
@@ -722,10 +695,7 @@ export const useUserStore = defineStore('User', () => {
      * @param newNote
      */
     async function checkNote(userId, newNote) {
-        if (
-            !state.lastNoteCheck ||
-            state.lastNoteCheck.getTime() + 5 * 60 * 1000 > Date.now()
-        ) {
+        if (!state.lastNoteCheck || state.lastNoteCheck.getTime() + 5 * 60 * 1000 > Date.now()) {
             return;
         }
         const existingNote = state.notes.get(userId);
@@ -782,11 +752,7 @@ export const useUserStore = defineStore('User', () => {
      * @param {string} travelingToLocation
      * @param {number} timestamp
      */
-    function setCurrentUserLocationState(
-        location,
-        travelingToLocation,
-        timestamp = Date.now()
-    ) {
+    function setCurrentUserLocationState(location, travelingToLocation, timestamp = Date.now()) {
         currentUser.value.$location_at = timestamp;
         currentUser.value.$travelingToTime = timestamp;
         currentUser.value.$locationTag = location;
@@ -835,6 +801,7 @@ export const useUserStore = defineStore('User', () => {
         D.bannerUrl = currentUser.value.bannerUrl;
         D.bannerType = currentUser.value.bannerType;
         D.userIcon = currentUser.value.userIcon;
+        D.iconUrl = currentUser.value.iconUrl;
 
         D.themeId = '';
         D.themes = [];
@@ -859,9 +826,7 @@ export const useUserStore = defineStore('User', () => {
 
             D.themes = ref.themes;
             D.themeId = ref.themeId;
-            const selectedTheme = ref.themes.find(
-                (theme) => theme.id === ref.themeId
-            );
+            const selectedTheme = ref.themes.find((theme) => theme.id === ref.themeId);
             D.themeName = selectedTheme?.name ?? '';
             D.themeButtonColor = ref.themeButtonColor;
             D.themeIconColor = ref.themeIconColor;
@@ -898,9 +863,7 @@ export const useUserStore = defineStore('User', () => {
      * @param {string} command
      */
     async function confirmCurrentUserToggle(command, isEnableAction) {
-        const action = isEnableAction
-            ? t('confirm.enable_action')
-            : t('confirm.disable_action');
+        const action = isEnableAction ? t('confirm.enable_action') : t('confirm.disable_action');
         const { ok } = await modalStore.confirm({
             title: t('confirm.title'),
             description: t('confirm.command_question_toggle', {
@@ -930,12 +893,7 @@ export const useUserStore = defineStore('User', () => {
     /**
      */
     async function toggleAllowBooping() {
-        if (
-            !(await confirmCurrentUserToggle(
-                t('dialog.user.info.booping'),
-                !currentUser.value.isBoopingEnabled
-            ))
-        ) {
+        if (!(await confirmCurrentUserToggle(t('dialog.user.info.booping'), !currentUser.value.isBoopingEnabled))) {
             return;
         }
         userRequest.saveCurrentUser({
@@ -955,8 +913,7 @@ export const useUserStore = defineStore('User', () => {
             return;
         }
         userRequest.saveCurrentUser({
-            hasSharedConnectionsOptOut:
-                !currentUser.value.hasSharedConnectionsOptOut
+            hasSharedConnectionsOptOut: !currentUser.value.hasSharedConnectionsOptOut
         });
     }
 
