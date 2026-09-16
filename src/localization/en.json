@@ -916,8 +916,6 @@
                     "theme_mode_pink": "Pink",
                     "theme_mode_material3": "Material 3",
                     "zoom": "Zoom",
-                    "profile_icons": "Profile Icons",
-                    "profile_icons_description": "Use profile icons when available.",
                     "vrc_profile_themes": "VRChat Profile Themes",
                     "show_instance_id": "Show Instance ID",
                     "show_status_bar": "Show Status Bar",

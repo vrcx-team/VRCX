@@ -62,7 +62,7 @@
                     <img
                         v-else
                         class="w-full h-full object-cover cursor-pointer"
-                        :src="userImage(userDialog.publicProfileRef, true, '256', true)"
+                        :src="userImage(userDialog.publicProfileRef, true, '256')"
                         @click.stop="showFullscreenImageDialog(userDialog.publicProfileRef?.iconUrl)"
                         @error="userIconError = true"
                         loading="lazy" />
