@@ -2,6 +2,7 @@ import { reactive } from 'vue';
 import { toast } from 'vue-sonner';
 
 import {
+    useFriendStore,
     useGalleryStore,
     useGroupStore,
     useInstanceStore,
