@@ -1,11 +1,11 @@
-using NLog;
-using NLog.Targets;
 using System;
 using System.Data.SQLite;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
 using System.Threading;
+using NLog;
+using NLog.Targets;
 #if !LINUX
 using System.Windows.Forms;
 using VRCX.Overlay;
@@ -263,7 +263,7 @@ namespace VRCX
         }
 #else
         public static VRCXVRInterface VRCXVRInstance;
-        
+
         public static void PreInit(string version, string[] args)
         {
             Version = version;
@@ -282,7 +282,7 @@ namespace VRCX
                 logger.Info("Launch Command: {0}", StartupArgs.LaunchArguments.LaunchCommand);
 
             AppApiInstance = new AppApiElectron();
-            
+
             VRCXVRInstance = new VRCXVRElectron();
             VRCXVRInstance.Init();
         }

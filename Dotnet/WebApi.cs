@@ -11,9 +11,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Cookie = System.Net.Cookie;
 using NLog;
 using SixLabors.ImageSharp;
+using Cookie = System.Net.Cookie;
 using Timer = System.Threading.Timer;
 
 #if !LINUX
