@@ -51,21 +51,13 @@ vi.mock('../../services/database', () => ({
 vi.mock('../../services/config', () => ({
     default: {
         init: vi.fn(),
-        getString: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? '{}'),
+        getString: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? '{}'),
         setString: vi.fn(),
-        getBool: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? false),
+        getBool: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? false),
         setBool: vi.fn(),
-        getInt: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? 0),
+        getInt: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? 0),
         setInt: vi.fn(),
-        getFloat: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? 0),
+        getFloat: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? 0),
         setFloat: vi.fn(),
         getObject: vi.fn().mockReturnValue(null),
         setObject: vi.fn(),
@@ -99,8 +91,7 @@ const i18n = createI18n({
 
 const stubs = {
     TooltipWrapper: {
-        template:
-            '<span class="tooltip"><slot /><slot name="content" /></span>',
+        template: '<span class="tooltip"><slot /><slot name="content" /></span>',
         props: ['content']
     }
 };
@@ -190,11 +181,7 @@ describe('AvatarInfo.vue', () => {
                 imageurl: 'https://example.com/avatar.png',
                 hintownerid: 'usr_123',
                 hintavatarname: 'Test',
-                avatartags: [
-                    'content_horror',
-                    'content_gore',
-                    'content_adult_language'
-                ]
+                avatartags: ['content_horror', 'content_gore', 'content_adult_language']
             });
             expect(wrapper.text()).toContain('horror');
             expect(wrapper.text()).toContain('gore');
@@ -216,9 +203,7 @@ describe('AvatarInfo.vue', () => {
         test('does not call showAvatarAuthorDialog when no imageurl', async () => {
             const wrapper = mountAvatarInfo({});
             await wrapper.trigger('click');
-            expect(
-                avatarCoordinatorModule.showAvatarAuthorDialog
-            ).not.toHaveBeenCalled();
+            expect(avatarCoordinatorModule.showAvatarAuthorDialog).not.toHaveBeenCalled();
         });
     });
 });

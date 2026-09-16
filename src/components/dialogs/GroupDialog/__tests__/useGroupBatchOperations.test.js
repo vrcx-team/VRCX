@@ -6,7 +6,6 @@ vi.mock('vue-sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 import { useGroupBatchOperations } from '../useGroupBatchOperations';
 
 /**
- *
  * @param overrides
  */
 function createDeps(overrides = {}) {
@@ -106,9 +105,7 @@ describe('useGroupBatchOperations', () => {
 
         test('handles errors gracefully', async () => {
             const deps = createDeps();
-            deps.groupRequest.banGroupMember
-                .mockRejectedValueOnce(new Error('fail'))
-                .mockResolvedValueOnce(undefined);
+            deps.groupRequest.banGroupMember.mockRejectedValueOnce(new Error('fail')).mockResolvedValueOnce(undefined);
             const { groupMembersBan } = useGroupBatchOperations(deps);
 
             await groupMembersBan();
@@ -119,8 +116,7 @@ describe('useGroupBatchOperations', () => {
 
         test('tracks progress during operation', async () => {
             const deps = createDeps();
-            const { groupMembersBan, progressTotal, progressCurrent } =
-                useGroupBatchOperations(deps);
+            const { groupMembersBan, progressTotal, progressCurrent } = useGroupBatchOperations(deps);
 
             expect(progressTotal.value).toBe(0);
             const p = groupMembersBan();
@@ -160,16 +156,10 @@ describe('useGroupBatchOperations', () => {
 
             await groupMembersSaveNote('Test note');
 
-            expect(deps.groupRequest.setGroupMemberProps).toHaveBeenCalledTimes(
-                2
-            );
-            expect(deps.groupRequest.setGroupMemberProps).toHaveBeenCalledWith(
-                'usr_1',
-                'grp_test',
-                {
-                    managerNotes: 'Test note'
-                }
-            );
+            expect(deps.groupRequest.setGroupMemberProps).toHaveBeenCalledTimes(2);
+            expect(deps.groupRequest.setGroupMemberProps).toHaveBeenCalledWith('usr_1', 'grp_test', {
+                managerNotes: 'Test note'
+            });
         });
     });
 
@@ -181,9 +171,7 @@ describe('useGroupBatchOperations', () => {
             await groupMembersAddRoles(['role_1', 'role_2']);
 
             // Both users already have role_1, so only role_2 gets added → 2 calls
-            expect(deps.groupRequest.addGroupMemberRole).toHaveBeenCalledTimes(
-                2
-            );
+            expect(deps.groupRequest.addGroupMemberRole).toHaveBeenCalledTimes(2);
         });
     });
 
@@ -194,79 +182,62 @@ describe('useGroupBatchOperations', () => {
 
             await groupMembersRemoveRoles(['role_1']);
 
-            expect(
-                deps.groupRequest.removeGroupMemberRole
-            ).toHaveBeenCalledTimes(2);
+            expect(deps.groupRequest.removeGroupMemberRole).toHaveBeenCalledTimes(2);
         });
     });
 
     describe('groupMembersDeleteSentInvite', () => {
         test('calls deleteSentGroupInvite for each user', async () => {
             const deps = createDeps();
-            const { groupMembersDeleteSentInvite } =
-                useGroupBatchOperations(deps);
+            const { groupMembersDeleteSentInvite } = useGroupBatchOperations(deps);
 
             await groupMembersDeleteSentInvite();
 
-            expect(
-                deps.groupRequest.deleteSentGroupInvite
-            ).toHaveBeenCalledTimes(2);
+            expect(deps.groupRequest.deleteSentGroupInvite).toHaveBeenCalledTimes(2);
         });
     });
 
     describe('groupMembersAcceptInviteRequest', () => {
         test('calls acceptGroupInviteRequest for each user', async () => {
             const deps = createDeps();
-            const { groupMembersAcceptInviteRequest } =
-                useGroupBatchOperations(deps);
+            const { groupMembersAcceptInviteRequest } = useGroupBatchOperations(deps);
 
             await groupMembersAcceptInviteRequest();
 
-            expect(
-                deps.groupRequest.acceptGroupInviteRequest
-            ).toHaveBeenCalledTimes(2);
+            expect(deps.groupRequest.acceptGroupInviteRequest).toHaveBeenCalledTimes(2);
         });
     });
 
     describe('groupMembersRejectInviteRequest', () => {
         test('calls rejectGroupInviteRequest for each user', async () => {
             const deps = createDeps();
-            const { groupMembersRejectInviteRequest } =
-                useGroupBatchOperations(deps);
+            const { groupMembersRejectInviteRequest } = useGroupBatchOperations(deps);
 
             await groupMembersRejectInviteRequest();
 
-            expect(
-                deps.groupRequest.rejectGroupInviteRequest
-            ).toHaveBeenCalledTimes(2);
+            expect(deps.groupRequest.rejectGroupInviteRequest).toHaveBeenCalledTimes(2);
         });
     });
 
     describe('groupMembersBlockJoinRequest', () => {
         test('calls blockGroupInviteRequest for each user', async () => {
             const deps = createDeps();
-            const { groupMembersBlockJoinRequest } =
-                useGroupBatchOperations(deps);
+            const { groupMembersBlockJoinRequest } = useGroupBatchOperations(deps);
 
             await groupMembersBlockJoinRequest();
 
-            expect(
-                deps.groupRequest.blockGroupInviteRequest
-            ).toHaveBeenCalledTimes(2);
+            expect(deps.groupRequest.blockGroupInviteRequest).toHaveBeenCalledTimes(2);
         });
     });
 
     describe('groupMembersDeleteBlockedRequest', () => {
         test('calls deleteBlockedGroupRequest for each user', async () => {
             const deps = createDeps();
-            const { groupMembersDeleteBlockedRequest } =
-                useGroupBatchOperations(deps);
+            const { groupMembersDeleteBlockedRequest } = useGroupBatchOperations(deps);
 
             await groupMembersDeleteBlockedRequest();
 
-            expect(
-                deps.groupRequest.deleteBlockedGroupRequest
-            ).toHaveBeenCalledTimes(2);
+            expect(deps.groupRequest.deleteBlockedGroupRequest).toHaveBeenCalledTimes(2);
         });
     });
 });

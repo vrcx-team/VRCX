@@ -35,7 +35,6 @@ function formatTimeUnit(value, unit) {
 }
 
 /**
- *
  * @param {number} sec
  * @param {boolean} isNeedSeconds
  * @returns {string}
@@ -142,7 +141,6 @@ function timeAgo(datetime) {
 }
 
 /**
- *
  * @param {number} duration
  * @returns {string}
  */
@@ -179,7 +177,6 @@ function formatFileSize(bytes) {
 }
 
 /**
- *
  * @param {string} duration
  * @returns {number}
  */

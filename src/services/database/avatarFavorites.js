@@ -121,9 +121,7 @@ const avatarFavorites = {
     },
 
     clearAvatarHistory() {
-        sqliteService.executeNonQuery(
-            `DELETE FROM ${dbVars.userPrefix}_avatar_history`
-        );
+        sqliteService.executeNonQuery(`DELETE FROM ${dbVars.userPrefix}_avatar_history`);
         sqliteService.executeNonQuery('DELETE FROM cache_avatar');
     },
 
@@ -149,12 +147,9 @@ const avatarFavorites = {
     },
 
     deleteAvatarFavoriteGroup(groupName) {
-        sqliteService.executeNonQuery(
-            `DELETE FROM favorite_avatar WHERE group_name = @group_name`,
-            {
-                '@group_name': groupName
-            }
-        );
+        sqliteService.executeNonQuery(`DELETE FROM favorite_avatar WHERE group_name = @group_name`, {
+            '@group_name': groupName
+        });
     },
 
     removeAvatarFromFavorites(avatarId, groupName) {
@@ -181,12 +176,9 @@ const avatarFavorites = {
     },
 
     removeAvatarFromCache(avatarId) {
-        sqliteService.executeNonQuery(
-            `DELETE FROM cache_avatar WHERE id = @avatar_id`,
-            {
-                '@avatar_id': avatarId
-            }
-        );
+        sqliteService.executeNonQuery(`DELETE FROM cache_avatar WHERE id = @avatar_id`, {
+            '@avatar_id': avatarId
+        });
     },
 
     async getAvatarCache() {

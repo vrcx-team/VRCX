@@ -11,7 +11,7 @@ export function resolveFavoriteGroups(stored, allKeys) {
 }
 
 /**
- * @param {string[]|null} value - New selection value
+ * @param {string[] | null} value - New selection value
  * @param {string[]} allKeys - All available group keys
  * @returns {string[]} Value to store
  */
@@ -19,10 +19,7 @@ export function normalizeFavoriteGroupsChange(value, allKeys) {
     if (!value || value.length === 0) {
         return [];
     }
-    if (
-        value.length >= allKeys.length &&
-        allKeys.every((k) => value.includes(k))
-    ) {
+    if (value.length >= allKeys.length && allKeys.every((k) => value.includes(k))) {
         return [];
     }
     return value;

@@ -2,8 +2,8 @@ import { nextTick, ref } from 'vue';
 
 /**
  * @param {object} options
- * @param {Function} options.createGroup - store function to create a new local group
- * @param {Function} options.selectGroup - function to select a group after creation
+ * @param {Function} options.createGroup - Store function to create a new local group
+ * @param {Function} options.selectGroup - Function to select a group after creation
  * @returns {object}
  */
 export function useFavoritesLocalGroups(options = {}) {
@@ -23,8 +23,7 @@ export function useFavoritesLocalGroups(options = {}) {
         isCreatingLocalGroup.value = true;
         newLocalGroupName.value = '';
         nextTick(() => {
-            const el =
-                newLocalGroupInput.value?.$el ?? newLocalGroupInput.value;
+            const el = newLocalGroupInput.value?.$el ?? newLocalGroupInput.value;
             el?.focus?.();
         });
     }

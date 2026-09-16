@@ -257,7 +257,6 @@
     });
 
     /**
-     *
      * @param userId
      */
     async function clickDeleteSavedLogin(userId) {
@@ -266,7 +265,6 @@
     }
 
     /**
-     *
      * @param user
      */
     async function clickSavedLogin(user) {
@@ -285,9 +283,6 @@
         await updateSavedCredentials();
     });
 
-    /**
-     *
-     */
     async function updateSavedCredentials() {
         if (watchState.isLoggedIn) {
             return;
@@ -295,9 +290,6 @@
         savedCredentials.value = await getAllSavedCredentials();
     }
 
-    /**
-     *
-     */
     function postLoginRedirect() {
         const redirect = route.query.redirect;
         if (typeof redirect === 'string' && redirect.startsWith('/') && redirect !== '/login') {

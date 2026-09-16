@@ -73,9 +73,6 @@
     const groupName = ref('');
     const closedAt = ref('');
 
-    /**
-     *
-     */
     function parse() {
         const locObj = props.locationobject;
         location.value = locObj.tag;
@@ -122,7 +119,6 @@
     }
 
     /**
-     *
      * @param accessTypeNameRaw
      */
     function translateAccessType(accessTypeNameRaw) {
@@ -149,16 +145,10 @@
         { immediate: true }
     );
 
-    /**
-     *
-     */
     function showLaunchDialog() {
         launchStore.showLaunchDialog(location.value, shortName.value);
     }
 
-    /**
-     *
-     */
     function openLocationGroupDialog() {
         if (!location.value) return;
         const L = parseLocation(location.value);

@@ -458,7 +458,6 @@
     });
 
     /**
-     *
      * @param value
      */
     function handleSortFavoritesChange(value) {
@@ -476,17 +475,11 @@
         friendToolbarMenuOpen.value = false;
     };
 
-    /**
-     *
-     */
     function handleFriendImportClick() {
         closeFriendToolbarMenu();
         showFriendImportDialog();
     }
 
-    /**
-     *
-     */
     function handleFriendExportClick() {
         closeFriendToolbarMenu();
         showFriendExportDialog();
@@ -560,7 +553,6 @@
     );
 
     /**
-     *
      * @param visibility
      */
     function getBadgeVariant(visibility) {
@@ -574,16 +566,10 @@
         }
     }
 
-    /**
-     *
-     */
     function showFriendExportDialog() {
         friendExportDialogVisible.value = true;
     }
 
-    /**
-     *
-     */
     function handleRefreshFavorites() {
         refreshFavorites();
         getLocalWorldFavorites();
@@ -591,7 +577,6 @@
     }
 
     /**
-     *
      * @param type
      * @param key
      */
@@ -604,7 +589,6 @@
     }
 
     /**
-     *
      * @param searchTerm
      */
     function doSearchFriendFavorites(searchTerm) {
@@ -626,7 +610,6 @@
     const searchFriendFavorites = debounce(doSearchFriendFavorites, 200);
 
     /**
-     *
      * @param id
      * @param value
      */
@@ -640,16 +623,10 @@
         }
     }
 
-    /**
-     *
-     */
     function clearSelectedFriends() {
         selectedFavoriteFriends.value = [];
     }
 
-    /**
-     *
-     */
     function toggleSelectAllFriends() {
         if (!activeRemoteGroup.value) {
             return;
@@ -661,9 +638,6 @@
         }
     }
 
-    /**
-     *
-     */
     function copySelectedFriends() {
         if (!selectedFavoriteFriends.value.length) {
             return;
@@ -673,9 +647,6 @@
         showFriendImportDialog();
     }
 
-    /**
-     *
-     */
     function showFriendBulkUnfavoriteSelectionConfirm() {
         if (!selectedFavoriteFriends.value.length) {
             return;
@@ -691,7 +662,6 @@
     }
 
     /**
-     *
      * @param ids
      */
     function bulkUnfavoriteSelectedFriends(ids) {
@@ -711,7 +681,6 @@
     }
 
     /**
-     *
      * @param ctx
      */
     function clearFavoriteGroup(ctx) {
@@ -732,7 +701,6 @@
     }
 
     /**
-     *
      * @param group
      * @param visibility
      */
@@ -742,7 +710,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function handleRemoteRename(group) {
@@ -751,7 +718,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function handleRemoteClear(group) {
@@ -760,7 +726,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function changeFavoriteGroupName(group) {
@@ -802,7 +767,6 @@
     }
 
     /**
-     *
      * @param name
      * @param visibility
      * @param menuKey
@@ -830,7 +794,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function formatVisibility(value) {
@@ -840,9 +803,6 @@
         return value.charAt(0).toUpperCase() + value.slice(1);
     }
 
-    /**
-     *
-     */
     const {
         isCreatingLocalGroup,
         newLocalGroupName,
@@ -856,7 +816,6 @@
     });
 
     /**
-     *
      * @param group
      */
     function handleLocalRename(group) {
@@ -887,7 +846,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function handleLocalDelete(group) {

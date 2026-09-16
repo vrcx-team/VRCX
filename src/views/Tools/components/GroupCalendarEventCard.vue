@@ -226,7 +226,6 @@
     });
 
     /**
-     *
      * @param event
      */
     async function openCalendarEvent(event) {
@@ -236,7 +235,6 @@
     }
 
     /**
-     *
      * @param event
      */
     async function getCalendarIcs(event) {
@@ -257,7 +255,6 @@
     }
 
     /**
-     *
      * @param event
      */
     async function downloadEventIcs(event) {
@@ -274,7 +271,6 @@
     }
 
     /**
-     *
      * @param event
      */
     async function toggleEventFollow(event) {
@@ -287,7 +283,6 @@
     }
 
     /**
-     *
      * @param event
      */
     function copyEventLink(event) {

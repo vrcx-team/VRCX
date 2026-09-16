@@ -537,16 +537,10 @@
         purgeAvatarFeedData(days);
     }
 
-    /**
-     *
-     */
     function openShortcutFolder() {
         AppApi.OpenShortcutFolder();
     }
 
-    /**
-     *
-     */
     function refreshCacheSize() {
         cacheSize.cachedUsers = cachedUsers.size;
         cacheSize.cachedWorlds = cachedWorlds.size;
@@ -556,17 +550,11 @@
         cacheSize.cachedInstances = cachedInstances.size;
     }
 
-    /**
-     *
-     */
     async function refreshConfigTreeData() {
         await authRequest.getConfig();
         configTreeData.value = cachedConfig.value;
     }
 
-    /**
-     *
-     */
     function getVisits() {
         queryRequest.fetch('visits').then((args) => {
             visits.value = args.json;

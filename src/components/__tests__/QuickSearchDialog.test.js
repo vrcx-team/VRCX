@@ -53,8 +53,7 @@ vi.mock('@/components/ui/command', () => ({
     CommandGroup: { template: '<div><slot /></div>' },
     CommandItem: {
         emits: ['select'],
-        template:
-            '<button data-testid="cmd-item" @click="$emit(\'select\')"><slot /></button>'
+        template: '<button data-testid="cmd-item" @click="$emit(\'select\')"><slot /></button>'
     }
 }));
 vi.mock('lucide-vue-next', () => ({

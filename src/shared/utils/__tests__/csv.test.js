@@ -73,9 +73,7 @@ describe('formatCsvRow', () => {
 
     it('escapes fields that need quoting', () => {
         const obj = { id: 'avtr_123', name: 'Test, Avatar' };
-        expect(formatCsvRow(obj, ['id', 'name'])).toBe(
-            'avtr_123,"Test, Avatar"'
-        );
+        expect(formatCsvRow(obj, ['id', 'name'])).toBe('avtr_123,"Test, Avatar"');
     });
 
     it('handles null obj gracefully', () => {

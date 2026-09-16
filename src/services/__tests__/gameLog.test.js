@@ -4,10 +4,7 @@ const svc = new LogWatcherService();
 
 describe('parseRawGameLog', () => {
     test('parses location type', () => {
-        const log = svc.parseRawGameLog('2024-01-01', 'location', [
-            'wrld_123:456',
-            'Test World'
-        ]);
+        const log = svc.parseRawGameLog('2024-01-01', 'location', ['wrld_123:456', 'Test World']);
         expect(log).toEqual({
             dt: '2024-01-01',
             type: 'location',
@@ -17,9 +14,7 @@ describe('parseRawGameLog', () => {
     });
 
     test('parses location-destination type', () => {
-        const log = svc.parseRawGameLog('2024-01-01', 'location-destination', [
-            'wrld_abc:789'
-        ]);
+        const log = svc.parseRawGameLog('2024-01-01', 'location-destination', ['wrld_abc:789']);
         expect(log).toEqual({
             dt: '2024-01-01',
             type: 'location-destination',
@@ -28,10 +23,7 @@ describe('parseRawGameLog', () => {
     });
 
     test('parses player-joined type', () => {
-        const log = svc.parseRawGameLog('2024-01-01', 'player-joined', [
-            'TestUser',
-            'usr_123'
-        ]);
+        const log = svc.parseRawGameLog('2024-01-01', 'player-joined', ['TestUser', 'usr_123']);
         expect(log).toEqual({
             dt: '2024-01-01',
             type: 'player-joined',
@@ -41,10 +33,7 @@ describe('parseRawGameLog', () => {
     });
 
     test('parses player-left type', () => {
-        const log = svc.parseRawGameLog('2024-01-01', 'player-left', [
-            'TestUser',
-            'usr_123'
-        ]);
+        const log = svc.parseRawGameLog('2024-01-01', 'player-left', ['TestUser', 'usr_123']);
         expect(log).toEqual({
             dt: '2024-01-01',
             type: 'player-left',
@@ -73,10 +62,7 @@ describe('parseRawGameLog', () => {
     });
 
     test('parses video-play type', () => {
-        const log = svc.parseRawGameLog('2024-01-01', 'video-play', [
-            'https://example.com/video.mp4',
-            'Player1'
-        ]);
+        const log = svc.parseRawGameLog('2024-01-01', 'video-play', ['https://example.com/video.mp4', 'Player1']);
         expect(log).toEqual({
             dt: '2024-01-01',
             type: 'video-play',
@@ -86,9 +72,7 @@ describe('parseRawGameLog', () => {
     });
 
     test('parses resource-load-string type', () => {
-        const log = svc.parseRawGameLog('2024-01-01', 'resource-load-string', [
-            'https://example.com/res'
-        ]);
+        const log = svc.parseRawGameLog('2024-01-01', 'resource-load-string', ['https://example.com/res']);
         expect(log).toEqual({
             dt: '2024-01-01',
             type: 'resource-load-string',
@@ -97,9 +81,7 @@ describe('parseRawGameLog', () => {
     });
 
     test('parses resource-load-image type', () => {
-        const log = svc.parseRawGameLog('2024-01-01', 'resource-load-image', [
-            'https://example.com/img.png'
-        ]);
+        const log = svc.parseRawGameLog('2024-01-01', 'resource-load-image', ['https://example.com/img.png']);
         expect(log).toEqual({
             dt: '2024-01-01',
             type: 'resource-load-image',
@@ -108,10 +90,7 @@ describe('parseRawGameLog', () => {
     });
 
     test('parses avatar-change type', () => {
-        const log = svc.parseRawGameLog('2024-01-01', 'avatar-change', [
-            'User1',
-            'CoolAvatar'
-        ]);
+        const log = svc.parseRawGameLog('2024-01-01', 'avatar-change', ['User1', 'CoolAvatar']);
         expect(log).toEqual({
             dt: '2024-01-01',
             type: 'avatar-change',
@@ -121,10 +100,7 @@ describe('parseRawGameLog', () => {
     });
 
     test('parses photon-id type', () => {
-        const log = svc.parseRawGameLog('2024-01-01', 'photon-id', [
-            'User1',
-            '42'
-        ]);
+        const log = svc.parseRawGameLog('2024-01-01', 'photon-id', ['User1', '42']);
         expect(log).toEqual({
             dt: '2024-01-01',
             type: 'photon-id',
@@ -134,9 +110,7 @@ describe('parseRawGameLog', () => {
     });
 
     test('parses screenshot type', () => {
-        const log = svc.parseRawGameLog('2024-01-01', 'screenshot', [
-            '/path/to/screenshot.png'
-        ]);
+        const log = svc.parseRawGameLog('2024-01-01', 'screenshot', ['/path/to/screenshot.png']);
         expect(log).toEqual({
             dt: '2024-01-01',
             type: 'screenshot',
@@ -145,11 +119,7 @@ describe('parseRawGameLog', () => {
     });
 
     test('parses sticker-spawn type', () => {
-        const log = svc.parseRawGameLog('2024-01-01', 'sticker-spawn', [
-            'usr_abc',
-            'StickerUser',
-            'inv_123'
-        ]);
+        const log = svc.parseRawGameLog('2024-01-01', 'sticker-spawn', ['usr_abc', 'StickerUser', 'inv_123']);
         expect(log).toEqual({
             dt: '2024-01-01',
             type: 'sticker-spawn',
@@ -160,9 +130,7 @@ describe('parseRawGameLog', () => {
     });
 
     test('parses video-sync type', () => {
-        const log = svc.parseRawGameLog('2024-01-01', 'video-sync', [
-            '123.456'
-        ]);
+        const log = svc.parseRawGameLog('2024-01-01', 'video-sync', ['123.456']);
         expect(log).toEqual({
             dt: '2024-01-01',
             type: 'video-sync',
@@ -180,9 +148,7 @@ describe('parseRawGameLog', () => {
     });
 
     test('parses api-request type', () => {
-        const log = svc.parseRawGameLog('2024-01-01', 'api-request', [
-            'https://api.vrchat.cloud/api/1/users'
-        ]);
+        const log = svc.parseRawGameLog('2024-01-01', 'api-request', ['https://api.vrchat.cloud/api/1/users']);
         expect(log).toEqual({
             dt: '2024-01-01',
             type: 'api-request',
@@ -191,9 +157,7 @@ describe('parseRawGameLog', () => {
     });
 
     test('parses udon-exception type', () => {
-        const log = svc.parseRawGameLog('2024-01-01', 'udon-exception', [
-            'NullRef'
-        ]);
+        const log = svc.parseRawGameLog('2024-01-01', 'udon-exception', ['NullRef']);
         expect(log).toEqual({
             dt: '2024-01-01',
             type: 'udon-exception',
@@ -202,12 +166,7 @@ describe('parseRawGameLog', () => {
     });
 
     test('handles types with no extra fields', () => {
-        for (const type of [
-            'portal-spawn',
-            'vrc-quit',
-            'openvr-init',
-            'desktop-mode'
-        ]) {
+        for (const type of ['portal-spawn', 'vrc-quit', 'openvr-init', 'desktop-mode']) {
             const log = svc.parseRawGameLog('2024-01-01', type, []);
             expect(log).toEqual({ dt: '2024-01-01', type });
         }

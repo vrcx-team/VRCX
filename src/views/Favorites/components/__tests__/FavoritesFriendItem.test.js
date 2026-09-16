@@ -79,8 +79,7 @@ vi.mock('../../../../api', () => ({
 }));
 
 vi.mock('../../../../coordinators/favoriteCoordinator', () => ({
-    removeLocalFriendFavorite: (...args) =>
-        mocks.removeLocalFriendFavorite(...args)
+    removeLocalFriendFavorite: (...args) => mocks.removeLocalFriendFavorite(...args)
 }));
 
 vi.mock('../../../../coordinators/userCoordinator', () => ({
@@ -118,8 +117,7 @@ vi.mock('../../../../components/Location.vue', () => ({
 vi.mock('@/components/ui/item', () => ({
     Item: {
         emits: ['click'],
-        template:
-            '<div data-testid="item" @click="$emit(\'click\', $event)"><slot /></div>'
+        template: '<div data-testid="item" @click="$emit(\'click\', $event)"><slot /></div>'
     },
     ItemActions: { template: '<div><slot /></div>' },
     ItemMedia: { template: '<div><slot /></div>' },
@@ -137,8 +135,7 @@ vi.mock('@/components/ui/avatar', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="btn" @click="$emit(\'click\', $event)"><slot /></button>'
+        template: '<button data-testid="btn" @click="$emit(\'click\', $event)"><slot /></button>'
     }
 }));
 
@@ -158,8 +155,7 @@ vi.mock('@/components/ui/context-menu', () => ({
     ContextMenuSeparator: { template: '<hr />' },
     ContextMenuItem: {
         emits: ['click'],
-        template:
-            '<button data-testid="context-item" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="context-item" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -170,8 +166,7 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
     DropdownMenuSeparator: { template: '<hr />' },
     DropdownMenuItem: {
         emits: ['click'],
-        template:
-            '<button data-testid="dropdown-item" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="dropdown-item" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -184,7 +179,6 @@ vi.mock('lucide-vue-next', () => ({
 import FavoritesFriendItem from '../FavoritesFriendItem.vue';
 
 /**
- *
  * @param {Record<string, any>} props
  */
 function mountItem(props = {}) {
@@ -210,7 +204,6 @@ function mountItem(props = {}) {
 }
 
 /**
- *
  * @param wrapper
  * @param text
  */
@@ -254,11 +247,7 @@ describe('FavoritesFriendItem.vue', () => {
         const wrapper = mountItem();
 
         expect(wrapper.get('[data-testid="item"]').classes()).toEqual(
-            expect.arrayContaining([
-                'favorites-item',
-                'hover:bg-muted',
-                'x-hover-list'
-            ])
+            expect.arrayContaining(['favorites-item', 'hover:bg-muted', 'x-hover-list'])
         );
     });
 
@@ -275,10 +264,7 @@ describe('FavoritesFriendItem.vue', () => {
 
         await clickMenuItem(wrapper, 'view.favorite.delete_tooltip');
 
-        expect(mocks.removeLocalFriendFavorite).toHaveBeenCalledWith(
-            'usr_1',
-            'Local'
-        );
+        expect(mocks.removeLocalFriendFavorite).toHaveBeenCalledWith('usr_1', 'Local');
         expect(mocks.deleteFavorite).not.toHaveBeenCalled();
     });
 
@@ -298,12 +284,8 @@ describe('FavoritesFriendItem.vue', () => {
 
         expect(wrapper.text()).toContain('dialog.user.actions.request_invite');
         expect(wrapper.text()).toContain('dialog.user.actions.invite');
-        expect(wrapper.text()).toContain(
-            'dialog.user.info.launch_invite_tooltip'
-        );
-        expect(wrapper.text()).toContain(
-            'dialog.user.info.self_invite_tooltip'
-        );
+        expect(wrapper.text()).toContain('dialog.user.info.launch_invite_tooltip');
+        expect(wrapper.text()).toContain('dialog.user.info.self_invite_tooltip');
     });
 
     it('hides invite/join actions when offline', () => {
@@ -321,15 +303,9 @@ describe('FavoritesFriendItem.vue', () => {
             }
         });
 
-        expect(wrapper.text()).not.toContain(
-            'dialog.user.actions.request_invite'
-        );
-        expect(wrapper.text()).not.toContain(
-            'dialog.user.info.launch_invite_tooltip'
-        );
-        expect(wrapper.text()).not.toContain(
-            'dialog.user.info.self_invite_tooltip'
-        );
+        expect(wrapper.text()).not.toContain('dialog.user.actions.request_invite');
+        expect(wrapper.text()).not.toContain('dialog.user.info.launch_invite_tooltip');
+        expect(wrapper.text()).not.toContain('dialog.user.info.self_invite_tooltip');
     });
 
     it('triggers request invite action', async () => {
@@ -337,10 +313,7 @@ describe('FavoritesFriendItem.vue', () => {
 
         await clickMenuItem(wrapper, 'dialog.user.actions.request_invite');
 
-        expect(mocks.sendRequestInvite).toHaveBeenCalledWith(
-            { platform: 'standalonewindows' },
-            'usr_1'
-        );
+        expect(mocks.sendRequestInvite).toHaveBeenCalledWith({ platform: 'standalonewindows' }, 'usr_1');
     });
 
     it('triggers join action', async () => {
@@ -348,8 +321,6 @@ describe('FavoritesFriendItem.vue', () => {
 
         await clickMenuItem(wrapper, 'dialog.user.info.launch_invite_tooltip');
 
-        expect(mocks.showLaunchDialog).toHaveBeenCalledWith(
-            'wrld_aaa:1~private'
-        );
+        expect(mocks.showLaunchDialog).toHaveBeenCalledWith('wrld_aaa:1~private');
     });
 });

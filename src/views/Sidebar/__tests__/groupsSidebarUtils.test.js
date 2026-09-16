@@ -1,11 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import {
-    buildGroupHeaderRow,
-    buildGroupItemRow,
-    estimateGroupRowSize,
-    getGroupId
-} from '../groupsSidebarUtils';
+import { buildGroupHeaderRow, buildGroupItemRow, estimateGroupRowSize, getGroupId } from '../groupsSidebarUtils';
 
 // ─── getGroupId ──────────────────────────────────────────────────────
 
@@ -127,12 +122,7 @@ describe('buildGroupItemRow', () => {
             ...ref,
             location: 'wrld_abc:inst_123~ageGate'
         };
-        const row = buildGroupItemRow(
-            refWithAgeGateLocation,
-            0,
-            'grp_1',
-            false
-        );
+        const row = buildGroupItemRow(refWithAgeGateLocation, 0, 'grp_1', false);
         expect(row.isVisible).toBe(false);
     });
 });

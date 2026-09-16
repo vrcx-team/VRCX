@@ -1,5 +1,6 @@
 /**
  * Create a default group ref object.
+ *
  * @param {object} json - API response to merge
  * @returns {object}
  */

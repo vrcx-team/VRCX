@@ -6,13 +6,7 @@ import { THEME_CONFIG } from '../../../shared/constants';
 
 export function useNavTheme({ t, appearanceSettingsStore }) {
     const themes = computed(() => Object.keys(THEME_CONFIG));
-    const {
-        themeColors,
-        currentThemeColor,
-        isApplyingThemeColor,
-        applyThemeColor,
-        initThemeColor
-    } = useThemeColor();
+    const { themeColors, currentThemeColor, isApplyingThemeColor, applyThemeColor, initThemeColor } = useThemeColor();
 
     const themeDisplayName = (themeKey) => {
         const i18nKey = `view.settings.appearance.appearance.theme_mode_${themeKey}`;

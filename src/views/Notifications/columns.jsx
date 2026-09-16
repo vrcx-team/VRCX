@@ -1,30 +1,9 @@
 import Location from '../../components/Location.vue';
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage
-} from '../../components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-    TooltipWrapper
-} from '../../components/ui/tooltip';
-import {
-    ArrowUpDown,
-    Ban,
-    BellOff,
-    Check,
-    Image,
-    Link,
-    MessageCircle,
-    Reply,
-    Tag,
-    Trash2,
-    X
-} from 'lucide-vue-next';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipWrapper } from '../../components/ui/tooltip';
+import { ArrowUpDown, Ban, BellOff, Check, Image, Link, MessageCircle, Reply, Tag, Trash2, X } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 
 import { formatDateFilter } from '../../shared/utils';
@@ -126,9 +105,7 @@ export const createColumns = ({
                 <Button
                     variant="ghost"
                     class="pl-0!"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === 'asc')
-                    }
+                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
                 >
                     {t('table.notification.date')}
                     <ArrowUpDown class="ml-1 h-4 w-4" />
@@ -141,14 +118,8 @@ export const createColumns = ({
                     return a - b;
                 }
 
-                const aId =
-                    typeof rowA.original?.id === 'string'
-                        ? rowA.original.id
-                        : '';
-                const bId =
-                    typeof rowB.original?.id === 'string'
-                        ? rowB.original.id
-                        : '';
+                const aId = typeof rowA.original?.id === 'string' ? rowA.original.id : '';
+                const bId = typeof rowB.original?.id === 'string' ? rowB.original.id : '';
                 return aId.localeCompare(bId);
             },
             cell: ({ row }) => {
@@ -186,20 +157,12 @@ export const createColumns = ({
                     );
                 }
 
-                if (
-                    original.type === 'group.queueReady' ||
-                    original.type === 'instance.closed'
-                ) {
+                if (original.type === 'group.queueReady' || original.type === 'instance.closed') {
                     return (
                         <Badge variant="outline" class="text-muted-foreground">
                             <Tooltip>
                                 <TooltipTrigger asChild>
-                                    <span
-                                        class="cursor-pointer"
-                                        onClick={() =>
-                                            showWorldDialog(original.location)
-                                        }
-                                    >
+                                    <span class="cursor-pointer" onClick={() => showWorldDialog(original.location)}>
                                         {label}
                                     </span>
                                 </TooltipTrigger>
@@ -223,12 +186,7 @@ export const createColumns = ({
                         <Badge variant="outline" class="text-muted-foreground">
                             <Tooltip>
                                 <TooltipTrigger asChild>
-                                    <span
-                                        class="cursor-pointer"
-                                        onClick={() =>
-                                            openNotificationLink(original.link)
-                                        }
-                                    >
+                                    <span class="cursor-pointer" onClick={() => openNotificationLink(original.link)}>
                                         {label}
                                     </span>
                                 </TooltipTrigger>
@@ -257,17 +215,12 @@ export const createColumns = ({
             header: () => t('table.notification.user'),
             cell: ({ row }) => {
                 const original = row.original;
-                if (
-                    original.senderUserId &&
-                    !isGroupId(original.senderUserId)
-                ) {
+                if (original.senderUserId && !isGroupId(original.senderUserId)) {
                     return (
                         <span class="table-user-text block w-full min-w-0 truncate">
                             <span
                                 class="cursor-pointer block w-full min-w-0 truncate"
-                                onClick={() =>
-                                    showUserDialog(original.senderUserId)
-                                }
+                                onClick={() => showUserDialog(original.senderUserId)}
                             >
                                 {original.senderUsername}
                             </span>
@@ -280,9 +233,7 @@ export const createColumns = ({
                         <span class="table-user-text block w-full min-w-0 truncate">
                             <span
                                 class="cursor-pointer block w-full min-w-0 truncate"
-                                onClick={() =>
-                                    openNotificationLink(original.link)
-                                }
+                                onClick={() => openNotificationLink(original.link)}
                             >
                                 {original.linkText || original.senderUsername}
                             </span>
@@ -290,15 +241,8 @@ export const createColumns = ({
                     );
                 }
 
-                if (
-                    original.senderUsername &&
-                    !isGroupId(original.senderUserId)
-                ) {
-                    return (
-                        <span class="table-user-text block w-full min-w-0 truncate">
-                            {original.senderUsername}
-                        </span>
-                    );
+                if (original.senderUsername && !isGroupId(original.senderUserId)) {
+                    return <span class="table-user-text block w-full min-w-0 truncate">{original.senderUsername}</span>;
                 }
 
                 return null;
@@ -321,18 +265,12 @@ export const createColumns = ({
                     original.details?.groupName ||
                     original.linkText;
 
-                if (
-                    original.senderUserId &&
-                    (original.type === 'groupChange' ||
-                        isGroupId(original.senderUserId))
-                ) {
+                if (original.senderUserId && (original.type === 'groupChange' || isGroupId(original.senderUserId))) {
                     return (
                         <span class="table-user-text block w-full min-w-0 truncate">
                             <span
                                 class="cursor-pointer block w-full min-w-0 truncate"
-                                onClick={() =>
-                                    showGroupDialog(original.senderUserId)
-                                }
+                                onClick={() => showGroupDialog(original.senderUserId)}
                             >
                                 {label}
                             </span>
@@ -340,15 +278,8 @@ export const createColumns = ({
                     );
                 }
 
-                if (
-                    original.type === 'groupChange' &&
-                    original.senderUsername
-                ) {
-                    return (
-                        <span class="table-user-text block w-full min-w-0 truncate">
-                            {original.senderUsername}
-                        </span>
-                    );
+                if (original.type === 'groupChange' && original.senderUsername) {
+                    return <span class="table-user-text block w-full min-w-0 truncate">{original.senderUsername}</span>;
                 }
 
                 if (original.link?.startsWith('group:')) {
@@ -356,9 +287,7 @@ export const createColumns = ({
                         <span class="table-user-text block w-full min-w-0 truncate">
                             <span
                                 class="cursor-pointer block w-full min-w-0 truncate"
-                                onClick={() =>
-                                    openNotificationLink(original.link)
-                                }
+                                onClick={() => openNotificationLink(original.link)}
                             >
                                 {original.data?.groupName || label}
                             </span>
@@ -371,40 +300,26 @@ export const createColumns = ({
                         <span class="table-user-text block w-full min-w-0 truncate">
                             <span
                                 class="cursor-pointer block w-full min-w-0 truncate"
-                                onClick={() =>
-                                    openNotificationLink(original.link)
-                                }
+                                onClick={() => openNotificationLink(original.link)}
                             >
-                                {original.data?.groupName ||
-                                    original.groupName ||
-                                    label}
+                                {original.data?.groupName || original.groupName || label}
                             </span>
                         </span>
                     );
                 }
 
                 if (original.data?.groupName) {
-                    return (
-                        <span class="table-user-text block w-full min-w-0 truncate">
-                            {original.data.groupName}
-                        </span>
-                    );
+                    return <span class="table-user-text block w-full min-w-0 truncate">{original.data.groupName}</span>;
                 }
 
                 if (original.details?.groupName) {
                     return (
-                        <span class="table-user-text block w-full min-w-0 truncate">
-                            {original.details.groupName}
-                        </span>
+                        <span class="table-user-text block w-full min-w-0 truncate">{original.details.groupName}</span>
                     );
                 }
 
                 if (original.groupName) {
-                    return (
-                        <span class="table-user-text block w-full min-w-0 truncate">
-                            {original.groupName}
-                        </span>
-                    );
+                    return <span class="table-user-text block w-full min-w-0 truncate">{original.groupName}</span>;
                 }
 
                 return null;
@@ -418,8 +333,7 @@ export const createColumns = ({
             cell: ({ row }) => {
                 const original = row.original;
                 if (original.type === 'boop') {
-                    const imageUrl =
-                        original.details?.imageUrl || original.imageUrl;
+                    const imageUrl = original.details?.imageUrl || original.imageUrl;
                     if (!imageUrl || imageUrl.startsWith('default_')) {
                         return null;
                     }
@@ -434,22 +348,13 @@ export const createColumns = ({
                 }
 
                 if (original.details?.imageUrl) {
-                    const detailsUrl = getSmallThumbnailUrl(
-                        original.details.imageUrl
-                    );
+                    const detailsUrl = getSmallThumbnailUrl(original.details.imageUrl);
                     return (
                         <Avatar
                             class="cursor-pointer size-7.5 rounded"
-                            onClick={() =>
-                                showFullscreenImageDialog(
-                                    original.details.imageUrl
-                                )
-                            }
+                            onClick={() => showFullscreenImageDialog(original.details.imageUrl)}
                         >
-                            <AvatarImage
-                                src={detailsUrl}
-                                class="object-cover"
-                            />
+                            <AvatarImage src={detailsUrl} class="object-cover" />
                             <AvatarFallback class="rounded">
                                 <Image class="size-4 text-muted-foreground" />
                             </AvatarFallback>
@@ -462,9 +367,7 @@ export const createColumns = ({
                     return (
                         <Avatar
                             class="cursor-pointer size-7.5 rounded"
-                            onClick={() =>
-                                showFullscreenImageDialog(original.imageUrl)
-                            }
+                            onClick={() => showFullscreenImageDialog(original.imageUrl)}
                         >
                             <AvatarImage src={imgUrl} class="object-cover" />
                             <AvatarFallback class="rounded">
@@ -502,69 +405,37 @@ export const createColumns = ({
                             </div>
                         ) : null}
                         {original.message && original.title ? (
-                            <TooltipWrapper
-                                content={`${original.title}, ${original.message}`}
-                                delayDuration={500}
-                            >
+                            <TooltipWrapper content={`${original.title}, ${original.message}`} delayDuration={500}>
                                 <span class="block w-full min-w-0 truncate">
                                     {`${original.title}, ${original.message}`}
                                 </span>
                             </TooltipWrapper>
                         ) : null}
                         {!original.message && original.title ? (
-                            <TooltipWrapper
-                                content={original.title}
-                                delayDuration={500}
-                            >
-                                <span class="block w-full min-w-0 truncate">
-                                    {original.title}
-                                </span>
+                            <TooltipWrapper content={original.title} delayDuration={500}>
+                                <span class="block w-full min-w-0 truncate">{original.title}</span>
                             </TooltipWrapper>
                         ) : null}
                         {original.message &&
                         !original.title &&
-                        original.message !==
-                            `This is a generated invite to ${original.details?.worldName}` ? (
-                            <TooltipWrapper
-                                content={original.message}
-                                delayDuration={500}
-                            >
-                                <span class="block w-full min-w-0 truncate">
-                                    {original.message}
-                                </span>
+                        original.message !== `This is a generated invite to ${original.details?.worldName}` ? (
+                            <TooltipWrapper content={original.message} delayDuration={500}>
+                                <span class="block w-full min-w-0 truncate">{original.message}</span>
                             </TooltipWrapper>
                         ) : null}
-                        {!original.message &&
-                        original.details?.inviteMessage ? (
-                            <TooltipWrapper
-                                content={original.details.inviteMessage}
-                                delayDuration={500}
-                            >
-                                <span class="block w-full min-w-0 truncate">
-                                    {original.details.inviteMessage}
-                                </span>
+                        {!original.message && original.details?.inviteMessage ? (
+                            <TooltipWrapper content={original.details.inviteMessage} delayDuration={500}>
+                                <span class="block w-full min-w-0 truncate">{original.details.inviteMessage}</span>
                             </TooltipWrapper>
                         ) : null}
-                        {!original.message &&
-                        original.details?.requestMessage ? (
-                            <TooltipWrapper
-                                content={original.details.requestMessage}
-                                delayDuration={500}
-                            >
-                                <span class="block w-full min-w-0 truncate">
-                                    {original.details.requestMessage}
-                                </span>
+                        {!original.message && original.details?.requestMessage ? (
+                            <TooltipWrapper content={original.details.requestMessage} delayDuration={500}>
+                                <span class="block w-full min-w-0 truncate">{original.details.requestMessage}</span>
                             </TooltipWrapper>
                         ) : null}
-                        {!original.message &&
-                        original.details?.responseMessage ? (
-                            <TooltipWrapper
-                                content={original.details.responseMessage}
-                                delayDuration={500}
-                            >
-                                <span class="block w-full min-w-0 truncate">
-                                    {original.details.responseMessage}
-                                </span>
+                        {!original.message && original.details?.responseMessage ? (
+                            <TooltipWrapper content={original.details.responseMessage} delayDuration={500}>
+                                <span class="block w-full min-w-0 truncate">{original.details.responseMessage}</span>
                             </TooltipWrapper>
                         ) : null}
                     </div>
@@ -595,14 +466,11 @@ export const createColumns = ({
                     !original.type?.includes('moderation.') &&
                     !original.type?.includes('instance.') &&
                     !original.link?.startsWith('economy.');
-                const showDeleteLog =
-                    original.type !== 'friendRequest' &&
-                    original.type !== 'ignoredFriendRequest';
+                const showDeleteLog = original.type !== 'friendRequest' && original.type !== 'ignoredFriendRequest';
 
                 return (
                     <div class="flex items-center justify-end gap-2">
-                        {original.senderUserId !== currentUser.value?.id &&
-                        !isNotificationExpired(original) ? (
+                        {original.senderUserId !== currentUser.value?.id && !isNotificationExpired(original) ? (
                             <span class="inline-flex items-center gap-2">
                                 {original.type === 'friendRequest' ? (
                                     <Tooltip>
@@ -610,24 +478,14 @@ export const createColumns = ({
                                             <button
                                                 type="button"
                                                 class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
-                                                aria-label={t(
-                                                    'view.notification.actions.accept'
-                                                )}
-                                                onClick={() =>
-                                                    acceptFriendRequestNotification(
-                                                        original
-                                                    )
-                                                }
+                                                aria-label={t('view.notification.actions.accept')}
+                                                onClick={() => acceptFriendRequestNotification(original)}
                                             >
                                                 <Check class="h-4 w-4" />
                                             </button>
                                         </TooltipTrigger>
                                         <TooltipContent side="top">
-                                            <span>
-                                                {t(
-                                                    'view.notification.actions.accept'
-                                                )}
-                                            </span>
+                                            <span>{t('view.notification.actions.accept')}</span>
                                         </TooltipContent>
                                     </Tooltip>
                                 ) : null}
@@ -638,24 +496,14 @@ export const createColumns = ({
                                             <button
                                                 type="button"
                                                 class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
-                                                aria-label={t(
-                                                    'view.notification.actions.decline_with_message'
-                                                )}
-                                                onClick={() =>
-                                                    showSendInviteResponseDialog(
-                                                        original
-                                                    )
-                                                }
+                                                aria-label={t('view.notification.actions.decline_with_message')}
+                                                onClick={() => showSendInviteResponseDialog(original)}
                                             >
                                                 <MessageCircle class="h-4 w-4" />
                                             </button>
                                         </TooltipTrigger>
                                         <TooltipContent side="top">
-                                            <span>
-                                                {t(
-                                                    'view.notification.actions.decline_with_message'
-                                                )}
-                                            </span>
+                                            <span>{t('view.notification.actions.decline_with_message')}</span>
                                         </TooltipContent>
                                     </Tooltip>
                                 ) : null}
@@ -668,24 +516,14 @@ export const createColumns = ({
                                                     <button
                                                         type="button"
                                                         class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
-                                                        aria-label={t(
-                                                            'view.notification.actions.invite'
-                                                        )}
-                                                        onClick={() =>
-                                                            acceptRequestInvite(
-                                                                original
-                                                            )
-                                                        }
+                                                        aria-label={t('view.notification.actions.invite')}
+                                                        onClick={() => acceptRequestInvite(original)}
                                                     >
                                                         <Check class="h-4 w-4" />
                                                     </button>
                                                 </TooltipTrigger>
                                                 <TooltipContent side="top">
-                                                    <span>
-                                                        {t(
-                                                            'view.notification.actions.invite'
-                                                        )}
-                                                    </span>
+                                                    <span>{t('view.notification.actions.invite')}</span>
                                                 </TooltipContent>
                                             </Tooltip>
                                         ) : null}
@@ -694,24 +532,14 @@ export const createColumns = ({
                                                 <button
                                                     type="button"
                                                     class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
-                                                    aria-label={t(
-                                                        'view.notification.actions.decline_with_message'
-                                                    )}
-                                                    onClick={() =>
-                                                        showSendInviteRequestResponseDialog(
-                                                            original
-                                                        )
-                                                    }
+                                                    aria-label={t('view.notification.actions.decline_with_message')}
+                                                    onClick={() => showSendInviteRequestResponseDialog(original)}
                                                 >
                                                     <MessageCircle class="h-4 w-4" />
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
-                                                <span>
-                                                    {t(
-                                                        'view.notification.actions.decline_with_message'
-                                                    )}
-                                                </span>
+                                                <span>{t('view.notification.actions.decline_with_message')}</span>
                                             </TooltipContent>
                                         </Tooltip>
                                     </span>
@@ -721,52 +549,32 @@ export const createColumns = ({
                                     ? original.responses.map((response) => {
                                           const onClick = () => {
                                               if (response.type === 'link') {
-                                                  openNotificationLink(
-                                                      response.data
-                                                  );
+                                                  openNotificationLink(response.data);
                                                   return;
                                               }
-                                              if (
-                                                  response.icon === 'reply' &&
-                                                  original.type === 'boop'
-                                              ) {
-                                                  showSendBoopDialog(
-                                                      original.senderUserId
-                                                  );
+                                              if (response.icon === 'reply' && original.type === 'boop') {
+                                                  showSendBoopDialog(original.senderUserId);
                                                   return;
                                               }
-                                              sendNotificationResponse(
-                                                  original.id,
-                                                  original.responses,
-                                                  response.type
-                                              );
+                                              sendNotificationResponse(original.id, original.responses, response.type);
                                           };
 
-                                          const ResponseIcon = getResponseIcon(
-                                              response,
-                                              original.type
-                                          );
+                                          const ResponseIcon = getResponseIcon(response, original.type);
 
                                           return (
-                                              <Tooltip
-                                                  key={`${response.text}:${response.type}`}
-                                              >
+                                              <Tooltip key={`${response.text}:${response.type}`}>
                                                   <TooltipTrigger asChild>
                                                       <button
                                                           type="button"
                                                           class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
-                                                          aria-label={
-                                                              response.text
-                                                          }
+                                                          aria-label={response.text}
                                                           onClick={onClick}
                                                       >
                                                           <ResponseIcon class="h-4 w-4" />
                                                       </button>
                                                   </TooltipTrigger>
                                                   <TooltipContent side="top">
-                                                      <span>
-                                                          {response.text}
-                                                      </span>
+                                                      <span>{response.text}</span>
                                                   </TooltipContent>
                                               </Tooltip>
                                           );
@@ -779,34 +587,18 @@ export const createColumns = ({
                                             <button
                                                 type="button"
                                                 class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
-                                                aria-label={t(
-                                                    'view.notification.actions.decline'
-                                                )}
+                                                aria-label={t('view.notification.actions.decline')}
                                                 onClick={() =>
                                                     shiftHeld.value
-                                                        ? hideNotification(
-                                                              original
-                                                          )
-                                                        : hideNotificationPrompt(
-                                                              original
-                                                          )
+                                                        ? hideNotification(original)
+                                                        : hideNotificationPrompt(original)
                                                 }
                                             >
-                                                <X
-                                                    class={
-                                                        shiftHeld.value
-                                                            ? 'h-4 w-4 text-red-600'
-                                                            : 'h-4 w-4'
-                                                    }
-                                                />
+                                                <X class={shiftHeld.value ? 'h-4 w-4 text-red-600' : 'h-4 w-4'} />
                                             </button>
                                         </TooltipTrigger>
                                         <TooltipContent side="top">
-                                            <span>
-                                                {t(
-                                                    'view.notification.actions.decline'
-                                                )}
-                                            </span>
+                                            <span>{t('view.notification.actions.decline')}</span>
                                         </TooltipContent>
                                     </Tooltip>
                                 ) : null}
@@ -817,17 +609,11 @@ export const createColumns = ({
                                             <button
                                                 type="button"
                                                 class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
-                                                aria-label={t(
-                                                    'view.notification.actions.delete_log'
-                                                )}
+                                                aria-label={t('view.notification.actions.delete_log')}
                                                 onClick={() =>
                                                     shiftHeld.value
-                                                        ? deleteNotificationLog(
-                                                              original
-                                                          )
-                                                        : deleteNotificationLogPrompt(
-                                                              original
-                                                          )
+                                                        ? deleteNotificationLog(original)
+                                                        : deleteNotificationLogPrompt(original)
                                                 }
                                             >
                                                 {shiftHeld.value ? (
@@ -847,17 +633,11 @@ export const createColumns = ({
                                     <button
                                         type="button"
                                         class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
-                                        aria-label={t(
-                                            'view.notification.actions.delete_log'
-                                        )}
+                                        aria-label={t('view.notification.actions.delete_log')}
                                         onClick={() =>
                                             shiftHeld.value
-                                                ? deleteNotificationLog(
-                                                      original
-                                                  )
-                                                : deleteNotificationLogPrompt(
-                                                      original
-                                                  )
+                                                ? deleteNotificationLog(original)
+                                                : deleteNotificationLogPrompt(original)
                                         }
                                     >
                                         {shiftHeld.value ? (
@@ -868,11 +648,7 @@ export const createColumns = ({
                                     </button>
                                 </TooltipTrigger>
                                 <TooltipContent side="top">
-                                    <span>
-                                        {t(
-                                            'view.notification.actions.delete_log'
-                                        )}
-                                    </span>
+                                    <span>{t('view.notification.actions.delete_log')}</span>
                                 </TooltipContent>
                             </Tooltip>
                         ) : null}

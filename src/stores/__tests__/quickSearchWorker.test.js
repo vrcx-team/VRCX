@@ -86,9 +86,7 @@ describe('quickSearchWorker message protocol', () => {
                         imageUrl: ''
                     }
                 ],
-                favAvatars: [
-                    { id: 'avtr_1', name: 'Alpha Avatar', imageUrl: '' }
-                ],
+                favAvatars: [{ id: 'avtr_1', name: 'Alpha Avatar', imageUrl: '' }],
                 favWorlds: [{ id: 'wrld_1', name: 'Alpha World', imageUrl: '' }]
             }
         });

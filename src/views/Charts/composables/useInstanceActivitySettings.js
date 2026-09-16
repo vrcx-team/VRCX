@@ -10,26 +10,13 @@ export function useInstanceActivitySettings() {
 
     async function initializeSettings() {
         try {
-            const [
-                barWidthValue,
-                isDetailVisibleValue,
-                isSoloInstanceVisibleValue,
-                isNoFriendInstanceVisibleValue
-            ] = await Promise.all([
-                configRepository.getInt('VRCX_InstanceActivityBarWidth', 25),
-                configRepository.getBool(
-                    'VRCX_InstanceActivityDetailVisible',
-                    true
-                ),
-                configRepository.getBool(
-                    'VRCX_InstanceActivitySoloInstanceVisible',
-                    true
-                ),
-                configRepository.getBool(
-                    'VRCX_InstanceActivityNoFriendInstanceVisible',
-                    true
-                )
-            ]);
+            const [barWidthValue, isDetailVisibleValue, isSoloInstanceVisibleValue, isNoFriendInstanceVisibleValue] =
+                await Promise.all([
+                    configRepository.getInt('VRCX_InstanceActivityBarWidth', 25),
+                    configRepository.getBool('VRCX_InstanceActivityDetailVisible', true),
+                    configRepository.getBool('VRCX_InstanceActivitySoloInstanceVisible', true),
+                    configRepository.getBool('VRCX_InstanceActivityNoFriendInstanceVisible', true)
+                ]);
 
             barWidth.value = barWidthValue;
             isDetailVisible.value = isDetailVisibleValue;
@@ -42,38 +29,30 @@ export function useInstanceActivitySettings() {
 
     function changeBarWidth(value, onSettingsChange) {
         barWidth.value = value;
-        configRepository
-            .setInt('VRCX_InstanceActivityBarWidth', value)
-            .finally(() => {
-                if (onSettingsChange) onSettingsChange();
-            });
+        configRepository.setInt('VRCX_InstanceActivityBarWidth', value).finally(() => {
+            if (onSettingsChange) onSettingsChange();
+        });
     }
 
     function changeIsDetailInstanceVisible(value, onSettingsChange) {
         isDetailVisible.value = value;
-        configRepository
-            .setBool('VRCX_InstanceActivityDetailVisible', value)
-            .finally(() => {
-                if (onSettingsChange) onSettingsChange();
-            });
+        configRepository.setBool('VRCX_InstanceActivityDetailVisible', value).finally(() => {
+            if (onSettingsChange) onSettingsChange();
+        });
     }
 
     function changeIsSoloInstanceVisible(value, onSettingsChange) {
         isSoloInstanceVisible.value = value;
-        configRepository
-            .setBool('VRCX_InstanceActivitySoloInstanceVisible', value)
-            .finally(() => {
-                if (onSettingsChange) onSettingsChange();
-            });
+        configRepository.setBool('VRCX_InstanceActivitySoloInstanceVisible', value).finally(() => {
+            if (onSettingsChange) onSettingsChange();
+        });
     }
 
     function changeIsNoFriendInstanceVisible(value, onSettingsChange) {
         isNoFriendInstanceVisible.value = value;
-        configRepository
-            .setBool('VRCX_InstanceActivityNoFriendInstanceVisible', value)
-            .finally(() => {
-                if (onSettingsChange) onSettingsChange();
-            });
+        configRepository.setBool('VRCX_InstanceActivityNoFriendInstanceVisible', value).finally(() => {
+            if (onSettingsChange) onSettingsChange();
+        });
     }
 
     function handleChangeSettings(activityDetailChartRef) {

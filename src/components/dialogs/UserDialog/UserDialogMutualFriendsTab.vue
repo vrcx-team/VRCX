@@ -116,7 +116,6 @@
     );
 
     /**
-     *
      * @param sortOrder
      */
     async function setUserDialogMutualFriendSorting(sortOrder) {
@@ -136,7 +135,6 @@
     }
 
     /**
-     *
      * @param userId
      */
     async function getUserMutualFriends(userId) {

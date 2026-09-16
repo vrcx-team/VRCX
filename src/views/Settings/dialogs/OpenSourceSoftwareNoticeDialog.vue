@@ -109,8 +109,7 @@
                                 <pre
                                     v-if="selectedEntry.noticeText"
                                     class="mt-4 max-h-[20rem] overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted p-3 text-xs"
-                                    >{{ selectedEntry.noticeText }}</pre
-                                >
+                                    >{{ selectedEntry.noticeText }}</pre>
                                 <div
                                     v-else
                                     class="mt-4 rounded-md border border-dashed p-4 text-sm text-muted-foreground">
@@ -198,15 +197,11 @@
         }
     });
 
-    /**
-     *
-     */
     function closeDialog() {
         emit('update:ossDialog', false);
     }
 
     /**
-     *
      * @param relativePath
      */
     function buildAssetUrl(relativePath) {
@@ -214,7 +209,6 @@
     }
 
     /**
-     *
      * @param license
      */
     function getLicenseLabel(license) {
@@ -225,9 +219,6 @@
         return license;
     }
 
-    /**
-     *
-     */
     async function loadLicenses() {
         isLoading.value = true;
         loadError.value = false;

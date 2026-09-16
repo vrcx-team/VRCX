@@ -41,10 +41,7 @@ export const createColumns = ({
         cell: ({ row }) => {
             const original = row.original;
             return (
-                <div
-                    class="flex items-center justify-center"
-                    onClick={(e) => e.stopPropagation()}
-                >
+                <div class="flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
                     <Checkbox
                         modelValue={!!original?.$selected}
                         onUpdate:modelValue={(value) => {
@@ -93,9 +90,7 @@ export const createColumns = ({
         cell: ({ row }) => {
             const original = row.original;
             const useColors = !!(randomUserColours?.value ?? randomUserColours);
-            const colorStyle = useColors
-                ? { color: original?.user?.$userColour }
-                : null;
+            const colorStyle = useColors ? { color: original?.user?.$userColour } : null;
 
             return (
                 <span
@@ -105,9 +100,7 @@ export const createColumns = ({
                         onShowUser?.(original?.userId);
                     }}
                 >
-                    <span style={colorStyle}>
-                        {original?.user?.displayName}
-                    </span>
+                    <span style={colorStyle}>{original?.user?.displayName}</span>
                 </span>
             );
         }
@@ -123,10 +116,7 @@ export const createColumns = ({
             const managerNotes = row.original?.managerNotes ?? '';
             return (
                 <TooltipWrapper content={managerNotes} disabled={!managerNotes}>
-                    <span
-                        class="inline-block max-w-full truncate align-middle"
-                        onClick={(e) => e.stopPropagation()}
-                    >
+                    <span class="inline-block max-w-full truncate align-middle" onClick={(e) => e.stopPropagation()}>
                         {managerNotes}
                     </span>
                 </TooltipWrapper>

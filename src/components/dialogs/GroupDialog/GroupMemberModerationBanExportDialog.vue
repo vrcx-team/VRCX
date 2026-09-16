@@ -77,7 +77,6 @@
     const checkedExportBansOptions = ref(['userId', 'displayName', 'roles', 'managerNotes', 'joinedAt', 'bannedAt']);
 
     /**
-     *
      * @param label
      * @param checked
      */
@@ -93,7 +92,6 @@
     }
 
     /**
-     *
      * @param item
      * @param key
      */
@@ -110,9 +108,6 @@
         }
     }
 
-    /**
-     *
-     */
     function updateExportContent() {
         const sortedCheckedOptions = exportBansOptions
             .filter((option) => checkedExportBansOptions.value.includes(option.label))
@@ -127,16 +122,10 @@
         exportContent.value = header + content;
     }
 
-    /**
-     *
-     */
     function handleCopyExportContent() {
         copyToClipboard(exportContent.value);
     }
 
-    /**
-     *
-     */
     function setIsGroupBansExportDialogVisible() {
         emit('update:isGroupBansExportDialogVisible', false);
     }

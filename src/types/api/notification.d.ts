@@ -10,19 +10,12 @@ export type GetNotifications = (params: {
     params: any;
 }>;
 
-export type GetHiddenFriendRequests = (params: {
-    n?: number;
-    offset?: number;
-}) => Promise<{
+export type GetHiddenFriendRequests = (params: { n?: number; offset?: number }) => Promise<{
     json: NotificationResponse[];
     params: any;
 }>;
 
-export type GetNotificationsV2 = (params: {
-    n?: number;
-    offset?: number;
-    type?: string;
-}) => Promise<{
+export type GetNotificationsV2 = (params: { n?: number; offset?: number; type?: string }) => Promise<{
     json: NotificationResponse[];
     params: any;
 }>;

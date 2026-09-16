@@ -2,7 +2,6 @@ import { parseLocation } from './location';
 import { queryRequest } from '../../api';
 
 /**
- *
  * @param {object} ref
  * @param {string} permission
  * @returns {boolean}
@@ -20,7 +19,6 @@ function hasGroupPermission(ref, permission) {
 }
 
 /**
- *
  * @param {object} group
  * @returns {boolean}
  */
@@ -42,7 +40,6 @@ function hasGroupModerationPermission(group) {
 }
 
 /**
- *
  * @param {string} data
  * @returns {Promise<string>}
  */

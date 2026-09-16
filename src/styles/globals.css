@@ -218,9 +218,7 @@ html.dark .x-container {
 
 body {
     @apply bg-background text-foreground;
-    font-family:
-        var(--font-western), var(--font-symbol), var(--font-primary-cjk),
-        var(--font-fallback-cjk);
+    font-family: var(--font-western), var(--font-symbol), var(--font-primary-cjk), var(--font-fallback-cjk);
     margin: 0;
 }
 

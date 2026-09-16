@@ -62,8 +62,7 @@ vi.mock('../../../../shared/constants', () => ({
 vi.mock('@/components/ui/dialog', () => ({
     Dialog: {
         emits: ['update:open'],
-        template:
-            '<div><button data-testid="dialog-close" @click="$emit(\'update:open\', false)" /><slot /></div>'
+        template: '<div><button data-testid="dialog-close" @click="$emit(\'update:open\', false)" /><slot /></div>'
     },
     DialogContent: { template: '<div><slot /></div>' },
     DialogHeader: { template: '<div><slot /></div>' },
@@ -74,8 +73,7 @@ vi.mock('@/components/ui/dialog', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -117,9 +115,7 @@ describe('FeedFiltersDialog.vue', () => {
             }
         });
 
-        expect(wrapper.get('[data-testid="dialog-title"]').text()).toBe(
-            'dialog.shared_feed_filters.wrist'
-        );
+        expect(wrapper.get('[data-testid="dialog-title"]').text()).toBe('dialog.shared_feed_filters.wrist');
 
         await wrapper.get('[data-testid="toggle-update"]').trigger('click');
         expect(mocks.sharedFeedFilters.value.wrist.status).toBe('all');

@@ -239,7 +239,6 @@
     const treeData = ref({});
 
     /**
-     *
      * @param user
      */
     function getUserStateText(user) {
@@ -258,7 +257,6 @@
     }
 
     /**
-     *
      * @param status
      */
     function getUserStatusText(status) {
@@ -277,9 +275,6 @@
         return t('dialog.user.status.offline');
     }
 
-    /**
-     *
-     */
     function refreshUserDialogTreeData() {
         const D = userDialog.value;
         if (D.id === currentUser.value.id) {
@@ -297,7 +292,6 @@
     }
 
     /**
-     *
      * @param tabName
      */
     function handleUserDialogTab(tabName) {
@@ -348,16 +342,12 @@
         }
     }
 
-    /**
-     *
-     */
     function loadLastActiveTab() {
         const tab = userDialog.value.lastActiveTab;
         handleUserDialogTab(tab);
     }
 
     /**
-     *
      * @param tabName
      */
     function userDialogTabClick(tabName) {
@@ -377,7 +367,6 @@
     });
 
     /**
-     *
      * @param badge
      */
     async function toggleBadgeVisibility(badge) {
@@ -393,7 +382,6 @@
     }
 
     /**
-     *
      * @param badge
      */
     async function toggleBadgeShowcased(badge) {
@@ -409,7 +397,6 @@
     }
 
     /**
-     *
      * @param args
      */
     function handleBadgeUpdate(args) {
@@ -419,16 +406,12 @@
     }
 
     /**
-     *
      * @param displayName
      */
     function copyUserDisplayName(displayName) {
         copyToClipboard(displayName, 'User DisplayName copied to clipboard');
     }
 
-    /**
-     *
-     */
     function closeInviteDialog() {
         clearInviteImageUpload();
     }

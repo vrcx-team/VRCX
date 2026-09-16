@@ -3,11 +3,7 @@ import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
-import {
-    compareByName,
-    createDefaultFavoriteGroupRef,
-    replaceReactiveObject
-} from '../shared/utils';
+import { compareByName, createDefaultFavoriteGroupRef, replaceReactiveObject } from '../shared/utils';
 import { favoriteRequest } from '../api';
 import { database } from '../services/database';
 import { processBulk } from '../services/request';
@@ -133,13 +129,9 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         { immediate: true }
     );
 
-    const localAvatarFavoriteGroups = computed(() =>
-        Object.keys(localAvatarFavorites).sort()
-    );
+    const localAvatarFavoriteGroups = computed(() => Object.keys(localAvatarFavorites).sort());
 
-    const localWorldFavoriteGroups = computed(() =>
-        Object.keys(localWorldFavorites).sort()
-    );
+    const localWorldFavoriteGroups = computed(() => Object.keys(localWorldFavorites).sort());
 
     const localWorldFavoritesList = computed(() =>
         Object.values(localWorldFavorites)
@@ -188,9 +180,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         return favoriteGroup.length;
     });
 
-    const localFriendFavoriteGroups = computed(() =>
-        Object.keys(localFriendFavorites).sort()
-    );
+    const localFriendFavoriteGroups = computed(() => Object.keys(localFriendFavorites).sort());
 
     const localFriendFavGroupLength = computed(() => (group) => {
         const favoriteGroup = localFriendFavorites[group];
@@ -201,7 +191,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     });
 
     /**
-     *
      * @param {Array} list
      * @param {object} selectionRef
      * @returns {void}
@@ -212,9 +201,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             return;
         }
         const availableIds = new Set(list.map((item) => item.id));
-        const filtered = selectionRef.value.filter((id) =>
-            availableIds.has(id)
-        );
+        const filtered = selectionRef.value.filter((id) => availableIds.has(id));
         if (filtered.length !== selectionRef.value.length) {
             selectionRef.value = filtered;
         }
@@ -269,7 +256,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
      * @param {string} objectId
      * @returns {object | undefined}
      */
@@ -278,8 +264,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
-     * @param {object}  args
+     * @param {object} args
      * @returns {void}
      */
     function handleFavoriteGroup(args) {
@@ -287,7 +272,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
      * @returns {void}
      */
     function refreshFavoriteGroups() {
@@ -321,9 +305,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         });
     }
 
-    /**
-     *
-     */
     function buildFavoriteGroups() {
         let group;
         let groups;
@@ -357,19 +338,14 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             });
         }
         // 400 = ['vrcPlusWorlds1', 'vrcPlusWorlds2', 'vrcPlusWorlds3', 'vrcPlusWorlds4'] x 100
-        for (
-            i = 0;
-            i < favoriteLimits.value.maxFavoriteGroups.vrcPlusWorld;
-            ++i
-        ) {
+        for (i = 0; i < favoriteLimits.value.maxFavoriteGroups.vrcPlusWorld; ++i) {
             favoriteWorldGroups.value.push({
                 assign: false,
                 key: `vrcPlusWorld:vrcPlusWorlds${i + 1}`,
                 type: 'vrcPlusWorld',
                 name: `vrcPlusWorlds${i + 1}`,
                 displayName: `VRC+ Group ${i + 1}`,
-                capacity:
-                    favoriteLimits.value.maxFavoritesPerGroup.vrcPlusWorld,
+                capacity: favoriteLimits.value.maxFavoritesPerGroup.vrcPlusWorld,
                 count: 0,
                 visibility: 'private'
             });
@@ -440,9 +416,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         countFavoriteGroups();
     }
 
-    /**
-     *
-     */
     function countFavoriteGroups() {
         const cachedFavoriteGroups = getCachedFavoriteGroupsByTypeName();
         for (const key in cachedFavoriteGroups) {
@@ -458,7 +431,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
      * @param {object} json
      * @returns {object}
      */
@@ -516,7 +488,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
      * @param avatarRef
      */
     function syncLocalAvatarFavoriteRef(avatarRef) {
@@ -538,7 +509,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
      * @param {string} worldId
      * @param {string} group
      * @returns {boolean}
@@ -557,7 +527,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
      * @param {string} avatarId
      * @param {string} group
      * @returns {boolean}
@@ -576,7 +545,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
      * @param {string} objectId
      */
     function updateFavoriteDialog(objectId) {
@@ -610,7 +578,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
      * @param {string} group
      */
     function deleteLocalWorldFavoriteGroup(group) {
@@ -659,6 +626,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     /**
      * Check if a user is in any local friend favorite group.
+     *
      * @param {string} userId
      * @returns {boolean}
      */
@@ -689,7 +657,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
      * @param objectId
      */
     function deleteFavoriteNoConfirm(objectId) {
@@ -710,7 +677,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
      * @param type
      * @param objectId
      */
@@ -723,7 +689,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     *
      * @param a
      * @param b
      */

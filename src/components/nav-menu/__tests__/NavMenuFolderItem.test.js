@@ -20,8 +20,7 @@ vi.mock('@/components/ui/sidebar', () => ({
     SidebarMenuSubItem: { template: '<div><slot /></div>' },
     SidebarMenuSubButton: {
         emits: ['click'],
-        template:
-            '<button data-testid="submenu-btn" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="submenu-btn" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -45,8 +44,7 @@ vi.mock('@/components/ui/context-menu', () => ({
 vi.mock('@/components/ui/dropdown-menu', () => ({
     DropdownMenu: {
         emits: ['update:open'],
-        template:
-            '<div><button data-testid="dropdown-open" @click="$emit(\'update:open\', true)" /><slot /></div>'
+        template: '<div><button data-testid="dropdown-open" @click="$emit(\'update:open\', true)" /><slot /></div>'
     },
     DropdownMenuTrigger: { template: '<div><slot /></div>' },
     DropdownMenuContent: { template: '<div><slot /></div>' },

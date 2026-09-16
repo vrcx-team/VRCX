@@ -468,9 +468,6 @@
         return convertFileUrlToImageUrl(url);
     }
 
-    /**
-     *
-     */
     function handleClearSearch() {
         clearUserSearch();
         clearWorldSearch();
@@ -480,16 +477,12 @@
     }
 
     /**
-     *
      * @param text
      */
     function updateSearchText(text) {
         searchText.value = text;
     }
 
-    /**
-     *
-     */
     function search() {
         if (activeSearchTab.value === 'avatar' && (!searchText.value || searchText.value.length < 3)) {
             toast.warning(t('view.search.avatar.min_chars_warning'));

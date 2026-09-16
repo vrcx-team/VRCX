@@ -92,12 +92,8 @@ describe('Emoji.vue', () => {
 
         expect(mocks.getCachedEmoji).toHaveBeenCalledWith('file_1');
         expect(wrapper.find('[data-testid="avatar"]').exists()).toBe(true);
-        expect(
-            wrapper.find('[data-testid="avatar-image"]').attributes('src')
-        ).toBe('https://example.com/file_2.png');
-        expect(wrapper.find('[data-testid="avatar-fallback"]').exists()).toBe(
-            true
-        );
+        expect(wrapper.find('[data-testid="avatar-image"]').attributes('src')).toBe('https://example.com/file_2.png');
+        expect(wrapper.find('[data-testid="avatar-fallback"]').exists()).toBe(true);
     });
 
     it('updates when imageUrl changes', async () => {

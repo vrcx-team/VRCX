@@ -71,11 +71,7 @@ export const useModerationStore = defineStore('Moderation', () => {
         }
 
         const D = userStore.userDialog;
-        if (
-            D.visible === false ||
-            ref.targetUserId !== D.id ||
-            ref.sourceUserId !== userStore.currentUser.id
-        ) {
+        if (D.visible === false || ref.targetUserId !== D.id || ref.sourceUserId !== userStore.currentUser.id) {
             return;
         }
         if (ref.type === 'block') {
@@ -95,11 +91,7 @@ export const useModerationStore = defineStore('Moderation', () => {
         let { type, moderated } = args.params;
         const userId = userStore.currentUser.id;
         for (let ref of cachedPlayerModerations.values()) {
-            if (
-                ref.type === type &&
-                ref.targetUserId === moderated &&
-                ref.sourceUserId === userId
-            ) {
+            if (ref.type === type && ref.targetUserId === moderated && ref.sourceUserId === userId) {
                 cachedPlayerModerations.delete(ref.id);
                 handlePlayerModerationAtDelete({
                     ref,
@@ -113,7 +105,6 @@ export const useModerationStore = defineStore('Moderation', () => {
     }
 
     /**
-     *
      * @param {object} json
      * @returns {object}
      */
@@ -178,12 +169,13 @@ export const useModerationStore = defineStore('Moderation', () => {
 
     /**
      * Get user moderations
-     * @param {string} userId
-     * @returns {object} moderations
+     *
      * @property {boolean} isBlocked
      * @property {boolean} isMuted
      * @property {boolean} isAvatarInteractionDisabled
      * @property {boolean} isChatBoxMuted
+     * @param {string} userId
+     * @returns {object} Moderations
      */
     function getUserModerations(userId) {
         let moderations = {

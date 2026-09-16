@@ -353,7 +353,6 @@
     });
 
     /**
-     *
      * @param list
      */
     function excludeSameInstance(list) {
@@ -642,9 +641,6 @@
         };
     };
 
-    /**
-     *
-     */
     function saveFriendsGroupStates() {
         configRepository.setBool('VRCX_isFriendsGroupMe', isFriendsGroupMe.value);
         configRepository.setBool('VRCX_isFriendsGroupFavorites', isVIPFriends.value);
@@ -653,9 +649,6 @@
         configRepository.setBool('VRCX_isFriendsGroupOffline', isOfflineFriends.value);
     }
 
-    /**
-     *
-     */
     async function loadFriendsGroupStates() {
         isFriendsGroupMe.value = await configRepository.getBool('VRCX_isFriendsGroupMe', true);
         isVIPFriends.value = await configRepository.getBool('VRCX_isFriendsGroupFavorites', true);
@@ -668,49 +661,31 @@
         );
     }
 
-    /**
-     *
-     */
     function toggleSwitchGroupByInstanceCollapsed() {
         isSidebarGroupByInstanceCollapsed.value = !isSidebarGroupByInstanceCollapsed.value;
         configRepository.setBool('VRCX_sidebarGroupByInstanceCollapsed', isSidebarGroupByInstanceCollapsed.value);
     }
 
-    /**
-     *
-     */
     function toggleFriendsGroupMe() {
         isFriendsGroupMe.value = !isFriendsGroupMe.value;
         saveFriendsGroupStates();
     }
 
-    /**
-     *
-     */
     function toggleVIPFriends() {
         isVIPFriends.value = !isVIPFriends.value;
         saveFriendsGroupStates();
     }
 
-    /**
-     *
-     */
     function toggleOnlineFriends() {
         isOnlineFriends.value = !isOnlineFriends.value;
         saveFriendsGroupStates();
     }
 
-    /**
-     *
-     */
     function toggleActiveFriends() {
         isActiveFriends.value = !isActiveFriends.value;
         saveFriendsGroupStates();
     }
 
-    /**
-     *
-     */
     function toggleOfflineFriends() {
         isOfflineFriends.value = !isOfflineFriends.value;
         saveFriendsGroupStates();
@@ -759,7 +734,6 @@
     });
 
     /**
-     *
      * @param value
      */
     function changeStatus(value) {
@@ -769,7 +743,6 @@
     }
 
     /**
-     *
      * @param status
      */
     function setStatusFromHistory(status) {
@@ -802,8 +775,8 @@
     const canInviteToMyLocation = computed(() => checkCanInvite(lastLocation.value.location));
 
     /**
-     * @param {object} friend - friend item from friend list
-     * @returns {boolean} whether the friend has a valid joinable location
+     * @param {object} friend - Friend item from friend list
+     * @returns {boolean} Whether the friend has a valid joinable location
      */
     function hasFriendLocation(friend) {
         const loc = friend.ref?.location;
@@ -811,8 +784,8 @@
     }
 
     /**
-     * @param {object} friend - friend item from friend list
-     * @returns {boolean} whether the current user can join friend's instance
+     * @param {object} friend - Friend item from friend list
+     * @returns {boolean} Whether the current user can join friend's instance
      */
     function canJoinFriend(friend) {
         const loc = friend.ref?.location;
@@ -821,7 +794,7 @@
     }
 
     /**
-     * @param {object} friend - friend item from friend list
+     * @param {object} friend - Friend item from friend list
      */
     function friendRequestInvite(friend) {
         notificationRequest.sendRequestInvite({ platform: 'standalonewindows' }, friend.id).then(() => {
@@ -831,7 +804,7 @@
     }
 
     /**
-     * @param {object} friend - friend item from friend list
+     * @param {object} friend - Friend item from friend list
      */
     function friendInvite(friend) {
         let currentLocation = lastLocation.value.location;
@@ -857,7 +830,7 @@
     }
 
     /**
-     * @param {object} friend - friend item from friend list
+     * @param {object} friend - Friend item from friend list
      */
     function friendSendBoop(friend) {
         showSendBoopDialog(friend.id);
@@ -865,7 +838,8 @@
 
     /**
      * Join friend's instance (launch dialog)
-     * @param {object} friend - friend item from friend list
+     *
+     * @param {object} friend - Friend item from friend list
      */
     function friendJoin(friend) {
         const loc = friend.ref?.location;
@@ -874,7 +848,7 @@
     }
 
     /**
-     * @param {object} friend - friend item from friend list
+     * @param {object} friend - Friend item from friend list
      */
     function friendInviteSelf(friend) {
         const loc = friend.ref?.location;

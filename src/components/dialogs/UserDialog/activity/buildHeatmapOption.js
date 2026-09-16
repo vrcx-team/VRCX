@@ -70,18 +70,14 @@ export function buildHeatmapOption({
                 data,
                 emphasis: {
                     itemStyle: {
-                        borderColor: isDarkMode
-                            ? 'hsl(220, 15%, 18%)'
-                            : 'hsl(210, 18%, 78%)',
+                        borderColor: isDarkMode ? 'hsl(220, 15%, 18%)' : 'hsl(210, 18%, 78%)',
                         borderWidth: 1.5,
                         opacity: 0.92
                     }
                 },
                 itemStyle: {
                     borderWidth: 1.5,
-                    borderColor: isDarkMode
-                        ? 'hsl(220, 15%, 8%)'
-                        : 'hsl(0, 0%, 100%)',
+                    borderColor: isDarkMode ? 'hsl(220, 15%, 8%)' : 'hsl(0, 0%, 100%)',
                     borderRadius: 2
                 }
             }

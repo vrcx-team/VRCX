@@ -1,11 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import {
-    buildFriendRow,
-    buildInstanceHeaderRow,
-    buildToggleRow,
-    estimateRowSize
-} from '../friendsSidebarUtils';
+import { buildFriendRow, buildInstanceHeaderRow, buildToggleRow, estimateRowSize } from '../friendsSidebarUtils';
 
 // ─── buildToggleRow ──────────────────────────────────────────────────
 
@@ -87,11 +82,7 @@ describe('buildFriendRow', () => {
 
 describe('buildInstanceHeaderRow', () => {
     test('creates an instance-header row', () => {
-        const row = buildInstanceHeaderRow(
-            'wrld_123:456~private',
-            3,
-            'inst:wrld_123'
-        );
+        const row = buildInstanceHeaderRow('wrld_123:456~private', 3, 'inst:wrld_123');
         expect(row).toEqual({
             type: 'instance-header',
             key: 'inst:wrld_123',
@@ -117,29 +108,21 @@ describe('estimateRowSize', () => {
 
     test('returns 28 + paddingBottom for toggle-header', () => {
         expect(estimateRowSize({ type: 'toggle-header' })).toBe(28);
-        expect(
-            estimateRowSize({ type: 'toggle-header', paddingBottom: 8 })
-        ).toBe(36);
+        expect(estimateRowSize({ type: 'toggle-header', paddingBottom: 8 })).toBe(36);
     });
 
     test('returns 24 + paddingBottom for vip-subheader', () => {
         expect(estimateRowSize({ type: 'vip-subheader' })).toBe(24);
-        expect(
-            estimateRowSize({ type: 'vip-subheader', paddingBottom: 4 })
-        ).toBe(28);
+        expect(estimateRowSize({ type: 'vip-subheader', paddingBottom: 4 })).toBe(28);
     });
 
     test('returns 26 + paddingBottom for instance-header', () => {
         expect(estimateRowSize({ type: 'instance-header' })).toBe(26);
-        expect(
-            estimateRowSize({ type: 'instance-header', paddingBottom: 4 })
-        ).toBe(30);
+        expect(estimateRowSize({ type: 'instance-header', paddingBottom: 4 })).toBe(30);
     });
 
     test('returns 52 + paddingBottom for any other type (friend-item)', () => {
         expect(estimateRowSize({ type: 'friend-item' })).toBe(52);
-        expect(estimateRowSize({ type: 'friend-item', paddingBottom: 6 })).toBe(
-            58
-        );
+        expect(estimateRowSize({ type: 'friend-item', paddingBottom: 6 })).toBe(58);
     });
 });

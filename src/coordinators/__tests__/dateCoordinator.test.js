@@ -5,8 +5,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('../../stores', () => ({
-    useAppearanceSettingsStore: (...args) =>
-        mocks.useAppearanceSettingsStore(...args)
+    useAppearanceSettingsStore: (...args) => mocks.useAppearanceSettingsStore(...args)
 }));
 
 import { formatDateFilter } from '../dateCoordinator';

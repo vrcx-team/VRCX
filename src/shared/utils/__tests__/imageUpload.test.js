@@ -63,9 +63,7 @@ describe('withUploadTimeout', () => {
 
     test('rejects if underlying promise rejects', async () => {
         const failingPromise = Promise.reject(new Error('upload failed'));
-        await expect(withUploadTimeout(failingPromise)).rejects.toThrow(
-            'upload failed'
-        );
+        await expect(withUploadTimeout(failingPromise)).rejects.toThrow('upload failed');
     });
 });
 
@@ -160,10 +158,7 @@ describe('handleImageUploadInput', () => {
 
     test('calls onClear callback when clearing', () => {
         const onClear = vi.fn();
-        const { clearInput } = handleImageUploadInput(
-            { target: { files: [] } },
-            { onClear }
-        );
+        const { clearInput } = handleImageUploadInput({ target: { files: [] } }, { onClear });
         // clearInput is called automatically for empty files, but let's call explicitly
         clearInput();
         expect(onClear).toHaveBeenCalled();

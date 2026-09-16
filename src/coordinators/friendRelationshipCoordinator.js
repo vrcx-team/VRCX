@@ -11,10 +11,7 @@ import { useNotificationStore } from '../stores/notification';
 import { useSharedFeedStore } from '../stores/sharedFeed';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
-import {
-    removeFriendSearchIndex,
-    syncFriendSearchIndex
-} from './searchIndexCoordinator';
+import { removeFriendSearchIndex, syncFriendSearchIndex } from './searchIndexCoordinator';
 import { watchState } from '../services/watchState';
 
 import configRepository from '../services/config';
@@ -72,10 +69,7 @@ export function getFriendRequest(userId) {
     const notificationStore = useNotificationStore();
     const array = notificationStore.notificationTable.data;
     for (let i = array.length - 1; i >= 0; i--) {
-        if (
-            array[i].type === 'friendRequest' &&
-            array[i].senderUserId === userId
-        ) {
+        if (array[i].type === 'friendRequest' && array[i].senderUserId === userId) {
             return array[i].id;
         }
     }
@@ -89,10 +83,7 @@ function deleteFriendRequest(userId) {
     const notificationStore = useNotificationStore();
     const array = notificationStore.notificationTable.data;
     for (let i = array.length - 1; i >= 0; i--) {
-        if (
-            array[i].type === 'friendRequest' &&
-            array[i].senderUserId === userId
-        ) {
+        if (array[i].type === 'friendRequest' && array[i].senderUserId === userId) {
             array.splice(i, 1);
             return;
         }
@@ -112,11 +103,7 @@ export function addFriendship(id) {
     const { friendLogTable } = storeToRefs(friendStore);
     const { friendLog, state } = friendStore;
 
-    if (
-        !watchState.isFriendsLoaded ||
-        friendLog.has(id) ||
-        id === userStore.currentUser.id
-    ) {
+    if (!watchState.isFriendsLoaded || friendLog.has(id) || id === userStore.currentUser.id) {
         return;
     }
     const ref = userStore.cachedUsers.get(id);
@@ -140,10 +127,7 @@ export function addFriendship(id) {
                     state.friendNumber = friendStore.friends.size;
                 }
                 ref.$friendNumber = ++state.friendNumber;
-                configRepository.setInt(
-                    `VRCX_friendNumber_${userStore.currentUser.id}`,
-                    state.friendNumber
-                );
+                configRepository.setInt(`VRCX_friendNumber_${userStore.currentUser.id}`, state.friendNumber);
                 friendStore.addFriend(id, ref.state);
                 const friendCtx = friendStore.friends.get(id);
                 if (friendCtx) {
@@ -175,10 +159,7 @@ export function addFriendship(id) {
                         userId: id
                     })
                     .then(() => {
-                        if (
-                            userStore.userDialog.visible &&
-                            id === userStore.userDialog.id
-                        ) {
+                        if (userStore.userDialog.visible && id === userStore.userDialog.id) {
                             userStore.applyUserDialogLocation(true);
                         }
                     });
@@ -235,16 +216,10 @@ export function updateFriendship(ref) {
             uiStore.notifyMenu('friend-log');
         }
     }
-    if (
-        ref.$trustLevel &&
-        ctx.trustLevel &&
-        ctx.trustLevel !== ref.$trustLevel
-    ) {
+    if (ref.$trustLevel && ctx.trustLevel && ctx.trustLevel !== ref.$trustLevel) {
         if (
-            (ctx.trustLevel === 'Trusted User' &&
-                ref.$trustLevel === 'Veteran User') ||
-            (ctx.trustLevel === 'Veteran User' &&
-                ref.$trustLevel === 'Trusted User')
+            (ctx.trustLevel === 'Trusted User' && ref.$trustLevel === 'Veteran User') ||
+            (ctx.trustLevel === 'Veteran User' && ref.$trustLevel === 'Trusted User')
         ) {
             const friendLogCurrent3 = {
                 userId: ref.id,
@@ -344,10 +319,7 @@ export function updateUserCurrentStatus(ref) {
     friendStore.updateOnlineFriendCounter();
 
     if (appearanceSettingsStore.randomUserColours) {
-        getNameColour(
-            userStore.currentUser.id,
-            appearanceSettingsStore.isDarkMode
-        ).then((colour) => {
+        getNameColour(userStore.currentUser.id, appearanceSettingsStore.isDarkMode).then((colour) => {
             userStore.setCurrentUserColour(colour);
         });
     }
@@ -355,14 +327,12 @@ export function updateUserCurrentStatus(ref) {
 
 /**
  * Validates and applies unfriend transition side effects.
+ *
  * @param {string} id User id.
  * @param {object} [options] Test seams.
  * @param {function} [options.nowIso] ISO timestamp provider.
  */
-export function runDeleteFriendshipFlow(
-    id,
-    { nowIso = () => new Date().toJSON() } = {}
-) {
+export function runDeleteFriendshipFlow(id, { nowIso = () => new Date().toJSON() } = {}) {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
@@ -413,14 +383,12 @@ export function runDeleteFriendshipFlow(
 
 /**
  * Reconciles current friend list against local friend log.
+ *
  * @param {object} ref Current user reference.
  * @param {object} [options] Test seams.
  * @param {function} [options.nowIso] ISO timestamp provider.
  */
-export function runUpdateFriendshipsFlow(
-    ref,
-    { nowIso = () => new Date().toJSON() } = {}
-) {
+export function runUpdateFriendshipsFlow(ref, { nowIso = () => new Date().toJSON() } = {}) {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
     const { friendLog } = friendStore;

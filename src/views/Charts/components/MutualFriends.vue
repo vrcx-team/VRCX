@@ -697,7 +697,7 @@
 
     /**
      * @param {Graph} graph
-     * @returns {{ nodes: Array, edges: Array }}
+     * @returns {{ nodes: Array; edges: Array }}
      */
     function serializeGraph(graph) {
         const nodes = [];
@@ -715,6 +715,7 @@
      * Run ForceAtlas2 + Noverlap layout in a Web Worker.
      * Requests are serialized: a new call waits for the previous one to finish,
      * preventing concurrent callbacks from stepping on each other.
+     *
      * @param {Graph} graph
      * @param {object} options
      * @param {boolean} [options.reinitialize]
@@ -948,7 +949,9 @@
             try {
                 const cam = sigmaInstance.getCamera?.();
                 cameraState = cam?.getState?.() || null;
-            } catch (e) {}
+            } catch {
+                // do nothing
+            }
             sigmaInstance.kill();
             sigmaInstance = null;
         }
@@ -1030,7 +1033,9 @@
             try {
                 const cam = sigmaInstance.getCamera?.();
                 cam?.setState?.(cameraState);
-            } catch (e) {}
+            } catch {
+                // do nothing
+            }
         }
 
         let hovered = null;

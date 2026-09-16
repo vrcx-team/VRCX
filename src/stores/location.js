@@ -13,7 +13,13 @@ export const useLocationStore = defineStore('Location', () => {
     const lastLocationDestinationTime = ref(0);
 
     /**
-     * @param {{date: number|null, location: string, name: string, playerList: Map<any, any>, friendList: Map<any, any>}} value
+     * @param {{
+     *     date: number | null;
+     *     location: string;
+     *     name: string;
+     *     playerList: Map<any, any>;
+     *     friendList: Map<any, any>;
+     * }} value
      */
     function setLastLocation(value) {
         lastLocation.value = value;

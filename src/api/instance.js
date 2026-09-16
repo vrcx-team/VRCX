@@ -63,7 +63,7 @@ const instanceReq = {
 
     /**
      * @param {{ shortName: string }} params
-     * @returns {Promise<{json: any, params}>}
+     * @returns {Promise<{ json: any; params }>}
      */
     getInstanceFromShortName(params) {
         const instanceStore = useInstanceStore();
@@ -81,8 +81,9 @@ const instanceReq = {
 
     /**
      * Send invite to current user.
-     * @param {{ worldId: string, instanceId: string, shortName?: string }} instance
-     * @returns {Promise<{instance, json: any, params}>}
+     *
+     * @param {{ worldId: string; instanceId: string; shortName?: string }} instance
+     * @returns {Promise<{ instance; json: any; params }>}
      */
     selfInvite(instance) {
         /**
@@ -115,6 +116,7 @@ const instanceReq = {
 
     /**
      * Send instance announcement
+     *
      * @type {import('../types/api/instance').InstanceAnnouncement}
      */
     instanceAnnouncement(params) {

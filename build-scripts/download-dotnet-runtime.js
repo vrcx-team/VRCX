@@ -7,23 +7,13 @@ const { pipeline } = require('stream/promises');
 const { unlink, copyFile, rename } = require('node:fs/promises');
 
 const DOTNET_VERSION = '10.0.8';
-const DOTNET_RUNTIME_DIR = path.join(
-    __dirname,
-    '..',
-    'build',
-    'Electron',
-    'dotnet-runtime'
-);
+const DOTNET_RUNTIME_DIR = path.join(__dirname, '..', 'build', 'Electron', 'dotnet-runtime');
 
-const DOTNET_CACHE_DIR = path.join(
-    os.homedir(),
-    '.cache',
-    'vrcx-build',
-    'dotnet-cache'
-);
+const DOTNET_CACHE_DIR = path.join(os.homedir(), '.cache', 'vrcx-build', 'dotnet-cache');
 
 /**
  * Downloads a file from a URL and saves it to a target path
+ *
  * @param {string} url
  * @param {string} targetPath
  * @returns {Promise<void>} A promise that resolves when the file is downloaded and saved
@@ -34,9 +24,7 @@ async function downloadFile(url, targetPath) {
     try {
         const response = await fetch(url);
         if (!response.ok) {
-            throw new Error(
-                `Failed to download, url: ${url} status code: ${response.status}`
-            );
+            throw new Error(`Failed to download, url: ${url} status code: ${response.status}`);
         }
 
         const fileStream = fs.createWriteStream(tempPath);
@@ -64,32 +52,28 @@ async function downloadFile(url, targetPath) {
 
 /**
  * Extracts a tar.gz file to a target directory
+ *
  * @param {string} tarGzPath
  * @param {string} extractDir
  * @returns {Promise<void>} A promise that resolves when the file is extracted
  */
 async function extractTarGz(tarGzPath, extractDir) {
     return new Promise((resolve, reject) => {
-        const tar = spawnSync(
-            'tar',
-            ['-xzf', tarGzPath, '-C', extractDir, '--strip-components=1'],
-            {
-                stdio: 'inherit'
-            }
-        );
+        const tar = spawnSync('tar', ['-xzf', tarGzPath, '-C', extractDir, '--strip-components=1'], {
+            stdio: 'inherit'
+        });
 
         if (tar.status === 0) {
             resolve();
         } else {
-            reject(
-                new Error(`tar extraction failed with status ${tar.status}`)
-            );
+            reject(new Error(`tar extraction failed with status ${tar.status}`));
         }
     });
 }
 
 /**
  * Downloads the .NET runtime for the specified architecture and platform
+ *
  * @param {string} arch
  * @param {string} platform
  * @returns {Promise<void>} A promise that resolves when the .NET runtime is downloaded and extracted
@@ -128,9 +112,7 @@ async function downloadDotnetRuntime(arch, platform) {
 
     // Download .NET runtime if it doesn't exist in the cache
     if (!fs.existsSync(cacheFilePath)) {
-        console.log(
-            `Downloading .NET ${DOTNET_VERSION}-${dotnetPlatform}-${arch} runtime...`
-        );
+        console.log(`Downloading .NET ${DOTNET_VERSION}-${dotnetPlatform}-${arch} runtime...`);
         await downloadFile(dotnetRuntimeUrl, cacheFilePath);
         console.log(`Downloaded ${dotnetRuntimeUrl} to ${cacheFilePath}`);
     } else {
@@ -181,9 +163,7 @@ async function downloadDotnetRuntime(arch, platform) {
     // Clean up temp directory
     fs.rmSync(tempExtractDir, { recursive: true, force: true });
 
-    console.log(
-        `.NET runtime downloaded and extracted to: ${DOTNET_RUNTIME_DIR}`
-    );
+    console.log(`.NET runtime downloaded and extracted to: ${DOTNET_RUNTIME_DIR}`);
 }
 
 const { arch, platform } = getArchAndPlatform();

@@ -16,7 +16,6 @@ import { isRpcWorld, findUserByDisplayName } from '../../shared/utils';
 import { createMediaParsers } from '../gameLog/mediaParsers';
 
 /**
- *
  * @param overrides
  */
 function makeDeps(overrides = {}) {
@@ -122,9 +121,7 @@ describe('addGameLogVideo', () => {
         };
         await parsers.addGameLogVideo(gameLog, 'wrld_123:456', 'usr_a');
 
-        expect(
-            deps.advancedSettingsStore.lookupYouTubeVideo
-        ).toHaveBeenCalledWith('dQw4w9WgXcQ');
+        expect(deps.advancedSettingsStore.lookupYouTubeVideo).toHaveBeenCalledWith('dQw4w9WgXcQ');
         expect(deps.setNowPlaying).toHaveBeenCalledWith(
             expect.objectContaining({
                 videoId: 'YouTube',
@@ -142,16 +139,13 @@ describe('addGameLogVideo', () => {
         };
         await parsers.addGameLogVideo(gameLog, 'wrld_123:456', 'usr_a');
 
-        expect(deps.setNowPlaying).toHaveBeenCalledWith(
-            expect.objectContaining({ videoPos: 42 })
-        );
+        expect(deps.setNowPlaying).toHaveBeenCalledWith(expect.objectContaining({ videoPos: 42 }));
     });
 
     test('unwraps proxy URLs (t-ne.x0.to)', async () => {
         const gameLog = {
             dt: '2024-01-01',
-            videoUrl:
-                'https://t-ne.x0.to/?url=https://www.youtube.com/watch?v=abcdefghijk'
+            videoUrl: 'https://t-ne.x0.to/?url=https://www.youtube.com/watch?v=abcdefghijk'
         };
         deps = makeDeps({
             advancedSettingsStore: {
@@ -171,9 +165,7 @@ describe('addGameLogVideo', () => {
 
         await parsers.addGameLogVideo(gameLog, 'wrld_123:456', 'usr_a');
 
-        expect(
-            deps.advancedSettingsStore.lookupYouTubeVideo
-        ).toHaveBeenCalledWith('abcdefghijk');
+        expect(deps.advancedSettingsStore.lookupYouTubeVideo).toHaveBeenCalledWith('abcdefghijk');
     });
 });
 
@@ -221,9 +213,7 @@ describe('addGameLogPyPyDance', () => {
         };
         parsers.addGameLogPyPyDance(gameLog, 'wrld_rpc');
 
-        expect(deps.setNowPlaying).toHaveBeenCalledWith(
-            expect.objectContaining({ displayName: '' })
-        );
+        expect(deps.setNowPlaying).toHaveBeenCalledWith(expect.objectContaining({ displayName: '' }));
     });
 
     test('updates nowPlaying when URL matches', () => {
@@ -295,9 +285,7 @@ describe('addGameLogVRDancing', () => {
         };
         parsers.addGameLogVRDancing(gameLog, 'wrld_rpc');
 
-        expect(deps.setNowPlaying).toHaveBeenCalledWith(
-            expect.objectContaining({ videoName: 'Actual Title' })
-        );
+        expect(deps.setNowPlaying).toHaveBeenCalledWith(expect.objectContaining({ videoName: 'Actual Title' }));
     });
 
     test('resets videoPos when it equals videoLength', () => {
@@ -307,9 +295,7 @@ describe('addGameLogVRDancing', () => {
         };
         parsers.addGameLogVRDancing(gameLog, 'wrld_rpc');
 
-        expect(deps.setNowPlaying).toHaveBeenCalledWith(
-            expect.objectContaining({ videoPos: 0 })
-        );
+        expect(deps.setNowPlaying).toHaveBeenCalledWith(expect.objectContaining({ videoPos: 0 }));
     });
 
     test('returns early for unparseable data', () => {
@@ -365,9 +351,7 @@ describe('addGameLogZuwaZuwaDance', () => {
         };
         parsers.addGameLogZuwaZuwaDance(gameLog, 'wrld_rpc');
 
-        expect(deps.setNowPlaying).toHaveBeenCalledWith(
-            expect.objectContaining({ displayName: '' })
-        );
+        expect(deps.setNowPlaying).toHaveBeenCalledWith(expect.objectContaining({ displayName: '' }));
     });
 
     test('returns early for unparseable data', () => {
@@ -433,9 +417,7 @@ describe('addGameLogLSMedia', () => {
         };
         parsers.addGameLogLSMedia(gameLog, 'wrld_123:456');
 
-        expect(deps.setNowPlaying).toHaveBeenCalledWith(
-            expect.objectContaining({ userId: 'usr_found' })
-        );
+        expect(deps.setNowPlaying).toHaveBeenCalledWith(expect.objectContaining({ userId: 'usr_found' }));
     });
 });
 

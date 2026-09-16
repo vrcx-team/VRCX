@@ -83,7 +83,6 @@
     ]);
 
     /**
-     *
      * @param label
      * @param checked
      */
@@ -98,9 +97,6 @@
         updateGroupLogsExportContent();
     }
 
-    /**
-     *
-     */
     function updateGroupLogsExportContent() {
         const sortedCheckedOptions = checkGroupsLogsExportLogsOptions
             .filter((option) => checkedGroupLogsExportLogsOptions.value.includes(option.label))
@@ -119,16 +115,10 @@
         groupLogsExportContent.value = header + content;
     }
 
-    /**
-     *
-     */
     function handleCopyGroupLogsExportContent() {
         copyToClipboard(groupLogsExportContent.value);
     }
 
-    /**
-     *
-     */
     function setIsGroupLogsExportDialogVisible() {
         emit('update:isGroupLogsExportDialogVisible', false);
     }

@@ -26,7 +26,6 @@
     const emit = defineEmits(['change']);
 
     /**
-     *
      * @param event
      */
     function change(event) {

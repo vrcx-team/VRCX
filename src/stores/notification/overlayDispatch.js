@@ -3,6 +3,7 @@ import { getNotificationMessage, toNotificationText } from '../../shared/utils/n
 
 /**
  * Creates the overlay dispatch functions for the Notification store.
+ *
  * @param {object} deps
  * @param {Function} deps.getUserIdFromNoty
  * @param {object} deps.queryRequest
@@ -19,7 +20,6 @@ export function createOverlayDispatch({
     appearanceSettingsStore
 }) {
     /**
-     *
      * @param {object} noty
      * @returns
      */
@@ -43,7 +43,6 @@ export function createOverlayDispatch({
     }
 
     /**
-     *
      * @param noty
      * @param message
      * @param image
@@ -56,7 +55,6 @@ export function createOverlayDispatch({
     }
 
     /**
-     *
      * @param {string} noty
      * @param {string} message
      * @param {string} imageFile
@@ -70,7 +68,6 @@ export function createOverlayDispatch({
     }
 
     /**
-     *
      * @param {any} noty
      * @param {string} message
      * @param {string} image
@@ -85,7 +82,6 @@ export function createOverlayDispatch({
     }
 
     /**
-     *
      * @param playOvrtHudNotifications
      * @param playOvrtWristNotifications
      * @param noty
@@ -110,7 +106,6 @@ export function createOverlayDispatch({
     }
 
     /**
-     *
      * @param {object} noty
      * @returns
      */
@@ -150,7 +145,6 @@ export function createOverlayDispatch({
     }
 
     /**
-     *
      * @param {string} displayName
      * @param {string} message
      * @param {string} image

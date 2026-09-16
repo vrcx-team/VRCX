@@ -25,7 +25,7 @@ describe('gameLog.getMyTopWorlds', () => {
     });
 
     test('adds an exclude clause when a home world id is provided', async () => {
-        mocks.execute.mockImplementation(async (callback, sql, params) => {
+        mocks.execute.mockImplementation(async (callback, _sql, _params) => {
             callback(['wrld_1', 'World One', 3, 9000]);
             return undefined;
         });
@@ -41,9 +41,7 @@ describe('gameLog.getMyTopWorlds', () => {
             }
         ]);
         expect(mocks.execute).toHaveBeenCalledTimes(1);
-        expect(mocks.execute.mock.calls[0][1]).toContain(
-            'AND world_id != @excludeWorldId'
-        );
+        expect(mocks.execute.mock.calls[0][1]).toContain('AND world_id != @excludeWorldId');
         expect(mocks.execute.mock.calls[0][2]).toMatchObject({
             '@limit': 5,
             '@daysOffset': '-30 days',

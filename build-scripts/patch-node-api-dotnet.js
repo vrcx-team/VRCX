@@ -4,6 +4,7 @@ const { getArchAndPlatform } = require('./utils');
 
 /**
  * Patches a file with the specified path
+ *
  * @param {string} filePath
  * @returns {boolean} True if the file was patched, false otherwise
  */
@@ -38,6 +39,7 @@ managedHostPath = managedHostPath.indexOf('app.asar.unpacked') < 0 ?
 
 /**
  * Patches the node-api-dotnet module for the specified architecture and platform
+ *
  * @param {string} arch
  * @param {string} platform
  * @returns {void}

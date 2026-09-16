@@ -45,27 +45,18 @@ const baseDateColumn = () => ({
             label: t('table.previous_instances.date'),
             descFirst: true
         }),
-    cell: ({ row }) => (
-        <span>{formatDateFilter(row.original?.created_at, 'long')}</span>
-    )
+    cell: ({ row }) => <span>{formatDateFilter(row.original?.created_at, 'long')}</span>
 });
 
 const timeColumn = () => ({
     id: 'time',
     accessorFn: (row) => row?.time ?? 0,
     size: 100,
-    header: ({ column }) =>
-        sortButton({ column, label: t('table.previous_instances.time') }),
+    header: ({ column }) => sortButton({ column, label: t('table.previous_instances.time') }),
     cell: ({ row }) => <span>{row.original?.timer ?? ''}</span>
 });
 
-const actionsColumn = ({
-    shiftHeld,
-    onShowInfo,
-    onDelete,
-    onDeletePrompt,
-    onLaunch
-}) => ({
+const actionsColumn = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt, onLaunch }) => ({
     id: 'actions',
     enableSorting: false,
     size: onLaunch ? 140 : 120,
@@ -156,10 +147,7 @@ export const createPreviousInstancesColumns = (variant, config) => {
                 size: 170,
                 header: () => t('table.previous_instances.instance_creator'),
                 cell: ({ row }) => (
-                    <DisplayName
-                        userid={row.original?.$location?.userId}
-                        location={row.original?.$location?.tag}
-                    />
+                    <DisplayName userid={row.original?.$location?.userId} location={row.original?.$location?.tag} />
                 )
             },
             timeColumn(),
@@ -226,9 +214,7 @@ export const createPreviousInstancesColumns = (variant, config) => {
             },
             cell: ({ row }) => (
                 <Location
-                    location={
-                        row.original?.$location?.tag ?? row.original?.location
-                    }
+                    location={row.original?.$location?.tag ?? row.original?.location}
                     grouphint={row.original?.groupName}
                     hint={row.original?.worldName}
                 />

@@ -60,22 +60,16 @@ const avatarTags = {
     },
 
     async removeAvatarTag(avatarId, tag) {
-        await sqliteService.executeNonQuery(
-            `DELETE FROM avatar_tags WHERE avatar_id = @avatar_id AND tag = @tag`,
-            {
-                '@avatar_id': avatarId,
-                '@tag': tag
-            }
-        );
+        await sqliteService.executeNonQuery(`DELETE FROM avatar_tags WHERE avatar_id = @avatar_id AND tag = @tag`, {
+            '@avatar_id': avatarId,
+            '@tag': tag
+        });
     },
 
     async removeAllAvatarTags(avatarId) {
-        await sqliteService.executeNonQuery(
-            `DELETE FROM avatar_tags WHERE avatar_id = @avatar_id`,
-            {
-                '@avatar_id': avatarId
-            }
-        );
+        await sqliteService.executeNonQuery(`DELETE FROM avatar_tags WHERE avatar_id = @avatar_id`, {
+            '@avatar_id': avatarId
+        });
     }
 };
 

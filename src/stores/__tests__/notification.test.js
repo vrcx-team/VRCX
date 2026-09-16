@@ -51,15 +51,9 @@ vi.mock('../../services/config', () => ({
             }
             return Promise.resolve(defaultValue);
         }),
-        getInt: vi.fn((_key, defaultValue) =>
-            Promise.resolve(defaultValue)
-        ),
-        getFloat: vi.fn((_key, defaultValue) =>
-            Promise.resolve(defaultValue)
-        ),
-        getString: vi.fn((_key, defaultValue) =>
-            Promise.resolve(defaultValue)
-        ),
+        getInt: vi.fn((_key, defaultValue) => Promise.resolve(defaultValue)),
+        getFloat: vi.fn((_key, defaultValue) => Promise.resolve(defaultValue)),
+        getString: vi.fn((_key, defaultValue) => Promise.resolve(defaultValue)),
 
         setBool: vi.fn(),
         setInt: vi.fn(),
@@ -190,11 +184,7 @@ describe('notification store - auto decline friend requests', () => {
         });
 
         expect(notificationRequest.hideNotification).not.toHaveBeenCalled();
-        expect(
-            notificationStore.notificationTable.data.some(
-                (n) => n.id === 'not_test'
-            )
-        ).toBe(true);
+        expect(notificationStore.notificationTable.data.some((n) => n.id === 'not_test')).toBe(true);
     });
 
     it('does nothing when auto decline is disabled', async () => {

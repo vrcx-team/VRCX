@@ -10,6 +10,7 @@ import { useLaunchStore } from '../stores/launch';
 /**
  * Creates a new instance for the given world and either opens it in-game
  * or sends a self-invite, depending on game state.
+ *
  * @param {string} worldId
  */
 export function runNewInstanceSelfInviteFlow(worldId) {
@@ -30,8 +31,7 @@ export function runNewInstanceSelfInviteFlow(worldId) {
             return;
         }
         if (inviteStore.canOpenInstanceInGame) {
-            const secureOrShortName =
-                args.json.shortName || args.json.secureName;
+            const secureOrShortName = args.json.shortName || args.json.secureName;
             launchStore.tryOpenInstanceInVrc(location, secureOrShortName);
             return;
         }

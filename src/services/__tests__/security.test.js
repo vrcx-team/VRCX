@@ -1,8 +1,4 @@
-import security, {
-    hexToUint8Array,
-    stdAESKey,
-    uint8ArrayToHex
-} from '../security.js';
+import security, { hexToUint8Array, stdAESKey, uint8ArrayToHex } from '../security.js';
 
 describe('hexToUint8Array', () => {
     test('converts hex string to Uint8Array', () => {

@@ -24,9 +24,7 @@ describe('CountdownTimer.vue', () => {
         mocks.setInterval.mockClear();
         mocks.clearInterval.mockClear();
         mocks.timeToText.mockClear();
-        vi.spyOn(Date, 'now').mockReturnValue(
-            new Date('2026-01-01T00:00:00.000Z').getTime()
-        );
+        vi.spyOn(Date, 'now').mockReturnValue(new Date('2026-01-01T00:00:00.000Z').getTime());
     });
 
     afterEach(() => {

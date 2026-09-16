@@ -46,8 +46,7 @@ vi.mock('@/components/ui/button', () => ({
     Button: {
         props: ['disabled'],
         emits: ['click'],
-        template:
-            '<button data-testid="filters-btn" :disabled="disabled" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="filters-btn" :disabled="disabled" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 

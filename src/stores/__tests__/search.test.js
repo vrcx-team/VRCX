@@ -122,8 +122,7 @@ vi.mock('../settings/appearance', () => ({
 function makeApiMock() {
     return {
         instanceRequest: {
-            getInstanceFromShortName: (...args) =>
-                mockGetInstanceFromShortName(...args)
+            getInstanceFromShortName: (...args) => mockGetInstanceFromShortName(...args)
         },
         userRequest: {
             getUsers: vi.fn().mockResolvedValue({ json: [] })
@@ -212,9 +211,7 @@ describe('useSearchStore', () => {
         });
 
         test('parses vrchat.com avatar URL', () => {
-            store.directAccessParse(
-                'https://vrchat.com/home/avatar/avtr_abc123'
-            );
+            store.directAccessParse('https://vrchat.com/home/avatar/avtr_abc123');
             expect(mockShowAvatarDialog).toHaveBeenCalledWith('avtr_abc123');
         });
 
@@ -244,9 +241,7 @@ describe('useSearchStore', () => {
         });
 
         test('returns false for short vrchat URL with insufficient path segments', () => {
-            expect(store.directAccessParse('https://vrchat.com/home')).toBe(
-                false
-            );
+            expect(store.directAccessParse('https://vrchat.com/home')).toBe(false);
         });
     });
 
@@ -257,9 +252,7 @@ describe('useSearchStore', () => {
 
         test('opens world dialog for wrld_ prefix', () => {
             store.directAccessWorld('wrld_abc123:12345~friends');
-            expect(mockShowWorldDialog).toHaveBeenCalledWith(
-                'wrld_abc123:12345~friends'
-            );
+            expect(mockShowWorldDialog).toHaveBeenCalledWith('wrld_abc123:12345~friends');
         });
 
         test('opens world dialog for wld_ prefix', () => {
@@ -285,10 +278,7 @@ describe('useSearchStore', () => {
             expect(mockGetInstanceFromShortName).toHaveBeenCalledWith({
                 shortName: 'AbCdEfGh'
             });
-            expect(mockShowWorldDialog).toHaveBeenCalledWith(
-                'wrld_abc:123',
-                'AbCdEfGh'
-            );
+            expect(mockShowWorldDialog).toHaveBeenCalledWith('wrld_abc:123', 'AbCdEfGh');
         });
 
         test('resolves vrch.at short URL via API', async () => {
@@ -299,30 +289,21 @@ describe('useSearchStore', () => {
             expect(mockGetInstanceFromShortName).toHaveBeenCalledWith({
                 shortName: 'XyZ12345'
             });
-            expect(mockShowWorldDialog).toHaveBeenCalledWith(
-                'wrld_abc:123',
-                'XyZ12345'
-            );
+            expect(mockShowWorldDialog).toHaveBeenCalledWith('wrld_abc:123', 'XyZ12345');
         });
 
         test('parses vrchat.com/home/world/ URL', () => {
-            store.directAccessWorld(
-                'https://vrchat.com/home/world/wrld_abc123'
-            );
+            store.directAccessWorld('https://vrchat.com/home/world/wrld_abc123');
             expect(mockShowWorldDialog).toHaveBeenCalledWith('wrld_abc123');
         });
 
         test('parses launch URL with worldId only', () => {
-            store.directAccessWorld(
-                'https://vrchat.com/home/launch?worldId=wrld_abc'
-            );
+            store.directAccessWorld('https://vrchat.com/home/launch?worldId=wrld_abc');
             expect(mockShowWorldDialog).toHaveBeenCalledWith('wrld_abc');
         });
 
         test('parses launch URL with worldId and instanceId', () => {
-            store.directAccessWorld(
-                'https://vrchat.com/home/launch?worldId=wrld_abc&instanceId=123'
-            );
+            store.directAccessWorld('https://vrchat.com/home/launch?worldId=wrld_abc&instanceId=123');
             expect(mockShowWorldDialog).toHaveBeenCalledWith('wrld_abc:123');
         });
 
@@ -339,10 +320,7 @@ describe('useSearchStore', () => {
             expect(mockGetInstanceFromShortName).toHaveBeenCalledWith({
                 shortName: 'myShort1'
             });
-            expect(mockShowWorldDialog).toHaveBeenCalledWith(
-                'wrld_abc:123',
-                'myShort1'
-            );
+            expect(mockShowWorldDialog).toHaveBeenCalledWith('wrld_abc:123', 'myShort1');
         });
 
         test('handles /home/ relative path by prepending https://vrchat.com', () => {

@@ -255,7 +255,6 @@
 
     // ── Batch operations ─────────────────────────────────────────
     /**
-     *
      * @param args
      */
     function handleGroupMemberRoleChange(args) {
@@ -302,92 +301,53 @@
     const logsTabRef = ref(null);
 
     // ── Event handlers ───────────────────────────────────────────
-    /**
-     *
-     */
     function handleBan() {
         groupMembersBan({ onComplete: () => getAllGroupBans(groupMemberModeration.value.id) });
     }
-    /**
-     *
-     */
     function handleUnban() {
         groupMembersUnban({ onComplete: () => getAllGroupBans(groupMemberModeration.value.id) });
     }
-    /**
-     *
-     */
     function handleKick() {
         groupMembersKick({ onComplete: () => loadAllGroupMembers() });
     }
-    /**
-     *
-     */
     function handleSaveNote() {
         groupMembersSaveNote(note.value);
     }
-    /**
-     *
-     */
     function handleAddRoles() {
         groupMembersAddRoles(selectedRoles.value);
     }
-    /**
-     *
-     */
     function handleRemoveRoles() {
         groupMembersRemoveRoles(selectedRoles.value);
     }
-    /**
-     *
-     */
     function handleDeleteSentInvite() {
         groupMembersDeleteSentInvite({
             onComplete: () => getAllGroupInvitesAndJoinRequests(groupMemberModeration.value.id)
         });
     }
-    /**
-     *
-     */
     function handleAcceptInviteRequest() {
         groupMembersAcceptInviteRequest({
             onComplete: () => getAllGroupInvitesAndJoinRequests(groupMemberModeration.value.id)
         });
     }
-    /**
-     *
-     */
     function handleRejectInviteRequest() {
         groupMembersRejectInviteRequest({
             onComplete: () => getAllGroupInvitesAndJoinRequests(groupMemberModeration.value.id)
         });
     }
-    /**
-     *
-     */
     function handleBlockJoinRequest() {
         groupMembersBlockJoinRequest({
             onComplete: () => getAllGroupInvitesAndJoinRequests(groupMemberModeration.value.id)
         });
     }
-    /**
-     *
-     */
     function handleDeleteBlockedRequest() {
         groupMembersDeleteBlockedRequest({
             onComplete: () => getAllGroupInvitesAndJoinRequests(groupMemberModeration.value.id)
         });
     }
-    /**
-     *
-     */
     async function handleSelectUser() {
         await selectGroupMemberUserId(selectUserId.value);
         selectUserId.value = '';
     }
-    /**
-     *
-     */
     function handleLogsRefresh() {
         const eventTypes = logsTabRef.value?.selectedAuditLogTypes ?? [];
         getAllGroupLogs(groupMemberModeration.value.id, eventTypes);

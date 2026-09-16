@@ -51,18 +51,15 @@ const avatarReq = {
                 queryKey: queryKeys.avatar(params.id),
                 nextData: args
             }).catch((err) => {
-                console.error(
-                    'Failed to refresh avatar query after mutation:',
-                    err
-                );
+                console.error('Failed to refresh avatar query after mutation:', err);
             });
             return args;
         });
     },
 
     /**
-     * @param {{avatarId: string }} params
-     * @returns {Promise<{json: any, params}>}
+     * @param {{ avatarId: string }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     selectAvatar(params) {
         return request(`avatars/${params.avatarId}/select`, {
@@ -82,10 +79,7 @@ const avatarReq = {
                     ref
                 }
             }).catch((err) => {
-                console.error(
-                    'Failed to refresh current user query after avatar select:',
-                    err
-                );
+                console.error('Failed to refresh current user query after avatar select:', err);
             });
             return args;
         });
@@ -93,7 +87,7 @@ const avatarReq = {
 
     /**
      * @param {{ avatarId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     selectFallbackAvatar(params) {
         return request(`avatars/${params.avatarId}/selectfallback`, {
@@ -113,10 +107,7 @@ const avatarReq = {
                     ref
                 }
             }).catch((err) => {
-                console.error(
-                    'Failed to refresh current user query after fallback avatar select:',
-                    err
-                );
+                console.error('Failed to refresh current user query after fallback avatar select:', err);
             });
             return args;
         });
@@ -124,7 +115,7 @@ const avatarReq = {
 
     /**
      * @param {{ avatarId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     deleteAvatar(params) {
         return request(`avatars/${params.avatarId}`, {
@@ -140,7 +131,7 @@ const avatarReq = {
 
     /**
      * @param {{ avatarId: string }} params
-     * @returns {Promise<{json: any, params}>}
+     * @returns {Promise<{ json: any; params }>}
      */
     createImposter(params) {
         return request(`avatars/${params.avatarId}/impostor/enqueue`, {
@@ -156,7 +147,7 @@ const avatarReq = {
 
     /**
      * @param {{ avatarId: string }} params
-     * @returns {Promise<{json: any, params}>}
+     * @returns {Promise<{ json: any; params }>}
      */
     deleteImposter(params) {
         return request(`avatars/${params.avatarId}/impostor`, {
@@ -171,7 +162,7 @@ const avatarReq = {
     },
 
     /**
-     * @returns {Promise<{json: any}>}
+     * @returns {Promise<{ json: any }>}
      */
     getAvailableAvatarStyles() {
         return request('avatarStyles', {
@@ -186,7 +177,7 @@ const avatarReq = {
 
     /**
      * @param {string} avatarId
-     * @returns {Promise<{json: any, params}>}
+     * @returns {Promise<{ json: any; params }>}
      */
     getAvatarGallery(avatarId) {
         const params = {
@@ -228,7 +219,7 @@ const avatarReq = {
     /**
      * @param {string} imageData
      * @param {string} avatarId
-     * @returns {Promise<{json: any; params: any;}>}
+     * @returns {Promise<{ json: any; params: any }>}
      */
     uploadAvatarGalleryImage(imageData, avatarId) {
         const params = {
@@ -251,7 +242,7 @@ const avatarReq = {
 
     /**
      * @param {string[]} order
-     * @returns {Promise<{json: any; params: any;}>}
+     * @returns {Promise<{ json: any; params: any }>}
      */
     setAvatarGalleryOrder(order) {
         const params = {
@@ -270,8 +261,8 @@ const avatarReq = {
     },
 
     /**
-     * @param {{n: number; offset: number;}} params
-     * @returns {Promise<{json: any; params: any}>}
+     * @param {{ n: number; offset: number }} params
+     * @returns {Promise<{ json: any; params: any }>}
      */
     getLicensedAvatars(params) {
         return request('avatars/licensed', {

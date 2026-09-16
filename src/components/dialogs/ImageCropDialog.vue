@@ -268,9 +268,6 @@
         cropperRef.value?.zoom(factor);
     }
 
-    /**
-     *
-     */
     function fillCropper() {
         cropperRef.value?.setCoordinates(
             ({ imageSize }) => ({
@@ -286,9 +283,6 @@
         );
     }
 
-    /**
-     *
-     */
     async function scheduleFitCropper() {
         const token = ++fitCropperToken.value;
         await nextTick();
@@ -301,41 +295,26 @@
         fillCropper();
     }
 
-    /**
-     *
-     */
     function handleCropperReady() {
         if (!freeMode.value) {
             scheduleFitCropper();
         }
     }
 
-    /**
-     *
-     */
     function toggleMode() {
         freeMode.value = !freeMode.value;
     }
 
-    /**
-     *
-     */
     function handleReset() {
         freeMode.value = false;
         scheduleFitCropper();
     }
 
-    /**
-     *
-     */
     function cancelCrop() {
         resetCropState();
         emit('update:open', false);
     }
 
-    /**
-     *
-     */
     async function onConfirmCrop() {
         loading.value = true;
         try {

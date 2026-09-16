@@ -81,8 +81,7 @@ vi.mock('@/components/ui/field', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 vi.mock('@/components/ui/button-group', () => ({

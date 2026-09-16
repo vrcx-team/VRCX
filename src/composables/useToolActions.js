@@ -3,12 +3,7 @@ import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 
 import { toolDefinitionMap, toolDefinitions } from '../shared/constants';
-import {
-    useAdvancedSettingsStore,
-    useLaunchStore,
-    useToolsStore,
-    useVrcxStore
-} from '../stores';
+import { useAdvancedSettingsStore, useLaunchStore, useToolsStore, useVrcxStore } from '../stores';
 
 /**
  * @param {object} definition
@@ -79,10 +74,7 @@ export function useToolActions() {
     const vrcxStore = useVrcxStore();
 
     async function triggerTool(toolOrKey) {
-        const definition =
-            typeof toolOrKey === 'string'
-                ? toolDefinitionMap.get(toolOrKey)
-                : toolOrKey;
+        const definition = typeof toolOrKey === 'string' ? toolDefinitionMap.get(toolOrKey) : toolOrKey;
 
         await executeToolAction(definition, {
             router,

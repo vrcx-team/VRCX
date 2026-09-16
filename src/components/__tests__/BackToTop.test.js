@@ -11,8 +11,7 @@ vi.mock('@/components/ui/tooltip', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="back-btn" @click="$emit(\'click\', $event)"><slot /></button>'
+        template: '<button data-testid="back-btn" @click="$emit(\'click\', $event)"><slot /></button>'
     }
 }));
 

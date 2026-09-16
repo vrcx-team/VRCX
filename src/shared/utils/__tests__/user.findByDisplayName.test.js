@@ -41,9 +41,7 @@ describe('findUserByDisplayName', () => {
     });
 
     test('returns undefined when no match found', () => {
-        const users = createCachedUsers([
-            { id: 'usr_1', displayName: 'Alice' }
-        ]);
+        const users = createCachedUsers([{ id: 'usr_1', displayName: 'Alice' }]);
         expect(findUserByDisplayName(users, 'Unknown')).toBeUndefined();
     });
 
@@ -63,9 +61,7 @@ describe('findUserByDisplayName', () => {
     });
 
     test('match is exact (case-sensitive)', () => {
-        const users = createCachedUsers([
-            { id: 'usr_1', displayName: 'Alice' }
-        ]);
+        const users = createCachedUsers([{ id: 'usr_1', displayName: 'Alice' }]);
         expect(findUserByDisplayName(users, 'alice')).toBeUndefined();
         expect(findUserByDisplayName(users, 'ALICE')).toBeUndefined();
     });

@@ -2,6 +2,7 @@ import { replaceBioSymbols } from './base/string';
 
 /**
  * Sanitize arbitrary entity JSON fields via replaceBioSymbols.
+ *
  * @param {object} json - Raw API response
  * @param {string[]} fields - Field names to sanitize
  * @returns {object} The mutated json
@@ -17,6 +18,7 @@ export function sanitizeEntityJson(json, fields) {
 
 /**
  * Build a default favorite group ref from JSON data.
+ *
  * @param {object} json
  * @returns {object}
  */
@@ -37,6 +39,7 @@ export function createDefaultFavoriteGroupRef(json) {
 /**
  * Build a default cached favorite ref from JSON data.
  * Computes $groupKey from type and first tag.
+ *
  * @param {object} json
  * @returns {object}
  */

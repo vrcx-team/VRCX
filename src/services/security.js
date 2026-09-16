@@ -1,6 +1,4 @@
-const defaultAESKey = new TextEncoder().encode(
-    'https://github.com/pypy-vrc/VRCX'
-);
+const defaultAESKey = new TextEncoder().encode('https://github.com/pypy-vrc/VRCX');
 
 const hexToUint8Array = (hexStr) => {
     const r = hexStr.match(/.{1,2}/g);
@@ -8,11 +6,9 @@ const hexToUint8Array = (hexStr) => {
     return new Uint8Array(r.map((b) => parseInt(b, 16)));
 };
 
-const uint8ArrayToHex = (arr) =>
-    arr.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
+const uint8ArrayToHex = (arr) => arr.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
 
 /**
- *
  * @param key
  */
 function stdAESKey(key) {
@@ -27,7 +23,6 @@ function stdAESKey(key) {
 }
 
 /**
- *
  * @param plaintext
  * @param key
  */
@@ -53,7 +48,6 @@ async function encrypt(plaintext, key) {
 }
 
 /**
- *
  * @param ciphertext
  * @param key
  */

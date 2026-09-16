@@ -418,7 +418,6 @@
     });
 
     /**
-     *
      * @param tag
      */
     function toggleTagFilter(tag) {
@@ -428,9 +427,6 @@
         tagFilters.value = next;
     }
 
-    /**
-     *
-     */
     function clearFilters() {
         releaseStatusFilter.value = 'all';
         tagFilters.value = new Set();
@@ -470,7 +466,6 @@
     });
 
     /**
-     *
      * @param avatarId
      */
     function handleShowAvatarDialog(avatarId) {
@@ -478,7 +473,6 @@
     }
 
     /**
-     *
      * @param avatarId
      */
     function handleWearAvatar(avatarId) {
@@ -500,7 +494,6 @@
     }
 
     /**
-     *
      * @param command
      * @param labelKey
      * @param fn
@@ -519,7 +512,6 @@
     }
 
     /**
-     *
      * @param action
      * @param avatarRef
      */
@@ -616,7 +608,6 @@
     }
 
     /**
-     *
      * @param root0
      * @param root0.avatarId
      * @param root0.tags
@@ -650,7 +641,6 @@
     }
 
     /**
-     *
      * @param e
      */
     function onFileChangeAvatarImage(e) {
@@ -668,7 +658,6 @@
     }
 
     /**
-     *
      * @param {Blob} blob
      */
     async function onCropConfirmAvatar(blob) {
@@ -763,7 +752,6 @@
     });
 
     /**
-     *
      * @param value
      */
     function handleViewModeChange(value) {
@@ -786,7 +774,6 @@
     });
 
     /**
-     *
      * @param row
      */
     function handleRowClick(row) {
@@ -794,7 +781,6 @@
     }
 
     /**
-     *
      * @param row
      */
     function getRowClass(row) {
@@ -825,9 +811,6 @@
         };
     };
 
-    /**
-     *
-     */
     async function refreshAvatars() {
         if (isLoading.value) {
             return;

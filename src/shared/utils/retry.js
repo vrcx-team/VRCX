@@ -1,9 +1,5 @@
 export async function executeWithBackoff(fn, options = {}) {
-    const {
-        maxRetries = 5,
-        baseDelay = 1000,
-        shouldRetry = () => true
-    } = options;
+    const { maxRetries = 5, baseDelay = 1000, shouldRetry = () => true } = options;
 
     async function attempt(remaining) {
         try {
@@ -12,9 +8,7 @@ export async function executeWithBackoff(fn, options = {}) {
             if (remaining <= 0 || !shouldRetry(err)) {
                 throw err;
             }
-            const delay =
-                baseDelay *
-                Math.pow(2, (options.maxRetries || maxRetries) - remaining);
+            const delay = baseDelay * Math.pow(2, (options.maxRetries || maxRetries) - remaining);
             await new Promise((resolve) => setTimeout(resolve, delay));
             return attempt(remaining - 1);
         }

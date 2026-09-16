@@ -22,8 +22,7 @@ describe('DeprecationAlert.vue', () => {
             global: {
                 stubs: {
                     i18nT: {
-                        template:
-                            '<span data-testid="i18n-t"><slot name="feature" /></span>'
+                        template: '<span data-testid="i18n-t"><slot name="feature" /></span>'
                     }
                 }
             }

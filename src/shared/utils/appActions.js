@@ -6,7 +6,7 @@ import { i18n } from '../../plugins/i18n';
 
 /**
  * @param {string} fileName
- * @param {*} data
+ * @param {any} data
  */
 function downloadAndSaveJson(fileName, data) {
     if (!fileName || !data) {
@@ -16,9 +16,7 @@ function downloadAndSaveJson(fileName, data) {
         const link = document.createElement('a');
         link.setAttribute(
             'href',
-            `data:application/json;charset=utf-8,${encodeURIComponent(
-                JSON.stringify(data, null, 2)
-            )}`
+            `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data, null, 2))}`
         );
         link.setAttribute('download', `${fileName}.json`);
         document.body.appendChild(link);
@@ -30,7 +28,6 @@ function downloadAndSaveJson(fileName, data) {
 }
 
 /**
- *
  * @param {string} text
  * @param {string} message
  */
@@ -47,7 +44,6 @@ function copyToClipboard(text, message = 'Copied successfully!') {
 }
 
 /**
- *
  * @param {string} link
  */
 function openExternalLink(link) {
@@ -77,10 +73,4 @@ function openFolderGeneric(path) {
     AppApi.OpenFolderAndSelectItem(path, true);
 }
 
-export {
-    downloadAndSaveJson,
-    copyToClipboard,
-    openExternalLink,
-    openDiscordProfile,
-    openFolderGeneric
-};
+export { downloadAndSaveJson, copyToClipboard, openExternalLink, openDiscordProfile, openFolderGeneric };

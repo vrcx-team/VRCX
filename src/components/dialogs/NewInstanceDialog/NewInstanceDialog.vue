@@ -733,7 +733,6 @@
     });
 
     /**
-     *
      * @param userId
      */
     function resolveUserDisplayName(userId) {
@@ -785,15 +784,11 @@
         return groups;
     });
 
-    /**
-     *
-     */
     function closeInviteDialog() {
         inviteDialog.value.visible = false;
     }
 
     /**
-     *
      * @param tag
      */
     function showInviteDialog(tag) {
@@ -824,7 +819,6 @@
     }
 
     /**
-     *
      * @param location
      * @param shortName
      */
@@ -834,7 +828,6 @@
     }
 
     /**
-     *
      * @param location
      */
     function selfInvite(location) {
@@ -854,7 +847,6 @@
     }
 
     /**
-     *
      * @param location
      */
     async function copyInstanceUrl(location) {

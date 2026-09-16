@@ -6,6 +6,7 @@ const localizedStringsUrls = import.meta.glob('./*.json', {
 
 /**
  * Retrieves localized strings for the specified language code
+ *
  * @param {string} code - The language code
  * @returns {Promise<Object>} A promise that resolves to the localized strings
  */
@@ -37,6 +38,7 @@ const languageNames = import.meta.glob('./*.json', {
 
 /**
  * Retrieves the name of the specified language code
+ *
  * @param {string} code - The language code
  * @returns {string} The language name
  */
@@ -46,9 +48,10 @@ function getLanguageName(code) {
 
 /**
  * Resolves the system language to a supported language code
+ *
  * @param {string} systemLanguage - BCP-47 code from AppApi.CurrentLanguage()
- * @param {string[]} codes - supported language codes
- * @returns {string | null} matched language code, or null
+ * @param {string[]} codes - Supported language codes
+ * @returns {string | null} Matched language code, or null
  */
 function resolveSystemLanguage(systemLanguage, codes) {
     if (!systemLanguage) return null;
@@ -67,9 +70,7 @@ function resolveSystemLanguage(systemLanguage, codes) {
         const hasHant = parts.includes('Hant');
         const hasHans = parts.includes('Hans');
         const traditionalRegions = ['TW', 'HK', 'MO'];
-        const hasTraditionalRegion = parts.some((p) =>
-            traditionalRegions.includes(p)
-        );
+        const hasTraditionalRegion = parts.some((p) => traditionalRegions.includes(p));
 
         if (hasHant || hasTraditionalRegion) {
             return codes.includes('zh-TW') ? 'zh-TW' : null;

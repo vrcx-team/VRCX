@@ -150,46 +150,16 @@ vi.mock('../../queries', () => ({
         worldsByUser: (params) => ['worlds', 'user', params.userId, params],
         groupCalendar: (groupId) => ['group', groupId, 'calendar'],
         groupCalendars: (params) => ['group', 'calendar', params],
-        followingGroupCalendars: (params) => [
-            'group',
-            'calendar',
-            'following',
-            params
-        ],
-        featuredGroupCalendars: (params) => [
-            'group',
-            'calendar',
-            'featured',
-            params
-        ],
+        followingGroupCalendars: (params) => ['group', 'calendar', 'following', params],
+        featuredGroupCalendars: (params) => ['group', 'calendar', 'featured', params],
         avatar: (avatarId) => ['avatar', avatarId],
         world: (worldId) => ['world', worldId],
-        group: (groupId, includeRoles) => [
-            'group',
-            groupId,
-            Boolean(includeRoles)
-        ],
+        group: (groupId, includeRoles) => ['group', groupId, Boolean(includeRoles)],
         groupPosts: (params) => ['group', params.groupId, 'posts', params],
-        groupMember: (params) => [
-            'group',
-            params.groupId,
-            'member',
-            params.userId
-        ],
+        groupMember: (params) => ['group', params.groupId, 'member', params.userId],
         groupMembers: (params) => ['group', params.groupId, 'members', params],
-        groupGallery: (params) => [
-            'group',
-            params.groupId,
-            'gallery',
-            params.galleryId,
-            params
-        ],
-        groupCalendarEvent: (params) => [
-            'group',
-            params.groupId,
-            'calendarEvent',
-            params.eventId
-        ],
+        groupGallery: (params) => ['group', params.groupId, 'gallery', params.galleryId, params],
+        groupCalendarEvent: (params) => ['group', params.groupId, 'calendarEvent', params.eventId],
         avatarGallery: (avatarId) => ['avatar', avatarId, 'gallery'],
         friends: (params) => ['friends', params],
         favoriteLimits: () => ['favorite', 'limits'],
@@ -201,24 +171,10 @@ vi.mock('../../queries', () => ({
         prints: (params) => ['gallery', 'prints', params],
         print: (printId) => ['gallery', 'print', printId],
         inventoryItem: (inventoryId) => ['inventory', 'item', inventoryId],
-        userInventoryItem: (params) => [
-            'inventory',
-            'item',
-            params.userId,
-            params.inventoryId
-        ],
+        userInventoryItem: (params) => ['inventory', 'item', params.userId, params.inventoryId],
         inventoryItems: (params) => ['inventory', 'items', params],
-        inventoryTemplate: (inventoryTemplateId) => [
-            'inventory',
-            'template',
-            inventoryTemplateId
-        ],
-        fileAnalysis: (params) => [
-            'analysis',
-            params.fileId,
-            Number(params.version),
-            String(params.variant || '')
-        ],
+        inventoryTemplate: (inventoryTemplateId) => ['inventory', 'template', inventoryTemplateId],
+        fileAnalysis: (params) => ['analysis', params.fileId, Number(params.version), String(params.variant || '')],
         worldPersistData: (worldId) => ['world', worldId, 'persistData'],
         mutualCounts: (userId) => ['user', userId, 'mutualCounts'],
         visits: () => ['visits'],

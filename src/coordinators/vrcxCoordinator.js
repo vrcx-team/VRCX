@@ -62,11 +62,7 @@ export function clearVRCXCache() {
         }
     });
     instanceStore.cachedInstances.forEach((ref, id) => {
-        if (
-            [...friendStore.friends.values()].some(
-                (f) => f.$location?.tag === id
-            )
-        ) {
+        if ([...friendStore.friends.values()].some((f) => f.$location?.tag === id)) {
             return;
         }
         // delete instances over an hour old

@@ -137,8 +137,9 @@ const POPCORN_PALACE_WORLD_IDS = new Set([
 
 /**
  * Get custom world rpc configuration for a specific world ID.
+ *
  * @param {string} worldId
- * @returns {{ activityType: number, statusDisplayType: number, appId: string, bigIcon: string } | null}
+ * @returns {{ activityType: number; statusDisplayType: number; appId: string; bigIcon: string } | null}
  */
 export function getRpcWorldConfig(worldId) {
     const config = RPC_WORLD_CONFIGS.get(worldId);
@@ -150,6 +151,7 @@ export function getRpcWorldConfig(worldId) {
 
 /**
  * Check if a world ID is a Popcorn Palace world.
+ *
  * @param {string} worldId
  * @returns {boolean}
  */
@@ -159,10 +161,11 @@ export function isPopcornPalaceWorld(worldId) {
 
 /**
  * Get the platform display label for Discord RPC.
+ *
  * @param {string} platform - VRC platform string (e.g. 'standalonewindows', 'android')
  * @param {boolean} isGameRunning
  * @param {boolean} isGameNoVR
- * @param {Function} t - i18n translate function
+ * @param {Function} t - I18n translate function
  * @returns {string} Platform label string (e.g. ' (VR)', ' (PC)'), or empty string
  */
 export function getPlatformLabel(platform, isGameRunning, isGameNoVR, t) {
@@ -187,10 +190,11 @@ export function getPlatformLabel(platform, isGameRunning, isGameNoVR, t) {
 
 /**
  * Get Discord status info from VRC user status.
+ *
  * @param {string} status - VRC user status ('active', 'join me', 'ask me', 'busy')
  * @param {boolean} discordHideInvite - Whether invite-hiding is enabled
- * @param {Function} t - i18n translate function
- * @returns {{ statusName: string, statusImage: string, hidePrivate: boolean }}
+ * @param {Function} t - I18n translate function
+ * @returns {{ statusName: string; statusImage: string; hidePrivate: boolean }}
  */
 export function getStatusInfo(status, discordHideInvite, t) {
     switch (status) {

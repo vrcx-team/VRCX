@@ -127,8 +127,7 @@ vi.mock('../../../../coordinators/userCoordinator', () => ({
 
 vi.mock('../../../../shared/utils', () => ({
     getFriendsSortFunction: () => (a, b) => a.id.localeCompare(b.id),
-    isRealInstance: (location) =>
-        typeof location === 'string' && location.startsWith('wrld_'),
+    isRealInstance: (location) => typeof location === 'string' && location.startsWith('wrld_'),
     userImage: vi.fn(() => 'https://example.com/avatar.png'),
     userStatusClass: vi.fn(() => ''),
     parseLocation: vi.fn((location) => ({
@@ -176,8 +175,7 @@ vi.mock('../../../../components/ui/context-menu', () => ({
     ContextMenuItem: {
         emits: ['click'],
         props: ['disabled'],
-        template:
-            '<button :disabled="disabled" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button :disabled="disabled" @click="$emit(\'click\')"><slot /></button>'
     },
     ContextMenuSeparator: { template: '<hr />' },
     ContextMenuShortcut: { template: '<span><slot /></span>' },
@@ -257,8 +255,8 @@ describe('FriendsSidebar.vue', () => {
         mocks.appearanceStore.sidebarFavoriteGroupOrder.value = [];
         mocks.appearanceStore.sidebarSortMethods.value = [];
 
-        mocks.configRepository.getBool.mockImplementation(
-            (_key, defaultValue) => Promise.resolve(defaultValue ?? false)
+        mocks.configRepository.getBool.mockImplementation((_key, defaultValue) =>
+            Promise.resolve(defaultValue ?? false)
         );
         mocks.configRepository.setBool.mockResolvedValue(undefined);
         mocks.configRepository.getArray.mockResolvedValue([]);
@@ -294,19 +292,13 @@ describe('FriendsSidebar.vue', () => {
         await nextTick();
 
         expect(wrapper.findAll('[data-testid="friend-item"]').length).toBe(0);
-        expect(mocks.configRepository.setBool).toHaveBeenCalledWith(
-            'VRCX_isFriendsGroupOnline',
-            false
-        );
+        expect(mocks.configRepository.setBool).toHaveBeenCalledWith('VRCX_isFriendsGroupOnline', false);
     });
 
     test('renders same-instance section when grouping is enabled', async () => {
         mocks.appearanceStore.isSidebarGroupByInstance.value = true;
         mocks.friendStore.friendsInSameInstance.value = [
-            [
-                makeFriend('usr_a', 'wrld_same:1'),
-                makeFriend('usr_b', 'wrld_same:1')
-            ]
+            [makeFriend('usr_a', 'wrld_same:1'), makeFriend('usr_b', 'wrld_same:1')]
         ];
 
         const wrapper = mount(FriendsSidebar);

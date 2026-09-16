@@ -102,37 +102,26 @@
     });
 
     /**
-     *
      * @param row
      */
     function handleInviteResponseRowClick(row) {
         showSendInviteResponseConfirmDialog(row?.original);
     }
 
-    /**
-     *
-     */
     function closeInviteDialog() {
         cancelSendInviteResponse();
     }
 
-    /**
-     *
-     */
     function cancelSendInviteResponse() {
         emit('update:sendInviteResponseDialogVisible', false);
     }
 
-    /**
-     *
-     */
     function closeResponseConfirmDialog() {
         sendInviteResponseConfirmDialog.value.visible = false;
         editAndSendInviteResponseDialog.value.visible = false;
     }
 
     /**
-     *
      * @param row
      */
     function showEditAndSendInviteResponseDialog(row) {
@@ -143,7 +132,6 @@
         };
     }
     /**
-     *
      * @param row
      */
     function showSendInviteResponseConfirmDialog(row) {

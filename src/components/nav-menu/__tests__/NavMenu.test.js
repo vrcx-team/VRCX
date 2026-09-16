@@ -143,8 +143,7 @@ vi.mock('../../../stores', () => ({
         dashboards: mocks.dashboards,
         dashboardNavKeys: mocks.dashboardNavKeys,
         loadDashboards: (...args) => mocks.loadDashboards(...args),
-        getDashboardNavDefinitions: (...args) =>
-            mocks.getDashboardNavDefinitions(...args),
+        getDashboardNavDefinitions: (...args) => mocks.getDashboardNavDefinitions(...args),
         createDashboard: (...args) => mocks.createDashboard(...args),
         setEditingDashboardId: (...args) => mocks.setEditingDashboardId(...args)
     }),
@@ -228,13 +227,11 @@ vi.mock('@/components/ui/sidebar', () => ({
     SidebarMenuSubItem: { template: '<div><slot /></div>' },
     SidebarMenuButton: {
         emits: ['click'],
-        template:
-            '<button data-testid="menu-btn" @click="$emit(\'click\', $event)"><slot /></button>'
+        template: '<button data-testid="menu-btn" @click="$emit(\'click\', $event)"><slot /></button>'
     },
     SidebarMenuSubButton: {
         emits: ['click'],
-        template:
-            '<button data-testid="submenu-btn" @click="$emit(\'click\', $event)"><slot /></button>'
+        template: '<button data-testid="submenu-btn" @click="$emit(\'click\', $event)"><slot /></button>'
     }
 }));
 
@@ -254,8 +251,7 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
     DropdownMenuSubContent: { template: '<div><slot /></div>' },
     DropdownMenuCheckboxItem: {
         emits: ['select'],
-        template:
-            '<button data-testid="dd-check" @click="$emit(\'select\')"><slot /></button>'
+        template: '<button data-testid="dd-check" @click="$emit(\'select\')"><slot /></button>'
     }
 }));
 
@@ -265,8 +261,7 @@ vi.mock('@/components/ui/context-menu', () => ({
     ContextMenuContent: { template: '<div><slot /></div>' },
     ContextMenuItem: {
         emits: ['click'],
-        template:
-            '<button data-testid="ctx-item" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="ctx-item" @click="$emit(\'click\')"><slot /></button>'
     },
     ContextMenuSeparator: { template: '<hr />' }
 }));
@@ -329,9 +324,7 @@ describe('NavMenu.vue', () => {
         await vi.waitFor(() => {
             expect(mocks.initThemeColor).toHaveBeenCalled();
             expect(mocks.loadDashboards).toHaveBeenCalled();
-            expect(mocks.getString).toHaveBeenCalledWith(
-                'VRCX_customNavMenuLayoutList'
-            );
+            expect(mocks.getString).toHaveBeenCalledWith('VRCX_customNavMenuLayoutList');
         });
 
         await vi.waitFor(() => {
@@ -344,9 +337,7 @@ describe('NavMenu.vue', () => {
         await vi.waitFor(() => {
             const target = wrapper
                 .findAll('[data-testid="menu-btn"]')
-                .find((node) =>
-                    node.text().includes('nav_tooltip.direct_access')
-                );
+                .find((node) => node.text().includes('nav_tooltip.direct_access'));
             expect(target).toBeTruthy();
         });
 

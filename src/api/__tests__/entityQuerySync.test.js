@@ -35,8 +35,7 @@ vi.mock('../../coordinators/worldCoordinator', () => ({
 }));
 
 vi.mock('../../queries', () => ({
-    patchAndRefetchActiveQuery: (...args) =>
-        mockPatchAndRefetchActiveQuery(...args),
+    patchAndRefetchActiveQuery: (...args) => mockPatchAndRefetchActiveQuery(...args),
     queryKeys: {
         user: (userId) => ['user', userId],
         avatar: (avatarId) => ['avatar', avatarId],

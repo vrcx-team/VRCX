@@ -109,9 +109,11 @@
     /**
      * Parse CSV input and extract user IDs.
      * Supports:
+     *
      * - Raw list of user IDs (one per line)
      * - CSV with header row containing a "userId" column
      * - Any column containing usr_ prefixed IDs
+     *
      * @param input
      */
     function extractUserIds(input) {
@@ -153,9 +155,6 @@
         return [...ids];
     }
 
-    /**
-     *
-     */
     async function parseAndImport() {
         const userIds = extractUserIds(csvInput.value);
         if (userIds.length === 0) {
@@ -208,16 +207,10 @@
         }
     }
 
-    /**
-     *
-     */
     function cancelImport() {
         cancelled.value = true;
     }
 
-    /**
-     *
-     */
     function closeDialog() {
         if (importing.value) {
             cancelImport();

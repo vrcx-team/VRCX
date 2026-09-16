@@ -53,12 +53,9 @@ const friendLogCurrent = {
     },
 
     deleteFriendLogCurrent(userId) {
-        sqliteService.executeNonQuery(
-            `DELETE FROM ${dbVars.userPrefix}_friend_log_current WHERE user_id = @user_id`,
-            {
-                '@user_id': userId
-            }
-        );
+        sqliteService.executeNonQuery(`DELETE FROM ${dbVars.userPrefix}_friend_log_current WHERE user_id = @user_id`, {
+            '@user_id': userId
+        });
     }
 };
 

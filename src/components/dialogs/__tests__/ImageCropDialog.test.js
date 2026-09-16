@@ -29,8 +29,7 @@ vi.mock('@/components/ui/dialog', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 vi.mock('@/components/ui/slider', () => ({
@@ -45,10 +44,7 @@ vi.mock('@/components/ui/tooltip/TooltipWrapper.vue', () => ({
 vi.mock('vue-advanced-cropper', () => ({
     Cropper: { emits: ['change'], template: '<div />' }
 }));
-vi.mock(
-    'lucide-vue-next',
-    () => new Proxy({}, { get: () => ({ template: '<i />' }) })
-);
+vi.mock('lucide-vue-next', () => new Proxy({}, { get: () => ({ template: '<i />' }) }));
 
 import ImageCropDialog from '../ImageCropDialog.vue';
 

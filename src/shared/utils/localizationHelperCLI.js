@@ -11,11 +11,7 @@ const getLocalizationObjects = function* () {
     const localeFolder = './src/localization';
     const files = fs
         .readdirSync(localeFolder, { withFileTypes: true })
-        .filter(
-            (file) =>
-                file.isFile() &&
-                path.extname(file.name).toLowerCase() === '.json'
-        );
+        .filter((file) => file.isFile() && path.extname(file.name).toLowerCase() === '.json');
     for (const file of files) {
         const filePath = path.join(localeFolder, file.name);
         const jsonStr = fs.readFileSync(filePath).toString('utf8');
@@ -90,9 +86,7 @@ const addLocalizationKey = (key, value, above_key) => {
 };
 
 const removeKey = (obj, objects, i = 0) => {
-    console.log(
-        `Removing key from ${obj.language} at path '${objects.join('.')}'`
-    );
+    console.log(`Removing key from ${obj.language} at path '${objects.join('.')}'`);
     if (!Object.hasOwn(obj, objects[i])) {
         return;
     }
@@ -123,9 +117,7 @@ const removeLocalizationKey = (key) => {
 // Yes this code is extremely slow, but it doesn't run very often so.
 const Validate = function () {
     const files = [...getLocalizationObjects()];
-    const enIndex = files.findIndex(
-        (file) => path.basename(file[0]) === 'en.json'
-    );
+    const enIndex = files.findIndex((file) => path.basename(file[0]) === 'en.json');
     const [_, enObj] = files.splice(enIndex, 1)[0];
 
     const traverse = function (obj, predicate, pathes = []) {
@@ -166,11 +158,7 @@ const Validate = function () {
     let toAdd = [];
     traverse(enObj, (obj, key, pathes) => {
         // Add above_key to the toAdd entry
-        if (
-            toAdd.length > 0 &&
-            typeof toAdd.at(-1)[3] === 'undefined' &&
-            toAdd.at(-1)[1].at(-2) === pathes.at(-1)
-        ) {
+        if (toAdd.length > 0 && typeof toAdd.at(-1)[3] === 'undefined' && toAdd.at(-1)[1].at(-2) === pathes.at(-1)) {
             toAdd.at(-1)[3] = key;
         }
 
@@ -180,12 +168,7 @@ const Validate = function () {
                 if (Object.hasOwn(currObj, pathSegment)) {
                     currObj = currObj[pathSegment];
                 } else {
-                    toAdd.push([
-                        localeObj,
-                        [...pathes, key],
-                        obj[key],
-                        undefined
-                    ]);
+                    toAdd.push([localeObj, [...pathes, key], obj[key], undefined]);
                     return;
                 }
             }
@@ -202,10 +185,7 @@ const Validate = function () {
 
     if (toAdd.length > 0 || hasRemoved) {
         for (const [localePath, localeObj] of files) {
-            fs.writeFileSync(
-                localePath,
-                `${JSON.stringify(localeObj, null, 4)}\n`
-            );
+            fs.writeFileSync(localePath, `${JSON.stringify(localeObj, null, 4)}\n`);
         }
     } else {
         console.log('validation passed!');
@@ -217,8 +197,7 @@ const cliParser = yargs(hideBin(nodeprocess.argv))
         command: 'add <key> <value> [above_key]',
         aliases: ['a', 'replace', 'r'],
         desc: 'adds or replaces a key and value to all localization files above `above_key`',
-        handler: (argv) =>
-            addLocalizationKey(argv.key, argv.value, argv.above_key)
+        handler: (argv) => addLocalizationKey(argv.key, argv.value, argv.above_key)
     })
     .command({
         command: 'remove <key>',
@@ -236,10 +215,7 @@ const cliParser = yargs(hideBin(nodeprocess.argv))
     .example([
         ['$0 add foo.bar "I\'m adding a key!"', 'Adding a key as `foo.bar`'],
         ['$0 remove foo.bar', 'removes the foo.bar key'],
-        [
-            '$0 add foo.bar "I\'m adding a key!" baz',
-            'Adding a key aboe the existing `foo.baz` key'
-        ]
+        ['$0 add foo.bar "I\'m adding a key!" baz', 'Adding a key aboe the existing `foo.baz` key']
     ])
     .help(false)
     .version(false);

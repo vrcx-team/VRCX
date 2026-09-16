@@ -48,12 +48,8 @@ export const useChartsStore = defineStore('Charts', () => {
     });
 
     const friendCount = computed(() => friendStore.friends.size || 0);
-    const currentUser = computed(
-        () => userStore.currentUser?.value ?? userStore.currentUser
-    );
-    const isOptOut = computed(() =>
-        Boolean(currentUser.value?.hasSharedConnectionsOptOut)
-    );
+    const currentUser = computed(() => userStore.currentUser?.value ?? userStore.currentUser);
+    const isOptOut = computed(() => Boolean(currentUser.value?.hasSharedConnectionsOptOut));
 
     function showInfoMessage(message, type) {
         const toastFn = toast[type] ?? toast;
@@ -64,10 +60,7 @@ export const useChartsStore = defineStore('Charts', () => {
         () => mutualGraphStatus.isFetching,
         (isFetching) => {
             if (!isFetching) return;
-            showInfoMessage(
-                t('view.charts.mutual_friend.notifications.start_fetching'),
-                'info'
-            );
+            showInfoMessage(t('view.charts.mutual_friend.notifications.start_fetching'), 'info');
             mutualGraphStatus.completionNotified = false;
         }
     );
@@ -75,27 +68,15 @@ export const useChartsStore = defineStore('Charts', () => {
     watch(
         () => [mutualGraphStatus.hasFetched, mutualGraphStatus.isFetching],
         ([hasFetched, isFetching]) => {
-            if (
-                !hasFetched ||
-                isFetching ||
-                mutualGraphStatus.completionNotified
-            )
-                return;
+            if (!hasFetched || isFetching || mutualGraphStatus.completionNotified) return;
             mutualGraphStatus.completionNotified = true;
-            toast.success(
-                t(
-                    'view.charts.mutual_friend.notifications.mutual_friend_graph_ready_title'
-                ),
-                {
-                    description: t(
-                        'view.charts.mutual_friend.notifications.mutual_friend_graph_ready_message'
-                    ),
-                    action: {
-                        label: t('common.actions.open'),
-                        onClick: () => router.push({ name: 'charts-mutual' })
-                    }
+            toast.success(t('view.charts.mutual_friend.notifications.mutual_friend_graph_ready_title'), {
+                description: t('view.charts.mutual_friend.notifications.mutual_friend_graph_ready_message'),
+                action: {
+                    label: t('common.actions.open'),
+                    onClick: () => router.push({ name: 'charts-mutual' })
                 }
-            );
+            });
         }
     );
 
@@ -110,12 +91,7 @@ export const useChartsStore = defineStore('Charts', () => {
         }
         if (count !== mutualGraphStatus.friendSignature) {
             mutualGraphStatus.needsRefetch = true;
-            showInfoMessage(
-                t(
-                    'view.charts.mutual_friend.notifications.friend_list_changed_fetch_again'
-                ),
-                'warning'
-            );
+            showInfoMessage(t('view.charts.mutual_friend.notifications.friend_list_changed_fetch_again'), 'warning');
         }
     });
 
@@ -135,17 +111,17 @@ export const useChartsStore = defineStore('Charts', () => {
     }
 
     function requestMutualGraphCancel() {
-        if (mutualGraphStatus.isFetching)
-            mutualGraphStatus.cancelRequested = true;
+        if (mutualGraphStatus.isFetching) mutualGraphStatus.cancelRequested = true;
     }
 
     /**
      * Shared helper: fetch mutual friends for a single userId.
+     *
      * @param {string} userId
      * @param {object} [options]
      * @param {{ wait(): Promise<void> }} [options.rateLimiter]
      * @param {() => boolean} [options.isCancelled]
-     * @returns {Promise<Array>} collected mutual friend entries
+     * @returns {Promise<Array>} Collected mutual friend entries
      */
     async function fetchMutualFriendsForUser(userId, options = {}) {
         const { rateLimiter, isCancelled = () => false } = options;
@@ -169,9 +145,7 @@ export const useChartsStore = defineStore('Charts', () => {
                 {
                     maxRetries: 4,
                     baseDelay: 500,
-                    shouldRetry: (err) =>
-                        err?.status === 429 ||
-                        (err?.message || '').includes('429')
+                    shouldRetry: (err) => err?.status === 429 || (err?.message || '').includes('429')
                 }
             ).catch((err) => {
                 if ((err?.message || '') === 'cancelled') return null;
@@ -180,11 +154,7 @@ export const useChartsStore = defineStore('Charts', () => {
 
             if (!args || isCancelled()) break;
 
-            collected.push(
-                ...args.json.filter((entry) =>
-                    isValidMutualIdentifier(entry?.id)
-                )
-            );
+            collected.push(...args.json.filter((entry) => isValidMutualIdentifier(entry?.id)));
 
             if (args.json.length < 100) break;
             offset += args.json.length;
@@ -195,8 +165,9 @@ export const useChartsStore = defineStore('Charts', () => {
 
     /**
      * Fetch mutual friends for a single friend, independent of the full graph fetch.
+     *
      * @param {string} friendId
-     * @returns {Promise<{success: boolean, mutuals: Array, optedOut: boolean}>}
+     * @returns {Promise<{ success: boolean; mutuals: Array; optedOut: boolean }>}
      */
     async function fetchSingleFriendMutuals(friendId) {
         if (!friendId || isOptOut.value) {
@@ -206,9 +177,7 @@ export const useChartsStore = defineStore('Charts', () => {
         try {
             const mutuals = await fetchMutualFriendsForUser(friendId);
 
-            const mutualIds = mutuals
-                .map((entry) => normalizeIdentifier(entry?.id))
-                .filter(isValidMutualIdentifier);
+            const mutualIds = mutuals.map((entry) => normalizeIdentifier(entry?.id)).filter(isValidMutualIdentifier);
             await database.updateMutualsForFriend(friendId, mutualIds);
             await database.upsertMutualGraphMeta(friendId, {
                 optedOut: false
@@ -223,11 +192,7 @@ export const useChartsStore = defineStore('Charts', () => {
                 });
                 return { success: false, mutuals: [], optedOut: true };
             }
-            console.error(
-                '[MutualNetworkGraph] Single fetch error',
-                friendId,
-                err
-            );
+            console.error('[MutualNetworkGraph] Single fetch error', friendId, err);
             return { success: false, mutuals: [], optedOut: false };
         }
     }
@@ -236,10 +201,7 @@ export const useChartsStore = defineStore('Charts', () => {
         if (mutualGraphStatus.isFetching || isOptOut.value) return null;
 
         if (!friendCount.value) {
-            showInfoMessage(
-                t('view.charts.mutual_friend.status.no_friends_to_process'),
-                'info'
-            );
+            showInfoMessage(t('view.charts.mutual_friend.status.no_friends_to_process'), 'info');
             return null;
         }
 
@@ -293,11 +255,7 @@ export const useChartsStore = defineStore('Charts', () => {
                     if (status === 403 || status === 404) {
                         metaEntries.set(friend.id, { optedOut: true });
                     }
-                    console.warn(
-                        '[MutualNetworkGraph] Skipping friend due to fetch error',
-                        friend.id,
-                        err
-                    );
+                    console.warn('[MutualNetworkGraph] Skipping friend due to fetch error', friend.id, err);
                     continue;
                 }
 
@@ -310,12 +268,7 @@ export const useChartsStore = defineStore('Charts', () => {
 
             if (cancelled) {
                 mutualGraphStatus.hasFetched = false;
-                showInfoMessage(
-                    t(
-                        'view.charts.mutual_friend.messages.fetch_cancelled_graph_not_updated'
-                    ),
-                    'warning'
-                );
+                showInfoMessage(t('view.charts.mutual_friend.messages.fetch_cancelled_graph_not_updated'), 'warning');
                 return null;
             }
 
@@ -335,25 +288,19 @@ export const useChartsStore = defineStore('Charts', () => {
                 mutualMap.forEach((value, friendId) => {
                     if (!friendId) return;
                     const normalizedFriendId = String(friendId);
-                    const collection = Array.isArray(value?.mutuals)
-                        ? value.mutuals
-                        : [];
+                    const collection = Array.isArray(value?.mutuals) ? value.mutuals : [];
                     const ids = [];
 
                     for (const entry of collection) {
                         const identifier = normalizeIdentifier(entry?.id);
-                        if (isValidMutualIdentifier(identifier))
-                            ids.push(identifier);
+                        if (isValidMutualIdentifier(identifier)) ids.push(identifier);
                     }
 
                     entries.set(normalizedFriendId, ids);
                 });
                 await database.saveMutualGraphSnapshot(entries);
             } catch (persistErr) {
-                console.error(
-                    '[MutualNetworkGraph] Failed to cache data',
-                    persistErr
-                );
+                console.error('[MutualNetworkGraph] Failed to cache data', persistErr);
             }
 
             markMutualGraphLoaded({ notify: true });

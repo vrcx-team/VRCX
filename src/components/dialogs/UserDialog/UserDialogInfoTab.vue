@@ -522,25 +522,16 @@
         }
     );
 
-    /**
-     *
-     */
     function onTabActivated() {
         if (currentUser.value.id === userDialog.value.id && vrchatCredit.value === null) {
             getVRChatCredits();
         }
     }
 
-    /**
-     *
-     */
     function showEditNoteAndMemoDialog() {
         isEditNoteAndMemoDialogVisible.value = true;
     }
 
-    /**
-     *
-     */
     async function translateBio() {
         if (translateLoading.value) {
             return;
@@ -579,16 +570,12 @@
     }
 
     /**
-     *
      * @param userRef
      */
     function showPreviousInstancesListDialog(userRef) {
         instanceStore.showPreviousInstancesListDialog('user', userRef);
     }
 
-    /**
-     *
-     */
     function resetHome() {
         modalStore
             .confirm({
@@ -611,15 +598,11 @@
             .catch(() => {});
     }
 
-    /**
-     *
-     */
     function getVRChatCredits() {
         queryRequest.fetch('vrchatCredits').then((args) => (vrchatCredit.value = args.json?.balance));
     }
 
     /**
-     *
      * @param imageUrl
      * @param fileName
      */

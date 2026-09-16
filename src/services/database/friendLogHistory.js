@@ -119,12 +119,9 @@ const friendLogHistory = {
     // https://github.com/vrcx-team/VRCX/issues/1262
     deleteFriendLogHistory(entry) {
         if (entry.rowId != null) {
-            sqliteService.executeNonQuery(
-                `DELETE FROM ${dbVars.userPrefix}_friend_log_history WHERE id = @row_id`,
-                {
-                    '@row_id': entry.rowId
-                }
-            );
+            sqliteService.executeNonQuery(`DELETE FROM ${dbVars.userPrefix}_friend_log_history WHERE id = @row_id`, {
+                '@row_id': entry.rowId
+            });
         } else {
             // Entries created in-session don't have a rowId yet;
             // fall back to composite key so the DB row is still removed.

@@ -50,10 +50,7 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 // localStorage polyfill (jsdom may not provide a full implementation)
-if (
-    typeof globalThis.localStorage === 'undefined' ||
-    typeof globalThis.localStorage.clear !== 'function'
-) {
+if (typeof globalThis.localStorage === 'undefined' || typeof globalThis.localStorage.clear !== 'function') {
     const store = new Map();
     globalThis.localStorage = {
         getItem: (key) => store.get(key) ?? null,

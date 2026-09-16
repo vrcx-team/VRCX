@@ -936,8 +936,6 @@ export function applyCurrentUser(json) {
     return ref;
 }
 
-/**
- */
 export function getCurrentUser() {
     const authStore = useAuthStore();
     return request('auth/user', {
@@ -979,8 +977,6 @@ export function addCustomTag(data) {
     sharedFeedStore.addTag(data.UserId, data.TagColour);
 }
 
-/**
- */
 export function updateAutoStateChange() {
     const userStore = useUserStore();
     const generalSettingsStore = useGeneralSettingsStore();

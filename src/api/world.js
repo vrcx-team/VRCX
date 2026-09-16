@@ -43,8 +43,8 @@ const worldReq = {
         });
     },
     /**
-     * @param {{worldId: string}} params
-     * @returns {Promise<{json: any, params}>}
+     * @param {{ worldId: string }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     deleteWorld(params) {
         return request(`worlds/${params.worldId}`, {
@@ -75,18 +75,15 @@ const worldReq = {
                 queryKey: queryKeys.world(args.ref.id),
                 nextData: args
             }).catch((err) => {
-                console.error(
-                    'Failed to refresh world query after mutation:',
-                    err
-                );
+                console.error('Failed to refresh world query after mutation:', err);
             });
             return args;
         });
     },
 
     /**
-     * @param {{worldId: string}} params
-     * @returns {Promise<{json: any, params}>}
+     * @param {{ worldId: string }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     publishWorld(params) {
         return request(`worlds/${params.worldId}/publish`, {
@@ -102,18 +99,15 @@ const worldReq = {
                 queryKey: queryKeys.world(args.ref.id),
                 nextData: args
             }).catch((err) => {
-                console.error(
-                    'Failed to refresh world query after publish:',
-                    err
-                );
+                console.error('Failed to refresh world query after publish:', err);
             });
             return args;
         });
     },
 
     /**
-     * @param {{worldId: string}} params
-     * @returns {Promise<{json: any, params}>}
+     * @param {{ worldId: string }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     unpublishWorld(params) {
         return request(`worlds/${params.worldId}/publish`, {
@@ -129,10 +123,7 @@ const worldReq = {
                 queryKey: queryKeys.world(args.ref.id),
                 nextData: args
             }).catch((err) => {
-                console.error(
-                    'Failed to refresh world query after unpublish:',
-                    err
-                );
+                console.error('Failed to refresh world query after unpublish:', err);
             });
             return args;
         });

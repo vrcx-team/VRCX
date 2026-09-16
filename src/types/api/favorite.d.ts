@@ -6,21 +6,12 @@ export type GetFavorites = (params: { n: number; offset: number }) => Promise<{
     params: { n: number; offset: number };
 }>;
 
-export type GetFavoriteAvatars = (params: {
-    n: number;
-    offset: number;
-    tag: string;
-}) => Promise<{
+export type GetFavoriteAvatars = (params: { n: number; offset: number; tag: string }) => Promise<{
     json: GetFavoriteAvatarsResponseList;
     params: { n: number; offset: number; tag: string };
 }>;
 
-export type GetFavoriteWorlds = (params: {
-    n: number;
-    offset: number;
-    userId?: string;
-    tag?: string;
-}) => Promise<{
+export type GetFavoriteWorlds = (params: { n: number; offset: number; userId?: string; tag?: string }) => Promise<{
     json: GetFavoriteWorldsResponseList;
     params: {
         n: number;
@@ -30,11 +21,7 @@ export type GetFavoriteWorlds = (params: {
     };
 }>;
 
-export type AddFavorite = (params: {
-    type: string;
-    favoriteId: string;
-    tags: string;
-}) => Promise<{
+export type AddFavorite = (params: { type: string; favoriteId: string; tags: string }) => Promise<{
     json: AddFavoriteResponse;
     params: {
         type: string;

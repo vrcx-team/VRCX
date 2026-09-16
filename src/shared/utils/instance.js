@@ -1,5 +1,4 @@
 /**
- *
  * @param {string} instanceId
  * @returns
  */
@@ -24,7 +23,6 @@ function isRealInstance(instanceId) {
 }
 
 /**
- *
  * @param {object} instance
  * @returns {string}
  */
@@ -34,17 +32,13 @@ function getLaunchURL(instance) {
         if (L.shortName) {
             return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
                 L.worldId
-            )}&instanceId=${encodeURIComponent(
-                L.instanceId
-            )}&shortName=${encodeURIComponent(L.shortName)}`;
+            )}&instanceId=${encodeURIComponent(L.instanceId)}&shortName=${encodeURIComponent(L.shortName)}`;
         }
         return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
             L.worldId
         )}&instanceId=${encodeURIComponent(L.instanceId)}`;
     }
-    return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
-        L.worldId
-    )}`;
+    return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(L.worldId)}`;
 }
 
 const regionTagMap = {
@@ -64,7 +58,7 @@ const regionTagMap = {
  * @param {string} opts.region - Display region name ('US West', 'US East', 'Europe', 'Japan')
  * @param {boolean} [opts.ageGate]
  * @param {boolean} [opts.strict]
- * @returns {string} instance tag, e.g. '12345~hidden(usr_xxx)~region(us)'
+ * @returns {string} Instance tag, e.g. '12345~hidden(usr_xxx)~region(us)'
  */
 function buildLegacyInstanceTag({
     instanceName,

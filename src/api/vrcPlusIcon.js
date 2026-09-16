@@ -1,9 +1,6 @@
 import { queryClient } from '../queries';
 import { request } from '../services/request';
 
-/**
- *
- */
 function refetchActiveGalleryQueries() {
     queryClient
         .invalidateQueries({

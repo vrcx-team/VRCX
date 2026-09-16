@@ -10,10 +10,7 @@ vi.mock('../../shared/utils/notificationMessage', () => ({
 }));
 
 import { extractFileId, extractFileVersion } from '../../shared/utils';
-import {
-    getNotificationMessage,
-    toNotificationText
-} from '../../shared/utils/notificationMessage';
+import { getNotificationMessage, toNotificationText } from '../../shared/utils/notificationMessage';
 import { createOverlayDispatch } from '../notification/overlayDispatch';
 
 function makeDeps(overrides = {}) {
@@ -158,11 +155,7 @@ describe('displayDesktopToast', () => {
         dispatch.displayDesktopToast({}, 'some message', 'img.jpg');
 
         expect(getNotificationMessage).toHaveBeenCalled();
-        expect(AppApi.DesktopNotification).toHaveBeenCalledWith(
-            'Friend Online',
-            'Alice is online',
-            'img.jpg'
-        );
+        expect(AppApi.DesktopNotification).toHaveBeenCalledWith('Friend Online', 'Alice is online', 'img.jpg');
     });
 
     test('does nothing when getNotificationMessage returns null', () => {
@@ -197,11 +190,7 @@ describe('notySaveImage', () => {
         };
         const result = await dispatch.notySaveImage(noty);
 
-        expect(AppApi.GetImage).toHaveBeenCalledWith(
-            'https://api.vrchat.cloud/file_123/v1',
-            'file_123',
-            'v1'
-        );
+        expect(AppApi.GetImage).toHaveBeenCalledWith('https://api.vrchat.cloud/file_123/v1', 'file_123', 'v1');
         expect(result).toBe('/local/path.jpg');
     });
 
@@ -210,8 +199,7 @@ describe('notySaveImage', () => {
         extractFileVersion.mockReturnValue('');
 
         const noty = {
-            thumbnailImageUrl:
-                'https://cdn.example.com/1416226261.thumbnail-500.png'
+            thumbnailImageUrl: 'https://cdn.example.com/1416226261.thumbnail-500.png'
         };
         const result = await dispatch.notySaveImage(noty);
 
@@ -257,11 +245,7 @@ describe('displayXSNotification', () => {
 
         dispatch.displayXSNotification({ type: 'friendOnline' }, 'msg', 'img');
 
-        expect(toNotificationText).toHaveBeenCalledWith(
-            'Title',
-            'Body',
-            'friendOnline'
-        );
+        expect(toNotificationText).toHaveBeenCalledWith('Title', 'Body', 'friendOnline');
         expect(AppApi.XSNotification).toHaveBeenCalledWith(
             'VRCX',
             'Title: Body',

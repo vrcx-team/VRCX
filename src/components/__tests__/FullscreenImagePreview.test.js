@@ -58,8 +58,7 @@ vi.mock('reka-ui', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button :aria-label="$attrs[\'aria-label\']" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button :aria-label="$attrs[\'aria-label\']" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 vi.mock('lucide-vue-next', () => ({

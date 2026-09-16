@@ -25,25 +25,21 @@ const tableAlter = {
         }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_feed_gps' OR name LIKE '%_feed_online_offline' OR name = 'gamelog_location'`);
         for (var tableName of tables) {
             try {
-                await sqliteService.executeNonQuery(
-                    `ALTER TABLE ${tableName} ADD group_name TEXT DEFAULT ''`
-                );
+                await sqliteService.executeNonQuery(`ALTER TABLE ${tableName} ADD group_name TEXT DEFAULT ''`);
             } catch (e) {
-                e = e.toString();
-                if (e.indexOf('duplicate column name') === -1) {
-                    console.error(e);
+                const msg = e.toString();
+                if (msg.indexOf('duplicate column name') === -1) {
+                    console.error(msg);
                 }
             }
         }
         // Fix gamelog_location column typo
         try {
-            await sqliteService.executeNonQuery(
-                `ALTER TABLE gamelog_location DROP COLUMN groupName`
-            );
+            await sqliteService.executeNonQuery(`ALTER TABLE gamelog_location DROP COLUMN groupName`);
         } catch (e) {
-            e = e.toString();
-            if (e.indexOf('no such column') === -1) {
-                console.error(e);
+            const msg = e.toString();
+            if (msg.indexOf('no such column') === -1) {
+                console.error(msg);
             }
         }
     },
@@ -55,13 +51,11 @@ const tableAlter = {
         }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_friend_log_current' OR name LIKE '%_friend_log_history'`);
         for (var tableName of tables) {
             try {
-                await sqliteService.executeNonQuery(
-                    `ALTER TABLE ${tableName} ADD friend_number INTEGER DEFAULT 0`
-                );
+                await sqliteService.executeNonQuery(`ALTER TABLE ${tableName} ADD friend_number INTEGER DEFAULT 0`);
             } catch (e) {
-                e = e.toString();
-                if (e.indexOf('duplicate column name') === -1) {
-                    console.error(e);
+                const msg = e.toString();
+                if (msg.indexOf('duplicate column name') === -1) {
+                    console.error(msg);
                 }
             }
         }
@@ -74,13 +68,11 @@ const tableAlter = {
         }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_avatar_history'`);
         for (var tableName of tables) {
             try {
-                await sqliteService.executeNonQuery(
-                    `ALTER TABLE ${tableName} ADD time INTEGER DEFAULT 0`
-                );
+                await sqliteService.executeNonQuery(`ALTER TABLE ${tableName} ADD time INTEGER DEFAULT 0`);
             } catch (e) {
-                e = e.toString();
-                if (e.indexOf('duplicate column name') === -1) {
-                    console.error(e);
+                const msg = e.toString();
+                if (msg.indexOf('duplicate column name') === -1) {
+                    console.error(msg);
                 }
             }
         }

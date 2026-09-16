@@ -1,12 +1,4 @@
-import {
-    computed,
-    nextTick,
-    onBeforeMount,
-    onBeforeUnmount,
-    onMounted,
-    ref,
-    watch
-} from 'vue';
+import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 import configRepository from '../../../services/config.js';
 
@@ -24,10 +16,7 @@ export function useFavoritesSplitter(options = {}) {
     const maxPx = options.maxPx ?? 360;
     const minPx = options.minPx ?? 0;
 
-    const splitterFallbackWidth =
-        typeof window !== 'undefined' && window.innerWidth
-            ? window.innerWidth
-            : 1200;
+    const splitterFallbackWidth = typeof window !== 'undefined' && window.innerWidth ? window.innerWidth : 1200;
 
     const splitterSize = ref(defaultSize);
     const splitterGroupRef = ref(null);
@@ -36,14 +25,8 @@ export function useFavoritesSplitter(options = {}) {
     const splitterDraggingCount = ref(0);
     let splitterObserver = null;
 
-    /**
-     *
-     */
     async function loadSplitterPreferences() {
-        const storedSize = await configRepository.getString(
-            configKey,
-            String(defaultSize)
-        );
+        const storedSize = await configRepository.getString(configKey, String(defaultSize));
         const parsedSize = Number(storedSize);
         if (Number.isFinite(parsedSize) && parsedSize >= 0) {
             splitterSize.value = parsedSize;
@@ -58,9 +41,7 @@ export function useFavoritesSplitter(options = {}) {
 
     const getSplitterWidth = () => {
         const width = getSplitterWidthRaw();
-        return Number.isFinite(width) && width > 0
-            ? width
-            : splitterFallbackWidth;
+        return Number.isFinite(width) && width > 0 ? width : splitterFallbackWidth;
     };
 
     const resolveDraggingPayload = (payload) => {
@@ -91,15 +72,9 @@ export function useFavoritesSplitter(options = {}) {
 
     const percentToPx = (percent, groupWidth) => (percent / 100) * groupWidth;
 
-    const defaultSizePercent = computed(() =>
-        pxToPercent(splitterSize.value, splitterWidth.value, 0)
-    );
-    const minSizePercent = computed(() =>
-        pxToPercent(minPx, splitterWidth.value, 0)
-    );
-    const maxSizePercent = computed(() =>
-        pxToPercent(maxPx, splitterWidth.value, 0)
-    );
+    const defaultSizePercent = computed(() => pxToPercent(splitterSize.value, splitterWidth.value, 0));
+    const minSizePercent = computed(() => pxToPercent(minPx, splitterWidth.value, 0));
+    const maxSizePercent = computed(() => pxToPercent(maxPx, splitterWidth.value, 0));
 
     const handleLayout = (sizes) => {
         if (!Array.isArray(sizes) || !sizes.length) {

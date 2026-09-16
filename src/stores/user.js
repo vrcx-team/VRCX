@@ -604,8 +604,6 @@ export const useUserStore = defineStore('User', () => {
         D.avatars = array;
     }
 
-    /**
-     */
     async function initUserNotes() {
         state.lastNoteCheck = new Date();
         state.lastDbNoteDate = null;
@@ -633,8 +631,6 @@ export const useUserStore = defineStore('User', () => {
         }
     }
 
-    /**
-     */
     async function getLatestUserNotes() {
         state.lastNoteCheck = new Date();
         const params = {
@@ -843,16 +839,12 @@ export const useUserStore = defineStore('User', () => {
         D.visible = true;
     }
 
-    /**
-     */
     function markCurrentUserGameStarted() {
         currentUser.value.$online_for = Date.now();
         currentUser.value.$offline_for = null;
         currentUser.value.$previousAvatarSwapTime = Date.now();
     }
 
-    /**
-     */
     function markCurrentUserGameStopped() {
         currentUser.value.$online_for = 0;
         currentUser.value.$offline_for = Date.now();
@@ -874,8 +866,6 @@ export const useUserStore = defineStore('User', () => {
         return ok;
     }
 
-    /**
-     */
     async function toggleAvatarCopying() {
         if (
             !(await confirmCurrentUserToggle(
@@ -890,8 +880,6 @@ export const useUserStore = defineStore('User', () => {
         });
     }
 
-    /**
-     */
     async function toggleAllowBooping() {
         if (!(await confirmCurrentUserToggle(t('dialog.user.info.booping'), !currentUser.value.isBoopingEnabled))) {
             return;
@@ -901,8 +889,6 @@ export const useUserStore = defineStore('User', () => {
         });
     }
 
-    /**
-     */
     async function toggleSharedConnectionsOptOut() {
         if (
             !(await confirmCurrentUserToggle(
@@ -917,8 +903,6 @@ export const useUserStore = defineStore('User', () => {
         });
     }
 
-    /**
-     */
     async function toggleDiscordFriendsOptOut() {
         if (
             !(await confirmCurrentUserToggle(

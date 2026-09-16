@@ -49,15 +49,13 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
     DropdownMenuContent: { template: '<div><slot /></div>' },
     DropdownMenuItem: {
         emits: ['click'],
-        template:
-            '<button data-testid="crumb-dd" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="crumb-dd" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 vi.mock('@/components/ui/tooltip', () => ({

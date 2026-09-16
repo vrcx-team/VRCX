@@ -216,17 +216,11 @@
         }
     );
 
-    /**
-     *
-     */
     function resetWorldImport() {
         worldImportDialog.value.input = '';
         worldImportDialog.value.errors = '';
     }
 
-    /**
-     *
-     */
     async function processWorldImportList() {
         const D = worldImportDialog.value;
         D.loading = true;
@@ -268,7 +262,6 @@
     }
 
     /**
-     *
      * @param ref
      */
     function deleteItemWorldImport(ref) {
@@ -276,16 +269,12 @@
         worldImportDialog.value.worldIdList.delete(ref.id);
     }
 
-    /**
-     *
-     */
     function clearWorldImportTable() {
         worldImportTable.value.data = [];
         worldImportDialog.value.worldIdList = new Set();
     }
 
     /**
-     *
      * @param group
      */
     function selectWorldImportGroup(group) {
@@ -296,7 +285,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function selectWorldImportLocalGroup(group) {
@@ -307,7 +295,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function handleWorldImportGroupSelect(value) {
@@ -317,7 +304,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function handleWorldImportLocalGroupSelect(value) {
@@ -325,16 +311,10 @@
         selectWorldImportLocalGroup(value || null);
     }
 
-    /**
-     *
-     */
     function cancelWorldImport() {
         worldImportDialog.value.loading = false;
     }
 
-    /**
-     *
-     */
     async function importWorldImportTable() {
         const D = worldImportDialog.value;
         if (!D.worldImportFavoriteGroup && !D.worldImportLocalFavoriteGroup) {
@@ -372,7 +352,6 @@
     }
 
     /**
-     *
      * @param ref
      * @param group
      * @param message

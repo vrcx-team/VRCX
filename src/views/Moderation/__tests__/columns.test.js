@@ -93,12 +93,8 @@ describe('views/Moderation/columns.jsx', () => {
             onDelete: vi.fn(),
             onDeletePrompt: vi.fn()
         });
-        const sourceCol = cols.find(
-            (c) => c.accessorKey === 'sourceDisplayName'
-        );
-        const targetCol = cols.find(
-            (c) => c.accessorKey === 'targetDisplayName'
-        );
+        const sourceCol = cols.find((c) => c.accessorKey === 'sourceDisplayName');
+        const targetCol = cols.find((c) => c.accessorKey === 'targetDisplayName');
         const row = {
             original: {
                 sourceUserId: 'usr_source',
@@ -111,14 +107,8 @@ describe('views/Moderation/columns.jsx', () => {
 
         const sourceCell = sourceCol.cell({ row });
         const targetCell = targetCol.cell({ row });
-        findNode(
-            sourceCell,
-            (n) => n.type === 'span' && typeof n.props?.onClick === 'function'
-        ).props.onClick();
-        findNode(
-            targetCell,
-            (n) => n.type === 'span' && typeof n.props?.onClick === 'function'
-        ).props.onClick();
+        findNode(sourceCell, (n) => n.type === 'span' && typeof n.props?.onClick === 'function').props.onClick();
+        findNode(targetCell, (n) => n.type === 'span' && typeof n.props?.onClick === 'function').props.onClick();
 
         expect(mocks.showUserDialog).toHaveBeenNthCalledWith(1, 'usr_source');
         expect(mocks.showUserDialog).toHaveBeenNthCalledWith(2, 'usr_target');

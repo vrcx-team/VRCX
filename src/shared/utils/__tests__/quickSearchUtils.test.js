@@ -65,7 +65,6 @@ describe('isPrefixMatch', () => {
 
 describe('searchFriends', () => {
     /**
-     *
      * @param id
      * @param name
      * @param memo
@@ -123,19 +122,12 @@ describe('searchFriends', () => {
     });
 
     test('respects limit', () => {
-        const many = new Map(
-            Array.from({ length: 20 }, (_, i) =>
-                makeFriend(`u${i}`, `Test${i}`)
-            )
-        );
+        const many = new Map(Array.from({ length: 20 }, (_, i) => makeFriend(`u${i}`, `Test${i}`)));
         expect(searchFriends('Test', many, comparer, 5)).toHaveLength(5);
     });
 
     test('prefix matches sort first', () => {
-        const f = new Map([
-            makeFriend('u1', 'XAliceX'),
-            makeFriend('u2', 'Alice')
-        ]);
+        const f = new Map([makeFriend('u1', 'XAliceX'), makeFriend('u2', 'Alice')]);
         const results = searchFriends('Alice', f, comparer);
         expect(results[0].id).toBe('u2'); // prefix match first
     });

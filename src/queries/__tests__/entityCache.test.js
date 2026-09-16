@@ -131,13 +131,7 @@ describe('entity query cache helpers', () => {
             queryKey,
             expect.any(Object)
         );
-        expect(mockLogWebRequest).toHaveBeenNthCalledWith(
-            2,
-            '[QUERY CACHE HIT]',
-            'user',
-            queryKey,
-            expect.any(Object)
-        );
+        expect(mockLogWebRequest).toHaveBeenNthCalledWith(2, '[QUERY CACHE HIT]', 'user', queryKey, expect.any(Object));
     });
 
     test('does not overwrite newer data with older payload', () => {
@@ -162,9 +156,7 @@ describe('entity query cache helpers', () => {
     });
 
     test('patch and refetch invalidates only active queries for that key', async () => {
-        const invalidateSpy = vi
-            .spyOn(queryClient, 'invalidateQueries')
-            .mockResolvedValue();
+        const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries').mockResolvedValue();
 
         const queryKey = ['avatar', 'avtr_1'];
         await patchAndRefetchActiveQuery({
@@ -189,18 +181,12 @@ describe('entity query cache helpers', () => {
             ref: { id: 'usr_1', updated_at: '2026-01-01T00:00:00.000Z' }
         };
 
-        expect(_entityCacheInternals.shouldReplaceCurrent(older, newer)).toBe(
-            true
-        );
-        expect(_entityCacheInternals.shouldReplaceCurrent(newer, older)).toBe(
-            false
-        );
+        expect(_entityCacheInternals.shouldReplaceCurrent(older, newer)).toBe(true);
+        expect(_entityCacheInternals.shouldReplaceCurrent(newer, older)).toBe(false);
     });
 
     test('internal completeness guard requires params + entity identifier', () => {
-        expect(_entityCacheInternals.hasCompleteEntityData(undefined)).toBe(
-            false
-        );
+        expect(_entityCacheInternals.hasCompleteEntityData(undefined)).toBe(false);
         expect(_entityCacheInternals.hasCompleteEntityData({})).toBe(false);
         expect(
             _entityCacheInternals.hasCompleteEntityData({

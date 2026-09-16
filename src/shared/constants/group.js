@@ -21,9 +21,4 @@ const FILTER_NO_ROLE = {
 
 const groupDialogFilterOptions = [FILTER_EVERYONE, FILTER_NO_ROLE];
 
-export {
-    groupDialogSortingOptions,
-    groupDialogFilterOptions,
-    FILTER_EVERYONE,
-    FILTER_NO_ROLE
-};
+export { groupDialogSortingOptions, groupDialogFilterOptions, FILTER_EVERYONE, FILTER_NO_ROLE };

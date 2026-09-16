@@ -153,12 +153,8 @@ describe('OtpDialogModal.vue', () => {
                 otpDescription: 'Check your authenticator app'
             });
             store = useModalStore();
-            expect(wrapper.find('.dialog-title').text()).toBe(
-                'Enter TOTP Code'
-            );
-            expect(wrapper.find('.dialog-description').text()).toBe(
-                'Check your authenticator app'
-            );
+            expect(wrapper.find('.dialog-title').text()).toBe('Enter TOTP Code');
+            expect(wrapper.find('.dialog-description').text()).toBe('Check your authenticator app');
         });
     });
 
@@ -171,12 +167,8 @@ describe('OtpDialogModal.vue', () => {
             store = useModalStore();
             const otpInput = wrapper.find('.input-otp-stub');
             expect(otpInput.exists()).toBe(true);
-            expect(otpInput.find('input').attributes('data-maxlength')).toBe(
-                '6'
-            );
-            expect(otpInput.find('input').attributes('inputmode')).toBe(
-                'numeric'
-            );
+            expect(otpInput.find('input').attributes('data-maxlength')).toBe('6');
+            expect(otpInput.find('input').attributes('inputmode')).toBe('numeric');
             const slots = wrapper.findAll('.otp-slot');
             expect(slots).toHaveLength(6);
             expect(wrapper.find('.otp-separator').exists()).toBe(false);
@@ -190,12 +182,8 @@ describe('OtpDialogModal.vue', () => {
             store = useModalStore();
             const otpInput = wrapper.find('.input-otp-stub');
             expect(otpInput.exists()).toBe(true);
-            expect(otpInput.find('input').attributes('data-maxlength')).toBe(
-                '6'
-            );
-            expect(otpInput.find('input').attributes('inputmode')).toBe(
-                'numeric'
-            );
+            expect(otpInput.find('input').attributes('data-maxlength')).toBe('6');
+            expect(otpInput.find('input').attributes('inputmode')).toBe('numeric');
             const slots = wrapper.findAll('.otp-slot');
             expect(slots).toHaveLength(6);
         });
@@ -208,9 +196,7 @@ describe('OtpDialogModal.vue', () => {
             store = useModalStore();
             const otpInput = wrapper.find('.input-otp-stub');
             expect(otpInput.exists()).toBe(true);
-            expect(otpInput.find('input').attributes('data-maxlength')).toBe(
-                '8'
-            );
+            expect(otpInput.find('input').attributes('data-maxlength')).toBe('8');
             expect(otpInput.find('input').attributes('inputmode')).toBe('text');
             const slots = wrapper.findAll('.otp-slot');
             expect(slots).toHaveLength(8);
@@ -226,9 +212,7 @@ describe('OtpDialogModal.vue', () => {
             // Should not have the 8-slot recovery code input
             const inputs = wrapper.findAll('.input-otp-stub');
             expect(inputs).toHaveLength(1);
-            expect(inputs[0].find('input').attributes('data-maxlength')).toBe(
-                '6'
-            );
+            expect(inputs[0].find('input').attributes('data-maxlength')).toBe('6');
         });
     });
 
@@ -258,9 +242,7 @@ describe('OtpDialogModal.vue', () => {
             store = useModalStore();
             const spy = vi.spyOn(store, 'handleOtpCancel');
 
-            const cancelBtn = wrapper
-                .findAll('button')
-                .find((b) => b.text() === 'Cancel');
+            const cancelBtn = wrapper.findAll('button').find((b) => b.text() === 'Cancel');
             await cancelBtn.trigger('click');
 
             expect(spy).toHaveBeenCalledWith('');

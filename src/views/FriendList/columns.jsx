@@ -1,9 +1,5 @@
 import { ArrowUpDown, EyeOff, User, UserMinus } from 'lucide-vue-next';
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage
-} from '../../components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 
 import { Button } from '../../components/ui/button';
 import { Checkbox } from '../../components/ui/checkbox';
@@ -63,25 +59,14 @@ const withFriendNumber = (rowA, rowB, result) => {
     if (result !== 0) {
         return result;
     }
-    return compareNumbers(
-        rowA.original?.$friendNumber,
-        rowB.original?.$friendNumber
-    );
+    return compareNumbers(rowA.original?.$friendNumber, rowB.original?.$friendNumber);
 };
 
 const sortByNumber = (selector) => (rowA, rowB) =>
-    withFriendNumber(
-        rowA,
-        rowB,
-        compareNumbers(selector(rowA.original), selector(rowB.original))
-    );
+    withFriendNumber(rowA, rowB, compareNumbers(selector(rowA.original), selector(rowB.original)));
 
 const sortByString = (selector) => (rowA, rowB) =>
-    withFriendNumber(
-        rowA,
-        rowB,
-        sortAlphabetically(selector(rowA.original), selector(rowB.original))
-    );
+    withFriendNumber(rowA, rowB, sortAlphabetically(selector(rowA.original), selector(rowB.original)));
 
 const sortByStatus = (rowA, rowB) => {
     const a = rowA.original?.status ?? 'offline';
@@ -90,11 +75,7 @@ const sortByStatus = (rowA, rowB) => {
 };
 
 const sortByLanguages = (rowA, rowB) =>
-    withFriendNumber(
-        rowA,
-        rowB,
-        sortLanguages(rowA.original?.$languages, rowB.original?.$languages)
-    );
+    withFriendNumber(rowA, rowB, sortLanguages(rowA.original?.$languages, rowB.original?.$languages));
 
 export const createColumns = ({
     randomUserColours,
@@ -131,16 +112,8 @@ export const createColumns = ({
                 const id = row.original?.id;
                 const checked = selectedFriends?.value?.has?.(id);
                 return (
-                    <div
-                        class="flex items-center justify-center"
-                        onClick={(event) => event.stopPropagation()}
-                    >
-                        <Checkbox
-                            modelValue={checked}
-                            onUpdate:modelValue={() =>
-                                onToggleFriendSelection?.(id)
-                            }
-                        />
+                    <div class="flex items-center justify-center" onClick={(event) => event.stopPropagation()}>
+                        <Checkbox modelValue={checked} onUpdate:modelValue={() => onToggleFriendSelection?.(id)} />
                     </div>
                 );
             }
@@ -171,11 +144,7 @@ export const createColumns = ({
                 return (
                     <div class="flex items-center">
                         <Avatar class="size-6 rounded-full">
-                            <AvatarImage
-                                src={src}
-                                class="friends-list-avatar object-cover"
-                                loading="lazy"
-                            />
+                            <AvatarImage src={src} class="friends-list-avatar object-cover" loading="lazy" />
                             <AvatarFallback>
                                 <User class="size-3 text-muted-foreground" />
                             </AvatarFallback>
@@ -196,9 +165,7 @@ export const createColumns = ({
             meta: { label: () => t('table.friendList.displayName') },
             sortingFn: sortByString((row) => row?.displayName ?? ''),
             cell: ({ row }) => {
-                const style = randomUserColours?.value
-                    ? { color: row.original?.$userColour }
-                    : null;
+                const style = randomUserColours?.value ? { color: row.original?.$userColour } : null;
                 return (
                     <span class="name" style={style}>
                         {row.original?.displayName ?? ''}
@@ -219,17 +186,10 @@ export const createColumns = ({
             sortingFn: sortByNumber((row) => row?.$trustSortNum ?? 0),
             cell: ({ row }) => {
                 if (randomUserColours?.value) {
-                    return (
-                        <span class={row.original?.$trustClass}>
-                            {row.original?.$trustLevel ?? ''}
-                        </span>
-                    );
+                    return <span class={row.original?.$trustClass}>{row.original?.$trustLevel ?? ''}</span>;
                 }
                 return (
-                    <span
-                        class="name"
-                        style={{ color: row.original?.$userColour }}
-                    >
+                    <span class="name" style={{ color: row.original?.$userColour }}>
                         {row.original?.$trustLevel ?? ''}
                     </span>
                 );
@@ -254,13 +214,7 @@ export const createColumns = ({
                 return (
                     <span class="flex items-center">
                         {status && status !== 'offline' ? (
-                            <i
-                                class={[
-                                    'x-user-status',
-                                    statusClass(status),
-                                    'mr-1'
-                                ]}
-                            ></i>
+                            <i class={['x-user-status', statusClass(status), 'mr-1']}></i>
                         ) : null}
                         <span>{row.original?.statusDescription ?? ''}</span>
                     </span>
@@ -281,19 +235,8 @@ export const createColumns = ({
             cell: ({ row }) => (
                 <div class="flex items-center">
                     {(row.original?.$languages ?? []).map((item) => (
-                        <TooltipWrapper
-                            key={item.key}
-                            side="top"
-                            content={`${item.value} (${item.key})`}
-                        >
-                            <span
-                                class={[
-                                    'flags',
-                                    'inline-block',
-                                    'mr-1',
-                                    languageClass(item.key)
-                                ]}
-                            ></span>
+                        <TooltipWrapper key={item.key} side="top" content={`${item.value} (${item.key})`}>
+                            <span class={['flags', 'inline-block', 'mr-1', languageClass(item.key)]}></span>
                         </TooltipWrapper>
                     ))}
                 </div>
@@ -307,21 +250,19 @@ export const createColumns = ({
             meta: { label: () => t('table.friendList.bioLink') },
             cell: ({ row }) => (
                 <div class="flex items-center">
-                    {(row.original?.bioLinks ?? [])
-                        .filter(Boolean)
-                        .map((link, index) => (
-                            <TooltipWrapper key={index} content={String(link)}>
-                                <img
-                                    src={getFaviconUrl(link)}
-                                    class="h-4 w-4 mr-1 align-middle cursor-pointer"
-                                    onClick={(event) => {
-                                        event.stopPropagation();
-                                        openExternalLink(link);
-                                    }}
-                                    loading="lazy"
-                                />
-                            </TooltipWrapper>
-                        ))}
+                    {(row.original?.bioLinks ?? []).filter(Boolean).map((link, index) => (
+                        <TooltipWrapper key={index} content={String(link)}>
+                            <img
+                                src={getFaviconUrl(link)}
+                                class="h-4 w-4 mr-1 align-middle cursor-pointer"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    openExternalLink(link);
+                                }}
+                                loading="lazy"
+                            />
+                        </TooltipWrapper>
+                    ))}
                 </div>
             )
         },
@@ -397,10 +338,7 @@ export const createColumns = ({
                     <span class="inline-flex items-center gap-1">
                         {count || null}
                         {optedOut ? (
-                            <TooltipWrapper
-                                side="top"
-                                content={t('table.friendList.mutualOptedOut')}
-                            >
+                            <TooltipWrapper side="top" content={t('table.friendList.mutualOptedOut')}>
                                 <EyeOff class="h-3.5 w-3.5 text-muted-foreground" />
                             </TooltipWrapper>
                         ) : null}
@@ -419,11 +357,7 @@ export const createColumns = ({
             size: 200,
             meta: { label: () => t('table.friendList.lastActivity') },
             sortingFn: sortByString((row) => row?.last_activity ?? ''),
-            cell: ({ row }) => (
-                <span>
-                    {formatDateFilter(row.original?.last_activity, 'long')}
-                </span>
-            )
+            cell: ({ row }) => <span>{formatDateFilter(row.original?.last_activity, 'long')}</span>
         },
         {
             id: 'lastLogin',
@@ -436,11 +370,7 @@ export const createColumns = ({
             size: 200,
             meta: { label: () => t('table.friendList.lastLogin') },
             sortingFn: sortByString((row) => row?.last_login ?? ''),
-            cell: ({ row }) => (
-                <span>
-                    {formatDateFilter(row.original?.last_login, 'long')}
-                </span>
-            )
+            cell: ({ row }) => <span>{formatDateFilter(row.original?.last_login, 'long')}</span>
         },
         {
             id: 'dateJoined',

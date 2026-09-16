@@ -134,9 +134,6 @@ export const useAppearanceSettingsStore = defineStore(
             return THEME_CONFIG[normalized]?.isDark === true ? normalized : fallback;
         };
 
-        /**
-         *
-         */
         async function initAppearanceSettings() {
             const { initThemeMode, isDarkMode: initDarkMode } = await getThemeMode(configRepository);
             const fallbackDarkTheme = THEME_CONFIG[initThemeMode]?.isDark === true ? initThemeMode : 'dark';
@@ -334,7 +331,6 @@ export const useAppearanceSettingsStore = defineStore(
         );
 
         /**
-         *
          * @param {string} language
          */
         async function changeAppLanguage(language) {
@@ -358,7 +354,6 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         /**
-         *
          * @param {string} field
          * @param {string} color
          * @param {boolean} setRandomColor
@@ -391,7 +386,6 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         /**
-         *
          * @param customFunc
          */
         async function userColourInit(customFunc) {
@@ -418,7 +412,6 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         /**
-         *
          * @param {object} ref
          */
         function applyUserTrustLevel(ref) {
@@ -463,16 +456,12 @@ export const useAppearanceSettingsStore = defineStore(
             updateTrustColor(undefined, undefined);
         }
 
-        /**
-         *
-         */
         function toggleThemeMode() {
             const nextMode = isDarkMode.value ? 'light' : resolveLastDarkTheme(lastDarkTheme.value);
             setThemeMode(nextMode);
         }
 
         /**
-         *
          * @param value
          */
         function normalizeAppFontFamily(value) {
@@ -481,7 +470,6 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         /**
-         *
          * @param value
          */
         function normalizeAppCjkFontPack(value) {
@@ -489,7 +477,6 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         /**
-         *
          * @param value
          */
         function setAppFontFamily(value) {
@@ -508,7 +495,6 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         /**
-         *
          * @param value
          */
         function setAppCjkFontPack(value) {
@@ -526,76 +512,48 @@ export const useAppearanceSettingsStore = defineStore(
             configRepository.setBool('VRCX_displayVRCProfileThemes', displayVRCProfileThemes.value);
         }
 
-        /**
-         *
-         */
         function setDisplayVRCProfileBackgrounds() {
             displayVRCProfileBackgrounds.value = !displayVRCProfileBackgrounds.value;
             configRepository.setBool('VRCX_displayVRCProfileBackgrounds', displayVRCProfileBackgrounds.value);
         }
 
-        /**
-         *
-         */
         function setProfileBackgroundOpacity(value) {
             profileBackgroundOpacity.value = value;
             configRepository.setFloat('VRCX_profileBackgroundOpacity', value);
         }
 
-        /**
-         *
-         */
         function setDisplayVRCProfileCosmetics() {
             displayVRCProfileCosmetics.value = !displayVRCProfileCosmetics.value;
             configRepository.setBool('VRCX_displayVRCProfileCosmetics', displayVRCProfileCosmetics.value);
         }
 
-        /**
-         *
-         */
         function setNotificationIconDot() {
             notificationIconDot.value = !notificationIconDot.value;
             configRepository.setBool('VRCX_notificationIconDot', notificationIconDot.value);
             uiStore.updateTrayIconNotify();
         }
-        /**
-         *
-         */
         function setHideNicknames() {
             hideNicknames.value = !hideNicknames.value;
             configRepository.setBool('VRCX_hideNicknames', hideNicknames.value);
         }
-        /**
-         *
-         */
         function setShowInstanceIdInLocation() {
             showInstanceIdInLocation.value = !showInstanceIdInLocation.value;
             configRepository.setBool('VRCX_showInstanceIdInLocation', showInstanceIdInLocation.value);
         }
-        /**
-         *
-         */
         function setIsAgeGatedInstancesVisible() {
             isAgeGatedInstancesVisible.value = !isAgeGatedInstancesVisible.value;
             configRepository.setBool('VRCX_isAgeGatedInstancesVisible', isAgeGatedInstancesVisible.value);
         }
-        /**
-         *
-         */
         function setSortFavorites() {
             sortFavorites.value = !sortFavorites.value;
             configRepository.setBool('VRCX_sortFavorites', sortFavorites.value);
         }
-        /**
-         *
-         */
         function setInstanceUsersSortAlphabetical() {
             instanceUsersSortAlphabetical.value = !instanceUsersSortAlphabetical.value;
             configRepository.setBool('VRCX_instanceUsersSortAlphabetical', instanceUsersSortAlphabetical.value);
         }
 
         /**
-         *
          * @param size
          */
         function setTablePageSize(size) {
@@ -607,7 +565,6 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         /**
-         *
          * @param input
          */
         function normalizeTablePageSizes(input) {
@@ -619,7 +576,7 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         /**
-         * @param {Array<number|string>} sizes
+         * @param {(number | string)[]} sizes
          */
         function setTablePageSizes(sizes) {
             tablePageSizes.value = normalizeTablePageSizes(sizes);
@@ -629,16 +586,10 @@ export const useAppearanceSettingsStore = defineStore(
                 setTablePageSize(tablePageSizes.value[0]);
             }
         }
-        /**
-         *
-         */
         function setDtHour12() {
             dtHour12.value = !dtHour12.value;
             configRepository.setBool('VRCX_dtHour12', dtHour12.value);
         }
-        /**
-         *
-         */
         function setDtIsoFormat() {
             dtIsoFormat.value = !dtIsoFormat.value;
             configRepository.setBool('VRCX_dtIsoFormat', dtIsoFormat.value);
@@ -673,28 +624,23 @@ export const useAppearanceSettingsStore = defineStore(
             handleSaveSidebarSortOrder();
         }
         /**
-         * @param {Array<string>} methods
+         * @param {string[]} methods
          */
         function setSidebarSortMethods(methods) {
             sidebarSortMethods.value = methods;
             configRepository.setString('VRCX_sidebarSortMethods', JSON.stringify(methods));
         }
         /**
-         *
          * @param collapsed
          */
         function setNavCollapsed(collapsed) {
             isNavCollapsed.value = collapsed;
             configRepository.setBool('VRCX_navIsCollapsed', collapsed);
         }
-        /**
-         *
-         */
         function toggleNavCollapsed() {
             setNavCollapsed(!isNavCollapsed.value);
         }
         /**
-         *
          * @param widthOrArray
          */
         function setNavWidth(widthOrArray) {
@@ -711,30 +657,18 @@ export const useAppearanceSettingsStore = defineStore(
                 });
             }
         }
-        /**
-         *
-         */
         function setIsSidebarGroupByInstance() {
             isSidebarGroupByInstance.value = !isSidebarGroupByInstance.value;
             configRepository.setBool('VRCX_sidebarGroupByInstance', isSidebarGroupByInstance.value);
         }
-        /**
-         *
-         */
         function setIsHideFriendsInSameInstance() {
             isHideFriendsInSameInstance.value = !isHideFriendsInSameInstance.value;
             configRepository.setBool('VRCX_hideFriendsInSameInstance', isHideFriendsInSameInstance.value);
         }
-        /**
-         *
-         */
         function setIsSameInstanceAboveFavorites() {
             isSameInstanceAboveFavorites.value = !isSameInstanceAboveFavorites.value;
             configRepository.setBool('VRCX_sameInstanceAboveFavorites', isSameInstanceAboveFavorites.value);
         }
-        /**
-         *
-         */
         function setIsSidebarDivideByFriendGroup() {
             isSidebarDivideByFriendGroup.value = !isSidebarDivideByFriendGroup.value;
             configRepository.setBool('VRCX_sidebarDivideByFriendGroup', isSidebarDivideByFriendGroup.value);
@@ -753,43 +687,27 @@ export const useAppearanceSettingsStore = defineStore(
             sidebarFavoriteGroupOrder.value = value;
             configRepository.setString('VRCX_sidebarFavoriteGroupOrder', JSON.stringify(value));
         }
-        /**
-         *
-         */
         function setSidebarCosmetics() {
             sidebarCosmetics.value = !sidebarCosmetics.value;
             configRepository.setBool('VRCX_sidebarCosmetics', sidebarCosmetics.value);
         }
-        /**
-         *
-         */
         function setHideUserNotes() {
             hideUserNotes.value = !hideUserNotes.value;
             configRepository.setBool('VRCX_hideUserNotes', hideUserNotes.value);
         }
-        /**
-         *
-         */
         function setHideUserMemos() {
             hideUserMemos.value = !hideUserMemos.value;
             configRepository.setBool('VRCX_hideUserMemos', hideUserMemos.value);
         }
-        /**
-         *
-         */
         function setHideUnfriends() {
             hideUnfriends.value = !hideUnfriends.value;
             configRepository.setBool('VRCX_hideUnfriends', hideUnfriends.value);
         }
-        /**
-         *
-         */
         function setRandomUserColours() {
             randomUserColours.value = !randomUserColours.value;
             configRepository.setBool('VRCX_randomUserColours', randomUserColours.value);
         }
         /**
-         *
          * @param value
          */
         function normalizeTableDensity(value) {
@@ -800,7 +718,6 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         /**
-         *
          * @param density
          */
         function setTableDensity(density) {
@@ -810,17 +727,11 @@ export const useAppearanceSettingsStore = defineStore(
             configRepository.setString('VRCX_tableDensity', tableDensity.value);
         }
 
-        /**
-         *
-         */
         function toggleStripedDataTable() {
             isDataTableStriped.value = !isDataTableStriped.value;
             configRepository.setBool('VRCX_dataTableStriped', isDataTableStriped.value);
         }
 
-        /**
-         *
-         */
         function applyAccessibleStatusClass() {
             const classList = document.documentElement.classList;
             classList.remove('accessible-status-indicators');
@@ -830,18 +741,12 @@ export const useAppearanceSettingsStore = defineStore(
             }
         }
 
-        /**
-         *
-         */
         function toggleAccessibleStatusIndicators() {
             accessibleStatusIndicators.value = !accessibleStatusIndicators.value;
             configRepository.setBool('VRCX_accessibleStatusIndicators', accessibleStatusIndicators.value);
             applyAccessibleStatusClass();
         }
 
-        /**
-         *
-         */
         function setShowNewDashboardButton() {
             showNewDashboardButton.value = !showNewDashboardButton.value;
             configRepository.setBool('VRCX_showNewDashboardButton', showNewDashboardButton.value);
@@ -856,9 +761,6 @@ export const useAppearanceSettingsStore = defineStore(
             configRepository.setString('VRCX_trustColor', JSON.stringify(trustColor.value));
         }
 
-        /**
-         *
-         */
         function handleSaveSidebarSortOrder() {
             if (sidebarSortMethod1.value === sidebarSortMethod2.value) {
                 sidebarSortMethod2.value = '';
@@ -879,9 +781,6 @@ export const useAppearanceSettingsStore = defineStore(
             setSidebarSortMethods(sidebarSortMethods);
         }
 
-        /**
-         *
-         */
         async function mergeOldSortMethodsSettings() {
             const orderFriendsGroupPrivate = await configRepository.getBool('orderFriendGroupPrivate');
             if (orderFriendsGroupPrivate !== null) {
@@ -937,25 +836,16 @@ export const useAppearanceSettingsStore = defineStore(
             return n;
         };
 
-        /**
-         *
-         */
         function showTableLimitsDialog() {
             tableLimitsDialog.value.maxTableSize = Number(vrcxStore.maxTableSize ?? 500);
             tableLimitsDialog.value.searchLimit = Number(vrcxStore.searchLimit ?? 50000);
             tableLimitsDialog.value.visible = true;
         }
 
-        /**
-         *
-         */
         function closeTableLimitsDialog() {
             tableLimitsDialog.value.visible = false;
         }
 
-        /**
-         *
-         */
         async function saveTableLimitsDialog() {
             const nextMaxTableSize = clampLimit(
                 tableLimitsDialog.value.maxTableSize,
@@ -984,9 +874,6 @@ export const useAppearanceSettingsStore = defineStore(
             tableLimitsDialog.value.visible = false;
         }
 
-        /**
-         *
-         */
         async function tryInitUserColours() {
             if (!randomUserColours.value) {
                 return;
@@ -997,7 +884,6 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         /**
-         *
          * @param density
          */
         function applyTableDensity(density) {

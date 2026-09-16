@@ -2,28 +2,16 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
 import configRepository from '../services/config';
-import {
-    DASHBOARD_NAV_KEY_PREFIX,
-    DASHBOARD_STORAGE_KEY,
-    DEFAULT_DASHBOARD_ICON
-} from '../shared/constants/dashboard';
+import { DASHBOARD_NAV_KEY_PREFIX, DASHBOARD_STORAGE_KEY, DEFAULT_DASHBOARD_ICON } from '../shared/constants/dashboard';
 
 function clonePanel(panel) {
     if (typeof panel === 'string' && panel) {
         return panel;
     }
-    if (
-        panel &&
-        typeof panel === 'object' &&
-        typeof panel.key === 'string' &&
-        panel.key
-    ) {
+    if (panel && typeof panel === 'object' && typeof panel.key === 'string' && panel.key) {
         return {
             key: panel.key,
-            config:
-                panel.config && typeof panel.config === 'object'
-                    ? JSON.parse(JSON.stringify(panel.config))
-                    : {}
+            config: panel.config && typeof panel.config === 'object' ? JSON.parse(JSON.stringify(panel.config)) : {}
         };
     }
     return null;
@@ -35,14 +23,11 @@ function cloneRows(rows) {
     }
     return rows
         .map((row) => {
-            const panels = Array.isArray(row?.panels)
-                ? row.panels.slice(0, 2).map(clonePanel)
-                : [];
+            const panels = Array.isArray(row?.panels) ? row.panels.slice(0, 2).map(clonePanel) : [];
             if (!panels.length) {
                 return null;
             }
-            const direction =
-                row?.direction === 'vertical' ? 'vertical' : 'horizontal';
+            const direction = row?.direction === 'vertical' ? 'vertical' : 'horizontal';
             return { panels, direction };
         })
         .filter(Boolean);
@@ -53,21 +38,15 @@ function sanitizeDashboard(dashboard) {
         return null;
     }
 
-    const id =
-        typeof dashboard.id === 'string' && dashboard.id ? dashboard.id : null;
+    const id = typeof dashboard.id === 'string' && dashboard.id ? dashboard.id : null;
     if (!id) {
         return null;
     }
 
-    const name =
-        typeof dashboard.name === 'string' && dashboard.name.trim()
-            ? dashboard.name.trim()
-            : 'Dashboard';
+    const name = typeof dashboard.name === 'string' && dashboard.name.trim() ? dashboard.name.trim() : 'Dashboard';
 
     const icon =
-        typeof dashboard.icon === 'string' && dashboard.icon.trim()
-            ? dashboard.icon.trim()
-            : DEFAULT_DASHBOARD_ICON;
+        typeof dashboard.icon === 'string' && dashboard.icon.trim() ? dashboard.icon.trim() : DEFAULT_DASHBOARD_ICON;
 
     return {
         id,
@@ -83,20 +62,12 @@ export const useDashboardStore = defineStore('dashboard', () => {
     const editingDashboardId = ref(null);
 
     const dashboardNavKeys = computed(
-        () =>
-            new Set(
-                dashboards.value.map(
-                    (dashboard) => `${DASHBOARD_NAV_KEY_PREFIX}${dashboard.id}`
-                )
-            )
+        () => new Set(dashboards.value.map((dashboard) => `${DASHBOARD_NAV_KEY_PREFIX}${dashboard.id}`))
     );
 
     async function loadDashboards() {
         try {
-            const stored = await configRepository.getString(
-                DASHBOARD_STORAGE_KEY,
-                null
-            );
+            const stored = await configRepository.getString(DASHBOARD_STORAGE_KEY, null);
             if (!stored) {
                 dashboards.value = [];
                 loaded.value = true;
@@ -104,9 +75,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
             }
 
             const parsed = JSON.parse(stored);
-            const source = Array.isArray(parsed?.dashboards)
-                ? parsed.dashboards
-                : [];
+            const source = Array.isArray(parsed?.dashboards) ? parsed.dashboards : [];
             dashboards.value = source.map(sanitizeDashboard).filter(Boolean);
         } catch {
             dashboards.value = [];
@@ -116,10 +85,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     }
 
     async function saveDashboards() {
-        await configRepository.setString(
-            DASHBOARD_STORAGE_KEY,
-            JSON.stringify({ dashboards: dashboards.value })
-        );
+        await configRepository.setString(DASHBOARD_STORAGE_KEY, JSON.stringify({ dashboards: dashboards.value }));
     }
 
     function ensureLoaded() {
@@ -129,8 +95,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     }
 
     function getDashboard(id, panel = null) {
-        const dashboard =
-            dashboards.value.find((dashboard) => dashboard.id === id) || null;
+        const dashboard = dashboards.value.find((dashboard) => dashboard.id === id) || null;
         if (panel) {
             return dashboard?.rows.find((row) => row.panels.includes(panel));
         }
@@ -138,10 +103,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     }
 
     function generateDashboardId() {
-        if (
-            typeof crypto !== 'undefined' &&
-            typeof crypto.randomUUID === 'function'
-        ) {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
             return crypto.randomUUID();
         }
         return `dashboard-${Date.now()}-${Math.random().toString().slice(2, 8)}`;
@@ -174,9 +136,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     }
 
     async function updateDashboard(id, updates) {
-        const index = dashboards.value.findIndex(
-            (dashboard) => dashboard.id === id
-        );
+        const index = dashboards.value.findIndex((dashboard) => dashboard.id === id);
         if (index < 0) {
             return;
         }
@@ -196,9 +156,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     }
 
     async function deleteDashboard(id) {
-        dashboards.value = dashboards.value.filter(
-            (dashboard) => dashboard.id !== id
-        );
+        dashboards.value = dashboards.value.filter((dashboard) => dashboard.id !== id);
         if (editingDashboardId.value === id) {
             editingDashboardId.value = null;
         }

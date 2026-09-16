@@ -1,9 +1,4 @@
-import {
-    generateEmojiStyle,
-    getEmojiFileName,
-    getPrintFileName,
-    getPrintLocalDate
-} from '../gallery';
+import { generateEmojiStyle, getEmojiFileName, getPrintFileName, getPrintLocalDate } from '../gallery';
 
 describe('Gallery Utils', () => {
     describe('getPrintFileName', () => {
@@ -18,9 +13,7 @@ describe('Gallery Utils', () => {
             expect(result).toContain('print_12345');
             expect(result).toContain('.png');
             // Check date formatting - should replace : with - and T with _
-            expect(result).toMatch(
-                /\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.\d{3}/
-            );
+            expect(result).toMatch(/\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.\d{3}/);
         });
 
         test('generates filename with timestamp fallback', () => {
@@ -45,9 +38,7 @@ describe('Gallery Utils', () => {
             expect(result).toContain('print_fallback');
             expect(result).toContain('.png');
             // Should still have valid date format
-            expect(result).toMatch(
-                /\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.\d{3}/
-            );
+            expect(result).toMatch(/\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.\d{3}/);
         });
 
         test('handles missing authorName', () => {
@@ -87,9 +78,7 @@ describe('Gallery Utils', () => {
             expect(result).toBeInstanceOf(Date);
             // Should have timezone offset applied
             const originalDate = new Date('2023-01-15T10:30:45.123Z');
-            const expectedLocalTime =
-                originalDate.getTime() -
-                originalDate.getTimezoneOffset() * 60000;
+            const expectedLocalTime = originalDate.getTime() - originalDate.getTimezoneOffset() * 60000;
             expect(result.getTime()).toBe(expectedLocalTime);
         });
 
@@ -109,9 +98,7 @@ describe('Gallery Utils', () => {
             const result = getPrintLocalDate(print);
             // Should use createdAt, not timestamp
             const originalDate = new Date('2023-01-15T10:30:45.123Z');
-            const expectedLocalTime =
-                originalDate.getTime() -
-                originalDate.getTimezoneOffset() * 60000;
+            const expectedLocalTime = originalDate.getTime() - originalDate.getTimezoneOffset() * 60000;
             expect(result.getTime()).toBe(expectedLocalTime);
         });
 
@@ -122,12 +109,9 @@ describe('Gallery Utils', () => {
             expect(result).toBeInstanceOf(Date);
             // Should be approximately current time with timezone offset
             const currentDate = new Date();
-            const expectedLocalTime =
-                currentDate.getTime() - currentDate.getTimezoneOffset() * 60000;
+            const expectedLocalTime = currentDate.getTime() - currentDate.getTimezoneOffset() * 60000;
             // Allow some tolerance for execution time
-            expect(Math.abs(result.getTime() - expectedLocalTime)).toBeLessThan(
-                1000
-            );
+            expect(Math.abs(result.getTime() - expectedLocalTime)).toBeLessThan(1000);
         });
 
         test('handles invalid createdAt gracefully', () => {
@@ -154,9 +138,7 @@ describe('Gallery Utils', () => {
                 loopStyle: 'loop'
             };
             const result = getEmojiFileName(emoji);
-            expect(result).toBe(
-                'happy_bounceanimationStyle_10frames_30fps_looploopStyle.png'
-            );
+            expect(result).toBe('happy_bounceanimationStyle_10frames_30fps_looploopStyle.png');
         });
 
         test('creates animated filename with default loopStyle', () => {
@@ -167,9 +149,7 @@ describe('Gallery Utils', () => {
                 framesOverTime: 15
             };
             const result = getEmojiFileName(emoji);
-            expect(result).toBe(
-                'wave_wiggleanimationStyle_5frames_15fps_linearloopStyle.png'
-            );
+            expect(result).toBe('wave_wiggleanimationStyle_5frames_15fps_linearloopStyle.png');
         });
 
         test('creates static filename without frames', () => {
@@ -221,9 +201,7 @@ describe('Gallery Utils', () => {
                 loopStyle: 'pingpong'
             };
             const result = getEmojiFileName(emoji);
-            expect(result).toBe(
-                'emoji-with_special.chars_bounceanimationStyle_8frames_24fps_pingpongloopStyle.png'
-            );
+            expect(result).toBe('emoji-with_special.chars_bounceanimationStyle_8frames_24fps_pingpongloopStyle.png');
         });
 
         test('handles edge case values', () => {
@@ -288,9 +266,7 @@ describe('Gallery Utils', () => {
 
             // Both functions should produce consistent results
             expect(localDate).toBeInstanceOf(Date);
-            expect(fileName).toMatch(
-                /test_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.\d{3}_test\.png/
-            );
+            expect(fileName).toMatch(/test_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.\d{3}_test\.png/);
         });
 
         test('emoji filename handles boundary conditions', () => {
@@ -315,13 +291,7 @@ describe('Gallery Utils', () => {
 
     describe('generateEmojiStyle', () => {
         test('returns CSS with background url and animation', () => {
-            const style = generateEmojiStyle(
-                'https://example.com/emoji.png',
-                10,
-                4,
-                'linear',
-                100
-            );
+            const style = generateEmojiStyle('https://example.com/emoji.png', 10, 4, 'linear', 100);
             expect(style).toContain("url('https://example.com/emoji.png')");
             expect(style).toContain('animation:');
             expect(style).toContain('steps(1)');

@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-    findMatchingDetailData,
-    formatWorldName,
-    generateYAxisLabel,
-    isDetailDataFiltered
-} from '../useChartHelpers';
+import { findMatchingDetailData, formatWorldName, generateYAxisLabel, isDetailDataFiltered } from '../useChartHelpers';
 
 describe('isDetailDataFiltered', () => {
     it('returns false when both filters are enabled', () => {
@@ -47,9 +42,7 @@ describe('findMatchingDetailData', () => {
     });
 
     it('returns null when currentUser is null', () => {
-        expect(
-            findMatchingDetailData({ location: 'loc1' }, [], null)
-        ).toBeNull();
+        expect(findMatchingDetailData({ location: 'loc1' }, [], null)).toBeNull();
     });
 
     it('finds matching detail data by location and joinTime', () => {
@@ -73,11 +66,7 @@ describe('findMatchingDetailData', () => {
             ]
         ];
 
-        const result = findMatchingDetailData(
-            activityItem,
-            detailData,
-            currentUser
-        );
+        const result = findMatchingDetailData(activityItem, detailData, currentUser);
         expect(result).toBe(detailData[0]);
     });
 
@@ -93,26 +82,18 @@ describe('findMatchingDetailData', () => {
             ]
         ];
 
-        const result = findMatchingDetailData(
-            activityItem,
-            detailData,
-            currentUser
-        );
+        const result = findMatchingDetailData(activityItem, detailData, currentUser);
         expect(result).toBeUndefined();
     });
 });
 
 describe('generateYAxisLabel', () => {
     it('returns filtered label format for filtered data', () => {
-        expect(generateYAxisLabel('TestWorld', true)).toBe(
-            '{filtered|TestWorld}'
-        );
+        expect(generateYAxisLabel('TestWorld', true)).toBe('{filtered|TestWorld}');
     });
 
     it('returns normal label format for non-filtered data', () => {
-        expect(generateYAxisLabel('TestWorld', false)).toBe(
-            '{normal|TestWorld}'
-        );
+        expect(generateYAxisLabel('TestWorld', false)).toBe('{normal|TestWorld}');
     });
 
     it('truncates long world names', () => {

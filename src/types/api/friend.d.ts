@@ -1,9 +1,5 @@
 // Exported API functions
-export type GetFriends = (params: {
-    n: number;
-    offline: boolean;
-    offset: number;
-}) => Promise<{
+export type GetFriends = (params: { n: number; offline: boolean; offset: number }) => Promise<{
     json: GetFriendsResponseList;
     params: {
         n: number;

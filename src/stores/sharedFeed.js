@@ -2,11 +2,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { watch } from 'vue';
 
-import {
-    compareByCreatedAt,
-    getGroupName,
-    getWorldName
-} from '../shared/utils';
+import { compareByCreatedAt, getGroupName, getWorldName } from '../shared/utils';
 import { database } from '../services/database';
 import { useFriendStore } from './friend';
 import { useInstanceStore } from './instance';
@@ -31,18 +27,14 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
     const onPlayerJoining = ref([]);
 
     async function rebuildOnPlayerJoining() {
-        const wristFilter =
-            notificationsSettingsStore.sharedFeedFilters.wrist.OnPlayerJoining;
+        const wristFilter = notificationsSettingsStore.sharedFeedFilters.wrist.OnPlayerJoining;
         let newOnPlayerJoining = [];
         for (const ref of userStore.currentTravelers.values()) {
             if (!wristFilter || wristFilter === 'Off') {
                 break;
             }
             const isFavorite = friendStore.localFavoriteFriends.has(ref.id);
-            if (
-                locationStore.lastLocation.playerList.has(ref.id) ||
-                (wristFilter === 'VIP' && !isFavorite)
-            ) {
+            if (locationStore.lastLocation.playerList.has(ref.id) || (wristFilter === 'VIP' && !isFavorite)) {
                 continue;
             }
             if (ref.$location.tag === locationStore.lastLocation.location) {
@@ -76,11 +68,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         onPlayerJoining.value = newOnPlayerJoining;
 
         sharedFeedData.value = sharedFeedData.value.filter(
-            (ctx) =>
-                !(
-                    ctx.type === 'OnPlayerJoining' ||
-                    (ctx.type === 'GPS' && ctx.isTraveling)
-                )
+            (ctx) => !(ctx.type === 'OnPlayerJoining' || (ctx.type === 'GPS' && ctx.isTraveling))
         );
         sharedFeedData.value.unshift(...onPlayerJoining.value);
         if (sharedFeedData.value.length > maxEntries) {
@@ -117,100 +105,61 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         const friendList = Array.from(friendStore.friends.keys());
 
         // Filters
-        const vipFilters = Object.keys(wristFilter).filter(
-            (key) => wristFilter[key] === 'VIP'
-        );
-        const friendsFilters = Object.keys(wristFilter).filter(
-            (key) => wristFilter[key] === 'Friends'
-        );
+        const vipFilters = Object.keys(wristFilter).filter((key) => wristFilter[key] === 'VIP');
+        const friendsFilters = Object.keys(wristFilter).filter((key) => wristFilter[key] === 'Friends');
         const everyoneFilters = Object.keys(wristFilter).filter(
-            (key) =>
-                wristFilter[key] === 'On' || wristFilter[key] === 'Everyone'
+            (key) => wristFilter[key] === 'On' || wristFilter[key] === 'Everyone'
         );
         const everyoneAndFriendsFilters = Object.keys(wristFilter).filter(
-            (key) =>
-                wristFilter[key] === 'Friends' ||
-                wristFilter[key] === 'On' ||
-                wristFilter[key] === 'Everyone'
+            (key) => wristFilter[key] === 'Friends' || wristFilter[key] === 'On' || wristFilter[key] === 'Everyone'
         );
 
         // Feed
         if (vipFilters.length) {
-            const vipFeedRows = await database.lookupFeedDatabase(
-                vipFilters,
-                vipList,
-                maxEntries
-            );
+            const vipFeedRows = await database.lookupFeedDatabase(vipFilters, vipList, maxEntries);
             newFeed = newFeed.concat(vipFeedRows);
         }
         if (everyoneAndFriendsFilters.length) {
-            const friendsFeedRows = await database.lookupFeedDatabase(
-                everyoneAndFriendsFilters,
-                [],
-                maxEntries
-            );
+            const friendsFeedRows = await database.lookupFeedDatabase(everyoneAndFriendsFilters, [], maxEntries);
             newFeed = newFeed.concat(friendsFeedRows);
         }
 
         // GameLog
         if (vipFilters.length) {
-            const vipGameLogRows = await database.lookupGameLogDatabase(
-                vipFilters,
-                vipList,
-                maxEntries
-            );
+            const vipGameLogRows = await database.lookupGameLogDatabase(vipFilters, vipList, maxEntries);
             newFeed = newFeed.concat(vipGameLogRows);
         }
         if (friendsFilters.length) {
-            const friendsGameLogRows = await database.lookupGameLogDatabase(
-                friendsFilters,
-                friendList,
-                maxEntries
-            );
+            const friendsGameLogRows = await database.lookupGameLogDatabase(friendsFilters, friendList, maxEntries);
             newFeed = newFeed.concat(friendsGameLogRows);
         }
         if (everyoneFilters.length) {
-            const everyoneGameLogRows = await database.lookupGameLogDatabase(
-                everyoneFilters,
-                [],
-                maxEntries
-            );
+            const everyoneGameLogRows = await database.lookupGameLogDatabase(everyoneFilters, [], maxEntries);
             newFeed = newFeed.concat(everyoneGameLogRows);
         }
 
         // Notifications
         if (vipFilters.length) {
-            const vipNotificationRows =
-                await database.lookupNotificationDatabase(
-                    '',
-                    vipFilters,
-                    vipList,
-                    maxEntries
-                );
+            const vipNotificationRows = await database.lookupNotificationDatabase('', vipFilters, vipList, maxEntries);
             newFeed = newFeed.concat(vipNotificationRows);
         }
         if (everyoneAndFriendsFilters.length) {
-            const friendsNotificationRows =
-                await database.lookupNotificationDatabase(
-                    '',
-                    everyoneAndFriendsFilters,
-                    [],
-                    maxEntries
-                );
+            const friendsNotificationRows = await database.lookupNotificationDatabase(
+                '',
+                everyoneAndFriendsFilters,
+                [],
+                maxEntries
+            );
             newFeed = newFeed.concat(friendsNotificationRows);
         }
 
         // hide private worlds from feed
         if (wristOverlaySettingsStore.hidePrivateFromFeed) {
-            newFeed = newFeed.filter(
-                (ctx) => !(ctx.type === 'GPS' && ctx.location === 'private')
-            );
+            newFeed = newFeed.filter((ctx) => !(ctx.type === 'GPS' && ctx.location === 'private'));
         }
 
         // remove current user
-        newFeed = newFeed.filter(
-            (ctx) => ctx.userId !== userStore.currentUser.id
-        );
+        newFeed = newFeed.filter((ctx) => ctx.userId !== userStore.currentUser.id);
 
         // FriendLog, Moderations Against (nope, not worth it)
 
@@ -225,14 +174,12 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
             if (userId) {
                 entry.isFriend = friendStore.friends.has(userId);
                 entry.isFavorite = friendStore.localFavoriteFriends.has(userId);
-                entry.tagColour =
-                    userStore.customUserTags.get(userId)?.colour ?? '';
+                entry.tagColour = userStore.customUserTags.get(userId)?.colour ?? '';
             }
             // tack on instance names
             const location = entry.location || entry.details?.location;
             if (location) {
-                entry.instanceDisplayName =
-                    await instanceStore.getInstanceName(location);
+                entry.instanceDisplayName = await instanceStore.getInstanceName(location);
             }
         }
         sharedFeedData.value = newFeed;
@@ -246,11 +193,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         if (userId === userStore.currentUser.id) {
             return;
         }
-        if (
-            wristOverlaySettingsStore.hidePrivateFromFeed &&
-            ctx.type === 'GPS' &&
-            ctx.location === 'private'
-        ) {
+        if (wristOverlaySettingsStore.hidePrivateFromFeed && ctx.type === 'GPS' && ctx.location === 'private') {
             return;
         }
         if (ctx.type === 'FriendRequest' || ctx.type === 'Avatar') {
@@ -268,8 +211,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         // tack on instance names
         const location = ctx.location || ctx.details?.location;
         if (location) {
-            ctx.instanceDisplayName =
-                await instanceStore.getInstanceName(location);
+            ctx.instanceDisplayName = await instanceStore.getInstanceName(location);
         }
 
         // TODO: videoPlay come through before it gets video name
@@ -407,10 +349,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
     }
 
     async function sendSharedFeed() {
-        await AppApi.ExecuteVrOverlayFunction(
-            'wristFeedUpdate',
-            JSON.stringify(sharedFeedData.value)
-        );
+        await AppApi.ExecuteVrOverlayFunction('wristFeedUpdate', JSON.stringify(sharedFeedData.value));
     }
 
     return {

@@ -64,9 +64,7 @@ describe('useGroupGalleries', () => {
             const { groupGalleryTabs } = useGroupGalleries(groupDialog);
             expect(groupGalleryTabs.value).toHaveLength(0);
 
-            groupDialog.value.ref.galleries = [
-                { id: 'g1', name: 'New Gallery' }
-            ];
+            groupDialog.value.ref.galleries = [{ id: 'g1', name: 'New Gallery' }];
             expect(groupGalleryTabs.value).toHaveLength(1);
         });
     });
@@ -83,9 +81,7 @@ describe('useGroupGalleries', () => {
         test('returns green for members-only without role restriction', () => {
             const groupDialog = createGroupDialog();
             const { groupGalleryStatus } = useGroupGalleries(groupDialog);
-            expect(
-                groupGalleryStatus({ membersOnly: true, roleIdsToView: null })
-            ).toEqual({ green: true });
+            expect(groupGalleryStatus({ membersOnly: true, roleIdsToView: null })).toEqual({ green: true });
         });
 
         test('returns red for role-restricted gallery', () => {
@@ -105,8 +101,7 @@ describe('useGroupGalleries', () => {
             const groupDialog = createGroupDialog({
                 galleries: { old: [1, 2, 3] }
             });
-            const { getGroupGalleries, groupDialogGalleryCurrentName } =
-                useGroupGalleries(groupDialog);
+            const { getGroupGalleries, groupDialogGalleryCurrentName } = useGroupGalleries(groupDialog);
             groupDialogGalleryCurrentName.value = '2';
 
             await getGroupGalleries();
@@ -125,8 +120,7 @@ describe('useGroupGalleries', () => {
                 params: { groupId: 'grp_1' }
             });
 
-            const { getGroupGalleries, isGroupGalleryLoading } =
-                useGroupGalleries(groupDialog);
+            const { getGroupGalleries, isGroupGalleryLoading } = useGroupGalleries(groupDialog);
             expect(isGroupGalleryLoading.value).toBe(false);
 
             const promise = getGroupGalleries();
@@ -229,15 +223,11 @@ describe('useGroupGalleries', () => {
         test('handles API errors gracefully', async () => {
             const groupDialog = createGroupDialog();
             const { getGroupGallery } = useGroupGalleries(groupDialog);
-            const consoleSpy = vi
-                .spyOn(console, 'error')
-                .mockImplementation(() => {});
+            const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
             queryRequest.fetch.mockRejectedValueOnce(new Error('API Error'));
 
-            await expect(
-                getGroupGallery('grp_1', 'g1')
-            ).resolves.toBeUndefined();
+            await expect(getGroupGallery('grp_1', 'g1')).resolves.toBeUndefined();
             expect(consoleSpy).toHaveBeenCalled();
 
             consoleSpy.mockRestore();

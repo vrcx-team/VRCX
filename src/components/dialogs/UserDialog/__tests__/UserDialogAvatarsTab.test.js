@@ -8,8 +8,7 @@ vi.mock('vue-i18n', () => {
     const { ref } = require('vue');
     return {
         useI18n: () => ({
-            t: (key, params) =>
-                params ? `${key}:${JSON.stringify(params)}` : key,
+            t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
             locale: ref('en')
         }),
         createI18n: () => ({
@@ -109,7 +108,6 @@ const MOCK_AVATARS = [
 ];
 
 /**
- *
  * @param overrides
  */
 function mountComponent(overrides = {}) {

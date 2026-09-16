@@ -243,16 +243,12 @@
         loading: false
     });
 
-    /**
-     *
-     */
     function showChatboxBlacklistDialog() {
         const D = chatboxBlacklistDialog.value;
         D.visible = true;
     }
 
     /**
-     *
      * @param val
      */
     function selectCurrentInstanceRow(val) {
@@ -268,7 +264,6 @@
     }
 
     /**
-     *
      * @param userId
      */
     async function deleteChatboxUserBlacklist(userId) {
@@ -278,7 +273,6 @@
     }
 
     /**
-     *
      * @param user
      */
     async function addChatboxUserBlacklist(user) {
@@ -288,7 +282,6 @@
     }
 
     /**
-     *
      * @param a
      * @param b
      * @param field

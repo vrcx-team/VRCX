@@ -1198,7 +1198,7 @@
             return;
         }
 
-        /** @type {Partial<import("../../../types/api/user").GetCurrentUserResponse>} */
+        /** @type {Partial<import('../../../types/api/user').GetCurrentUserResponse>} */
         const userPayload = {};
         if (D.status !== currentUser.value.status) {
             userPayload.status = D.status;
@@ -1210,7 +1210,7 @@
             userPayload.pronouns = D.pronouns;
         }
 
-        /** @type {Partial<import("../../../types/api/profile").selfProfile>} */
+        /** @type {Partial<import('../../../types/api/profile').selfProfile>} */
         const profilePayload = {};
         if (D.bio !== D.selfProfileRef.bio) {
             profilePayload.bio = D.bio;

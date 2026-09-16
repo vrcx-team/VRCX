@@ -3,6 +3,7 @@ import { toast } from 'vue-sonner';
 
 /**
  * Composable for batch moderation operations with progress tracking.
+ *
  * @param {object} deps
  * @param {import('vue').Ref} deps.currentUser
  * @param {import('vue').Ref} deps.groupMemberModeration
@@ -17,23 +18,17 @@ export function useGroupBatchOperations(deps) {
 
     /**
      * Generic batch operation runner.
+     *
      * @param {object} options
-     * @param {Function} options.action - async (user, groupId) => void
-     * @param {string} options.logPrefix - e.g. 'Banning'
-     * @param {string} options.successMessage - e.g. 'Banned {count} group members'
-     * @param {string} options.errorMessage - e.g. 'Failed to ban group member'
+     * @param {Function} options.action - Async (user, groupId) => void
+     * @param {string} options.logPrefix - E.g. 'Banning'
+     * @param {string} options.successMessage - E.g. 'Banned {count} group members'
+     * @param {string} options.errorMessage - E.g. 'Failed to ban group member'
      * @param {boolean} [options.skipSelf]
-     * @param {Function} [options.onComplete] - called after the loop finishes
+     * @param {Function} [options.onComplete] - Called after the loop finishes
      * @returns {Promise<void>}
      */
-    async function runBatchOperation({
-        action,
-        logPrefix,
-        successMessage,
-        errorMessage,
-        skipSelf = true,
-        onComplete
-    }) {
+    async function runBatchOperation({ action, logPrefix, successMessage, errorMessage, skipSelf = true, onComplete }) {
         const users = [...deps.groupMemberModeration.value.selectedUsersArray];
         const memberCount = users.length;
         const groupId = deps.groupMemberModeration.value.id;
@@ -67,7 +62,6 @@ export function useGroupBatchOperations(deps) {
     }
 
     /**
-     *
      * @param callbacks
      */
     async function groupMembersBan(callbacks) {
@@ -85,7 +79,6 @@ export function useGroupBatchOperations(deps) {
     }
 
     /**
-     *
      * @param callbacks
      */
     async function groupMembersUnban(callbacks) {
@@ -103,7 +96,6 @@ export function useGroupBatchOperations(deps) {
     }
 
     /**
-     *
      * @param callbacks
      */
     async function groupMembersKick(callbacks) {
@@ -121,7 +113,6 @@ export function useGroupBatchOperations(deps) {
     }
 
     /**
-     *
      * @param noteValue
      * @param callbacks
      */
@@ -129,13 +120,9 @@ export function useGroupBatchOperations(deps) {
         await runBatchOperation({
             action: async (user, groupId) => {
                 if (user.managerNotes === noteValue) return;
-                const args = await deps.groupRequest.setGroupMemberProps(
-                    user.userId,
-                    groupId,
-                    {
-                        managerNotes: noteValue
-                    }
-                );
+                const args = await deps.groupRequest.setGroupMemberProps(user.userId, groupId, {
+                    managerNotes: noteValue
+                });
                 deps.handleGroupMemberProps(args);
             },
             logPrefix: 'Setting note for',
@@ -147,7 +134,6 @@ export function useGroupBatchOperations(deps) {
     }
 
     /**
-     *
      * @param roleIds
      * @param callbacks
      */
@@ -180,7 +166,6 @@ export function useGroupBatchOperations(deps) {
     }
 
     /**
-     *
      * @param roleIds
      * @param callbacks
      */
@@ -213,7 +198,6 @@ export function useGroupBatchOperations(deps) {
     }
 
     /**
-     *
      * @param callbacks
      */
     async function groupMembersDeleteSentInvite(callbacks) {
@@ -231,7 +215,6 @@ export function useGroupBatchOperations(deps) {
     }
 
     /**
-     *
      * @param callbacks
      */
     async function groupMembersAcceptInviteRequest(callbacks) {
@@ -249,7 +232,6 @@ export function useGroupBatchOperations(deps) {
     }
 
     /**
-     *
      * @param callbacks
      */
     async function groupMembersRejectInviteRequest(callbacks) {
@@ -267,7 +249,6 @@ export function useGroupBatchOperations(deps) {
     }
 
     /**
-     *
      * @param callbacks
      */
     async function groupMembersBlockJoinRequest(callbacks) {
@@ -285,7 +266,6 @@ export function useGroupBatchOperations(deps) {
     }
 
     /**
-     *
      * @param callbacks
      */
     async function groupMembersDeleteBlockedRequest(callbacks) {

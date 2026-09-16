@@ -18,37 +18,27 @@ import { convertFileUrlToImageUrl, debounce } from '../common';
 
 describe('convertFileUrlToImageUrl', () => {
     test('converts standard file URL to image URL', () => {
-        const url =
-            'https://api.vrchat.cloud/api/1/file/file_abc123-def456/1/file';
+        const url = 'https://api.vrchat.cloud/api/1/file/file_abc123-def456/1/file';
         const result = convertFileUrlToImageUrl(url);
-        expect(result).toBe(
-            'https://api.vrchat.cloud/api/1/image/file_abc123-def456/1/128'
-        );
+        expect(result).toBe('https://api.vrchat.cloud/api/1/image/file_abc123-def456/1/128');
     });
 
     test('converts URL without trailing /file', () => {
         const url = 'https://api.vrchat.cloud/api/1/file/file_abc123-def456/1';
         const result = convertFileUrlToImageUrl(url);
-        expect(result).toBe(
-            'https://api.vrchat.cloud/api/1/image/file_abc123-def456/1/128'
-        );
+        expect(result).toBe('https://api.vrchat.cloud/api/1/image/file_abc123-def456/1/128');
     });
 
     test('converts URL with trailing slash', () => {
         const url = 'https://api.vrchat.cloud/api/1/file/file_abc123-def456/2/';
         const result = convertFileUrlToImageUrl(url);
-        expect(result).toBe(
-            'https://api.vrchat.cloud/api/1/image/file_abc123-def456/2/128'
-        );
+        expect(result).toBe('https://api.vrchat.cloud/api/1/image/file_abc123-def456/2/128');
     });
 
     test('accepts custom resolution', () => {
-        const url =
-            'https://api.vrchat.cloud/api/1/file/file_abc123-def456/1/file';
+        const url = 'https://api.vrchat.cloud/api/1/file/file_abc123-def456/1/file';
         const result = convertFileUrlToImageUrl(url, 256);
-        expect(result).toBe(
-            'https://api.vrchat.cloud/api/1/image/file_abc123-def456/1/256'
-        );
+        expect(result).toBe('https://api.vrchat.cloud/api/1/image/file_abc123-def456/1/256');
     });
 
     test('returns original URL when pattern does not match', () => {
@@ -69,12 +59,9 @@ describe('convertFileUrlToImageUrl', () => {
     });
 
     test('handles URL with /file/file path', () => {
-        const url =
-            'https://api.vrchat.cloud/api/1/file/file_aabbccdd-1234-5678-9012-abcdef123456/5/file/';
+        const url = 'https://api.vrchat.cloud/api/1/file/file_aabbccdd-1234-5678-9012-abcdef123456/5/file/';
         const result = convertFileUrlToImageUrl(url, 64);
-        expect(result).toBe(
-            'https://api.vrchat.cloud/api/1/image/file_aabbccdd-1234-5678-9012-abcdef123456/5/64'
-        );
+        expect(result).toBe('https://api.vrchat.cloud/api/1/image/file_aabbccdd-1234-5678-9012-abcdef123456/5/64');
     });
 });
 

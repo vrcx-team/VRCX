@@ -36,8 +36,7 @@ vi.mock('../../../../shared/utils', () => ({
 vi.mock('vue-showdown', () => ({
     VueShowdown: {
         props: ['markdown', 'flavor', 'options'],
-        template:
-            '<div class="changelog-markdown" data-testid="showdown">{{ markdown }}</div>'
+        template: '<div class="changelog-markdown" data-testid="showdown">{{ markdown }}</div>'
     }
 }));
 
@@ -45,9 +44,6 @@ import ChangelogDialog from '../ChangelogDialog.vue';
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 
-/**
- *
- */
 function mountComponent() {
     return mount(ChangelogDialog, {
         global: {
@@ -55,8 +51,7 @@ function mountComponent() {
                 Dialog: {
                     props: ['open'],
                     emits: ['update:open'],
-                    template:
-                        '<div data-testid="dialog" v-if="open"><slot /></div>'
+                    template: '<div data-testid="dialog" v-if="open"><slot /></div>'
                 },
                 DialogContent: { template: '<div><slot /></div>' },
                 DialogHeader: { template: '<div><slot /></div>' },
@@ -67,8 +62,7 @@ function mountComponent() {
                 Button: {
                     emits: ['click'],
                     props: ['variant'],
-                    template:
-                        '<button @click="$emit(\'click\')"><slot /></button>'
+                    template: '<button @click="$emit(\'click\')"><slot /></button>'
                 }
             }
         }
@@ -124,9 +118,7 @@ describe('ChangelogDialog.vue', () => {
         test('clicking Close button sets visible to false', async () => {
             const wrapper = mountComponent();
             const buttons = wrapper.findAll('button');
-            const closeBtn = buttons.find((b) =>
-                b.text().includes('dialog.change_log.close')
-            );
+            const closeBtn = buttons.find((b) => b.text().includes('dialog.change_log.close'));
             expect(closeBtn).toBeTruthy();
 
             await closeBtn.trigger('click');
@@ -136,15 +128,11 @@ describe('ChangelogDialog.vue', () => {
         test('clicking GitHub button opens external link', async () => {
             const wrapper = mountComponent();
             const buttons = wrapper.findAll('button');
-            const githubBtn = buttons.find((b) =>
-                b.text().includes('dialog.change_log.github')
-            );
+            const githubBtn = buttons.find((b) => b.text().includes('dialog.change_log.github'));
             expect(githubBtn).toBeTruthy();
 
             await githubBtn.trigger('click');
-            expect(openExternalLinkFn).toHaveBeenCalledWith(
-                'https://github.com/vrcx-team/VRCX/releases'
-            );
+            expect(openExternalLinkFn).toHaveBeenCalledWith('https://github.com/vrcx-team/VRCX/releases');
         });
 
         test('clicking Ko-fi link opens external link', async () => {
@@ -154,9 +142,7 @@ describe('ChangelogDialog.vue', () => {
             expect(kofiLink).toBeTruthy();
 
             await kofiLink.trigger('click');
-            expect(openExternalLinkFn).toHaveBeenCalledWith(
-                'https://ko-fi.com/map1en_'
-            );
+            expect(openExternalLinkFn).toHaveBeenCalledWith('https://ko-fi.com/map1en_');
         });
     });
 });

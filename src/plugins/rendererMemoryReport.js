@@ -3,10 +3,7 @@ function readPerformanceMemory() {
     const memory = window?.performance?.memory;
     if (!memory) return null;
     const { usedJSHeapSize, jsHeapSizeLimit } = memory;
-    if (
-        typeof usedJSHeapSize !== 'number' ||
-        typeof jsHeapSizeLimit !== 'number'
-    ) {
+    if (typeof usedJSHeapSize !== 'number' || typeof jsHeapSizeLimit !== 'number') {
         return null;
     }
     return { usedJSHeapSize, jsHeapSizeLimit };
@@ -42,9 +39,7 @@ export function startRendererMemoryThresholdReport(
                 limitMB: m.jsHeapSizeLimit / 1024 / 1024,
                 ratio
             });
-            Sentry.captureMessage(
-                'Memory usage critical: nearing JS heap limit'
-            );
+            Sentry.captureMessage('Memory usage critical: nearing JS heap limit');
         });
     }, intervalMs);
 }
