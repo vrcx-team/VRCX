@@ -308,9 +308,9 @@ function statusClass(status) {
 
 /**
  * @param {object} user - User Ref Object
- * @param {boolean} isIcon - is use for icon (about 40x40)
- * @param {string} resolution - requested icon resolution (default 128),
- * @returns {string} - img url
+ * @param {boolean} isIcon - Is use for icon (about 40x40)
+ * @param {string} resolution - Requested icon resolution (default 128),
+ * @returns {string} - Img url
  */
 function userImage(user, isIcon = false, resolution = '128') {
     if (!user) {
@@ -321,16 +321,6 @@ function userImage(user, isIcon = false, resolution = '128') {
             return convertFileUrlToImageUrl(user.iconUrl);
         }
         return user.iconUrl;
-    }
-
-    if (user.profilePicOverrideThumbnail) {
-        if (isIcon) {
-            return user.profilePicOverrideThumbnail.replace('/256', `/${resolution}`);
-        }
-        return user.profilePicOverrideThumbnail;
-    }
-    if (user.profilePicOverride) {
-        return user.profilePicOverride;
     }
     if (user.thumbnailUrl) {
         return user.thumbnailUrl;
@@ -352,7 +342,7 @@ function userImage(user, isIcon = false, resolution = '128') {
 
 /**
  * @param {object} user
- * @returns {string|*}
+ * @returns {string | any}
  */
 function userImageFull(user) {
     if (!user) {

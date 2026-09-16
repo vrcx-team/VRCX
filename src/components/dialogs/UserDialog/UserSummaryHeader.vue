@@ -62,7 +62,7 @@
                     <img
                         v-else
                         class="w-full h-full object-cover cursor-pointer"
-                        :src="userImage(userDialog.publicProfileRef, true, '256')"
+                        :src="userDialog.publicProfileRef?.iconUrl"
                         @click.stop="showFullscreenImageDialog(userDialog.publicProfileRef?.iconUrl)"
                         @error="userIconError = true"
                         loading="lazy" />
@@ -377,39 +377,34 @@
         <div
             class="text-[10px] font-bold uppercase tracking-wide mb-2 pb-2 border-b border-muted-foreground/20"
             :style="{ color: userDialog.theme.subtextColor }">
-            {{
-                userDialog.id !== currentUser.id &&
-                userDialog.ref.profilePicOverride &&
-                userDialog.ref.currentAvatarImageUrl
-                    ? t('dialog.user.info.avatar_info_last_seen')
-                    : t('dialog.user.info.avatar_info')
-            }}
+            {{ t('dialog.user.info.avatar_info') }}
             <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                <TooltipWrapper
-                    v-if="userDialog.ref.profilePicOverride && !userDialog.ref.currentAvatarImageUrl"
-                    side="top"
-                    :content="t('dialog.user.info.vrcplus_hides_avatar')">
+                <TooltipWrapper v-if="!hasAvatarSet" side="top" :content="t('dialog.user.info.icon_hides_avatar')">
                     <Info class="inline-block h-3 w-3 align-middle" :style="{ color: userDialog.theme.iconColor }" />
                 </TooltipWrapper>
             </span>
         </div>
         <div class="text-xs flex justify-between gap-2">
-            <AvatarInfo
-                :key="userDialog.id"
-                :imageurl="userDialog.ref.currentAvatarImageUrl"
-                :userid="userDialog.id"
-                :avatartags="userDialog.ref.currentAvatarTags"
-                style="display: inline-block" />
-            <img
-                v-if="userDialog.ref.currentAvatarThumbnailImageUrl"
-                class="h-12 w-16 rounded-lg object-cover cursor-pointer flex-none"
-                :src="userDialog.ref.currentAvatarThumbnailImageUrl"
-                @click="
-                    showFullscreenImageDialog(
-                        userDialog.ref.currentAvatarImageUrl || userDialog.ref.currentAvatarThumbnailImageUrl
-                    )
-                "
-                loading="lazy" />
+            <template v-if="hasAvatarSet">
+                <AvatarInfo
+                    :key="userDialog.id"
+                    :imageurl="userDialog.ref.currentAvatarImageUrl || userDialog.publicProfileRef?.iconUrl"
+                    :userid="userDialog.id"
+                    :avatartags="userDialog.ref.currentAvatarTags"
+                    style="display: inline-block" />
+                <img
+                    class="h-12 w-16 rounded-lg object-cover cursor-pointer flex-none"
+                    :src="userDialog.ref.currentAvatarImageUrl || userDialog.publicProfileRef?.iconUrl"
+                    @click="
+                        showFullscreenImageDialog(
+                            userDialog.ref.currentAvatarImageUrl || userDialog.publicProfileRef?.iconUrl
+                        )
+                    "
+                    loading="lazy" />
+            </template>
+            <template v-else>
+                <div class="text-xs text-muted-foreground">—</div>
+            </template>
         </div>
     </div>
 
@@ -497,6 +492,7 @@
 
     import UserActionDropdown from './UserActionDropdown.vue';
     import { showGroupDialog } from '@/coordinators/groupCoordinator';
+    import { getAvatarName } from '@/coordinators/avatarCoordinator';
 
     const props = defineProps({
         getUserStateText: {
@@ -528,11 +524,37 @@
         useUserStore();
 
     const { showFullscreenImageDialog } = useGalleryStore();
-    const { userImage, userStatusClass } = useUserDisplay();
+    const { userStatusClass } = useUserDisplay();
     const { showEditProfileDialog } = useUserStore();
 
     const profileImageError = ref(false);
     const userIconError = ref(false);
+    const hasAvatarSet = ref(false);
+
+    watch(
+        [
+            () => userDialog.value.id,
+            () => userDialog.value.ref.currentAvatarImageUrl,
+            () => userDialog.value.publicProfileRef?.iconUrl
+        ],
+        async ([userId, currentAvatarImageUrl, iconUrl]) => {
+            if (currentAvatarImageUrl) {
+                hasAvatarSet.value = true;
+                return;
+            }
+
+            hasAvatarSet.value = false;
+            const avatarInfo = await getAvatarName(iconUrl);
+            if (
+                userId === userDialog.value.id &&
+                iconUrl === userDialog.value.publicProfileRef?.iconUrl &&
+                !userDialog.value.ref.currentAvatarImageUrl
+            ) {
+                hasAvatarSet.value = Boolean(avatarInfo.ownerId);
+            }
+        },
+        { immediate: true }
+    );
 
     watch(
         () => userDialog.value.id,

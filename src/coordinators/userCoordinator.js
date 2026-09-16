@@ -288,6 +288,8 @@ export function showUserDialog(userId) {
         return;
     }
     D.id = userId;
+    D.ref = {};
+    D.publicProfileRef = {};
     D.memo = '';
     D.note = '';
     getUserMemo(userId).then((memo) => {
