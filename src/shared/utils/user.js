@@ -143,28 +143,19 @@ function getReadableProfileThemeColor(colorValue, fallback, isDarkMode) {
         return fallback;
     }
 
-    const luminanceThreshold = isDarkMode
-        ? THEME_COLOR_LIMITS.darkMinLuminance
-        : THEME_COLOR_LIMITS.lightMaxLuminance;
+    const luminanceThreshold = isDarkMode ? THEME_COLOR_LIMITS.darkMinLuminance : THEME_COLOR_LIMITS.lightMaxLuminance;
     let luminance = getRelativeLuminance(rgb);
-    const requiresAdjustment = isDarkMode
-        ? luminance < luminanceThreshold
-        : luminance > luminanceThreshold;
+    const requiresAdjustment = isDarkMode ? luminance < luminanceThreshold : luminance > luminanceThreshold;
     if (!requiresAdjustment) {
         return normalized;
     }
 
     // Nudge only extreme values so profile colors remain recognizable.
-    const targetRgb = isDarkMode
-        ? { r: 255, g: 255, b: 255 }
-        : { r: 0, g: 0, b: 0 };
+    const targetRgb = isDarkMode ? { r: 255, g: 255, b: 255 } : { r: 0, g: 0, b: 0 };
     for (let i = 0; i < 14; i++) {
         rgb = mixRgb(rgb, targetRgb, 0.18);
         luminance = getRelativeLuminance(rgb);
-        if (
-            (isDarkMode && luminance >= luminanceThreshold) ||
-            (!isDarkMode && luminance <= luminanceThreshold)
-        ) {
+        if ((isDarkMode && luminance >= luminanceThreshold) || (!isDarkMode && luminance <= luminanceThreshold)) {
             break;
         }
     }
@@ -217,10 +208,7 @@ function userStatusClass(user, pendingOffline = false, currentUser) {
         return {
             ...style,
             ...statusClass(user.status),
-            mobile:
-                platform &&
-                platform !== 'standalonewindows' &&
-                platform !== 'web'
+            mobile: platform && platform !== 'standalonewindows' && platform !== 'web'
         };
     }
     if (!user.isFriend) {
@@ -341,22 +329,16 @@ function userImage(
     if (!user) {
         return '';
     }
-    if (
-        (isUserDialogIcon && user.userIcon) ||
-        (displayVRCPlusIconsAsAvatar && user.userIcon)
-    ) {
+    if ((isUserDialogIcon && user.iconUrl) || (displayVRCPlusIconsAsAvatar && user.iconUrl)) {
         if (isIcon) {
-            return convertFileUrlToImageUrl(user.userIcon);
+            return convertFileUrlToImageUrl(user.iconUrl);
         }
-        return user.userIcon;
+        return user.iconUrl;
     }
 
     if (user.profilePicOverrideThumbnail) {
         if (isIcon) {
-            return user.profilePicOverrideThumbnail.replace(
-                '/256',
-                `/${resolution}`
-            );
+            return user.profilePicOverrideThumbnail.replace('/256', `/${resolution}`);
         }
         return user.profilePicOverrideThumbnail;
     }
@@ -368,10 +350,7 @@ function userImage(
     }
     if (user.currentAvatarThumbnailImageUrl) {
         if (isIcon) {
-            return user.currentAvatarThumbnailImageUrl.replace(
-                '/256',
-                `/${resolution}`
-            );
+            return user.currentAvatarThumbnailImageUrl.replace('/256', `/${resolution}`);
         }
         return user.currentAvatarThumbnailImageUrl;
     }
@@ -394,8 +373,8 @@ function userImageFull(user, displayVRCPlusIconsAsAvatar = false) {
     if (!user) {
         return '';
     }
-    if (displayVRCPlusIconsAsAvatar && user.userIcon) {
-        return user.userIcon;
+    if (displayVRCPlusIconsAsAvatar && user.iconUrl) {
+        return user.iconUrl;
     }
     if (user.profilePicOverride) {
         return user.profilePicOverride;
@@ -424,11 +403,7 @@ function parseUserUrl(user) {
  * @param {Map<string, Set<string>>} [cachedUserIdsByDisplayName]
  * @returns {object|undefined}
  */
-function findUserByDisplayName(
-    cachedUsers,
-    displayName,
-    cachedUserIdsByDisplayName
-) {
+function findUserByDisplayName(cachedUsers, displayName, cachedUserIdsByDisplayName) {
     const indexedUserIds = cachedUserIdsByDisplayName?.get(displayName);
     if (indexedUserIds) {
         for (const userId of indexedUserIds) {
