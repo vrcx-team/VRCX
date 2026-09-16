@@ -4,7 +4,6 @@ import { database } from '../services/database';
 import { getAvatarName } from './avatarCoordinator';
 import { useFeedStore } from '../stores/feed';
 import { useFriendStore } from '../stores/friend';
-import { useGeneralSettingsStore } from '../stores/settings/general';
 import { useGroupStore } from '../stores/group';
 import { useInstanceStore } from '../stores/instance';
 import { useNotificationStore } from '../stores/notification';
@@ -31,7 +30,6 @@ export async function runHandleUserUpdateFlow(ref, props, { now = Date.now, nowI
     const feedStore = useFeedStore();
     const notificationStore = useNotificationStore();
     const sharedFeedStore = useSharedFeedStore();
-    const generalSettingsStore = useGeneralSettingsStore();
 
     const { state, userDialog, applyUserDialogLocation, checkNote } = userStore;
 
@@ -144,68 +142,25 @@ export async function runHandleUserUpdateFlow(ref, props, { now = Date.now, nowI
         ref.$previousLocation = props.location[1];
         ref.$travelingToTime = now();
     }
-    let imageMatches = false;
-    if (
-        props.currentAvatarThumbnailImageUrl &&
-        props.currentAvatarThumbnailImageUrl[0] &&
-        props.currentAvatarThumbnailImageUrl[1] &&
-        props.currentAvatarThumbnailImageUrl[0] === props.currentAvatarThumbnailImageUrl[1]
-    ) {
-        imageMatches = true;
-    }
-    if (
-        (((props.currentAvatarImageUrl || props.currentAvatarThumbnailImageUrl) && !ref.profilePicOverride) ||
-            props.currentAvatarTags) &&
-        !imageMatches
-    ) {
-        let currentAvatarImageUrl = '';
-        let previousCurrentAvatarImageUrl = '';
-        let currentAvatarThumbnailImageUrl = '';
-        let previousCurrentAvatarThumbnailImageUrl = '';
-        let currentAvatarTags = '';
-        let previousCurrentAvatarTags = '';
-        if (props.currentAvatarImageUrl) {
-            currentAvatarImageUrl = props.currentAvatarImageUrl[0];
-            previousCurrentAvatarImageUrl = props.currentAvatarImageUrl[1];
-        } else {
-            currentAvatarImageUrl = ref.currentAvatarImageUrl;
-            previousCurrentAvatarImageUrl = ref.currentAvatarImageUrl;
+    if (props.iconUrl && props.iconUrl[0]) {
+        const currentIconUrl = props.iconUrl[0];
+        const previousIconUrl = props.iconUrl[1];
+        let avatarInfo = {
+            ownerId: '',
+            avatarName: ''
+        };
+        try {
+            avatarInfo = await getAvatarName(currentIconUrl);
+        } catch (err) {
+            console.log(err);
         }
-        if (props.currentAvatarThumbnailImageUrl) {
-            currentAvatarThumbnailImageUrl = props.currentAvatarThumbnailImageUrl[0];
-            previousCurrentAvatarThumbnailImageUrl = props.currentAvatarThumbnailImageUrl[1];
-        } else {
-            currentAvatarThumbnailImageUrl = ref.currentAvatarThumbnailImageUrl;
-            previousCurrentAvatarThumbnailImageUrl = ref.currentAvatarThumbnailImageUrl;
-        }
-        if (props.currentAvatarTags) {
-            currentAvatarTags = props.currentAvatarTags[0];
-            previousCurrentAvatarTags = props.currentAvatarTags[1];
-            if (ref.profilePicOverride && !props.currentAvatarThumbnailImageUrl) {
-                // forget last seen avatar
-                ref.currentAvatarImageUrl = '';
-                ref.currentAvatarThumbnailImageUrl = '';
-            }
-        } else {
-            currentAvatarTags = ref.currentAvatarTags;
-            previousCurrentAvatarTags = ref.currentAvatarTags;
-        }
-        if (generalSettingsStore.logEmptyAvatars || ref.currentAvatarImageUrl) {
-            let avatarInfo = {
-                ownerId: '',
-                avatarName: ''
-            };
-            try {
-                avatarInfo = await getAvatarName(currentAvatarImageUrl);
-            } catch (err) {
-                console.log(err);
-            }
+        if (avatarInfo.ownerId) {
             let previousAvatarInfo = {
                 ownerId: '',
                 avatarName: ''
             };
             try {
-                previousAvatarInfo = await getAvatarName(previousCurrentAvatarImageUrl);
+                previousAvatarInfo = await getAvatarName(previousIconUrl);
             } catch (err) {
                 console.log(err);
             }
@@ -218,12 +173,10 @@ export async function runHandleUserUpdateFlow(ref, props, { now = Date.now, nowI
                 previousOwnerId: previousAvatarInfo.ownerId,
                 avatarName: avatarInfo.avatarName,
                 previousAvatarName: previousAvatarInfo.avatarName,
-                currentAvatarImageUrl,
-                currentAvatarThumbnailImageUrl,
-                previousCurrentAvatarImageUrl,
-                previousCurrentAvatarThumbnailImageUrl,
-                currentAvatarTags,
-                previousCurrentAvatarTags
+                currentAvatarImageUrl: avatarInfo.ownerId ? currentIconUrl : '',
+                currentAvatarThumbnailImageUrl: avatarInfo.ownerId ? currentIconUrl : '',
+                previousCurrentAvatarImageUrl: previousAvatarInfo.ownerId ? previousIconUrl : '',
+                previousCurrentAvatarThumbnailImageUrl: previousAvatarInfo.ownerId ? previousIconUrl : ''
             };
             notificationStore.queueFeedNoty(feed);
             sharedFeedStore.addEntry(feed);

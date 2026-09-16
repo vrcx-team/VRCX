@@ -252,6 +252,12 @@ export async function getAvatarName(imageUrl) {
     }
     try {
         const args = await miscRequest.getFile({ fileId });
+        if (args.json?.tags?.includes('icon')) {
+            return {
+                ownerId: '',
+                avatarName: '-'
+            };
+        }
         return storeAvatarImage(args, avatarStore.cachedAvatarNames);
     } catch (error) {
         console.error('Failed to get avatar images:', error);
