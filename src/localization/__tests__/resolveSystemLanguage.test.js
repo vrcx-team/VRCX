@@ -34,6 +34,14 @@ describe('resolveSystemLanguage', () => {
         test('en matches en', () => {
             expect(resolveSystemLanguage('en', languageCodes)).toBe('en');
         });
+
+        test('hu matches hu', () => {
+            expect(resolveSystemLanguage('hu', languageCodes)).toBe('hu');
+        });
+
+        test.each(languageCodes)('%s resolves to itself', (code) => {
+            expect(resolveSystemLanguage(code, languageCodes)).toBe(code);
+        });
     });
 
     describe('prefix match', () => {
@@ -63,6 +71,14 @@ describe('resolveSystemLanguage', () => {
 
         test('ru-RU matches ru', () => {
             expect(resolveSystemLanguage('ru-RU', languageCodes)).toBe('ru');
+        });
+
+        test('hu-HU matches hu', () => {
+            expect(resolveSystemLanguage('hu-HU', languageCodes)).toBe('hu');
+        });
+
+        test('hu-Latn-HU matches hu (script + region)', () => {
+            expect(resolveSystemLanguage('hu-Latn-HU', languageCodes)).toBe('hu');
         });
     });
 
