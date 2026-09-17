@@ -536,7 +536,7 @@
 
     watch(
         () => userDialog.value.publicProfileRef?.iconUrl,
-        async ([iconUrl]) => {
+        async (iconUrl) => {
             hasAvatarSet.value = false;
             // check if image is from an avatar
             const avatarInfo = await getAvatarName(iconUrl);
