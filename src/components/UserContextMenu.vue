@@ -24,7 +24,7 @@
                 </ContextMenuShortcut>
             </ContextMenuItem>
             <ContextMenuItem :disabled="!currentUser?.isBoopingEnabled" @click="handleSendBoop">
-                <MousePointer class="size-4" />
+                <Hand class="size-4" />
                 {{ t('dialog.user.actions.send_boop') }}
             </ContextMenuItem>
             <ContextMenuSeparator v-if="isOnline && hasLocation" />
@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-    import { Clock, ExternalLink, LogIn, Mail, MessageSquare, MousePointer } from 'lucide-vue-next';
+    import { Clock, ExternalLink, LogIn, Mail, MessageSquare, Hand } from 'lucide-vue-next';
     import { computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';

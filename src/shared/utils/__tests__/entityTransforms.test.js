@@ -1,8 +1,4 @@
-import {
-    sanitizeEntityJson,
-    createDefaultFavoriteGroupRef,
-    createDefaultFavoriteCachedRef
-} from '../entityTransforms';
+import { sanitizeEntityJson, createDefaultFavoriteGroupRef, createDefaultFavoriteCachedRef } from '../entityTransforms';
 
 describe('sanitizeEntityJson', () => {
     it('applies replaceBioSymbols to specified fields', () => {
@@ -19,9 +15,7 @@ describe('sanitizeEntityJson', () => {
 
     it('skips falsy fields', () => {
         const json = { name: '', description: null };
-        expect(() =>
-            sanitizeEntityJson(json, ['name', 'description'])
-        ).not.toThrow();
+        expect(() => sanitizeEntityJson(json, ['name', 'description'])).not.toThrow();
     });
 });
 

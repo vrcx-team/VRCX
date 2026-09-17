@@ -1,5 +1,6 @@
 /**
  * Create a default group ref object.
+ *
  * @param {object} json - API response to merge
  * @returns {object}
  */
@@ -37,6 +38,7 @@ export function createDefaultGroupRef(json) {
             id: '',
             isRepresenting: false,
             isSubscribedToAnnouncements: false,
+            isSubscribedToEventAnnouncements: false,
             joinedAt: '',
             managerNotes: '',
             membershipStatus: '',

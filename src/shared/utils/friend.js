@@ -2,7 +2,6 @@ import {
     compareByLastActive,
     compareByLastSeen,
     compareByLocation,
-    compareByLocationAt,
     compareByName,
     compareByPrivate,
     compareByStatus,
@@ -10,7 +9,6 @@ import {
 } from './compare';
 
 /**
- *
  * @param {string[]} sortMethods
  * @returns
  */
@@ -64,7 +62,6 @@ function getFriendsSortFunction(sortMethods) {
 }
 
 /**
- *
  * @param {string} a
  * @param {string} b
  * @returns {number}
@@ -136,12 +133,11 @@ function sortStatus(a, b) {
 }
 
 /**
- *
  * @param {object} friend
  * @returns {boolean}
  */
 function isFriendOnline(friend) {
-    if (typeof friend === 'undefined' || typeof friend.ref === 'undefined') {
+    if (typeof friend === 'undefined' || typeof friend?.ref === 'undefined') {
         return false;
     }
     if (friend.state === 'online') {

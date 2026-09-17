@@ -99,20 +99,14 @@ describe('useUiStore - notification methods', () => {
         test('does not add duplicate keys', () => {
             store.notifyMenu('feed');
             store.notifyMenu('feed');
-            expect(
-                store.notifiedMenus.filter((k) => k === 'feed')
-            ).toHaveLength(1);
+            expect(store.notifiedMenus.filter((k) => k === 'feed')).toHaveLength(1);
         });
 
         test('adds multiple different keys', () => {
             store.notifyMenu('feed');
             store.notifyMenu('notification');
             store.notifyMenu('friend-log');
-            expect(store.notifiedMenus).toEqual([
-                'feed',
-                'notification',
-                'friend-log'
-            ]);
+            expect(store.notifiedMenus).toEqual(['feed', 'notification', 'friend-log']);
         });
     });
 

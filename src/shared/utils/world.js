@@ -3,7 +3,6 @@ import { queryRequest } from '../../api';
 import { rpcWorlds } from '../constants';
 
 /**
- *
  * @param {string} location
  * @returns {Promise<string>}
  */
@@ -26,7 +25,6 @@ async function getWorldName(location) {
 }
 
 /**
- *
  * @param {string} location
  * @returns
  */

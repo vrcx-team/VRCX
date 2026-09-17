@@ -51,16 +51,10 @@ import LaunchOptionsDialog from '../LaunchOptionsDialog.vue';
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 
-/**
- *
- */
 function flushPromises() {
     return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
-/**
- *
- */
 function mountComponent() {
     return mount(LaunchOptionsDialog, {
         global: {
@@ -68,8 +62,7 @@ function mountComponent() {
                 Dialog: {
                     props: ['open'],
                     emits: ['update:open'],
-                    template:
-                        '<div data-testid="dialog" v-if="open"><slot /></div>'
+                    template: '<div data-testid="dialog" v-if="open"><slot /></div>'
                 },
                 DialogContent: { template: '<div><slot /></div>' },
                 DialogHeader: { template: '<div><slot /></div>' },
@@ -80,18 +73,10 @@ function mountComponent() {
                 Button: {
                     emits: ['click'],
                     props: ['variant', 'disabled'],
-                    template:
-                        '<button @click="$emit(\'click\')" :disabled="disabled"><slot /></button>'
+                    template: '<button @click="$emit(\'click\')" :disabled="disabled"><slot /></button>'
                 },
                 InputGroupTextareaField: {
-                    props: [
-                        'modelValue',
-                        'placeholder',
-                        'rows',
-                        'autosize',
-                        'inputClass',
-                        'spellcheck'
-                    ],
+                    props: ['modelValue', 'placeholder', 'rows', 'autosize', 'inputClass', 'spellcheck'],
                     emits: ['update:modelValue'],
                     template:
                         '<textarea data-testid="textarea" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)"></textarea>'
@@ -122,9 +107,7 @@ describe('LaunchOptionsDialog.vue', () => {
         test('renders description and example args', async () => {
             const wrapper = mountComponent();
             await flushPromises();
-            expect(wrapper.text()).toContain(
-                'dialog.launch_options.description'
-            );
+            expect(wrapper.text()).toContain('dialog.launch_options.description');
             expect(wrapper.text()).toContain('--fps=144');
             expect(wrapper.text()).toContain('--enable-debug-gui');
         });
@@ -138,30 +121,22 @@ describe('LaunchOptionsDialog.vue', () => {
         test('renders VRChat docs and Unity manual buttons', async () => {
             const wrapper = mountComponent();
             await flushPromises();
-            expect(wrapper.text()).toContain(
-                'dialog.launch_options.vrchat_docs'
-            );
-            expect(wrapper.text()).toContain(
-                'dialog.launch_options.unity_manual'
-            );
+            expect(wrapper.text()).toContain('dialog.launch_options.vrchat_docs');
+            expect(wrapper.text()).toContain('dialog.launch_options.unity_manual');
         });
 
         test('renders path override section when not Linux', async () => {
             globalThis.LINUX = false;
             const wrapper = mountComponent();
             await flushPromises();
-            expect(wrapper.text()).toContain(
-                'dialog.launch_options.path_override'
-            );
+            expect(wrapper.text()).toContain('dialog.launch_options.path_override');
         });
 
         test('hides path override section on Linux', async () => {
             globalThis.LINUX = true;
             const wrapper = mountComponent();
             await flushPromises();
-            expect(wrapper.text()).not.toContain(
-                'dialog.launch_options.path_override'
-            );
+            expect(wrapper.text()).not.toContain('dialog.launch_options.path_override');
         });
 
         test('does not render when not visible', () => {
@@ -174,98 +149,74 @@ describe('LaunchOptionsDialog.vue', () => {
     describe('initialization', () => {
         test('loads launch arguments from configRepository on mount', async () => {
             mocks.configRepository.getString.mockImplementation((key) => {
-                if (key === 'launchArguments')
-                    return Promise.resolve('--fps=90');
-                if (key === 'vrcLaunchPathOverride')
-                    return Promise.resolve('C:\\VRChat');
+                if (key === 'launchArguments') return Promise.resolve('--fps=90');
+                if (key === 'vrcLaunchPathOverride') return Promise.resolve('C:\\VRChat');
                 return Promise.resolve('');
             });
 
             mountComponent();
             await flushPromises();
 
-            expect(mocks.configRepository.getString).toHaveBeenCalledWith(
-                'launchArguments'
-            );
-            expect(mocks.configRepository.getString).toHaveBeenCalledWith(
-                'vrcLaunchPathOverride'
-            );
+            expect(mocks.configRepository.getString).toHaveBeenCalledWith('launchArguments');
+            expect(mocks.configRepository.getString).toHaveBeenCalledWith('vrcLaunchPathOverride');
         });
 
         test('clears null/string-null vrcLaunchPathOverride values', async () => {
             mocks.configRepository.getString.mockImplementation((key) => {
-                if (key === 'vrcLaunchPathOverride')
-                    return Promise.resolve('null');
+                if (key === 'vrcLaunchPathOverride') return Promise.resolve('null');
                 return Promise.resolve('');
             });
 
             mountComponent();
             await flushPromises();
 
-            expect(mocks.configRepository.setString).toHaveBeenCalledWith(
-                'vrcLaunchPathOverride',
-                ''
-            );
+            expect(mocks.configRepository.setString).toHaveBeenCalledWith('vrcLaunchPathOverride', '');
         });
     });
 
     describe('save logic', () => {
         test('normalizes whitespace in launch arguments on save', async () => {
             mocks.configRepository.getString.mockImplementation((key) => {
-                if (key === 'launchArguments')
-                    return Promise.resolve('--fps=90   --debug  ');
+                if (key === 'launchArguments') return Promise.resolve('--fps=90   --debug  ');
                 return Promise.resolve('');
             });
 
             const wrapper = mountComponent();
             await flushPromises();
 
-            const saveBtn = wrapper
-                .findAll('button')
-                .find((b) => b.text().includes('dialog.launch_options.save'));
+            const saveBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.launch_options.save'));
             await saveBtn.trigger('click');
 
-            expect(mocks.configRepository.setString).toHaveBeenCalledWith(
-                'launchArguments',
-                '--fps=90 --debug'
-            );
+            expect(mocks.configRepository.setString).toHaveBeenCalledWith('launchArguments', '--fps=90 --debug');
         });
 
         test('shows error toast for invalid .exe path', async () => {
             mocks.configRepository.getString.mockImplementation((key) => {
                 if (key === 'launchArguments') return Promise.resolve('');
-                if (key === 'vrcLaunchPathOverride')
-                    return Promise.resolve('C:\\VRChat\\VRChat.exe');
+                if (key === 'vrcLaunchPathOverride') return Promise.resolve('C:\\VRChat\\VRChat.exe');
                 return Promise.resolve('');
             });
 
             const wrapper = mountComponent();
             await flushPromises();
 
-            const saveBtn = wrapper
-                .findAll('button')
-                .find((b) => b.text().includes('dialog.launch_options.save'));
+            const saveBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.launch_options.save'));
             await saveBtn.trigger('click');
 
-            expect(mocks.toast.error).toHaveBeenCalledWith(
-                'message.launch.invalid_path'
-            );
+            expect(mocks.toast.error).toHaveBeenCalledWith('message.launch.invalid_path');
         });
 
         test('accepts valid launch.exe path', async () => {
             mocks.configRepository.getString.mockImplementation((key) => {
                 if (key === 'launchArguments') return Promise.resolve('');
-                if (key === 'vrcLaunchPathOverride')
-                    return Promise.resolve('C:\\VRChat\\launch.exe');
+                if (key === 'vrcLaunchPathOverride') return Promise.resolve('C:\\VRChat\\launch.exe');
                 return Promise.resolve('');
             });
 
             const wrapper = mountComponent();
             await flushPromises();
 
-            const saveBtn = wrapper
-                .findAll('button')
-                .find((b) => b.text().includes('dialog.launch_options.save'));
+            const saveBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.launch_options.save'));
             await saveBtn.trigger('click');
 
             expect(mocks.toast.error).not.toHaveBeenCalled();
@@ -276,9 +227,7 @@ describe('LaunchOptionsDialog.vue', () => {
             const wrapper = mountComponent();
             await flushPromises();
 
-            const saveBtn = wrapper
-                .findAll('button')
-                .find((b) => b.text().includes('dialog.launch_options.save'));
+            const saveBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.launch_options.save'));
             await saveBtn.trigger('click');
 
             expect(isLaunchOptionsDialogVisible.value).toBe(false);
@@ -292,14 +241,10 @@ describe('LaunchOptionsDialog.vue', () => {
 
             const docsBtn = wrapper
                 .findAll('button')
-                .find((b) =>
-                    b.text().includes('dialog.launch_options.vrchat_docs')
-                );
+                .find((b) => b.text().includes('dialog.launch_options.vrchat_docs'));
             await docsBtn.trigger('click');
 
-            expect(mocks.openExternalLink).toHaveBeenCalledWith(
-                'https://docs.vrchat.com/docs/launch-options'
-            );
+            expect(mocks.openExternalLink).toHaveBeenCalledWith('https://docs.vrchat.com/docs/launch-options');
         });
 
         test('clicking Unity manual button opens external link', async () => {
@@ -308,9 +253,7 @@ describe('LaunchOptionsDialog.vue', () => {
 
             const unityBtn = wrapper
                 .findAll('button')
-                .find((b) =>
-                    b.text().includes('dialog.launch_options.unity_manual')
-                );
+                .find((b) => b.text().includes('dialog.launch_options.unity_manual'));
             await unityBtn.trigger('click');
 
             expect(mocks.openExternalLink).toHaveBeenCalledWith(

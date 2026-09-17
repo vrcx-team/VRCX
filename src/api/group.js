@@ -3,15 +3,11 @@ import { applyGroup } from '../coordinators/groupCoordinator';
 import { queryClient } from '../queries';
 import { request } from '../services/request';
 
-/**
- *
- */
 function getCurrentUserId() {
     return useUserStore().currentUser.id;
 }
 
 /**
- *
  * @param groupId
  */
 function refetchActiveGroupScope(groupId) {
@@ -30,7 +26,7 @@ function refetchActiveGroupScope(groupId) {
 const groupReq = {
     /**
      * @param {string} groupId
-     * @param {{isRepresenting: bool}} params
+     * @param {{ isRepresenting: bool }} params
      * @returns
      */
     setGroupRepresentation(groupId, params) {
@@ -50,7 +46,7 @@ const groupReq = {
 
     /**
      * @param {{ groupId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     cancelGroupRequest(params) {
         return request(`groups/${params.groupId}/requests`, {
@@ -65,8 +61,8 @@ const groupReq = {
     },
 
     /**
-     * @param {{ groupId: string, postId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @param {{ groupId: string; postId: string }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     deleteGroupPost(params) {
         return request(`groups/${params.groupId}/posts/${params.postId}`, {
@@ -100,7 +96,7 @@ const groupReq = {
     },
     /**
      * @param {{ userId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     getRepresentedGroup(params) {
         return request(`users/${params.userId}/groups/represented`, {
@@ -115,7 +111,7 @@ const groupReq = {
     },
     /**
      * @param {{ userId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     getGroups(params) {
         return request(`users/${params.userId}/groups`, {
@@ -128,9 +124,67 @@ const groupReq = {
             return args;
         });
     },
+
+    /**
+     * @type {import('../types/api/group').CheckTransferGroup}
+     */
+    checkTransferGroup(params) {
+        return request(`groups/${params.groupId}/transfer`, {
+            method: 'GET',
+            params: {
+                transferTargetId: params.transferTargetId
+            }
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    /**
+     * @param {{ groupId: string; transferTargetId: string }} params
+     * @returns {Promise<{ json: any; params }>}
+     */
+    transferGroup(params) {
+        return request(`groups/${params.groupId}/transfer`, {
+            method: 'POST',
+            params: {
+                transferTargetId: params.transferTargetId
+            }
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            refetchActiveGroupScope(params.groupId);
+            return args;
+        });
+    },
+
+    /**
+     * @param {{ groupId: string; hardDelete?: boolean }} params
+     * @returns {Promise<{ json: any; params }>}
+     */
+    deleteGroup(params) {
+        return request(`groups/${params.groupId}`, {
+            method: 'DELETE',
+            params: {
+                hardDelete: params.hardDelete ?? false
+            }
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
     /**
      * @param {{ groupId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     joinGroup(params) {
         return request(`groups/${params.groupId}/join`, {
@@ -146,7 +200,7 @@ const groupReq = {
     },
     /**
      * @param {{ groupId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     leaveGroup(params) {
         return request(`groups/${params.groupId}/leave`, {
@@ -162,7 +216,7 @@ const groupReq = {
     },
     /**
      * @param {{ query: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     groupStrictsearch(params) {
         return request(`groups/strictsearch`, {
@@ -177,13 +231,15 @@ const groupReq = {
         });
     },
     /**
-    userId: string,
-    groupId: string,
-    params: {
-        visibility: string,
-        isSubscribedToAnnouncements: bool,
-        managerNotes: string
-    }
+     * UserId: string,
+     * groupId: string,
+     * params: {
+     * visibility: string,
+     * isSubscribedToAnnouncements: bool,
+     * isSubscribedToEventAnnouncements: bool,
+     * managerNotes: string
+     * }
+     *
      * @param userId
      * @param groupId
      * @param params
@@ -205,19 +261,16 @@ const groupReq = {
     },
     /**
      * @param {{
-     * userId: string,
-     * groupId: string,
-     * roleId: string
+     *     userId: string;
+     *     groupId: string;
+     *     roleId: string;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     addGroupMemberRole(params) {
-        return request(
-            `groups/${params.groupId}/members/${params.userId}/roles/${params.roleId}`,
-            {
-                method: 'PUT'
-            }
-        ).then((json) => {
+        return request(`groups/${params.groupId}/members/${params.userId}/roles/${params.roleId}`, {
+            method: 'PUT'
+        }).then((json) => {
             const args = {
                 json,
                 params
@@ -228,19 +281,16 @@ const groupReq = {
     },
     /**
      * @param {{
-     * userId: string,
-     * groupId: string,
-     * roleId: string
+     *     userId: string;
+     *     groupId: string;
+     *     roleId: string;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     removeGroupMemberRole(params) {
-        return request(
-            `groups/${params.groupId}/members/${params.userId}/roles/${params.roleId}`,
-            {
-                method: 'DELETE'
-            }
-        ).then((json) => {
+        return request(`groups/${params.groupId}/members/${params.userId}/roles/${params.roleId}`, {
+            method: 'DELETE'
+        }).then((json) => {
             const args = {
                 json,
                 params
@@ -262,11 +312,11 @@ const groupReq = {
     },
     /**
      * @param {{
-     groupId: string,
-     n: number,
-     offset: number
-     }} params
-     * @returns { Promise<{json: any, params}> }
+     *     groupId: string;
+     *     n: number;
+     *     offset: number;
+     * }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     getGroupPosts(params) {
         return request(`groups/${params.groupId}/posts`, {
@@ -308,10 +358,10 @@ const groupReq = {
     },
     /**
      * @param {{
-     * groupId: string,
-     * userId: string
+     *     groupId: string;
+     *     userId: string;
      * }} params
-     * @returns { Promise<{json: any, params, ref?: any}> }
+     * @returns {Promise<{ json: any; params; ref?: any }>}
      */
     getGroupMember(params) {
         return request(`groups/${params.groupId}/members/${params.userId}`, {
@@ -326,11 +376,11 @@ const groupReq = {
     },
     /**
      * @param {{
-     * groupId: string,
-     * n: number,
-     * offset: number
+     *     groupId: string;
+     *     n: number;
+     *     offset: number;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     getGroupMembers(params) {
         return request(`groups/${params.groupId}/members`, {
@@ -346,12 +396,12 @@ const groupReq = {
     },
     /**
      * @param {{
-     * groupId: string,
-     * query: string,
-     * n: number,
-     * offset: number
+     *     groupId: string;
+     *     query: string;
+     *     n: number;
+     *     offset: number;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     getGroupMembersSearch(params) {
         return request(`groups/${params.groupId}/members/search`, {
@@ -368,17 +418,14 @@ const groupReq = {
 
     /**
      * @param {{
-     * membershipStatus : 'invited' | 'requested' | 'userblocked'
+     *     membershipStatus: 'invited' | 'requested' | 'userblocked';
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     getBlockedGroups(params) {
-        return request(
-            `users/${getCurrentUserId()}/groups/${params.membershipStatus}`,
-            {
-                method: 'GET'
-            }
-        ).then((json) => {
+        return request(`users/${getCurrentUserId()}/groups/${params.membershipStatus}`, {
+            method: 'GET'
+        }).then((json) => {
             const args = {
                 json,
                 params
@@ -389,9 +436,9 @@ const groupReq = {
 
     /**
      * @param {{
-     * groupId: string
+     *     groupId: string;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     blockGroup(params) {
         return request(`groups/${params.groupId}/block`, {
@@ -407,10 +454,10 @@ const groupReq = {
     },
     /**
      * @param {{
-     * groupId: string,
-     * userId: string
+     *     groupId: string;
+     *     userId: string;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     unblockGroup(params) {
         return request(`groups/${params.groupId}/members/${params.userId}`, {
@@ -426,10 +473,10 @@ const groupReq = {
     },
     /**
      * @param {{
-     * groupId: string,
-     * userId: string
+     *     groupId: string;
+     *     userId: string;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     sendGroupInvite(params) {
         return request(`groups/${params.groupId}/invites`, {
@@ -447,10 +494,10 @@ const groupReq = {
     },
     /**
      * @param {{
-     * groupId: string,
-     * userId: string
+     *     groupId: string;
+     *     userId: string;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     kickGroupMember(params) {
         return request(`groups/${params.groupId}/members/${params.userId}`, {
@@ -465,8 +512,8 @@ const groupReq = {
         });
     },
     /**
-     * @param {{ groupId: string, userId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @param {{ groupId: string; userId: string }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     banGroupMember(params) {
         return request(`groups/${params.groupId}/bans`, {
@@ -496,8 +543,8 @@ const groupReq = {
         });
     },
     /**
-     * @param {{ groupId: string, userId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @param {{ groupId: string; userId: string }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     deleteSentGroupInvite(params) {
         return request(`groups/${params.groupId}/invites/${params.userId}`, {
@@ -581,7 +628,7 @@ const groupReq = {
     },
     /**
      * @param {{ groupId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     getGroupAuditLogTypes(params) {
         return request(`groups/${params.groupId}/auditLogTypes`, {
@@ -595,8 +642,8 @@ const groupReq = {
         });
     },
     /**
-     * @param {{groupId: string, n: number, offset: number, eventTypes?: Array}} params
-     * @returns { Promise<{json: any, params}> }
+     * @param {{ groupId: string; n: number; offset: number; eventTypes?: Array }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     getGroupLogs(params) {
         return request(`groups/${params.groupId}/auditLogs`, {
@@ -612,7 +659,7 @@ const groupReq = {
     },
     /**
      * @param {{ groupId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     getGroupInvites(params) {
         return request(`groups/${params.groupId}/invites`, {
@@ -628,7 +675,7 @@ const groupReq = {
     },
     /**
      * @param {{ groupId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     getGroupJoinRequests(params) {
         return request(`groups/${params.groupId}/requests`, {
@@ -644,15 +691,12 @@ const groupReq = {
     },
     /**
      * @param {{ groupId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     getGroupInstances(params) {
-        return request(
-            `users/${getCurrentUserId()}/instances/groups/${params.groupId}`,
-            {
-                method: 'GET'
-            }
-        ).then((json) => {
+        return request(`users/${getCurrentUserId()}/instances/groups/${params.groupId}`, {
+            method: 'GET'
+        }).then((json) => {
             const args = {
                 json,
                 params
@@ -662,7 +706,7 @@ const groupReq = {
     },
     /**
      * @param {{ groupId: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     getGroupRoles(params) {
         return request(`groups/${params.groupId}/roles`, {
@@ -679,16 +723,16 @@ const groupReq = {
 
     /**
      * @param {{
-     * groupId: string,
-     * name?: string,
-     * description?: string,
-     * isAddedOnJoin?: boolean,
-     * isSelfAssignable?: boolean,
-     * requiresTwoFactor?: boolean,
-     * permissions?: Array<string>,
-     * requiresPurchase?: boolean
+     *     groupId: string;
+     *     name?: string;
+     *     description?: string;
+     *     isAddedOnJoin?: boolean;
+     *     isSelfAssignable?: boolean;
+     *     requiresTwoFactor?: boolean;
+     *     permissions?: Array<string>;
+     *     requiresPurchase?: boolean;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     createGroupRole(params) {
         return request(`groups/${params.groupId}/roles`, {
@@ -705,17 +749,17 @@ const groupReq = {
 
     /**
      * @param {{
-     * groupId: string,
-     * roleId: string,
-     * name?: string,
-     * description?: string,
-     * isAddedOnJoin?: boolean,
-     * isSelfAssignable?: boolean,
-     * requiresTwoFactor?: boolean,
-     * permissions?: Array<string>,
-     * order?: number
+     *     groupId: string;
+     *     roleId: string;
+     *     name?: string;
+     *     description?: string;
+     *     isAddedOnJoin?: boolean;
+     *     isSelfAssignable?: boolean;
+     *     requiresTwoFactor?: boolean;
+     *     permissions?: Array<string>;
+     *     order?: number;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     editGroupRole(params) {
         return request(`groups/${params.groupId}/roles/${params.roleId}`, {
@@ -743,13 +787,13 @@ const groupReq = {
 
     /**
      * @param {{
-     query: string,
-     n: number,
-     offset: number,
-     order: string,
-     sortBy: string
-     }} params
-     * @returns { Promise<{json: any, params}> }
+     *     query: string;
+     *     n: number;
+     *     offset: number;
+     *     order: string;
+     *     sortBy: string;
+     * }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     groupSearch(params) {
         return request(`groups`, {
@@ -765,24 +809,21 @@ const groupReq = {
     },
     /**
      * @param {{
-     groupId: string,
-     galleryId: string,
-     n: number,
-     offset: number
-     }} params
-     * @returns { Promise<{json: any, params}> }
+     *     groupId: string;
+     *     galleryId: string;
+     *     n: number;
+     *     offset: number;
+     * }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     getGroupGallery(params) {
-        return request(
-            `groups/${params.groupId}/galleries/${params.galleryId}`,
-            {
-                method: 'GET',
-                params: {
-                    n: params.n,
-                    offset: params.offset
-                }
+        return request(`groups/${params.groupId}/galleries/${params.galleryId}`, {
+            method: 'GET',
+            params: {
+                n: params.n,
+                offset: params.offset
             }
-        ).then((json) => {
+        }).then((json) => {
             const args = {
                 json,
                 params
@@ -807,10 +848,10 @@ const groupReq = {
 
     /**
      * @param {{
-     groupId: string,
-     eventId: string
-     }} params
-     * @returns { Promise<{json: any, params}> }
+     *     groupId: string;
+     *     eventId: string;
+     * }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     getGroupCalendarEvent(params) {
         return request(`calendar/${params.groupId}/${params.eventId}`, {
@@ -882,28 +923,25 @@ const groupReq = {
 
     /**
      * @param {{
-     * startsAt: string,
-     * endsAt: string,
-     * title: string,
-     * accessType: 'group' | 'public',
-     * description: string,
-     * category: string,
-     * tags: Array<string>,
-     * isDraft: boolean,
-     * imageId: string,
-     * roleIds: Array<string>,
-     * parentId: null,
-     * platforms: Array<string>,
-     * languages: Array<string>,
-     * sendCreationNotification: boolean,
-     * featured: boolean,
-     * hostEarlyJoinMinutes: number,
-     * guestEarlyJoinMinutes: number,
-     * closeInstanceAfterEndMinutes: number,
-     * usesInstanceOverflow: boolean,
-     * groupId: string
+     *     startsAt: string;
+     *     endsAt: string;
+     *     title: string;
+     *     accessType: string; // 'group' | 'public',
+     *     description: string;
+     *     category: string;
+     *     tags: Array<string>;
+     *     imageId: string;
+     *     roleIds: Array<string>;
+     *     parentId?: null;
+     *     platforms: Array<string>;
+     *     languages: Array<string>;
+     *     sendCreationNotification: boolean;
+     *     hostEarlyJoinMinutes: number;
+     *     guestEarlyJoinMinutes: number;
+     *     closeInstanceAfterEndMinutes: number;
+     *     groupId: string;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     createGroupEvent(params) {
         return request(`calendar/${params.groupId}/event`, {
@@ -920,32 +958,29 @@ const groupReq = {
 
     /**
      * @param {{
-     * startsAt?: string,
-     * endsAt?: string,
-     * title?: string,
-     * accessType?: 'group' | 'public',
-     * description?: string,
-     * category?: string,
-     * tags?: Array<string>,
-     * isDraft?: boolean,
-     * imageId?: string,
-     * roleIds?: Array<string>,
-     * parentId?: null,
-     * platforms?: Array<string>,
-     * languages?: Array<string>,
-     * sendCreationNotification?: boolean,
-     * featured?: boolean,
-     * hostEarlyJoinMinutes?: number,
-     * guestEarlyJoinMinutes?: number,
-     * closeInstanceAfterEndMinutes?: number,
-     * usesInstanceOverflow?: boolean,
-     * groupId: string,
-     * eventId: string
+     *     startsAt?: string;
+     *     endsAt?: string;
+     *     title?: string;
+     *     accessType?: string; // 'group' | 'public',
+     *     description?: string;
+     *     category?: string;
+     *     tags?: Array<string>;
+     *     imageId?: string;
+     *     roleIds?: Array<string>;
+     *     parentId?: null;
+     *     platforms?: Array<string>;
+     *     languages?: Array<string>;
+     *     featured?: boolean;
+     *     hostEarlyJoinMinutes?: number;
+     *     guestEarlyJoinMinutes?: number;
+     *     closeInstanceAfterEndMinutes?: number;
+     *     groupId: string;
+     *     eventId: string;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     editGroupEvent(params) {
-        return request(`calendar/${params.groupId}/${params.eventId}`, {
+        return request(`calendar/${params.groupId}/${params.eventId}/event`, {
             method: 'PUT',
             params
         }).then((json) => {
@@ -959,16 +994,16 @@ const groupReq = {
 
     /**
      * @param {{
-     * name: string,
-     * shortCode: string,
-     * description: string,
-     * joinState: 'open' | 'request' | 'invite' | 'closed',
-     * privacy: 'public' | 'private',
-     * roleTemplate: 'default' | 'managedFree' | 'managedInvite' | 'managedRequest',
-     * bannerId: string,
-     * iconId: string
+     *     name: string;
+     *     shortCode: string;
+     *     description: string;
+     *     joinState: 'open' | 'request' | 'invite' | 'closed';
+     *     privacy: 'public' | 'default';
+     *     roleTemplate: 'default' | 'managedFree' | 'managedInvite' | 'managedRequest';
+     *     bannerId: string;
+     *     iconId: string;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     createGroup(params) {
         return request('groups', {
@@ -985,19 +1020,19 @@ const groupReq = {
 
     /**
      * @param {{
-     * id: string,
-     * name: string,
-     * shortCode: string,
-     * description: string,
-     * joinState: 'open' | 'request' | 'invite' | 'closed',
-     * language: string,
-     * rules: string,
-     * links: Array<string>,
-     * bannerId: string,
-     * iconId: string,
-     * allowGroupJoinPrompt: boolean
+     *     id: string;
+     *     name: string;
+     *     shortCode: string;
+     *     description: string;
+     *     joinState: 'open' | 'request' | 'invite' | 'closed';
+     *     languages: Array<string>;
+     *     rules: string;
+     *     links: Array<string>;
+     *     bannerId: string;
+     *     iconId: string;
+     *     allowGroupJoinPrompt: boolean;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     editGroup(params) {
         return request(`groups/${params.id}`, {
@@ -1018,21 +1053,6 @@ const groupReq = {
         }).then((json) => {
             const args = {
                 json
-            };
-            return args;
-        });
-    },
-
-    followGroupEvent(params) {
-        return request(`calendar/${params.groupId}/${params.eventId}/follow`, {
-            method: 'POST',
-            params: {
-                isFollowing: params.isFollowing
-            }
-        }).then((json) => {
-            const args = {
-                json,
-                params
             };
             return args;
         });

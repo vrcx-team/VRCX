@@ -11,10 +11,12 @@ const recentActions = useLocalStorage('VRCX_recentActions', {});
 
 const TRACKED_ACTIONS = new Set([
     'Send Friend Request',
-    'Request Invite',
     'Invite',
-    'Request Invite Message',
-    'Invite Message'
+    'Invite Photo',
+    'Invite Message',
+    'Request Invite',
+    'Request Invite Photo',
+    'Request Invite Message'
 ]);
 
 /**

@@ -43,13 +43,14 @@ export async function runLogoutFlow() {
     authStore.loginForm.lastUserLoggedIn = '';
     await configRepository.remove('lastUserLoggedIn');
     authStore.setAttemptingAutoLogin(false);
-    authStore.state.autoLoginAttempts.clear();
+    authStore.autoLoginAttempts.clear();
     closeWebSocket();
     queryClient.clear();
 }
 
 /**
  * Runs post-login side effects after a successful auth response.
+ *
  * @param {object} json Current user payload from auth API.
  */
 export function runLoginSuccessFlow(json) {

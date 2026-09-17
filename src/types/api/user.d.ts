@@ -120,36 +120,30 @@ interface GetUserResponse {
     ageVerificationStatus: string;
     ageVerified: boolean;
     allowAvatarCopying: boolean;
-    badges: {
-        badgeDescription: string;
-        badgeId: string;
-        badgeImageUrl: string;
-        badgeName: string;
-        showcased: boolean;
-    }[];
-    bio: string;
-    bioLinks: string[];
-    currentAvatarImageUrl: string;
-    currentAvatarTags: string[];
-    currentAvatarThumbnailImageUrl: string;
+    bannerColor: string;
+    bannerType: 'avatarBanner' | 'color' | 'customImage';
+    bannerUrl: string;
     date_joined: string;
     developerType: string;
     discordId: string;
     displayName: string;
     friendKey: string;
     friendRequestStatus?: string;
+    iconFrame: string;
+    iconUrl: string;
     id: string;
     instanceId?: string;
+    isEconomyCreator: boolean;
     isFriend: boolean;
     last_activity: string;
     last_login: string;
     last_mobile: string | null;
     last_platform: string;
     location?: string;
+    nameplateEffect: string;
     note?: string;
     platform?: string;
-    profilePicOverride: string;
-    profilePicOverrideThumbnail: string;
+    profileEffect: string;
     pronouns: string;
     state: string;
     status: string;
@@ -158,7 +152,6 @@ interface GetUserResponse {
     travelingToInstance?: string;
     travelingToLocation?: string;
     travelingToWorld?: string;
-    userIcon: string;
     worldId?: string;
 }
 
@@ -168,20 +161,33 @@ interface GetCurrentUserResponse extends GetUserResponse {
     accountDeletionDate: string | null;
     accountDeletionLog: string | null;
     activeFriends: string[];
+    appleDetails: object;
+    appleId: string;
+    completedTutorials: string[];
     currentAvatar: string;
+    currentAvatarImageUrl: string;
+    currentAvatarTags: string[];
+    currentAvatarThumbnailImageUrl: string;
+    discordDetails: { global_name: string; id: string };
     emailVerified: boolean;
     fallbackAvatar: string;
     friendGroupNames: string[];
     friends: string[];
+    googleDetails: object;
     googleId: string;
+    hasAcceptedDiscordSocialSDKPerms: boolean;
     hasBirthday: boolean;
+    hasDiscordFriendsOptOut: boolean;
     hasEmail: boolean;
     hasLoggedInFromClient: boolean;
     hasPendingEmail: boolean;
+    hasSharedConnectionsOptOut: boolean;
     hideContentFilterSettings: boolean;
     homeLocation: string;
     isAdult: boolean;
     isBoopingEnabled: boolean;
+    isEconomyCreator: boolean;
+    isTemporary: boolean;
     obfuscatedEmail: string;
     obfuscatedPendingEmail: string;
     oculusId: string;
@@ -189,6 +195,11 @@ interface GetCurrentUserResponse extends GetUserResponse {
     onlineFriends: string[];
     pastDisplayNames: { displayName: string; updated_at: string }[];
     picoId: string;
+    platform_history: {
+        isMobile: boolean;
+        platform: string;
+        recorded: string;
+    }[];
     presence?: {
         avatarThumbnail: string;
         currentAvatarTags: string;
@@ -206,5 +217,28 @@ interface GetCurrentUserResponse extends GetUserResponse {
         userIcon: string;
         world: string;
     };
+    pronounsHistory: string[];
     queuedInstance: string | null;
+    receiveMobileInvitations: boolean;
+    statusFirstTime: boolean;
+    statusHistory: string[];
+    steamDetails: object;
+    steamId: string;
+    temporaryExpiryDate: string | null;
+    twitchDetails: {
+        display_name: string;
+        id: string;
+        login: string;
+        profile_image_url: string;
+    };
+    twitchId: string;
+    twoFactorAuthEnabled: boolean;
+    twoFactorAuthEnabledDate: string | null;
+    unsubscribe: boolean;
+    updated_at: string;
+    userLanguage: string;
+    userLanguageCode: string;
+    username: string;
+    usesGeneratedPassword: boolean;
+    viveId: string;
 }

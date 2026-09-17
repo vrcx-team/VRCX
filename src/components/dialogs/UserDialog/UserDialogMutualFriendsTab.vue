@@ -1,67 +1,73 @@
 <template>
-    <div style="display: flex; align-items: center; justify-content: space-between">
-        <div style="display: flex; align-items: center">
-            <Button
-                class="rounded-full"
-                variant="ghost"
-                size="icon-sm"
-                :disabled="userDialog.isMutualFriendsLoading"
-                @click="getUserMutualFriends(userDialog.id)">
-                <Spinner v-if="userDialog.isMutualFriendsLoading" />
-                <RefreshCw v-else />
-            </Button>
-            <span class="inline-flex items-center gap-1 ml-1.5 text-sm">
-                <Users class="size-3.5 text-muted-foreground" />
-                {{ t('dialog.user.groups.total_count', { count: userDialog.mutualFriends.length }) }}
-            </span>
+    <div class="flex h-full min-h-0 flex-col overflow-hidden rounded-xl bg-(--profile-card) p-2">
+        <div class="shrink-0" style="display: flex; align-items: center; justify-content: space-between">
+            <div style="display: flex; align-items: center">
+                <Button
+                    class="rounded-full"
+                    variant="ghost"
+                    size="icon-sm"
+                    :disabled="userDialog.isMutualFriendsLoading"
+                    @click="getUserMutualFriends(userDialog.id)">
+                    <Spinner v-if="userDialog.isMutualFriendsLoading" />
+                    <RefreshCw v-else />
+                </Button>
+                <span class="inline-flex items-center gap-1 ml-1.5 text-sm">
+                    <Users class="size-3.5 text-muted-foreground" />
+                    {{ t('dialog.user.groups.total_count', { count: userDialog.mutualFriends.length }) }}
+                </span>
+            </div>
+            <div style="display: flex; align-items: center">
+                <Input v-model="searchQuery" class="h-8 w-40 mr-2" placeholder="Search friends" @click.stop />
+                <span style="margin-right: 6px">{{ t('dialog.user.groups.sort_by') }}</span>
+                <Select
+                    :model-value="userDialogMutualFriendSortingKey"
+                    :disabled="userDialog.isMutualFriendsLoading"
+                    @update:modelValue="setUserDialogMutualFriendSortingByKey">
+                    <SelectTrigger size="sm" @click.stop>
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem
+                            v-for="(item, key) in userDialogMutualFriendSortingOptions"
+                            :key="String(key)"
+                            :value="String(key)">
+                            {{ t(item.name) }}
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
         </div>
-        <div style="display: flex; align-items: center">
-            <Input v-model="searchQuery" class="h-8 w-40 mr-2" placeholder="Search friends" @click.stop />
-            <span style="margin-right: 6px">{{ t('dialog.user.groups.sort_by') }}</span>
-            <Select
-                :model-value="userDialogMutualFriendSortingKey"
-                :disabled="userDialog.isMutualFriendsLoading"
-                @update:modelValue="setUserDialogMutualFriendSortingByKey">
-                <SelectTrigger size="sm" @click.stop>
-                    <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem
-                        v-for="(item, key) in userDialogMutualFriendSortingOptions"
-                        :key="String(key)"
-                        :value="String(key)">
-                        {{ t(item.name) }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
+        <div class="min-h-0 flex-1 overflow-auto">
+            <ul class="flex flex-wrap items-start" style="margin-top: 8px; min-width: 130px">
+                <li
+                    v-for="user in filteredMutualFriends"
+                    :key="user.id"
+                    class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
+                    @click="showUserDialog(user.id)">
+                    <div class="relative inline-block flex-none size-9 mr-2.5">
+                        <Avatar class="size-9">
+                            <AvatarImage :src="userImage(user)" class="object-cover" />
+                            <AvatarFallback>
+                                <User class="size-4 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
+                        <IconFrame :icon-frame="user.iconFrame" />
+                    </div>
+                    <div class="flex-1 overflow-hidden">
+                        <span
+                            class="block truncate font-medium leading-[18px]"
+                            :style="{ color: user.$userColour }"
+                            v-text="user.displayName"></span>
+                    </div>
+                </li>
+            </ul>
         </div>
     </div>
-    <ul class="flex flex-wrap items-start" style="margin-top: 8px; overflow: auto; max-height: 250px; min-width: 130px">
-        <li
-            v-for="user in filteredMutualFriends"
-            :key="user.id"
-            class="box-border flex items-center p-1.5 text-[13px] cursor-pointer w-[167px] hover:rounded-[25px_5px_5px_25px]"
-            @click="showUserDialog(user.id)">
-            <div class="relative inline-block flex-none size-9 mr-2.5">
-                <Avatar class="size-9">
-                    <AvatarImage :src="userImage(user)" class="object-cover" />
-                    <AvatarFallback>
-                        <User class="size-4 text-muted-foreground" />
-                    </AvatarFallback>
-                </Avatar>
-            </div>
-            <div class="flex-1 overflow-hidden">
-                <span
-                    class="block truncate font-medium leading-[18px]"
-                    :style="{ color: user.$userColour }"
-                    v-text="user.displayName"></span>
-            </div>
-        </li>
-    </ul>
 </template>
 
 <script setup>
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+    import IconFrame from '@/components/IconFrame.vue';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Button } from '@/components/ui/button';
     import { RefreshCw, User, Users } from 'lucide-vue-next';
@@ -110,7 +116,6 @@
     );
 
     /**
-     *
      * @param sortOrder
      */
     async function setUserDialogMutualFriendSorting(sortOrder) {
@@ -130,7 +135,6 @@
     }
 
     /**
-     *
      * @param userId
      */
     async function getUserMutualFriends(userId) {

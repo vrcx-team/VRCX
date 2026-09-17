@@ -84,9 +84,7 @@ describe('graphLayoutWorker message protocol', () => {
                 { id: 'n1', attributes: { x: 0, y: 0 } },
                 { id: 'n2', attributes: { x: 2, y: 2 } }
             ],
-            edges: [
-                { key: 'n1__n2', source: 'n1', target: 'n2', attributes: {} }
-            ],
+            edges: [{ key: 'n1__n2', source: 'n1', target: 'n2', attributes: {} }],
             settings: {
                 layoutIterations: 300,
                 layoutSpacing: 60,
@@ -108,9 +106,7 @@ describe('graphLayoutWorker message protocol', () => {
         harness.dispatch({
             requestId: 12,
             nodes: [{ id: 'n1', attributes: { x: 0, y: 0 } }],
-            edges: [
-                { key: 'n1__n2', source: 'n1', target: 'n2', attributes: {} }
-            ],
+            edges: [{ key: 'n1__n2', source: 'n1', target: 'n2', attributes: {} }],
             settings: {
                 layoutIterations: 300,
                 layoutSpacing: 60,

@@ -30,12 +30,9 @@
                                 <span class="min-w-0 flex-1 truncate">
                                     <span>{{ text }}</span>
                                     <span v-if="showInstanceIdInLocation && instanceName" class="ml-1">{{
-                                        ` · #${instanceName}`
+                                        `· #${instanceName}`
                                     }}</span>
-                                    <span
-                                        v-if="groupName"
-                                        class="ml-0.5 cursor-pointer"
-                                        @click.stop="handleShowGroupDialog">
+                                    <span v-if="groupName" class="cursor-pointer" @click.stop="handleShowGroupDialog">
                                         ({{ groupName }})
                                     </span>
                                 </span>
@@ -129,6 +126,10 @@
             type: String,
             default: ''
         },
+        excludeGroupName: {
+            type: Boolean,
+            default: false
+        },
         link: {
             type: Boolean,
             default: true
@@ -176,7 +177,9 @@
         isDisposed = true;
     });
 
-    watch(() => [props.location, props.traveling, props.hint, props.grouphint], parse, { immediate: true });
+    watch(() => [props.location, props.traveling, props.hint, props.grouphint, props.excludeGroupName], parse, {
+        immediate: true
+    });
 
     watch(
         () => lastInstanceApplied.value,
@@ -187,9 +190,6 @@
         }
     );
 
-    /**
-     *
-     */
     function currentInstanceId() {
         if (typeof props.traveling !== 'undefined' && props.location === 'traveling') {
             return props.traveling;
@@ -197,9 +197,6 @@
         return props.location;
     }
 
-    /**
-     *
-     */
     function resetState() {
         text.value = '';
         region.value = '';
@@ -211,9 +208,6 @@
         instanceName.value = '';
     }
 
-    /**
-     *
-     */
     function parse() {
         if (isDisposed) {
             return;
@@ -260,11 +254,13 @@
     }
 
     /**
-     *
      * @param L
      * @param instanceId
      */
     function updateGroupName(L, instanceId) {
+        if (props.excludeGroupName) {
+            return;
+        }
         if (props.grouphint) {
             groupName.value = props.grouphint;
             return;
@@ -281,7 +277,6 @@
     }
 
     /**
-     *
      * @param L
      */
     function updateRegion(L) {
@@ -289,7 +284,6 @@
     }
 
     /**
-     *
      * @param accessTypeName
      */
     function getAccessTypeLabel(accessTypeName) {
@@ -297,7 +291,6 @@
     }
 
     /**
-     *
      * @param L
      */
     function setText(L) {
@@ -326,9 +319,6 @@
         }
     }
 
-    /**
-     *
-     */
     function handleShowWorldDialog() {
         if (props.link) {
             let instanceId = currentInstanceId();
@@ -344,9 +334,6 @@
         }
     }
 
-    /**
-     *
-     */
     function handleShowGroupDialog() {
         let location = currentInstanceId();
         if (!location) {
@@ -359,36 +346,24 @@
         showGroupDialog(L.groupId);
     }
 
-    /**
-     *
-     */
     function handleShareLocation() {
         const L = parsedLocation.value;
         if (!L.worldId) return;
         copyToClipboard(`https://vrchat.com/home/world/${L.worldId}`, t('message.world.url_copied'));
     }
 
-    /**
-     *
-     */
     function handleNewInstance() {
         const L = parsedLocation.value;
         if (!L.worldId) return;
         showWorldDialog(L.tag, L.shortName);
     }
 
-    /**
-     *
-     */
     function handleNewInstanceSelfInvite() {
         const L = parsedLocation.value;
         if (!L.worldId) return;
         runNewInstanceSelfInviteFlow(L.worldId);
     }
 
-    /**
-     *
-     */
     function handleShowPreviousInstances() {
         const instanceId = currentInstanceId();
         if (!instanceId) return;

@@ -3,8 +3,9 @@ import { copyToClipboard } from '../../../shared/utils';
 /**
  * Composable for GroupDialog command dispatch.
  * Uses a command map pattern consistent with Avatar/World/User dialogs.
- * @param {import('vue').Ref} groupDialog - reactive ref to the group dialog state
- * @param {object} deps - external dependencies
+ *
+ * @param {import('vue').Ref} groupDialog - Reactive ref to the group dialog state
+ * @param {object} deps - External dependencies
  * @param deps.t
  * @param deps.modalStore
  * @param deps.currentUser
@@ -12,11 +13,14 @@ import { copyToClipboard } from '../../../shared/utils';
  * @param deps.leaveGroupPrompt
  * @param deps.setGroupVisibility
  * @param deps.setGroupSubscription
+ * @param deps.setGroupEventAnnouncements
+ * @param deps.showPreviousInstancesListDialog
  * @param deps.showGroupMemberModerationDialog
  * @param deps.showInviteGroupDialog
+ * @param deps.showGroupTransferDialog
  * @param deps.showGroupPostEditDialog
  * @param deps.groupRequest
- * @returns {object} command composable API
+ * @returns {object} Command composable API
  */
 export function useGroupDialogCommands(
     groupDialog,
@@ -28,8 +32,11 @@ export function useGroupDialogCommands(
         leaveGroupPrompt,
         setGroupVisibility,
         setGroupSubscription,
+        setGroupEventAnnouncements,
+        showPreviousInstancesListDialog,
         showGroupMemberModerationDialog,
         showInviteGroupDialog,
+        showGroupTransferDialog,
         showGroupPostEditDialog,
         groupRequest
     }
@@ -38,9 +45,6 @@ export function useGroupDialogCommands(
     // Direct commands: function
     // Confirmed commands: { confirm: () => ({title, description, ...}), handler: fn }
 
-    /**
-     *
-     */
     function buildCommandMap() {
         const D = () => groupDialog.value;
 
@@ -48,6 +52,12 @@ export function useGroupDialogCommands(
             // --- Direct commands ---
             Share: () => {
                 copyToClipboard(D().ref.$url);
+            },
+            'Copy Group Name': () => {
+                copyToClipboard(D().ref.name);
+            },
+            'Copy Group ID': () => {
+                copyToClipboard(D().id);
             },
             'Create Post': () => {
                 showGroupPostEditDialog(D().id, null);
@@ -58,8 +68,14 @@ export function useGroupDialogCommands(
             'Invite To Group': () => {
                 showInviteGroupDialog(D().id, '');
             },
+            'Transfer Group': () => {
+                showGroupTransferDialog(D().id, D().ref.name, D().ref.ownerId);
+            },
             Refresh: () => {
                 showGroupDialog(D().id, { forceRefresh: true });
+            },
+            'Previous Instances': () => {
+                showPreviousInstancesListDialog(D().ref);
             },
             'Leave Group': () => {
                 leaveGroupPrompt(D().id);
@@ -79,6 +95,12 @@ export function useGroupDialogCommands(
             'Unsubscribe To Announcements': () => {
                 setGroupSubscription(D().id, false);
             },
+            'Subscribe To Event Announcements': () => {
+                setGroupEventAnnouncements(D().id, true);
+            },
+            'Unsubscribe To Event Announcements': () => {
+                setGroupEventAnnouncements(D().id, false);
+            },
 
             // --- Confirmed commands ---
             'Block Group': {
@@ -89,10 +111,7 @@ export function useGroupDialogCommands(
                 }),
                 handler: (id) => {
                     groupRequest.blockGroup({ groupId: id }).then((args) => {
-                        if (
-                            groupDialog.value.visible &&
-                            groupDialog.value.id === args.params.groupId
-                        ) {
+                        if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
                             showGroupDialog(args.params.groupId);
                         }
                     });
@@ -110,10 +129,7 @@ export function useGroupDialogCommands(
                             userId: currentUser.value.id
                         })
                         .then((args) => {
-                            if (
-                                groupDialog.value.visible &&
-                                groupDialog.value.id === args.params.groupId
-                            ) {
+                            if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
                                 showGroupDialog(args.params.groupId);
                             }
                         });
@@ -126,6 +142,7 @@ export function useGroupDialogCommands(
 
     /**
      * Dispatch a group dialog command.
+     *
      * @param {string} command
      */
     function groupDialogCommand(command) {

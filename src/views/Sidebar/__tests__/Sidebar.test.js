@@ -68,8 +68,7 @@ vi.mock('../sidebarSettingsUtils', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="btn" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 vi.mock('@/components/ui/context-menu', () => ({
@@ -78,8 +77,7 @@ vi.mock('@/components/ui/context-menu', () => ({
     ContextMenuContent: { template: '<div><slot /></div>' },
     ContextMenuItem: {
         emits: ['click'],
-        template:
-            '<button data-testid="ctx" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="ctx" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 vi.mock('@/components/ui/popover', () => ({

@@ -1,18 +1,10 @@
 import { storeToRefs } from 'pinia';
 import { toast } from 'vue-sonner';
 
-import {
-    useAuthStore,
-    useAvatarStore,
-    useInstanceStore,
-    useWorldStore
-} from '../stores';
-import {
-    extractFileId,
-    extractFileVersion,
-    extractVariantVersion
-} from '../shared/utils/fileUtils';
+import { useAuthStore, useAvatarStore, useInstanceStore, useWorldStore } from '../stores';
+import { extractFileId, extractFileVersion, extractVariantVersion } from '../shared/utils/fileUtils';
 import { compareUnityVersion } from '../shared/utils/avatar';
+import { formatFileSize } from '../shared/utils/base/format';
 import { queryRequest } from '../api';
 
 async function deleteVRChatCache(ref) {
@@ -22,11 +14,7 @@ async function deleteVRChatCache(ref) {
     let variant = '';
     for (let i = ref.unityPackages.length - 1; i > -1; i--) {
         const unityPackage = ref.unityPackages[i];
-        if (
-            unityPackage.variant &&
-            unityPackage.variant !== 'standard' &&
-            unityPackage.variant !== 'security'
-        ) {
+        if (unityPackage.variant && unityPackage.variant !== 'standard' && unityPackage.variant !== 'security') {
             continue;
         }
         if (
@@ -49,7 +37,6 @@ async function deleteVRChatCache(ref) {
 }
 
 /**
- *
  * @param {object} ref
  * @returns
  */
@@ -90,12 +77,7 @@ async function checkVRChatCache(ref) {
     }
 
     try {
-        return AssetBundleManager.CheckVRChatCache(
-            id,
-            version,
-            variant,
-            variantVersion
-        );
+        return AssetBundleManager.CheckVRChatCache(id, version, variant, variantVersion);
     } catch (err) {
         console.error('Failed reading VRChat cache size:', err);
         toast.error(`Failed reading VRChat cache size: ${err}`);
@@ -104,7 +86,6 @@ async function checkVRChatCache(ref) {
 }
 
 /**
- *
  * @param {object} ref
  * @returns {Promise<object>}
  */
@@ -116,24 +97,17 @@ async function getBundleDateSize(ref) {
     const worldStore = useWorldStore();
     const { worldDialog } = storeToRefs(worldStore);
     const instanceStore = useInstanceStore();
-    const { currentInstanceWorld, currentInstanceLocation } =
-        storeToRefs(instanceStore);
+    const { currentInstanceWorld, currentInstanceLocation } = storeToRefs(instanceStore);
     const bundleJson = {};
     for (let i = ref.unityPackages.length - 1; i > -1; i--) {
         const unityPackage = ref.unityPackages[i];
         if (!unityPackage) {
             continue;
         }
-        if (
-            unityPackage.variant &&
-            unityPackage.variant !== 'standard' &&
-            unityPackage.variant !== 'security'
-        ) {
+        if (unityPackage.variant && unityPackage.variant !== 'standard' && unityPackage.variant !== 'security') {
             continue;
         }
-        if (
-            !compareUnityVersion(unityPackage.unitySortNumber, sdkUnityVersion)
-        ) {
+        if (!compareUnityVersion(unityPackage.unitySortNumber, sdkUnityVersion)) {
             continue;
         }
 
@@ -164,13 +138,13 @@ async function getBundleDateSize(ref) {
 
         const json = args.json;
         if (typeof json.fileSize !== 'undefined') {
-            json._fileSize = `${(json.fileSize / 1048576).toFixed(2)} MB`;
+            json._fileSize = formatFileSize(json.fileSize);
         }
         if (typeof json.uncompressedSize !== 'undefined') {
-            json._uncompressedSize = `${(json.uncompressedSize / 1048576).toFixed(2)} MB`;
+            json._uncompressedSize = formatFileSize(json.uncompressedSize);
         }
         if (typeof json.avatarStats?.totalTextureUsage !== 'undefined') {
-            json._totalTextureUsage = `${(json.avatarStats.totalTextureUsage / 1048576).toFixed(2)} MB`;
+            json._totalTextureUsage = formatFileSize(json.avatarStats.totalTextureUsage);
         }
         bundleJson[platform] = json;
 

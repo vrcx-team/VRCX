@@ -76,7 +76,6 @@
     const moveDropdownOpen = ref(false);
 
     /**
-     *
      * @param groupAPI
      */
     function handleDropdownItemClick(groupAPI) {
@@ -93,7 +92,6 @@
     }
 
     /**
-     *
      * @param ref
      * @param group
      */
@@ -108,7 +106,6 @@
     }
 
     /**
-     *
      * @param groupAPI
      */
     function addFavoriteAvatar(groupAPI) {
@@ -125,7 +122,6 @@
     }
 
     /**
-     *
      * @param groupAPI
      */
     function addFavoriteWorld(groupAPI) {

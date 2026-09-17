@@ -52,8 +52,7 @@ function mountComponent(props = {}) {
                 Trash2: { template: '<svg class="trash-icon" />' },
                 X: { template: '<svg class="x-icon" />' },
                 TooltipWrapper: {
-                    template:
-                        '<div class="tooltip-stub"><slot /><slot name="content" /></div>'
+                    template: '<div class="tooltip-stub"><slot /><slot name="content" /></div>'
                 }
             }
         }
@@ -68,32 +67,24 @@ describe('GroupModerationBulkActions.vue', () => {
     describe('rendering', () => {
         test('renders user ID input field', () => {
             const wrapper = mountComponent();
-            expect(wrapper.text()).toContain(
-                'dialog.group_member_moderation.user_id'
-            );
+            expect(wrapper.text()).toContain('dialog.group_member_moderation.user_id');
         });
 
         test('renders selected users section', () => {
             const wrapper = mountComponent();
-            expect(wrapper.text()).toContain(
-                'dialog.group_member_moderation.selected_users'
-            );
+            expect(wrapper.text()).toContain('dialog.group_member_moderation.selected_users');
         });
 
         test('renders roles dropdown with available roles', () => {
             const wrapper = mountComponent();
-            expect(wrapper.text()).toContain(
-                'dialog.group_member_moderation.selected_roles'
-            );
+            expect(wrapper.text()).toContain('dialog.group_member_moderation.selected_roles');
         });
 
         test('renders action buttons', () => {
             const wrapper = mountComponent();
             const text = wrapper.text();
             expect(text).toContain('dialog.group_member_moderation.add_roles');
-            expect(text).toContain(
-                'dialog.group_member_moderation.remove_roles'
-            );
+            expect(text).toContain('dialog.group_member_moderation.remove_roles');
             expect(text).toContain('dialog.group_member_moderation.save_note');
             expect(text).toContain('dialog.group_member_moderation.kick');
             expect(text).toContain('dialog.group_member_moderation.ban');
@@ -132,9 +123,7 @@ describe('GroupModerationBulkActions.vue', () => {
                     }
                 ]
             });
-            expect(wrapper.text()).toContain(
-                'dialog.group_member_moderation.user_isnt_in_group'
-            );
+            expect(wrapper.text()).toContain('dialog.group_member_moderation.user_isnt_in_group');
         });
 
         test('does not show warning for member users', () => {
@@ -148,9 +137,7 @@ describe('GroupModerationBulkActions.vue', () => {
                     }
                 ]
             });
-            expect(wrapper.text()).not.toContain(
-                'dialog.group_member_moderation.user_isnt_in_group'
-            );
+            expect(wrapper.text()).not.toContain('dialog.group_member_moderation.user_isnt_in_group');
         });
     });
 
@@ -160,9 +147,7 @@ describe('GroupModerationBulkActions.vue', () => {
                 progressCurrent: 3,
                 progressTotal: 10
             });
-            expect(wrapper.text()).toContain(
-                'dialog.group_member_moderation.progress'
-            );
+            expect(wrapper.text()).toContain('dialog.group_member_moderation.progress');
             expect(wrapper.text()).toContain('3/10');
         });
 
@@ -171,16 +156,12 @@ describe('GroupModerationBulkActions.vue', () => {
                 progressCurrent: 3,
                 progressTotal: 10
             });
-            expect(wrapper.text()).toContain(
-                'dialog.group_member_moderation.cancel'
-            );
+            expect(wrapper.text()).toContain('dialog.group_member_moderation.cancel');
         });
 
         test('hides progress when not in progress', () => {
             const wrapper = mountComponent({ progressCurrent: 0 });
-            expect(wrapper.text()).not.toContain(
-                'dialog.group_member_moderation.progress'
-            );
+            expect(wrapper.text()).not.toContain('dialog.group_member_moderation.progress');
         });
     });
 
@@ -189,11 +170,7 @@ describe('GroupModerationBulkActions.vue', () => {
             const wrapper = mountComponent({ selectedRoles: [] });
             const addBtn = wrapper
                 .findAll('button')
-                .find((b) =>
-                    b
-                        .text()
-                        .includes('dialog.group_member_moderation.add_roles')
-                );
+                .find((b) => b.text().includes('dialog.group_member_moderation.add_roles'));
             expect(addBtn.attributes('disabled')).toBeDefined();
         });
 
@@ -201,11 +178,7 @@ describe('GroupModerationBulkActions.vue', () => {
             const wrapper = mountComponent({ selectedRoles: ['role_1'] });
             const addBtn = wrapper
                 .findAll('button')
-                .find((b) =>
-                    b
-                        .text()
-                        .includes('dialog.group_member_moderation.add_roles')
-                );
+                .find((b) => b.text().includes('dialog.group_member_moderation.add_roles'));
             expect(addBtn.attributes('disabled')).toBeUndefined();
         });
 
@@ -217,9 +190,7 @@ describe('GroupModerationBulkActions.vue', () => {
             });
             const kickBtn = wrapper
                 .findAll('button')
-                .find((b) =>
-                    b.text().includes('dialog.group_member_moderation.kick')
-                );
+                .find((b) => b.text().includes('dialog.group_member_moderation.kick'));
             expect(kickBtn.attributes('disabled')).toBeDefined();
         });
 
@@ -227,11 +198,7 @@ describe('GroupModerationBulkActions.vue', () => {
             const wrapper = mountComponent({ selectUserId: '' });
             const selectBtn = wrapper
                 .findAll('button')
-                .find((b) =>
-                    b
-                        .text()
-                        .includes('dialog.group_member_moderation.select_user')
-                );
+                .find((b) => b.text().includes('dialog.group_member_moderation.select_user'));
             expect(selectBtn.attributes('disabled')).toBeDefined();
         });
 
@@ -239,11 +206,7 @@ describe('GroupModerationBulkActions.vue', () => {
             const wrapper = mountComponent({ selectUserId: 'usr_test' });
             const selectBtn = wrapper
                 .findAll('button')
-                .find((b) =>
-                    b
-                        .text()
-                        .includes('dialog.group_member_moderation.select_user')
-                );
+                .find((b) => b.text().includes('dialog.group_member_moderation.select_user'));
             expect(selectBtn.attributes('disabled')).toBeUndefined();
         });
     });
@@ -258,9 +221,7 @@ describe('GroupModerationBulkActions.vue', () => {
             });
             const kickBtn = wrapper
                 .findAll('button')
-                .find((b) =>
-                    b.text().includes('dialog.group_member_moderation.kick')
-                );
+                .find((b) => b.text().includes('dialog.group_member_moderation.kick'));
             expect(kickBtn.attributes('disabled')).toBeDefined();
         });
 
@@ -273,14 +234,10 @@ describe('GroupModerationBulkActions.vue', () => {
             });
             const banBtn = wrapper
                 .findAll('button')
-                .find((b) =>
-                    b.text().includes('dialog.group_member_moderation.ban')
-                );
+                .find((b) => b.text().includes('dialog.group_member_moderation.ban'));
             const unbanBtn = wrapper
                 .findAll('button')
-                .find((b) =>
-                    b.text().includes('dialog.group_member_moderation.unban')
-                );
+                .find((b) => b.text().includes('dialog.group_member_moderation.unban'));
             expect(banBtn.attributes('disabled')).toBeDefined();
             expect(unbanBtn.attributes('disabled')).toBeDefined();
         });
@@ -291,11 +248,7 @@ describe('GroupModerationBulkActions.vue', () => {
             const wrapper = mountComponent({ selectUserId: 'usr_test' });
             const selectBtn = wrapper
                 .findAll('button')
-                .find((b) =>
-                    b
-                        .text()
-                        .includes('dialog.group_member_moderation.select_user')
-                );
+                .find((b) => b.text().includes('dialog.group_member_moderation.select_user'));
             await selectBtn.trigger('click');
             expect(wrapper.emitted('select-user')).toBeTruthy();
         });
@@ -330,9 +283,7 @@ describe('GroupModerationBulkActions.vue', () => {
             const wrapper = mountComponent();
             const banBtn = wrapper
                 .findAll('button')
-                .find((b) =>
-                    b.text().includes('dialog.group_member_moderation.ban')
-                );
+                .find((b) => b.text().includes('dialog.group_member_moderation.ban'));
             await banBtn.trigger('click');
             expect(wrapper.emitted('ban')).toBeTruthy();
         });
@@ -344,9 +295,7 @@ describe('GroupModerationBulkActions.vue', () => {
             });
             const cancelBtn = wrapper
                 .findAll('button')
-                .find((b) =>
-                    b.text().includes('dialog.group_member_moderation.cancel')
-                );
+                .find((b) => b.text().includes('dialog.group_member_moderation.cancel'));
             await cancelBtn.trigger('click');
             expect(wrapper.emitted('cancel-progress')).toBeTruthy();
         });

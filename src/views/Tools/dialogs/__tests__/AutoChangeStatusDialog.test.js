@@ -62,8 +62,7 @@ vi.mock('../../../../shared/constants', () => ({
 vi.mock('@/components/ui/dialog', () => ({
     Dialog: {
         emits: ['update:open'],
-        template:
-            '<div><button data-testid="dialog-close" @click="$emit(\'update:open\', false)" /><slot /></div>'
+        template: '<div><button data-testid="dialog-close" @click="$emit(\'update:open\', false)" /><slot /></div>'
     },
     DialogContent: { template: '<div><slot /></div>' },
     DialogHeader: { template: '<div><slot /></div>' },
@@ -138,34 +137,20 @@ describe('AutoChangeStatusDialog.vue', () => {
         const autoAcceptSwitch = wrapper
             .findAll('[data-testid="simple-switch"]')
             .find((node) =>
-                node
-                    .attributes('data-label')
-                    ?.includes(
-                        'view.settings.general.automation.auto_invite_request_accept'
-                    )
+                node.attributes('data-label')?.includes('view.settings.general.automation.auto_invite_request_accept')
             );
 
         await autoAcceptSwitch.find('.emit-false').trigger('click');
-        expect(
-            mocks.generalStore.setAutoAcceptInviteRequests
-        ).toHaveBeenCalledWith('Off');
+        expect(mocks.generalStore.setAutoAcceptInviteRequests).toHaveBeenCalledWith('Off');
 
         await autoAcceptSwitch.find('.emit-true').trigger('click');
-        expect(
-            mocks.generalStore.setAutoAcceptInviteRequests
-        ).toHaveBeenCalledWith('All Favorites');
+        expect(mocks.generalStore.setAutoAcceptInviteRequests).toHaveBeenCalledWith('All Favorites');
 
-        const noFriendsRadio = wrapper.findAll(
-            '[data-testid="radio-group"]'
-        )[0];
+        const noFriendsRadio = wrapper.findAll('[data-testid="radio-group"]')[0];
         await noFriendsRadio.find('.emit-false').trigger('click');
-        expect(
-            mocks.generalStore.setAutoStateChangeNoFriends
-        ).not.toHaveBeenCalled();
+        expect(mocks.generalStore.setAutoStateChangeNoFriends).not.toHaveBeenCalled();
 
         await noFriendsRadio.find('.emit-true').trigger('click');
-        expect(
-            mocks.generalStore.setAutoStateChangeNoFriends
-        ).toHaveBeenCalledTimes(1);
+        expect(mocks.generalStore.setAutoStateChangeNoFriends).toHaveBeenCalledTimes(1);
     });
 });

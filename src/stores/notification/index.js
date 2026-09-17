@@ -18,22 +18,14 @@ import {
     sanitizeNotificationJson
 } from '../../shared/utils';
 import { getUserMemo } from '../../coordinators/memoCoordinator';
-import {
-    friendRequest,
-    instanceRequest,
-    notificationRequest,
-    queryRequest
-} from '../../api';
+import { friendRequest, instanceRequest, notificationRequest, queryRequest } from '../../api';
 import {
     getNotificationMessage,
     getUserIdFromNoty as getUserIdFromNotyBase,
     toNotificationText
 } from '../../shared/utils/notificationMessage';
 import { database, dbVars } from '../../services/database';
-import {
-    getNotificationCategory,
-    getNotificationTs
-} from '../../shared/utils/notificationCategory';
+import { getNotificationCategory, getNotificationTs } from '../../shared/utils/notificationCategory';
 import { AppDebug } from '../../services/appConfig';
 import { createOverlayDispatch } from './overlayDispatch';
 import { useAdvancedSettingsStore } from '../settings/advanced';
@@ -43,7 +35,7 @@ import { useFriendStore } from '../friend';
 import { handleFriendAdd } from '../../coordinators/friendRelationshipCoordinator';
 import { useGameStore } from '../game';
 import { useGeneralSettingsStore } from '../settings/general';
-import { useGroupStore } from '../group';
+
 import { showGroupDialog } from '../../coordinators/groupCoordinator';
 import { showUserDialog } from '../../coordinators/userCoordinator';
 import { useInstanceStore } from '../instance';
@@ -99,58 +91,37 @@ export const useNotificationStore = defineStore('Notification', () => {
     const isNotificationCenterOpen = ref(false);
 
     const friendNotifications = computed(() =>
-        notificationTable.value.data.filter(
-            (n) => getNotificationCategory(n.type) === 'friend'
-        )
+        notificationTable.value.data.filter((n) => getNotificationCategory(n.type) === 'friend')
     );
     const groupNotifications = computed(() =>
-        notificationTable.value.data.filter(
-            (n) => getNotificationCategory(n.type) === 'group'
-        )
+        notificationTable.value.data.filter((n) => getNotificationCategory(n.type) === 'group')
     );
     const otherNotifications = computed(() =>
-        notificationTable.value.data.filter(
-            (n) => getNotificationCategory(n.type) === 'other'
-        )
+        notificationTable.value.data.filter((n) => getNotificationCategory(n.type) === 'other')
     );
     const unseenSet = computed(() => new Set(unseenNotifications.value));
     const unseenFriendNotifications = computed(() =>
         friendNotifications.value.filter((n) => unseenSet.value.has(n.id))
     );
-    const unseenGroupNotifications = computed(() =>
-        groupNotifications.value.filter((n) => unseenSet.value.has(n.id))
-    );
-    const unseenOtherNotifications = computed(() =>
-        otherNotifications.value.filter((n) => unseenSet.value.has(n.id))
-    );
+    const unseenGroupNotifications = computed(() => groupNotifications.value.filter((n) => unseenSet.value.has(n.id)));
+    const unseenOtherNotifications = computed(() => otherNotifications.value.filter((n) => unseenSet.value.has(n.id)));
     const recentCutoff = computed(() => dayjs().subtract(24, 'hour').valueOf());
     const recentFriendNotifications = computed(() =>
         friendNotifications.value.filter(
-            (n) =>
-                !unseenSet.value.has(n.id) &&
-                n.seen !== false &&
-                getNotificationTs(n) > recentCutoff.value
+            (n) => !unseenSet.value.has(n.id) && n.seen !== false && getNotificationTs(n) > recentCutoff.value
         )
     );
     const recentGroupNotifications = computed(() =>
         groupNotifications.value.filter(
-            (n) =>
-                !unseenSet.value.has(n.id) &&
-                n.seen !== false &&
-                getNotificationTs(n) > recentCutoff.value
+            (n) => !unseenSet.value.has(n.id) && n.seen !== false && getNotificationTs(n) > recentCutoff.value
         )
     );
     const recentOtherNotifications = computed(() =>
         otherNotifications.value.filter(
-            (n) =>
-                !unseenSet.value.has(n.id) &&
-                n.seen !== false &&
-                getNotificationTs(n) > recentCutoff.value
+            (n) => !unseenSet.value.has(n.id) && n.seen !== false && getNotificationTs(n) > recentCutoff.value
         )
     );
-    const hasUnseenNotifications = computed(
-        () => unseenNotifications.value.length > 0
-    );
+    const hasUnseenNotifications = computed(() => unseenNotifications.value.length > 0);
 
     const notyMap = {};
 
@@ -166,22 +137,15 @@ export const useNotificationStore = defineStore('Notification', () => {
         { flush: 'sync' }
     );
 
-    /**
-     *
-     */
     async function init() {
         notificationTable.value.filters[0].value = JSON.parse(
-            await configRepository.getString(
-                'VRCX_notificationTableFilters',
-                '[]'
-            )
+            await configRepository.getString('VRCX_notificationTableFilters', '[]')
         );
     }
 
     init();
 
     /**
-     *
      * @param args
      */
     function handleNotification(args) {
@@ -201,18 +165,18 @@ export const useNotificationStore = defineStore('Notification', () => {
             }
         }
         if (ref.senderUserId !== userStore.currentUser.id) {
-            if (
-                ref.type !== 'friendRequest' &&
-                ref.type !== 'ignoredFriendRequest' &&
-                !ref.type.includes('.')
-            ) {
+            const isExcludedType =
+                ref.type === 'friendRequest' || ref.type === 'ignoredFriendRequest' || ref.type.includes('.');
+            const isNotificationInitReady = !notificationInitStatus.value || !isNotificationsLoading.value;
+            const matchesNotificationTypeFilter =
+                notificationTable.value.filters[0].value.length === 0 ||
+                notificationTable.value.filters[0].value.includes(ref.type);
+
+            if (!isExcludedType) {
                 database.addNotificationToDatabase(ref);
             }
-            if (watchState.isFriendsLoaded && notificationInitStatus.value) {
-                if (
-                    ref.details?.worldId &&
-                    !instanceStore.cachedInstances.has(ref.details.worldId)
-                ) {
+            if (isNotificationInitReady) {
+                if (ref.details?.worldId && !instanceStore.cachedInstances.has(ref.details.worldId)) {
                     // get instance name for invite
                     const L = parseLocation(ref.details.worldId);
                     if (L.isRealInstance) {
@@ -222,44 +186,30 @@ export const useNotificationStore = defineStore('Notification', () => {
                         });
                     }
                 }
-                if (
-                    notificationTable.value.filters[0].value.length === 0 ||
-                    notificationTable.value.filters[0].value.includes(ref.type)
-                ) {
-                    uiStore.notifyMenu('notification');
-                }
                 queueNotificationNoty(ref);
                 sharedFeedStore.addEntry(ref);
+            }
+            if (matchesNotificationTypeFilter && !isExcludedType) {
+                uiStore.notifyMenu('notification');
             }
         }
         notificationTable.value.data.push(ref);
         const D = userStore.userDialog;
-        if (
-            D.visible === false ||
-            ref.type !== 'friendRequest' ||
-            ref.senderUserId !== D.id
-        ) {
+        if (D.visible === false || ref.type !== 'friendRequest' || ref.senderUserId !== D.id) {
             return;
         }
         D.incomingRequest = true;
     }
 
     /**
-     *
      * @param notificationId
      */
     function handleNotificationHide(notificationId) {
-        const ref = notificationTable.value.data.find(
-            (n) => n.id === notificationId
-        );
+        const ref = notificationTable.value.data.find((n) => n.id === notificationId);
         if (typeof ref === 'undefined') {
             return;
         }
-        if (
-            ref.type === 'friendRequest' ||
-            ref.type === 'ignoredFriendRequest' ||
-            ref.type.includes('.')
-        ) {
+        if (ref.type === 'friendRequest' || ref.type === 'ignoredFriendRequest' || ref.type.includes('.')) {
             removeFromArray(notificationTable.value.data, ref);
         } else {
             ref.$isExpired = true;
@@ -274,15 +224,14 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param args
      */
     function handlePipelineNotification(args) {
         const ref = args.json;
-        if (
-            ref.type !== 'requestInvite' ||
-            generalSettingsStore.autoAcceptInviteRequests === 'Off'
-        ) {
+        if (ref.type === 'friendRequest' && generalSettingsStore.autoDeclineFriendRequests) {
+            handleAutoDeclineFriendRequest(ref);
+        }
+        if (ref.type !== 'requestInvite' || generalSettingsStore.autoAcceptInviteRequests === 'Off') {
             return;
         }
 
@@ -302,17 +251,12 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         if (
             generalSettingsStore.autoAcceptInviteRequests === 'All Favorites' &&
-            !favoriteStore.state.favoriteFriends_.some(
-                (x) => x.id === ref.senderUserId
-            ) &&
+            !favoriteStore.state.favoriteFriends_.some((x) => x.id === ref.senderUserId) &&
             !favoriteStore.isInAnyLocalFriendGroup(ref.senderUserId)
         ) {
             return;
         }
-        if (
-            generalSettingsStore.autoAcceptInviteRequests ===
-            'Selected Favorites'
-        ) {
+        if (generalSettingsStore.autoAcceptInviteRequests === 'Selected Favorites') {
             const groups = generalSettingsStore.autoAcceptInviteGroups;
             if (groups.length === 0) {
                 return;
@@ -321,21 +265,13 @@ export const useNotificationStore = defineStore('Notification', () => {
                 for (const groupKey of groups) {
                     if (groupKey.startsWith('local:')) {
                         const localGroup = groupKey.slice(6);
-                        const localFavs =
-                            favoriteStore.localFriendFavorites[localGroup];
+                        const localFavs = favoriteStore.localFriendFavorites[localGroup];
                         if (localFavs && localFavs.includes(ref.senderUserId)) {
                             found = true;
                             break;
                         }
                     } else {
-                        const remoteFavs =
-                            favoriteStore.cachedFavorites.get(groupKey);
-                        if (
-                            remoteFavs &&
-                            remoteFavs.some(
-                                (f) => f.favoriteId === ref.senderUserId
-                            )
-                        ) {
+                        if (favoriteStore.cachedFavoritesByObjectId.get(ref.senderUserId)?.$groupKey === groupKey) {
                             found = true;
                             break;
                         }
@@ -394,6 +330,27 @@ export const useNotificationStore = defineStore('Notification', () => {
             });
     }
 
+    async function handleAutoDeclineFriendRequest(ref) {
+        const joinInfo = await database.getJoinCount({
+            id: ref.senderUserId,
+            displayName: ref.senderUsername
+        });
+        if (Number(joinInfo.joinCount) !== 0) {
+            return;
+        }
+
+        const text = `Auto declined friend request from ${ref.senderUsername}`;
+        if (AppDebug.errorNoty) {
+            toast.dismiss(AppDebug.errorNoty);
+        }
+        AppDebug.errorNoty = toast.info(text);
+        console.log(text);
+        await notificationRequest.hideNotification({
+            notificationId: ref.id
+        });
+        handleNotificationHide(ref.id);
+    }
+
     /**
      * @param {object} entry
      */
@@ -408,15 +365,11 @@ export const useNotificationStore = defineStore('Notification', () => {
         notificationInitStatus.value = value;
     }
 
-    /**
-     *
-     */
     function clearUnseenNotifications() {
         unseenNotifications.value = [];
     }
 
     /**
-     *
      * @param notificationId
      */
     function handleNotificationSee(notificationId) {
@@ -424,9 +377,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         if (unseenNotifications.value.length === 0) {
             uiStore.removeNotify('notification');
         }
-        const ref = notificationTable.value.data.find(
-            (n) => n.id === notificationId
-        );
+        const ref = notificationTable.value.data.find((n) => n.id === notificationId);
         if (ref) {
             ref.seen = true;
         }
@@ -437,9 +388,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     const seenIds = new Set();
     let seeProcessing = false;
 
-    /**
-     *
-     */
     async function processSeeQueue() {
         if (seeProcessing) return;
         seeProcessing = true;
@@ -450,10 +398,9 @@ export const useNotificationStore = defineStore('Notification', () => {
                 await executeWithBackoff(
                     async () => {
                         if (version >= 2) {
-                            const args =
-                                await notificationRequest.seeNotificationV2({
-                                    notificationId: id
-                                });
+                            const args = await notificationRequest.seeNotificationV2({
+                                notificationId: id
+                            });
                             handleNotificationV2Update({
                                 params: { notificationId: id },
                                 json: { ...args.json, seen: true }
@@ -468,12 +415,10 @@ export const useNotificationStore = defineStore('Notification', () => {
                     {
                         maxRetries: 3,
                         baseDelay: 1000,
-                        shouldRetry: (err) =>
-                            err?.status === 429 ||
-                            (err?.message || '').includes('429')
+                        shouldRetry: (err) => err?.status === 429 || (err?.message || '').includes('429')
                     }
                 );
-            } catch (err) {
+            } catch {
                 console.warn('Failed to mark notification as seen:', id);
                 if (version >= 2) {
                     handleNotificationV2Hide(id);
@@ -485,6 +430,7 @@ export const useNotificationStore = defineStore('Notification', () => {
 
     /**
      * Queue a notification to be marked as seen.
+     *
      * @param {string} notificationId
      * @param {number} [version]
      */
@@ -495,9 +441,6 @@ export const useNotificationStore = defineStore('Notification', () => {
         processSeeQueue();
     }
 
-    /**
-     *
-     */
     function markAllAsSeen() {
         const unseenIds = [...unseenNotifications.value];
         for (const id of unseenIds) {
@@ -510,7 +453,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param args
      */
     function handleNotificationAccept(args) {
@@ -540,11 +482,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         });
 
         const D = userStore.userDialog;
-        if (
-            typeof args.ref === 'undefined' ||
-            args.ref.type !== 'friendRequest' ||
-            args.ref.senderUserId !== D.id
-        ) {
+        if (typeof args.ref === 'undefined' || args.ref.type !== 'friendRequest' || args.ref.senderUserId !== D.id) {
             return;
         }
         D.isFriend = true;
@@ -552,7 +490,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param args
      */
     function handleNotificationExpire(args) {
@@ -565,7 +502,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param {object} data
      * @returns {object}
      */
@@ -590,7 +526,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param data
      */
     function applyNotificationV2(data) {
@@ -607,7 +542,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param args
      */
     function handleNotificationV2(args) {
@@ -617,19 +551,18 @@ export const useNotificationStore = defineStore('Notification', () => {
         } else if (!unseenNotifications.value.includes(ref.id)) {
             unseenNotifications.value.push(ref.id);
         }
-        const existingNotification = notificationTable.value.data.find(
-            (n) => n.id === ref.id
-        );
+        const existingNotification = notificationTable.value.data.find((n) => n.id === ref.id);
         if (existingNotification) {
             Object.assign(existingNotification, ref);
             database.addNotificationV2ToDatabase(existingNotification); // update
             return;
         }
 
-        if (
+        const isNotificationInitReady = !notificationInitStatus.value || !isNotificationsLoading.value;
+        const matchesNotificationTypeFilter =
             notificationTable.value.filters[0].value.length === 0 ||
-            notificationTable.value.filters[0].value.includes(ref.type)
-        ) {
+            notificationTable.value.filters[0].value.includes(ref.type);
+        if (isNotificationInitReady && matchesNotificationTypeFilter) {
             uiStore.notifyMenu('notification');
         }
         database.addNotificationV2ToDatabase(ref);
@@ -639,7 +572,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param args
      */
     function handleNotificationV2Update(args) {
@@ -661,37 +593,27 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param notificationId
      */
     function handleNotificationV2Hide(notificationId) {
         database.expireNotificationV2(notificationId);
-        const ref = notificationTable.value.data.find(
-            (n) => n.id === notificationId
-        );
+        const ref = notificationTable.value.data.find((n) => n.id === notificationId);
         if (ref) {
             ref.expiresAt = new Date().toJSON();
             ref.seen = true;
         }
     }
 
-    /**
-     *
-     */
     function expireFriendRequestNotifications() {
         const array = notificationTable.value.data;
         for (let i = array.length - 1; i >= 0; i--) {
-            if (
-                array[i].type === 'friendRequest' ||
-                array[i].type === 'ignoredFriendRequest'
-            ) {
+            if (array[i].type === 'friendRequest' || array[i].type === 'ignoredFriendRequest') {
                 array.splice(i, 1);
             }
         }
     }
 
     /**
-     *
      * @param {string} notificationId
      */
     function expireNotification(notificationId) {
@@ -717,7 +639,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @returns {Promise<void>}
      */
     async function refreshNotifications() {
@@ -752,8 +673,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             };
             count = 50; // 5000 max
             for (let i = 0; i < count; i++) {
-                const args =
-                    await notificationRequest.getNotificationsV2(params);
+                const args = await notificationRequest.getNotificationsV2(params);
                 for (const json of args.json) {
                     handleNotificationV2({
                         json,
@@ -773,8 +693,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             };
             count = 50; // 5000 max
             for (let i = 0; i < count; i++) {
-                const args =
-                    await notificationRequest.getHiddenFriendRequests(params);
+                const args = await notificationRequest.getHiddenFriendRequests(params);
                 for (const json of args.json) {
                     json.type = 'ignoredFriendRequest';
                     handleNotification({
@@ -798,14 +717,11 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param {object} noty
      */
     function queueNotificationNoty(noty) {
         noty.isFriend = friendStore.friends.has(noty.senderUserId);
-        noty.isFavorite = friendStore.localFavoriteFriends.has(
-            noty.senderUserId
-        );
+        noty.isFavorite = friendStore.localFavoriteFriends.has(noty.senderUserId);
         const notyFilter = notificationsSettingsStore.sharedFeedFilters.noty;
         if (
             notyFilter[noty.type] &&
@@ -818,14 +734,10 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param noty
      */
     function playNoty(noty) {
-        if (
-            userStore.currentUser.status === 'busy' ||
-            !watchState.isFriendsLoaded
-        ) {
+        if (userStore.currentUser.status === 'busy' || !watchState.isFriendsLoaded) {
             return;
         }
         let displayName = '';
@@ -863,8 +775,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             'Outside VR': () => !gameStore.isSteamVRRunning,
             'Game Closed': () => !gameStore.isGameRunning, // Also known as "Outside VRChat"
             'Game Running': () => gameStore.isGameRunning, // Also known as "Inside VRChat"
-            'Desktop Mode': () =>
-                gameStore.isGameNoVR && gameStore.isGameRunning,
+            'Desktop Mode': () => gameStore.isGameNoVR && gameStore.isGameRunning,
             AFK: () =>
                 notificationsSettingsStore.afkDesktopToast &&
                 gameStore.isHmdAfk &&
@@ -872,23 +783,14 @@ export const useNotificationStore = defineStore('Notification', () => {
                 !gameStore.isGameNoVR
         };
 
-        const playNotificationTTS =
-            notiConditions[notificationsSettingsStore.notificationTTS]?.();
-        const playDesktopToast =
-            notiConditions[notificationsSettingsStore.desktopToast]?.() ||
-            notiConditions['AFK']();
+        const playNotificationTTS = notiConditions[notificationsSettingsStore.notificationTTS]?.();
+        const playDesktopToast = notiConditions[notificationsSettingsStore.desktopToast]?.() || notiConditions['AFK']();
 
-        const playOverlayToast =
-            notiConditions[notificationsSettingsStore.overlayToast]?.();
-        const playOverlayNotification =
-            notificationsSettingsStore.overlayNotifications && playOverlayToast;
-        const playXSNotification =
-            notificationsSettingsStore.xsNotifications && playOverlayToast;
-        const playOvrtHudNotifications =
-            notificationsSettingsStore.ovrtHudNotifications && playOverlayToast;
-        const playOvrtWristNotifications =
-            notificationsSettingsStore.ovrtWristNotifications &&
-            playOverlayToast;
+        const playOverlayToast = notiConditions[notificationsSettingsStore.overlayToast]?.();
+        const playOverlayNotification = notificationsSettingsStore.overlayNotifications && playOverlayToast;
+        const playXSNotification = notificationsSettingsStore.xsNotifications && playOverlayToast;
+        const playOvrtHudNotifications = notificationsSettingsStore.ovrtHudNotifications && playOverlayToast;
+        const playOvrtWristNotifications = notificationsSettingsStore.ovrtWristNotifications && playOverlayToast;
 
         let message = '';
         if (noty.title) {
@@ -896,16 +798,9 @@ export const useNotificationStore = defineStore('Notification', () => {
         } else if (noty.message) {
             message = noty.message;
         }
-        const messageList = [
-            'inviteMessage',
-            'requestMessage',
-            'responseMessage'
-        ];
+        const messageList = ['inviteMessage', 'requestMessage', 'responseMessage'];
         for (let k = 0; k < messageList.length; k++) {
-            if (
-                typeof noty.details !== 'undefined' &&
-                typeof noty.details[messageList[k]] !== 'undefined'
-            ) {
+            if (typeof noty.details !== 'undefined' && typeof noty.details[messageList[k]] !== 'undefined') {
                 message = `, ${noty.details[messageList[k]]}`;
             }
         }
@@ -924,10 +819,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                     if (playXSNotification) {
                         displayXSNotification(noty, message, image);
                     }
-                    if (
-                        playOvrtHudNotifications ||
-                        playOvrtWristNotifications
-                    ) {
+                    if (playOvrtHudNotifications || playOvrtWristNotifications) {
                         displayOvrtNotification(
                             playOvrtHudNotifications,
                             playOvrtWristNotifications,
@@ -948,13 +840,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                     displayXSNotification(noty, message, '');
                 }
                 if (playOvrtHudNotifications || playOvrtWristNotifications) {
-                    displayOvrtNotification(
-                        playOvrtHudNotifications,
-                        playOvrtWristNotifications,
-                        noty,
-                        message,
-                        ''
-                    );
+                    displayOvrtNotification(playOvrtHudNotifications, playOvrtWristNotifications, noty, message, '');
                 }
                 if (playDesktopToast) {
                     displayDesktopToast(noty, message, '');
@@ -967,7 +853,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param {object} noty
      * @param {string} displayName
      * @param {string} message
@@ -984,9 +869,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         const msg = getNotificationMessage(noty, message, displayName);
         if (msg) {
-            notificationsSettingsStore.speak(
-                toNotificationText(msg.title, msg.body, noty.type)
-            );
+            notificationsSettingsStore.speak(toNotificationText(msg.title, msg.body, noty.type));
         }
     }
 
@@ -1008,7 +891,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     // are in ./overlayDispatch.js — destructured above via createOverlayDispatch().
 
     /**
-     *
      * @param {object} noty
      * @returns
      */
@@ -1017,18 +899,14 @@ export const useNotificationStore = defineStore('Notification', () => {
         if (id) return id;
         if (noty.displayName) {
             return (
-                findUserByDisplayName(
-                    userStore.cachedUsers,
-                    noty.displayName,
-                    userStore.cachedUserIdsByDisplayName
-                )?.id ?? ''
+                findUserByDisplayName(userStore.cachedUsers, noty.displayName, userStore.cachedUserIdsByDisplayName)
+                    ?.id ?? ''
             );
         }
         return '';
     }
 
     /**
-     *
      * @param gamelog
      */
     function queueGameLogNoty(gamelog) {
@@ -1045,11 +923,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                 return;
             }
         }
-        if (
-            noty.type === 'OnPlayerLeft' ||
-            noty.type === 'BlockedOnPlayerLeft' ||
-            noty.type === 'MutedOnPlayerLeft'
-        ) {
+        if (noty.type === 'OnPlayerLeft' || noty.type === 'BlockedOnPlayerLeft' || noty.type === 'MutedOnPlayerLeft') {
             bias = locationStore.lastLocationDestinationTime + 5 * 1000; // 5 secs
             if (Date.parse(noty.created_at) <= bias) {
                 return;
@@ -1073,10 +947,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                 noty.notyName = `${noty.videoName} (${noty.displayName})`;
             }
         }
-        if (
-            noty.type !== 'VideoPlay' &&
-            noty.displayName === userStore.currentUser.displayName
-        ) {
+        if (noty.type !== 'VideoPlay' && noty.displayName === userStore.currentUser.displayName) {
             // remove current user
             return;
         }
@@ -1109,7 +980,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param feed
      */
     function queueFeedNoty(feed) {
@@ -1118,11 +988,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             return;
         }
         // hide private worlds from feed
-        if (
-            wristOverlaySettingsStore.hidePrivateFromFeed &&
-            noty.type === 'GPS' &&
-            noty.location === 'private'
-        ) {
+        if (wristOverlaySettingsStore.hidePrivateFromFeed && noty.type === 'GPS' && noty.location === 'private') {
             return;
         }
         noty.isFriend = friendStore.friends.has(noty.userId);
@@ -1139,7 +1005,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param noty
      */
     function queueFriendLogNoty(noty) {
@@ -1160,7 +1025,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param noty
      */
     function queueModerationNoty(noty) {
@@ -1176,27 +1040,17 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
     }
 
-    /**
-     *
-     */
     async function initNotifications() {
         notificationInitStatus.value = false;
         let tableData = await database.getNotificationsV2();
         let notifications = await database.getNotifications();
-        tableData = tableData.concat(
-            notifications.filter((n) => !tableData.some((t) => t.id === n.id))
-        );
-        tableData.sort(
-            (a, b) => Date.parse(b.created_at) - Date.parse(a.created_at)
-        );
+        tableData = tableData.concat(notifications.filter((n) => !tableData.some((t) => t.id === n.id)));
+        tableData.sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
         tableData.splice(dbVars.maxTableSize);
         notificationTable.value.data = tableData;
         refreshNotifications();
     }
 
-    /**
-     *
-     */
     function testNotification() {
         playNoty({
             type: 'Event',
@@ -1206,7 +1060,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param row
      */
     function acceptFriendRequestNotification(row) {
@@ -1234,15 +1087,11 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param row
      */
     async function hideNotification(row) {
         if (row.type === 'ignoredFriendRequest') {
-            await friendRequest.deleteHiddenFriendRequest(
-                { notificationId: row.id },
-                row.senderUserId
-            );
+            await friendRequest.deleteHiddenFriendRequest({ notificationId: row.id }, row.senderUserId);
             handleNotificationHide(row.id);
         } else {
             notificationRequest
@@ -1256,7 +1105,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param row
      */
     function hideNotificationPrompt(row) {
@@ -1272,7 +1120,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param row
      */
     function acceptRequestInvite(row) {
@@ -1291,37 +1138,34 @@ export const useNotificationStore = defineStore('Notification', () => {
                     currentLocation = userStore.currentUser?.$locationTag;
                 }
                 const L = parseLocation(currentLocation);
-                queryRequest
-                    .fetch('world', { worldId: L.worldId })
-                    .then((args) => {
-                        notificationRequest
-                            .sendInvite(
-                                {
-                                    instanceId: L.tag,
-                                    worldId: L.tag,
-                                    worldName: args.ref.name,
-                                    rsvp: true
-                                },
-                                row.senderUserId
-                            )
-                            .then((_args) => {
-                                toast(t('message.invite.sent'));
-                                notificationRequest
-                                    .hideNotification({
-                                        notificationId: row.id
-                                    })
-                                    .then(() => {
-                                        handleNotificationHide(row.id);
-                                    });
-                                return _args;
-                            });
-                    });
+                queryRequest.fetch('world', { worldId: L.worldId }).then((args) => {
+                    notificationRequest
+                        .sendInvite(
+                            {
+                                instanceId: L.tag,
+                                worldId: L.tag,
+                                worldName: args.ref.name,
+                                rsvp: true
+                            },
+                            row.senderUserId
+                        )
+                        .then((_args) => {
+                            toast(t('message.invite.sent'));
+                            notificationRequest
+                                .hideNotification({
+                                    notificationId: row.id
+                                })
+                                .then(() => {
+                                    handleNotificationHide(row.id);
+                                });
+                            return _args;
+                        });
+                });
             })
             .catch(() => {});
     }
 
     /**
-     *
      * @param notificationId
      * @param responses
      * @param responseType
@@ -1351,20 +1195,14 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param row
      */
     function deleteNotificationLog(row) {
-        const idx = notificationTable.value.data.findIndex(
-            (e) => e.id === row.id
-        );
+        const idx = notificationTable.value.data.findIndex((e) => e.id === row.id);
         if (idx !== -1) {
             notificationTable.value.data.splice(idx, 1);
         }
-        if (
-            row.type !== 'friendRequest' &&
-            row.type !== 'ignoredFriendRequest'
-        ) {
+        if (row.type !== 'friendRequest' && row.type !== 'ignoredFriendRequest') {
             if (!row.version || row.version < 2) {
                 database.deleteNotification(row.id);
             } else {
@@ -1374,7 +1212,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param row
      */
     function deleteNotificationLogPrompt(row) {
@@ -1391,7 +1228,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param notification
      */
     function isNotificationExpired(notification) {
@@ -1406,7 +1242,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     *
      * @param link
      */
     function openNotificationLink(link) {

@@ -6,6 +6,7 @@
                 :description="t('view.settings.appearance.user_dialog.recent_action_cooldown_description')">
                 <Switch
                     :model-value="recentActionCooldownEnabled"
+                    :ariaLabel="t('view.settings.appearance.user_dialog.recent_action_cooldown')"
                     @update:modelValue="setRecentActionCooldownEnabled" />
             </SettingsItem>
 
@@ -26,6 +27,17 @@
                         <NumberFieldIncrement />
                     </NumberFieldContent>
                 </NumberField>
+            </SettingsItem>
+        </SettingsGroup>
+
+        <SettingsGroup :title="t('view.settings.social.friend_requests.header')">
+            <SettingsItem
+                :label="t('view.settings.general.friend_requests.header')"
+                :description="t('view.settings.general.friend_requests.header_tooltip')">
+                <Switch
+                    :model-value="autoDeclineFriendRequests"
+                    :ariaLabel="t('view.settings.general.friend_requests.header')"
+                    @update:modelValue="setAutoDeclineFriendRequests" />
             </SettingsItem>
         </SettingsGroup>
 
@@ -96,11 +108,19 @@
     const generalSettingsStore = useGeneralSettingsStore();
     const favoriteStore = useFavoriteStore();
 
-    const { recentActionCooldownEnabled, recentActionCooldownMinutes, localFavoriteFriendsGroups } =
-        storeToRefs(generalSettingsStore);
+    const {
+        recentActionCooldownEnabled,
+        recentActionCooldownMinutes,
+        localFavoriteFriendsGroups,
+        autoDeclineFriendRequests
+    } = storeToRefs(generalSettingsStore);
 
-    const { setRecentActionCooldownEnabled, setRecentActionCooldownMinutes, setLocalFavoriteFriendsGroups } =
-        generalSettingsStore;
+    const {
+        setRecentActionCooldownEnabled,
+        setRecentActionCooldownMinutes,
+        setLocalFavoriteFriendsGroups,
+        setAutoDeclineFriendRequests
+    } = generalSettingsStore;
 
     const { favoriteFriendGroups, localFriendFavoriteGroups } = storeToRefs(favoriteStore);
 </script>

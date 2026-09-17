@@ -1,16 +1,10 @@
 import { isRealInstance } from './instance.js';
 
-export {
-    parseLocation,
-    displayLocation,
-    resolveRegion,
-    translateAccessType
-} from './locationParser.js';
+export { parseLocation, displayLocation, resolveRegion, translateAccessType } from './locationParser.js';
 
 /**
- *
  * @param {Array} friendsArr
- * @param {object} lastLocation - last location from location store
+ * @param {object} lastLocation - Last location from location store
  * @param {Set} lastLocation.friendList
  * @param {string} lastLocation.location
  */
@@ -44,12 +38,13 @@ export { getFriendsLocations };
 /**
  * Get the display text for a location — synchronous, pure function.
  * Does NOT handle async world name lookups (those stay in the component).
+ *
  * @param {object} L - Parsed location object from parseLocation()
  * @param {object} options
  * @param {string} [options.hint] - Hint string (e.g. from props)
- * @param {string|undefined} [options.worldName] - Cached world name, if available
+ * @param {string | undefined} [options.worldName] - Cached world name, if available
  * @param {string} options.accessTypeLabel - Translated access type label
- * @param {Function} options.t - i18n translate function
+ * @param {Function} options.t - I18n translate function
  * @returns {string} Display text for the location
  */
 function getLocationText(L, { hint, worldName, accessTypeLabel, t }) {

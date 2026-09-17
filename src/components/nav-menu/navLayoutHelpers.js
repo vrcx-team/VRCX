@@ -56,9 +56,7 @@ export function buildMenuItems(layout, navDefinitionMap, t) {
         }
 
         if (entry.type === 'folder') {
-            const folderDefinitions = (entry.items || [])
-                .map((key) => navDefinitionMap.get(key))
-                .filter(Boolean);
+            const folderDefinitions = (entry.items || []).map((key) => navDefinitionMap.get(key)).filter(Boolean);
             if (folderDefinitions.length === 0) {
                 return;
             }
@@ -66,9 +64,7 @@ export function buildMenuItems(layout, navDefinitionMap, t) {
             items.push({
                 index: entry.id,
                 icon: entry.icon || DEFAULT_FOLDER_ICON,
-                title:
-                    entry.name?.trim() ||
-                    t('nav_menu.custom_nav.folder_name_placeholder'),
+                title: entry.name?.trim() || t('nav_menu.custom_nav.folder_name_placeholder'),
                 titleIsCustom: true,
                 children: folderDefinitions.map((definition) => ({
                     label: definition.labelKey,

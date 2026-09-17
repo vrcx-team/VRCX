@@ -12,10 +12,7 @@ export function useMainLayoutResizable() {
     const asideMinSize = 12;
     const asideMaxPx = 700;
 
-    const isAsideCollapsed = (layout) =>
-        Array.isArray(layout) &&
-        layout.length >= 2 &&
-        layout[layout.length - 1] <= 1;
+    const isAsideCollapsed = (layout) => Array.isArray(layout) && layout.length >= 2 && layout[layout.length - 1] <= 1;
 
     const isAsideCollapsedState = ref(false);
     const handleLayout = (sizes) => {
@@ -26,9 +23,7 @@ export function useMainLayoutResizable() {
         isAsideCollapsedState.value = isAsideCollapsed(sizes);
     };
 
-    const isAsideCollapsedStatic = computed(
-        () => !isSideBarTabShow.value || isAsideCollapsedState.value
-    );
+    const isAsideCollapsedStatic = computed(() => !isSideBarTabShow.value || isAsideCollapsedState.value);
 
     return {
         asideDefaultSize,

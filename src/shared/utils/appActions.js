@@ -1,12 +1,12 @@
 import { toast } from 'vue-sonner';
 
-import { useModalStore, useSearchStore } from '../../stores';
+import { useExternalLinkStore, useSearchStore } from '../../stores';
 import { escapeTag } from './base/string';
 import { i18n } from '../../plugins/i18n';
 
 /**
  * @param {string} fileName
- * @param {*} data
+ * @param {any} data
  */
 function downloadAndSaveJson(fileName, data) {
     if (!fileName || !data) {
@@ -16,9 +16,7 @@ function downloadAndSaveJson(fileName, data) {
         const link = document.createElement('a');
         link.setAttribute(
             'href',
-            `data:application/json;charset=utf-8,${encodeURIComponent(
-                JSON.stringify(data, null, 2)
-            )}`
+            `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data, null, 2))}`
         );
         link.setAttribute('download', `${fileName}.json`);
         document.body.appendChild(link);
@@ -30,7 +28,6 @@ function downloadAndSaveJson(fileName, data) {
 }
 
 /**
- *
  * @param {string} text
  * @param {string} message
  */
@@ -47,7 +44,6 @@ function copyToClipboard(text, message = 'Copied successfully!') {
 }
 
 /**
- *
  * @param {string} link
  */
 function openExternalLink(link) {
@@ -56,24 +52,8 @@ function openExternalLink(link) {
         return;
     }
 
-    const modalStore = useModalStore();
-    modalStore
-        .confirm({
-            description: `${link}`,
-            title: 'Open External Link',
-            confirmText: 'Open',
-            cancelText: 'Copy'
-        })
-        .then(({ ok, reason }) => {
-            if (reason === 'cancel') {
-                copyToClipboard(link, 'Link copied to clipboard!');
-                return;
-            }
-            if (ok) {
-                AppApi.OpenLink(link);
-                return;
-            }
-        });
+    const externalLinkStore = useExternalLinkStore();
+    externalLinkStore.showExternalLinkDialog(link);
 }
 
 function openDiscordProfile(discordId) {
@@ -93,10 +73,4 @@ function openFolderGeneric(path) {
     AppApi.OpenFolderAndSelectItem(path, true);
 }
 
-export {
-    downloadAndSaveJson,
-    copyToClipboard,
-    openExternalLink,
-    openDiscordProfile,
-    openFolderGeneric
-};
+export { downloadAndSaveJson, copyToClipboard, openExternalLink, openDiscordProfile, openFolderGeneric };

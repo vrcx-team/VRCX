@@ -21,6 +21,11 @@
                             {{ groupName }}
                         </div>
                         <div class="event-title-content" @click="onGroupClick">
+                            <TooltipWrapper
+                                v-if="event.seriesId"
+                                :content="t('dialog.group_calendar.event_card.repeating_event_tooltip')">
+                                <Repeat class="size-4! inline" />
+                            </TooltipWrapper>
                             {{ event.title }}
                         </div>
                     </div>
@@ -34,6 +39,14 @@
                     </div>
                 </div>
                 <div class="badges">
+                    <Button
+                        v-if="canManageEvent"
+                        @click="editEvent(event)"
+                        size="icon"
+                        variant="secondary"
+                        class="rounded-full badge">
+                        <Pencil />
+                    </Button>
                     <Button @click="copyEventLink(event)" size="icon" variant="secondary" class="rounded-full badge">
                         <Share2 />
                     </Button>
@@ -42,7 +55,8 @@
                         size="icon"
                         :variant="isFollowing ? 'default' : 'secondary'"
                         class="rounded-full badge">
-                        <Star />
+                        <Star fill="currentColor" v-if="isFollowing" />
+                        <Star v-else />
                     </Button>
                 </div>
             </Card>
@@ -114,7 +128,7 @@
 </template>
 
 <script setup>
-    import { Calendar, Download, Image, Share2, Star } from 'lucide-vue-next';
+    import { Calendar, Download, Image, Pencil, Repeat, Share2, Star } from 'lucide-vue-next';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
@@ -124,18 +138,24 @@
 
     import { useGalleryStore, useGroupStore } from '../../../stores';
     import { AppDebug } from '../../../services/appConfig';
-    import { formatDateFilter } from '../../../shared/utils';
-    import { groupRequest } from '../../../api';
+    import { formatDateFilter, hasGroupPermission } from '../../../shared/utils';
+    import { groupRequest, queryRequest } from '../../../api';
+    import TooltipWrapper from '@/components/ui/tooltip/TooltipWrapper.vue';
 
     const { showFullscreenImageDialog } = useGalleryStore();
 
     const { t } = useI18n();
-    const { cachedGroups } = useGroupStore();
+    const groupStore = useGroupStore();
+    const { cachedGroups } = groupStore;
 
     const props = defineProps({
         event: {
             type: Object,
             required: true
+        },
+        groupRef: {
+            type: Object,
+            default: null
         },
         mode: {
             type: String,
@@ -156,6 +176,9 @@
     const emit = defineEmits(['update-following-calendar-data', 'click-action']);
 
     const showGroupName = computed(() => props.mode === 'timeline');
+    const canManageEvent = computed(() =>
+        hasGroupPermission(props.groupRef ?? cachedGroups.get(props.event.ownerId), 'group-calendar-manage')
+    );
 
     const timeClass = computed(() => (props.mode === 'grid' ? 'event-time' : ''));
     const eventPopoverOpen = ref(false);
@@ -172,6 +195,23 @@
 
     const bannerError = ref(false);
 
+    async function editEvent(event) {
+        let group = props.groupRef;
+        if (!group) {
+            try {
+                const args = await queryRequest.fetch('group.dialog', {
+                    groupId: event.ownerId
+                });
+                group = args.ref;
+            } catch (error) {
+                console.error('Failed to load group event for editing:', error);
+                toast.error(t('dialog.group_event_edit.load_error'));
+                return;
+            }
+        }
+        groupStore.showEditGroupEventDialog(event, group);
+    }
+
     const groupName = computed(() => {
         if (!props.event) return '';
         return cachedGroups.get(props.event.ownerId)?.name || '';
@@ -186,7 +226,6 @@
     });
 
     /**
-     *
      * @param event
      */
     async function openCalendarEvent(event) {
@@ -196,7 +235,6 @@
     }
 
     /**
-     *
      * @param event
      */
     async function getCalendarIcs(event) {
@@ -217,7 +255,6 @@
     }
 
     /**
-     *
      * @param event
      */
     async function downloadEventIcs(event) {
@@ -234,7 +271,6 @@
     }
 
     /**
-     *
      * @param event
      */
     async function toggleEventFollow(event) {
@@ -247,7 +283,6 @@
     }
 
     /**
-     *
      * @param event
      */
     function copyEventLink(event) {

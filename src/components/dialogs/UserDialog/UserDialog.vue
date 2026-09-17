@@ -1,82 +1,83 @@
 <template>
-    <div class="w-223 flex-1 min-h-0 flex flex-col">
+    <div class="user-dialog-scrollbars flex-1 min-h-0 min-w-0 flex flex-row">
         <DialogHeader class="sr-only">
             <DialogTitle>{{
                 userDialog.ref?.displayName || userDialog.id || t('dialog.user.info.header')
             }}</DialogTitle>
             <DialogDescription>{{ getUserStateText(userDialog.ref || {}) }}</DialogDescription>
         </DialogHeader>
-        <UserSummaryHeader
-            class="flex-shrink-0"
-            :get-user-state-text="getUserStateText"
-            :copy-user-display-name="copyUserDisplayName"
-            :toggle-badge-visibility="toggleBadgeVisibility"
-            :toggle-badge-showcased="toggleBadgeShowcased"
-            :user-dialog-command="userDialogCommand" />
 
-        <TabsUnderline
-            v-model="userDialog.activeTab"
-            :items="userDialogTabs"
-            :unmount-on-hide="false"
-            fill
-            @update:modelValue="userDialogTabClick">
-            <template #Info>
-                <UserDialogInfoTab ref="infoTabRef" @show-bio-dialog="showBioDialog" />
-            </template>
+        <div class="flex-none w-77 overflow-y-auto">
+            <UserSummaryHeader
+                :get-user-state-text="getUserStateText"
+                :copy-user-display-name="copyUserDisplayName"
+                :toggle-badge-visibility="toggleBadgeVisibility"
+                :toggle-badge-showcased="toggleBadgeShowcased"
+                :user-dialog-command="userDialogCommand" />
+        </div>
 
-            <template v-if="userDialog.id !== currentUser.id && !currentUser.hasSharedConnectionsOptOut" #mutual>
-                <UserDialogMutualFriendsTab ref="mutualFriendsTabRef" />
-            </template>
+        <div class="flex-1 min-w-0 flex flex-col min-h-0 pl-2">
+            <TabsUnderline
+                v-model="userDialog.activeTab"
+                :items="userDialogTabs"
+                :activeColor="userDialogTabColor"
+                :unmount-on-hide="false"
+                fill
+                :background="true"
+                @update:modelValue="userDialogTabClick">
+                <template #Info>
+                    <UserDialogInfoTab ref="infoTabRef" />
+                </template>
 
-            <template #Groups>
-                <UserDialogGroupsTab ref="groupsTabRef" />
-            </template>
+                <template v-if="userDialog.id !== currentUser.id && !currentUser.hasSharedConnectionsOptOut" #mutual>
+                    <UserDialogMutualFriendsTab ref="mutualFriendsTabRef" />
+                </template>
 
-            <template #Worlds>
-                <UserDialogWorldsTab ref="worldsTabRef" />
-            </template>
+                <template #Groups>
+                    <UserDialogGroupsTab ref="groupsTabRef" />
+                </template>
 
-            <template #favorite-worlds>
-                <UserDialogFavoriteWorldsTab ref="favoriteWorldsTabRef" />
-            </template>
+                <template #Worlds>
+                    <UserDialogWorldsTab ref="worldsTabRef" />
+                </template>
 
-            <template #Avatars>
-                <UserDialogAvatarsTab ref="avatarsTabRef" />
-            </template>
+                <template #favorite-worlds>
+                    <UserDialogFavoriteWorldsTab ref="favoriteWorldsTabRef" />
+                </template>
 
-            <template #Activity>
-                <UserDialogActivityTab ref="activityTabRef" />
-            </template>
+                <template #Avatars>
+                    <UserDialogAvatarsTab ref="avatarsTabRef" />
+                </template>
 
-            <template #JSON>
-                <DialogJsonTab
-                    :tree-data="treeData"
-                    :tree-data-key="treeData?.id"
-                    :dialog-id="userDialog.id"
-                    :dialog-ref="userDialog.ref"
-                    @refresh="refreshUserDialogTreeData()" />
-            </template>
-        </TabsUnderline>
-        <SendInviteDialog
-            v-model:sendInviteDialogVisible="sendInviteDialogVisible"
-            v-model:sendInviteDialog="sendInviteDialog"
-            @closeInviteDialog="closeInviteDialog" />
-        <SendInviteRequestDialog
-            v-model:sendInviteRequestDialogVisible="sendInviteRequestDialogVisible"
-            v-model:sendInviteDialog="sendInviteDialog"
-            @closeInviteDialog="closeInviteDialog" />
-        <SocialStatusDialog
-            :social-status-dialog="socialStatusDialog"
-            :social-status-history-table="socialStatusHistoryTable" />
-        <LanguageDialog />
-        <BioDialog :bio-dialog="bioDialog" />
-        <PronounsDialog :pronouns-dialog="pronounsDialog" />
-        <ModerateGroupDialog />
+                <template #Activity>
+                    <UserDialogActivityTab ref="activityTabRef" />
+                </template>
+
+                <template #JSON>
+                    <DialogJsonTab
+                        class="rounded-xl bg-(--profile-card) p-2"
+                        :tree-data="treeData"
+                        :tree-data-key="treeData?.user?.id"
+                        :dialog-id="userDialog.id"
+                        :dialog-ref="userDialog.ref"
+                        @refresh="refreshUserDialogTreeData()" />
+                </template>
+            </TabsUnderline>
+            <SendInviteDialog
+                v-model:sendInviteDialogVisible="sendInviteDialogVisible"
+                v-model:sendInviteDialog="sendInviteDialog"
+                @closeInviteDialog="closeInviteDialog" />
+            <SendInviteRequestDialog
+                v-model:sendInviteRequestDialogVisible="sendInviteRequestDialogVisible"
+                v-model:sendInviteDialog="sendInviteDialog"
+                @closeInviteDialog="closeInviteDialog" />
+            <ModerateGroupDialog />
+        </div>
     </div>
 </template>
 
 <script setup>
-    import { computed, onMounted, ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
@@ -100,6 +101,9 @@
     import { formatJsonVars } from '../../../shared/utils/base/ui';
     import { miscRequest } from '../../../api';
     import { useUserDialogCommands } from './useUserDialogCommands';
+    import { showAvatarDialog, showAvatarAuthorDialog } from '../../../coordinators/avatarCoordinator';
+    import { showUserDialog, refreshUserDialogAvatars } from '../../../coordinators/userCoordinator';
+    import { getFriendRequest, handleFriendDelete } from '../../../coordinators/friendRelationshipCoordinator';
 
     import DialogJsonTab from '../DialogJsonTab.vue';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
@@ -112,12 +116,19 @@
     import UserDialogWorldsTab from './UserDialogWorldsTab.vue';
     import UserSummaryHeader from './UserSummaryHeader.vue';
 
-    import BioDialog from './BioDialog.vue';
-    import LanguageDialog from './LanguageDialog.vue';
     import ModerateGroupDialog from '../ModerateGroupDialog.vue';
-    import PronounsDialog from './PronounsDialog.vue';
     import SendInviteRequestDialog from './SendInviteRequestDialog.vue';
-    import SocialStatusDialog from './SocialStatusDialog.vue';
+
+    const props = defineProps({
+        previousIds: {
+            type: Object,
+            required: true
+        },
+        updatePreviousId: {
+            type: Function,
+            default: () => {}
+        }
+    });
 
     const { t } = useI18n();
     const userDialogTabs = computed(() => {
@@ -148,13 +159,22 @@
     const modalStore = useModalStore();
     const instanceStore = useInstanceStore();
 
-    const { userDialog, languageDialog, currentUser } = storeToRefs(useUserStore());
-    const { cachedUsers, showSendBoopDialog } = useUserStore();
+    const { userDialog, currentUser } = storeToRefs(useUserStore());
+    const userDialogTabColor = computed(() => {
+        const color = userDialog.value.theme?.buttonColor;
+        if (!color) {
+            return 'var(--primary)';
+        }
+        return color;
+    });
+    const scrollbarThumbColor = computed(() => {
+        const color = userDialog.value.theme?.buttonColor;
+        return color === 'var(--primary)'
+            ? 'color-mix(in oklab, var(--foreground) 30%, transparent)'
+            : `color-mix(in oklab, ${color} 50%, transparent)`;
+    });
+    const { cachedUsers, showSendBoopDialog, showEditProfileDialog } = useUserStore();
     const { showFavoriteDialog } = useFavoriteStore();
-    import { showAvatarDialog, showAvatarAuthorDialog } from '../../../coordinators/avatarCoordinator';
-    import { showUserDialog, refreshUserDialogAvatars } from '../../../coordinators/userCoordinator';
-    import { getFriendRequest, handleFriendDelete } from '../../../coordinators/friendRelationshipCoordinator';
-
     const { showModerateGroupDialog } = useGroupStore();
     const { inviteGroupDialog } = storeToRefs(useGroupStore());
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
@@ -194,7 +214,8 @@
         refreshInviteMessageTableData,
         clearInviteImageUpload,
         instanceStore,
-        useNotificationStore
+        useNotificationStore,
+        showEditProfileDialog
     });
 
     watch(
@@ -215,55 +236,9 @@
         }
     );
 
-    watch(
-        () => userDialog.value.activeTab,
-        (activeTab) => {
-            if (activeTab === 'Activity' && userDialog.value.visible && !userDialog.value.loading) {
-                activityTabRef.value?.loadOnlineFrequency(userDialog.value.id);
-            }
-        }
-    );
-
-    onMounted(() => {
-        if (userDialog.value.visible && !userDialog.value.loading) {
-            loadLastActiveTab();
-        }
-    });
-
-    const userDialogLastMutualFriends = ref('');
-    const userDialogLastGroup = ref('');
-    const userDialogLastAvatar = ref('');
-    const userDialogLastWorld = ref('');
-    const userDialogLastFavoriteWorld = ref('');
-
-    const socialStatusDialog = ref({
-        visible: false,
-        loading: false,
-        status: '',
-        statusDescription: ''
-    });
-    const socialStatusHistoryTable = ref({
-        data: [],
-
-        layout: 'table'
-    });
-
-    const bioDialog = ref({
-        visible: false,
-        loading: false,
-        bio: '',
-        bioLinks: []
-    });
-
-    const pronounsDialog = ref({
-        visible: false,
-        loading: false,
-        pronouns: ''
-    });
     const treeData = ref({});
 
     /**
-     *
      * @param user
      */
     function getUserStateText(user) {
@@ -282,7 +257,6 @@
     }
 
     /**
-     *
      * @param status
      */
     function getUserStatusText(status) {
@@ -301,23 +275,23 @@
         return t('dialog.user.status.offline');
     }
 
-    /**
-     *
-     */
     function refreshUserDialogTreeData() {
         const D = userDialog.value;
         if (D.id === currentUser.value.id) {
-            treeData.value = formatJsonVars({
-                ...currentUser.value,
-                ...D.ref
-            });
+            treeData.value = {
+                currentUser: formatJsonVars(currentUser.value),
+                user: formatJsonVars(D.ref),
+                profile: formatJsonVars(D.publicProfileRef)
+            };
             return;
         }
-        treeData.value = formatJsonVars(D.ref);
+        treeData.value = {
+            user: formatJsonVars(D.ref),
+            profile: formatJsonVars(D.publicProfileRef)
+        };
     }
 
     /**
-     *
      * @param tabName
      */
     function handleUserDialogTab(tabName) {
@@ -331,19 +305,19 @@
                 userDialog.value.lastActiveTab = 'Info';
                 return;
             }
-            if (userDialogLastMutualFriends.value !== userId) {
-                userDialogLastMutualFriends.value = userId;
+            if (props.previousIds.mutualFriend !== userId) {
+                props.updatePreviousId('mutualFriend', userId);
                 mutualFriendsTabRef.value?.getUserMutualFriends(userId);
             }
         } else if (tabName === 'Groups') {
-            if (userDialogLastGroup.value !== userId) {
-                userDialogLastGroup.value = userId;
+            if (props.previousIds.group !== userId) {
+                props.updatePreviousId('group', userId);
                 groupsTabRef.value?.getUserGroups(userId);
             }
         } else if (tabName === 'Avatars') {
             avatarsTabRef.value?.setUserDialogAvatars(userId);
-            if (userDialogLastAvatar.value !== userId) {
-                userDialogLastAvatar.value = userId;
+            if (props.previousIds.avatar !== userId) {
+                props.updatePreviousId('avatar', userId);
                 if (userId === currentUser.value.id) {
                     refreshUserDialogAvatars();
                 } else {
@@ -352,13 +326,13 @@
             }
         } else if (tabName === 'Worlds') {
             worldsTabRef.value?.setUserDialogWorlds(userId);
-            if (userDialogLastWorld.value !== userId) {
-                userDialogLastWorld.value = userId;
+            if (props.previousIds.world !== userId) {
+                props.updatePreviousId('world', userId);
                 worldsTabRef.value?.refreshUserDialogWorlds();
             }
         } else if (tabName === 'favorite-worlds') {
-            if (userDialogLastFavoriteWorld.value !== userId) {
-                userDialogLastFavoriteWorld.value = userId;
+            if (props.previousIds.favoriteWorld !== userId) {
+                props.updatePreviousId('favoriteWorld', userId);
                 favoriteWorldsTabRef.value?.getUserFavoriteWorlds(userId);
             }
         } else if (tabName === 'Activity') {
@@ -368,16 +342,12 @@
         }
     }
 
-    /**
-     *
-     */
     function loadLastActiveTab() {
         const tab = userDialog.value.lastActiveTab;
         handleUserDialogTab(tab);
     }
 
     /**
-     *
      * @param tabName
      */
     function userDialogTabClick(tabName) {
@@ -390,56 +360,13 @@
         handleUserDialogTab(tabName);
     }
 
-    /**
-     *
-     */
-    function showPronounsDialog() {
-        const D = pronounsDialog.value;
-        D.pronouns = currentUser.value.pronouns;
-        D.visible = true;
-    }
-
-    /**
-     *
-     */
-    function showLanguageDialog() {
-        const D = languageDialog.value;
-        D.visible = true;
-    }
-
     // Register simple dialog openers as callbacks for the command composable
     registerCallbacks({
-        showSocialStatusDialog,
-        showLanguageDialog,
-        showBioDialog,
-        showPronounsDialog,
-        showEditNoteAndMemoDialog: () => {
-            infoTabRef.value?.showEditNoteAndMemoDialog();
-        }
+        showEditProfileDialog,
+        showEditNoteAndMemoDialog: () => infoTabRef.value?.showEditNoteAndMemoDialog()
     });
 
     /**
-     *
-     */
-    function showSocialStatusDialog() {
-        const D = socialStatusDialog.value;
-        const { statusHistory } = currentUser.value;
-        const statusHistoryArray = [];
-        for (let i = 0; i < statusHistory.length; ++i) {
-            const addStatus = {
-                no: i + 1,
-                status: statusHistory[i]
-            };
-            statusHistoryArray.push(addStatus);
-        }
-        socialStatusHistoryTable.value.data = statusHistoryArray;
-        D.status = currentUser.value.status;
-        D.statusDescription = currentUser.value.statusDescription;
-        D.visible = true;
-    }
-
-    /**
-     *
      * @param badge
      */
     async function toggleBadgeVisibility(badge) {
@@ -455,7 +382,6 @@
     }
 
     /**
-     *
      * @param badge
      */
     async function toggleBadgeShowcased(badge) {
@@ -471,7 +397,6 @@
     }
 
     /**
-     *
      * @param args
      */
     function handleBadgeUpdate(args) {
@@ -481,27 +406,24 @@
     }
 
     /**
-     *
-     */
-    function showBioDialog() {
-        const D = bioDialog.value;
-        D.bio = currentUser.value.bio;
-        D.bioLinks = currentUser.value.bioLinks.slice();
-        D.visible = true;
-    }
-
-    /**
-     *
      * @param displayName
      */
     function copyUserDisplayName(displayName) {
         copyToClipboard(displayName, 'User DisplayName copied to clipboard');
     }
 
-    /**
-     *
-     */
     function closeInviteDialog() {
         clearInviteImageUpload();
     }
 </script>
+
+<style scoped>
+    .user-dialog-scrollbars {
+        --user-dialog-scrollbar-thumb: v-bind(scrollbarThumbColor);
+        --user-dialog-scrollbar-track: transparent;
+    }
+
+    .user-dialog-scrollbars :deep(*) {
+        scrollbar-color: var(--user-dialog-scrollbar-thumb) var(--user-dialog-scrollbar-track);
+    }
+</style>

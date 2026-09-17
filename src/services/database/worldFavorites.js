@@ -43,12 +43,9 @@ const worldFavorites = {
     },
 
     deleteWorldFavoriteGroup(groupName) {
-        sqliteService.executeNonQuery(
-            `DELETE FROM favorite_world WHERE group_name = @group_name`,
-            {
-                '@group_name': groupName
-            }
-        );
+        sqliteService.executeNonQuery(`DELETE FROM favorite_world WHERE group_name = @group_name`, {
+            '@group_name': groupName
+        });
     },
 
     removeWorldFromFavorites(worldId, groupName) {
@@ -75,12 +72,9 @@ const worldFavorites = {
     },
 
     removeWorldFromCache(worldId) {
-        sqliteService.executeNonQuery(
-            `DELETE FROM cache_world WHERE id = @world_id`,
-            {
-                '@world_id': worldId
-            }
-        );
+        sqliteService.executeNonQuery(`DELETE FROM cache_world WHERE id = @world_id`, {
+            '@world_id': worldId
+        });
     },
 
     async getWorldCache() {

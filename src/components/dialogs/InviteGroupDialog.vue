@@ -115,7 +115,10 @@
         () => inviteGroupDialog.value.visible,
         async (value) => {
             if (value) {
-                inviteGroupDialog.value.groupId = await configRepository.getString('inviteGroupLastGroup', '');
+                const lastGroupId = await configRepository.getString('inviteGroupLastGroup', '');
+                if (!inviteGroupDialog.value.groupId) {
+                    inviteGroupDialog.value.groupId = lastGroupId;
+                }
                 initDialog();
             } else {
                 await configRepository.setString('inviteGroupLastGroup', inviteGroupDialog.value.groupId);
@@ -176,7 +179,6 @@
     });
 
     /**
-     *
      * @param userId
      */
     function resolveUserDisplayName(userId) {
@@ -259,9 +261,6 @@
         }
     );
 
-    /**
-     *
-     */
     function initDialog() {
         const D = inviteGroupDialog.value;
         if (D.groupId) {
@@ -285,9 +284,6 @@
             });
         }
     }
-    /**
-     *
-     */
     function isAllowedToInviteToGroup() {
         const D = inviteGroupDialog.value;
         const groupId = D.groupId;
@@ -311,9 +307,6 @@
                 inviteGroupDialog.value.loading = false;
             });
     }
-    /**
-     *
-     */
     function sendGroupInvite() {
         modalStore
             .confirm({

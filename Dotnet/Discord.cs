@@ -162,7 +162,6 @@ namespace VRCX
                     _presence.Assets = null;
                     _presence.Party = null;
                     _presence.Timestamps = null;
-                    _lock.ExitWriteLock();
                     return;
                 }
 

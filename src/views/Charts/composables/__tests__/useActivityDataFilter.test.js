@@ -27,11 +27,7 @@ describe('useActivityDataFilter', () => {
     });
 
     it('returns all data when all filters are enabled', () => {
-        const data = [
-            [{ isFriend: true }],
-            [{ isFriend: false }],
-            [{ isFriend: true }, { isFriend: false }]
-        ];
+        const data = [[{ isFriend: true }], [{ isFriend: false }], [{ isFriend: true }, { isFriend: false }]];
         const { filteredActivityDetailData } = setup({ detailData: data });
         expect(filteredActivityDetailData.value).toHaveLength(3);
     });

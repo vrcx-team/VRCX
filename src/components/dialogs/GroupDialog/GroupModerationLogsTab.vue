@@ -37,7 +37,8 @@
             :table="tanstackTable"
             :loading="loading"
             :page-sizes="pageSizes"
-            :total-items="totalItems" />
+            :total-items="totalItems"
+            :on-page-change="handlePageChange" />
     </div>
 </template>
 
@@ -59,7 +60,8 @@
         tableData: { type: Object, required: true },
         auditLogTypes: { type: Array, default: () => [] },
         pageSizes: { type: Array, required: true },
-        columnContext: { type: Object, required: true }
+        columnContext: { type: Object, required: true },
+        handlePageChange: { type: Function, required: true }
     });
 
     const emit = defineEmits(['refresh', 'export']);
@@ -97,7 +99,10 @@
         },
         columns,
         getRowId: (row) => String(row?.id ?? `${row?.created_at ?? ''}:${row?.eventType ?? ''}`),
-        initialPagination: { pageIndex: 0, pageSize: props.tableData.pageSize ?? 15 }
+        initialPagination: { pageIndex: props.tableData.pageIndex ?? 0, pageSize: props.tableData.pageSize ?? 15 },
+        tableOptions: {
+            autoResetPageIndex: false
+        }
     });
 
     const totalItems = computed(() => tanstackTable.getFilteredRowModel().rows.length);

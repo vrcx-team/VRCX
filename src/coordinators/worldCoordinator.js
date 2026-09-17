@@ -20,10 +20,7 @@ import { applyFavorite } from './favoriteCoordinator';
 import { useFavoriteStore } from '../stores/favorite';
 import { useInstanceStore } from '../stores/instance';
 import { useLocationStore } from '../stores/location';
-import {
-    syncWorldSearchIndex,
-    removeWorldSearchIndex
-} from './searchIndexCoordinator';
+import { syncWorldSearchIndex, removeWorldSearchIndex } from './searchIndexCoordinator';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
 import { useWorldStore } from '../stores/world';
@@ -144,18 +141,11 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
                 D.loading = false;
                 D.isFavorite = favoriteStore.getCachedFavoritesByObjectId(D.id);
                 if (!D.isFavorite) {
-                    D.isFavorite =
-                        favoriteStore.localWorldFavoritesList.includes(D.id);
+                    D.isFavorite = favoriteStore.localWorldFavoritesList.includes(D.id);
                 }
-                let { isPC, isQuest, isIos } = getAvailablePlatforms(
-                    args.ref.unityPackages
-                );
-                D.avatarScalingDisabled = args.ref?.tags.includes(
-                    'feature_avatar_scaling_disabled'
-                );
-                D.focusViewDisabled = args.ref?.tags.includes(
-                    'feature_focus_view_disabled'
-                );
+                let { isPC, isQuest, isIos } = getAvailablePlatforms(args.ref.unityPackages);
+                D.avatarScalingDisabled = args.ref?.tags.includes('feature_avatar_scaling_disabled');
+                D.focusViewDisabled = args.ref?.tags.includes('feature_focus_view_disabled');
                 D.isPC = isPC;
                 D.isQuest = isQuest;
                 D.isIos = isIos;
@@ -165,12 +155,8 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
                         worldId: D.id
                     })
                     .then((args) => {
-                        if (
-                            args.params.worldId === worldStore.worldDialog.id &&
-                            worldStore.worldDialog.visible
-                        ) {
-                            worldStore.worldDialog.hasPersistData =
-                                args.json !== false;
+                        if (args.params.worldId === worldStore.worldDialog.id && worldStore.worldDialog.visible) {
+                            worldStore.worldDialog.hasPersistData = args.json !== false;
                         }
                     });
             }
@@ -179,7 +165,7 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
 
 /**
  * @param {object} json
- * @returns {object} ref
+ * @returns {object} Ref
  */
 export function applyWorld(json) {
     const worldStore = useWorldStore();
@@ -207,12 +193,8 @@ export function applyWorld(json) {
     const worldDialog = worldStore.worldDialog;
     if (worldDialog.visible && worldDialog.id === ref.id) {
         worldDialog.ref = ref;
-        worldDialog.avatarScalingDisabled = ref.tags?.includes(
-            'feature_avatar_scaling_disabled'
-        );
-        worldDialog.focusViewDisabled = ref.tags?.includes(
-            'feature_focus_view_disabled'
-        );
+        worldDialog.avatarScalingDisabled = ref.tags?.includes('feature_avatar_scaling_disabled');
+        worldDialog.focusViewDisabled = ref.tags?.includes('feature_focus_view_disabled');
         instanceStore.applyWorldDialogInstances();
         for (const room of worldDialog.rooms) {
             if (isRealInstance(room.tag)) {

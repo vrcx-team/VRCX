@@ -41,20 +41,18 @@ import { useVRCXUpdaterStore } from '../vrcxUpdater';
 
 describe('useVRCXUpdaterStore.setAutoUpdateVRCX', () => {
     beforeEach(async () => {
-        mocks.configRepository.getString.mockImplementation(
-            (key, defaultValue) => {
-                if (key === 'VRCX_autoUpdateVRCX') {
-                    return Promise.resolve('Off');
-                }
-                if (key === 'VRCX_id') {
-                    return Promise.resolve('test-vrcx-id');
-                }
-                if (key === 'VRCX_lastVRCXVersion') {
-                    return Promise.resolve('2026.1.0');
-                }
-                return Promise.resolve(defaultValue ?? '');
+        mocks.configRepository.getString.mockImplementation((key, defaultValue) => {
+            if (key === 'VRCX_autoUpdateVRCX') {
+                return Promise.resolve('Off');
             }
-        );
+            if (key === 'VRCX_id') {
+                return Promise.resolve('test-vrcx-id');
+            }
+            if (key === 'VRCX_lastVRCXVersion') {
+                return Promise.resolve('2026.1.0');
+            }
+            return Promise.resolve(defaultValue ?? '');
+        });
         mocks.configRepository.setString.mockResolvedValue(undefined);
 
         globalThis.AppApi = {
@@ -75,10 +73,7 @@ describe('useVRCXUpdaterStore.setAutoUpdateVRCX', () => {
 
         expect(store.autoUpdateVRCX).toBe('Off');
         expect(store.pendingVRCXUpdate).toBe(false);
-        expect(mocks.configRepository.setString).toHaveBeenCalledWith(
-            'VRCX_autoUpdateVRCX',
-            'Off'
-        );
+        expect(mocks.configRepository.setString).toHaveBeenCalledWith('VRCX_autoUpdateVRCX', 'Off');
     });
 
     test('updates autoUpdateVRCX for non-Off values and keeps pending flag', async () => {
@@ -89,9 +84,6 @@ describe('useVRCXUpdaterStore.setAutoUpdateVRCX', () => {
 
         expect(store.autoUpdateVRCX).toBe('Notify');
         expect(store.pendingVRCXUpdate).toBe(true);
-        expect(mocks.configRepository.setString).toHaveBeenCalledWith(
-            'VRCX_autoUpdateVRCX',
-            'Notify'
-        );
+        expect(mocks.configRepository.setString).toHaveBeenCalledWith('VRCX_autoUpdateVRCX', 'Notify');
     });
 });

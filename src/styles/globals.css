@@ -20,6 +20,7 @@
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);
     --card-foreground: oklch(0.145 0 0);
+    --profile-card: oklch(0.95 0 0 / 80%);
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.145 0 0);
     --primary: oklch(0.205 0 0);
@@ -72,21 +73,13 @@
     --visibility-private: #ef4444;
 }
 
-/* VRCX adjusted status colors (when official colors are disabled) */
-.vrcx-status-colors {
-    --status-online: #67c23a;
-    --status-joinme: #00b8ff;
-    --status-askme: #ff9500;
-    --status-busy: #ff2c2c;
-    --status-offline: #909399;
-}
-
 .dark {
     /* --background: oklch(0.145 0 0); */
     --background: oklch(0.205 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.205 0 0);
     --card-foreground: oklch(0.985 0 0);
+    --profile-card: oklch(0.235 0 0 / 80%);
     --popover: oklch(0.205 0 0);
     --popover-foreground: oklch(0.985 0 0);
     --primary: oklch(0.922 0 0);
@@ -215,17 +208,17 @@ html.dark .x-container {
     white-space: pre-line;
 }
 
-* {
-    @apply border-border outline-ring/50;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+    }
 }
 
 body {
     @apply bg-background text-foreground;
-    font-family:
-        var(--font-western), var(--font-symbol), var(--font-primary-cjk),
-        var(--font-fallback-cjk);
+    font-family: var(--font-western), var(--font-symbol), var(--font-primary-cjk), var(--font-fallback-cjk);
     margin: 0;
 }
 

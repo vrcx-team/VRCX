@@ -29,36 +29,29 @@ describe('useDateNavigation', () => {
     describe('changeSelectedDateFromBtn', () => {
         it('navigates to previous date', () => {
             const dates = ['2025-01-03', '2025-01-02', '2025-01-01'];
-            const { selectedDate, changeSelectedDateFromBtn, reloadData } =
-                setup(dates);
+            const { selectedDate, changeSelectedDateFromBtn, reloadData } = setup(dates);
 
             // Start at the latest date
             selectedDate.value = dayjs('2025-01-03').toDate();
 
             changeSelectedDateFromBtn(false); // go prev
-            expect(dayjs(selectedDate.value).format('YYYY-MM-DD')).toBe(
-                '2025-01-02'
-            );
+            expect(dayjs(selectedDate.value).format('YYYY-MM-DD')).toBe('2025-01-02');
             expect(reloadData).toHaveBeenCalled();
         });
 
         it('navigates to next date', () => {
             const dates = ['2025-01-03', '2025-01-02', '2025-01-01'];
-            const { selectedDate, changeSelectedDateFromBtn, reloadData } =
-                setup(dates);
+            const { selectedDate, changeSelectedDateFromBtn, reloadData } = setup(dates);
 
             selectedDate.value = dayjs('2025-01-02').toDate();
 
             changeSelectedDateFromBtn(true); // go next
-            expect(dayjs(selectedDate.value).format('YYYY-MM-DD')).toBe(
-                '2025-01-03'
-            );
+            expect(dayjs(selectedDate.value).format('YYYY-MM-DD')).toBe('2025-01-03');
             expect(reloadData).toHaveBeenCalled();
         });
 
         it('does nothing when allDateOfActivity is empty', () => {
-            const { selectedDate, changeSelectedDateFromBtn, reloadData } =
-                setup([]);
+            const { selectedDate, changeSelectedDateFromBtn, reloadData } = setup([]);
             const original = selectedDate.value;
 
             changeSelectedDateFromBtn(false);
@@ -68,17 +61,14 @@ describe('useDateNavigation', () => {
 
         it('finds nearest previous date when current date is not in array', () => {
             const dates = ['2025-01-05', '2025-01-03', '2025-01-01'];
-            const { selectedDate, changeSelectedDateFromBtn, reloadData } =
-                setup(dates);
+            const { selectedDate, changeSelectedDateFromBtn, reloadData } = setup(dates);
 
             // Set to a date not in the array
             selectedDate.value = dayjs('2025-01-04').toDate();
 
             changeSelectedDateFromBtn(false);
             // Should find 2025-01-03 as the closest previous date
-            expect(dayjs(selectedDate.value).format('YYYY-MM-DD')).toBe(
-                '2025-01-03'
-            );
+            expect(dayjs(selectedDate.value).format('YYYY-MM-DD')).toBe('2025-01-03');
             expect(reloadData).toHaveBeenCalled();
         });
 
@@ -89,9 +79,7 @@ describe('useDateNavigation', () => {
             selectedDate.value = dayjs('2025-01-01').toDate();
             changeSelectedDateFromBtn(false);
             // Should stay at or fallback to the last date
-            expect(dayjs(selectedDate.value).format('YYYY-MM-DD')).toBe(
-                '2025-01-01'
-            );
+            expect(dayjs(selectedDate.value).format('YYYY-MM-DD')).toBe('2025-01-01');
         });
 
         it('falls back to first date when going next at boundary', () => {
@@ -101,9 +89,7 @@ describe('useDateNavigation', () => {
             selectedDate.value = dayjs('2025-01-03').toDate();
             changeSelectedDateFromBtn(true);
             // Already at the latest, should fallback to first
-            expect(dayjs(selectedDate.value).format('YYYY-MM-DD')).toBe(
-                '2025-01-03'
-            );
+            expect(dayjs(selectedDate.value).format('YYYY-MM-DD')).toBe('2025-01-03');
         });
     });
 

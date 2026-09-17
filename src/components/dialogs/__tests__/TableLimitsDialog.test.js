@@ -39,8 +39,7 @@ vi.mock('@/components/ui/field', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="btn" :disabled="$attrs.disabled" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="btn" :disabled="$attrs.disabled" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 vi.mock('@/components/ui/input-group', () => ({

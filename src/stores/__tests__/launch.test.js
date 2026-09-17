@@ -108,15 +108,10 @@ describe('useLaunchStore', () => {
 
     describe('showLaunchDialog', () => {
         test('sets dialog visible with tag and shortName', async () => {
-            await store.showLaunchDialog(
-                'wrld_123:456~friends(usr_abc)',
-                'abc'
-            );
+            await store.showLaunchDialog('wrld_123:456~friends(usr_abc)', 'abc');
 
             expect(store.launchDialogData.visible).toBe(true);
-            expect(store.launchDialogData.tag).toBe(
-                'wrld_123:456~friends(usr_abc)'
-            );
+            expect(store.launchDialogData.tag).toBe('wrld_123:456~friends(usr_abc)');
             expect(store.launchDialogData.shortName).toBe('abc');
         });
 
@@ -137,13 +132,8 @@ describe('useLaunchStore', () => {
 
     describe('getLaunchUrl', () => {
         test('uses provided shortName for non-public instance', async () => {
-            const url = await store.getLaunchUrl(
-                'wrld_123:456~friends(usr_abc)',
-                'myShort'
-            );
-            expect(url).toBe(
-                'vrchat://launch?ref=vrcx.app&id=wrld_123:456~friends(usr_abc)&shortName=myShort'
-            );
+            const url = await store.getLaunchUrl('wrld_123:456~friends(usr_abc)', 'myShort');
+            expect(url).toBe('vrchat://launch?ref=vrcx.app&id=wrld_123:456~friends(usr_abc)&shortName=myShort');
             expect(mockGetInstanceShortName).not.toHaveBeenCalled();
         });
 
@@ -152,10 +142,7 @@ describe('useLaunchStore', () => {
                 json: { shortName: 'fetched123' }
             });
 
-            const url = await store.getLaunchUrl(
-                'wrld_123:456~friends(usr_abc)',
-                ''
-            );
+            const url = await store.getLaunchUrl('wrld_123:456~friends(usr_abc)', '');
             expect(url).toContain('shortName=fetched123');
             expect(mockGetInstanceShortName).toHaveBeenCalled();
         });
@@ -165,23 +152,15 @@ describe('useLaunchStore', () => {
                 json: { shortName: '', secureName: 'secure456' }
             });
 
-            const url = await store.getLaunchUrl(
-                'wrld_123:456~friends(usr_abc)',
-                ''
-            );
+            const url = await store.getLaunchUrl('wrld_123:456~friends(usr_abc)', '');
             expect(url).toContain('shortName=secure456');
         });
 
         test('omits shortName when API returns nothing', async () => {
             mockGetInstanceShortName.mockResolvedValue({ json: null });
 
-            const url = await store.getLaunchUrl(
-                'wrld_123:456~friends(usr_abc)',
-                ''
-            );
-            expect(url).toBe(
-                'vrchat://launch?ref=vrcx.app&id=wrld_123:456~friends(usr_abc)'
-            );
+            const url = await store.getLaunchUrl('wrld_123:456~friends(usr_abc)', '');
+            expect(url).toBe('vrchat://launch?ref=vrcx.app&id=wrld_123:456~friends(usr_abc)');
             expect(url).not.toContain('shortName');
         });
 

@@ -21,7 +21,12 @@
                         @input="updateSearchText"
                         @keyup.enter="search" />
                     <TooltipWrapper side="bottom" :content="t('view.search.clear_results_tooltip')">
-                        <Button class="rounded-full ml-2" size="icon" variant="ghost" @click="handleClearSearch">
+                        <Button
+                            class="rounded-full ml-2"
+                            size="icon"
+                            variant="ghost"
+                            :ariaLabel="t('view.search.clear_results_tooltip')"
+                            @click="handleClearSearch">
                             <Trash2 />
                         </Button>
                     </TooltipWrapper>
@@ -30,10 +35,6 @@
             <TabsContent value="user" class="flex flex-col min-h-0 flex-1">
                 <div class="flex flex-col min-h-0" style="flex: 9">
                     <div class="shrink-0 mb-3 flex justify-end">
-                        <label class="inline-flex items-center gap-2 ml-2">
-                            <Checkbox v-model="searchUserByBio" />
-                            <span>{{ t('view.search.user.search_by_bio') }}</span>
-                        </label>
                         <label class="inline-flex items-center gap-2 ml-2">
                             <Checkbox v-model="searchUserSortByLastLoggedIn" />
                             <span>{{ t('view.search.user.sort_by_last_logged_in') }}</span>
@@ -49,13 +50,14 @@
                                 :key="user.id"
                                 class="cursor-pointer hover:bg-muted x-hover-list rounded-none"
                                 @click="showUserDialog(user.id)">
-                                <ItemMedia variant="image">
-                                    <Avatar>
+                                <ItemMedia class="relative size-10">
+                                    <Avatar class="size-full">
                                         <AvatarImage :src="userImage(user, true)" loading="lazy" />
                                         <AvatarFallback>
                                             <User class="size-5 text-muted-foreground" />
                                         </AvatarFallback>
                                     </Avatar>
+                                    <IconFrame :icon-frame="user.iconFrame" />
                                 </ItemMedia>
                                 <ItemContent class="min-w-0">
                                     <ItemTitle class="flex items-center gap-1.5 max-w-full">
@@ -300,6 +302,7 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Settings, Trash2, User, Users } from 'lucide-vue-next';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+    import IconFrame from '@/components/IconFrame.vue';
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { Spinner } from '@/components/ui/spinner';
     import AvatarProviderDialog from '../Settings/dialogs/AvatarProviderDialog.vue';
@@ -377,7 +380,6 @@
 
     const {
         searchUserParams,
-        searchUserByBio,
         searchUserSortByLastLoggedIn,
         isSearchUserLoading,
         searchUser,
@@ -461,9 +463,6 @@
         return convertFileUrlToImageUrl(url);
     }
 
-    /**
-     *
-     */
     function handleClearSearch() {
         clearUserSearch();
         clearWorldSearch();
@@ -473,16 +472,12 @@
     }
 
     /**
-     *
      * @param text
      */
     function updateSearchText(text) {
         searchText.value = text;
     }
 
-    /**
-     *
-     */
     function search() {
         if (activeSearchTab.value === 'avatar' && (!searchText.value || searchText.value.length < 3)) {
             toast.warning(t('view.search.avatar.min_chars_warning'));

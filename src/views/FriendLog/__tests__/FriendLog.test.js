@@ -97,8 +97,7 @@ vi.mock('../../../components/ui/input-group', () => ({
     InputGroupField: {
         props: ['modelValue'],
         emits: ['update:modelValue'],
-        template:
-            '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />'
+        template: '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />'
     }
 }));
 
@@ -110,8 +109,7 @@ vi.mock('../../../services/config', () => ({
 
 vi.mock('../../../services/database', () => ({
     database: {
-        deleteFriendLogHistory: (...args) =>
-            mocks.deleteFriendLogHistory(...args)
+        deleteFriendLogHistory: (...args) => mocks.deleteFriendLogHistory(...args)
     }
 }));
 
@@ -166,11 +164,7 @@ describe('FriendLog.vue', () => {
                 created_at: '2026-03-10T00:00:00.000Z'
             }
         ];
-        mocks.friendLogTable.value.filters = [
-            { value: ['Friend'] },
-            { value: 'ali' },
-            { value: true }
-        ];
+        mocks.friendLogTable.value.filters = [{ value: ['Friend'] }, { value: 'ali' }, { value: true }];
         const wrapper = mount(FriendLog);
 
         expect(wrapper.vm.friendLogDisplayData).toEqual([
@@ -189,10 +183,7 @@ describe('FriendLog.vue', () => {
         await wrapper.get('[data-testid="set-type-filter"]').trigger('click');
 
         expect(mocks.friendLogTable.value.filters[0].value).toEqual(['Friend']);
-        expect(mocks.configSetString).toHaveBeenCalledWith(
-            'VRCX_friendLogTableFilters',
-            JSON.stringify(['Friend'])
-        );
+        expect(mocks.configSetString).toHaveBeenCalledWith('VRCX_friendLogTableFilters', JSON.stringify(['Friend']));
     });
 
     test('deletes friend log row and writes to database', () => {
@@ -202,10 +193,7 @@ describe('FriendLog.vue', () => {
 
         wrapper.vm.deleteFriendLog(row);
 
-        expect(mocks.removeFromArray).toHaveBeenCalledWith(
-            mocks.friendLogTable.value.data,
-            row
-        );
+        expect(mocks.removeFromArray).toHaveBeenCalledWith(mocks.friendLogTable.value.data, row);
         expect(mocks.deleteFriendLogHistory).toHaveBeenCalledWith(row);
     });
 

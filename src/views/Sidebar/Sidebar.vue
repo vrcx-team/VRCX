@@ -21,6 +21,7 @@
                         variant="ghost"
                         size="icon-sm"
                         :disabled="isRefreshFriendsLoading"
+                        :ariaLabel="t('side_panel.refresh_tooltip')"
                         @click="runRefreshFriendsListFlow">
                         <Spinner v-if="isRefreshFriendsLoading" />
                         <RefreshCw v-else />
@@ -34,6 +35,7 @@
                                     class="rounded-full relative"
                                     variant="ghost"
                                     size="icon-sm"
+                                    :ariaLabel="t('side_panel.notification_center.title')"
                                     @click="isNotificationCenterOpen = !isNotificationCenterOpen">
                                     <Bell />
                                     <span class="absolute top-1 right-1.25 size-1.5 rounded-full bg-red-500" />
@@ -51,6 +53,7 @@
                             class="rounded-full relative"
                             variant="ghost"
                             size="icon-sm"
+                            :ariaLabel="t('side_panel.notification_center.title')"
                             @click="isNotificationCenterOpen = !isNotificationCenterOpen"
                             @contextmenu.prevent="
                                 toast.info(t('side_panel.notification_center.no_unseen_notifications'))
@@ -61,7 +64,11 @@
                 </template>
                 <Popover v-model:open="isSettingsPopoverOpen">
                     <PopoverTrigger as-child>
-                        <Button class="rounded-full" variant="ghost" size="icon-sm">
+                        <Button
+                            class="rounded-full"
+                            variant="ghost"
+                            size="icon-sm"
+                            :ariaLabel="t('nav_tooltip.settings')">
                             <Settings />
                         </Button>
                     </PopoverTrigger>
@@ -75,25 +82,36 @@
                                 <FieldLabel>{{ t('side_panel.settings.group_by_instance') }}</FieldLabel>
                                 <Switch
                                     :model-value="isSidebarGroupByInstance"
+                                    :ariaLabel="t('side_panel.settings.group_by_instance')"
                                     @update:modelValue="setIsSidebarGroupByInstance" />
                             </Field>
                             <Field v-if="isSidebarGroupByInstance" orientation="horizontal">
                                 <FieldLabel>{{ t('side_panel.settings.hide_friends_in_same_instance') }}</FieldLabel>
                                 <Switch
                                     :model-value="isHideFriendsInSameInstance"
+                                    :ariaLabel="t('side_panel.settings.hide_friends_in_same_instance')"
                                     @update:modelValue="setIsHideFriendsInSameInstance" />
                             </Field>
                             <Field v-if="isSidebarGroupByInstance" orientation="horizontal">
                                 <FieldLabel>{{ t('side_panel.settings.same_instance_above_favorites') }}</FieldLabel>
                                 <Switch
                                     :model-value="isSameInstanceAboveFavorites"
+                                    :ariaLabel="t('side_panel.settings.same_instance_above_favorites')"
                                     @update:modelValue="setIsSameInstanceAboveFavorites" />
                             </Field>
                             <Field orientation="horizontal">
                                 <FieldLabel>{{ t('side_panel.settings.split_favorite_friends') }}</FieldLabel>
                                 <Switch
                                     :model-value="isSidebarDivideByFriendGroup"
+                                    :ariaLabel="t('side_panel.settings.split_favorite_friends')"
                                     @update:modelValue="setIsSidebarDivideByFriendGroup" />
+                            </Field>
+                            <Field orientation="horizontal">
+                                <FieldLabel>{{ t('view.settings.appearance.appearance.show_cosmetics') }}</FieldLabel>
+                                <Switch
+                                    :model-value="sidebarCosmetics"
+                                    :ariaLabel="t('view.settings.appearance.appearance.show_cosmetics')"
+                                    @update:modelValue="setSidebarCosmetics" />
                             </Field>
 
                             <Separator />
@@ -344,7 +362,8 @@
         useFriendStore,
         useGroupStore,
         useNotificationStore,
-        useNotificationsSettingsStore
+        useNotificationsSettingsStore,
+        useVrStore
     } from '../../stores';
     import { runRefreshFriendsListFlow } from '../../coordinators/friendSyncCoordinator';
     import { normalizeFavoriteGroupsChange, resolveFavoriteGroups } from './sidebarSettingsUtils';
@@ -361,6 +380,7 @@
     const notificationStore = useNotificationStore();
     const { isNotificationCenterOpen, hasUnseenNotifications } = storeToRefs(notificationStore);
     const { notificationLayout } = storeToRefs(useNotificationsSettingsStore());
+    const { saveOpenVROption } = useVrStore();
     const quickSearchStore = useQuickSearchStore();
     const { t } = useI18n();
 
@@ -371,16 +391,10 @@
     whenever(keys['Meta+k'], () => openQuickSearch());
     whenever(keys['Ctrl+k'], () => openQuickSearch());
 
-    /**
-     *
-     */
     function openQuickSearch() {
         quickSearchStore.open();
     }
 
-    /**
-     *
-     */
     function markNotificationsRead() {
         notificationStore.markAllAsSeen();
     }
@@ -394,7 +408,8 @@
         isHideFriendsInSameInstance,
         isSameInstanceAboveFavorites,
         isSidebarDivideByFriendGroup,
-        sidebarFavoriteGroups
+        sidebarFavoriteGroups,
+        sidebarCosmetics
     } = storeToRefs(appearanceSettingsStore);
     const {
         setSidebarSortMethod1,
@@ -404,7 +419,8 @@
         setIsHideFriendsInSameInstance,
         setIsSameInstanceAboveFavorites,
         setIsSidebarDivideByFriendGroup,
-        setSidebarFavoriteGroups
+        setSidebarFavoriteGroups,
+        setSidebarCosmetics
     } = appearanceSettingsStore;
 
     const favoriteStore = useFavoriteStore();
@@ -423,7 +439,6 @@
     );
 
     /**
-     *
      * @param value
      */
     function handleFavoriteGroupsChange(value) {

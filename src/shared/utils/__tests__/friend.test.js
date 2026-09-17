@@ -43,9 +43,7 @@ describe('Friend Utils', () => {
 
     describe('isFriendOnline', () => {
         test('returns true for online friends', () => {
-            expect(
-                isFriendOnline({ state: 'online', ref: { location: 'wrld_1' } })
-            ).toBe(true);
+            expect(isFriendOnline({ state: 'online', ref: { location: 'wrld_1' } })).toBe(true);
         });
 
         test('returns true for non-online friends with non-private location', () => {
@@ -169,10 +167,7 @@ describe('Friend Utils', () => {
         });
 
         test('applies multiple sort methods in order (tie-breaking)', () => {
-            const fn = getFriendsSortFunction([
-                'Sort by Status',
-                'Sort Alphabetically'
-            ]);
+            const fn = getFriendsSortFunction(['Sort by Status', 'Sort Alphabetically']);
             // Same status → tie → falls to alphabetical
             const a = {
                 name: 'Alice',
@@ -186,10 +181,7 @@ describe('Friend Utils', () => {
         });
 
         test('first sort wins when not tied', () => {
-            const fn = getFriendsSortFunction([
-                'Sort by Status',
-                'Sort Alphabetically'
-            ]);
+            const fn = getFriendsSortFunction(['Sort by Status', 'Sort Alphabetically']);
             const joinMe = {
                 name: 'Zack',
                 ref: { status: 'join me', state: 'online' }

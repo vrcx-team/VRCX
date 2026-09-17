@@ -245,7 +245,6 @@
     });
 
     /**
-     *
      * @param value
      */
     function setInviteUserIds(value) {
@@ -265,7 +264,6 @@
     });
 
     /**
-     *
      * @param userId
      */
     function resolveUserDisplayName(userId) {
@@ -276,15 +274,11 @@
         return friend?.ref?.displayName ?? friend?.name ?? String(userId);
     }
 
-    /**
-     *
-     */
     function closeInviteDialog() {
         emit('closeInviteDialog');
     }
 
     /**
-     *
      * @param params
      * @param userId
      */
@@ -299,9 +293,6 @@
         sendInviteDialogVisible.value = true;
     }
 
-    /**
-     *
-     */
     function addSelfToInvite() {
         const D = props.inviteDialog;
         if (!D.userIds.includes(currentUser.value.id)) {
@@ -309,9 +300,6 @@
         }
     }
 
-    /**
-     *
-     */
     function addFriendsInInstanceToInvite() {
         const D = props.inviteDialog;
         for (const friend of D.friendsInInstance) {
@@ -382,9 +370,6 @@
         }
     }
 
-    /**
-     *
-     */
     function sendInvite() {
         modalStore
             .confirm({

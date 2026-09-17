@@ -1,7 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { ref } from 'vue';
-
 const mocks = vi.hoisted(() => ({
     makeRef: (value) => ({ value, __v_isRef: true }),
     handleSessionsEventFilterChange: vi.fn(),
@@ -20,11 +18,7 @@ const sessionsSearch = mocks.makeRef('');
 const sessionsDateFrom = mocks.makeRef('');
 const sessionsDateTo = mocks.makeRef('');
 const sessionsEventFilterSelection = mocks.makeRef(['All']);
-const sessionsEventFilterTypes = mocks.makeRef([
-    'OnPlayerJoined',
-    'OnPlayerLeft',
-    'VideoPlay'
-]);
+const sessionsEventFilterTypes = mocks.makeRef(['OnPlayerJoined', 'OnPlayerLeft', 'VideoPlay']);
 const sessionsDateRangeMaxDays = mocks.makeRef(7);
 const weekStartsOn = mocks.makeRef(0);
 
@@ -58,16 +52,12 @@ vi.mock('../../../stores', () => ({
         sessionsEventFilterSelection,
         sessionsEventFilterTypes,
         sessionsDateRangeMaxDays,
-        toggleSessionsVipFilter: (...args) =>
-            mocks.toggleSessionsVipFilter(...args),
-        handleSessionsEventFilterChange: (...args) =>
-            mocks.handleSessionsEventFilterChange(...args),
+        toggleSessionsVipFilter: (...args) => mocks.toggleSessionsVipFilter(...args),
+        handleSessionsEventFilterChange: (...args) => mocks.handleSessionsEventFilterChange(...args),
         setSessionsSearch: (...args) => mocks.setSessionsSearch(...args),
         setSessionsDateRange: (...args) => mocks.setSessionsDateRange(...args),
-        clearSessionsDateRange: (...args) =>
-            mocks.clearSessionsDateRange(...args),
-        loadMoreSessionsSegments: (...args) =>
-            mocks.loadMoreSessionsSegments(...args)
+        clearSessionsDateRange: (...args) => mocks.clearSessionsDateRange(...args),
+        loadMoreSessionsSegments: (...args) => mocks.loadMoreSessionsSegments(...args)
     }),
     useAppearanceSettingsStore: () => ({
         weekStartsOn
@@ -164,9 +154,7 @@ vi.mock('lucide-vue-next', () => ({
 import GameLogSessions from '../components/GameLogSessions.vue';
 
 function clickButtonByText(wrapper, text) {
-    const button = wrapper
-        .findAll('button')
-        .find((node) => node.text().includes(text));
+    const button = wrapper.findAll('button').find((node) => node.text().includes(text));
     if (!button) {
         throw new Error(`Cannot find button with text: ${text}`);
     }
@@ -196,9 +184,7 @@ describe('GameLogSessions.vue', () => {
 
         await wrapper.get('[data-testid="select-join"]').trigger('click');
 
-        expect(mocks.handleSessionsEventFilterChange).toHaveBeenCalledWith([
-            'OnPlayerJoined'
-        ]);
+        expect(mocks.handleSessionsEventFilterChange).toHaveBeenCalledWith(['OnPlayerJoined']);
     });
 
     test('applies sessions search on change', async () => {

@@ -10,7 +10,8 @@
                     <ToggleGroupItem
                         value="grid"
                         class="px-2"
-                        :class="viewMode === 'grid' && 'bg-accent text-accent-foreground'">
+                        :class="viewMode === 'grid' && 'bg-accent text-accent-foreground'"
+                        :ariaLabel="t('view.my_avatars.grid_view')">
                         <LayoutGrid class="size-4" />
                     </ToggleGroupItem>
                 </TooltipWrapper>
@@ -18,7 +19,8 @@
                     <ToggleGroupItem
                         value="table"
                         class="px-2"
-                        :class="viewMode === 'table' && 'bg-accent text-accent-foreground'">
+                        :class="viewMode === 'table' && 'bg-accent text-accent-foreground'"
+                        :ariaLabel="t('view.my_avatars.table_view')">
                         <List class="size-4" />
                     </ToggleGroupItem>
                 </TooltipWrapper>
@@ -128,7 +130,11 @@
 
             <DropdownMenu v-if="viewMode === 'grid'">
                 <DropdownMenuTrigger as-child>
-                    <Button class="rounded-full" size="icon-sm" variant="ghost">
+                    <Button
+                        class="rounded-full"
+                        size="icon-sm"
+                        variant="ghost"
+                        :ariaLabel="t('view.settings.appearance.appearance.header')">
                         <SettingsIcon class="size-4" />
                     </Button>
                 </DropdownMenuTrigger>
@@ -158,7 +164,12 @@
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button size="icon-sm" variant="ghost" :disabled="isLoading" @click="refreshAvatars">
+            <Button
+                size="icon-sm"
+                variant="ghost"
+                :disabled="isLoading"
+                @click="refreshAvatars"
+                :ariaLabel="t('view.charts.instance_activity.refresh')">
                 <RefreshCw :class="{ 'animate-spin': isLoading }" />
             </Button>
         </div>
@@ -244,7 +255,7 @@
                 :style="{ height: `${virtualizer?.getTotalSize?.() ?? 0}px` }">
                 <div
                     v-for="vItem in virtualItems"
-                    :key="String(vItem.virtualItem.key)"
+                    :key="vItem.row?.key ?? String(vItem.virtualItem.index)"
                     class="absolute left-0 top-0 w-full box-border pb-2"
                     :data-index="vItem.virtualItem.index"
                     :ref="virtualizer.measureElement"
@@ -258,7 +269,6 @@
                         <MyAvatarCard
                             v-for="avatar in vItem.row.items"
                             :key="avatar.id"
-                            v-memo="[currentAvatarId, cardScale]"
                             :avatar="avatar"
                             :current-avatar-id="currentAvatarId"
                             :card-scale="cardScale"
@@ -314,7 +324,7 @@
     import { useI18n } from 'vue-i18n';
     import { useVirtualizer } from '@tanstack/vue-virtual';
 
-    import { useAppearanceSettingsStore, useAvatarStore, useModalStore, useUserStore } from '../../stores';
+    import { useAppearanceSettingsStore, useModalStore, useUserStore } from '../../stores';
     import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from '../../components/ui/context-menu';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
     import { Field, FieldContent, FieldLabel } from '../../components/ui/field';
@@ -353,7 +363,6 @@
 
     const { t } = useI18n();
     const appearanceSettingsStore = useAppearanceSettingsStore();
-    const avatarStore = useAvatarStore();
     const modalStore = useModalStore();
 
     const { currentUser } = storeToRefs(useUserStore());
@@ -409,7 +418,6 @@
     });
 
     /**
-     *
      * @param tag
      */
     function toggleTagFilter(tag) {
@@ -419,9 +427,6 @@
         tagFilters.value = next;
     }
 
-    /**
-     *
-     */
     function clearFilters() {
         releaseStatusFilter.value = 'all';
         tagFilters.value = new Set();
@@ -461,7 +466,6 @@
     });
 
     /**
-     *
      * @param avatarId
      */
     function handleShowAvatarDialog(avatarId) {
@@ -469,7 +473,6 @@
     }
 
     /**
-     *
      * @param avatarId
      */
     function handleWearAvatar(avatarId) {
@@ -491,7 +494,6 @@
     }
 
     /**
-     *
      * @param command
      * @param labelKey
      * @param fn
@@ -510,7 +512,6 @@
     }
 
     /**
-     *
      * @param action
      * @param avatarRef
      */
@@ -607,7 +608,6 @@
     }
 
     /**
-     *
      * @param root0
      * @param root0.avatarId
      * @param root0.tags
@@ -641,7 +641,6 @@
     }
 
     /**
-     *
      * @param e
      */
     function onFileChangeAvatarImage(e) {
@@ -659,8 +658,7 @@
     }
 
     /**
-     *
-     * @param blob
+     * @param {Blob} blob
      */
     async function onCropConfirmAvatar(blob) {
         const avatarRef = changeImageAvatarRef.value;
@@ -722,6 +720,7 @@
     const virtualizer = useVirtualizer(
         computed(() => ({
             count: gridRows.value.length,
+            getItemKey: (index) => gridRows.value[index]?.key ?? `avatar-row:${index}`,
             getScrollElement: () => gridScrollRef.value,
             estimateSize: (index) => estimateRowHeight(gridRows.value[index]?.items?.length ?? 0),
             overscan: 5
@@ -739,7 +738,13 @@
     watch(gridContainerRefEl, (el) => {
         gridContainerRef.value = el;
     });
-    watch([cardScale, cardSpacing, gridRows], () => {
+
+    const gridLayoutSignature = computed(() => {
+        const firstRowItems = gridRows.value[0]?.items?.length ?? 0;
+        return `${filteredAvatars.value.length}:${firstRowItems}:${cardScale.value}:${cardSpacing.value}`;
+    });
+
+    watch(gridLayoutSignature, () => {
         nextTick(() => {
             updateContainerWidth();
             virtualizer.value?.measure?.();
@@ -747,7 +752,6 @@
     });
 
     /**
-     *
      * @param value
      */
     function handleViewModeChange(value) {
@@ -770,7 +774,6 @@
     });
 
     /**
-     *
      * @param row
      */
     function handleRowClick(row) {
@@ -778,7 +781,6 @@
     }
 
     /**
-     *
      * @param row
      */
     function getRowClass(row) {
@@ -809,9 +811,6 @@
         };
     };
 
-    /**
-     *
-     */
     async function refreshAvatars() {
         if (isLoading.value) {
             return;

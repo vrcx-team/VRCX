@@ -17,7 +17,11 @@
                     <div>
                         <Popover>
                             <PopoverTrigger asChild>
-                                <Button class="rounded-full mr-2" size="icon" variant="ghost">
+                                <Button
+                                    class="rounded-full mr-2"
+                                    size="icon"
+                                    variant="ghost"
+                                    :ariaLabel="t('view.charts.instance_activity.settings.header')">
                                     <Settings />
                                 </Button>
                             </PopoverTrigger>
@@ -27,8 +31,16 @@
                                         <FieldLabel class="friend-view__settings-label">{{
                                             t('view.friends_locations.separate_same_instance_friends')
                                         }}</FieldLabel>
-                                        <FieldContent>
+                                        <FieldContent class="items-end">
                                             <Switch v-model="showSameInstance" />
+                                        </FieldContent>
+                                    </Field>
+                                    <Field orientation="horizontal" class="friend-view__settings-row">
+                                        <FieldLabel class="friend-view__settings-label">{{
+                                            t('view.settings.appearance.appearance.show_cosmetics')
+                                        }}</FieldLabel>
+                                        <FieldContent class="items-end">
+                                            <Switch v-model="showCosmetics" />
                                         </FieldContent>
                                     </Field>
                                     <Field orientation="horizontal" class="friend-view__settings-row">
@@ -121,6 +133,7 @@
                                     :friend="card.friend"
                                     :card-scale="cardScale"
                                     :card-spacing="cardSpacing"
+                                    :show-cosmetics="showCosmetics"
                                     :display-instance-info="card.displayInstanceInfo" />
                             </div>
                         </template>
@@ -245,12 +258,21 @@
     });
 
     const showSameInstanceBase = ref(false);
+    const showCosmeticsBase = ref(true);
 
     const showSameInstance = computed({
         get: () => showSameInstanceBase.value,
         set: (value) => {
             showSameInstanceBase.value = value;
             configRepository.setBool('VRCX_FriendLocationShowSameInstance', value);
+        }
+    });
+
+    const showCosmetics = computed({
+        get: () => showCosmeticsBase.value,
+        set: (value) => {
+            showCosmeticsBase.value = value;
+            configRepository.setBool('VRCX_FriendLocationShowCosmetics', value);
         }
     });
 
@@ -452,7 +474,6 @@
     );
 
     /**
-     *
      * @param groupKey
      */
     function toggleGroupCollapse(groupKey) {
@@ -880,15 +901,13 @@
         });
     });
 
-    /**
-     *
-     */
     async function loadInitialSettings() {
         try {
-            const [storedScale, storedSpacing, storedShowSameInstance] = await Promise.all([
+            const [storedScale, storedSpacing, storedShowSameInstance, storedShowCosmetics] = await Promise.all([
                 configRepository.getString('VRCX_FriendLocationCardScale', '1'),
                 configRepository.getString('VRCX_FriendLocationCardSpacing', '1'),
-                configRepository.getBool('VRCX_FriendLocationShowSameInstance', null)
+                configRepository.getBool('VRCX_FriendLocationShowSameInstance', null),
+                configRepository.getBool('VRCX_FriendLocationShowCosmetics', true)
             ]);
 
             const parsedScale = parseFloat(storedScale);
@@ -904,6 +923,7 @@
             if (storedShowSameInstance !== null && storedShowSameInstance !== undefined) {
                 showSameInstanceBase.value = Boolean(storedShowSameInstance);
             }
+            showCosmeticsBase.value = Boolean(storedShowCosmetics);
         } catch (error) {
             console.error('Failed to load Friend Location preferences', error);
         } finally {

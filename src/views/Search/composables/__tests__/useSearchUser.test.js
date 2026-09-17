@@ -54,9 +54,6 @@ describe('useSearchUser', () => {
 
         await api.handleMoreSearchUser(-1);
 
-        expect(mocks.moreSearchUser).toHaveBeenCalledWith(
-            -1,
-            api.searchUserParams.value
-        );
+        expect(mocks.moreSearchUser).toHaveBeenCalledWith(-1, api.searchUserParams.value);
     });
 });

@@ -318,6 +318,30 @@
                                 </div>
                             </div>
                             <div
+                                v-else-if="feed.type === 'group.event.created'"
+                                class="x-friend-item"
+                                :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
+                                <div class="detail">
+                                    <span class="extra flex items-center">
+                                        <span class="time">{{ formatDate(feed.created_at) }}</span>
+                                        <CalendarPlus class="mr-5 h-5 w-5" />
+                                        <span class="name" v-text="feed.message"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div
+                                v-else-if="feed.type === 'group.event.starting'"
+                                class="x-friend-item"
+                                :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
+                                <div class="detail">
+                                    <span class="extra flex items-center">
+                                        <span class="time">{{ formatDate(feed.created_at) }}</span>
+                                        <CalendarCheck class="mr-5 h-5 w-5" />
+                                        <span class="name" v-text="feed.message"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div
                                 v-else-if="feed.type === 'group.informative'"
                                 class="x-friend-item"
                                 :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
@@ -887,6 +911,30 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
+                                        <span class="name" v-text="feed.message"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div
+                                v-else-if="feed.type === 'group.event.created'"
+                                class="x-friend-item"
+                                :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
+                                <div class="detail">
+                                    <span class="extra flex items-center">
+                                        <span class="time">{{ formatDate(feed.created_at) }}</span>
+                                        <CalendarPlus class="mr-5 h-5 w-5" />
+                                        <span class="name" v-text="feed.message"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div
+                                v-else-if="feed.type === 'group.event.starting'"
+                                class="x-friend-item"
+                                :class="{ friend: feed.isFriend, favorite: feed.isFavorite }">
+                                <div class="detail">
+                                    <span class="extra flex items-center">
+                                        <span class="time">{{ formatDate(feed.created_at) }}</span>
+                                        <Clock class="mr-5 h-5 w-5" />
                                         <span class="name" v-text="feed.message"></span>
                                     </span>
                                 </div>
@@ -1594,6 +1642,7 @@
 
     /**
      * VR overlay config payload (passed as JSON string).
+     *
      * @typedef {object} VrConfigVarsPayload
      * @property {boolean} overlayNotifications
      * @property {boolean} hideDevicesFromFeed
@@ -1643,7 +1692,6 @@
     }
 
     /**
-     *
      * @param count
      */
     function updateOnlineFriendCount(count) {
@@ -1651,7 +1699,6 @@
     }
 
     /**
-     *
      * @param json
      */
     function nowPlayingUpdate(json) {
@@ -1672,7 +1719,6 @@
     }
 
     /**
-     *
      * @param json
      */
     function lastLocationUpdate(json) {
@@ -1680,7 +1726,6 @@
     }
 
     /**
-     *
      * @param json
      */
     function wristFeedUpdate(json) {
@@ -1688,9 +1733,6 @@
         updateFeedLength();
     }
 
-    /**
-     *
-     */
     function updateFeedLength() {
         if (vrState.wristFeed.length === 0) {
             return;
@@ -1710,9 +1752,6 @@
         }
     }
 
-    /**
-     *
-     */
     async function refreshCustomScript() {
         if (document.contains(document.getElementById('vr-custom-script'))) {
             document.getElementById('vr-custom-script').remove();
@@ -1729,7 +1768,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function setNotyOpacity(value) {
@@ -1745,9 +1783,6 @@
         element.innerHTML = `.noty_layout { opacity: ${opacity}; }`;
     }
 
-    /**
-     *
-     */
     async function updateStatsLoop() {
         try {
             vrState.currentTime = new Date()
@@ -1840,9 +1875,6 @@
         updateStatsLoopTimeoutId = workerTimers.setTimeout(() => updateStatsLoop(), 500);
     }
 
-    /**
-     *
-     */
     async function updateVrElectronLoop() {
         try {
             const overlayQueue = await AppApiVr.GetExecuteVrOverlayFunctionQueue();
@@ -1869,7 +1901,6 @@
     }
 
     /**
-     *
      * @param json
      */
     function playNoty(json) {
@@ -1955,6 +1986,12 @@
             case 'group.announcement':
                 text = noty.message;
                 break;
+            case 'group.event.created':
+                text = noty.message;
+                break;
+            case 'group.event.starting':
+                text = noty.message;
+                break;
             case 'group.informative':
                 text = noty.message;
                 break;
@@ -2038,7 +2075,6 @@
     }
 
     /**
-     *
      * @param status
      */
     function statusClass(status) {
@@ -2062,16 +2098,10 @@
         return style;
     }
 
-    /**
-     *
-     */
     function notyClear() {
         Noty.closeAll();
     }
 
-    /**
-     *
-     */
     function cleanHudFeedLoop() {
         if (!vrState.cleanHudFeedLoopStatus) {
             return;
@@ -2087,9 +2117,6 @@
         cleanHudFeedLoopTimeoutId = workerTimers.setTimeout(() => cleanHudFeedLoop(), 500);
     }
 
-    /**
-     *
-     */
     function cleanHudFeed() {
         const dt = Date.now();
         vrState.hudFeed.forEach((item) => {
@@ -2107,7 +2134,6 @@
     }
 
     /**
-     *
      * @param json
      */
     function addEntryHudFeed(json) {
@@ -2128,7 +2154,6 @@
     }
 
     /**
-     *
      * @param json
      */
     function updateHudFeedTag(json) {
@@ -2141,16 +2166,12 @@
     }
 
     /**
-     *
      * @param json
      */
     function updateHudTimeout(json) {
         vrState.hudTimeout = JSON.parse(json);
     }
 
-    /**
-     *
-     */
     async function setDatetimeFormat() {
         vrState.currentCulture = await AppApiVr.CurrentCulture();
     }
@@ -2171,7 +2192,6 @@
     };
 
     /**
-     *
      * @param appLanguage
      */
     async function setAppLanguage(appLanguage) {
@@ -2186,7 +2206,6 @@
     }
 
     /**
-     *
      * @param deviceStatus
      */
     function trackingResultToClass(deviceStatus) {

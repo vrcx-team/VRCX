@@ -61,7 +61,6 @@
     const selectedDayKey = computed(() => dayjs(props.modelValue).format('YYYY-MM-DD'));
 
     /**
-     *
      * @param dateValue
      */
     function toKey(dateValue) {
@@ -69,7 +68,6 @@
     }
 
     /**
-     *
      * @param dateValue
      */
     function eventCountFor(dateValue) {
@@ -78,7 +76,6 @@
     }
 
     /**
-     *
      * @param dateValue
      */
     function hasFollowingFor(dateValue) {
@@ -87,7 +84,6 @@
     }
 
     /**
-     *
      * @param next
      */
     function onUpdateModelValue(next) {
@@ -99,7 +95,6 @@
     }
 
     /**
-     *
      * @param next
      */
     function onUpdatePlaceholder(next) {
@@ -110,7 +105,6 @@
     }
 
     /**
-     *
      * @param dateValue
      */
     function dayLabel(dateValue) {

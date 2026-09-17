@@ -33,10 +33,7 @@ describe('resolveRef', () => {
     });
 
     test('uses idAlias when id is missing', async () => {
-        const result = await resolveRef(
-            { worldId: 'wrld_456', name: 'World' },
-            opts
-        );
+        const result = await resolveRef({ worldId: 'wrld_456', name: 'World' }, opts);
         expect(result.id).toBe('wrld_456');
         expect(result.name).toBe('World');
         expect(opts.fetchFn).not.toHaveBeenCalled();
@@ -61,10 +58,7 @@ describe('resolveRef', () => {
     });
 
     test('does not fetch when name is already present', async () => {
-        const result = await resolveRef(
-            { id: 'wrld_222', name: 'Known' },
-            opts
-        );
+        const result = await resolveRef({ id: 'wrld_222', name: 'Known' }, opts);
         expect(opts.fetchFn).not.toHaveBeenCalled();
         expect(result.name).toBe('Known');
     });

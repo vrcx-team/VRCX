@@ -79,8 +79,7 @@ vi.mock('../../../stores', () => ({
 
 vi.mock('../../../coordinators/avatarCoordinator', () => ({
     applyAvatar: (...args) => mocks.applyAvatar(...args),
-    selectAvatarWithoutConfirmation: (...args) =>
-        mocks.selectAvatarWithoutConfirmation(...args),
+    selectAvatarWithoutConfirmation: (...args) => mocks.selectAvatarWithoutConfirmation(...args),
     showAvatarDialog: (...args) => mocks.showAvatarDialog(...args)
 }));
 
@@ -216,8 +215,7 @@ vi.mock('../../../components/ui/badge', () => ({
 vi.mock('../../../components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="button" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="button" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -250,8 +248,7 @@ vi.mock('../components/MyAvatarCard.vue', () => ({
     default: {
         props: ['avatar'],
         emits: ['click', 'context-action'],
-        template:
-            '<button data-testid="avatar-card" @click="$emit(\'click\')">{{ avatar.name }}</button>'
+        template: '<button data-testid="avatar-card" @click="$emit(\'click\')">{{ avatar.name }}</button>'
     }
 }));
 
@@ -292,9 +289,7 @@ describe('MyAvatars.vue', () => {
             }
             return Promise.resolve(defaultValue ?? '');
         });
-        mocks.getAllAvatarTags.mockResolvedValue(
-            new Map([['avtr_1', [{ tag: 'fun', color: null }]]])
-        );
+        mocks.getAllAvatarTags.mockResolvedValue(new Map([['avtr_1', [{ tag: 'fun', color: null }]]]));
         mocks.getAvatarTimeSpent.mockResolvedValue({ timeSpent: 1000 });
         mocks.processBulk.mockImplementation(async ({ handle, done }) => {
             handle({
@@ -324,9 +319,7 @@ describe('MyAvatars.vue', () => {
         const wrapper = mount(MyAvatars);
         await flushAll();
 
-        expect(wrapper.find('[data-testid="table-layout"]').exists()).toBe(
-            true
-        );
+        expect(wrapper.find('[data-testid="table-layout"]').exists()).toBe(true);
     });
 
     test('persists view mode when toggled', async () => {
@@ -335,10 +328,7 @@ describe('MyAvatars.vue', () => {
 
         await wrapper.get('[data-testid="set-table"]').trigger('click');
 
-        expect(mocks.configSetString).toHaveBeenCalledWith(
-            'VRCX_MyAvatarsViewMode',
-            'table'
-        );
+        expect(mocks.configSetString).toHaveBeenCalledWith('VRCX_MyAvatarsViewMode', 'table');
     });
 
     test('confirms and selects avatar when grid card is clicked', async () => {
@@ -349,8 +339,6 @@ describe('MyAvatars.vue', () => {
         await flushAll();
 
         expect(mocks.modalConfirm).toHaveBeenCalled();
-        expect(mocks.selectAvatarWithoutConfirmation).toHaveBeenCalledWith(
-            'avtr_1'
-        );
+        expect(mocks.selectAvatarWithoutConfirmation).toHaveBeenCalledWith('avtr_1');
     });
 });

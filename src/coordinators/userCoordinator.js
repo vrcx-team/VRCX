@@ -13,15 +13,11 @@ import {
     getWorldName,
     isRealInstance,
     parseLocation,
-    sanitizeUserJson
+    sanitizeUserJson,
+    getReadableProfileThemeColor
 } from '../shared/utils';
 import { getUserMemo } from './memoCoordinator';
-import {
-    avatarRequest,
-    instanceRequest,
-    queryRequest,
-    userRequest
-} from '../api';
+import { avatarRequest, instanceRequest, queryRequest, userRequest } from '../api';
 import { processBulk, request } from '../services/request';
 import { AppDebug } from '../services/appConfig';
 import { database } from '../services/database';
@@ -59,8 +55,7 @@ import { useSharedFeedStore } from '../stores/sharedFeed';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
 
-const getRobotUrl = () =>
-    `${AppDebug.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
+const getRobotUrl = () => `${AppDebug.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
 
 /**
  * @param {import('../types/api/user').GetUserResponse} json
@@ -87,7 +82,7 @@ export function applyUser(json) {
     } = userStore;
 
     let ref = cachedUsers.get(json.id);
-    let previousDisplayName = '';
+    let previousDisplayName;
     let hasPropChanged = false;
     let changedProps = {};
     sanitizeUserJson(json, getRobotUrl());
@@ -132,8 +127,11 @@ export function applyUser(json) {
             runUpdateFriendFlow(ref.id, json.state);
         }
         previousDisplayName = ref.displayName;
-        const { hasPropChanged: _hasPropChanged, changedProps: _changedProps } =
-            diffObjectProps(ref, json, arraysMatch);
+        const { hasPropChanged: _hasPropChanged, changedProps: _changedProps } = diffObjectProps(
+            ref,
+            json,
+            arraysMatch
+        );
         for (const prop in json) {
             if (typeof json[prop] !== 'undefined') {
                 ref[prop] = json[prop];
@@ -163,10 +161,7 @@ export function applyUser(json) {
         ref.$location = parseLocation(ref.location);
         currentTravelers.delete(ref.id);
     }
-    if (
-        !instanceStore.cachedInstances.has(ref.$location.tag) &&
-        isRealInstance(ref.location)
-    ) {
+    if (!instanceStore.cachedInstances.has(ref.$location.tag) && isRealInstance(ref.location)) {
         instanceRequest.getInstance({
             worldId: ref.$location.worldId,
             instanceId: ref.$location.instanceId
@@ -175,16 +170,13 @@ export function applyUser(json) {
     if (
         ref.$isVRCPlus &&
         ref.badges &&
-        ref.badges.every(
-            (x) => x.badgeId !== 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa'
-        )
+        ref.badges.every((x) => x.badgeId !== 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa')
     ) {
         ref.badges.unshift({
             badgeId: 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa',
             badgeName: 'Supporter',
             badgeDescription: 'Supports VRChat through VRC+',
-            badgeImageUrl:
-                'https://assets.vrchat.com/badges/fa/bdgai_583f6b13-91ab-4e1b-974e-ab91600b06cb.png',
+            badgeImageUrl: 'https://assets.vrchat.com/badges/fa/bdgai_583f6b13-91ab-4e1b-974e-ab91600b06cb.png',
             hidden: true,
             showcased: false
         });
@@ -205,10 +197,7 @@ export function applyUser(json) {
     // add user ref to playerList, friendList, photonLobby, photonLobbyCurrent
     const playerListRef = locationStore.lastLocation.playerList.get(ref.id);
     if (playerListRef) {
-        if (
-            !locationStore.lastLocation.friendList.has(ref.id) &&
-            friendStore.friends.has(ref.id)
-        ) {
+        if (!locationStore.lastLocation.friendList.has(ref.id) && friendStore.friends.has(ref.id)) {
             const userMap = {
                 displayName: ref.displayName,
                 userId: ref.id,
@@ -216,18 +205,11 @@ export function applyUser(json) {
             };
             locationStore.lastLocation.friendList.set(ref.id, userMap);
         }
-        if (
-            locationStore.lastLocation.friendList.has(ref.id) &&
-            !friendStore.friends.has(ref.id)
-        ) {
+        if (locationStore.lastLocation.friendList.has(ref.id) && !friendStore.friends.has(ref.id)) {
             locationStore.lastLocation.friendList.delete(ref.id);
         }
         photonStore.photonLobby.forEach((ref1, id) => {
-            if (
-                typeof ref1 !== 'undefined' &&
-                ref1.displayName === ref.displayName &&
-                ref1 !== ref
-            ) {
+            if (typeof ref1 !== 'undefined' && ref1.displayName === ref.displayName && ref1 !== ref) {
                 photonStore.photonLobby.set(id, ref);
                 if (photonStore.photonLobbyCurrent.has(id)) {
                     photonStore.photonLobbyCurrent.set(id, ref);
@@ -280,11 +262,7 @@ export function applyUser(json) {
  * @param {string} userId
  */
 export function showUserDialog(userId) {
-    if (
-        !userId ||
-        typeof userId !== 'string' ||
-        userId === 'usr_00000000-0000-0000-0000-000000000000'
-    ) {
+    if (!userId || typeof userId !== 'string' || userId === 'usr_00000000-0000-0000-0000-000000000000') {
         return;
     }
     const userStore = useUserStore();
@@ -310,6 +288,8 @@ export function showUserDialog(userId) {
         return;
     }
     D.id = userId;
+    D.ref = {};
+    D.publicProfileRef = {};
     D.memo = '';
     D.note = '';
     getUserMemo(userId).then((memo) => {
@@ -371,11 +351,17 @@ export function showUserDialog(userId) {
     D.dateFriendedInfo = [];
     D.mutualFriendCount = 0;
     D.mutualGroupCount = 0;
+    D.theme = {
+        iconColor: 'var(--muted-foreground)',
+        buttonColor: 'var(--primary)',
+        subtextColor: 'var(--muted-foreground)'
+    };
     if (userId === currentUser.id) {
         getWorldName(currentUser.homeLocation).then((worldName) => {
             D.$homeLocationName = worldName;
         });
     }
+    updateUserDialogProfile();
     AppApi.SendIpc('ShowUserDialog', userId);
     queryRequest
         .fetch('user', {
@@ -394,11 +380,7 @@ export function showUserDialog(userId) {
                 D.loading = false;
 
                 D.ref = args.ref;
-                uiStore.setDialogCrumbLabel(
-                    'user',
-                    D.id,
-                    D.ref?.displayName || D.id
-                );
+                uiStore.setDialogCrumbLabel('user', D.id, D.ref?.displayName || D.id);
                 D.friend = friendStore.friends.get(D.id);
                 D.isFriend = Boolean(D.friend);
                 D.note = String(D.ref.note || '');
@@ -409,10 +391,7 @@ export function showUserDialog(userId) {
                 D.isInteractOff = false;
                 D.isMuteChat = false;
                 for (const ref of moderationStore.cachedPlayerModerations.values()) {
-                    if (
-                        ref.targetUserId === D.id &&
-                        ref.sourceUserId === currentUser.id
-                    ) {
+                    if (ref.targetUserId === D.id && ref.sourceUserId === currentUser.id) {
                         if (ref.type === 'block') {
                             D.isBlock = true;
                         } else if (ref.type === 'mute') {
@@ -425,8 +404,7 @@ export function showUserDialog(userId) {
                     }
                 }
                 D.isFavorite =
-                    favoriteStore.getCachedFavoritesByObjectId(D.id) ||
-                    favoriteStore.isInAnyLocalFriendGroup(D.id);
+                    favoriteStore.getCachedFavoritesByObjectId(D.id) || favoriteStore.isInAnyLocalFriendGroup(D.id);
                 if (D.ref.friendRequestStatus === 'incoming') {
                     D.incomingRequest = true;
                 } else if (D.ref.friendRequestStatus === 'outgoing') {
@@ -437,102 +415,121 @@ export function showUserDialog(userId) {
                     inCurrentWorld = true;
                 }
                 if (userId !== currentUser.id && watchState.isFriendsLoaded) {
-                    database
-                        .getUserStats(D.ref, inCurrentWorld)
-                        .then(async (ref1) => {
-                            if (ref1.userId === D.id) {
-                                D.lastSeen = ref1.lastSeen;
-                                D.joinCount = ref1.joinCount;
-                                D.timeSpent = ref1.timeSpent;
+                    database.getUserStats(D.ref, inCurrentWorld).then(async (ref1) => {
+                        if (ref1.userId === D.id) {
+                            D.lastSeen = ref1.lastSeen;
+                            D.joinCount = ref1.joinCount;
+                            D.timeSpent = ref1.timeSpent;
+                        }
+                        const displayNameMap = ref1.previousDisplayNames;
+                        const userNotifications = await database.getFriendLogHistoryForUserId(D.id, [
+                            'DisplayName',
+                            'Friend',
+                            'Unfriend'
+                        ]);
+                        const dateFriendedInfo = [];
+                        for (const notification of userNotifications) {
+                            if (notification.userId !== D.id) {
+                                continue;
                             }
-                            const displayNameMap = ref1.previousDisplayNames;
-                            const userNotifications =
-                                await database.getFriendLogHistoryForUserId(
-                                    D.id,
-                                    ['DisplayName', 'Friend', 'Unfriend']
-                                );
-                            const dateFriendedInfo = [];
-                            for (const notification of userNotifications) {
-                                if (notification.userId !== D.id) {
-                                    continue;
-                                }
-                                if (notification.type === 'DisplayName') {
-                                    displayNameMap.set(
-                                        notification.previousDisplayName,
-                                        notification.created_at
-                                    );
-                                }
-                                if (
-                                    notification.type === 'Friend' ||
-                                    (notification.type === 'Unfriend' &&
-                                        !appearanceSettingsStore.hideUnfriends)
-                                ) {
-                                    dateFriendedInfo.unshift(notification);
-                                }
+                            if (notification.type === 'DisplayName') {
+                                displayNameMap.set(notification.previousDisplayName, notification.created_at);
                             }
-                            D.dateFriendedInfo = dateFriendedInfo;
-                            if (dateFriendedInfo.length > 0) {
-                                const latestFriendedInfo = dateFriendedInfo[0];
-                                D.unFriended =
-                                    latestFriendedInfo.type === 'Unfriend';
-                                D.dateFriended = latestFriendedInfo.created_at;
-                            }
-                            displayNameMap.forEach(
-                                (updated_at, displayName) => {
-                                    D.previousDisplayNames.push({
-                                        displayName,
-                                        updated_at
-                                    });
-                                }
-                            );
-                        });
-                    AppApi.GetVRChatUserModeration(currentUser.id, userId).then(
-                        (result) => {
-                            D.avatarModeration = result;
-                            if (result === 4) {
-                                D.isHideAvatar = true;
-                            } else if (result === 5) {
-                                D.isShowAvatar = true;
+                            if (
+                                notification.type === 'Friend' ||
+                                (notification.type === 'Unfriend' && !appearanceSettingsStore.hideUnfriends)
+                            ) {
+                                dateFriendedInfo.unshift(notification);
                             }
                         }
-                    );
+                        D.dateFriendedInfo = dateFriendedInfo;
+                        if (dateFriendedInfo.length > 0) {
+                            const latestFriendedInfo = dateFriendedInfo[0];
+                            D.unFriended = latestFriendedInfo.type === 'Unfriend';
+                            D.dateFriended = latestFriendedInfo.created_at;
+                        }
+                        displayNameMap.forEach((updated_at, displayName) => {
+                            D.previousDisplayNames.push({
+                                displayName,
+                                updated_at
+                            });
+                        });
+                    });
+                    AppApi.GetVRChatUserModeration(currentUser.id, userId).then((result) => {
+                        D.avatarModeration = result;
+                        if (result === 4) {
+                            D.isHideAvatar = true;
+                        } else if (result === 5) {
+                            D.isShowAvatar = true;
+                        }
+                    });
                     if (!currentUser.hasSharedConnectionsOptOut) {
                         try {
-                            queryRequest
-                                .fetch('mutualCounts', { userId })
-                                .then((args) => {
-                                    if (args.params.userId === D.id) {
-                                        D.mutualFriendCount = args.json.friends;
-                                        D.mutualGroupCount = args.json.groups;
-                                    }
-                                });
+                            queryRequest.fetch('mutualCounts', { userId }).then((args) => {
+                                if (args.params.userId === D.id) {
+                                    D.mutualFriendCount = args.json.friends;
+                                    D.mutualGroupCount = args.json.groups;
+                                }
+                            });
                         } catch (error) {
                             console.error(error);
                         }
                     }
                 } else {
                     D.previousDisplayNames = currentUser.pastDisplayNames;
-                    database
-                        .getUserStats(D.ref, inCurrentWorld)
-                        .then((ref1) => {
-                            if (ref1.userId === D.id) {
-                                D.lastSeen = ref1.lastSeen;
-                                D.joinCount = ref1.joinCount;
-                                D.timeSpent = ref1.timeSpent;
-                            }
-                        });
-                }
-                queryRequest
-                    .fetch('representedGroup', { userId })
-                    .then((args1) => {
-                        handleGroupRepresented(args1);
+                    database.getUserStats(D.ref, inCurrentWorld).then((ref1) => {
+                        if (ref1.userId === D.id) {
+                            D.lastSeen = ref1.lastSeen;
+                            D.joinCount = ref1.joinCount;
+                            D.timeSpent = ref1.timeSpent;
+                        }
                     });
+                }
+                queryRequest.fetch('representedGroup', { userId }).then((args1) => {
+                    handleGroupRepresented(args1);
+                });
                 D.visible = true;
                 userStore.applyUserDialogLocation(true);
             }
         });
     showUserDialogHistory.delete(userId);
     showUserDialogHistory.add(userId);
+}
+
+export function updateUserDialogProfile() {
+    const D = useUserStore().userDialog;
+    const appearanceSettingsStore = useAppearanceSettingsStore();
+    userRequest
+        .getPublicProfile({ userId: D.id })
+        .then((args1) => {
+            if (args1.params.userId !== D.id) {
+                return;
+            }
+            D.publicProfileRef = args1.json;
+            if (appearanceSettingsStore.displayVRCProfileThemes) {
+                D.theme = {
+                    iconColor: getReadableProfileThemeColor(
+                        args1.json.themeIconColor,
+                        'var(--muted-foreground)',
+                        appearanceSettingsStore.isDarkMode
+                    ),
+                    buttonColor: getReadableProfileThemeColor(
+                        args1.json.themeButtonColor,
+                        'var(--primary)',
+                        appearanceSettingsStore.isDarkMode
+                    ),
+                    subtextColor: getReadableProfileThemeColor(
+                        args1.json.themeSubtextColor,
+                        'var(--muted-foreground)',
+                        appearanceSettingsStore.isDarkMode
+                    )
+                };
+            }
+        })
+        .catch((err) => {
+            console.error('Failed to fetch public profile', err);
+            D.publicProfileRef = {};
+        });
 }
 
 /**
@@ -587,8 +584,6 @@ export async function refreshUserDialogAvatars(fileId) {
     if (fileId) {
         D.loading = true;
     }
-    D.avatarSorting = 'update';
-    D.avatarReleaseStatus = 'all';
     const params = {
         n: 50,
         offset: 0,
@@ -648,11 +643,7 @@ export async function lookupUser(ref) {
     if (!ref.displayName || ref.displayName.substring(0, 3) === 'ID:') {
         return;
     }
-    const found = findUserByDisplayName(
-        userStore.cachedUsers,
-        ref.displayName,
-        userStore.cachedUserIdsByDisplayName
-    );
+    const found = findUserByDisplayName(userStore.cachedUsers, ref.displayName, userStore.cachedUserIdsByDisplayName);
     if (found) {
         showUserDialog(found.id);
         return;
@@ -690,20 +681,11 @@ export function handleConfig(args) {
         return;
     }
     userStore.setSubsetOfLanguages(languages);
-    const data = [];
-    for (const key in languages) {
-        const value = languages[key];
-        data.push({
-            key,
-            value
-        });
-    }
-    userStore.setLanguageDialogLanguages(data);
 }
 
 /**
  * @param {import('../types/api/user').GetCurrentUserResponse} json
- * @returns {import('../types/api/user').GetCurrentUserResponse}
+ * @returns {import('../types/api/user').VrcxCurrentUser}
  */
 export function applyCurrentUser(json) {
     const userStore = useUserStore();
@@ -713,7 +695,7 @@ export function applyCurrentUser(json) {
     const locationStore = useLocationStore();
 
     authStore.setAttemptingAutoLogin(false);
-    let ref = userStore.currentUser;
+    let ref = /** @type {import('../types/api/user').VrcxCurrentUser} */ (userStore.currentUser);
     runAvatarSwapFlow({
         json,
         ref,
@@ -726,7 +708,7 @@ export function applyCurrentUser(json) {
             }
         }
     } else {
-        ref = {
+        ref = /** @type {import('../types/api/user').VrcxCurrentUser} */ ({
             acceptedPrivacyVersion: 0,
             acceptedTOSVersion: 0,
             accountDeletionDate: null,
@@ -735,9 +717,15 @@ export function applyCurrentUser(json) {
             ageVerificationStatus: '',
             ageVerified: false,
             allowAvatarCopying: false,
+            appleDetails: {},
+            appleId: '',
             badges: [],
+            bannerColor: '',
+            bannerType: 'none',
+            bannerUrl: '',
             bio: '',
             bioLinks: [],
+            completedTutorials: [],
             currentAvatar: '',
             currentAvatarImageUrl: '',
             currentAvatarTags: [],
@@ -755,7 +743,9 @@ export function applyCurrentUser(json) {
             friendGroupNames: [],
             friendKey: '',
             friends: [],
+            googleDetails: {},
             googleId: '',
+            hasAcceptedDiscordSocialSDKPerms: false,
             hasBirthday: false,
             hasDiscordFriendsOptOut: false,
             hasEmail: false,
@@ -767,11 +757,16 @@ export function applyCurrentUser(json) {
             id: '',
             isAdult: true,
             isBoopingEnabled: false,
+            isEconomyCreator: false,
             isFriend: false,
+            isTemporary: false,
+            iconFrame: '',
+            iconUrl: '',
             last_activity: '',
             last_login: '',
             last_mobile: null,
             last_platform: '',
+            nameplateEffect: '',
             obfuscatedEmail: '',
             obfuscatedPendingEmail: '',
             oculusId: '',
@@ -779,6 +774,7 @@ export function applyCurrentUser(json) {
             onlineFriends: [],
             pastDisplayNames: [],
             picoId: '',
+            platform_history: [],
             presence: {
                 avatarThumbnail: '',
                 currentAvatarTags: '',
@@ -797,10 +793,13 @@ export function applyCurrentUser(json) {
                 world: '',
                 ...json.presence
             },
+            profileEffect: '',
             profilePicOverride: '',
             profilePicOverrideThumbnail: '',
             pronouns: '',
+            pronounsHistory: [],
             queuedInstance: '',
+            receiveMobileInvitations: false,
             state: '',
             status: '',
             statusDescription: '',
@@ -809,6 +808,14 @@ export function applyCurrentUser(json) {
             steamDetails: {},
             steamId: '',
             tags: [],
+            temporaryExpiryDate: null,
+            twitchDetails: {
+                display_name: '',
+                id: '',
+                login: '',
+                profile_image_url: ''
+            },
+            twitchId: '',
             twoFactorAuthEnabled: false,
             twoFactorAuthEnabledDate: null,
             unsubscribe: false,
@@ -817,6 +824,7 @@ export function applyCurrentUser(json) {
             userLanguage: '',
             userLanguageCode: '',
             username: '',
+            usesGeneratedPassword: false,
             viveId: '',
             // VRCX
             $online_for: null,
@@ -837,7 +845,7 @@ export function applyCurrentUser(json) {
             $locationTag: '',
             $travelingToLocation: '',
             ...json
-        };
+        });
         runFirstLoginFlow(ref);
     }
 
@@ -850,9 +858,7 @@ export function applyCurrentUser(json) {
 
     // when isGameRunning use gameLog instead of API
     const $location = parseLocation(locationStore.lastLocation.location);
-    const $travelingLocation = parseLocation(
-        locationStore.lastLocationDestination
-    );
+    const $travelingLocation = parseLocation(locationStore.lastLocationDestination);
     let location = locationStore.lastLocation.location;
     let instanceId = $location.instanceId;
     let worldId = $location.worldId;
@@ -879,31 +885,31 @@ export function applyCurrentUser(json) {
         ageVerificationStatus: json.ageVerificationStatus,
         ageVerified: json.ageVerified,
         allowAvatarCopying: json.allowAvatarCopying,
-        badges: json.badges,
-        bio: json.bio,
-        bioLinks: json.bioLinks,
-        currentAvatarImageUrl: json.currentAvatarImageUrl,
-        currentAvatarTags: json.currentAvatarTags,
-        currentAvatarThumbnailImageUrl: json.currentAvatarThumbnailImageUrl,
+        bannerColor: json.bannerColor,
+        bannerType: json.bannerType,
+        bannerUrl: json.bannerUrl,
         date_joined: json.date_joined,
         developerType: json.developerType,
         discordId: json.discordId,
         displayName: json.displayName,
         friendKey: json.friendKey,
+        iconFrame: json.iconFrame,
+        iconUrl: json.iconUrl,
         id: json.id,
+        isEconomyCreator: json.isEconomyCreator,
         isFriend: json.isFriend,
         last_activity: json.last_activity,
         last_login: json.last_login,
         last_mobile: json.last_mobile,
         last_platform: json.last_platform,
-        profilePicOverride: json.profilePicOverride,
-        profilePicOverrideThumbnail: json.profilePicOverrideThumbnail,
+        nameplateEffect: json.nameplateEffect,
+        platform: json.platform,
+        profileEffect: json.profileEffect,
         pronouns: json.pronouns,
         state: json.state,
         status: json.status,
         statusDescription: json.statusDescription,
         tags: json.tags,
-        userIcon: json.userIcon,
         location,
         instanceId,
         worldId,
@@ -923,8 +929,6 @@ export function applyCurrentUser(json) {
     return ref;
 }
 
-/**
- */
 export function getCurrentUser() {
     const authStore = useAuthStore();
     return request('auth/user', {
@@ -957,10 +961,7 @@ export function addCustomTag(data) {
         userId: data.UserId,
         colour: data.TagColour
     };
-    AppApi.ExecuteVrOverlayFunction(
-        'updateHudFeedTag',
-        JSON.stringify(feedUpdate)
-    );
+    AppApi.ExecuteVrOverlayFunction('updateHudFeedTag', JSON.stringify(feedUpdate));
     const ref = userStore.cachedUsers.get(data.UserId);
     if (typeof ref !== 'undefined') {
         ref.$customTag = data.Tag;
@@ -969,8 +970,6 @@ export function addCustomTag(data) {
     sharedFeedStore.addTag(data.UserId, data.TagColour);
 }
 
-/**
- */
 export function updateAutoStateChange() {
     const userStore = useUserStore();
     const generalSettingsStore = useGeneralSettingsStore();
@@ -1001,9 +1000,7 @@ export function updateAutoStateChange() {
     }
     if (
         generalSettingsStore.autoStateChangeInstanceTypes.length > 0 &&
-        !generalSettingsStore.autoStateChangeInstanceTypes.includes(
-            instanceType
-        )
+        !generalSettingsStore.autoStateChangeInstanceTypes.includes(instanceType)
     ) {
         return;
     }
@@ -1014,18 +1011,14 @@ export function updateAutoStateChange() {
         if (selectedGroups.length > 0) {
             const groupFriendIds = new Set();
             for (const ref of favoriteStore.cachedFavorites.values()) {
-                if (
-                    ref.type === 'friend' &&
-                    selectedGroups.includes(ref.$groupKey)
-                ) {
+                if (ref.type === 'friend' && selectedGroups.includes(ref.$groupKey)) {
                     groupFriendIds.add(ref.favoriteId);
                 }
             }
             for (const selectedKey of selectedGroups) {
                 if (selectedKey.startsWith('local:')) {
                     const groupName = selectedKey.slice(6);
-                    const userIds =
-                        favoriteStore.localFriendFavorites[groupName];
+                    const userIds = favoriteStore.localFriendFavorites[groupName];
                     if (userIds) {
                         for (let i = 0; i < userIds.length; ++i) {
                             groupFriendIds.add(userIds[i]);
@@ -1056,14 +1049,9 @@ export function updateAutoStateChange() {
 
     const params = { status: newStatus };
     if (withCompany && generalSettingsStore.autoStateChangeCompanyDescEnabled) {
-        params.statusDescription =
-            generalSettingsStore.autoStateChangeCompanyDesc;
-    } else if (
-        !withCompany &&
-        generalSettingsStore.autoStateChangeAloneDescEnabled
-    ) {
-        params.statusDescription =
-            generalSettingsStore.autoStateChangeAloneDesc;
+        params.statusDescription = generalSettingsStore.autoStateChangeCompanyDesc;
+    } else if (!withCompany && generalSettingsStore.autoStateChangeAloneDescEnabled) {
+        params.statusDescription = generalSettingsStore.autoStateChangeAloneDesc;
     }
 
     userRequest.saveCurrentUser(params).then(() => {

@@ -17,7 +17,8 @@ import { tryLoadPlayerList } from '../../coordinators/gameLogCoordinator';
 import { useAdvancedSettingsStore } from '../settings/advanced';
 import { useFriendStore } from '../friend';
 import { useNotificationStore } from '../notification';
-import { useUiStore } from '../ui';
+import { useDashboardStore } from '../dashboard';
+
 import { useUserStore } from '../user';
 import { useVrStore } from '../vr';
 import { useVrcxStore } from '../vrcx';
@@ -28,11 +29,7 @@ import configRepository from '../../services/config';
 import * as workerTimers from 'worker-timers';
 
 const SESSIONS_EVENT_FILTER_ALL = 'All';
-const SESSIONS_EVENT_FILTER_TYPES = [
-    'OnPlayerJoined',
-    'OnPlayerLeft',
-    'VideoPlay'
-];
+const SESSIONS_EVENT_FILTER_TYPES = ['OnPlayerJoined', 'OnPlayerLeft', 'VideoPlay'];
 const SESSIONS_DATE_RANGE_MAX_DAYS = 7;
 const SESSIONS_GLOBAL_SEARCH_INITIAL_LOCATIONS = 500;
 const SESSIONS_SEARCH_BATCH_ATTEMPTS = 3;
@@ -42,9 +39,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
     const vrStore = useVrStore();
     const friendStore = useFriendStore();
     const userStore = useUserStore();
-    const uiStore = useUiStore();
+
     const vrcxStore = useVrcxStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
+    const dashboardStore = useDashboardStore();
 
     const router = useRouter();
 
@@ -77,17 +75,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
     const sessionsRawEvents = shallowRef([]);
     const sessionsEventFilterSelection = computed({
         get() {
-            return sessionsEventFilters.value.length === 0
-                ? [SESSIONS_EVENT_FILTER_ALL]
-                : sessionsEventFilters.value;
+            return sessionsEventFilters.value.length === 0 ? [SESSIONS_EVENT_FILTER_ALL] : sessionsEventFilters.value;
         },
         set(value) {
             handleSessionsEventFilterChange(value);
         }
     });
-    const sessionsDateRangeActive = computed(
-        () => !!sessionsDateFrom.value || !!sessionsDateTo.value
-    );
+    const sessionsDateRangeActive = computed(() => !!sessionsDateFrom.value || !!sessionsDateTo.value);
 
     const nowPlaying = ref({
         url: '',
@@ -124,14 +118,16 @@ export const useGameLogStore = defineStore('GameLog', () => {
     );
 
     watch(
-        router.currentRoute,
-        async (value) => {
+        [router.currentRoute, () => dashboardStore.dashboards],
+        async ([value]) => {
             await initPromise;
-            if (value.name === 'game-log') {
+            const isDashboardPanel =
+                value.name === 'dashboard' && dashboardStore.getDashboard(value.params.id, 'game-log');
+            if (value.name === 'game-log' || isDashboardPanel) {
                 if (sessionsViewMode.value === 'sessions') {
                     loadSessionsSegments();
                 } else {
-                    initGameLogTable();
+                    gameLogTableLookup();
                 }
             } else {
                 gameLogTableData.value = [];
@@ -142,7 +138,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 sessionsHasMore.value = true;
             }
         },
-        { immediate: true }
+        { immediate: true, deep: true }
     );
 
     watch(
@@ -164,21 +160,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
         { flush: 'sync' }
     );
 
-    /**
-     *
-     */
     async function init() {
-        gameLogTable.value.filter = JSON.parse(
-            await configRepository.getString('VRCX_gameLogTableFilters', '[]')
-        );
-        gameLogTable.value.vip = await configRepository.getBool(
-            'VRCX_gameLogTableVIPFilter',
-            false
-        );
-        const savedViewMode = await configRepository.getString(
-            'VRCX_gameLogViewMode',
-            'table'
-        );
+        gameLogTable.value.filter = JSON.parse(await configRepository.getString('VRCX_gameLogTableFilters', '[]'));
+        gameLogTable.value.vip = await configRepository.getBool('VRCX_gameLogTableVIPFilter', false);
+        const savedViewMode = await configRepository.getString('VRCX_gameLogViewMode', 'table');
         if (savedViewMode === 'sessions' || savedViewMode === 'table') {
             sessionsViewMode.value = savedViewMode;
         }
@@ -187,7 +172,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
     initPromise = init();
 
     /**
-     *
      * @param entry
      */
     function insertGameLogSorted(entry) {
@@ -206,20 +190,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
         for (let i = 1; i < arr.length; i++) {
             if (compareGameLogRows(entry, arr[i]) < 0) {
-                gameLogTableData.value = [
-                    ...arr.slice(0, i),
-                    entry,
-                    ...arr.slice(i)
-                ];
+                gameLogTableData.value = [...arr.slice(0, i), entry, ...arr.slice(i)];
                 return;
             }
         }
         gameLogTableData.value = [...arr, entry];
     }
 
-    /**
-     *
-     */
     function clearNowPlaying() {
         nowPlaying.value = {
             url: '',
@@ -236,16 +213,12 @@ export const useGameLogStore = defineStore('GameLog', () => {
         vrStore.updateVrNowPlaying();
     }
 
-    /**
-     *
-     */
     function resetLastMediaUrls() {
         lastVideoUrl.value = '';
         lastResourceloadUrl.value = '';
     }
 
     /**
-     *
      * @param data
      */
     function setNowPlaying(data) {
@@ -253,11 +226,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
         if (nowPlaying.value.url !== ctx.videoUrl) {
             if (!ctx.userId && ctx.displayName) {
                 ctx.userId =
-                    findUserByDisplayName(
-                        userStore.cachedUsers,
-                        ctx.displayName,
-                        userStore.cachedUserIdsByDisplayName
-                    )?.id ?? '';
+                    findUserByDisplayName(userStore.cachedUsers, ctx.displayName, userStore.cachedUserIdsByDisplayName)
+                        ?.id ?? '';
             }
             notificationStore.queueGameLogNoty(ctx);
             addGameLog(ctx);
@@ -291,11 +261,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 thumbnailUrl: ctx.thumbnailUrl
             };
             if (ctx.updatedAt && ctx.videoPos) {
-                nowPlaying.value.startTime =
-                    Date.parse(ctx.updatedAt) / 1000 - ctx.videoPos;
+                nowPlaying.value.startTime = Date.parse(ctx.updatedAt) / 1000 - ctx.videoPos;
             } else {
-                nowPlaying.value.startTime =
-                    Date.parse(ctx.created_at) / 1000 - ctx.videoPos;
+                nowPlaying.value.startTime = Date.parse(ctx.created_at) / 1000 - ctx.videoPos;
             }
         }
         vrStore.updateVrNowPlaying();
@@ -320,9 +288,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
         advancedSettingsStore
     });
 
-    /**
-     *
-     */
     function updateNowPlaying() {
         const np = nowPlaying.value;
         if (!nowPlaying.value.playing) {
@@ -342,7 +307,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     /**
-     *
      * @param row
      */
     function gameLogIsFriend(row) {
@@ -356,7 +320,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     /**
-     *
      * @param row
      */
     function gameLogIsFavorite(row) {
@@ -369,18 +332,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         return friendStore.localFavoriteFriends.has(row.userId);
     }
 
-    /**
-     *
-     */
     async function gameLogTableLookup() {
-        await configRepository.setString(
-            'VRCX_gameLogTableFilters',
-            JSON.stringify(gameLogTable.value.filter)
-        );
-        await configRepository.setBool(
-            'VRCX_gameLogTableVIPFilter',
-            gameLogTable.value.vip
-        );
+        await configRepository.setString('VRCX_gameLogTableFilters', JSON.stringify(gameLogTable.value.filter));
+        await configRepository.setBool('VRCX_gameLogTableVIPFilter', gameLogTable.value.vip);
         gameLogTable.value.loading = true;
         try {
             let vipList = [];
@@ -397,10 +351,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     vrcxStore.searchLimit
                 );
             } else {
-                rows = await database.lookupGameLogDatabase(
-                    gameLogTable.value.filter,
-                    vipList
-                );
+                rows = await database.lookupGameLogDatabase(gameLogTable.value.filter, vipList);
             }
 
             for (const row of rows) {
@@ -414,7 +365,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     /**
-     *
      * @param entry
      */
     function addGameLog(entry) {
@@ -429,8 +379,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             entry.type === 'AvatarChange' ||
             entry.type === 'ChatBoxMessage' ||
             (entry.userId === userStore.currentUser.id &&
-                (entry.type === 'OnPlayerJoined' ||
-                    entry.type === 'OnPlayerLeft'))
+                (entry.type === 'OnPlayerJoined' || entry.type === 'OnPlayerLeft'))
         ) {
             return;
         }
@@ -447,10 +396,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             ) {
                 return;
             }
-            if (
-                gameLogTable.value.filter.length > 0 &&
-                !gameLogTable.value.filter.includes(entry.type)
-            ) {
+            if (gameLogTable.value.filter.length > 0 && !gameLogTable.value.filter.includes(entry.type)) {
                 return;
             }
             if (!gameLogSearch(entry)) {
@@ -466,7 +412,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     /**
-     *
      * @param input
      */
     async function addGamelogLocationToDatabase(input) {
@@ -479,38 +424,17 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     /**
-     *
      * @param row
      */
     function gameLogSearch(row) {
         return gameLogSearchFilter(row, gameLogTable.value.search);
     }
 
-    /**
-     *
-     */
     function sweepGameLog() {
         const j = gameLogTableData.value.length;
         if (j > vrcxStore.maxTableSize + 50) {
             gameLogTableData.value = gameLogTableData.value.slice(0, -50);
         }
-    }
-
-    /**
-     *
-     */
-    async function initGameLogTable() {
-        gameLogTable.value.loading = true;
-        const rows = await database.lookupGameLogDatabase(
-            gameLogTable.value.filter,
-            []
-        );
-        for (const row of rows) {
-            row.isFriend = gameLogIsFriend(row);
-            row.isFavorite = gameLogIsFavorite(row);
-        }
-        gameLogTableData.value = rows;
-        gameLogTable.value.loading = false;
     }
 
     /**
@@ -553,10 +477,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @returns {boolean}
      */
     function isSessionsGlobalSearchMode() {
-        return (
-            !sessionsDateRangeActive.value &&
-            normalizeSessionsSearch(sessionsSearch.value).length > 0
-        );
+        return !sessionsDateRangeActive.value && normalizeSessionsSearch(sessionsSearch.value).length > 0;
     }
 
     /**
@@ -604,9 +525,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             return startTs <= endTs ? [start, end] : [end, start];
         }
 
-        const clampedEnd = new Date(
-            lower + SESSIONS_DATE_RANGE_MAX_DAYS * 86400000
-        ).toISOString();
+        const clampedEnd = new Date(lower + SESSIONS_DATE_RANGE_MAX_DAYS * 86400000).toISOString();
         return startTs <= endTs ? [start, clampedEnd] : [clampedEnd, start];
     }
 
@@ -620,9 +539,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             return false;
         }
 
-        return [event.displayName]
-            .map((item) => String(item ?? '').toUpperCase())
-            .some((item) => item.includes(value));
+        return [event.displayName].map((item) => String(item ?? '').toUpperCase()).some((item) => item.includes(value));
     }
 
     /**
@@ -636,9 +553,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
         if (event.type === 'JoinGroup' || event.type === 'LeftGroup') {
             return Array.isArray(event.members)
-                ? event.members.some((member) =>
-                      isSessionsMemberSearchMatch(member, value)
-                  )
+                ? event.members.some((member) => isSessionsMemberSearchMatch(member, value))
                 : false;
         }
         if (gameLogSearchFilter(event, value)) {
@@ -655,59 +570,49 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @returns {boolean}
      */
     function isSessionsSegmentHeaderSearchMatch(segment, value) {
-        return [segment.worldName]
-            .map((item) => String(item ?? '').toUpperCase())
-            .some((item) => item.includes(value));
+        return [segment.worldName].map((item) => String(item ?? '').toUpperCase()).some((item) => item.includes(value));
     }
 
     /**
-     * @param {Array<object>} events
-     * @returns {Array<object>}
+     * @param {object[]} events
+     * @returns {object[]}
      */
     function filterSessionsEventsByFilters(events) {
         let result = events;
 
         if (sessionsVipFilter.value) {
-            result = result.filter(
-                (event) => event.type === 'VideoPlay' || event.isFavorite
-            );
+            result = result.filter((event) => event.type === 'VideoPlay' || event.isFavorite);
         }
 
         if (sessionsEventFilters.value.length > 0) {
-            result = result.filter((event) =>
-                sessionsEventFilters.value.includes(event.type)
-            );
+            result = result.filter((event) => sessionsEventFilters.value.includes(event.type));
         }
 
         return result;
     }
 
     /**
-     * @param {Array<object>} segments
-     * @returns {Array<object>}
+     * @param {object[]} segments
+     * @returns {object[]}
      */
     function dropEmptySessionsSegments(segments) {
-        return segments.filter(
-            (segment) => segment.events && segment.events.length > 0
-        );
+        return segments.filter((segment) => segment.events && segment.events.length > 0);
     }
 
     /**
-     * @param {Array<object>} segments
-     * @returns {Array<object>}
+     * @param {object[]} segments
+     * @returns {object[]}
      */
     function filterSessionsSegmentsByDateRange(segments) {
         if (!sessionsDateRangeActive.value) {
             return segments;
         }
-        return segments.filter((segment) =>
-            isSessionsLocationInDateRange(segment)
-        );
+        return segments.filter((segment) => isSessionsLocationInDateRange(segment));
     }
 
     /**
-     * @param {Array<object>} segments
-     * @returns {Array<object>}
+     * @param {object[]} segments
+     * @returns {object[]}
      */
     function applySessionsSearchFilter(segments) {
         const value = normalizeSessionsSearch(sessionsSearch.value);
@@ -724,30 +629,21 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
             const events = Array.isArray(segment.events)
                 ? segment.events.flatMap((event) => {
-                      if (
-                          event.type === 'JoinGroup' ||
-                          event.type === 'LeftGroup'
-                      ) {
+                      if (event.type === 'JoinGroup' || event.type === 'LeftGroup') {
                           if (!Array.isArray(event.members)) {
                               return [];
                           }
-                          const matchedMembers = event.members.filter(
-                              (member) =>
-                                  isSessionsMemberSearchMatch(member, value)
+                          const matchedMembers = event.members.filter((member) =>
+                              isSessionsMemberSearchMatch(member, value)
                           );
                           return matchedMembers.map((member) => ({
                               ...member,
-                              type:
-                                  event.type === 'JoinGroup'
-                                      ? 'OnPlayerJoined'
-                                      : 'OnPlayerLeft',
+                              type: event.type === 'JoinGroup' ? 'OnPlayerJoined' : 'OnPlayerLeft',
                               location: segment.location
                           }));
                       }
 
-                      return isSessionsEventSearchMatch(event, value)
-                          ? [event]
-                          : [];
+                      return isSessionsEventSearchMatch(event, value) ? [event] : [];
                   })
                 : [];
             if (events.length > 0) {
@@ -766,9 +662,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     function rebuildSessions() {
         const events = filterSessionsEventsByFilters(sessionsRawEvents.value);
         const result = buildGameLogSessions(sessionsRawLocations.value, events);
-        sessionsSegments.value = applySessionsSearchFilter(
-            filterSessionsSegmentsByDateRange(result.segments)
-        );
+        sessionsSegments.value = applySessionsSearchFilter(filterSessionsSegmentsByDateRange(result.segments));
     }
 
     /**
@@ -785,16 +679,14 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     /**
-     * @param {Array<string>} value
+     * @param {string[]} value
      */
     async function handleSessionsEventFilterChange(value) {
         const selected = Array.isArray(value) ? value : [];
         const wasAll = sessionsEventFilters.value.length === 0;
         const hasAll = selected.includes(SESSIONS_EVENT_FILTER_ALL);
         const types = selected.filter(
-            (item) =>
-                item !== SESSIONS_EVENT_FILTER_ALL &&
-                SESSIONS_EVENT_FILTER_TYPES.includes(item)
+            (item) => item !== SESSIONS_EVENT_FILTER_ALL && SESSIONS_EVENT_FILTER_TYPES.includes(item)
         );
 
         if (hasAll && !wasAll) {
@@ -803,11 +695,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             sessionsEventFilters.value = types;
         } else {
             sessionsEventFilters.value =
-                types.length === SESSIONS_EVENT_FILTER_TYPES.length
-                    ? []
-                    : types.length > 0
-                      ? types
-                      : [];
+                types.length === SESSIONS_EVENT_FILTER_TYPES.length ? [] : types.length > 0 ? types : [];
         }
         if (isSessionsGlobalSearchMode()) {
             await loadSessionsSegments();
@@ -849,15 +737,12 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     /**
-     * @param {number|null} beforeId
+     * @param {number | null} beforeId
      * @param {number} fetchCount
-     * @returns {Promise<{ beforeId: number|null, hasMore: boolean }>}
+     * @returns {Promise<{ beforeId: number | null; hasMore: boolean }>}
      */
     async function loadSessionsSearchBatch(beforeId, fetchCount) {
-        const locations = await database.getSessionsLocationSegments(
-            beforeId,
-            fetchCount
-        );
+        const locations = await database.getSessionsLocationSegments(beforeId, fetchCount);
         if (locations.length === 0) {
             return { beforeId, hasMore: false };
         }
@@ -871,18 +756,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
 
         const events = await fetchEventsForLocations(locations);
-        sessionsRawLocations.value = [
-            ...sessionsRawLocations.value,
-            ...locations
-        ];
+        sessionsRawLocations.value = [...sessionsRawLocations.value, ...locations];
         sessionsRawEvents.value = [...sessionsRawEvents.value, ...events];
         rebuildSessions();
 
         return {
             beforeId: locations[locations.length - 1].id,
-            hasMore:
-                hasExtraTail &&
-                sessionsSegments.value.length < vrcxStore.searchLimit
+            hasMore: hasExtraTail && sessionsSegments.value.length < vrcxStore.searchLimit
         };
     }
 
@@ -900,10 +780,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             sessionsHasMore.value = true;
 
             // Derive location budget from maxTableSize (total event budget)
-            const locationBudget = Math.max(
-                5,
-                Math.ceil(vrcxStore.maxTableSize / 50)
-            );
+            const locationBudget = Math.max(5, Math.ceil(vrcxStore.maxTableSize / 50));
             let fetchCount = locationBudget + 1; // +1 to drop last for clean boundary
 
             if (isSessionsGlobalSearchMode()) {
@@ -915,15 +792,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 sessionsRawEvents.value = [];
                 sessionsSegments.value = [];
 
-                while (
-                    hasMore &&
-                    sessionsSegments.value.length === 0 &&
-                    attempts < SESSIONS_SEARCH_BATCH_ATTEMPTS
-                ) {
-                    const nextBatch = await loadSessionsSearchBatch(
-                        beforeId,
-                        fetchCount
-                    );
+                while (hasMore && sessionsSegments.value.length === 0 && attempts < SESSIONS_SEARCH_BATCH_ATTEMPTS) {
+                    const nextBatch = await loadSessionsSearchBatch(beforeId, fetchCount);
                     beforeId = nextBatch.beforeId;
                     hasMore = nextBatch.hasMore;
                     attempts += 1;
@@ -944,14 +814,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     const locations =
                         beforeId === null
                             ? await database.getSessionsLocationSegmentsByAnchor(
-                                  sessionsDateFrom.value ||
-                                      sessionsDateTo.value,
+                                  sessionsDateFrom.value || sessionsDateTo.value,
                                   fetchCount
                               )
-                            : await database.getSessionsLocationSegments(
-                                  beforeId,
-                                  fetchCount
-                              );
+                            : await database.getSessionsLocationSegments(beforeId, fetchCount);
                     if (locations.length === 0) {
                         hasMore = false;
                         break;
@@ -966,23 +832,14 @@ export const useGameLogStore = defineStore('GameLog', () => {
                         break;
                     }
 
-                    const inRangeLocations = locations.filter((location) =>
-                        isSessionsLocationInDateRange(location)
-                    );
-                    const oldestLocationEpoch = toSessionsEpoch(
-                        locations[locations.length - 1].created_at
-                    );
-                    const newestLocationEpoch = toSessionsEpoch(
-                        locations[0].created_at
-                    );
+                    const inRangeLocations = locations.filter((location) => isSessionsLocationInDateRange(location));
+                    const oldestLocationEpoch = toSessionsEpoch(locations[locations.length - 1].created_at);
+                    const newestLocationEpoch = toSessionsEpoch(locations[0].created_at);
                     const isEntireBatchAfterRange =
-                        Boolean(sessionsDateTo.value) &&
-                        oldestLocationEpoch >
-                            toSessionsEpoch(sessionsDateTo.value);
+                        Boolean(sessionsDateTo.value) && oldestLocationEpoch > toSessionsEpoch(sessionsDateTo.value);
                     const reachedRangeStart =
                         Boolean(sessionsDateFrom.value) &&
-                        newestLocationEpoch <
-                            toSessionsEpoch(sessionsDateFrom.value);
+                        newestLocationEpoch < toSessionsEpoch(sessionsDateFrom.value);
 
                     if (inRangeLocations.length === 0) {
                         if (reachedRangeStart || !hasExtraTail) {
@@ -994,16 +851,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
                         continue;
                     }
 
-                    const events =
-                        await fetchEventsForLocations(inRangeLocations);
-                    sessionsRawLocations.value = [
-                        ...sessionsRawLocations.value,
-                        ...inRangeLocations
-                    ];
-                    sessionsRawEvents.value = [
-                        ...sessionsRawEvents.value,
-                        ...events
-                    ];
+                    const events = await fetchEventsForLocations(inRangeLocations);
+                    sessionsRawLocations.value = [...sessionsRawLocations.value, ...inRangeLocations];
+                    sessionsRawEvents.value = [...sessionsRawEvents.value, ...events];
                     beforeId = locations[locations.length - 1].id;
                     rebuildSessions();
                     hasMore = hasExtraTail && !reachedRangeStart;
@@ -1013,10 +863,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 return;
             }
 
-            const locations = await database.getSessionsLocationSegments(
-                null,
-                fetchCount
-            );
+            const locations = await database.getSessionsLocationSegments(null, fetchCount);
             if (locations.length === 0) {
                 sessionsRawLocations.value = [];
                 sessionsRawEvents.value = [];
@@ -1050,10 +897,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         if (sessionsLoading.value || !sessionsHasMore.value) return;
         sessionsLoading.value = true;
         try {
-            const batchBudget = Math.max(
-                3,
-                Math.ceil(vrcxStore.maxTableSize / 100)
-            );
+            const batchBudget = Math.max(3, Math.ceil(vrcxStore.maxTableSize / 100));
             const fetchCount = batchBudget + 1;
 
             if (isSessionsGlobalSearchMode()) {
@@ -1069,10 +913,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     sessionsSegments.value.length === previousCount &&
                     attempts < SESSIONS_SEARCH_BATCH_ATTEMPTS
                 ) {
-                    const nextBatch = await loadSessionsSearchBatch(
-                        beforeId,
-                        fetchCount
-                    );
+                    const nextBatch = await loadSessionsSearchBatch(beforeId, fetchCount);
                     beforeId = nextBatch.beforeId;
                     hasMore = nextBatch.hasMore;
                     attempts += 1;
@@ -1083,10 +924,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 return;
             }
 
-            const moreLocations = await database.getSessionsLocationSegments(
-                sessionsCursor.value,
-                fetchCount
-            );
+            const moreLocations = await database.getSessionsLocationSegments(sessionsCursor.value, fetchCount);
             if (moreLocations.length === 0) {
                 sessionsHasMore.value = false;
                 return;
@@ -1099,23 +937,16 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
             const moreEvents = await fetchEventsForLocations(moreLocations);
 
-            sessionsRawLocations.value = [
-                ...sessionsRawLocations.value,
-                ...moreLocations
-            ];
-            sessionsRawEvents.value = [
-                ...sessionsRawEvents.value,
-                ...moreEvents
-            ];
+            sessionsRawLocations.value = [...sessionsRawLocations.value, ...moreLocations];
+            sessionsRawEvents.value = [...sessionsRawEvents.value, ...moreEvents];
             rebuildSessions();
 
             sessionsCursor.value = moreLocations[moreLocations.length - 1].id;
             sessionsHasMore.value =
                 hasExtraTail &&
                 (!sessionsDateRangeActive.value ||
-                    toSessionsEpoch(
-                        moreLocations[moreLocations.length - 1].created_at
-                    ) >= toSessionsEpoch(sessionsDateFrom.value));
+                    toSessionsEpoch(moreLocations[moreLocations.length - 1].created_at) >=
+                        toSessionsEpoch(sessionsDateFrom.value));
         } finally {
             sessionsLoading.value = false;
         }
@@ -1123,25 +954,17 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     /**
      * Jump to a time anchor (load segments from N hours ago).
-     * @param {number} hours - how many hours back
+     *
+     * @param {number} hours - How many hours back
      */
     async function jumpToSessionsAnchor(hours) {
         if (sessionsLoading.value) return;
         sessionsLoading.value = true;
         try {
-            const sinceDate = new Date(
-                Date.now() - hours * 3600 * 1000
-            ).toISOString();
-            const maxSegments = Math.max(
-                10,
-                Math.ceil(vrcxStore.maxTableSize / 25)
-            );
+            const sinceDate = new Date(Date.now() - hours * 3600 * 1000).toISOString();
+            const maxSegments = Math.max(10, Math.ceil(vrcxStore.maxTableSize / 25));
 
-            const locations =
-                await database.getSessionsLocationSegmentsByAnchor(
-                    sinceDate,
-                    maxSegments + 1
-                );
+            const locations = await database.getSessionsLocationSegmentsByAnchor(sinceDate, maxSegments + 1);
             if (locations.length === 0) {
                 sessionsRawLocations.value = [];
                 sessionsRawEvents.value = [];
@@ -1171,19 +994,16 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     /**
      * Fetch events (join/leave + video) for a batch of location segments.
-     * @param {Array<object>} locations
-     * @returns {Promise<Array<object>>}
+     *
+     * @param {object[]} locations
+     * @returns {Promise<object[]>}
      */
     async function fetchEventsForLocations(locations) {
         const locationTags = [...new Set(locations.map((l) => l.location))];
         const dates = locations.map((l) => new Date(l.created_at).getTime());
         const minDate = new Date(Math.min(...dates) - 86400000).toISOString();
         const maxDate = new Date(Math.max(...dates) + 86400000).toISOString();
-        const events = await database.getSessionsEventsForSegments(
-            locationTags,
-            minDate,
-            maxDate
-        );
+        const events = await database.getSessionsEventsForSegments(locationTags, minDate, maxDate);
         for (const e of events) {
             e.isFriend = gameLogIsFriend(e);
             e.isFavorite = gameLogIsFavorite(e);
@@ -1203,16 +1023,12 @@ export const useGameLogStore = defineStore('GameLog', () => {
     /**
      * Append a real-time entry to the sessions raw data and rebuild.
      * Only handles event types relevant to the sessions view.
+     *
      * @param {object} entry
      */
     function appendSessionsEntry(entry) {
         const type = entry.type;
-        if (
-            type !== 'OnPlayerJoined' &&
-            type !== 'OnPlayerLeft' &&
-            type !== 'VideoPlay' &&
-            type !== 'Location'
-        ) {
+        if (type !== 'OnPlayerJoined' && type !== 'OnPlayerLeft' && type !== 'VideoPlay' && type !== 'Location') {
             return;
         }
 
@@ -1253,7 +1069,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     /**
      * Switch between sessions and table view.
-     * @param {'sessions'|'table'} mode
+     *
+     * @param {'sessions' | 'table'} mode
      */
     async function setSessionsViewMode(mode) {
         if (mode !== 'sessions' && mode !== 'table') {
@@ -1265,10 +1082,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
         sessionsViewMode.value = mode;
         await configRepository.setString('VRCX_gameLogViewMode', mode);
         if (mode === 'table') {
-            initGameLogTable();
+            await gameLogTableLookup();
         } else {
             gameLogTableData.value = [];
-            loadSessionsSegments();
+            await loadSessionsSegments();
         }
     }
 

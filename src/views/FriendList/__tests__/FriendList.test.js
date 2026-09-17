@@ -138,8 +138,7 @@ vi.mock('../../../lib/table/useVrcxVueTable', () => ({
             getColumn: (id) =>
                 id === 'bulkSelect'
                     ? {
-                          toggleVisibility: (...args) =>
-                              mocks.toggleBulkColumnVisibility(...args)
+                          toggleVisibility: (...args) => mocks.toggleBulkColumnVisibility(...args)
                       }
                     : null
         },
@@ -217,8 +216,7 @@ vi.mock('@/components/ui/switch', () => ({
     Switch: {
         props: ['modelValue'],
         emits: ['update:modelValue'],
-        template:
-            '<button data-testid="bulk-switch" @click="$emit(\'update:modelValue\', !modelValue)">switch</button>'
+        template: '<button data-testid="bulk-switch" @click="$emit(\'update:modelValue\', !modelValue)">switch</button>'
     }
 }));
 
@@ -258,9 +256,7 @@ function makeFriendCtx({ id, displayName, memo = '', dateJoined = null }) {
 }
 
 function clickButtonByText(wrapper, text) {
-    const button = wrapper
-        .findAll('button')
-        .find((node) => node.text().trim() === text);
+    const button = wrapper.findAll('button').find((node) => node.text().trim() === text);
     if (!button) {
         throw new Error(`Cannot find button with text: ${text}`);
     }
@@ -320,9 +316,7 @@ describe('FriendList.vue', () => {
         wrapper.vm.friendsListSearchChange();
         await nextTick();
 
-        expect(
-            wrapper.vm.friendsListDisplayData.map((item) => item.id)
-        ).toEqual(['usr_1']);
+        expect(wrapper.vm.friendsListDisplayData.map((item) => item.id)).toEqual(['usr_1']);
         expect(mocks.getAllUserStats).toHaveBeenCalledTimes(1);
         expect(mocks.getAllUserMutualCount).toHaveBeenCalledTimes(1);
     });
@@ -341,30 +335,22 @@ describe('FriendList.vue', () => {
         await searchInput.trigger('input');
         await nextTick();
 
-        expect(
-            wrapper.vm.friendsListDisplayData.map((item) => item.id)
-        ).toEqual(['usr_1', 'usr_2']);
+        expect(wrapper.vm.friendsListDisplayData.map((item) => item.id)).toEqual(['usr_1', 'usr_2']);
 
         vi.advanceTimersByTime(150);
         await flushAsync();
 
-        expect(
-            wrapper.vm.friendsListDisplayData.map((item) => item.id)
-        ).toEqual(['usr_2']);
+        expect(wrapper.vm.friendsListDisplayData.map((item) => item.id)).toEqual(['usr_2']);
 
         mocks.friendsListSearch.value = 'alice';
         await searchInput.trigger('change');
         await flushAsync();
 
-        expect(
-            wrapper.vm.friendsListDisplayData.map((item) => item.id)
-        ).toEqual(['usr_1']);
+        expect(wrapper.vm.friendsListDisplayData.map((item) => item.id)).toEqual(['usr_1']);
     });
 
     test('refreshFriendStats retries immediately after a failed stats request', async () => {
-        mocks.friends.value = new Map([
-            ['usr_1', makeFriendCtx({ id: 'usr_1', displayName: 'Alice' })]
-        ]);
+        mocks.friends.value = new Map([['usr_1', makeFriendCtx({ id: 'usr_1', displayName: 'Alice' })]]);
         mocks.getAllUserStats.mockRejectedValueOnce(new Error('stats failed'));
 
         const wrapper = mount(FriendList);
@@ -379,18 +365,14 @@ describe('FriendList.vue', () => {
     });
 
     test('refreshFriendStats refreshes again when friend roster changes with same size', async () => {
-        mocks.friends.value = new Map([
-            ['usr_1', makeFriendCtx({ id: 'usr_1', displayName: 'Alice' })]
-        ]);
+        mocks.friends.value = new Map([['usr_1', makeFriendCtx({ id: 'usr_1', displayName: 'Alice' })]]);
 
         const wrapper = mount(FriendList);
         await flushAsync();
 
         expect(mocks.getAllUserStats).toHaveBeenCalledTimes(1);
 
-        mocks.friends.value = new Map([
-            ['usr_2', makeFriendCtx({ id: 'usr_2', displayName: 'Bob' })]
-        ]);
+        mocks.friends.value = new Map([['usr_2', makeFriendCtx({ id: 'usr_2', displayName: 'Bob' })]]);
 
         await wrapper.vm.refreshFriendStats();
 
@@ -401,10 +383,7 @@ describe('FriendList.vue', () => {
     test('opens charts tab from toolbar button', async () => {
         const wrapper = mount(FriendList);
 
-        await clickButtonByText(
-            wrapper,
-            'view.friend_list.load_mutual_friends'
-        );
+        await clickButtonByText(wrapper, 'view.friend_list.load_mutual_friends');
 
         expect(mocks.routerPush).toHaveBeenCalledWith({ name: 'charts' });
     });
@@ -436,9 +415,7 @@ describe('FriendList.vue', () => {
 
         expect(mocks.userGetUser).toHaveBeenCalledTimes(1);
         expect(mocks.userGetUser).toHaveBeenCalledWith({ userId: 'usr_1' });
-        expect(mocks.toastSuccess).toHaveBeenCalledWith(
-            'view.friend_list.load_complete'
-        );
+        expect(mocks.toastSuccess).toHaveBeenCalledWith('view.friend_list.load_complete');
     });
 
     test('select row emits lookup-user for id-less value and opens user dialog for id', () => {

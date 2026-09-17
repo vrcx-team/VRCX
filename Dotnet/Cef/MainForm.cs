@@ -58,6 +58,7 @@ namespace VRCX
                 {
                     DefaultEncoding = "UTF-8",
                 },
+                RenderProcessMessageHandler = PlatformRenderProcessMessageHandler.Instance,
                 Dock = DockStyle.Fill
             };
             Browser.IsBrowserInitializedChanged += (_, _) =>

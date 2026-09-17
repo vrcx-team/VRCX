@@ -35,7 +35,6 @@ function remixiconWoff2Only() {
 }
 
 /**
- *
  * @param assetId
  */
 function getAssetLanguage(assetId) {
@@ -60,7 +59,6 @@ function getAssetLanguage(assetId) {
 }
 
 /**
- *
  * @param moduleId
  */
 function getManualChunk(moduleId) {
@@ -81,7 +79,6 @@ function isFont(name) {
 }
 
 /**
- *
  * @param {import('rolldown').PreRenderedAsset} assetInfo
  */
 function getAssetFilename({ name }) {
@@ -92,22 +89,20 @@ function getAssetFilename({ name }) {
     return 'assets/i18n/[name][extname]';
 }
 
+/**
+ * @param ConfigEnv ConfigEnv
+ * @returns {import('vite').UserConfig}
+ */
 export default defineConfig(({ mode }) => {
-    const { SENTRY_AUTH_TOKEN: sentryAuthToken } = loadEnv(
-        mode,
-        process.cwd(),
-        ''
-    );
+    const { SENTRY_AUTH_TOKEN: sentryAuthToken } = loadEnv(mode, process.cwd(), '');
 
     const buildAndUploadSourceMaps = !!sentryAuthToken;
 
-    const version = fs
-        .readFileSync(new URL('../Version', import.meta.url), 'utf-8')
-        .trim();
+    const version = fs.readFileSync(new URL('../Version', import.meta.url), 'utf-8').trim();
 
-    const nightly =
-        mode === 'development' || version.split('-').at(-1).length === 7;
+    const nightly = mode === 'development' || version.split('-').at(-1).length === 7;
 
+    /** @type {import('vite').UserConfig} */
     return {
         base: '',
         plugins: [
@@ -127,8 +122,7 @@ export default defineConfig(({ mode }) => {
                         },
                         sourcemaps: {
                             assets: './build/html/**',
-                            filesToDeleteAfterUpload:
-                                './build/html/**/*.js.map',
+                            filesToDeleteAfterUpload: './build/html/**/*.js.map',
                             ignore: []
                         }
                     })
@@ -164,8 +158,6 @@ export default defineConfig(({ mode }) => {
             ]
         },
         define: {
-            LINUX: JSON.stringify(process.env.PLATFORM === 'linux'),
-            WINDOWS: JSON.stringify(process.env.PLATFORM === 'windows'),
             VERSION: JSON.stringify(version),
             NIGHTLY: JSON.stringify(nightly)
         },
@@ -182,10 +174,10 @@ export default defineConfig(({ mode }) => {
             reportCompressedSize: false,
             chunkSizeWarningLimit: 5000,
             sourcemap: buildAndUploadSourceMaps ? 'hidden' : false,
-            assetsInlineLimit(filePath) {
-                if (isFont(filePath)) return 0;
-                if (filePath.endsWith('.json')) return 0;
-                return 40960;
+            assetsInlineLimit(filePath, content) {
+                if (isFont(filePath)) return false;
+                if (filePath.endsWith('.json')) return false;
+                return content.length <= 40960;
             },
             rolldownOptions: {
                 preserveEntrySignatures: false,

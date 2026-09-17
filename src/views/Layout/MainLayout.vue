@@ -57,39 +57,24 @@
         </div>
 
         <!-- ## Dialogs ## -->
-        <MainDialogContainer></MainDialogContainer>
-
-        <GroupMemberModerationDialog></GroupMemberModerationDialog>
-
-        <InviteGroupDialog></InviteGroupDialog>
-
-        <FullscreenImagePreview></FullscreenImagePreview>
-
-        <LaunchDialog></LaunchDialog>
-
-        <LaunchOptionsDialog></LaunchOptionsDialog>
-
-        <FriendImportDialog></FriendImportDialog>
-
-        <WorldImportDialog></WorldImportDialog>
-
-        <AvatarImportDialog></AvatarImportDialog>
-
-        <ChooseFavoriteGroupDialog></ChooseFavoriteGroupDialog>
-
-        <VRChatConfigDialog></VRChatConfigDialog>
-
-        <PrimaryPasswordDialog></PrimaryPasswordDialog>
-
-        <SendBoopDialog></SendBoopDialog>
-
-        <GlobalToolsDialogs></GlobalToolsDialogs>
-
-        <ChangelogDialog></ChangelogDialog>
-
-        <WhatsNewDialog></WhatsNewDialog>
-
-        <SpotlightDialog></SpotlightDialog>
+        <MainDialogContainer />
+        <InviteGroupDialog />
+        <GroupEditDialog />
+        <GroupEventEditDialog />
+        <FullscreenImagePreview />
+        <LaunchDialog />
+        <LaunchOptionsDialog />
+        <FriendImportDialog />
+        <WorldImportDialog />
+        <AvatarImportDialog />
+        <ChooseFavoriteGroupDialog />
+        <VRChatConfigDialog />
+        <PrimaryPasswordDialog />
+        <SendBoopDialog />
+        <GlobalToolsDialogs />
+        <ChangelogDialog />
+        <WhatsNewDialog />
+        <SpotlightDialog />
     </template>
 </template>
 
@@ -110,7 +95,8 @@
     import FriendImportDialog from '../Favorites/dialogs/FriendImportDialog.vue';
     import FullscreenImagePreview from '../../components/FullscreenImagePreview.vue';
     import GlobalToolsDialogs from '../Tools/components/GlobalToolsDialogs.vue';
-    import GroupMemberModerationDialog from '../../components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
+    import GroupEditDialog from '../../components/dialogs/GroupDialog/GroupEditDialog.vue';
+    import GroupEventEditDialog from '../../components/dialogs/GroupDialog/GroupEventEditDialog.vue';
     import InviteGroupDialog from '../../components/dialogs/InviteGroupDialog.vue';
     import LaunchDialog from '../../components/dialogs/LaunchDialog.vue';
     import LaunchOptionsDialog from '../Settings/dialogs/LaunchOptionsDialog.vue';
@@ -188,11 +174,18 @@
     } = useMainLayoutResizable();
 
     const asidePanelRef = ref(null);
+    let restoreAsideAfterHiddenRoute = false;
 
     watch(isSideBarTabShow, async (show) => {
+        if (!show) {
+            restoreAsideAfterHiddenRoute = asidePanelRef.value?.isCollapsed === false;
+        }
+
         await nextTick();
         if (show) {
-            asidePanelRef.value?.expand();
+            if (restoreAsideAfterHiddenRoute) {
+                asidePanelRef.value?.expand();
+            }
         } else {
             asidePanelRef.value?.collapse();
         }

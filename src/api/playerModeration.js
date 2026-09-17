@@ -13,8 +13,8 @@ const playerModerationReq = {
     },
 
     /**
-     * @param {{ moderated: string, type: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @param {{ moderated: string; type: string }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     // old-way: POST auth/user/blocks {blocked:userId}
     sendPlayerModeration(params) {
@@ -31,11 +31,28 @@ const playerModerationReq = {
     },
 
     /**
-     * @param {{ moderated: string, type: string }} params
-     * @returns { Promise<{json: any, params}> }
+     * @param {{ moderated: string; type: string }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     // old-way: PUT auth/user/unblocks {blocked:userId}
     deletePlayerModeration(params) {
+        return request('auth/user/unplayermoderate', {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    /**
+     * @param {{ type: string }} params
+     * @returns {Promise<{ json: any; params }>}
+     */
+    deletePlayerModerations(params) {
         return request('auth/user/unplayermoderate', {
             method: 'PUT',
             params

@@ -31,11 +31,7 @@ describe('getAvailablePlatforms', () => {
     });
 
     it('detects multiple platforms', () => {
-        const packages = [
-            { platform: 'standalonewindows' },
-            { platform: 'android' },
-            { platform: 'ios' }
-        ];
+        const packages = [{ platform: 'standalonewindows' }, { platform: 'android' }, { platform: 'ios' }];
         expect(getAvailablePlatforms(packages)).toEqual({
             isPC: true,
             isQuest: true,
@@ -56,9 +52,7 @@ describe('getAvailablePlatforms', () => {
     });
 
     it('allows security variant', () => {
-        const packages = [
-            { platform: 'standalonewindows', variant: 'security' }
-        ];
+        const packages = [{ platform: 'standalonewindows', variant: 'security' }];
         expect(getAvailablePlatforms(packages)).toEqual({
             isPC: true,
             isQuest: false,

@@ -5,6 +5,7 @@ import { removeEmojis, replaceBioSymbols } from './base/string';
  * Applies replaceBioSymbols to statusDescription, bio, note;
  * removeEmojis to statusDescription;
  * strips robot avatar URL.
+ *
  * @param {object} json - Raw user API response
  * @param {string} robotUrl - The robot/default avatar URL to strip
  * @returns {object} The mutated json (same reference)
@@ -30,16 +31,17 @@ export function sanitizeUserJson(json, robotUrl) {
 /**
  * Compute trust level, moderator status, and troll status from user tags.
  * Pure function — no store dependencies.
+ *
  * @param {string[]} tags - User tags array
  * @param {string} developerType - User's developerType field
  * @returns {{
- *   trustLevel: string,
- *   trustClass: string,
- *   trustSortNum: number,
- *   isModerator: boolean,
- *   isTroll: boolean,
- *   isProbableTroll: boolean,
- *   trustColorKey: string
+ *     trustLevel: string;
+ *     trustClass: string;
+ *     trustSortNum: number;
+ *     isModerator: boolean;
+ *     isTroll: boolean;
+ *     isProbableTroll: boolean;
+ *     trustColorKey: string;
  * }}
  */
 export function computeTrustLevel(tags, developerType) {
@@ -105,6 +107,7 @@ export function computeTrustLevel(tags, developerType) {
 
 /**
  * Determine the effective user platform.
+ *
  * @param {string} platform - Current platform
  * @param {string} lastPlatform - Last known platform
  * @returns {string} Resolved platform
@@ -119,10 +122,11 @@ export function computeUserPlatform(platform, lastPlatform) {
 /**
  * Detect which properties changed between an existing ref and incoming JSON.
  * Compares primitives directly; arrays via arraysMatchFn.
+ *
  * @param {object} ref - The existing cached object
  * @param {object} json - The incoming update
  * @param {(a: any[], b: any[]) => boolean} arraysMatchFn - Function to compare arrays
- * @returns {{ hasPropChanged: boolean, changedProps: object }}
+ * @returns {{ hasPropChanged: boolean; changedProps: object }}
  */
 export function diffObjectProps(ref, json, arraysMatchFn) {
     const changedProps = {};
@@ -170,6 +174,7 @@ export function diffObjectProps(ref, json, arraysMatchFn) {
 /**
  * Create a default user ref object with all expected fields.
  * Returns a plain object (caller wraps in reactive() if needed).
+ *
  * @param {object} json - API response to merge
  * @returns {object} Default user object with json spread on top
  */

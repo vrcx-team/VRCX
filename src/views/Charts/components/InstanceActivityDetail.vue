@@ -109,9 +109,6 @@
         }
     });
 
-    /**
-     *
-     */
     function initResizeObserver() {
         resizeObserver.value = new ResizeObserver((entries) => {
             if (!echartsInstance) {
@@ -132,9 +129,6 @@
         });
     }
 
-    /**
-     *
-     */
     async function initEcharts() {
         if (!activityDetailChartRef.value || !props.activityDetailData || props.activityDetailData.length === 0) {
             isLoading.value = false;
@@ -193,7 +187,6 @@
     }
 
     /**
-     *
      * @param params
      */
     function handleClickYAxisLabel(params) {
@@ -203,9 +196,6 @@
         }
     }
 
-    /**
-     *
-     */
     function getNewOption() {
         if (!props.activityDetailData || props.activityDetailData.length === 0) {
             return {

@@ -77,15 +77,11 @@ import TranslationApiDialog from '../TranslationApiDialog.vue';
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 
-/**
- *
- */
 function flushPromises() {
     return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
 /**
- *
  * @param propsOverrides
  */
 function mountComponent(propsOverrides = {}) {
@@ -99,8 +95,7 @@ function mountComponent(propsOverrides = {}) {
                 Dialog: {
                     props: ['open'],
                     emits: ['update:open'],
-                    template:
-                        '<div data-testid="dialog" v-if="open"><slot /></div>'
+                    template: '<div data-testid="dialog" v-if="open"><slot /></div>'
                 },
                 DialogContent: { template: '<div><slot /></div>' },
                 DialogHeader: { template: '<div><slot /></div>' },
@@ -111,17 +106,10 @@ function mountComponent(propsOverrides = {}) {
                 Button: {
                     emits: ['click'],
                     props: ['variant', 'disabled', 'size'],
-                    template:
-                        '<button @click="$emit(\'click\')" :disabled="disabled"><slot /></button>'
+                    template: '<button @click="$emit(\'click\')" :disabled="disabled"><slot /></button>'
                 },
                 InputGroupField: {
-                    props: [
-                        'modelValue',
-                        'type',
-                        'showPassword',
-                        'placeholder',
-                        'clearable'
-                    ],
+                    props: ['modelValue', 'type', 'showPassword', 'placeholder', 'clearable'],
                     emits: ['update:modelValue'],
                     template:
                         '<input data-testid="input-field" :type="type" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />'
@@ -184,9 +172,7 @@ describe('TranslationApiDialog.vue', () => {
 
         test('renders bio language selector', () => {
             const wrapper = mountComponent();
-            expect(wrapper.text()).toContain(
-                'view.settings.appearance.appearance.bio_language'
-            );
+            expect(wrapper.text()).toContain('view.settings.appearance.appearance.bio_language');
         });
 
         test('renders language options', () => {
@@ -202,12 +188,8 @@ describe('TranslationApiDialog.vue', () => {
 
         test('renders google and openai options', () => {
             const wrapper = mountComponent();
-            expect(wrapper.text()).toContain(
-                'dialog.translation_api.mode_google'
-            );
-            expect(wrapper.text()).toContain(
-                'dialog.translation_api.mode_openai'
-            );
+            expect(wrapper.text()).toContain('dialog.translation_api.mode_google');
+            expect(wrapper.text()).toContain('dialog.translation_api.mode_openai');
         });
 
         test('does not render when not visible', () => {
@@ -227,9 +209,7 @@ describe('TranslationApiDialog.vue', () => {
         test('shows API key field in google mode', () => {
             translationApiType.value = 'google';
             const wrapper = mountComponent();
-            expect(wrapper.text()).toContain(
-                'dialog.translation_api.description'
-            );
+            expect(wrapper.text()).toContain('dialog.translation_api.description');
         });
 
         test('shows guide button in google mode', () => {
@@ -242,9 +222,7 @@ describe('TranslationApiDialog.vue', () => {
             translationApiType.value = 'google';
             const wrapper = mountComponent();
 
-            const guideBtn = wrapper
-                .findAll('button')
-                .find((b) => b.text().includes('dialog.translation_api.guide'));
+            const guideBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.translation_api.guide'));
             await guideBtn.trigger('click');
 
             expect(mocks.openExternalLink).toHaveBeenCalledWith(
@@ -255,12 +233,8 @@ describe('TranslationApiDialog.vue', () => {
         test('does not show openai-specific fields', () => {
             translationApiType.value = 'google';
             const wrapper = mountComponent();
-            expect(wrapper.text()).not.toContain(
-                'dialog.translation_api.openai.endpoint'
-            );
-            expect(wrapper.text()).not.toContain(
-                'dialog.translation_api.openai.model'
-            );
+            expect(wrapper.text()).not.toContain('dialog.translation_api.openai.endpoint');
+            expect(wrapper.text()).not.toContain('dialog.translation_api.openai.model');
         });
     });
 
@@ -270,18 +244,10 @@ describe('TranslationApiDialog.vue', () => {
             const wrapper = mountComponent();
             await nextTick();
 
-            expect(wrapper.text()).toContain(
-                'dialog.translation_api.openai.endpoint'
-            );
-            expect(wrapper.text()).toContain(
-                'dialog.translation_api.openai.api_key'
-            );
-            expect(wrapper.text()).toContain(
-                'dialog.translation_api.openai.model'
-            );
-            expect(wrapper.text()).toContain(
-                'dialog.translation_api.openai.prompt_optional'
-            );
+            expect(wrapper.text()).toContain('dialog.translation_api.openai.endpoint');
+            expect(wrapper.text()).toContain('dialog.translation_api.openai.api_key');
+            expect(wrapper.text()).toContain('dialog.translation_api.openai.model');
+            expect(wrapper.text()).toContain('dialog.translation_api.openai.prompt_optional');
         });
 
         test('shows test button in openai mode', async () => {
@@ -297,9 +263,7 @@ describe('TranslationApiDialog.vue', () => {
             const wrapper = mountComponent();
             await nextTick();
 
-            expect(wrapper.text()).not.toContain(
-                'dialog.translation_api.guide'
-            );
+            expect(wrapper.text()).not.toContain('dialog.translation_api.guide');
         });
 
         test('shows fetch models button', async () => {
@@ -307,9 +271,7 @@ describe('TranslationApiDialog.vue', () => {
             const wrapper = mountComponent();
             await nextTick();
 
-            expect(wrapper.text()).toContain(
-                'dialog.translation_api.fetch_models'
-            );
+            expect(wrapper.text()).toContain('dialog.translation_api.fetch_models');
         });
     });
 
@@ -319,17 +281,13 @@ describe('TranslationApiDialog.vue', () => {
             translationApiKey.value = 'test-key';
             const wrapper = mountComponent();
 
-            const saveBtn = wrapper
-                .findAll('button')
-                .find((b) => b.text().includes('dialog.translation_api.save'));
+            const saveBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.translation_api.save'));
             await saveBtn.trigger('click');
             await flushPromises();
 
             expect(mocks.setTranslationApiType).toHaveBeenCalledWith('google');
             expect(mocks.setTranslationApiKey).toHaveBeenCalled();
-            expect(mocks.toast.success).toHaveBeenCalledWith(
-                'dialog.translation_api.msg_settings_saved'
-            );
+            expect(mocks.toast.success).toHaveBeenCalledWith('dialog.translation_api.msg_settings_saved');
         });
 
         test('warns if openai endpoint/model are empty on save', async () => {
@@ -339,15 +297,11 @@ describe('TranslationApiDialog.vue', () => {
             const wrapper = mountComponent();
             await nextTick();
 
-            const saveBtn = wrapper
-                .findAll('button')
-                .find((b) => b.text().includes('dialog.translation_api.save'));
+            const saveBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.translation_api.save'));
             await saveBtn.trigger('click');
             await flushPromises();
 
-            expect(mocks.toast.warning).toHaveBeenCalledWith(
-                'dialog.translation_api.msg_fill_endpoint_model'
-            );
+            expect(mocks.toast.warning).toHaveBeenCalledWith('dialog.translation_api.msg_fill_endpoint_model');
             expect(mocks.setTranslationApiType).not.toHaveBeenCalled();
         });
 
@@ -355,33 +309,24 @@ describe('TranslationApiDialog.vue', () => {
             translationApiType.value = 'google';
             const wrapper = mountComponent();
 
-            const saveBtn = wrapper
-                .findAll('button')
-                .find((b) => b.text().includes('dialog.translation_api.save'));
+            const saveBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.translation_api.save'));
             await saveBtn.trigger('click');
             await flushPromises();
 
-            expect(
-                wrapper.emitted('update:isTranslationApiDialogVisible')
-            ).toBeTruthy();
-            expect(
-                wrapper.emitted('update:isTranslationApiDialogVisible')[0]
-            ).toEqual([false]);
+            expect(wrapper.emitted('update:isTranslationApiDialogVisible')).toBeTruthy();
+            expect(wrapper.emitted('update:isTranslationApiDialogVisible')[0]).toEqual([false]);
         });
     });
 
     describe('test translation', () => {
         test('calls translateText with test parameters in openai mode', async () => {
             translationApiType.value = 'openai';
-            translationApiEndpoint.value =
-                'https://api.openai.com/v1/chat/completions';
+            translationApiEndpoint.value = 'https://api.openai.com/v1/chat/completions';
             translationApiModel.value = 'gpt-4';
             const wrapper = mountComponent();
             await nextTick();
 
-            const testBtn = wrapper
-                .findAll('button')
-                .find((b) => b.text().includes('dialog.translation_api.test'));
+            const testBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.translation_api.test'));
             await testBtn.trigger('click');
             await flushPromises();
 
@@ -392,29 +337,22 @@ describe('TranslationApiDialog.vue', () => {
                     type: 'openai'
                 })
             );
-            expect(mocks.toast.success).toHaveBeenCalledWith(
-                'dialog.translation_api.msg_test_success'
-            );
+            expect(mocks.toast.success).toHaveBeenCalledWith('dialog.translation_api.msg_test_success');
         });
 
         test('shows error toast when test fails', async () => {
             translationApiType.value = 'openai';
-            translationApiEndpoint.value =
-                'https://api.openai.com/v1/chat/completions';
+            translationApiEndpoint.value = 'https://api.openai.com/v1/chat/completions';
             translationApiModel.value = 'gpt-4';
             mocks.translateText.mockRejectedValue(new Error('fail'));
             const wrapper = mountComponent();
             await nextTick();
 
-            const testBtn = wrapper
-                .findAll('button')
-                .find((b) => b.text().includes('dialog.translation_api.test'));
+            const testBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.translation_api.test'));
             await testBtn.trigger('click');
             await flushPromises();
 
-            expect(mocks.toast.error).toHaveBeenCalledWith(
-                'dialog.translation_api.msg_test_failed'
-            );
+            expect(mocks.toast.error).toHaveBeenCalledWith('dialog.translation_api.msg_test_failed');
         });
 
         test('warns when endpoint/model are missing before test', async () => {
@@ -424,65 +362,48 @@ describe('TranslationApiDialog.vue', () => {
             const wrapper = mountComponent();
             await nextTick();
 
-            const testBtn = wrapper
-                .findAll('button')
-                .find((b) => b.text().includes('dialog.translation_api.test'));
+            const testBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.translation_api.test'));
             await testBtn.trigger('click');
             await flushPromises();
 
-            expect(mocks.toast.warning).toHaveBeenCalledWith(
-                'dialog.translation_api.msg_fill_endpoint_model'
-            );
+            expect(mocks.toast.warning).toHaveBeenCalledWith('dialog.translation_api.msg_fill_endpoint_model');
         });
     });
 
     describe('fetch models', () => {
         test('fetches models and shows success toast', async () => {
             translationApiType.value = 'openai';
-            translationApiEndpoint.value =
-                'https://api.openai.com/v1/chat/completions';
-            mocks.fetchAvailableModels.mockResolvedValue([
-                'gpt-4',
-                'gpt-3.5-turbo'
-            ]);
+            translationApiEndpoint.value = 'https://api.openai.com/v1/chat/completions';
+            mocks.fetchAvailableModels.mockResolvedValue(['gpt-4', 'gpt-3.5-turbo']);
             const wrapper = mountComponent();
             await nextTick();
 
             const fetchBtn = wrapper
                 .findAll('button')
-                .find((b) =>
-                    b.text().includes('dialog.translation_api.fetch_models')
-                );
+                .find((b) => b.text().includes('dialog.translation_api.fetch_models'));
             await fetchBtn.trigger('click');
             await flushPromises();
 
             expect(mocks.fetchAvailableModels).toHaveBeenCalled();
             expect(mocks.toast.success).toHaveBeenCalledWith(
-                expect.stringContaining(
-                    'dialog.translation_api.msg_models_fetched'
-                )
+                expect.stringContaining('dialog.translation_api.msg_models_fetched')
             );
         });
 
         test('warns when no models found', async () => {
             translationApiType.value = 'openai';
-            translationApiEndpoint.value =
-                'https://api.openai.com/v1/chat/completions';
+            translationApiEndpoint.value = 'https://api.openai.com/v1/chat/completions';
             mocks.fetchAvailableModels.mockResolvedValue([]);
             const wrapper = mountComponent();
             await nextTick();
 
             const fetchBtn = wrapper
                 .findAll('button')
-                .find((b) =>
-                    b.text().includes('dialog.translation_api.fetch_models')
-                );
+                .find((b) => b.text().includes('dialog.translation_api.fetch_models'));
             await fetchBtn.trigger('click');
             await flushPromises();
 
-            expect(mocks.toast.warning).toHaveBeenCalledWith(
-                'dialog.translation_api.msg_no_models_found'
-            );
+            expect(mocks.toast.warning).toHaveBeenCalledWith('dialog.translation_api.msg_no_models_found');
         });
     });
 
@@ -498,9 +419,7 @@ describe('TranslationApiDialog.vue', () => {
             await nextTick();
 
             // openai mode fields should be visible
-            expect(wrapper.text()).toContain(
-                'dialog.translation_api.openai.endpoint'
-            );
+            expect(wrapper.text()).toContain('dialog.translation_api.openai.endpoint');
         });
     });
 });

@@ -1,5 +1,4 @@
 /**
- *
  * @param {object} print
  * @returns
  */
@@ -7,17 +6,12 @@ function getPrintFileName(print) {
     const authorName = print.authorName;
     // fileDate format: 2024-11-03_16-14-25.757
     const createdAt = getPrintLocalDate(print);
-    const fileNameDate = createdAt
-        .toISOString()
-        .replace(/:/g, '-')
-        .replace(/T/g, '_')
-        .replace(/Z/g, '');
+    const fileNameDate = createdAt.toISOString().replace(/:/g, '-').replace(/T/g, '_').replace(/Z/g, '');
     const fileName = `${authorName}_${fileNameDate}_${print.id}.png`;
     return fileName;
 }
 
 /**
- *
  * @param {object} print
  * @returns
  */
@@ -25,9 +19,7 @@ function getPrintLocalDate(print) {
     if (print.createdAt) {
         const createdAt = new Date(print.createdAt);
         // cursed convert to local time
-        createdAt.setMinutes(
-            createdAt.getMinutes() - createdAt.getTimezoneOffset()
-        );
+        createdAt.setMinutes(createdAt.getMinutes() - createdAt.getTimezoneOffset());
         return createdAt;
     }
     if (print.timestamp) {
@@ -36,9 +28,7 @@ function getPrintLocalDate(print) {
 
     const createdAt = new Date();
     // cursed convert to local time
-    createdAt.setMinutes(
-        createdAt.getMinutes() - createdAt.getTimezoneOffset()
-    );
+    createdAt.setMinutes(createdAt.getMinutes() - createdAt.getTimezoneOffset());
     return createdAt;
 }
 
@@ -80,9 +70,4 @@ function generateEmojiStyle(url, fps, frameCount, loopStyle, size) {
     return style;
 }
 
-export {
-    getPrintLocalDate,
-    getPrintFileName,
-    getEmojiFileName,
-    generateEmojiStyle
-};
+export { getPrintLocalDate, getPrintFileName, getEmojiFileName, generateEmojiStyle };

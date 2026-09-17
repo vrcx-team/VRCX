@@ -2,9 +2,6 @@ import { queryClient, queryKeys } from '../queries';
 import { request } from '../services/request';
 import { useUserStore } from '../stores';
 
-/**
- *
- */
 function getCurrentUserId() {
     return useUserStore().currentUser.id;
 }
@@ -37,12 +34,12 @@ const miscReq = {
 
     /**
      * @param {{
-     *       userId: string,
-     *       contentType: string,
-     *       reason: string,
-     *       type: string
+     *     userId: string;
+     *     contentType: string;
+     *     reason: string;
+     *     type: string;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     reportUser(params) {
         return request(`feedback/${params.userId}/user`, {
@@ -63,19 +60,16 @@ const miscReq = {
 
     /**
      * @param {{
-     *       fileId: string,
-     *       version: number,
-     *       variant: string
+     *     fileId: string;
+     *     version: number;
+     *     variant: string;
      * }} params
-     * @returns { Promise<{json: any, params}> }
+     * @returns {Promise<{ json: any; params }>}
      */
     getFileAnalysis(params) {
-        return request(
-            `analysis/${params.fileId}/${params.version}/${params.variant}`,
-            {
-                method: 'GET'
-            }
-        ).then((json) => {
+        return request(`analysis/${params.fileId}/${params.version}/${params.variant}`, {
+            method: 'GET'
+        }).then((json) => {
             const args = {
                 json,
                 params
@@ -85,7 +79,7 @@ const miscReq = {
     },
 
     getVRChatCredits() {
-        return request(`user/${getCurrentUserId()}/balance`, {
+        return request(`user/${getCurrentUserId()}/economy/balance`, {
             method: 'GET'
         }).then((json) => {
             const args = {
@@ -97,10 +91,10 @@ const miscReq = {
 
     /**
      * @param {{
-     *       location: string,
-     *       hardClose: boolean
+     *     location: string;
+     *     hardClose: boolean;
      * }} params
-     * @returns {Promise<{json: any, params}>}
+     * @returns {Promise<{ json: any; params }>}
      */
     closeInstance(params) {
         return request(`instances/${params.location}`, {
@@ -119,17 +113,14 @@ const miscReq = {
 
     /**
      * @param {{
-     *       worldId: string
+     *     worldId: string;
      * }} params
-     * @returns {Promise<{json: any, params}>}
+     * @returns {Promise<{ json: any; params }>}
      */
     deleteWorldPersistData(params) {
-        return request(
-            `users/${getCurrentUserId()}/${params.worldId}/persist`,
-            {
-                method: 'DELETE'
-            }
-        ).then((json) => {
+        return request(`users/${getCurrentUserId()}/${params.worldId}/persist`, {
+            method: 'DELETE'
+        }).then((json) => {
             const args = {
                 json,
                 params
@@ -140,17 +131,14 @@ const miscReq = {
 
     /**
      * @param {{
-     *       worldId: string
+     *     worldId: string;
      * }} params
-     * @returns {Promise<{json: any, params}>}
+     * @returns {Promise<{ json: any; params }>}
      */
     hasWorldPersistData(params) {
-        return request(
-            `users/${getCurrentUserId()}/${params.worldId}/persist/exists`,
-            {
-                method: 'GET'
-            }
-        ).then((json) => {
+        return request(`users/${getCurrentUserId()}/${params.worldId}/persist/exists`, {
+            method: 'GET'
+        }).then((json) => {
             const args = {
                 json,
                 params
@@ -206,11 +194,11 @@ const miscReq = {
 
     /**
      * @param params
-     * @params {{
-        userId: string,
-        emojiId: string
-     }} params
-     * @returns {Promise<{json: any, params}>}
+     * @param {{
+     *     userId: string;
+     *     emojiId: string;
+     * }} params
+     * @returns {Promise<{ json: any; params }>}
      */
     sendBoop(params) {
         return request(`users/${params.userId}/boop`, {

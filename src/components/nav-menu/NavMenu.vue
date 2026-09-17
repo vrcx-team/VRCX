@@ -365,20 +365,20 @@
         navLayout.value = sanitized;
         navHiddenKeys.value = nextHiddenKeys;
         await saveNavLayout(sanitized, nextHiddenKeys);
+        await router.push({ name: 'dashboard', params: { id: dashboard.id } });
         dashboardStore.setEditingDashboardId(dashboard.id);
-        router.push({ name: 'dashboard', params: { id: dashboard.id } });
     };
 
-    const handleEditDashboard = (item) => {
+    const handleEditDashboard = async (item) => {
         if (!isDashboardItem(item)) {
             return;
         }
         const dashboardId = item.index.replace(DASHBOARD_NAV_KEY_PREFIX, '');
-        dashboardStore.setEditingDashboardId(dashboardId);
         const currentRoute = router.currentRoute.value;
         if (currentRoute?.name !== 'dashboard' || String(currentRoute?.params?.id || '') !== dashboardId) {
-            router.push({ name: 'dashboard', params: { id: dashboardId } });
+            await router.push({ name: 'dashboard', params: { id: dashboardId } });
         }
+        dashboardStore.setEditingDashboardId(dashboardId);
     };
 
     const handleDeleteDashboard = async (item) => {
@@ -408,7 +408,8 @@
 
     const handleDashboardCreated = async (dashboardId, layout, hiddenKeys) => {
         await handleCustomNavSave(layout, hiddenKeys);
-        router.push({ name: 'dashboard', params: { id: dashboardId } });
+        await router.push({ name: 'dashboard', params: { id: dashboardId } });
+        dashboardStore.setEditingDashboardId(dashboardId);
     };
 
     const handleSubmenuClick = (entry) => {

@@ -6,23 +6,14 @@ import {
     useGalleryStore,
     useGroupStore,
     useInstanceStore,
-    useLocationStore,
     useNotificationStore,
     useSharedFeedStore,
     useUiStore,
     useUserStore
 } from '../stores';
 import { applyUser, applyCurrentUser } from '../coordinators/userCoordinator';
-import {
-    onGroupLeft,
-    applyGroup,
-    getGroupDialogGroup,
-    handleGroupMember
-} from '../coordinators/groupCoordinator';
-import {
-    handleFriendAdd,
-    handleFriendDelete
-} from '../coordinators/friendRelationshipCoordinator';
+import { onGroupLeft, applyGroup, getGroupDialogGroup, handleGroupMember } from '../coordinators/groupCoordinator';
+import { handleFriendAdd, handleFriendDelete } from '../coordinators/friendRelationshipCoordinator';
 import { parseLocation } from '../shared/utils';
 import { AppDebug } from './appConfig';
 import { groupRequest } from '../api';
@@ -35,6 +26,7 @@ import * as workerTimers from 'worker-timers';
 
 let webSocket = null;
 let lastWebSocketMessage = '';
+let webSocketClosedGracefully = true;
 
 /**
  * Reactive WebSocket state for status bar telemetry.
@@ -47,9 +39,6 @@ export const wsState = reactive({
     bytesReceived: 0
 });
 
-/**
- *
- */
 export function initWebsocket() {
     if (!watchState.isFriendsLoaded || webSocket !== null) {
         return;
@@ -76,19 +65,28 @@ export function initWebsocket() {
  */
 function connectWebSocket(token) {
     const userStore = useUserStore();
+    const notificationStore = useNotificationStore();
+    const friendStore = useFriendStore();
     if (webSocket !== null) {
         return;
     }
     const socket = new WebSocket(`${AppDebug.websocketDomain}/?auth=${token}`);
     socket.onopen = () => {
         wsState.connected = true;
+        if (!webSocketClosedGracefully && watchState.isLoggedIn && watchState.isFriendsLoaded) {
+            console.warn('WebSocket reconnected after unexpected closure');
+            webSocketClosedGracefully = true;
+            notificationStore.refreshNotifications();
+            friendStore.refreshFriends();
+        }
         if (AppDebug.debugWebSocket) {
             console.log('WebSocket connected');
         }
     };
-    socket.onclose = () => {
+    socket.onclose = ({ code, reason }) => {
         wsState.connected = false;
-        if (webSocket === socket) {
+        const isCurrentSocket = webSocket === socket;
+        if (isCurrentSocket) {
             webSocket = null;
         }
         try {
@@ -96,15 +94,12 @@ function connectWebSocket(token) {
         } catch (err) {
             console.error('Error closing WebSocket:', err);
         }
-        if (AppDebug.debugWebSocket) {
-            console.log('WebSocket closed');
+        webSocketClosedGracefully = code === 1000 || code === 1001; // Normal Closure or Going Away
+        if (!webSocketClosedGracefully || AppDebug.debugWebSocket) {
+            console.log('WebSocket closed', { code, reason });
         }
         workerTimers.setTimeout(() => {
-            if (
-                watchState.isLoggedIn &&
-                watchState.isFriendsLoaded &&
-                webSocket === null
-            ) {
+            if (watchState.isLoggedIn && watchState.isFriendsLoaded && webSocket === null) {
                 initWebsocket();
             }
         }, 5000);
@@ -163,7 +158,9 @@ export function closeWebSocket() {
     if (socket === null) {
         return;
     }
+    socket.onclose = null;
     webSocket = null;
+    wsState.connected = false;
     try {
         socket.close();
     } catch (err) {
@@ -187,11 +184,11 @@ export function reconnectWebSocket() {
  */
 function handlePipeline(args) {
     const userStore = useUserStore();
-    const locationStore = useLocationStore();
+
     const galleryStore = useGalleryStore();
     const notificationStore = useNotificationStore();
     const sharedFeedStore = useSharedFeedStore();
-    const friendStore = useFriendStore();
+
     const groupStore = useGroupStore();
     const uiStore = useUiStore();
     const instanceStore = useInstanceStore();
@@ -291,9 +288,7 @@ function handlePipeline(args) {
             // Where is instanceId, travelingToWorld, travelingToInstance?
             // More JANK, what a mess
             const $location = parseLocation(content.location);
-            const $travelingToLocation = parseLocation(
-                content.travelingToLocation
-            );
+            const $travelingToLocation = parseLocation(content.travelingToLocation);
             if (content?.user?.id) {
                 const onlineJson = {
                     id: content.userId,
@@ -362,9 +357,7 @@ function handlePipeline(args) {
 
         case 'friend-location':
             const $location1 = parseLocation(content.location);
-            const $travelingToLocation1 = parseLocation(
-                content.travelingToLocation
-            );
+            const $travelingToLocation1 = parseLocation(content.travelingToLocation);
             if (!content?.user?.id) {
                 console.error('friend-location missing user id', content);
                 const jankLocationJson = {
@@ -409,10 +402,7 @@ function handlePipeline(args) {
             // content.worldId // where did worldId go?
             // content.instance // without worldId, this is useless
 
-            runSetCurrentUserLocationFlow(
-                content.location,
-                content.travelingToLocation
-            );
+            runSetCurrentUserLocationFlow(content.location, content.travelingToLocation);
             break;
 
         case 'group-joined':
@@ -426,9 +416,7 @@ function handlePipeline(args) {
 
         case 'group-role-updated':
             const groupId = content.role.groupId;
-            groupRequest
-                .getGroup({ groupId, includeRoles: true })
-                .then((args) => applyGroup(args.json));
+            groupRequest.getGroup({ groupId, includeRoles: true }).then((args) => applyGroup(args.json));
             console.log('group-role-updated', content);
 
             // content {
@@ -453,10 +441,7 @@ function handlePipeline(args) {
                 break;
             }
             const groupId1 = member.groupId;
-            if (
-                groupStore.groupDialog.visible &&
-                groupStore.groupDialog.id === groupId1
-            ) {
+            if (groupStore.groupDialog.visible && groupStore.groupDialog.id === groupId1) {
                 getGroupDialogGroup(groupId1);
             }
             handleGroupMember({
@@ -490,24 +475,15 @@ function handlePipeline(args) {
             var contentType = content.contentType;
             console.log('content-refresh', content);
             if (contentType === 'icon') {
-                if (
-                    galleryStore.galleryDialogVisible &&
-                    !galleryStore.galleryDialogIconsLoading
-                ) {
+                if (galleryStore.galleryDialogVisible && !galleryStore.galleryDialogIconsLoading) {
                     galleryStore.refreshVRCPlusIconsTable();
                 }
             } else if (contentType === 'gallery') {
-                if (
-                    galleryStore.galleryDialogVisible &&
-                    !galleryStore.galleryDialogGalleryLoading
-                ) {
+                if (galleryStore.galleryDialogVisible && !galleryStore.galleryDialogGalleryLoading) {
                     galleryStore.refreshGalleryTable();
                 }
             } else if (contentType === 'emoji') {
-                if (
-                    galleryStore.galleryDialogVisible &&
-                    !galleryStore.galleryDialogEmojisLoading
-                ) {
+                if (galleryStore.galleryDialogVisible && !galleryStore.galleryDialogEmojisLoading) {
                     galleryStore.refreshEmojiTable();
                 }
             } else if (contentType === 'sticker') {
@@ -515,10 +491,7 @@ function handlePipeline(args) {
             } else if (contentType === 'print') {
                 if (content.actionType === 'created') {
                     galleryStore.tryDeleteOldPrints();
-                } else if (
-                    galleryStore.galleryDialogVisible &&
-                    !galleryStore.galleryDialogPrintsLoading
-                ) {
+                } else if (galleryStore.galleryDialogVisible && !galleryStore.galleryDialogPrintsLoading) {
                     galleryStore.refreshPrintTable();
                 }
             } else if (contentType === 'prints') {
@@ -534,10 +507,7 @@ function handlePipeline(args) {
             } else if (contentType === 'invitePhoto') {
                 // on uploading invite photo
             } else if (contentType === 'inventory') {
-                if (
-                    galleryStore.galleryDialogVisible &&
-                    !galleryStore.galleryDialogInventoryLoading
-                ) {
+                if (galleryStore.galleryDialogVisible && !galleryStore.galleryDialogInventoryLoading) {
                     galleryStore.getInventory();
                 }
                 // on consuming a bundle
@@ -545,10 +515,7 @@ function handlePipeline(args) {
             } else if (!contentType) {
                 console.log('content-refresh without contentType', content);
             } else {
-                console.log(
-                    'Unknown content-refresh type',
-                    content.contentType
-                );
+                console.log('Unknown content-refresh type', content.contentType);
             }
             break;
 
@@ -561,11 +528,8 @@ function handlePipeline(args) {
                 created_at: new Date().toJSON()
             };
             if (
-                notificationStore.notificationTable.filters[0].value.length ===
-                    0 ||
-                notificationStore.notificationTable.filters[0].value.includes(
-                    noty.type
-                )
+                notificationStore.notificationTable.filters[0].value.length === 0 ||
+                notificationStore.notificationTable.filters[0].value.includes(noty.type)
             ) {
                 uiStore.notifyMenu('notification');
             }

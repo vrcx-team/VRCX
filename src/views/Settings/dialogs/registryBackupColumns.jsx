@@ -37,9 +37,7 @@ export const createColumns = ({ onRestore, onSaveToFile, onDelete }) => [
             </button>
         ),
         size: 170,
-        cell: ({ row }) => (
-            <span>{formatDateFilter(row.original?.date, 'long')}</span>
-        )
+        cell: ({ row }) => <span>{formatDateFilter(row.original?.date, 'long')}</span>
     },
     {
         id: 'action',
@@ -53,10 +51,7 @@ export const createColumns = ({ onRestore, onSaveToFile, onDelete }) => [
             const original = row.original;
             return (
                 <div class="inline-flex items-center justify-end gap-1">
-                    <TooltipWrapper
-                        side="top"
-                        content={t('dialog.registry_backup.restore')}
-                    >
+                    <TooltipWrapper side="top" content={t('dialog.registry_backup.restore')}>
                         <Button
                             size="icon-sm"
                             variant="ghost"
@@ -70,10 +65,7 @@ export const createColumns = ({ onRestore, onSaveToFile, onDelete }) => [
                         </Button>
                     </TooltipWrapper>
 
-                    <TooltipWrapper
-                        side="top"
-                        content={t('dialog.registry_backup.save_to_file')}
-                    >
+                    <TooltipWrapper side="top" content={t('dialog.registry_backup.save_to_file')}>
                         <Button
                             size="icon-sm"
                             variant="ghost"
@@ -87,10 +79,7 @@ export const createColumns = ({ onRestore, onSaveToFile, onDelete }) => [
                         </Button>
                     </TooltipWrapper>
 
-                    <TooltipWrapper
-                        side="top"
-                        content={t('dialog.registry_backup.delete')}
-                    >
+                    <TooltipWrapper side="top" content={t('dialog.registry_backup.delete')}>
                         <Button
                             size="icon-sm"
                             variant="ghost"

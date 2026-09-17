@@ -14,41 +14,28 @@ export function useDateNavigation(allDateOfActivity, reloadData) {
     });
 
     const isNextDayBtnDisabled = computed(() => {
-        return dayjs(selectedDate.value).isSameOrAfter(
-            allDateOfActivityArray.value[0],
-            'day'
-        );
+        return dayjs(selectedDate.value).isSameOrAfter(allDateOfActivityArray.value[0], 'day');
     });
 
     const isPrevDayBtnDisabled = computed(() => {
         return dayjs(selectedDate.value).isSame(
-            allDateOfActivityArray.value[
-                allDateOfActivityArray.value.length - 1
-            ],
+            allDateOfActivityArray.value[allDateOfActivityArray.value.length - 1],
             'day'
         );
     });
 
     function changeSelectedDateFromBtn(isNext = false) {
-        if (
-            !allDateOfActivityArray.value ||
-            allDateOfActivityArray.value.length === 0
-        ) {
+        if (!allDateOfActivityArray.value || allDateOfActivityArray.value.length === 0) {
             return;
         }
 
-        const idx = allDateOfActivityArray.value.findIndex((date) =>
-            date.isSame(selectedDate.value, 'day')
-        );
+        const idx = allDateOfActivityArray.value.findIndex((date) => date.isSame(selectedDate.value, 'day'));
 
         // when invalid date is selected, find the next closest date
         if (idx === -1 && !isNext) {
-            const newIdx = allDateOfActivityArray.value.findIndex((date) =>
-                date.isBefore(selectedDate.value, 'day')
-            );
+            const newIdx = allDateOfActivityArray.value.findIndex((date) => date.isBefore(selectedDate.value, 'day'));
             if (newIdx !== -1) {
-                selectedDate.value =
-                    allDateOfActivityArray.value[newIdx].toDate();
+                selectedDate.value = allDateOfActivityArray.value[newIdx].toDate();
                 reloadData();
                 return;
             }
@@ -57,8 +44,7 @@ export function useDateNavigation(allDateOfActivity, reloadData) {
         if (idx !== -1) {
             const newIdx = isNext ? idx - 1 : idx + 1;
             if (newIdx >= 0 && newIdx < allDateOfActivityArray.value.length) {
-                selectedDate.value =
-                    allDateOfActivityArray.value[newIdx].toDate();
+                selectedDate.value = allDateOfActivityArray.value[newIdx].toDate();
                 reloadData();
                 return;
             }
@@ -67,18 +53,14 @@ export function useDateNavigation(allDateOfActivity, reloadData) {
         // Fallback to the first/last date
         selectedDate.value = isNext
             ? allDateOfActivityArray.value[0].toDate()
-            : allDateOfActivityArray.value[
-                  allDateOfActivityArray.value.length - 1
-              ].toDate();
+            : allDateOfActivityArray.value[allDateOfActivityArray.value.length - 1].toDate();
         reloadData();
     }
 
     function getDatePickerDisabledDate(time) {
         if (
             time > Date.now() ||
-            allDateOfActivityArray.value[
-                allDateOfActivityArray.value.length - 1
-            ]
+            allDateOfActivityArray.value[allDateOfActivityArray.value.length - 1]
                 ?.add(-1, 'day')
                 .isAfter(time, 'day') ||
             !allDateOfActivity.value

@@ -10,7 +10,11 @@ import { updateLocalizedStrings } from '../plugins/i18n';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useAvatarStore } from './avatar';
 import { useGroupStore } from './group';
-import { showGroupDialog } from '../coordinators/groupCoordinator';
+import {
+    clearGroupMemberModerationDialog,
+    showGroupDialog,
+    showGroupMemberModerationDialog
+} from '../coordinators/groupCoordinator';
 import { showWorldDialog } from '../coordinators/worldCoordinator';
 import { showAvatarDialog } from '../coordinators/avatarCoordinator';
 import { showUserDialog } from '../coordinators/userCoordinator';
@@ -90,9 +94,7 @@ export const useUiStore = defineStore('Ui', () => {
             }
             return;
         }
-        const existingIndex = items.findIndex(
-            (item) => item.type === type && item.id === id
-        );
+        const existingIndex = items.findIndex((item) => item.type === type && item.id === id);
         if (existingIndex !== -1) {
             items.splice(existingIndex + 1);
             if (label) {
@@ -110,9 +112,7 @@ export const useUiStore = defineStore('Ui', () => {
         if (!type || !id || !label) {
             return;
         }
-        const item = dialogCrumbs.value.find(
-            (entry) => entry.type === type && entry.id === id
-        );
+        const item = dialogCrumbs.value.find((entry) => entry.type === type && entry.id === id);
         if (item) {
             item.label = label;
         }
@@ -174,9 +174,11 @@ export const useUiStore = defineStore('Ui', () => {
             instanceStore.showPreviousInstancesInfoDialog(item.id);
             return;
         }
-        console.error(
-            `Unknown dialog crumb type: ${item.type}, closing dialog`
-        );
+        if (item.type === 'group-member-moderation') {
+            showGroupMemberModerationDialog(item.id);
+            return;
+        }
+        console.error(`Unknown dialog crumb type: ${item.type}, closing dialog`);
         closeMainDialog();
     }
 
@@ -195,6 +197,8 @@ export const useUiStore = defineStore('Ui', () => {
         worldStore.setWorldDialogVisible(false);
         avatarStore.setAvatarDialogVisible(false);
         groupStore.setGroupDialogVisible(false);
+        groupStore.setGroupMemberModerationVisible(false);
+        clearGroupMemberModerationDialog();
         instanceStore.hidePreviousInstancesDialogs();
         clearDialogCrumbs();
     }
@@ -215,18 +219,15 @@ export const useUiStore = defineStore('Ui', () => {
         const groupStore = useGroupStore();
         const instanceStore = useInstanceStore();
         const isPrevInfo = type === 'previous-instances-info';
-        const isPrevList =
-            type &&
-            type.startsWith('previous-instances-') &&
-            type !== 'previous-instances-info';
+        const isPrevList = type && type.startsWith('previous-instances-') && type !== 'previous-instances-info';
         const hadActiveDialog =
             dialogCrumbs.value.length > 0 ||
             userStore.userDialog.visible ||
             worldStore.worldDialog.visible ||
             avatarStore.avatarDialog.visible ||
             groupStore.groupDialog.visible ||
-            (instanceStore.previousInstancesInfoDialog.visible &&
-                !isPrevInfo) ||
+            groupStore.groupMemberModeration.visible ||
+            (instanceStore.previousInstancesInfoDialog.visible && !isPrevInfo) ||
             (instanceStore.previousInstancesListDialog.visible && !isPrevList);
 
         if (type !== 'user') {
@@ -240,6 +241,9 @@ export const useUiStore = defineStore('Ui', () => {
         }
         if (type !== 'group') {
             groupStore.setGroupDialogVisible(false);
+        }
+        if (type !== 'group-member-moderation') {
+            groupStore.setGroupMemberModerationVisible(false);
         }
         if (!isPrevInfo) {
             instanceStore.setPreviousInstancesInfoDialogVisible(false);
@@ -262,12 +266,7 @@ export const useUiStore = defineStore('Ui', () => {
 
     function showConsole() {
         AppApi.ShowDevTools();
-        if (
-            AppDebug.debug ||
-            AppDebug.debugWebRequests ||
-            AppDebug.debugWebSocket ||
-            AppDebug.debugUserDiff
-        ) {
+        if (AppDebug.debug || AppDebug.debugWebRequests || AppDebug.debugWebSocket || AppDebug.debugUserDiff) {
             return;
         }
         console.log(
@@ -295,10 +294,7 @@ export const useUiStore = defineStore('Ui', () => {
 
     function notifyMenu(index) {
         const currentRouteName = router.currentRoute.value?.name;
-        if (
-            index !== currentRouteName &&
-            !notifiedMenus.value.includes(index)
-        ) {
+        if (index !== currentRouteName && !notifiedMenus.value.includes(index)) {
             notifiedMenus.value.push(index);
             updateTrayIconNotify();
         }
@@ -317,19 +313,14 @@ export const useUiStore = defineStore('Ui', () => {
     function updateTrayIconNotify(force = false) {
         const notificationsSettingsStore = useNotificationsSettingsStore();
         let newState;
-        if (
-            notificationsSettingsStore.notificationLayout ===
-            'notification-center'
-        ) {
+        if (notificationsSettingsStore.notificationLayout === 'notification-center') {
             newState =
                 appearanceSettings.notificationIconDot &&
-                (notificationStore.hasUnseenNotifications ||
-                    notifiedMenus.value.includes('friend-log'));
+                (notificationStore.hasUnseenNotifications || notifiedMenus.value.includes('friend-log'));
         } else {
             newState =
                 appearanceSettings.notificationIconDot &&
-                (notifiedMenus.value.includes('notification') ||
-                    notifiedMenus.value.includes('friend-log'));
+                (notifiedMenus.value.includes('notification') || notifiedMenus.value.includes('friend-log'));
         }
 
         if (trayIconNotify.value !== newState || force) {

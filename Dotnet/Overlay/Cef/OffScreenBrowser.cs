@@ -46,6 +46,7 @@ public class OffScreenBrowser : ChromiumWebBrowser, IRenderHandler
             WindowlessFrameRate = !_isLegacy ? 60 : 24
         };
 
+        RenderProcessMessageHandler = PlatformRenderProcessMessageHandler.Instance;
         CreateBrowser(windowInfo, browserSettings);
 
         Size = new System.Drawing.Size(width, height);

@@ -57,30 +57,23 @@ vi.mock('@/components/ui/tabs', () => ({
     Tabs: {
         props: ['modelValue'],
         emits: ['update:modelValue'],
-        template:
-            '<div data-testid="tabs" :data-model-value="modelValue"><slot /></div>'
+        template: '<div data-testid="tabs" :data-model-value="modelValue"><slot /></div>'
     },
     TabsList: { template: '<div data-testid="tabs-list"><slot /></div>' },
     TabsTrigger: {
         props: ['value'],
-        template:
-            '<button data-testid="tabs-trigger" :data-value="value"><slot /></button>'
+        template: '<button data-testid="tabs-trigger" :data-value="value"><slot /></button>'
     },
     TabsContent: {
         props: ['value'],
-        template:
-            '<div data-testid="tabs-content" :data-value="value"><slot /></div>'
+        template: '<div data-testid="tabs-content" :data-value="value"><slot /></div>'
     }
 }));
 
 vi.mock('../NotificationList.vue', () => ({
     default: {
         props: ['notifications', 'recentNotifications'],
-        emits: [
-            'show-invite-response',
-            'show-invite-request-response',
-            'navigate-to-table'
-        ],
+        emits: ['show-invite-response', 'show-invite-request-response', 'navigate-to-table'],
         template:
             '<div data-testid="notification-list">' +
             '<button data-testid="emit-show-invite-response" @click="$emit(\'show-invite-response\', { id: \'invite_1\' })">invite-response</button>' +
@@ -93,21 +86,17 @@ vi.mock('../NotificationList.vue', () => ({
 vi.mock('../../../Notifications/dialogs/SendInviteResponseDialog.vue', () => ({
     default: {
         props: ['sendInviteResponseDialogVisible'],
-        template:
-            '<div data-testid="dialog-response" :data-visible="String(sendInviteResponseDialogVisible)" />'
+        template: '<div data-testid="dialog-response" :data-visible="String(sendInviteResponseDialogVisible)" />'
     }
 }));
 
-vi.mock(
-    '../../../Notifications/dialogs/SendInviteRequestResponseDialog.vue',
-    () => ({
-        default: {
-            props: ['sendInviteRequestResponseDialogVisible'],
-            template:
-                '<div data-testid="dialog-request-response" :data-visible="String(sendInviteRequestResponseDialogVisible)" />'
-        }
-    })
-);
+vi.mock('../../../Notifications/dialogs/SendInviteRequestResponseDialog.vue', () => ({
+    default: {
+        props: ['sendInviteRequestResponseDialogVisible'],
+        template:
+            '<div data-testid="dialog-request-response" :data-visible="String(sendInviteRequestResponseDialogVisible)" />'
+    }
+}));
 
 import NotificationCenterSheet from '../NotificationCenterSheet.vue';
 
@@ -135,9 +124,7 @@ describe('NotificationCenterSheet.vue', () => {
         mocks.notificationStore.isNotificationCenterOpen.value = true;
         await wrapper.vm.$nextTick();
 
-        expect(
-            wrapper.get('[data-testid="tabs"]').attributes('data-model-value')
-        ).toBe('group');
+        expect(wrapper.get('[data-testid="tabs"]').attributes('data-model-value')).toBe('group');
     });
 
     test('navigate-to-table closes center and routes to notification page', async () => {
@@ -146,9 +133,7 @@ describe('NotificationCenterSheet.vue', () => {
 
         await wrapper.get('[data-testid="emit-navigate"]').trigger('click');
 
-        expect(mocks.notificationStore.isNotificationCenterOpen.value).toBe(
-            false
-        );
+        expect(mocks.notificationStore.isNotificationCenterOpen.value).toBe(false);
         expect(mocks.router.push).toHaveBeenCalledWith({
             name: 'notification',
             query: { fromCenter: '1' }
@@ -158,31 +143,15 @@ describe('NotificationCenterSheet.vue', () => {
     test('show invite response/request dialogs trigger side effects', async () => {
         const wrapper = mount(NotificationCenterSheet);
 
-        await wrapper
-            .get('[data-testid="emit-show-invite-response"]')
-            .trigger('click');
+        await wrapper.get('[data-testid="emit-show-invite-response"]').trigger('click');
 
-        expect(
-            mocks.inviteStore.refreshInviteMessageTableData
-        ).toHaveBeenCalledWith('response');
+        expect(mocks.inviteStore.refreshInviteMessageTableData).toHaveBeenCalledWith('response');
         expect(mocks.galleryStore.clearInviteImageUpload).toHaveBeenCalled();
-        expect(
-            wrapper
-                .get('[data-testid="dialog-response"]')
-                .attributes('data-visible')
-        ).toBe('true');
+        expect(wrapper.get('[data-testid="dialog-response"]').attributes('data-visible')).toBe('true');
 
-        await wrapper
-            .get('[data-testid="emit-show-invite-request-response"]')
-            .trigger('click');
+        await wrapper.get('[data-testid="emit-show-invite-request-response"]').trigger('click');
 
-        expect(
-            mocks.inviteStore.refreshInviteMessageTableData
-        ).toHaveBeenCalledWith('requestResponse');
-        expect(
-            wrapper
-                .get('[data-testid="dialog-request-response"]')
-                .attributes('data-visible')
-        ).toBe('true');
+        expect(mocks.inviteStore.refreshInviteMessageTableData).toHaveBeenCalledWith('requestResponse');
+        expect(wrapper.get('[data-testid="dialog-request-response"]').attributes('data-visible')).toBe('true');
     });
 });

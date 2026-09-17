@@ -43,10 +43,8 @@ vi.mock('vue-i18n', () => ({
 vi.mock('../../../stores', () => ({
     useModerationStore: () => ({
         playerModerationTable: mocks.playerModerationTable,
-        refreshPlayerModerations: (...args) =>
-            mocks.refreshPlayerModerations(...args),
-        handlePlayerModerationDelete: (...args) =>
-            mocks.handlePlayerModerationDelete(...args)
+        refreshPlayerModerations: (...args) => mocks.refreshPlayerModerations(...args),
+        handlePlayerModerationDelete: (...args) => mocks.handlePlayerModerationDelete(...args)
     }),
     useAppearanceSettingsStore: () => ({
         tablePageSizes: [10, 25, 50],
@@ -69,14 +67,12 @@ vi.mock('../../../services/config.js', () => ({
 
 vi.mock('../../../api', () => ({
     playerModerationRequest: {
-        deletePlayerModeration: (...args) =>
-            mocks.deletePlayerModeration(...args)
+        deletePlayerModeration: (...args) => mocks.deletePlayerModeration(...args)
     }
 }));
 
 vi.mock('../../../coordinators/moderationCoordinator', () => ({
-    runRefreshPlayerModerationsFlow: (...args) =>
-        mocks.refreshPlayerModerations(...args)
+    runRefreshPlayerModerationsFlow: (...args) => mocks.refreshPlayerModerations(...args)
 }));
 
 vi.mock('../../../shared/constants', async (importOriginal) => {
@@ -117,8 +113,7 @@ vi.mock('@/components/ui/select', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="moderation-button" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="moderation-button" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -197,13 +192,8 @@ describe('Moderation.vue', () => {
         mountModeration();
         await flushAsync();
 
-        expect(mocks.configGetString).toHaveBeenCalledWith(
-            'VRCX_playerModerationTableFilters',
-            '[]'
-        );
-        expect(mocks.playerModerationTable.value.filters[0].value).toEqual([
-            'block'
-        ]);
+        expect(mocks.configGetString).toHaveBeenCalledWith('VRCX_playerModerationTableFilters', '[]');
+        expect(mocks.playerModerationTable.value.filters[0].value).toEqual(['block']);
     });
 
     test('updates moderation filter and persists value', async () => {
@@ -213,9 +203,7 @@ describe('Moderation.vue', () => {
         wrapper.vm.handleModerationFilterChange(['mute']);
         await nextTick();
 
-        expect(mocks.playerModerationTable.value.filters[0].value).toEqual([
-            'mute'
-        ]);
+        expect(mocks.playerModerationTable.value.filters[0].value).toEqual(['mute']);
         expect(mocks.configSetString).toHaveBeenCalledWith(
             'VRCX_playerModerationTableFilters',
             JSON.stringify(['mute'])
@@ -236,10 +224,7 @@ describe('Moderation.vue', () => {
             },
             { type: 'mute', sourceDisplayName: 'X', targetDisplayName: 'Alice' }
         ];
-        mocks.playerModerationTable.value.filters = [
-            { value: ['mute'] },
-            { value: 'ali' }
-        ];
+        mocks.playerModerationTable.value.filters = [{ value: ['mute'] }, { value: 'ali' }];
 
         const wrapper = mountModeration();
         await flushAsync();

@@ -7,7 +7,7 @@
 
             <div>
                 <span>{{ t('dialog.gallery_select.gallery') }}</span>
-                <span class="ml-1.5 text-muted-foreground text-xs">{{ galleryTable.length }}/64</span>
+                <span class="ml-1.5 text-muted-foreground text-xs">{{ imageTable.length }}/64</span>
                 <br />
                 <input
                     id="GalleryUploadButton"
@@ -20,7 +20,7 @@
                         <X />
                         {{ t('dialog.gallery_select.none') }}
                     </Button>
-                    <Button variant="outline" size="sm" @click="refreshGalleryTable">
+                    <Button variant="outline" size="sm" @click="refreshTable()">
                         <RefreshCw />
                         {{ t('dialog.gallery_select.refresh') }}
                     </Button>
@@ -34,16 +34,17 @@
                     </Button>
                 </ButtonGroup>
                 <br />
-                <div
-                    v-for="image in galleryTable"
-                    :key="image.id"
-                    class="box-border inline-block mt-2.5 cursor-default">
+                <div v-for="image in imageTable" :key="image.id" class="box-border inline-block mt-2.5 cursor-default">
                     <template v-if="image.versions && image.versions.length > 0">
                         <div
                             v-if="image.versions[image.versions.length - 1].file.url"
-                            class="h-[200px] w-[200px] rounded-[20px] cursor-pointer overflow-hidden"
+                            class="h-[200px] w-[200px] rounded-[20px] cursor-pointer overflow-hidden mr-5"
                             @click="
-                                selectImageGallerySelect(image.versions[image.versions.length - 1].file.url, image.id)
+                                selectImageGallerySelect(
+                                    image.versions[image.versions.length - 1].file.url,
+                                    image.id,
+                                    image.versions[image.versions.length - 1].version
+                                )
                             ">
                             <img
                                 :src="image.versions[image.versions.length - 1].file.url"
@@ -67,12 +68,13 @@
     import { useI18n } from 'vue-i18n';
 
     import { useGalleryStore, useUserStore } from '../../../stores';
-    import { vrcPlusImageRequest } from '../../../api';
+    import { vrcPlusIconRequest, vrcPlusImageRequest } from '../../../api';
+    import { computed, watch } from 'vue';
 
     const { t } = useI18n();
 
-    const { galleryTable } = storeToRefs(useGalleryStore());
-    const { refreshGalleryTable, handleGalleryImageAdd } = useGalleryStore();
+    const { galleryTable, VRCPlusIconsTable } = storeToRefs(useGalleryStore());
+    const { refreshGalleryTable, refreshVRCPlusIconsTable, handleGalleryImageAdd } = useGalleryStore();
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
 
     const props = defineProps({
@@ -81,28 +83,50 @@
             required: true
         }
     });
+    const emit = defineEmits(['select-image']);
+
+    watch(
+        () => props.gallerySelectDialog.visible,
+        (newValue) => {
+            if (newValue) {
+                refreshTable();
+            }
+        }
+    );
+
+    function refreshTable() {
+        if (props.gallerySelectDialog.isIconGallerySelectDialog) {
+            refreshVRCPlusIconsTable();
+            return;
+        }
+        refreshGalleryTable();
+    }
+    const imageTable = computed(() => {
+        if (props.gallerySelectDialog.isIconGallerySelectDialog) {
+            return VRCPlusIconsTable.value;
+        }
+        return galleryTable.value;
+    });
 
     /**
-     *
      * @param imageUrl
      * @param fileId
+     * @param fileVersion
      */
-    function selectImageGallerySelect(imageUrl, fileId) {
+    function selectImageGallerySelect(imageUrl, fileId, fileVersion) {
         const D = props.gallerySelectDialog;
         D.selectedFileId = fileId;
         D.selectedImageUrl = imageUrl;
+        D.selectedFileVersion = fileVersion;
+        emit('select-image', { imageUrl, fileId, fileVersion });
         D.visible = false;
     }
 
-    /**
-     *
-     */
     function displayGalleryUpload() {
         document.getElementById('GalleryUploadButton').click();
     }
 
     /**
-     *
      * @param e
      */
     function onFileChangeGallery(e) {
@@ -130,6 +154,17 @@
         const r = new FileReader();
         r.onload = function () {
             const base64Body = btoa(r.result.toString());
+            if (props.gallerySelectDialog.isIconGallerySelectDialog) {
+                vrcPlusIconRequest.uploadVRCPlusIcon(base64Body).then((args) => {
+                    handleGalleryImageAdd(args);
+                    toast.success(t('message.gallery.uploaded'));
+                    if (Object.keys(VRCPlusIconsTable.value).length !== 0) {
+                        VRCPlusIconsTable.value.unshift(args.json);
+                    }
+                    return args;
+                });
+                return;
+            }
             vrcPlusImageRequest.uploadGalleryImage(base64Body).then((args) => {
                 handleGalleryImageAdd(args);
                 toast.success(t('message.gallery.uploaded'));

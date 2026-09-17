@@ -28,7 +28,19 @@
             "d": "天",
             "h": "小时",
             "m": "分钟",
-            "s": "秒"
+            "s": "秒",
+            "year": "年",
+            "month": "月",
+            "day": "天",
+            "hour": "小时",
+            "minute": "分钟",
+            "second": "秒",
+            "years": "年",
+            "months": "月",
+            "days": "天",
+            "hours": "小时",
+            "minutes": "分钟",
+            "seconds": "秒"
         },
         "days": {
             "sunday": "星期日",
@@ -423,6 +435,10 @@
             "filter_placeholder": "筛选管理操作",
             "search_placeholder": "搜索",
             "refresh_tooltip": "刷新",
+            "clear_type_placeholder": "清除全部管理操作",
+            "clear_all": "清除全部",
+            "clear_confirm_title": "清除管理操作",
+            "clear_confirm_description": "警告：这将会从你的账号中删除所有“{type}”管理操作且无法撤销。你确定吗？",
             "filters": {
                 "block": "屏蔽",
                 "unblock": "取消屏蔽",
@@ -461,12 +477,13 @@
                 "group": {
                     "announcement": "群组公告",
                     "informative": "群组消息",
-                    "invite": "邀请",
+                    "invite": "群组邀请",
                     "joinRequest": "加入申请",
                     "transfer": "转让",
                     "queueReady": "队列准备就绪",
                     "event": {
-                        "created": "群组活动"
+                        "created": "群组活动创建",
+                        "starting": "群组活动开始"
                     }
                 },
                 "moderation": {
@@ -479,7 +496,8 @@
                     "contentrestriction": "内容限制"
                 },
                 "instance": {
-                    "closed": "房间关闭"
+                    "closed": "房间关闭",
+                    "announcement": "房间公告"
                 },
                 "badge": {
                     "earned": "获得徽章"
@@ -493,6 +511,9 @@
                         "gift": "礼物已接收"
                     },
                     "alert": "创作者经济警告"
+                },
+                "twitchdrop": {
+                    "fulfilled": "Twitch Drop 已发放"
                 }
             }
         },
@@ -888,8 +909,11 @@
                     "theme_mode_pink": "粉色",
                     "theme_mode_material3": "Material 3",
                     "zoom": "界面缩放",
+                    "profile_icons": "个人主页头像",
+                    "profile_icons_description": "在可用时使用个人主页头像。",
                     "vrcplus_profile_icons": "VRC+ 个人资料图标",
-                    "vrcplus_profile_icons_description": "当可用时显示 VRChat+ 专属个人资料图标。",
+                    "vrcplus_profile_icons_description": "当可用时显示 VRC+ 专属个人资料图标。",
+                    "vrc_profile_themes": "VRChat 个人资料主题",
                     "show_instance_id": "显示房间 ID",
                     "show_status_bar": "显示底部状态栏",
                     "age_gated_instances": "显示具有年龄限制的房间",
@@ -907,18 +931,21 @@
                     "table_page_sizes_error": "页面尺寸必须是 1 到 1000 之间的数字",
                     "show_notification_icon_dot": "显示托盘通知",
                     "striped_data_table_mode": "斑马纹表格模式",
-                    "toggle_pointer_on_hover": "悬停时强制显示指针",
-                    "toggle_pointer_on_hover_description": "对可点击元素始终显示指针光标。",
                     "accessible_status_indicators": "无障碍版状态指示器",
                     "accessible_status_indicators_description": "除了使用颜色之外，也使用形状来区分状态。",
-                    "use_official_status_colors": "使用游戏内的状态颜色",
-                    "use_official_status_colors_description": "匹配游戏内的状态颜色。",
                     "table_density": "行高密度",
                     "table_density_standard": "标准",
                     "table_density_comfortable": "舒适",
                     "table_density_compact": "紧凑",
                     "table_entries_settings": "条目读取设置",
-                    "table_entries_settings_description": "控制读取列表和进行搜索时加载的条目数量"
+                    "table_entries_settings_description": "控制读取列表和进行搜索时加载的条目数量",
+                    "vrc_profile_backgrounds": "VRChat 个人主页背景",
+                    "vrc_profile_backgrounds_description": "在玩家信息中显示个人主页背景，例如渐变或 VRC+ 背景。",
+                    "vrc_profile_backgrounds_opacity": "个人主页背景不透明度",
+                    "vrc_profile_backgrounds_opacity_description": "较高的值会影响文本的可读性。",
+                    "vrc_profile_cosmetics": "个人主页外观",
+                    "cosmetics_description": "显示头像边框和个人主页特效",
+                    "show_cosmetics": "显示外观"
                 },
                 "display": {
                     "header": "显示设置"
@@ -1363,10 +1390,13 @@
                 "unfriend_success_msg": "已成功删除好友",
                 "logout": "退出登录",
                 "edit_note_memo": "编辑备注",
-                "reset_home": "重置出生点"
+                "reset_home": "重置出生点",
+                "edit_profile": "编辑个人主页"
             },
             "info": {
                 "header": "信息",
+                "vrcx_info": "VRCX 信息",
+                "vrcx_info_tooltip": "VRCX 的信息可能不准确",
                 "launch_invite_tooltip": "启动 / 邀请",
                 "self_invite_tooltip": "邀请自己",
                 "open_in_vrchat_tooltip": "在 VRChat 中打开",
@@ -1411,14 +1441,18 @@
                 "copy_display_name": "复制昵称",
                 "vrcplus_hides_avatar": "当设置了 VRC+ 专属的个人资料图标后，模型信息将会被隐藏。同时这也会导致动态中的“模型变动”事件被隐藏",
                 "instance_full": "房间已满",
-                "instance_closed": "房间已关闭",
+                "instance_closed_at": "房间关闭于",
                 "instance_age_restricted": "年龄限制",
                 "instance_age_restricted_tooltip": "位于年龄限制房间",
                 "close_instance": "关闭该房间",
                 "instance_age_gated": "房间具有年龄限制",
+                "instance_role_restricted": "房间具有身份组限制",
                 "open_previous_instance": "打开之前加入的房间的列表",
                 "show_mutual_friends": "是否允许查看共同好友",
-                "show_discord_connections": "是否允许查看绑定的 Discord 账号信息"
+                "show_discord_connections": "是否允许查看绑定的 Discord 账号信息",
+                "instance_minimum_avatar_performance": "模型性能评级限制",
+                "current_instance": "当前房间",
+                "economy_creator": "商业创作者"
             },
             "groups": {
                 "header": "群组",
@@ -1426,6 +1460,8 @@
                 "sort_by": "排序方式：",
                 "edit_mode": "编辑模式",
                 "exit_edit_mode": "退出编辑模式",
+                "create_requires_vrc_plus": "创建群组需要 VRC+",
+                "create_limit_reached": "你已达到最大群组拥有数",
                 "hold_shift": "按住Shift键可在不确认的情况下退出",
                 "own_groups": "创建的群组",
                 "mutual_groups": "共同群组",
@@ -1595,13 +1631,14 @@
                 "copy_name": "复制名称",
                 "youtube_preview": "YouTube 预览链接",
                 "author_tags": "作者添加的标签",
+                "more_info": "更多信息",
                 "players": "地图内总在线人数",
                 "favorites": "收藏人数",
                 "visits": "总游玩人次",
                 "capacity": "推荐人数",
                 "heat": "热度",
                 "popularity": "知名度",
-                "created_at": "创建时间",
+                "created": "创建时间",
                 "last_updated": "最后更新时间",
                 "publication_date": "正式公开于",
                 "labs_publication_date": "进入实验室的日期",
@@ -1610,7 +1647,8 @@
                 "platform": "支持的平台",
                 "last_visited": "最后游玩时间",
                 "visit_count": "游玩次数",
-                "time_spent": "总停留时长"
+                "time_spent": "总停留时长",
+                "description": "描述"
             },
             "json": {
                 "header": "原始 JSON 信息"
@@ -1628,7 +1666,15 @@
                 "content_gore": "血腥",
                 "content_violence": "暴力",
                 "content_adult": "成人内容",
-                "content_sex": "性暗示"
+                "content_sex": "性暗示",
+                "performanceRating": {
+                    "Excellent": "流畅",
+                    "Good": "低负载",
+                    "Medium": "中负载",
+                    "Poor": "高负载",
+                    "VeryPoor": "极高负载",
+                    "None": "无"
+                }
             },
             "labels": {
                 "public": "（公开）",
@@ -1686,6 +1732,33 @@
                 "header": "原始 JSON 信息"
             }
         },
+        "group_edit": {
+            "create_header": "创建群组",
+            "edit_header": "编辑群组",
+            "name": "名称",
+            "short_code": "群组代码",
+            "description": "描述",
+            "join_state": "加入状态",
+            "privacy": "私密",
+            "role_template": "身份组模板",
+            "loading_role_templates": "正在加载身份组模板...",
+            "language": "语言",
+            "no_language": "无语言",
+            "rules": "规则",
+            "links": "链接",
+            "add_link": "添加链接",
+            "allow_join_prompt": "自动群组邀请",
+            "allow_join_prompt_description": "自动向在此群组房间中停留超过 5 分钟或在其中添加好友的非成员玩家发送邀请。仅适用于公开群组。",
+            "banner": "横幅",
+            "icon": "头像",
+            "select_image": "选择图片",
+            "clear_image": "清除图片",
+            "saving": "保存中...",
+            "save": "保存更改",
+            "create": "创建群组",
+            "create_success": "群组已创建",
+            "edit_success": "群组已更新"
+        },
         "group": {
             "tags": {
                 "verified": "已认证",
@@ -1697,6 +1770,7 @@
                 "closed": "不允许任何人加入",
                 "joined": "已加入",
                 "banned": "被屏蔽/封禁",
+                "everyone": "可见性：所有人",
                 "visible": "可见性：所有人",
                 "friends": "可见性：好友",
                 "hidden": "可见性：隐藏",
@@ -1723,9 +1797,13 @@
                 "visibility_hidden": "可见性：隐藏",
                 "create_post": "创建群组帖子",
                 "moderation_tools": "成员管理",
+                "transfer": "转让群组",
+                "delete": "删除群组",
                 "leave": "离开群组",
                 "block": "屏蔽该群组",
-                "unblock": "取消屏蔽该群组"
+                "unblock": "取消屏蔽该群组",
+                "unsubscribe_event": "取消订阅活动公告",
+                "subscribe_event": "订阅活动公告"
             },
             "info": {
                 "header": "信息",
@@ -1733,7 +1811,8 @@
                 "announcement": "公告",
                 "rules": "规则",
                 "members": "成员",
-                "created_at": "创建时间",
+                "online_members": "在线成员",
+                "created": "创建时间",
                 "links": "链接",
                 "url": "群组链接",
                 "url_tooltip": "复制链接到剪贴板",
@@ -1748,7 +1827,10 @@
                 "role_permissions": "权限：",
                 "last_visited": "最后访问时间",
                 "past_events": "之前举办的活动",
-                "upcoming_events": "即将到来的活动"
+                "upcoming_events": "即将到来的活动",
+                "member_info": "成员信息",
+                "visibility": "可见性",
+                "short_code": "群组代码"
             },
             "posts": {
                 "header": "帖子",
@@ -1781,6 +1863,26 @@
                 "representing": "该玩家在其名片上展示该群组",
                 "manager_notes": "群组内备注：",
                 "search": "搜索"
+            },
+            "transfer": {
+                "header": "转让群组",
+                "description": "搜索将接受 {groupName} 的所有权移交的成员。",
+                "search_placeholder": "搜索群组成员",
+                "search_minimum": "至少输入 {count} 个字符进行搜索。",
+                "no_results": "未找到匹配的成员。",
+                "cancel": "取消",
+                "submit": "转让群组",
+                "requirements_title": "无法转移群组",
+                "requirements_description": "{displayName} 未满足拥有此群组的所有要求。未满足的要求：{requirements}。",
+                "requirements": {
+                    "group_not_monetized": "该群组不能被商业化",
+                    "has_vrc_plus": "该成员必须拥有 VRC+",
+                    "has_verified_email": "该成员必须有一个已验证的电子邮箱地址",
+                    "can_own_more_groups": "该成员不能超出最大群组拥有数",
+                    "is_group_member": "该用户必须是该组成员"
+                },
+                "confirm_title": "转让群组所有权",
+                "confirm_description": "确定要发送将 {groupName} 的所有权移交至 {displayName} 的请求吗？"
             },
             "gallery": {
                 "header": "相册"
@@ -1821,6 +1923,30 @@
             "pronouns_placeholder": "请输入你的人称代词（例如武装直升机）",
             "update": "更新"
         },
+        "edit_profile": {
+            "banner": "横幅",
+            "banner_color": "横幅颜色",
+            "banner_type_color": "颜色",
+            "banner_type_avatar_banner": "模型图片",
+            "banner_type_custom_image": "自定义图片",
+            "button": "按钮",
+            "icon": "头像",
+            "subtext": "次要文本",
+            "profile_theme": "个人主页主题",
+            "theme_name_placeholder": "主题名称",
+            "create_theme": "创建主题",
+            "delete_theme": "删除主题",
+            "profile_background": "个人主页背景",
+            "profile_background_type_none": "无",
+            "profile_background_type_image": "图片",
+            "profile_background_type_gradient": "渐变",
+            "gradient_top": "渐变顶部",
+            "gradient_bottom": "渐变底部",
+            "nameplate_effect": "名牌特效",
+            "profile_effect": "个人主页特效",
+            "icon_frame": "头像边框",
+            "select_effect": "选择一个特效"
+        },
         "new_instance": {
             "header": "新房间",
             "access_type": "房间类型",
@@ -1846,6 +1972,7 @@
             "content_drones": "无人机",
             "content_items": "物品",
             "content_third_person": "第三人称视角",
+            "content_prop_movement": "改变玩家移动方式的道具",
             "world_id": "世界 ID",
             "instance_id": "房间 ID",
             "instance_id_placeholder": "通常是随机数",
@@ -1868,7 +1995,8 @@
             "legacy": "传统",
             "roles": "身份组",
             "open_ingame": "在 VRChat 中打开",
-            "display_name": "自定义房间名称 (需要 VRC+)"
+            "display_name": "自定义房间名称 (需要 VRC+)",
+            "minimum_avatar_performance": "模型性能评级限制"
         },
         "launch": {
             "header": "启动",
@@ -2338,7 +2466,8 @@
                 "description": "描述",
                 "export_to_calendar": "导出到日历",
                 "download_ics": "下载 .ics 文件",
-                "copied_event_link": "相关活动日历的链接已复制到剪贴板"
+                "copied_event_link": "相关活动日历的链接已复制到剪贴板",
+                "repeating_event_tooltip": "重复活动"
             },
             "featured_events": "精选活动"
         },
@@ -2438,7 +2567,10 @@
         "send_invite": "要发送邀请吗？",
         "decline_type": "确定要拒绝{type}吗？",
         "delete_type": "确定要删除{type}吗？",
-        "command_question": "继续？{command}",
+        "command_question": "确定要{command}吗？",
+        "command_question_toggle": "确定要{action}{command}吗？",
+        "enable_action": "启用",
+        "disable_action": "禁用",
         "clear_group": "确定要清空群组吗？",
         "delete_group": "确定要删除群组 {name} 吗？",
         "delete_post": "确定要删除这个公告吗？",
@@ -2726,7 +2858,9 @@
             "joined": "加入群组成功",
             "join_request_sent": "已发送加入申请",
             "visibility_updated": "群组可见性已更新",
-            "subscription_updated": "群组通知订阅状态已更新"
+            "subscription_updated": "群组通知订阅状态已更新",
+            "event_announcement_updated": "群组活动公告已更新",
+            "transfer_requested": "已发送群组转让请求"
         },
         "invite": {
             "self_sent": "已发送自我邀请",
@@ -2825,6 +2959,8 @@
         "trust_level": "信誉等级变更为 {trustLevel}",
         "display_name": "已改名为 {displayName}",
         "group_announcement_title": "群组公告",
+        "group_event_created_title": "群组活动已创建",
+        "group_event_starting_title": "群组活动已开始",
         "group_informative_title": "群组信息",
         "group_invite_title": "群组邀请",
         "group_join_request_title": "群组加入请求",

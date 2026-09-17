@@ -21,8 +21,7 @@ const mocks = vi.hoisted(() => ({
             }
         ]
     },
-    sortGroupInstancesByInGame: (a, b) =>
-        a[0].group.name.localeCompare(b[0].group.name),
+    sortGroupInstancesByInGame: (a, b) => a[0].group.name.localeCompare(b[0].group.name),
     showLaunchDialog: vi.fn(),
     checkCanInviteSelf: vi.fn(() => true),
     selfInvite: vi.fn().mockResolvedValue({}),
@@ -100,8 +99,7 @@ vi.mock('../../../../components/ui/context-menu', () => ({
     ContextMenuItem: {
         emits: ['click'],
         props: ['disabled'],
-        template:
-            '<button data-testid="ctx-item" :disabled="disabled" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="ctx-item" :disabled="disabled" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -149,8 +147,6 @@ describe('GroupsSidebar.vue', () => {
             worldId: 'wrld_1',
             instanceId: '123'
         });
-        expect(mocks.toastSuccess).toHaveBeenCalledWith(
-            'message.invite.self_sent'
-        );
+        expect(mocks.toastSuccess).toHaveBeenCalledWith('message.invite.self_sent');
     });
 });

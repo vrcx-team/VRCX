@@ -78,12 +78,8 @@ export const useVrStore = defineStore('Vr', () => {
             date: locationStore.lastLocation.date,
             location: locationStore.lastLocation.location,
             name: locationStore.lastLocation.name,
-            playerList: Array.from(
-                locationStore.lastLocation.playerList.values()
-            ),
-            friendList: Array.from(
-                locationStore.lastLocation.friendList.values()
-            ),
+            playerList: Array.from(locationStore.lastLocation.playerList.values()),
+            friendList: Array.from(locationStore.lastLocation.friendList.values()),
             progressPie,
             onlineFor
         };
@@ -117,16 +113,13 @@ export const useVrStore = defineStore('Vr', () => {
 
         /** @type {VrConfigVarsPayload} */
         const VRConfigVars = {
-            overlayNotifications:
-                notificationsSettingsStore.overlayNotifications,
+            overlayNotifications: notificationsSettingsStore.overlayNotifications,
             hideDevicesFromFeed: wristOverlaySettingsStore.hideDevicesFromFeed,
             vrOverlayCpuUsage: wristOverlaySettingsStore.vrOverlayCpuUsage,
             minimalFeed: wristOverlaySettingsStore.minimalFeed,
-            notificationPosition:
-                notificationsSettingsStore.notificationPosition,
+            notificationPosition: notificationsSettingsStore.notificationPosition,
             notificationTimeout: notificationsSettingsStore.notificationTimeout,
-            photonOverlayMessageTimeout:
-                photonStore.photonOverlayMessageTimeout,
+            photonOverlayMessageTimeout: photonStore.photonOverlayMessageTimeout,
             notificationTheme,
             backgroundEnabled: wristOverlaySettingsStore.vrBackgroundEnabled,
             dtHour12: appearanceSettingsStore.dtHour12,
@@ -152,8 +145,7 @@ export const useVrStore = defineStore('Vr', () => {
         if (
             notificationsSettingsStore.openVR &&
             gameStore.isSteamVRRunning &&
-            ((gameStore.isGameRunning && !gameStore.isGameNoVR) ||
-                wristOverlaySettingsStore.openVRAlways)
+            ((gameStore.isGameRunning && !gameStore.isGameNoVR) || wristOverlaySettingsStore.openVRAlways)
         ) {
             let hmdOverlay = false;
             if (

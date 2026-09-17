@@ -1,5 +1,6 @@
 /**
  * Create a default world ref object.
+ *
  * @param {object} json - API response to merge
  * @returns {object}
  */
@@ -9,6 +10,7 @@ export function createDefaultWorldRef(json) {
         name: '',
         description: '',
         defaultContentSettings: {},
+        disabledPropAbilities: [],
         authorId: '',
         authorName: '',
         capacity: 0,

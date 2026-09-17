@@ -34,9 +34,7 @@ export const createColumns = ({ onShowUser }) => [
                 label: t('dialog.group_member_moderation.created_at')
             }),
         size: 170,
-        cell: ({ row }) => (
-            <span>{formatDateFilter(row.original?.created_at, 'long')}</span>
-        )
+        cell: ({ row }) => <span>{formatDateFilter(row.original?.created_at, 'long')}</span>
     },
     {
         accessorKey: 'eventType',
@@ -83,8 +81,7 @@ export const createColumns = ({ onShowUser }) => [
             const targetId = original?.targetId ?? '';
             return (
                 <span>
-                    {typeof targetId === 'string' &&
-                    targetId.startsWith('wrld_') ? (
+                    {typeof targetId === 'string' && targetId.startsWith('wrld_') ? (
                         <Location location={targetId} />
                     ) : null}
                     <span>{original?.description}</span>
@@ -99,8 +96,7 @@ export const createColumns = ({ onShowUser }) => [
         cell: ({ row }) => {
             const original = row.original;
             const data = original?.data;
-            const hasData =
-                data && typeof data === 'object' && Object.keys(data).length;
+            const hasData = data && typeof data === 'object' && Object.keys(data).length;
             return <span>{hasData ? JSON.stringify(data) : ''}</span>;
         }
     }

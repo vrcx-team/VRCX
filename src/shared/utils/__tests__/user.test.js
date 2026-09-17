@@ -122,15 +122,11 @@ describe('User Utils', () => {
 
     describe('parseUserUrl', () => {
         test('extracts user ID from VRChat URL', () => {
-            expect(
-                parseUserUrl('https://vrchat.com/home/user/usr_abc123-def456')
-            ).toBe('usr_abc123-def456');
+            expect(parseUserUrl('https://vrchat.com/home/user/usr_abc123-def456')).toBe('usr_abc123-def456');
         });
 
         test('returns undefined for non-user URLs', () => {
-            expect(
-                parseUserUrl('https://vrchat.com/home/world/wrld_abc')
-            ).toBeUndefined();
+            expect(parseUserUrl('https://vrchat.com/home/world/wrld_abc')).toBeUndefined();
         });
 
         test('throws for invalid URLs', () => {
@@ -223,11 +219,7 @@ describe('User Utils', () => {
         });
 
         test('does not access stores when currentUser is passed (pure path)', () => {
-            userStatusClass(
-                { id: 'usr_me', status: 'active', isFriend: true },
-                false,
-                currentUser
-            );
+            userStatusClass({ id: 'usr_me', status: 'active', isFriend: true }, false, currentUser);
             expect(storeMocks.useUserStore).not.toHaveBeenCalled();
         });
 
@@ -280,11 +272,7 @@ describe('User Utils', () => {
         });
 
         test('returns offline style for pending offline friend', () => {
-            const result = userStatusClass(
-                { id: 'usr_other', isFriend: true, status: 'active' },
-                true,
-                currentUser
-            );
+            const result = userStatusClass({ id: 'usr_other', isFriend: true, status: 'active' }, true, currentUser);
             expect(result).toMatchObject({
                 'status-icon': true,
                 offline: true
@@ -448,16 +436,8 @@ describe('User Utils', () => {
 
     describe('userImage (explicit settings)', () => {
         test('does not access appearance store when setting is passed (pure path)', () => {
-            userImage(
-                { thumbnailUrl: 'https://img.com/thumb' },
-                false,
-                '128',
-                false,
-                false
-            );
-            expect(
-                storeMocks.useAppearanceSettingsStore
-            ).not.toHaveBeenCalled();
+            userImage({ thumbnailUrl: 'https://img.com/thumb' }, false, '128', false, false);
+            expect(storeMocks.useAppearanceSettingsStore).not.toHaveBeenCalled();
         });
 
         test('returns empty string for falsy user', () => {
@@ -469,70 +449,52 @@ describe('User Utils', () => {
             const user = {
                 profilePicOverrideThumbnail: 'https://img.com/pic/256/thumb'
             };
-            expect(userImage(user, false, '128', false, false)).toBe(
-                'https://img.com/pic/256/thumb'
-            );
+            expect(userImage(user, false, '128', false, false)).toBe('https://img.com/pic/256/thumb');
         });
 
         test('replaces resolution for icon mode with profilePicOverrideThumbnail', () => {
             const user = {
                 profilePicOverrideThumbnail: 'https://img.com/pic/256/thumb'
             };
-            expect(userImage(user, true, '64', false, false)).toBe(
-                'https://img.com/pic/64/thumb'
-            );
+            expect(userImage(user, true, '64', false, false)).toBe('https://img.com/pic/64/thumb');
         });
 
         test('returns profilePicOverride when no thumbnail', () => {
             const user = { profilePicOverride: 'https://img.com/full' };
-            expect(userImage(user, false, '128', false, false)).toBe(
-                'https://img.com/full'
-            );
+            expect(userImage(user, false, '128', false, false)).toBe('https://img.com/full');
         });
 
         test('returns thumbnailUrl as fallback', () => {
             const user = { thumbnailUrl: 'https://img.com/thumb' };
-            expect(userImage(user, false, '128', false, false)).toBe(
-                'https://img.com/thumb'
-            );
+            expect(userImage(user, false, '128', false, false)).toBe('https://img.com/thumb');
         });
 
         test('returns currentAvatarThumbnailImageUrl as fallback', () => {
             const user = {
-                currentAvatarThumbnailImageUrl:
-                    'https://img.com/avatar/256/thumb'
+                currentAvatarThumbnailImageUrl: 'https://img.com/avatar/256/thumb'
             };
-            expect(userImage(user, false, '128', false, false)).toBe(
-                'https://img.com/avatar/256/thumb'
-            );
+            expect(userImage(user, false, '128', false, false)).toBe('https://img.com/avatar/256/thumb');
         });
 
         test('replaces resolution for icon mode with currentAvatarThumbnailImageUrl', () => {
             const user = {
-                currentAvatarThumbnailImageUrl:
-                    'https://img.com/avatar/256/thumb'
+                currentAvatarThumbnailImageUrl: 'https://img.com/avatar/256/thumb'
             };
-            expect(userImage(user, true, '64', false, false)).toBe(
-                'https://img.com/avatar/64/thumb'
-            );
+            expect(userImage(user, true, '64', false, false)).toBe('https://img.com/avatar/64/thumb');
         });
 
         test('returns currentAvatarImageUrl as last resort', () => {
             const user = {
                 currentAvatarImageUrl: 'https://img.com/avatar/full'
             };
-            expect(userImage(user, false, '128', false, false)).toBe(
-                'https://img.com/avatar/full'
-            );
+            expect(userImage(user, false, '128', false, false)).toBe('https://img.com/avatar/full');
         });
 
         test('converts currentAvatarImageUrl for icon mode', () => {
             const user = {
                 currentAvatarImageUrl: 'https://img.com/avatar/full'
             };
-            expect(userImage(user, true, '128', false, false)).toBe(
-                'converted:https://img.com/avatar/full'
-            );
+            expect(userImage(user, true, '128', false, false)).toBe('converted:https://img.com/avatar/full');
         });
 
         test('returns empty string when user has no image fields', () => {
@@ -544,16 +506,12 @@ describe('User Utils', () => {
                 userIcon: 'https://img.com/icon',
                 thumbnailUrl: 'https://img.com/thumb'
             };
-            expect(userImage(user, false, '128', false, true)).toBe(
-                'https://img.com/icon'
-            );
+            expect(userImage(user, false, '128', false, true)).toBe('https://img.com/icon');
         });
 
         test('converts userIcon for icon mode when VRCPlus setting enabled', () => {
             const user = { userIcon: 'https://img.com/icon' };
-            expect(userImage(user, true, '128', false, true)).toBe(
-                'converted:https://img.com/icon'
-            );
+            expect(userImage(user, true, '128', false, true)).toBe('converted:https://img.com/icon');
         });
 
         test('returns userIcon for isUserDialogIcon even if VRCPlus setting off', () => {
@@ -561,21 +519,14 @@ describe('User Utils', () => {
                 userIcon: 'https://img.com/icon',
                 thumbnailUrl: 'https://img.com/thumb'
             };
-            expect(userImage(user, false, '128', true, false)).toBe(
-                'https://img.com/icon'
-            );
+            expect(userImage(user, false, '128', true, false)).toBe('https://img.com/icon');
         });
     });
 
     describe('userImageFull (explicit settings)', () => {
         test('does not access appearance store when setting is passed (pure path)', () => {
-            userImageFull(
-                { currentAvatarImageUrl: 'https://img.com/avatar' },
-                false
-            );
-            expect(
-                storeMocks.useAppearanceSettingsStore
-            ).not.toHaveBeenCalled();
+            userImageFull({ currentAvatarImageUrl: 'https://img.com/avatar' }, false);
+            expect(storeMocks.useAppearanceSettingsStore).not.toHaveBeenCalled();
         });
 
         test('returns empty string for falsy user', () => {

@@ -1,12 +1,6 @@
 import { toast } from 'vue-sonner';
 
-import {
-    useAuthStore,
-    useModalStore,
-    useNotificationStore,
-    useUpdateLoopStore,
-    useUserStore
-} from '../stores';
+import { useAuthStore, useModalStore, useNotificationStore, useUpdateLoopStore } from '../stores';
 import { getCurrentUser } from '../coordinators/userCoordinator';
 import { AppDebug, isApiLogSuppressed, logWebRequest } from './appConfig.js';
 import { i18n } from '../plugins/i18n';
@@ -23,7 +17,7 @@ const t = i18n.global.t;
 /**
  * @param {string} endpoint
  * @param {object} [options]
- * @returns {object} init object ready for webApiService.execute
+ * @returns {object} Init object ready for webApiService.execute
  */
 export function buildRequestInit(endpoint, options) {
     const init = {
@@ -42,11 +36,7 @@ export function buildRequestInit(endpoint, options) {
             }
             init.url = url.toString();
         }
-    } else if (
-        init.uploadImage ||
-        init.uploadFilePUT ||
-        init.uploadImageLegacy
-    ) {
+    } else if (init.uploadImage || init.uploadFilePUT || init.uploadImageLegacy) {
         // nothing — upload requests handle their own body
     } else {
         init.headers = {
@@ -60,8 +50,9 @@ export function buildRequestInit(endpoint, options) {
 
 /**
  * Parses a raw response: JSON-decodes response.data and detects API-level errors.
- * @param {{status: number, data?: string | object}} response
- * @returns {{status: number, data?: any, hasApiError?: boolean, parseError?: boolean}}
+ *
+ * @param {{ status: number; data?: string | object }} response
+ * @returns {{ status: number; data?: any; hasApiError?: boolean; parseError?: boolean }}
  */
 export function parseResponse(response) {
     if (!response.data) {
@@ -81,7 +72,7 @@ export function parseResponse(response) {
 /**
  * @template T
  * @param {string} endpoint
- * @param {RequestInit & { params?: any } & {customMsg?: string}} [options]
+ * @param {RequestInit & { params?: any } & { customMsg?: string }} [options]
  * @returns {Promise<T>}
  */
 export function request(endpoint, options) {
@@ -89,11 +80,7 @@ export function request(endpoint, options) {
     const modalStore = useModalStore();
     const notificationStore = useNotificationStore();
     const updateLoopStore = useUpdateLoopStore();
-    if (
-        !watchState.isLoggedIn &&
-        endpoint.startsWith('/auth') &&
-        endpoint !== 'config'
-    ) {
+    if (!watchState.isLoggedIn && endpoint.startsWith('/auth') && endpoint !== 'config') {
         throw `API request blocked while logged out: ${endpoint}`;
     }
     let req;
@@ -104,11 +91,7 @@ export function request(endpoint, options) {
             const lastRun = failedGetRequests.get(endpoint);
             if (lastRun >= Date.now() - 900000) {
                 // 15mins
-                $throw(
-                    -1,
-                    t('api.error.message.403_404_bailing_request'),
-                    endpoint
-                );
+                $throw(-1, t('api.error.message.403_404_bailing_request'), endpoint);
             }
             failedGetRequests.delete(endpoint);
         }
@@ -128,11 +111,7 @@ export function request(endpoint, options) {
             $throw(0, err, endpoint);
         })
         .then((response) => {
-            if (
-                !watchState.isLoggedIn &&
-                endpoint.startsWith('/auth') &&
-                endpoint !== 'config'
-            ) {
+            if (!watchState.isLoggedIn && endpoint.startsWith('/auth') && endpoint !== 'config') {
                 throw `API request blocked while logged out: ${endpoint}`;
             }
             const parsed = parseResponse(response);
@@ -140,13 +119,10 @@ export function request(endpoint, options) {
                 const tag = `[API ${init.method}]`;
                 if (!parsed.data) {
                     logWebRequest(tag, endpoint, `(${parsed.status}) no data`);
+                } else if (init.method === 'PUT' || init.method === 'POST') {
+                    logWebRequest(tag, endpoint, `(${parsed.status})`, init.params, parsed.data);
                 } else {
-                    logWebRequest(
-                        tag,
-                        endpoint,
-                        `(${parsed.status})`,
-                        parsed.data
-                    );
+                    logWebRequest(tag, endpoint, `(${parsed.status})`, parsed.data);
                 }
             }
             if (parsed.status === 403 && endpoint === 'config') {
@@ -161,15 +137,8 @@ export function request(endpoint, options) {
                 if (parsed.status === 401) {
                     if (parsed.data.error.message === '"Missing Credentials"') {
                         authStore.handleAutoLogin();
-                        $throw(
-                            401,
-                            t('api.error.message.missing_credentials'),
-                            endpoint
-                        );
-                    } else if (
-                        parsed.data.error.message === '"Unauthorized"' &&
-                        endpoint !== 'auth/user'
-                    ) {
+                        $throw(401, t('api.error.message.missing_credentials'), endpoint);
+                    } else if (parsed.data.error.message === '"Unauthorized"' && endpoint !== 'auth/user') {
                         // trigger 2FA dialog                }
                         if (!authStore.twoFactorAuthDialogVisible) {
                             getCurrentUser();
@@ -177,25 +146,17 @@ export function request(endpoint, options) {
                         $throw(401, t('api.status_code.401'), endpoint);
                     }
                 }
-                $throw(
-                    parsed.data.error.status_code || 0,
-                    parsed.data.error.message,
-                    endpoint
-                );
+                $throw(parsed.data.error.status_code || 0, parsed.data.error.message, endpoint);
             }
             if (parsed.parseError) {
+                if (parsed.data === 'ok') {
+                    return parsed;
+                }
                 console.error('JSON parse error for', endpoint);
                 if (parsed.status === 200) {
-                    $throw(
-                        0,
-                        t('api.error.message.invalid_json_response'),
-                        endpoint
-                    );
+                    $throw(0, t('api.error.message.invalid_json_response'), endpoint);
                 }
-                if (
-                    parsed.status === 429 &&
-                    init.url.endsWith('/instances/groups')
-                ) {
+                if (parsed.status === 429 && init.url.endsWith('/instances/groups')) {
                     updateLoopStore.setNextGroupInstanceRefresh(120); // 1min
                     $throw(429, t('api.status_code.429'), endpoint);
                 }
@@ -222,11 +183,7 @@ export function request(endpoint, options) {
                 }
                 return data;
             }
-            if (
-                init.method === 'GET' &&
-                status === 404 &&
-                endpoint?.startsWith('avatars/')
-            ) {
+            if (init.method === 'GET' && status === 404 && endpoint?.startsWith('avatars/')) {
                 $throw(404, data.error?.message || '', endpoint);
             }
             if (status === 404 && endpoint.endsWith('/persist/exists')) {
@@ -236,11 +193,7 @@ export function request(endpoint, options) {
                 // ignore when responding to expired notification
                 return null;
             }
-            if (
-                init.method === 'GET' &&
-                (status === 404 || status === 403) &&
-                !endpoint.startsWith('auth/user')
-            ) {
+            if (init.method === 'GET' && (status === 404 || status === 403) && !endpoint.startsWith('auth/user')) {
                 failedGetRequests.set(endpoint, Date.now());
             }
             if (
@@ -251,19 +204,11 @@ export function request(endpoint, options) {
             ) {
                 $throw(404, data.error?.message || '', endpoint);
             }
-            if (
-                status === 404 &&
-                endpoint.startsWith('invite/') &&
-                init.inviteId
-            ) {
+            if (status === 404 && endpoint.startsWith('invite/') && init.inviteId) {
                 notificationStore.expireNotification(init.inviteId);
             }
             if (data && data.error === Object(data.error)) {
-                $throw(
-                    data.error.status_code || status,
-                    data.error.message,
-                    endpoint
-                );
+                $throw(data.error.status_code || status, data.error.message, endpoint);
             } else if (data && typeof data.error === 'string') {
                 $throw(data.status_code || status, data.error, endpoint);
             }
@@ -299,10 +244,7 @@ export function shouldIgnoreError(code, endpoint) {
     ) {
         return true;
     }
-    if (
-        (code === 403 || code === 404 || code === -1) &&
-        endpoint?.startsWith('instances/')
-    ) {
+    if ((code === 403 || code === 404 || code === -1) && endpoint?.startsWith('instances/')) {
         return true;
     }
     if (endpoint?.startsWith('analysis/')) {
@@ -311,13 +253,17 @@ export function shouldIgnoreError(code, endpoint) {
     if (endpoint?.endsWith('/mutuals') && (code === 403 || code === -1)) {
         return true;
     }
+    if (endpoint?.endsWith('/see') && (code === 429 || code === -1)) {
+        return true;
+    }
     return false;
 }
 
 /**
  * @param {number} code
- * @param {string|object} [error]
+ * @param {string | object} [error]
  * @param {string} [endpoint]
+ * @returns {never}
  */
 export function $throw(code, error, endpoint) {
     let message = [];
@@ -341,10 +287,7 @@ export function $throw(code, error, endpoint) {
         );
     }
     const ignoreError = shouldIgnoreError(code, endpoint);
-    if (
-        (code === 403 || code === 404 || code === -1) &&
-        endpoint?.includes('/mutuals/friends')
-    ) {
+    if ((code === 403 || code === 404 || code === -1) && endpoint?.includes('/mutuals/friends')) {
         message[1] = `${t('api.error.message.error_message')}: "${t('api.error.message.unavailable')}"`;
     }
     const text = message.join('\n');
@@ -363,34 +306,31 @@ export function $throw(code, error, endpoint) {
 
 /**
  * Processes data in bulk by making paginated requests until all data is fetched or limits are reached.
+ *
  * @async
+ * @example
+ *     await processBulk({
+ *         fn: fetchUsers,
+ *         params: { n: 50 },
+ *         N: 200,
+ *         handle: (result) => console.log(`Fetched ${result.json.length} users`),
+ *         done: (success) => console.log(success ? 'Complete' : 'Failed')
+ *     });
+ *
  * @function processBulk
  * @param {object} options - Configuration options for bulk processing
- * @param {function} options.fn - The function to call for each batch request. Must return a result with a 'json' property containing an array
+ * @param {function} options.fn - The function to call for each batch request. Must return a result with a 'json'
+ *   property containing an array
  * @param {object} [options.params] - Parameters to pass to the function. Will be modified to include pagination
  * @param {number} [options.N] - Maximum number of items to fetch. -1 for unlimited, 0 for fetch until page size not met
  * @param {string} [options.limitParam] - The parameter name used for page size in the request
  * @param {function} [options.handle] - Callback function to handle each batch result
- * @param {function} [options.done] - Callback function called when processing is complete. Receives boolean indicating success
+ * @param {function} [options.done] - Callback function called when processing is complete. Receives boolean indicating
+ *   success
  * @returns {Promise<void>} Promise that resolves when bulk processing is complete
- * @example
- * await processBulk({
- *   fn: fetchUsers,
- *   params: { n: 50 },
- *   N: 200,
- *   handle: (result) => console.log(`Fetched ${result.json.length} users`),
- *   done: (success) => console.log(success ? 'Complete' : 'Failed')
- * });
  */
 export async function processBulk(options) {
-    const {
-        fn,
-        params: rawParams = {},
-        N = -1,
-        limitParam = 'n',
-        handle,
-        done
-    } = options;
+    const { fn, params: rawParams = {}, N = -1, limitParam = 'n', handle, done } = options;
 
     if (typeof fn !== 'function') {
         return;
@@ -413,9 +353,7 @@ export async function processBulk(options) {
             } else if (Array.isArray(result.results)) {
                 batchSize = result.results.length;
             } else {
-                throw new Error(
-                    'Invalid result format: expected an array in result.json or result.results'
-                );
+                throw new Error('Invalid result format: expected an array in result.json or result.results');
             }
 
             if (typeof handle === 'function') {

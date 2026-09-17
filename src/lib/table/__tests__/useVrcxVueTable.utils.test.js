@@ -60,9 +60,7 @@ describe('filterSortingByColumns', () => {
             { id: 'name', desc: false },
             { id: 'removed', desc: true }
         ];
-        expect(filterSortingByColumns(sorting, cols('name', 'date'))).toEqual([
-            { id: 'name', desc: false }
-        ]);
+        expect(filterSortingByColumns(sorting, cols('name', 'date'))).toEqual([{ id: 'name', desc: false }]);
     });
 
     it('returns empty array for non-array input', () => {
@@ -71,20 +69,13 @@ describe('filterSortingByColumns', () => {
     });
 
     it('returns empty array for null columns', () => {
-        expect(
-            filterSortingByColumns([{ id: 'a', desc: false }], null)
-        ).toEqual([]);
+        expect(filterSortingByColumns([{ id: 'a', desc: false }], null)).toEqual([]);
     });
 });
 
 describe('filterOrderByColumns', () => {
     it('keeps IDs present in columns', () => {
-        expect(
-            filterOrderByColumns(
-                ['date', 'removed', 'name'],
-                cols('name', 'date')
-            )
-        ).toEqual(['date', 'name']);
+        expect(filterOrderByColumns(['date', 'removed', 'name'], cols('name', 'date'))).toEqual(['date', 'name']);
     });
 
     it('returns empty array for non-array input', () => {
@@ -144,11 +135,7 @@ describe('getColumnId', () => {
 
 describe('findStretchColumnId', () => {
     it('returns the ID of the stretch column', () => {
-        const columns = [
-            { id: 'a' },
-            { id: 'b', meta: { stretch: true } },
-            { id: 'c' }
-        ];
+        const columns = [{ id: 'a' }, { id: 'b', meta: { stretch: true } }, { id: 'c' }];
         expect(findStretchColumnId(columns)).toBe('b');
     });
 
@@ -192,12 +179,7 @@ describe('withSpacerColumn', () => {
     it('inserts spacer after stretchAfterId column', () => {
         const columns = [{ id: 'x' }, { id: 'stretch' }, { id: 'y' }];
         const result = withSpacerColumn(columns, true, '__spacer', 'stretch');
-        expect(result.map((c) => c.id)).toEqual([
-            'x',
-            'stretch',
-            '__spacer',
-            'y'
-        ]);
+        expect(result.map((c) => c.id)).toEqual(['x', 'stretch', '__spacer', 'y']);
     });
 
     it('returns original columns when disabled', () => {

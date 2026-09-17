@@ -45,13 +45,8 @@ export const useFeedStore = defineStore('Feed', () => {
     );
 
     async function init() {
-        feedTable.value.filter = JSON.parse(
-            await configRepository.getString('VRCX_feedTableFilters', '[]')
-        );
-        feedTable.value.vip = await configRepository.getBool(
-            'VRCX_feedTableVIPFilter',
-            false
-        );
+        feedTable.value.filter = JSON.parse(await configRepository.getString('VRCX_feedTableFilters', '[]'));
+        feedTable.value.vip = await configRepository.getBool('VRCX_feedTableVIPFilter', false);
     }
 
     init();
@@ -99,9 +94,7 @@ export const useFeedStore = defineStore('Feed', () => {
                 if (String(row.status).toUpperCase().includes(value)) {
                     return true;
                 }
-                if (
-                    String(row.statusDescription).toUpperCase().includes(value)
-                ) {
+                if (String(row.statusDescription).toUpperCase().includes(value)) {
                     return true;
                 }
                 return false;
@@ -129,14 +122,8 @@ export const useFeedStore = defineStore('Feed', () => {
     }
 
     async function feedTableLookup() {
-        await configRepository.setString(
-            'VRCX_feedTableFilters',
-            JSON.stringify(feedTable.value.filter)
-        );
-        await configRepository.setBool(
-            'VRCX_feedTableVIPFilter',
-            feedTable.value.vip
-        );
+        await configRepository.setString('VRCX_feedTableFilters', JSON.stringify(feedTable.value.filter));
+        await configRepository.setBool('VRCX_feedTableVIPFilter', feedTable.value.vip);
         feedTable.value.loading = true;
         try {
             let vipList = [];
@@ -155,10 +142,7 @@ export const useFeedStore = defineStore('Feed', () => {
                           dateFrom,
                           dateTo
                       )
-                    : await database.lookupFeedDatabase(
-                          feedTable.value.filter,
-                          vipList
-                      );
+                    : await database.lookupFeedDatabase(feedTable.value.filter, vipList);
             feedTableData.value = [];
             feedTableData.value = [...feedTableData.value, ...rows];
         } finally {
@@ -169,34 +153,23 @@ export const useFeedStore = defineStore('Feed', () => {
     /**
      * Appends a feed entry to the local table if it passes filters.
      * Does NOT trigger notifications or shared feed — that is the caller's responsibility.
+     *
      * @param {object} feed The feed entry to add.
      */
     function addFeedEntry(feed) {
-        if (
-            feedTable.value.filter.length > 0 &&
-            !feedTable.value.filter.includes(feed.type)
-        ) {
+        if (feedTable.value.filter.length > 0 && !feedTable.value.filter.includes(feed.type)) {
             return;
         }
-        if (
-            feedTable.value.vip &&
-            !friendStore.localFavoriteFriends.has(feed.userId)
-        ) {
+        if (feedTable.value.vip && !friendStore.localFavoriteFriends.has(feed.userId)) {
             return;
         }
         if (!feedSearch(feed)) {
             return;
         }
-        if (
-            feedTable.value.dateFrom &&
-            feed.created_at < feedTable.value.dateFrom
-        ) {
+        if (feedTable.value.dateFrom && feed.created_at < feedTable.value.dateFrom) {
             return;
         }
-        if (
-            feedTable.value.dateTo &&
-            feed.created_at > feedTable.value.dateTo
-        ) {
+        if (feedTable.value.dateTo && feed.created_at > feedTable.value.dateTo) {
             return;
         }
         feedTableData.value = [feed, ...feedTableData.value];

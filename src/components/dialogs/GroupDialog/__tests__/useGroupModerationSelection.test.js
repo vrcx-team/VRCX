@@ -16,8 +16,7 @@ describe('useGroupModerationSelection', () => {
     describe('setSelectedUsers', () => {
         test('adds a user to selection', () => {
             const tables = createTables();
-            const { selectedUsers, selectedUsersArray, setSelectedUsers } =
-                useGroupModerationSelection(tables);
+            const { selectedUsers, selectedUsersArray, setSelectedUsers } = useGroupModerationSelection(tables);
 
             setSelectedUsers('usr_1', { userId: 'usr_1', name: 'Alice' });
 
@@ -30,8 +29,7 @@ describe('useGroupModerationSelection', () => {
 
         test('ignores null user', () => {
             const tables = createTables();
-            const { selectedUsersArray, setSelectedUsers } =
-                useGroupModerationSelection(tables);
+            const { selectedUsersArray, setSelectedUsers } = useGroupModerationSelection(tables);
 
             setSelectedUsers('usr_1', null);
 
@@ -40,8 +38,7 @@ describe('useGroupModerationSelection', () => {
 
         test('adds multiple users', () => {
             const tables = createTables();
-            const { selectedUsersArray, setSelectedUsers } =
-                useGroupModerationSelection(tables);
+            const { selectedUsersArray, setSelectedUsers } = useGroupModerationSelection(tables);
 
             setSelectedUsers('usr_1', { userId: 'usr_1', name: 'Alice' });
             setSelectedUsers('usr_2', { userId: 'usr_2', name: 'Bob' });
@@ -53,12 +50,8 @@ describe('useGroupModerationSelection', () => {
     describe('deselectedUsers', () => {
         test('removes a specific user', () => {
             const tables = createTables();
-            const {
-                selectedUsers,
-                selectedUsersArray,
-                setSelectedUsers,
-                deselectedUsers
-            } = useGroupModerationSelection(tables);
+            const { selectedUsers, selectedUsersArray, setSelectedUsers, deselectedUsers } =
+                useGroupModerationSelection(tables);
 
             setSelectedUsers('usr_1', { userId: 'usr_1', name: 'Alice' });
             setSelectedUsers('usr_2', { userId: 'usr_2', name: 'Bob' });
@@ -71,8 +64,7 @@ describe('useGroupModerationSelection', () => {
 
         test('removes all users when isAll=true', () => {
             const tables = createTables();
-            const { selectedUsersArray, setSelectedUsers, deselectedUsers } =
-                useGroupModerationSelection(tables);
+            const { selectedUsersArray, setSelectedUsers, deselectedUsers } = useGroupModerationSelection(tables);
 
             setSelectedUsers('usr_1', { userId: 'usr_1', name: 'Alice' });
             setSelectedUsers('usr_2', { userId: 'usr_2', name: 'Bob' });
@@ -85,8 +77,7 @@ describe('useGroupModerationSelection', () => {
     describe('onSelectionChange', () => {
         test('selects user when row.$selected is true', () => {
             const tables = createTables();
-            const { selectedUsersArray, onSelectionChange } =
-                useGroupModerationSelection(tables);
+            const { selectedUsersArray, onSelectionChange } = useGroupModerationSelection(tables);
 
             onSelectionChange({
                 userId: 'usr_1',
@@ -99,8 +90,7 @@ describe('useGroupModerationSelection', () => {
 
         test('deselects user when row.$selected is false', () => {
             const tables = createTables();
-            const { selectedUsersArray, setSelectedUsers, onSelectionChange } =
-                useGroupModerationSelection(tables);
+            const { selectedUsersArray, setSelectedUsers, onSelectionChange } = useGroupModerationSelection(tables);
 
             setSelectedUsers('usr_1', { userId: 'usr_1', name: 'Alice' });
             onSelectionChange({ userId: 'usr_1', $selected: false });
@@ -153,8 +143,7 @@ describe('useGroupModerationSelection', () => {
         test('removes user from selection and tables', () => {
             const tables = createTables();
             tables.members.data = [{ userId: 'usr_1', $selected: true }];
-            const { selectedUsersArray, setSelectedUsers, deleteSelectedUser } =
-                useGroupModerationSelection(tables);
+            const { selectedUsersArray, setSelectedUsers, deleteSelectedUser } = useGroupModerationSelection(tables);
 
             setSelectedUsers('usr_1', { userId: 'usr_1', name: 'Alice' });
             deleteSelectedUser({ userId: 'usr_1' });
@@ -172,8 +161,7 @@ describe('useGroupModerationSelection', () => {
                 { userId: 'usr_2', $selected: true }
             ];
             tables.bans.data = [{ userId: 'usr_3', $selected: true }];
-            const { selectedUsersArray, setSelectedUsers, clearAllSelected } =
-                useGroupModerationSelection(tables);
+            const { selectedUsersArray, setSelectedUsers, clearAllSelected } = useGroupModerationSelection(tables);
 
             setSelectedUsers('usr_1', { userId: 'usr_1' });
             setSelectedUsers('usr_2', { userId: 'usr_2' });
@@ -194,8 +182,7 @@ describe('useGroupModerationSelection', () => {
                 { userId: 'usr_1', $selected: false },
                 { userId: 'usr_2', $selected: false }
             ];
-            const { selectedUsersArray, selectAll } =
-                useGroupModerationSelection(tables);
+            const { selectedUsersArray, selectAll } = useGroupModerationSelection(tables);
 
             selectAll(tableData);
 

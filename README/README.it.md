@@ -22,26 +22,26 @@ Scarica e installa l'ultimo installer (`VRCX_Setup.exe`) da [qui](https://github
 <div align="left">
 
 - :family: Gestione di liste di amici, mondi e avatar
-    - Gestite la vostra lista di amici, il mondo, i gruppi e gli avatar al di fuori di VRChat.
-    - Monitorate l'attività del mondo/avatar dei vostri amici e controllate il loro stato online.
-    - Tenete traccia di quando li avete aggiunti per la prima volta e di quando li avete visti per l'ultima volta.
-    - Vedere quanto tempo avete trascorso insieme nei mondi e quante volte.
-    - Tenere traccia dei cambiamenti di nome degli amici.
-    - Salvate le note per ricordare come vi siete conosciuti.
+  - Gestite la vostra lista di amici, il mondo, i gruppi e gli avatar al di fuori di VRChat.
+  - Monitorate l'attività del mondo/avatar dei vostri amici e controllate il loro stato online.
+  - Tenete traccia di quando li avete aggiunti per la prima volta e di quando li avete visti per l'ultima volta.
+  - Vedere quanto tempo avete trascorso insieme nei mondi e quante volte.
+  - Tenere traccia dei cambiamenti di nome degli amici.
+  - Salvate le note per ricordare come vi siete conosciuti.
 - :electric_plug: Avvio automatico delle applicazioni all'avvio di VRChat
-    - È possibile configurare VRCX per avviare altre applicazioni quando si avvia VRChat.
-    - Ad esempio, si può fare in modo che VRCX lanci un'applicazione OSC o un cambiavoce all'apertura di VRChat.
+  - È possibile configurare VRCX per avviare altre applicazioni quando si avvia VRChat.
+  - Ad esempio, si può fare in modo che VRCX lanci un'applicazione OSC o un cambiavoce all'apertura di VRChat.
 - :mag: Ricerca di avatar, utenti, mondi e gruppi
 - :earth_americas: Costruire un elenco di preferiti locali e non limitati del mondo
 - :camera: Memorizza i dati del mondo nelle foto scattate nel gioco, in modo da poter ricordare quel mondo in cui hai scattato quelle belle foto come... 6 mesi fa!
 - :bell: Monitorare/rispondere alle notifiche
-    - È possibile inviare/ricevere inviti e richieste di amicizia da VRCX e vedere le informazioni sull'istanza degli inviti ricevuti.
+  - È possibile inviare/ricevere inviti e richieste di amicizia da VRCX e vedere le informazioni sull'istanza degli inviti ricevuti.
 - :scroll: Vedere le statistiche/giocatori della vostra istanza attuale
 - :tv: Visualizza i link ai video che si stanno riproducendo nel mondo in cui ci si trova, oltre a vari altri dati registrati.
 - :bar_chart: Attività su Discord migliorata
-    - È possibile visualizzare opzionalmente più informazioni sulla propria istanza corrente in Discord.
-    - Integrazione del mondo per mondi popolari come PyPyDance, LSMedia, Movies&Chill e VRDancing.
-    - Questo include la miniatura del mondo, il nome, l'ID dell'istanza e il numero di giocatori, a seconda delle impostazioni e del fatto che la lobby sia privata. È anche possibile aggiungere un pulsante di adesione per le lobby pubbliche!
+  - È possibile visualizzare opzionalmente più informazioni sulla propria istanza corrente in Discord.
+  - Integrazione del mondo per mondi popolari come PyPyDance, LSMedia, Movies&Chill e VRDancing.
+  - Questo include la miniatura del mondo, il nome, l'ID dell'istanza e il numero di giocatori, a seconda delle impostazioni e del fatto che la lobby sia privata. È anche possibile aggiungere un pulsante di adesione per le lobby pubbliche!
 - :crystal_ball: Overlay VR con feed live configurabile di tutti gli eventi/notifiche supportati.
 - :outbox_tray: Caricare immagini di avatar/mondo senza Unity
 - :page_facing_up: Gestire e modificare i dettagli degli avatar/mondo caricati senza Unity

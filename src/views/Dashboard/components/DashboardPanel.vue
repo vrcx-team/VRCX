@@ -14,7 +14,11 @@
                     <div class="flex items-center gap-2 text-base text-muted-foreground">
                         <i v-if="panelIcon" :class="panelIcon" class="text-base" />
                         <span>{{ panelLabel }}</span>
-                        <Button variant="ghost" size="icon-sm" @click="clearPanel">
+                        <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            :ariaLabel="t('common.actions.delete')"
+                            @click="clearPanel">
                             <Trash2 class="size-3.5" />
                         </Button>
                     </div>

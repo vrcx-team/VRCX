@@ -9,8 +9,7 @@
     box-sizing: border-box;
     border: 1px solid var(--border);
     border-radius: calc(var(--radius-lg) * var(--favorites-card-scale, 1));
-    padding: var(--favorites-card-padding-y, 8px)
-        var(--favorites-card-padding-x, 8px);
+    padding: var(--favorites-card-padding-y, 8px) var(--favorites-card-padding-x, 8px);
     cursor: pointer;
     width: 100%;
     min-width: var(--favorites-card-min-width, 240px);

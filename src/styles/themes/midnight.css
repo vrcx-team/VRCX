@@ -91,7 +91,7 @@
 /* yellow */
 :root[data-theme='midnight'][data-theme-color='yellow'] {
     --primary: oklch(0.795 0.184 86.047);
-    --primary-foreground: oklch(0.421 0.095 57.708);
+    --primary-foreground: oklch(0.957 0.015 106.799);
     --accent: oklch(0.274 0.006 286.033);
     --accent-foreground: oklch(0.985 0 0);
     --ring: oklch(0.421 0.095 57.708);

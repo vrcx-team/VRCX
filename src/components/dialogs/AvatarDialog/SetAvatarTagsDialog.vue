@@ -62,7 +62,7 @@
                 >
                 <Spinner v-if="setAvatarTagsDialog.loading" class="inline-block ml-2" />
                 <div
-                    class="flex flex-wrap items-start max-h-[300px] overflow-hidden auto"
+                    class="flex flex-wrap items-start max-h-[300px] overflow-auto"
                     style="margin-top: 8px; min-height: 60px">
                     <div
                         v-for="avatar in setAvatarTagsDialog.ownAvatars"
@@ -150,9 +150,6 @@
         }
     );
 
-    /**
-     *
-     */
     function closeSetAvatarTagsDialog() {
         emit('update:setAvatarTagsDialog', {
             ...props.setAvatarTagsDialog,
@@ -160,9 +157,6 @@
         });
     }
 
-    /**
-     *
-     */
     function updateSelectedAvatarTags() {
         const D = props.setAvatarTagsDialog;
         if (D.contentHorror) {
@@ -205,7 +199,6 @@
     }
 
     /**
-     *
      * @param avatarId
      * @param checked
      */
@@ -220,9 +213,6 @@
         }
     }
 
-    /**
-     *
-     */
     function updateAvatarTagsString() {
         const D = props.setAvatarTagsDialog;
         for (const ref of D.ownAvatars) {
@@ -248,9 +238,6 @@
         }
     }
 
-    /**
-     *
-     */
     function setAvatarTagsSelectToggle() {
         const D = props.setAvatarTagsDialog;
         const allSelected = D.ownAvatars.length === D.selectedAvatarIds.length;
@@ -265,9 +252,6 @@
         }
     }
 
-    /**
-     *
-     */
     async function saveSetAvatarTagsDialog() {
         const D = props.setAvatarTagsDialog;
         if (D.loading) {
@@ -303,9 +287,6 @@
         }
     }
 
-    /**
-     *
-     */
     function updateInputAvatarTags() {
         const D = props.setAvatarTagsDialog;
         D.contentHorror = false;

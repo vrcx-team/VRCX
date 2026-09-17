@@ -1,12 +1,9 @@
 import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 
-import { checkVRChatCache } from '../shared/utils';
+import { checkVRChatCache, formatFileSize } from '../shared/utils';
 import { queryRequest } from '../api';
-import {
-    getAvatarHistory,
-    preloadOwnAvatars
-} from '../coordinators/avatarCoordinator';
+import { getAvatarHistory, preloadOwnAvatars } from '../coordinators/avatarCoordinator';
 import { database } from '../services/database';
 import { watchState } from '../services/watchState';
 
@@ -82,17 +79,14 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     /**
-     *
      * @param {string} avatarId
      * @returns {Promise<string[]>}
      */
     async function getAvatarGallery(avatarId) {
         const D = avatarDialog.value;
-        const args = await queryRequest
-            .fetch('avatarGallery', { avatarId })
-            .finally(() => {
-                D.galleryLoading = false;
-            });
+        const args = await queryRequest.fetch('avatarGallery', { avatarId }).finally(() => {
+            D.galleryLoading = false;
+        });
         if (args.params.galleryId !== D.id) {
             return;
         }
@@ -115,9 +109,8 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     /**
-     *
      * @param {object} json
-     * @returns {object} ref
+     * @returns {object} Ref
      */
     function applyAvatarModeration(json) {
         // fix inconsistent Unix time response
@@ -140,27 +133,17 @@ export const useAvatarStore = defineStore('Avatar', () => {
 
         // update avatar dialog
         const D = avatarDialog.value;
-        if (
-            D.visible &&
-            ref.avatarModerationType === 'block' &&
-            D.id === ref.targetAvatarId
-        ) {
+        if (D.visible && ref.avatarModerationType === 'block' && D.id === ref.targetAvatarId) {
             D.isBlocked = true;
         }
 
         return ref;
     }
 
-    /**
-     *
-     */
     function resetCachedAvatarModerations() {
         cachedAvatarModerations.clear();
     }
 
-    /**
-     *
-     */
     function updateVRChatAvatarCache() {
         const D = avatarDialog.value;
         if (D.visible) {
@@ -171,7 +154,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
             checkVRChatCache(D.ref).then((cacheInfo) => {
                 if (cacheInfo.Item1 > 0) {
                     D.inCache = true;
-                    D.cacheSize = `${(cacheInfo.Item1 / 1048576).toFixed(2)} MB`;
+                    D.cacheSize = formatFileSize(cacheInfo.Item1);
                     D.cachePath = cacheInfo.Item3;
                 }
                 D.cacheLocked = cacheInfo.Item2;
@@ -179,9 +162,6 @@ export const useAvatarStore = defineStore('Avatar', () => {
         }
     }
 
-    /**
-     *
-     */
     function clearAvatarHistory() {
         avatarHistory.value = [];
         database.clearAvatarHistory();
@@ -195,7 +175,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     /**
-     * @param {*} value
+     * @param {any} value
      */
     function setLoadingToastId(value) {
         loadingToastId.value = value;

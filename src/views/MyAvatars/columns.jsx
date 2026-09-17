@@ -22,12 +22,7 @@ import {
     Tag,
     User
 } from 'lucide-vue-next';
-import {
-    formatDateFilter,
-    getAvailablePlatforms,
-    getPlatformInfo,
-    timeToText
-} from '../../shared/utils';
+import { formatDateFilter, getAvailablePlatforms, getPlatformInfo, timeToText } from '../../shared/utils';
 import { i18n } from '../../plugins';
 
 const { t } = i18n.global;
@@ -54,11 +49,7 @@ const sortButton = ({ column, label, descFirst = false }) => {
     );
 };
 
-export function getColumns({
-    onShowAvatarDialog,
-    onContextMenuAction,
-    currentAvatarId
-}) {
+export function getColumns({ onShowAvatarDialog, onContextMenuAction, currentAvatarId }) {
     return [
         {
             id: 'active',
@@ -71,14 +62,7 @@ export function getColumns({
                 const isActive = ref.id === currentAvatarId.value;
                 return (
                     <div class="flex items-center justify-center">
-                        <Check
-                            class={[
-                                'h-4 w-4',
-                                isActive
-                                    ? 'text-primary'
-                                    : 'text-muted-foreground/0'
-                            ]}
-                        />
+                        <Check class={['h-4 w-4', isActive ? 'text-primary' : 'text-muted-foreground/0']} />
                     </div>
                 );
             }
@@ -154,14 +138,9 @@ export function getColumns({
                     <div class="flex flex-nowrap gap-1 overflow-hidden">
                         {tags.map((entry) => {
                             const hashColor = getTagColor(entry.tag);
-                            const storedColor =
-                                typeof entry.color === 'string'
-                                    ? entry.color
-                                    : null;
+                            const storedColor = typeof entry.color === 'string' ? entry.color : null;
                             const bg = storedColor || hashColor.bg;
-                            const text = storedColor
-                                ? storedColor.replace(/\/ [\d.]+\)$/, ')')
-                                : hashColor.text;
+                            const text = storedColor ? storedColor.replace(/\/ [\d.]+\)$/, ')') : hashColor.text;
                             return (
                                 <Badge
                                     key={entry.tag}
@@ -197,18 +176,12 @@ export function getColumns({
                             </Badge>
                         )}
                         {platforms.isQuest && (
-                            <Badge
-                                class="x-tag-platform-quest"
-                                variant="outline"
-                            >
+                            <Badge class="x-tag-platform-quest" variant="outline">
                                 <Smartphone class="h-3.5 w-3.5" />
                             </Badge>
                         )}
                         {platforms.isIos && (
-                            <Badge
-                                class="text-platform-ios border-platform-ios"
-                                variant="outline"
-                            >
+                            <Badge class="text-platform-ios border-platform-ios" variant="outline">
                                 <Apple class="h-3.5 w-3.5" />
                             </Badge>
                         )}
@@ -301,8 +274,7 @@ export function getColumns({
         },
         {
             id: 'pcPerf',
-            accessorFn: (row) =>
-                getPlatformInfo(row.unityPackages)?.pc?.performanceRating ?? '',
+            accessorFn: (row) => getPlatformInfo(row.unityPackages)?.pc?.performanceRating ?? '',
             header: ({ column }) =>
                 sortButton({
                     column,
@@ -311,20 +283,13 @@ export function getColumns({
             size: 140,
             meta: { label: () => t('dialog.avatar.info.pc_performance') },
             cell: ({ row }) => {
-                const perf = getPlatformInfo(row.original.unityPackages)?.pc
-                    ?.performanceRating;
-                return perf ? (
-                    <span>{perf}</span>
-                ) : (
-                    <span class="text-muted-foreground">-</span>
-                );
+                const perf = getPlatformInfo(row.original.unityPackages)?.pc?.performanceRating;
+                return perf ? <span>{perf}</span> : <span class="text-muted-foreground">-</span>;
             }
         },
         {
             id: 'androidPerf',
-            accessorFn: (row) =>
-                getPlatformInfo(row.unityPackages)?.android
-                    ?.performanceRating ?? '',
+            accessorFn: (row) => getPlatformInfo(row.unityPackages)?.android?.performanceRating ?? '',
             header: ({ column }) =>
                 sortButton({
                     column,
@@ -333,20 +298,13 @@ export function getColumns({
             size: 140,
             meta: { label: () => t('dialog.avatar.info.android_performance') },
             cell: ({ row }) => {
-                const perf = getPlatformInfo(row.original.unityPackages)
-                    ?.android?.performanceRating;
-                return perf ? (
-                    <span>{perf}</span>
-                ) : (
-                    <span class="text-muted-foreground">-</span>
-                );
+                const perf = getPlatformInfo(row.original.unityPackages)?.android?.performanceRating;
+                return perf ? <span>{perf}</span> : <span class="text-muted-foreground">-</span>;
             }
         },
         {
             id: 'iosPerf',
-            accessorFn: (row) =>
-                getPlatformInfo(row.unityPackages)?.ios?.performanceRating ??
-                '',
+            accessorFn: (row) => getPlatformInfo(row.unityPackages)?.ios?.performanceRating ?? '',
             header: ({ column }) =>
                 sortButton({
                     column,
@@ -355,13 +313,8 @@ export function getColumns({
             size: 140,
             meta: { label: () => t('dialog.avatar.info.ios_performance') },
             cell: ({ row }) => {
-                const perf = getPlatformInfo(row.original.unityPackages)?.ios
-                    ?.performanceRating;
-                return perf ? (
-                    <span>{perf}</span>
-                ) : (
-                    <span class="text-muted-foreground">-</span>
-                );
+                const perf = getPlatformInfo(row.original.unityPackages)?.ios?.performanceRating;
+                return perf ? <span>{perf}</span> : <span class="text-muted-foreground">-</span>;
             }
         },
         {
@@ -405,121 +358,56 @@ export function getColumns({
             cell: ({ row }) => {
                 const ref = row.original;
                 return (
-                    <div
-                        class="flex items-center gap-1"
-                        onClick={(e) => e.stopPropagation()}
-                    >
+                    <div class="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button
-                                    class="rounded-full h-6 w-6"
-                                    size="icon"
-                                    variant="ghost"
-                                >
+                                <Button class="rounded-full h-6 w-6" size="icon" variant="ghost">
                                     <Ellipsis class="h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                                <DropdownMenuItem
-                                    onClick={() => onShowAvatarDialog(ref.id)}
-                                >
+                                <DropdownMenuItem onClick={() => onShowAvatarDialog(ref.id)}>
                                     <Eye class="size-4" />
                                     {t('dialog.avatar.actions.view_details')}
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                    onClick={() =>
-                                        onContextMenuAction('manageTags', ref)
-                                    }
-                                >
+                                <DropdownMenuItem onClick={() => onContextMenuAction('manageTags', ref)}>
                                     <Tag class="size-4" />
                                     {t('dialog.avatar.actions.manage_tags')}
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 {ref.releaseStatus === 'public' ? (
-                                    <DropdownMenuItem
-                                        onClick={() =>
-                                            onContextMenuAction(
-                                                'makePrivate',
-                                                ref
-                                            )
-                                        }
-                                    >
+                                    <DropdownMenuItem onClick={() => onContextMenuAction('makePrivate', ref)}>
                                         <User class="size-4" />
-                                        {t(
-                                            'dialog.avatar.actions.make_private'
-                                        )}
+                                        {t('dialog.avatar.actions.make_private')}
                                     </DropdownMenuItem>
                                 ) : (
-                                    <DropdownMenuItem
-                                        onClick={() =>
-                                            onContextMenuAction(
-                                                'makePublic',
-                                                ref
-                                            )
-                                        }
-                                    >
+                                    <DropdownMenuItem onClick={() => onContextMenuAction('makePublic', ref)}>
                                         <User class="size-4" />
                                         {t('dialog.avatar.actions.make_public')}
                                     </DropdownMenuItem>
                                 )}
-                                <DropdownMenuItem
-                                    onClick={() =>
-                                        onContextMenuAction('rename', ref)
-                                    }
-                                >
+                                <DropdownMenuItem onClick={() => onContextMenuAction('rename', ref)}>
                                     <Pencil class="size-4" />
                                     {t('dialog.avatar.actions.rename')}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() =>
-                                        onContextMenuAction(
-                                            'changeDescription',
-                                            ref
-                                        )
-                                    }
-                                >
+                                <DropdownMenuItem onClick={() => onContextMenuAction('changeDescription', ref)}>
                                     <Pencil class="size-4" />
-                                    {t(
-                                        'dialog.avatar.actions.change_description'
-                                    )}
+                                    {t('dialog.avatar.actions.change_description')}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() =>
-                                        onContextMenuAction('changeTags', ref)
-                                    }
-                                >
+                                <DropdownMenuItem onClick={() => onContextMenuAction('changeTags', ref)}>
                                     <Pencil class="size-4" />
-                                    {t(
-                                        'dialog.avatar.actions.change_content_tags'
-                                    )}
+                                    {t('dialog.avatar.actions.change_content_tags')}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() =>
-                                        onContextMenuAction('changeStyles', ref)
-                                    }
-                                >
+                                <DropdownMenuItem onClick={() => onContextMenuAction('changeStyles', ref)}>
                                     <Pencil class="size-4" />
-                                    {t(
-                                        'dialog.avatar.actions.change_styles_author_tags'
-                                    )}
+                                    {t('dialog.avatar.actions.change_styles_author_tags')}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() =>
-                                        onContextMenuAction('changeImage', ref)
-                                    }
-                                >
+                                <DropdownMenuItem onClick={() => onContextMenuAction('changeImage', ref)}>
                                     <Image class="size-4" />
                                     {t('dialog.avatar.actions.change_image')}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() =>
-                                        onContextMenuAction(
-                                            'createImpostor',
-                                            ref
-                                        )
-                                    }
-                                >
+                                <DropdownMenuItem onClick={() => onContextMenuAction('createImpostor', ref)}>
                                     <RefreshCw class="size-4" />
                                     {t('dialog.avatar.actions.create_impostor')}
                                 </DropdownMenuItem>

@@ -137,14 +137,10 @@
     );
 
     const { t } = useI18n();
-    /**
-     *
-     */
     function saveTableFilters() {
         configRepository.setString('VRCX_friendLogTableFilters', JSON.stringify(friendLogTable.value.filters[0].value));
     }
     /**
-     *
      * @param value
      */
     function handleFriendLogFilterChange(value) {
@@ -152,7 +148,6 @@
         saveTableFilters();
     }
     /**
-     *
      * @param row
      */
     function deleteFriendLogPrompt(row) {
@@ -165,7 +160,6 @@
             .catch(() => {});
     }
     /**
-     *
      * @param row
      */
     function deleteFriendLog(row) {

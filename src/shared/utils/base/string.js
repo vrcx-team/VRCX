@@ -1,5 +1,4 @@
 /**
- *
  * @param {string} tag
  * @returns {string}
  */
@@ -9,7 +8,6 @@ function escapeTag(tag) {
 }
 
 /**
- *
  * @param {object} obj
  * @returns {object}
  */
@@ -26,7 +24,6 @@ function escapeTagRecursive(obj) {
 }
 
 /**
- *
  * @param {string} text
  * @returns {string}
  */
@@ -39,7 +36,6 @@ function textToHex(text) {
 }
 
 /**
- *
  * @param {number} num
  * @returns {string}
  */
@@ -56,7 +52,6 @@ function commaNumber(num) {
 }
 
 /**
- *
  * @param {string} str
  * @param {string} search
  * @param {object} comparer
@@ -91,7 +86,6 @@ function localeIncludes(str, search, comparer) {
 }
 
 /**
- *
  * @param {string} text
  * @returns {string}
  */
@@ -100,7 +94,6 @@ function changeLogRemoveLinks(text) {
 }
 
 /**
- *
  * @param {string} text
  * @returns {string}
  */

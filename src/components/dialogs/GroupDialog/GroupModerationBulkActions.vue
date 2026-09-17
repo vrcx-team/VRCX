@@ -25,6 +25,7 @@
             size="icon-sm"
             variant="outline"
             style="margin-left: 6px"
+            :ariaLabel="t('common.actions.delete')"
             @click="$emit('clear-all')">
             <Trash2 />
         </Button>
@@ -43,6 +44,7 @@
             <span v-text="user.user?.displayName || user.userId" style="font-weight: bold; margin-left: 6px"></span>
             <button
                 type="button"
+                :ariaLabel="t('common.actions.delete')"
                 style="
                     margin-left: 8px;
                     border: none;

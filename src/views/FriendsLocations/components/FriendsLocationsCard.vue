@@ -4,6 +4,10 @@
             class="friend-card x-hover-card hover:bg-muted relative"
             :style="cardStyle"
             @click="showUserDialog(friend.id)">
+            <ProfileEffect
+                v-if="showCosmetics"
+                :profile-effect="friend.ref.profileEffect"
+                class="object-cover rounded-lg" />
             <div class="friend-card__header grid items-center mb-1.75">
                 <div class="relative inline-block flex-none size-9 mr-2.5">
                     <Avatar class="size-full rounded-full">
@@ -12,6 +16,7 @@
                             <User class="text-muted-foreground" :size="Math.max(16, 20 * cardScale)" />
                         </AvatarFallback>
                     </Avatar>
+                    <IconFrame v-if="showCosmetics" :icon-frame="friend.ref.iconFrame" />
                 </div>
                 <span
                     class="friend-card__status-dot absolute rounded-full pointer-events-none"
@@ -48,6 +53,8 @@
 
 <script setup>
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+    import IconFrame from '@/components/IconFrame.vue';
+    import ProfileEffect from '@/components/ProfileEffect.vue';
     import { Card } from '@/components/ui/card';
     import { Pencil, User } from 'lucide-vue-next';
     import { computed } from 'vue';
@@ -70,6 +77,10 @@
             default: 1
         },
         displayInstanceInfo: {
+            type: Boolean,
+            default: true
+        },
+        showCosmetics: {
             type: Boolean,
             default: true
         },
@@ -134,11 +145,13 @@
     .friend-card__header {
         grid-template-columns: auto minmax(0, 1fr);
         gap: calc(10px * var(--card-scale) * var(--card-spacing));
+        padding-top: calc(3px * var(--card-scale));
+        padding-left: calc(4px * var(--card-scale));
     }
 
     .friend-card__status-dot {
-        top: calc(8px * var(--card-scale));
-        right: calc(8px * var(--card-scale));
+        top: calc(16px * var(--card-scale));
+        right: calc(16px * var(--card-scale));
         inline-size: calc(12px * var(--card-scale));
         block-size: calc(12px * var(--card-scale));
     }

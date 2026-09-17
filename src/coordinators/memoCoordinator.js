@@ -19,7 +19,6 @@ async function migrateMemos() {
 }
 
 /**
- *
  * @param {string} userId
  * @returns
  */
@@ -37,7 +36,6 @@ async function getUserMemo(userId) {
 }
 
 /**
- *
  * @param {string} id
  * @param {string} memo
  */
@@ -62,6 +60,8 @@ async function saveUserMemo(id, memo) {
         } else {
             ref.$nickName = '';
         }
+    }
+    if (userStore.userDialog.id === id) {
         userStore.setUserDialogMemo(memo);
     }
 }
@@ -86,7 +86,6 @@ async function getAllUserMemos() {
 }
 
 /**
- *
  * @param {string} worldId
  * @returns
  */

@@ -8,16 +8,11 @@ vi.mock('vue-i18n', () => ({
     useI18n: () => ({ t: (key) => key, locale: require('vue').ref('en') })
 }));
 
-import {
-    applyTransforms,
-    cropImage,
-    useImageCropper
-} from '../useImageCropper';
+import { applyTransforms, cropImage, useImageCropper } from '../useImageCropper';
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 
 /**
- *
  * @param width
  * @param height
  */
@@ -26,7 +21,6 @@ function makeImage(width, height) {
 }
 
 /**
- *
  * @param root0
  * @param root0.left
  * @param root0.top
@@ -65,9 +59,6 @@ function makeCropperResult({
 let mockCtx;
 let canvasInstances;
 
-/**
- *
- */
 function setupCanvasMocks() {
     canvasInstances = [];
     mockCtx = {
@@ -87,9 +78,7 @@ function setupCanvasMocks() {
                 height: 0,
                 getContext: vi.fn(() => mockCtx),
                 toDataURL: vi.fn(() => 'data:image/jpeg;base64,mock'),
-                toBlob: vi.fn((cb) =>
-                    cb(new Blob(['mock'], { type: 'image/png' }))
-                )
+                toBlob: vi.fn((cb) => cb(new Blob(['mock'], { type: 'image/png' })))
             };
             canvasInstances.push(canvas);
             return canvas;
@@ -298,10 +287,7 @@ describe('cropImage', () => {
         const result = await cropImage(img, 1, cropResult);
 
         const cropCanvas = canvasInstances[canvasInstances.length - 1];
-        expect(cropCanvas.toBlob).toHaveBeenCalledWith(
-            expect.any(Function),
-            'image/png'
-        );
+        expect(cropCanvas.toBlob).toHaveBeenCalledWith(expect.any(Function), 'image/png');
         expect(result).toBeInstanceOf(Blob);
     });
 

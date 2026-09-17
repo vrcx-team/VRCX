@@ -9,12 +9,7 @@ vi.mock('../../../plugins/router', () => ({
     default: { push: vi.fn(), currentRoute: { value: {} } }
 }));
 
-import {
-    displayLocation,
-    parseLocation,
-    resolveRegion,
-    translateAccessType
-} from '../locationParser';
+import { displayLocation, parseLocation, resolveRegion, translateAccessType } from '../locationParser';
 import { getLocationText } from '../location';
 import { accessTypeLocaleKeyMap } from '../../constants';
 
@@ -63,8 +58,7 @@ describe('Location Utils', () => {
         });
 
         test('parses invite+ instance', () => {
-            const location =
-                'wrld_12345:instance~private(usr_12345)~canRequestInvite';
+            const location = 'wrld_12345:instance~private(usr_12345)~canRequestInvite';
             const result = parseLocation(location);
             expect(result.worldId).toBe('wrld_12345');
             expect(result.accessType).toBe('invite+');
@@ -101,8 +95,7 @@ describe('Location Utils', () => {
         });
 
         test('parses group public instance', () => {
-            const location =
-                'wrld_12345:instance~group(grp_12345)~groupAccessType(public)';
+            const location = 'wrld_12345:instance~group(grp_12345)~groupAccessType(public)';
             const result = parseLocation(location);
             expect(result.worldId).toBe('wrld_12345');
             expect(result.accessType).toBe('group');
@@ -124,8 +117,7 @@ describe('Location Utils', () => {
         });
 
         test('parses complex instance with multiple parameters', () => {
-            const location =
-                'wrld_12345:67890~region(eu)~private(usr_abc)~canRequestInvite~strict~ageGate';
+            const location = 'wrld_12345:67890~region(eu)~private(usr_abc)~canRequestInvite~strict~ageGate';
             const result = parseLocation(location);
             expect(result.worldId).toBe('wrld_12345');
             expect(result.instanceName).toBe('67890');
@@ -169,8 +161,7 @@ describe('Location Utils', () => {
         });
 
         test('handles malformed instance parameters', () => {
-            const location =
-                'wrld_12345:instance~private()~region~invalid(test';
+            const location = 'wrld_12345:instance~private()~region~invalid(test';
             const result = parseLocation(location);
             expect(result.worldId).toBe('wrld_12345');
             expect(result.privateId).toBe(''); // Empty parentheses
@@ -192,77 +183,40 @@ describe('Location Utils', () => {
 
         test('handles offline state', () => {
             expect(displayLocation('offline', 'Some World')).toBe('Offline');
-            expect(displayLocation('offline:offline', 'Some World')).toBe(
-                'Offline'
-            );
+            expect(displayLocation('offline:offline', 'Some World')).toBe('Offline');
         });
 
         test('handles private state', () => {
             expect(displayLocation('private', 'Some World')).toBe('Private');
-            expect(displayLocation('private:private', 'Some World')).toBe(
-                'Private'
-            );
+            expect(displayLocation('private:private', 'Some World')).toBe('Private');
         });
 
         test('handles traveling state', () => {
-            expect(displayLocation('traveling', 'Some World')).toBe(
-                'Traveling'
-            );
-            expect(displayLocation('traveling:traveling', 'Some World')).toBe(
-                'Traveling'
-            );
+            expect(displayLocation('traveling', 'Some World')).toBe('Traveling');
+            expect(displayLocation('traveling:traveling', 'Some World')).toBe('Traveling');
         });
 
         test('shows world with access type for instance', () => {
-            const result = displayLocation(
-                'wrld_12345:instance~private(usr_123)',
-                'Test World'
-            );
+            const result = displayLocation('wrld_12345:instance~private(usr_123)', 'Test World');
             expect(result).toBe('Test World invite');
         });
 
         test('includes group name when provided', () => {
-            const result = displayLocation(
-                'wrld_12345:instance~group(grp_123)',
-                'Test World',
-                'My Group'
-            );
+            const result = displayLocation('wrld_12345:instance~group(grp_123)', 'Test World', 'My Group');
             expect(result).toBe('Test World group(My Group)');
         });
 
         test('shows different access types correctly', () => {
             const worldName = 'Test World';
 
-            expect(displayLocation('wrld_12345:instance', worldName)).toBe(
-                'Test World public'
+            expect(displayLocation('wrld_12345:instance', worldName)).toBe('Test World public');
+            expect(displayLocation('wrld_12345:instance~private(usr_123)', worldName)).toBe('Test World invite');
+            expect(displayLocation('wrld_12345:instance~private(usr_123)~canRequestInvite', worldName)).toBe(
+                'Test World invite+'
             );
-            expect(
-                displayLocation(
-                    'wrld_12345:instance~private(usr_123)',
-                    worldName
-                )
-            ).toBe('Test World invite');
-            expect(
-                displayLocation(
-                    'wrld_12345:instance~private(usr_123)~canRequestInvite',
-                    worldName
-                )
-            ).toBe('Test World invite+');
-            expect(
-                displayLocation(
-                    'wrld_12345:instance~friends(usr_123)',
-                    worldName
-                )
-            ).toBe('Test World friends');
-            expect(
-                displayLocation(
-                    'wrld_12345:instance~hidden(usr_123)',
-                    worldName
-                )
-            ).toBe('Test World friends+');
-            expect(
-                displayLocation('wrld_12345:instance~group(grp_123)', worldName)
-            ).toBe('Test World group');
+            expect(displayLocation('wrld_12345:instance~friends(usr_123)', worldName)).toBe('Test World friends');
+            expect(displayLocation('wrld_12345:instance~hidden(usr_123)', worldName)).toBe('Test World friends+');
+            expect(displayLocation('wrld_12345:instance~group(grp_123)', worldName)).toBe('Test World group');
         });
 
         test('shows group access types correctly', () => {
@@ -270,43 +224,25 @@ describe('Location Utils', () => {
             const groupName = 'Test Group';
 
             expect(
-                displayLocation(
-                    'wrld_12345:instance~group(grp_123)~groupAccessType(public)',
-                    worldName,
-                    groupName
-                )
+                displayLocation('wrld_12345:instance~group(grp_123)~groupAccessType(public)', worldName, groupName)
             ).toBe('Test World groupPublic(Test Group)');
             expect(
-                displayLocation(
-                    'wrld_12345:instance~group(grp_123)~groupAccessType(plus)',
-                    worldName,
-                    groupName
-                )
+                displayLocation('wrld_12345:instance~group(grp_123)~groupAccessType(plus)', worldName, groupName)
             ).toBe('Test World groupPlus(Test Group)');
         });
 
         test('prioritizes group name over access type when both available', () => {
-            const result = displayLocation(
-                'wrld_12345:instance~private(usr_123)',
-                'Test World',
-                'Override Group'
-            );
+            const result = displayLocation('wrld_12345:instance~private(usr_123)', 'Test World', 'Override Group');
             expect(result).toBe('Test World invite(Override Group)');
         });
 
         test('handles empty or missing world name', () => {
             expect(displayLocation('wrld_12345:instance', '')).toBe(' public');
-            expect(displayLocation('wrld_12345:instance', undefined)).toBe(
-                'undefined public'
-            );
+            expect(displayLocation('wrld_12345:instance', undefined)).toBe('undefined public');
         });
 
         test('handles empty or missing group name', () => {
-            const result = displayLocation(
-                'wrld_12345:instance~group(grp_123)',
-                'Test World',
-                ''
-            );
+            const result = displayLocation('wrld_12345:instance~group(grp_123)', 'Test World', '');
             expect(result).toBe('Test World group');
         });
 
@@ -316,9 +252,7 @@ describe('Location Utils', () => {
         });
 
         test('handles malformed location strings', () => {
-            expect(displayLocation('invalid-location', 'Test World')).toBe(
-                'Test World'
-            );
+            expect(displayLocation('invalid-location', 'Test World')).toBe('Test World');
             expect(displayLocation('', 'Test World')).toBe('Test World');
             expect(displayLocation(null, 'Test World')).toBe('Test World');
         });
@@ -333,8 +267,7 @@ describe('Location Utils', () => {
                     expectedAccessType: 'invite'
                 },
                 {
-                    location:
-                        'wrld_test:private~private(usr_123)~canRequestInvite',
+                    location: 'wrld_test:private~private(usr_123)~canRequestInvite',
                     expectedAccessType: 'invite+'
                 },
                 {
@@ -386,10 +319,8 @@ describe('Location Utils', () => {
 
         test('parseLocation maintains consistency across parameter order', () => {
             // Different parameter orders should produce same result
-            const location1 =
-                'wrld_12345:instance~region(us)~private(usr_123)~strict';
-            const location2 =
-                'wrld_12345:instance~strict~private(usr_123)~region(us)';
+            const location1 = 'wrld_12345:instance~region(us)~private(usr_123)~strict';
+            const location2 = 'wrld_12345:instance~strict~private(usr_123)~region(us)';
 
             const result1 = parseLocation(location1);
             const result2 = parseLocation(location2);
@@ -469,55 +400,33 @@ describe('Location Utils', () => {
         const t = (key) => key;
 
         test('returns raw name when not in keyMap', () => {
-            expect(
-                translateAccessType('unknown', t, accessTypeLocaleKeyMap)
-            ).toBe('unknown');
+            expect(translateAccessType('unknown', t, accessTypeLocaleKeyMap)).toBe('unknown');
         });
 
         test('translates public', () => {
-            expect(
-                translateAccessType('public', t, accessTypeLocaleKeyMap)
-            ).toBe(accessTypeLocaleKeyMap['public']);
+            expect(translateAccessType('public', t, accessTypeLocaleKeyMap)).toBe(accessTypeLocaleKeyMap['public']);
         });
 
         test('translates invite', () => {
-            expect(
-                translateAccessType('invite', t, accessTypeLocaleKeyMap)
-            ).toBe(accessTypeLocaleKeyMap['invite']);
+            expect(translateAccessType('invite', t, accessTypeLocaleKeyMap)).toBe(accessTypeLocaleKeyMap['invite']);
         });
 
         test('translates friends', () => {
-            expect(
-                translateAccessType('friends', t, accessTypeLocaleKeyMap)
-            ).toBe(accessTypeLocaleKeyMap['friends']);
+            expect(translateAccessType('friends', t, accessTypeLocaleKeyMap)).toBe(accessTypeLocaleKeyMap['friends']);
         });
 
         test('translates friends+', () => {
-            expect(
-                translateAccessType('friends+', t, accessTypeLocaleKeyMap)
-            ).toBe(accessTypeLocaleKeyMap['friends+']);
+            expect(translateAccessType('friends+', t, accessTypeLocaleKeyMap)).toBe(accessTypeLocaleKeyMap['friends+']);
         });
 
         test('prefixes Group for groupPublic', () => {
-            const result = translateAccessType(
-                'groupPublic',
-                t,
-                accessTypeLocaleKeyMap
-            );
-            expect(result).toBe(
-                `${accessTypeLocaleKeyMap['group']} ${accessTypeLocaleKeyMap['groupPublic']}`
-            );
+            const result = translateAccessType('groupPublic', t, accessTypeLocaleKeyMap);
+            expect(result).toBe(`${accessTypeLocaleKeyMap['group']} ${accessTypeLocaleKeyMap['groupPublic']}`);
         });
 
         test('prefixes Group for groupPlus', () => {
-            const result = translateAccessType(
-                'groupPlus',
-                t,
-                accessTypeLocaleKeyMap
-            );
-            expect(result).toBe(
-                `${accessTypeLocaleKeyMap['group']} ${accessTypeLocaleKeyMap['groupPlus']}`
-            );
+            const result = translateAccessType('groupPlus', t, accessTypeLocaleKeyMap);
+            expect(result).toBe(`${accessTypeLocaleKeyMap['group']} ${accessTypeLocaleKeyMap['groupPlus']}`);
         });
     });
 
@@ -548,30 +457,22 @@ describe('Location Utils', () => {
 
         test('returns hint with access type when instance exists', () => {
             const L = parseLocation('wrld_12345:67890');
-            expect(getLocationText(L, opts({ hint: 'My World' }))).toBe(
-                'My World · Public'
-            );
+            expect(getLocationText(L, opts({ hint: 'My World' }))).toBe('My World · Public');
         });
 
         test('returns hint alone when no instance', () => {
             const L = parseLocation('wrld_12345');
-            expect(getLocationText(L, opts({ hint: 'My World' }))).toBe(
-                'My World'
-            );
+            expect(getLocationText(L, opts({ hint: 'My World' }))).toBe('My World');
         });
 
         test('returns world name with access type when cached', () => {
             const L = parseLocation('wrld_12345:67890');
-            expect(getLocationText(L, opts({ worldName: 'Cool World' }))).toBe(
-                'Cool World · Public'
-            );
+            expect(getLocationText(L, opts({ worldName: 'Cool World' }))).toBe('Cool World · Public');
         });
 
         test('returns world name alone when no instance', () => {
             const L = parseLocation('wrld_12345');
-            expect(getLocationText(L, opts({ worldName: 'Cool World' }))).toBe(
-                'Cool World'
-            );
+            expect(getLocationText(L, opts({ worldName: 'Cool World' }))).toBe('Cool World');
         });
 
         test('falls back to worldId when no cached name', () => {
@@ -586,12 +487,7 @@ describe('Location Utils', () => {
 
         test('hint takes priority over worldName', () => {
             const L = parseLocation('wrld_12345:67890');
-            expect(
-                getLocationText(
-                    L,
-                    opts({ hint: 'Hint Text', worldName: 'World Name' })
-                )
-            ).toBe('Hint Text · Public');
+            expect(getLocationText(L, opts({ hint: 'Hint Text', worldName: 'World Name' }))).toBe('Hint Text · Public');
         });
     });
 });

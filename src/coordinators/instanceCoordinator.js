@@ -2,7 +2,6 @@ import { instanceRequest } from '../api';
 import { parseLocation } from '../shared/utils/locationParser';
 
 /**
- *
  * @param {object} instance
  */
 function refreshInstancePlayerCount(instance) {

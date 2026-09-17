@@ -1,11 +1,9 @@
 import { extractFileId, extractFileVersion } from '../../shared/utils';
-import {
-    getNotificationMessage,
-    toNotificationText
-} from '../../shared/utils/notificationMessage';
+import { getNotificationMessage, toNotificationText } from '../../shared/utils/notificationMessage';
 
 /**
  * Creates the overlay dispatch functions for the Notification store.
+ *
  * @param {object} deps
  * @param {Function} deps.getUserIdFromNoty
  * @param {object} deps.queryRequest
@@ -22,7 +20,6 @@ export function createOverlayDispatch({
     appearanceSettingsStore
 }) {
     /**
-     *
      * @param {object} noty
      * @returns
      */
@@ -33,19 +30,11 @@ export function createOverlayDispatch({
         let imageLocation = '';
         try {
             if (fileId && fileVersion) {
-                imageLocation = await AppApi.GetImage(
-                    imageUrl,
-                    fileId,
-                    fileVersion
-                );
+                imageLocation = await AppApi.GetImage(imageUrl, fileId, fileVersion);
             } else if (imageUrl && imageUrl.startsWith('http')) {
                 fileVersion = imageUrl.split('/').pop(); // 1416226261.thumbnail-500.png
                 fileId = fileVersion.split('.').shift(); // 1416226261
-                imageLocation = await AppApi.GetImage(
-                    imageUrl,
-                    fileId,
-                    fileVersion
-                );
+                imageLocation = await AppApi.GetImage(imageUrl, fileId, fileVersion);
             }
         } catch (err) {
             console.error(imageUrl, err);
@@ -54,7 +43,6 @@ export function createOverlayDispatch({
     }
 
     /**
-     *
      * @param noty
      * @param message
      * @param image
@@ -67,7 +55,6 @@ export function createOverlayDispatch({
     }
 
     /**
-     *
      * @param {string} noty
      * @param {string} message
      * @param {string} imageFile
@@ -77,14 +64,10 @@ export function createOverlayDispatch({
         if (imageFile) {
             image = `file:///${imageFile}`;
         }
-        AppApi.ExecuteVrOverlayFunction(
-            'playNoty',
-            JSON.stringify({ noty, message, image })
-        );
+        AppApi.ExecuteVrOverlayFunction('playNoty', JSON.stringify({ noty, message, image }));
     }
 
     /**
-     *
      * @param {any} noty
      * @param {string} message
      * @param {string} image
@@ -92,45 +75,24 @@ export function createOverlayDispatch({
     function displayXSNotification(noty, message, image) {
         const result = getNotificationMessage(noty, message);
         if (!result) return;
-        const timeout = Math.floor(
-            parseInt(
-                notificationsSettingsStore.notificationTimeout.toString(),
-                10
-            ) / 1000
-        );
-        const opacity =
-            parseFloat(advancedSettingsStore.notificationOpacity.toString()) /
-            100;
+        const timeout = Math.floor(parseInt(notificationsSettingsStore.notificationTimeout.toString(), 10) / 1000);
+        const opacity = parseFloat(advancedSettingsStore.notificationOpacity.toString()) / 100;
         const text = toNotificationText(result.title, result.body, noty.type);
         AppApi.XSNotification('VRCX', text, timeout, opacity, image);
     }
 
     /**
-     *
      * @param playOvrtHudNotifications
      * @param playOvrtWristNotifications
      * @param noty
      * @param message
      * @param image
      */
-    function displayOvrtNotification(
-        playOvrtHudNotifications,
-        playOvrtWristNotifications,
-        noty,
-        message,
-        image
-    ) {
+    function displayOvrtNotification(playOvrtHudNotifications, playOvrtWristNotifications, noty, message, image) {
         const result = getNotificationMessage(noty, message);
         if (!result) return;
-        const timeout = Math.floor(
-            parseInt(
-                notificationsSettingsStore.notificationTimeout.toString(),
-                10
-            ) / 1000
-        );
-        const opacity =
-            parseFloat(advancedSettingsStore.notificationOpacity.toString()) /
-            100;
+        const timeout = Math.floor(parseInt(notificationsSettingsStore.notificationTimeout.toString(), 10) / 1000);
+        const opacity = parseFloat(advancedSettingsStore.notificationOpacity.toString()) / 100;
         const text = toNotificationText(result.title, result.body, noty.type);
         AppApi.OVRTNotification(
             playOvrtHudNotifications,
@@ -144,7 +106,6 @@ export function createOverlayDispatch({
     }
 
     /**
-     *
      * @param {object} noty
      * @returns
      */
@@ -171,11 +132,8 @@ export function createOverlayDispatch({
                     if (!args.json) {
                         return '';
                     }
-                    if (
-                        appearanceSettingsStore.displayVRCPlusIconsAsAvatar &&
-                        args.json.userIcon
-                    ) {
-                        return args.json.userIcon;
+                    if (args.json.iconUrl) {
+                        return args.json.iconUrl;
                     }
                     if (args.json.profilePicOverride) {
                         return args.json.profilePicOverride;
@@ -187,7 +145,6 @@ export function createOverlayDispatch({
     }
 
     /**
-     *
      * @param {string} displayName
      * @param {string} message
      * @param {string} image

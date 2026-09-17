@@ -47,12 +47,9 @@ const memos = {
     },
 
     async deleteUserMemo(userId) {
-        await sqliteService.executeNonQuery(
-            `DELETE FROM memos WHERE user_id = @user_id`,
-            {
-                '@user_id': userId
-            }
-        );
+        await sqliteService.executeNonQuery(`DELETE FROM memos WHERE user_id = @user_id`, {
+            '@user_id': userId
+        });
     },
 
     // world memos
@@ -87,12 +84,9 @@ const memos = {
     },
 
     deleteWorldMemo(worldId) {
-        sqliteService.executeNonQuery(
-            `DELETE FROM world_memos WHERE world_id = @world_id`,
-            {
-                '@world_id': worldId
-            }
-        );
+        sqliteService.executeNonQuery(`DELETE FROM world_memos WHERE world_id = @world_id`, {
+            '@world_id': worldId
+        });
     },
 
     // Avatar memos
@@ -127,12 +121,9 @@ const memos = {
     },
 
     deleteAvatarMemo(avatarId) {
-        sqliteService.executeNonQuery(
-            `DELETE FROM avatar_memos WHERE avatar_id = @avatar_id`,
-            {
-                '@avatar_id': avatarId
-            }
-        );
+        sqliteService.executeNonQuery(`DELETE FROM avatar_memos WHERE avatar_id = @avatar_id`, {
+            '@avatar_id': avatarId
+        });
     },
 
     // user notes
@@ -164,12 +155,9 @@ const memos = {
     },
 
     async deleteUserNote(userId) {
-        sqliteService.executeNonQuery(
-            `DELETE FROM ${dbVars.userPrefix}_notes WHERE user_id = @userId`,
-            {
-                '@userId': userId
-            }
-        );
+        sqliteService.executeNonQuery(`DELETE FROM ${dbVars.userPrefix}_notes WHERE user_id = @userId`, {
+            '@userId': userId
+        });
     }
 };
 

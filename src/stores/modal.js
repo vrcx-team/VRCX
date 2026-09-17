@@ -12,19 +12,19 @@ import { useI18n } from 'vue-i18n';
  * @typedef {object} ConfirmOptions
  * @property {string} title
  * @property {string} description
- * @property {string=} confirmText
- * @property {string=} cancelText
- * @property {boolean=} dismissible  // true: allow esc/outside, false: block
- * @property {boolean=} destructive  // true: use destructive variant for confirm button
+ * @property {string} [confirmText]
+ * @property {string} [cancelText]
+ * @property {boolean} [dismissible] // true: allow esc/outside, false: block
+ * @property {boolean} [destructive] // true: use destructive variant for confirm button
  */
 
 /**
  * @typedef {object} AlertOptions
  * @property {string} title
  * @property {string} description
- * @property {string=} confirmText
- * @property {boolean=} dismissible
- * @property {boolean=} destructive  // true: use destructive variant for confirm button
+ * @property {string} [confirmText]
+ * @property {boolean} [dismissible]
+ * @property {boolean} [destructive] // true: use destructive variant for confirm button
  */
 
 /**
@@ -38,13 +38,13 @@ import { useI18n } from 'vue-i18n';
  * @typedef {object} PromptOptions
  * @property {string} title
  * @property {string} description
- * @property {string=} confirmText
- * @property {string=} cancelText
- * @property {string=} inputValue
- * @property {string=} inputType
- * @property {RegExp | string=} pattern
- * @property {string=} errorMessage
- * @property {boolean=} dismissible
+ * @property {string} [confirmText]
+ * @property {string} [cancelText]
+ * @property {string} [inputValue]
+ * @property {string} [inputType]
+ * @property {RegExp | string} [pattern]
+ * @property {string} [errorMessage]
+ * @property {boolean} [dismissible]
  */
 
 /**
@@ -52,9 +52,9 @@ import { useI18n } from 'vue-i18n';
  * @property {string} title
  * @property {string} description
  * @property {'totp' | 'emailOtp' | 'otp'} mode
- * @property {string=} confirmText
- * @property {string=} cancelText
- * @property {boolean=} dismissible
+ * @property {string} [confirmText]
+ * @property {string} [cancelText]
+ * @property {boolean} [dismissible]
  */
 
 export const useModalStore = defineStore('Modal', () => {
@@ -161,14 +161,11 @@ export const useModalStore = defineStore('Modal', () => {
         alertDestructive.value = options.destructive === true;
 
         if (mode === 'alert') {
-            alertOkText.value =
-                options.confirmText || t('dialog.alertdialog.ok');
+            alertOkText.value = options.confirmText || t('dialog.alertdialog.ok');
             alertCancelText.value = '';
         } else {
-            alertOkText.value =
-                options.confirmText || t('dialog.alertdialog.confirm');
-            alertCancelText.value =
-                options.cancelText || t('dialog.alertdialog.cancel');
+            alertOkText.value = options.confirmText || t('dialog.alertdialog.confirm');
+            alertCancelText.value = options.cancelText || t('dialog.alertdialog.cancel');
         }
 
         alertOpen.value = true;
@@ -188,10 +185,7 @@ export const useModalStore = defineStore('Modal', () => {
         }
 
         const inputValue = options.inputValue ?? '';
-        const inputValueCopy =
-            typeof inputValue === 'string'
-                ? inputValue.slice()
-                : String(inputValue);
+        const inputValueCopy = typeof inputValue === 'string' ? inputValue.slice() : String(inputValue);
 
         promptTitle.value = options.title;
         promptDescription.value = options.description;
@@ -199,13 +193,10 @@ export const useModalStore = defineStore('Modal', () => {
         promptInputValue.value = inputValueCopy;
         promptInputType.value = options.inputType || 'text';
         promptPattern.value = options.pattern ?? null;
-        promptErrorMessage.value =
-            options.errorMessage || t('dialog.prompt.input_invalid');
+        promptErrorMessage.value = options.errorMessage || t('dialog.prompt.input_invalid');
 
-        promptOkText.value =
-            options.confirmText || t('dialog.alertdialog.confirm');
-        promptCancelText.value =
-            options.cancelText || t('dialog.alertdialog.cancel');
+        promptOkText.value = options.confirmText || t('dialog.alertdialog.confirm');
+        promptCancelText.value = options.cancelText || t('dialog.alertdialog.cancel');
 
         promptOpen.value = true;
 
@@ -215,7 +206,8 @@ export const useModalStore = defineStore('Modal', () => {
     }
 
     /**
-     * confirm: always resolve({ok, reason})
+     * Confirm: always resolve({ok, reason})
+     *
      * @param {ConfirmOptions} options
      * @returns {Promise<ConfirmResult>}
      */
@@ -224,7 +216,8 @@ export const useModalStore = defineStore('Modal', () => {
     }
 
     /**
-     * alert: always resolve({ok:true, reason:'ok'}) when closed
+     * Alert: always resolve({ok:true, reason:'ok'}) when closed
+     *
      * @param {AlertOptions} options
      * @returns {Promise<ConfirmResult>}
      */
@@ -233,7 +226,8 @@ export const useModalStore = defineStore('Modal', () => {
     }
 
     /**
-     * prompt: always resolve({ok, reason, value})
+     * Prompt: always resolve({ok, reason, value})
+     *
      * @param {PromptOptions} options
      * @returns {Promise<PromptResult>}
      */
@@ -336,10 +330,8 @@ export const useModalStore = defineStore('Modal', () => {
         otpDismissible.value = options.dismissible !== false;
         otpMode.value = options.mode || 'totp';
 
-        otpOkText.value =
-            options.confirmText || t('dialog.alertdialog.confirm');
-        otpCancelText.value =
-            options.cancelText || t('dialog.alertdialog.cancel');
+        otpOkText.value = options.confirmText || t('dialog.alertdialog.confirm');
+        otpCancelText.value = options.cancelText || t('dialog.alertdialog.cancel');
 
         otpOpen.value = true;
 
@@ -349,7 +341,8 @@ export const useModalStore = defineStore('Modal', () => {
     }
 
     /**
-     * otpPrompt: always resolve({ok, reason, value})
+     * OtpPrompt: always resolve({ok, reason, value})
+     *
      * @param {OtpPromptOptions} options
      * @returns {Promise<PromptResult>}
      */

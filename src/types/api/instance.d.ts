@@ -1,10 +1,7 @@
 import { BaseWorld } from '../common';
 
 // Exported API functions
-export type GetInstance = (params: {
-    worldId: string;
-    instanceId: string;
-}) => Promise<{
+export type GetInstance = (params: { worldId: string; instanceId: string }) => Promise<{
     json: GetInstanceResponse;
     ref: GetInstanceResponse;
     params: { worldId: string; instanceId: string };
@@ -24,14 +21,27 @@ export type CreateInstance = (params: {
     params: any;
 }>;
 
-export type GetInstanceShortName = (instance: {
-    worldId: string;
-    instanceId: string;
-    shortName?: string;
-}) => Promise<{
+export type GetInstanceShortName = (instance: { worldId: string; instanceId: string; shortName?: string }) => Promise<{
     json: GetInstanceShortNameResponse;
     instance: { worldId: string; instanceId: string };
     params?: { shortName: string };
+}>;
+
+export type InstanceAnnouncement = (params: {
+    location: string;
+    title: string;
+    message: string;
+    imageId?: string;
+    imageVersion?: string;
+}) => Promise<{
+    json: any;
+    params: {
+        location: string;
+        title: string;
+        message: string;
+        imageId?: string;
+        imageVersion?: string;
+    };
 }>;
 
 // Internal response types

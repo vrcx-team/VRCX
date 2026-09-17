@@ -21,6 +21,7 @@
                         variant="outline"
                         size="icon-sm"
                         :disabled="VRChatCacheSizeLoading"
+                        :ariaLabel="t('dialog.config_json.refresh')"
                         @click="getVRChatCacheSize">
                         <Spinner v-if="VRChatCacheSizeLoading" />
                         <RefreshCw v-else />
@@ -265,7 +266,6 @@
     const VRCHAT_RESOLUTION_DEFAULT_KEY = '__default__';
 
     /**
-     *
      * @param row
      */
     function getVRChatResolutionKey(row) {
@@ -328,9 +328,6 @@
         }
     });
 
-    /**
-     *
-     */
     function showDeleteAllVRChatCacheConfirm() {
         modalStore
             .confirm({
@@ -345,9 +342,6 @@
             .catch(() => {});
     }
 
-    /**
-     *
-     */
     async function deleteAllVRChatCache() {
         try {
             await AssetBundleManager.DeleteAllCache();
@@ -359,7 +353,6 @@
     }
 
     /**
-     *
      * @param value
      */
     async function openConfigFolderBrowser(value) {
@@ -371,16 +364,12 @@
         }
     }
 
-    /**
-     *
-     */
     function refreshDialogValues() {
         loading.value = true;
         loading.value = false;
     }
 
     /**
-     *
      * @param res
      */
     function setVRChatSpoutResolution(res) {
@@ -390,7 +379,6 @@
     }
 
     /**
-     *
      * @param res
      */
     function setVRChatCameraResolution(res) {
@@ -400,7 +388,6 @@
     }
 
     /**
-     *
      * @param res
      */
     function setVRChatScreenshotResolution(res) {
@@ -409,9 +396,6 @@
         refreshDialogValues();
     }
 
-    /**
-     *
-     */
     function getVRChatCameraResolution() {
         if (VRChatConfigFile.value.camera_res_height && VRChatConfigFile.value.camera_res_width) {
             const res = `${VRChatConfigFile.value.camera_res_width}x${VRChatConfigFile.value.camera_res_height}`;
@@ -420,9 +404,6 @@
         return '1920x1080 (1080p)';
     }
 
-    /**
-     *
-     */
     function getVRChatSpoutResolution() {
         if (VRChatConfigFile.value.camera_spout_res_height && VRChatConfigFile.value.camera_spout_res_width) {
             const res = `${VRChatConfigFile.value.camera_spout_res_width}x${VRChatConfigFile.value.camera_spout_res_height}`;
@@ -431,9 +412,6 @@
         return '1920x1080 (1080p)';
     }
 
-    /**
-     *
-     */
     function getVRChatScreenshotResolution() {
         if (VRChatConfigFile.value.screenshot_res_height && VRChatConfigFile.value.screenshot_res_width) {
             const res = `${VRChatConfigFile.value.screenshot_res_width}x${VRChatConfigFile.value.screenshot_res_height}`;
@@ -442,9 +420,6 @@
         return '1920x1080 (1080p)';
     }
 
-    /**
-     *
-     */
     function saveVRChatConfigFile() {
         for (const item in VRChatConfigFile.value) {
             if (item === 'picture_output_split_by_date') {
@@ -467,17 +442,11 @@
         closeDialog();
     }
 
-    /**
-     *
-     */
     function WriteVRChatConfigFile() {
         const json = JSON.stringify(VRChatConfigFile.value, null, '\t');
         AppApi.WriteConfigFile(json);
     }
 
-    /**
-     *
-     */
     async function readVRChatConfigFile() {
         const config = await AppApi.ReadConfigFileSafe();
         if (config) {
@@ -494,9 +463,6 @@
         }
     }
 
-    /**
-     *
-     */
     function closeDialog() {
         isVRChatConfigDialogVisible.value = false;
     }

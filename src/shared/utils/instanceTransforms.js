@@ -1,5 +1,6 @@
 /**
  * Compute which content settings are disabled for an instance.
+ *
  * @param {object} contentSettings - The instance's contentSettings object
  * @param {string[]} settingsList - List of all possible content setting keys
  * @returns {string[]} Array of disabled setting keys
@@ -10,10 +11,7 @@ export function computeDisabledContentSettings(contentSettings, settingsList) {
         return disabled;
     }
     for (const setting of settingsList) {
-        if (
-            typeof contentSettings[setting] === 'undefined' ||
-            contentSettings[setting] === true
-        ) {
+        if (typeof contentSettings[setting] === 'undefined' || contentSettings[setting] === true) {
             continue;
         }
         disabled.push(setting);
@@ -23,6 +21,7 @@ export function computeDisabledContentSettings(contentSettings, settingsList) {
 
 /**
  * Create a default instance ref object.
+ *
  * @param {object} json - API response to merge
  * @returns {object}
  */

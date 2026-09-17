@@ -54,10 +54,7 @@ describe('useGroupDialogCommands', () => {
     it('returns early when dialog is not visible', () => {
         const groupDialog = createGroupDialog({ visible: false });
         const deps = createDeps();
-        const { groupDialogCommand } = useGroupDialogCommands(
-            groupDialog,
-            deps
-        );
+        const { groupDialogCommand } = useGroupDialogCommands(groupDialog, deps);
 
         groupDialogCommand('Refresh');
         expect(deps.showGroupDialog).not.toHaveBeenCalled();
@@ -66,24 +63,16 @@ describe('useGroupDialogCommands', () => {
     it('Share copies group URL', () => {
         const groupDialog = createGroupDialog();
         const deps = createDeps();
-        const { groupDialogCommand } = useGroupDialogCommands(
-            groupDialog,
-            deps
-        );
+        const { groupDialogCommand } = useGroupDialogCommands(groupDialog, deps);
 
         groupDialogCommand('Share');
-        expect(copyToClipboard).toHaveBeenCalledWith(
-            'https://vrchat.com/home/group/grp_123'
-        );
+        expect(copyToClipboard).toHaveBeenCalledWith('https://vrchat.com/home/group/grp_123');
     });
 
     it('Invite To Group dispatches invite callback', () => {
         const groupDialog = createGroupDialog();
         const deps = createDeps();
-        const { groupDialogCommand } = useGroupDialogCommands(
-            groupDialog,
-            deps
-        );
+        const { groupDialogCommand } = useGroupDialogCommands(groupDialog, deps);
 
         groupDialogCommand('Invite To Group');
         expect(deps.showInviteGroupDialog).toHaveBeenCalledWith('grp_123', '');
@@ -92,10 +81,7 @@ describe('useGroupDialogCommands', () => {
     it('Refresh calls showGroupDialog with forceRefresh', () => {
         const groupDialog = createGroupDialog();
         const deps = createDeps();
-        const { groupDialogCommand } = useGroupDialogCommands(
-            groupDialog,
-            deps
-        );
+        const { groupDialogCommand } = useGroupDialogCommands(groupDialog, deps);
 
         groupDialogCommand('Refresh');
         expect(deps.showGroupDialog).toHaveBeenCalledWith('grp_123', {
@@ -106,10 +92,7 @@ describe('useGroupDialogCommands', () => {
     it('Block Group confirms and calls blockGroup', async () => {
         const groupDialog = createGroupDialog();
         const deps = createDeps();
-        const { groupDialogCommand } = useGroupDialogCommands(
-            groupDialog,
-            deps
-        );
+        const { groupDialogCommand } = useGroupDialogCommands(groupDialog, deps);
 
         groupDialogCommand('Block Group');
         await vi.waitFor(() => {
@@ -124,10 +107,7 @@ describe('useGroupDialogCommands', () => {
     it('Unblock Group confirms and calls unblockGroup', async () => {
         const groupDialog = createGroupDialog();
         const deps = createDeps();
-        const { groupDialogCommand } = useGroupDialogCommands(
-            groupDialog,
-            deps
-        );
+        const { groupDialogCommand } = useGroupDialogCommands(groupDialog, deps);
 
         groupDialogCommand('Unblock Group');
         await vi.waitFor(() => {
@@ -147,10 +127,7 @@ describe('useGroupDialogCommands', () => {
                 confirm: vi.fn().mockResolvedValue({ ok: false })
             }
         });
-        const { groupDialogCommand } = useGroupDialogCommands(
-            groupDialog,
-            deps
-        );
+        const { groupDialogCommand } = useGroupDialogCommands(groupDialog, deps);
 
         groupDialogCommand('Block Group');
         await vi.waitFor(() => {

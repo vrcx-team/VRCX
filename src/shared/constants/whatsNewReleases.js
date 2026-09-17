@@ -29,14 +29,16 @@ function normalizeReleaseVersion(version) {
     const normalizedVersion = String(version || '')
         .replace(/^VRCX\s+/, '')
         .trim();
-    return /^\d{4}\.\d{2}\.\d{2}$/.test(normalizedVersion)
-        ? normalizedVersion
-        : '';
+    return /^\d{4}\.\d{2}\.\d{2}$/.test(normalizedVersion) ? normalizedVersion : '';
 }
 
 /**
  * @param {string} version
- * @returns {{titleKey: string, subtitleKey: string, items: Array<{key: string, icon: string, titleKey: string, descriptionKey: string}>} | null}
+ * @returns {{
+ *     titleKey: string;
+ *     subtitleKey: string;
+ *     items: { key: string; icon: string; titleKey: string; descriptionKey: string }[];
+ * } | null}
  */
 function getWhatsNewRelease(version) {
     const normalizedVersion = normalizeReleaseVersion(version);
@@ -62,7 +64,11 @@ function getWhatsNewRelease(version) {
 }
 
 /**
- * @returns {{titleKey: string, subtitleKey: string, items: Array<{key: string, icon: string, titleKey: string, descriptionKey: string}>} | null}
+ * @returns {{
+ *     titleKey: string;
+ *     subtitleKey: string;
+ *     items: { key: string; icon: string; titleKey: string; descriptionKey: string }[];
+ * } | null}
  */
 function getLatestWhatsNewRelease() {
     const versions = Object.keys(whatsNewReleases);
@@ -73,9 +79,4 @@ function getLatestWhatsNewRelease() {
     return getWhatsNewRelease(latestVersion);
 }
 
-export {
-    getLatestWhatsNewRelease,
-    getWhatsNewRelease,
-    normalizeReleaseVersion,
-    whatsNewReleases
-};
+export { getLatestWhatsNewRelease, getWhatsNewRelease, normalizeReleaseVersion, whatsNewReleases };

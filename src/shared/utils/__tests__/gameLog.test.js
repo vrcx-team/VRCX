@@ -109,15 +109,11 @@ describe('gameLogSearchFilter', () => {
 
 describe('getGameLogCreatedAtTs', () => {
     test('returns millisecond timestamp from millis number', () => {
-        expect(getGameLogCreatedAtTs({ created_at: 1700000000000 })).toBe(
-            1700000000000
-        );
+        expect(getGameLogCreatedAtTs({ created_at: 1700000000000 })).toBe(1700000000000);
     });
 
     test('converts seconds to millis for small numbers', () => {
-        expect(getGameLogCreatedAtTs({ created_at: 1700000000 })).toBe(
-            1700000000000
-        );
+        expect(getGameLogCreatedAtTs({ created_at: 1700000000 })).toBe(1700000000000);
     });
 
     test('parses ISO string via Date.parse', () => {
@@ -128,15 +124,11 @@ describe('getGameLogCreatedAtTs', () => {
     });
 
     test('supports createdAt alias', () => {
-        expect(getGameLogCreatedAtTs({ createdAt: 1700000000000 })).toBe(
-            1700000000000
-        );
+        expect(getGameLogCreatedAtTs({ createdAt: 1700000000000 })).toBe(1700000000000);
     });
 
     test('supports dt alias', () => {
-        expect(getGameLogCreatedAtTs({ dt: 1700000000000 })).toBe(
-            1700000000000
-        );
+        expect(getGameLogCreatedAtTs({ dt: 1700000000000 })).toBe(1700000000000);
     });
 
     test('returns 0 for null/undefined row', () => {
@@ -193,12 +185,7 @@ describe('compareGameLogRows', () => {
 
 describe('createLocationEntry', () => {
     test('creates entry with correct shape', () => {
-        const entry = createLocationEntry(
-            '2024-01-15T12:00:00Z',
-            'wrld_abc123~12345',
-            'wrld_abc123',
-            'Test World'
-        );
+        const entry = createLocationEntry('2024-01-15T12:00:00Z', 'wrld_abc123~12345', 'wrld_abc123', 'Test World');
         expect(entry).toEqual({
             created_at: '2024-01-15T12:00:00Z',
             type: 'Location',
@@ -246,10 +233,7 @@ describe('createJoinLeaveEntry', () => {
 
 describe('createPortalSpawnEntry', () => {
     test('creates portal spawn entry with empty defaults', () => {
-        const entry = createPortalSpawnEntry(
-            '2024-01-15T12:00:00Z',
-            'wrld_abc~123'
-        );
+        const entry = createPortalSpawnEntry('2024-01-15T12:00:00Z', 'wrld_abc~123');
         expect(entry).toEqual({
             created_at: '2024-01-15T12:00:00Z',
             type: 'PortalSpawn',
@@ -297,11 +281,7 @@ describe('parseInventoryFromUrl', () => {
     });
 
     test('returns null for non-inventory URL', () => {
-        expect(
-            parseInventoryFromUrl(
-                'https://api.vrchat.cloud/api/1/user/usr_abc/avatar'
-            )
-        ).toBeNull();
+        expect(parseInventoryFromUrl('https://api.vrchat.cloud/api/1/user/usr_abc/avatar')).toBeNull();
     });
 
     test('returns null for invalid URL', () => {
@@ -313,11 +293,7 @@ describe('parseInventoryFromUrl', () => {
     });
 
     test('returns null if inventoryId length is wrong', () => {
-        expect(
-            parseInventoryFromUrl(
-                'https://api.vrchat.cloud/api/1/user/usr_abc/inventory/inv_short'
-            )
-        ).toBeNull();
+        expect(parseInventoryFromUrl('https://api.vrchat.cloud/api/1/user/usr_abc/inventory/inv_short')).toBeNull();
     });
 });
 
@@ -331,9 +307,7 @@ describe('parsePrintFromUrl', () => {
     });
 
     test('returns null for non-print URL', () => {
-        expect(
-            parsePrintFromUrl('https://api.vrchat.cloud/api/1/user/usr_abc')
-        ).toBeNull();
+        expect(parsePrintFromUrl('https://api.vrchat.cloud/api/1/user/usr_abc')).toBeNull();
     });
 
     test('returns null for invalid URL', () => {
@@ -341,8 +315,6 @@ describe('parsePrintFromUrl', () => {
     });
 
     test('returns null if printId has wrong length', () => {
-        expect(
-            parsePrintFromUrl('https://api.vrchat.cloud/api/1/prints/short')
-        ).toBeNull();
+        expect(parsePrintFromUrl('https://api.vrchat.cloud/api/1/prints/short')).toBeNull();
     });
 });

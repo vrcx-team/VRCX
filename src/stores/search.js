@@ -107,9 +107,7 @@ export const useSearchStore = defineStore('Search', () => {
         if (!directAccessParse(trimemd)) {
             promptOmniDirectDialog();
         } else {
-            toast.success(
-                t('prompt.direct_access_omni.message.opened_from_clipboard')
-            );
+            toast.success(t('prompt.direct_access_omni.message.opened_from_clipboard'));
         }
     }
 
@@ -148,16 +146,10 @@ export const useSearchStore = defineStore('Search', () => {
         } else if (/^[A-Za-z0-9]{3,6}\.[0-9]{4}$/g.test(input)) {
             showGroupDialogShortCode(input);
             return true;
-        } else if (
-            input.substring(0, 4) === 'usr_' ||
-            /^[A-Za-z0-9]{10}$/g.test(input)
-        ) {
+        } else if (input.substring(0, 4) === 'usr_' || /^[A-Za-z0-9]{10}$/g.test(input)) {
             showUserDialog(input);
             return true;
-        } else if (
-            input.substring(0, 5) === 'avtr_' ||
-            input.substring(0, 2) === 'b_'
-        ) {
+        } else if (input.substring(0, 5) === 'avtr_' || input.substring(0, 2) === 'b_') {
             showAvatarDialog(input);
             return true;
         } else if (input.substring(0, 4) === 'grp_') {
@@ -179,10 +171,7 @@ export const useSearchStore = defineStore('Search', () => {
         } else if (input.startsWith('https://vrch.at/')) {
             shortName = input.substring(16, 24);
             return verifyShortName('', shortName);
-        } else if (
-            input.startsWith('https://vrchat.') ||
-            input.startsWith('/home/')
-        ) {
+        } else if (input.startsWith('https://vrchat.') || input.startsWith('/home/')) {
             const url = new URL(input);
             const urlPath = url.pathname;
             const urlPathSplit = urlPath.split('/');
@@ -265,20 +254,18 @@ export const useSearchStore = defineStore('Search', () => {
     }
 
     function verifyShortName(location, shortName) {
-        return instanceRequest
-            .getInstanceFromShortName({ shortName })
-            .then((args) => {
-                const newLocation = args.json.location;
-                const newShortName = args.json.shortName;
-                if (newShortName) {
-                    showWorldDialog(newLocation, newShortName);
-                } else if (newLocation) {
-                    showWorldDialog(newLocation);
-                } else {
-                    showWorldDialog(location);
-                }
-                return args;
-            });
+        return instanceRequest.getInstanceFromShortName({ shortName }).then((args) => {
+            const newLocation = args.json.location;
+            const newShortName = args.json.shortName;
+            if (newShortName) {
+                showWorldDialog(newLocation, newShortName);
+            } else if (newLocation) {
+                showWorldDialog(newLocation);
+            } else {
+                showWorldDialog(location);
+            }
+            return args;
+        });
     }
 
     return {

@@ -39,6 +39,7 @@
                                         variant="ghost"
                                         size="icon-sm"
                                         :disabled="isFavoriteLoading"
+                                        :ariaLabel="t('view.favorite.refresh_favorites_tooltip')"
                                         @click.stop="handleRefreshFavorites">
                                         <Spinner v-if="isFavoriteLoading" />
                                         <RefreshCw v-else />
@@ -76,6 +77,7 @@
                                                         class="rounded-full"
                                                         variant="ghost"
                                                         size="icon-sm"
+                                                        :ariaLabel="t('nav_tooltip.manage')"
                                                         @click.stop>
                                                         <MoreHorizontal />
                                                     </Button>
@@ -146,6 +148,7 @@
                                         class="rounded-full"
                                         size="icon"
                                         variant="ghost"
+                                        :ariaLabel="t('common.actions.refresh')"
                                         @click.stop="refreshLocalAvatarFavorites"
                                         ><RefreshCcw
                                     /></Button>
@@ -306,7 +309,8 @@
                         </FavoritesContentHeader>
                         <div ref="avatarFavoritesContainerRef" class="flex-1 min-h-0">
                             <template v-if="isSearchActive">
-                                <div class="favorites-content__scroll favorites-content__scroll--native">
+                                <div
+                                    class="favorites-content__scroll favorites-content__scroll--native h-full overflow-auto">
                                     <div
                                         v-if="avatarFavoriteSearchResults.length"
                                         class="favorites-search-grid"
@@ -327,7 +331,7 @@
                                                 </div>
                                                 <div class="favorites-search-card__detail">
                                                     <div class="flex items-center gap-2">
-                                                        <span class="name">{{ favorite.name }}</span>
+                                                        <span class="name truncate">{{ favorite.name }}</span>
                                                     </div>
                                                     <span class="text-xs">{{ favorite.authorName }}</span>
                                                 </div>
@@ -602,7 +606,6 @@
     const historyGroupMenuKey = 'history';
 
     /**
-     *
      * @param value
      */
     function handleSortFavoritesChange(value) {
@@ -620,17 +623,11 @@
         avatarToolbarMenuOpen.value = false;
     };
 
-    /**
-     *
-     */
     function handleAvatarImportClick() {
         closeAvatarToolbarMenu();
         showAvatarImportDialog();
     }
 
-    /**
-     *
-     */
     function handleAvatarExportClick() {
         closeAvatarToolbarMenu();
         showAvatarExportDialog();
@@ -711,7 +708,6 @@
     );
 
     /**
-     *
      * @param type
      * @param key
      */
@@ -723,9 +719,6 @@
         selectGroup(type, key, { userInitiated: true });
     }
 
-    /**
-     *
-     */
     const {
         isCreatingLocalGroup,
         newLocalGroupName,
@@ -740,7 +733,6 @@
     });
 
     /**
-     *
      * @param id
      * @param value
      */
@@ -754,30 +746,20 @@
         }
     }
 
-    /**
-     *
-     */
     function clearSelectedAvatars() {
         selectedFavoriteAvatars.value = [];
     }
 
-    /**
-     *
-     */
     function showAvatarExportDialog() {
         avatarExportDialogVisible.value = true;
     }
 
-    /**
-     *
-     */
     function handleRefreshFavorites() {
         refreshFavorites();
         getLocalAvatarFavorites();
     }
 
     /**
-     *
      * @param group
      * @param visibility
      */
@@ -787,7 +769,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function handleRemoteRename(group) {
@@ -796,7 +777,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function handleRemoteClear(group) {
@@ -805,7 +785,6 @@
     }
 
     /**
-     *
      * @param groupName
      */
     function handleLocalRename(groupName) {
@@ -814,7 +793,6 @@
     }
 
     /**
-     *
      * @param groupName
      */
     function handleLocalDelete(groupName) {
@@ -823,7 +801,6 @@
     }
 
     /**
-     *
      * @param groupName
      */
     async function handleCheckInvalidAvatars(groupName) {
@@ -917,16 +894,12 @@
         }
     }
 
-    /**
-     *
-     */
     function handleHistoryClear() {
         handleGroupMenuVisible(historyGroupMenuKey, false);
         promptClearAvatarHistory();
     }
 
     /**
-     *
      * @param group
      */
     function changeFavoriteGroupName(group) {
@@ -968,7 +941,6 @@
     }
 
     /**
-     *
      * @param name
      * @param visibility
      * @param menuKey
@@ -996,7 +968,6 @@
     }
 
     /**
-     *
      * @param ctx
      */
     function clearFavoriteGroup(ctx) {
@@ -1018,7 +989,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function promptLocalAvatarFavoriteGroupRename(group) {
@@ -1047,7 +1017,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function promptLocalAvatarFavoriteGroupDelete(group) {
@@ -1066,7 +1035,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function doSearchAvatarFavorites(value) {
@@ -1123,9 +1091,6 @@
     }
     const searchAvatarFavorites = debounce(doSearchAvatarFavorites, 200);
 
-    /**
-     *
-     */
     async function refreshLocalAvatarFavorites() {
         if (refreshingLocalFavorites.value) {
             return;
@@ -1172,9 +1137,6 @@
         }
     }
 
-    /**
-     *
-     */
     function cancelLocalAvatarRefresh() {
         if (!refreshingLocalFavorites.value) {
             return;
@@ -1192,9 +1154,6 @@
         refreshingLocalFavorites.value = false;
     }
 
-    /**
-     *
-     */
     function toggleSelectAllAvatars() {
         if (!activeRemoteGroup.value) {
             return;
@@ -1206,9 +1165,6 @@
         }
     }
 
-    /**
-     *
-     */
     function copySelectedAvatars() {
         if (!selectedFavoriteAvatars.value.length) {
             return;
@@ -1218,9 +1174,6 @@
         showAvatarImportDialog();
     }
 
-    /**
-     *
-     */
     function showAvatarBulkUnfavoriteSelectionConfirm() {
         if (!selectedFavoriteAvatars.value.length) {
             return;
@@ -1241,7 +1194,6 @@
     }
 
     /**
-     *
      * @param ids
      */
     function bulkUnfavoriteSelectedAvatars(ids) {
@@ -1259,7 +1211,6 @@
     });
 
     /**
-     *
      * @param value
      */
     function formatVisibility(value) {

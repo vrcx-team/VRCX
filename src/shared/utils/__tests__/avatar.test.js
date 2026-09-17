@@ -32,10 +32,7 @@ describe('storeAvatarImage', () => {
 
     test('extracts avatar name from standard image file name', () => {
         const cache = new Map();
-        const result = storeAvatarImage(
-            makeArgs('Avatar - Cool Robot - Image - 2024.01.01', 'usr_owner1'),
-            cache
-        );
+        const result = storeAvatarImage(makeArgs('Avatar - Cool Robot - Image - 2024.01.01', 'usr_owner1'), cache);
         expect(result.avatarName).toBe('Cool Robot');
         expect(result.ownerId).toBe('usr_owner1');
         expect(result.fileCreatedAt).toBe('2024-01-01T00:00:00Z');
@@ -43,45 +40,32 @@ describe('storeAvatarImage', () => {
 
     test('stores result in cachedAvatarNames map', () => {
         const cache = new Map();
-        storeAvatarImage(
-            makeArgs('Avatar - Test - Image - x', 'usr_123'),
-            cache
-        );
+        storeAvatarImage(makeArgs('Avatar - Test - Image - x', 'usr_123'), cache);
         expect(cache.has('file_abc123')).toBe(true);
         expect(cache.get('file_abc123').avatarName).toBe('Test');
     });
 
     test('returns empty avatarName when name does not match pattern', () => {
         const cache = new Map();
-        const result = storeAvatarImage(
-            makeArgs('SomeOtherFileName.png', 'usr_456'),
-            cache
-        );
+        const result = storeAvatarImage(makeArgs('SomeOtherFileName.png', 'usr_456'), cache);
         expect(result.avatarName).toBe('');
     });
 
     test('handles special characters in avatar name', () => {
         const cache = new Map();
-        const result = storeAvatarImage(
-            makeArgs('Avatar - ★ Fancy (Name) ★ - Image - v1', 'usr_789'),
-            cache
-        );
+        const result = storeAvatarImage(makeArgs('Avatar - ★ Fancy (Name) ★ - Image - v1', 'usr_789'), cache);
         expect(result.avatarName).toContain('Fancy');
     });
 });
 
 describe('parseAvatarUrl', () => {
     test('extracts avatar ID from valid avatar URL', () => {
-        const result = parseAvatarUrl(
-            'https://api.vrchat.cloud/file/avatar/avtr_12345-abcde'
-        );
+        const result = parseAvatarUrl('https://api.vrchat.cloud/file/avatar/avtr_12345-abcde');
         expect(result).toBe('avtr_12345-abcde');
     });
 
     test('returns null for non-avatar URL', () => {
-        const result = parseAvatarUrl(
-            'https://api.vrchat.cloud/api/1/worlds/wrld_12345'
-        );
+        const result = parseAvatarUrl('https://api.vrchat.cloud/api/1/worlds/wrld_12345');
         expect(result).toBeNull();
     });
 
@@ -180,9 +164,7 @@ describe('getPlatformInfo', () => {
     });
 
     test('allows packages without variant (undefined)', () => {
-        const packages = [
-            { platform: 'standalonewindows', performanceRating: 'Good' }
-        ];
+        const packages = [{ platform: 'standalonewindows', performanceRating: 'Good' }];
         const result = getPlatformInfo(packages);
         expect(result.pc.platform).toBe('standalonewindows');
     });

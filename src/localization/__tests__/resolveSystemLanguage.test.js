@@ -84,33 +84,23 @@ describe('resolveSystemLanguage', () => {
         });
 
         test('zh-Hant maps to zh-TW (traditional script tag)', () => {
-            expect(resolveSystemLanguage('zh-Hant', languageCodes)).toBe(
-                'zh-TW'
-            );
+            expect(resolveSystemLanguage('zh-Hant', languageCodes)).toBe('zh-TW');
         });
 
         test('zh-Hans maps to zh-CN (simplified script tag)', () => {
-            expect(resolveSystemLanguage('zh-Hans', languageCodes)).toBe(
-                'zh-CN'
-            );
+            expect(resolveSystemLanguage('zh-Hans', languageCodes)).toBe('zh-CN');
         });
 
         test('zh-Hant-HK maps to zh-TW (script + region)', () => {
-            expect(resolveSystemLanguage('zh-Hant-HK', languageCodes)).toBe(
-                'zh-TW'
-            );
+            expect(resolveSystemLanguage('zh-Hant-HK', languageCodes)).toBe('zh-TW');
         });
 
         test('zh-Hans-CN maps to zh-CN (script + region)', () => {
-            expect(resolveSystemLanguage('zh-Hans-CN', languageCodes)).toBe(
-                'zh-CN'
-            );
+            expect(resolveSystemLanguage('zh-Hans-CN', languageCodes)).toBe('zh-CN');
         });
 
         test('zh-Hant-MO maps to zh-TW (script + traditional region)', () => {
-            expect(resolveSystemLanguage('zh-Hant-MO', languageCodes)).toBe(
-                'zh-TW'
-            );
+            expect(resolveSystemLanguage('zh-Hant-MO', languageCodes)).toBe('zh-TW');
         });
     });
 });

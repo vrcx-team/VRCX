@@ -63,9 +63,7 @@ const mutualGraph = {
             });
             if (idsToClean) {
                 idsToClean = idsToClean.slice(0, -1);
-                await sqliteService.executeNonQuery(
-                    `DELETE FROM ${linkTable} WHERE friend_id IN (${idsToClean})`
-                );
+                await sqliteService.executeNonQuery(`DELETE FROM ${linkTable} WHERE friend_id IN (${idsToClean})`);
             }
             let friendValues = '';
             let edgeValues = '';
@@ -118,9 +116,7 @@ const mutualGraph = {
         await sqliteService.executeNonQuery(
             `INSERT OR REPLACE INTO ${friendTable} (friend_id) VALUES ('${safeFriendId}')`
         );
-        await sqliteService.executeNonQuery(
-            `DELETE FROM ${linkTable} WHERE friend_id='${safeFriendId}'`
-        );
+        await sqliteService.executeNonQuery(`DELETE FROM ${linkTable} WHERE friend_id='${safeFriendId}'`);
         let edgeValues = '';
         for (const mutual of mutualIds) {
             if (!mutual) {
@@ -159,10 +155,7 @@ const mutualGraph = {
         }
         const metaTable = `${dbVars.userPrefix}_mutual_graph_meta`;
         const escapedId = friendId.replace(/'/g, "''");
-        const time = (lastFetchedAt || new Date().toISOString()).replace(
-            /'/g,
-            "''"
-        );
+        const time = (lastFetchedAt || new Date().toISOString()).replace(/'/g, "''");
         const optedOutInt = optedOut ? 1 : 0;
         await sqliteService.executeNonQuery(
             `INSERT OR REPLACE INTO ${metaTable} (friend_id, last_fetched_at, opted_out) VALUES ('${escapedId}', '${time}', ${optedOutInt})`

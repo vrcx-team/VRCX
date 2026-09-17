@@ -21,7 +21,7 @@ jobs:
           operations-per-run: '1000'
           stale-issue-message: >
             Hi there! 👋  
-            
+
             This issue has been waiting for more information for over 90 days.
 
             To help us move forward, please check the following:
@@ -44,7 +44,7 @@ jobs:
           exempt-issue-labels: 'nostale'
           close-issue-message: >
             Hi there 👋  
-            
+
             We’re closing this issue due to missing information.
 
             If you’d like us to take another look, feel free to reopen it after:

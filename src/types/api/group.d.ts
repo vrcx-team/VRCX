@@ -1,23 +1,19 @@
 // API functions
-export type GetGroup = (params: {
-    groupId: string;
-    includeRoles?: boolean;
-}) => Promise<{
+export type GetGroup = (params: { groupId: string; includeRoles?: boolean }) => Promise<{
     json: GetGroupResponse;
     params: { groupId: string; includeRoles?: boolean };
 }>;
 
-export type GetCalendars = (params: {
-    date: string;
-}) => Promise<CalendarResponse>;
+export type CheckTransferGroup = (params: { groupId: string; transferTargetId: string }) => Promise<{
+    json: CheckTransferGroupResponse;
+    params: { groupId: string; transferTargetId: string };
+}>;
 
-export type GetFollowingCalendars = (params: {
-    date: string;
-}) => Promise<CalendarResponse>;
+export type GetCalendars = (params: { date: string }) => Promise<CalendarResponse>;
 
-export type GetFeaturedCalendars = (params: {
-    date: string;
-}) => Promise<CalendarResponse>;
+export type GetFollowingCalendars = (params: { date: string }) => Promise<CalendarResponse>;
+
+export type GetFeaturedCalendars = (params: { date: string }) => Promise<CalendarResponse>;
 
 // API response types
 interface GetGroupResponse {
@@ -48,6 +44,16 @@ interface GetGroupResponse {
     tags: string[];
 }
 
+interface CheckTransferGroupResponse {
+    requirements: {
+        groupNotMonetized: boolean;
+        hasVRCPlus: boolean;
+        hasVerifiedEmail: boolean;
+        targetCanOwnMoreGroups: boolean;
+        targetIsGroupMember: boolean;
+    };
+}
+
 // Exported interfaces
 
 /**
@@ -60,6 +66,7 @@ export interface GroupCalendarEvent {
     createdAt: string;
     deletedAt: string | null;
     description: string;
+    durationInMs: number;
     endsAt: string;
     featured: boolean;
     guestEarlyJoinMinutes: number;
@@ -70,9 +77,12 @@ export interface GroupCalendarEvent {
     interestedUserCount: number;
     isDraft: boolean;
     languages: string[];
+    occurrenceKind: 'occurrence' | 'single' | string;
     ownerId: string;
     platforms: string[];
+    recurrence: string | null;
     roleIds: string[] | null;
+    seriesId: string | null;
     startsAt: string;
     tags: string[];
     title: string;

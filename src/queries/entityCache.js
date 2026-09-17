@@ -1,4 +1,4 @@
-import { AppDebug, logWebRequest, withQueryLog } from '../services/appConfig';
+import { logWebRequest, withQueryLog } from '../services/appConfig';
 import { queryClient } from './client';
 import { queryKeys } from './keys';
 import { toQueryOptions } from './policies';
@@ -17,7 +17,6 @@ const RECENCY_FIELDS = [
 ];
 
 /**
- *
  * @param data
  */
 function getComparableEntity(data) {
@@ -27,18 +26,13 @@ function getComparableEntity(data) {
     if (data.ref && typeof data.ref === 'object') {
         return data.ref;
     }
-    if (
-        data.json &&
-        typeof data.json === 'object' &&
-        !Array.isArray(data.json)
-    ) {
+    if (data.json && typeof data.json === 'object' && !Array.isArray(data.json)) {
         return data.json;
     }
     return data;
 }
 
 /**
- *
  * @param value
  */
 function parseTimestamp(value) {
@@ -55,7 +49,6 @@ function parseTimestamp(value) {
 }
 
 /**
- *
  * @param data
  */
 function getRecencyTimestamp(data) {
@@ -75,7 +68,6 @@ function getRecencyTimestamp(data) {
 }
 
 /**
- *
  * @param currentData
  * @param nextData
  */
@@ -99,7 +91,6 @@ function shouldReplaceCurrent(currentData, nextData) {
 }
 
 /**
- *
  * @param data
  */
 function hasCompleteEntityData(data) {
@@ -128,7 +119,7 @@ function hasCompleteEntityData(data) {
 }
 
 /**
- * @param {{queryKey: unknown[], nextData: any}} options
+ * @param {{ queryKey: unknown[]; nextData: any }} options
  */
 export function patchQueryDataWithRecency({ queryKey, nextData }) {
     queryClient.setQueryData(queryKey, (currentData) => {
@@ -140,15 +131,15 @@ export function patchQueryDataWithRecency({ queryKey, nextData }) {
 }
 
 /**
- * @param {{queryKey: unknown[], policy: {staleTime: number, gcTime: number, retry: number, refetchOnWindowFocus: boolean}, queryFn: () => Promise<any>, label?: string}} options
- * @returns {Promise<{data: any, cache: boolean}>}
+ * @param {{
+ *     queryKey: unknown[];
+ *     policy: { staleTime: number; gcTime: number; retry: number; refetchOnWindowFocus: boolean };
+ *     queryFn: () => Promise<any>;
+ *     label?: string;
+ * }} options
+ * @returns {Promise<{ data: any; cache: boolean }>}
  */
-export async function fetchWithEntityPolicy({
-    queryKey,
-    policy,
-    queryFn,
-    label
-}) {
+export async function fetchWithEntityPolicy({ queryKey, policy, queryFn, label }) {
     const queryState = queryClient.getQueryState(queryKey);
     const isFresh =
         Boolean(queryState?.dataUpdatedAt) &&
@@ -162,12 +153,7 @@ export async function fetchWithEntityPolicy({
     });
 
     if (isFresh) {
-        logWebRequest(
-            '[QUERY CACHE HIT]',
-            label || queryKey[0],
-            queryKey,
-            data
-        );
+        logWebRequest('[QUERY CACHE HIT]', label || queryKey[0], queryKey, data);
     } else {
         logWebRequest('[QUERY FETCH]', label || queryKey[0], queryKey, data);
     }
@@ -191,7 +177,7 @@ export async function refetchActiveEntityQuery(queryKey) {
 }
 
 /**
- * @param {{queryKey: unknown[], nextData: any}} options
+ * @param {{ queryKey: unknown[]; nextData: any }} options
  * @returns {Promise<void>}
  */
 export async function patchAndRefetchActiveQuery({ queryKey, nextData }) {

@@ -38,6 +38,7 @@
     import { instanceRequest, notificationRequest } from '../../../api';
     import { useGalleryStore, useUserStore } from '../../../stores';
     import { parseLocation } from '../../../shared/utils';
+    import { recordRecentAction } from '../../../composables/useRecentActions';
 
     const { t } = useI18n();
 
@@ -89,6 +90,9 @@
                                 instanceId: L.instanceId,
                                 worldId: L.worldId
                             })
+                            .then(() => {
+                                recordRecentAction(receiverUserId, 'Invite');
+                            })
                             .finally(inviteLoop);
                     } else if (uploadImage.value) {
                         notificationRequest
@@ -101,6 +105,9 @@
                                 },
                                 receiverUserId
                             )
+                            .then(() => {
+                                recordRecentAction(receiverUserId, 'Invite Photo');
+                            })
                             .finally(inviteLoop);
                     } else {
                         notificationRequest
@@ -113,6 +120,9 @@
                                 },
                                 receiverUserId
                             )
+                            .then(() => {
+                                recordRecentAction(receiverUserId, 'Invite Message');
+                            })
                             .finally(inviteLoop);
                     }
                 } else {
@@ -132,6 +142,7 @@
                         throw err;
                     })
                     .then((args) => {
+                        recordRecentAction(D.userId, 'Invite Photo');
                         toast.success('Invite photo message sent');
                         return args;
                     });
@@ -142,6 +153,7 @@
                         throw err;
                     })
                     .then((args) => {
+                        recordRecentAction(D.userId, 'Invite Message');
                         toast.success('Invite message sent');
                         return args;
                     });
@@ -156,6 +168,7 @@
                         throw err;
                     })
                     .then((args) => {
+                        recordRecentAction(D.userId, 'Request Invite Photo');
                         toast.success('Request invite photo message sent');
                         return args;
                     });
@@ -166,6 +179,7 @@
                         throw err;
                     })
                     .then((args) => {
+                        recordRecentAction(D.userId, 'Request Invite Message');
                         toast.success('Request invite message sent');
                         return args;
                     });

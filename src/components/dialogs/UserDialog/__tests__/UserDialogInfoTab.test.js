@@ -6,8 +6,7 @@ vi.mock('vue-i18n', () => ({
     useI18n: () => {
         const { ref } = require('vue');
         return {
-            t: (key, params) =>
-                params ? `${key}:${JSON.stringify(params)}` : key,
+            t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
             locale: ref('en')
         };
     },
@@ -101,7 +100,6 @@ import {
 } from '../../../../stores';
 
 /**
- *
  * @param overrides
  */
 function mountComponent(overrides = {}) {
@@ -225,9 +223,7 @@ describe('UserDialogInfoTab.vue', () => {
 
     describe('unit behavior', () => {
         test('onTabActivated fetches VRChat credits only once after first success', async () => {
-            const creditsSpy = vi
-                .spyOn(miscRequest, 'getVRChatCredits')
-                .mockResolvedValue({ json: { balance: 42 } });
+            const creditsSpy = vi.spyOn(miscRequest, 'getVRChatCredits').mockResolvedValue({ json: { balance: 42 } });
             const wrapper = mountComponent();
 
             wrapper.vm.onTabActivated();
@@ -243,9 +239,7 @@ describe('UserDialogInfoTab.vue', () => {
         test('renders imported InstanceActionBar and Spinner components when conditions are met', () => {
             const wrapper = mountComponent();
 
-            expect(wrapper.find('instance-action-bar-stub').exists()).toBe(
-                true
-            );
+            expect(wrapper.find('instance-action-bar-stub').exists()).toBe(true);
             expect(wrapper.find('spinner-stub').exists()).toBe(true);
         });
     });

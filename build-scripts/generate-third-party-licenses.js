@@ -2,44 +2,75 @@
 // generate-third-party-licenses.js
 // use by frontend open source software notice dialog
 
+/**
+ * @typedef {Object} PackageReference
+ * @property {string} name - The name of the package.
+ * @property {string} version - The package version.
+ * @property {string} sourceType - Where the package is sourced from.
+ * @property {string[]} [projects] - Optional list of project names.
+ */
+
+/**
+ * @typedef {Object} ProjectLicenseFields
+ * @property {string} id - Unique identifier.
+ * @property {string | null} license - The license identifier.
+ * @property {string} sourceLabel - Label indicating the source origin.
+ * @property {string | null} [noticeText] - Optional legal notice text.
+ * @property {boolean} needsReview - Indicates if manual review is required.
+ * @property {string | null} [projectUrl] - Optional URL to the project homepage.
+ * @property {string | null} [licenseUrl] - Optional URL to the license text.
+ * @property {string | null} [filePath] - Optional local file path.
+ */
+
+/**
+ * @typedef {PackageReference & ProjectLicenseFields} ProjectLicense
+ */
+
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
 const rootDir = path.join(__dirname, '..');
-const frontendLicensePath = path.join(
-    rootDir,
-    'build',
-    'html',
-    '.vite',
-    'license.md'
-);
+const frontendLicensePath = path.join(rootDir, 'build', 'html', '.vite', 'license.md');
 const outputDir = path.join(rootDir, 'build', 'html', 'licenses');
 const outputManifestPath = path.join(outputDir, 'third-party-licenses.json');
 const outputNoticePath = path.join(outputDir, 'THIRD_PARTY_NOTICES.txt');
 const dotnetDir = path.join(rootDir, 'Dotnet');
-const nugetCacheDir =
-    process.env.NUGET_PACKAGES || path.join(os.homedir(), '.nuget', 'packages');
+const nugetCacheDir = process.env.NUGET_PACKAGES || path.join(os.homedir(), '.nuget', 'packages');
 const overridesPath = path.join(__dirname, 'licenses', 'nuget-overrides.json');
 
 const nugetOverrides = JSON.parse(fs.readFileSync(overridesPath, 'utf8'));
 
+/**
+ * @param {fs.PathLike} directoryPath
+ */
 function ensureDirectory(directoryPath) {
     fs.mkdirSync(directoryPath, { recursive: true });
 }
 
+/**
+ * @param {fs.PathLike | null} filePath
+ */
 function readFileIfExists(filePath) {
-    if (!fs.existsSync(filePath)) {
+    if (!filePath || !fs.existsSync(filePath)) {
         return null;
     }
 
     return fs.readFileSync(filePath, 'utf8');
 }
 
+/**
+ * @param {string | null} value
+ * @returns {string | null}
+ */
 function normalizeWhitespace(value) {
     return value?.replace(/\r\n/g, '\n').trim() || '';
 }
 
+/**
+ * @param {string} value
+ * @returns {string}
+ */
 function sanitizeId(value) {
     return value
         .toLowerCase()
@@ -47,35 +78,53 @@ function sanitizeId(value) {
         .replace(/^-|-$/g, '');
 }
 
+/**
+ * @param {string} xml
+ * @param {string} tagName
+ * @returns {string}
+ */
 function extractXmlTagValue(xml, tagName) {
-    const match = xml.match(
-        new RegExp(`<${tagName}>([\\s\\S]*?)<\\/${tagName}>`, 'i')
-    );
+    const match = xml.match(new RegExp(`<${tagName}>([\\s\\S]*?)<\\/${tagName}>`, 'i'));
 
     return match?.[1]?.trim() || '';
 }
 
+/**
+ * @param {string} xml
+ * @param {string} tagName
+ * @param {string} attributeName
+ * @returns {string}
+ */
 function extractXmlSelfClosingTagAttribute(xml, tagName, attributeName) {
     const match = xml.match(
-        new RegExp(
-            `<${tagName}[^>]*${attributeName}="([^"]+)"[^>]*>(?:[\\s\\S]*?)<\\/${tagName}>`,
-            'i'
-        )
+        new RegExp(`<${tagName}[^>]*${attributeName}="([^"]+)"[^>]*>(?:[\\s\\S]*?)<\\/${tagName}>`, 'i')
     );
 
     return match?.[1]?.trim() || '';
 }
 
+/**
+ * @param {string} xml
+ * @returns {string}
+ */
 function extractRepositoryUrl(xml) {
     const match = xml.match(/<repository[^>]*url="([^"]+)"/i);
 
     return match?.[1]?.trim() || '';
 }
 
+/**
+ * @param {(string | null)[]} filePaths
+ * @returns {string | null}
+ */
 function findFirstExistingFile(filePaths) {
-    return filePaths.find((filePath) => fs.existsSync(filePath)) || null;
+    return filePaths.find((filePath) => filePath && fs.existsSync(filePath)) || null;
 }
 
+/**
+ * @param {string} packageDir
+ * @returns {string | null}
+ */
 function findPackageLicenseFile(packageDir) {
     if (!fs.existsSync(packageDir)) {
         return null;
@@ -84,7 +133,7 @@ function findPackageLicenseFile(packageDir) {
     const stack = [packageDir];
 
     while (stack.length > 0) {
-        const currentDir = stack.pop();
+        const currentDir = /** @type {!string} */ (stack.pop());
         const dirEntries = fs.readdirSync(currentDir, { withFileTypes: true });
 
         for (const dirEntry of dirEntries) {
@@ -97,11 +146,7 @@ function findPackageLicenseFile(packageDir) {
                 continue;
             }
 
-            if (
-                /^(license|licence|notice|copying)(\.[^.]+)?$/i.test(
-                    dirEntry.name
-                )
-            ) {
+            if (/^(license|licence|notice|copying)(\.[^.]+)?$/i.test(dirEntry.name)) {
                 return fullPath;
             }
         }
@@ -110,6 +155,10 @@ function findPackageLicenseFile(packageDir) {
     return null;
 }
 
+/**
+ * @param {string} markdown
+ * @returns {ProjectLicense[]}
+ */
 function parseFrontendLicenses(markdown) {
     const normalized = normalizeWhitespace(markdown);
     if (!normalized) {
@@ -121,20 +170,18 @@ function parseFrontendLicenses(markdown) {
     return sections
         .map((section) => {
             const [headerLine, ...bodyLines] = section.split('\n');
-            const headerMatch = headerLine.match(
-                /^##\s+(.+?)\s+-\s+(.+?)\s+\((.+?)\)$/
-            );
+            const headerMatch = headerLine.match(/^##\s+(.+?)\s+-\s+(.+?)\s+\((.+?)\)$/);
 
             if (!headerMatch) {
                 return null;
             }
 
-            const [, name, version, license] = headerMatch;
+            const [, packageName, version, license] = headerMatch;
             const noticeText = normalizeWhitespace(bodyLines.join('\n'));
 
             return {
-                id: `frontend-${sanitizeId(`${name}-${version}`)}`,
-                name,
+                id: `frontend-${sanitizeId(`${packageName}-${version}`)}`,
+                name: packageName,
                 version,
                 license,
                 sourceType: 'frontend',
@@ -143,43 +190,46 @@ function parseFrontendLicenses(markdown) {
                 needsReview: !license && !noticeText
             };
         })
-        .filter(Boolean)
+        .filter((section) => section != null)
         .sort((left, right) => left.name.localeCompare(right.name));
 }
 
+/**
+ * @param {string} csprojText
+ * @returns {PackageReference[]}
+ */
 function parseCsprojPackageReferences(csprojText) {
-    return [
-        ...csprojText.matchAll(
-            /<PackageReference\s+Include="([^"]+)"\s+Version="([^"]+)"/g
-        )
-    ].map(([, name, version]) => ({
-        name,
-        version,
-        sourceType: 'dotnet'
-    }));
+    return [...csprojText.matchAll(/<PackageReference\s+Include="([^"]+)"\s+Version="([^"]+)"/g)].map(
+        ([, packageName, version]) => ({
+            name: packageName,
+            version,
+            sourceType: 'dotnet'
+        })
+    );
 }
 
+/**
+ * @param {string} csprojText
+ * @returns {(PackageReference & { filePath: string })[]}
+ */
 function parseCsprojBinaryReferences(csprojText) {
     const binaryEntries = [];
 
-    for (const [, name, hintPath] of csprojText.matchAll(
+    for (const [, include, hintPath] of csprojText.matchAll(
         /<Reference\s+Include="([^"]+)">[\s\S]*?<HintPath>([^<]+)<\/HintPath>[\s\S]*?<\/Reference>/g
     )) {
         binaryEntries.push({
-            name,
+            name: include,
             version: '',
             sourceType: 'native',
             filePath: hintPath.replaceAll('\\', '/')
         });
     }
 
-    for (const [, includePath] of csprojText.matchAll(
-        /<None\s+Include="([^"]*libs[^"]+\.(?:dll|so|dylib))">/g
-    )) {
+    for (const [, includePath] of csprojText.matchAll(/<None\s+Include="([^"]*libs[^"]+\.(?:dll|so|dylib))">/g)) {
         const normalizedPath = includePath.replaceAll('\\', '/');
         const fileName = path.basename(normalizedPath);
-        const overrideName =
-            fileName === 'openvr_api.dll' ? 'OpenVR SDK' : fileName;
+        const overrideName = fileName === 'openvr_api.dll' ? 'OpenVR SDK' : fileName;
 
         binaryEntries.push({
             name: overrideName,
@@ -192,6 +242,10 @@ function parseCsprojBinaryReferences(csprojText) {
     return binaryEntries;
 }
 
+/**
+ * @param {fs.PathLike} projectAssetsPath
+ * @returns {PackageReference[]}
+ */
 function parseAssetsLibraries(projectAssetsPath) {
     const assetsRaw = readFileIfExists(projectAssetsPath);
     if (!assetsRaw) {
@@ -202,11 +256,7 @@ function parseAssetsLibraries(projectAssetsPath) {
     const libraries = assets.libraries || {};
 
     return Object.keys(libraries)
-        .filter(
-            (libraryKey) =>
-                !libraries[libraryKey]?.type ||
-                libraries[libraryKey].type === 'package'
-        )
+        .filter((libraryKey) => !libraries[libraryKey]?.type || libraries[libraryKey].type === 'package')
         .map((libraryKey) => {
             const lastSlashIndex = libraryKey.lastIndexOf('/');
 
@@ -218,19 +268,19 @@ function parseAssetsLibraries(projectAssetsPath) {
         });
 }
 
+/**
+ * @param {string[]} csprojFiles
+ * @returns {PackageReference[]}
+ */
 function mergeDotnetEntries(csprojFiles) {
+    /** @type {Map<string, PackageReference>} */
     const collectedEntries = new Map();
 
     for (const csprojFile of csprojFiles) {
         const projectName = path.basename(csprojFile, '.csproj');
         const csprojText = fs.readFileSync(csprojFile, 'utf8');
-        const assetEntries = parseAssetsLibraries(
-            path.join(path.dirname(csprojFile), 'obj', 'project.assets.json')
-        );
-        const packageEntries =
-            assetEntries.length > 0
-                ? assetEntries
-                : parseCsprojPackageReferences(csprojText);
+        const assetEntries = parseAssetsLibraries(path.join(path.dirname(csprojFile), 'obj', 'project.assets.json'));
+        const packageEntries = assetEntries.length > 0 ? assetEntries : parseCsprojPackageReferences(csprojText);
         const binaryEntries = parseCsprojBinaryReferences(csprojText);
 
         for (const entry of [...packageEntries, ...binaryEntries]) {
@@ -240,23 +290,24 @@ function mergeDotnetEntries(csprojFiles) {
                 projects: []
             };
 
-            existingEntry.projects = [
-                ...new Set([...existingEntry.projects, projectName])
-            ].sort();
+            const previousProjects = existingEntry.projects ?? [];
+            existingEntry.projects = [...new Set([...previousProjects, projectName])].sort();
             collectedEntries.set(key, existingEntry);
         }
     }
 
-    return [...collectedEntries.values()].sort((left, right) =>
-        left.name.localeCompare(right.name)
-    );
+    return [...collectedEntries.values()].sort((left, right) => left.name.localeCompare(right.name));
 }
 
-function resolveNugetMetadata(name, version) {
-    const packageDir = path.join(nugetCacheDir, name.toLowerCase(), version);
+/**
+ * @param {string} packageName
+ * @param {string} version
+ */
+function resolveNugetMetadata(packageName, version) {
+    const packageDir = path.join(nugetCacheDir, packageName.toLowerCase(), version);
     const nuspecPath =
         findFirstExistingFile([
-            path.join(packageDir, `${name.toLowerCase()}.nuspec`),
+            path.join(packageDir, `${packageName.toLowerCase()}.nuspec`),
             ...(fs.existsSync(packageDir)
                 ? fs
                       .readdirSync(packageDir)
@@ -265,7 +316,7 @@ function resolveNugetMetadata(name, version) {
                 : [])
         ]) || null;
 
-    const override = nugetOverrides[name] || {};
+    const override = nugetOverrides[packageName] || {};
     const metadata = {
         license: override.license || '',
         licenseUrl: override.licenseUrl || '',
@@ -281,21 +332,17 @@ function resolveNugetMetadata(name, version) {
 
     const nuspecText = fs.readFileSync(nuspecPath, 'utf8');
     const licenseExpression =
-        extractXmlSelfClosingTagAttribute(nuspecText, 'license', 'type') ===
-        'expression'
+        extractXmlSelfClosingTagAttribute(nuspecText, 'license', 'type') === 'expression'
             ? extractXmlTagValue(nuspecText, 'license')
             : '';
     const licenseFilePath =
-        extractXmlSelfClosingTagAttribute(nuspecText, 'license', 'type') ===
-        'file'
+        extractXmlSelfClosingTagAttribute(nuspecText, 'license', 'type') === 'file'
             ? extractXmlTagValue(nuspecText, 'license')
             : '';
 
     metadata.license ||= licenseExpression;
     metadata.licenseUrl ||= extractXmlTagValue(nuspecText, 'licenseUrl');
-    metadata.projectUrl ||=
-        extractXmlTagValue(nuspecText, 'projectUrl') ||
-        extractRepositoryUrl(nuspecText);
+    metadata.projectUrl ||= extractXmlTagValue(nuspecText, 'projectUrl') || extractRepositoryUrl(nuspecText);
 
     if (!metadata.noticeText) {
         const embeddedLicensePath = licenseFilePath
@@ -303,18 +350,20 @@ function resolveNugetMetadata(name, version) {
             : null;
         const discoveredLicensePath = findPackageLicenseFile(packageDir);
         const resolvedLicensePath = findFirstExistingFile(
-            [embeddedLicensePath, discoveredLicensePath].filter(Boolean)
+            [embeddedLicensePath, discoveredLicensePath].filter((path) => path != null)
         );
 
-        metadata.noticeText = normalizeWhitespace(
-            readFileIfExists(resolvedLicensePath)
-        );
+        metadata.noticeText = normalizeWhitespace(readFileIfExists(resolvedLicensePath));
     }
 
     metadata.needsReview = !metadata.license && !metadata.noticeText;
     return metadata;
 }
 
+/**
+ * @param {PackageReference[]} entries
+ * @returns {ProjectLicense[]}
+ */
 function enrichDotnetEntries(entries) {
     return entries.map((entry) => {
         const override = nugetOverrides[entry.name] || {};
@@ -355,6 +404,10 @@ function enrichDotnetEntries(entries) {
     });
 }
 
+/**
+ * @param {string} frontendLicenseMarkdown
+ * @param {ProjectLicense[]} entries
+ */
 function createThirdPartyNoticeText(frontendLicenseMarkdown, entries) {
     const lines = [
         'VRCX Third-Party Notices',
@@ -365,8 +418,7 @@ function createThirdPartyNoticeText(frontendLicenseMarkdown, entries) {
         'Frontend bundled dependencies',
         '========================================',
         '',
-        normalizeWhitespace(frontendLicenseMarkdown) ||
-            'No frontend license manifest was available.',
+        normalizeWhitespace(frontendLicenseMarkdown) || 'No frontend license manifest was available.',
         '',
         '',
         '========================================',
@@ -375,12 +427,8 @@ function createThirdPartyNoticeText(frontendLicenseMarkdown, entries) {
         ''
     ];
 
-    for (const entry of entries.filter(
-        (item) => item.sourceType !== 'frontend'
-    )) {
-        lines.push(
-            `${entry.name}${entry.version ? ` - ${entry.version}` : ''} (${entry.license})`
-        );
+    for (const entry of entries.filter((item) => item.sourceType !== 'frontend')) {
+        lines.push(`${entry.name}${entry.version ? ` - ${entry.version}` : ''} (${entry.license})`);
         lines.push(`Source: ${entry.sourceLabel}`);
 
         if (entry.projects?.length) {
@@ -404,9 +452,7 @@ function createThirdPartyNoticeText(frontendLicenseMarkdown, entries) {
         if (entry.noticeText) {
             lines.push(entry.noticeText);
         } else {
-            lines.push(
-                'No local license text was available during generation. Review this component before release.'
-            );
+            lines.push('No local license text was available during generation. Review this component before release.');
         }
 
         lines.push('');
@@ -427,10 +473,7 @@ function main() {
         .filter((fileName) => fileName.endsWith('.csproj'))
         .map((fileName) => path.join(dotnetDir, fileName))
         .concat(path.join(dotnetDir, 'DBMerger', 'DBMerger.csproj'))
-        .filter(
-            (filePath, index, filePaths) =>
-                filePaths.indexOf(filePath) === index && fs.existsSync(filePath)
-        );
+        .filter((filePath, index, filePaths) => filePaths.indexOf(filePath) === index && fs.existsSync(filePath));
 
     const dotnetEntries = enrichDotnetEntries(mergeDotnetEntries(csprojFiles));
     const manifest = {
@@ -440,14 +483,9 @@ function main() {
     };
 
     fs.writeFileSync(outputManifestPath, JSON.stringify(manifest, null, 4));
-    fs.writeFileSync(
-        outputNoticePath,
-        createThirdPartyNoticeText(frontendLicenseMarkdown, manifest.entries)
-    );
+    fs.writeFileSync(outputNoticePath, createThirdPartyNoticeText(frontendLicenseMarkdown, manifest.entries));
 
-    const reviewCount = manifest.entries.filter(
-        (entry) => entry.needsReview
-    ).length;
+    const reviewCount = manifest.entries.filter((entry) => entry.needsReview).length;
     console.log(
         `Generated third-party license manifest with ${manifest.entries.length} entries (${reviewCount} requiring review).`
     );

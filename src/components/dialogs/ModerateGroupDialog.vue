@@ -68,10 +68,10 @@
     import { VirtualCombobox } from '../ui/virtual-combobox';
     import { queryRequest } from '../../api';
     import { useGroupStore } from '../../stores';
+    import { showGroupMemberModerationDialog } from '../../coordinators/groupCoordinator';
 
     const { userImage } = useUserDisplay();
     const { currentUserGroups, moderateGroupDialog } = storeToRefs(useGroupStore());
-    const { showGroupMemberModerationDialog } = useGroupStore();
     const { t } = useI18n();
 
     const groupsWithModerationPermission = computed(() => {
@@ -92,7 +92,6 @@
     ]);
 
     /**
-     *
      * @param value
      */
     function setGroupId(value) {
@@ -110,9 +109,6 @@
         }
     );
 
-    /**
-     *
-     */
     function initDialog() {
         const D = moderateGroupDialog.value;
         if (D.groupId) {

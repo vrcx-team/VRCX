@@ -22,13 +22,13 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAvatarStore, useUserStore } from '../../../stores';
-    import { removeAvatarFromCache } from '../../../coordinators/avatarCoordinator';
+    import { applyAvatar, removeAvatarFromCache } from '../../../coordinators/avatarCoordinator';
     import { avatarRequest } from '../../../api';
     import { processBulk } from '../../../services/request';
 
     const { t } = useI18n();
 
-    const { applyAvatar, cachedAvatars } = useAvatarStore();
+    const { cachedAvatars } = useAvatarStore();
     const { currentUser } = storeToRefs(useUserStore());
 
     const props = defineProps({
@@ -94,6 +94,7 @@
                 }
                 const lines = ['AvatarID,AvatarName'];
                 const _ = function (str) {
+                    // oxlint-disable-next-line no-control-regex
                     if (/[\x00-\x1f,"]/.test(str) === true) {
                         return `"${str.replace(/"/g, '""')}"`;
                     }

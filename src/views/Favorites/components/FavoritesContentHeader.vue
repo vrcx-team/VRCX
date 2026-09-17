@@ -8,6 +8,7 @@
             <Switch
                 :model-value="editMode"
                 :disabled="editModeDisabled"
+                :ariaLabel="t('view.favorite.edit_mode')"
                 @update:modelValue="$emit('update:editMode', $event)" />
         </div>
     </div>

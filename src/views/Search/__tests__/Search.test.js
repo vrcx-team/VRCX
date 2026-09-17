@@ -102,8 +102,7 @@ vi.mock('../../../stores', () => ({
         randomUserColours: mocks.randomUserColours
     }),
     useAvatarProviderStore: () => ({
-        avatarRemoteDatabaseProviderList:
-            mocks.avatarRemoteDatabaseProviderList,
+        avatarRemoteDatabaseProviderList: mocks.avatarRemoteDatabaseProviderList,
         avatarRemoteDatabaseProvider: mocks.avatarRemoteDatabaseProvider,
         isAvatarProviderDialogVisible: mocks.isAvatarProviderDialogVisible,
         setAvatarProvider: (...args) => mocks.setAvatarProvider(...args)
@@ -178,16 +177,14 @@ vi.mock('@/components/ui/tabs', () => ({
     },
     TabsContent: {
         props: ['value'],
-        template:
-            '<section :data-testid="`content-${value}`"><slot /></section>'
+        template: '<section :data-testid="`content-${value}`"><slot /></section>'
     }
 }));
 
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="button" v-bind="$attrs" @click="$emit(\'click\')"><slot /></button>'
+        template: '<button data-testid="button" v-bind="$attrs" @click="$emit(\'click\')"><slot /></button>'
     }
 }));
 
@@ -221,8 +218,7 @@ vi.mock('@/components/ui/select', () => ({
 vi.mock('@/components/ui/item', () => ({
     Item: {
         emits: ['click'],
-        template:
-            '<article class="item" @click="$emit(\'click\')"><slot /></article>'
+        template: '<article class="item" @click="$emit(\'click\')"><slot /></article>'
     },
     ItemGroup: { template: '<div><slot /></div>' },
     ItemHeader: { template: '<div><slot /></div>' },
@@ -322,24 +318,16 @@ describe('Search.vue', () => {
         await wrapper.get('button.ml-2').trigger('click');
 
         expect(mocks.useSearchUserApi.clearUserSearch).toHaveBeenCalledTimes(1);
-        expect(mocks.useSearchWorldApi.clearWorldSearch).toHaveBeenCalledTimes(
-            1
-        );
-        expect(
-            mocks.useSearchAvatarApi.clearAvatarSearch
-        ).toHaveBeenCalledTimes(1);
-        expect(mocks.useSearchGroupApi.clearGroupSearch).toHaveBeenCalledTimes(
-            1
-        );
+        expect(mocks.useSearchWorldApi.clearWorldSearch).toHaveBeenCalledTimes(1);
+        expect(mocks.useSearchAvatarApi.clearAvatarSearch).toHaveBeenCalledTimes(1);
+        expect(mocks.useSearchGroupApi.clearGroupSearch).toHaveBeenCalledTimes(1);
         expect(mocks.clearSearch).toHaveBeenCalledTimes(1);
     });
 
     it('runs user search on Enter when active tab is user', async () => {
         const wrapper = mountSearch();
 
-        await wrapper
-            .get('[data-testid="search-input"]')
-            .trigger('keyup.enter');
+        await wrapper.get('[data-testid="search-input"]').trigger('keyup.enter');
 
         expect(mocks.useSearchUserApi.searchUser).toHaveBeenCalledTimes(1);
         expect(mocks.useSearchAvatarApi.searchAvatar).not.toHaveBeenCalled();
@@ -350,13 +338,9 @@ describe('Search.vue', () => {
         mocks.searchText.value = 'ab';
 
         await wrapper.get('[data-testid="set-tab-avatar"]').trigger('click');
-        await wrapper
-            .get('[data-testid="search-input"]')
-            .trigger('keyup.enter');
+        await wrapper.get('[data-testid="search-input"]').trigger('keyup.enter');
 
-        expect(mocks.toastWarning).toHaveBeenCalledWith(
-            'view.search.avatar.min_chars_warning'
-        );
+        expect(mocks.toastWarning).toHaveBeenCalledWith('view.search.avatar.min_chars_warning');
         expect(mocks.useSearchAvatarApi.searchAvatar).not.toHaveBeenCalled();
     });
 

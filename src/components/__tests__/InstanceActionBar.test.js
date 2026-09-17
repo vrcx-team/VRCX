@@ -13,9 +13,7 @@ const mocks = vi.hoisted(() => ({
     hasGroupPermission: vi.fn(() => false),
     formatDateFilter: vi.fn(() => 'formatted-date'),
     selfInvite: vi.fn(() => Promise.resolve({})),
-    closeInstance: vi.fn(() =>
-        Promise.resolve({ json: { id: 'inst_closed' } })
-    ),
+    closeInstance: vi.fn(() => Promise.resolve({ json: { id: 'inst_closed' } })),
     showUserDialog: vi.fn(),
     toastSuccess: vi.fn(),
     applyInstance: vi.fn(),
@@ -41,9 +39,7 @@ vi.mock('pinia', async (importOriginal) => {
             Object.fromEntries(
                 Object.entries(store).map(([key, value]) => [
                     key,
-                    key === 'instanceJoinHistory'
-                        ? value
-                        : (value?.value ?? value)
+                    key === 'instanceJoinHistory' ? value : (value?.value ?? value)
                 ])
             )
     };
@@ -116,8 +112,7 @@ vi.mock('../../coordinators/userCoordinator', () => ({
 vi.mock('@/components/ui/button', () => ({
     Button: {
         emits: ['click'],
-        template:
-            '<button data-testid="btn" @click="$emit(\'click\', $event)"><slot /></button>'
+        template: '<button data-testid="btn" @click="$emit(\'click\', $event)"><slot /></button>'
     }
 }));
 
@@ -170,8 +165,7 @@ function mountBar(props = {}) {
             stubs: {
                 TooltipWrapper: {
                     props: ['content'],
-                    template:
-                        '<div><slot /><slot name="content" /><span v-if="content">{{ content }}</span></div>'
+                    template: '<div><slot /><slot name="content" /><span v-if="content">{{ content }}</span></div>'
                 },
                 Timer: {
                     props: ['epoch'],
@@ -199,12 +193,8 @@ describe('InstanceActionBar.vue', () => {
         mocks.applyInstance.mockClear();
         mocks.showLaunchDialog.mockClear();
         mocks.tryOpenInstanceInVrc.mockClear();
-        mocks.modalConfirm.mockImplementation(() =>
-            Promise.resolve({ ok: true })
-        );
-        mocks.instanceJoinHistory.value = new Map([
-            ['wrld_base:111', 1700000000]
-        ]);
+        mocks.modalConfirm.mockImplementation(() => Promise.resolve({ ok: true }));
+        mocks.instanceJoinHistory.value = new Map([['wrld_base:111', 1700000000]]);
         mocks.canOpenInstanceInGame = false;
         mocks.isOpeningInstance = false;
         mocks.lastLocation.location = 'wrld_here:111';
@@ -221,12 +211,8 @@ describe('InstanceActionBar.vue', () => {
         });
 
         expect(wrapper.findAll('[data-testid="btn"]')).toHaveLength(2);
-        expect(wrapper.text()).toContain(
-            'dialog.user.info.launch_invite_tooltip'
-        );
-        expect(wrapper.text()).toContain(
-            'dialog.user.info.self_invite_tooltip'
-        );
+        expect(wrapper.text()).toContain('dialog.user.info.launch_invite_tooltip');
+        expect(wrapper.text()).toContain('dialog.user.info.self_invite_tooltip');
     });
 
     it('launch button opens launch dialog with resolved launchLocation', async () => {
@@ -262,9 +248,7 @@ describe('InstanceActionBar.vue', () => {
             worldId: 'wrld_1',
             shortName: 'sn'
         });
-        expect(mocks.toastSuccess).toHaveBeenCalledWith(
-            'message.invite.self_sent'
-        );
+        expect(mocks.toastSuccess).toHaveBeenCalledWith('message.invite.self_sent');
     });
 
     it('invite button opens in VRChat when canOpenInstanceInGame is true', async () => {
@@ -280,10 +264,7 @@ describe('InstanceActionBar.vue', () => {
 
         await inviteBtn.trigger('click');
 
-        expect(mocks.tryOpenInstanceInVrc).toHaveBeenCalledWith(
-            'wrld_1:inst_1',
-            'sn'
-        );
+        expect(mocks.tryOpenInstanceInVrc).toHaveBeenCalledWith('wrld_1:inst_1', 'sn');
         expect(mocks.selfInvite).not.toHaveBeenCalled();
     });
 
@@ -331,9 +312,7 @@ describe('InstanceActionBar.vue', () => {
 
         const closeBtn = wrapper
             .findAll('button')
-            .find((btn) =>
-                btn.text().includes('dialog.user.info.close_instance')
-            );
+            .find((btn) => btn.text().includes('dialog.user.info.close_instance'));
         expect(closeBtn).toBeTruthy();
 
         await closeBtn.trigger('click');
@@ -347,9 +326,7 @@ describe('InstanceActionBar.vue', () => {
             hardClose: false
         });
         expect(mocks.applyInstance).toHaveBeenCalledWith({ id: 'inst_closed' });
-        expect(mocks.toastSuccess).toHaveBeenCalledWith(
-            'message.instance.closed'
-        );
+        expect(mocks.toastSuccess).toHaveBeenCalledWith('message.instance.closed');
     });
 
     it('hides launch and invite buttons when invite-self is not allowed', () => {

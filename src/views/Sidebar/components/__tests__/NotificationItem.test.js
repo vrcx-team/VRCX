@@ -213,9 +213,9 @@ describe('NotificationItem.vue', () => {
         });
 
         await wrapper.get('[data-icon="Check"]').trigger('click');
-        expect(
-            mocks.notificationStore.acceptFriendRequestNotification
-        ).toHaveBeenCalledWith(expect.objectContaining({ id: 'noty_1' }));
+        expect(mocks.notificationStore.acceptFriendRequestNotification).toHaveBeenCalledWith(
+            expect.objectContaining({ id: 'noty_1' })
+        );
     });
 
     test('link response calls openNotificationLink', async () => {
@@ -236,9 +236,7 @@ describe('NotificationItem.vue', () => {
         });
 
         await wrapper.get('[data-icon="Link"]').trigger('click');
-        expect(
-            mocks.notificationStore.openNotificationLink
-        ).toHaveBeenCalledWith('group:grp_123');
+        expect(mocks.notificationStore.openNotificationLink).toHaveBeenCalledWith('group:grp_123');
     });
 
     test('unmount queues mark-as-seen for unseen notification', () => {
@@ -252,9 +250,6 @@ describe('NotificationItem.vue', () => {
         });
 
         wrapper.unmount();
-        expect(mocks.notificationStore.queueMarkAsSeen).toHaveBeenCalledWith(
-            'noty_1',
-            2
-        );
+        expect(mocks.notificationStore.queueMarkAsSeen).toHaveBeenCalledWith('noty_1', 2);
     });
 });

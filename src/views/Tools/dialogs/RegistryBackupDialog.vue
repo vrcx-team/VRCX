@@ -101,16 +101,12 @@
         }
     );
 
-    /**
-     *
-     */
     async function updateRegistryBackupDialog() {
         const backupsJson = await configRepository.getString('VRCX_VRChatRegistryBackups');
         registryBackupTable.value.data = JSON.parse(backupsJson || '[]');
     }
 
     /**
-     *
      * @param row
      */
     function restoreVrcRegistryBackup(row) {
@@ -137,7 +133,6 @@
     }
 
     /**
-     *
      * @param row
      */
     function saveVrcRegistryBackupToFile(row) {
@@ -145,7 +140,6 @@
     }
 
     /**
-     *
      * @param row
      */
     async function deleteVrcRegistryBackup(row) {
@@ -155,9 +149,6 @@
         await updateRegistryBackupDialog();
     }
 
-    /**
-     *
-     */
     function deleteVrcRegistry() {
         modalStore
             .confirm({
@@ -176,7 +167,6 @@
     }
 
     /**
-     *
      * @param name
      */
     async function handleBackupVrcRegistry(name) {
@@ -184,9 +174,6 @@
         await updateRegistryBackupDialog();
     }
 
-    /**
-     *
-     */
     function promptVrcRegistryBackupName() {
         modalStore
             .prompt({
@@ -203,9 +190,6 @@
             .catch(() => {});
     }
 
-    /**
-     *
-     */
     async function openJsonFileSelectorDialogElectron() {
         return new Promise((resolve) => {
             const fileInput = document.createElement('input');
@@ -234,9 +218,6 @@
         });
     }
 
-    /**
-     *
-     */
     async function restoreVrcRegistryFromFile() {
         const filePath = await AppApi.OpenFileSelectorDialog(null, '.json', 'JSON Files (*.json)|*.json');
         if (WINDOWS) {
@@ -277,16 +258,10 @@
         }
     }
 
-    /**
-     *
-     */
     function clearVrcRegistryDialog() {
         registryBackupTable.value.data = [];
     }
 
-    /**
-     *
-     */
     function closeAndClearDialog() {
         closeDialog();
         // TODO: Element Plus had a distinct @closed event after animation.
@@ -294,9 +269,6 @@
         clearVrcRegistryDialog();
     }
 
-    /**
-     *
-     */
     function closeDialog() {
         isRegistryBackupDialogVisible.value = false;
     }

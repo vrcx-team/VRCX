@@ -1,5 +1,5 @@
 <template>
-    <div class="flex min-w-0 flex-col overflow-x-hidden" style="min-height: 200px">
+    <div class="flex h-full min-h-0 min-w-0 flex-col overflow-hidden p-2 rounded-xl bg-(--profile-card)">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="display: flex; align-items: center">
                 <Button
@@ -18,7 +18,7 @@
             </div>
             <div class="flex items-center gap-2">
                 <span class="text-muted-foreground text-sm">{{ t('dialog.user.activity.period') }}</span>
-                <Select v-model="selectedPeriod" :disabled="isLoading">
+                <Select v-model="userDialog.activityPeriodDays" :disabled="isLoading">
                     <SelectTrigger size="sm" class="w-40" @click.stop>
                         <SelectValue />
                     </SelectTrigger>
@@ -40,209 +40,218 @@
             </div>
         </div>
 
-        <div v-if="isSelf && !fullCacheReady" class="text-xs text-muted-foreground mb-1">
-            {{ t('dialog.user.activity.building_cache') }}
-        </div>
-
-        <div v-if="peakDayText || peakTimeText" class="mt-2 mb-1 text-sm flex gap-4">
-            <div v-if="peakDayText">
-                <span class="text-muted-foreground">{{ t('dialog.user.activity.most_active_day') }}</span>
-                <span class="font-medium ml-1">{{ peakDayText }}</span>
-            </div>
-            <div v-if="peakTimeText">
-                <span class="text-muted-foreground">{{ t('dialog.user.activity.most_active_time') }}</span>
-                <span class="font-medium ml-1">{{ peakTimeText }}</span>
-            </div>
-        </div>
-
-        <div v-if="isLoading" class="flex flex-col items-center justify-center flex-1 mt-8 gap-2">
-            <Spinner class="h-5 w-5" />
-            <span class="text-sm text-muted-foreground">{{ t('dialog.user.activity.preparing_data') }}</span>
-            <span class="text-xs text-muted-foreground">{{ t('dialog.user.activity.preparing_data_hint') }}</span>
-        </div>
-
-        <div v-if="!isLoading && filteredEventCount === 0" class="flex items-center justify-center flex-1 mt-8">
-            <span class="text-muted-foreground text-sm">{{ t('dialog.user.activity.no_data_in_period') }}</span>
-        </div>
-
-        <div
-            v-show="filteredEventCount > 0"
-            ref="activityChartRef"
-            class="min-w-0 overflow-hidden"
-            style="width: 100%; height: 240px"
-            @contextmenu.prevent="onChartRightClick" />
-
-        <DailyPlaytime v-if="isSelf" :sessions="cachedSessions" :range-days="currentRangeDays" />
-
-        <div v-if="!isSelf" class="mt-4 border-t border-border pt-3">
-            <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium">{{ t('dialog.user.activity.overlap.header') }}</span>
-                    <Spinner v-if="isOverlapLoadingVisible" class="h-3.5 w-3.5" />
-                </div>
-                <div v-if="hasOverlapData" class="flex items-center gap-1.5 shrink-0">
-                    <Switch :model-value="excludeHoursEnabled" class="scale-75" @update:model-value="onExcludeToggle" />
-                    <span class="text-sm text-muted-foreground whitespace-nowrap">
-                        {{ t('dialog.user.activity.overlap.exclude_hours') }}
-                    </span>
-                    <Select v-model="excludeStartHour" @update:model-value="onExcludeRangeChange">
-                        <SelectTrigger size="sm" class="w-[78px] h-6 text-sm px-2" @click.stop>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem v-for="h in 24" :key="h - 1" :value="String(h - 1)">
-                                {{ String(h - 1).padStart(2, '0') }}:00
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <span class="text-xs text-muted-foreground">–</span>
-                    <Select v-model="excludeEndHour" @update:model-value="onExcludeRangeChange">
-                        <SelectTrigger size="sm" class="w-[78px] h-6 text-sm px-2" @click.stop>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem v-for="h in 24" :key="h - 1" :value="String(h - 1)">
-                                {{ String(h - 1).padStart(2, '0') }}:00
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
+        <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+            <div v-if="isSelf && !fullCacheReady" class="text-xs text-muted-foreground mb-1">
+                {{ t('dialog.user.activity.building_cache') }}
             </div>
 
-            <div v-if="!isOverlapLoadingVisible && hasOverlapData" class="flex flex-col gap-1 mb-2">
-                <div class="flex items-center gap-2">
-                    <span
-                        class="text-sm font-medium"
-                        :class="overlapPercent > 0 ? 'text-accent-foreground' : 'text-muted-foreground'">
-                        {{ overlapPercent }}%
-                    </span>
-                    <div class="flex-1 h-2 rounded-full bg-muted overflow-hidden">
-                        <div
-                            class="h-full rounded-full transition-all duration-500"
-                            :style="{
-                                width: `${overlapPercent}%`,
-                                backgroundColor: isDarkMode ? 'hsl(260, 60%, 55%)' : 'hsl(260, 55%, 50%)'
-                            }" />
-                    </div>
+            <div v-if="peakDayText || peakTimeText" class="mt-2 mb-1 text-sm flex gap-4">
+                <div v-if="peakDayText">
+                    <span class="text-muted-foreground">{{ t('dialog.user.activity.most_active_day') }}</span>
+                    <span class="font-medium ml-1">{{ peakDayText }}</span>
                 </div>
-                <div v-if="bestOverlapTime" class="text-sm">
-                    <span class="text-muted-foreground">{{ t('dialog.user.activity.overlap.peak_overlap') }}</span>
-                    <span class="font-medium ml-1">{{ bestOverlapTime }}</span>
+                <div v-if="peakTimeText">
+                    <span class="text-muted-foreground">{{ t('dialog.user.activity.most_active_time') }}</span>
+                    <span class="font-medium ml-1">{{ peakTimeText }}</span>
                 </div>
             </div>
 
             <div
-                v-show="hasOverlapData || isOverlapLoadingVisible"
-                ref="overlapChartRef"
-                class="min-w-0 overflow-hidden"
-                style="width: 100%; height: 240px"
-                @contextmenu.prevent="onOverlapChartRightClick" />
-
-            <div v-if="!isOverlapLoading && !hasOverlapData" class="text-sm text-muted-foreground py-2">
-                {{ t('dialog.user.activity.overlap.no_data') }}
+                v-if="isLoading && filteredEventCount === 0"
+                class="flex flex-col items-center justify-center flex-1 my-8 gap-2">
+                <Spinner class="h-5 w-5" />
+                <span class="text-sm text-muted-foreground">{{ t('dialog.user.activity.preparing_data') }}</span>
+                <span class="text-xs text-muted-foreground">{{ t('dialog.user.activity.preparing_data_hint') }}</span>
             </div>
-        </div>
 
-        <div v-if="isSelf" class="mt-4 border-t border-border pt-3">
-            <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium">
-                        {{ t('dialog.user.activity.most_visited_worlds.header') }}
-                    </span>
-                    <Spinner v-if="topWorldsLoadingVisible" class="h-3.5 w-3.5" />
-                </div>
-                <div class="flex items-center gap-4">
-                    <div
-                        v-if="isSelf && currentHomeWorldId"
-                        class="flex items-center gap-1.5 text-sm text-muted-foreground">
-                        <Switch
-                            :model-value="excludeHomeWorldEnabled"
-                            class="scale-75"
-                            @update:model-value="onExcludeHomeWorldToggle" />
-                        <span class="whitespace-nowrap">
-                            {{ t('dialog.user.activity.most_visited_worlds.exclude_home_world') }}
-                        </span>
+            <div v-if="!isLoading && filteredEventCount === 0" class="flex items-center justify-center flex-1 my-8">
+                <span class="text-muted-foreground text-sm">{{ t('dialog.user.activity.no_data_in_period') }}</span>
+            </div>
+
+            <div
+                v-show="filteredEventCount > 0"
+                ref="activityChartRef"
+                class="min-w-0"
+                style="width: 100%; height: 240px"
+                @contextmenu.prevent="onChartRightClick" />
+
+            <DailyPlaytime v-if="isSelf" :sessions="cachedSessions" :range-days="currentRangeDays" />
+
+            <div v-if="!isSelf" v-show="filteredEventCount > 0" class="mt-4 border-t border-border pt-3">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium">{{ t('dialog.user.activity.overlap.header') }}</span>
+                        <Spinner v-if="isOverlapLoadingVisible" class="h-3.5 w-3.5" />
                     </div>
-                    <div v-if="topWorlds.length > 0" class="flex items-center gap-2">
-                        <span class="text-muted-foreground text-sm">{{ t('common.sort_by') }}</span>
-                        <Select v-model="topWorldsSortBy" :disabled="topWorldsLoading">
-                            <SelectTrigger size="sm" class="w-32" @click.stop>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <Switch
+                            :model-value="excludeHoursEnabled"
+                            class="scale-75"
+                            @update:model-value="onExcludeToggle" />
+                        <span class="text-sm text-muted-foreground whitespace-nowrap">
+                            {{ t('dialog.user.activity.overlap.exclude_hours') }}
+                        </span>
+                        <Select v-model="excludeStartHour" @update:model-value="onExcludeRangeChange">
+                            <SelectTrigger size="sm" class="w-[78px] h-6 text-sm px-2" @click.stop>
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="time">{{
-                                    t('dialog.user.activity.most_visited_worlds.sort_by_time')
-                                }}</SelectItem>
-                                <SelectItem value="count">{{
-                                    t('dialog.user.activity.most_visited_worlds.sort_by_count')
-                                }}</SelectItem>
+                                <SelectItem v-for="h in 24" :key="h - 1" :value="String(h - 1)">
+                                    {{ String(h - 1).padStart(2, '0') }}:00
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <span class="text-xs text-muted-foreground">–</span>
+                        <Select v-model="excludeEndHour" @update:model-value="onExcludeRangeChange">
+                            <SelectTrigger size="sm" class="w-[78px] h-6 text-sm px-2" @click.stop>
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="h in 24" :key="h - 1" :value="String(h - 1)">
+                                    {{ String(h - 1).padStart(2, '0') }}:00
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                 </div>
-            </div>
-            <div
-                v-if="topWorldsLoadingVisible && topWorlds.length === 0"
-                class="flex items-center gap-2 text-sm text-muted-foreground py-2">
-                <Spinner class="h-4 w-4" />
-                <span>{{ t('dialog.user.activity.most_visited_worlds.loading') }}</span>
-            </div>
-            <div
-                v-else-if="topWorlds.length === 0 && !isLoading && !topWorldsLoading"
-                class="text-sm text-muted-foreground py-2">
-                {{ t('dialog.user.activity.no_data_in_period') }}
-            </div>
-            <div v-else class="flex flex-col gap-0.5">
-                <button
-                    v-for="(world, index) in sortedTopWorlds"
-                    :key="world.worldId"
-                    type="button"
-                    class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent cursor-pointer"
-                    :class="index === 0 ? 'bg-primary/4' : ''"
-                    @click="openWorld(world.worldId)">
-                    <span
-                        class="mt-1 w-5 shrink-0 text-right font-mono text-xs font-bold"
-                        :class="index === 0 ? 'text-primary' : 'text-muted-foreground'">
-                        #{{ index + 1 }}
-                    </span>
-                    <Avatar class="rounded-sm size-8 mt-0.5 shrink-0">
-                        <AvatarImage
-                            v-if="getWorldThumbnail(world.worldId)"
-                            :src="getWorldThumbnail(world.worldId)"
-                            loading="lazy"
-                            decoding="async"
-                            class="rounded-sm object-cover" />
-                        <AvatarFallback class="rounded-sm">
-                            <ImageIcon class="size-3.5 text-muted-foreground" />
-                        </AvatarFallback>
-                    </Avatar>
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-baseline justify-between gap-2">
-                            <span class="truncate text-sm font-medium">{{ world.worldName }}</span>
-                            <span class="shrink-0 text-xs tabular-nums text-muted-foreground">
-                                {{
-                                    topWorldsSortBy === 'time'
-                                        ? formatWorldTime(world.totalTime)
-                                        : t('dialog.user.activity.most_visited_worlds.visit_count_label', {
-                                              count: world.visitCount
-                                          })
-                                }}
-                            </span>
-                        </div>
-                        <div
-                            class="mt-1 h-1.5 w-full overflow-hidden rounded-full"
-                            :class="isDarkMode ? 'bg-white/8' : 'bg-black/6'">
+
+                <div v-if="!isOverlapLoadingVisible && hasOverlapData" class="flex flex-col gap-1 mb-2">
+                    <div class="flex items-center gap-2">
+                        <span
+                            class="text-sm font-medium"
+                            :class="overlapPercent > 0 ? 'text-accent-foreground' : 'text-muted-foreground'">
+                            {{ overlapPercent }}%
+                        </span>
+                        <div class="flex-1 h-2 rounded-full bg-muted overflow-hidden">
                             <div
                                 class="h-full rounded-full transition-all duration-500"
-                                :class="isDarkMode ? 'bg-white/45' : 'bg-black/25'"
                                 :style="{
-                                    width: getTopWorldBarWidth(
-                                        topWorldsSortBy === 'time' ? world.totalTime : world.visitCount
-                                    )
+                                    width: `${overlapPercent}%`,
+                                    backgroundColor: isDarkMode ? 'hsl(260, 60%, 55%)' : 'hsl(260, 55%, 50%)'
                                 }" />
                         </div>
                     </div>
-                </button>
+                    <div v-if="bestOverlapTime" class="text-sm">
+                        <span class="text-muted-foreground">{{ t('dialog.user.activity.overlap.peak_overlap') }}</span>
+                        <span class="font-medium ml-1">{{ bestOverlapTime }}</span>
+                    </div>
+                </div>
+
+                <div
+                    v-show="hasOverlapData || isOverlapLoadingVisible"
+                    ref="overlapChartRef"
+                    class="min-w-0"
+                    style="width: 100%; height: 240px"
+                    @contextmenu.prevent="onOverlapChartRightClick" />
+
+                <div
+                    v-if="!isOverlapLoading && !hasOverlapData"
+                    class="flex text-sm items-center justify-center text-muted-foreground my-8">
+                    {{ t('dialog.user.activity.overlap.no_data') }}
+                </div>
+            </div>
+
+            <div v-if="isSelf && filteredEventCount > 0" class="mt-4 border-t border-border pt-3">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium">
+                            {{ t('dialog.user.activity.most_visited_worlds.header') }}
+                        </span>
+                        <Spinner v-if="topWorldsLoadingVisible" class="h-3.5 w-3.5" />
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div
+                            v-if="isSelf && currentHomeWorldId"
+                            class="flex items-center gap-1.5 text-sm text-muted-foreground">
+                            <Switch
+                                :model-value="excludeHomeWorldEnabled"
+                                class="scale-75"
+                                @update:model-value="onExcludeHomeWorldToggle" />
+                            <span class="whitespace-nowrap">
+                                {{ t('dialog.user.activity.most_visited_worlds.exclude_home_world') }}
+                            </span>
+                        </div>
+                        <div v-if="topWorlds.length > 0" class="flex items-center gap-2">
+                            <span class="text-muted-foreground text-sm">{{ t('common.sort_by') }}</span>
+                            <Select v-model="topWorldsSortBy" :disabled="topWorldsLoading">
+                                <SelectTrigger size="sm" class="w-32" @click.stop>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="time">{{
+                                        t('dialog.user.activity.most_visited_worlds.sort_by_time')
+                                    }}</SelectItem>
+                                    <SelectItem value="count">{{
+                                        t('dialog.user.activity.most_visited_worlds.sort_by_count')
+                                    }}</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    v-if="topWorldsLoadingVisible && topWorlds.length === 0"
+                    class="flex items-center gap-2 text-sm text-muted-foreground py-2">
+                    <Spinner class="h-4 w-4" />
+                    <span>{{ t('dialog.user.activity.most_visited_worlds.loading') }}</span>
+                </div>
+                <div
+                    v-else-if="topWorlds.length === 0 && !isLoading && !topWorldsLoading"
+                    class="text-sm text-muted-foreground py-2">
+                    {{ t('dialog.user.activity.no_data_in_period') }}
+                </div>
+                <div v-else class="flex flex-col gap-0.5">
+                    <button
+                        v-for="(world, index) in sortedTopWorlds"
+                        :key="world.worldId"
+                        type="button"
+                        class="group flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent/50 cursor-pointer"
+                        :class="index === 0 ? 'bg-primary/4' : ''"
+                        @click="openWorld(world.worldId)">
+                        <span
+                            class="mt-1 w-5 shrink-0 text-right font-mono text-xs font-bold"
+                            :class="index === 0 ? 'text-primary' : 'text-muted-foreground'">
+                            #{{ index + 1 }}
+                        </span>
+                        <Avatar class="rounded-sm size-8 mt-0.5 shrink-0">
+                            <AvatarImage
+                                v-if="getWorldThumbnail(world.worldId)"
+                                :src="getWorldThumbnail(world.worldId)"
+                                loading="lazy"
+                                decoding="async"
+                                class="rounded-sm object-cover" />
+                            <AvatarFallback class="rounded-sm">
+                                <ImageIcon class="size-3.5 text-muted-foreground" />
+                            </AvatarFallback>
+                        </Avatar>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-baseline justify-between gap-2">
+                                <span class="truncate text-sm font-medium">{{ world.worldName }}</span>
+                                <span class="shrink-0 text-xs tabular-nums text-muted-foreground">
+                                    {{
+                                        topWorldsSortBy === 'time'
+                                            ? formatWorldTime(world.totalTime)
+                                            : t('dialog.user.activity.most_visited_worlds.visit_count_label', {
+                                                  count: world.visitCount
+                                              })
+                                    }}
+                                </span>
+                            </div>
+                            <div
+                                class="mt-1 h-1.5 w-full overflow-hidden rounded-full"
+                                :class="isDarkMode ? 'bg-white/8' : 'bg-black/6'">
+                                <div
+                                    class="h-full rounded-full transition-all duration-500"
+                                    :class="isDarkMode ? 'bg-white/45' : 'bg-black/25'"
+                                    :style="{
+                                        width: getTopWorldBarWidth(
+                                            topWorldsSortBy === 'time' ? world.totalTime : world.visitCount
+                                        )
+                                    }" />
+                            </div>
+                        </div>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -276,11 +285,10 @@
     const { userDialog, currentUser } = storeToRefs(useUserStore());
     const { isDarkMode, weekStartsOn } = storeToRefs(useAppearanceSettingsStore());
     const activityStore = useActivityStore();
-    const { fullCacheReady } = storeToRefs(activityStore);
+    const { fullCacheReady, userActivity } = storeToRefs(activityStore);
     const worldStore = useWorldStore();
 
     const isLoading = ref(false);
-    const selectedPeriod = ref('30');
     const currentRangeDays = ref(30);
     const cachedSessions = ref([]);
     const filteredEventCount = ref(0);
@@ -309,10 +317,6 @@
     });
     const isRestoringSettings = ref(false);
 
-    let activeRequestId = 0;
-    let activeOverlapRequestId = 0;
-    let activeTopWorldsRequestId = 0;
-    let lastLoadedUserId = '';
     let topWorldsLoadingTimer = null;
     let overlapLoadingTimer = null;
     let overlapRenderTimer = null;
@@ -344,24 +348,19 @@
         return Array.from({ length: 7 }, (_, index) => dayLabels.value[(start + index) % 7]);
     });
     const hourLabels = Array.from({ length: 24 }, (_, index) => `${String(index).padStart(2, '0')}:00`);
-    const ACTIVITY_SELF_PERIOD_KEY = 'VRCX_activitySelfPeriodDays';
-    const ACTIVITY_FRIEND_PERIOD_KEY = 'VRCX_activityFriendPeriodDays';
     const ACTIVITY_SELF_TOP_WORLDS_SORT_KEY = 'VRCX_activitySelfTopWorldsSortBy';
     const ACTIVITY_SELF_EXCLUDE_HOME_WORLD_KEY = 'VRCX_activitySelfExcludeHomeWorld';
 
-    async function applySettingsForCurrentContext() {
+    async function applySettingsAndRefresh() {
         isRestoringSettings.value = true;
-        const periodKey = isSelf.value ? ACTIVITY_SELF_PERIOD_KEY : ACTIVITY_FRIEND_PERIOD_KEY;
-        const [period, sortBy, excludeHomeWorld, overlapExcludeEnabled, overlapExcludeStart, overlapExcludeEnd] =
+        const [sortBy, excludeHomeWorld, overlapExcludeEnabled, overlapExcludeStart, overlapExcludeEnd] =
             await Promise.all([
-                configRepository.getString(periodKey, '30'),
                 configRepository.getString(ACTIVITY_SELF_TOP_WORLDS_SORT_KEY, 'count'),
                 configRepository.getBool(ACTIVITY_SELF_EXCLUDE_HOME_WORLD_KEY, false),
                 configRepository.getBool('VRCX_overlapExcludeEnabled', false),
                 configRepository.getString('VRCX_overlapExcludeStart', '1'),
                 configRepository.getString('VRCX_overlapExcludeEnd', '6')
             ]);
-        selectedPeriod.value = ['0', '7', '30', '90', '180', '365'].includes(period) ? period : '30';
         topWorldsSortBy.value = ['time', 'count'].includes(sortBy) ? sortBy : 'count';
         excludeHomeWorldEnabled.value = excludeHomeWorld;
         excludeHoursEnabled.value = overlapExcludeEnabled;
@@ -369,6 +368,7 @@
         excludeEndHour.value = String(overlapExcludeEnd);
         await nextTick();
         isRestoringSettings.value = false;
+        await refreshData();
     }
 
     function resetActivityState() {
@@ -376,7 +376,6 @@
         filteredEventCount.value = 0;
         peakDayText.value = '';
         peakTimeText.value = '';
-        selectedPeriod.value = '30';
         hasOverlapData.value = false;
         overlapPercent.value = 0;
         bestOverlapTime.value = '';
@@ -389,10 +388,6 @@
         overlapHeatmapView.value = { rawBuckets: [], normalizedBuckets: [] };
         clearOverlapLoadingTimer();
         clearOverlapRenderTimer();
-        activeRequestId++;
-        activeOverlapRequestId++;
-        activeTopWorldsRequestId++;
-        lastLoadedUserId = '';
         clearTimeout(topWorldsLoadingTimer);
         topWorldsLoadingTimer = null;
     }
@@ -417,14 +412,14 @@
         clearOverlapLoadingTimer();
         overlapLoadingTimer = setTimeout(() => {
             overlapLoadingTimer = null;
-            if (requestId === activeOverlapRequestId && isOverlapLoading.value) {
+            if (requestId === userActivity.value.activeOverlapRequestId && isOverlapLoading.value) {
                 isOverlapLoadingVisible.value = true;
             }
         }, OVERLAP_LOADING_DELAY);
     }
 
     function finishOverlapLoading(requestId) {
-        if (requestId !== activeOverlapRequestId) {
+        if (requestId !== userActivity.value.activeOverlapRequestId) {
             return;
         }
         clearOverlapLoadingTimer();
@@ -454,14 +449,14 @@
         clearTimeout(topWorldsLoadingTimer);
         topWorldsLoadingTimer = setTimeout(() => {
             topWorldsLoadingTimer = null;
-            if (requestId === activeTopWorldsRequestId) {
+            if (requestId === userActivity.value.activeTopWorldsRequestId) {
                 topWorldsLoadingVisible.value = true;
             }
         }, TOP_WORLDS_LOADING_DELAY);
     }
 
     function finishTopWorldsLoading(requestId) {
-        if (requestId !== activeTopWorldsRequestId) {
+        if (requestId !== userActivity.value.activeTopWorldsRequestId) {
             return;
         }
         clearTimeout(topWorldsLoadingTimer);
@@ -471,7 +466,7 @@
     }
 
     async function loadTopWorldsSection({ userId, rangeDays, sortBy, period }) {
-        const requestId = ++activeTopWorldsRequestId;
+        const requestId = ++userActivity.value.activeTopWorldsRequestId;
         topWorldsLoading.value = true;
         scheduleTopWorldsLoading(requestId);
 
@@ -484,10 +479,10 @@
                 excludeWorldId: excludeHomeWorldEnabled.value ? currentHomeWorldId.value : ''
             });
             if (
-                requestId !== activeTopWorldsRequestId ||
+                requestId !== userActivity.value.activeTopWorldsRequestId ||
                 userDialog.value.id !== userId ||
                 topWorldsSortBy.value !== sortBy ||
-                selectedPeriod.value !== period
+                userDialog.value.activityPeriodDays !== period
             ) {
                 return;
             }
@@ -505,12 +500,15 @@
             return;
         }
 
-        const rangeDays = parseInt(selectedPeriod.value, 10) === 0 ? 3650 : parseInt(selectedPeriod.value, 10) || 30;
+        const rangeDays =
+            parseInt(userDialog.value.activityPeriodDays, 10) === 0
+                ? 3650
+                : parseInt(userDialog.value.activityPeriodDays, 10) || 30;
         await loadTopWorldsSection({
             userId,
             rangeDays,
             sortBy: topWorldsSortBy.value,
-            period: selectedPeriod.value
+            period: userDialog.value.activityPeriodDays
         });
     }
 
@@ -520,15 +518,17 @@
             return;
         }
 
-        const requestId = ++activeRequestId;
-        const overlapRequestId = ++activeOverlapRequestId;
+        const requestId = ++userActivity.value.activeRequestId;
+        const overlapRequestId = ++userActivity.value.activeOverlapRequestId;
         if (!silent) {
             isLoading.value = true;
         }
 
         try {
             const rangeDays =
-                parseInt(selectedPeriod.value, 10) === 0 ? 3650 : parseInt(selectedPeriod.value, 10) || 30;
+                parseInt(userDialog.value.activityPeriodDays, 10) === 0
+                    ? 3650
+                    : parseInt(userDialog.value.activityPeriodDays, 10) || 30;
             const activityView = await activityStore.loadActivityView({
                 userId,
                 isSelf: isSelf.value,
@@ -536,7 +536,7 @@
                 dayLabels: dayLabels.value,
                 forceRefresh
             });
-            if (requestId !== activeRequestId || userDialog.value.id !== userId) {
+            if (requestId !== userActivity.value.activeRequestId || userDialog.value.id !== userId) {
                 return;
             }
 
@@ -547,7 +547,7 @@
                 rawBuckets: activityView.rawBuckets,
                 normalizedBuckets: activityView.normalizedBuckets
             };
-            lastLoadedUserId = userId;
+            userActivity.value.lastLoadedUserId = userId;
 
             if (isSelf.value) {
                 currentRangeDays.value = rangeDays;
@@ -560,9 +560,9 @@
                     userId,
                     rangeDays,
                     sortBy: topWorldsSortBy.value,
-                    period: selectedPeriod.value
+                    period: userDialog.value.activityPeriodDays
                 });
-                if (requestId !== activeRequestId || userDialog.value.id !== userId) {
+                if (requestId !== userActivity.value.activeRequestId || userDialog.value.id !== userId) {
                     return;
                 }
                 hasOverlapData.value = false;
@@ -582,38 +582,20 @@
                     endHour: parseInt(excludeEndHour.value, 10)
                 }
             });
-            if (requestId !== activeRequestId || userDialog.value.id !== userId) {
+            if (requestId !== userActivity.value.activeRequestId || userDialog.value.id !== userId) {
                 return;
             }
             applyOverlapView(overlapView);
         } finally {
-            if (requestId === activeRequestId) {
+            if (requestId === userActivity.value.activeRequestId) {
                 isLoading.value = false;
             }
             finishOverlapLoading(overlapRequestId);
         }
     }
 
-    async function loadForVisibleTab() {
-        const userId = userDialog.value.id;
-        if (!userId) {
-            return;
-        }
-        if (userId !== lastLoadedUserId) {
-            resetActivityState();
-            lastLoadedUserId = userId;
-        }
-        if (isLoading.value) {
-            return;
-        }
-        await refreshData();
-    }
-
-    async function onPeriodChange() {
-        await configRepository.setString(
-            isSelf.value ? ACTIVITY_SELF_PERIOD_KEY : ACTIVITY_FRIEND_PERIOD_KEY,
-            selectedPeriod.value
-        );
+    async function onPeriodChange(period) {
+        userDialog.value.activityPeriodDays = period;
         await refreshData();
     }
 
@@ -623,12 +605,14 @@
             return;
         }
 
-        const requestId = ++activeOverlapRequestId;
+        const requestId = ++userActivity.value.activeOverlapRequestId;
         beginOverlapLoading(requestId);
 
         try {
             const rangeDays =
-                parseInt(selectedPeriod.value, 10) === 0 ? 3650 : parseInt(selectedPeriod.value, 10) || 30;
+                parseInt(userDialog.value.activityPeriodDays, 10) === 0
+                    ? 3650
+                    : parseInt(userDialog.value.activityPeriodDays, 10) || 30;
             const overlapView = await activityStore.loadOverlapView({
                 currentUserId: currentUser.value.id,
                 targetUserId: userId,
@@ -641,7 +625,7 @@
                     endHour: parseInt(excludeEndHour.value, 10)
                 }
             });
-            if (requestId !== activeOverlapRequestId || userDialog.value.id !== userId) {
+            if (requestId !== userActivity.value.activeOverlapRequestId || userDialog.value.id !== userId) {
                 return;
             }
             applyOverlapView(overlapView);
@@ -870,33 +854,34 @@
         }
     }
 
-    function loadOnlineFrequency(userId) {
+    async function loadOnlineFrequency(userId) {
         if (!userId || userDialog.value.id !== userId) {
             return;
         }
-        void loadForVisibleTab();
+        if (userId !== userActivity.value.lastLoadedUserId) {
+            resetActivityState();
+        } else if (isLoading.value || filteredEventCount.value > 0) {
+            return;
+        }
+
+        await applySettingsAndRefresh();
     }
 
     watch(
         () => userDialog.value.id,
         async () => {
-            resetActivityState();
             rebuildCharts();
-            await applySettingsForCurrentContext();
-            if (userDialog.value.visible && userDialog.value.activeTab === 'Activity') {
-                void nextTick(() => loadForVisibleTab());
-            }
         }
     );
     watch([locale, isDarkMode, weekStartsOn], rebuildCharts);
     watch(
-        () => selectedPeriod.value,
-        () => {
+        () => userDialog.value.activityPeriodDays,
+        (period) => {
             if (isRestoringSettings.value) {
                 return;
             }
             if (userDialog.value.visible && userDialog.value.activeTab === 'Activity') {
-                void onPeriodChange();
+                void onPeriodChange(period);
             }
         }
     );
@@ -932,34 +917,6 @@
         },
         { deep: true }
     );
-    watch(
-        () => userDialog.value.visible,
-        (visible) => {
-            if (!visible) return;
-            nextTick(() => {
-                activityChart?.resize();
-                overlapChart?.resize();
-            });
-            if (userDialog.value.activeTab === 'Activity') {
-                void loadForVisibleTab();
-            }
-        }
-    );
-    watch(
-        () => userDialog.value.activeTab,
-        (activeTab) => {
-            if (activeTab === 'Activity' && userDialog.value.visible) {
-                void loadForVisibleTab();
-            }
-        }
-    );
-
-    onMounted(async () => {
-        await applySettingsForCurrentContext();
-        if (userDialog.value.visible && userDialog.value.activeTab === 'Activity') {
-            await loadForVisibleTab();
-        }
-    });
 
     onBeforeUnmount(() => {
         clearTimeout(easterEggTimer);

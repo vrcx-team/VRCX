@@ -1,7 +1,6 @@
 import { sortStatus } from './friend';
 
 /**
- *
  * @param {object} a
  * @param {object} b
  * @returns
@@ -14,7 +13,8 @@ function compareByName(a, b) {
 }
 
 /**
- * descending
+ * Descending
+ *
  * @param {object} a
  * @param {object} b
  * @returns
@@ -35,7 +35,8 @@ function compareByCreatedAt(a, b) {
 }
 
 /**
- * ascending
+ * Ascending
+ *
  * @param {object} a
  * @param {object} b
  * @returns
@@ -53,7 +54,8 @@ function compareByCreatedAtAscending(a, b) {
 }
 
 /**
- * descending
+ * Descending
+ *
  * @param {object} a
  * @param {object} b
  * @returns
@@ -74,23 +76,22 @@ function compareByUpdatedAt(a, b) {
 }
 
 /**
- * ascending
+ * Ascending
+ *
  * @param {object} a
  * @param {object} b
  * @returns
  */
 function compareByDisplayName(a, b) {
-    if (
-        typeof a.displayName !== 'string' ||
-        typeof b.displayName !== 'string'
-    ) {
+    if (typeof a.displayName !== 'string' || typeof b.displayName !== 'string') {
         return 0;
     }
     return a.displayName.localeCompare(b.displayName);
 }
 
 /**
- * ascending
+ * Ascending
+ *
  * @param {object} a
  * @param {object} b
  * @returns
@@ -103,23 +104,20 @@ function compareById(a, b) {
 }
 
 /**
- *
  * @param {object} a
  * @param {object} b
  * @returns
  */
 function compareByMemberCount(a, b) {
-    if (
-        typeof a.memberCount !== 'number' ||
-        typeof b.memberCount !== 'number'
-    ) {
+    if (typeof a.memberCount !== 'number' || typeof b.memberCount !== 'number') {
         return 0;
     }
     return a.memberCount - b.memberCount;
 }
 
 /**
- * private
+ * Private
+ *
  * @param {object} a
  * @param {object} b
  * @returns
@@ -139,7 +137,6 @@ function compareByPrivate(a, b) {
 }
 
 /**
- *
  * @param {object} a
  * @param {object} b
  * @returns
@@ -158,18 +155,15 @@ function compareByStatus(a, b) {
 }
 
 /**
- * last active
+ * Last active
+ *
  * @param {object} a
  * @param {object} b
  * @returns
  */
 function compareByLastActive(a, b) {
     if (a.state === 'online' && b.state === 'online') {
-        if (
-            a.ref?.$online_for &&
-            b.ref?.$online_for &&
-            a.ref.$online_for === b.ref.$online_for
-        ) {
+        if (a.ref?.$online_for && b.ref?.$online_for && a.ref.$online_for === b.ref.$online_for) {
             return compareByActivityField(a, b, 'last_login');
         }
         return compareByActivityField(a, b, '$online_for');
@@ -189,7 +183,8 @@ function compareByLastActiveRef(a, b) {
 }
 
 /**
- * last seen
+ * Last seen
+ *
  * @param {object} a
  * @param {object} b
  * @returns
@@ -199,7 +194,6 @@ function compareByLastSeen(a, b) {
 }
 
 /**
- *
  * @param {object} a
  * @param {object} b
  * @param {string} field
@@ -212,16 +206,10 @@ function compareByActivityField(a, b, field) {
 
     // When the field is just and empty string, it means they've been
     // in whatever active state for the longest
-    if (
-        a.ref[field] < b.ref[field] ||
-        (a.ref[field] !== '' && b.ref[field] === '')
-    ) {
+    if (a.ref[field] < b.ref[field] || (a.ref[field] !== '' && b.ref[field] === '')) {
         return 1;
     }
-    if (
-        a.ref[field] > b.ref[field] ||
-        (a.ref[field] === '' && b.ref[field] !== '')
-    ) {
+    if (a.ref[field] > b.ref[field] || (a.ref[field] === '' && b.ref[field] !== '')) {
         return -1;
     }
     return 0;
@@ -244,7 +232,8 @@ function compareByTimeInInstance(a, b) {
 }
 
 /**
- * location at
+ * Location at
+ *
  * @param {object} a
  * @param {object} b
  * @returns
@@ -269,7 +258,8 @@ function compareByLocationAt(a, b) {
 }
 
 /**
- * location at but for the sidebar
+ * Location at but for the sidebar
+ *
  * @param {object} a
  * @param {object} b
  * @returns
@@ -287,6 +277,7 @@ function compareByLocation(a, b) {
 
 /**
  * $friendNumber friend order
+ *
  * @param {object} a
  * @param {object} b
  * @returns

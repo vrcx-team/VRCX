@@ -1,18 +1,13 @@
-import {
-    entityQueryPolicies,
-    fetchWithEntityPolicy,
-    queryKeys
-} from '../queries';
+import { entityQueryPolicies, fetchWithEntityPolicy, queryKeys } from '../queries';
 
 import avatarRequest from './avatar';
 import favoriteRequest from './favorite';
-import friendRequest from './friend';
+
 import groupRequest from './group';
 import inventoryRequest from './inventory';
 import miscRequest from './misc';
 import userRequest from './user';
-import vrcPlusIconRequest from './vrcPlusIcon';
-import vrcPlusImageRequest from './vrcPlusImage';
+
 import worldRequest from './world';
 
 const registry = Object.freeze({
@@ -82,8 +77,7 @@ const registry = Object.freeze({
     worldsByUser: {
         key: (params) => queryKeys.worldsByUser(params),
         policy: entityQueryPolicies.worldCollection,
-        queryFn: (params) =>
-            worldRequest.getWorlds(params, params.option || undefined)
+        queryFn: (params) => worldRequest.getWorlds(params, params.option || undefined)
     },
     group: {
         key: (params) => queryKeys.group(params.groupId, params.includeRoles),
@@ -193,7 +187,7 @@ const queryRequest = {
      * @template T
      * @param {keyof typeof registry} resource
      * @param {any} [params]
-     * @returns {Promise<T & {cache: boolean}>}
+     * @returns {Promise<T & { cache: boolean }>}
      */
     async fetch(resource, params = {}) {
         const entry = registry[resource];

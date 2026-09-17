@@ -38,24 +38,14 @@ const activityV2 = {
     ACTIVITY_VIEW_KIND,
 
     async getActivitySourceSliceV2({ userId, isSelf, fromDays, toDays = 0 }) {
-        const fromDateIso = new Date(
-            Date.now() - fromDays * 86400000
-        ).toISOString();
-        const toDateIso =
-            toDays > 0
-                ? new Date(Date.now() - toDays * 86400000).toISOString()
-                : '';
+        const fromDateIso = new Date(Date.now() - fromDays * 86400000).toISOString();
+        const toDateIso = toDays > 0 ? new Date(Date.now() - toDays * 86400000).toISOString() : '';
         return isSelf
             ? this.getCurrentUserLocationSliceV2(fromDateIso, toDateIso)
             : this.getFriendPresenceSliceV2(userId, fromDateIso, toDateIso);
     },
 
-    async getActivitySourceAfterV2({
-        userId,
-        isSelf,
-        afterCreatedAt,
-        inclusive = false
-    }) {
+    async getActivitySourceAfterV2({ userId, isSelf, afterCreatedAt, inclusive = false }) {
         return isSelf
             ? this.getCurrentUserLocationAfterV2(afterCreatedAt, inclusive)
             : this.getFriendPresenceAfterV2(userId, afterCreatedAt);
@@ -116,9 +106,7 @@ const activityV2 = {
             );
         }
 
-        return rows.sort((left, right) =>
-            left.created_at.localeCompare(right.created_at)
-        );
+        return rows.sort((left, right) => left.created_at.localeCompare(right.created_at));
     },
 
     async getFriendPresenceAfterV2(userId, afterCreatedAt) {
@@ -212,8 +200,7 @@ const activityV2 = {
                     updatedAt: dbRow[1] || '',
                     isSelf: Boolean(dbRow[2]),
                     sourceLastCreatedAt: dbRow[3] || '',
-                    pendingSessionStartAt:
-                        typeof dbRow[4] === 'number' ? dbRow[4] : null,
+                    pendingSessionStartAt: typeof dbRow[4] === 'number' ? dbRow[4] : null,
                     cachedRangeDays: dbRow[5] || 0
                 };
             },
@@ -264,10 +251,9 @@ const activityV2 = {
     async replaceActivitySessionsV2(userId, sessions = []) {
         await sqliteService.executeNonQuery('BEGIN');
         try {
-            await sqliteService.executeNonQuery(
-                `DELETE FROM ${sessionsTable()} WHERE user_id = @userId`,
-                { '@userId': userId }
-            );
+            await sqliteService.executeNonQuery(`DELETE FROM ${sessionsTable()} WHERE user_id = @userId`, {
+                '@userId': userId
+            });
             await insertSessions(userId, sessions);
             await sqliteService.executeNonQuery('COMMIT');
         } catch (error) {
@@ -276,11 +262,7 @@ const activityV2 = {
         }
     },
 
-    async appendActivitySessionsV2({
-        userId,
-        sessions = [],
-        replaceFromStartAt = null
-    }) {
+    async appendActivitySessionsV2({ userId, sessions = [], replaceFromStartAt = null }) {
         await sqliteService.executeNonQuery('BEGIN');
         try {
             if (replaceFromStartAt !== null) {
@@ -301,13 +283,7 @@ const activityV2 = {
         }
     },
 
-    async getActivityBucketCacheV2({
-        ownerUserId,
-        targetUserId = '',
-        rangeDays,
-        viewKind,
-        excludeKey = ''
-    }) {
+    async getActivityBucketCacheV2({ ownerUserId, targetUserId = '', rangeDays, viewKind, excludeKey = '' }) {
         let row = null;
         await sqliteService.execute(
             (dbRow) => {
@@ -353,9 +329,7 @@ const activityV2 = {
                 '@bucketVersion': entry.bucketVersion || 1,
                 '@builtFromCursor': entry.builtFromCursor || '',
                 '@rawBucketsJson': JSON.stringify(entry.rawBuckets || []),
-                '@normalizedBucketsJson': JSON.stringify(
-                    entry.normalizedBuckets || []
-                ),
+                '@normalizedBucketsJson': JSON.stringify(entry.normalizedBuckets || []),
                 '@summaryJson': JSON.stringify(entry.summary || {}),
                 '@builtAt': entry.builtAt || ''
             }
@@ -369,11 +343,7 @@ async function insertSessions(userId, sessions = []) {
     }
 
     const chunkSize = 250;
-    for (
-        let chunkStart = 0;
-        chunkStart < sessions.length;
-        chunkStart += chunkSize
-    ) {
+    for (let chunkStart = 0; chunkStart < sessions.length; chunkStart += chunkSize) {
         const chunk = sessions.slice(chunkStart, chunkStart + chunkSize);
         const args = {};
         const values = chunk.map((session, index) => {

@@ -1,8 +1,10 @@
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { useFavoriteStore } from './favorite';
 
 export const useSearchIndexStore = defineStore('SearchIndex', () => {
+    const favoriteStore = useFavoriteStore();
+
     const friends = new Map();
     const avatars = new Map();
     const worlds = new Map();
@@ -15,6 +17,7 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
     /**
      * Sync a friend context into the search index.
      * Extracts only the fields needed for searching.
+     *
      * @param {object} ctx - Friend context from friendStore.friends
      */
     function syncFriend(ctx) {
@@ -177,8 +180,6 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
     }
 
     function rebuildFavoritesFromStore() {
-        const favoriteStore = useFavoriteStore();
-
         const newFavAvatars = new Map();
         for (const ctx of favoriteStore.favoriteAvatars) {
             if (!ctx?.ref?.name) continue;
@@ -187,6 +188,16 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
                 name: ctx.ref.name,
                 imageUrl: ctx.ref.thumbnailImageUrl || ctx.ref.imageUrl || ''
             });
+        }
+        for (const group of Object.values(favoriteStore.localAvatarFavorites)) {
+            for (const ref of group) {
+                if (!ref?.name || newFavAvatars.has(ref.id)) continue;
+                newFavAvatars.set(ref.id, {
+                    id: ref.id,
+                    name: ref.name,
+                    imageUrl: ref.thumbnailImageUrl || ref.imageUrl || ''
+                });
+            }
         }
 
         const newFavWorlds = new Map();
@@ -198,6 +209,16 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
                 imageUrl: ctx.ref.thumbnailImageUrl || ctx.ref.imageUrl || ''
             });
         }
+        for (const group of Object.values(favoriteStore.localWorldFavorites)) {
+            for (const ref of group) {
+                if (!ref?.name || newFavWorlds.has(ref.id)) continue;
+                newFavWorlds.set(ref.id, {
+                    id: ref.id,
+                    name: ref.name,
+                    imageUrl: ref.thumbnailImageUrl || ref.imageUrl || ''
+                });
+            }
+        }
 
         let changed = false;
         if (favAvatars.size !== newFavAvatars.size) {
@@ -205,11 +226,7 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
         } else {
             for (const [id, entry] of newFavAvatars) {
                 const existing = favAvatars.get(id);
-                if (
-                    !existing ||
-                    existing.name !== entry.name ||
-                    existing.imageUrl !== entry.imageUrl
-                ) {
+                if (!existing || existing.name !== entry.name || existing.imageUrl !== entry.imageUrl) {
                     changed = true;
                     break;
                 }
@@ -220,11 +237,7 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
         } else if (!changed) {
             for (const [id, entry] of newFavWorlds) {
                 const existing = favWorlds.get(id);
-                if (
-                    !existing ||
-                    existing.name !== entry.name ||
-                    existing.imageUrl !== entry.imageUrl
-                ) {
+                if (!existing || existing.name !== entry.name || existing.imageUrl !== entry.imageUrl) {
                     changed = true;
                     break;
                 }
@@ -244,6 +257,12 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
         }
     }
 
+    watch(
+        [() => favoriteStore.localAvatarFavorites, () => favoriteStore.localWorldFavorites],
+        rebuildFavoritesFromStore,
+        { deep: true, immediate: true }
+    );
+
     function clearFavorites() {
         if (favAvatars.size > 0 || favWorlds.size > 0) {
             favAvatars.clear();
@@ -255,6 +274,7 @@ export const useSearchIndexStore = defineStore('SearchIndex', () => {
     /**
      * Build a snapshot from the internal index maps.
      * Used by quickSearch to send data to the Worker.
+     *
      * @returns {object} Plain object arrays ready for postMessage.
      */
     function getSnapshot() {

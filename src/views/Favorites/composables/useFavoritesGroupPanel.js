@@ -2,13 +2,13 @@ import { computed, ref } from 'vue';
 
 /**
  * @param {object} options
- * @param {import('vue').Ref<Array>} options.remoteGroups - remote groups ref
- * @param {import('vue').Ref<Array>} options.localGroups - local groups ref (string keys)
- * @param {import('vue').Ref<object>} options.localFavorites - local favorites map { groupKey: items[] }
- * @param {Function} options.clearSelection - callback to clear entity selection
- * @param {Array} [options.placeholders] - placeholder groups when remote data not yet loaded
- * @param {boolean} [options.hasHistory] - whether history group type is supported (Avatar only)
- * @param {import('vue').Ref<Array>} [options.historyItems] - items for history group
+ * @param {import('vue').Ref<Array>} options.remoteGroups - Remote groups ref
+ * @param {import('vue').Ref<Array>} options.localGroups - Local groups ref (string keys)
+ * @param {import('vue').Ref<object>} options.localFavorites - Local favorites map { groupKey: items[] }
+ * @param {Function} options.clearSelection - Callback to clear entity selection
+ * @param {Array} [options.placeholders] - Placeholder groups when remote data not yet loaded
+ * @param {boolean} [options.hasHistory] - Whether history group type is supported (Avatar only)
+ * @param {import('vue').Ref<Array>} [options.historyItems] - Items for history group
  * @returns {object}
  */
 export function useFavoritesGroupPanel(options = {}) {
@@ -27,15 +27,9 @@ export function useFavoritesGroupPanel(options = {}) {
     const hasUserSelectedGroup = ref(false);
     const remoteGroupsResolved = ref(false);
 
-    const isRemoteGroupSelected = computed(
-        () => selectedGroup.value?.type === 'remote'
-    );
-    const isLocalGroupSelected = computed(
-        () => selectedGroup.value?.type === 'local'
-    );
-    const isHistorySelected = computed(
-        () => hasHistory && selectedGroup.value?.type === 'history'
-    );
+    const isRemoteGroupSelected = computed(() => selectedGroup.value?.type === 'remote');
+    const isLocalGroupSelected = computed(() => selectedGroup.value?.type === 'local');
+    const isHistorySelected = computed(() => hasHistory && selectedGroup.value?.type === 'history');
 
     const remoteGroupMenuKey = (key) => `remote:${key}`;
     const localGroupMenuKey = (key) => `local:${key}`;
@@ -44,11 +38,7 @@ export function useFavoritesGroupPanel(options = {}) {
         if (!isRemoteGroupSelected.value) {
             return null;
         }
-        return (
-            remoteGroups.value.find(
-                (group) => group.key === selectedGroup.value.key
-            ) || null
-        );
+        return remoteGroups.value.find((group) => group.key === selectedGroup.value.key) || null;
     });
 
     const activeLocalGroupName = computed(() => {
@@ -67,7 +57,6 @@ export function useFavoritesGroupPanel(options = {}) {
     });
 
     /**
-     *
      * @param key {string}
      * @param visible {boolean}
      */
@@ -82,17 +71,13 @@ export function useFavoritesGroupPanel(options = {}) {
     }
 
     /**
-     *
      * @param type {string}
      * @param key {string}
      * @param options {object}
      * @param opts {object}
      */
     function selectGroup(type, key, opts = {}) {
-        if (
-            selectedGroup.value?.type === type &&
-            selectedGroup.value?.key === key
-        ) {
+        if (selectedGroup.value?.type === type && selectedGroup.value?.key === key) {
             return;
         }
         selectedGroup.value = { type, key };
@@ -103,20 +88,15 @@ export function useFavoritesGroupPanel(options = {}) {
     }
 
     /**
-     *
      * @param type {string}
      * @param key {string}
      * @returns {boolean}
      */
     function isGroupActive(type, key) {
-        return (
-            selectedGroup.value?.type === type &&
-            selectedGroup.value?.key === key
-        );
+        return selectedGroup.value?.type === type && selectedGroup.value?.key === key;
     }
 
     /**
-     *
      * @param group {object}
      * @returns {boolean}
      */
@@ -145,17 +125,13 @@ export function useFavoritesGroupPanel(options = {}) {
     function selectDefaultGroup() {
         if (!hasUserSelectedGroup.value && placeholders.length) {
             const remote =
-                remoteGroups.value.find((group) => group.count > 0) ||
-                remoteGroups.value[0] ||
-                placeholders[0];
+                remoteGroups.value.find((group) => group.count > 0) || remoteGroups.value[0] || placeholders[0];
             if (remote) {
                 selectGroup('remote', remote.key);
                 return;
             }
         } else if (remoteGroups.value.length) {
-            const remote =
-                remoteGroups.value.find((group) => group.count > 0) ||
-                remoteGroups.value[0];
+            const remote = remoteGroups.value.find((group) => group.count > 0) || remoteGroups.value[0];
             if (remote) {
                 selectGroup('remote', remote.key);
                 return;

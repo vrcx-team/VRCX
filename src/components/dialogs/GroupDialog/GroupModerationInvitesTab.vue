@@ -5,7 +5,12 @@
             <RefreshCw v-else />
         </Button>
         <br />
-        <TabsUnderline default-value="sent" :items="invitesTabs" :unmount-on-hide="false">
+        <TabsUnderline
+            v-model="groupMemberModeration.activeInviteTab"
+            @update:modelValue="tabClick"
+            default-value="sent"
+            :items="invitesTabs"
+            :unmount-on-hide="false">
             <template #label-sent>
                 <span class="text-base font-bold">{{ t('dialog.group_member_moderation.sent_invites') }}</span>
                 <span class="text-muted-foreground text-xs ml-1.5">{{ invitesTable.data.length }}</span>
@@ -70,6 +75,7 @@
                 }}</Button>
                 <DataTableLayout
                     style="margin-top: 8px"
+                    :on-page-change="handlePageChange"
                     :table="blockedTanstackTable"
                     :loading="loading"
                     :page-sizes="pageSizes"
@@ -97,6 +103,10 @@
     import { createColumns as createInvitesColumns } from './groupMemberModerationInvitesColumns.jsx';
     import { createColumns as createJoinRequestsColumns } from './groupMemberModerationJoinRequestsColumns.jsx';
     import { createColumns as createBlockedColumns } from './groupMemberModerationBlockedColumns.jsx';
+    import { storeToRefs } from 'pinia';
+    import { useGroupStore } from '@/stores/group.js';
+
+    const { groupMemberModeration } = storeToRefs(useGroupStore());
 
     const props = defineProps({
         loading: { type: Boolean, default: false },
@@ -106,7 +116,8 @@
         groupRef: { type: Object, default: () => ({}) },
         progressCurrent: { type: Number, default: 0 },
         pageSizes: { type: Array, required: true },
-        columnContext: { type: Object, required: true }
+        columnContext: { type: Object, required: true },
+        handlePageChange: { type: Function, required: true }
     });
 
     defineEmits([
@@ -140,7 +151,13 @@
         },
         columns: invitesColumns,
         getRowId: (row) => String(row?.userId ?? row?.id ?? ''),
-        initialPagination: { pageIndex: 0, pageSize: props.invitesTable.pageSize ?? 15 }
+        initialPagination: {
+            pageIndex: props.invitesTable.pageIndex ?? 0,
+            pageSize: props.invitesTable.pageSize ?? 15
+        },
+        tableOptions: {
+            autoResetPageIndex: false
+        }
     });
     const invitesTotalItems = computed(() => invitesTanstackTable.getFilteredRowModel().rows.length);
 
@@ -153,7 +170,13 @@
         },
         columns: joinRequestsColumns,
         getRowId: (row) => String(row?.userId ?? row?.id ?? ''),
-        initialPagination: { pageIndex: 0, pageSize: props.joinRequestsTable.pageSize ?? 15 }
+        initialPagination: {
+            pageIndex: props.joinRequestsTable.pageIndex ?? 0,
+            pageSize: props.joinRequestsTable.pageSize ?? 15
+        },
+        tableOptions: {
+            autoResetPageIndex: false
+        }
     });
     const joinRequestsTotalItems = computed(() => joinRequestsTanstackTable.getFilteredRowModel().rows.length);
 
@@ -166,7 +189,17 @@
         },
         columns: blockedColumns,
         getRowId: (row) => String(row?.userId ?? row?.id ?? ''),
-        initialPagination: { pageIndex: 0, pageSize: props.blockedTable.pageSize ?? 15 }
+        initialPagination: {
+            pageIndex: props.blockedTable.pageIndex ?? 0,
+            pageSize: props.blockedTable.pageSize ?? 15
+        },
+        tableOptions: {
+            autoResetPageIndex: false
+        }
     });
     const blockedTotalItems = computed(() => blockedTanstackTable.getFilteredRowModel().rows.length);
+
+    function tabClick(newTab) {
+        groupMemberModeration.value.activeInviteTab = newTab;
+    }
 </script>

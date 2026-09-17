@@ -18,6 +18,7 @@
                                 class="rounded-full"
                                 size="icon-sm"
                                 variant="ghost"
+                                :ariaLabel="t('dialog.launch.copy_tooltip')"
                                 @click="copyInstanceMessage(launchDialog.url)"
                                 ><Copy
                             /></Button>
@@ -29,7 +30,7 @@
                         <span class="flex items-center gap-1">
                             <span>{{ t('dialog.launch.short_url') }}</span>
                             <TooltipWrapper side="top" :content="t('dialog.launch.short_url_notice')">
-                                <Info class="text-muted-foreground" />
+                                <Info class="text-muted-foreground" :ariaLabel="t('dialog.launch.short_url_notice')" />
                             </TooltipWrapper>
                         </span>
                     </FieldLabel>
@@ -43,6 +44,7 @@
                                 class="rounded-full"
                                 size="icon-sm"
                                 variant="ghost"
+                                :ariaLabel="t('dialog.launch.copy_tooltip')"
                                 @click="copyInstanceMessage(launchDialog.shortUrl)"
                                 ><Copy
                             /></Button>
@@ -61,6 +63,7 @@
                                 class="rounded-full"
                                 size="icon-sm"
                                 variant="ghost"
+                                :ariaLabel="t('dialog.launch.copy_tooltip')"
                                 @click="copyInstanceMessage(launchDialog.location)"
                                 ><Copy
                             /></Button>
@@ -99,7 +102,10 @@
                     </Button>
                     <DropdownMenu>
                         <DropdownMenuTrigger as-child>
-                            <Button size="icon" :disabled="!launchDialog.secureOrShortName" aria-label="More options">
+                            <Button
+                                size="icon"
+                                :disabled="!launchDialog.secureOrShortName"
+                                :ariaLabel="t('dialog.new_instance.launch')">
                                 <MoreHorizontal class="size-4" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -232,14 +238,10 @@
 
     getConfig();
 
-    /**
-     *
-     */
     function closeInviteDialog() {
         inviteDialog.value.visible = false;
     }
     /**
-     *
      * @param tag
      */
     function showInviteDialog(tag) {
@@ -269,7 +271,6 @@
             });
     }
     /**
-     *
      * @param location
      * @param shortName
      * @param desktop
@@ -296,7 +297,6 @@
     }
 
     /**
-     *
      * @param location
      * @param shortName
      */
@@ -305,7 +305,6 @@
     }
 
     /**
-     *
      * @param command
      * @param location
      * @param shortName
@@ -320,7 +319,6 @@
         }, 500);
     }
     /**
-     *
      * @param location
      * @param shortName
      */
@@ -329,7 +327,6 @@
         isVisible.value = false;
     }
     /**
-     *
      * @param location
      * @param shortName
      */
@@ -350,15 +347,9 @@
             });
     }
 
-    /**
-     *
-     */
     function getConfig() {
         configRepository.getBool('launchAsDesktop').then((value) => (launchDialog.value.desktop = value));
     }
-    /**
-     *
-     */
     async function initLaunchDialog() {
         const { tag, shortName } = launchDialogData.value;
         if (!isRealInstance(tag)) {
@@ -404,7 +395,6 @@
         }
     }
     /**
-     *
      * @param input
      */
     async function copyInstanceMessage(input) {

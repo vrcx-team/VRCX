@@ -492,9 +492,6 @@
         stopNextWatch();
     });
 
-    /**
-     *
-     */
     function navigatePrev() {
         const D = screenshotMetadataDialog;
 
@@ -521,9 +518,6 @@
         }
     }
 
-    /**
-     *
-     */
     function navigateNext() {
         const D = screenshotMetadataDialog;
 
@@ -550,15 +544,11 @@
         }
     }
 
-    /**
-     *
-     */
     function goBack() {
         router.push({ name: 'tools' });
     }
 
     /**
-     *
      * @param event
      */
     function handleDrop(event) {
@@ -573,9 +563,6 @@
         event.preventDefault();
     }
 
-    /**
-     *
-     */
     async function getAndDisplayScreenshotFromFile() {
         let filePath = '';
 
@@ -597,9 +584,6 @@
         getAndDisplayScreenshot(filePath);
     }
 
-    /**
-     *
-     */
     function getAndDisplayLastScreenshot() {
         screenshotMetadataResetSearch();
         AppApi.GetLastScreenshot().then((path) => {
@@ -611,7 +595,6 @@
     }
 
     /**
-     *
      * @param path
      */
     function copyImageToClipboard(path) {
@@ -623,7 +606,6 @@
         });
     }
     /**
-     *
      * @param path
      */
     function openImageFolder(path) {
@@ -635,7 +617,6 @@
         });
     }
     /**
-     *
      * @param path
      */
     function deleteMetadata(path) {
@@ -652,9 +633,6 @@
             getAndDisplayScreenshot(D.metadata.filePath, true);
         });
     }
-    /**
-     *
-     */
     function uploadScreenshotToGallery() {
         const D = screenshotMetadataDialog;
         if (D.metadata.fileSizeBytes > 10000000) {
@@ -681,9 +659,6 @@
                 D.isUploading = false;
             });
     }
-    /**
-     *
-     */
     function screenshotMetadataSearch() {
         const D = screenshotMetadataDialog;
 
@@ -734,7 +709,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function handleSearchTypeChange(value) {
@@ -742,9 +716,6 @@
         screenshotMetadataSearch();
     }
 
-    /**
-     *
-     */
     function screenshotMetadataResetSearch() {
         const D = screenshotMetadataDialog;
 
@@ -757,7 +728,6 @@
     }
 
     /**
-     *
      * @param path
      * @param needsCarouselFiles
      */
@@ -767,10 +737,11 @@
     }
 
     /**
-     * Function receives an unmodified json string grabbed from the screenshot file
-     * Error checking and and verification of data is done in .NET already; In the case that the data/file is invalid, a JSON object with the token "error" will be returned containing a description of the problem.
-     * Example: {"error":"Invalid file selected. Please select a valid VRChat screenshot."}
-     * See docs/screenshotMetadata.json for schema
+     * Function receives an unmodified json string grabbed from the screenshot file Error checking and and verification
+     * of data is done in .NET already; In the case that the data/file is invalid, a JSON object with the token "error"
+     * will be returned containing a description of the problem. Example: {"error":"Invalid file selected. Please select
+     * a valid VRChat screenshot."} See docs/screenshotMetadata.json for schema
+     *
      * @param {string} json - JSON string grabbed from PNG file
      * @param {boolean} needsCarouselFiles - Whether or not to get the last/next files for the carousel
      * @returns {Promise<void>}

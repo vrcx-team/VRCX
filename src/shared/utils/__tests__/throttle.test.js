@@ -15,9 +15,7 @@ describe('createRateLimiter', () => {
             limitPerInterval: 10,
             intervalMs: 1000
         });
-        const result = await limiter.schedule(
-            () => new Promise((r) => setTimeout(() => r('async'), 10))
-        );
+        const result = await limiter.schedule(() => new Promise((r) => setTimeout(() => r('async'), 10)));
         expect(result).toBe('async');
     });
 

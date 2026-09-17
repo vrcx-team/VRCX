@@ -58,21 +58,13 @@ vi.mock('../../services/database', () => ({
 vi.mock('../../services/config', () => ({
     default: {
         init: vi.fn(),
-        getString: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? '{}'),
+        getString: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? '{}'),
         setString: vi.fn(),
-        getBool: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? false),
+        getBool: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? false),
         setBool: vi.fn(),
-        getInt: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? 0),
+        getInt: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? 0),
         setInt: vi.fn(),
-        getFloat: vi
-            .fn()
-            .mockImplementation((_key, defaultValue) => defaultValue ?? 0),
+        getFloat: vi.fn().mockImplementation((_key, defaultValue) => defaultValue ?? 0),
         setFloat: vi.fn(),
         getObject: vi.fn().mockReturnValue(null),
         setObject: vi.fn(),
@@ -118,23 +110,13 @@ const stubs = {
     WorldActionMenuItems: { template: '<div />' },
     TooltipWrapper: {
         template: '<span><slot /></span>',
-        props: [
-            'content',
-            'disabled',
-            'delayDuration',
-            'delay-duration',
-            'side'
-        ]
+        props: ['content', 'disabled', 'delayDuration', 'delay-duration', 'side']
     },
     Spinner: { template: '<span class="spinner" />' },
     AlertTriangle: { template: '<span class="alert-triangle" />' }
 };
 
-function mountLocation(
-    props = {},
-    appearanceOverrides = {},
-    mountOptions = {}
-) {
+function mountLocation(props = {}, appearanceOverrides = {}, mountOptions = {}) {
     return mount(Location, {
         props,
         ...mountOptions,
@@ -343,8 +325,7 @@ describe('Location.vue', () => {
 
         test('shows Group prefix for groupPublic instances', () => {
             const wrapper = mountLocation({
-                location:
-                    'wrld_12345:67890~group(grp_123)~groupAccessType(public)',
+                location: 'wrld_12345:67890~group(grp_123)~groupAccessType(public)',
                 hint: 'Test'
             });
             const text = wrapper.text();

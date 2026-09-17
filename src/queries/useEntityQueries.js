@@ -5,7 +5,6 @@ import { entityQueryPolicies, toQueryOptions } from './policies';
 import { queryKeys } from './keys';
 
 /**
- *
  * @param userId
  * @param options
  */
@@ -20,7 +19,6 @@ export function useUserQuery(userId, options = {}) {
 }
 
 /**
- *
  * @param avatarId
  * @param options
  */
@@ -35,7 +33,6 @@ export function useAvatarQuery(avatarId, options = {}) {
 }
 
 /**
- *
  * @param worldId
  * @param options
  */
@@ -50,7 +47,6 @@ export function useWorldQuery(worldId, options = {}) {
 }
 
 /**
- *
  * @param groupId
  * @param includeRoles
  * @param options

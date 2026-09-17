@@ -116,9 +116,7 @@ describe('LocationWorld.vue', () => {
     it('renders translated access type and instance name', () => {
         const wrapper = mountComponent();
 
-        expect(wrapper.text()).toContain(
-            'dialog.world.instance.friends #Instance Name'
-        );
+        expect(wrapper.text()).toContain('dialog.world.instance.friends #Instance Name');
         expect(wrapper.find('.flags.eu').exists()).toBe(true);
     });
 
@@ -129,10 +127,7 @@ describe('LocationWorld.vue', () => {
 
         await wrapper.findAll('.cursor-pointer')[0].trigger('click');
 
-        expect(mocks.showLaunchDialog).toHaveBeenCalledWith(
-            'wrld_1:inst_1',
-            'short-1'
-        );
+        expect(mocks.showLaunchDialog).toHaveBeenCalledWith('wrld_1:inst_1', 'short-1');
     });
 
     it('shows group hint and opens group dialog', async () => {

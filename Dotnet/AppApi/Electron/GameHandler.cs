@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace VRCX
 {
@@ -116,6 +117,87 @@ namespace VRCX
         {
             // This method is not used
             return false;
+        }
+
+        public override Task<bool> TryOpenInstanceInVrc(string launchUrl)
+        {
+            try
+            {
+                var pid = FindVRChatPid();
+                if (pid <= 0)
+                    return Task.FromResult(false);
+
+                var launchExe = Path.Join(_vrcInstallPath, "launch.exe");
+                if (!File.Exists(launchExe))
+                {
+                    logger.Error($"TryOpenInstanceInVrc: launch.exe not found at {launchExe}");
+                    return Task.FromResult(false);
+                }
+
+                // attach=1 tells launch.exe to forward into the running client instead of cold-starting
+                var url = launchUrl.Contains("attach=1") ? launchUrl : launchUrl + "&attach=1";
+
+                // enter the running game's user + mount namespaces (we own the pressure-vessel
+                // userns, so no privilege is required), re-import its environment, then run
+                // launch.exe inside the container so it reaches VRChat's URL pipe
+                const string inner =
+                    "while IFS= read -r -d '' kv; do export \"$kv\"; done < \"/proc/$1/environ\"; exec wine \"$2\" \"$3\"";
+
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "nsenter",
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                };
+                foreach (var arg in new[]
+                         {
+                             "-t", pid.ToString(), "-U", "-m", "--preserve-credentials", "--",
+                             "/bin/bash", "-c", inner, "_", pid.ToString(), launchExe, url
+                         })
+                    psi.ArgumentList.Add(arg);
+
+                // launch.exe hands the deeplink to the running client, then exits on wine's
+                // own schedule and its exit code is not a reliable success signal, so a clean
+                // spawn is treated as success. Gating on the exit code would race the frontend
+                // self-invite fallback and fire both. stdout/stderr are left un-redirected so
+                // wine log spam cannot fill an undrained pipe and stall the forward.
+                using var process = Process.Start(psi);
+                return Task.FromResult(process != null);
+            }
+            catch (Exception e)
+            {
+                logger.Error($"TryOpenInstanceInVrc failed: {e.Message}");
+                return Task.FromResult(false);
+            }
+        }
+
+        private static int FindVRChatPid()
+        {
+            var processes = Process.GetProcessesByName("VRChat.exe");
+            try
+            {
+                // prefer the VRChat whose environment points at the 438100 compat prefix
+                foreach (var process in processes)
+                {
+                    try
+                    {
+                        var environ = File.ReadAllText($"/proc/{process.Id}/environ");
+                        if (environ.Contains("compatdata/438100"))
+                            return process.Id;
+                    }
+                    catch
+                    {
+                        // unreadable environ, skip
+                    }
+                }
+
+                return processes.Length > 0 ? processes[0].Id : -1;
+            }
+            finally
+            {
+                foreach (var process in processes)
+                    process.Dispose();
+            }
         }
     }
 }

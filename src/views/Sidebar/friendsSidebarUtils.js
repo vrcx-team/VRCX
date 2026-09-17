@@ -2,11 +2,11 @@
  * @param {object} opts
  * @param {string} opts.key - Unique key
  * @param {string} opts.label - Display label
- * @param {number|null} [opts.count] - Item count
+ * @param {number | null} [opts.count] - Item count
  * @param {boolean} [opts.expanded] - Whether section is expanded
- * @param {number|null} [opts.headerPadding] - Top padding in px
- * @param {number|null} [opts.paddingBottom] - Bottom padding in px
- * @param {Function|null} [opts.onClick] - Click handler
+ * @param {number | null} [opts.headerPadding] - Top padding in px
+ * @param {number | null} [opts.paddingBottom] - Bottom padding in px
+ * @param {Function | null} [opts.onClick] - Click handler
  * @returns {object} Row object
  */
 export function buildToggleRow({
@@ -68,6 +68,7 @@ export function buildInstanceHeaderRow(location, count, key) {
 
 /**
  * Estimate pixel height for a virtual row.
+ *
  * @param {object} row - Row object with type property
  * @returns {number} Estimated height in pixels
  */

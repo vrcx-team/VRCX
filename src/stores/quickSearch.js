@@ -193,7 +193,7 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
     }
 
     /**
-     * @param {{id: string, type: string}} item
+     * @param {{ id: string; type: string }} item
      */
     function selectResult(item) {
         if (!item) return;

@@ -8,7 +8,15 @@
         BreadcrumbPage,
         BreadcrumbSeparator
     } from '@/components/ui/breadcrumb';
-    import { useAvatarStore, useGroupStore, useInstanceStore, useUiStore, useUserStore, useWorldStore } from '@/stores';
+    import {
+        useAvatarStore,
+        useGroupStore,
+        useInstanceStore,
+        useUiStore,
+        useUserStore,
+        useWorldStore,
+        useAppearanceSettingsStore
+    } from '@/stores';
     import {
         DropdownMenu,
         DropdownMenuContent,
@@ -19,7 +27,7 @@
     import { ArrowLeft } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
     import { TooltipWrapper } from '@/components/ui/tooltip';
-    import { computed } from 'vue';
+    import { computed, ref } from 'vue';
     import { storeToRefs } from 'pinia';
 
     import AvatarDialog from './AvatarDialog/AvatarDialog.vue';
@@ -28,6 +36,9 @@
     import PreviousInstancesListDialog from './PreviousInstancesDialog/PreviousInstancesListDialog.vue';
     import UserDialog from './UserDialog/UserDialog.vue';
     import WorldDialog from './WorldDialog/WorldDialog.vue';
+    import GroupMemberModerationDialog from './GroupDialog/GroupMemberModerationDialog.vue';
+    import { getReadableProfileThemeColor } from '@/shared/utils/user';
+    import { profileBackgrounds } from '@/shared/constants/backgrounds';
 
     const avatarStore = useAvatarStore();
     const groupStore = useGroupStore();
@@ -35,8 +46,23 @@
     const uiStore = useUiStore();
     const userStore = useUserStore();
     const worldStore = useWorldStore();
+    const appearanceSettingsStore = useAppearanceSettingsStore();
 
     const { previousInstancesInfoDialog, previousInstancesListDialog } = storeToRefs(instanceStore);
+
+    const previousIds = ref({
+        userDialog: {
+            mutualFriend: null,
+            group: null,
+            avatar: null,
+            world: null,
+            favoriteWorld: null
+        }
+    });
+
+    function updateUserPreviousId(key, value) {
+        previousIds.value.userDialog[key] = value;
+    }
 
     const dialogCrumbs = computed(() => uiStore.dialogCrumbs);
     const activeType = computed(() => {
@@ -58,6 +84,9 @@
             }
             if (groupStore.groupDialog.visible) {
                 return 'group';
+            }
+            if (groupStore.groupMemberModeration.visible) {
+                return 'group-member-moderation';
             }
             return null;
         })();
@@ -81,12 +110,16 @@
                 return PreviousInstancesListDialog;
             case 'previous-instances-group':
                 return PreviousInstancesListDialog;
+            case 'group-member-moderation':
+                return GroupMemberModerationDialog;
             default:
                 return null;
         }
     });
     const activeComponentProps = computed(() => {
         switch (activeType.value) {
+            case 'user':
+                return { previousIds: previousIds.value.userDialog, updatePreviousId: updateUserPreviousId };
             case 'previous-instances-user':
                 return { variant: 'user' };
             case 'previous-instances-world':
@@ -108,20 +141,20 @@
 
     const dialogClass = computed(() => {
         switch (activeType.value) {
-            case 'world':
-                return 'x-dialog translate-y-0 sm:max-w-235 overflow-hidden flex flex-col';
-            case 'avatar':
-                return 'x-dialog sm:max-w-235 translate-y-0 overflow-hidden flex flex-col';
+            case 'user':
             case 'group':
-                return 'x-dialog translate-y-0 sm:max-w-235 overflow-hidden flex flex-col';
+            case 'world':
+            case 'avatar':
+                return 'x-dialog translate-y-0 sm:max-w-270 overflow-hidden flex flex-col';
+            case 'group-member-moderation':
+                return 'x-dialog translate-y-0 max-w-none flex flex-col sm:min-w-[90vw] sm:max-w-[90vw] sm:min-h-[80vh] sm:max-h-[80vh]';
             case 'previous-instances-info':
             case 'previous-instances-user':
             case 'previous-instances-world':
             case 'previous-instances-group':
                 return 'x-dialog translate-y-0 sm:max-w-250';
-            case 'user':
             default:
-                return 'x-dialog sm:max-w-235 translate-y-0 overflow-hidden flex flex-col';
+                return 'x-dialog translate-y-0 sm:max-w-235 overflow-hidden flex flex-col';
         }
     });
 
@@ -144,12 +177,62 @@
     function handleBreadcrumbClick(index) {
         uiStore.handleBreadcrumbClick(index);
     }
+
+    const dialogStyle = computed(() => {
+        if (activeType.value !== 'user' || !appearanceSettingsStore.displayVRCProfileBackgrounds) {
+            return {};
+        }
+
+        const userDialogBaseStyle = {
+            overflow: 'hidden',
+            backgroundClip: 'padding-box'
+        };
+
+        const opacity = -appearanceSettingsStore.profileBackgroundOpacity + 1; // Invert the opacity value
+        const textureOverlay = appearanceSettingsStore.isDarkMode
+            ? `rgba(0, 0, 0, ${opacity})`
+            : `rgba(255, 255, 255, ${opacity})`;
+        if (userStore.userDialog.publicProfileRef?.backgroundType === 'gradient') {
+            const bgTopColor = getReadableProfileThemeColor(
+                `#${userStore.userDialog.publicProfileRef?.backgroundGradientTop}`,
+                'var(--background)',
+                !appearanceSettingsStore.isDarkMode
+            );
+            const bgBottomColor = getReadableProfileThemeColor(
+                `#${userStore.userDialog.publicProfileRef?.backgroundGradientBottom}`,
+                'var(--background)',
+                !appearanceSettingsStore.isDarkMode
+            );
+            return {
+                ...userDialogBaseStyle,
+                backgroundImage: `linear-gradient(${textureOverlay}, ${textureOverlay}), linear-gradient(180deg, ${bgTopColor}, ${bgBottomColor})`
+            };
+        }
+        if (userStore.userDialog.publicProfileRef?.backgroundType === 'texture') {
+            const bg = profileBackgrounds.find(
+                (b) => b.id === userStore.userDialog.publicProfileRef?.backgroundTextureId
+            );
+            if (!bg) {
+                return userDialogBaseStyle;
+            }
+            return {
+                ...userDialogBaseStyle,
+                backgroundImage: `linear-gradient(${textureOverlay}, ${textureOverlay}), url(${bg.url})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'top center',
+                backgroundRepeat: 'no-repeat'
+            };
+        }
+        return userDialogBaseStyle;
+    });
 </script>
 
 <template>
     <Dialog v-if="isOpen" v-model:open="isOpen">
-        <DialogContent :class="dialogClass" style="top: 10vh" :show-close-button="false">
-            <Breadcrumb v-if="shouldShowBreadcrumbs" class="mb-2 flex-shrink-0">
+        <DialogContent :class="dialogClass" style="top: 10vh" :show-close-button="false" :style="dialogStyle">
+            <Breadcrumb
+                v-if="shouldShowBreadcrumbs"
+                class="mb-2 flex-shrink-0 rounded-xl bg-(--profile-card) w-fit pr-4">
                 <BreadcrumbList>
                     <TooltipWrapper :content="backCrumbLabel" :disabled="!backCrumbLabel" :delayDuration="500">
                         <Button variant="ghost" size="icon-sm" @click="handleBreadcrumbClick(dialogCrumbs.length - 2)">

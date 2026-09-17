@@ -82,9 +82,7 @@ describe('query policy configuration', () => {
             refetchOnWindowFocus: false
         });
 
-        expect(entityQueryPolicies.avatarGallery.staleTime).toBeLessThan(
-            entityQueryPolicies.avatar.staleTime
-        );
+        expect(entityQueryPolicies.avatarGallery.staleTime).toBeLessThan(entityQueryPolicies.avatar.staleTime);
     });
 
     test('file-related policies', () => {
@@ -146,9 +144,7 @@ describe('query policy configuration', () => {
         });
 
         // Should outlive visits (which is already long-lived)
-        expect(entityQueryPolicies.avatarStyles.staleTime).toBeGreaterThan(
-            entityQueryPolicies.visits.staleTime
-        );
+        expect(entityQueryPolicies.avatarStyles.staleTime).toBeGreaterThan(entityQueryPolicies.visits.staleTime);
     });
 
     test('vrchatCredits policy has moderate staleTime for balance data', () => {
@@ -175,12 +171,7 @@ describe('query policy configuration', () => {
         const options = toQueryOptions(entityQueryPolicies.user);
         const keys = Object.keys(options);
 
-        expect(keys).toEqual([
-            'staleTime',
-            'gcTime',
-            'retry',
-            'refetchOnWindowFocus'
-        ]);
+        expect(keys).toEqual(['staleTime', 'gcTime', 'retry', 'refetchOnWindowFocus']);
     });
 
     test('all policies are frozen and immutable', () => {

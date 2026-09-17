@@ -8,7 +8,7 @@
             :total-items="totalItems"
             :on-page-size-change="handlePageSizeChange">
             <template #toolbar>
-                <div class="mb-2 flex items-center">
+                <div class="mb-2 flex justify-between items-center gap-2">
                     <Select
                         multiple
                         :model-value="
@@ -17,7 +17,7 @@
                                 : []
                         "
                         @update:modelValue="handleNotificationFilterChange">
-                        <SelectTrigger class="w-full" style="flex: 1">
+                        <SelectTrigger class="max-w-1/2 min-w-50">
                             <SelectValue :placeholder="t('view.notification.filter_placeholder')" />
                         </SelectTrigger>
                         <SelectContent>
@@ -40,11 +40,14 @@
                                         'group.joinRequest',
                                         'group.transfer',
                                         'group.queueReady',
+                                        'group.event.created',
+                                        'group.event.starting',
                                         'moderation.warning.group',
                                         'moderation.report.closed',
                                         'moderation.contentrestriction',
                                         'instance.closed',
-                                        'economy.alert'
+                                        'economy.alert',
+                                        'twitchdrop.fulfilled'
                                     ]"
                                     :key="type"
                                     :value="type">
@@ -53,23 +56,26 @@
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                    <InputGroupField
-                        v-model="notificationTable.filters[1].value"
-                        :placeholder="t('view.notification.search_placeholder')"
-                        clearable
-                        class="flex-[0.4] my-0 mx-2" />
-                    <TooltipWrapper side="bottom" :content="t('view.notification.refresh_tooltip')">
-                        <Button
-                            class="rounded-full"
-                            variant="ghost"
-                            size="icon-sm"
-                            :disabled="isNotificationsLoading"
-                            style="flex: none"
-                            @click="refreshNotifications()">
-                            <Spinner v-if="isNotificationsLoading" />
-                            <RefreshCw v-else />
-                        </Button>
-                    </TooltipWrapper>
+                    <div class="flex flex-row justify-end">
+                        <InputGroupField
+                            v-model="notificationTable.filters[1].value"
+                            :placeholder="t('view.notification.search_placeholder')"
+                            clearable
+                            class="flex-[0.4] my-0 mx-2 min-w-50" />
+                        <TooltipWrapper side="bottom" :content="t('view.notification.refresh_tooltip')">
+                            <Button
+                                class="rounded-full"
+                                variant="ghost"
+                                size="icon-sm"
+                                :disabled="isNotificationsLoading"
+                                style="flex: none"
+                                :ariaLabel="t('view.notification.refresh_tooltip')"
+                                @click="refreshNotifications()">
+                                <Spinner v-if="isNotificationsLoading" />
+                                <RefreshCw v-else />
+                            </Button>
+                        </TooltipWrapper>
+                    </div>
                 </div>
             </template>
         </DataTableLayout>
@@ -133,7 +139,6 @@
     const notificationsRef = ref(null);
 
     /**
-     *
      * @param row
      */
     function getNotificationCreatedAt(row) {
@@ -147,7 +152,6 @@
     }
 
     /**
-     *
      * @param row
      */
     function getNotificationCreatedAtTs(row) {
@@ -264,9 +268,6 @@
 
     const sendInviteRequestResponseDialogVisible = ref(false);
 
-    /**
-     *
-     */
     function saveTableFilters() {
         configRepository.setString(
             'VRCX_notificationTableFilters',
@@ -275,7 +276,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function handleNotificationFilterChange(value) {
@@ -284,7 +284,6 @@
     }
 
     /**
-     *
      * @param url
      */
     function getSmallThumbnailUrl(url) {
@@ -292,7 +291,6 @@
     }
 
     /**
-     *
      * @param invite
      */
     function showSendInviteResponseDialog(invite) {
@@ -304,7 +302,6 @@
     }
 
     /**
-     *
      * @param invite
      */
     function showSendInviteRequestResponseDialog(invite) {

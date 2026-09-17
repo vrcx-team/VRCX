@@ -24,6 +24,7 @@ import userRequest from './user';
 import vrcPlusIconRequest from './vrcPlusIcon';
 import vrcPlusImageRequest from './vrcPlusImage';
 import worldRequest from './world';
+import cosmeticsRequest from './cosmetics';
 
 window.request = {
     request,
@@ -45,7 +46,8 @@ window.request = {
     inventoryRequest,
     propRequest,
     imageRequest,
-    queryRequest
+    queryRequest,
+    cosmeticsRequest
 };
 
 export {
@@ -68,5 +70,6 @@ export {
     inventoryRequest,
     propRequest,
     imageRequest,
-    queryRequest
+    queryRequest,
+    cosmeticsRequest
 };

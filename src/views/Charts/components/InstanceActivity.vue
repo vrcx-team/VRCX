@@ -227,9 +227,6 @@
         setInstanceActivityHeight();
     });
 
-    /**
-     *
-     */
     function setInstanceActivityHeight() {
         if (instanceActivityRef.value) {
             const availableHeight = window.innerHeight - 110;
@@ -275,7 +272,6 @@
     });
 
     /**
-     *
      * @param value
      */
     function handleBarWidthCommit(value) {
@@ -323,7 +319,6 @@
     });
 
     /**
-     *
      * @param dateValue
      */
     function isCalendarDateDisabled(dateValue) {
@@ -335,7 +330,6 @@
     }
 
     /**
-     *
      * @param dateValue
      */
     function handleCalendarModelUpdate(dateValue) {
@@ -458,7 +452,6 @@
     };
 
     /**
-     *
      * @param params
      */
     function handleYAxisLabelClick(params) {
@@ -494,9 +487,6 @@
         }
     }
 
-    /**
-     *
-     */
     function getYAxisData() {
         return worldNameArray.value.map((worldName, index) => {
             const activityItem = activityData.value[index];
@@ -513,9 +503,6 @@
         });
     }
 
-    /**
-     *
-     */
     function initEcharts() {
         const chartsHeight = activityData.value.length * (barWidth.value + 10) + 200;
         const chartDom = activityChartRef.value;
@@ -570,9 +557,6 @@
         }
         afterInit();
     }
-    /**
-     *
-     */
     function getNewOption() {
         // FIXME(kube): this is a bandaid to make the formater shut up
         // this should be looked at by someone with more experience
@@ -709,16 +693,10 @@
         return echartsOption;
     }
 
-    /**
-     *
-     */
     function handleEchartsRerender() {
         initEcharts();
         handleSettingsChange();
     }
-    /**
-     *
-     */
     function handleSettingsChange() {
         handleChangeSettings(activityDetailChartRef);
 

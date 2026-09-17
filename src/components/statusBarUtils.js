@@ -18,8 +18,9 @@ export const defaultVisibility = {
 /**
  * Clamp and round a numeric value to a valid UTC offset range [-12, 14].
  * Returns 0 for non-finite values.
- * @param {*} value - raw offset value
- * @returns {number} normalised integer offset
+ *
+ * @param {any} value - Raw offset value
+ * @returns {number} Normalised integer offset
  */
 export function normalizeUtcHour(value) {
     const n = Number(value);
@@ -29,6 +30,7 @@ export function normalizeUtcHour(value) {
 
 /**
  * Format a numeric UTC offset as a human-readable string, e.g. "UTC+9", "UTC-5".
+ *
  * @param {number} offset
  * @returns {string}
  */
@@ -41,11 +43,12 @@ export function formatUtcHour(offset) {
  * Parse a clock offset value into a normalised integer.
  *
  * Accepted inputs:
- *  - number (clamped/rounded)
- *  - numeric string like `"5"` or `"-3"`
- *  - UTC pattern like `"UTC+9"`, `"UTC-5:30"`
- *  - legacy IANA timezone name (resolved via dayjs)
- * @param {*} value
+ * - number (clamped/rounded)
+ * - numeric string like `"5"` or `"-3"`
+ * - UTC pattern like `"UTC+9"`, `"UTC-5:30"`
+ * - legacy IANA timezone name (resolved via dayjs)
+ *
+ * @param {any} value
  * @returns {number}
  */
 export function parseClockOffset(value) {
@@ -76,7 +79,8 @@ export function parseClockOffset(value) {
 /**
  * Normalise a single clock config entry.
  * Handles current `{ offset }` format and legacy `{ timezone }` format.
- * @param {*} entry
+ *
+ * @param {any} entry
  * @returns {{ offset: number }}
  */
 export function normalizeClock(entry) {
@@ -93,7 +97,8 @@ export function normalizeClock(entry) {
 
 /**
  * Load visibility settings from a Storage-like object, merging with defaults.
- * @param {Storage} storage - object with `getItem(key)` method
+ *
+ * @param {Storage} storage - Object with `getItem(key)` method
  * @returns {object}
  */
 export function loadVisibility(storage) {
@@ -111,9 +116,10 @@ export function loadVisibility(storage) {
 /**
  * Load saved clocks array from a Storage-like object.
  * Returns the default clocks when stored data is absent or invalid.
+ *
  * @param {Storage} storage
- * @param {Array} defaults - fallback clock definitions
- * @returns {Array<{ offset: number }>}
+ * @param {Array} defaults - Fallback clock definitions
+ * @returns {{ offset: number }[]}
  */
 export function loadClocks(storage, defaults) {
     try {
@@ -133,6 +139,7 @@ export function loadClocks(storage, defaults) {
 /**
  * Load the clock count (0-3) from a Storage-like object.
  * Returns 2 when stored data is absent or invalid.
+ *
  * @param {Storage} storage
  * @returns {number}
  */
@@ -151,6 +158,7 @@ export function loadClockCount(storage) {
 
 /**
  * Format an elapsed-seconds value into an `HH:MM:SS` string.
+ *
  * @param {number} elapsedSeconds
  * @returns {string}
  */

@@ -29,7 +29,7 @@ window.dayjs = dayjs;
 
 /**
  * @param {string} tag
- * @param {string|unknown[]} target
+ * @param {string | unknown[]} target
  * @param {...any} rest
  */
 export function logWebRequest(tag, target, ...rest) {
@@ -43,6 +43,7 @@ let _queryLogDepth = 0;
  * Wraps an async fn so that any API request made inside
  * will NOT emit the default [API …] debug log (the query
  * layer prints its own log instead).
+ *
  * @template T
  * @param {() => Promise<T>} fn
  * @returns {Promise<T>}
@@ -57,7 +58,7 @@ export async function withQueryLog(fn) {
 }
 
 /**
- * @returns {boolean} true when inside a withQueryLog callback
+ * @returns {boolean} True when inside a withQueryLog callback
  */
 export function isApiLogSuppressed() {
     return _queryLogDepth > 0;

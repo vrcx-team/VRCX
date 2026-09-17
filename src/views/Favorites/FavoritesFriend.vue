@@ -39,6 +39,7 @@
                                         variant="ghost"
                                         size="icon-sm"
                                         :disabled="isFavoriteLoading"
+                                        :ariaLabel="t('view.favorite.refresh_favorites_tooltip')"
                                         @click.stop="handleRefreshFavorites">
                                         <Spinner v-if="isFavoriteLoading" />
                                         <RefreshCw v-else />
@@ -76,6 +77,7 @@
                                                         class="rounded-full"
                                                         variant="ghost"
                                                         size="icon-sm"
+                                                        :ariaLabel="t('nav_tooltip.manage')"
                                                         @click.stop>
                                                         <MoreHorizontal />
                                                     </Button>
@@ -130,6 +132,7 @@
                                     class="rounded-full"
                                     size="icon-sm"
                                     variant="ghost"
+                                    :ariaLabel="t('common.actions.refresh')"
                                     @click.stop="getLocalFriendFavorites"
                                     ><RefreshCcw />
                                 </Button>
@@ -282,41 +285,12 @@
                                 <div class="h-full pr-2 overflow-auto">
                                     <div
                                         v-if="friendFavoriteSearchResults.length"
-                                        class="favorites-search-grid"
+                                        class="favorites-card-list"
                                         :style="friendFavoritesGridStyle(friendFavoriteSearchResults.length)">
-                                        <div
+                                        <FavoritesFriendItem
                                             v-for="favorite in friendFavoriteSearchResults"
                                             :key="favorite.id"
-                                            class="favorites-search-card x-hover-card hover:shadow-sm"
-                                            @click="showUserDialog(favorite.id)">
-                                            <div class="favorites-search-card__content">
-                                                <div class="favorites-search-card__avatar">
-                                                    <Avatar class="size-full">
-                                                        <AvatarImage
-                                                            :src="userImage(favorite, true)"
-                                                            class="object-cover"
-                                                            loading="lazy" />
-                                                        <AvatarFallback>
-                                                            <User class="size-5 text-muted-foreground" />
-                                                        </AvatarFallback>
-                                                    </Avatar>
-                                                </div>
-                                                <div class="favorites-search-card__detail">
-                                                    <div class="flex items-center gap-2">
-                                                        <span class="name">{{ favorite.displayName }}</span>
-                                                    </div>
-                                                    <div
-                                                        v-if="favorite.location && favorite.location !== 'offline'"
-                                                        class="text-xs truncate">
-                                                        <Location
-                                                            :location="favorite.location"
-                                                            :traveling="favorite.travelingToLocation"
-                                                            :link="false" />
-                                                    </div>
-                                                    <span v-else class="text-xs">{{ favorite.statusDescription }}</span>
-                                                </div>
-                                            </div>
-                                        </div>
+                                            :favorite="favorite" />
                                     </div>
                                     <div v-else class="flex items-center justify-center text-[13px] h-full">
                                         <DataTableEmpty type="nomatch" />
@@ -333,9 +307,8 @@
 </template>
 
 <script setup>
-    import { Ellipsis, MoreHorizontal, Plus, RefreshCcw, RefreshCw, User } from 'lucide-vue-next';
+    import { Ellipsis, MoreHorizontal, Plus, RefreshCcw, RefreshCw } from 'lucide-vue-next';
     import { computed, ref, watch } from 'vue';
-    import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import { Button } from '@/components/ui/button';
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { InputGroupField } from '@/components/ui/input-group';
@@ -358,7 +331,6 @@
     import { useAppearanceSettingsStore, useFavoriteStore, useModalStore, useUserStore } from '../../stores';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { debounce } from '../../shared/utils';
-    import { useUserDisplay } from '../../composables/useUserDisplay';
     import { favoriteRequest } from '../../api';
     import { useFavoritesCardScaling } from './composables/useFavoritesCardScaling.js';
     import { useFavoritesGroupPanel } from './composables/useFavoritesGroupPanel.js';
@@ -372,13 +344,11 @@
         renameLocalFriendFavoriteGroup,
         removeLocalFriendFavorite
     } from '../../coordinators/favoriteCoordinator';
-
     import FavoritesContentHeader from './components/FavoritesContentHeader.vue';
     import FavoritesFriendItem from './components/FavoritesFriendItem.vue';
     import FavoritesToolbar from './components/FavoritesToolbar.vue';
     import FriendExportDialog from './dialogs/FriendExportDialog.vue';
 
-    const { userImage } = useUserDisplay();
     const friendGroupVisibilityOptions = ref(['public', 'friends', 'private']);
 
     const {
@@ -408,7 +378,6 @@
     const { showFriendImportDialog, handleFavoriteGroup, localFriendFavGroupLength, newLocalFriendFavoriteGroup } =
         favoriteStore;
     const userStore = useUserStore();
-    const { showUserDialog } = userStore;
     const { cachedUsers } = storeToRefs(userStore);
     const { t } = useI18n();
 
@@ -489,7 +458,6 @@
     });
 
     /**
-     *
      * @param value
      */
     function handleSortFavoritesChange(value) {
@@ -507,17 +475,11 @@
         friendToolbarMenuOpen.value = false;
     };
 
-    /**
-     *
-     */
     function handleFriendImportClick() {
         closeFriendToolbarMenu();
         showFriendImportDialog();
     }
 
-    /**
-     *
-     */
     function handleFriendExportClick() {
         closeFriendToolbarMenu();
         showFriendExportDialog();
@@ -531,7 +493,7 @@
                 return;
             }
             seen.add(favorite.id);
-            entries.push(favorite.ref);
+            entries.push(favorite);
         });
         return entries;
     });
@@ -591,7 +553,6 @@
     );
 
     /**
-     *
      * @param visibility
      */
     function getBadgeVariant(visibility) {
@@ -605,16 +566,10 @@
         }
     }
 
-    /**
-     *
-     */
     function showFriendExportDialog() {
         friendExportDialogVisible.value = true;
     }
 
-    /**
-     *
-     */
     function handleRefreshFavorites() {
         refreshFavorites();
         getLocalWorldFavorites();
@@ -622,7 +577,6 @@
     }
 
     /**
-     *
      * @param type
      * @param key
      */
@@ -635,16 +589,16 @@
     }
 
     /**
-     *
      * @param searchTerm
      */
     function doSearchFriendFavorites(searchTerm) {
-        const search = searchTerm.trim().toLowerCase();
+        const search = (searchTerm ?? friendFavoriteSearch.value).trim().toLowerCase();
         if (search.length < 3) {
             friendFavoriteSearchResults.value = [];
             return;
         }
-        const filtered = searchableFriendEntries.value.filter((ref) => {
+        const filtered = searchableFriendEntries.value.filter((favorite) => {
+            const ref = favorite.ref;
             if (!ref || typeof ref.id === 'undefined' || typeof ref.displayName === 'undefined') {
                 return false;
             }
@@ -656,7 +610,6 @@
     const searchFriendFavorites = debounce(doSearchFriendFavorites, 200);
 
     /**
-     *
      * @param id
      * @param value
      */
@@ -670,16 +623,10 @@
         }
     }
 
-    /**
-     *
-     */
     function clearSelectedFriends() {
         selectedFavoriteFriends.value = [];
     }
 
-    /**
-     *
-     */
     function toggleSelectAllFriends() {
         if (!activeRemoteGroup.value) {
             return;
@@ -691,9 +638,6 @@
         }
     }
 
-    /**
-     *
-     */
     function copySelectedFriends() {
         if (!selectedFavoriteFriends.value.length) {
             return;
@@ -703,9 +647,6 @@
         showFriendImportDialog();
     }
 
-    /**
-     *
-     */
     function showFriendBulkUnfavoriteSelectionConfirm() {
         if (!selectedFavoriteFriends.value.length) {
             return;
@@ -721,7 +662,6 @@
     }
 
     /**
-     *
      * @param ids
      */
     function bulkUnfavoriteSelectedFriends(ids) {
@@ -741,7 +681,6 @@
     }
 
     /**
-     *
      * @param ctx
      */
     function clearFavoriteGroup(ctx) {
@@ -762,7 +701,6 @@
     }
 
     /**
-     *
      * @param group
      * @param visibility
      */
@@ -772,7 +710,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function handleRemoteRename(group) {
@@ -781,7 +718,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function handleRemoteClear(group) {
@@ -790,7 +726,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function changeFavoriteGroupName(group) {
@@ -832,7 +767,6 @@
     }
 
     /**
-     *
      * @param name
      * @param visibility
      * @param menuKey
@@ -860,7 +794,6 @@
     }
 
     /**
-     *
      * @param value
      */
     function formatVisibility(value) {
@@ -870,9 +803,6 @@
         return value.charAt(0).toUpperCase() + value.slice(1);
     }
 
-    /**
-     *
-     */
     const {
         isCreatingLocalGroup,
         newLocalGroupName,
@@ -886,7 +816,6 @@
     });
 
     /**
-     *
      * @param group
      */
     function handleLocalRename(group) {
@@ -917,7 +846,6 @@
     }
 
     /**
-     *
      * @param group
      */
     function handleLocalDelete(group) {

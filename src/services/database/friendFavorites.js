@@ -33,12 +33,9 @@ const friendFavorites = {
     },
 
     deleteFriendFavoriteGroup(groupName) {
-        sqliteService.executeNonQuery(
-            `DELETE FROM favorite_friend WHERE group_name = @group_name`,
-            {
-                '@group_name': groupName
-            }
-        );
+        sqliteService.executeNonQuery(`DELETE FROM favorite_friend WHERE group_name = @group_name`, {
+            '@group_name': groupName
+        });
     },
 
     async getFriendFavorites() {

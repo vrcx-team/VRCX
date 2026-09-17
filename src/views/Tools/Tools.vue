@@ -34,7 +34,7 @@
                                         variant="secondary"
                                         class="opacity-0 transition-opacity group-hover:opacity-100"
                                         :title="t('nav_menu.custom_nav.unpin_from_nav')"
-                                        :aria-label="t('nav_menu.custom_nav.unpin_from_nav')"
+                                        :ariaLabel="t('nav_menu.custom_nav.unpin_from_nav')"
                                         @click.stop="unpinToolFromNav(tool.key)">
                                         <span class="relative inline-flex size-4">
                                             <i
@@ -57,7 +57,7 @@
                                         variant="ghost"
                                         class="opacity-0 transition-opacity group-hover:opacity-100"
                                         :title="t('nav_menu.custom_nav.pin_to_nav')"
-                                        :aria-label="t('nav_menu.custom_nav.pin_to_nav')"
+                                        :ariaLabel="t('nav_menu.custom_nav.pin_to_nav')"
                                         @click.stop="pinToolToNav(tool.key)">
                                         <span class="relative inline-flex size-4">
                                             <i

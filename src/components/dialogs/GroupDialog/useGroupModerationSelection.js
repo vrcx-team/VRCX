@@ -1,69 +1,56 @@
-import { reactive, ref } from 'vue';
-
-/**
- * Composable for managing selected users across all moderation tables.
- * @param {object} tables - reactive table objects with `.data` arrays
- * @param {object} tables.members
- * @param {object} tables.bans
- * @param {object} tables.invites
- * @param {object} tables.joinRequests
- * @param {object} tables.blocked
- */
-export function useGroupModerationSelection(tables) {
-    const selectedUsers = reactive({});
-    const selectedUsersArray = ref([]);
-
+export function useGroupModerationSelection(groupMemberModeration) {
     /**
      * @param {string} userId
      * @param {object} user
      */
     function setSelectedUsers(userId, user) {
         if (!user) return;
-        selectedUsers[userId] = user;
-        selectedUsersArray.value = Object.values(selectedUsers);
+        groupMemberModeration.selectedUsers[userId] = user;
+        groupMemberModeration.selectedUsersArray = Object.values(groupMemberModeration.selectedUsers);
     }
 
     /**
-     * @param {string|null} userId
+     * @param {string | null} userId
      * @param {boolean} isAll
      */
     function deselectedUsers(userId, isAll = false) {
         if (isAll) {
-            for (const id in selectedUsers) {
-                if (Object.prototype.hasOwnProperty.call(selectedUsers, id)) {
-                    delete selectedUsers[id];
+            for (const id in groupMemberModeration.selectedUsers) {
+                if (Object.prototype.hasOwnProperty.call(groupMemberModeration.selectedUsers, id)) {
+                    delete groupMemberModeration.selectedUsers[id];
                 }
             }
         } else {
-            if (Object.prototype.hasOwnProperty.call(selectedUsers, userId)) {
-                delete selectedUsers[userId];
+            if (Object.prototype.hasOwnProperty.call(groupMemberModeration.selectedUsers, userId)) {
+                delete groupMemberModeration.selectedUsers[userId];
             }
         }
-        selectedUsersArray.value = Object.values(selectedUsers);
+        groupMemberModeration.selectedUsersArray = Object.values(groupMemberModeration.selectedUsers);
     }
 
     /**
      * @param {object} row
      */
     function onSelectionChange(row) {
-        if (row.$selected && !selectedUsers[row.userId]) {
+        if (row.$selected && !groupMemberModeration.selectedUsers[row.userId]) {
             setSelectedUsers(row.userId, row);
-        } else if (!row.$selected && selectedUsers[row.userId]) {
+        } else if (!row.$selected && groupMemberModeration.selectedUsers[row.userId]) {
             deselectedUsers(row.userId);
         }
     }
 
     /**
      * Deselect a user across all tables.
-     * @param {string} [userId] - if omitted, deselects all rows in all tables
+     *
+     * @param {string} [userId] - If omitted, deselects all rows in all tables
      */
     function deselectInTables(userId) {
         const allTables = [
-            tables.members,
-            tables.bans,
-            tables.invites,
-            tables.joinRequests,
-            tables.blocked
+            groupMemberModeration.tables.members,
+            groupMemberModeration.tables.bans,
+            groupMemberModeration.tables.invites,
+            groupMemberModeration.tables.joinRequests,
+            groupMemberModeration.tables.blocked
         ];
         for (const table of allTables) {
             if (!table?.data) continue;
@@ -90,9 +77,6 @@ export function useGroupModerationSelection(tables) {
         deselectInTables(user.userId);
     }
 
-    /**
-     *
-     */
     function clearAllSelected() {
         deselectedUsers(null, true);
         deselectInTables();
@@ -100,6 +84,7 @@ export function useGroupModerationSelection(tables) {
 
     /**
      * Select all rows in a given table data array.
+     *
      * @param {Array} tableData
      */
     function selectAll(tableData) {
@@ -110,8 +95,6 @@ export function useGroupModerationSelection(tables) {
     }
 
     return {
-        selectedUsers,
-        selectedUsersArray,
         setSelectedUsers,
         deselectedUsers,
         onSelectionChange,

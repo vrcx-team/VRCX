@@ -50,8 +50,7 @@ function aggregateTailEvents(events, matchType, groupType) {
     if (lastIdx === -1) return;
 
     // Collect all matchType within window backward from last
-    const windowStart =
-        toEpoch(events[lastIdx].created_at) - AGGREGATE_WINDOW_MS;
+    const windowStart = toEpoch(events[lastIdx].created_at) - AGGREGATE_WINDOW_MS;
     const indices = [];
     for (let i = lastIdx; i >= 0; i--) {
         if (toEpoch(events[i].created_at) < windowStart) break;
@@ -80,8 +79,7 @@ function aggregateHeadEvents(events, matchType, groupType) {
     if (firstIdx === -1) return;
 
     // Collect all matchType within window forward from first
-    const windowEnd =
-        toEpoch(events[firstIdx].created_at) + AGGREGATE_WINDOW_MS;
+    const windowEnd = toEpoch(events[firstIdx].created_at) + AGGREGATE_WINDOW_MS;
     const indices = [];
     for (let i = firstIdx; i < events.length; i++) {
         if (toEpoch(events[i].created_at) > windowEnd) break;
@@ -111,8 +109,7 @@ function deduplicateVideoPlay(events) {
             events[i - 1].type === 'VideoPlay' &&
             events[i].videoUrl === events[i - 1].videoUrl
         ) {
-            events[i - 1].playCount =
-                (events[i - 1].playCount || 1) + (events[i].playCount || 1);
+            events[i - 1].playCount = (events[i - 1].playCount || 1) + (events[i].playCount || 1);
             events.splice(i, 1);
         }
     }
@@ -121,6 +118,22 @@ function deduplicateVideoPlay(events) {
     }
 }
 
+/**
+ * @param {{ id: any; created_at: any; location: any; worldId: any; worldName: any; groupName: any; time: any }[]} locationSegments
+ * @param {{ type: any; created_at: any; userId: any; location: any; videoUrl: any }[]} flatEvents
+ * @returns {{
+ *     segments: {
+ *         id: any;
+ *         created_at: any;
+ *         location: any;
+ *         worldId: any;
+ *         worldName: any;
+ *         groupName: any;
+ *         duration?: any;
+ *         events: any[];
+ *     }[];
+ * }}
+ */
 export function buildGameLogSessions(locationSegments, flatEvents) {
     if (!locationSegments || locationSegments.length === 0) {
         return { segments: [] };
@@ -161,19 +174,14 @@ export function buildGameLogSessions(locationSegments, flatEvents) {
     if (dedupedEvents && dedupedEvents.length > 0) {
         for (const event of dedupedEvents) {
             const eventEpoch = toEpoch(event.created_at);
-            const candidates = event.location
-                ? locationMap.get(event.location)
-                : null;
+            const candidates = event.location ? locationMap.get(event.location) : null;
             let idx;
 
             if (candidates && candidates.length > 0) {
                 idx = candidates[0];
                 if (candidates.length > 1) {
                     for (let j = candidates.length - 1; j >= 0; j--) {
-                        if (
-                            segmentsAsc[candidates[j]].epoch <=
-                            eventEpoch + TOLERANCE_MS
-                        ) {
+                        if (segmentsAsc[candidates[j]].epoch <= eventEpoch + TOLERANCE_MS) {
                             idx = candidates[j];
                             break;
                         }
@@ -188,9 +196,7 @@ export function buildGameLogSessions(locationSegments, flatEvents) {
     }
 
     for (const seg of segmentsAsc) {
-        seg.events.sort(
-            (a, b) => toEpoch(a.created_at) - toEpoch(b.created_at)
-        );
+        seg.events.sort((a, b) => toEpoch(a.created_at) - toEpoch(b.created_at));
     }
 
     for (const seg of segmentsAsc) {
@@ -211,11 +217,7 @@ export function buildGameLogSessions(locationSegments, flatEvents) {
             for (let i = seg.events.length - 1; i >= 0; i--) {
                 const e = seg.events[i];
                 if (toEpoch(e.created_at) > windowEnd) continue;
-                if (
-                    e.type === 'OnPlayerLeft' &&
-                    e.userId &&
-                    joinedIds.has(e.userId)
-                ) {
+                if (e.type === 'OnPlayerLeft' && e.userId && joinedIds.has(e.userId)) {
                     seg.events.splice(i, 1);
                 }
             }
@@ -228,7 +230,7 @@ export function buildGameLogSessions(locationSegments, flatEvents) {
         deduplicateVideoPlay(seg.events);
     }
     for (const seg of segmentsAsc) seg.events.reverse();
-    const segments = segmentsAsc.reverse().map(({ epoch, ...rest }) => rest);
+    const segments = segmentsAsc.reverse().map(({ epoch: _epoch, ...rest }) => rest);
 
     return { segments };
 }

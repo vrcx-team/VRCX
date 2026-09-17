@@ -4,7 +4,6 @@ import { useResizeObserver } from '@vueuse/core';
 import configRepository from '../../../services/config.js';
 
 /**
- *
  * @param value
  * @param min
  * @param max
@@ -33,8 +32,7 @@ export function useAvatarCardGrid(options = {}) {
     const baseGap = options.baseGap ?? 12;
     const baseCardHeight = options.baseCardHeight ?? 200;
     const scaleConfigKey = options.scaleConfigKey ?? 'VRCX_MyAvatarsCardScale';
-    const spacingConfigKey =
-        options.spacingConfigKey ?? 'VRCX_MyAvatarsCardSpacing';
+    const spacingConfigKey = options.spacingConfigKey ?? 'VRCX_MyAvatarsCardSpacing';
 
     const cardScaleBase = ref(0.6);
     const cardSpacingBase = ref(1);
@@ -47,20 +45,13 @@ export function useAvatarCardGrid(options = {}) {
             containerWidth.value = 0;
             return;
         }
-        containerWidth.value = Math.max(
-            element.clientWidth ?? element.offsetWidth ?? 0,
-            0
-        );
+        containerWidth.value = Math.max(element.clientWidth ?? element.offsetWidth ?? 0, 0);
     };
 
     const cardScale = computed({
         get: () => cardScaleBase.value,
         set: (value) => {
-            const next = clamp(
-                Number(value) || 1,
-                scaleSlider.min,
-                scaleSlider.max
-            );
+            const next = clamp(Number(value) || 1, scaleSlider.min, scaleSlider.max);
             cardScaleBase.value = next;
             configRepository.setString(scaleConfigKey, String(next));
         }
@@ -69,20 +60,14 @@ export function useAvatarCardGrid(options = {}) {
     const cardSpacing = computed({
         get: () => cardSpacingBase.value,
         set: (value) => {
-            const next = clamp(
-                Number(value) || 1,
-                spacingSlider.min,
-                spacingSlider.max
-            );
+            const next = clamp(Number(value) || 1, spacingSlider.min, spacingSlider.max);
             cardSpacingBase.value = next;
             configRepository.setString(spacingConfigKey, String(next));
         }
     });
 
     const cardScalePercent = computed(() => Math.round(cardScale.value * 100));
-    const cardSpacingPercent = computed(() =>
-        Math.round(cardSpacing.value * 100)
-    );
+    const cardSpacingPercent = computed(() => Math.round(cardSpacing.value * 100));
 
     // Slider v-model helpers (shadcn Slider expects array)
     const cardScaleValue = computed({
@@ -112,18 +97,14 @@ export function useAvatarCardGrid(options = {}) {
         const width = Math.max(containerWidth.value, 0);
         const itemCount = Math.max(Number(count) || 0, 0);
         const safeCount = itemCount > 0 ? itemCount : 1;
-        const maxColumns =
-            width > 0
-                ? Math.max(1, Math.floor((width + gap) / (minWidth + gap)) || 1)
-                : 1;
+        const maxColumns = width > 0 ? Math.max(1, Math.floor((width + gap) / (minWidth + gap)) || 1) : 1;
         const columns = Math.max(1, Math.min(safeCount, maxColumns));
 
         // Stretch cards to fill available width
         let cardWidth = minWidth;
         if (itemCount >= maxColumns && columns > 0) {
             const columnsWidth = width - gap * (columns - 1);
-            const rawWidth =
-                columnsWidth > 0 ? columnsWidth / columns : minWidth;
+            const rawWidth = columnsWidth > 0 ? columnsWidth / columns : minWidth;
             if (Number.isFinite(rawWidth) && rawWidth > 0) {
                 cardWidth = Math.max(minWidth, rawWidth);
             }
@@ -132,8 +113,6 @@ export function useAvatarCardGrid(options = {}) {
         return { minWidth, gap, columns, cardWidth };
     };
 
-    /**
-     */
     const gridStyle = computed(() => {
         const scale = cardScale.value;
         const spacing = cardSpacing.value;
@@ -198,12 +177,7 @@ export function useAvatarCardGrid(options = {}) {
 
     useResizeObserver(gridContainerRef, (entries) => {
         const [entry] = entries;
-        containerWidth.value = Math.max(
-            entry?.contentRect?.width ??
-                gridContainerRef.value?.clientWidth ??
-                0,
-            0
-        );
+        containerWidth.value = Math.max(entry?.contentRect?.width ?? gridContainerRef.value?.clientWidth ?? 0, 0);
     });
 
     onBeforeMount(async () => {
@@ -215,20 +189,12 @@ export function useAvatarCardGrid(options = {}) {
 
             const parsedScale = parseFloat(storedScale);
             if (!Number.isNaN(parsedScale)) {
-                cardScaleBase.value = clamp(
-                    parsedScale,
-                    scaleSlider.min,
-                    scaleSlider.max
-                );
+                cardScaleBase.value = clamp(parsedScale, scaleSlider.min, scaleSlider.max);
             }
 
             const parsedSpacing = parseFloat(storedSpacing);
             if (!Number.isNaN(parsedSpacing)) {
-                cardSpacingBase.value = clamp(
-                    parsedSpacing,
-                    spacingSlider.min,
-                    spacingSlider.max
-                );
+                cardSpacingBase.value = clamp(parsedSpacing, spacingSlider.min, spacingSlider.max);
             }
         } catch (error) {
             console.error('Failed to load avatar card grid preferences', error);

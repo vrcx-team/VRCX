@@ -53,12 +53,9 @@ const moderation = {
     },
 
     deleteModeration(userId) {
-        sqliteService.executeNonQuery(
-            `DELETE FROM ${dbVars.userPrefix}_moderation WHERE user_id = @user_id`,
-            {
-                '@user_id': userId
-            }
-        );
+        sqliteService.executeNonQuery(`DELETE FROM ${dbVars.userPrefix}_moderation WHERE user_id = @user_id`, {
+            '@user_id': userId
+        });
     }
 };
 

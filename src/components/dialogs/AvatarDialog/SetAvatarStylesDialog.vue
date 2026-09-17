@@ -114,7 +114,6 @@
     );
 
     /**
-     *
      * @param patch
      */
     function updateDialog(patch) {
@@ -124,9 +123,6 @@
         });
     }
 
-    /**
-     *
-     */
     async function getAvatarStyles() {
         try {
             const ref = await queryRequest.fetch('avatarStyles');
@@ -146,16 +142,10 @@
         }
     }
 
-    /**
-     *
-     */
     function closeSetAvatarStylesDialog() {
         updateDialog({ visible: false });
     }
 
-    /**
-     *
-     */
     function saveSetAvatarStylesDialog() {
         const primaryStyleId =
             props.setAvatarStylesDialog.availableAvatarStylesMap.get(props.setAvatarStylesDialog.primaryStyle) || '';
