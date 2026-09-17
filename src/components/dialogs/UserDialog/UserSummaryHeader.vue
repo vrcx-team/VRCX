@@ -385,21 +385,17 @@
             </span>
         </div>
         <div class="text-xs flex justify-between gap-2">
-            <template v-if="hasAvatarSet">
+            <template v-if="avatarImageUrl">
                 <AvatarInfo
-                    :key="userDialog.id"
-                    :imageurl="userDialog.ref.currentAvatarImageUrl || userDialog.publicProfileRef?.iconUrl"
+                    :key="avatarImageUrl"
+                    :imageurl="avatarImageUrl"
                     :userid="userDialog.id"
                     :avatartags="userDialog.ref.currentAvatarTags"
                     style="display: inline-block" />
                 <img
                     class="h-12 w-16 rounded-lg object-cover cursor-pointer flex-none"
-                    :src="userDialog.ref.currentAvatarImageUrl || userDialog.publicProfileRef?.iconUrl"
-                    @click="
-                        showFullscreenImageDialog(
-                            userDialog.ref.currentAvatarImageUrl || userDialog.publicProfileRef?.iconUrl
-                        )
-                    "
+                    :src="avatarImageUrl"
+                    @click="showFullscreenImageDialog(avatarImageUrl)"
                     loading="lazy" />
             </template>
             <template v-else>
@@ -475,7 +471,7 @@
         MessageCircle,
         User
     } from 'lucide-vue-next';
-    import { ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
@@ -530,26 +526,21 @@
     const profileImageError = ref(false);
     const userIconError = ref(false);
     const hasAvatarSet = ref(false);
+    const avatarImageUrl = computed(() => {
+        if (userDialog.value.id === currentUser.value.id) {
+            return currentUser.value.currentAvatarImageUrl;
+        }
+
+        return hasAvatarSet.value ? userDialog.value.publicProfileRef?.iconUrl : '';
+    });
 
     watch(
-        [
-            () => userDialog.value.id,
-            () => userDialog.value.ref.currentAvatarImageUrl,
-            () => userDialog.value.publicProfileRef?.iconUrl
-        ],
-        async ([userId, currentAvatarImageUrl, iconUrl]) => {
-            if (currentAvatarImageUrl) {
-                hasAvatarSet.value = true;
-                return;
-            }
-
+        () => userDialog.value.publicProfileRef?.iconUrl,
+        async ([iconUrl]) => {
             hasAvatarSet.value = false;
+            // check if image is from an avatar
             const avatarInfo = await getAvatarName(iconUrl);
-            if (
-                userId === userDialog.value.id &&
-                iconUrl === userDialog.value.publicProfileRef?.iconUrl &&
-                !userDialog.value.ref.currentAvatarImageUrl
-            ) {
+            if (iconUrl === userDialog.value.publicProfileRef?.iconUrl) {
                 hasAvatarSet.value = Boolean(avatarInfo.ownerId);
             }
         },
