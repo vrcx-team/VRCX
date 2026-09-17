@@ -4,6 +4,10 @@
     "common": {
         "no_data": "No data",
         "no_matching_records": "No matching records",
+        "tabs": {
+            "scroll_left": "Scroll tabs left",
+            "scroll_right": "Scroll tabs right"
+        },
         "feature_relocated": {
             "title": "Deprecation Notice",
             "description": "This feature will be removed in a future update. Please use {feature} instead."
