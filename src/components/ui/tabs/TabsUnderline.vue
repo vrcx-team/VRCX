@@ -92,7 +92,8 @@
         // Account for removed pl-2 (or its extra inset over pill p-1) to avoid overflow flicker.
         const removedPadding =
             background.value && hasOverflow.value
-                ? parseFloat(getComputedStyle(document.documentElement).fontSize) * (variant.value === 'pill' ? 0.25 : 0.5)
+                ? parseFloat(getComputedStyle(document.documentElement).fontSize) *
+                  (variant.value === 'pill' ? 0.25 : 0.5)
                 : 0;
         // Compare against the whole header, not the space left by the arrows.
         hasOverflow.value =

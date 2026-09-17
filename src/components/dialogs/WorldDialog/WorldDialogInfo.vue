@@ -107,7 +107,9 @@
                                 <ChevronDown class="size-3" />
                             </TooltipWrapper>
                         </span>
-                        <TooltipWrapper side="right" :content="formatDateFilter(worldDialog.ref.publicationDate, 'long')">
+                        <TooltipWrapper
+                            side="right"
+                            :content="formatDateFilter(worldDialog.ref.publicationDate, 'long')">
                             <span class="truncate text-right text-muted-foreground">
                                 {{ timeAgo(worldDialog.ref.publicationDate) }}
                             </span>

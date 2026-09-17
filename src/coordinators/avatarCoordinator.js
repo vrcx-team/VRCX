@@ -235,7 +235,7 @@ export function promptClearAvatarHistory() {
 
 /**
  * @param {string} imageUrl
- * @returns {Promise<{ownerId: string, avatarName: string, fileCreatedAt?: string}>}
+ * @returns {Promise<{ ownerId: string; avatarName: string; fileCreatedAt?: string }>}
  */
 export async function getAvatarName(imageUrl) {
     const avatarStore = useAvatarStore();
