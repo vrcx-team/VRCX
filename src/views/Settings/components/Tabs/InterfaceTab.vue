@@ -170,6 +170,38 @@
                     :ariaLabel="t('view.settings.appearance.user_dialog.vrcx_memos')"
                     @update:modelValue="setHideUserMemos" />
             </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.appearance.user_dialog.show_last_known_location')"
+                :description="t('view.settings.appearance.user_dialog.show_last_known_location_description')">
+                <Switch
+                    :model-value="showLastKnownLocation"
+                    :ariaLabel="t('view.settings.appearance.user_dialog.show_last_known_location')"
+                    @update:modelValue="setShowLastKnownLocation" />
+            </SettingsItem>
+
+            <SettingsItem
+                :label="t('view.settings.appearance.user_dialog.last_known_location_max_age')"
+                :description="t('view.settings.appearance.user_dialog.last_known_location_max_age_description')">
+                <Select
+                    :model-value="lastKnownLocationMaxAge"
+                    :disabled="!showLastKnownLocation"
+                    @update:modelValue="setLastKnownLocationMaxAge">
+                    <SelectTrigger class="w-36">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem
+                                v-for="option in LAST_KNOWN_LOCATION_MAX_AGE_OPTIONS"
+                                :key="option"
+                                :value="option">
+                                {{ t(`view.settings.appearance.user_dialog.last_known_location_max_age_${option}`) }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </SettingsItem>
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.appearance.display.header')">
@@ -481,6 +513,8 @@
     import SettingsGroup from '../SettingsGroup.vue';
     import SettingsItem from '../SettingsItem.vue';
 
+    const LAST_KNOWN_LOCATION_MAX_AGE_OPTIONS = ['0', '5', '30', '60', '360', '720'];
+
     const { t } = useI18n();
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -505,6 +539,8 @@
         weekStartsOn,
         hideUserNotes,
         hideUserMemos,
+        showLastKnownLocation,
+        lastKnownLocationMaxAge,
         hideUnfriends,
         randomUserColours,
         trustColor,
@@ -531,6 +567,8 @@
         setWeekStartsOn,
         setHideUserNotes,
         setHideUserMemos,
+        setShowLastKnownLocation,
+        setLastKnownLocationMaxAge,
         setHideUnfriends,
         updateTrustColor,
         changeAppLanguage,
