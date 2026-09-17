@@ -16,7 +16,7 @@
                     </span>
                 </div>
                 <TooltipWrapper
-                    side="top"
+                    side="right"
                     :content="formatDateFilter(worldDialog.ref.created_at, 'long')"
                     :disabled="!worldDialog.ref.created_at">
                     <div class="flex items-start justify-between gap-2 text-xs">
@@ -29,7 +29,7 @@
                 <div class="flex items-start justify-between gap-2 text-xs">
                     <span class="inline-flex items-center text-muted-foreground shrink-0">
                         {{ t('dialog.world.info.last_updated') }}
-                        <TooltipWrapper v-if="Object.keys(worldDialog.fileAnalysis).length" side="top">
+                        <TooltipWrapper v-if="Object.keys(worldDialog.fileAnalysis).length" side="right">
                             <template #content>
                                 <template
                                     v-for="(created_at, platform) in worldDialogPlatformCreatedAt"
@@ -44,7 +44,7 @@
                         </TooltipWrapper>
                     </span>
                     <TooltipWrapper
-                        side="top"
+                        side="right"
                         :content="formatDateFilter(worldDialog.ref.updated_at, 'long')"
                         :disabled="!worldDialog.ref.updated_at">
                         <span class="truncate text-right text-muted-foreground">
@@ -59,7 +59,7 @@
                         ({{ commaNumber(worldDialog.ref.capacity) }})
                     </span>
                 </div>
-                <TooltipWrapper side="top" :content="worldTags" :disabled="!worldTags">
+                <TooltipWrapper side="right" :content="worldTags" :disabled="!worldTags">
                     <div class="flex items-start justify-between gap-2 text-xs">
                         <span class="text-muted-foreground shrink-0">{{ t('dialog.world.info.author_tags') }}</span>
 
@@ -84,7 +84,7 @@
                     </div>
                     <TooltipWrapper
                         v-if="worldDialog.ref.labsPublicationDate !== 'none'"
-                        side="top"
+                        side="right"
                         :content="formatDateFilter(worldDialog.ref.labsPublicationDate, 'long')">
                         <div class="flex items-start justify-between gap-2 text-xs">
                             <span class="text-muted-foreground shrink-0">
@@ -100,14 +100,14 @@
                         class="flex items-start justify-between gap-2 text-xs">
                         <span class="inline-flex items-center text-muted-foreground shrink-0">
                             {{ t('dialog.world.info.publication_date') }}
-                            <TooltipWrapper v-if="isTimeInLabVisible" side="top">
+                            <TooltipWrapper v-if="isTimeInLabVisible" side="right">
                                 <template #content>
                                     {{ t('dialog.world.info.time_in_labs') }} {{ timeInLab }}
                                 </template>
                                 <ChevronDown class="size-3" />
                             </TooltipWrapper>
                         </span>
-                        <TooltipWrapper side="top" :content="formatDateFilter(worldDialog.ref.publicationDate, 'long')">
+                        <TooltipWrapper side="right" :content="formatDateFilter(worldDialog.ref.publicationDate, 'long')">
                             <span class="truncate text-right text-muted-foreground">
                                 {{ timeAgo(worldDialog.ref.publicationDate) }}
                             </span>
@@ -129,7 +129,7 @@
                         <span class="text-muted-foreground shrink-0">{{ t('dialog.world.info.version') }}</span>
                         <span class="text-right text-muted-foreground" v-text="worldDialog.ref.version" />
                     </div>
-                    <TooltipWrapper side="top" :content="worldDialogPlatform" :disabled="!worldDialogPlatform">
+                    <TooltipWrapper side="right" :content="worldDialogPlatform" :disabled="!worldDialogPlatform">
                         <div class="flex items-start justify-between gap-2 text-xs">
                             <span class="text-muted-foreground shrink-0">{{ t('dialog.world.info.platform') }}</span>
                             <span class="block max-w-25 truncate whitespace-nowrap text-right text-muted-foreground">
@@ -157,7 +157,7 @@
             </div>
             <div class="flex flex-col gap-1.5">
                 <TooltipWrapper
-                    side="top"
+                    side="right"
                     :content="formatDateFilter(worldDialog.lastVisit, 'long')"
                     :disabled="!worldDialog.lastVisit">
                     <div class="flex items-start justify-between gap-2 text-xs">
@@ -167,7 +167,7 @@
                         </span>
                     </div>
                 </TooltipWrapper>
-                <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
+                <TooltipWrapper side="right" :content="t('dialog.user.info.open_previous_instance')">
                     <div
                         class="flex items-start justify-between gap-2 text-xs cursor-pointer"
                         @click="showPreviousInstancesListDialog(worldDialog.ref)">
@@ -180,7 +180,7 @@
                     </div>
                 </TooltipWrapper>
                 <TooltipWrapper
-                    side="top"
+                    side="right"
                     :content="timeToText(worldDialog.timeSpent, true)"
                     :disabled="!worldDialog.lastVisit">
                     <div class="flex items-start justify-between gap-2 text-xs">

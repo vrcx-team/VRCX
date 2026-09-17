@@ -235,7 +235,7 @@
                             {{ t('dialog.user.info.vrcx_info') }}
                             <span
                                 class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                                <TooltipWrapper side="top" :content="t('dialog.user.info.vrcx_info_tooltip')">
+                                <TooltipWrapper side="right" :content="t('dialog.user.info.vrcx_info_tooltip')">
                                     <Info class="h-3 w-3 shrink-0" :style="{ color: userDialog.theme.iconColor }" />
                                 </TooltipWrapper>
                             </span>
@@ -243,7 +243,7 @@
                     </div>
                     <div class="flex flex-col gap-1.5">
                         <TooltipWrapper
-                            side="top"
+                            side="right"
                             :content="formatDateFilter(userOnlineForTimestamp(userDialog), 'long')"
                             :disabled="!userOnlineForTimestamp(userDialog)">
                             <template #content>
@@ -265,7 +265,7 @@
 
                         <template v-if="currentUser.id !== userDialog.id">
                             <TooltipWrapper
-                                side="top"
+                                side="right"
                                 :disabled="!userDialog.lastSeen"
                                 :content="formatDateFilter(userDialog.lastSeen, 'long')">
                                 <div class="flex justify-between items-start gap-2 text-xs">
@@ -277,7 +277,7 @@
                                     }}</span>
                                 </div>
                             </TooltipWrapper>
-                            <TooltipWrapper side="top" :disabled="userDialog.dateFriendedInfo.length === 0">
+                            <TooltipWrapper side="right" :disabled="userDialog.dateFriendedInfo.length === 0">
                                 <template #content>
                                     <template v-if="userDialog.dateFriendedInfo.length === 1">
                                         {{ formatDateFilter(userDialog.dateFriended, 'long') }}
@@ -303,7 +303,7 @@
                                 </div>
                             </TooltipWrapper>
                             <TooltipWrapper
-                                side="top"
+                                side="right"
                                 :content="timeToText(userDialog.timeSpent, true)"
                                 :disabled="!userDialog.timeSpent">
                                 <div class="flex justify-between items-start gap-2 text-xs">
@@ -315,7 +315,7 @@
                                     }}</span>
                                 </div>
                             </TooltipWrapper>
-                            <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
+                            <TooltipWrapper side="right" :content="t('dialog.user.info.open_previous_instance')">
                                 <div
                                     class="flex justify-between items-start gap-2 text-xs cursor-pointer hover:text-foreground"
                                     @click="showPreviousInstancesListDialog(userDialog.ref)">
@@ -329,7 +329,7 @@
                             </TooltipWrapper>
                         </template>
                         <template v-else>
-                            <TooltipWrapper side="top" :content="t('dialog.user.info.open_previous_instance')">
+                            <TooltipWrapper side="right" :content="t('dialog.user.info.open_previous_instance')">
                                 <div
                                     class="flex justify-between items-start gap-2 text-xs cursor-pointer hover:text-foreground"
                                     @click="showPreviousInstancesListDialog(userDialog.ref)">
@@ -352,7 +352,7 @@
                         {{ t('dialog.user.info.header') }}
                     </div>
                     <div class="flex flex-col gap-1.5">
-                        <TooltipWrapper side="top">
+                        <TooltipWrapper side="right">
                             <template #content>
                                 <span
                                     >{{ t('dialog.user.info.last_login') }}
@@ -375,7 +375,7 @@
                         </TooltipWrapper>
 
                         <TooltipWrapper
-                            side="top"
+                            side="right"
                             :content="formatDateFilter(userDialog.ref.date_joined, 'date')"
                             :disabled="!userDialog.ref.date_joined">
                             <div class="flex justify-between items-start gap-2 text-xs">
@@ -389,7 +389,7 @@
                         </TooltipWrapper>
 
                         <template v-if="currentUser.id === userDialog.id">
-                            <TooltipWrapper side="top">
+                            <TooltipWrapper side="right">
                                 <template #content>
                                     <span>{{ t('view.profile.profile.refresh') }}</span>
                                 </template>

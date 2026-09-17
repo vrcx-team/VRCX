@@ -379,7 +379,7 @@
             :style="{ color: userDialog.theme.subtextColor }">
             {{ t('dialog.user.info.avatar_info') }}
             <span class="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                <TooltipWrapper v-if="!hasAvatarSet" side="top" :content="t('dialog.user.info.icon_hides_avatar')">
+                <TooltipWrapper v-if="!hasAvatarSet" side="right" :content="t('dialog.user.info.icon_hides_avatar')">
                     <Info class="inline-block h-3 w-3 align-middle" :style="{ color: userDialog.theme.iconColor }" />
                 </TooltipWrapper>
             </span>

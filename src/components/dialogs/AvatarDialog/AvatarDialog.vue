@@ -338,7 +338,7 @@
                     </div>
                     <div class="flex flex-col gap-1.5">
                         <TooltipWrapper
-                            side="top"
+                            side="right"
                             :content="formatDateFilter(avatarDialog.ref.created_at, 'long')"
                             :disabled="!avatarDialog.ref.created_at">
                             <div class="flex justify-between items-start gap-2 text-xs">
@@ -351,7 +351,7 @@
                             </div>
                         </TooltipWrapper>
                         <TooltipWrapper
-                            side="top"
+                            side="right"
                             :content="formatDateFilter(avatarDialog.ref.updated_at, 'long')"
                             :disabled="!avatarDialog.ref.updated_at">
                             <div class="flex justify-between items-start gap-2 text-xs">
@@ -363,7 +363,7 @@
                                 }}</span>
                             </div>
                         </TooltipWrapper>
-                        <TooltipWrapper side="top" :content="avatarTags" :disabled="!avatarTags">
+                        <TooltipWrapper side="right" :content="avatarTags" :disabled="!avatarTags">
                             <div class="flex items-start justify-between gap-2 text-xs">
                                 <span class="text-muted-foreground shrink-0">{{ t('dialog.avatar.info.tags') }}</span>
                                 <span class="max-w-30 truncate text-right text-muted-foreground">
@@ -375,7 +375,7 @@
                             <span class="text-muted-foreground shrink-0">{{ t('dialog.avatar.info.version') }}</span>
                             <span class="text-right text-muted-foreground">{{ avatarDialog.ref.version || '—' }}</span>
                         </div>
-                        <TooltipWrapper side="top" :content="avatarDialogPlatform" :disabled="!avatarDialogPlatform">
+                        <TooltipWrapper side="right" :content="avatarDialogPlatform" :disabled="!avatarDialogPlatform">
                             <div class="flex items-start justify-between gap-2 text-xs">
                                 <span class="text-muted-foreground shrink-0">{{
                                     t('dialog.avatar.info.platform')
@@ -394,7 +394,7 @@
                         <span
                             class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
                             {{ t('dialog.user.info.vrcx_info') }}
-                            <TooltipWrapper side="top" :content="t('dialog.user.info.vrcx_info_tooltip')">
+                            <TooltipWrapper side="right" :content="t('dialog.user.info.vrcx_info_tooltip')">
                                 <Info class="h-3 w-3 shrink-0" />
                             </TooltipWrapper>
                         </span>
