@@ -1,18 +1,18 @@
 ###############################################################################
-# Set default behavior to automatically normalize line endings.
+# Normalize text to LF by default, with CRLF for Windows-specific files.
 ###############################################################################
-* text=auto eol=crlf
+* text=auto eol=lf
 
 # general files
 *.cmd                       text eol=crlf
 *.bat                       text eol=crlf
-*.yaml                      text eol=crlf
-*.yml                       text eol=crlf
-*.md                        text eol=crlf
-*.txt                       text eol=crlf
 *.nsi                       text eol=crlf
 *.nsh                       text eol=crlf
-*.json                      text eol=crlf
+*.yaml                      text eol=lf
+*.yml                       text eol=lf
+*.md                        text eol=lf
+*.txt                       text eol=lf
+*.json                      text eol=lf
 
 # dotnet files
 *.cs                        text eol=crlf
@@ -23,32 +23,32 @@
 *.resx                      text eol=crlf
 
 # config files
-.git-blame-ignore-revs      text eol=crlf
-.editorconfig               text eol=crlf
-.gitignore                  text eol=crlf
-.npmrc                      text eol=crlf
+.git-blame-ignore-revs      text eol=lf
+.editorconfig               text eol=lf
+.gitignore                  text eol=lf
+.npmrc                      text eol=lf
 
 # VRCX specific
-Version                     text eol=crlf
+Version                     text eol=lf
 
 # linux specific
-*.sh                        text eol=crlf
+*.sh                        text eol=lf
 
 # cross platform
-*.ps1                       text eol=crlf
+*.ps1                       text eol=lf
 
 # web files
-*.js        text eol=crlf
-*.mjs       text eol=crlf
-*.cjs       text eol=crlf
-*.jsx       text eol=crlf
-*.ts        text eol=crlf
-*.mts       text eol=crlf
-*.tsx       text eol=crlf
-*.html      text eol=crlf
-*.vue       text eol=crlf
-*.css       text eol=crlf
-*.svg       text eol=crlf
+*.js        text eol=lf
+*.mjs       text eol=lf
+*.cjs       text eol=lf
+*.jsx       text eol=lf
+*.ts        text eol=lf
+*.mts       text eol=lf
+*.tsx       text eol=lf
+*.html      text eol=lf
+*.vue       text eol=lf
+*.css       text eol=lf
+*.svg       text eol=lf
 
 # binary files
 *.png   binary
