@@ -13,7 +13,11 @@
     <template v-if="userDialog.userFavoriteWorlds && userDialog.userFavoriteWorlds.length > 0">
         <div class="flex h-full min-h-0 flex-col overflow-hidden p-2 rounded-xl bg-(--profile-card)">
             <div class="pb-2">
-                <Input v-model="searchQuery" class="h-8 w-40 shrink-0" placeholder="Search worlds" @click.stop />
+                <Input
+                    v-model="searchQuery"
+                    class="h-8 w-40 shrink-0"
+                    :placeholder="t('dialog.user.favorite_worlds.search_placeholder')"
+                    @click.stop />
             </div>
             <template v-if="searchActive">
                 <div class="min-h-0 flex-1 overflow-auto">
@@ -111,11 +115,14 @@
     import { DataTableEmpty } from '@/components/ui/data-table';
     import { TabsUnderline } from '@/components/ui/tabs';
     import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
 
     import { useFavoriteStore, useUserStore } from '../../../stores';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { handleFavoriteWorldList } from '../../../coordinators/favoriteCoordinator';
     import { favoriteRequest } from '../../../api';
+
+    const { t } = useI18n();
 
     const { userDialog } = storeToRefs(useUserStore());
     const { favoriteLimits } = storeToRefs(useFavoriteStore());

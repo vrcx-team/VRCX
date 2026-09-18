@@ -19,7 +19,7 @@
                     :model-value="worldExportFavoriteGroupSelection"
                     @update:modelValue="handleWorldExportGroupSelect">
                     <SelectTrigger size="sm">
-                        <SelectValue placeholder="All Favorites" />
+                        <SelectValue :placeholder="t('dialog.world_export.all_favorites')" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
@@ -39,7 +39,7 @@
                     :model-value="worldExportLocalFavoriteGroupSelection"
                     @update:modelValue="handleWorldExportLocalGroupSelect">
                     <SelectTrigger size="sm">
-                        <SelectValue placeholder="Select Group" />
+                        <SelectValue :placeholder="t('dialog.world_export.select_group')" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>

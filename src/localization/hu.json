@@ -1311,7 +1311,8 @@
                         "filter_favorites": "Kedvencek",
                         "filter_friends": "Barátok",
                         "filter_everyone": "Mindenki",
-                        "message_timeout": "Üzenet időtúllépése"
+                        "message_timeout": "Üzenet időtúllépése",
+                        "type_filter_placeholder": "Szűrés"
                     },
                     "timeout_hud": {
                         "header": "Felhasználói időtúllépés HUD",
@@ -1468,6 +1469,7 @@
             "groups": {
                 "header": "Csoportok",
                 "total_count": "Összesen {count}",
+                "search_placeholder": "Csoportok keresése",
                 "sort_by": "Rendezés:",
                 "edit_mode": "Szerkesztési mód",
                 "exit_edit_mode": "Szerkesztési mód kilépése",
@@ -1487,6 +1489,7 @@
             "worlds": {
                 "header": "Világok",
                 "total_count": "Összesen {count}",
+                "search_placeholder": "Világok keresése",
                 "sort_by": "Rendezés:",
                 "order_by": "Sorrend:",
                 "sorting": {
@@ -1502,11 +1505,13 @@
                 }
             },
             "favorite_worlds": {
-                "header": "Kedvenc világok"
+                "header": "Kedvenc világok",
+                "search_placeholder": "Világok keresése"
             },
             "avatars": {
                 "header": "Avatarok",
                 "total_count": "Összesen {count}",
+                "search_placeholder": "Avatarok keresése",
                 "sort_by": "Rendezés:",
                 "sort_by_name": "Név",
                 "sort_by_update": "Frissítve",
@@ -1521,6 +1526,7 @@
             },
             "mutual_friends": {
                 "header": "Közös barátok",
+                "search_placeholder": "Barátok keresése",
                 "sorting": {
                     "alphabetical": "Betűrend",
                     "last_active": "Utolsó aktivitás",
@@ -2198,7 +2204,9 @@
             "send": "Küldés"
         },
         "world_export": {
-            "header": "Kedvenc világok exportálása"
+            "header": "Kedvenc világok exportálása",
+            "all_favorites": "Összes kedvenc",
+            "select_group": "Csoport kiválasztása"
         },
         "world_import": {
             "header": "Kedvenc világok importálása",
@@ -2215,7 +2223,9 @@
             "clear_errors": "Hibák törlése"
         },
         "avatar_export": {
-            "header": "Kedvenc avatarok exportálása"
+            "header": "Kedvenc avatarok exportálása",
+            "all_favorites": "Összes kedvenc",
+            "select_group": "Csoport kiválasztása"
         },
         "avatar_import": {
             "header": "Kedvenc avatarok importálása",
@@ -2231,7 +2241,9 @@
             "clear_errors": "Hibák törlése"
         },
         "friend_export": {
-            "header": "Kedvenc barátok exportálása"
+            "header": "Kedvenc barátok exportálása",
+            "all_favorites": "Összes kedvenc",
+            "select_group": "Csoport kiválasztása"
         },
         "friend_import": {
             "header": "Kedvenc barátok importálása",
@@ -2284,6 +2296,7 @@
             "stickers": "Matricák",
             "prints": "Nyomatok",
             "inventory": "Leltár",
+            "all_types": "Összes típus",
             "refresh": "Frissítés",
             "upload": "Feltöltés",
             "clear": "Törlés",
