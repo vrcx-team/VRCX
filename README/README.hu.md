@@ -17,42 +17,51 @@ A VRCX egy kiegészítő program VRChat-hez, ami segít különféle dolgokat el
 
 Töltsd le és telepítsd a legfrissebb telepítőt (`VRCX_Setup.exe`) [innen](https://github.com/vrcx-team/VRCX/releases/latest).
 
+macOS-hez és Linuxhoz [itt](https://github.com/vrcx-team/VRCX/wiki/Running-VRCX-on-Linux) találsz további információt.
+
+Béta/nightly build [itt](https://vrcx.app/github/nightly) érhető el, vagy az alkalmazáson belül: `Beállítások -> Általános -> Build váltása`.
+
 # Mire jó?
 
 <div align="left">
 
 - :family: Barátok, világok és avatarok kezelése
-  - Kezeld a baráti listádat, a kedvenc világjaidat, csoportjaidat és avatárjaidat anélkül, hogy megnyitnád a VRChat-et.
-  - Kövesd nyomon, hogy a barátaid mit csinálnak éppen: hol járnak és milyen avatárt viselnek.
-  - Láthatod, mikor adtad hozzá őket és mikor láttad őket utoljára.
-  - Megnézheted, mennyi időt töltöttetek együtt különböző világokban és hányszor találkoztatok.
-  - Követi, ha valaki nevet vált.
-  - Írj magadnak feljegyzéseket, hogy emlékezz, hogyan találkoztatok.
-- :electric_plug: Programok automatikus indítása VRChat mellé
-  - Beállíthatod, hogy a VRCX elindítson más programokat is, amikor megnyitod a VRChat-et.
-  - Például automatikusan elindíthat egy OSC-alkalmazást vagy hangváltót, amikor elindítod a játékot.
-- :mag: Avatárok, felhasználók, világok és csoportok keresése
-- :earth_americas: Saját kedvencek lista, ami nincs korlátozva úgy, mint a játékban
+  - Kezeld a baráti listádat, a világ-, csoport- és avatárlistáidat anélkül, hogy megnyitnád a VRChat-et.
+  - Kövesd nyomon a barátaid aktivitását: hogy online vannak-e, hol járnak és milyen avatárt viselnek.
+  - Láthatod a barátság előzményeit: mikor adtad hozzá őket, mennyi időt töltöttetek együtt és mikor váltottak nevet.
+  - Írj magadnak jegyzeteket és feljegyzéseket, hogy emlékezz, hogyan találkoztatok.
+- :bar_chart: Testreszabható irányítópult widgetekkel
+  - Állíts össze saját, többpaneles elrendezéseket Hírfolyam-, Játéknapló- és Szoba-widgetekből.
+  - Több irányítópultot is létrehozhatsz, mindegyikhez külön eseményszűrőkkel és oszlopbeállításokkal.
+- :mag: Hatékony keresés minden tartalomban
+  - Keress felhasználókra, világokra, avatárokra és csoportokra, vagy illessz be azonosítót vagy linket a közvetlen megnyitáshoz.
+  - A gyorskeresés azonnali, helyi „fuzzy" keresést nyújt a barátaid, avatárjaid, világaid és csoportjaid között.
+- :chart_with_upwards_trend: Aktivitási hőtérkép
+  - Jelenítsd meg egy felhasználó online aktivitásának mintázatát hét napja × napszak bontású hőtérképen, a csúcsidőszakok statisztikáival együtt.
 - :camera: Elmenti a világ adatait a játékban készített képekbe, hogy visszanézhess és megtaláld azt a helyet, ahol azokat a menő fotókat csináltad... mondjuk 6 hónappal ezelőtt!
 - :bell: Értesítések kezelése
-  - Meghívókat és barátkéréseket küldhetsz és fogadhatsz közvetlenül a VRCX-ből, és láthatod a kapott meghívók részleteit is.
+  - Meghívókat és barátkéréseket küldhetsz és fogadhatsz közvetlenül a VRCX-ből, és láthatod a kapott meghívók szobaadatait is.
 - :scroll: Megnézheted az aktuális szobád (instance) statisztikáit és a jelenlévő játékosokat
 - :tv: Láthatod a linkeket azokhoz a videókhoz, amik éppen mennek a világban, ahol vagy, meg egyéb naplózott adatokat.
+- :performing_arts: Állapot-sablonok
+  - Mentsd el és alkalmazd gyorsan a kedvenc állapot + állapotleírás párosaidat az oldalsávból vagy a felhasználói ablakból.
+- :rotating_light: VRChat szerverállapot
+  - Az állapotsávban megjelenő jelzés és a bejelentkezési oldal figyelmeztetése valós időben tájékoztat a VRChat szerverproblémáiról és kimaradásairól.
 - :bar_chart: Fejlettebb Discord-jelenlét (Rich Presence)
-  - Opcionálisan több információt is megjeleníthetsz a Discord-profilodon arról, hogy éppen mit csinálsz VRChat-ben.
-  - Támogatja a népszerű világokat, mint a PyPyDance, LSMedia, Movies&Chill és VRDancing.
-  - Megjelenítheti a világ képét, nevét, a szoba azonosítóját és a játékosok számát – attól függően, hogyan állítod be, és hogy a szoba nyilvános-e. Nyilvános szobákhoz még egy „Csatlakozás" gombot is hozzáadhatsz!
+  - Részletes szobaadatokat jelenít meg a Discordon: a világ képét, nevét, a játékosok számát, és egy csatlakozás gombot a nyilvános szobákhoz.
 - :crystal_ball: VR-overlay, ami élőben mutat mindenfajta eseményt és értesítést, amit te állítasz be.
-- :outbox_tray: Avatar- és világképek feltöltése Unity nélkül
-- :page_facing_up: A feltöltött avatarok és világok adatainak szerkesztése Unity nélkül
+- :outbox_tray: Avatar- és világképek, valamint azok adatainak feltöltése és kezelése Unity nélkül
+- :electric_plug: Programok automatikus indítása VRChat mellé
 - :skull: Ha a VRChat összeomlik, a VRCX automatikusan újraindítja és visszavisz az előző szobádba.
-- :left_right_arrow: Kedvenc csoportok exportálása és importálása
+- :left_right_arrow: Adatok exportálása és importálása
+  - Exportáld a baráti listádat, az avatárlistádat, a Discord-neveket, a jegyzeteket és a kedvenc csoportokat. Importálhatod a kedvenc csoportokat és a csoportmoderációs kitiltásokat.
 
 ## Egyéb dolgok
 
 - Más kinézetet szeretnél a VRCX-nek? Nézd meg a [Témákat](https://github.com/vrcx-team/VRCX/wiki/Themes)!
 - Ha magad szeretnéd lefordítani a forráskódból, lásd: [Fordítás forrásból](https://github.com/vrcx-team/VRCX/wiki/Building-from-source).
 - Ha Linuxon szeretnéd futtatni a VRCX-et, erre [itt](https://github.com/vrcx-team/VRCX/wiki/Running-VRCX-on-Linux) találsz útmutatót.
+- Szeretnél hozzájárulni a fejlesztéshez? Az irányelveket a [CONTRIBUTING.md](/.github/CONTRIBUTING.md) fájlban találod.
 
 # Képernyőképek
 
