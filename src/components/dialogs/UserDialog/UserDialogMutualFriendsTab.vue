@@ -17,7 +17,11 @@
                 </span>
             </div>
             <div style="display: flex; align-items: center">
-                <Input v-model="searchQuery" class="h-8 w-40 mr-2" placeholder="Search friends" @click.stop />
+                <Input
+                    v-model="searchQuery"
+                    class="h-8 w-40 mr-2"
+                    :placeholder="t('dialog.user.mutual_friends.search_placeholder')"
+                    @click.stop />
                 <span style="margin-right: 6px">{{ t('dialog.user.groups.sort_by') }}</span>
                 <Select
                     :model-value="userDialogMutualFriendSortingKey"

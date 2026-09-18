@@ -19,11 +19,13 @@
                     :model-value="avatarExportFavoriteGroupSelection"
                     @update:modelValue="handleAvatarExportFavoriteGroupSelect">
                     <SelectTrigger size="sm">
-                        <SelectValue placeholder="All Favorites" />
+                        <SelectValue :placeholder="t('dialog.avatar_export.all_favorites')" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem :value="AVATAR_EXPORT_ALL_VALUE">All Favorites</SelectItem>
+                            <SelectItem :value="AVATAR_EXPORT_ALL_VALUE">{{
+                                t('dialog.avatar_export.all_favorites')
+                            }}</SelectItem>
                             <SelectItem
                                 v-for="groupAPI in favoriteAvatarGroups"
                                 :key="groupAPI.name"
@@ -39,7 +41,7 @@
                     :model-value="avatarExportLocalFavoriteGroupSelection"
                     @update:modelValue="handleAvatarExportLocalFavoriteGroupSelect">
                     <SelectTrigger size="sm">
-                        <SelectValue placeholder="Select Group" />
+                        <SelectValue :placeholder="t('dialog.avatar_export.select_group')" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
