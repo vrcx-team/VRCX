@@ -1,0 +1,103 @@
+name: Insights Windows Preview
+on:
+  push:
+    branches: [codex/local-activity-dashboard-20260920]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: insights-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - name: Apply reviewed integration and verify idempotence
+        shell: pwsh
+        run: |
+          node build-scripts/apply-local-insights.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $first = git diff --binary | Out-String
+          node build-scripts/apply-local-insights.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $second = git diff --binary | Out-String
+          if ($first -cne $second) { throw 'Integration is not idempotent' }
+          New-Item -ItemType Directory test-results -Force | Out-Null
+          $second | Set-Content test-results/applied-integration.diff -Encoding utf8
+      - name: Analysis and read-only adapter tests
+        shell: pwsh
+        run: |
+          node --test tests/local-insights/analytics.test.mjs tests/local-insights/reader.test.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node tests/local-insights/run-report.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Install locked frontend dependencies
+        run: npm ci
+      - name: Mounted Vue component tests
+        run: npx vitest run --config tests/local-insights/vitest.config.mjs --reporter=default --reporter=json --outputFile=test-results/ui-tests.json
+      - name: Build production frontend
+        run: npm run prod
+      - name: Build Windows application
+        run: dotnet build Dotnet/VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true '-t:Restore;Clean;Build' -m -a x64 --self-contained
+      - name: Stage isolated package and verified Microsoft runtime
+        shell: pwsh
+        run: |
+          if (!(Test-Path build/Cef/VRCX-Insights.exe)) { throw 'Missing renamed executable' }
+          if (Test-Path build/Cef/VRCX.exe) { throw 'Unexpected official executable' }
+          robocopy build/Cef build/InsightsPackage /E /XJ /XF *.pdb *.log
+          if ($LASTEXITCODE -gt 7) { throw 'Package copy failed' }
+          $global:LASTEXITCODE = 0
+          New-Item -ItemType Directory build/InsightsPackage/html -Force | Out-Null
+          Copy-Item build/html/* build/InsightsPackage/html/ -Recurse -Force
+          Copy-Item LICENSE build/InsightsPackage/LICENSE.txt
+          Copy-Item docs/LOCAL_INSIGHTS_TESTING.md build/InsightsPackage/TESTING.md
+          Invoke-WebRequest https://aka.ms/vs/17/release/vc_redist.x64.exe -OutFile build/InsightsPackage/vc_redist.x64.exe
+          $sig = Get-AuthenticodeSignature build/InsightsPackage/vc_redist.x64.exe
+          if ($sig.Status -ne 'Valid' -or $sig.SignerCertificate.Subject -notmatch 'Microsoft Corporation') { throw 'Untrusted runtime download' }
+      - name: Build isolated installer
+        shell: pwsh
+        run: |
+          choco install nsis -y --no-progress
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & "${env:ProgramFiles(x86)}\NSIS\makensis.exe" Installer/insights.nsi
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Package artifacts and checksums
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory dist -Force | Out-Null
+          Copy-Item Installer/VRCX-Insights_Setup.exe dist/VRCX-Insights_2026.09.16-preview_Setup.exe
+          Compress-Archive build/InsightsPackage/* dist/VRCX-Insights_2026.09.16-preview.zip
+          Copy-Item docs/LOCAL_INSIGHTS_TESTING.md dist/
+          Copy-Item tests/local-insights/fixtures.json dist/synthetic-fixture.json
+          Copy-Item test-results/local-insights-report.json dist/
+          Copy-Item test-results/ui-tests.json dist/
+          Copy-Item test-results/applied-integration.diff dist/
+          Get-ChildItem dist -File | ForEach-Object { "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)" } | Set-Content dist/SHA256SUMS.txt -Encoding ascii
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: insights-validation-${{ github.run_number }}
+          path: |
+            test-results/
+            dist/
+          if-no-files-found: warn
+      - name: Publish successful preview only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $tag = "insights-preview-2026.09.16-${{ github.run_number }}"
+          $assets = (Get-ChildItem dist -File).FullName
+          gh release create $tag --target $env:GITHUB_SHA --prerelease --title "VRCX Insights Preview (${{ github.run_number }})" --notes-file docs/LOCAL_INSIGHTS_RELEASE.md $assets
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

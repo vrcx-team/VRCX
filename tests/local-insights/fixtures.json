@@ -1,0 +1,25 @@
+{
+  "description": "Entirely synthetic; no real friends, accounts or API calls.",
+  "since": "2026-09-19T18:00:00Z",
+  "until": "2026-09-19T22:00:00Z",
+  "observerId": "demo:observer",
+  "friendIds": ["demo:alex", "demo:blair"],
+  "targetId": "demo:alex",
+  "expected": {"observedMinutes":90,"completeSessions":2,"incompleteSessions":1,"companions":[{"id":"demo:casey","minutes":40},{"id":"demo:blair","minutes":30}]},
+  "records": [
+    {"rowId":"1","created_at":"2026-09-19T18:00:00Z","type":"Location","location":"wrld_demo-one:100~friends(demo:owner)","worldName":"Moonlit Lounge"},
+    {"rowId":"2","created_at":"2026-09-19T18:05:00Z","type":"OnPlayerJoined","userId":"demo:alex","displayName":"Alex (demo)","location":"wrld_demo-one:100~friends(demo:owner)"},
+    {"rowId":"3","created_at":"2026-09-19T18:15:00Z","type":"OnPlayerJoined","userId":"demo:blair","displayName":"Blair (demo)","location":"wrld_demo-one:100~friends(demo:owner)"},
+    {"rowId":"4","created_at":"2026-09-19T18:40:00Z","type":"OnPlayerJoined","userId":"demo:casey","displayName":"Casey (demo, non-friend)","location":"wrld_demo-one:100~friends(demo:owner)"},
+    {"rowId":"5","created_at":"2026-09-19T18:45:00Z","type":"OnPlayerLeft","userId":"demo:blair","displayName":"Blair (demo)","location":"wrld_demo-one:100~friends(demo:owner)"},
+    {"rowId":"6","created_at":"2026-09-19T18:55:00Z","type":"OnPlayerLeft","userId":"demo:casey","displayName":"Casey (demo, non-friend)","location":"wrld_demo-one:100~friends(demo:owner)"},
+    {"rowId":"7","created_at":"2026-09-19T19:05:00Z","type":"OnPlayerLeft","userId":"demo:alex","displayName":"Alex (demo)","location":"wrld_demo-one:100~friends(demo:owner)"},
+    {"rowId":"8","created_at":"2026-09-19T19:20:00Z","type":"OnPlayerJoined","userId":"demo:alex","displayName":"Alex (demo)","location":"wrld_demo-one:100~friends(demo:owner)"},
+    {"rowId":"9","created_at":"2026-09-19T19:21:00Z","type":"Status","userId":"demo:alex","status":"busy","location":"private"},
+    {"rowId":"10","created_at":"2026-09-19T20:00:00Z","type":"Location","location":"wrld_demo-two:200","worldName":"Arcade Garden"},
+    {"rowId":"11","created_at":"2026-09-19T20:05:00Z","type":"OnPlayerJoined","userId":"demo:alex","displayName":"Alex (demo)","location":"wrld_demo-two:200"},
+    {"rowId":"12","created_at":"2026-09-19T20:10:00Z","type":"OnPlayerJoined","userId":"demo:casey","displayName":"Casey (demo, non-friend)","location":"wrld_demo-two:200"},
+    {"rowId":"13","created_at":"2026-09-19T20:35:00Z","type":"OnPlayerLeft","userId":"demo:alex","displayName":"Alex (demo)","location":"wrld_demo-two:200"},
+    {"rowId":"14","created_at":"2026-09-19T20:40:00Z","type":"OnPlayerLeft","userId":"demo:casey","displayName":"Casey (demo, non-friend)","location":"wrld_demo-two:200"}
+  ]
+}

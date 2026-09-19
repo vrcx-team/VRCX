@@ -1,0 +1,28 @@
+export const en = {
+    title: 'Shared-session review', subtitle: 'A local diary of encounters recorded on this computer.', local: 'Local only', demo: 'Synthetic demo',
+    loadDemo: 'Load demo', live: 'Read local logs', refresh: 'Refresh', person: 'Person', search: 'Filter names', choose: 'Select a person', friendsOnly: 'Friends only', range: 'Range',
+    day1: '24 hours', day7: '7 days', day30: '30 days', empty: 'No recorded encounters in this range.', chooseHint: 'Select someone you encountered. Unobserved activity stays unknown.', loading: 'Reading local logs...', error: 'Could not load records',
+    timeline: 'Recorded encounters', joined: 'Joined the recorded instance', left: 'Left the recorded instance', source: 'Source', more: 'Show more',
+    duration: 'Observed duration', sessions: 'Complete sessions', incomplete: 'Unclosed records (not counted)', ranking: 'Observed co-presence', rankingNote: 'Shared instance, not proof of interaction. Different people may overlap in time.', noPeers: 'No complete overlapping records.',
+    friend: 'Friend', nonFriend: 'Observed non-friend', daily: 'Observed duration by day (UTC)', noDuration: 'No complete join/leave pairs to measure.', minutes: 'min',
+    evidence: 'Only complete join/leave pairs in recorded local sessions count. Missing exits and activity outside recorded visits are not extrapolated.', notOnline: 'Not total online time. Creators are not presumed present.',
+    excluded: 'The configured excluded account and the signed-in account are filtered from this feature. This rule is documented, not hidden.',
+    demoNotice: 'All demo records are fictional. They are never inserted into your database.', failureNote: 'No previous result is retained after a failed read. Narrow the range or retry.',
+    copy: 'Copy summary', copied: 'Summary copied', copyError: 'Clipboard unavailable.', clear: 'Clear view', policy: 'Analysis scope', events: 'events',
+    privacy: 'No extra API polling, automatic group joining or hidden-location guesses. Clearing this view does not delete the original GameLog.',
+    rangeNote: 'Event times use your local timezone. Daily totals use UTC.'
+};
+export const zh = {
+    title: '\u5171\u540c\u6e38\u73a9\u56de\u987e', subtitle: '\u6574\u7406\u8fd9\u53f0\u7535\u8111\u5b9e\u9645\u8bb0\u5f55\u8fc7\u7684\u76f8\u9047\u7247\u6bb5\u3002', local: '\u4ec5\u672c\u5730', demo: '\u5408\u6210\u6f14\u793a',
+    loadDemo: '\u52a0\u8f7d\u6f14\u793a', live: '\u8bfb\u53d6\u672c\u5730\u65e5\u5fd7', refresh: '\u5237\u65b0', person: '\u9009\u62e9\u73a9\u5bb6', search: '\u7b5b\u9009\u540d\u79f0', choose: '\u8bf7\u9009\u62e9\u4e00\u4f4d\u73a9\u5bb6', friendsOnly: '\u53ea\u770b\u597d\u53cb', range: '\u65f6\u95f4\u8303\u56f4',
+    day1: '24 \u5c0f\u65f6', day7: '7 \u5929', day30: '30 \u5929', empty: '\u8fd9\u4e2a\u65f6\u95f4\u8303\u56f4\u6ca1\u6709\u76f8\u9047\u8bb0\u5f55\u3002', chooseHint: '\u9009\u62e9\u672c\u5730\u65e5\u5fd7\u4e2d\u89c1\u8fc7\u7684\u73a9\u5bb6\u3002\u672a\u89c2\u6d4b\u7684\u6d3b\u52a8\u4fdd\u6301\u672a\u77e5\u3002', loading: '\u6b63\u5728\u8bfb\u53d6\u672c\u5730\u65e5\u5fd7\u2026', error: '\u8bfb\u53d6\u5931\u8d25',
+    timeline: '\u76f8\u9047\u8bb0\u5f55', joined: '\u52a0\u5165\u5df2\u8bb0\u5f55\u7684\u623f\u95f4', left: '\u79bb\u5f00\u5df2\u8bb0\u5f55\u7684\u623f\u95f4', source: '\u6570\u636e\u6765\u6e90', more: '\u663e\u793a\u66f4\u591a',
+    duration: '\u5df2\u89c2\u6d4b\u5728\u573a\u65f6\u957f', sessions: '\u5b8c\u6574\u8bb0\u5f55\u6b21\u6570', incomplete: '\u672a\u95ed\u5408\u8bb0\u5f55\uff08\u4e0d\u8ba1\u65f6\uff09', ranking: '\u5171\u540c\u5728\u573a\u6392\u884c', rankingNote: '\u540c\u623f\u4e0d\u4ee3\u8868\u5b9e\u9645\u4e92\u52a8\uff1b\u591a\u4eba\u53ef\u540c\u65f6\u5728\u573a\uff0c\u65f6\u957f\u4e0d\u53ef\u76f4\u63a5\u76f8\u52a0\u3002', noPeers: '\u6ca1\u6709\u5b8c\u6574\u7684\u91cd\u53e0\u5728\u573a\u8bb0\u5f55\u3002',
+    friend: '\u597d\u53cb', nonFriend: '\u5b9e\u9645\u89c1\u8fc7\u7684\u975e\u597d\u53cb', daily: '\u6bcf\u65e5\u89c2\u6d4b\u65f6\u957f\uff08UTC\uff09', noDuration: '\u6ca1\u6709\u5b8c\u6574\u7684\u52a0\u5165\uff0f\u79bb\u5f00\u914d\u5bf9\uff0c\u6682\u4e0d\u8ba1\u65f6\u3002', minutes: '\u5206\u949f',
+    evidence: '\u4ec5\u8ba1\u7b97\u672c\u5730\u573a\u6b21\u5185\u5b8c\u6574\u7684\u52a0\u5165\uff0f\u79bb\u5f00\u8bb0\u5f55\u3002\u7f3a\u5931\u9000\u51fa\u548c\u8bb0\u5f55\u8303\u56f4\u5916\u7684\u65f6\u95f4\u4e0d\u63a8\u7b97\u3002', notOnline: '\u8fd9\u4e0d\u662f\u603b\u5728\u7ebf\u65f6\u957f\uff1b\u623f\u95f4\u521b\u5efa\u8005\u4e0d\u9ed8\u8ba4\u7b97\u4f5c\u5728\u573a\u3002',
+    excluded: '\u6307\u5b9a\u6392\u9664\u8d26\u53f7\u548c\u5f53\u524d\u767b\u5f55\u8d26\u53f7\u4e0d\u53c2\u4e0e\u672c\u529f\u80fd\u5206\u6790\u3002\u89c4\u5219\u662f\u516c\u5f00\u53ef\u89e3\u91ca\u7684\u3002',
+    demoNotice: '\u6f14\u793a\u6570\u636e\u5168\u90e8\u4e3a\u865a\u6784\uff0c\u4e0d\u5199\u5165\u771f\u5b9e\u6570\u636e\u5e93\u3002', failureNote: '\u8bfb\u53d6\u5931\u8d25\u540e\u4e0d\u4fdd\u7559\u4e0a\u6b21\u7ed3\u679c\u3002\u8bf7\u7f29\u5c0f\u8303\u56f4\u6216\u91cd\u8bd5\u3002',
+    copy: '\u590d\u5236\u6458\u8981', copied: '\u6458\u8981\u5df2\u590d\u5236', copyError: '\u526a\u8d34\u677f\u4e0d\u53ef\u7528\u3002', clear: '\u6e05\u7a7a\u89c6\u56fe', policy: '\u5206\u6790\u8fb9\u754c', events: '\u6761\u8bb0\u5f55',
+    privacy: '\u4e0d\u65b0\u589e API \u8f6e\u8be2\u3001\u81ea\u52a8\u52a0\u7fa4\u6216\u9690\u85cf\u53bb\u5411\u731c\u6d4b\u3002\u6e05\u7a7a\u89c6\u56fe\u4e0d\u4f1a\u5220\u9664\u539f\u59cb GameLog\u3002',
+    rangeNote: '\u4e8b\u4ef6\u65f6\u95f4\u4f7f\u7528\u672c\u673a\u65f6\u533a\uff0c\u6bcf\u65e5\u603b\u91cf\u4f7f\u7528 UTC\u3002'
+};
