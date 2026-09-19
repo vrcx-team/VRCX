@@ -18,7 +18,9 @@ patch('src/plugins/router.js', "            { path: 'feed', name: 'feed', compon
 patch('src/components/nav-menu/NavMenu.vue', '        </SidebarHeader>', '        </SidebarHeader>\n        <LocalInsightsNav />');
 patch('src/components/nav-menu/NavMenu.vue', '<script setup>', "<script setup>\n    import LocalInsightsNav from '../../features/local-insights/LocalInsightsNav.vue';");
 patch('Dotnet/Program.cs', '                    "VRCX");', '                    "VRCX-Insights");');
-patch('Dotnet/Program.cs', '            Update.Check();', '            // Insights preview uses manual, isolated releases only.');
+patch('Dotnet/Program.cs', '            Update.Check();', '            // Insights preview uses manual, isolated releases only.', 2);
+patch('Dotnet/SQLite.cs', '            m_Connection = new SQLiteConnection(', '            InsightsIdentity.ValidateConfigDirectory(Path.GetDirectoryName(Path.GetFullPath(dataSource)));\n\n            m_Connection = new SQLiteConnection(');
+patch('Dotnet/Program.cs', '%AppData%\\\\VRCX', '%AppData%\\\\VRCX-Insights');
 patch('Dotnet/StartupArgs.cs', 'Process.GetProcessesByName("VRCX")', 'Process.GetProcessesByName("VRCX-Insights")');
 patch('Dotnet/StartupArgs.cs', '            LaunchArguments = ParseArgs(args);', '            LaunchArguments = ParseArgs(args);\n            InsightsIdentity.ValidateConfigDirectory(LaunchArguments.ConfigDirectory);');
 patch('Dotnet/IPC/IPCServer.cs', 'return $"vrcx-ipc-{hash}";', 'return $"vrcx-insights-ipc-{hash}";');
