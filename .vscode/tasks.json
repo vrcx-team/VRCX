@@ -2,18 +2,98 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "build-all-script",
             "type": "shell",
-            "label": "build-all",
-            "command": "${workspaceFolder}/build-scripts/build-all.ps1",
-            "args": ["-NoCI"],
-            "options": { "cwd": "${workspaceFolder}/build-scripts" },
+            "group": "build",
+            "detail": "Run the build-all.ps1 script",
+            "command": "pwsh",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/build-scripts/build-all.ps1",
+                "-NoCI"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build-scripts"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
             "problemMatcher": []
         },
         {
-            "type": "shell",
             "label": "clean",
-            "command": "Remove-Item",
-            "args": ["-Path", "${workspaceFolder}/build/*", "-Recurse"],
+            "type": "shell",
+            "group": "build",
+            "detail": "Run the clean.ps1 script which will delete the 'build' and 'obj' directories",
+            "command": "pwsh",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/build-scripts/clean.ps1",
+                "-NoCI"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build-scripts"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Run the required sequence of build steps to build the project",
+            "dependsOn": ["dotnet: build Electron", "npm: install", "npm: prod", "npm: build-electron"],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "dotnet: build CEF",
+            "type": "shell",
+            "group": "build",
+            "detail": "Build the Cef project with dotnet, for win-x64",
+            "command": "dotnet",
+            "args": [
+                "build",
+                "${workspaceFolder}/Dotnet/VRCX-Cef.csproj",
+                "-p:Configuration=Release",
+                "-p:WarningLevel=0",
+                "-p:Platform=x64",
+                "-t:'Clean;Build'",
+                "-maxcpucount",
+                "--runtime",
+                "win-x64"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "dotnet: build Electron",
+            "type": "shell",
+            "group": "build",
+            "detail": "Build the Electron project with dotnet, for linux-x64",
+            "command": "dotnet",
+            "args": [
+                "build",
+                "${workspaceFolder}/Dotnet/VRCX-Electron.csproj",
+                "-p:Configuration=Release",
+                "-p:WarningLevel=0",
+                "-p:Platform=x64",
+                "-t:'Clean;Build'",
+                "-maxcpucount",
+                "--runtime",
+                "linux-x64"
+            ],
             "problemMatcher": []
         }
     ]

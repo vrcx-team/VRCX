@@ -1,0 +1,49 @@
+<Project>
+  <PropertyGroup>
+    <!-- Set each project to have a separate folder under obj\ and bin\ -->
+    <BaseIntermediateOutputPath>obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <BaseOutputPath>bin\$(MSBuildProjectName)\</BaseOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsWindows>$([MSBuild]::IsOsPlatform('Windows'))</IsWindows>
+    <IsLinux>$([MSBuild]::IsOsPlatform('Linux'))</IsLinux>
+    <IsOSX>$([MSBuild]::IsOsPlatform('OSX'))</IsOSX>
+  </PropertyGroup>
+
+  <!-- Platform-specific Runtime Identifiers -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == '' and $(IsWindows) and '$(Platform)'=='x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == '' and $(IsWindows) and '$(Platform)'=='ARM64'">
+    <PlatformTarget>ARM64</PlatformTarget>
+    <RuntimeIdentifier>win-arm64</RuntimeIdentifier>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == '' and $(IsLinux) and '$(Platform)' == 'x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == '' and $(IsLinux) and '$(Platform)'=='ARM64'">
+    <PlatformTarget>ARM64</PlatformTarget>
+    <RuntimeIdentifier>linux-arm64</RuntimeIdentifier>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == '' and $(IsOSX) and '$(Platform)' == 'x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <RuntimeIdentifier>osx-x64</RuntimeIdentifier>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == '' and $(IsOSX) and '$(Platform)'=='ARM64'">
+    <PlatformTarget>ARM64</PlatformTarget>
+    <RuntimeIdentifier>osx-arm64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <Target Name="ValidateRuntimeIdentifier" BeforeTargets="Build">
+    <Warning Condition="!($(IsWindows) or $(IsLinux) or $(IsOSX))" Text="Unable to determine platform, you will have to explicity use a RuntimeIdentifier." />
+
+    <Error Condition="'$(Platform)' == 'AnyCPU'"
+      Text="The 'Platform' parameter cannot be AnyCPU (e.g., -p:Platform=x64)." />
+
+    <Error Condition="'$(RuntimeIdentifier)' == '' or '$(Platform)' == ''"
+      Text="The 'Platform' parameter or 'RuntimeIdentifier' must be explicitly set (e.g., -p:Platform=x64)." />
+  </Target>
+</Project>
