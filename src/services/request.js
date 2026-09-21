@@ -4,6 +4,7 @@ import { useAuthStore, useModalStore, useNotificationStore, useUpdateLoopStore }
 import { getCurrentUser } from '../coordinators/userCoordinator';
 import { AppDebug, isApiLogSuppressed, logWebRequest } from './appConfig.js';
 import { i18n } from '../plugins/i18n';
+import { createRateLimiter } from '../shared/utils/throttle';
 import { statusCodes } from '../shared/constants/api.js';
 import { watchState } from './watchState';
 
@@ -11,6 +12,18 @@ import webApiService from './webapi.js';
 
 const pendingGetRequests = new Map();
 export let failedGetRequests = new Map();
+
+// VRChat's API has a combined rate limit of ~60 reqs/min across all endpoints.
+// Calendar navigation can fan out multiple requests per click (group list,
+// event details, following/featured), and combined with friends/instances
+// from the update loop a single fast user can blow past the limit and start
+// receiving 429/500 responses. Cap calendar requests at 12/min to leave
+// headroom for the rest of VRCX. Same utility used by `fetchMutualGraph` and
+// `bulkRefreshFriends`.
+const calendarRateLimiter = createRateLimiter({
+    limitPerInterval: 12,
+    intervalMs: 60_000
+});
 
 const t = i18n.global.t;
 
@@ -105,8 +118,9 @@ export function request(endpoint, options) {
             pendingGetRequests.delete(init.url);
         }
     }
-    req = webApiService
-        .execute(init)
+    req = (init.method === 'GET' && endpoint.startsWith('calendar')
+        ? calendarRateLimiter.wait().then(() => webApiService.execute(init))
+        : webApiService.execute(init))
         .catch((err) => {
             $throw(0, err, endpoint);
         })
@@ -156,8 +170,10 @@ export function request(endpoint, options) {
                 if (parsed.status === 200) {
                     $throw(0, t('api.error.message.invalid_json_response'), endpoint);
                 }
-                if (parsed.status === 429 && init.url.endsWith('/instances/groups')) {
-                    updateLoopStore.setNextGroupInstanceRefresh(120); // 1min
+                if (parsed.status === 429) {
+                    if (init.url.endsWith('/instances/groups')) {
+                        updateLoopStore.setNextGroupInstanceRefresh(120); // 1min
+                    }
                     $throw(429, t('api.status_code.429'), endpoint);
                 }
                 if (parsed.status === 504 || parsed.status === 502) {
