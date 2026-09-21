@@ -1,12 +1,7 @@
-import { computed, onScopeDispose, ref, unref, watch } from 'vue';
+import { computed, ref, unref, watch } from 'vue';
 
-import { instanceRequest } from '../../../../api';
 import { database } from '../../../../services/database';
 import { parseLocation } from '../../../../shared/utils';
-import { getGameLogCreatedAtTs } from '../../../../shared/utils/gameLog';
-import { useInstanceStore } from '../../../../stores';
-
-const STALENESS_TICK_MS = 30 * 1000;
 
 function parseMaxAgeMinutes(value) {
     const minutes = Number(value);
@@ -16,213 +11,84 @@ function parseMaxAgeMinutes(value) {
     return minutes;
 }
 
-async function findLastKnownInstance(userRef) {
-    if (!userRef || (!userRef.id && !userRef.displayName)) {
-        return null;
-    }
-
-    const gps = await database.getLastKnownGPSLocation({
-        id: userRef.id,
-        displayName: userRef.displayName
-    });
-    if (gps) {
-        const location =
-            gps.previousLocation && parseLocation(gps.previousLocation).isRealInstance
-                ? gps.previousLocation
-                : gps.location;
-        if (parseLocation(location).isRealInstance) {
-            const worldName = gps.worldName || (await database.getWorldNameByLocation(location)) || '';
-            return {
-                location,
-                lastSeenAt: Date.parse(gps.createdAt) || 0,
-                worldName
-            };
-        }
-    }
-
-    const instances = await database.getPreviousInstancesByUserId({
-        id: userRef.id,
-        displayName: userRef.displayName
-    });
-    if (!instances || typeof instances.values !== 'function') {
-        return null;
-    }
-
-    // Returned oldest first, so the newest real visit wins.
-    let lastKnown = null;
-    let lastKnownLastSeenAt = 0;
-    for (const instance of instances.values()) {
-        if (!parseLocation(instance.location).isRealInstance) {
-            continue;
-        }
-        const lastSeenAt = Number(instance.last_ts) || getGameLogCreatedAtTs(instance);
-        if (!lastKnown || lastSeenAt >= lastKnownLastSeenAt) {
-            lastKnown = instance;
-            lastKnownLastSeenAt = lastSeenAt;
-        }
-    }
-
-    if (!lastKnown) {
-        return null;
-    }
-
-    return {
-        location: lastKnown.location,
-        lastSeenAt: lastKnownLastSeenAt,
-        worldName: lastKnown.worldName || ''
-    };
-}
-
 /**
- * Resolves the last known location of the player shown in the user dialog,
- * while their own location is hidden. `maxAgeMinutes` caps how old that
- * location may be, measured from when it stopped being current.
+ * Resolves the instance the player shown in the user dialog was last seen in, so
+ * it can still be shown while their location is hidden. `maxAgeMinutes` caps how
+ * old that instance may be, measured from when it stopped being current; '0'
+ * means no limit.
  *
  * @param {object} options
  * @param {import('vue').Ref<object> | object} options.userDialog
  * @param {import('vue').Ref<object> | object} options.currentUser
  * @param {import('vue').Ref<boolean> | boolean} options.isEnabled
- * @param {import('vue').Ref<string> | string} [options.maxAgeMinutes] - '0' for unlimited
+ * @param {import('vue').Ref<string> | string} [options.maxAgeMinutes]
  * @returns {{
  *     lastKnownLocation: import('vue').Ref<object | null>;
  *     isLoading: import('vue').Ref<boolean>;
  * }}
  */
 export function useLastKnownLocation({ userDialog, currentUser, isEnabled, maxAgeMinutes }) {
-    const instanceStore = useInstanceStore();
-
     const lastKnownLocation = ref(null);
-    const lastKnownInstanceRef = ref(null);
     const isLoading = ref(false);
-    const now = ref(Date.now());
-    let lookupToken = 0;
-
-    const window = computed(() => parseMaxAgeMinutes(unref(maxAgeMinutes)));
 
     const shouldLookup = computed(() => {
-        if (!unref(isEnabled)) {
-            return false;
-        }
         const user = unref(userDialog);
-        if (!user || !user.visible || user.loading) {
+        if (!unref(isEnabled) || !user?.visible || user.loading || !user.id) {
             return false;
         }
-        const me = unref(currentUser);
-        if (!user.id || user.id === me?.id) {
+        if (user.id === unref(currentUser)?.id) {
             return false;
         }
-        const $location = user.$location;
-        if (!$location) {
-            return false;
-        }
-        return !$location.isRealInstance;
+        return Boolean(user.$location) && !user.$location.isRealInstance;
     });
 
-    // Lets a shown location age out while the dialog stays open.
-    const stalenessTimer = setInterval(() => {
-        now.value = Date.now();
-    }, STALENESS_TICK_MS);
-    onScopeDispose(() => clearInterval(stalenessTimer));
-
-    function resolveInstanceRef(location) {
-        const cached = instanceStore.cachedInstances.get(location);
-        if (cached) {
-            lastKnownInstanceRef.value = cached;
-            return;
-        }
-        lastKnownInstanceRef.value = null;
-
-        const L = parseLocation(location);
-        instanceRequest.getInstance({ worldId: L.worldId, instanceId: L.instanceId }).catch((err) => {
-            console.error('Failed to fetch last known instance details:', err);
-        });
-    }
-
-    async function refresh() {
-        const token = ++lookupToken;
+    async function load() {
         if (!shouldLookup.value) {
             lastKnownLocation.value = null;
-            lastKnownInstanceRef.value = null;
-            isLoading.value = false;
             return;
         }
 
         const user = unref(userDialog);
         isLoading.value = true;
         try {
-            const lastKnown = await findLastKnownInstance({
+            const row = await database.getLastKnownGPSLocation({
                 id: user.id,
                 displayName: user.ref?.displayName || ''
             });
-            if (token !== lookupToken) {
-                return;
-            }
-            if (!lastKnown) {
+            if (!row || !parseLocation(row.location).isRealInstance) {
                 lastKnownLocation.value = null;
-                lastKnownInstanceRef.value = null;
                 return;
             }
             lastKnownLocation.value = {
-                location: lastKnown.location,
-                $location: parseLocation(lastKnown.location),
-                worldName: lastKnown.worldName || '',
-                lastSeenAt: lastKnown.lastSeenAt
+                location: row.location,
+                $location: parseLocation(row.location),
+                worldName: row.worldName,
+                lastSeenAt: Date.parse(row.createdAt) || 0
             };
-            resolveInstanceRef(lastKnown.location);
         } catch (err) {
-            if (token === lookupToken) {
-                lastKnownLocation.value = null;
-                lastKnownInstanceRef.value = null;
-            }
+            lastKnownLocation.value = null;
             console.error('Failed to resolve last known location:', err);
         } finally {
-            if (token === lookupToken) {
-                isLoading.value = false;
-            }
+            isLoading.value = false;
         }
     }
 
-    const freshLocation = computed(() => {
-        const location = lastKnownLocation.value;
-        if (!location) {
-            return null;
+    const visibleLocation = computed(() => {
+        const found = lastKnownLocation.value;
+        const limit = parseMaxAgeMinutes(unref(maxAgeMinutes));
+        if (!found || limit === null) {
+            return found;
         }
-        const limit = window.value;
-        if (limit === null) {
-            return location;
-        }
-        if (now.value - location.lastSeenAt > limit * 60 * 1000) {
-            return null;
-        }
-        return location;
-    });
-
-    const resolvedLastKnownLocation = computed(() => {
-        const location = freshLocation.value;
-        if (!location) {
-            return null;
-        }
-        return {
-            ...location,
-            instance: lastKnownInstanceRef.value
-        };
+        return Date.now() - found.lastSeenAt > limit * 60 * 1000 ? null : found;
     });
 
     watch(
-        () => [
-            unref(isEnabled),
-            unref(maxAgeMinutes),
-            unref(userDialog)?.id,
-            unref(userDialog)?.visible,
-            unref(userDialog)?.loading,
-            unref(userDialog)?.$location?.tag,
-            unref(userDialog)?.ref?.$location_at
-        ],
-        refresh,
+        () => [unref(isEnabled), unref(userDialog)?.id, unref(userDialog)?.visible, unref(userDialog)?.$location?.tag],
+        load,
         { immediate: true }
     );
 
-    return { lastKnownLocation: resolvedLastKnownLocation, isLoading };
+    return { lastKnownLocation: visibleLocation, isLoading };
 }
 
-export { findLastKnownInstance, parseMaxAgeMinutes };
+export { parseMaxAgeMinutes };

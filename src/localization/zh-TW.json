@@ -980,6 +980,16 @@
                     "vrchat_notes_description": "顯示儲存在 VRChat 中的備註",
                     "vrcx_memos": "VRCX 備註",
                     "vrcx_memos_description": "顯示儲存在 VRCX 本機的備註",
+                    "show_last_known_location": "顯示最近一次所在位置",
+                    "show_last_known_location_description": "當玩家當前位置被隱藏時（私人房間、忙碌、請勿打擾、正在傳送或離線），根據好友動態顯示其最近一次所在的房間。",
+                    "last_known_location_max_age": "位置失效時間",
+                    "last_known_location_max_age_description": "當最近一次記錄的所在房間超過該時間時，視為已不在該位置，不再顯示。",
+                    "last_known_location_max_age_0": "不限制",
+                    "last_known_location_max_age_5": "5 分鐘",
+                    "last_known_location_max_age_30": "30 分鐘",
+                    "last_known_location_max_age_60": "1 小時",
+                    "last_known_location_max_age_360": "6 小時",
+                    "last_known_location_max_age_720": "12 小時",
                     "recent_action_cooldown": "顯示近期操作圖示",
                     "recent_action_cooldown_description": "在近期的邀請與請求操作上顯示時鐘圖示。",
                     "recent_action_cooldown_minutes": "冷卻時間（分鐘）"
@@ -1439,6 +1449,8 @@
                 "show_discord_connections": "顯示 Discord 連結",
                 "instance_minimum_avatar_performance": "角色性能評級限制",
                 "current_instance": "當前房間",
+                "last_known_location": "最近一次所在位置",
+                "last_known_location_tooltip": "對方當前位置已隱藏，這裡顯示的是好友動態中記錄的最近一次所在房間。這不是他當前所在的房間；當它超出設定中的「位置失效時間」後就不再顯示。",
                 "economy_creator": "商業創作者"
             },
             "groups": {

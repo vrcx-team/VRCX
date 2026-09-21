@@ -715,58 +715,22 @@ const feed = {
     },
 
     /**
-     * Find the instance a player was last verifiably in, from the friend GPS
-     * feed, and when that location stopped being current.
+     * Find the instance a player was last verifiably in, and when that location
+     * stopped being current.
      *
-     * The GPS feed records every location change of a friend, including the one
-     * where they disappear into a private/busy state, and keeps the location
-     * they came from in `previous_location`. That transition is exactly when the
-     * last real location stopped being current, so its timestamp is what an age
-     * limit should be measured against.
-     *
-     * Prefers the most recent transition into a hidden state (its
-     * `previous_location` is the world to show). Falls back to the most recent
-     * real location the player was seen in.
+     * The GPS feed keeps, for every location change, the location the player came
+     * from in `previous_location`. The change into a hidden state therefore
+     * carries the world they just left, and its timestamp is when that world
+     * stopped being current.
      *
      * @param {{ id?: string; displayName?: string }} userRef
-     * @returns {Promise<{ createdAt: string; location: string; previousLocation: string; worldName: string } | null>}
+     * @returns {Promise<{ createdAt: string; location: string; worldName: string } | null>}
      */
     async getLastKnownGPSLocation(userRef) {
         if (!userRef || (!userRef.id && !userRef.displayName)) {
             return null;
         }
 
-        const args = {
-            '@userId': userRef.id ?? '',
-            '@displayName': userRef.displayName ?? ''
-        };
-
-        // The change into a hidden state keeps the world that was left behind.
-        return this.getLastGPSRow(
-            `WHERE (user_id = @userId OR display_name = @displayName)
-               AND previous_location LIKE 'wrld_%'
-               AND location NOT LIKE 'wrld_%'`,
-            args
-        ).then((hidden) => {
-            if (hidden) {
-                return hidden;
-            }
-            return this.getLastGPSRow(
-                `WHERE (user_id = @userId OR display_name = @displayName)
-                   AND location LIKE 'wrld_%'`,
-                args
-            );
-        });
-    },
-
-    /**
-     * Read the newest GPS row matching a WHERE clause.
-     *
-     * @param {string} where
-     * @param {object} args
-     * @returns {Promise<{ createdAt: string; location: string; previousLocation: string; worldName: string } | null>}
-     */
-    async getLastGPSRow(where, args) {
         let result = null;
         await sqliteService.execute(
             (dbRow) => {
@@ -776,64 +740,37 @@ const feed = {
                 result = {
                     createdAt: dbRow[0] || '',
                     location: dbRow[1] || '',
-                    previousLocation: dbRow[2] || '',
-                    worldName: dbRow[3] || ''
+                    worldName: dbRow[2] || ''
                 };
             },
-            `SELECT created_at, location, previous_location, world_name
-             FROM ${dbVars.userPrefix}_feed_gps
-             ${where}
-             ORDER BY created_at DESC, id DESC
-             LIMIT 1`,
-            args
+            `WITH latest AS (
+                 SELECT created_at, previous_location AS location
+                 FROM ${dbVars.userPrefix}_feed_gps
+                 WHERE (user_id = @userId OR display_name = @displayName)
+                   AND COALESCE(previous_location, '') LIKE 'wrld_%'
+                   AND COALESCE(location, '') NOT LIKE 'wrld_%'
+                 ORDER BY created_at DESC, id DESC
+                 LIMIT 1
+             )
+             SELECT latest.created_at,
+                    latest.location,
+                    COALESCE(
+                        (SELECT world_name FROM ${dbVars.userPrefix}_feed_gps
+                          WHERE location = latest.location
+                            AND world_name IS NOT NULL AND world_name != ''
+                          ORDER BY id DESC LIMIT 1),
+                        (SELECT name FROM cache_world
+                          WHERE id = SUBSTR(latest.location, 1, INSTR(latest.location, ':') - 1)
+                          LIMIT 1),
+                        ''
+                    )
+             FROM latest`,
+            {
+                '@userId': userRef.id ?? '',
+                '@displayName': userRef.displayName ?? ''
+            }
         );
         return result;
-    },
-
-    /**
-     * Resolve a world name for an instance tag.
-     *
-     * The GPS row recording a transition into a hidden state has no world name
-     * (a hidden location has no world), but earlier rows for the same location
-     * do, so look there first and fall back to the cached world.
-     *
-     * @param {string} location
-     * @returns {Promise<string>} World name, or '' when unknown
-     */
-    async getWorldNameByLocation(location) {
-        if (!location || !location.startsWith('wrld_')) {
-            return '';
-        }
-
-        let name = '';
-        await sqliteService.execute(
-            (dbRow) => {
-                if (!name) {
-                    name = dbRow[0] || '';
-                }
-            },
-            `SELECT world_name
-             FROM ${dbVars.userPrefix}_feed_gps
-             WHERE location = @location AND world_name IS NOT NULL AND world_name != ''
-             ORDER BY id DESC
-             LIMIT 1`,
-            { '@location': location }
-        );
-        if (name) {
-            return name;
-        }
-
-        const worldId = location.split(':')[0];
-        await sqliteService.execute(
-            (dbRow) => {
-                if (!name) {
-                    name = dbRow[0] || '';
-                }
-            },
-            'SELECT name FROM cache_world WHERE id = @worldId LIMIT 1',
-            { '@worldId': worldId }
-        );
-        return name;
     }
 };
 

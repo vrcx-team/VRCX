@@ -40,48 +40,36 @@
                             <Info class="h-3 w-3 shrink-0" :style="{ color: userDialog.theme.iconColor }" />
                         </TooltipWrapper>
                     </div>
-                    <div class="flex items-start gap-1.5 justify-between mt-1">
-                        <div class="flex min-w-0 flex-1 flex-col justify-between gap-1.5">
-                            <span
-                                class="text-md text-foreground cursor-pointer block truncate"
-                                @click="showWorldDialog(lastKnownLocation.location)"
-                                :title="lastKnownLocation.worldName"
-                                >{{ lastKnownLocation.worldName || lastKnownLocation.$location.worldId }}</span
-                            >
-                            <span class="text-xs text-muted-foreground block truncate">
-                                {{ timeAgo(lastKnownLocation.lastSeenAt) }}
-                            </span>
-                            <div class="flex min-w-0 flex-wrap items-start gap-1.5">
-                                <LocationWorld
-                                    class="text-sm inline-flex min-w-0 w-fit max-w-full border-muted-foreground/30"
-                                    :locationobject="lastKnownLocation.$location"
-                                    :currentuserid="currentUser.id" />
-                                <InstanceActionBar
-                                    class="text-sm inline-flex max-w-full shrink-0 border-muted-foreground/30"
-                                    :showButtons="false"
-                                    :showInstanceInfo="true"
-                                    :showLastJoin="false"
-                                    :location="lastKnownLocation.location"
-                                    :shortname="lastKnownLocation.$location.shortName"
-                                    :instance="lastKnownLocation.instance" />
-                            </div>
+                    <div class="flex min-w-0 flex-col gap-1.5 mt-1">
+                        <span
+                            class="text-md text-foreground cursor-pointer block truncate"
+                            @click="showWorldDialog(lastKnownLocation.location)"
+                            :title="lastKnownLocation.worldName"
+                            >{{ lastKnownLocation.worldName || lastKnownLocation.$location.worldId }}</span
+                        >
+                        <div class="flex min-w-0 flex-wrap items-start gap-1.5">
+                            <LocationWorld
+                                class="text-sm inline-flex min-w-0 w-fit max-w-full border-muted-foreground/30"
+                                :locationobject="lastKnownLocation.$location"
+                                :currentuserid="currentUser.id" />
+                            <InstanceActionBar
+                                class="text-sm inline-flex max-w-full shrink-0 border-muted-foreground/30"
+                                :showButtons="false"
+                                :showInstanceInfo="false"
+                                :location="lastKnownLocation.location"
+                                :shortname="lastKnownLocation.$location.shortName" />
                         </div>
-                        <img
-                            v-if="lastKnownLocation.instance?.ref?.world?.thumbnailImageUrl"
-                            :src="lastKnownLocation.instance.ref.world.thumbnailImageUrl"
-                            class="cursor-pointer"
-                            style="width: 80px; height: 60px; border-radius: var(--radius-xl)"
-                            @click="showFullscreenImageDialog(lastKnownLocation.instance.ref.world.imageUrl)"
-                            loading="lazy" />
-                    </div>
-                    <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                        <InstanceActionBar
-                            :showButtons="true"
-                            :showInstanceInfo="false"
-                            :buttonStyle="{ color: userDialog.theme.iconColor }"
-                            :location="lastKnownLocation.location"
-                            :shortname="lastKnownLocation.$location.shortName"
-                            :instance="lastKnownLocation.instance" />
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <InstanceActionBar
+                                :showButtons="true"
+                                :showInstanceInfo="false"
+                                :buttonStyle="{ color: userDialog.theme.iconColor }"
+                                :location="lastKnownLocation.location"
+                                :shortname="lastKnownLocation.$location.shortName" />
+                            <span class="text-xs text-muted-foreground">{{
+                                timeAgo(lastKnownLocation.lastSeenAt)
+                            }}</span>
+                        </div>
                     </div>
                 </div>
                 <div class="flex flex-col">

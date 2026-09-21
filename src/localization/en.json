@@ -998,7 +998,7 @@
                     "vrcx_memos": "VRCX Memos",
                     "vrcx_memos_description": "Shows notes saved locally in VRCX",
                     "show_last_known_location": "Show last known location",
-                    "show_last_known_location_description": "Show a player's most recent instance from your game log when their current location is hidden (private, busy, do not disturb, traveling or offline).",
+                    "show_last_known_location_description": "Show a player's most recent instance from the friend activity feed when their current location is hidden (private, busy, do not disturb, traveling or offline).",
                     "last_known_location_max_age": "Last known location max age",
                     "last_known_location_max_age_description": "Discard the last known location when the most recent recorded visit is older than this.",
                     "last_known_location_max_age_0": "No limit",

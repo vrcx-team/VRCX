@@ -37,44 +37,32 @@ describe('feed.getLastKnownGPSLocation', () => {
         mocks.execute.mockReset();
     });
 
-    test('prefers the transition into a hidden state and its previous location', async () => {
-        respondWith(['2026-01-15T09:00:00.000Z', 'private', 'wrld_left:43160', '']);
+    test('maps the newest row to the resolved location', async () => {
+        respondWith(['2026-01-15T10:00:00.000Z', 'wrld_left:1~hidden(usr_x)', 'Some World']);
 
         const result = await feed.getLastKnownGPSLocation({ id: 'usr_1', displayName: 'Alice' });
 
         expect(result).toEqual({
-            createdAt: '2026-01-15T09:00:00.000Z',
-            location: 'private',
-            previousLocation: 'wrld_left:43160',
-            worldName: ''
-        });
-        // The hidden-state query matched, so the fallback must not run.
-        expect(mocks.execute).toHaveBeenCalledTimes(1);
-        expect(mocks.execute.mock.calls[0][1]).toContain("previous_location LIKE 'wrld_%'");
-    });
-
-    test('falls back to the last real location when there is no hidden transition', async () => {
-        respondEmpty();
-        respondWith(['2026-01-15T09:30:00.000Z', 'wrld_now:999', 'private', 'Some World']);
-
-        const result = await feed.getLastKnownGPSLocation({ id: 'usr_1', displayName: '' });
-
-        expect(result).toEqual({
-            createdAt: '2026-01-15T09:30:00.000Z',
-            location: 'wrld_now:999',
-            previousLocation: 'private',
+            createdAt: '2026-01-15T10:00:00.000Z',
+            location: 'wrld_left:1~hidden(usr_x)',
             worldName: 'Some World'
         });
-        expect(mocks.execute).toHaveBeenCalledTimes(2);
-        expect(mocks.execute.mock.calls[1][1]).toContain("location LIKE 'wrld_%'");
     });
 
-    test('returns null when neither query matches', async () => {
-        respondEmpty();
+    test('falls back to empty strings for missing columns', async () => {
+        respondWith([null, null, null]);
+
+        expect(await feed.getLastKnownGPSLocation({ id: 'usr_1' })).toEqual({
+            createdAt: '',
+            location: '',
+            worldName: ''
+        });
+    });
+
+    test('returns null when no row matches', async () => {
         respondEmpty();
 
         expect(await feed.getLastKnownGPSLocation({ id: 'usr_1' })).toBeNull();
-        expect(mocks.execute).toHaveBeenCalledTimes(2);
     });
 
     test('returns null without querying when there is no id or display name', async () => {
@@ -83,64 +71,31 @@ describe('feed.getLastKnownGPSLocation', () => {
         expect(mocks.execute).not.toHaveBeenCalled();
     });
 
-    test('queries by user id or display name, scoped to the gps table', async () => {
-        respondWith(['2026-01-15T09:00:00.000Z', 'private', 'wrld_left:1', '']);
+    test('only considers transitions out of a real world', async () => {
+        respondWith(['2026-01-15T10:00:00.000Z', 'wrld_left:1', '']);
 
         await feed.getLastKnownGPSLocation({ id: 'usr_1', displayName: 'Alice' });
 
         const [callback, sql, params] = mocks.execute.mock.calls[0];
         expect(typeof callback).toBe('function');
         expect(sql).toContain('usr_test_feed_gps');
+        // The location to show is the one the player came from.
+        expect(sql).toContain("COALESCE(previous_location, '') LIKE 'wrld_%'");
+        expect(sql).toContain("COALESCE(location, '') NOT LIKE 'wrld_%'");
+        // World name comes from another row of that location, then the world cache.
+        expect(sql).toContain('cache_world');
         expect(sql).toContain('ORDER BY created_at DESC, id DESC');
         expect(params).toEqual({ '@userId': 'usr_1', '@displayName': 'Alice' });
     });
 
-    test('falls back to empty strings for missing columns', async () => {
-        respondWith([null, null, null, null]);
+    test('reads the row positionally', async () => {
+        const row = ['2026-01-15T10:00:00.000Z', 'wrld_left:1', 'Some World'];
+        respondWith(row);
 
         const result = await feed.getLastKnownGPSLocation({ id: 'usr_1' });
 
-        expect(result).toEqual({ createdAt: '', location: '', previousLocation: '', worldName: '' });
-    });
-});
-
-describe('feed.getWorldNameByLocation', () => {
-    beforeEach(() => {
-        mocks.execute.mockReset();
-    });
-
-    test('reads the name from another GPS row of the same location', async () => {
-        respondWith(['Resolved World']);
-
-        const name = await feed.getWorldNameByLocation('wrld_abc:123');
-
-        expect(name).toBe('Resolved World');
-        expect(mocks.execute).toHaveBeenCalledTimes(1);
-    });
-
-    test('falls back to the cached world when the feed has no name', async () => {
-        respondEmpty();
-        respondWith(['Cached World']);
-
-        const name = await feed.getWorldNameByLocation('wrld_abc:123');
-
-        expect(name).toBe('Cached World');
-        expect(mocks.execute).toHaveBeenCalledTimes(2);
-        expect(mocks.execute.mock.calls[1][1]).toContain('cache_world');
-        expect(mocks.execute.mock.calls[1][2]).toEqual({ '@worldId': 'wrld_abc' });
-    });
-
-    test('returns an empty name when nothing resolves', async () => {
-        respondEmpty();
-        respondEmpty();
-
-        expect(await feed.getWorldNameByLocation('wrld_abc:123')).toBe('');
-    });
-
-    test('returns an empty name without querying for a non-world location', async () => {
-        expect(await feed.getWorldNameByLocation('private')).toBe('');
-        expect(await feed.getWorldNameByLocation('')).toBe('');
-        expect(await feed.getWorldNameByLocation(undefined)).toBe('');
-        expect(mocks.execute).not.toHaveBeenCalled();
+        expect(result.createdAt).toBe(row[0]);
+        expect(result.location).toBe(row[1]);
+        expect(result.worldName).toBe(row[2]);
     });
 });
