@@ -24,7 +24,7 @@ runs:
     - name: Set version
       shell: pwsh
       run: |
-        echo "${{ inputs.runtime-identifier }}" > Version
+        echo "${{ inputs.vrcx-version }}" > Version
         cat Version
     - uses: actions/cache@v5
       with:
