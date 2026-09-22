@@ -13,6 +13,7 @@ const {
 } = require('electron');
 const { spawnSync } = require('child_process');
 const fs = require('fs');
+const os = require('os');
 
 //app.disableHardwareAcceleration();
 
@@ -83,11 +84,26 @@ if (!fs.existsSync(userDataPath)) {
 }
 app.setPath('userData', userDataPath);
 
-const armPath = path.join(rootDir, 'build/Electron/VRCX-Electron-arm64.cjs');
-if (process.arch === 'arm64' && fs.existsSync(armPath)) {
-    require(armPath);
-} else {
+/**
+ * Generates a RuntimeIdentifier used by dotnet tooling to identify different builds.
+ * @returns A RuntimeIdentifier string of the form 'os-arch' eg 'linux-x64'
+ */
+function getRid() {
+    const osMap = { win32: 'win', darwin: 'osx', linux: 'linux', freebsd: 'linux', openbsd: 'linux' };
+    const archMap = { x64: 'x64', arm64: 'arm64' };
+
+    const osName = osMap[os.platform()];
+    const arch = archMap[os.arch()];
+
+    return `${osName}-${arch}`;
+}
+
+if (app.isPackaged) {
     require(path.join(rootDir, 'build/Electron/VRCX-Electron.cjs'));
+} else {
+    // if debugging, we need to get from the platform dir ourselves
+    const rid = getRid();
+    require(path.join(rootDir, `build/Electron/${rid}/VRCX-Electron.cjs`));
 }
 
 const InteropApi = require('./InteropApi');

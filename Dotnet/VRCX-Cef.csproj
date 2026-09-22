@@ -35,10 +35,10 @@
     <WarningLevel>0</WarningLevel>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <DebugType>portable</DebugType>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
 
@@ -115,20 +115,25 @@
     <CallTarget Targets="CefSharpAfterBuildDiagnostic" />
   </Target>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="$(IsWindows)">
     <Exec Command="&quot;$(ProjectDir)..\Dotnet\build-tools\Topten.nvpatch.exe&quot; --enable &quot;$(ProjectDir)..\build\Cef\VRCX.exe&quot;" />
   </Target>
 
   <ItemGroup>
+    <!-- old obj file path might still exist-->
     <Content Remove="obj1\**" />
     <Compile Remove="obj1\**" />
+
+    <!-- new obj file path, see Directory.Build.props -->
+    <Content Remove="obj\VRCX-Electron\**" />
+    <Compile Remove="obj\VRCX-Electron\**" />
     <Content Remove="AppApi\Electron\**" />
     <Compile Remove="AppApi\Electron\**" />
     <Content Remove="Overlay\Electron\**" />
     <Compile Remove="Overlay\Electron\**" />
   </ItemGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="$(IsWindows)">
     <Exec Command="&quot;$(ProjectDir)..\build-scripts\make-junction.cmd&quot;" />
   </Target>
 </Project>

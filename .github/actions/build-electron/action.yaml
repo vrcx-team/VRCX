@@ -1,0 +1,42 @@
+name: "Build Electron"
+description: "Build Electron"
+inputs:
+  vrcx-version:
+    description: "VRCX version number"
+    required: true
+  platform:
+    description: "The platform being built, x64 or arm64"
+    required: true
+  runtime-identifier:
+    description: "The dotnet runtime identifier for the platform and OS"
+    required: true
+# outputs:
+#   random-number:
+#     description: "Random number"
+#     value: ${{ steps.random-number-generator.outputs.random-number }}
+runs:
+  using: "composite"
+  steps:
+    - name: Setup dotnet 10
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: "10.0.x"
+    - name: Set version
+      shell: pwsh
+      run: |
+        echo "${{ inputs.runtime-identifier }}" > Version
+        cat Version
+    - uses: actions/cache@v5
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Electron.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+    - name: Build Electron dotnet ${{ inputs.runtime-identifier }} Application
+      shell: pwsh
+      run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=${{ inputs.platform }} -t:"Clean;Build" -maxcpucount --runtime ${{ inputs.runtime-identifier }}
+    - name: Upload Electron dotnet ${{ inputs.runtime-identifier }} artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        name: Electron-Release_${{ inputs.runtime-identifier }}
+        path: build/Electron

@@ -49,8 +49,8 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Cef.csproj') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
-      - name: Build Cef .NET Application
-        run: dotnet build Dotnet/VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
+      - name: Build Cef .NET win-x64 Application
+        run: dotnet build Dotnet/VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -t:"Clean;Build" -maxcpucount --runtime win-x64 --self-contained
       - name: Check if we want to sign
         id: check_sign
         run: |
@@ -139,78 +139,36 @@ jobs:
     needs: set_version
     steps:
       - uses: actions/checkout@v6
-      - name: Setup .NET 10
-        uses: actions/setup-dotnet@v5
+      - uses: ./.github/actions/build-electron
         with:
-          dotnet-version: '10.0.x'
-      - name: Set version
-        run: |
-          echo "${{ needs.set_version.outputs.version }}" > Version
-          cat Version
-      - uses: actions/cache@v5
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Electron.csproj') }}-${{ hashFiles('**/Dotnet/VRCX-Electron-arm64.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-      - name: Build Electron x64 .NET Application
-        run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64
-      - name: Upload Electron x64 dotnet artifacts
-        uses: actions/upload-artifact@v7
-        with:
-          name: Electron-Release-Linux-x64
-          path: build/Electron
+          vrcx-version: '${{ needs.set_version.outputs.version }}'
+          platform: x64
+          runtime-identifier: linux-x64
 
-      - name: Cleanup
-        run: |
-          rm -R build/Electron
-
-      - name: Build Electron arm64 .NET Application
-        run: dotnet build 'Dotnet/VRCX-Electron-arm64.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64
-      - name: Upload Electron arm64 dotnet artifacts
-        uses: actions/upload-artifact@v7
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/build-electron
         with:
-          name: Electron-Release-Linux-arm64
-          path: build/Electron
+          vrcx-version: '${{ needs.set_version.outputs.version }}'
+          platform: arm64
+          runtime-identifier: linux-arm64
 
   build_dotnet_macos:
     runs-on: macos-latest
     needs: set_version
     steps:
       - uses: actions/checkout@v6
-      - name: Setup .NET 10
-        uses: actions/setup-dotnet@v5
+      - uses: ./.github/actions/build-electron
         with:
-          dotnet-version: '10.0.x'
-      - name: Set version
-        run: |
-          echo "${{ needs.set_version.outputs.version }}" > Version
-          cat Version
-      - uses: actions/cache@v5
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/Dotnet/VRCX-Electron.csproj') }}-${{ hashFiles('**/Dotnet/VRCX-Electron-arm64.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-      - name: Build Electron x64 .NET Application
-        run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64
-      - name: Upload Electron x64 .NET artifacts
-        uses: actions/upload-artifact@v7
-        with:
-          name: Electron-Release-macOS-x64
-          path: build/Electron
+          vrcx-version: '${{ needs.set_version.outputs.version }}'
+          platform: x64
+          runtime-identifier: osx-x64
 
-      - name: Cleanup
-        run: |
-          rm -R build/Electron
-
-      - name: Build Electron arm64 .NET Application
-        run: dotnet build 'Dotnet/VRCX-Electron-arm64.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64
-      - name: Upload Electron arm64 dotnet artifacts
-        uses: actions/upload-artifact@v7
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/build-electron
         with:
-          name: Electron-Release-macOS-arm64
-          path: build/Electron
+          vrcx-version: '${{ needs.set_version.outputs.version }}'
+          platform: arm64
+          runtime-identifier: osx-arm64
 
   build_node:
     runs-on: ubuntu-latest
@@ -251,7 +209,7 @@ jobs:
       - name: Download Electron x64 dotnet artifacts
         uses: actions/download-artifact@v8
         with:
-          name: Electron-Release-Linux-x64
+          name: Electron-Release_linux-x64
           path: build/Electron
       - name: Build x64 AppImage
         run: npm run build-electron
@@ -264,7 +222,7 @@ jobs:
       - name: Download Electron arm64 dotnet artifacts
         uses: actions/download-artifact@v8
         with:
-          name: Electron-Release-Linux-arm64
+          name: Electron-Release_linux-arm64
           path: build/Electron
       - name: Build arm64 AppImage
         run: npm run build-electron-arm64
@@ -306,7 +264,7 @@ jobs:
       - name: Download x64 Electron dotnet artifacts
         uses: actions/download-artifact@v8
         with:
-          name: Electron-Release-macOS-x64
+          name: Electron-Release_osx-x64
           path: build/Electron
       - name: Build x64 macOS .dmg
         run: npm run build-electron
@@ -326,7 +284,7 @@ jobs:
       - name: Download arm64 Electron dotnet artifacts
         uses: actions/download-artifact@v8
         with:
-          name: Electron-Release-macOS-arm64
+          name: Electron-Release_osx-arm64
           path: build/Electron
       - name: Build arm64 macOS .dmg
         run: npm run build-electron-arm64
