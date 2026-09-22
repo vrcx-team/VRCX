@@ -37,6 +37,15 @@ export function clearVRCXCache() {
             userStore.deleteCachedUser(id);
         }
     });
+    userStore.cachedProfiles.forEach((ref, id) => {
+        if (
+            !friendStore.friends.has(id) &&
+            !locationStore.lastLocation.playerList.has(ref.id) &&
+            id !== userStore.currentUser.id
+        ) {
+            userStore.deleteCachedProfile(id);
+        }
+    });
     worldStore.cachedWorlds.forEach((ref, id) => {
         if (
             !favoriteStore.getCachedFavoritesByObjectId(id) &&

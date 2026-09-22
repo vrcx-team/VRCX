@@ -1221,7 +1221,10 @@ export const useInstanceStore = defineStore('Instance', () => {
 
         const playersInInstance = locationStore.lastLocation.playerList;
         if (playersInInstance.size > 0) {
-            let ref = userStore.cachedUsers.get(userStore.currentUser.id);
+            let ref = userStore.cachedProfiles.get(userStore.currentUser.id);
+            if (typeof ref === 'undefined') {
+                ref = userStore.cachedUsers.get(userStore.currentUser.id);
+            }
             if (typeof ref !== 'undefined' && playersInInstance.has(ref.id)) {
                 pushUser(ref);
             }
@@ -1234,7 +1237,10 @@ export const useInstanceStore = defineStore('Instance', () => {
                     return player.displayName === user.displayName;
                 });
                 if (addUser) {
-                    ref = userStore.cachedUsers.get(player.userId);
+                    ref = userStore.cachedProfiles.get(player.userId);
+                    if (typeof ref === 'undefined') {
+                        ref = userStore.cachedUsers.get(player.userId);
+                    }
                     if (typeof ref !== 'undefined') {
                         pushUser(ref);
                     } else {

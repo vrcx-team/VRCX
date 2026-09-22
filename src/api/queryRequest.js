@@ -32,6 +32,11 @@ const registry = Object.freeze({
         }),
         queryFn: (params) => userRequest.getUser(params)
     },
+    profile: {
+        key: (params) => queryKeys.profile(params.userId),
+        policy: entityQueryPolicies.profile,
+        queryFn: (params) => userRequest.getProfile(params)
+    },
     avatar: {
         key: (params) => queryKeys.avatar(params.avatarId),
         policy: entityQueryPolicies.avatar,
