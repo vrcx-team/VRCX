@@ -58,6 +58,26 @@ import { useUserStore } from '../stores/user';
 const getRobotUrl = () => `${AppDebug.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
 
 /**
+ * @param {import('../types/api/profile').publicProfile & { $lastFetch?: number }} json
+ * @returns {import('../types/api/profile').publicProfile & { $lastFetch?: number }}
+ */
+export function applyPublicProfile(json) {
+    const { cachedProfiles } = useUserStore();
+    let ref = cachedProfiles.get(json.id);
+    if (typeof ref === 'undefined') {
+        ref = reactive({ ...json });
+        cachedProfiles.set(json.id, ref);
+    } else {
+        for (const prop in json) {
+            if (typeof json[prop] !== 'undefined') {
+                ref[prop] = json[prop];
+            }
+        }
+    }
+    return ref;
+}
+
+/**
  * @param {import('../types/api/user').GetUserResponse} json
  * @returns {import('../types/api/user').VrcxUser}
  */

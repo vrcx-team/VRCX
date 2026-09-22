@@ -1,7 +1,7 @@
 import { patchAndRefetchActiveQuery, queryKeys } from '../queries';
 import { request } from '../services/request';
 import { useUserStore } from '../stores';
-import { applyUser, applyCurrentUser } from '../coordinators/userCoordinator';
+import { applyUser, applyCurrentUser, applyPublicProfile } from '../coordinators/userCoordinator';
 
 /**
  * @returns {string}
@@ -187,15 +187,21 @@ const userReq = {
 
     /**
      * @param {{ userId: string }} params
-     * @returns {Promise<{ json: import('../types/api/profile').publicProfile; params: { userId: string } }>}
+     * @returns {Promise<{
+     *     json: import('../types/api/profile').publicProfile;
+     *     params: { userId: string };
+     *     ref: import('../types/api/profile').publicProfile & { $lastFetch?: number };
+     * }>}
      */
     getPublicProfile(params) {
         return request(`profile/${params.userId}`, {
             method: 'GET'
         }).then((json) => {
+            json.$lastFetch = Date.now();
             const args = {
                 json,
-                params
+                params,
+                ref: applyPublicProfile(json)
             };
             return args;
         });

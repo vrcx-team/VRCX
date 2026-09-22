@@ -348,7 +348,7 @@ export const createColumns = ({
             enableSorting: false,
             meta: { label: () => t('table.playerList.bioLink') },
             cell: ({ row }) => {
-                const links = row.original?.ref?.bioLinks?.filter(Boolean) ?? [];
+                const links = row.original?.profileRef?.bioLinks?.filter(Boolean) ?? [];
                 return (
                     <div class="flex items-center">
                         {links.map((link, index) => (
