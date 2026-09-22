@@ -50,7 +50,7 @@
                     }
                 ">
                 <SelectTrigger style="flex: 1">
-                    <SelectValue placeholder="Filter" />
+                    <SelectValue :placeholder="t('view.settings.advanced.photon.event_hud.type_filter_placeholder')" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem v-for="type in photonEventTableTypeFilterList" :key="type" :value="type">{{

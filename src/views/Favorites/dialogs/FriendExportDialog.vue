@@ -8,7 +8,7 @@
                 :model-value="friendExportFavoriteGroupSelection"
                 @update:modelValue="handleFriendExportGroupSelect">
                 <SelectTrigger size="sm">
-                    <SelectValue placeholder="All Favorites" />
+                    <SelectValue :placeholder="t('dialog.friend_export.all_favorites')" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
@@ -28,7 +28,7 @@
                 :model-value="friendExportLocalFavoriteGroupSelection"
                 @update:modelValue="handleFriendExportLocalGroupSelect">
                 <SelectTrigger size="sm">
-                    <SelectValue placeholder="Select Group" />
+                    <SelectValue :placeholder="t('dialog.friend_export.select_group')" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>

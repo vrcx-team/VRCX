@@ -1307,7 +1307,8 @@
                         "filter_favorites": "Favorites",
                         "filter_friends": "Friends",
                         "filter_everyone": "Everyone",
-                        "message_timeout": "Message Timeout"
+                        "message_timeout": "Message Timeout",
+                        "type_filter_placeholder": "Filter"
                     },
                     "timeout_hud": {
                         "header": "User Timeout HUD",
@@ -1462,6 +1463,7 @@
             "groups": {
                 "header": "Groups",
                 "total_count": "Total {count}",
+                "search_placeholder": "Search groups",
                 "sort_by": "Sort by:",
                 "edit_mode": "Edit Mode",
                 "exit_edit_mode": "Exit Edit Mode",
@@ -1481,6 +1483,7 @@
             "worlds": {
                 "header": "Worlds",
                 "total_count": "Total {count}",
+                "search_placeholder": "Search worlds",
                 "sort_by": "Sort by:",
                 "order_by": "Order by:",
                 "sorting": {
@@ -1496,11 +1499,13 @@
                 }
             },
             "favorite_worlds": {
-                "header": "Favorite Worlds"
+                "header": "Favorite Worlds",
+                "search_placeholder": "Search worlds"
             },
             "avatars": {
                 "header": "Avatars",
                 "total_count": "Total {count}",
+                "search_placeholder": "Search avatars",
                 "sort_by": "Sort by:",
                 "sort_by_name": "Name",
                 "sort_by_update": "Updated",
@@ -1515,6 +1520,7 @@
             },
             "mutual_friends": {
                 "header": "Mutual Friends",
+                "search_placeholder": "Search friends",
                 "sorting": {
                     "alphabetical": "Alphabetical",
                     "last_active": "Last Active",
@@ -2192,7 +2198,9 @@
             "send": "Send"
         },
         "world_export": {
-            "header": "World Favorites Export"
+            "header": "World Favorites Export",
+            "all_favorites": "All Favorites",
+            "select_group": "Select Group"
         },
         "world_import": {
             "header": "World Favorites Import",
@@ -2209,7 +2217,9 @@
             "clear_errors": "Clear Errors"
         },
         "avatar_export": {
-            "header": "Avatar Favorites Export"
+            "header": "Avatar Favorites Export",
+            "all_favorites": "All Favorites",
+            "select_group": "Select Group"
         },
         "avatar_import": {
             "header": "Avatar Favorites Import",
@@ -2225,7 +2235,9 @@
             "clear_errors": "Clear Errors"
         },
         "friend_export": {
-            "header": "Friend Favorites Export"
+            "header": "Friend Favorites Export",
+            "all_favorites": "All Favorites",
+            "select_group": "Select Group"
         },
         "friend_import": {
             "header": "Friend Favorites Import",
@@ -2278,6 +2290,7 @@
             "stickers": "Stickers",
             "prints": "Prints",
             "inventory": "Inventory",
+            "all_types": "All types",
             "refresh": "Refresh",
             "upload": "Upload",
             "clear": "Clear",

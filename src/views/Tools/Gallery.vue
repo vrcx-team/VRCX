@@ -520,11 +520,11 @@
                         </ButtonGroup>
                         <Select v-model="inventoryTypeFilter">
                             <SelectTrigger size="sm" class="w-44">
-                                <SelectValue placeholder="All types" />
+                                <SelectValue :placeholder="t('dialog.gallery_icons.all_types')" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectItem value="all">All types</SelectItem>
+                                    <SelectItem value="all">{{ t('dialog.gallery_icons.all_types') }}</SelectItem>
                                     <SelectItem v-for="type in inventoryTypeOptions" :key="type" :value="type">
                                         {{ type }}
                                     </SelectItem>
