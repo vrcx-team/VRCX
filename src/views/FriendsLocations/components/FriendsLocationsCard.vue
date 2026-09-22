@@ -22,7 +22,7 @@
                     class="friend-card__status-dot absolute rounded-full pointer-events-none"
                     :class="statusDotClass"></span>
                 <div
-                    class="friend-card__name font-semibold overflow-hidden text-ellipsis whitespace-nowrap"
+                    class="friend-card__name relative font-semibold overflow-hidden text-ellipsis whitespace-nowrap"
                     :title="friend.name">
                     {{ friend.name }}
                 </div>
