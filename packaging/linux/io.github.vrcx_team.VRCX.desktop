@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=VRCX
+Comment=Friendship management tool for VRChat
+Exec=vrcx %u
+Icon=io.github.vrcx_team.VRCX
+Terminal=false
+Type=Application
+Categories=Utility;
+MimeType=x-scheme-handler/vrcx;
+StartupWMClass=VRCX
+Keywords=VRChat;friends;worlds;avatars;
