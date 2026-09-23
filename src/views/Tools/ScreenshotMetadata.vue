@@ -670,17 +670,26 @@
             }
             screenshotMetadataSearchInputs.value = 0;
 
-            if (D.search === '') {
-                screenshotMetadataResetSearch();
-                if (D.metadata.filePath !== null) {
-                    getAndDisplayScreenshot(D.metadata.filePath, true);
+            const search = D.search.trim();
+            if (search.length < 3) {
+                D.searchIndex = null;
+                D.searchResults = null;
+                searchResultsData.value = [];
+                selectedSearchFilePath.value = null;
+                searchViewMode.value = 'detail';
+
+                if (search.length === 0) {
+                    screenshotMetadataResetSearch();
+                    if (D.metadata.filePath !== null) {
+                        getAndDisplayScreenshot(D.metadata.filePath, true);
+                    }
                 }
                 return;
             }
 
             const searchType = D.searchTypes.indexOf(D.searchType);
             D.loading = true;
-            AppApi.FindScreenshotsBySearch(D.search, searchType)
+            AppApi.FindScreenshotsBySearch(search, searchType)
                 .then(async (json) => {
                     const results = JSON.parse(json);
 
@@ -698,7 +707,7 @@
                     D.searchIndex = 0;
                     D.searchResults = results;
 
-                    const enriched = await loadSearchResultsMetadata(results, D.search, searchType);
+                    const enriched = await loadSearchResultsMetadata(results, search, searchType);
                     searchResultsData.value = enriched;
                     searchViewMode.value = 'table';
                 })
