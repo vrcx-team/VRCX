@@ -88,6 +88,8 @@ export const useAppearanceSettingsStore = defineStore(
         const sidebarCosmetics = ref(false);
         const hideUserNotes = ref(false);
         const hideUserMemos = ref(false);
+        const showLastKnownLocation = ref(true);
+        const lastKnownLocationMaxAge = ref('60');
         const hideUnfriends = ref(false);
         const randomUserColours = ref(false);
         const tableDensity = ref('standard');
@@ -158,6 +160,8 @@ export const useAppearanceSettingsStore = defineStore(
                 sidebarCosmeticsConfig,
                 hideUserNotesConfig,
                 hideUserMemosConfig,
+                showLastKnownLocationConfig,
+                lastKnownLocationMaxAgeConfig,
                 hideUnfriendsConfig,
                 randomUserColoursConfig,
                 tableDensityConfig,
@@ -202,6 +206,8 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getBool('VRCX_sidebarCosmetics', false),
                 configRepository.getBool('VRCX_hideUserNotes', false),
                 configRepository.getBool('VRCX_hideUserMemos', false),
+                configRepository.getBool('VRCX_showLastKnownLocation', true),
+                configRepository.getString('VRCX_lastKnownLocationMaxAge', '60'),
                 configRepository.getBool('VRCX_hideUnfriends', false),
                 configRepository.getBool('VRCX_randomUserColours', false),
                 configRepository.getString('VRCX_tableDensity'),
@@ -283,6 +289,8 @@ export const useAppearanceSettingsStore = defineStore(
             sidebarCosmetics.value = sidebarCosmeticsConfig;
             hideUserNotes.value = hideUserNotesConfig;
             hideUserMemos.value = hideUserMemosConfig;
+            showLastKnownLocation.value = showLastKnownLocationConfig;
+            lastKnownLocationMaxAge.value = lastKnownLocationMaxAgeConfig;
             hideUnfriends.value = hideUnfriendsConfig;
             randomUserColours.value = randomUserColoursConfig;
             notificationIconDot.value = notificationIconDotConfig;
@@ -690,6 +698,17 @@ export const useAppearanceSettingsStore = defineStore(
             hideUserMemos.value = !hideUserMemos.value;
             configRepository.setBool('VRCX_hideUserMemos', hideUserMemos.value);
         }
+        function setShowLastKnownLocation() {
+            showLastKnownLocation.value = !showLastKnownLocation.value;
+            configRepository.setBool('VRCX_showLastKnownLocation', showLastKnownLocation.value);
+        }
+        /**
+         * @param {string} value
+         */
+        function setLastKnownLocationMaxAge(value) {
+            lastKnownLocationMaxAge.value = value;
+            configRepository.setString('VRCX_lastKnownLocationMaxAge', value);
+        }
         function setHideUnfriends() {
             hideUnfriends.value = !hideUnfriends.value;
             configRepository.setBool('VRCX_hideUnfriends', hideUnfriends.value);
@@ -922,6 +941,8 @@ export const useAppearanceSettingsStore = defineStore(
             sidebarCosmetics,
             hideUserNotes,
             hideUserMemos,
+            showLastKnownLocation,
+            lastKnownLocationMaxAge,
             hideUnfriends,
             randomUserColours,
             tableDensity,
@@ -968,6 +989,8 @@ export const useAppearanceSettingsStore = defineStore(
             setSidebarCosmetics,
             setHideUserNotes,
             setHideUserMemos,
+            setShowLastKnownLocation,
+            setLastKnownLocationMaxAge,
             setHideUnfriends,
             setRandomUserColours,
             toggleStripedDataTable,

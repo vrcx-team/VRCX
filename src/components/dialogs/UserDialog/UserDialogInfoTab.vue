@@ -29,6 +29,49 @@
                 <div v-if="userDialog.$location.isPrivate">
                     <span class="text-sm text-muted-foreground">{{ t('location.private') }}</span>
                 </div>
+                <div v-if="lastKnownLocation" class="mt-2 border-t border-dashed border-muted-foreground/30 pt-2">
+                    <div class="flex items-center gap-1">
+                        <span
+                            class="text-[10px] font-bold uppercase tracking-wide"
+                            :style="{ color: userDialog.theme.subtextColor }">
+                            {{ t('dialog.user.info.last_known_location') }}
+                        </span>
+                        <TooltipWrapper side="top" :content="t('dialog.user.info.last_known_location_tooltip')">
+                            <Info class="h-3 w-3 shrink-0" :style="{ color: userDialog.theme.iconColor }" />
+                        </TooltipWrapper>
+                    </div>
+                    <div class="flex min-w-0 flex-col gap-1.5 mt-1">
+                        <span
+                            class="text-md text-foreground cursor-pointer block truncate"
+                            @click="showWorldDialog(lastKnownLocation.location)"
+                            :title="lastKnownLocation.worldName"
+                            >{{ lastKnownLocation.worldName || lastKnownLocation.$location.worldId }}</span
+                        >
+                        <div class="flex min-w-0 flex-wrap items-start gap-1.5">
+                            <LocationWorld
+                                class="text-sm inline-flex min-w-0 w-fit max-w-full border-muted-foreground/30"
+                                :locationobject="lastKnownLocation.$location"
+                                :currentuserid="currentUser.id" />
+                            <InstanceActionBar
+                                class="text-sm inline-flex max-w-full shrink-0 border-muted-foreground/30"
+                                :showButtons="false"
+                                :showInstanceInfo="false"
+                                :location="lastKnownLocation.location"
+                                :shortname="lastKnownLocation.$location.shortName" />
+                        </div>
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <InstanceActionBar
+                                :showButtons="true"
+                                :showInstanceInfo="false"
+                                :buttonStyle="{ color: userDialog.theme.iconColor }"
+                                :location="lastKnownLocation.location"
+                                :shortname="lastKnownLocation.$location.shortName" />
+                            <span class="text-xs text-muted-foreground">{{
+                                timeAgo(lastKnownLocation.lastSeenAt)
+                            }}</span>
+                        </div>
+                    </div>
+                </div>
                 <div class="flex flex-col">
                     <div
                         v-if="isRealInstance(userDialog.$location.tag)"
@@ -480,16 +523,19 @@
     import { queryRequest, userRequest } from '../../../api';
 
     import InstanceActionBar from '../../InstanceActionBar.vue';
+    import LocationWorld from '../../LocationWorld.vue';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
 
     import EditNoteAndMemoDialog from './EditNoteAndMemoDialog.vue';
+    import { useLastKnownLocation } from './composables/useLastKnownLocation.js';
 
     const { t } = useI18n();
 
     const modalStore = useModalStore();
     const instanceStore = useInstanceStore();
 
-    const { hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
+    const { hideUserNotes, hideUserMemos, showLastKnownLocation, lastKnownLocationMaxAge } =
+        storeToRefs(useAppearanceSettingsStore());
     const { bioLanguage, translationApi, translationApiType } = storeToRefs(useAdvancedSettingsStore());
     const { translateText } = useAdvancedSettingsStore();
     const { userDialog, currentUser } = storeToRefs(useUserStore());
@@ -498,6 +544,13 @@
 
     const { lastLocation } = storeToRefs(useLocationStore());
     const { userImage, userStatusClass } = useUserDisplay();
+
+    const { lastKnownLocation } = useLastKnownLocation({
+        userDialog,
+        currentUser,
+        isEnabled: showLastKnownLocation,
+        maxAgeMinutes: lastKnownLocationMaxAge
+    });
 
     const bioCache = ref({
         userId: null,

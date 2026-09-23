@@ -712,6 +712,65 @@ const feed = {
             }
         );
         return results;
+    },
+
+    /**
+     * Find the instance a player was last verifiably in, and when that location
+     * stopped being current.
+     *
+     * The GPS feed keeps, for every location change, the location the player came
+     * from in `previous_location`. The change into a hidden state therefore
+     * carries the world they just left, and its timestamp is when that world
+     * stopped being current.
+     *
+     * @param {{ id?: string; displayName?: string }} userRef
+     * @returns {Promise<{ createdAt: string; location: string; worldName: string } | null>}
+     */
+    async getLastKnownGPSLocation(userRef) {
+        if (!userRef || (!userRef.id && !userRef.displayName)) {
+            return null;
+        }
+
+        let result = null;
+        await sqliteService.execute(
+            (dbRow) => {
+                if (result !== null) {
+                    return;
+                }
+                result = {
+                    createdAt: dbRow[0] || '',
+                    location: dbRow[1] || '',
+                    worldName: dbRow[2] || ''
+                };
+            },
+            `WITH latest AS (
+                 SELECT created_at, previous_location AS location
+                 FROM ${dbVars.userPrefix}_feed_gps
+                 WHERE (user_id = @userId OR display_name = @displayName)
+                   AND COALESCE(previous_location, '') LIKE 'wrld_%'
+                   AND COALESCE(location, '') NOT LIKE 'wrld_%'
+                 ORDER BY created_at DESC, id DESC
+                 LIMIT 1
+             )
+             SELECT latest.created_at,
+                    latest.location,
+                    COALESCE(
+                        (SELECT world_name FROM ${dbVars.userPrefix}_feed_gps
+                          WHERE location = latest.location
+                            AND world_name IS NOT NULL AND world_name != ''
+                          ORDER BY id DESC LIMIT 1),
+                        (SELECT name FROM cache_world
+                          WHERE id = SUBSTR(latest.location, 1, INSTR(latest.location, ':') - 1)
+                          LIMIT 1),
+                        ''
+                    )
+             FROM latest`,
+            {
+                '@userId': userRef.id ?? '',
+                '@displayName': userRef.displayName ?? ''
+            }
+        );
+        return result;
     }
 };
 
