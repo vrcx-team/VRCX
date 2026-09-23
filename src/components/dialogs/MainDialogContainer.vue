@@ -134,7 +134,11 @@
         get: () => activeComponent.value !== null,
         set: (value) => {
             if (!value) {
-                uiStore.closeMainDialog();
+                if (dialogCrumbs.value.length > 1) {
+                    uiStore.jumpBackDialogCrumb();
+                } else {
+                    uiStore.closeMainDialog();
+                }
             }
         }
     });
