@@ -82,7 +82,8 @@ module.exports = {
         target: ['dmg'],
         icon: 'images/VRCX.png',
         category: 'public.app-category.utilities',
-        executableName: 'VRCX'
+        executableName: 'VRCX',
+        minimumSystemVersion: '14.0'
     },
     toolsets: {
         appimage: '1.0.3'
