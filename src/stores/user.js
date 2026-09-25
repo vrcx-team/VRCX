@@ -176,6 +176,8 @@ export const useUserStore = defineStore('User', () => {
         })
     );
 
+    const currentUserCredits = ref(null);
+
     const userDialog = ref({
         visible: false,
         loading: false,
@@ -970,6 +972,7 @@ export const useUserStore = defineStore('User', () => {
         state,
 
         currentUser,
+        currentUserCredits,
         currentTravelers,
         userDialog,
         editProfileDialog,

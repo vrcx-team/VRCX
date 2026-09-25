@@ -538,6 +538,10 @@ function handlePipeline(args) {
             sharedFeedStore.addEntry(noty);
             break;
 
+        case 'economy-update':
+            userStore.currentUserCredits = content?.walletBalance;
+            break;
+
         default:
             console.log('Unknown pipeline type', args.json);
     }
