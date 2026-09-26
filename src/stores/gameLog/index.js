@@ -25,6 +25,7 @@ import { useVrcxStore } from '../vrcx';
 import { watchState } from '../../services/watchState';
 
 import configRepository from '../../services/config';
+import { compileResourceLoadFilters, isResourceLoadExcluded } from '../../shared/utils/resourceLoadFilter';
 
 import * as workerTimers from 'worker-timers';
 
@@ -51,6 +52,20 @@ export const useGameLogStore = defineStore('GameLog', () => {
     });
 
     const gameLogTableData = shallowRef([]);
+    const resourceLoadFilter = ref({ enabled: false, patterns: [] });
+    const resourceLoadRegexes = computed(() => compileResourceLoadFilters(resourceLoadFilter.value.patterns));
+    const visibleGameLogTableData = computed(() =>
+        resourceLoadFilter.value.enabled
+            ? gameLogTableData.value.filter((row) => !isResourceLoadExcluded(row, resourceLoadRegexes.value))
+            : gameLogTableData.value
+    );
+
+    async function setResourceLoadFilter(value) {
+        const next = { enabled: !!value.enabled, patterns: value.patterns.filter((pattern) => pattern.trim()) };
+        if (compileResourceLoadFilters(next.patterns).some(({ error }) => error)) return;
+        await configRepository.setString('VRCX_gameLogResourceLoadFilter', JSON.stringify(next));
+        resourceLoadFilter.value = next;
+    }
     const gameLogTable = ref({
         loading: false,
         search: '',
@@ -162,6 +177,17 @@ export const useGameLogStore = defineStore('GameLog', () => {
     );
 
     async function init() {
+        try {
+            const saved = JSON.parse(await configRepository.getString('VRCX_gameLogResourceLoadFilter', '{}'));
+            if (saved && Array.isArray(saved.patterns)) {
+                resourceLoadFilter.value = {
+                    enabled: saved.enabled === true,
+                    patterns: saved.patterns.filter((pattern) => typeof pattern === 'string')
+                };
+            }
+        } catch {
+            // Keep the optional filter disabled if its saved configuration is malformed.
+        }
         gameLogTable.value.filter = JSON.parse(await configRepository.getString('VRCX_gameLogTableFilters', '[]'));
         gameLogTable.value.vip = await configRepository.getBool('VRCX_gameLogTableVIPFilter', false);
         const savedViewMode = await configRepository.getString('VRCX_gameLogViewMode', 'table');
@@ -1110,6 +1136,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         nowPlaying,
         gameLogTable,
         gameLogTableData,
+        visibleGameLogTableData,
+        resourceLoadFilter,
+        setResourceLoadFilter,
         lastVideoUrl,
         lastResourceloadUrl,
         latestGameLogEntry,

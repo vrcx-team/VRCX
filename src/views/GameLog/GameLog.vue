@@ -124,6 +124,7 @@
                             style="flex: 0.4"
                             @keyup.enter="gameLogTableLookup"
                             @change="gameLogTableLookup" />
+                        <ResourceLoadFilter @saved="pagination.pageIndex = 0" />
                     </div>
                 </template>
             </DataTableLayout>
@@ -148,9 +149,11 @@
     import { database } from '../../services/database';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
     import GameLogSessions from './components/GameLogSessions.vue';
+    import ResourceLoadFilter from './components/ResourceLoadFilter.vue';
 
     const { gameLogTableLookup, setSessionsViewMode } = useGameLogStore();
-    const { gameLogTable, gameLogTableData, sessionsViewMode } = storeToRefs(useGameLogStore());
+    const { gameLogTable, gameLogTableData, visibleGameLogTableData, sessionsViewMode } =
+        storeToRefs(useGameLogStore());
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const vrcxStore = useVrcxStore();
     const modalStore = useModalStore();
@@ -236,7 +239,7 @@
     const { table, pagination } = useVrcxVueTable({
         persistKey: 'gameLog',
         get data() {
-            return gameLogTableData.value;
+            return visibleGameLogTableData.value;
         },
         columns,
         getRowId: getGameLogRowId,
