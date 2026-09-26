@@ -407,10 +407,7 @@ export const useFriendStore = defineStore('Friend', () => {
             }
         }
         // Local favorites
-        let localGroups = groups.filter((key) => key.startsWith('local:')).map((key) => key.replace('local:', ''));
-        if (localGroups.length === 0) {
-            localGroups = Object.keys(favoriteStore.localFriendFavorites);
-        }
+        const localGroups = groups.filter((key) => key.startsWith('local:')).map((key) => key.replace('local:', ''));
         for (const groupName of localGroups) {
             const userIds = favoriteStore.localFriendFavorites[groupName];
             if (userIds) {
