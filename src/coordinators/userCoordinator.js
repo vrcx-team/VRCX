@@ -517,8 +517,10 @@ export function showUserDialog(userId) {
 }
 
 export function updateUserDialogProfile() {
-    const D = useUserStore().userDialog;
+    const userStore = useUserStore();
+    const D = userStore.userDialog;
     const appearanceSettingsStore = useAppearanceSettingsStore();
+    D.publicProfileRef = userStore.cachedProfiles.get(D.id);
     userRequest
         .getPublicProfile({ userId: D.id })
         .then((args1) => {
