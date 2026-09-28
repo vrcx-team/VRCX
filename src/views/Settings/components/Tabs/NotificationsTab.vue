@@ -80,29 +80,28 @@
 
         <SettingsGroup :title="t('view.settings.notifications.notifications.text_to_speech.header')">
             <SettingsItem :label="t('view.settings.notifications.notifications.text_to_speech.when_to_play')">
-                <ToggleGroup
-                    type="single"
-                    required
-                    variant="outline"
-                    size="sm"
-                    :model-value="notificationTTS"
-                    @update:model-value="saveNotificationTTS">
-                    <ToggleGroupItem value="Never">{{
-                        t('view.settings.notifications.notifications.conditions.never')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Inside VR">{{
-                        t('view.settings.notifications.notifications.conditions.inside_vr')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Game Running">{{
-                        t('view.settings.notifications.notifications.conditions.inside_vrchat')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Game Closed">{{
-                        t('view.settings.notifications.notifications.conditions.outside_vrchat')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Always">{{
-                        t('view.settings.notifications.notifications.conditions.always')
-                    }}</ToggleGroupItem>
-                </ToggleGroup>
+                <Select :model-value="notificationTTS" @update:model-value="saveNotificationTTS">
+                    <SelectTrigger size="sm">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Never">{{
+                            t('view.settings.notifications.notifications.conditions.never')
+                        }}</SelectItem>
+                        <SelectItem value="Inside VR">{{
+                            t('view.settings.notifications.notifications.conditions.inside_vr')
+                        }}</SelectItem>
+                        <SelectItem value="Game Running">{{
+                            t('view.settings.notifications.notifications.conditions.inside_vrchat')
+                        }}</SelectItem>
+                        <SelectItem value="Game Closed">{{
+                            t('view.settings.notifications.notifications.conditions.outside_vrchat')
+                        }}</SelectItem>
+                        <SelectItem value="Always">{{
+                            t('view.settings.notifications.notifications.conditions.always')
+                        }}</SelectItem>
+                    </SelectContent>
+                </Select>
             </SettingsItem>
 
             <SettingsItem :label="t('view.settings.notifications.notifications.text_to_speech.tts_voice')">
@@ -161,7 +160,6 @@
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
     import { Switch } from '@/components/ui/switch';
     import { computed, onMounted, ref } from 'vue';
     import { Button } from '@/components/ui/button';

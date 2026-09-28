@@ -110,11 +110,7 @@
         <SettingsGroup :title="t('view.settings.vr.vr_notifications.header')">
             <SettingsItem
                 :label="t('view.settings.notifications.notifications.desktop_notifications.when_to_display_vr')">
-                <ToggleGroup
-                    type="single"
-                    required
-                    variant="outline"
-                    size="sm"
+                <Select
                     :model-value="overlayToast"
                     :disabled="
                         (!overlayNotifications || !openVR) &&
@@ -126,19 +122,24 @@
                         setOverlayToast($event);
                         saveOpenVROption();
                     ">
-                    <ToggleGroupItem value="Never">{{
-                        t('view.settings.notifications.notifications.conditions.never')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Game Running">{{
-                        t('view.settings.notifications.notifications.conditions.inside_vrchat')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Game Closed">{{
-                        t('view.settings.notifications.notifications.conditions.outside_vrchat')
-                    }}</ToggleGroupItem>
-                    <ToggleGroupItem value="Always">{{
-                        t('view.settings.notifications.notifications.conditions.always')
-                    }}</ToggleGroupItem>
-                </ToggleGroup>
+                    <SelectTrigger size="sm">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Never">{{
+                            t('view.settings.notifications.notifications.conditions.never')
+                        }}</SelectItem>
+                        <SelectItem value="Game Running">{{
+                            t('view.settings.notifications.notifications.conditions.inside_vrchat')
+                        }}</SelectItem>
+                        <SelectItem value="Game Closed">{{
+                            t('view.settings.notifications.notifications.conditions.outside_vrchat')
+                        }}</SelectItem>
+                        <SelectItem value="Always">{{
+                            t('view.settings.notifications.notifications.conditions.always')
+                        }}</SelectItem>
+                    </SelectContent>
+                </Select>
             </SettingsItem>
 
             <SettingsItem
@@ -253,7 +254,6 @@
     import { Switch } from '@/components/ui/switch';
     import { Slider } from '@/components/ui/slider';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
