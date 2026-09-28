@@ -9,7 +9,7 @@
                 </p>
             </template>
 
-            <SettingsItem :label="t('view.settings.discord_presence.discord_presence.enable')">
+            <SettingsItem :label="t('view.settings.discord_presence.discord_presence.enable')" toggle>
                 <Switch
                     :model-value="discordActive"
                     :ariaLabel="t('view.settings.discord_presence.discord_presence.enable')"
@@ -21,7 +21,8 @@
 
             <SettingsItem
                 :label="t('view.settings.discord_presence.discord_presence.world_integration')"
-                :description="t('view.settings.discord_presence.discord_presence.world_integration_tooltip')">
+                :description="t('view.settings.discord_presence.discord_presence.world_integration_tooltip')"
+                toggle>
                 <Switch
                     :model-value="discordWorldIntegration"
                     :disabled="!discordActive"
@@ -32,7 +33,9 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.discord_presence.discord_presence.instance_type_player_count')">
+            <SettingsItem
+                :label="t('view.settings.discord_presence.discord_presence.instance_type_player_count')"
+                toggle>
                 <Switch
                     :model-value="discordInstance"
                     :disabled="!discordActive"
@@ -43,7 +46,7 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.discord_presence.discord_presence.show_current_platform')">
+            <SettingsItem :label="t('view.settings.discord_presence.discord_presence.show_current_platform')" toggle>
                 <Switch
                     :model-value="discordShowPlatform"
                     :disabled="!discordActive || !discordInstance"
@@ -54,7 +57,7 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.discord_presence.discord_presence.show_details_in_private')">
+            <SettingsItem :label="t('view.settings.discord_presence.discord_presence.show_details_in_private')" toggle>
                 <Switch
                     :model-value="!discordHideInvite"
                     :disabled="!discordActive"
@@ -65,7 +68,7 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.discord_presence.discord_presence.join_button')">
+            <SettingsItem :label="t('view.settings.discord_presence.discord_presence.join_button')" toggle>
                 <Switch
                     :model-value="discordJoinButton"
                     :disabled="!discordActive"
@@ -76,7 +79,7 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.discord_presence.discord_presence.show_images')">
+            <SettingsItem :label="t('view.settings.discord_presence.discord_presence.show_images')" toggle>
                 <Switch
                     :model-value="!discordHideImage"
                     :disabled="!discordActive"
@@ -88,7 +91,8 @@
             </SettingsItem>
 
             <SettingsItem
-                :label="t('view.settings.discord_presence.discord_presence.display_world_name_as_discord_status')">
+                :label="t('view.settings.discord_presence.discord_presence.display_world_name_as_discord_status')"
+                toggle>
                 <Switch
                     :model-value="discordWorldNameAsDiscordStatus"
                     :disabled="!discordActive"
@@ -106,7 +110,8 @@
         <SettingsGroup :title="t('view.settings.advanced.advanced.translation_api.header')">
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.translation_api.enable')"
-                :description="t('view.settings.advanced.advanced.translation_api.enable_tooltip')">
+                :description="t('view.settings.advanced.advanced.translation_api.enable_tooltip')"
+                toggle>
                 <Switch
                     :model-value="translationApi"
                     :ariaLabel="t('view.settings.advanced.advanced.translation_api.enable')"
@@ -125,7 +130,8 @@
         <SettingsGroup :title="t('view.settings.advanced.advanced.youtube_api.header')">
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.youtube_api.enable')"
-                :description="t('view.settings.advanced.advanced.youtube_api.enable_tooltip')">
+                :description="t('view.settings.advanced.advanced.youtube_api.enable_tooltip')"
+                toggle>
                 <Switch
                     :model-value="youTubeApi"
                     :ariaLabel="t('view.settings.advanced.advanced.youtube_api.enable')"
@@ -143,7 +149,8 @@
         <SettingsGroup :title="t('view.settings.advanced.advanced.remote_database.header')">
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.remote_database.enable')"
-                :description="t('view.settings.advanced.advanced.remote_database.enable_description')">
+                :description="t('view.settings.advanced.advanced.remote_database.enable_description')"
+                toggle>
                 <Switch
                     :model-value="avatarRemoteDatabase"
                     :ariaLabel="t('view.settings.advanced.advanced.remote_database.enable')"

@@ -7,7 +7,7 @@
             </div>
         </div>
         <Card class="p-0">
-            <CardContent class="flex flex-col gap-1 py-4.5 px-5.5">
+            <CardContent class="flex flex-col gap-0 py-3 px-5.5">
                 <slot />
             </CardContent>
         </Card>

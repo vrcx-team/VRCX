@@ -3,7 +3,8 @@
         <SettingsGroup :title="t('view.settings.social.interaction.header')">
             <SettingsItem
                 :label="t('view.settings.appearance.user_dialog.recent_action_cooldown')"
-                :description="t('view.settings.appearance.user_dialog.recent_action_cooldown_description')">
+                :description="t('view.settings.appearance.user_dialog.recent_action_cooldown_description')"
+                toggle>
                 <Switch
                     :model-value="recentActionCooldownEnabled"
                     :ariaLabel="t('view.settings.appearance.user_dialog.recent_action_cooldown')"
@@ -33,7 +34,8 @@
         <SettingsGroup :title="t('view.settings.social.friend_requests.header')">
             <SettingsItem
                 :label="t('view.settings.general.friend_requests.header')"
-                :description="t('view.settings.general.friend_requests.header_tooltip')">
+                :description="t('view.settings.general.friend_requests.header_tooltip')"
+                toggle>
                 <Switch
                     :model-value="autoDeclineFriendRequests"
                     :ariaLabel="t('view.settings.general.friend_requests.header')"

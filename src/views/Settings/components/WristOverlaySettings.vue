@@ -18,7 +18,7 @@
                 >
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_overlay')">
+            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_overlay')" toggle>
                 <Switch
                     :model-value="overlayWrist"
                     :disabled="!openVR"
@@ -29,7 +29,7 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.hide_private_worlds')">
+            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.hide_private_worlds')" toggle>
                 <Switch
                     :model-value="hidePrivateFromFeed"
                     :ariaLabel="t('view.settings.wrist_overlay.steamvr_wrist_overlay.hide_private_worlds')"
@@ -82,7 +82,7 @@
                 </Select>
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.grey_background')">
+            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.grey_background')" toggle>
                 <Switch
                     :model-value="vrBackgroundEnabled"
                     :disabled="!openVR || !overlayWrist"
@@ -93,7 +93,7 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.minimal_feed_icons')">
+            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.minimal_feed_icons')" toggle>
                 <Switch
                     :model-value="minimalFeed"
                     :disabled="!openVR || !overlayWrist"
@@ -104,7 +104,7 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_vr_devices')">
+            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_vr_devices')" toggle>
                 <Switch
                     :model-value="!hideDevicesFromFeed"
                     :disabled="!openVR || !overlayWrist"
@@ -115,7 +115,7 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_cpu_usage')">
+            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_cpu_usage')" toggle>
                 <Switch
                     :model-value="vrOverlayCpuUsage"
                     :disabled="!openVR || !overlayWrist"
@@ -126,7 +126,7 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_game_uptime')">
+            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_game_uptime')" toggle>
                 <Switch
                     :model-value="!hideUptimeFromFeed"
                     :disabled="!openVR || !overlayWrist"
@@ -137,7 +137,7 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_pc_uptime')">
+            <SettingsItem :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_pc_uptime')" toggle>
                 <Switch
                     :model-value="pcUptimeOnFeed"
                     :disabled="!openVR || !overlayWrist"

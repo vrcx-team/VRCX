@@ -31,42 +31,42 @@
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.notifications.notifications.desktop_notifications.header')">
-            <SettingsItem
-                :label="t('view.settings.notifications.notifications.desktop_notifications.when_to_display')" />
-            <ToggleGroup
-                type="single"
-                required
-                variant="outline"
-                size="sm"
-                :model-value="desktopToast"
-                @update:model-value="setDesktopToast(String($event))">
-                <ToggleGroupItem value="Never">{{
-                    t('view.settings.notifications.notifications.conditions.never')
-                }}</ToggleGroupItem>
-                <ToggleGroupItem value="Desktop Mode">{{
-                    t('view.settings.notifications.notifications.conditions.desktop')
-                }}</ToggleGroupItem>
-                <ToggleGroupItem value="Inside VR">{{
-                    t('view.settings.notifications.notifications.conditions.inside_vr')
-                }}</ToggleGroupItem>
-                <ToggleGroupItem value="Outside VR">{{
-                    t('view.settings.notifications.notifications.conditions.outside_vr')
-                }}</ToggleGroupItem>
-                <ToggleGroupItem value="Game Running">{{
-                    t('view.settings.notifications.notifications.conditions.inside_vrchat')
-                }}</ToggleGroupItem>
-                <ToggleGroupItem value="Game Closed">{{
-                    t('view.settings.notifications.notifications.conditions.outside_vrchat')
-                }}</ToggleGroupItem>
-                <ToggleGroupItem value="Always">{{
-                    t('view.settings.notifications.notifications.conditions.always')
-                }}</ToggleGroupItem>
-            </ToggleGroup>
+            <SettingsItem :label="t('view.settings.notifications.notifications.desktop_notifications.when_to_display')">
+                <Select :model-value="desktopToast" @update:model-value="setDesktopToast">
+                    <SelectTrigger size="sm">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Never">{{
+                            t('view.settings.notifications.notifications.conditions.never')
+                        }}</SelectItem>
+                        <SelectItem value="Desktop Mode">{{
+                            t('view.settings.notifications.notifications.conditions.desktop')
+                        }}</SelectItem>
+                        <SelectItem value="Inside VR">{{
+                            t('view.settings.notifications.notifications.conditions.inside_vr')
+                        }}</SelectItem>
+                        <SelectItem value="Outside VR">{{
+                            t('view.settings.notifications.notifications.conditions.outside_vr')
+                        }}</SelectItem>
+                        <SelectItem value="Game Running">{{
+                            t('view.settings.notifications.notifications.conditions.inside_vrchat')
+                        }}</SelectItem>
+                        <SelectItem value="Game Closed">{{
+                            t('view.settings.notifications.notifications.conditions.outside_vrchat')
+                        }}</SelectItem>
+                        <SelectItem value="Always">{{
+                            t('view.settings.notifications.notifications.conditions.always')
+                        }}</SelectItem>
+                    </SelectContent>
+                </Select>
+            </SettingsItem>
 
             <SettingsItem
                 :label="
                     t('view.settings.notifications.notifications.desktop_notifications.desktop_notification_while_afk')
-                ">
+                "
+                toggle>
                 <Switch
                     :model-value="afkDesktopToast"
                     :ariaLabel="
@@ -123,7 +123,9 @@
                 </Select>
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.notifications.notifications.text_to_speech.use_memo_nicknames')">
+            <SettingsItem
+                :label="t('view.settings.notifications.notifications.text_to_speech.use_memo_nicknames')"
+                toggle>
                 <Switch
                     :model-value="notificationTTSNickName"
                     :disabled="notificationTTS === 'Never'"
@@ -131,7 +133,9 @@
                     @update:modelValue="setNotificationTTSNickName" />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')">
+            <SettingsItem
+                :label="t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')"
+                toggle>
                 <Switch
                     :model-value="isTestTTSVisible"
                     :ariaLabel="t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')"

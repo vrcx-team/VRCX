@@ -2,7 +2,9 @@
     <div class="flex flex-col gap-10 py-2">
         <!-- VR Core -->
         <SettingsGroup :title="t('view.settings.vr.vr_core.header')">
-            <SettingsItem :label="t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')">
+            <SettingsItem
+                :label="t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')"
+                toggle>
                 <Switch
                     :model-value="openVR"
                     :ariaLabel="t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')"
@@ -32,7 +34,8 @@
                 <SettingsItem
                     :label="
                         t('view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications')
-                    ">
+                    "
+                    toggle>
                     <Switch
                         :model-value="xsNotifications"
                         :ariaLabel="
@@ -46,7 +49,8 @@
             </template>
             <template v-else>
                 <SettingsItem
-                    :label="t('view.settings.notifications.notifications.steamvr_notifications.wayvr_notifications')">
+                    :label="t('view.settings.notifications.notifications.steamvr_notifications.wayvr_notifications')"
+                    toggle>
                     <Switch
                         :model-value="xsNotifications"
                         :ariaLabel="
@@ -65,7 +69,8 @@
                         t(
                             'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications'
                         )
-                    ">
+                    "
+                    toggle>
                     <Switch
                         :model-value="ovrtHudNotifications"
                         :ariaLabel="
@@ -84,7 +89,8 @@
                         t(
                             'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications'
                         )
-                    ">
+                    "
+                    toggle>
                     <Switch
                         :model-value="ovrtWristNotifications"
                         :ariaLabel="
@@ -136,7 +142,8 @@
             </SettingsItem>
 
             <SettingsItem
-                :label="t('view.settings.notifications.notifications.steamvr_notifications.overlay_notifications')">
+                :label="t('view.settings.notifications.notifications.steamvr_notifications.overlay_notifications')"
+                toggle>
                 <Switch
                     :model-value="overlayNotifications"
                     :disabled="!openVR"
@@ -191,7 +198,8 @@
                 :label="t('view.settings.notifications.notifications.steamvr_notifications.user_images')"
                 :description="
                     t('view.settings.notifications.notifications.steamvr_notifications.user_images_description')
-                ">
+                "
+                toggle>
                 <Switch
                     :model-value="imageNotifications"
                     :ariaLabel="t('view.settings.notifications.notifications.steamvr_notifications.user_images')"
@@ -209,7 +217,8 @@
         <SettingsGroup :title="t('view.settings.vr.vr_extras.header')">
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.video_progress_pie.header')"
-                :description="t('view.settings.advanced.advanced.video_progress_pie.enable_tooltip')">
+                :description="t('view.settings.advanced.advanced.video_progress_pie.enable_tooltip')"
+                toggle>
                 <Switch
                     :model-value="progressPie"
                     :disabled="!openVR"
@@ -217,7 +226,7 @@
                     @update:modelValue="changeYouTubeApi('VRCX_progressPie')" />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.advanced.advanced.video_progress_pie.dance_world_only')">
+            <SettingsItem :label="t('view.settings.advanced.advanced.video_progress_pie.dance_world_only')" toggle>
                 <Switch
                     :model-value="progressPieFilter"
                     :disabled="!openVR"

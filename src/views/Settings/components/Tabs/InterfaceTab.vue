@@ -86,7 +86,7 @@
                 </NumberField>
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.appearance.appearance.show_notification_icon_dot')">
+            <SettingsItem :label="t('view.settings.appearance.appearance.show_notification_icon_dot')" toggle>
                 <Switch
                     :model-value="notificationIconDot"
                     :ariaLabel="t('view.settings.appearance.appearance.show_notification_icon_dot')"
@@ -98,7 +98,7 @@
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.appearance.user_dialog.header')">
-            <SettingsItem :label="t('view.settings.appearance.appearance.vrc_profile_themes')">
+            <SettingsItem :label="t('view.settings.appearance.appearance.vrc_profile_themes')" toggle>
                 <Switch
                     :model-value="displayVRCProfileThemes"
                     :ariaLabel="t('view.settings.appearance.appearance.vrc_profile_themes')"
@@ -110,7 +110,8 @@
 
             <SettingsItem
                 :label="t('view.settings.appearance.appearance.vrc_profile_backgrounds')"
-                :description="t('view.settings.appearance.appearance.vrc_profile_backgrounds_description')">
+                :description="t('view.settings.appearance.appearance.vrc_profile_backgrounds_description')"
+                toggle>
                 <Switch
                     :model-value="displayVRCProfileBackgrounds"
                     :ariaLabel="t('view.settings.appearance.appearance.vrc_profile_backgrounds')"
@@ -143,7 +144,8 @@
 
             <SettingsItem
                 :label="t('view.settings.appearance.appearance.vrc_profile_cosmetics')"
-                :description="t('view.settings.appearance.appearance.cosmetics_description')">
+                :description="t('view.settings.appearance.appearance.cosmetics_description')"
+                toggle>
                 <Switch
                     :model-value="displayVRCProfileCosmetics"
                     :ariaLabel="t('view.settings.appearance.appearance.vrc_profile_cosmetics')"
@@ -155,7 +157,8 @@
 
             <SettingsItem
                 :label="t('view.settings.appearance.user_dialog.vrchat_notes')"
-                :description="t('view.settings.appearance.user_dialog.vrchat_notes_description')">
+                :description="t('view.settings.appearance.user_dialog.vrchat_notes_description')"
+                toggle>
                 <Switch
                     :model-value="!hideUserNotes"
                     :ariaLabel="t('view.settings.appearance.user_dialog.vrchat_notes')"
@@ -164,7 +167,8 @@
 
             <SettingsItem
                 :label="t('view.settings.appearance.user_dialog.vrcx_memos')"
-                :description="t('view.settings.appearance.user_dialog.vrcx_memos_description')">
+                :description="t('view.settings.appearance.user_dialog.vrcx_memos_description')"
+                toggle>
                 <Switch
                     :model-value="!hideUserMemos"
                     :ariaLabel="t('view.settings.appearance.user_dialog.vrcx_memos')"
@@ -173,7 +177,7 @@
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.appearance.display.header')">
-            <SettingsItem :label="t('view.settings.appearance.appearance.show_instance_id')">
+            <SettingsItem :label="t('view.settings.appearance.appearance.show_instance_id')" toggle>
                 <Switch
                     :model-value="showInstanceIdInLocation"
                     :ariaLabel="t('view.settings.appearance.appearance.show_instance_id')"
@@ -182,7 +186,8 @@
 
             <SettingsItem
                 :label="t('view.settings.appearance.appearance.nicknames')"
-                :description="t('view.settings.appearance.appearance.nicknames_description')">
+                :description="t('view.settings.appearance.appearance.nicknames_description')"
+                toggle>
                 <Switch
                     :model-value="!hideNicknames"
                     :ariaLabel="t('view.settings.appearance.appearance.nicknames')"
@@ -194,14 +199,15 @@
 
             <SettingsItem
                 :label="t('view.settings.appearance.appearance.age_gated_instances')"
-                :description="t('view.settings.appearance.appearance.age_gated_instances_description')">
+                :description="t('view.settings.appearance.appearance.age_gated_instances_description')"
+                toggle>
                 <Switch
                     :model-value="isAgeGatedInstancesVisible"
                     :ariaLabel="t('view.settings.appearance.appearance.age_gated_instances')"
                     @update:modelValue="setIsAgeGatedInstancesVisible" />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.appearance.appearance.striped_data_table_mode')">
+            <SettingsItem :label="t('view.settings.appearance.appearance.striped_data_table_mode')" toggle>
                 <Switch
                     :model-value="isDataTableStriped"
                     :ariaLabel="t('view.settings.appearance.appearance.striped_data_table_mode')"
@@ -210,7 +216,8 @@
 
             <SettingsItem
                 :label="t('view.settings.appearance.appearance.accessible_status_indicators')"
-                :description="t('view.settings.appearance.appearance.accessible_status_indicators_description')">
+                :description="t('view.settings.appearance.appearance.accessible_status_indicators_description')"
+                toggle>
                 <Switch
                     :model-value="accessibleStatusIndicators"
                     :ariaLabel="t('view.settings.appearance.appearance.accessible_status_indicators')"
@@ -219,7 +226,7 @@
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.interface.navigation.header')">
-            <SettingsItem :label="t('view.settings.interface.navigation.show_new_dashboard_button')">
+            <SettingsItem :label="t('view.settings.interface.navigation.show_new_dashboard_button')" toggle>
                 <Switch
                     :model-value="showNewDashboardButton"
                     :ariaLabel="t('view.settings.interface.navigation.show_new_dashboard_button')"
@@ -370,7 +377,7 @@
                 </ToggleGroup>
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.appearance.timedate.force_iso_date_format')">
+            <SettingsItem :label="t('view.settings.appearance.timedate.force_iso_date_format')" toggle>
                 <Switch
                     :model-value="dtIsoFormat"
                     :ariaLabel="t('view.settings.appearance.timedate.force_iso_date_format')"
@@ -394,7 +401,7 @@
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.appearance.friend_log.header')">
-            <SettingsItem :label="t('view.settings.appearance.friend_log.hide_unfriends')">
+            <SettingsItem :label="t('view.settings.appearance.friend_log.hide_unfriends')" toggle>
                 <Switch
                     :model-value="hideUnfriends"
                     :ariaLabel="t('view.settings.appearance.friend_log.hide_unfriends')"
@@ -405,7 +412,8 @@
         <SettingsGroup :title="t('view.settings.appearance.user_colors.header')">
             <SettingsItem
                 :label="t('view.settings.appearance.user_colors.random_colors_from_user_id')"
-                :description="t('view.settings.appearance.user_colors.random_colors_from_user_id_description')">
+                :description="t('view.settings.appearance.user_colors.random_colors_from_user_id_description')"
+                toggle>
                 <Switch
                     :model-value="randomUserColours"
                     :ariaLabel="t('view.settings.appearance.user_colors.random_colors_from_user_id')"

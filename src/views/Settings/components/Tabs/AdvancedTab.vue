@@ -3,7 +3,8 @@
         <SettingsGroup :title="t('view.settings.advanced.advanced.vrchat_settings.header')">
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.relaunch_vrchat.header')"
-                :description="t('view.settings.advanced.advanced.relaunch_vrchat.description')">
+                :description="t('view.settings.advanced.advanced.relaunch_vrchat.description')"
+                toggle>
                 <Switch
                     :model-value="relaunchVRChatAfterCrash"
                     :ariaLabel="t('view.settings.advanced.advanced.relaunch_vrchat.header')"
@@ -12,7 +13,8 @@
 
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.vrchat_quit_fix.header')"
-                :description="t('view.settings.advanced.advanced.vrchat_quit_fix.description')">
+                :description="t('view.settings.advanced.advanced.vrchat_quit_fix.description')"
+                toggle>
                 <Switch
                     :model-value="vrcQuitFix"
                     :ariaLabel="t('view.settings.advanced.advanced.vrchat_quit_fix.header')"
@@ -21,7 +23,8 @@
 
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.auto_cache_management.header')"
-                :description="t('view.settings.advanced.advanced.auto_cache_management.description')">
+                :description="t('view.settings.advanced.advanced.auto_cache_management.description')"
+                toggle>
                 <Switch
                     :model-value="autoSweepVRChatCache"
                     :ariaLabel="t('view.settings.advanced.advanced.auto_cache_management.header')"
@@ -30,7 +33,8 @@
 
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.self_invite.header')"
-                :description="t('view.settings.advanced.advanced.self_invite.description')">
+                :description="t('view.settings.advanced.advanced.self_invite.description')"
+                toggle>
                 <Switch
                     :model-value="selfInviteOverride"
                     :ariaLabel="t('view.settings.advanced.advanced.self_invite.header')"
@@ -41,7 +45,8 @@
         <SettingsGroup :title="t('view.settings.advanced_groups.security.header')">
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.primary_password.header')"
-                :description="t('view.settings.advanced.advanced.primary_password.description')">
+                :description="t('view.settings.advanced.advanced.primary_password.description')"
+                toggle>
                 <Switch
                     :model-value="enablePrimaryPassword"
                     :disabled="!enablePrimaryPassword"
@@ -51,21 +56,21 @@
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.general.logging.header')">
-            <SettingsItem :label="t('view.settings.advanced.advanced.cache_debug.udon_exception_logging')">
+            <SettingsItem :label="t('view.settings.advanced.advanced.cache_debug.udon_exception_logging')" toggle>
                 <Switch
                     :model-value="udonExceptionLogging"
                     :ariaLabel="t('view.settings.advanced.advanced.cache_debug.udon_exception_logging')"
                     @update:modelValue="setUdonExceptionLogging" />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.general.logging.resource_load')">
+            <SettingsItem :label="t('view.settings.general.logging.resource_load')" toggle>
                 <Switch
                     :model-value="logResourceLoad"
                     :ariaLabel="t('view.settings.general.logging.resource_load')"
                     @update:modelValue="setLogResourceLoad" />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.general.logging.auto_login_delay')">
+            <SettingsItem :label="t('view.settings.general.logging.auto_login_delay')" toggle>
                 <Switch
                     :model-value="autoLoginDelayEnabled"
                     :ariaLabel="t('view.settings.general.logging.auto_login_delay')"
@@ -91,21 +96,22 @@
 
                 <SettingsItem
                     :label="t('view.settings.advanced.advanced.remote_database.enable')"
-                    :description="t('view.settings.advanced.advanced.app_launcher.folder_tooltip')">
+                    :description="t('view.settings.advanced.advanced.app_launcher.folder_tooltip')"
+                    toggle>
                     <Switch
                         :model-value="enableAppLauncher"
                         :ariaLabel="t('view.settings.advanced.advanced.remote_database.enable')"
                         @update:modelValue="setEnableAppLauncher" />
                 </SettingsItem>
 
-                <SettingsItem :label="t('view.settings.advanced.advanced.app_launcher.auto_close')">
+                <SettingsItem :label="t('view.settings.advanced.advanced.app_launcher.auto_close')" toggle>
                     <Switch
                         :model-value="enableAppLauncherAutoClose"
                         :ariaLabel="t('view.settings.advanced.advanced.app_launcher.auto_close')"
                         @update:modelValue="setEnableAppLauncherAutoClose" />
                 </SettingsItem>
 
-                <SettingsItem :label="t('view.settings.advanced.advanced.app_launcher.run_process_once')">
+                <SettingsItem :label="t('view.settings.advanced.advanced.app_launcher.run_process_once')" toggle>
                     <Switch
                         :model-value="enableAppLauncherRunProcessOnce"
                         :ariaLabel="t('view.settings.advanced.advanced.app_launcher.run_process_once')"
@@ -117,9 +123,11 @@
         <SettingsGroup :title="t('view.settings.advanced.advanced.launch_commands.header')">
             <SettingsItem
                 :label="t('view.settings.advanced.advanced.launch_commands.show_confirmation_on_switch_avatar_enable')"
+                class="mb-2"
                 :description="
                     t('view.settings.advanced.advanced.launch_commands.show_confirmation_on_switch_avatar_tooltip')
-                ">
+                "
+                toggle>
                 <Switch
                     :model-value="showConfirmationOnSwitchAvatar"
                     :ariaLabel="
@@ -158,7 +166,9 @@
             </div>
 
             <SettingsItem
-                :label="`${t('view.settings.advanced.advanced.cache_debug.disable_gamelog')} ${t('view.settings.advanced.advanced.cache_debug.disable_gamelog_notice')}`">
+                :label="`${t('view.settings.advanced.advanced.cache_debug.disable_gamelog')} ${t('view.settings.advanced.advanced.cache_debug.disable_gamelog_notice')}`"
+                class="my-2"
+                toggle>
                 <Switch
                     :model-value="gameLogDisabled"
                     :ariaLabel="t('view.settings.advanced.advanced.cache_debug.disable_gamelog')"
@@ -398,7 +408,8 @@
             <SettingsGroup :title="t('view.settings.advanced_groups.nightly.header')">
                 <SettingsItem
                     :label="t('view.settings.advanced.advanced.anonymous_error_reporting.header')"
-                    :description="t('view.settings.advanced.advanced.anonymous_error_reporting.description')">
+                    :description="t('view.settings.advanced.advanced.anonymous_error_reporting.description')"
+                    toggle>
                     <Switch :model-value="sentryErrorReporting" @update:modelValue="setSentryErrorReporting()" />
                 </SettingsItem>
             </SettingsGroup>
