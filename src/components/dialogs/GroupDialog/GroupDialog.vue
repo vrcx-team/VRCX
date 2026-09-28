@@ -449,6 +449,17 @@
                             </template>
                         </div>
                     </div>
+                    <div class="flex justify-between items-center gap-2 text-xs">
+                        <span class="text-muted-foreground">{{ t('dialog.group.info.id') }}</span>
+                        <Button
+                            class="-mr-1.5 h-5 gap-1 px-1.5 text-xs font-normal text-muted-foreground has-[>svg]:px-1.5"
+                            size="sm"
+                            variant="ghost"
+                            @click="copyToClipboard(groupDialog.id)">
+                            <Copy class="size-3" />
+                            {{ t('dialog.group.info.copy_id') }}
+                        </Button>
+                    </div>
                 </div>
             </div>
 

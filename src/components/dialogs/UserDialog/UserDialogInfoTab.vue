@@ -414,6 +414,18 @@
                                     : t('dialog.user.info.avatar_cloning_deny')
                             }}</span>
                         </div>
+
+                        <div class="flex justify-between items-center gap-2 text-xs">
+                            <span class="text-muted-foreground">{{ t('dialog.user.info.id') }}</span>
+                            <Button
+                                class="-mr-1.5 h-5 gap-1 px-1.5 text-xs font-normal text-muted-foreground has-[>svg]:px-1.5"
+                                size="sm"
+                                variant="ghost"
+                                @click="copyToClipboard(userDialog.id, t('message.user.id_copied'))">
+                                <Copy class="size-3" />
+                                {{ t('dialog.user.info.copy_id') }}
+                            </Button>
+                        </div>
                     </div>
                 </div>
 
@@ -445,7 +457,7 @@
 </template>
 
 <script setup>
-    import { Info, Languages, Pencil, Trash2, User } from 'lucide-vue-next';
+    import { Copy, Info, Languages, Pencil, Trash2, User } from 'lucide-vue-next';
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
     import IconFrame from '@/components/IconFrame.vue';
     import { ref, watch } from 'vue';
@@ -456,6 +468,7 @@
     import { useI18n } from 'vue-i18n';
 
     import {
+        copyToClipboard,
         formatDateFilter,
         getFaviconUrl,
         isFriendOnline,
