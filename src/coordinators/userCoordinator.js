@@ -74,6 +74,21 @@ export function applyPublicProfile(json) {
             }
         }
     }
+    // this is dumb
+    if (
+        ref.hasVrcPlus &&
+        ref.badges &&
+        ref.badges.every((x) => x.badgeId !== 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa')
+    ) {
+        ref.badges.unshift({
+            badgeId: 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa',
+            badgeName: 'Supporter',
+            badgeDescription: 'Supports VRChat through VRC+',
+            badgeImageUrl: 'https://assets.vrchat.com/badges/fa/bdgai_583f6b13-91ab-4e1b-974e-ab91600b06cb.png',
+            hidden: true,
+            showcased: false
+        });
+    }
     return ref;
 }
 
@@ -185,20 +200,6 @@ export function applyUser(json) {
         instanceRequest.getInstance({
             worldId: ref.$location.worldId,
             instanceId: ref.$location.instanceId
-        });
-    }
-    if (
-        ref.$isVRCPlus &&
-        ref.badges &&
-        ref.badges.every((x) => x.badgeId !== 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa')
-    ) {
-        ref.badges.unshift({
-            badgeId: 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa',
-            badgeName: 'Supporter',
-            badgeDescription: 'Supports VRChat through VRC+',
-            badgeImageUrl: 'https://assets.vrchat.com/badges/fa/bdgai_583f6b13-91ab-4e1b-974e-ab91600b06cb.png',
-            hidden: true,
-            showcased: false
         });
     }
     const friendCtx = friendStore.friends.get(ref.id);
