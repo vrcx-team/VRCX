@@ -63,7 +63,11 @@
                         v-else
                         class="w-full h-full object-cover cursor-pointer"
                         :src="userDialog.publicProfileRef?.iconUrl"
-                        @click.stop="showFullscreenImageDialog(userDialog.publicProfileRef?.iconUrl)"
+                        @click.stop="
+                            showFullscreenImageDialog(
+                                convertFileUrlToImageUrl(userDialog.publicProfileRef?.iconUrl, 2048)
+                            )
+                        "
                         @error="userIconError = true"
                         loading="lazy" />
                 </div>
@@ -476,7 +480,13 @@
     import { useI18n } from 'vue-i18n';
 
     import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-    import { copyToClipboard, formatDateFilter, languageClass, openDiscordProfile } from '../../../shared/utils';
+    import {
+        convertFileUrlToImageUrl,
+        copyToClipboard,
+        formatDateFilter,
+        languageClass,
+        openDiscordProfile
+    } from '../../../shared/utils';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover';
     import { useGalleryStore, useUserStore } from '../../../stores';
