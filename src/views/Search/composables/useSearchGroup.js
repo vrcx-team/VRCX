@@ -18,7 +18,7 @@ export function useSearchGroup() {
 
     async function searchGroup() {
         searchGroupParams.value = {
-            n: 10,
+            n: 60,
             offset: 0,
             query: replaceBioSymbols(searchText.value)
         };

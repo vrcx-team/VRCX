@@ -28,7 +28,7 @@ export function useSearchWorld() {
         searchWorldOption.value = '';
         searchWorldCategoryIndex.value = ref?.index ?? null;
         const params = {
-            n: 10,
+            n: 60,
             offset: 0
         };
         switch (ref.sortHeading) {
