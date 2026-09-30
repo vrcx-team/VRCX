@@ -184,7 +184,7 @@ export function applyFavoriteCached(json) {
     const favoriteStore = useFavoriteStore();
     const friendStore = useFriendStore();
     const generalSettingsStore = useGeneralSettingsStore();
-
+    const groups = generalSettingsStore.localFavoriteFriendsGroups;
     let ref = favoriteStore.cachedFavorites.get(json.id);
     if (typeof ref === 'undefined') {
         ref = createDefaultFavoriteCachedRef(json);
@@ -194,11 +194,7 @@ export function applyFavoriteCached(json) {
         }
         favoriteStore.cachedFavorites.set(ref.id, ref);
         favoriteStore.cachedFavoritesByObjectId.set(ref.favoriteId, ref);
-        if (
-            ref.type === 'friend' &&
-            (!generalSettingsStore.localFavoriteFriendsGroups.some((key) => !key.startsWith('local:')) ||
-                generalSettingsStore.localFavoriteFriendsGroups.includes(ref.$groupKey))
-        ) {
+        if (ref.type === 'friend' && (groups.length === 0 || groups.includes(ref.$groupKey))) {
             friendStore.localFavoriteFriends.add(ref.favoriteId);
             friendStore.updateSidebarFavorites();
         }

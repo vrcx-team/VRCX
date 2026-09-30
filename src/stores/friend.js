@@ -111,13 +111,13 @@ export const useFriendStore = defineStore('Friend', () => {
 
     const allFavoriteFriendIds = computed(() => {
         const favoriteStore = useFavoriteStore();
+        const groups = generalSettingsStore.localFavoriteFriendsGroups;
         const set = new Set();
         for (const ref of favoriteStore.cachedFavorites.values()) {
-            if (ref.type === 'friend') {
+            if (ref.type === 'friend' && (groups.length === 0 || groups.includes(ref.$groupKey))) {
                 set.add(ref.favoriteId);
             }
         }
-        const groups = generalSettingsStore.localFavoriteFriendsGroups;
         let localGroups = groups.filter((key) => key.startsWith('local:')).map((key) => key.replace('local:', ''));
         if (groups.length === 0) {
             // Use all groups when no groups are selected
@@ -397,29 +397,9 @@ export const useFriendStore = defineStore('Friend', () => {
     init();
 
     function updateLocalFavoriteFriends() {
-        const favoriteStore = useFavoriteStore();
         localFavoriteFriends.clear();
-        const groups = generalSettingsStore.localFavoriteFriendsGroups;
-        const hasRemoteGroupFilter = groups.some((key) => !key.startsWith('local:'));
-        // Remote favorites: filter by selected remote groups
-        for (const ref of favoriteStore.cachedFavorites.values()) {
-            if (ref.type === 'friend' && (!hasRemoteGroupFilter || groups.includes(ref.$groupKey))) {
-                localFavoriteFriends.add(ref.favoriteId);
-            }
-        }
-        // Local favorites
-        let localGroups = groups.filter((key) => key.startsWith('local:')).map((key) => key.replace('local:', ''));
-        if (groups.length === 0) {
-            // Use all groups when no groups are selected
-            localGroups = Object.keys(favoriteStore.localFriendFavorites);
-        }
-        for (const groupName of localGroups) {
-            const userIds = favoriteStore.localFriendFavorites[groupName];
-            if (userIds) {
-                for (let i = 0; i < userIds.length; ++i) {
-                    localFavoriteFriends.add(userIds[i]);
-                }
-            }
+        for (const id of allFavoriteFriendIds.value) {
+            localFavoriteFriends.add(id);
         }
         updateSidebarFavorites();
     }
