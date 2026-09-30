@@ -84,8 +84,6 @@ jobs:
             ${{ github.workspace }}\build\Cef\CefSharp.WinForms.dll
             ${{ github.workspace }}\build\Cef\DiscordRPC.dll
             ${{ github.workspace }}\build\Cef\libcef.dll
-            ${{ github.workspace }}\build\Cef\libEGL.dll
-            ${{ github.workspace }}\build\Cef\libGLESv2.dll
             ${{ github.workspace }}\build\Cef\librsync.net.dll
             ${{ github.workspace }}\build\Cef\VRCX.dll
             ${{ github.workspace }}\build\Cef\VRCX.exe
