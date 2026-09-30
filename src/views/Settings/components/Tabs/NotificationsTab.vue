@@ -1,22 +1,6 @@
 <template>
     <div class="flex flex-col gap-10 py-2">
         <SettingsGroup :title="t('view.settings.notifications.notifications.header')">
-            <SettingsItem :label="t('view.settings.notifications.notifications.layout')">
-                <Select :model-value="notificationLayout" @update:modelValue="setNotificationLayout">
-                    <SelectTrigger size="sm">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="notification-center">{{
-                            t('view.settings.notifications.notifications.layout_notification_center')
-                        }}</SelectItem>
-                        <SelectItem value="table">{{
-                            t('view.settings.notifications.notifications.layout_table')
-                        }}</SelectItem>
-                    </SelectContent>
-                </Select>
-            </SettingsItem>
-
             <SettingsItem :label="t('view.settings.notifications.notifications.notification_filter')">
                 <Button size="sm" variant="outline" @click="showNotyFeedFiltersDialog">{{
                     t('view.settings.notifications.notifications.notification_filter')
@@ -185,8 +169,7 @@
         notificationTTSNickName,
         isTestTTSVisible,
         notificationTTSTest,
-        TTSvoices,
-        notificationLayout
+        TTSvoices
     } = storeToRefs(notificationsSettingsStore);
 
     const {
@@ -196,8 +179,7 @@
         getTTSVoiceName,
         changeTTSVoice,
         saveNotificationTTS,
-        testNotificationTTS,
-        setNotificationLayout
+        testNotificationTTS
     } = notificationsSettingsStore;
 
     const { testNotification, markAllAsSeen } = useNotificationStore();

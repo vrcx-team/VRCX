@@ -1023,9 +1023,6 @@
             "notifications": {
                 "notifications": {
                     "header": "Notifications",
-                    "layout": "Notification View",
-                    "layout_notification_center": "Notification Center",
-                    "layout_table": "Notifications Page",
                     "notification_filter": "Notification Filters",
                     "test_notification": "Send Test Notification",
                     "test_message": "Test notification.",

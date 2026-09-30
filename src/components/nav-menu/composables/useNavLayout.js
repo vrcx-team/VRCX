@@ -40,16 +40,7 @@ export function useNavLayout({ t, locale, router, dashboardStore, dashboards, di
     const createDefaultNavLayout = () => createBaseDefaultNavLayout(t);
 
     const menuItems = computed(() => {
-        const items = buildMenuItems(navLayout.value, navDefinitionMap.value, t);
-        if (notificationsSettingsStore.notificationLayout === 'notification-center') {
-            return items.filter((item) => {
-                if (item.children) {
-                    return item.children.length > 0;
-                }
-                return true;
-            });
-        }
-        return items;
+        return buildMenuItems(navLayout.value, navDefinitionMap.value, t);
     });
 
     const getFirstNavEntryLocal = (layout) => {

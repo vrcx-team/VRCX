@@ -311,17 +311,9 @@ export const useUiStore = defineStore('Ui', () => {
     }
 
     function updateTrayIconNotify(force = false) {
-        const notificationsSettingsStore = useNotificationsSettingsStore();
-        let newState;
-        if (notificationsSettingsStore.notificationLayout === 'notification-center') {
-            newState =
-                appearanceSettings.notificationIconDot &&
-                (notificationStore.hasUnseenNotifications || notifiedMenus.value.includes('friend-log'));
-        } else {
-            newState =
-                appearanceSettings.notificationIconDot &&
-                (notifiedMenus.value.includes('notification') || notifiedMenus.value.includes('friend-log'));
-        }
+        const newState =
+            appearanceSettings.notificationIconDot &&
+            (notifiedMenus.value.includes('notification') || notifiedMenus.value.includes('friend-log'));
 
         if (trayIconNotify.value !== newState || force) {
             trayIconNotify.value = newState;

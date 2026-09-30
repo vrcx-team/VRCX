@@ -208,7 +208,6 @@
     const { t } = useI18n();
     const dashboardStore = useDashboardStore();
     const modalStore = useModalStore();
-    const { notificationLayout } = storeToRefs(useNotificationsSettingsStore());
 
     const cloneLayout = (source) => {
         if (!Array.isArray(source)) return [];
