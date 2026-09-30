@@ -59,7 +59,7 @@ export async function runGameRunningChangedFlow(isGameRunning) {
         addAvatarWearTime(userStore.currentUser.currentAvatar);
     }
 
-    runLastLocationResetFlow();
+    await runLastLocationResetFlow();
     gameLogStore.clearNowPlaying();
     vrStore.updateVRLastLocation();
     workerTimers.setTimeout(() => runCheckVRChatDebugLoggingFlow(), 60000);
@@ -192,7 +192,7 @@ export function runCheckIfGameCrashedFlow() {
  *
  * @param {string} location Last known location to relaunch.
  */
-function runRestartCrashedGameFlow(location) {
+async function runRestartCrashedGameFlow(location) {
     const gameStore = useGameStore();
     const notificationStore = useNotificationStore();
     const gameLogStore = useGameLogStore();
@@ -210,9 +210,11 @@ function runRestartCrashedGameFlow(location) {
         type: 'Event',
         data: message
     };
-    database.addGamelogEventToDatabase(entry);
     notificationStore.queueGameLogNoty(entry);
-    gameLogStore.addGameLog(entry);
+    const persistedEntry = await database.addGamelogEventToDatabase(entry);
+    if (persistedEntry) {
+        gameLogStore.addGameLog(persistedEntry);
+    }
     launchStore.launchGame(location, '', gameStore.isGameNoVR);
 }
 

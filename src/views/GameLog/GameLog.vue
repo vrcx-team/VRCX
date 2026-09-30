@@ -222,15 +222,7 @@
      * @param row
      */
     function getGameLogRowId(row) {
-        if (row?.rowId != null) return `row:${row.rowId}:${row?.type ?? ''}`;
-
-        const type = row?.type ?? '';
-        const createdAt = row?.created_at ?? row?.createdAt ?? row?.dt ?? '';
-        const userId = row?.userId ?? '';
-        const displayName = row?.displayName ?? '';
-        const location = row?.location ?? '';
-
-        return `${type}:${createdAt}:${userId}:${displayName}:${location}:${Date.now()}`;
+        return `row:${row.rowId}:${row?.type ?? ''}`;
     }
 
     const { table, pagination } = useVrcxVueTable({

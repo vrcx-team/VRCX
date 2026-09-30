@@ -76,6 +76,17 @@ class SQLiteService {
             this.handleSQLiteError(e);
         }
     }
+
+    async executeInsert(sql, args = null) {
+        try {
+            if (LINUX && args) {
+                args = new Map(Object.entries(args));
+            }
+            return await SQLite.ExecuteInsert(sql, args);
+        } catch (e) {
+            this.handleSQLiteError(e);
+        }
+    }
 }
 
 var self = new SQLiteService();

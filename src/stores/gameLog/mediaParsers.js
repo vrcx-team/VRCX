@@ -79,11 +79,11 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                 userId,
                 videoPos
             };
-            setNowPlaying(entry);
+            await setNowPlaying(entry);
         }
     }
 
-    function addGameLogPyPyDance(gameLog, location) {
+    async function addGameLogPyPyDance(gameLog, location) {
         const data = /VideoPlay\(PyPyDance\) "(.+?)",([\d.]+),([\d.]+),"(.*)"/g.exec(gameLog.data);
         if (!data) {
             console.error('failed to parse', gameLog.data);
@@ -115,7 +115,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                 videoLength,
                 videoPos
             };
-            setNowPlaying(entry);
+            await setNowPlaying(entry);
             return;
         }
         let userId = '';
@@ -132,7 +132,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                 videoPos,
                 videoId
             };
-            addGameLogVideo(entry1, location, userId);
+            await addGameLogVideo(entry1, location, userId);
         } else {
             const entry2 = {
                 created_at: gameLog.dt,
@@ -146,11 +146,11 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                 userId,
                 videoPos
             };
-            setNowPlaying(entry2);
+            await setNowPlaying(entry2);
         }
     }
 
-    function addGameLogVRDancing(gameLog, location) {
+    async function addGameLogVRDancing(gameLog, location) {
         const data = /VideoPlay\(VRDancing\) "(.+?)",([\d.]+),([\d.]+),(-?[\d.]+),"(.+?)","(.+?)"/g.exec(gameLog.data);
         if (!data) {
             console.error('failed to parse', gameLog.data);
@@ -180,7 +180,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                 videoLength,
                 videoPos
             };
-            setNowPlaying(entry);
+            await setNowPlaying(entry);
             return;
         }
         let userId = '';
@@ -197,7 +197,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                 videoPos,
                 videoId
             };
-            addGameLogVideo(entry1, location, userId);
+            await addGameLogVideo(entry1, location, userId);
         } else {
             const entry2 = {
                 created_at: gameLog.dt,
@@ -211,11 +211,11 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                 userId,
                 videoPos
             };
-            setNowPlaying(entry2);
+            await setNowPlaying(entry2);
         }
     }
 
-    function addGameLogZuwaZuwaDance(gameLog, location) {
+    async function addGameLogZuwaZuwaDance(gameLog, location) {
         const data = /VideoPlay\(ZuwaZuwaDance\) "(.+?)",([\d.]+),([\d.]+),(-?[\d.]+),"(.+?)","(.+?)"/g.exec(
             gameLog.data
         );
@@ -242,7 +242,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                 videoLength,
                 videoPos
             };
-            setNowPlaying(entry);
+            await setNowPlaying(entry);
             return;
         }
         let userId = '';
@@ -259,7 +259,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                 videoPos,
                 videoId
             };
-            addGameLogVideo(entry1, location, userId);
+            await addGameLogVideo(entry1, location, userId);
         } else {
             const entry2 = {
                 created_at: gameLog.dt,
@@ -273,11 +273,11 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                 userId,
                 videoPos
             };
-            setNowPlaying(entry2);
+            await setNowPlaying(entry2);
         }
     }
 
-    function addGameLogLSMedia(gameLog, location) {
+    async function addGameLogLSMedia(gameLog, location) {
         // [VRCX] LSMedia 0,4268.981,Natsumi-sama,,
         // [VRCX] LSMedia 0,6298.292,Natsumi-sama,The Outfit (2022), 1080p
         const data = /LSMedia ([\d.]+),([\d.]+),(.+?),(.+?),(?=[^,]*$)/g.exec(gameLog.data);
@@ -297,7 +297,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                 videoLength,
                 videoPos
             };
-            setNowPlaying(entry);
+            await setNowPlaying(entry);
             return;
         }
         let userId = '';
@@ -318,10 +318,10 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
             userId,
             videoPos
         };
-        setNowPlaying(entry1);
+        await setNowPlaying(entry1);
     }
 
-    function addGameLogPopcornPalace(gameLog, location) {
+    async function addGameLogPopcornPalace(gameLog, location) {
         // [VRCX] VideoPlay(PopcornPalace) {"videoName": "How to Train Your Dragon - 2025-06-06", "videoPos": 37.28777, "videoLength": 11474.05, "thumbnailUrl": "", "displayName": "miner28_3", "isPaused": false, "is3D": false, "looping": false}
         let data = gameLog.data;
         if (!data) {
@@ -354,7 +354,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                 videoPos,
                 thumbnailUrl
             };
-            setNowPlaying(entry);
+            await setNowPlaying(entry);
             return;
         }
         let userId = '';
@@ -376,7 +376,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
             videoPos,
             thumbnailUrl
         };
-        setNowPlaying(entry1);
+        await setNowPlaying(entry1);
     }
 
     return {

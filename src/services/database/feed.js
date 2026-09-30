@@ -3,8 +3,8 @@ import { dbVars } from '../database';
 import sqliteService from '../sqlite.js';
 
 const feed = {
-    addGPSToDatabase(entry) {
-        sqliteService.executeNonQuery(
+    async addGPSToDatabase(entry) {
+        const rowId = await sqliteService.executeInsert(
             `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_gps (created_at, user_id, display_name, location, world_name, previous_location, time, group_name) VALUES (@created_at, @user_id, @display_name, @location, @world_name, @previous_location, @time, @group_name)`,
             {
                 '@created_at': entry.created_at,
@@ -17,10 +17,11 @@ const feed = {
                 '@group_name': entry.groupName
             }
         );
+        return rowId ? { ...entry, rowId } : undefined;
     },
 
-    addStatusToDatabase(entry) {
-        sqliteService.executeNonQuery(
+    async addStatusToDatabase(entry) {
+        const rowId = await sqliteService.executeInsert(
             `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_status (created_at, user_id, display_name, status, status_description, previous_status, previous_status_description) VALUES (@created_at, @user_id, @display_name, @status, @status_description, @previous_status, @previous_status_description)`,
             {
                 '@created_at': entry.created_at,
@@ -32,10 +33,11 @@ const feed = {
                 '@previous_status_description': entry.previousStatusDescription
             }
         );
+        return rowId ? { ...entry, rowId } : undefined;
     },
 
-    addBioToDatabase(entry) {
-        sqliteService.executeNonQuery(
+    async addBioToDatabase(entry) {
+        const rowId = await sqliteService.executeInsert(
             `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_bio (created_at, user_id, display_name, bio, previous_bio) VALUES (@created_at, @user_id, @display_name, @bio, @previous_bio)`,
             {
                 '@created_at': entry.created_at,
@@ -45,10 +47,11 @@ const feed = {
                 '@previous_bio': entry.previousBio
             }
         );
+        return rowId ? { ...entry, rowId } : undefined;
     },
 
-    addAvatarToDatabase(entry) {
-        sqliteService.executeNonQuery(
+    async addAvatarToDatabase(entry) {
+        const rowId = await sqliteService.executeInsert(
             `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_avatar (created_at, user_id, display_name, owner_id, avatar_name, current_avatar_image_url, current_avatar_thumbnail_image_url, previous_current_avatar_image_url, previous_current_avatar_thumbnail_image_url) VALUES (@created_at, @user_id, @display_name, @owner_id, @avatar_name, @current_avatar_image_url, @current_avatar_thumbnail_image_url, @previous_current_avatar_image_url, @previous_current_avatar_thumbnail_image_url)`,
             {
                 '@created_at': entry.created_at,
@@ -62,6 +65,7 @@ const feed = {
                 '@previous_current_avatar_thumbnail_image_url': entry.previousCurrentAvatarThumbnailImageUrl
             }
         );
+        return rowId ? { ...entry, rowId } : undefined;
     },
 
     /**
@@ -84,8 +88,8 @@ const feed = {
         }
     },
 
-    addOnlineOfflineToDatabase(entry) {
-        sqliteService.executeNonQuery(
+    async addOnlineOfflineToDatabase(entry) {
+        const rowId = await sqliteService.executeInsert(
             `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_online_offline (created_at, user_id, display_name, type, location, world_name, time, group_name) VALUES (@created_at, @user_id, @display_name, @type, @location, @world_name, @time, @group_name)`,
             {
                 '@created_at': entry.created_at,
@@ -98,6 +102,7 @@ const feed = {
                 '@group_name': entry.groupName
             }
         );
+        return rowId ? { ...entry, rowId } : undefined;
     },
 
     async searchFeedDatabase(

@@ -115,9 +115,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                     state.nextGetLogCheck = 0.5;
                     const logLines = await LogWatcher.GetLogLines();
                     if (logLines) {
-                        logLines.forEach((logLine) => {
-                            addGameLogEvent(logLine);
-                        });
+                        await Promise.all(logLines.map((logLine) => addGameLogEvent(logLine)));
                     }
                 }
                 if (LINUX && --state.nextGameRunningCheck <= 0) {

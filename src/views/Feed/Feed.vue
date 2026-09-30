@@ -158,15 +158,7 @@
      */
     function getFeedRowId(row) {
         if (row?.id != null) return `id:${row.id}:${row?.type ?? ''}`;
-        if (row?.rowId != null) return `row:${row.rowId}:${row?.type ?? ''}`;
-
-        const type = row?.type ?? '';
-        const createdAt = row?.created_at ?? row?.createdAt ?? '';
-        const userId = row?.userId ?? row?.senderUserId ?? '';
-        const location = row?.location ?? row?.details?.location ?? '';
-        const message = row?.message ?? '';
-
-        return `${type}:${createdAt}:${userId}:${location}:${message}:${Date.now()}`;
+        return `row:${row.rowId}:${row?.type ?? ''}`;
     }
 
     const { table, pagination } = useVrcxVueTable({

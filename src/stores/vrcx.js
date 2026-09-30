@@ -243,7 +243,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     /**
      * @param data
      */
-    function eventVrcxMessage(data) {
+    async function eventVrcxMessage(data) {
         let entry;
         switch (data.MsgType) {
             case 'CustomTag':
@@ -271,9 +271,11 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     type: 'Event',
                     data: data.Data
                 };
-                database.addGamelogEventToDatabase(entry);
                 notificationStore.queueGameLogNoty(entry);
-                gameLogStore.addGameLog(entry);
+                const persistedEntry = await database.addGamelogEventToDatabase(entry);
+                if (persistedEntry) {
+                    gameLogStore.addGameLog(persistedEntry);
+                }
                 break;
             case 'External': {
                 const displayName = data.DisplayName ?? '';
@@ -286,11 +288,13 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     userId: data.UserId,
                     location: locationStore.lastLocation.location
                 };
-                database.addGamelogExternalToDatabase(entry);
                 if (notify) {
                     notificationStore.queueGameLogNoty(entry);
                 }
-                gameLogStore.addGameLog(entry);
+                const persistedEntry = await database.addGamelogExternalToDatabase(entry);
+                if (persistedEntry) {
+                    gameLogStore.addGameLog(persistedEntry);
+                }
                 break;
             }
             default:
@@ -369,7 +373,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     /**
      * @param json
      */
-    function ipcEvent(json) {
+    async function ipcEvent(json) {
         if (!watchState.isLoggedIn) {
             return;
         }
@@ -454,7 +458,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 if (AppDebug.debugPhotonLogging || AppDebug.debugIPC) {
                     console.log('VrcxMessage:', data);
                 }
-                eventVrcxMessage(data);
+                await eventVrcxMessage(data);
                 break;
             case 'Ping':
                 if (AppDebug.debugIPC) {

@@ -104,9 +104,11 @@ export async function runSetCurrentUserLocationFlow(location, travelingToLocatio
             groupName: await getGroupName(L.groupId),
             time: 0
         };
-        database.addGamelogLocationToDatabase(entry);
         notificationStore.queueGameLogNoty(entry);
-        gameLogStore.addGameLog(entry);
+        const persistedEntry = await database.addGamelogLocationToDatabase(entry);
+        if (persistedEntry) {
+            gameLogStore.addGameLog(persistedEntry);
+        }
         instanceStore.addInstanceJoinHistory(location, dt);
 
         userStore.applyUserDialogLocation();
@@ -121,7 +123,7 @@ export async function runSetCurrentUserLocationFlow(location, travelingToLocatio
     }
 }
 
-export function runLastLocationResetFlow(gameLogDate) {
+export async function runLastLocationResetFlow(gameLogDate) {
     const photonStore = usePhotonStore();
     const instanceStore = useInstanceStore();
     const gameLogStore = useGameLogStore();
@@ -147,9 +149,11 @@ export function runLastLocationResetFlow(gameLogDate) {
             time: dateTimeStamp - ref.joinTime
         };
         dataBaseEntries.unshift(entry);
+    }
+    const persistedEntries = await database.addGamelogJoinLeaveBulk(dataBaseEntries);
+    for (const entry of persistedEntries) {
         gameLogStore.addGameLog(entry);
     }
-    database.addGamelogJoinLeaveBulk(dataBaseEntries);
     if (locationStore.lastLocation.date !== null && locationStore.lastLocation.date > 0) {
         const update = {
             time: dateTimeStamp - locationStore.lastLocation.date,
