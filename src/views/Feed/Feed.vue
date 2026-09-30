@@ -157,7 +157,6 @@
      * @param row
      */
     function getFeedRowId(row) {
-        if (row?.id != null) return `id:${row.id}:${row?.type ?? ''}`;
         return `row:${row.rowId}:${row?.type ?? ''}`;
     }
 
