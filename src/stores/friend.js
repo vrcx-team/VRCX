@@ -119,7 +119,8 @@ export const useFriendStore = defineStore('Friend', () => {
         }
         const groups = generalSettingsStore.localFavoriteFriendsGroups;
         let localGroups = groups.filter((key) => key.startsWith('local:')).map((key) => key.replace('local:', ''));
-        if (localGroups.length === 0) {
+        if (groups.length === 0) {
+            // Use all groups when no groups are selected
             localGroups = Object.keys(favoriteStore.localFriendFavorites);
         }
         for (const groupName of localGroups) {
@@ -408,7 +409,8 @@ export const useFriendStore = defineStore('Friend', () => {
         }
         // Local favorites
         let localGroups = groups.filter((key) => key.startsWith('local:')).map((key) => key.replace('local:', ''));
-        if (localGroups.length === 0) {
+        if (groups.length === 0) {
+            // Use all groups when no groups are selected
             localGroups = Object.keys(favoriteStore.localFriendFavorites);
         }
         for (const groupName of localGroups) {
