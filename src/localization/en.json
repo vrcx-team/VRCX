@@ -289,6 +289,19 @@
         "game_log": {
             "filter_placeholder": "Filter",
             "search_placeholder": "Search",
+            "url_filter": {
+                "title": "URL exclusions",
+                "description": "Hide String and Image loads whose URL matches any pattern. Log history is retained. Applies to the entries loaded in the table; older entries are not fetched to replace hidden rows.",
+                "enabled": "Enable URL exclusions",
+                "help": "Enter case-sensitive JavaScript regex patterns without surrounding / delimiters. Blank patterns are ignored. Examples: logs\\.example\\.com or ^https://cdn\\.example\\.com/images/[0-9]+$",
+                "pattern": "Pattern {number}",
+                "add": "Add pattern",
+                "remove": "Remove",
+                "invalid": "Invalid regex",
+                "save": "Save",
+                "cancel": "Cancel",
+                "save_error": "Could not save URL exclusions. Please try again."
+            },
             "filters": {
                 "Location": "Location",
                 "OnPlayerJoined": "Player joined",
