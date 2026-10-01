@@ -33,14 +33,10 @@
             "month": "月",
             "day": "天",
             "hour": "時",
-            "minute": "分",
-            "second": "秒",
             "years": "年",
             "months": "月",
             "days": "天",
-            "hours": "時",
-            "minutes": "分",
-            "seconds": "秒"
+            "hours": "時"
         },
         "days": {
             "sunday": "星期日",
@@ -327,7 +323,6 @@
             "clear_results_tooltip": "清除搜尋結果",
             "user": {
                 "header": "用戶",
-                "search_by_bio": "依自介搜尋",
                 "sort_by_last_logged_in": "依最近上線時間排序"
             },
             "world": {
@@ -824,7 +819,6 @@
                 "logging": {
                     "header": "記錄",
                     "resource_load": "記錄 Udon 字串/圖片載入",
-                    "empty_avatar": "記錄沒有名稱的動態影像",
                     "auto_login_delay": "自動登入延遲",
                     "auto_login_delay_button": "設定延遲秒數"
                 },
@@ -897,10 +891,6 @@
                     "theme_mode_pink": "粉色",
                     "theme_mode_material3": "Material 3",
                     "zoom": "介面縮放",
-                    "profile_icons": "個人檔案圖示",
-                    "profile_icons_description": "在可用時使用個人檔案圖示。",
-                    "vrcplus_profile_icons": "VRC+ 個人檔案圖示",
-                    "vrcplus_profile_icons_description": "在可用的情況下，使用 VRC+ 獨家設定檔圖示。",
                     "vrc_profile_themes": "VRChat 個人檔案主題",
                     "show_instance_id": "顯示房間 ID",
                     "show_status_bar": "顯示狀態列",
@@ -1006,9 +996,6 @@
             "notifications": {
                 "notifications": {
                     "header": "通知",
-                    "layout": "通知顯示模式",
-                    "layout_notification_center": "通知中心",
-                    "layout_table": "通知頁面",
                     "notification_filter": "通知篩選器",
                     "test_notification": "發送測試用通知",
                     "test_message": "測試通知。",
@@ -1402,7 +1389,6 @@
                 "memo": "備忘錄",
                 "memo_placeholder": "點擊新增備忘錄",
                 "avatar_info": "角色資訊",
-                "avatar_info_last_seen": "最後已知角色資訊",
                 "unknown_avatar": "未知角色",
                 "represented_group": "代表群組",
                 "bio": "自我介紹",
@@ -1427,7 +1413,6 @@
                 "copy_id": "複製 ID",
                 "copy_url": "複製連結",
                 "copy_display_name": "複製顯示名稱",
-                "vrcplus_hides_avatar": "設定 VRC+ 個人檔案照片時，會隱藏角色資訊。 這也會隱藏 feed 中的角色變更",
                 "instance_full": "已滿",
                 "instance_age_restricted": "年齡限制",
                 "instance_age_restricted_tooltip": "在有年齡限制的房間中",
@@ -1763,9 +1748,7 @@
                 "created": "創建時間",
                 "links": "連結",
                 "url": "群組連結",
-                "url_tooltip": "複製連結到剪貼簿",
                 "id": "群組 ID",
-                "id_tooltip": "複製 ID 到剪貼簿",
                 "joined_at": "加入時間",
                 "roles": "身分",
                 "role": "身分：",

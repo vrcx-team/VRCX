@@ -290,7 +290,6 @@
             "clear_results_tooltip": "Limpar Resultados da Pesquisa",
             "user": {
                 "header": "Usuário",
-                "search_by_bio": "Pesquisar por bio",
                 "sort_by_last_logged_in": "Ordenar por último login"
             },
             "world": {
@@ -770,7 +769,6 @@
                 "logging": {
                     "header": "Registro",
                     "resource_load": "Registrar Carregamento de String/Imagem Udon",
-                    "empty_avatar": "Registrar Avatares no Feed sem Nomes",
                     "auto_login_delay": "Atraso de Login Automático",
                     "auto_login_delay_button": "Definir Segundos de Atraso"
                 },
@@ -842,7 +840,6 @@
                     "theme_mode_pink": "Rosa",
                     "theme_mode_material3": "Material 3",
                     "zoom": "Zoom",
-                    "vrcplus_profile_icons": "Ícones de Perfil VRC+",
                     "show_instance_id": "Mostrar ID da Instância",
                     "show_status_bar": "Mostrar Barra de Status",
                     "age_gated_instances": "Mostrar Instâncias com Restrição de Idade",
@@ -1325,7 +1322,6 @@
                 "memo": "Memo",
                 "memo_placeholder": "Clique para adicionar um memo",
                 "avatar_info": "Informações do Avatar",
-                "avatar_info_last_seen": "Última Vez Visto com o Avatar",
                 "unknown_avatar": "Avatar Desconhecido",
                 "represented_group": "Grupo Representado",
                 "bio": "Bio",
@@ -1350,7 +1346,6 @@
                 "copy_id": "Copiar ID",
                 "copy_url": "Copiar URL",
                 "copy_display_name": "Copiar Nome de Exibição",
-                "vrcplus_hides_avatar": "Quando uma foto de perfil VRC+ está definida, as informações do avatar ficam ocultas. Isso também oculta mudanças de avatar no feed",
                 "instance_full": "cheio",
                 "instance_age_restricted": "Restrito",
                 "instance_age_restricted_tooltip": "Em uma instância com restrição de idade",
@@ -1664,9 +1659,7 @@
                 "created": "Criado em",
                 "links": "Links",
                 "url": "URL do Grupo",
-                "url_tooltip": "Copiar URL para a área de transferência",
                 "id": "ID do Grupo",
-                "id_tooltip": "Copiar ID para a área de transferência",
                 "joined_at": "Entrou em",
                 "roles": "Cargos",
                 "role": "Cargo:",

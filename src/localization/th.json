@@ -162,7 +162,6 @@
             "clear_results_tooltip": "ล้างผลการค้นหา",
             "user": {
                 "header": "ผู้ใช้",
-                "search_by_bio": "ค้นหาจากข้อมูลประวัติ",
                 "sort_by_last_logged_in": "เรียงตามการเข้าสู่ระบบล่าสุด"
             },
             "world": {
@@ -612,7 +611,6 @@
                 "logging": {
                     "header": "การบันทึกล็อก",
                     "resource_load": "บันทึกการโหลดสตริง/รูปภาพของ Udon",
-                    "empty_avatar": "บันทึกอวาตาร์ที่ไม่มีชื่อในฟีด",
                     "auto_login_delay": "การหน่วงเวลาเข้าสู่ระบบอัตโนมัติ",
                     "auto_login_delay_button": "ตั้งเวลาหน่วง (วินาที)"
                 },
@@ -664,7 +662,6 @@
                     "theme_mode_pink": "สีชมพู",
                     "theme_mode_material3": "Material 3",
                     "zoom": "ขยาย",
-                    "vrcplus_profile_icons": "ไอคอนโปรไฟล์ VRC+",
                     "age_gated_instances": "อินสแตนซ์จำกัดอายุ",
                     "nicknames": "ชื่อเล่นในบันทึก",
                     "sort_favorite_by": "เรียงรายการโปรดตาม",
@@ -694,7 +691,6 @@
                     "theme_mode_blue": "น้ำเงิน (Blue)",
                     "theme_mode_darkblue": "น้ำเงินเข้ม (Dark Blue)",
                     "theme_mode_amoled": "อะโมเลด (Amoled)",
-                    "vrcplus_profile_icons_description": "ใช้ไอคอนโปรไฟล์เฉพาะของ VRC+ หากมี",
                     "show_instance_id": "แสดง ID อินสแตนซ์",
                     "show_status_bar": "แสดงแถบสถานะ",
                     "age_gated_instances_description": "แสดงอินสแตนซ์ที่มีการจำกัดอายุ หากปิดใช้งาน อินสแตนซ์เหล่านี้จะถูกซ่อนและแสดงเป็นแบบจำกัดสิทธิ์",
@@ -822,9 +818,6 @@
                         "play": "เล่น",
                         "tts_test_placeholder": "ทดสอบ TTS"
                     },
-                    "layout": "มุมมองการแจ้งเตือน",
-                    "layout_notification_center": "ศูนย์การแจ้งเตือน",
-                    "layout_table": "หน้าการแจ้งเตือน",
                     "test_notification": "ส่งการแจ้งเตือนทดสอบ",
                     "test_message": "การแจ้งเตือนทดสอบ"
                 }
@@ -1236,7 +1229,6 @@
                 "memo": "บันทึก",
                 "memo_placeholder": "คลิกเพื่อเพิ่มบันทึก",
                 "avatar_info": "ข้อมูลอวาตาร์",
-                "avatar_info_last_seen": "ข้อมูลอวาตาร์ที่เห็นล่าสุด",
                 "represented_group": "กลุ่มที่ถูกนำเสนอ",
                 "bio": "ข้อมูลประวัติ",
                 "last_seen": "เห็นล่าสุด",
@@ -1260,7 +1252,6 @@
                 "copy_id": "คัดลอก ID",
                 "copy_url": "คัดลอก URL",
                 "copy_display_name": "คัดลอกชื่อที่แสดง",
-                "vrcplus_hides_avatar": "เมื่อตั้งค่ารูปโปรไฟล์ VRC+ ข้อมูลอวาตาร์จะถูกซ่อนไว้ ซึ่งจะซ่อนการเปลี่ยนแปลงอวาตาร์ในฟีดด้วย",
                 "instance_full": "เต็ม",
                 "close_instance": "ปิดอินสแตนซ์",
                 "instance_age_gated": "จำกัดอายุ",
@@ -1602,9 +1593,7 @@
                 "created": "สร้างเมื่อ",
                 "links": "ลิงก์",
                 "url": "URL ของกลุ่ม",
-                "url_tooltip": "คัดลอกไปยังคลิปบอร์ด",
                 "id": "ID กลุ่ม",
-                "id_tooltip": "คัดลอกไปยังคลิปบอร์ด",
                 "joined_at": "เข้าร่วมเมื่อ",
                 "roles": "บทบาท",
                 "role": "บทบาท",
