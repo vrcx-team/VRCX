@@ -873,6 +873,10 @@
                 },
                 "contributors": {
                     "header": "贡献者们"
+                },
+                "friend_requests": {
+                    "header": "自动拒绝陌生骚扰好友申请",
+                    "header_tooltip": "自动拒绝从未见过面 (从未加入过同一个房间) 的好友申请"
                 }
             },
             "appearance": {
@@ -992,6 +996,16 @@
                     "vrchat_notes_description": "显示 VRChat 服务器上保存的备注",
                     "vrcx_memos": "显示本地备注",
                     "vrcx_memos_description": "显示在 VRCX 中本地保存的备注",
+                    "show_last_known_location": "显示最近一次所在位置",
+                    "show_last_known_location_description": "当玩家当前位置被隐藏时（私人房间、忙碌、请勿打扰、正在传送或离线），根据好友动态显示其最近一次所在的房间。",
+                    "last_known_location_max_age": "位置失效时间",
+                    "last_known_location_max_age_description": "当最近一次记录的所在房间超过该时间时，视为已不在该位置，不再显示。",
+                    "last_known_location_max_age_0": "不限制",
+                    "last_known_location_max_age_5": "5 分钟",
+                    "last_known_location_max_age_30": "30 分钟",
+                    "last_known_location_max_age_60": "1 小时",
+                    "last_known_location_max_age_360": "6 小时",
+                    "last_known_location_max_age_720": "12 小时",
                     "recent_action_cooldown": "显示“最近操作”图标",
                     "recent_action_cooldown_description": "在最近的邀请和加入申请操作上显示一个时钟图标。",
                     "recent_action_cooldown_minutes": "冷却时间（分钟）"
@@ -1452,6 +1466,8 @@
                 "show_discord_connections": "是否允许查看绑定的 Discord 账号信息",
                 "instance_minimum_avatar_performance": "模型性能评级限制",
                 "current_instance": "当前房间",
+                "last_known_location": "最近一次所在位置",
+                "last_known_location_tooltip": "对方当前位置已隐藏，这里显示的是好友动态中记录的最近一次所在房间。这不是他当前所在的房间；当它超出设置中的「位置失效时间」后就不再显示。",
                 "economy_creator": "商业创作者"
             },
             "groups": {
