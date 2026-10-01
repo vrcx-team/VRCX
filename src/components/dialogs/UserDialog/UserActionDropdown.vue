@@ -104,7 +104,11 @@
                         <DropdownMenuItem @click="onCommand('Request Invite Message')">
                             <Mail class="size-4" />
                             {{ t('dialog.user.actions.request_invite_with_message') }}
-                            <DropdownMenuShortcut v-if="isActionRecent(userDialog.id, 'Request Invite Message')">
+                            <DropdownMenuShortcut
+                                v-if="
+                                    isActionRecent(userDialog.id, 'Request Invite Message') ||
+                                    isActionRecent(userDialog.id, 'Request Invite Photo')
+                                ">
                                 <Clock class="size-3.5 text-muted-foreground" />
                             </DropdownMenuShortcut>
                         </DropdownMenuItem>
@@ -123,7 +127,11 @@
                                 @click="onCommand('Invite Message')">
                                 <MessageSquare class="size-4" />
                                 {{ t('dialog.user.actions.invite_with_message') }}
-                                <DropdownMenuShortcut v-if="isActionRecent(userDialog.id, 'Invite Message')">
+                                <DropdownMenuShortcut
+                                    v-if="
+                                        isActionRecent(userDialog.id, 'Invite Message') ||
+                                        isActionRecent(userDialog.id, 'Invite Photo')
+                                    ">
                                     <Clock class="size-3.5 text-muted-foreground" />
                                 </DropdownMenuShortcut>
                             </DropdownMenuItem>
