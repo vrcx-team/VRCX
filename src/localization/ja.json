@@ -1174,7 +1174,7 @@
                         "header": "YouTube API",
                         "enable": "有効化する",
                         "youtube_api_key": "YouTube API キー",
-                        "enable_tooltip": "ゲームログに動画のタイトルと、動画の長さを取得し表示しするます。"
+                        "enable_tooltip": "ゲームログに動画のタイトルと、動画の長さを取得し表示します"
                     },
                     "translation_api": {
                         "header": "プロフィールの翻訳 API",
