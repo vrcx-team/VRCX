@@ -829,6 +829,8 @@
                 "links": "Links",
                 "url": "Group URL",
                 "id": "Group ID",
+                "copy_id": "Copy ID",
+                "copy_url": "Copy URL",
                 "joined_at": "Joined At",
                 "roles": "Roles",
                 "role": "Role:",

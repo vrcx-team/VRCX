@@ -33,10 +33,14 @@
             "month": "か月",
             "day": "日",
             "hour": "時間",
+            "min": "分",
+            "sec": "秒",
             "years": "年",
             "months": "か月",
             "days": "日",
-            "hours": "時間"
+            "hours": "時間",
+            "mins": "分",
+            "secs": "秒"
         },
         "days": {
             "sunday": "日曜日",
@@ -1752,6 +1756,8 @@
                 "links": "リンク",
                 "url": "グループURL",
                 "id": "グループID",
+                "copy_id": "IDをコピー",
+                "copy_url": "URLをコピー",
                 "joined_at": "参加日時",
                 "roles": "ロール",
                 "role": "ロール:",
