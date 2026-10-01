@@ -4,6 +4,10 @@
     "common": {
         "no_data": "無資料",
         "no_matching_records": "無符合記錄",
+        "tabs": {
+            "scroll_left": "向左滾動標籤頁",
+            "scroll_right": "向右滾動標籤頁"
+        },
         "feature_relocated": {
             "title": "停用通知",
             "description": "此功能將於未來的更新中移除。請改用 {feature}"
@@ -33,14 +37,14 @@
             "month": "月",
             "day": "天",
             "hour": "時",
-            "minute": "分",
-            "second": "秒",
+            "min": "分",
+            "sec": "秒",
             "years": "年",
             "months": "月",
             "days": "天",
             "hours": "時",
-            "minutes": "分",
-            "seconds": "秒"
+            "mins": "分",
+            "secs": "秒"
         },
         "days": {
             "sunday": "星期日",
@@ -327,7 +331,6 @@
             "clear_results_tooltip": "清除搜尋結果",
             "user": {
                 "header": "用戶",
-                "search_by_bio": "依自介搜尋",
                 "sort_by_last_logged_in": "依最近上線時間排序"
             },
             "world": {
@@ -824,7 +827,6 @@
                 "logging": {
                     "header": "記錄",
                     "resource_load": "記錄 Udon 字串/圖片載入",
-                    "empty_avatar": "記錄沒有名稱的動態影像",
                     "auto_login_delay": "自動登入延遲",
                     "auto_login_delay_button": "設定延遲秒數"
                 },
@@ -897,10 +899,6 @@
                     "theme_mode_pink": "粉色",
                     "theme_mode_material3": "Material 3",
                     "zoom": "介面縮放",
-                    "profile_icons": "個人檔案圖示",
-                    "profile_icons_description": "在可用時使用個人檔案圖示。",
-                    "vrcplus_profile_icons": "VRC+ 個人檔案圖示",
-                    "vrcplus_profile_icons_description": "在可用的情況下，使用 VRC+ 獨家設定檔圖示。",
                     "vrc_profile_themes": "VRChat 個人檔案主題",
                     "show_instance_id": "顯示房間 ID",
                     "show_status_bar": "顯示狀態列",
@@ -1006,9 +1004,6 @@
             "notifications": {
                 "notifications": {
                     "header": "通知",
-                    "layout": "通知顯示模式",
-                    "layout_notification_center": "通知中心",
-                    "layout_table": "通知頁面",
                     "notification_filter": "通知篩選器",
                     "test_notification": "發送測試用通知",
                     "test_message": "測試通知。",
@@ -1402,7 +1397,6 @@
                 "memo": "備忘錄",
                 "memo_placeholder": "點擊新增備忘錄",
                 "avatar_info": "角色資訊",
-                "avatar_info_last_seen": "最後已知角色資訊",
                 "unknown_avatar": "未知角色",
                 "represented_group": "代表群組",
                 "bio": "自我介紹",
@@ -1427,7 +1421,6 @@
                 "copy_id": "複製 ID",
                 "copy_url": "複製連結",
                 "copy_display_name": "複製顯示名稱",
-                "vrcplus_hides_avatar": "設定 VRC+ 個人檔案照片時，會隱藏角色資訊。 這也會隱藏 feed 中的角色變更",
                 "instance_full": "已滿",
                 "instance_age_restricted": "年齡限制",
                 "instance_age_restricted_tooltip": "在有年齡限制的房間中",
@@ -1711,6 +1704,124 @@
                 "header": "原始資料"
             }
         },
+        "group_edit": {
+            "create_header": "建立群組",
+            "edit_header": "編輯群組",
+            "name": "名稱",
+            "short_code": "群組代碼",
+            "description": "描述",
+            "join_state": "加入狀態",
+            "privacy": "私密",
+            "role_template": "身分組模板",
+            "loading_role_templates": "正在載入身分組模板...",
+            "language": "語言",
+            "no_language": "無語言",
+            "rules": "規則",
+            "links": "連結",
+            "add_link": "新增連結",
+            "allow_join_prompt": "自動群組邀請",
+            "allow_join_prompt_description": "自動向在此群組房間中停留超過 5 分鐘或在其中新增好友的非成員玩家傳送邀請。僅適用於公開群組。",
+            "banner": "橫幅",
+            "icon": "頭像",
+            "select_image": "選擇圖片",
+            "clear_image": "清除圖片",
+            "saving": "儲存中...",
+            "save": "儲存更改",
+            "create": "建立群組",
+            "create_success": "群組已建立",
+            "edit_success": "群組已更新"
+        },
+        "group_event_edit": {
+            "create_header": "建立群組活動",
+            "edit_header": "編輯群組活動",
+            "title": "標題",
+            "description": "描述",
+            "starts_at": "開始時間",
+            "ends_at": "結束時間",
+            "invalid_date_range": "活動結束時間必須位於開始時間之後",
+            "access_type": "可見性",
+            "access_group": "僅限群組",
+            "access_public": "公開",
+            "category": "分類",
+            "categories": {
+                "arts": "藝術",
+                "avatars": "模型",
+                "dance": "舞蹈",
+                "education": "教育",
+                "exploration": "探索",
+                "film_media": "影片與媒體",
+                "gaming": "遊戲",
+                "hangout": "閒逛",
+                "music": "音樂",
+                "other": "其他",
+                "performance": "演出",
+                "roleplaying": "角色扮演",
+                "wellness": "健身"
+            },
+            "tags": "標籤",
+            "tags_help": "最多用英文逗號（,）分隔五個標籤，每個標籤最多可包含 100 個字元。",
+            "languages": "語言",
+            "platforms": "平臺",
+            "platform_values": {
+                "android": "Android",
+                "ios": "iOS",
+                "standalonewindows": "Windows"
+            },
+            "none_selected": "未選擇",
+            "roles": "身分組",
+            "all_members": "所有成員",
+            "image": "圖片",
+            "select_image": "選擇圖片",
+            "clear_image": "清除圖片",
+            "host_early_join": "主持人提前加入（分鐘）",
+            "guest_early_join": "客人提前加入（分鐘）",
+            "close_after_end": "結束後關閉（分鐘）",
+            "send_notification": "傳送活動建立通知",
+            "repeat": "重複",
+            "repeat_every": "重複間隔",
+            "repeat_values": {
+                "none": "從不",
+                "weekly": "每週",
+                "monthly": "每月",
+                "yearly": "每年"
+            },
+            "weekly_pattern": "每週重複模式",
+            "weekly_pattern_values": {
+                "every_week": "每週",
+                "weekdays": "每個工作日",
+                "weekend": "每個週末",
+                "custom": "指定星期"
+            },
+            "custom_days": "選擇星期",
+            "weekday_values": {
+                "MO": "星期一",
+                "TU": "星期二",
+                "WE": "星期三",
+                "TH": "星期四",
+                "FR": "星期五",
+                "SA": "星期六",
+                "SU": "星期日"
+            },
+            "ends": "結束於",
+            "ends_values": {
+                "never": "從不",
+                "after_occurrences": "活動發生後",
+                "after_date": "指定日期"
+            },
+            "occurrence_count": "發生次數",
+            "end_date": "結束日期",
+            "saving": "儲存中...",
+            "save": "儲存更改",
+            "edit_parent": "編輯父級活動",
+            "create": "建立活動",
+            "create_success": "群組活動已建立",
+            "edit_success": "群組活動已更新",
+            "delete_success": "群組活動已刪除",
+            "save_error": "儲存群組活動失敗",
+            "delete_error": "刪除群組活動失敗",
+            "load_error": "載入群組活動失敗",
+            "delete_confirm": "你確定要刪除此群組活動嗎？"
+        },
         "group": {
             "tags": {
                 "verified": "已認證",
@@ -1763,9 +1874,9 @@
                 "created": "創建時間",
                 "links": "連結",
                 "url": "群組連結",
-                "url_tooltip": "複製連結到剪貼簿",
                 "id": "群組 ID",
-                "id_tooltip": "複製 ID 到剪貼簿",
+                "copy_id": "複製 ID",
+                "copy_url": "複製 URL",
                 "joined_at": "加入時間",
                 "roles": "身分",
                 "role": "身分：",

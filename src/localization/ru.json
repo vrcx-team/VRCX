@@ -94,7 +94,6 @@
             "clear_results_tooltip": "Очистить результаты поиска",
             "user": {
                 "header": "Пользователь",
-                "search_by_bio": "Искать по био",
                 "sort_by_last_logged_in": "Сортировать по последнему входу в систему"
             },
             "world": {
@@ -342,8 +341,7 @@
                 },
                 "logging": {
                     "header": "Журнал игры",
-                    "resource_load": "Запись загрузки ресурсов Udon",
-                    "empty_avatar": "Запись аватаров в ленту без имен"
+                    "resource_load": "Запись загрузки ресурсов Udon"
                 },
                 "automation": {
                     "auto_change_status": "Автосмена статуса",
@@ -387,7 +385,6 @@
                     "theme_mode_pink": "Pink",
                     "theme_mode_material3": "Material 3",
                     "zoom": "Масштаб",
-                    "vrcplus_profile_icons": "Иконки профиля VRCPlus",
                     "age_gated_instances": "Ограниченые по возросту Инстансы",
                     "nicknames": "Заметки имени",
                     "sort_favorite_by": "Сортировать избранное по",
@@ -602,7 +599,6 @@
                 "memo": "Заметка VRCX",
                 "memo_placeholder": "Нажмите, чтобы добавить заметку",
                 "avatar_info": "Информация о аватаре",
-                "avatar_info_last_seen": "Последняя информация о аватаре",
                 "represented_group": "Представленная группа",
                 "bio": "Био",
                 "last_seen": "Последний раз замечен",
@@ -626,7 +622,6 @@
                 "copy_id": "Скопировать ID",
                 "copy_url": "Скопировать URL",
                 "copy_display_name": "Скопировать имя",
-                "vrcplus_hides_avatar": "Когда установлена фотография профиля VRC+, информация об аватаре скрывается. Это также скрывает изменения аватара в ленте",
                 "instance_full": "заполнен",
                 "close_instance": "Закрыть инстанс",
                 "instance_age_gated": "ограничение по возросту",
@@ -873,9 +868,7 @@
                 "created": "Дата и время создания",
                 "links": "Ссылки",
                 "url": "URL группы",
-                "url_tooltip": "Копировать URL в буфер обмена",
                 "id": "ID группы",
-                "id_tooltip": "Скопировать ID в буфер обмена",
                 "joined_at": "Присоединился",
                 "roles": "Роли",
                 "role": "Роль:",

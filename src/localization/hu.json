@@ -331,8 +331,7 @@
             "clear_results_tooltip": "Keresési eredmények törlése",
             "user": {
                 "header": "Felhasználó",
-                "sort_by_last_logged_in": "Rendezés utolsó bejelentkezés szerint",
-                "search_by_bio": "Keresés bio alapján"
+                "sort_by_last_logged_in": "Rendezés utolsó bejelentkezés szerint"
             },
             "world": {
                 "header": "Világ",
@@ -844,8 +843,7 @@
                     "header": "Naplózás",
                     "resource_load": "Udon string/kép betöltés naplózása",
                     "auto_login_delay": "Automatikus bejelentkezés késleltetése",
-                    "auto_login_delay_button": "Késleltetési idő beállítása",
-                    "empty_avatar": "Név nélküli avatarok naplózása a hírfolyamban"
+                    "auto_login_delay_button": "Késleltetési idő beállítása"
                 },
                 "automation": {
                     "auto_change_status": "Automatikus állapot és meghívók",
@@ -952,9 +950,7 @@
                     "vrc_profile_backgrounds_opacity_description": "A magasabb érték rontja a szöveg olvashatóságát.",
                     "vrc_profile_cosmetics": "Profil díszítések",
                     "cosmetics_description": "Ikonkeretet és profil effekteket jelenít meg",
-                    "show_cosmetics": "Díszítések megjelenítése",
-                    "vrcplus_profile_icons": "VRChat Plus profil ikonok",
-                    "vrcplus_profile_icons_description": "VRC+ kizárólagos profilikonok használata, ha elérhető."
+                    "show_cosmetics": "Díszítések megjelenítése"
                 },
                 "display": {
                     "header": "Megjelenítés"
@@ -1027,9 +1023,6 @@
             "notifications": {
                 "notifications": {
                     "header": "Értesítések",
-                    "layout": "Értesítési nézet",
-                    "layout_notification_center": "Értesítési központ",
-                    "layout_table": "Értesítések oldala",
                     "notification_filter": "Értesítési szűrők",
                     "test_notification": "Teszt értesítés küldése",
                     "test_message": "Teszt értesítés.",
@@ -1462,9 +1455,7 @@
                 "instance_minimum_avatar_performance": "Minimális avatar teljesítmény",
                 "current_instance": "Jelenlegi helyzet",
                 "economy_creator": "Creator Economy alkotó",
-                "instance_announcement_tooltip": "Helyzet bejelentés küldése",
-                "avatar_info_last_seen": "Avatar utoljára látva",
-                "vrcplus_hides_avatar": "Ha VRC+ profilfotó van beállítva, az avatar adatai rejtve vannak. Ez a feedben is elrejti az avatar változásokat."
+                "instance_announcement_tooltip": "Helyzet bejelentés küldése"
             },
             "groups": {
                 "header": "Csoportok",
@@ -1924,9 +1915,7 @@
                 "created": "Létrehozva",
                 "links": "Linkek",
                 "url": "Csoport URL",
-                "url_tooltip": "URL másolása a vágólapra",
                 "id": "Csoport azonosító",
-                "id_tooltip": "Azonosító másolása a vágólapra",
                 "joined_at": "Csatlakozás dátuma",
                 "roles": "Szerepkörök",
                 "role": "Szerepkör:",

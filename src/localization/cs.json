@@ -215,8 +215,7 @@
                 },
                 "logging": {
                     "header": "Záznamy",
-                    "resource_load": "Záznam načítání Udon nápisů/obrázků",
-                    "empty_avatar": "Záznam avatarů v kanálu bez jmen"
+                    "resource_load": "Záznam načítání Udon nápisů/obrázků"
                 },
                 "automation": {
                     "auto_change_status": "Automaticky měnit status",
@@ -257,7 +256,6 @@
                     "theme_mode_pink": "Růžový",
                     "theme_mode_material3": "Material 3",
                     "zoom": "Přiblížení",
-                    "vrcplus_profile_icons": "VRCPlus Profilové ikony",
                     "nicknames": "Přezdívky v poznámkách",
                     "sort_favorite_by": "Řadit oblíbené podle",
                     "sort_favorite_by_name": "jména",
@@ -574,7 +572,6 @@
                 "memo": "Memo",
                 "memo_placeholder": "Click to add a memo",
                 "avatar_info": "Avatar Info",
-                "avatar_info_last_seen": "Avatar Info Last Seen",
                 "represented_group": "Represented Group",
                 "bio": "Bio",
                 "last_seen": "Last Seen",
@@ -831,9 +828,9 @@
                 "created": "Created",
                 "links": "Links",
                 "url": "Group URL",
-                "url_tooltip": "Copy URL to clipboard",
                 "id": "Group ID",
-                "id_tooltip": "Copy ID to clipboard",
+                "copy_id": "Copy ID",
+                "copy_url": "Copy URL",
                 "joined_at": "Joined At",
                 "roles": "Roles",
                 "role": "Role:",

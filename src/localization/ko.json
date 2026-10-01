@@ -216,8 +216,7 @@
                 },
                 "logging": {
                     "header": "Logging",
-                    "resource_load": "Log Udon string/image load",
-                    "empty_avatar": "Log avatars in feed without names"
+                    "resource_load": "Log Udon string/image load"
                 },
                 "automation": {
                     "auto_state_change_tooltip": "인스턴스에 다른 사람이 있을 때 상태를 자동으로 바꿉니다",
@@ -250,7 +249,6 @@
                     "theme_mode_pink": "핑크",
                     "theme_mode_material3": "머티리얼 3",
                     "zoom": "Zoom",
-                    "vrcplus_profile_icons": "VRC+ 프로필 사진으로 표시",
                     "nicknames": "Memo Nicknames",
                     "sort_favorite_by": "즐겨찾기 순서",
                     "sort_favorite_by_name": "이름순",
@@ -531,7 +529,6 @@
                 "memo": "VRCX 메모",
                 "memo_placeholder": "-",
                 "avatar_info": "아바타 정보",
-                "avatar_info_last_seen": "아바타 정보를 마지막으로 본 시간",
                 "represented_group": "이름표에 표시 중인 그룹",
                 "bio": "자기소개",
                 "last_seen": "마지막으로 본 시간",
@@ -773,9 +770,7 @@
                 "created": "설립일",
                 "links": "링크",
                 "url": "그룹 URL",
-                "url_tooltip": "URL 복사",
                 "id": "그룹 ID",
-                "id_tooltip": "ID 복사",
                 "joined_at": "가입일",
                 "roles": "역할",
                 "role": "역할:",

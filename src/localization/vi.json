@@ -205,8 +205,7 @@
                 },
                 "logging": {
                     "header": "Logging",
-                    "resource_load": "Log Udon string/image load",
-                    "empty_avatar": "Log avatars in feed without names"
+                    "resource_load": "Log Udon string/image load"
                 },
                 "automation": {
                     "auto_state_change_tooltip": "Tự động thay đổi status khi có người khác trong world instance (Một mình / Cùng mọi người)",
@@ -239,7 +238,6 @@
                     "theme_mode_pink": "Hồng",
                     "theme_mode_material3": "Material 3",
                     "zoom": "Zoom",
-                    "vrcplus_profile_icons": "VRCPlus Profile Icons",
                     "nicknames": "Memo Nicknames",
                     "sort_favorite_by": "Sắp xếp mục yêu thích theo",
                     "sort_favorite_by_name": "Tên",
@@ -520,7 +518,6 @@
                 "memo": "Ghi nhớ",
                 "memo_placeholder": "Bấm để tạo ghi nhớ",
                 "avatar_info": "Thông tin Avatar",
-                "avatar_info_last_seen": "Lần cuối xem thông tin Avatar",
                 "represented_group": "Đại diện Group",
                 "bio": "Bio",
                 "last_seen": "Lần cuối gặp",
@@ -762,9 +759,7 @@
                 "created": "Tạo lúc",
                 "links": "Đường dẫn",
                 "url": "URL nhóm",
-                "url_tooltip": "Sao chép URL đến clipboard",
                 "id": "Group ID",
-                "id_tooltip": "Sao chép ID đến clipboard",
                 "joined_at": "Tham gia lúc",
                 "roles": "Vai trò",
                 "role": "Vai trò:",

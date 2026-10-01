@@ -4,6 +4,10 @@
     "common": {
         "no_data": "无数据",
         "no_matching_records": "无匹配记录",
+        "tabs": {
+            "scroll_left": "向左滚动标签页",
+            "scroll_right": "向右滚动标签页"
+        },
         "feature_relocated": {
             "title": "弃用通知",
             "description": "此功能将在未来更新中被移除。请改用 {feature} 选项卡。"
@@ -33,14 +37,14 @@
             "month": "月",
             "day": "天",
             "hour": "小时",
-            "minute": "分钟",
-            "second": "秒",
+            "min": "分钟",
+            "sec": "秒",
             "years": "年",
             "months": "月",
             "days": "天",
             "hours": "小时",
-            "minutes": "分钟",
-            "seconds": "秒"
+            "mins": "分钟",
+            "secs": "秒"
         },
         "days": {
             "sunday": "星期日",
@@ -327,7 +331,6 @@
             "clear_results_tooltip": "清除搜索结果",
             "user": {
                 "header": "玩家",
-                "search_by_bio": "同时搜索简介信息",
                 "sort_by_last_logged_in": "按最后登录时间排序"
             },
             "world": {
@@ -753,6 +756,9 @@
                 },
                 "favorites": {
                     "header": "收藏"
+                },
+                "friend_requests": {
+                    "header": "好友申请"
                 }
             },
             "vr": {
@@ -836,7 +842,6 @@
                 "logging": {
                     "header": "日志",
                     "resource_load": "显示世界内 Udon 网络资源的加载详情",
-                    "empty_avatar": "不在动态里记录模型名称",
                     "auto_login_delay": "自动登录延迟",
                     "auto_login_delay_button": "设置延迟（秒）"
                 },
@@ -873,6 +878,10 @@
                 },
                 "contributors": {
                     "header": "贡献者们"
+                },
+                "friend_requests": {
+                    "header": "自动拒绝垃圾好友申请",
+                    "header_tooltip": "自动拒绝你从未见过的用户（从未出现在同一个房间中）的申请。"
                 }
             },
             "appearance": {
@@ -909,10 +918,6 @@
                     "theme_mode_pink": "粉色",
                     "theme_mode_material3": "Material 3",
                     "zoom": "界面缩放",
-                    "profile_icons": "个人主页头像",
-                    "profile_icons_description": "在可用时使用个人主页头像。",
-                    "vrcplus_profile_icons": "VRC+ 个人资料图标",
-                    "vrcplus_profile_icons_description": "当可用时显示 VRC+ 专属个人资料图标。",
                     "vrc_profile_themes": "VRChat 个人资料主题",
                     "show_instance_id": "显示房间 ID",
                     "show_status_bar": "显示底部状态栏",
@@ -1018,9 +1023,6 @@
             "notifications": {
                 "notifications": {
                     "header": "通知",
-                    "layout": "通知视图",
-                    "layout_notification_center": "通知中心",
-                    "layout_table": "通知标签页",
                     "notification_filter": "通知筛选器",
                     "test_notification": "发送测试通知",
                     "test_message": "这是一个测试通知。",
@@ -1302,7 +1304,8 @@
                         "filter_favorites": "星标好友",
                         "filter_friends": "好友",
                         "filter_everyone": "所有人",
-                        "message_timeout": "消息显示时长"
+                        "message_timeout": "消息显示时长",
+                        "type_filter_placeholder": "筛选器"
                     },
                     "timeout_hud": {
                         "header": "玩家超时 HUD",
@@ -1414,7 +1417,6 @@
                 "memo": "本地备注",
                 "memo_placeholder": "点此添加备注",
                 "avatar_info": "正在使用的模型",
-                "avatar_info_last_seen": "正在使用的模型",
                 "unknown_avatar": "未知模型",
                 "represented_group": "展示群组",
                 "bio": "个人简介",
@@ -1439,7 +1441,7 @@
                 "copy_id": "复制 ID",
                 "copy_url": "复制URL",
                 "copy_display_name": "复制昵称",
-                "vrcplus_hides_avatar": "当设置了 VRC+ 专属的个人资料图标后，模型信息将会被隐藏。同时这也会导致动态中的“模型变动”事件被隐藏",
+                "icon_hides_avatar": "当用户头像被设置时，模型信息将被隐藏。包括好友动态中的模型变动",
                 "instance_full": "房间已满",
                 "instance_closed_at": "房间关闭于",
                 "instance_age_restricted": "年龄限制",
@@ -1452,11 +1454,13 @@
                 "show_discord_connections": "是否允许查看绑定的 Discord 账号信息",
                 "instance_minimum_avatar_performance": "模型性能评级限制",
                 "current_instance": "当前房间",
-                "economy_creator": "商业创作者"
+                "economy_creator": "商业创作者",
+                "instance_announcement_tooltip": "发送房间公告"
             },
             "groups": {
                 "header": "群组",
                 "total_count": "总共 {count} 个",
+                "search_placeholder": "搜索群组",
                 "sort_by": "排序方式：",
                 "edit_mode": "编辑模式",
                 "exit_edit_mode": "退出编辑模式",
@@ -1476,6 +1480,7 @@
             "worlds": {
                 "header": "创建的世界",
                 "total_count": "总共 {count} 个",
+                "search_placeholder": "搜索世界",
                 "sort_by": "排序方式：",
                 "order_by": "顺序：",
                 "sorting": {
@@ -1491,11 +1496,13 @@
                 }
             },
             "favorite_worlds": {
-                "header": "收藏的世界"
+                "header": "收藏的世界",
+                "search_placeholder": "搜索世界"
             },
             "avatars": {
                 "header": "创建的模型",
                 "total_count": "总共 {count} 个",
+                "search_placeholder": "搜索模型",
                 "sort_by": "排序方式：",
                 "sort_by_name": "名称",
                 "sort_by_update": "更新时间",
@@ -1510,6 +1517,7 @@
             },
             "mutual_friends": {
                 "header": "共同好友",
+                "search_placeholder": "搜索好友",
                 "sorting": {
                     "alphabetical": "字母顺序",
                     "last_active": "最后活跃",
@@ -1759,6 +1767,97 @@
             "create_success": "群组已创建",
             "edit_success": "群组已更新"
         },
+        "group_event_edit": {
+            "create_header": "创建群组活动",
+            "edit_header": "编辑群组活动",
+            "title": "标题",
+            "description": "描述",
+            "starts_at": "开始时间",
+            "ends_at": "结束时间",
+            "invalid_date_range": "活动结束时间必须位于开始时间之后",
+            "access_type": "可见性",
+            "access_group": "仅限群组",
+            "access_public": "公开",
+            "category": "分类",
+            "categories": {
+                "arts": "艺术",
+                "avatars": "模型",
+                "dance": "舞蹈",
+                "education": "教育",
+                "exploration": "探索",
+                "film_media": "电影与媒体",
+                "gaming": "游戏",
+                "hangout": "闲逛",
+                "music": "音乐",
+                "other": "其他",
+                "performance": "演出",
+                "roleplaying": "角色扮演",
+                "wellness": "健身"
+            },
+            "tags": "标签",
+            "tags_help": "最多用英文逗号（,）分隔五个标签，每个标签最多可包含 100 个字符。",
+            "languages": "语言",
+            "platforms": "平台",
+            "platform_values": {
+                "android": "Android",
+                "ios": "iOS",
+                "standalonewindows": "Windows"
+            },
+            "none_selected": "未选择",
+            "roles": "身份组",
+            "all_members": "所有成员",
+            "image": "图片",
+            "select_image": "选择图片",
+            "clear_image": "清除图片",
+            "host_early_join": "主持人提前加入（分钟）",
+            "guest_early_join": "客人提前加入（分钟）",
+            "close_after_end": "结束后关闭（分钟）",
+            "send_notification": "发送活动创建通知",
+            "repeat": "重复",
+            "repeat_every": "重复间隔",
+            "repeat_values": {
+                "none": "从不",
+                "weekly": "每周",
+                "monthly": "每月",
+                "yearly": "每年"
+            },
+            "weekly_pattern": "每周重复模式",
+            "weekly_pattern_values": {
+                "every_week": "每周",
+                "weekdays": "每个工作日",
+                "weekend": "每个周末",
+                "custom": "指定星期"
+            },
+            "custom_days": "选择星期",
+            "weekday_values": {
+                "MO": "星期一",
+                "TU": "星期二",
+                "WE": "星期三",
+                "TH": "星期四",
+                "FR": "星期五",
+                "SA": "星期六",
+                "SU": "星期日"
+            },
+            "ends": "结束于",
+            "ends_values": {
+                "never": "从不",
+                "after_occurrences": "活动发生后",
+                "after_date": "指定日期"
+            },
+            "occurrence_count": "发生次数",
+            "end_date": "结束日期",
+            "saving": "保存中...",
+            "save": "保存更改",
+            "edit_parent": "编辑父级活动",
+            "create": "创建活动",
+            "create_success": "群组活动已创建",
+            "edit_success": "群组活动已更新",
+            "delete_success": "群组活动已删除",
+            "save_error": "保存群组活动失败",
+            "delete_error": "删除群组活动失败",
+            "load_error": "加载群组活动失败",
+            "delete_confirm": "你确定要删除此群组活动吗？"
+        },
         "group": {
             "tags": {
                 "verified": "已认证",
@@ -1796,6 +1895,7 @@
                 "visibility_friends": "可见性：好友",
                 "visibility_hidden": "可见性：隐藏",
                 "create_post": "创建群组帖子",
+                "create_event": "创建群组活动",
                 "moderation_tools": "成员管理",
                 "transfer": "转让群组",
                 "delete": "删除群组",
@@ -1815,9 +1915,9 @@
                 "created": "创建时间",
                 "links": "链接",
                 "url": "群组链接",
-                "url_tooltip": "复制链接到剪贴板",
                 "id": "群组 ID",
-                "id_tooltip": "复制 ID 到剪贴板",
+                "copy_id": "复制 ID",
+                "copy_url": "复制 URL",
                 "joined_at": "加入时间",
                 "roles": "身份组",
                 "role": "身份组：",
@@ -2095,7 +2195,9 @@
             "send": "发送"
         },
         "world_export": {
-            "header": "导出世界收藏夹"
+            "header": "导出世界收藏夹",
+            "all_favorites": "所有在线收藏夹",
+            "select_group": "选择本地收藏夹"
         },
         "world_import": {
             "header": "导入世界",
@@ -2112,7 +2214,9 @@
             "clear_errors": "清除错误"
         },
         "avatar_export": {
-            "header": "导出模型收藏夹"
+            "header": "导出模型收藏夹",
+            "all_favorites": "所有在线收藏夹",
+            "select_group": "选择本地收藏夹"
         },
         "avatar_import": {
             "header": "导入模型",
@@ -2128,7 +2232,9 @@
             "clear_errors": "清除错误信息"
         },
         "friend_export": {
-            "header": "导出好友分组"
+            "header": "导出好友分组",
+            "all_favorites": "所有在线收藏夹",
+            "select_group": "选择本地收藏夹"
         },
         "friend_import": {
             "header": "导入好友",
@@ -2181,6 +2287,7 @@
             "stickers": "贴纸",
             "prints": "拍立得",
             "inventory": "库存",
+            "all_types": "所有类型",
             "refresh": "刷新",
             "upload": "上传",
             "clear": "清除",
@@ -2549,6 +2656,15 @@
         "avatar_database_provider": {
             "header": "模型数据库提供方",
             "add_provider": "新增"
+        },
+        "instance_announcement": {
+            "header": "发送房间公告",
+            "message": "消息",
+            "image": "图片（可选）",
+            "clear_image": "清除图片",
+            "select_image": "选择图片",
+            "sending": "发送中...",
+            "send": "发送房间公告"
         }
     },
     "confirm": {
@@ -2563,7 +2679,7 @@
         "invite": "确定要发送邀请吗？",
         "invite_group": "确定要邀请这些用户加入群组吗？",
         "delete_log": "确定要删除日志吗？",
-        "accept_friend_request": "要接受这个好友请求吗？",
+        "accept_friend_request": "要接受这个好友申请吗？",
         "send_invite": "要发送邀请吗？",
         "decline_type": "确定要拒绝{type}吗？",
         "delete_type": "确定要删除{type}吗？",
@@ -2815,7 +2931,8 @@
             "closed": "房间已关闭",
             "removed_form_queue": "已从等待队列中移除 {worldName}",
             "not_allowed": "你无权访问此房间",
-            "create_failed": "房间创建失败"
+            "create_failed": "房间创建失败",
+            "announcement_sent": "房间公告已发送"
         },
         "avatar": {
             "selected": "模型已更换",
@@ -2953,7 +3070,7 @@
         "request_invite": "申请加入房间 {message}",
         "invite_response": "回应了你的邀请 {message}",
         "request_invite_response": "回应了你的加入请求 {message}",
-        "friend_request": "给你发送了一个好友请求",
+        "friend_request": "给你发送了一个好友申请",
         "friend": "现在是你的好友了",
         "unfriend": "不再是你的好友了",
         "trust_level": "信誉等级变更为 {trustLevel}",

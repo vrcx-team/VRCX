@@ -126,7 +126,6 @@
             "clear_results_tooltip": "Wyczyść wyniki wyszukiwania",
             "user": {
                 "header": "Użytkownik",
-                "search_by_bio": "Szukaj po bio",
                 "sort_by_last_logged_in": "Sortuj wg ostatniego logowania"
             },
             "world": {
@@ -435,8 +434,7 @@
                 },
                 "logging": {
                     "header": "Logi",
-                    "resource_load": "Loguj wczytywanie tekstu/obrazków w Udonie",
-                    "empty_avatar": "Loguj awatary w aktywności bez nazw"
+                    "resource_load": "Loguj wczytywanie tekstu/obrazków w Udonie"
                 },
                 "automation": {
                     "auto_change_status": "Automatyczna zmiana statusu",
@@ -481,7 +479,6 @@
                     "theme_mode_pink": "Różowy",
                     "theme_mode_material3": "Material 3",
                     "zoom": "Powiększ",
-                    "vrcplus_profile_icons": "Ikony profilu VRCPlus",
                     "age_gated_instances": "Instancje z weryfikacją wieku",
                     "nicknames": "Notatki nazw",
                     "sort_favorite_by": "Sortuj ulubione wg",
@@ -859,7 +856,6 @@
                 "memo": "Notatka VRCX",
                 "memo_placeholder": "Kliknij, aby dodać notatkę VRCX",
                 "avatar_info": "Informacje o awatarze",
-                "avatar_info_last_seen": "Ostatnio widziane informacje awatara",
                 "represented_group": "Reprezentowana grupa",
                 "bio": "Bio",
                 "last_seen": "Ostatnio widziany",
@@ -883,7 +879,6 @@
                 "copy_id": "Kopiuj ID",
                 "copy_url": "Kopiuj URL",
                 "copy_display_name": "Kopiuj wyświetlaną nazwę",
-                "vrcplus_hides_avatar": "Po ustawieniu obrazka profilowego VRC+ informacje o awatarze są ukryte. Ukrywa to również zmiany awatara w aktywności.",
                 "instance_full": "pełna",
                 "close_instance": "Zamknij instancję",
                 "instance_age_gated": "weryfikacja wiekowa",
@@ -1140,9 +1135,7 @@
                 "created": "Data utworzenia",
                 "links": "Linki",
                 "url": "URL grupy",
-                "url_tooltip": "Kopiuj adres URL do schowka",
                 "id": "ID grupy",
-                "id_tooltip": "Skopiuj ID do schowka",
                 "joined_at": "Dołączono",
                 "roles": "Role",
                 "role": "Rola:",

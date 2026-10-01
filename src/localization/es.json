@@ -93,7 +93,6 @@
             "clear_results_tooltip": "Borrar Resultados de Búsqueda",
             "user": {
                 "header": "Usuario",
-                "search_by_bio": "Buscar por biografía",
                 "sort_by_last_logged_in": "Ordenar por último inicio de sesión"
             },
             "world": {
@@ -308,8 +307,7 @@
                 },
                 "logging": {
                     "header": "Registro",
-                    "resource_load": "Registrar carga de cadena/imagen de Udon",
-                    "empty_avatar": "Registrar avatares en el feed sin nombres"
+                    "resource_load": "Registrar carga de cadena/imagen de Udon"
                 },
                 "automation": {
                     "auto_change_status": "Cambio Automático de Estado",
@@ -350,7 +348,6 @@
                     "theme_mode_pink": "Rosa",
                     "theme_mode_material3": "Material 3",
                     "zoom": "Zoom",
-                    "vrcplus_profile_icons": "Iconos de Perfil VRCPlus",
                     "nicknames": "Apodos de Memo",
                     "sort_favorite_by": "Ordenar Favoritos por",
                     "sort_favorite_by_name": "nombre",
@@ -679,7 +676,6 @@
                 "memo": "Memo",
                 "memo_placeholder": "Haz clic para agregar un memo",
                 "avatar_info": "Información del Avatar",
-                "avatar_info_last_seen": "Última Vez Visto",
                 "represented_group": "Grupo Representado",
                 "bio": "Biografía",
                 "last_seen": "Última Vez Visto",
@@ -703,7 +699,6 @@
                 "copy_id": "Copiar ID",
                 "copy_url": "Copiar URL",
                 "copy_display_name": "Copiar Nombre de Pantalla",
-                "vrcplus_hides_avatar": "Cuando se establece una foto de perfil de VRC+, la información del avatar se oculta. Esto también oculta los cambios de avatar en el feed",
                 "instance_full": "lleno",
                 "close_instance": "Cerrar Instancia",
                 "instance_age_gated": "Restringido por Edad",
@@ -943,9 +938,7 @@
                 "created": "Creado el",
                 "links": "Enlaces",
                 "url": "URL del Grupo",
-                "url_tooltip": "Copiar URL al portapapeles",
                 "id": "ID del Grupo",
-                "id_tooltip": "Copiar ID al portapapeles",
                 "joined_at": "Unido el",
                 "roles": "Roles",
                 "role": "Rol:",
