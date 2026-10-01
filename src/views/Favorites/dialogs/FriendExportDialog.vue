@@ -12,7 +12,9 @@
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        <SelectItem :value="FRIEND_EXPORT_ALL_VALUE">None</SelectItem>
+                        <SelectItem :value="FRIEND_EXPORT_ALL_VALUE">{{
+                            t('dialog.friend_export.all_favorites')
+                        }}</SelectItem>
                         <SelectItem
                             v-for="groupAPI in favoriteFriendGroups"
                             :key="groupAPI.name"
@@ -32,7 +34,7 @@
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        <SelectItem :value="FRIEND_EXPORT_NONE_VALUE">None</SelectItem>
+                        <SelectItem :value="FRIEND_EXPORT_NONE_VALUE">{{ t('dialog.gallery_select.none') }}</SelectItem>
                         <SelectItem v-for="group in localFriendFavoriteGroups" :key="group" :value="group">
                             {{ group }} ({{ localFriendFavorites[group].length }})
                         </SelectItem>

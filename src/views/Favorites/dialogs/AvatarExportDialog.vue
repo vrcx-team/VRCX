@@ -45,7 +45,9 @@
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem :value="AVATAR_EXPORT_NONE_VALUE">None</SelectItem>
+                            <SelectItem :value="AVATAR_EXPORT_NONE_VALUE">{{
+                                t('dialog.gallery_select.none')
+                            }}</SelectItem>
                             <SelectItem v-for="group in localAvatarFavoriteGroups" :key="group" :value="group">
                                 {{ group }} ({{ localAvatarFavGroupLength(group) }})
                             </SelectItem>

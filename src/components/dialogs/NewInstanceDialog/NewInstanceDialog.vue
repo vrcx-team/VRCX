@@ -164,16 +164,27 @@
                                     <SelectTrigger size="sm" class="w-full">
                                         <SelectValue>
                                             <span>
-                                                {{ newInstanceDialog.minimumAvatarPerformance || 'None' }}
+                                                {{
+                                                    newInstanceDialog.minimumAvatarPerformance ||
+                                                    t('dialog.avatar.tags.performanceRating.None')
+                                                }}
                                             </span>
                                         </SelectValue>
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectItem value="None">None</SelectItem>
-                                            <SelectItem value="Poor">Poor</SelectItem>
-                                            <SelectItem value="Medium">Medium</SelectItem>
-                                            <SelectItem value="Good">Good</SelectItem>
+                                            <SelectItem value="None">{{
+                                                t('dialog.avatar.tags.performanceRating.None')
+                                            }}</SelectItem>
+                                            <SelectItem value="Poor">{{
+                                                t('dialog.avatar.tags.performanceRating.Poor')
+                                            }}</SelectItem>
+                                            <SelectItem value="Medium">{{
+                                                t('dialog.avatar.tags.performanceRating.Medium')
+                                            }}</SelectItem>
+                                            <SelectItem value="Good">{{
+                                                t('dialog.avatar.tags.performanceRating.Good')
+                                            }}</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
