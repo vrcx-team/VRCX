@@ -389,6 +389,23 @@ export const createColumns = ({
                 const text = typeof note === 'string' || typeof note === 'number' ? String(note) : '';
                 return <span>{text}</span>;
             }
+        },
+        {
+            id: 'memo',
+            accessorFn: (row) => row?.ref?.$memo,
+            header: () => t('table.playerList.memo'),
+            size: 150,
+            minSize: 20,
+            meta: {
+                stretch: true,
+                label: () => t('table.playerList.memo')
+            },
+            enableSorting: false,
+            cell: ({ row }) => {
+                const memo = row.original?.ref?.$memo;
+                const text = typeof memo === 'string' || typeof memo === 'number' ? String(memo) : '';
+                return <span>{text}</span>;
+            }
         }
     ];
 

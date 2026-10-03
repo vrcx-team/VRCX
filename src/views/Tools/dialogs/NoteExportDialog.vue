@@ -139,8 +139,9 @@
     function updateNoteExportDialog() {
         const data = [];
         friends.value.forEach((ctx) => {
-            const newMemo = ctx.memo.replace(/[\r\n]/g, ' ');
-            if (ctx.memo && ctx.ref && ctx.ref.note !== newMemo.slice(0, 256)) {
+            const memo = ctx.ref?.$memo || '';
+            const newMemo = memo.replace(/[\r\n]/g, ' ');
+            if (memo && ctx.ref.note !== newMemo.slice(0, 256)) {
                 data.push({
                     id: ctx.id,
                     name: ctx.name,

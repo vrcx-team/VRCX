@@ -95,7 +95,7 @@
         for (const userId of friends) {
             const ref = props.friends.get(userId);
             const name = (typeof ref !== 'undefined' && ref.name) || '';
-            const memo = (typeof ref !== 'undefined' && ref.memo.replace(/\n/g, ' ')) || '';
+            const memo = (ref?.ref?.$memo || '').replace(/\n/g, ' ');
             lines.push(`${_(userId)},${_(name)},${_(memo)}`);
             friendsList.push(userId);
         }

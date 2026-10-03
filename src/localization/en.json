@@ -3144,6 +3144,7 @@
             "language": "Language",
             "bioLink": "Bio Links",
             "note": "Note",
+            "memo": "Memo",
             "date": "Date",
             "user": "User",
             "type": "Type",

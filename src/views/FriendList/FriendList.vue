@@ -370,7 +370,7 @@
             return null;
         }
         const signature = [
-            ctx.memo ?? '',
+            ctx.ref.$memo ?? '',
             ctx.ref.displayName ?? '',
             ctx.ref.note ?? '',
             ctx.ref.bio ?? '',
@@ -385,7 +385,7 @@
             signature,
             bio: ctx.ref.bio ?? '',
             displayName: ctx.ref.displayName ?? '',
-            memo: ctx.memo ?? '',
+            memo: ctx.ref.$memo ?? '',
             normalizedDisplayName: removeConfusables(ctx.ref.displayName ?? ''),
             note: ctx.ref.note ?? '',
             rank: String(ctx.ref.$trustLevel ?? '').toUpperCase(),
