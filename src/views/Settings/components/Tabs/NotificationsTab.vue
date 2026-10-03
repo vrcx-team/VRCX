@@ -145,7 +145,7 @@
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Switch } from '@/components/ui/switch';
-    import { computed, onMounted, ref } from 'vue';
+    import { computed, ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { Play } from 'lucide-vue-next';
@@ -182,7 +182,7 @@
         testNotificationTTS
     } = notificationsSettingsStore;
 
-    const { testNotification, markAllAsSeen } = useNotificationStore();
+    const { testNotification } = useNotificationStore();
 
     const feedFiltersDialogMode = ref('');
 
@@ -197,10 +197,6 @@
                 changeTTSVoice(value);
             }
         }
-    });
-
-    onMounted(() => {
-        markAllAsSeen();
     });
 
     function showNotyFeedFiltersDialog() {
