@@ -1024,6 +1024,7 @@
             "notifications": {
                 "notifications": {
                     "header": "Notifications",
+                    "busy_warning": "Notifications are disabled while your status is set to Do Not Disturb.",
                     "notification_filter": "Notification Filters",
                     "test_notification": "Send Test Notification",
                     "test_message": "Test notification.",

@@ -1,6 +1,11 @@
 <template>
     <div class="flex flex-col gap-10 py-2">
         <SettingsGroup :title="t('view.settings.notifications.notifications.header')">
+            <template #description>
+                <span :class="{ 'text-destructive': currentUser.status === 'busy' }">{{
+                    t('view.settings.notifications.notifications.busy_warning')
+                }}</span>
+            </template>
             <SettingsItem :label="t('view.settings.notifications.notifications.notification_filter')">
                 <Button size="sm" variant="outline" @click="showNotyFeedFiltersDialog">{{
                     t('view.settings.notifications.notifications.notification_filter')
@@ -152,7 +157,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
-    import { useNotificationStore, useNotificationsSettingsStore } from '@/stores';
+    import { useNotificationStore, useNotificationsSettingsStore, useUserStore } from '@/stores';
 
     import FeedFiltersDialog from '../../dialogs/FeedFiltersDialog.vue';
     import SettingsGroup from '../SettingsGroup.vue';
@@ -181,6 +186,8 @@
         saveNotificationTTS,
         testNotificationTTS
     } = notificationsSettingsStore;
+
+    const { currentUser } = storeToRefs(useUserStore());
 
     const { testNotification, markAllAsSeen } = useNotificationStore();
 
