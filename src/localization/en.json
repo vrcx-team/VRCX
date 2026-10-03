@@ -2305,8 +2305,7 @@
             "drone_skin": "Drone Skin",
             "emoji": "Emoji",
             "redeem": "Redeem",
-            "create_animated_emoji": "Animated Emoji Generator",
-            "crop_image": "Confirm Upload"
+            "create_animated_emoji": "Animated Emoji Generator"
         },
         "image_crop": {
             "rotate_left": "Rotate Left",
@@ -2317,7 +2316,8 @@
             "zoom_out": "Zoom Out",
             "mode_fit": "Switch to Fit Mode",
             "mode_free": "Switch to Free Mode",
-            "reset": "Reset"
+            "reset": "Reset",
+            "auto_resize": "Auto fit image"
         },
         "gallery_select": {
             "header": "Select Image",

@@ -11,7 +11,10 @@
                 <DialogTitle>{{ title }}</DialogTitle>
             </DialogHeader>
 
-            <div v-if="cropperImageSrc" class="mt-4">
+            <div v-if="cropperImageSrc && autoResize" class="mt-4">
+                <img :src="cropperImageSrc" class="h-100 max-h-full w-full object-contain" />
+            </div>
+            <div v-else-if="cropperImageSrc" class="mt-4">
                 <Cropper
                     ref="cropperRef"
                     class="h-100 max-h-full"
@@ -139,12 +142,16 @@
 
             <DialogFooter>
                 <template v-if="cropperImageSrc">
+                    <label class="inline-flex items-center gap-2 mr-auto">
+                        <Checkbox v-model="autoResize" :disabled="loading" />
+                        <span class="text-sm">{{ t('dialog.image_crop.auto_resize') }}</span>
+                    </label>
                     <Button variant="secondary" size="sm" :disabled="loading" @click="cancelCrop">
                         {{ t('dialog.change_content_image.cancel') }}
                     </Button>
                     <Button size="sm" :disabled="loading" @click="onConfirmCrop">
                         <Spinner v-if="loading" />
-                        {{ loading ? t('message.upload.loading') : t('dialog.gallery_icons.crop_image') }}
+                        {{ loading ? t('message.upload.loading') : t('dialog.change_content_image.upload') }}
                     </Button>
                 </template>
             </DialogFooter>
@@ -165,8 +172,9 @@
         ZoomOut
     } from 'lucide-vue-next';
     import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-    import { nextTick, ref, watch } from 'vue';
+    import { nextTick, onMounted, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { Checkbox } from '@/components/ui/checkbox';
     import { Cropper } from 'vue-advanced-cropper';
     import { Slider } from '@/components/ui/slider';
     import { Spinner } from '@/components/ui/spinner';
@@ -175,6 +183,7 @@
     import TooltipWrapper from '@/components/ui/tooltip/TooltipWrapper.vue';
 
     import { useImageCropper } from '../../composables/useImageCropper';
+    import configRepository from '../../services/config';
 
     import 'vue-advanced-cropper/dist/style.css';
 
@@ -214,6 +223,15 @@
     const LOG_MAX = Math.log(MAX_ZOOM_RATIO);
 
     const { cropperRef, cropperImageSrc, resetCropState, loadImageForCrop, getCroppedBlob } = useImageCropper();
+
+    const autoResize = ref(false);
+    onMounted(async () => {
+        autoResize.value = await configRepository.getBool('VRCX_imageCropAutoResize', false);
+    });
+
+    watch(autoResize, (value) => {
+        configRepository.setBool('VRCX_imageCropAutoResize', value);
+    });
 
     watch(
         () => props.file,
@@ -317,6 +335,10 @@
 
     async function onConfirmCrop() {
         loading.value = true;
+        if (autoResize.value) {
+            emit('confirm', props.file);
+            return;
+        }
         try {
             const blob = await getCroppedBlob(props.file);
             if (!blob) {
