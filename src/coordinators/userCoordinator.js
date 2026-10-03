@@ -934,6 +934,7 @@ export function applyCurrentUser(json) {
     // set VRCX online/offline timers
     userRef.$online_for = userStore.currentUser.$online_for;
     userRef.$offline_for = userStore.currentUser.$offline_for;
+    userRef.$active_for = null;
     userRef.$location_at = userStore.currentUser.$location_at;
     userRef.$travelingToTime = userStore.currentUser.$travelingToTime;
     if (json.presence?.platform) {

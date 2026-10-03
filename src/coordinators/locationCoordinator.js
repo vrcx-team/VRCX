@@ -47,6 +47,7 @@ export function runUpdateCurrentUserLocationFlow() {
 
     ref.$online_for = userStore.currentUser.$online_for;
     ref.$offline_for = userStore.currentUser.$offline_for;
+    ref.$active_for = null;
     ref.$location = parseLocation(currentLocation);
     if (!gameStore.isGameRunning || advancedSettingsStore.gameLogDisabled) {
         ref.$location_at = userStore.currentUser.$location_at;
