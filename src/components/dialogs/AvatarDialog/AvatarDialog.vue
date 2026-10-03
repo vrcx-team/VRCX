@@ -475,7 +475,10 @@
                                         @change="onFileChangeAvatarGallery" />
 
                                     <div class="mt-2 w-[80%] ml-20">
-                                        <Carousel v-if="avatarDialog.galleryImages.length" class="w-full">
+                                        <Carousel
+                                            v-if="avatarDialog.galleryImages.length"
+                                            class="w-full"
+                                            @init-api="onGalleryCarouselInit">
                                             <CarouselContent class="h-50">
                                                 <CarouselItem
                                                     v-for="(image, index) in avatarDialog.galleryImages"
@@ -532,6 +535,9 @@
                                             </CarouselContent>
                                             <CarouselPrevious />
                                             <CarouselNext />
+                                            <div class="mt-1 text-center text-xs text-muted-foreground">
+                                                {{ galleryCarouselIndex + 1 }}/{{ avatarDialog.galleryImages.length }}
+                                            </div>
                                         </Carousel>
                                         <div v-else>
                                             <DataTableEmpty type="nodata" />
@@ -753,6 +759,35 @@
     const isAvatarOwner = computed(() => avatarDialog.value.ref.authorId === currentUser.value.id);
     const galleryCropDialogOpen = ref(false);
     const galleryCropDialogFile = ref(null);
+    const galleryCarouselApi = ref(null);
+    const galleryCarouselIndex = ref(0);
+
+    function onGalleryCarouselInit(api) {
+        galleryCarouselApi.value = api;
+        const updateIndex = () => {
+            galleryCarouselIndex.value = api.selectedScrollSnap();
+        };
+        updateIndex();
+        api.on('select', updateIndex);
+        api.on('reInit', updateIndex);
+    }
+
+    /**
+     * @param {string} imageId
+     */
+    async function scrollGalleryToImage(imageId) {
+        await nextTick();
+        const api = galleryCarouselApi.value;
+        if (!api) {
+            return;
+        }
+        let index = avatarDialog.value.galleryImages.findIndex((image) => image.id === imageId);
+        if (index === -1) {
+            index = avatarDialog.value.galleryImages.length - 1;
+        }
+        api.reInit();
+        api.scrollTo(index, true);
+    }
 
     const avatarDialogTabs = computed(() => [
         { value: 'Info', label: t('dialog.avatar.info.header') },
@@ -1059,7 +1094,8 @@
             error: t('message.upload.error')
         });
         try {
-            await uploadPromise;
+            const args = await uploadPromise;
+            await scrollGalleryToImage(args.json?.id);
         } catch (error) {
             console.error('Failed to upload image', error);
         } finally {
@@ -1091,6 +1127,7 @@
             toast.error(t('message.upload.error'));
         }
         await getAvatarGallery(avatarId);
+        await scrollGalleryToImage(images[target].id);
     }
 
     /**
