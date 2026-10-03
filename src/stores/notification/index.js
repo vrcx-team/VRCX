@@ -1270,6 +1270,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                 // ids[1] cal_ is the event id
                 break;
             case 'openNotificationLink':
+            case 'OpenSafetyCenter':
             default:
                 toast.error('Unsupported notification link type');
                 break;
