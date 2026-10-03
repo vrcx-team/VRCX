@@ -448,15 +448,13 @@
                             <div
                                 class="h-full min-h-0 overflow-y-auto flex flex-wrap content-start items-start rounded-xl bg-(--profile-card) p-3"
                                 style="max-height: unset"
-                                v-if="
-                                    avatarDialog.galleryImages.length || avatarDialog.ref.authorId === currentUser.id
-                                ">
+                                v-if="avatarDialog.galleryImages.length || isAvatarOwner">
                                 <div class="w-full">
                                     <div
                                         class="flex justify-between text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-2 pb-2 border-b border-border">
                                         <span>{{ t('dialog.avatar.info.gallery') }}</span>
                                         <Button
-                                            v-if="avatarDialog.ref.authorId === currentUser.id"
+                                            v-if="isAvatarOwner"
                                             size="sm"
                                             variant="outline"
                                             class="h-6"
@@ -480,19 +478,50 @@
                                         <Carousel v-if="avatarDialog.galleryImages.length" class="w-full">
                                             <CarouselContent class="h-50">
                                                 <CarouselItem
-                                                    v-for="imageUrl in avatarDialog.galleryImages"
-                                                    :key="imageUrl">
+                                                    v-for="(image, index) in avatarDialog.galleryImages"
+                                                    :key="image.id">
                                                     <div class="relative h-50 w-full">
                                                         <img
-                                                            :src="imageUrl"
+                                                            :src="image.url"
                                                             style="
                                                                 width: 100%;
                                                                 height: 100%;
                                                                 object-fit: contain;
                                                                 cursor: pointer;
                                                             "
-                                                            @click="showFullscreenImageDialog(imageUrl)"
+                                                            @click="showFullscreenImageDialog(image.url)"
                                                             loading="lazy" />
+                                                        <div
+                                                            v-if="isAvatarOwner"
+                                                            class="absolute top-1 right-1 flex gap-1">
+                                                            <Button
+                                                                size="icon-sm"
+                                                                variant="outline"
+                                                                :disabled="avatarDialog.galleryLoading || index === 0"
+                                                                :ariaLabel="t('dialog.avatar.info.gallery_move_left')"
+                                                                @click="moveGalleryImage(index, -1)">
+                                                                <ChevronLeft />
+                                                            </Button>
+                                                            <Button
+                                                                size="icon-sm"
+                                                                variant="outline"
+                                                                :disabled="
+                                                                    avatarDialog.galleryLoading ||
+                                                                    index === avatarDialog.galleryImages.length - 1
+                                                                "
+                                                                :ariaLabel="t('dialog.avatar.info.gallery_move_right')"
+                                                                @click="moveGalleryImage(index, 1)">
+                                                                <ChevronRight />
+                                                            </Button>
+                                                            <Button
+                                                                size="icon-sm"
+                                                                variant="outline"
+                                                                :disabled="avatarDialog.galleryLoading"
+                                                                :ariaLabel="t('dialog.avatar.info.gallery_delete')"
+                                                                @click="deleteGalleryImage(image)">
+                                                                <Trash2 />
+                                                            </Button>
+                                                        </div>
                                                         <div
                                                             class="absolute inset-0 items-center justify-center bg-muted"
                                                             style="display: none">
@@ -588,6 +617,13 @@
                     :file="cropDialogFile"
                     @update:open="cropDialogOpen = $event"
                     @confirm="onCropConfirmAvatar" />
+                <ImageCropDialog
+                    :open="galleryCropDialogOpen"
+                    :title="t('dialog.avatar.info.gallery')"
+                    :aspect-ratio="4 / 3"
+                    :file="galleryCropDialogFile"
+                    @update:open="galleryCropDialogOpen = $event"
+                    @confirm="onCropConfirmAvatarGallery" />
             </template>
         </div>
     </div>
@@ -598,6 +634,8 @@
         Apple,
         Check,
         CheckCircle,
+        ChevronLeft,
+        ChevronRight,
         Copy,
         Download,
         Ellipsis,
@@ -652,10 +690,11 @@
         DropdownMenuTrigger
     } from '../../ui/dropdown-menu';
     import { Badge } from '../../ui/badge';
-    import { avatarRequest } from '../../../api';
+    import { avatarRequest, miscRequest } from '../../../api';
     import { database } from '../../../services/database';
     import { formatJsonVars } from '../../../shared/utils/base/ui';
-    import { handleImageUploadInput } from '../../../coordinators/imageUploadCoordinator';
+    import { handleImageUploadInput, resizeImageToFitLimits } from '../../../coordinators/imageUploadCoordinator';
+    import { readFileAsBase64 } from '../../../shared/utils/imageUpload';
     import { runDeleteVRChatCacheFlow as deleteVRChatCache } from '../../../coordinators/gameCoordinator';
     import {
         showAvatarDialog,
@@ -710,6 +749,10 @@
         sortUserDialogAvatars,
         uiStore
     });
+
+    const isAvatarOwner = computed(() => avatarDialog.value.ref.authorId === currentUser.value.id);
+    const galleryCropDialogOpen = ref(false);
+    const galleryCropDialogFile = ref(null);
 
     const avatarDialogTabs = computed(() => [
         { value: 'Info', label: t('dialog.avatar.info.header') },
@@ -992,42 +1035,84 @@
         if (!file) {
             return;
         }
-        const r = new FileReader();
-        const resetLoading = () => {
-            avatarDialog.value.galleryLoading = false;
-            clearInput();
-        };
-        r.onerror = resetLoading;
-        r.onabort = resetLoading;
-        r.onload = function () {
-            try {
-                avatarDialog.value.galleryLoading = true;
-                const base64Body = btoa(r.result.toString());
-                const uploadPromise = (async () => {
-                    const args = await avatarRequest.uploadAvatarGalleryImage(base64Body, avatarDialog.value.id);
-                    avatarDialog.value.galleryImages = await getAvatarGallery(avatarDialog.value.id);
-                    return args;
-                })();
-                toast.promise(uploadPromise, {
-                    loading: t('message.upload.loading'),
-                    success: t('message.upload.success'),
-                    error: t('message.upload.error')
-                });
-                uploadPromise
-                    .catch((error) => {
-                        console.error('Failed to upload image', error);
-                    })
-                    .finally(resetLoading);
-            } catch (error) {
-                console.error('Failed to process image', error);
-                resetLoading();
-            }
-        };
+        clearInput();
+        galleryCropDialogFile.value = file;
+        galleryCropDialogOpen.value = true;
+    }
+
+    /**
+     * @param {Blob} blob
+     */
+    async function onCropConfirmAvatarGallery(blob) {
+        const avatarId = avatarDialog.value.id;
+        avatarDialog.value.galleryLoading = true;
+        const uploadPromise = (async () => {
+            const base64Body = await readFileAsBase64(blob);
+            const base64File = await resizeImageToFitLimits(base64Body);
+            const args = await avatarRequest.uploadAvatarGalleryImage(base64File, avatarId);
+            await getAvatarGallery(avatarId);
+            return args;
+        })();
+        toast.promise(uploadPromise, {
+            loading: t('message.upload.loading'),
+            success: t('message.upload.success'),
+            error: t('message.upload.error')
+        });
         try {
-            r.readAsBinaryString(file);
+            await uploadPromise;
         } catch (error) {
-            console.error('Failed to read file', error);
-            resetLoading();
+            console.error('Failed to upload image', error);
+        } finally {
+            avatarDialog.value.galleryLoading = false;
+            galleryCropDialogOpen.value = false;
         }
+    }
+
+    /**
+     * @param {number} index
+     * @param {number} direction
+     */
+    async function moveGalleryImage(index, direction) {
+        const avatarId = avatarDialog.value.id;
+        const images = [...avatarDialog.value.galleryImages];
+        const target = index + direction;
+        if (target < 0 || target >= images.length) {
+            return;
+        }
+        [images[index], images[target]] = [images[target], images[index]];
+        avatarDialog.value.galleryLoading = true;
+        try {
+            await avatarRequest.setAvatarGalleryOrder(
+                images.map((image) => image.id),
+                avatarId
+            );
+        } catch (error) {
+            console.error('Failed to reorder gallery', error);
+            toast.error(t('message.upload.error'));
+        }
+        await getAvatarGallery(avatarId);
+    }
+
+    /**
+     * @param {{ id: string; url: string }} image
+     */
+    async function deleteGalleryImage(image) {
+        const avatarId = avatarDialog.value.id;
+        const { ok } = await modalStore.confirm({
+            title: t('confirm.title'),
+            description: t('confirm.command_question', {
+                command: t('dialog.avatar.info.gallery_delete')
+            })
+        });
+        if (!ok) {
+            return;
+        }
+        avatarDialog.value.galleryLoading = true;
+        try {
+            await miscRequest.deleteFile(image.id);
+        } catch (error) {
+            console.error('Failed to delete gallery image', error);
+        }
+        await getAvatarGallery(avatarId);
     }
 </script>

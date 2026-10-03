@@ -1735,7 +1735,10 @@
                 "memo": "Memo",
                 "memo_placeholder": "Click to add a memo",
                 "listings": "Listings",
-                "gallery": "Gallery"
+                "gallery": "Gallery",
+                "gallery_move_left": "Move Left",
+                "gallery_move_right": "Move Right",
+                "gallery_delete": "Delete Image"
             },
             "json": {
                 "header": "JSON"

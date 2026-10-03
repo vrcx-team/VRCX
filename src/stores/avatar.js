@@ -80,11 +80,11 @@ export const useAvatarStore = defineStore('Avatar', () => {
 
     /**
      * @param {string} avatarId
-     * @returns {Promise<string[]>}
+     * @returns {Promise<{ id: string, url: string }[]>}
      */
     async function getAvatarGallery(avatarId) {
         const D = avatarDialog.value;
-        const args = await queryRequest.fetch('avatarGallery', { avatarId }).finally(() => {
+        const args = await queryRequest.fetch('avatarGallery.force', { avatarId }).finally(() => {
             D.galleryLoading = false;
         });
         if (args.params.galleryId !== D.id) {
@@ -100,7 +100,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         });
         for (const file of sortedGallery) {
             const url = file.versions[file.versions.length - 1].file.url;
-            D.galleryImages.push(url);
+            D.galleryImages.push({ id: file.id, url });
         }
 
         // for JSON tab treeData

@@ -135,6 +135,14 @@ const registry = Object.freeze({
         policy: entityQueryPolicies.avatarGallery,
         queryFn: (params) => avatarRequest.getAvatarGallery(params.avatarId)
     },
+    'avatarGallery.force': {
+        key: (params) => queryKeys.avatarGallery(params.avatarId),
+        policy: Object.freeze({
+            ...entityQueryPolicies.avatarGallery,
+            staleTime: 0
+        }),
+        queryFn: (params) => avatarRequest.getAvatarGallery(params.avatarId)
+    },
     favoriteLimits: {
         key: () => queryKeys.favoriteLimits(),
         policy: entityQueryPolicies.favoriteLimits,

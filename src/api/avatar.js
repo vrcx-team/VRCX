@@ -242,11 +242,13 @@ const avatarReq = {
 
     /**
      * @param {string[]} order
+     * @param {string} galleryId
      * @returns {Promise<{ json: any; params: any }>}
      */
-    setAvatarGalleryOrder(order) {
+    setAvatarGalleryOrder(order, galleryId) {
         const params = {
-            ids: order
+            ids: order,
+            galleryId
         };
         return request('files/order', {
             method: 'PUT',
