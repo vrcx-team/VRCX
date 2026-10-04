@@ -9,6 +9,7 @@ import { AppDebug } from '../services/appConfig';
 import { handleImageUploadInput } from '../coordinators/imageUploadCoordinator';
 import { router } from '../plugins/router';
 import { useAdvancedSettingsStore } from './settings/advanced';
+import { useAuthStore } from './auth';
 import { useModalStore } from './modal';
 import { watchState } from '../services/watchState';
 import { database } from '../services/database';
@@ -17,6 +18,7 @@ import * as workerTimers from 'worker-timers';
 
 export const useGalleryStore = defineStore('Gallery', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
+    const authStore = useAuthStore();
     const { t } = useI18n();
     const modalStore = useModalStore();
 
@@ -414,7 +416,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
         await refreshPrintTable();
         await refreshPrintFavorites();
-        const printLimit = 64 - 2; // 2 reserved for new prints
+        const printLimit = authStore.cachedPermissions.maxUserPrints - 2; // 2 reserved for new prints
         const printCount = printTable.value.length;
         if (printCount <= printLimit) {
             return;

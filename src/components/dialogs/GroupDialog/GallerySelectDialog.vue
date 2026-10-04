@@ -7,7 +7,7 @@
 
             <div>
                 <span>{{ t('dialog.gallery_select.gallery') }}</span>
-                <span class="ml-1.5 text-muted-foreground text-xs">{{ imageTable.length }}/64</span>
+                <span class="ml-1.5 text-muted-foreground text-xs">{{ imageTable.length }}/{{ imageLimit }}</span>
                 <br />
                 <input
                     id="GalleryUploadButton"
@@ -67,7 +67,7 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import { useGalleryStore, useUserStore } from '../../../stores';
+    import { useAuthStore, useGalleryStore, useUserStore } from '../../../stores';
     import { vrcPlusIconRequest, vrcPlusImageRequest } from '../../../api';
     import { computed, watch } from 'vue';
 
@@ -76,6 +76,7 @@
     const { galleryTable, VRCPlusIconsTable } = storeToRefs(useGalleryStore());
     const { refreshGalleryTable, refreshVRCPlusIconsTable, handleGalleryImageAdd } = useGalleryStore();
     const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
+    const { cachedPermissions } = storeToRefs(useAuthStore());
 
     const props = defineProps({
         gallerySelectDialog: {
@@ -106,6 +107,12 @@
             return VRCPlusIconsTable.value;
         }
         return galleryTable.value;
+    });
+    const imageLimit = computed(() => {
+        if (props.gallerySelectDialog.isIconGallerySelectDialog) {
+            return cachedPermissions.value.maxUserIcons;
+        }
+        return cachedPermissions.value.maxUserGallery;
     });
 
     /**

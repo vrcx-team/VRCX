@@ -66,6 +66,21 @@ const loginReq = {
             handleConfig(args);
             return args;
         });
+    },
+
+    /**
+     * @returns {Promise<{ json: any }>}
+     */
+    getPermissions() {
+        return request('auth/permissions', {
+            method: 'GET',
+            params: { condensed: true }
+        }).then((json) => {
+            const args = {
+                json
+            };
+            return args;
+        });
     }
 };
 

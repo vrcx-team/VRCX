@@ -11,33 +11,33 @@
             <template #label-gallery>
                 <span>
                     {{ t('dialog.gallery_icons.gallery') }}
-                    <span class="text-xs ml-[5px]"> {{ galleryTable.length }}/64 </span>
+                    <span class="text-xs ml-[5px]"> {{ galleryTable.length }}/{{ cachedPermissions.maxUserGallery }} </span>
                 </span>
             </template>
             <template #label-icons>
                 <span>
                     {{ t('dialog.gallery_icons.icons') }}
-                    <span class="text-xs ml-[5px]"> {{ VRCPlusIconsTable.length }}/64 </span>
+                    <span class="text-xs ml-[5px]"> {{ VRCPlusIconsTable.length }}/{{ cachedPermissions.maxUserIcons }} </span>
                 </span>
             </template>
             <template #label-emojis>
                 <span>
                     {{ t('dialog.gallery_icons.emojis') }}
-                    <span class="text-xs ml-[5px]"> {{ emojiTable.length }}/{{ cachedConfigTyped.maxUserEmoji }} </span>
+                    <span class="text-xs ml-[5px]"> {{ emojiTable.length }}/{{ cachedPermissions.maxUserEmoji }} </span>
                 </span>
             </template>
             <template #label-stickers>
                 <span>
                     {{ t('dialog.gallery_icons.stickers') }}
                     <span class="text-xs ml-[5px]">
-                        {{ stickerTable.length }}/{{ cachedConfigTyped.maxUserStickers }}
+                        {{ stickerTable.length }}/{{ cachedPermissions.maxUserStickers }}
                     </span>
                 </span>
             </template>
             <template #label-prints>
                 <span>
                     {{ t('dialog.gallery_icons.prints') }}
-                    <span class="text-xs ml-[5px]"> {{ printTable.length }}/64 </span>
+                    <span class="text-xs ml-[5px]"> {{ printTable.length }}/{{ cachedPermissions.maxUserPrints }} </span>
                 </span>
             </template>
             <template #label-inventory>
@@ -666,10 +666,7 @@
     const { currentUserInventory } = storeToRefs(useAdvancedSettingsStore());
     const { showFullscreenImageDialog } = useGalleryStore();
     const { currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
-    const { cachedConfig } = storeToRefs(useAuthStore());
-    const cachedConfigTyped = computed(
-        () => /** @type {{ maxUserEmoji?: number; maxUserStickers?: number }} */ (cachedConfig.value ?? {})
-    );
+    const { cachedPermissions } = storeToRefs(useAuthStore());
     const galleryTabs = computed(() => [
         { value: 'gallery', label: t('dialog.gallery_icons.gallery') },
         { value: 'icons', label: t('dialog.gallery_icons.icons') },
