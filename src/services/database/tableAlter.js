@@ -16,6 +16,7 @@ const tableAlter = {
         await this.addFriendLogFriendNumber();
         await this.updateTableForAvatarHistory();
         await this.addPerformanceIndexes(); // 16
+        await this.addFeedBioLinks(); // 18
     },
 
     async updateTableForGroupNames() {
@@ -91,6 +92,25 @@ const tableAlter = {
                 );
             } catch (e) {
                 console.error(e);
+            }
+        }
+    },
+
+    async addFeedBioLinks() {
+        var tables = [];
+        await sqliteService.execute((dbRow) => {
+            tables.push(dbRow[0]);
+        }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_feed_bio'`);
+        for (var tableName of tables) {
+            for (var column of ['bio_links', 'previous_bio_links']) {
+                try {
+                    await sqliteService.executeNonQuery(`ALTER TABLE ${tableName} ADD ${column} TEXT DEFAULT '[]'`);
+                } catch (e) {
+                    const msg = e.toString();
+                    if (msg.indexOf('duplicate column name') === -1) {
+                        console.error(msg);
+                    }
+                }
             }
         }
     }

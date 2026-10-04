@@ -54,6 +54,7 @@ import { removeAvatarFromCache } from './avatarCoordinator';
 import { useSharedFeedStore } from '../stores/sharedFeed';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
+import { useFeedStore } from '../stores/feed';
 
 const getRobotUrl = () => `${AppDebug.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
 
@@ -89,7 +90,62 @@ export function applyPublicProfile(json) {
             showcased: false
         });
     }
+    if (useFriendStore().friends.has(ref.id)) {
+        updateUserProfile(ref);
+    }
     return ref;
+}
+
+async function updateUserProfile(ref) {
+    if (!ref.id || typeof ref.bio !== 'string') {
+        return;
+    }
+    const existing = await database.getUserProfile(ref.id);
+    if (!existing) {
+        database.setUserProfile(ref);
+        return;
+    }
+    if (existing.bio === ref.bio && arraysMatch(existing.bioLinks, ref.bioLinks)) {
+        return;
+    }
+    const feed = {
+        created_at: new Date().toJSON(),
+        type: 'Bio',
+        userId: ref.id,
+        displayName: ref.displayName,
+        bio: ref.bio,
+        previousBio: existing.bio,
+        bioLinks: ref.bioLinks,
+        previousBioLinks: existing.bioLinks
+    };
+    useNotificationStore().queueFeedNoty(feed);
+    useSharedFeedStore().addEntry(feed);
+    const persistedFeed = await database.addBioToDatabase(feed);
+    if (persistedFeed) {
+        useFeedStore().addFeedEntry(persistedFeed);
+    }
+    database.setUserProfile(ref);
+}
+
+const PROFILE_REFRESH_INTERVAL = 7 * 24 * 60 * 60 * 1000;
+const pendingProfileRefresh = new Set();
+
+async function refreshStaleUserProfile(userId) {
+    if (pendingProfileRefresh.has(userId)) {
+        return;
+    }
+    pendingProfileRefresh.add(userId);
+    try {
+        const existing = await database.getUserProfile(userId);
+        if (existing && Date.now() - Date.parse(existing.updatedAt) < PROFILE_REFRESH_INTERVAL) {
+            return;
+        }
+        await userRequest.getPublicProfile({ userId });
+    } catch (err) {
+        console.error('Failed to refresh public profile', err);
+    } finally {
+        pendingProfileRefresh.delete(userId);
+    }
 }
 
 /**
@@ -579,6 +635,7 @@ function onPlayerTraveling(ref) {
  * @param {object} props
  */
 async function handleUserUpdate(ref, props) {
+    refreshStaleUserProfile(ref.id);
     await runHandleUserUpdateFlow(ref, props);
 }
 

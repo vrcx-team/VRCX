@@ -4,7 +4,7 @@ import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { ArrowDown, ArrowRight, ArrowUpDown, ChevronDown, ChevronRight } from 'lucide-vue-next';
-import { formatDateFilter, statusClass, timeToText } from '../../shared/utils';
+import { formatDateFilter, getFaviconUrl, openExternalLink, statusClass, timeToText } from '../../shared/utils';
 import { i18n } from '../../plugins/i18n';
 import { useGalleryStore, useFriendStore } from '../../stores';
 import { showUserDialog } from '../../coordinators/userCoordinator';
@@ -148,12 +148,26 @@ const expandedRow = ({ row }) => {
     }
 
     if (type === 'Bio') {
+        const links = getBioLinksDifference(original.previousBioLinks, original.bioLinks);
         return (
             <div class="pl-5 text-sm">
                 <pre
                     class="text-xs leading-5.5 whitespace-pre-wrap font-[inherit]"
                     innerHTML={formatDifference(original.previousBio, original.bio)}
                 ></pre>
+                {links.length ? (
+                    <div class="mt-1 flex flex-col gap-0.5 text-xs">
+                        {links.map(({ link, className }) => (
+                            <span
+                                class="flex items-center gap-1 cursor-pointer"
+                                onClick={() => openExternalLink(link)}
+                            >
+                                <img src={getFaviconUrl(link)} class="size-4" loading="lazy" />
+                                <span class={className}>{link}</span>
+                            </span>
+                        ))}
+                    </div>
+                ) : null}
             </div>
         );
     }
@@ -340,6 +354,18 @@ export const columns = [
         }
     }
 ];
+
+function getBioLinksDifference(previousLinks = [], links = []) {
+    return [
+        ...links.map((link) => ({
+            link,
+            className: previousLinks.includes(link) ? '' : 'x-text-added'
+        })),
+        ...previousLinks
+            .filter((link) => !links.includes(link))
+            .map((link) => ({ link, className: 'x-text-removed' }))
+    ];
+}
 
 /**
  * Function that format the differences between two strings with HTML tags markerStartTag and markerEndTag are optional,
