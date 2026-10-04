@@ -3,14 +3,19 @@
         <div class="absolute inset-0 rounded-b-lg" :style="nameplateStyle"></div>
         <img
             v-if="mainUrl"
-            v-show="!introActive"
+            v-show="isBrowserFocused && !introActive"
             :src="mainUrl"
             class="absolute right-0 top-0 h-full w-auto object-contain object-right opacity-100 transition-opacity rounded-b-lg" />
         <img
-            v-if="introUrl"
+            v-if="introUrl && isBrowserFocused"
             v-show="introActive"
             :src="introUrl"
             @load="startIntroTimer"
+            class="absolute right-0 top-0 h-full w-auto object-contain object-right opacity-100 transition-opacity rounded-b-lg" />
+        <img
+            v-if="baseUrl"
+            v-show="!isBrowserFocused"
+            :src="baseUrl"
             class="absolute right-0 top-0 h-full w-auto object-contain object-right opacity-100 transition-opacity rounded-b-lg" />
     </div>
 </template>
@@ -19,7 +24,7 @@
     import { onBeforeUnmount, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
 
-    import { useAppearanceSettingsStore, useUserStore } from '../stores';
+    import { useAppearanceSettingsStore, useUserStore, useVrcxStore } from '../stores';
 
     defineOptions({ inheritAttrs: false });
 
@@ -29,7 +34,9 @@
 
     const { cachedNameplateEffects } = storeToRefs(useUserStore());
     const { displayVRCProfileCosmetics } = storeToRefs(useAppearanceSettingsStore());
+    const { isBrowserFocused } = storeToRefs(useVrcxStore());
 
+    const baseUrl = ref(null);
     const mainUrl = ref(null);
     const introUrl = ref(null);
     const introActive = ref(false);
@@ -49,10 +56,19 @@
         }, introDuration.value);
     }
 
+    watch(isBrowserFocused, (focused) => {
+        if (focused) {
+            return;
+        }
+        clearIntroTimer();
+        introActive.value = false;
+    });
+
     watch(
         () => [props.nameplateEffect, cachedNameplateEffects.value.get(props.nameplateEffect)],
         ([, effect]) => {
             clearIntroTimer();
+            baseUrl.value = null;
             mainUrl.value = null;
             introUrl.value = null;
             introActive.value = false;
@@ -60,6 +76,9 @@
 
             const introAsset = effect?.metadata?.assets.find((asset) => asset.type === 'introAnimation');
             const mainAsset = effect?.metadata?.assets.find((asset) => asset.type === 'mainAnimation');
+            const baseAsset = effect?.metadata?.assets.find((asset) => asset.type === 'base');
+
+            baseUrl.value = baseAsset?.url ?? null;
             mainUrl.value = mainAsset?.url ?? null;
             if (introAsset) {
                 introUrl.value = introAsset.url;
