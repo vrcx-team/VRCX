@@ -139,6 +139,50 @@
             </SettingsItem>
         </SettingsGroup>
 
+        <SettingsGroup :title="t('view.settings.general.remote_host.header')">
+            <div class="flex flex-col gap-2 text-sm text-muted-foreground mb-2">
+                <p class="m-0">
+                    {{ t('view.settings.general.remote_host.description') }}
+                </p>
+            </div>
+            <SettingsItem :label="t('view.settings.general.remote_host.enable')" toggle>
+                <Switch
+                    :model-value="remoteHostEnabled"
+                    :ariaLabel="t('view.settings.general.remote_host.enable')"
+                    @update:modelValue="setRemoteHostEnabled" />
+            </SettingsItem>
+            <SettingsItem :label="t('view.settings.general.remote_host.address')">
+                <Input
+                    v-model="remoteHostAddress"
+                    :placeholder="'192.168.1.100'"
+                    class="w-56!"
+                    @blur="applyRemoteHostConfig" />
+            </SettingsItem>
+            <SettingsItem :label="t('view.settings.general.remote_host.username')">
+                <Input
+                    v-model="remoteHostUsername"
+                    class="w-56!"
+                    @blur="applyRemoteHostConfig" />
+            </SettingsItem>
+            <SettingsItem :label="t('view.settings.general.remote_host.password')">
+                <Input
+                    v-model="remoteHostPassword"
+                    type="password"
+                    class="w-56!"
+                    @blur="applyRemoteHostConfig" />
+            </SettingsItem>
+            <SettingsItem :label="t('view.settings.general.remote_host.log_path')">
+                <Input
+                    v-model="remoteHostLogPath"
+                    :placeholder="t('view.settings.general.remote_host.log_path_placeholder')"
+                    class="w-80!"
+                    @blur="applyRemoteHostConfig" />
+            </SettingsItem>
+            <SettingsItem :label="t('view.settings.general.remote_host.status')">
+                <span class="text-sm text-muted-foreground break-all max-w-md">{{ remoteHostStatusText }}</span>
+            </SettingsItem>
+        </SettingsGroup>
+
         <SettingsGroup :title="t('view.settings.general.contributors.header')">
             <div>
                 <img
@@ -175,8 +219,9 @@
 </template>
 
 <script setup>
-    import { computed, defineAsyncComponent, ref } from 'vue';
+    import { computed, defineAsyncComponent, onMounted, onUnmounted, ref } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { Input } from '@/components/ui/input';
     import { Switch } from '@/components/ui/switch';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -227,4 +272,81 @@
     function openOSSDialog() {
         ossDialog.value = true;
     }
+
+    const remoteHostEnabled = ref(false);
+    const remoteHostAddress = ref('');
+    const remoteHostUsername = ref('');
+    const remoteHostPassword = ref('');
+    const remoteHostLogPath = ref('');
+    const remoteHostStatusText = ref('');
+    let remoteHostStatusTimer = null;
+
+    function formatRemoteHostStatus(statusJson) {
+        const s = JSON.parse(statusJson);
+        if (!s.enabled) {
+            return t('view.settings.general.remote_host.status_off');
+        }
+        if (s.lastError) {
+            return t('view.settings.general.remote_host.status_error', { message: s.lastError });
+        }
+        if (!s.connected) {
+            return t('view.settings.general.remote_host.status_connecting');
+        }
+        return t('view.settings.general.remote_host.status_ok', {
+            gameRunning: s.gameRunning
+                ? t('view.settings.general.remote_host.game_running')
+                : t('view.settings.general.remote_host.game_stopped'),
+            logDirectory: s.logDirectory
+        });
+    }
+
+    async function refreshRemoteHostStatus() {
+        try {
+            remoteHostStatusText.value = formatRemoteHostStatus(await AppApi.GetRemoteHostStatus());
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    function applyRemoteHostConfig() {
+        VRCXStorage.Set('VRCX_RemoteHostAddress', remoteHostAddress.value.trim());
+        VRCXStorage.Set('VRCX_RemoteHostUsername', remoteHostUsername.value.trim());
+        VRCXStorage.Set('VRCX_RemoteHostPassword', remoteHostPassword.value);
+        VRCXStorage.Set('VRCX_RemoteHostLogPath', remoteHostLogPath.value.trim());
+        if (remoteHostEnabled.value) {
+            AppApi.SetRemoteHostConfig(
+                remoteHostAddress.value.trim(),
+                remoteHostUsername.value.trim(),
+                remoteHostPassword.value,
+                remoteHostLogPath.value.trim()
+            );
+        }
+        refreshRemoteHostStatus();
+    }
+
+    async function setRemoteHostEnabled(enabled) {
+        remoteHostEnabled.value = enabled;
+        VRCXStorage.Set('VRCX_RemoteHostEnabled', enabled ? 'true' : 'false');
+        if (enabled) {
+            applyRemoteHostConfig();
+            AppApi.SetRemoteHostEnabled(true);
+        } else {
+            AppApi.SetRemoteHostEnabled(false);
+        }
+        refreshRemoteHostStatus();
+    }
+
+    onMounted(async () => {
+        remoteHostEnabled.value = (await VRCXStorage.Get('VRCX_RemoteHostEnabled')) === 'true';
+        remoteHostAddress.value = (await VRCXStorage.Get('VRCX_RemoteHostAddress')) || '';
+        remoteHostUsername.value = (await VRCXStorage.Get('VRCX_RemoteHostUsername')) || '';
+        remoteHostPassword.value = (await VRCXStorage.Get('VRCX_RemoteHostPassword')) || '';
+        remoteHostLogPath.value = (await VRCXStorage.Get('VRCX_RemoteHostLogPath')) || '';
+        await refreshRemoteHostStatus();
+        remoteHostStatusTimer = setInterval(refreshRemoteHostStatus, 5000);
+    });
+
+    onUnmounted(() => {
+        clearInterval(remoteHostStatusTimer);
+    });
 </script>

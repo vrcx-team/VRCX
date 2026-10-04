@@ -882,6 +882,23 @@
                 "friend_requests": {
                     "header": "自动拒绝垃圾好友申请",
                     "header_tooltip": "自动拒绝你从未见过的用户（从未出现在同一个房间中）的申请。"
+                },
+                "remote_host": {
+                    "header": "远程 VRChat 主机",
+                    "description": "VRChat 运行在局域网另一台电脑上时，VRCX 通过 SSH 同步其游戏日志：填写主机地址（ip[:端口]）和该机的 SSH 账户，共同游玩时间、会话记录、通知等功能照常工作。日志目录自动探测，也可手动指定。密码保存在本机 VRCX.json 中。",
+                    "enable": "启用远程主机日志同步",
+                    "address": "主机地址（ip[:端口]）",
+                    "username": "SSH 用户名",
+                    "password": "SSH 密码",
+                    "log_path": "远程日志目录（可选）",
+                    "log_path_placeholder": "自动探测",
+                    "status": "状态",
+                    "status_off": "未启用",
+                    "status_connecting": "连接中...",
+                    "status_ok": "已连接 —— VRChat {gameRunning}，日志目录：{logDirectory}",
+                    "status_error": "错误：{message}",
+                    "game_running": "运行中",
+                    "game_stopped": "未运行"
                 }
             },
             "appearance": {

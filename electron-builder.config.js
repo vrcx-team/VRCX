@@ -83,7 +83,11 @@ module.exports = {
         icon: 'images/VRCX.png',
         category: 'public.app-category.utilities',
         executableName: 'VRCX',
-        minimumSystemVersion: '14.0'
+        minimumSystemVersion: '14.0',
+        extendInfo: {
+            NSLocalNetworkUsageDescription:
+                'VRCX connects to your VRChat host on the local network (SSH) to sync the game log. / VRCX 需要访问局域网内的 VRChat 主机（SSH）以同步游戏日志。'
+        }
     },
     toolsets: {
         appimage: '1.0.3'

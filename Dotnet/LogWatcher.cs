@@ -46,7 +46,15 @@ namespace VRCX
 
         public void Init()
         {
+#if LINUX
+            RemoteHostClient.Instance.StartFromConfig();
+
+            var logPath = RemoteHostClient.Instance.Enabled
+                ? RemoteHostClient.MirrorLogDirectory
+                : Program.AppApiInstance.GetVRChatAppDataLocation();
+#else
             var logPath = Program.AppApiInstance.GetVRChatAppDataLocation();
+#endif
             m_LogDirectoryInfo = new DirectoryInfo(logPath);
             m_LogContextMap = new Dictionary<string, LogContext>();
             m_LogListLock = new ReaderWriterLockSlim();
@@ -65,6 +73,17 @@ namespace VRCX
             m_Thread = null;
             thread.Interrupt();
             thread.Join();
+        }
+
+        public void Restart()
+        {
+            var threadActiveBackup = threadActive;
+            Exit();
+            Init();
+            if (threadActiveBackup)
+            {
+                threadActive = true;
+            }
         }
 
         public void Reset()

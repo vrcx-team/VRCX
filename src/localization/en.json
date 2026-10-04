@@ -882,6 +882,23 @@
                 "friend_requests": {
                     "header": "Auto-decline Spam Friend Requests",
                     "header_tooltip": "Auto-decline requests from users you haven't met (never been in the same instance)."
+                },
+                "remote_host": {
+                    "header": "Remote VRChat host",
+                    "description": "VRChat runs on another machine in this LAN while VRCX tails its game log over SSH. Fill in the host (ip[:port]), an SSH account on that machine, and co-play time, sessions and notifications keep working. The log directory is detected automatically; an explicit path overrides it. The password is stored locally in VRCX.json.",
+                    "enable": "Enable remote host log tailing",
+                    "address": "Host address (ip[:port])",
+                    "username": "SSH username",
+                    "password": "SSH password",
+                    "log_path": "Remote log directory (optional)",
+                    "log_path_placeholder": "auto-detect",
+                    "status": "Status",
+                    "status_off": "Disabled",
+                    "status_connecting": "Connecting...",
+                    "status_ok": "Connected — VRChat {gameRunning}, log dir: {logDirectory}",
+                    "status_error": "Error: {message}",
+                    "game_running": "running",
+                    "game_stopped": "not running"
                 }
             },
             "appearance": {

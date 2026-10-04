@@ -131,6 +131,8 @@
     <Compile Remove="AppApi\Electron\**" />
     <Content Remove="Overlay\Electron\**" />
     <Compile Remove="Overlay\Electron\**" />
+    <Content Remove="RemoteHost\**" />
+    <Compile Remove="RemoteHost\**" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="$(IsWindows)">

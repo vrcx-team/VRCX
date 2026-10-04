@@ -22,6 +22,11 @@ namespace VRCX
 
         public override bool IsGameRunning()
         {
+            if (RemoteHostClient.Instance.Enabled)
+            {
+                return RemoteHostClient.Instance.IsGameRunning;
+            }
+
             var processes = Process.GetProcessesByName("VRChat.exe");
             var isGameRunning = processes.Length > 0;
             foreach (var process in processes)
