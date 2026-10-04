@@ -80,7 +80,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
 
     /**
      * @param {string} avatarId
-     * @returns {Promise<{ id: string, url: string }[]>}
+     * @returns {Promise<{ id: string; url: string }[]>}
      */
     async function getAvatarGallery(avatarId) {
         const D = avatarDialog.value;

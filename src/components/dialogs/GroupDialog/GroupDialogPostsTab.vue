@@ -17,7 +17,7 @@
                 v-for="post in groupDialog.postsFiltered"
                 :key="post.id"
                 class="box-border flex items-start pb-2 text-[13px] w-full cursor-default">
-                <div class="relative flex-1 overflow-hidden rounded-lg border border-border/60 bg-background p-2">
+                <div class="relative flex-1 overflow-hidden rounded-lg border border-border/60 bg-muted/60 p-2">
                     <template v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
                         <div class="absolute top-0 right-0 flex items-center">
                             <TooltipWrapper side="top" :content="t('dialog.group.posts.edit_tooltip')">

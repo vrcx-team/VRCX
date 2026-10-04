@@ -86,6 +86,7 @@ app.setPath('userData', userDataPath);
 
 /**
  * Generates a RuntimeIdentifier used by dotnet tooling to identify different builds.
+ *
  * @returns A RuntimeIdentifier string of the form 'os-arch' eg 'linux-x64'
  */
 function getRid() {

@@ -1,26 +1,26 @@
-name: "Build Electron"
-description: "Build Electron"
+name: 'Build Electron'
+description: 'Build Electron .NET files for packaging in the calling job'
 inputs:
   vrcx-version:
-    description: "VRCX version number"
+    description: 'VRCX version number'
     required: true
   platform:
-    description: "The platform being built, x64 or arm64"
+    description: 'The platform being built, x64 or arm64'
     required: true
   runtime-identifier:
-    description: "The dotnet runtime identifier for the platform and OS"
+    description: 'The dotnet runtime identifier for the platform and OS'
     required: true
 # outputs:
 #   random-number:
 #     description: "Random number"
 #     value: ${{ steps.random-number-generator.outputs.random-number }}
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Setup dotnet 10
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: "10.0.x"
+        dotnet-version: '10.0.x'
     - name: Set version
       shell: pwsh
       run: |
