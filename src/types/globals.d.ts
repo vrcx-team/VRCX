@@ -47,6 +47,7 @@ declare global {
             ) => () => void;
             onWindowStateChange: (Function: (event: any, state: { windowState: any }) => void) => () => void;
             onBrowserFocus: (Function: (event: any) => void) => () => void;
+            onBrowserBlur: (Function: (event: any) => void) => () => void;
             restartApp: () => Promise<void>;
             getOverlayWindow: () => Promise<boolean>;
             updateVr: (

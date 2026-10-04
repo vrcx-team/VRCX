@@ -393,6 +393,10 @@ function createWindow() {
     mainWindow.on('focus', () => {
         mainWindow.webContents.send('onBrowserFocus');
     });
+
+    mainWindow.on('blur', () => {
+        mainWindow.webContents.send('onBrowserBlur');
+    });
 }
 
 let overlayWindow = undefined;
