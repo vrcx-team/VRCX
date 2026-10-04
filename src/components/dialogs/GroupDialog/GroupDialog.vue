@@ -203,6 +203,15 @@
                                             </DropdownMenuItem>
                                         </DropdownMenuSubContent>
                                     </DropdownMenuSub>
+                                    <DropdownMenuItem
+                                        v-if="
+                                            groupDialog.inGroup &&
+                                            !hasGroupPermission(groupDialog.ref, 'group-roles-manage')
+                                        "
+                                        @click="groupDialogCommand('Manage Roles')">
+                                        <ShieldCheck class="size-4" />
+                                        {{ t('dialog.group.actions.view_roles') }}
+                                    </DropdownMenuItem>
 
                                     <template v-if="hasGroupModerationPermission(groupDialog.ref)">
                                         <DropdownMenuSeparator />
@@ -217,6 +226,12 @@
                                             @click="groupDialogCommand('Moderation Tools')">
                                             <Settings class="size-4" />
                                             {{ t('dialog.group.actions.moderation_tools') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            v-if="hasGroupPermission(groupDialog.ref, 'group-roles-manage')"
+                                            @click="groupDialogCommand('Manage Roles')">
+                                            <ShieldCheck class="size-4" />
+                                            {{ t('dialog.group.actions.manage_roles') }}
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
                                             v-if="hasGroupPermission(groupDialog.ref, 'group-invites-manage')"
@@ -636,6 +651,7 @@
         RefreshCw,
         Settings,
         Share2,
+        ShieldCheck,
         Ticket,
         Trash2,
         X,
@@ -696,7 +712,7 @@
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
     import GroupTransferDialog from './GroupTransferDialog.vue';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
-    import { showGroupMemberModerationDialog } from '../../../coordinators/groupCoordinator';
+    import { showGroupMemberModerationDialog, showGroupRolesDialog } from '../../../coordinators/groupCoordinator';
 
     const { t } = useI18n();
     const groupDialogTabs = computed(() => [
@@ -732,6 +748,7 @@
         setGroupEventAnnouncements,
         showPreviousInstancesListDialog,
         showGroupMemberModerationDialog,
+        showGroupRolesDialog,
         showInviteGroupDialog: (groupId, userId) => {
             if (groupId) {
                 inviteGroupDialog.value.groupId = groupId;

@@ -735,14 +735,16 @@ const groupReq = {
      * @returns {Promise<{ json: any; params }>}
      */
     createGroupRole(params) {
-        return request(`groups/${params.groupId}/roles`, {
+        const { groupId, ...body } = params;
+        return request(`groups/${groupId}/roles`, {
             method: 'POST',
-            params
+            params: body
         }).then((json) => {
             const args = {
                 json,
                 params
             };
+            refetchActiveGroupScope(groupId);
             return args;
         });
     },
@@ -762,9 +764,44 @@ const groupReq = {
      * @returns {Promise<{ json: any; params }>}
      */
     editGroupRole(params) {
-        return request(`groups/${params.groupId}/roles/${params.roleId}`, {
+        const { groupId, roleId, ...body } = params;
+        return request(`groups/${groupId}/roles/${roleId}`, {
             method: 'PUT',
-            params
+            params: body
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            refetchActiveGroupScope(groupId);
+            return args;
+        });
+    },
+
+    /**
+     * @param {{ groupId: string; roleId: string }} params
+     * @returns {Promise<{ json: any; params }>}
+     */
+    deleteGroupRole(params) {
+        return request(`groups/${params.groupId}/roles/${params.roleId}`, {
+            method: 'DELETE'
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            refetchActiveGroupScope(params.groupId);
+            return args;
+        });
+    },
+
+    /**
+     * @param {{ groupId: string }} params
+     * @returns {Promise<{ json: any; params }>}
+     */
+    getGroupPermissionList(params) {
+        return request(`groups/${params.groupId}/permissions`, {
+            method: 'GET'
         }).then((json) => {
             const args = {
                 json,

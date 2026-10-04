@@ -165,6 +165,16 @@ export const useGroupStore = defineStore('Group', () => {
         }
     });
 
+    const groupRolesDialog = ref({
+        visible: false,
+        loading: false,
+        id: '',
+        groupRef: {},
+        roles: [],
+        permissions: [],
+        selectedRoleId: ''
+    });
+
     const inGameGroupOrder = ref([]);
 
     const groupInstances = ref([]);
@@ -180,6 +190,7 @@ export const useGroupStore = defineStore('Group', () => {
             inviteGroupDialog.value.visible = false;
             moderateGroupDialog.value.visible = false;
             groupMemberModeration.value.visible = false;
+            groupRolesDialog.value.visible = false;
             currentUserGroupsInit.value = false;
             cachedGroups.clear();
             currentUserGroups.clear();
@@ -343,6 +354,13 @@ export const useGroupStore = defineStore('Group', () => {
      */
     function setGroupMemberModerationVisible(value) {
         groupMemberModeration.value.visible = value;
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    function setGroupRolesDialogVisible(value) {
+        groupRolesDialog.value.visible = value;
     }
 
     /**
@@ -534,6 +552,7 @@ export const useGroupStore = defineStore('Group', () => {
         inviteGroupDialog,
         moderateGroupDialog,
         groupMemberModeration,
+        groupRolesDialog,
         cachedGroups,
         inGameGroupOrder,
         groupInstances,
@@ -547,6 +566,7 @@ export const useGroupStore = defineStore('Group', () => {
         setGroupDialogVisible,
         showModerateGroupDialog,
         setGroupMemberModerationVisible,
+        setGroupRolesDialogVisible,
         setCurrentUserGroupsInit,
         setInGameGroupOrder,
         setGroupInstances,
