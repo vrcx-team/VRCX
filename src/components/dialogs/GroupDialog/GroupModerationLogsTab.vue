@@ -1,39 +1,33 @@
 <template>
-    <div style="margin-top: 8px">
-        <Button class="rounded-full" variant="outline" size="icon-sm" :disabled="loading" @click="$emit('refresh')">
-            <Spinner v-if="loading" />
-            <RefreshCw v-else />
-        </Button>
-        <span class="text-sm mx-1.5">{{ tableData.data.length }}</span>
-        <br />
-        <div style="display: flex; justify-content: space-between; align-items: center">
-            <div>
-                <Select v-model="selectedAuditLogTypes" multiple>
-                    <SelectTrigger style="margin: 8px 0; width: 250px">
-                        <SelectValue :placeholder="t('dialog.group_member_moderation.filter_type')" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem v-for="type in auditLogTypes" :key="type" :value="type">
-                            {{ getAuditLogTypeName(type) }}
-                        </SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-            <div>
-                <Button variant="outline" @click="$emit('export')">{{
-                    t('dialog.group_member_moderation.export_logs')
-                }}</Button>
-            </div>
+    <div class="flex h-full min-h-0 flex-col gap-2">
+        <div class="flex items-center gap-2">
+            <Button class="rounded-full" variant="outline" size="icon-sm" :disabled="loading" @click="$emit('refresh')">
+                <Spinner v-if="loading" />
+                <RefreshCw v-else />
+            </Button>
+            <span class="text-sm tabular-nums shrink-0">{{ tableData.data.length }}</span>
+            <Select v-model="selectedAuditLogTypes" multiple>
+                <SelectTrigger size="sm" class="w-64 shrink-0">
+                    <SelectValue :placeholder="t('dialog.group_member_moderation.filter_type')" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem v-for="type in auditLogTypes" :key="type" :value="type">
+                        {{ getAuditLogTypeName(type) }}
+                    </SelectItem>
+                </SelectContent>
+            </Select>
+            <InputGroupField
+                v-model="tableData.filters[0].value"
+                clearable
+                size="sm"
+                class="flex-1"
+                :placeholder="t('dialog.group.members.search')" />
+            <Button size="sm" variant="outline" @click="$emit('export')">{{
+                t('dialog.group_member_moderation.export_logs')
+            }}</Button>
         </div>
-        <InputGroupField
-            v-model="tableData.filters[0].value"
-            clearable
-            size="sm"
-            :placeholder="t('dialog.group.members.search')"
-            style="margin-top: 8px; margin-bottom: 8px" />
-        <br />
         <DataTableLayout
-            style="margin-top: 8px"
+            auto-height
             :table="tanstackTable"
             :loading="loading"
             :page-sizes="pageSizes"

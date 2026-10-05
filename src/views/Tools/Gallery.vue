@@ -11,13 +11,17 @@
             <template #label-gallery>
                 <span>
                     {{ t('dialog.gallery_icons.gallery') }}
-                    <span class="text-xs ml-[5px]"> {{ galleryTable.length }}/{{ cachedPermissions.maxUserGallery }} </span>
+                    <span class="text-xs ml-[5px]">
+                        {{ galleryTable.length }}/{{ cachedPermissions.maxUserGallery }}
+                    </span>
                 </span>
             </template>
             <template #label-icons>
                 <span>
                     {{ t('dialog.gallery_icons.icons') }}
-                    <span class="text-xs ml-[5px]"> {{ VRCPlusIconsTable.length }}/{{ cachedPermissions.maxUserIcons }} </span>
+                    <span class="text-xs ml-[5px]">
+                        {{ VRCPlusIconsTable.length }}/{{ cachedPermissions.maxUserIcons }}
+                    </span>
                 </span>
             </template>
             <template #label-emojis>
@@ -37,7 +41,9 @@
             <template #label-prints>
                 <span>
                     {{ t('dialog.gallery_icons.prints') }}
-                    <span class="text-xs ml-[5px]"> {{ printTable.length }}/{{ cachedPermissions.maxUserPrints }} </span>
+                    <span class="text-xs ml-[5px]">
+                        {{ printTable.length }}/{{ cachedPermissions.maxUserPrints }}
+                    </span>
                 </span>
             </template>
             <template #label-inventory>

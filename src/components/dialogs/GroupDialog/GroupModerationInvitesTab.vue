@@ -1,14 +1,17 @@
 <template>
-    <div style="margin-top: 8px">
-        <Button class="rounded-full" variant="outline" size="icon-sm" :disabled="loading" @click="$emit('refresh')">
-            <Spinner v-if="loading" />
-            <RefreshCw v-else />
-        </Button>
-        <br />
+    <div class="flex h-full min-h-0 flex-col">
+        <div class="flex items-center">
+            <Button class="rounded-full" variant="outline" size="icon-sm" :disabled="loading" @click="$emit('refresh')">
+                <Spinner v-if="loading" />
+                <RefreshCw v-else />
+            </Button>
+        </div>
         <TabsUnderline
             v-model="groupMemberModeration.activeInviteTab"
             @update:modelValue="tabClick"
             default-value="sent"
+            fill
+            class="flex-1"
             :items="invitesTabs"
             :unmount-on-hide="false">
             <template #label-sent>
@@ -24,66 +27,89 @@
                 <span class="text-muted-foreground text-xs ml-1.5">{{ blockedTable.data.length }}</span>
             </template>
             <template #sent>
-                <Button size="sm" variant="outline" @click="$emit('select-all', invitesTable.data)">{{
-                    t('dialog.group_member_moderation.select_all')
-                }}</Button>
-                <DataTableLayout
-                    style="margin-top: 8px"
-                    :table="invitesTanstackTable"
-                    :loading="loading"
-                    :page-sizes="pageSizes"
-                    :total-items="invitesTotalItems" />
-                <br />
-                <Button variant="outline" :disabled="inviteActionDisabled" @click="$emit('delete-sent-invite')">{{
-                    t('dialog.group_member_moderation.delete_sent_invite')
-                }}</Button>
+                <div class="flex h-full min-h-0 flex-col gap-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <Button size="sm" variant="outline" @click="$emit('select-all', invitesTable.data)">{{
+                            t('dialog.group_member_moderation.select_all')
+                        }}</Button>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            :disabled="inviteActionDisabled"
+                            @click="$emit('delete-sent-invite')"
+                            >{{ t('dialog.group_member_moderation.delete_sent_invite') }}</Button
+                        >
+                    </div>
+                    <DataTableLayout
+                        auto-height
+                        :table="invitesTanstackTable"
+                        :loading="loading"
+                        :page-sizes="pageSizes"
+                        :total-items="invitesTotalItems" />
+                </div>
             </template>
 
             <template #join>
-                <Button size="sm" variant="outline" @click="$emit('select-all', joinRequestsTable.data)">{{
-                    t('dialog.group_member_moderation.select_all')
-                }}</Button>
-                <DataTableLayout
-                    style="margin-top: 8px"
-                    :table="joinRequestsTanstackTable"
-                    :loading="loading"
-                    :page-sizes="pageSizes"
-                    :total-items="joinRequestsTotalItems" />
-                <br />
-                <Button
-                    variant="outline"
-                    :disabled="inviteActionDisabled"
-                    class="mr-2"
-                    @click="$emit('accept-invite-request')"
-                    >{{ t('dialog.group_member_moderation.accept_join_requests') }}</Button
-                >
-                <Button
-                    variant="outline"
-                    :disabled="inviteActionDisabled"
-                    class="mr-2"
-                    @click="$emit('reject-invite-request')"
-                    >{{ t('dialog.group_member_moderation.reject_join_requests') }}</Button
-                >
-                <Button variant="outline" :disabled="inviteActionDisabled" @click="$emit('block-join-request')">{{
-                    t('dialog.group_member_moderation.block_join_requests')
-                }}</Button>
+                <div class="flex h-full min-h-0 flex-col gap-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <Button size="sm" variant="outline" @click="$emit('select-all', joinRequestsTable.data)">{{
+                            t('dialog.group_member_moderation.select_all')
+                        }}</Button>
+                        <div class="flex gap-2">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                :disabled="inviteActionDisabled"
+                                @click="$emit('accept-invite-request')"
+                                >{{ t('dialog.group_member_moderation.accept_join_requests') }}</Button
+                            >
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                :disabled="inviteActionDisabled"
+                                @click="$emit('reject-invite-request')"
+                                >{{ t('dialog.group_member_moderation.reject_join_requests') }}</Button
+                            >
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                :disabled="inviteActionDisabled"
+                                @click="$emit('block-join-request')"
+                                >{{ t('dialog.group_member_moderation.block_join_requests') }}</Button
+                            >
+                        </div>
+                    </div>
+                    <DataTableLayout
+                        auto-height
+                        :table="joinRequestsTanstackTable"
+                        :loading="loading"
+                        :page-sizes="pageSizes"
+                        :total-items="joinRequestsTotalItems" />
+                </div>
             </template>
 
             <template #blocked>
-                <Button size="sm" variant="outline" @click="$emit('select-all', blockedTable.data)">{{
-                    t('dialog.group_member_moderation.select_all')
-                }}</Button>
-                <DataTableLayout
-                    style="margin-top: 8px"
-                    :on-page-change="handlePageChange"
-                    :table="blockedTanstackTable"
-                    :loading="loading"
-                    :page-sizes="pageSizes"
-                    :total-items="blockedTotalItems" />
-                <br />
-                <Button variant="outline" :disabled="inviteActionDisabled" @click="$emit('delete-blocked-request')">{{
-                    t('dialog.group_member_moderation.delete_blocked_requests')
-                }}</Button>
+                <div class="flex h-full min-h-0 flex-col gap-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <Button size="sm" variant="outline" @click="$emit('select-all', blockedTable.data)">{{
+                            t('dialog.group_member_moderation.select_all')
+                        }}</Button>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            :disabled="inviteActionDisabled"
+                            @click="$emit('delete-blocked-request')"
+                            >{{ t('dialog.group_member_moderation.delete_blocked_requests') }}</Button
+                        >
+                    </div>
+                    <DataTableLayout
+                        auto-height
+                        :on-page-change="handlePageChange"
+                        :table="blockedTanstackTable"
+                        :loading="loading"
+                        :page-sizes="pageSizes"
+                        :total-items="blockedTotalItems" />
+                </div>
             </template>
         </TabsUnderline>
     </div>
