@@ -82,7 +82,8 @@ export const createColumns = ({
     selectedFriends,
     onToggleFriendSelection,
     onConfirmDeleteFriend,
-    userImage
+    userImage,
+    friendProfiles
 }) => {
     const cols = [];
 
@@ -250,7 +251,7 @@ export const createColumns = ({
             meta: { label: () => t('table.friendList.bioLink') },
             cell: ({ row }) => (
                 <div class="flex items-center">
-                    {(row.original?.bioLinks ?? []).filter(Boolean).map((link, index) => (
+                    {(friendProfiles.value.get(row.original?.id)?.bioLinks ?? []).filter(Boolean).map((link, index) => (
                         <TooltipWrapper key={index} content={String(link)}>
                             <img
                                 src={getFaviconUrl(link)}

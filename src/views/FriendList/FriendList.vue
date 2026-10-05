@@ -139,7 +139,7 @@
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
     import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-    import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+    import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupField } from '@/components/ui/input-group';
     import { Progress } from '@/components/ui/progress';
@@ -170,6 +170,7 @@
     import { showUserDialog } from '../../coordinators/userCoordinator';
     import { confirmDeleteFriend, handleFriendDelete } from '../../coordinators/friendRelationshipCoordinator';
     import { useUserDisplay } from '../../composables/useUserDisplay';
+    import { database } from '../../services/database';
 
     const { t } = useI18n();
 
@@ -211,6 +212,7 @@
 
     const friendsListRef = ref(null);
     const friendSearchCache = new Map();
+    const friendProfiles = shallowRef(new Map());
     const FRIEND_LIST_SEARCH_DEBOUNCE_MS = 150;
     const FRIEND_STATS_REFRESH_INTERVAL_MS = 30000;
     let friendsListSearchTimer = 0;
@@ -224,7 +226,8 @@
             selectedFriends,
             onToggleFriendSelection: toggleFriendSelection,
             onConfirmDeleteFriend: confirmDeleteFriend,
-            userImage
+            userImage,
+            friendProfiles
         })
     );
 
@@ -289,6 +292,7 @@
         () => route.path,
         () => {
             refreshFriendStats();
+            loadFriendProfiles();
             nextTick(() => applyFriendsListSearchChange());
         },
         { immediate: true }
@@ -299,6 +303,7 @@
         () => {
             friendSearchCache.clear();
             refreshFriendStats({ force: true });
+            loadFriendProfiles();
             applyFriendsListSearchChange();
         }
     );
@@ -308,6 +313,15 @@
             clearTimeout(friendsListSearchTimer);
         }
     });
+
+    async function loadFriendProfiles() {
+        const profiles = await database.getAllUserProfiles();
+        friendProfiles.value = new Map(profiles.map((profile) => [profile.userId, profile]));
+        friendSearchCache.clear();
+        if (friendsListSearch.value) {
+            applyFriendsListSearchChange();
+        }
+    }
 
     function getFriendStatsRefreshKey() {
         return Array.from(friends.value.keys()).sort().join('\u0000');
@@ -373,7 +387,7 @@
             ctx.ref.$memo ?? '',
             ctx.ref.displayName ?? '',
             ctx.ref.note ?? '',
-            ctx.ref.bio ?? '',
+            friendProfiles.value.get(ctx.id)?.bio ?? '',
             ctx.ref.statusDescription ?? '',
             ctx.ref.$trustLevel ?? ''
         ].join('\u0000');
@@ -383,7 +397,7 @@
         }
         const entry = {
             signature,
-            bio: ctx.ref.bio ?? '',
+            bio: friendProfiles.value.get(ctx.id)?.bio ?? '',
             displayName: ctx.ref.displayName ?? '',
             memo: ctx.ref.$memo ?? '',
             normalizedDisplayName: removeConfusables(ctx.ref.displayName ?? ''),
