@@ -189,7 +189,7 @@
 
     const { currentUser } = storeToRefs(useUserStore());
 
-    const { testNotification, markAllAsSeen } = useNotificationStore();
+    const { testNotification } = useNotificationStore();
 
     const feedFiltersDialogMode = ref('');
 
@@ -204,10 +204,6 @@
                 changeTTSVoice(value);
             }
         }
-    });
-
-    onMounted(() => {
-        markAllAsSeen();
     });
 
     function showNotyFeedFiltersDialog() {

@@ -90,7 +90,7 @@
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { computed, ref, watch } from 'vue';
+    import { computed, onMounted, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { InputGroupField } from '@/components/ui/input-group';
     import { RefreshCw } from 'lucide-vue-next';
@@ -128,7 +128,8 @@
         sendNotificationResponse,
         deleteNotificationLog,
         deleteNotificationLogPrompt,
-        openNotificationLink
+        openNotificationLink,
+        markAllAsSeen
     } = useNotificationStore();
     const { showFullscreenImageDialog } = useGalleryStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -311,4 +312,8 @@
         clearInviteImageUpload();
         sendInviteRequestResponseDialogVisible.value = true;
     }
+
+    onMounted(() => {
+        markAllAsSeen();
+    });
 </script>
