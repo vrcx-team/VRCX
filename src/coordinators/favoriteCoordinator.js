@@ -1068,9 +1068,16 @@ export function removeLocalFriendFavorite(userId, group) {
 export function deleteLocalFriendFavoriteGroup(group) {
     const favoriteStore = useFavoriteStore();
     const friendStore = useFriendStore();
+    const generalSettingsStore = useGeneralSettingsStore();
 
     delete favoriteStore.localFriendFavorites[group];
     database.deleteFriendFavoriteGroup(group);
+    const key = `local:${group}`;
+    if (generalSettingsStore.localFavoriteFriendsGroups.includes(key)) {
+        generalSettingsStore.setLocalFavoriteFriendsGroups(
+            generalSettingsStore.localFavoriteFriendsGroups.filter((k) => k !== key)
+        );
+    }
     friendStore.updateLocalFavoriteFriends();
 }
 
