@@ -3,7 +3,13 @@ import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
 
-import { getEmojiFileName, getPrintFileName, getPrintLocalDate, openExternalLink } from '../shared/utils';
+import {
+    convertFileUrlToImageUrl,
+    getEmojiFileName,
+    getPrintFileName,
+    getPrintLocalDate,
+    openExternalLink
+} from '../shared/utils';
 import { inventoryRequest, queryRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../api';
 import { AppDebug } from '../services/appConfig';
 import { handleImageUploadInput } from '../coordinators/imageUploadCoordinator';
@@ -463,7 +469,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
             return;
         }
         const D = fullscreenImageDialog.value;
-        D.imageUrl = imageUrl;
+        D.imageUrl = convertFileUrlToImageUrl(imageUrl, 10_000);
         D.fileName = fileName;
         D.visible = true;
     }

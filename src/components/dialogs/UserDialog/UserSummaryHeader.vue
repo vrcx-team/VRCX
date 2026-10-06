@@ -63,11 +63,7 @@
                         v-else
                         class="w-full h-full object-cover cursor-pointer"
                         :src="userDialog.publicProfileRef?.iconUrl"
-                        @click.stop="
-                            showFullscreenImageDialog(
-                                convertFileUrlToImageUrl(userDialog.publicProfileRef?.iconUrl, 2048)
-                            )
-                        "
+                        @click.stop="showFullscreenImageDialog(userDialog.publicProfileRef?.iconUrl)"
                         @error="userIconError = true"
                         loading="lazy" />
                 </div>

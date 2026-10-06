@@ -737,12 +737,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     // ran from Cef and Electron when browser is focused
     function onBrowserFocus() {
         isBrowserFocused.value = true;
-        console.log('Browser gained focus');
     }
 
     function onBrowserBlur() {
         isBrowserFocused.value = false;
-        console.log('Browser lost focus');
     }
 
     return {
