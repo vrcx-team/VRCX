@@ -67,6 +67,7 @@ export const useAppearanceSettingsStore = defineStore(
         const hideNicknames = ref(false);
         const showInstanceIdInLocation = ref(false);
         const isAgeGatedInstancesVisible = ref(false);
+        const isClosedInstancesVisible = ref(true);
         const sortFavorites = ref(true);
         const instanceUsersSortAlphabetical = ref(false);
         const tablePageSize = ref(15);
@@ -140,6 +141,7 @@ export const useAppearanceSettingsStore = defineStore(
                 hideNicknamesConfig,
                 showInstanceIdInLocationConfig,
                 isAgeGatedInstancesVisibleConfig,
+                isClosedInstancesVisibleConfig,
                 sortFavoritesConfig,
                 instanceUsersSortAlphabeticalConfig,
                 tablePageSizeConfig,
@@ -181,6 +183,7 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getBool('VRCX_hideNicknames', false),
                 configRepository.getBool('VRCX_showInstanceIdInLocation', false),
                 configRepository.getBool('VRCX_isAgeGatedInstancesVisible', true),
+                configRepository.getBool('VRCX_isClosedInstancesVisible', true),
                 configRepository.getBool('VRCX_sortFavorites', true),
                 configRepository.getBool('VRCX_instanceUsersSortAlphabetical', false),
                 configRepository.getInt('VRCX_tablePageSize', 20),
@@ -249,6 +252,7 @@ export const useAppearanceSettingsStore = defineStore(
             hideNicknames.value = hideNicknamesConfig;
             showInstanceIdInLocation.value = showInstanceIdInLocationConfig;
             isAgeGatedInstancesVisible.value = isAgeGatedInstancesVisibleConfig;
+            isClosedInstancesVisible.value = isClosedInstancesVisibleConfig;
             sortFavorites.value = sortFavoritesConfig;
             instanceUsersSortAlphabetical.value = instanceUsersSortAlphabeticalConfig;
 
@@ -534,6 +538,10 @@ export const useAppearanceSettingsStore = defineStore(
         function setIsAgeGatedInstancesVisible() {
             isAgeGatedInstancesVisible.value = !isAgeGatedInstancesVisible.value;
             configRepository.setBool('VRCX_isAgeGatedInstancesVisible', isAgeGatedInstancesVisible.value);
+        }
+        function setIsClosedInstancesVisible() {
+            isClosedInstancesVisible.value = !isClosedInstancesVisible.value;
+            configRepository.setBool('VRCX_isClosedInstancesVisible', isClosedInstancesVisible.value);
         }
         function setSortFavorites() {
             sortFavorites.value = !sortFavorites.value;
@@ -901,6 +909,7 @@ export const useAppearanceSettingsStore = defineStore(
             hideNicknames,
             showInstanceIdInLocation,
             isAgeGatedInstancesVisible,
+            isClosedInstancesVisible,
             sortFavorites,
             instanceUsersSortAlphabetical,
             tablePageSize,
@@ -947,6 +956,7 @@ export const useAppearanceSettingsStore = defineStore(
             setHideNicknames,
             setShowInstanceIdInLocation,
             setIsAgeGatedInstancesVisible,
+            setIsClosedInstancesVisible,
             setSortFavorites,
             setInstanceUsersSortAlphabetical,
             setTablePageSize,

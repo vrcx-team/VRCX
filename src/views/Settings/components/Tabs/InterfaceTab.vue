@@ -207,6 +207,16 @@
                     @update:modelValue="setIsAgeGatedInstancesVisible" />
             </SettingsItem>
 
+            <SettingsItem
+                :label="t('view.settings.appearance.appearance.closed_instances')"
+                :description="t('view.settings.appearance.appearance.closed_instances_description')"
+                toggle>
+                <Switch
+                    :model-value="isClosedInstancesVisible"
+                    :ariaLabel="t('view.settings.appearance.appearance.closed_instances')"
+                    @update:modelValue="setIsClosedInstancesVisible" />
+            </SettingsItem>
+
             <SettingsItem :label="t('view.settings.appearance.appearance.striped_data_table_mode')" toggle>
                 <Switch
                     :model-value="isDataTableStriped"
@@ -506,6 +516,7 @@
         hideNicknames,
         showInstanceIdInLocation,
         isAgeGatedInstancesVisible,
+        isClosedInstancesVisible,
         sortFavorites,
         instanceUsersSortAlphabetical,
         dtHour12,
@@ -533,6 +544,7 @@
         setHideNicknames,
         setShowInstanceIdInLocation,
         setIsAgeGatedInstancesVisible,
+        setIsClosedInstancesVisible,
         setInstanceUsersSortAlphabetical,
         setDtHour12,
         setDtIsoFormat,

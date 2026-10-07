@@ -924,6 +924,8 @@
                     "show_status_bar": "Show Status Bar",
                     "age_gated_instances": "Show Age-Gated Instances",
                     "age_gated_instances_description": "Show age-restricted instances. When disabled, these instances are hidden and shown as restricted.",
+                    "closed_instances": "Show Closed Instances",
+                    "closed_instances_description": "Show instances that have been closed. When disabled, closed instances are hidden from the world instance list.",
                     "nicknames": "Friend Memo Nicknames",
                     "nicknames_description": "Show your custom memo names after usernames.",
                     "sort_favorite_by": "Sort Favorites by",
