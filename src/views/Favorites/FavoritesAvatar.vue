@@ -142,7 +142,7 @@
                         </div>
                         <div class="flex flex-col gap-2">
                             <div class="flex items-center justify-between font-semibold text-sm mb-[9px]">
-                                <span>{{ t('view.favorite.avatars.local_favorites') }}</span>
+                                <span>{{ t('view.favorite.worlds.local_favorites') }}</span>
                                 <template v-if="!refreshingLocalFavorites">
                                     <Button
                                         class="rounded-full"
@@ -210,13 +210,11 @@
                                 </div>
                                 <TooltipWrapper
                                     v-if="!isCreatingLocalGroup"
-                                    :disabled="isLocalUserVrcPlusSupporter"
-                                    :content="t('view.favorite.avatars.local_favorites')">
+                                    :content="t('view.favorite.worlds.local_favorites')">
                                     <div
                                         :class="[
                                             'group-item x-hover-card hover:shadow-sm',
-                                            'border-dashed flex items-center justify-center gap-2 text-sm',
-                                            { 'opacity-50 cursor-not-allowed': !isLocalUserVrcPlusSupporter }
+                                            'border-dashed flex items-center justify-center gap-2 text-sm'
                                         ]"
                                         @click="startLocalGroupCreation">
                                         <Plus />
@@ -450,13 +448,7 @@
         DropdownMenuSubTrigger,
         DropdownMenuTrigger
     } from '../../components/ui/dropdown-menu';
-    import {
-        useAppearanceSettingsStore,
-        useAvatarStore,
-        useFavoriteStore,
-        useModalStore,
-        useUserStore
-    } from '../../stores';
+    import { useAppearanceSettingsStore, useAvatarStore, useFavoriteStore, useModalStore } from '../../stores';
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
     import { avatarRequest, favoriteRequest } from '../../api';
     import { debounce } from '../../shared/utils';
@@ -517,7 +509,6 @@
         favoriteStore;
     const { avatarHistory } = storeToRefs(useAvatarStore());
     import { promptClearAvatarHistory, showAvatarDialog, applyAvatar } from '../../coordinators/avatarCoordinator';
-    const { isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { t } = useI18n();
 
     const {
@@ -728,8 +719,7 @@
         handleLocalGroupCreationConfirm
     } = useFavoritesLocalGroups({
         createGroup: newLocalAvatarFavoriteGroup,
-        selectGroup,
-        canCreate: () => isLocalUserVrcPlusSupporter.value
+        selectGroup
     });
 
     /**
