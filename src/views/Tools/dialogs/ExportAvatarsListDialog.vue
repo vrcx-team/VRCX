@@ -4,11 +4,15 @@
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.export_own_avatars.header') }}</DialogTitle>
             </DialogHeader>
+            <div class="mt-4 flex items-center justify-between text-xs">
+                <span class="name mr-6">{{ t('dialog.export_own_avatars.public_only') }}</span>
+                <Switch v-model="publicOnly" />
+            </div>
             <InputGroupTextareaField
-                v-model="exportAvatarsListCsv"
+                :model-value="exportAvatarsListCsv"
                 :rows="15"
                 readonly
-                input-class="resize-none mt-4"
+                input-class="resize-none mt-2"
                 @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
         </DialogContent>
     </Dialog>
@@ -25,6 +29,7 @@
     import { applyAvatar, removeAvatarFromCache } from '../../../coordinators/avatarCoordinator';
     import { avatarRequest } from '../../../api';
     import { processBulk } from '../../../services/request';
+    import { Switch } from '../../../components/ui/switch';
 
     const { t } = useI18n();
 
@@ -38,8 +43,28 @@
         }
     });
 
-    const exportAvatarsListCsv = ref('');
+    const avatars = ref([]);
+    const publicOnly = ref(false);
     const loading = ref(false);
+
+    function escapeCsv(str) {
+        // oxlint-disable-next-line no-control-regex
+        if (/[\x00-\x1f,"]/.test(str) === true) {
+            return `"${str.replace(/"/g, '""')}"`;
+        }
+        return str;
+    }
+
+    const exportAvatarsListCsv = computed(() => {
+        const lines = ['AvatarID,AvatarName'];
+        for (const avatar of avatars.value) {
+            if (publicOnly.value && avatar.releaseStatus !== 'public') {
+                continue;
+            }
+            lines.push(`${escapeCsv(avatar.id)},${escapeCsv(avatar.name)}`);
+        }
+        return lines.join('\n');
+    });
 
     const isVisible = computed({
         get() {
@@ -88,22 +113,7 @@
                 }
             },
             done: () => {
-                const avatars = Array.from(map.values());
-                if (Array.isArray(avatars) === false) {
-                    return;
-                }
-                const lines = ['AvatarID,AvatarName'];
-                const _ = function (str) {
-                    // oxlint-disable-next-line no-control-regex
-                    if (/[\x00-\x1f,"]/.test(str) === true) {
-                        return `"${str.replace(/"/g, '""')}"`;
-                    }
-                    return str;
-                };
-                for (const avatar of avatars) {
-                    lines.push(`${_(avatar.id)},${_(avatar.name)}`);
-                }
-                exportAvatarsListCsv.value = lines.join('\n');
+                avatars.value = Array.from(map.values());
                 loading.value = false;
             }
         });

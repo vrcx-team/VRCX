@@ -2261,7 +2261,8 @@
             "json": "JSON"
         },
         "export_own_avatars": {
-            "header": "Export Own Avatars"
+            "header": "Export Own Avatars",
+            "public_only": "Public avatars only"
         },
         "discord_names": {
             "header": "Discord Names",
