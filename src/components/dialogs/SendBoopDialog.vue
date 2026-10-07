@@ -3,10 +3,10 @@
         <DialogContent>
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.boop_dialog.header') }}</DialogTitle>
+                <DialogDescription>{{ displayName }}</DialogDescription>
             </DialogHeader>
-            <span>{{ displayName }}</span>
 
-            <div v-if="sendBoopDialog.visible" style="width: 100%">
+            <div v-if="sendBoopDialog.visible" class="w-full">
                 <VirtualCombobox
                     v-model="emojiModel"
                     :groups="emojiPickerGroups"
@@ -25,38 +25,25 @@
 
             <div
                 v-if="isLocalUserVrcPlusSupporter"
-                style="
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-                    gap: 6px;
-                    margin-top: 8px;
-                    max-height: 600px;
-                    overflow-y: auto;
-                ">
-                <div
-                    v-for="image in emojiTable"
-                    :key="image.id"
-                    :class="image.id === fileId ? 'x-image-selected' : ''"
-                    style="cursor: pointer; border: 1px solid transparent; border-radius: var(--radius-xl)"
-                    @click="fileId = image.id">
-                    <div
-                        v-if="
-                            image.versions &&
-                            image.versions.length > 0 &&
-                            image.versions[image.versions.length - 1].file.url
-                        "
-                        class="max-w-full max-h-full"
-                        style="padding: 8px">
-                        <Emoji :imageUrl="image.versions[image.versions.length - 1].file.url" :size="100"></Emoji>
-                    </div>
-                </div>
+                class="grid max-h-[60vh] grid-cols-[repeat(auto-fill,minmax(88px,1fr))] -m-1 gap-2 overflow-y-auto p-1">
+                <template v-for="image in emojiTable" :key="image.id">
+                    <button
+                        v-if="image.versions?.length && image.versions[image.versions.length - 1].file.url"
+                        type="button"
+                        class="flex aspect-square cursor-pointer items-center justify-center rounded-md border p-0.5 transition-colors"
+                        :class="image.id === fileId ? 'border-primary' : 'border-transparent hover:bg-accent'"
+                        :aria-pressed="image.id === fileId"
+                        @click="fileId = image.id">
+                        <Emoji :imageUrl="image.versions[image.versions.length - 1].file.url" class="size-full" />
+                    </button>
+                </template>
             </div>
 
             <DialogFooter>
-                <Button size="sm" variant="outline" class="mr-2" @click="showGalleryPage">{{
+                <Button size="sm" variant="outline" class="sm:mr-auto" @click="showGalleryPage">{{
                     t('dialog.boop_dialog.emoji_manager')
                 }}</Button>
-                <Button size="sm" variant="secondary" class="mr-2" @click="closeDialog">{{
+                <Button size="sm" variant="secondary" @click="closeDialog">{{
                     t('dialog.boop_dialog.cancel')
                 }}</Button>
                 <Button size="sm" :disabled="!sendBoopDialog.userId" @click="sendBoop">{{
@@ -68,7 +55,14 @@
 </template>
 
 <script setup>
-    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import {
+        Dialog,
+        DialogContent,
+        DialogDescription,
+        DialogFooter,
+        DialogHeader,
+        DialogTitle
+    } from '@/components/ui/dialog';
     import { computed, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Check as CheckIcon } from 'lucide-vue-next';
@@ -103,7 +97,7 @@
                     displayName.value = user.ref.displayName;
                 });
             }
-            if (visible && isLocalUserVrcPlusSupporter && emojiTable.value.length === 0) {
+            if (visible && isLocalUserVrcPlusSupporter.value && emojiTable.value.length === 0) {
                 refreshEmojiTable();
             }
         }
