@@ -3,78 +3,70 @@
         <DialogContent>
             <DialogHeader>
                 <DialogTitle>{{ t('dialog.config_json.header') }}</DialogTitle>
-            </DialogHeader>
-            <div>
-                <div class="text-xs break-keep">
-                    {{ t('dialog.config_json.description1') }} <br />
+                <DialogDescription>
+                    {{ t('dialog.config_json.description1') }}
                     {{ t('dialog.config_json.description2') }}
-                </div>
-                <br />
-                <span class="mr-1.5">{{ t('dialog.config_json.cache_size') }}</span>
-                <span v-text="VRChatUsedCacheSize"></span>
-                <span>/</span>
-                <span v-text="totalCacheSize"></span>
-                <span>GB</span>
-                <TooltipWrapper side="top" :content="t('dialog.config_json.refresh')">
-                    <Button
-                        class="rounded-full ml-1.5"
-                        variant="outline"
-                        size="icon-sm"
-                        :disabled="VRChatCacheSizeLoading"
-                        :ariaLabel="t('dialog.config_json.refresh')"
-                        @click="getVRChatCacheSize">
-                        <Spinner v-if="VRChatCacheSizeLoading" />
-                        <RefreshCw v-else />
-                    </Button>
-                </TooltipWrapper>
+                </DialogDescription>
+            </DialogHeader>
 
-                <div class="mt-2">
-                    <span class="mr-1.5">{{ t('dialog.config_json.delete_all_cache') }}</span>
-                    <Button class="ml-1.5" size="sm" variant="outline" @click="showDeleteAllVRChatCacheConfirm">{{
-                        t('dialog.config_json.delete_cache')
-                    }}</Button>
-                </div>
-
-                <div class="mt-2">
-                    <span class="mr-1.5">{{ t('dialog.config_json.delete_old_cache') }}</span>
-                    <Button class="ml-1.5" size="sm" variant="outline" @click="sweepVRChatCache">{{
-                        t('dialog.config_json.sweep_cache')
-                    }}</Button>
-                </div>
-
-                <div class="mt-2" v-for="(item, value) in VRChatConfigList" :key="value" style="display: block">
-                    <span style="word-break: keep-all">{{ item.name }}:</span>
-                    <div style="display: flex">
-                        <InputGroupAction
-                            class="mt-1.5"
-                            v-model="VRChatConfigFile[value]"
-                            :placeholder="item.default"
-                            size="sm"
-                            :type="item.type ? item.type : 'text'"
-                            :min="item.min"
-                            :max="item.max"
-                            @input="refreshDialogValues"
-                            style="flex: 1">
-                            <template #actions>
-                                <Button
-                                    size="icon-sm"
-                                    variant="outline"
-                                    v-if="item.folderBrowser"
-                                    @click="openConfigFolderBrowser(value)">
-                                    <FolderOpen />
-                                </Button>
-                            </template>
-                        </InputGroupAction>
+            <FieldGroup class="gap-4">
+                <Field orientation="horizontal">
+                    <FieldLabel>{{ t('dialog.config_json.cache_size') }}</FieldLabel>
+                    <div class="flex items-center gap-2 text-sm">
+                        <span>{{ VRChatUsedCacheSize }} / {{ totalCacheSize }} GB</span>
+                        <TooltipWrapper side="top" :content="t('dialog.config_json.refresh')">
+                            <Button
+                                class="rounded-full"
+                                variant="outline"
+                                size="icon-sm"
+                                :disabled="VRChatCacheSizeLoading"
+                                :ariaLabel="t('dialog.config_json.refresh')"
+                                @click="getVRChatCacheSize">
+                                <Spinner v-if="VRChatCacheSizeLoading" />
+                                <RefreshCw v-else />
+                            </Button>
+                        </TooltipWrapper>
                     </div>
-                </div>
+                </Field>
+                <Field orientation="horizontal">
+                    <FieldLabel>{{ t('dialog.config_json.delete_all_cache') }}</FieldLabel>
+                    <Button size="sm" variant="outline" @click="showDeleteAllVRChatCacheConfirm">
+                        {{ t('dialog.config_json.delete_cache') }}
+                    </Button>
+                </Field>
+                <Field orientation="horizontal">
+                    <FieldLabel>{{ t('dialog.config_json.delete_old_cache') }}</FieldLabel>
+                    <Button size="sm" variant="outline" @click="sweepVRChatCache">
+                        {{ t('dialog.config_json.sweep_cache') }}
+                    </Button>
+                </Field>
 
-                <div style="display: inline-block; margin-top: 8px">
-                    <span>{{ t('dialog.config_json.camera_resolution') }}</span>
-                    <br />
-                    <Select
-                        :model-value="vrchatCameraResolutionKey"
-                        @update:modelValue="(v) => (vrchatCameraResolutionKey = v)">
-                        <SelectTrigger size="sm" style="margin-top: 6px">
+                <Field v-for="(item, key) in VRChatConfigList" :key="key" class="gap-2">
+                    <FieldLabel>{{ item.name }}</FieldLabel>
+                    <InputGroupAction
+                        v-model="VRChatConfigFile[key]"
+                        :placeholder="item.default"
+                        size="sm"
+                        :type="item.type ? item.type : 'text'"
+                        :min="item.min"
+                        :max="item.max"
+                        @input="refreshDialogValues">
+                        <template #actions>
+                            <Button
+                                v-if="item.folderBrowser"
+                                size="icon-sm"
+                                variant="outline"
+                                @click="openConfigFolderBrowser(key)">
+                                <FolderOpen />
+                            </Button>
+                        </template>
+                    </InputGroupAction>
+                </Field>
+
+                <Field orientation="horizontal">
+                    <FieldLabel>{{ t('dialog.config_json.camera_resolution') }}</FieldLabel>
+                    <Select v-model="vrchatCameraResolutionKey">
+                        <SelectTrigger size="sm" class="w-48">
                             <SelectValue :placeholder="getVRChatCameraResolution()" />
                         </SelectTrigger>
                         <SelectContent>
@@ -88,16 +80,11 @@
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                </div>
-                <br />
-
-                <div style="display: inline-block; margin-top: 8px">
-                    <span>{{ t('dialog.config_json.spout_resolution') }}</span>
-                    <br />
-                    <Select
-                        :model-value="vrchatSpoutResolutionKey"
-                        @update:modelValue="(v) => (vrchatSpoutResolutionKey = v)">
-                        <SelectTrigger size="sm" style="margin-top: 6px">
+                </Field>
+                <Field orientation="horizontal">
+                    <FieldLabel>{{ t('dialog.config_json.spout_resolution') }}</FieldLabel>
+                    <Select v-model="vrchatSpoutResolutionKey">
+                        <SelectTrigger size="sm" class="w-48">
                             <SelectValue :placeholder="getVRChatSpoutResolution()" />
                         </SelectTrigger>
                         <SelectContent>
@@ -111,16 +98,11 @@
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                </div>
-                <br />
-
-                <div style="display: inline-block; margin-top: 8px">
-                    <span>{{ t('dialog.config_json.screenshot_resolution') }}</span>
-                    <br />
-                    <Select
-                        :model-value="vrchatScreenshotResolutionKey"
-                        @update:modelValue="(v) => (vrchatScreenshotResolutionKey = v)">
-                        <SelectTrigger size="sm" style="margin-top: 6px">
+                </Field>
+                <Field orientation="horizontal">
+                    <FieldLabel>{{ t('dialog.config_json.screenshot_resolution') }}</FieldLabel>
+                    <Select v-model="vrchatScreenshotResolutionKey">
+                        <SelectTrigger size="sm" class="w-48">
                             <SelectValue :placeholder="getVRChatScreenshotResolution()" />
                         </SelectTrigger>
                         <SelectContent>
@@ -134,38 +116,29 @@
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                </div>
-                <br />
+                </Field>
 
-                <label class="inline-flex items-center gap-2" style="margin-top: 6px; display: block">
+                <label class="flex w-fit cursor-pointer items-center gap-2 text-sm">
                     <Checkbox
                         v-model="VRChatConfigFile.picture_output_split_by_date"
                         @update:modelValue="refreshDialogValues" />
-                    <span>{{ t('dialog.config_json.picture_sort_by_date') }}</span>
+                    {{ t('dialog.config_json.picture_sort_by_date') }}
                 </label>
-                <label class="inline-flex items-center gap-2" style="margin-top: 6px; display: block">
+                <label class="flex w-fit cursor-pointer items-center gap-2 text-sm">
                     <Checkbox v-model="VRChatConfigFile.disableRichPresence" @update:modelValue="refreshDialogValues" />
-                    <span>{{ t('dialog.config_json.disable_discord_presence') }}</span>
+                    {{ t('dialog.config_json.disable_discord_presence') }}
                 </label>
-            </div>
+            </FieldGroup>
+
             <DialogFooter>
-                <div style="display: flex; align-items: center; justify-content: space-between" class="w-full">
-                    <div>
-                        <Button
-                            variant="outline"
-                            @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')"
-                            >{{ t('dialog.config_json.vrchat_docs') }}</Button
-                        >
-                    </div>
-                    <div>
-                        <Button variant="secondary" class="mr-2" @click="closeDialog">{{
-                            t('dialog.config_json.cancel')
-                        }}</Button>
-                        <Button :disabled="loading" @click="saveVRChatConfigFile">{{
-                            t('dialog.config_json.save')
-                        }}</Button>
-                    </div>
-                </div>
+                <Button
+                    variant="outline"
+                    class="sm:mr-auto"
+                    @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')">
+                    {{ t('dialog.config_json.vrchat_docs') }}
+                </Button>
+                <Button variant="secondary" @click="closeDialog">{{ t('dialog.config_json.cancel') }}</Button>
+                <Button :disabled="loading" @click="saveVRChatConfigFile">{{ t('dialog.config_json.save') }}</Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>
@@ -173,7 +146,15 @@
 
 <script setup>
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+    import {
+        Dialog,
+        DialogContent,
+        DialogDescription,
+        DialogFooter,
+        DialogHeader,
+        DialogTitle
+    } from '@/components/ui/dialog';
+    import { Field, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field';
     import { computed, ref, watch } from 'vue';
     import { FolderOpen, RefreshCw } from 'lucide-vue-next';
     import { Button } from '@/components/ui/button';
