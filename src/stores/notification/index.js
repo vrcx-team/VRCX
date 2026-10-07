@@ -234,6 +234,10 @@ export const useNotificationStore = defineStore('Notification', () => {
         if (ref.type !== 'requestInvite' || generalSettingsStore.autoAcceptInviteRequests === 'Off') {
             return;
         }
+        const allowedStatuses = generalSettingsStore.autoAcceptInviteStatuses;
+        if (allowedStatuses.length && !allowedStatuses.includes(userStore.currentUser.status)) {
+            return;
+        }
 
         let currentLocation = locationStore.lastLocation.location;
         if (locationStore.lastLocation.location === 'traveling') {

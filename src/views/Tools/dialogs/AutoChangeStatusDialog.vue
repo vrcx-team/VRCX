@@ -257,6 +257,38 @@
                         </Select>
                     </FieldContent>
                 </Field>
+
+                <Field>
+                    <FieldLabel>{{ t('view.settings.general.automation.auto_accept_invite_statuses') }}</FieldLabel>
+                    <FieldContent>
+                        <Select
+                            :model-value="autoAcceptInviteStatuses"
+                            :disabled="autoAcceptInviteRequests === 'Off'"
+                            multiple
+                            @update:modelValue="setAutoAcceptInviteStatuses">
+                            <SelectTrigger size="sm">
+                                <SelectValue
+                                    :placeholder="
+                                        t('view.settings.general.automation.auto_accept_invite_statuses_placeholder')
+                                    " />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="join me">
+                                    <i class="x-user-status joinme"></i> {{ t('dialog.user.status.join_me') }}
+                                </SelectItem>
+                                <SelectItem value="active">
+                                    <i class="x-user-status online"></i> {{ t('dialog.user.status.online') }}
+                                </SelectItem>
+                                <SelectItem value="ask me">
+                                    <i class="x-user-status askme"></i> {{ t('dialog.user.status.ask_me') }}
+                                </SelectItem>
+                                <SelectItem value="busy">
+                                    <i class="x-user-status busy"></i> {{ t('dialog.user.status.busy') }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </FieldContent>
+                </Field>
             </FieldGroup>
         </DialogContent>
     </Dialog>
@@ -308,7 +340,8 @@
         autoStateChangeCompanyDesc,
         autoStateChangeGroups,
         autoAcceptInviteRequests,
-        autoAcceptInviteGroups
+        autoAcceptInviteGroups,
+        autoAcceptInviteStatuses
     } = storeToRefs(generalSettingsStore);
 
     const favoriteStore = useFavoriteStore();
@@ -326,7 +359,8 @@
         setAutoStateChangeCompanyDesc,
         setAutoStateChangeGroups,
         setAutoAcceptInviteRequests,
-        setAutoAcceptInviteGroups
+        setAutoAcceptInviteGroups,
+        setAutoAcceptInviteStatuses
     } = generalSettingsStore;
 
     const instanceTypes = computed(() => [

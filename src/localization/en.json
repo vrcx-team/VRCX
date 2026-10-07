@@ -868,7 +868,9 @@
                     "auto_change_status_groups": "Only count friends from",
                     "auto_change_status_groups_placeholder": "Choose Groups",
                     "auto_accept_invite_groups": "Only accept from",
-                    "auto_accept_invite_groups_placeholder": "Choose Groups"
+                    "auto_accept_invite_groups_placeholder": "Choose Groups",
+                    "auto_accept_invite_statuses": "Only accept when my status is",
+                    "auto_accept_invite_statuses_placeholder": "All Statuses"
                 },
                 "legal_notice": {
                     "header": "Legal Notice",
