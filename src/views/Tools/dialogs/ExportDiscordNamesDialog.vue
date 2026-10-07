@@ -19,6 +19,8 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
 
+    import { database } from '../../../services/database';
+    import { replaceBioSymbols } from '../../../shared/utils';
     import { useUserStore } from '../../../stores';
 
     const { t } = useI18n();
@@ -48,11 +50,13 @@
 
     const discordNamesContent = ref('');
 
-    function showDiscordNamesContent() {
+    async function showDiscordNamesContent() {
         const { friends } = currentUser.value;
         if (Array.isArray(friends) === false) {
             return;
         }
+        const profiles = await database.getAllUserProfiles();
+        const bioByUserId = new Map(profiles.map((profile) => [profile.userId, replaceBioSymbols(profile.bio)]));
         const lines = ['DisplayName,DiscordName'];
         const _ = function (str) {
             // oxlint-disable-next-line no-control-regex
@@ -75,8 +79,9 @@
                     discord = statusRegex[1];
                 }
             }
-            if (!discord && ref.bio) {
-                const bioRegex = /(?:discord|dc|dis)(?: |=|:|˸|;)(.*)/gi.exec(ref.bio);
+            const bio = bioByUserId.get(userId);
+            if (!discord && bio) {
+                const bioRegex = /(?:discord|dc|dis)(?: |=|:|˸|;)(.*)/gi.exec(bio);
                 if (bioRegex) {
                     discord = bioRegex[1];
                 }
