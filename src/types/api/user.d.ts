@@ -161,6 +161,7 @@ interface GetCurrentUserResponse extends GetUserResponse {
     acceptedTOSVersion: number;
     accountDeletionDate: string | null;
     accountDeletionLog: string | null;
+    accountStanding: string;
     activeFriends: string[];
     appleDetails: object;
     appleId: string;

@@ -784,6 +784,7 @@ export function applyCurrentUser(json) {
             acceptedTOSVersion: 0,
             accountDeletionDate: null,
             accountDeletionLog: null,
+            accountStanding: '',
             activeFriends: [],
             ageVerificationStatus: '',
             ageVerified: false,

@@ -43,6 +43,7 @@ export const useUserStore = defineStore('User', () => {
             acceptedTOSVersion: 0,
             accountDeletionDate: null,
             accountDeletionLog: null,
+            accountStanding: '',
             activeFriends: [],
             ageVerificationStatus: '',
             ageVerified: false,
