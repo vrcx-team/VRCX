@@ -110,12 +110,7 @@ export const useFriendStore = defineStore('Friend', () => {
 
     const allFavoriteFriendIds = computed(() => {
         const favoriteStore = useFavoriteStore();
-        const remoteGroupKeys = new Set(favoriteStore.favoriteFriendGroups.map((group) => group.key));
-        const groups = generalSettingsStore.localFavoriteFriendsGroups.filter((key) =>
-            key.startsWith('local:')
-                ? favoriteStore.localFriendFavoriteGroups.includes(key.slice('local:'.length))
-                : remoteGroupKeys.has(key)
-        );
+        const groups = generalSettingsStore.localFavoriteFriendsGroups;
         const set = new Set();
         for (const ref of favoriteStore.cachedFavorites.values()) {
             if (ref.type === 'friend' && (groups.length === 0 || groups.includes(ref.$groupKey))) {
