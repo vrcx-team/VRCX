@@ -77,10 +77,10 @@
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectItem value="public">
+                                            <SelectItem value="default">
                                                 {{ t('dialog.group.tags.public') }}
                                             </SelectItem>
-                                            <SelectItem value="default">
+                                            <SelectItem value="private">
                                                 {{ t('dialog.group.tags.private') }}
                                             </SelectItem>
                                         </SelectGroup>
@@ -387,10 +387,10 @@
 
     /**
      * @param {string} value
-     * @returns {value is 'public' | 'default'}
+     * @returns {value is import('vrchat').GroupPrivacy}
      */
     function isPrivacy(value) {
-        return value === 'public' || value === 'default';
+        return value === 'default' || value === 'private';
     }
 
     /**
