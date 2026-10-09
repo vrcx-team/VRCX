@@ -3,17 +3,11 @@ import { useGalleryStore } from '../stores';
 
 const notificationReq = {
     /**
-     * @typedef {object} NotificationFetchParameter
-     * @property {number} n
-     * @property {number} offset
-     * @property {boolean} [sent]
-     * @property {string} [type]
-     * @property {'five_minutes_ago' | (string & {})} [after] ISO8601 or 'five_minutes_ago'
-     */
-
-    /**
-     * @param {NotificationFetchParameter} params
-     * @returns {Promise<{ json: any; params }>}
+     * @param {import('vrchat').GetNotifications['query']} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Notification[]>;
+     *     params: import('vrchat').GetNotifications['query'];
+     * }>}
      */
     getNotifications(params) {
         return request('auth/user/notifications', {
@@ -30,8 +24,11 @@ const notificationReq = {
     },
 
     /**
-     * @param {{ n?: number; offset?: number }} params
-     * @returns {Promise<{ json: any; params: any }>}
+     * @param {import('vrchat').GetNotifications['query']} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Notification[]>;
+     *     params: import('vrchat').GetNotifications['query'];
+     * }>}
      */
     getHiddenFriendRequests(params) {
         return request('auth/user/notifications', {
@@ -52,7 +49,7 @@ const notificationReq = {
 
     /**
      * @param {{ n?: number; offset?: number; type?: string }} params
-     * @returns {Promise<{ json: any; params: any }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').NotificationV2[]>; params: any }>}
      */
     getNotificationsV2(params) {
         return request('notifications', {
@@ -68,27 +65,13 @@ const notificationReq = {
     },
 
     /**
-     * String that represents valid serialized JSON of T's value
-     *
-     * @template T=any
-     * @typedef {string} JsonString
-     */
-
-    /**
-     * @param {{
-     *     receiverUserId?: string;
-     *     type?: string;
-     *     message?: string;
-     *     seen?: boolean;
-     *     details?: JsonString<any>;
-     *     instanceId?: string;
-     *     worldId?: string;
-     *     worldName?: string;
-     *     messageSlot?: string;
-     *     rsvp?: boolean;
-     * }} params
-     * @param receiverUserId
-     * @returns {Promise<{ json: any; params }>}
+     * @param {import('vrchat').InviteRequest & { worldId?: string; worldName?: string; rsvp?: boolean }} params
+     * @param {string} receiverUserId
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').SentNotification>;
+     *     params: import('vrchat').InviteRequest & { worldId?: string; worldName?: string; rsvp?: boolean };
+     *     receiverUserId: string;
+     * }>}
      */
     sendInvite(params, receiverUserId) {
         return request(`invite/${receiverUserId}`, {
@@ -103,6 +86,15 @@ const notificationReq = {
             return args;
         });
     },
+    /**
+     * @param {import('vrchat').InviteRequest & { worldId?: string; worldName?: string; rsvp?: boolean }} params
+     * @param {string} receiverUserId
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').SentNotification>;
+     *     params: import('vrchat').InviteRequest & { worldId?: string; worldName?: string; rsvp?: boolean };
+     *     receiverUserId: string;
+     * }>}
+     */
     sendInvitePhoto(params, receiverUserId) {
         return request(`invite/${receiverUserId}/photo`, {
             uploadImageLegacy: true,
@@ -118,6 +110,15 @@ const notificationReq = {
         });
     },
 
+    /**
+     * @param {import('vrchat').RequestInviteRequest & { platform?: string }} params
+     * @param {string} receiverUserId
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Notification>;
+     *     params: import('vrchat').RequestInviteRequest & { platform?: string };
+     *     receiverUserId: string;
+     * }>}
+     */
     sendRequestInvite(params, receiverUserId) {
         return request(`requestInvite/${receiverUserId}`, {
             method: 'POST',
@@ -132,6 +133,15 @@ const notificationReq = {
         });
     },
 
+    /**
+     * @param {import('vrchat').RequestInviteRequest & { platform?: string }} params
+     * @param {string} receiverUserId
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Notification>;
+     *     params: import('vrchat').RequestInviteRequest & { platform?: string };
+     *     receiverUserId: string;
+     * }>}
+     */
     sendRequestInvitePhoto(params, receiverUserId) {
         return request(`requestInvite/${receiverUserId}/photo`, {
             uploadImageLegacy: true,
@@ -147,6 +157,15 @@ const notificationReq = {
         });
     },
 
+    /**
+     * @param {import('vrchat').InviteResponse} params
+     * @param {string} inviteId
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Notification>;
+     *     params: import('vrchat').InviteResponse;
+     *     inviteId: string;
+     * }>}
+     */
     sendInviteResponse(params, inviteId) {
         return request(`invite/${inviteId}/response`, {
             method: 'POST',
@@ -161,6 +180,15 @@ const notificationReq = {
         });
     },
 
+    /**
+     * @param {import('vrchat').InviteResponse} params
+     * @param {string} inviteId
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Notification>;
+     *     params: import('vrchat').InviteResponse;
+     *     inviteId: string;
+     * }>}
+     */
     sendInviteResponsePhoto(params, inviteId) {
         return request(`invite/${inviteId}/response/photo`, {
             uploadImageLegacy: true,
@@ -179,7 +207,7 @@ const notificationReq = {
 
     /**
      * @param {{ notificationId: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Success>; params }>}
      */
     acceptFriendRequestNotification(params) {
         return request(`auth/user/notifications/${params.notificationId}/accept`, {
@@ -195,7 +223,7 @@ const notificationReq = {
 
     /**
      * @param {{ notificationId: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Success>; params }>}
      */
     hideNotification(params) {
         return request(`auth/user/notifications/${params.notificationId}/hide`, {
@@ -211,7 +239,7 @@ const notificationReq = {
 
     /**
      * @param {{ notificationId: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Notification>; params }>}
      */
     seeNotification(params) {
         return request(`auth/user/notifications/${params.notificationId}/see`, {
@@ -227,7 +255,7 @@ const notificationReq = {
 
     /**
      * @param {{ notificationId: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').NotificationV2>; params }>}
      */
     seeNotificationV2(params) {
         return request(`notifications/${params.notificationId}/see`, {
@@ -242,12 +270,11 @@ const notificationReq = {
     },
 
     /**
-     * @param {{
-     *     notificationId: string;
-     *     responseType: string;
-     *     responseData: string;
-     * }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @param {{ notificationId: string } & import('vrchat').RespondNotificationV2Request} params
+     * @returns {Promise<{
+     *     json: string;
+     *     params: { notificationId: string } & import('vrchat').RespondNotificationV2Request;
+     * }>}
      */
     sendNotificationResponse(params) {
         return request(`notifications/${params.notificationId}/respond`, {
@@ -262,6 +289,13 @@ const notificationReq = {
         });
     },
 
+    /**
+     * @param {string} notificationId
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Success>;
+     *     params: { notificationId: string };
+     * }>}
+     */
     hideNotificationV2(notificationId) {
         return request(`notifications/${notificationId}`, {
             method: 'DELETE'

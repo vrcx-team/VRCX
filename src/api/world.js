@@ -54,7 +54,7 @@ const worldReq = {
     },
     /**
      * @param {{ worldId: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').World>; params }>}
      */
     deleteWorld(params) {
         return request(`worlds/${params.worldId}`, {
@@ -97,7 +97,7 @@ const worldReq = {
 
     /**
      * @param {{ worldId: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: unknown; params }>}
      */
     publishWorld(params) {
         return request(`worlds/${params.worldId}/publish`, {
@@ -121,7 +121,7 @@ const worldReq = {
 
     /**
      * @param {{ worldId: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: unknown; params }>}
      */
     unpublishWorld(params) {
         return request(`worlds/${params.worldId}/publish`, {
@@ -143,6 +143,10 @@ const worldReq = {
         });
     },
 
+    /**
+     * @param {string} imageData
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; params: { tag: string } }>}
+     */
     uploadWorldImage(imageData) {
         const params = {
             tag: 'worldimage'

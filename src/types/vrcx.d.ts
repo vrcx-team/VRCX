@@ -1,4 +1,12 @@
-import type { CurrentUser, Group, GroupMyMember, PublicProfile, UpdateUserRequest, User } from 'vrchat';
+import type {
+    CurrentUser,
+    Group,
+    GroupMyMember,
+    PublicProfile,
+    UpdateProfileRequest,
+    UpdateUserRequest,
+    User
+} from 'vrchat';
 
 // cursed line to convert Date and bigint to expected types
 export type Json<T> = T extends Date
@@ -83,6 +91,12 @@ export interface VrcxUpdateUserRequest extends UpdateUserRequest {
     allowAvatarCopying?: boolean;
     homeLocation?: string;
     status?: string; // override type
+}
+
+export interface VrcxUpdateProfileRequest extends UpdateProfileRequest {
+    bannerCustomUrl?: string;
+    backgroundGradientTop?: string;
+    backgroundGradientBottom?: string;
 }
 
 export interface SelfProfile extends Json<PublicProfile> {

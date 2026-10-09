@@ -17,6 +17,10 @@ function refetchActiveGalleryQueries() {
         });
 }
 const vrcPlusImageReq = {
+    /**
+     * @param {string} imageData
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; params: { tag: string } }>}
+     */
     uploadGalleryImage(imageData) {
         const params = {
             tag: 'gallery'
@@ -36,6 +40,14 @@ const vrcPlusImageReq = {
         });
     },
 
+    /**
+     * @param {string} imageData
+     * @param {Omit<NonNullable<import('vrchat').UploadImage['body']>, 'file'>} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
+     *     params: Omit<NonNullable<import('vrchat').UploadImage['body']>, 'file'>;
+     * }>}
+     */
     uploadSticker(imageData, params) {
         return request('file/image', {
             uploadImage: true,
@@ -52,6 +64,10 @@ const vrcPlusImageReq = {
         });
     },
 
+    /**
+     * @param {{ n?: number }} params
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Print[]>; params: { n?: number } }>}
+     */
     getPrints(params) {
         return request(`prints/user/${getCurrentUserId()}`, {
             method: 'GET',
@@ -65,6 +81,10 @@ const vrcPlusImageReq = {
         });
     },
 
+    /**
+     * @param {string} printId
+     * @returns {Promise<{ json: unknown; printId: string }>}
+     */
     deletePrint(printId) {
         return request(`prints/${printId}`, {
             method: 'DELETE'
@@ -78,6 +98,15 @@ const vrcPlusImageReq = {
         });
     },
 
+    /**
+     * @param {string} imageData
+     * @param {boolean} cropWhiteBorder
+     * @param {import('@/types/vrcx').Json<Omit<NonNullable<import('vrchat').UploadPrint['body']>, 'image'>>} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Print>;
+     *     params: import('@/types/vrcx').Json<Omit<NonNullable<import('vrchat').UploadPrint['body']>, 'image'>>;
+     * }>}
+     */
     uploadPrint(imageData, cropWhiteBorder, params) {
         return request('prints', {
             uploadImagePrint: true,
@@ -94,6 +123,10 @@ const vrcPlusImageReq = {
         });
     },
 
+    /**
+     * @param {{ printId: string }} params
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Print>; params: { printId: string } }>}
+     */
     getPrint(params) {
         return request(`prints/${params.printId}`, {
             method: 'GET'
@@ -106,6 +139,14 @@ const vrcPlusImageReq = {
         });
     },
 
+    /**
+     * @param {string} imageData
+     * @param {Omit<NonNullable<import('vrchat').UploadImage['body']>, 'file'>} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
+     *     params: Omit<NonNullable<import('vrchat').UploadImage['body']>, 'file'>;
+     * }>}
+     */
     uploadEmoji(imageData, params) {
         return request('file/image', {
             uploadImage: true,

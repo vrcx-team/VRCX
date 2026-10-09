@@ -1,6 +1,9 @@
 import { request } from '../services/request';
 
 const playerModerationReq = {
+    /**
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').PlayerModeration[]> }>}
+     */
     getPlayerModerations() {
         return request('auth/user/playermoderations', {
             method: 'GET'
@@ -13,8 +16,11 @@ const playerModerationReq = {
     },
 
     /**
-     * @param {{ moderated: string; type: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @param {import('vrchat').ModerateUserRequest} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').PlayerModeration>;
+     *     params: import('vrchat').ModerateUserRequest;
+     * }>}
      */
     // old-way: POST auth/user/blocks {blocked:userId}
     sendPlayerModeration(params) {
@@ -31,8 +37,11 @@ const playerModerationReq = {
     },
 
     /**
-     * @param {{ moderated: string; type: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @param {import('vrchat').ModerateUserRequest} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Success>;
+     *     params: import('vrchat').ModerateUserRequest;
+     * }>}
      */
     // old-way: PUT auth/user/unblocks {blocked:userId}
     deletePlayerModeration(params) {
@@ -49,8 +58,11 @@ const playerModerationReq = {
     },
 
     /**
-     * @param {{ type: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @param {Pick<import('vrchat').ModerateUserRequest, 'type'>} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Success>;
+     *     params: Pick<import('vrchat').ModerateUserRequest, 'type'>;
+     * }>}
      */
     deletePlayerModerations(params) {
         return request('auth/user/unplayermoderate', {

@@ -7,6 +7,10 @@ function getCurrentUserId() {
 }
 
 const miscReq = {
+    /**
+     * @param {{ fileId: string }} params
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; params: { fileId: string } }>}
+     */
     getFile(params) {
         return request(`file/${params.fileId}`, {
             method: 'GET'
@@ -19,6 +23,13 @@ const miscReq = {
         });
     },
 
+    /**
+     * @param {import('vrchat').UpdateUserNoteRequest} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').UpdateUserNoteResponse>;
+     *     params: import('vrchat').UpdateUserNoteRequest;
+     * }>}
+     */
     saveNote(params) {
         return request('userNotes', {
             method: 'POST',
@@ -64,7 +75,7 @@ const miscReq = {
      *     version: number;
      *     variant: string;
      * }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').FileAnalysis>; params }>}
      */
     getFileAnalysis(params) {
         return request(`analysis/${params.fileId}/${params.version}/${params.variant}`, {
@@ -78,6 +89,9 @@ const miscReq = {
         });
     },
 
+    /**
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Balance> }>}
+     */
     getVRChatCredits() {
         return request(`user/${getCurrentUserId()}/economy/balance`, {
             method: 'GET'
@@ -94,7 +108,7 @@ const miscReq = {
      *     location: string;
      *     hardClose: boolean;
      * }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Instance>; params }>}
      */
     closeInstance(params) {
         return request(`instances/${params.location}`, {
@@ -115,7 +129,7 @@ const miscReq = {
      * @param {{
      *     worldId: string;
      * }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: unknown; params }>}
      */
     deleteWorldPersistData(params) {
         return request(`users/${getCurrentUserId()}/${params.worldId}/persist`, {
@@ -133,7 +147,7 @@ const miscReq = {
      * @param {{
      *     worldId: string;
      * }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: unknown; params }>}
      */
     hasWorldPersistData(params) {
         return request(`users/${getCurrentUserId()}/${params.worldId}/persist/exists`, {
@@ -147,6 +161,10 @@ const miscReq = {
         });
     },
 
+    /**
+     * @param {{ badgeId: string } & import('vrchat').UpdateUserBadgeRequest} params
+     * @returns {Promise<{ json: unknown; params: { badgeId: string } & import('vrchat').UpdateUserBadgeRequest }>}
+     */
     updateBadge(params) {
         return request(`users/${getCurrentUserId()}/badges/${params.badgeId}`, {
             method: 'PUT',
@@ -165,6 +183,9 @@ const miscReq = {
         });
     },
 
+    /**
+     * @returns {Promise<{ json: number }>}
+     */
     getVisits() {
         return request('visits', {
             method: 'GET'
@@ -176,6 +197,10 @@ const miscReq = {
         });
     },
 
+    /**
+     * @param {string} fileId
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; fileId: string }>}
+     */
     deleteFile(fileId) {
         return request(`file/${fileId}`, {
             method: 'DELETE'
@@ -193,11 +218,11 @@ const miscReq = {
     },
 
     /**
-     * @param {{
-     *     userId: string;
-     *     emojiId?: string;
-     * }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @param {{ userId: string } & import('vrchat').BoopRequest} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Success>;
+     *     params: { userId: string } & import('vrchat').BoopRequest;
+     * }>}
      */
     sendBoop(params) {
         return request(`users/${params.userId}/boop`, {

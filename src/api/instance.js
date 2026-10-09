@@ -73,7 +73,7 @@ const instanceReq = {
 
     /**
      * @param {{ shortName: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Instance>; params }>}
      */
     getInstanceFromShortName(params) {
         const instanceStore = useInstanceStore();
@@ -93,7 +93,7 @@ const instanceReq = {
      * Send invite to current user.
      *
      * @param {{ worldId: string; instanceId: string; shortName?: string }} instance
-     * @returns {Promise<{ instance; json: any; params }>}
+     * @returns {Promise<{ instance; json: import('@/types/vrcx').Json<import('vrchat').SentNotification>; params }>}
      */
     selfInvite(instance) {
         /**

@@ -3,8 +3,11 @@ import { handleConfig } from '../coordinators/userCoordinator';
 
 const loginReq = {
     /**
-     * @param {{ code: string }} params One-time password
-     * @returns {Promise<{ json: any; params: { code: string } }>}
+     * @param {import('vrchat').TwoFactorAuthCode} params One-time password
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Verify2FaResult>;
+     *     params: import('vrchat').TwoFactorAuthCode;
+     * }>}
      */
     verifyOTP(params) {
         return request('auth/twofactorauth/otp/verify', {
@@ -20,8 +23,11 @@ const loginReq = {
     },
 
     /**
-     * @param {{ code: string }} params One-time token
-     * @returns {Promise<{ json: any; params: { code: string } }>}
+     * @param {import('vrchat').TwoFactorAuthCode} params One-time token
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Verify2FaResult>;
+     *     params: import('vrchat').TwoFactorAuthCode;
+     * }>}
      */
     verifyTOTP(params) {
         return request('auth/twofactorauth/totp/verify', {
@@ -37,8 +43,11 @@ const loginReq = {
     },
 
     /**
-     * @param {{ code: string }} params One-time token
-     * @returns {Promise<{ json: any; params: { code: string } }>}
+     * @param {import('vrchat').TwoFactorEmailCode} params One-time token
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Verify2FaEmailCodeResult>;
+     *     params: import('vrchat').TwoFactorEmailCode;
+     * }>}
      */
     verifyEmailOTP(params) {
         return request('auth/twofactorauth/emailotp/verify', {
@@ -54,7 +63,7 @@ const loginReq = {
     },
 
     /**
-     * @returns {Promise<{ json: any }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').ApiConfig> }>}
      */
     getConfig() {
         return request('config', {
@@ -69,7 +78,7 @@ const loginReq = {
     },
 
     /**
-     * @returns {Promise<{ json: any }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Permission[]> }>}
      */
     getPermissions() {
         return request('auth/permissions', {

@@ -1,6 +1,9 @@
 import { request } from '../services/request';
 
 const cosmeticsReq = {
+    /**
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').InventoryTemplate[]> }>}
+     */
     getProfileEffects() {
         return request('cosmetics/index/profileEffect', {
             method: 'GET'
@@ -12,6 +15,9 @@ const cosmeticsReq = {
         });
     },
 
+    /**
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').InventoryTemplate[]> }>}
+     */
     getIconFrames() {
         return request('cosmetics/index/iconFrame', {
             method: 'GET'
@@ -23,6 +29,9 @@ const cosmeticsReq = {
         });
     },
 
+    /**
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').InventoryTemplate[]> }>}
+     */
     getNameplateEffects() {
         return request('cosmetics/index/nameplateEffect', {
             method: 'GET'

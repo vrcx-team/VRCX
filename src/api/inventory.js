@@ -15,7 +15,7 @@ function refetchActiveInventoryQueries() {
 const inventoryReq = {
     /**
      * @param {{ inventoryId: string; userId: string; flags }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').InventoryItem>; params }>}
      */
     getUserInventoryItem(params) {
         return request(`user/${params.userId}/inventory/${params.inventoryId}`, {
@@ -31,7 +31,7 @@ const inventoryReq = {
 
     /**
      * @param {{ inventoryId: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').InventoryItem>; params }>}
      */
     getInventoryItem(params) {
         return request(`inventory/${params.inventoryId}`, {
@@ -47,16 +47,11 @@ const inventoryReq = {
     },
 
     /**
-     * @param {{
-     *     n: number;
-     *     offset: number;
-     *     order: string;
-     *     types?: string;
-     *     flags?: string;
-     *     notFlags?: string;
-     *     archived?: boolean;
-     * }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @param {import('vrchat').GetInventory['query']} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Inventory>;
+     *     params: import('vrchat').GetInventory['query'];
+     * }>}
      */
     getInventoryItems(params) {
         return request('inventory', {
@@ -73,7 +68,7 @@ const inventoryReq = {
 
     /**
      * @param {{ inventoryId: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').InventoryConsumptionResults>; params }>}
      */
     consumeInventoryBundle(params) {
         return request(`inventory/${params.inventoryId}/consume`, {
@@ -91,7 +86,7 @@ const inventoryReq = {
 
     /**
      * @param {{ inventoryTemplateId: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').InventoryTemplate>; params }>}
      */
     getInventoryTemplate(params) {
         return request(`inventory/template/${params.inventoryTemplateId}`, {
@@ -107,8 +102,12 @@ const inventoryReq = {
     },
 
     /**
-     * @param {{ code: string }} params
-     * @returns {Promise<{ json: any; params }>} Note: Do not redeem
+     * @param {import('vrchat').RewardRedemptionRequest} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').RewardRedemptionResult[]>;
+     *     params: import('vrchat').RewardRedemptionRequest;
+     * }>}
+     *   Note: Do not redeem
      */
     redeemReward(params) {
         return request('reward/redeem', {
@@ -140,11 +139,11 @@ const inventoryReq = {
     },
 
     /**
-     * @param {{
-     *     equipSlot: 'drone' | 'warp' | 'portal' | 'loadingscreen';
-     *     holderId: string;
-     * }} params
-     * @returns {Promise<{ json: any; params }>} Note: Do not redeem
+     * @param {import('vrchat').GetInventory['query']} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Inventory>;
+     *     params: import('vrchat').GetInventory['query'];
+     * }>}
      */
     getEquipSlot(params) {
         return request('inventory', {
@@ -160,11 +159,11 @@ const inventoryReq = {
     },
 
     /**
-     * @param {{
-     *     equipSlot: 'drone' | 'warp' | 'portal' | 'loadingscreen';
-     *     inventoryId: string;
-     * }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @param {{ inventoryId: string } & import('vrchat').EquipInventoryItemRequest} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').InventoryItem>;
+     *     params: { inventoryId: string } & import('vrchat').EquipInventoryItemRequest;
+     * }>}
      */
     equipItem(params) {
         return request(`inventory/${params.inventoryId}/equip`, {
@@ -179,6 +178,13 @@ const inventoryReq = {
         });
     },
 
+    /**
+     * @param {{ inventoryId: string }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').InventoryItem>;
+     *     params: { inventoryId: string };
+     * }>}
+     */
     archiveItem(params) {
         return request(`inventory/${params.inventoryId}`, {
             method: 'PUT',
@@ -194,6 +200,13 @@ const inventoryReq = {
         });
     },
 
+    /**
+     * @param {{ inventoryId: string }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').InventoryItem>;
+     *     params: { inventoryId: string };
+     * }>}
+     */
     unArchiveItem(params) {
         return request(`inventory/${params.inventoryId}`, {
             method: 'PUT',

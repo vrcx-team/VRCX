@@ -3,6 +3,9 @@ import { applyWorld } from '../coordinators/worldCoordinator';
 import { request } from '../services/request';
 
 const imageReq = {
+    /**
+     * @param {string} id
+     */
     async uploadAvatarFailCleanup(id) {
         const avatarStore = useAvatarStore();
         try {
@@ -23,6 +26,15 @@ const imageReq = {
         avatarStore.setAvatarDialogLoading(false);
     },
 
+    /**
+     * @param {import('vrchat').CreateFileVersionRequest} params
+     * @param {string} fileId
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
+     *     params: import('vrchat').CreateFileVersionRequest;
+     *     fileId: string;
+     * }>}
+     */
     async uploadAvatarImage(params, fileId) {
         try {
             return await request(`file/${fileId}`, {
@@ -43,6 +55,13 @@ const imageReq = {
         }
     },
 
+    /**
+     * @param {{ fileId: string; fileVersion: number }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').FileUploadUrl>;
+     *     params: { fileId: string; fileVersion: number };
+     * }>}
+     */
     async uploadAvatarImageFileStart(params) {
         try {
             return await request(`file/${params.fileId}/${params.fileVersion}/file/start`, {
@@ -60,6 +79,13 @@ const imageReq = {
         }
     },
 
+    /**
+     * @param {{ fileId: string; fileVersion: number }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
+     *     params: { fileId: string; fileVersion: number };
+     * }>}
+     */
     uploadAvatarImageFileFinish(params) {
         return request(`file/${params.fileId}/${params.fileVersion}/file/finish`, {
             method: 'PUT',
@@ -76,6 +102,13 @@ const imageReq = {
         });
     },
 
+    /**
+     * @param {{ fileId: string; fileVersion: number }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').FileUploadUrl>;
+     *     params: { fileId: string; fileVersion: number };
+     * }>}
+     */
     async uploadAvatarImageSigStart(params) {
         try {
             return await request(`file/${params.fileId}/${params.fileVersion}/signature/start`, {
@@ -93,6 +126,13 @@ const imageReq = {
         }
     },
 
+    /**
+     * @param {{ fileId: string; fileVersion: number }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
+     *     params: { fileId: string; fileVersion: number };
+     * }>}
+     */
     uploadAvatarImageSigFinish(params) {
         return request(`file/${params.fileId}/${params.fileVersion}/signature/finish`, {
             method: 'PUT',
@@ -109,6 +149,13 @@ const imageReq = {
         });
     },
 
+    /**
+     * @param {{ id: string } & import('vrchat').UpdateAvatarRequest} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Avatar>;
+     *     params: { id: string } & import('vrchat').UpdateAvatarRequest;
+     * }>}
+     */
     setAvatarImage(params) {
         return request(`avatars/${params.id}`, {
             method: 'PUT',
@@ -122,6 +169,9 @@ const imageReq = {
         });
     },
 
+    /**
+     * @param {string} id
+     */
     async uploadWorldFailCleanup(id) {
         const worldStore = useWorldStore();
         try {
@@ -142,6 +192,15 @@ const imageReq = {
         worldStore.setWorldDialogLoading(false);
     },
 
+    /**
+     * @param {import('vrchat').CreateFileVersionRequest} params
+     * @param {string} fileId
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
+     *     params: import('vrchat').CreateFileVersionRequest;
+     *     fileId: string;
+     * }>}
+     */
     async uploadWorldImage(params, fileId) {
         try {
             return await request(`file/${fileId}`, {
@@ -162,6 +221,13 @@ const imageReq = {
         return void 0;
     },
 
+    /**
+     * @param {{ fileId: string; fileVersion: number }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').FileUploadUrl>;
+     *     params: { fileId: string; fileVersion: number };
+     * }>}
+     */
     async uploadWorldImageFileStart(params) {
         try {
             return await request(`file/${params.fileId}/${params.fileVersion}/file/start`, {
@@ -180,6 +246,13 @@ const imageReq = {
         return void 0;
     },
 
+    /**
+     * @param {{ fileId: string; fileVersion: number }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
+     *     params: { fileId: string; fileVersion: number };
+     * }>}
+     */
     uploadWorldImageFileFinish(params) {
         return request(`file/${params.fileId}/${params.fileVersion}/file/finish`, {
             method: 'PUT',
@@ -196,6 +269,13 @@ const imageReq = {
         });
     },
 
+    /**
+     * @param {{ fileId: string; fileVersion: number }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').FileUploadUrl>;
+     *     params: { fileId: string; fileVersion: number };
+     * }>}
+     */
     async uploadWorldImageSigStart(params) {
         try {
             return await request(`file/${params.fileId}/${params.fileVersion}/signature/start`, {
@@ -214,6 +294,13 @@ const imageReq = {
         return void 0;
     },
 
+    /**
+     * @param {{ fileId: string; fileVersion: number }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
+     *     params: { fileId: string; fileVersion: number };
+     * }>}
+     */
     uploadWorldImageSigFinish(params) {
         return request(`file/${params.fileId}/${params.fileVersion}/signature/finish`, {
             method: 'PUT',
@@ -230,6 +317,14 @@ const imageReq = {
         });
     },
 
+    /**
+     * @param {{ id: string } & import('vrchat').UpdateWorldRequest} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').World>;
+     *     params: { id: string } & import('vrchat').UpdateWorldRequest;
+     *     ref: any;
+     * }>}
+     */
     setWorldImage(params) {
         return request(`worlds/${params.id}`, {
             method: 'PUT',
@@ -243,6 +338,10 @@ const imageReq = {
         });
     },
 
+    /**
+     * @param {{ fileId: string }} params
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; params: { fileId: string } }>}
+     */
     getAvatarImages(params) {
         return request(`file/${params.fileId}`, {
             method: 'GET'
@@ -255,6 +354,10 @@ const imageReq = {
         });
     },
 
+    /**
+     * @param {{ fileId: string }} params
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; params: { fileId: string } }>}
+     */
     getWorldImages(params) {
         return request(`file/${params.fileId}`, {
             method: 'GET',

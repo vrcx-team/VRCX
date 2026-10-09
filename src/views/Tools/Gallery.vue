@@ -990,9 +990,12 @@
     }
 
     async function uploadEmoji(base64Body) {
+        /** @type {Omit<NonNullable<import('vrchat').UploadImage['body']>, 'file'>} */
         const params = {
             tag: emojiAnimType.value ? 'emojianimated' : 'emoji',
-            animationStyle: emojiAnimationStyle.value.toLowerCase(),
+            animationStyle: /** @type {import('vrchat').ImageAnimationStyle} */ (
+                emojiAnimationStyle.value.toLowerCase()
+            ),
             maskTag: 'square'
         };
         if (emojiAnimType.value) {
@@ -1037,6 +1040,7 @@
     }
 
     async function uploadSticker(base64Body) {
+        /** @type {Omit<NonNullable<import('vrchat').UploadImage['body']>, 'file'>} */
         const params = {
             tag: 'sticker',
             maskTag: 'square'

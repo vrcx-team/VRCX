@@ -388,6 +388,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
     async function getInventory() {
         inventoryTable.value = [];
         advancedSettingsStore.currentUserInventory.clear();
+        /** @type {import('vrchat').GetInventory['query']} */
         const params = {
             n: 100,
             offset: 0,

@@ -13,6 +13,13 @@ function refetchActiveGalleryQueries() {
 }
 
 const VRCPlusIconsReq = {
+    /**
+     * @param {import('vrchat').GetFiles['query']} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').File[]>;
+     *     params: import('vrchat').GetFiles['query'];
+     * }>}
+     */
     getFileList(params) {
         return request('files', {
             method: 'GET',
@@ -26,6 +33,10 @@ const VRCPlusIconsReq = {
         });
     },
 
+    /**
+     * @param {string} fileId
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; fileId: string }>}
+     */
     deleteFile(fileId) {
         return request(`file/${fileId}`, {
             method: 'DELETE'
@@ -39,6 +50,10 @@ const VRCPlusIconsReq = {
         });
     },
 
+    /**
+     * @param {string} imageData
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; params: { tag: string } }>}
+     */
     uploadVRCPlusIcon(imageData) {
         const params = {
             tag: 'icon'

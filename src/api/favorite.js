@@ -19,6 +19,9 @@ function refetchActiveFavoriteQueries() {
 }
 
 const favoriteReq = {
+    /**
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').FavoriteLimits> }>}
+     */
     getFavoriteLimits() {
         return request('auth/user/favoritelimits', {
             method: 'GET'
@@ -74,7 +77,7 @@ const favoriteReq = {
 
     /**
      * @param {{ objectId: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Success>; params }>}
      */
     deleteFavorite(params) {
         return request(`favorites/${params.objectId}`, {
@@ -91,8 +94,11 @@ const favoriteReq = {
     },
 
     /**
-     * @param {{ n: number; offset: number; type?: string; ownerId?: string }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @param {import('vrchat').GetFavoriteGroups['query']} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').FavoriteGroup[]>;
+     *     params: import('vrchat').GetFavoriteGroups['query'];
+     * }>}
      */
     getFavoriteGroups(params) {
         return request('favorite/groups', {
@@ -108,8 +114,11 @@ const favoriteReq = {
     },
 
     /**
-     * @param {{ type: string; group: string; displayName?: string; visibility?: string }} params Group is a name
-     * @returns {Promise<{ json: any; params }>}
+     * @param {import('vrchat').UpdateFavoriteGroupRequest & { type: string; group: string }} params Group is a name
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').UpdateFavoriteGroupResponse>;
+     *     params: import('vrchat').UpdateFavoriteGroupRequest & { type: string; group: string };
+     * }>}
      */
     saveFavoriteGroup(params) {
         return request(`favorite/group/${params.type}/${params.group}/${getCurrentUserId()}`, {
@@ -130,7 +139,7 @@ const favoriteReq = {
      *     type: string;
      *     group: string;
      * }} params
-     * @returns {Promise<{ json: any; params }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Success>; params }>}
      */
     clearFavoriteGroup(params) {
         return request(`favorite/group/${params.type}/${params.group}/${getCurrentUserId()}`, {

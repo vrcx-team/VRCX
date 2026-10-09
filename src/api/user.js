@@ -60,8 +60,11 @@ const userReq = {
     },
 
     /**
-     * @param {{ tags: string[] }} params User tags to add
-     * @returns {Promise<{ json: any; params: { tags: string[] } }>}
+     * @param {import('vrchat').ChangeUserTagsRequest} params User tags to add
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').CurrentUser>;
+     *     params: import('vrchat').ChangeUserTagsRequest;
+     * }>}
      */
     addUserTags(params) {
         return request(`users/${getCurrentUserId()}/addTags`, {
@@ -78,8 +81,11 @@ const userReq = {
     },
 
     /**
-     * @param {{ tags: string[] }} params User tags to remove
-     * @returns {Promise<{ json: any; params: { tags: string[] } }>}
+     * @param {import('vrchat').ChangeUserTagsRequest} params User tags to remove
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').CurrentUser>;
+     *     params: import('vrchat').ChangeUserTagsRequest;
+     * }>}
      */
     removeUserTags(params) {
         return request(`users/${getCurrentUserId()}/removeTags`, {
@@ -97,7 +103,10 @@ const userReq = {
 
     /**
      * @param {{ userId: string }} params
-     * @returns {Promise<{ json: any; params: { userId: string } }>}
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Feedback[]>;
+     *     params: { userId: string };
+     * }>}
      */
     getUserFeedback(params) {
         return request(`users/${params.userId}/feedback`, {
@@ -145,8 +154,11 @@ const userReq = {
     },
 
     /**
-     * @param {{ offset: number; n: number }} params
-     * @returns {Promise<{ json: any; params: { offset: number; n: number } }>}
+     * @param {import('vrchat').GetUserNotes['query']} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').UserNote[]>;
+     *     params: import('vrchat').GetUserNotes['query'];
+     * }>}
      */
     getUserNotes(params) {
         return request(`userNotes`, {
@@ -161,6 +173,10 @@ const userReq = {
         });
     },
 
+    /**
+     * @param {{ userId: string }} params
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Mutuals>; params: { userId: string } }>}
+     */
     getMutualCounts(params) {
         return request(`users/${params.userId}/mutuals`, {
             method: 'GET'
@@ -173,6 +189,13 @@ const userReq = {
         });
     },
 
+    /**
+     * @param {import('vrchat').GetMutualFriends['path'] & import('vrchat').GetMutualFriends['query']} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').MutualFriend[]>;
+     *     params: import('vrchat').GetMutualFriends['path'] & import('vrchat').GetMutualFriends['query'];
+     * }>}
+     */
     getMutualFriends(params) {
         return request(`users/${params.userId}/mutuals/friends`, {
             method: 'GET',
@@ -186,6 +209,13 @@ const userReq = {
         });
     },
 
+    /**
+     * @param {import('vrchat').GetMutualGroups['path'] & import('vrchat').GetMutualGroups['query']} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').LimitedUserGroups[]>;
+     *     params: import('vrchat').GetMutualGroups['path'] & import('vrchat').GetMutualGroups['query'];
+     * }>}
+     */
     getMutualGroups(params) {
         return request(`users/${params.userId}/mutuals/groups`, {
             method: 'GET',
@@ -259,10 +289,10 @@ const userReq = {
     },
 
     /**
-     * @param {Partial<import('@/types/vrcx').Json<import('vrchat').PublicProfile>>} params
+     * @param {import('@/types/vrcx').VrcxUpdateProfileRequest} params
      * @returns {Promise<{
      *     json: import('@/types/vrcx').Json<import('vrchat').PublicProfile>;
-     *     params: Partial<import('@/types/vrcx').Json<import('vrchat').PublicProfile>>;
+     *     params: import('@/types/vrcx').VrcxUpdateProfileRequest;
      * }>}
      */
     saveProfile(params) {

@@ -1210,7 +1210,7 @@
             userPayload.pronouns = D.pronouns;
         }
 
-        /** @type {Partial<import('@/types/vrcx').Json<import('vrchat').PublicProfile>>} */
+        /** @type {import('@/types/vrcx').VrcxUpdateProfileRequest} */
         const profilePayload = {};
         if (D.bio !== D.selfProfileRef.bio) {
             profilePayload.bio = D.bio;
