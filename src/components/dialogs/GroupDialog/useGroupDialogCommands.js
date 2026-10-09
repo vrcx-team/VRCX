@@ -53,7 +53,7 @@ export function useGroupDialogCommands(
         return {
             // --- Direct commands ---
             Share: () => {
-                copyToClipboard(D().ref.$url);
+                copyToClipboard(`https://vrc.group/${D().ref.shortCode}.${D().ref.discriminator}`);
             },
             'Copy Group Name': () => {
                 copyToClipboard(D().ref.name);

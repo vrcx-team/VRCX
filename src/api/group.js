@@ -81,6 +81,7 @@ const groupReq = {
      * @returns {Promise<{
      *     json: import('@/types/vrcx').Json<import('vrchat').Group>;
      *     params: { groupId: string; includeRoles?: boolean };
+     *     ref: import('@/types/vrcx').VrcxGroup;
      * }>}
      */
     getGroup(params) {

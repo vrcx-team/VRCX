@@ -50,7 +50,7 @@ function applyGroupLanguage(ref) {
 
 /**
  * @param {object} json
- * @returns {object} Ref
+ * @returns {import('@/types/vrcx').VrcxGroup}
  */
 export function applyGroup(json) {
     const groupStore = useGroupStore();
@@ -109,7 +109,6 @@ export function applyGroup(json) {
     if (typeof json.roleIds !== 'undefined') {
         ref.myMember.roleIds = json.roleIds;
     }
-    ref.$url = `https://vrc.group/${ref.shortCode}.${ref.discriminator}`;
     applyGroupLanguage(ref);
 
     const currentUserGroupRef = groupStore.currentUserGroups.get(ref.id);
