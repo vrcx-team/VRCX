@@ -59,10 +59,11 @@
 
     if (typeof window !== 'undefined') {
         window.$pinia = store;
-        // Bridge: attach coordinator functions to store for C# IPC callbacks
-        store.game.updateIsGameRunning = runUpdateIsGameRunningFlow;
-        store.game.updateIsHmdAfk = runUpdateIsHmdAfkFlow;
-        store.gameLog.addGameLogEvent = addGameLogEvent;
+        window.$bridge = {
+            updateIsGameRunning: runUpdateIsGameRunningFlow,
+            updateIsHmdAfk: runUpdateIsHmdAfkFlow,
+            addGameLogEvent
+        };
     }
 
     onBeforeMount(() => {

@@ -10,6 +10,7 @@ declare global {
 
     interface Window {
         $pinia: any;
+        $bridge: any;
         $vr: any;
         $debug: AppDebug;
         AppApi: AppApi;
