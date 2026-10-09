@@ -298,6 +298,7 @@ export function $throw(code, error, endpoint) {
             position: 'bottom-left'
         });
     }
+    /** @type {any} */
     const e = new Error(text);
     e.status = code;
     e.endpoint = endpoint;

@@ -3,14 +3,12 @@ import { useGalleryStore } from '../stores';
 
 const notificationReq = {
     /**
-     * @typedef {{
-     *     n: number;
-     *     offset: number;
-     *     sent: boolean;
-     *     type: string;
-     *     //  (ISO8601 or 'five_minutes_ago')
-     *     after: 'five_minutes_ago' | (string & {});
-     * }} NotificationFetchParameter
+     * @typedef {object} NotificationFetchParameter
+     * @property {number} n
+     * @property {number} offset
+     * @property {boolean} sent
+     * @property {string} type
+     * @property {'five_minutes_ago' | (string & {})} after ISO8601 or 'five_minutes_ago'
      */
 
     /**

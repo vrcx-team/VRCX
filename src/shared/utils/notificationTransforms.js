@@ -77,7 +77,6 @@ export function createDefaultNotificationRef(json) {
  * Handles boop legacy formatting.
  *
  * @param {object} json - Sanitized notification JSON
- * @param {string} endpointDomain - API endpoint domain for emoji URLs
  * @returns {object} Default notification V2 ref
  */
 export function createDefaultNotificationV2Ref(json) {

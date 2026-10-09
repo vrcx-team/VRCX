@@ -348,6 +348,7 @@ function handlePipeline(args) {
                 travelingToWorld: 'offline',
                 travelingToInstance: 'offline'
             };
+            // @ts-ignore
             applyUser(offlineJson);
             break;
 
@@ -369,6 +370,7 @@ function handlePipeline(args) {
                     travelingToWorld: $travelingToLocation1.worldId,
                     travelingToInstance: $travelingToLocation1.instanceId
                 };
+                // @ts-ignore
                 applyUser(jankLocationJson);
                 break;
             }

@@ -239,7 +239,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     );
 
     /**
-     * @returns {void}
+     * @returns {Record<string, any>}
      */
     function getCachedFavoriteGroupsByTypeName() {
         const groups = {};

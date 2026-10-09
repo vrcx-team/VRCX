@@ -363,17 +363,14 @@ function getBioLinksDifference(previousLinks = [], links = []) {
 }
 
 /**
- * Function that format the differences between two strings with HTML tags markerStartTag and markerEndTag are optional,
- * if emitted, the differences will be highlighted with yellow and underlined.
+ * Builds an HTML-escaped word diff of two strings, wrapping removed and added words in the given markers.
  *
- * @param {any} s1
- * @param {any} s2
- * @param {any} markerStartTag
- * @param {any} markerEndTag
- * @returns An array that contains both the string 1 and string 2, which the differences are formatted with HTML tags
+ * @param {any} oldString
+ * @param {any} newString
+ * @param {string} [markerAddition] HTML template for added words; `{{text}}` is replaced with the words
+ * @param {string} [markerDeletion] HTML template for removed words; `{{text}}` is replaced with the words
+ * @returns {string} HTML string with newlines converted to `<br>`
  */
-
-//function getWordDifferences
 function formatDifference(
     oldString,
     newString,

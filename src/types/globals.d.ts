@@ -110,6 +110,7 @@ declare global {
         Execute: (sql: string, args: string) => Promise<any[]>;
         ExecuteJson: (sql: string, args: string) => Promise<string>;
         ExecuteNonQuery: (sql: string, args: string) => Promise<Number>;
+        ExecuteInsert: (sql: string, args: string) => Promise<Number>;
     };
 
     const LogWatcher: {

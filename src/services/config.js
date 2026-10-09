@@ -87,15 +87,15 @@ class ConfigRepository {
      * @returns {Promise<number | null>}
      */
     async getInt(key, defaultValue = null) {
-        let value = await this.getString(key, null);
+        const value = await this.getString(key, null);
         if (value === null || value === undefined) {
             return defaultValue;
         }
-        value = parseInt(value, 10);
-        if (isNaN(value) === true) {
+        const parsed = parseInt(value, 10);
+        if (isNaN(parsed) === true) {
             return defaultValue;
         }
-        return value;
+        return parsed;
     }
 
     async setInt(key, value) {
@@ -103,15 +103,15 @@ class ConfigRepository {
     }
 
     async getFloat(key, defaultValue = null) {
-        let value = await this.getString(key, null);
+        const value = await this.getString(key, null);
         if (value === null || value === undefined) {
             return defaultValue;
         }
-        value = parseFloat(value);
-        if (isNaN(value) === true) {
+        const parsed = parseFloat(value);
+        if (isNaN(parsed) === true) {
             return defaultValue;
         }
-        return value;
+        return parsed;
     }
 
     async setFloat(key, value) {

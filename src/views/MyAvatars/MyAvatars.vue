@@ -608,9 +608,9 @@
     }
 
     /**
-     * @param root0
-     * @param root0.avatarId
-     * @param root0.tags
+     * @param {object} params
+     * @param {string} params.avatarId
+     * @param {{ tag: string; color: string | null }[]} params.tags
      */
     async function onSaveTags({ avatarId, tags: newEntries }) {
         const avatar = avatars.value.find((a) => a.id === avatarId);
