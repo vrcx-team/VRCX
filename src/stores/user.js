@@ -962,7 +962,7 @@ export const useUserStore = defineStore('User', () => {
                 cachedIconFrames.set(frame.id, frame);
             });
         });
-        cosmeticsRequest.gatNameplateEffects().then(({ json }) => {
+        cosmeticsRequest.getNameplateEffects().then(({ json }) => {
             json.forEach((effect) => {
                 cachedNameplateEffects.set(effect.id, effect);
             });

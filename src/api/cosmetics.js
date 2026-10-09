@@ -23,7 +23,7 @@ const cosmeticsReq = {
         });
     },
 
-    gatNameplateEffects() {
+    getNameplateEffects() {
         return request('cosmetics/index/nameplateEffect', {
             method: 'GET'
         }).then((json) => {
