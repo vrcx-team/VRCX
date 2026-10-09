@@ -699,9 +699,8 @@ export const useNotificationStore = defineStore('Notification', () => {
             for (let i = 0; i < count; i++) {
                 const args = await notificationRequest.getHiddenFriendRequests(params);
                 for (const json of args.json) {
-                    json.type = 'ignoredFriendRequest';
                     handleNotification({
-                        json,
+                        json: { ...json, type: 'ignoredFriendRequest' },
                         params: {
                             notificationId: json.id
                         }

@@ -235,12 +235,11 @@ const imageReq = {
             method: 'PUT',
             params
         }).then((json) => {
-            const args = {
+            return {
                 json,
-                params
+                params,
+                ref: applyWorld(json)
             };
-            args.ref = applyWorld(json);
-            return args;
         });
     },
 

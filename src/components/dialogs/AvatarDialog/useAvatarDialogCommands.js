@@ -339,7 +339,7 @@ export function useAvatarDialogCommands(
                 handler: (id) => {
                     avatarRequest.deleteAvatar({ avatarId: id }).then((args) => {
                         const { json } = args;
-                        removeAvatarFromCache(json._id);
+                        removeAvatarFromCache(json.id);
                         if (userDialog.value.id === json.authorId) {
                             const map = new Map();
                             for (const ref of cachedAvatars.values()) {
