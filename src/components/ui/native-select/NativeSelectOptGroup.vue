@@ -1,5 +1,4 @@
 <!-- @fallthroughAttributes true -->
-<!-- @strictTemplates true -->
 
 <script setup>
     import { cn } from '@/lib/utils';

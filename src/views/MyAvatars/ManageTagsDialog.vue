@@ -83,7 +83,10 @@
         open: { type: Boolean, default: false },
         avatarName: { type: String, default: '' },
         avatarId: { type: String, default: '' },
-        initialTags: { type: Array, default: () => [] }
+        initialTags: {
+            type: /** @type {import('vue').PropType<{ tag: string; color: string | null }[]>} */ (Array),
+            default: () => []
+        }
     });
 
     const emit = defineEmits(['update:open', 'save']);

@@ -114,7 +114,9 @@
     const editName = ref('');
 
     const dashboard = computed(() => dashboardStore.getDashboard(props.id));
-    const displayRows = computed(() => (isEditing.value ? editRows.value : dashboard.value?.rows || []));
+    const displayRows = computed(
+        () => (/** @type {any[]} */ (isEditing.value ? editRows.value : dashboard.value?.rows || []))
+    );
 
     const cloneRows = (rows) => JSON.parse(JSON.stringify(Array.isArray(rows) ? rows : []));
 

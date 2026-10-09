@@ -9,11 +9,15 @@ export async function isSentryOptedIn() {
 
 /**
  * Guarded import, prevents leaking Sentry into non-nightly bundles.
+ * @returns {Promise<typeof import('@sentry/vue')> | null}
  */
 export function getSentry() {
     return NIGHTLY ? import('@sentry/vue') : null;
 }
 
+/**
+ * @param {import('vue').App} app
+ */
 export async function initSentry(app) {
     if (!NIGHTLY) return;
 

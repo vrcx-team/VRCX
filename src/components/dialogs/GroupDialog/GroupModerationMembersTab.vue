@@ -94,10 +94,13 @@
         memberSortOrder: { type: Object, required: true },
         memberFilter: { type: Object, required: true },
         memberSearch: { type: String, default: '' },
-        sortingOptions: { type: Array, required: true },
-        filterOptions: { type: Array, required: true },
-        pageSizes: { type: Array, required: true },
-        columnContext: { type: Object, required: true },
+        sortingOptions: { type: /** @type {import('vue').PropType<{ name: string }[]>} */ (Array), required: true },
+        filterOptions: { type: /** @type {import('vue').PropType<{ name: string }[]>} */ (Array), required: true },
+        pageSizes: { type: /** @type {import('vue').PropType<number[]>} */ (Array), required: true },
+        columnContext: {
+            type: /** @type {import('vue').PropType<Parameters<typeof createColumns>[0]>} */ (Object),
+            required: true
+        },
         handlePageChange: { type: Function, required: true }
     });
 

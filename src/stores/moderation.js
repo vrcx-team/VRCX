@@ -14,7 +14,7 @@ export const useModerationStore = defineStore('Moderation', () => {
         data: [],
         search: '',
         loading: false,
-        filters: [
+        filters: /** @type {import('@/types/vrcx').TableFilter[]} */ ([
             {
                 prop: 'type',
                 value: []
@@ -23,7 +23,7 @@ export const useModerationStore = defineStore('Moderation', () => {
                 prop: ['sourceDisplayName', 'targetDisplayName'],
                 value: ''
             }
-        ],
+        ]),
         pageSize: 20,
         pageSizeLinked: true
     });

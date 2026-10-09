@@ -70,7 +70,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     const notificationInitStatus = ref(false);
     const notificationTable = ref({
         data: [],
-        filters: [
+        filters: /** @type {import('@/types/vrcx').TableFilter[]} */ ([
             {
                 prop: 'type',
                 value: []
@@ -79,7 +79,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                 prop: ['senderUsername', 'message'],
                 value: ''
             }
-        ],
+        ]),
         pageSize: 20,
         pageSizeLinked: true,
         paginationProps: {

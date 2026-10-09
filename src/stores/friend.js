@@ -247,7 +247,7 @@ export const useFriendStore = defineStore('Friend', () => {
 
     const friendLogTable = ref({
         data: [],
-        filters: [
+        filters: /** @type {import('@/types/vrcx').TableFilter[]} */ ([
             {
                 prop: 'type',
                 value: []
@@ -261,7 +261,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 value: false,
                 filterFn: (row, filter) => !(filter.value && row.type === 'Unfriend')
             }
-        ],
+        ]),
         pageSizeLinked: true,
         loading: false
     });

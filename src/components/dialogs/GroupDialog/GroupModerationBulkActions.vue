@@ -160,7 +160,10 @@
 
     const props = defineProps({
         selectUserId: { type: String, default: '' },
-        selectedUsersArray: { type: Array, default: () => [] },
+        selectedUsersArray: {
+            type: /** @type {import('vue').PropType<import('vrchat').GroupMember[]>} */ (Array),
+            default: () => []
+        },
         selectedRoles: { type: Array, default: () => [] },
         note: { type: String, default: '' },
         progressCurrent: { type: Number, default: 0 },

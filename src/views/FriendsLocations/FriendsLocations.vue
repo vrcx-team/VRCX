@@ -682,6 +682,7 @@
         }
         const { columns } = computeGridLayout(safeItems.length, { matchMaxColumnWidth: true });
         const safeColumns = Math.max(1, columns || 1);
+        /** @type {VirtualRow[]} */
         const rows = [];
 
         for (let index = 0; index < safeItems.length; index += safeColumns) {
@@ -699,7 +700,15 @@
         () => isSidebarDivideByFriendGroup.value && activeSegment.value === 'favorite' && !normalizedSearchTerm.value
     );
 
+    /**
+     * @typedef {{ type: 'cards'; key: string; items: any[] }
+     *     | { type: 'header'; key: string; instanceId: string; count: number }
+     *     | { type: 'divider'; key: string }
+     *     | { type: 'group-header'; key: string; label: string; count: number; groupKey: string; collapsed: boolean }} VirtualRow
+     */
+
     const virtualRows = computed(() => {
+        /** @type {VirtualRow[]} */
         const rows = [];
 
         if (isSameInstanceView.value) {

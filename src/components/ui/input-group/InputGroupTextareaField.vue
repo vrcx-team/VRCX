@@ -52,6 +52,7 @@
                         .join('; ');
                 }
                 if (s && typeof s === 'object') {
+                    /** @type {Record<string, any>} */
                     const next = { ...s };
                     delete next.display;
                     return next;

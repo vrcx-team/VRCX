@@ -52,9 +52,12 @@
     const props = defineProps({
         loading: { type: Boolean, default: false },
         tableData: { type: Object, required: true },
-        auditLogTypes: { type: Array, default: () => [] },
-        pageSizes: { type: Array, required: true },
-        columnContext: { type: Object, required: true },
+        auditLogTypes: { type: /** @type {import('vue').PropType<string[]>} */ (Array), default: () => [] },
+        pageSizes: { type: /** @type {import('vue').PropType<number[]>} */ (Array), required: true },
+        columnContext: {
+            type: /** @type {import('vue').PropType<Parameters<typeof createColumns>[0]>} */ (Object),
+            required: true
+        },
         handlePageChange: { type: Function, required: true }
     });
 

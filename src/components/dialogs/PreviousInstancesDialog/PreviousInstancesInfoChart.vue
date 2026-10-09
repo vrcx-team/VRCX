@@ -32,7 +32,7 @@
 
     const props = defineProps({
         chartData: {
-            type: Array,
+            type: /** @type {import('vue').PropType<any[]>} */ (Array),
             required: true
         }
     });

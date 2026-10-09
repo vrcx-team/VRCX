@@ -141,8 +141,11 @@
         blockedTable: { type: Object, required: true },
         groupRef: { type: Object, default: () => ({}) },
         progressCurrent: { type: Number, default: 0 },
-        pageSizes: { type: Array, required: true },
-        columnContext: { type: Object, required: true },
+        pageSizes: { type: /** @type {import('vue').PropType<number[]>} */ (Array), required: true },
+        columnContext: {
+            type: /** @type {import('vue').PropType<Parameters<typeof createInvitesColumns>[0]>} */ (Object),
+            required: true
+        },
         handlePageChange: { type: Function, required: true }
     });
 
