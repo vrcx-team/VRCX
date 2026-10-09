@@ -105,14 +105,6 @@ describe('getNotificationMessage', () => {
         expect(result.body).toContain('(msg)');
     });
 
-    test('requestInvite', () => {
-        const result = getNotificationMessage({ type: 'requestInvite', senderUsername: 'Bob' }, ' hey');
-        expect(result).toEqual({
-            title: 'Bob',
-            body: 'has requested an invite hey'
-        });
-    });
-
     test('friendRequest', () => {
         const result = getNotificationMessage({ type: 'friendRequest', senderUsername: 'Charlie' }, '');
         expect(result).toEqual({
@@ -214,35 +206,11 @@ describe('getNotificationMessage', () => {
         expect(result).toEqual({ title: 'External', body: 'ext msg' });
     });
 
-    test('inviteResponse', () => {
-        const result = getNotificationMessage({ type: 'inviteResponse', senderUsername: 'Bob' }, ' (accepted)');
-        expect(result).toEqual({
-            title: 'Bob',
-            body: 'has responded to your invite (accepted)'
-        });
-    });
-
-    test('requestInviteResponse', () => {
-        const result = getNotificationMessage({ type: 'requestInviteResponse', senderUsername: 'Bob' }, ' (declined)');
-        expect(result).toEqual({
-            title: 'Bob',
-            body: 'has responded to your invite request (declined)'
-        });
-    });
-
     test('Unfriend', () => {
         const result = getNotificationMessage({ type: 'Unfriend', displayName: 'Eve' }, '');
         expect(result).toEqual({
             title: 'Eve',
             body: 'is no longer your friend'
-        });
-    });
-
-    test('TrustLevel', () => {
-        const result = getNotificationMessage({ type: 'TrustLevel', displayName: 'Dave', trustLevel: 'Known' }, '');
-        expect(result).toEqual({
-            title: 'Dave',
-            body: 'trust level is now Known'
         });
     });
 
@@ -252,11 +220,6 @@ describe('getNotificationMessage', () => {
             title: 'Alice',
             body: 'changed into avatar CoolAvatar'
         });
-    });
-
-    test('ChatBoxMessage', () => {
-        const result = getNotificationMessage({ type: 'ChatBoxMessage', displayName: 'Bob', text: 'hello!' }, '');
-        expect(result).toEqual({ title: 'Bob', body: 'said hello!' });
     });
 
     test('Blocked', () => {

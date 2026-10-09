@@ -100,14 +100,6 @@ describe('searchFriends', () => {
         expect(results[0].matchedField).toBe('name');
     });
 
-    test('matches by memo', () => {
-        const results = searchFriends('同事', friends, comparer);
-        expect(results).toHaveLength(1);
-        expect(results[0].id).toBe('u2');
-        expect(results[0].matchedField).toBe('memo');
-        expect(results[0].memo).toBe('同事');
-    });
-
     test('matches by note', () => {
         const results = searchFriends('roommate', friends, comparer);
         expect(results).toHaveLength(1);

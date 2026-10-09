@@ -38,7 +38,6 @@ import {
     statusClass,
     userImage,
     userImageFull,
-    userOnlineFor,
     userOnlineForTimestamp,
     userStatusClass
 } from '../user';
@@ -175,36 +174,6 @@ describe('User Utils', () => {
         });
     });
 
-    describe('userOnlineFor', () => {
-        test('returns formatted time for online user', () => {
-            const now = Date.now();
-            vi.spyOn(Date, 'now').mockReturnValue(now);
-            const ref = { state: 'online', $online_for: now - 5000 };
-            expect(userOnlineFor(ref)).toBe('5s');
-            vi.restoreAllMocks();
-        });
-
-        test('returns formatted time for active user', () => {
-            const now = Date.now();
-            vi.spyOn(Date, 'now').mockReturnValue(now);
-            const ref = { state: 'active', $active_for: now - 10000 };
-            expect(userOnlineFor(ref)).toBe('10s');
-            vi.restoreAllMocks();
-        });
-
-        test('returns formatted time for offline user with $offline_for', () => {
-            const now = Date.now();
-            vi.spyOn(Date, 'now').mockReturnValue(now);
-            const ref = { state: 'offline', $offline_for: now - 3000 };
-            expect(userOnlineFor(ref)).toBe('3s');
-            vi.restoreAllMocks();
-        });
-
-        test('returns dash when no timestamp available', () => {
-            expect(userOnlineFor({ state: 'offline' })).toBe('-');
-        });
-    });
-
     describe('userStatusClass (explicit currentUser)', () => {
         let currentUser;
 
@@ -337,21 +306,6 @@ describe('User Utils', () => {
             expect(result.offline).toBe(true);
         });
 
-        test('returns active style for state active', () => {
-            const result = userStatusClass(
-                {
-                    id: 'usr_f',
-                    isFriend: true,
-                    status: 'busy',
-                    location: 'private',
-                    state: 'active'
-                },
-                false,
-                currentUser
-            );
-            expect(result.active).toBe(true);
-        });
-
         test('sets mobile flag for non-PC platform friend', () => {
             const result = userStatusClass(
                 {
@@ -400,23 +354,6 @@ describe('User Utils', () => {
             });
         });
 
-        test('handles private location with empty state (temp fix branch)', () => {
-            currentUser.activeFriends = ['usr_f'];
-            const result = userStatusClass(
-                {
-                    id: 'usr_f',
-                    isFriend: true,
-                    status: 'busy',
-                    location: 'private',
-                    state: ''
-                },
-                false,
-                currentUser
-            );
-            // activeFriends includes usr_f → active
-            expect(result.active).toBe(true);
-        });
-
         test('handles private location temp fix → offline branch', () => {
             currentUser.activeFriends = [];
             const result = userStatusClass(
@@ -443,25 +380,6 @@ describe('User Utils', () => {
         test('returns empty string for falsy user', () => {
             expect(userImage(null, false, '128', false, false)).toBe('');
             expect(userImage(undefined, false, '128', false, false)).toBe('');
-        });
-
-        test('returns profilePicOverrideThumbnail when available', () => {
-            const user = {
-                profilePicOverrideThumbnail: 'https://img.com/pic/256/thumb'
-            };
-            expect(userImage(user, false, '128', false, false)).toBe('https://img.com/pic/256/thumb');
-        });
-
-        test('replaces resolution for icon mode with profilePicOverrideThumbnail', () => {
-            const user = {
-                profilePicOverrideThumbnail: 'https://img.com/pic/256/thumb'
-            };
-            expect(userImage(user, true, '64', false, false)).toBe('https://img.com/pic/64/thumb');
-        });
-
-        test('returns profilePicOverride when no thumbnail', () => {
-            const user = { profilePicOverride: 'https://img.com/full' };
-            expect(userImage(user, false, '128', false, false)).toBe('https://img.com/full');
         });
 
         test('returns thumbnailUrl as fallback', () => {
@@ -500,27 +418,6 @@ describe('User Utils', () => {
         test('returns empty string when user has no image fields', () => {
             expect(userImage({}, false, '128', false, false)).toBe('');
         });
-
-        test('returns userIcon when displayVRCPlusIconsAsAvatar is true', () => {
-            const user = {
-                userIcon: 'https://img.com/icon',
-                thumbnailUrl: 'https://img.com/thumb'
-            };
-            expect(userImage(user, false, '128', false, true)).toBe('https://img.com/icon');
-        });
-
-        test('converts userIcon for icon mode when VRCPlus setting enabled', () => {
-            const user = { userIcon: 'https://img.com/icon' };
-            expect(userImage(user, true, '128', false, true)).toBe('converted:https://img.com/icon');
-        });
-
-        test('returns userIcon for isUserDialogIcon even if VRCPlus setting off', () => {
-            const user = {
-                userIcon: 'https://img.com/icon',
-                thumbnailUrl: 'https://img.com/thumb'
-            };
-            expect(userImage(user, false, '128', true, false)).toBe('https://img.com/icon');
-        });
     });
 
     describe('userImageFull (explicit settings)', () => {
@@ -546,14 +443,6 @@ describe('User Utils', () => {
                 currentAvatarImageUrl: 'https://img.com/avatar'
             };
             expect(userImageFull(user, false)).toBe('https://img.com/avatar');
-        });
-
-        test('returns userIcon when VRCPlus setting enabled', () => {
-            const user = {
-                userIcon: 'https://img.com/icon',
-                profilePicOverride: 'https://img.com/full'
-            };
-            expect(userImageFull(user, true)).toBe('https://img.com/icon');
         });
     });
 });

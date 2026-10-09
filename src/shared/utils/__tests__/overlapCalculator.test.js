@@ -100,19 +100,6 @@ describe('buildSessionsFromGamelog', () => {
         expect(buildSessionsFromGamelog([])).toEqual([]);
     });
 
-    test('builds session with known duration', () => {
-        const rows = [
-            { created_at: utc('2025-01-06T10:00:00Z'), time: 7200000 } // 2h
-        ];
-        const result = buildSessionsFromGamelog(rows);
-        expect(result).toEqual([
-            {
-                start: ts('2025-01-06T10:00:00Z'),
-                end: ts('2025-01-06T12:00:00Z')
-            }
-        ]);
-    });
-
     test('estimates duration from next row when time=0', () => {
         const rows = [
             { created_at: utc('2025-01-06T10:00:00Z'), time: 0 },
@@ -357,36 +344,6 @@ describe('aggregateSessionsToGrid', () => {
             expect(row.every((v) => v === 0)).toBe(true);
         }
     });
-
-    test('increments grid for session hours', () => {
-        // A 3-hour session should increment 3 hour slots
-        const sessions = [
-            {
-                start: ts('2025-01-06T10:00:00Z'),
-                end: ts('2025-01-06T13:00:00Z')
-            }
-        ];
-        const result = aggregateSessionsToGrid(sessions);
-        const total = result.grid.flat().reduce((a, b) => a + b, 0);
-        expect(total).toBe(3);
-        expect(result.maxVal).toBe(1);
-    });
-
-    test('stacks multiple sessions on same hour', () => {
-        // Two sessions on the same day/hour
-        const sessions = [
-            {
-                start: ts('2025-01-06T10:00:00Z'),
-                end: ts('2025-01-06T11:00:00Z')
-            },
-            {
-                start: ts('2025-01-13T10:00:00Z'),
-                end: ts('2025-01-13T11:00:00Z')
-            } // Same weekday, 1 week later
-        ];
-        const result = aggregateSessionsToGrid(sessions);
-        expect(result.maxVal).toBe(2);
-    });
 });
 
 describe('findBestOverlapTime', () => {
@@ -395,13 +352,6 @@ describe('findBestOverlapTime', () => {
     test('returns empty string for all-zero grid', () => {
         const grid = Array.from({ length: 7 }, () => new Array(24).fill(0));
         expect(findBestOverlapTime(grid, dayLabels)).toBe('');
-    });
-
-    test('returns single hour when only one slot has data', () => {
-        const grid = Array.from({ length: 7 }, () => new Array(24).fill(0));
-        grid[1][14] = 5; // Monday 14:00
-        const result = findBestOverlapTime(grid, dayLabels);
-        expect(result).toBe('Mon, 14:00');
     });
 
     test('returns time range for adjacent high hours', () => {

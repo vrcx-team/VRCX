@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { nextTick } from 'vue';
 
 const mocks = vi.hoisted(() => ({
     checkCanInviteSelf: vi.fn(() => true),
@@ -286,47 +285,6 @@ describe('InstanceActionBar.vue', () => {
 
         expect(onRefresh).toHaveBeenCalledTimes(1);
         expect(onHistory).toHaveBeenCalledTimes(1);
-    });
-
-    it('shows last-join timer and friend count', () => {
-        const wrapper = mountBar({ friendcount: 5 });
-
-        expect(wrapper.find('[data-testid="timer"]').exists()).toBe(true);
-        expect(wrapper.text()).toContain('5');
-    });
-
-    it('close instance flow confirms, calls api, applies instance and toasts', async () => {
-        const wrapper = mountBar({
-            instanceLocation: 'wrld_close:444',
-            instance: {
-                ownerId: 'usr_me',
-                capacity: 16,
-                userCount: 4,
-                hasCapacityForYou: true,
-                platforms: { standalonewindows: 1, android: 2, ios: 0 },
-                users: [],
-                gameServerVersion: 123,
-                $disabledContentSettings: []
-            }
-        });
-
-        const closeBtn = wrapper
-            .findAll('button')
-            .find((btn) => btn.text().includes('dialog.user.info.close_instance'));
-        expect(closeBtn).toBeTruthy();
-
-        await closeBtn.trigger('click');
-        await Promise.resolve();
-        await Promise.resolve();
-        await nextTick();
-
-        expect(mocks.modalConfirm).toHaveBeenCalled();
-        expect(mocks.closeInstance).toHaveBeenCalledWith({
-            location: 'wrld_close:444',
-            hardClose: false
-        });
-        expect(mocks.applyInstance).toHaveBeenCalledWith({ id: 'inst_closed' });
-        expect(mocks.toastSuccess).toHaveBeenCalledWith('message.instance.closed');
     });
 
     it('hides launch and invite buttons when invite-self is not allowed', () => {

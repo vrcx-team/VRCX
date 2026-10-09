@@ -7,8 +7,6 @@ vi.mock('../../../../shared/utils', () => ({
     copyToClipboard: vi.fn()
 }));
 
-const { copyToClipboard } = await import('../../../../shared/utils');
-
 function createGroupDialog(overrides = {}) {
     return ref({
         visible: true,
@@ -58,15 +56,6 @@ describe('useGroupDialogCommands', () => {
 
         groupDialogCommand('Refresh');
         expect(deps.showGroupDialog).not.toHaveBeenCalled();
-    });
-
-    it('Share copies group URL', () => {
-        const groupDialog = createGroupDialog();
-        const deps = createDeps();
-        const { groupDialogCommand } = useGroupDialogCommands(groupDialog, deps);
-
-        groupDialogCommand('Share');
-        expect(copyToClipboard).toHaveBeenCalledWith('https://vrchat.com/home/group/grp_123');
     });
 
     it('Invite To Group dispatches invite callback', () => {

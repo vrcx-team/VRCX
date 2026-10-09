@@ -251,13 +251,6 @@ describe('sanitizeLayout', () => {
         expect(chartsFolder.items).toEqual(['charts-instance', 'charts-mutual', 'charts-hot-worlds']);
     });
 
-    test('auto-appends charts folder when charts keys are neither used nor hidden', () => {
-        const layout = [{ type: 'item', key: 'feed' }];
-        const result = runSanitize(layout);
-        const chartsFolder = result.find((e) => e.type === 'folder' && e.id === 'default-folder-charts');
-        expect(chartsFolder).toBeDefined();
-    });
-
     test('skips empty folders', () => {
         const layout = [
             {

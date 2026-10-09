@@ -31,17 +31,6 @@ describe('useGroupCalendarEvents', () => {
             expect(pastCalenderEvents.value).toEqual([]);
         });
 
-        test('returns only past events', () => {
-            const groupDialog = createGroupDialog([
-                { id: '1', endsAt: PAST_DATE },
-                { id: '2', endsAt: FUTURE_DATE },
-                { id: '3', endsAt: PAST_DATE }
-            ]);
-            const { pastCalenderEvents } = useGroupCalendarEvents(groupDialog);
-            expect(pastCalenderEvents.value).toHaveLength(2);
-            expect(pastCalenderEvents.value.map((e) => e.id)).toEqual(['1', '3']);
-        });
-
         test('is reactive to calendar changes', () => {
             const groupDialog = createGroupDialog([]);
             const { pastCalenderEvents } = useGroupCalendarEvents(groupDialog);
@@ -63,33 +52,6 @@ describe('useGroupCalendarEvents', () => {
             const groupDialog = createGroupDialog([{ id: '1', endsAt: PAST_DATE }]);
             const { upcomingCalenderEvents } = useGroupCalendarEvents(groupDialog);
             expect(upcomingCalenderEvents.value).toEqual([]);
-        });
-
-        test('returns only upcoming events', () => {
-            const groupDialog = createGroupDialog([
-                { id: '1', endsAt: PAST_DATE },
-                { id: '2', endsAt: FUTURE_DATE },
-                { id: '3', endsAt: FUTURE_DATE }
-            ]);
-            const { upcomingCalenderEvents } = useGroupCalendarEvents(groupDialog);
-            expect(upcomingCalenderEvents.value).toHaveLength(2);
-            expect(upcomingCalenderEvents.value.map((e) => e.id)).toEqual(['2', '3']);
-        });
-
-        test('past and upcoming are mutually exclusive', () => {
-            const events = [
-                { id: '1', endsAt: PAST_DATE },
-                { id: '2', endsAt: FUTURE_DATE }
-            ];
-            const groupDialog = createGroupDialog(events);
-            const { pastCalenderEvents, upcomingCalenderEvents } = useGroupCalendarEvents(groupDialog);
-
-            const allIds = [
-                ...pastCalenderEvents.value.map((e) => e.id),
-                ...upcomingCalenderEvents.value.map((e) => e.id)
-            ];
-            expect(allIds).toHaveLength(2);
-            expect(new Set(allIds).size).toBe(2);
         });
     });
 

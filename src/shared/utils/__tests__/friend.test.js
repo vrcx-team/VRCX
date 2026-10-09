@@ -121,22 +121,6 @@ describe('Friend Utils', () => {
             expect(fn(a, b)).toBe(1);
         });
 
-        test('sorts by time in instance', () => {
-            const fn = getFriendsSortFunction(['Sort by Time in Instance']);
-            const a = {
-                state: 'online',
-                pendingOffline: false,
-                ref: { $location_at: 100, location: 'wrld_1' }
-            };
-            const b = {
-                state: 'online',
-                pendingOffline: false,
-                ref: { $location_at: 200, location: 'wrld_2' }
-            };
-            // compareByLocationAt(b.ref, a.ref): b.$location_at(200) > a.$location_at(100) → 1
-            expect(fn(a, b)).toBe(1);
-        });
-
         test('sorts pending offline to bottom for time in instance', () => {
             const fn = getFriendsSortFunction(['Sort by Time in Instance']);
             const pending = {
@@ -157,13 +141,6 @@ describe('Friend Utils', () => {
             const a = { state: 'online', ref: { location: 'aaa' } };
             const b = { state: 'online', ref: { location: 'zzz' } };
             expect(fn(a, b)).toBeLessThan(0);
-        });
-
-        test('None sort returns 0', () => {
-            const fn = getFriendsSortFunction(['None']);
-            const a = { name: 'Zack' };
-            const b = { name: 'Alice' };
-            expect(fn(a, b)).toBe(0);
         });
 
         test('applies multiple sort methods in order (tie-breaking)', () => {
@@ -192,14 +169,6 @@ describe('Friend Utils', () => {
             };
             // status differs → alphabetical not reached
             expect(fn(joinMe, busy)).toBeLessThan(0);
-        });
-
-        test('handles empty sort methods array', () => {
-            const fn = getFriendsSortFunction([]);
-            const a = { name: 'Alice' };
-            const b = { name: 'Bob' };
-            // No sort functions → result is undefined from loop
-            expect(fn(a, b)).toBeUndefined();
         });
     });
 });

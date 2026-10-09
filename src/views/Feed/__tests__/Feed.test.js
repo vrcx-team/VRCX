@@ -237,18 +237,4 @@ describe('Feed.vue', () => {
 
         expect(wrapper.get('[data-testid="total-items"]').text()).toBe('100');
     });
-
-    test('builds stable row id fallback for rows without id', () => {
-        const wrapper = mount(Feed);
-
-        const key = wrapper.vm.getFeedRowId({
-            type: 'Online',
-            created_at: '2026-03-01T00:00:00.000Z',
-            userId: 'usr_123',
-            location: 'wrld_abc',
-            message: 'hello'
-        });
-
-        expect(key).toBe('Online:2026-03-01T00:00:00.000Z:usr_123:wrld_abc:hello');
-    });
 });

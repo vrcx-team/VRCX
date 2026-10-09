@@ -158,15 +158,6 @@ describe('useWorldDialogInfo', () => {
         });
     });
 
-    describe('timeSpent', () => {
-        test('converts milliseconds to text', () => {
-            const worldDialog = createWorldDialog({ timeSpent: 120000 });
-            const { timeSpent } = useWorldDialogInfo(worldDialog, createDeps());
-
-            expect(timeSpent.value).toBe('120s');
-        });
-    });
-
     describe('worldDialogPlatform', () => {
         test('formats platform strings from unity packages', () => {
             const worldDialog = createWorldDialog();

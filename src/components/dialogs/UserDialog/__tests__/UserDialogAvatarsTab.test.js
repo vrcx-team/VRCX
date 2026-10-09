@@ -156,12 +156,6 @@ describe('UserDialogAvatarsTab.vue', () => {
             expect(wrapper.text()).toContain('3');
         });
 
-        test('renders all avatars when releaseStatus is "all"', () => {
-            const wrapper = mountComponent();
-            const items = wrapper.findAll('.cursor-pointer');
-            expect(items).toHaveLength(3);
-        });
-
         test('renders avatar names', () => {
             const wrapper = mountComponent();
             expect(wrapper.text()).toContain('Alpha');

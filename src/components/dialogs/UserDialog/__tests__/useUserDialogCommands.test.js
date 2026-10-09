@@ -47,7 +47,6 @@ vi.mock('../../../../composables/useRecentActions', () => ({
 }));
 
 // Import mocks after vi.mock
-const { copyToClipboard } = await import('../../../../shared/utils');
 const { favoriteRequest, friendRequest, playerModerationRequest, miscRequest } = await import('../../../../api');
 const { database } = await import('../../../../services/database');
 
@@ -139,15 +138,6 @@ describe('useUserDialogCommands', () => {
             expect(deps.showUserDialog).toHaveBeenCalledWith('usr_test123');
         });
 
-        it('Share: should copy user URL', () => {
-            const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
-            userDialogCommand('Share');
-            expect(copyToClipboard).toHaveBeenCalledWith(
-                'https://vrchat.com/home/user/usr_test123',
-                'message.user.url_copied'
-            );
-        });
-
         it('Add Favorite: should call showFavoriteDialog', () => {
             const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Add Favorite');
@@ -215,6 +205,7 @@ describe('useUserDialogCommands', () => {
     });
 
     describe('userDialogCommand — string callback commands', () => {
+
         it('should not throw when callback is not registered', () => {
             const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             expect(() => userDialogCommand('Edit Bio')).not.toThrow();

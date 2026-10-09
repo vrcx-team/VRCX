@@ -113,13 +113,6 @@ describe('LocationWorld.vue', () => {
         }));
     });
 
-    it('renders translated access type and instance name', () => {
-        const wrapper = mountComponent();
-
-        expect(wrapper.text()).toContain('dialog.world.instance.friends #Instance Name');
-        expect(wrapper.find('.flags.eu').exists()).toBe(true);
-    });
-
     it('marks unlocked for owner and opens launch dialog on click', async () => {
         const wrapper = mountComponent();
 

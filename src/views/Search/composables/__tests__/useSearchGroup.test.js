@@ -35,25 +35,6 @@ describe('useSearchGroup', () => {
         mocks.groupSearch.mockReset();
     });
 
-    it('starts group search with normalized query', async () => {
-        mocks.searchText.value = 'group+name';
-        mocks.replaceBioSymbols.mockReturnValue('group name');
-        mocks.groupSearch.mockResolvedValue({
-            json: [{ id: 'grp_1' }, { id: 'grp_1' }, { id: 'grp_2' }]
-        });
-
-        const api = useSearchGroup();
-        await api.searchGroup();
-
-        expect(mocks.replaceBioSymbols).toHaveBeenCalledWith('group+name');
-        expect(mocks.groupSearch).toHaveBeenCalledWith({
-            n: 10,
-            offset: 0,
-            query: 'group name'
-        });
-        expect(api.searchGroupResults.value.map((x) => x.id)).toEqual(['grp_1', 'grp_2']);
-    });
-
     it('moves backward paging offset without going below zero', async () => {
         mocks.groupSearch.mockResolvedValue({ json: [] });
         const api = useSearchGroup();

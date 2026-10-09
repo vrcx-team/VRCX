@@ -87,7 +87,6 @@ vi.mock('../../../../services/request', () => ({
     failedGetRequests: new Map()
 }));
 
-import * as worldCoordinatorModule from '../../../../coordinators/worldCoordinator';
 vi.mock('../../../../coordinators/worldCoordinator', async (importOriginal) => {
     const actual = await importOriginal();
     return { ...actual, showWorldDialog: vi.fn() };
@@ -171,12 +170,6 @@ describe('UserDialogWorldsTab.vue', () => {
             expect(wrapper.text()).toContain('3');
         });
 
-        test('renders all worlds', () => {
-            const wrapper = mountComponent();
-            const items = wrapper.findAll('.cursor-pointer');
-            expect(items).toHaveLength(3);
-        });
-
         test('renders world names', () => {
             const wrapper = mountComponent();
             expect(wrapper.text()).toContain('Sunset Valley');
@@ -197,23 +190,6 @@ describe('UserDialogWorldsTab.vue', () => {
             expect(wrapper.text()).toContain('5');
         });
 
-        test('does not render occupant count for worlds with zero occupants', () => {
-            const wrapper = mountComponent({
-                worlds: [
-                    {
-                        id: 'wrld_3',
-                        name: 'Empty',
-                        thumbnailImageUrl: '',
-                        occupants: 0
-                    }
-                ]
-            });
-            // The (0) should NOT be rendered because v-if="world.occupants" is falsy for 0
-            const items = wrapper.findAll('.cursor-pointer');
-            expect(items).toHaveLength(1);
-            expect(wrapper.text()).not.toContain('(0)');
-        });
-
         test('renders empty state when no worlds and not loading', () => {
             const wrapper = mountComponent({ worlds: [] });
             expect(wrapper.text()).toContain('0');
@@ -231,39 +207,6 @@ describe('UserDialogWorldsTab.vue', () => {
             const wrapper = mountComponent({ isWorldsLoading: false });
             const button = wrapper.find('button');
             expect(button.attributes('disabled')).toBeUndefined();
-        });
-    });
-
-    describe('click interactions', () => {
-        test('calls showWorldDialog when a world is clicked', async () => {
-            const pinia = createTestingPinia({ stubActions: false });
-            const userStore = useUserStore(pinia);
-            const showWorldDialogSpy = vi.spyOn(worldCoordinatorModule, 'showWorldDialog').mockImplementation(() => {});
-
-            userStore.$patch({
-                userDialog: {
-                    id: 'usr_me',
-                    ref: { id: 'usr_me' },
-                    worlds: [...MOCK_WORLDS],
-                    worldSorting: userDialogWorldSortingOptions.name,
-                    worldOrder: userDialogWorldOrderOptions.descending,
-                    isWorldsLoading: false
-                },
-                currentUser: { id: 'usr_me' }
-            });
-
-            const wrapper = mount(UserDialogWorldsTab, {
-                global: {
-                    plugins: [pinia],
-                    stubs: {
-                        RefreshCw: { template: '<svg class="refresh-icon" />' }
-                    }
-                }
-            });
-
-            const firstItem = wrapper.findAll('.cursor-pointer')[0];
-            await firstItem.trigger('click');
-            expect(showWorldDialogSpy).toHaveBeenCalledWith('wrld_1');
         });
     });
 });

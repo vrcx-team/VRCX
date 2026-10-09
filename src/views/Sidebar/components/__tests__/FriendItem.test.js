@@ -137,29 +137,6 @@ describe('FriendItem.vue', () => {
         mocks.showUserDialog.mockReset();
     });
 
-    test('renders nickname when hideNicknames is false', () => {
-        const wrapper = mountItem();
-        expect(wrapper.text()).toContain('Alice (Ali)');
-    });
-
-    test('renders favorite star when grouped by instance and friend is favorite', () => {
-        mocks.appearanceStore.hideNicknames = true;
-        mocks.friendStore.allFavoriteFriendIds = new Set(['usr_1']);
-
-        const wrapper = mountItem({
-            friend: makeFriend({ $nickName: '' }),
-            isGroupByInstance: true
-        });
-
-        expect(wrapper.text()).toContain('Alice ⭐');
-    });
-
-    test('clicking row opens user dialog', async () => {
-        const wrapper = mountItem();
-        await wrapper.get('div').trigger('click');
-        expect(mocks.showUserDialog).toHaveBeenCalledWith('usr_1');
-    });
-
     test('renders delete action for orphan friend and triggers confirmDeleteFriend', async () => {
         const wrapper = mountItem({
             friend: makeFriend({

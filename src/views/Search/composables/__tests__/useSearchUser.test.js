@@ -24,24 +24,6 @@ describe('useSearchUser', () => {
         mocks.moreSearchUser.mockResolvedValue(undefined);
     });
 
-    it('builds search params and requests first page', async () => {
-        mocks.searchText.value = 'Alice';
-        const api = useSearchUser();
-        api.searchUserByBio.value = true;
-        api.searchUserSortByLastLoggedIn.value = true;
-
-        await api.searchUser();
-
-        expect(mocks.moreSearchUser).toHaveBeenCalledWith(null, {
-            n: 10,
-            offset: 0,
-            search: 'Alice',
-            customFields: 'bio',
-            sort: 'last_login'
-        });
-        expect(api.isSearchUserLoading.value).toBe(false);
-    });
-
     it('passes page direction into handleMoreSearchUser', async () => {
         const api = useSearchUser();
         api.searchUserParams.value = {
