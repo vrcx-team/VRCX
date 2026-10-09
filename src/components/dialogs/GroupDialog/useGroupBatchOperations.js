@@ -53,7 +53,7 @@ export function useGroupBatchOperations(deps) {
         }
 
         if (allSuccess) {
-            toast.success(successMessage.replace('{count}', memberCount));
+            toast.success(successMessage.replace('{count}', String(memberCount)));
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;

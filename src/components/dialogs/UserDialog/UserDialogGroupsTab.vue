@@ -572,6 +572,7 @@
 
     async function sortCurrentUserGroups() {
         const D = userDialog.value;
+        /** @type {(a: any, b: any) => number} */
         let sortMethod = () => 0;
 
         switch (D.groupSorting.value) {

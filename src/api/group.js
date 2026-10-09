@@ -92,9 +92,9 @@ const groupReq = {
         }).then((json) => {
             const args = {
                 json,
-                params
+                params,
+                ref: applyGroup(json)
             };
-            args.ref = applyGroup(json);
             return args;
         });
     },
@@ -832,11 +832,11 @@ const groupReq = {
 
     /**
      * @param {{
-     *     query: string;
-     *     n: number;
-     *     offset: number;
-     *     order: string;
-     *     sortBy: string;
+     *     query?: string;
+     *     n?: number;
+     *     offset?: number;
+     *     order?: string;
+     *     sortBy?: string;
      * }} params
      * @returns {Promise<{ json: any; params }>}
      */

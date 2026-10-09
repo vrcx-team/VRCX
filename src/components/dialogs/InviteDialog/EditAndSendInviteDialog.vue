@@ -84,21 +84,18 @@
             const params = {
                 message: D.newMessage
             };
-            await inviteMessagesRequest
-                .editInviteMessage(params, messageType, slot)
-                .catch((err) => {
-                    throw err;
-                })
-                .then((args) => {
-                    if (args.json[slot].message === I.messageSlot.message) {
-                        const errorMessage = t('message.invite.message_update_failed');
-                        toast.error(errorMessage);
-                        throw new Error(errorMessage);
-                    } else {
-                        toast('Invite message updated');
-                    }
-                    return args;
-                });
+            let args;
+            try {
+                args = await inviteMessagesRequest.editInviteMessage(params, messageType, slot);
+            } catch (err) {
+                console.error('Invite message update failed', err);
+                return;
+            }
+            if (args.json[slot].message === I.messageSlot.message) {
+                toast.error(t('message.invite.message_update_failed'));
+                return;
+            }
+            toast('Invite message updated');
         }
         const J = props.inviteDialog;
         if (J?.visible) {
@@ -151,22 +148,22 @@
             if (uploadImage.value) {
                 notificationRequest
                     .sendInvitePhoto(I.params, I.userId)
-                    .catch((err) => {
-                        throw err;
-                    })
                     .then((args) => {
                         toast.success('Invite photo message sent');
                         return args;
+                    })
+                    .catch((err) => {
+                        console.error(err);
                     });
             } else {
                 notificationRequest
                     .sendInvite(I.params, I.userId)
-                    .catch((err) => {
-                        throw err;
-                    })
                     .then((args) => {
                         toast.success('Invite message sent');
                         return args;
+                    })
+                    .catch((err) => {
+                        console.error(err);
                     });
             }
         } else if (messageType === 'request') {
@@ -174,23 +171,23 @@
             if (uploadImage.value) {
                 notificationRequest
                     .sendRequestInvitePhoto(I.params, I.userId)
-                    .catch((err) => {
-                        clearInviteImageUpload();
-                        throw err;
-                    })
                     .then((args) => {
                         toast.success('Request invite photo message sent');
                         return args;
+                    })
+                    .catch((err) => {
+                        clearInviteImageUpload();
+                        console.error(err);
                     });
             } else {
                 notificationRequest
                     .sendRequestInvite(I.params, I.userId)
-                    .catch((err) => {
-                        throw err;
-                    })
                     .then((args) => {
                         toast.success('Request invite message sent');
                         return args;
+                    })
+                    .catch((err) => {
+                        console.error(err);
                     });
             }
         }

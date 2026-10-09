@@ -138,24 +138,24 @@
             if (uploadImage.value) {
                 notificationRequest
                     .sendInvitePhoto(D.params, D.userId)
-                    .catch((err) => {
-                        throw err;
-                    })
                     .then((args) => {
                         recordRecentAction(D.userId, 'Invite Photo');
                         toast.success('Invite photo message sent');
                         return args;
+                    })
+                    .catch((err) => {
+                        console.error(err);
                     });
             } else {
                 notificationRequest
                     .sendInvite(D.params, D.userId)
-                    .catch((err) => {
-                        throw err;
-                    })
                     .then((args) => {
                         recordRecentAction(D.userId, 'Invite Message');
                         toast.success('Invite message sent');
                         return args;
+                    })
+                    .catch((err) => {
+                        console.error(err);
                     });
             }
         } else if (messageType === 'request') {
@@ -163,25 +163,25 @@
             if (uploadImage.value) {
                 notificationRequest
                     .sendRequestInvitePhoto(D.params, D.userId)
-                    .catch((err) => {
-                        clearInviteImageUpload();
-                        throw err;
-                    })
                     .then((args) => {
                         recordRecentAction(D.userId, 'Request Invite Photo');
                         toast.success('Request invite photo message sent');
                         return args;
+                    })
+                    .catch((err) => {
+                        clearInviteImageUpload();
+                        console.error(err);
                     });
             } else {
                 notificationRequest
                     .sendRequestInvite(D.params, D.userId)
-                    .catch((err) => {
-                        throw err;
-                    })
                     .then((args) => {
                         recordRecentAction(D.userId, 'Request Invite Message');
                         toast.success('Request invite message sent');
                         return args;
+                    })
+                    .catch((err) => {
+                        console.error(err);
                     });
             }
         }

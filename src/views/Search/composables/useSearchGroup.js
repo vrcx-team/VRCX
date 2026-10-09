@@ -5,6 +5,14 @@ import { useSearchStore } from '../../../stores';
 import { replaceBioSymbols } from '../../../shared/utils';
 import { groupRequest } from '../../../api';
 
+function createDefaultSearchGroupParams() {
+    return {
+        n: 60,
+        offset: 0,
+        query: ''
+    };
+}
+
 /**
  * Group search composable for Search view.
  * Manages group search state and pagination.
@@ -12,14 +20,13 @@ import { groupRequest } from '../../../api';
 export function useSearchGroup() {
     const { searchText } = storeToRefs(useSearchStore());
 
-    const searchGroupParams = ref({});
+    const searchGroupParams = ref(createDefaultSearchGroupParams());
     const searchGroupResults = ref([]);
     const isSearchGroupLoading = ref(false);
 
     async function searchGroup() {
         searchGroupParams.value = {
-            n: 60,
-            offset: 0,
+            ...createDefaultSearchGroupParams(),
             query: replaceBioSymbols(searchText.value)
         };
         await moreSearchGroup();
@@ -53,7 +60,7 @@ export function useSearchGroup() {
     }
 
     function clearGroupSearch() {
-        searchGroupParams.value = {};
+        searchGroupParams.value = createDefaultSearchGroupParams();
         searchGroupResults.value = [];
     }
 

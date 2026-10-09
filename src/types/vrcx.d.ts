@@ -18,7 +18,7 @@ export interface moderations {
     isChatBoxMuted: boolean;
 }
 
-export interface VrcxUser extends Omit<Json<User>, 'friendKey'> {
+export interface VrcxUser extends Json<User> {
     $location: {};
     $location_at: number;
     $online_for: number;
@@ -49,7 +49,7 @@ export interface VrcxUser extends Omit<Json<User>, 'friendKey'> {
     $memo: string;
 }
 
-export interface VrcxCurrentUser extends Omit<Json<CurrentUser>, 'friendKey'> {
+export interface VrcxCurrentUser extends Json<CurrentUser> {
     $online_for?: number;
     $offline_for?: number | null;
     $location_at?: number;

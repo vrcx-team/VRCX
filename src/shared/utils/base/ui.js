@@ -52,7 +52,7 @@ function applyThemeColorStyle(theme) {
     if (!styleEl) {
         styleEl = document.createElement('link');
         styleEl.id = THEME_COLOR_STYLE_ID;
-        styleEl.rel = 'stylesheet';
+        styleEl.setAttribute('rel', 'stylesheet');
         document.head.appendChild(styleEl);
     }
 
@@ -136,7 +136,7 @@ function applyThemeModeStyle(themeMode) {
     if (!styleEl) {
         styleEl = document.createElement('link');
         styleEl.id = THEME_MODE_STYLE_ID;
-        styleEl.rel = 'stylesheet';
+        styleEl.setAttribute('rel', 'stylesheet');
         document.head.appendChild(styleEl);
     }
 

@@ -235,7 +235,7 @@ export async function runCheckVRChatDebugLoggingFlow() {
             // key not found
             return;
         }
-        if (parseInt(loggingEnabled, 10) === 1) {
+        if (parseInt(String(loggingEnabled), 10) === 1) {
             // already enabled
             return;
         }

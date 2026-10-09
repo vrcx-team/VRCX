@@ -48,7 +48,7 @@ export const useChartsStore = defineStore('Charts', () => {
     });
 
     const friendCount = computed(() => friendStore.friends.size || 0);
-    const currentUser = computed(() => userStore.currentUser?.value ?? userStore.currentUser);
+    const currentUser = computed(() => userStore.currentUser);
     const isOptOut = computed(() => Boolean(currentUser.value?.hasSharedConnectionsOptOut));
 
     function showInfoMessage(message, type) {

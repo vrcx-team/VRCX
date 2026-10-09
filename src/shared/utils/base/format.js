@@ -42,7 +42,7 @@ function formatTimeUnit(value, unit) {
 function timeToText(sec, isNeedSeconds = false) {
     let n = Number(sec);
     if (isNaN(n)) {
-        return escapeTag(sec);
+        return escapeTag(String(sec));
     }
     n = Math.floor(n / 1000);
     const arr = [];
@@ -148,12 +148,12 @@ function formatSeconds(duration) {
     const pad = function (num, size) {
             return `000${num}`.slice(size * -1);
         },
-        time = parseFloat(duration).toFixed(3),
+        time = Number(Number(duration).toFixed(3)),
         hours = Math.floor(time / 60 / 60),
         minutes = Math.floor(time / 60) % 60,
         seconds = Math.floor(time - minutes * 60);
     let hoursOut = '';
-    if (hours > '0') {
+    if (hours > 0) {
         hoursOut = `${pad(hours, 2)}:`;
     }
     return `${hoursOut + pad(minutes, 2)}:${pad(seconds, 2)}`;
@@ -183,13 +183,13 @@ function formatFileSize(bytes) {
 function convertYoutubeTime(duration) {
     let a = duration.match(/\d+/g);
     if (duration.indexOf('M') >= 0 && duration.indexOf('H') === -1 && duration.indexOf('S') === -1) {
-        a = [0, a[0], 0];
+        a = ['0', a[0], '0'];
     }
     if (duration.indexOf('H') >= 0 && duration.indexOf('M') === -1) {
-        a = [a[0], 0, a[1]];
+        a = [a[0], '0', a[1]];
     }
     if (duration.indexOf('H') >= 0 && duration.indexOf('M') === -1 && duration.indexOf('S') === -1) {
-        a = [a[0], 0, 0];
+        a = [a[0], '0', '0'];
     }
     let length = 0;
     if (a.length === 3) {

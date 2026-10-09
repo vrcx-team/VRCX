@@ -149,7 +149,7 @@ async function refreshStaleUserProfile(userId) {
 }
 
 /**
- * @param {Omit<import('@/types/vrcx').Json<import('vrchat').User>, 'friendKey'>} json
+ * @param {import('@/types/vrcx').Json<import('vrchat').User>} json
  * @returns {import('@/types/vrcx').VrcxUser}
  */
 export function applyUser(json) {

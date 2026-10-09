@@ -56,7 +56,7 @@ const timeColumn = () => ({
     cell: ({ row }) => <span>{row.original?.timer ?? ''}</span>
 });
 
-const actionsColumn = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt, onLaunch }) => ({
+const actionsColumn = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt, onLaunch = null }) => ({
     id: 'actions',
     enableSorting: false,
     size: onLaunch ? 140 : 120,

@@ -334,10 +334,10 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     }
 
     /**
-     * @param {number} value
+     * @param {any} value
      */
     function setRecentActionCooldownMinutes(value) {
-        const parsed = parseInt(value, 10);
+        const parsed = parseInt(String(value), 10);
         recentActionCooldownMinutes.value = Number.isNaN(parsed) ? 60 : Math.min(1440, Math.max(1, parsed));
         configRepository.setInt('VRCX_recentActionCooldownMinutes', recentActionCooldownMinutes.value);
     }

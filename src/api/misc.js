@@ -193,10 +193,9 @@ const miscReq = {
     },
 
     /**
-     * @param params
      * @param {{
      *     userId: string;
-     *     emojiId: string;
+     *     emojiId?: string;
      * }} params
      * @returns {Promise<{ json: any; params }>}
      */

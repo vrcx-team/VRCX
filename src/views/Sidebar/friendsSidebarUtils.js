@@ -4,7 +4,7 @@
  * @param {string} opts.label - Display label
  * @param {number | null} [opts.count] - Item count
  * @param {boolean} [opts.expanded] - Whether section is expanded
- * @param {number | null} [opts.headerPadding] - Top padding in px
+ * @param {string | null} [opts.headerPadding] - CSS padding
  * @param {number | null} [opts.paddingBottom] - Bottom padding in px
  * @param {Function | null} [opts.onClick] - Click handler
  * @returns {object} Row object

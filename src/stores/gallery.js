@@ -195,13 +195,15 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
         const r = new FileReader();
         r.onload = function () {
-            uploadImage.value = btoa(r.result);
+            uploadImage.value = btoa(/** @type {string} */ (r.result));
         };
         r.readAsBinaryString(file);
     }
 
     function clearInviteImageUpload() {
-        const buttonList = document.querySelectorAll('.inviteImageUploadButton');
+        const buttonList = /** @type {NodeListOf<HTMLInputElement>} */ (
+            document.querySelectorAll('.inviteImageUploadButton')
+        );
         buttonList.forEach((button) => (button.value = ''));
         uploadImage.value = '';
     }

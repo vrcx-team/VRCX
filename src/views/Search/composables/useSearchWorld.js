@@ -5,6 +5,14 @@ import { replaceBioSymbols } from '../../../shared/utils';
 import { useAuthStore, useSearchStore, useWorldStore } from '../../../stores';
 import { worldRequest } from '../../../api';
 
+/** @returns {import('vrchat').SearchWorlds['query']} */
+function createDefaultSearchWorldParams() {
+    return {
+        n: 60,
+        offset: 0
+    };
+}
+
 /**
  * World search composable for Search view.
  * Manages world search state, category selection, and pagination.
@@ -16,7 +24,7 @@ export function useSearchWorld() {
 
     const searchWorldOption = ref('');
     const searchWorldLabs = ref(false);
-    const searchWorldParams = ref({});
+    const searchWorldParams = ref(createDefaultSearchWorldParams());
     const searchWorldCategoryIndex = ref(null);
     const searchWorldResults = ref([]);
     const isSearchWorldLoading = ref(false);
@@ -27,18 +35,15 @@ export function useSearchWorld() {
     function searchWorld(ref) {
         searchWorldOption.value = '';
         searchWorldCategoryIndex.value = ref?.index ?? null;
-        const params = {
-            n: 60,
-            offset: 0
-        };
+        const params = createDefaultSearchWorldParams();
         switch (ref.sortHeading) {
             case 'featured':
                 params.sort = 'order';
-                params.featured = 'true';
+                params.featured = true;
                 break;
             case 'trending':
                 params.sort = 'popularity';
-                params.featured = 'false';
+                params.featured = false;
                 break;
             case 'updated':
                 params.sort = 'updated';
@@ -66,7 +71,7 @@ export function useSearchWorld() {
                 break;
             case 'heat':
                 params.sort = 'heat';
-                params.featured = 'false';
+                params.featured = false;
                 break;
             default:
                 params.sort = 'relevance';
@@ -133,7 +138,7 @@ export function useSearchWorld() {
     }
 
     function clearWorldSearch() {
-        searchWorldParams.value = {};
+        searchWorldParams.value = createDefaultSearchWorldParams();
         searchWorldResults.value = [];
     }
 

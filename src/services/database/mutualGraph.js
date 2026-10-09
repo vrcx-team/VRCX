@@ -149,6 +149,10 @@ const mutualGraph = {
         return mutualCountMap;
     },
 
+    /**
+     * @param {string} friendId
+     * @param {{ lastFetchedAt?: string; optedOut: boolean }} meta
+     */
     async upsertMutualGraphMeta(friendId, { lastFetchedAt, optedOut }) {
         if (!dbVars.userPrefix || !friendId) {
             return;

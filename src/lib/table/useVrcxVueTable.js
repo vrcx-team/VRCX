@@ -28,7 +28,7 @@ export function safeJsonParse(str) {
  * @param wait
  */
 function debounce(fn, wait) {
-    let t = 0;
+    let t = null;
     return (...args) => {
         if (t) {
             clearTimeout(t);

@@ -44,7 +44,7 @@ export async function initSentry(app) {
             replaysOnErrorSampleRate: 1.0,
             tracesSampleRate: 0.0001,
             beforeSend(event, hint) {
-                const error = hint.originalException;
+                const error = /** @type {any} */ (hint.originalException);
                 if (error && typeof error.message === 'string') {
                     if (
                         error.message.includes('401') ||

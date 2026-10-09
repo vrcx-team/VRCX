@@ -215,7 +215,7 @@
     const friendProfiles = shallowRef(new Map());
     const FRIEND_LIST_SEARCH_DEBOUNCE_MS = 150;
     const FRIEND_STATS_REFRESH_INTERVAL_MS = 30000;
-    let friendsListSearchTimer = 0;
+    let friendsListSearchTimer = null;
     let friendStatsRefreshInFlight = null;
     let lastFriendStatsRefreshAt = 0;
     let lastFriendStatsRefreshKey = '';
@@ -362,7 +362,7 @@
             clearTimeout(friendsListSearchTimer);
         }
         friendsListSearchTimer = setTimeout(() => {
-            friendsListSearchTimer = 0;
+            friendsListSearchTimer = null;
             applyFriendsListSearchChange();
         }, FRIEND_LIST_SEARCH_DEBOUNCE_MS);
     }
@@ -370,7 +370,7 @@
     function friendsListSearchChange() {
         if (friendsListSearchTimer) {
             clearTimeout(friendsListSearchTimer);
-            friendsListSearchTimer = 0;
+            friendsListSearchTimer = null;
         }
         applyFriendsListSearchChange();
     }

@@ -236,6 +236,7 @@
         }
     );
 
+    /** @type {import('vue').Ref<any>} */
     const treeData = ref({});
 
     /**

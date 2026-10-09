@@ -67,6 +67,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         toVersion: 0
     });
     const databaseReadyForAutoLogin = ref(false);
+    /** @type {(value?: unknown) => void} */
     let resolveDatabaseInit = () => {};
     const databaseInitComplete = new Promise((resolve) => {
         resolveDatabaseInit = resolve;

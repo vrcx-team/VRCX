@@ -91,7 +91,7 @@ const favoriteReq = {
     },
 
     /**
-     * @param {{ n: number; offset: number; type: string }} params
+     * @param {{ n: number; offset: number; type?: string; ownerId?: string }} params
      * @returns {Promise<{ json: any; params }>}
      */
     getFavoriteGroups(params) {

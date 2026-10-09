@@ -770,6 +770,7 @@
     });
 
     const groupDialogTabCurrentName = ref('0');
+    /** @type {import('vue').Ref<any>} */
     const treeData = ref({});
     const imageError = ref(false);
     const bannerError = ref(false);

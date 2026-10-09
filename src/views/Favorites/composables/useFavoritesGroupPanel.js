@@ -11,7 +11,7 @@ import { computed, ref } from 'vue';
  * @param {import('vue').Ref<Array>} [options.historyItems] - Items for history group
  * @returns {object}
  */
-export function useFavoritesGroupPanel(options = {}) {
+export function useFavoritesGroupPanel(options) {
     const {
         remoteGroups,
         localGroups,

@@ -745,7 +745,6 @@
         toast,
         modalStore,
         userDialog,
-        currentUser,
         cachedAvatars,
         cachedAvatarModerations,
         showAvatarDialog,

@@ -62,7 +62,7 @@ const InsertKeyInObj = (obj, key, value, above_key) => {
         }
 
         return newObj;
-    }, {});
+    }, /** @type {Record<string, any>} */ ({}));
     delete ret.dummy;
 
     // Clear keys on old object

@@ -3,6 +3,16 @@ import { storeToRefs } from 'pinia';
 
 import { useSearchStore } from '../../../stores';
 
+function createDefaultSearchUserParams() {
+    return {
+        n: 60,
+        offset: 0,
+        search: '',
+        customFields: 'displayName',
+        sort: 'relevance'
+    };
+}
+
 /**
  * User search composable for Search view.
  * Manages user search state, filters, and pagination.
@@ -11,16 +21,14 @@ export function useSearchUser() {
     const { searchText } = storeToRefs(useSearchStore());
     const { moreSearchUser } = useSearchStore();
 
-    const searchUserParams = ref({});
+    const searchUserParams = ref(createDefaultSearchUserParams());
     const searchUserSortByLastLoggedIn = ref(false);
     const isSearchUserLoading = ref(false);
 
     async function searchUser() {
         searchUserParams.value = {
-            n: 60,
-            offset: 0,
+            ...createDefaultSearchUserParams(),
             search: searchText.value,
-            customFields: 'displayName',
             sort: searchUserSortByLastLoggedIn.value ? 'last_login' : 'relevance'
         };
         await handleMoreSearchUser();
@@ -36,7 +44,7 @@ export function useSearchUser() {
     }
 
     function clearUserSearch() {
-        searchUserParams.value = {};
+        searchUserParams.value = createDefaultSearchUserParams();
     }
 
     return {

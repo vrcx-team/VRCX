@@ -238,6 +238,7 @@
 
     const { t } = useI18n();
 
+    /** @type {import('vue').Ref<Record<string, any>>} */
     const savedCredentials = ref({});
     const requiredMessage = 'Required';
 

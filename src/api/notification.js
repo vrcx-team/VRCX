@@ -6,9 +6,9 @@ const notificationReq = {
      * @typedef {object} NotificationFetchParameter
      * @property {number} n
      * @property {number} offset
-     * @property {boolean} sent
-     * @property {string} type
-     * @property {'five_minutes_ago' | (string & {})} after ISO8601 or 'five_minutes_ago'
+     * @property {boolean} [sent]
+     * @property {string} [type]
+     * @property {'five_minutes_ago' | (string & {})} [after] ISO8601 or 'five_minutes_ago'
      */
 
     /**

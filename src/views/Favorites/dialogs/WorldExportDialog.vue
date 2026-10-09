@@ -236,8 +236,8 @@
             favoriteWorlds.value.forEach((ref) => {
                 lines.push(formatCsvRow(ref.ref, propsForQuery));
             });
-            for (let i = 0; i < localWorldFavoritesList.length; ++i) {
-                const worldId = localWorldFavoritesList[i];
+            for (let i = 0; i < localWorldFavoritesList.value.length; ++i) {
+                const worldId = localWorldFavoritesList.value[i];
                 const ref = cachedWorlds.get(worldId);
                 if (typeof ref !== 'undefined') {
                     lines.push(formatCsvRow(ref, propsForQuery));

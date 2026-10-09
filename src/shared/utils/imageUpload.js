@@ -22,7 +22,7 @@ export function readFileAsBase64(blob) {
         r.onerror = reject;
         r.onabort = reject;
         r.onload = () => {
-            const bytes = new Uint8Array(r.result);
+            const bytes = new Uint8Array(/** @type {ArrayBuffer} */ (r.result));
             let binary = '';
             for (let i = 0; i < bytes.length; i++) {
                 binary += String.fromCharCode(bytes[i]);

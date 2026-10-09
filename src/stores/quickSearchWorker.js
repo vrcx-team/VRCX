@@ -194,20 +194,20 @@ function searchFriends(query, cleanQuery, comparer, limit = 10) {
             });
         }
     }
-    // Pre-compute prefix flags to avoid repeated Collator calls in sort
-    for (const r of results) {
-        r._isPrefix = isPrefixMatch(r.name, cleanQuery, comparer);
-    }
+    return sortAndLimit(results, cleanQuery, comparer, limit);
+}
+
+function sortAndLimit(results, cleanQuery, comparer, limit) {
+    // Pre-compute prefix matches to avoid repeated Collator calls in sort
+    const prefixMatches = new Set(results.filter((r) => isPrefixMatch(r.name, cleanQuery, comparer)));
     results.sort((a, b) => {
-        if (a._isPrefix && !b._isPrefix) return -1;
-        if (b._isPrefix && !a._isPrefix) return 1;
+        const aIsPrefix = prefixMatches.has(a);
+        const bIsPrefix = prefixMatches.has(b);
+        if (aIsPrefix && !bIsPrefix) return -1;
+        if (bIsPrefix && !aIsPrefix) return 1;
         return comparer.compare(a.name, b.name);
     });
     if (results.length > limit) results.length = limit;
-    // Clean up internal sort field before returning
-    for (const r of results) {
-        delete r._isPrefix;
-    }
     return results;
 }
 
@@ -225,21 +225,7 @@ function searchItems(cleanQuery, items, type, comparer, ownerKey, ownerId, limit
             });
         }
     }
-    // Pre-compute prefix flags to avoid repeated Collator calls in sort
-    for (const r of results) {
-        r._isPrefix = isPrefixMatch(r.name, cleanQuery, comparer);
-    }
-    results.sort((a, b) => {
-        if (a._isPrefix && !b._isPrefix) return -1;
-        if (b._isPrefix && !a._isPrefix) return 1;
-        return comparer.compare(a.name, b.name);
-    });
-    if (results.length > limit) results.length = limit;
-    // Clean up internal sort field before returning
-    for (const r of results) {
-        delete r._isPrefix;
-    }
-    return results;
+    return sortAndLimit(results, cleanQuery, comparer, limit);
 }
 
 function handleSearch(payload) {

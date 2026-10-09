@@ -74,15 +74,9 @@
     import { useSearchStore } from '@/stores';
     import { useVrcxVueTable } from '@/lib/table/useVrcxVueTable';
 
-    import {
-        useAvatarStore,
-        useGalleryStore,
-        useGroupStore,
-        usePhotonStore,
-        useUserStore,
-        useVrcxStore,
-        useWorldStore
-    } from '../../../stores';
+    import { useGalleryStore, usePhotonStore, useUserStore, useVrcxStore, useWorldStore } from '../../../stores';
+    import { showAvatarDialog } from '../../../coordinators/avatarCoordinator';
+    import { showGroupDialog } from '../../../coordinators/groupCoordinator';
     import { showWorldDialog } from '../../../coordinators/worldCoordinator';
     import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
     import { createColumns } from './photonEventColumns.jsx';
@@ -108,9 +102,6 @@
 
     const { stringComparer } = storeToRefs(useSearchStore());
 
-    const { showAvatarDialog } = useAvatarStore();
-
-    const { showGroupDialog } = useGroupStore();
     const { showFullscreenImageDialog } = useGalleryStore();
     const { ipcEnabled } = storeToRefs(useVrcxStore());
 

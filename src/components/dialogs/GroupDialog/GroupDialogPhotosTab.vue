@@ -46,10 +46,7 @@
                             <img
                                 :src="image.imageUrl"
                                 :class="['max-w-full', 'max-h-full']"
-                                @error="
-                                    $event.target.style.display = 'none';
-                                    $event.target.nextElementSibling.style.display = 'flex';
-                                "
+                                @error="onImageError"
                                 loading="lazy" />
                             <div
                                 class="hidden h-[200px] w-full items-center justify-center bg-muted"
@@ -85,6 +82,15 @@
         groupGalleryStatus,
         getGroupGalleries
     } = useGroupGalleries(groupDialog);
+
+    /**
+     * @param {Event} event
+     */
+    function onImageError(event) {
+        const img = /** @type {HTMLElement} */ (event.target);
+        img.style.display = 'none';
+        /** @type {HTMLElement} */ (img.nextElementSibling).style.display = 'flex';
+    }
 
     defineExpose({
         getGroupGalleries

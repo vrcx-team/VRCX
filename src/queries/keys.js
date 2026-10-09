@@ -4,8 +4,8 @@ export const queryKeys = Object.freeze({
     avatar: (avatarId) => ['avatar', avatarId],
     world: (worldId) => ['world', worldId],
     group: (groupId, includeRoles = false) => ['group', groupId, Boolean(includeRoles)],
-    groupMember: ({ groupId, userId } = {}) => ['group', groupId, 'member', userId],
-    groupMembers: ({ groupId, n = 100, offset = 0, sort = '', roleId = '' } = {}) => [
+    groupMember: ({ groupId, userId }) => ['group', groupId, 'member', userId],
+    groupMembers: ({ groupId, n = 100, offset = 0, sort = '', roleId = '' }) => [
         'group',
         groupId,
         'members',
@@ -16,7 +16,7 @@ export const queryKeys = Object.freeze({
             roleId: String(roleId || '')
         }
     ],
-    groupGallery: ({ groupId, galleryId, n = 100, offset = 0 } = {}) => [
+    groupGallery: ({ groupId, galleryId, n = 100, offset = 0 }) => [
         'group',
         groupId,
         'gallery',
@@ -27,7 +27,7 @@ export const queryKeys = Object.freeze({
         }
     ],
     groupCalendar: (groupId) => ['group', groupId, 'calendar'],
-    groupCalendarEvent: ({ groupId, eventId } = {}) => ['group', groupId, 'calendarEvent', eventId],
+    groupCalendarEvent: ({ groupId, eventId }) => ['group', groupId, 'calendarEvent', eventId],
     avatarGallery: (avatarId) => ['avatar', avatarId, 'gallery'],
     worldsByUser: ({
         userId,
@@ -38,7 +38,7 @@ export const queryKeys = Object.freeze({
         user = '',
         releaseStatus = '',
         option = ''
-    } = {}) => [
+    }) => [
         'worlds',
         'user',
         userId,
@@ -54,7 +54,7 @@ export const queryKeys = Object.freeze({
     ],
     favoriteLimits: () => ['favorite', 'limits'],
     userInventoryItem: ({ inventoryId, userId }) => ['inventory', 'item', userId, inventoryId],
-    fileAnalysis: ({ fileId, version, variant } = {}) => ['analysis', fileId, Number(version), String(variant || '')],
+    fileAnalysis: ({ fileId, version, variant }) => ['analysis', fileId, Number(version), String(variant || '')],
     worldPersistData: (worldId) => ['world', worldId, 'persistData'],
     mutualCounts: (userId) => ['user', userId, 'mutualCounts'],
     visits: () => ['visits'],

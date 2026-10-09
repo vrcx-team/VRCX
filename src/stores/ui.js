@@ -215,6 +215,7 @@ export const useUiStore = defineStore('Ui', () => {
      * @param {string} data.id
      * @param {string} [data.tag]
      * @param {string} [data.shortName]
+     * @param {string} [data.label]
      * @returns {boolean}
      */
     function openDialog(data) {

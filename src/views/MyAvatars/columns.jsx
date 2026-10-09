@@ -84,8 +84,9 @@ export function getColumns({ onShowAvatarDialog, onContextMenuAction, currentAva
                             loading="lazy"
                             onClick={() => onShowAvatarDialog(ref.id)}
                             onError={(e) => {
-                                e.target.style.display = 'none';
-                                e.target.nextElementSibling.style.display = '';
+                                const img = /** @type {HTMLElement} */ (e.target);
+                                img.style.display = 'none';
+                                /** @type {HTMLElement} */ (img.nextElementSibling).style.display = '';
                             }}
                         />
                         <div

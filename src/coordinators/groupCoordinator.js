@@ -564,7 +564,7 @@ export function getGroupDialogGroup(groupId, existingRef) {
     D.isGetGroupDialogGroupLoading = false;
 
     const refPromise = existingRef
-        ? Promise.resolve({ ref: existingRef })
+        ? Promise.resolve({ ref: existingRef, args: undefined })
         : queryRequest
               .fetch('group.dialog', { groupId, includeRoles: true })
               .then((args) => ({ ref: applyGroup(args.json), args }));
@@ -833,7 +833,7 @@ export async function updateInGameGroupOrder() {
         if (!json) {
             return;
         }
-        groupStore.setInGameGroupOrder(JSON.parse(json));
+        groupStore.setInGameGroupOrder(JSON.parse(String(json)));
     } catch (err) {
         console.error(err);
     }

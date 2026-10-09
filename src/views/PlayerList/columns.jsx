@@ -73,8 +73,9 @@ export const createColumns = ({
                             class="h-4 w-4 rounded-sm object-cover"
                             loading="lazy"
                             onError={(e) => {
-                                e.target.style.display = 'none';
-                                e.target.nextElementSibling.style.display = '';
+                                const img = /** @type {HTMLElement} */ (e.target);
+                                img.style.display = 'none';
+                                /** @type {HTMLElement} */ (img.nextElementSibling).style.display = '';
                             }}
                         />
                         <div class="h-4 w-4 rounded-sm bg-muted flex items-center justify-center" style="display: none">

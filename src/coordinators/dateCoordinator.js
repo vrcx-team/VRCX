@@ -57,7 +57,7 @@ function toLocalDate(date, dateFormat) {
 }
 
 /**
- * @param {string} dateStr
+ * @param {string | number} dateStr
  * @param {'long' | 'short' | 'time' | 'date'} format
  * @returns {string}
  */

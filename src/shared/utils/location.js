@@ -5,7 +5,7 @@ export { parseLocation, displayLocation, resolveRegion, translateAccessType } fr
 /**
  * @param {Array} friendsArr
  * @param {object} lastLocation - Last location from location store
- * @param {Set} lastLocation.friendList
+ * @param {Map<string, any>} lastLocation.friendList
  * @param {string} lastLocation.location
  */
 function getFriendsLocations(friendsArr, lastLocation) {

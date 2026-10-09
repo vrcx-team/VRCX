@@ -60,10 +60,6 @@
         if (uploadImage.value) {
             notificationRequest
                 .sendInviteResponsePhoto(params, D.invite.id)
-                .catch((err) => {
-                    console.error('Invite response photo failed', err);
-                    toast.error(t('message.error'));
-                })
                 .then((args) => {
                     notificationRequest
                         .hideNotification({
@@ -75,16 +71,16 @@
                     toast.success(t('message.invite.response_photo_sent'));
                     return args;
                 })
+                .catch((err) => {
+                    console.error('Invite response photo failed', err);
+                    toast.error(t('message.error'));
+                })
                 .finally(() => {
                     emit('closeInviteDialog');
                 });
         } else {
             notificationRequest
                 .sendInviteResponse(params, D.invite.id)
-                .catch((err) => {
-                    console.error('Invite response failed', err);
-                    toast.error(t('message.error'));
-                })
                 .then((args) => {
                     notificationRequest
                         .hideNotification({
@@ -95,6 +91,10 @@
                         });
                     toast.success(t('message.invite.response_sent'));
                     return args;
+                })
+                .catch((err) => {
+                    console.error('Invite response failed', err);
+                    toast.error(t('message.error'));
                 })
                 .finally(() => {
                     emit('closeInviteDialog');

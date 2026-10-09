@@ -77,6 +77,7 @@ export const useSearchStore = defineStore('Search', () => {
                     console.error('getUsers gave us garbage', json);
                     continue;
                 }
+                // @ts-ignore
                 applyUser(json);
             }
 
