@@ -32,7 +32,7 @@
             default: false
         },
         friends: {
-            type: Map,
+            type: /** @type {import('vue').PropType<Map<string, any>>} */ (Map),
             default: () => new Map()
         }
     });

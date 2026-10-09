@@ -38,6 +38,17 @@
 
     const delegatedProps = reactiveOmit(props, 'class');
 
+    /**
+     * @param {CustomEvent<{ originalEvent: PointerEvent }>} event
+     */
+    function handlePointerDownOutside(event) {
+        const originalEvent = event.detail.originalEvent;
+        const target = /** @type {HTMLElement} */ (originalEvent.target);
+        if (originalEvent.offsetX > target.clientWidth || originalEvent.offsetY > target.clientHeight) {
+            event.preventDefault();
+        }
+    }
+
     const forwarded = useForwardPropsEmits(delegatedProps, emits);
 
     const injectedOpen = inject(DIALOG_OPEN_INJECTION_KEY, null);
@@ -73,15 +84,7 @@
                     )
                 "
                 v-bind="{ ...$attrs, ...forwarded }"
-                @pointer-down-outside="
-                    (event) => {
-                        const originalEvent = event.detail.originalEvent;
-                        const target = originalEvent.target;
-                        if (originalEvent.offsetX > target.clientWidth || originalEvent.offsetY > target.clientHeight) {
-                            event.preventDefault();
-                        }
-                    }
-                ">
+                @pointer-down-outside="handlePointerDownOutside">
                 <slot />
 
                 <VisuallyHidden as-child>

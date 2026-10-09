@@ -15,7 +15,7 @@
     const props = defineProps({
         item: { type: Object, required: true },
         index: { type: Number, required: true },
-        definitionsMap: { type: Map, required: true },
+        definitionsMap: { type: /** @type {import('vue').PropType<Map<string, any>>} */ (Map), required: true },
         dragState: { type: Object, default: () => ({}) }
     });
 

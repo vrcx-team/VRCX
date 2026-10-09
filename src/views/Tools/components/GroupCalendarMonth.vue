@@ -12,7 +12,7 @@
         CalendarNextButton,
         CalendarPrevButton
     } from '@/components/ui/calendar';
-    import { computed, ref, watch } from 'vue';
+    import { computed, shallowRef, watch } from 'vue';
     import { fromDate, getLocalTimeZone } from '@internationalized/date';
     import { CalendarRoot } from 'reka-ui';
     import { toDate } from 'reka-ui/date';
@@ -46,8 +46,8 @@
     const { weekStartsOn } = storeToRefs(useAppearanceSettingsStore());
     const timeZone = getLocalTimeZone();
 
-    const internalValue = ref(fromDate(props.modelValue ?? new Date(), timeZone));
-    const placeholder = ref(fromDate(props.modelValue ?? new Date(), timeZone));
+    const internalValue = shallowRef(fromDate(props.modelValue ?? new Date(), timeZone));
+    const placeholder = shallowRef(fromDate(props.modelValue ?? new Date(), timeZone));
 
     watch(
         () => props.modelValue,

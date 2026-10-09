@@ -38,10 +38,7 @@
                                 :content="t('dialog.previous_instances.chart_view')"
                                 side="bottom"
                                 :delay-duration="300">
-                                <ToggleGroupItem
-                                    value="chart"
-                                    class="px-2"
-                                    :class="viewMode === 'chart' && 'bg-accent text-accent-foreground'">
+                                <ToggleGroupItem value="chart" class="px-2">
                                     <BarChart3 class="size-4" />
                                 </ToggleGroupItem>
                             </TooltipWrapper>
@@ -69,10 +66,7 @@
                             :content="t('dialog.previous_instances.table_view')"
                             side="bottom"
                             :delay-duration="300">
-                            <ToggleGroupItem
-                                value="table"
-                                class="px-2"
-                                :class="viewMode === 'table' && 'bg-accent text-accent-foreground'">
+                            <ToggleGroupItem value="table" class="px-2">
                                 <List class="size-4" />
                             </ToggleGroupItem>
                         </TooltipWrapper>

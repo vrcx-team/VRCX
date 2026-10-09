@@ -6,7 +6,7 @@
 
     const props = defineProps({
         as: {
-            type: [String, Object, Function],
+            type: null,
             default: 'button'
         },
         asChild: {
@@ -14,11 +14,11 @@
             default: false
         },
         variant: {
-            type: String,
+            type: null,
             default: 'default'
         },
         size: {
-            type: String,
+            type: null,
             default: 'default'
         },
         isActive: {

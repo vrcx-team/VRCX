@@ -23,7 +23,6 @@
                             <ToggleGroupItem
                                 value="table"
                                 class="px-2"
-                                :class="sessionsViewMode === 'table' && 'bg-accent text-accent-foreground'"
                                 :ariaLabel="t('view.game_log.sessions.switch_to_table')">
                                 <Table2 class="size-4" />
                             </ToggleGroupItem>

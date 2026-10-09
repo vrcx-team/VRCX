@@ -212,7 +212,7 @@
             required: true
         },
         themes: {
-            type: Array,
+            type: /** @type {import('vue').PropType<string[]>} */ (Array),
             default: () => []
         },
         themeMode: {
@@ -224,7 +224,7 @@
             default: 'standard'
         },
         themeColors: {
-            type: Array,
+            type: /** @type {import('vue').PropType<{ key: string; swatch: string }[]>} */ (Array),
             default: () => []
         },
         currentThemeColor: {

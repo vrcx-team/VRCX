@@ -25,7 +25,10 @@
     import { formatTimestampKey } from '@/shared/utils/activityEngine';
 
     const props = defineProps({
-        sessions: { type: Array, default: () => [] },
+        sessions: {
+            type: /** @type {import('vue').PropType<{ start: number; end: number }[]>} */ (Array),
+            default: () => []
+        },
         rangeDays: { type: Number, default: 30 }
     });
 

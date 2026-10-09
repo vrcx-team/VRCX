@@ -53,8 +53,8 @@
     import NotificationItem from './NotificationItem.vue';
 
     const props = defineProps({
-        notifications: { type: Array, required: true },
-        recentNotifications: { type: Array, default: () => [] }
+        notifications: { type: /** @type {import('vue').PropType<any[]>} */ (Array), required: true },
+        recentNotifications: { type: /** @type {import('vue').PropType<any[]>} */ (Array), default: () => [] }
     });
 
     defineEmits(['show-invite-response', 'show-invite-request-response', 'navigate-to-table']);

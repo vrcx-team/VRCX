@@ -74,7 +74,7 @@ export const useAppearanceSettingsStore = defineStore(
         const tablePageSizes = ref([...DEFAULT_TABLE_PAGE_SIZES]);
         const dtHour12 = ref(false);
         const dtIsoFormat = ref(false);
-        const weekStartsOn = ref(1);
+        const weekStartsOn = ref(/** @type {0 | 1 | 6} */ (1));
         const sidebarSortMethod1 = ref('Sort Private to Bottom');
         const sidebarSortMethod2 = ref('Sort by Time in Instance');
         const sidebarSortMethod3 = ref('Sort by Last Active');
@@ -264,7 +264,9 @@ export const useAppearanceSettingsStore = defineStore(
 
             dtHour12.value = dtHour12Config;
             dtIsoFormat.value = dtIsoFormatConfig;
-            weekStartsOn.value = [0, 1, 6].includes(weekStartsOnConfig) ? weekStartsOnConfig : 1;
+            weekStartsOn.value = /** @type {0 | 1 | 6} */ (
+                [0, 1, 6].includes(weekStartsOnConfig) ? weekStartsOnConfig : 1
+            );
 
             currentCulture.value = await AppApi.CurrentCulture();
 
@@ -599,7 +601,7 @@ export const useAppearanceSettingsStore = defineStore(
          * @param {number} value - 0 (Sunday), 1 (Monday), or 6 (Saturday)
          */
         function setWeekStartsOn(value) {
-            const v = [0, 1, 6].includes(value) ? value : 1;
+            const v = /** @type {0 | 1 | 6} */ ([0, 1, 6].includes(value) ? value : 1);
             weekStartsOn.value = v;
             configRepository.setInt('VRCX_weekStartsOn', v);
         }

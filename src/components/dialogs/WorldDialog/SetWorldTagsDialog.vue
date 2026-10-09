@@ -107,11 +107,11 @@
 
     const props = defineProps({
         oldTags: {
-            type: Array,
+            type: /** @type {import('vue').PropType<string[]>} */ (Array),
             default: () => []
         },
         oldDisabledPropAbilities: {
-            type: Array,
+            type: /** @type {import('vue').PropType<string[]>} */ (Array),
             default: () => []
         },
         isSetWorldTagsDialogVisible: {

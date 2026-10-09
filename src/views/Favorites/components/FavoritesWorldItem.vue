@@ -190,7 +190,7 @@
 
     function handleDeleteFavorite() {
         if (props.isLocalFavorite) {
-            removeLocalWorldFavorite(props.favorite.id, props.group);
+            removeLocalWorldFavorite(props.favorite.id, /** @type {string} */ (props.group));
             return;
         }
         favoriteRequest.deleteFavorite({ objectId: props.favorite.id });

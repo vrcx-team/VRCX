@@ -536,7 +536,7 @@
     let lastMsgCount = wsState.messageCount;
 
     const wsCanvasRef = ref(null);
-    const now = useNow({ interval: 1000 });
+    const now = useNow({ scheduler: (cb) => useIntervalFn(cb, 1000) });
 
     useIntervalFn(() => {
         const delta = wsState.messageCount - lastMsgCount;

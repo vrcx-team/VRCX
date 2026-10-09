@@ -39,7 +39,7 @@
 
     const props = defineProps({
         friends: {
-            type: Map,
+            type: /** @type {import('vue').PropType<Map<string, any>>} */ (Map),
             required: true
         },
         isExportFriendsListDialogVisible: {

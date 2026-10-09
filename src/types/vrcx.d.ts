@@ -106,3 +106,9 @@ export interface RequestOptions {
 export interface WebApiOptions extends RequestOptions {
     url: string;
 }
+
+export interface TableFilter {
+    prop: string | string[];
+    value: any;
+    filterFn?: (row: any, filter: TableFilter) => boolean;
+}

@@ -12,7 +12,7 @@
         modelValue: { type: String, required: true },
         label: { type: String, default: null },
         disableAlpha: { type: Boolean, default: true },
-        presets: { type: Array, default: () => [] },
+        presets: { type: /** @type {import('vue').PropType<string[]>} */ (Array), default: () => [] },
         clearable: { type: Boolean, default: false },
         emptyValue: {
             type: String,

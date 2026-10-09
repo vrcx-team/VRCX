@@ -4,7 +4,7 @@
 
     const props = defineProps({
         as: {
-            type: [String, Object, Function],
+            type: null,
             default: 'div'
         },
         asChild: {

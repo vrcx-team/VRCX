@@ -117,16 +117,19 @@
 
     defineProps({
         sortValue: { type: String, default: 'name' },
-        extraSortOptions: { type: Array, default: () => [] },
+        extraSortOptions: {
+            type: /** @type {import('vue').PropType<{ value: string; label: string }[]>} */ (Array),
+            default: () => []
+        },
         searchQuery: { type: String, default: '' },
         searchPlaceholder: { type: String, default: '' },
         searchMode: { type: String, default: 'name' },
         searchModeVisible: { type: Boolean, default: false },
         toolbarMenuOpen: { type: Boolean, default: false },
-        cardScaleValue: { type: Array, default: () => [50] },
+        cardScaleValue: { type: /** @type {import('vue').PropType<number[]>} */ (Array), default: () => [50] },
         cardScalePercent: { type: Number, default: 100 },
         cardScaleSlider: { type: Object, default: () => ({ min: 0, max: 100, step: 1 }) },
-        cardSpacingValue: { type: Array, default: () => [50] },
+        cardSpacingValue: { type: /** @type {import('vue').PropType<number[]>} */ (Array), default: () => [50] },
         cardSpacingPercent: { type: Number, default: 100 },
         cardSpacingSlider: { type: Object, default: () => ({ min: 0, max: 100, step: 1 }) }
     });
