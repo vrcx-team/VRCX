@@ -29,6 +29,7 @@
         :data-size="context?.size || size"
         :data-spacing="context?.spacing"
         v-bind="forwardedProps"
+        :value="props.value"
         :class="
             cn(
                 toggleVariants({

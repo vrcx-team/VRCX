@@ -65,6 +65,7 @@
     <ListboxItem
         v-if="isRender"
         v-bind="forwarded"
+        :value="props.value"
         :id="id"
         ref="itemRef"
         data-slot="command-item"

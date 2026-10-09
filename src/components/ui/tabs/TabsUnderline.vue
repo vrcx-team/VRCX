@@ -10,7 +10,9 @@
         modelValue: String,
         defaultValue: String,
         items: {
-            type: Array,
+            type: /** @type {import('vue').PropType<{ value: string | number; label: string; disabled?: boolean }[]>} */ (
+                Array
+            ),
             required: true,
             validator: (value) =>
                 Array.isArray(value) &&

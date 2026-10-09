@@ -36,7 +36,9 @@
                 props.class
             )
         "
-        v-bind="forwardedProps">
+        v-bind="forwardedProps"
+        :day="props.day"
+        :month="props.month">
         <slot />
     </CalendarCellTrigger>
 </template>

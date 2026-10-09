@@ -3,12 +3,17 @@
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
 
+    /** @typedef {import('reka-ui').RadioGroupRootProps} RadioGroupRootProps */
+
     const props = defineProps({
         modelValue: { type: null, required: false },
         defaultValue: { type: null, required: false },
         disabled: { type: Boolean, required: false },
-        orientation: { type: String, required: false },
-        dir: { type: String, required: false },
+        orientation: {
+            type: /** @type {import('vue').PropType<RadioGroupRootProps['orientation']>} */ (String),
+            required: false
+        },
+        dir: { type: /** @type {import('vue').PropType<RadioGroupRootProps['dir']>} */ (String), required: false },
         loop: { type: Boolean, required: false },
         asChild: { type: Boolean, required: false },
         as: { type: null, required: false },

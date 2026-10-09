@@ -3,7 +3,10 @@
 
     const props = defineProps({
         class: { type: null, required: false },
-        style: { type: [String, Array, Object], required: false }
+        style: {
+            type: /** @type {import('vue').PropType<import('vue').StyleValue>} */ ([String, Array, Object]),
+            required: false
+        }
     });
 </script>
 

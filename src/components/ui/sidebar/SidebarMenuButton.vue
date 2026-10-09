@@ -36,7 +36,7 @@
             default: undefined
         },
         class: {
-            type: [String, Array, Object],
+            type: null,
             default: undefined
         }
     });

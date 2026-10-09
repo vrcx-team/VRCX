@@ -71,7 +71,7 @@
     });
 
     const inputType = computed(() => {
-        const rawType = props.type ?? attrs.type;
+        const rawType = /** @type {string | undefined} */ (props.type ?? attrs.type);
         if (props.showPassword) {
             return reveal.value ? 'text' : rawType || 'password';
         }

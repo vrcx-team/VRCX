@@ -21,14 +21,22 @@
         CalendarPrevButton
     } from '.';
 
+    /** @typedef {import('reka-ui').CalendarRootProps} CalendarRootProps */
+
     const props = defineProps({
         defaultValue: { type: null, required: false },
         defaultPlaceholder: { type: null, required: false },
         placeholder: { type: null, required: false },
         pagedNavigation: { type: Boolean, required: false },
         preventDeselect: { type: Boolean, required: false },
-        weekStartsOn: { type: Number, required: false },
-        weekdayFormat: { type: String, required: false },
+        weekStartsOn: {
+            type: /** @type {import('vue').PropType<CalendarRootProps['weekStartsOn']>} */ (Number),
+            required: false
+        },
+        weekdayFormat: {
+            type: /** @type {import('vue').PropType<CalendarRootProps['weekdayFormat']>} */ (String),
+            required: false
+        },
         calendarLabel: { type: String, required: false },
         fixedWeeks: { type: Boolean, required: false },
         maxValue: { type: null, required: false },
@@ -38,11 +46,23 @@
         disabled: { type: Boolean, required: false },
         readonly: { type: Boolean, required: false },
         initialFocus: { type: Boolean, required: false },
-        isDateDisabled: { type: Function, required: false },
-        isDateUnavailable: { type: Function, required: false },
-        dir: { type: String, required: false },
-        nextPage: { type: Function, required: false },
-        prevPage: { type: Function, required: false },
+        isDateDisabled: {
+            type: /** @type {import('vue').PropType<CalendarRootProps['isDateDisabled']>} */ (Function),
+            required: false
+        },
+        isDateUnavailable: {
+            type: /** @type {import('vue').PropType<CalendarRootProps['isDateUnavailable']>} */ (Function),
+            required: false
+        },
+        dir: { type: /** @type {import('vue').PropType<CalendarRootProps['dir']>} */ (String), required: false },
+        nextPage: {
+            type: /** @type {import('vue').PropType<CalendarRootProps['nextPage']>} */ (Function),
+            required: false
+        },
+        prevPage: {
+            type: /** @type {import('vue').PropType<CalendarRootProps['prevPage']>} */ (Function),
+            required: false
+        },
         modelValue: { type: null, required: false, default: undefined },
         multiple: { type: Boolean, required: false },
         disableDaysOutsideCurrentView: { type: Boolean, required: false },
@@ -50,7 +70,10 @@
         as: { type: null, required: false },
         class: { type: null, required: false },
         layout: { type: null, required: false, default: undefined },
-        yearRange: { type: Array, required: false }
+        yearRange: {
+            type: /** @type {import('vue').PropType<import('@internationalized/date').DateValue[]>} */ (Array),
+            required: false
+        }
     });
     const emits = defineEmits(['update:modelValue', 'update:placeholder']);
 

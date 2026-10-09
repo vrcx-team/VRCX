@@ -3,11 +3,19 @@
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
 
+    /** @typedef {import('reka-ui').ProgressRootProps} ProgressRootProps */
+
     const props = defineProps({
         modelValue: { type: [Number, null], required: false, default: 0 },
         max: { type: Number, required: false },
-        getValueLabel: { type: Function, required: false },
-        getValueText: { type: Function, required: false },
+        getValueLabel: {
+            type: /** @type {import('vue').PropType<ProgressRootProps['getValueLabel']>} */ (Function),
+            required: false
+        },
+        getValueText: {
+            type: /** @type {import('vue').PropType<ProgressRootProps['getValueText']>} */ (Function),
+            required: false
+        },
         asChild: { type: Boolean, required: false },
         as: { type: null, required: false },
         class: { type: null, required: false }

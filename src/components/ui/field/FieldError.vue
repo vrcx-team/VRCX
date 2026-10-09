@@ -4,7 +4,10 @@
 
     const props = defineProps({
         class: { type: null, required: false },
-        errors: { type: Array, required: false }
+        errors: {
+            type: /** @type {import('vue').PropType<(string | { message?: string } | undefined)[]>} */ (Array),
+            required: false
+        }
     });
 
     const content = computed(() => {

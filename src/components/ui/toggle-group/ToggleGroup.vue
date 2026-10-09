@@ -4,17 +4,22 @@
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
 
+    /** @typedef {import('reka-ui').ToggleGroupRootProps} ToggleGroupRootProps */
+
     const props = defineProps({
         rovingFocus: { type: Boolean, required: false },
         disabled: { type: Boolean, required: false },
-        orientation: { type: String, required: false },
-        dir: { type: String, required: false },
+        orientation: {
+            type: /** @type {import('vue').PropType<ToggleGroupRootProps['orientation']>} */ (String),
+            required: false
+        },
+        dir: { type: /** @type {import('vue').PropType<ToggleGroupRootProps['dir']>} */ (String), required: false },
         loop: { type: Boolean, required: false },
         asChild: { type: Boolean, required: false },
         as: { type: null, required: false },
         name: { type: String, required: false },
         required: { type: Boolean, required: false },
-        type: { type: String, required: false },
+        type: { type: /** @type {import('vue').PropType<ToggleGroupRootProps['type']>} */ (String), required: false },
         modelValue: { type: null, required: false },
         defaultValue: { type: null, required: false },
         class: { type: null, required: false },

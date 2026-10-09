@@ -1,13 +1,18 @@
 <script setup>
     import { SelectRoot, useForwardPropsEmits } from 'reka-ui';
 
+    /** @typedef {import('reka-ui').SelectRootProps} SelectRootProps */
+
     const props = defineProps({
         open: { type: Boolean, required: false },
         defaultOpen: { type: Boolean, required: false },
         defaultValue: { type: null, required: false },
         modelValue: { type: null, required: false },
-        by: { type: [String, Function], required: false },
-        dir: { type: String, required: false },
+        by: {
+            type: /** @type {import('vue').PropType<SelectRootProps['by']>} */ ([String, Function]),
+            required: false
+        },
+        dir: { type: /** @type {import('vue').PropType<SelectRootProps['dir']>} */ (String), required: false },
         multiple: { type: Boolean, required: false },
         autocomplete: { type: String, required: false },
         disabled: { type: Boolean, required: false },

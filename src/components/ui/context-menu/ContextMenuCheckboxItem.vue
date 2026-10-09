@@ -5,7 +5,10 @@
     import { cn } from '@/lib/utils';
 
     const props = defineProps({
-        modelValue: { type: [Boolean, String], required: false },
+        modelValue: {
+            type: /** @type {import('vue').PropType<boolean | 'indeterminate'>} */ ([Boolean, String]),
+            required: false
+        },
         disabled: { type: Boolean, required: false },
         textValue: { type: String, required: false },
         asChild: { type: Boolean, required: false },

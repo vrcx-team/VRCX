@@ -4,7 +4,11 @@
     import { reactiveOmit } from '@vueuse/core';
 
     const props = defineProps({
-        orientation: { type: String, required: false, default: 'vertical' },
+        orientation: {
+            type: /** @type {import('vue').PropType<import('reka-ui').SeparatorProps['orientation']>} */ (String),
+            required: false,
+            default: 'vertical'
+        },
         decorative: { type: Boolean, required: false },
         asChild: { type: Boolean, required: false },
         as: { type: null, required: false },

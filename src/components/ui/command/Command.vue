@@ -6,16 +6,27 @@
 
     import { provideCommandContext } from '.';
 
+    /** @typedef {import('reka-ui').ListboxRootProps} ListboxRootProps */
+
     const props = defineProps({
         modelValue: { type: null, required: false, default: '' },
         defaultValue: { type: null, required: false },
         multiple: { type: Boolean, required: false },
-        orientation: { type: String, required: false },
-        dir: { type: String, required: false },
+        orientation: {
+            type: /** @type {import('vue').PropType<ListboxRootProps['orientation']>} */ (String),
+            required: false
+        },
+        dir: { type: /** @type {import('vue').PropType<ListboxRootProps['dir']>} */ (String), required: false },
         disabled: { type: Boolean, required: false },
-        selectionBehavior: { type: String, required: false },
+        selectionBehavior: {
+            type: /** @type {import('vue').PropType<ListboxRootProps['selectionBehavior']>} */ (String),
+            required: false
+        },
         highlightOnHover: { type: Boolean, required: false },
-        by: { type: [String, Function], required: false },
+        by: {
+            type: /** @type {import('vue').PropType<ListboxRootProps['by']>} */ ([String, Function]),
+            required: false
+        },
         asChild: { type: Boolean, required: false },
         as: { type: null, required: false },
         name: { type: String, required: false },

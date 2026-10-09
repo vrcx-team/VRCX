@@ -17,17 +17,31 @@
         RangeCalendarPrevButton
     } from '.';
 
+    /** @typedef {import('reka-ui').RangeCalendarRootProps} RangeCalendarRootProps */
+
     const props = defineProps({
         defaultPlaceholder: { type: null, required: false },
-        defaultValue: { type: Object, required: false },
-        modelValue: { type: [Object, null], required: false },
+        defaultValue: {
+            type: /** @type {import('vue').PropType<RangeCalendarRootProps['defaultValue']>} */ (Object),
+            required: false
+        },
+        modelValue: {
+            type: /** @type {import('vue').PropType<RangeCalendarRootProps['modelValue']>} */ ([Object, null]),
+            required: false
+        },
         placeholder: { type: null, required: false },
         allowNonContiguousRanges: { type: Boolean, required: false },
         pagedNavigation: { type: Boolean, required: false },
         preventDeselect: { type: Boolean, required: false },
         maximumDays: { type: Number, required: false },
-        weekStartsOn: { type: Number, required: false },
-        weekdayFormat: { type: String, required: false },
+        weekStartsOn: {
+            type: /** @type {import('vue').PropType<RangeCalendarRootProps['weekStartsOn']>} */ (Number),
+            required: false
+        },
+        weekdayFormat: {
+            type: /** @type {import('vue').PropType<RangeCalendarRootProps['weekdayFormat']>} */ (String),
+            required: false
+        },
         calendarLabel: { type: String, required: false },
         fixedWeeks: { type: Boolean, required: false },
         maxValue: { type: null, required: false },
@@ -37,14 +51,32 @@
         disabled: { type: Boolean, required: false },
         readonly: { type: Boolean, required: false },
         initialFocus: { type: Boolean, required: false },
-        isDateDisabled: { type: Function, required: false },
-        isDateUnavailable: { type: Function, required: false },
-        isDateHighlightable: { type: Function, required: false },
-        dir: { type: String, required: false },
-        nextPage: { type: Function, required: false },
-        prevPage: { type: Function, required: false },
+        isDateDisabled: {
+            type: /** @type {import('vue').PropType<RangeCalendarRootProps['isDateDisabled']>} */ (Function),
+            required: false
+        },
+        isDateUnavailable: {
+            type: /** @type {import('vue').PropType<RangeCalendarRootProps['isDateUnavailable']>} */ (Function),
+            required: false
+        },
+        isDateHighlightable: {
+            type: /** @type {import('vue').PropType<RangeCalendarRootProps['isDateHighlightable']>} */ (Function),
+            required: false
+        },
+        dir: { type: /** @type {import('vue').PropType<RangeCalendarRootProps['dir']>} */ (String), required: false },
+        nextPage: {
+            type: /** @type {import('vue').PropType<RangeCalendarRootProps['nextPage']>} */ (Function),
+            required: false
+        },
+        prevPage: {
+            type: /** @type {import('vue').PropType<RangeCalendarRootProps['prevPage']>} */ (Function),
+            required: false
+        },
         disableDaysOutsideCurrentView: { type: Boolean, required: false },
-        fixedDate: { type: String, required: false },
+        fixedDate: {
+            type: /** @type {import('vue').PropType<RangeCalendarRootProps['fixedDate']>} */ (String),
+            required: false
+        },
         asChild: { type: Boolean, required: false },
         as: { type: null, required: false },
         class: { type: null, required: false }

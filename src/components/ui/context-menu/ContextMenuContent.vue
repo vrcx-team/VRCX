@@ -7,6 +7,8 @@
         inheritAttrs: false
     });
 
+    /** @typedef {import('reka-ui').ContextMenuContentProps} ContextMenuContentProps */
+
     const props = defineProps({
         forceMount: { type: Boolean, required: false },
         loop: { type: Boolean, required: false },
@@ -17,9 +19,15 @@
         collisionBoundary: { type: null, required: false },
         collisionPadding: { type: [Number, Object], required: false },
         hideShiftedArrow: { type: Boolean, required: false },
-        sticky: { type: String, required: false },
+        sticky: {
+            type: /** @type {import('vue').PropType<ContextMenuContentProps['sticky']>} */ (String),
+            required: false
+        },
         hideWhenDetached: { type: Boolean, required: false },
-        positionStrategy: { type: String, required: false },
+        positionStrategy: {
+            type: /** @type {import('vue').PropType<ContextMenuContentProps['positionStrategy']>} */ (String),
+            required: false
+        },
         disableUpdateOnLayoutShift: { type: Boolean, required: false },
         prioritizePosition: { type: Boolean, required: false },
         reference: { type: null, required: false },

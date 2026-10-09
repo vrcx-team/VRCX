@@ -3,11 +3,19 @@
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
 
+    /** @typedef {import('reka-ui').TabsRootProps} TabsRootProps */
+
     const props = defineProps({
         defaultValue: { type: null, required: false },
-        orientation: { type: String, required: false },
-        dir: { type: String, required: false },
-        activationMode: { type: String, required: false },
+        orientation: {
+            type: /** @type {import('vue').PropType<TabsRootProps['orientation']>} */ (String),
+            required: false
+        },
+        dir: { type: /** @type {import('vue').PropType<TabsRootProps['dir']>} */ (String), required: false },
+        activationMode: {
+            type: /** @type {import('vue').PropType<TabsRootProps['activationMode']>} */ (String),
+            required: false
+        },
         modelValue: { type: null, required: false },
         unmountOnHide: { type: Boolean, required: false },
         asChild: { type: Boolean, required: false },

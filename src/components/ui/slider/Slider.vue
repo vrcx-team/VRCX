@@ -3,18 +3,32 @@
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
 
+    /** @typedef {import('reka-ui').SliderRootProps} SliderRootProps */
+
     const props = defineProps({
-        defaultValue: { type: Array, required: false },
-        modelValue: { type: [Array, null], required: false },
+        defaultValue: {
+            type: /** @type {import('vue').PropType<SliderRootProps['defaultValue']>} */ (Array),
+            required: false
+        },
+        modelValue: {
+            type: /** @type {import('vue').PropType<SliderRootProps['modelValue']>} */ ([Array, null]),
+            required: false
+        },
         disabled: { type: Boolean, required: false },
-        orientation: { type: String, required: false },
-        dir: { type: String, required: false },
+        orientation: {
+            type: /** @type {import('vue').PropType<SliderRootProps['orientation']>} */ (String),
+            required: false
+        },
+        dir: { type: /** @type {import('vue').PropType<SliderRootProps['dir']>} */ (String), required: false },
         inverted: { type: Boolean, required: false },
         min: { type: Number, required: false },
         max: { type: Number, required: false },
         step: { type: Number, required: false },
         minStepsBetweenThumbs: { type: Number, required: false },
-        thumbAlignment: { type: String, required: false },
+        thumbAlignment: {
+            type: /** @type {import('vue').PropType<SliderRootProps['thumbAlignment']>} */ (String),
+            required: false
+        },
         asChild: { type: Boolean, required: false },
         as: { type: null, required: false },
         name: { type: String, required: false },

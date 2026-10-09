@@ -3,13 +3,18 @@
     import { Toaster as Sonner } from 'vue-sonner';
     import { cn } from '@/lib/utils';
 
+    /** @typedef {import('vue-sonner').ToasterProps} ToasterProps */
+
     const props = defineProps({
         id: { type: String, required: false },
         invert: { type: Boolean, required: false },
-        theme: { type: String, required: false },
-        position: { type: String, required: false },
-        closeButtonPosition: { type: String, required: false },
-        hotkey: { type: Array, required: false },
+        theme: { type: /** @type {import('vue').PropType<ToasterProps['theme']>} */ (String), required: false },
+        position: { type: /** @type {import('vue').PropType<ToasterProps['position']>} */ (String), required: false },
+        closeButtonPosition: {
+            type: /** @type {import('vue').PropType<ToasterProps['closeButtonPosition']>} */ (String),
+            required: false
+        },
+        hotkey: { type: /** @type {import('vue').PropType<ToasterProps['hotkey']>} */ (Array), required: false },
         richColors: { type: Boolean, required: false },
         expand: { type: Boolean, required: false },
         duration: { type: Number, required: false },
@@ -21,8 +26,11 @@
         style: { type: Object, required: false },
         offset: { type: [Object, String, Number], required: false },
         mobileOffset: { type: [Object, String, Number], required: false },
-        dir: { type: String, required: false },
-        swipeDirections: { type: Array, required: false },
+        dir: { type: /** @type {import('vue').PropType<ToasterProps['dir']>} */ (String), required: false },
+        swipeDirections: {
+            type: /** @type {import('vue').PropType<ToasterProps['swipeDirections']>} */ (Array),
+            required: false
+        },
         icons: { type: Object, required: false },
         containerAriaLabel: { type: String, required: false }
     });

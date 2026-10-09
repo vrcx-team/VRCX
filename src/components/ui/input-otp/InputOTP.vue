@@ -4,24 +4,44 @@
     import { reactiveOmit } from '@vueuse/core';
     import { useForwardPropsEmits } from 'reka-ui';
 
+    /** @typedef {import('vue-input-otp').OTPInputProps} OTPInputProps */
+
     const props = defineProps({
         maxlength: { type: Number, required: true },
-        textAlign: { type: String, required: false },
-        inputmode: { type: String, required: false },
+        textAlign: {
+            type: /** @type {import('vue').PropType<OTPInputProps['textAlign']>} */ (String),
+            required: false
+        },
+        inputmode: {
+            type: /** @type {import('vue').PropType<OTPInputProps['inputmode']>} */ (String),
+            required: false
+        },
         containerClass: { type: String, required: false },
-        pushPasswordManagerStrategy: { type: String, required: false },
+        pushPasswordManagerStrategy: {
+            type: /** @type {import('vue').PropType<OTPInputProps['pushPasswordManagerStrategy']>} */ (String),
+            required: false
+        },
         noScriptCssFallback: { type: [String, null], required: false },
         defaultValue: { type: null, required: false },
-        pasteTransformer: { type: Function, required: false },
+        pasteTransformer: {
+            type: /** @type {import('vue').PropType<OTPInputProps['pasteTransformer']>} */ (Function),
+            required: false
+        },
         accept: { type: String, required: false },
         alt: { type: String, required: false },
         autocomplete: { type: String, required: false },
         autofocus: { type: Boolean, required: false },
-        capture: { type: [Boolean, String], required: false },
+        capture: {
+            type: /** @type {import('vue').PropType<boolean | 'user' | 'environment'>} */ ([Boolean, String]),
+            required: false
+        },
         checked: { type: [Boolean, Array, Set], required: false },
         crossorigin: { type: String, required: false },
         disabled: { type: Boolean, required: false },
-        enterKeyHint: { type: String, required: false },
+        enterKeyHint: {
+            type: /** @type {import('vue').PropType<OTPInputProps['enterKeyHint']>} */ (String),
+            required: false
+        },
         form: { type: String, required: false },
         formaction: { type: String, required: false },
         formenctype: { type: String, required: false },

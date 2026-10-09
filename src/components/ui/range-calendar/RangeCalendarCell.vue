@@ -24,7 +24,8 @@
                 props.class
             )
         "
-        v-bind="forwardedProps">
+        v-bind="forwardedProps"
+        :date="props.date">
         <slot />
     </RangeCalendarCell>
 </template>

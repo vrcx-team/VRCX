@@ -7,6 +7,8 @@
         inheritAttrs: false
     });
 
+    /** @typedef {import('reka-ui').DropdownMenuContentProps} DropdownMenuContentProps */
+
     const props = defineProps({
         forceMount: { type: Boolean, required: false },
         loop: { type: Boolean, required: false },
@@ -20,10 +22,19 @@
         collisionBoundary: { type: null, required: false },
         collisionPadding: { type: [Number, Object], required: false },
         arrowPadding: { type: Number, required: false },
-        sticky: { type: String, required: false },
+        sticky: {
+            type: /** @type {import('vue').PropType<DropdownMenuContentProps['sticky']>} */ (String),
+            required: false
+        },
         hideWhenDetached: { type: Boolean, required: false },
-        positionStrategy: { type: String, required: false },
-        updatePositionStrategy: { type: String, required: false },
+        positionStrategy: {
+            type: /** @type {import('vue').PropType<DropdownMenuContentProps['positionStrategy']>} */ (String),
+            required: false
+        },
+        updatePositionStrategy: {
+            type: /** @type {import('vue').PropType<DropdownMenuContentProps['updatePositionStrategy']>} */ (String),
+            required: false
+        },
         disableUpdateOnLayoutShift: { type: Boolean, required: false },
         prioritizePosition: { type: Boolean, required: false },
         reference: { type: null, required: false },

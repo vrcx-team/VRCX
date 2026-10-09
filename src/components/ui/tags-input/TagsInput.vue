@@ -3,6 +3,8 @@
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
 
+    /** @typedef {import('reka-ui').TagsInputRootProps} TagsInputRootProps */
+
     const props = defineProps({
         modelValue: { type: [Array, null], required: false },
         defaultValue: { type: Array, required: false },
@@ -12,11 +14,17 @@
         duplicate: { type: Boolean, required: false },
         disabled: { type: Boolean, required: false },
         delimiter: { type: null, required: false },
-        dir: { type: String, required: false },
+        dir: { type: /** @type {import('vue').PropType<TagsInputRootProps['dir']>} */ (String), required: false },
         max: { type: Number, required: false },
         id: { type: String, required: false },
-        convertValue: { type: Function, required: false },
-        displayValue: { type: Function, required: false },
+        convertValue: {
+            type: /** @type {import('vue').PropType<TagsInputRootProps['convertValue']>} */ (Function),
+            required: false
+        },
+        displayValue: {
+            type: /** @type {import('vue').PropType<TagsInputRootProps['displayValue']>} */ (Function),
+            required: false
+        },
         asChild: { type: Boolean, required: false },
         as: { type: null, required: false },
         name: { type: String, required: false },

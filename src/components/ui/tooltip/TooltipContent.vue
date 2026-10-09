@@ -7,6 +7,8 @@
         inheritAttrs: false
     });
 
+    /** @typedef {import('reka-ui').TooltipContentProps} TooltipContentProps */
+
     const props = defineProps({
         forceMount: { type: Boolean, required: false },
         ariaLabel: { type: String, required: false },
@@ -20,10 +22,19 @@
         collisionBoundary: { type: null, required: false },
         collisionPadding: { type: [Number, Object], required: false },
         arrowPadding: { type: Number, required: false },
-        sticky: { type: String, required: false },
+        sticky: {
+            type: /** @type {import('vue').PropType<TooltipContentProps['sticky']>} */ (String),
+            required: false
+        },
         hideWhenDetached: { type: Boolean, required: false },
-        positionStrategy: { type: String, required: false },
-        updatePositionStrategy: { type: String, required: false },
+        positionStrategy: {
+            type: /** @type {import('vue').PropType<TooltipContentProps['positionStrategy']>} */ (String),
+            required: false
+        },
+        updatePositionStrategy: {
+            type: /** @type {import('vue').PropType<TooltipContentProps['updatePositionStrategy']>} */ (String),
+            required: false
+        },
         class: { type: null, required: false }
     });
 

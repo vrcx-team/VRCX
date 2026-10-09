@@ -3,8 +3,14 @@
     import { ScrollAreaScrollbar, ScrollAreaThumb } from 'reka-ui';
     import { cn } from '@/lib/utils';
 
+    /** @typedef {import('reka-ui').ScrollAreaScrollbarProps} ScrollAreaScrollbarProps */
+
     const props = defineProps({
-        orientation: { type: String, required: false, default: 'vertical' },
+        orientation: {
+            type: /** @type {import('vue').PropType<ScrollAreaScrollbarProps['orientation']>} */ (String),
+            required: false,
+            default: 'vertical'
+        },
         forceMount: { type: Boolean, required: false },
         asChild: { type: Boolean, required: false },
         as: { type: null, required: false },

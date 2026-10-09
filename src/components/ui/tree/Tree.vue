@@ -2,12 +2,17 @@
     import { TreeRoot } from 'reka-ui';
     import { cn } from '@/lib/utils';
 
+    /** @typedef {import('reka-ui').TreeRootProps} TreeRootProps */
+
     const props = defineProps({
         items: { type: Array, required: true },
-        getKey: { type: Function, required: false },
-        getChildren: { type: Function, required: false },
-        defaultExpanded: { type: Array, required: false },
-        expanded: { type: Array, required: false },
+        getKey: { type: /** @type {import('vue').PropType<TreeRootProps['getKey']>} */ (Function), required: false },
+        getChildren: {
+            type: /** @type {import('vue').PropType<TreeRootProps['getChildren']>} */ (Function),
+            required: false
+        },
+        defaultExpanded: { type: /** @type {import('vue').PropType<string[]>} */ (Array), required: false },
+        expanded: { type: /** @type {import('vue').PropType<string[]>} */ (Array), required: false },
         multiple: { type: Boolean, required: false, default: false },
         propagateSelect: { type: Boolean, required: false, default: false },
         class: { type: null, required: false }

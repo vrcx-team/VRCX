@@ -9,9 +9,15 @@
         inheritAttrs: false
     });
 
+    /** @typedef {import('reka-ui').SelectContentProps} SelectContentProps */
+
     const props = defineProps({
         forceMount: { type: Boolean, required: false },
-        position: { type: String, required: false, default: 'popper' },
+        position: {
+            type: /** @type {import('vue').PropType<SelectContentProps['position']>} */ (String),
+            required: false,
+            default: 'popper'
+        },
         bodyLock: { type: Boolean, required: false },
         side: { type: null, required: false },
         sideOffset: { type: Number, required: false },
@@ -23,10 +29,16 @@
         collisionBoundary: { type: null, required: false },
         collisionPadding: { type: [Number, Object], required: false },
         arrowPadding: { type: Number, required: false },
-        sticky: { type: String, required: false },
+        sticky: { type: /** @type {import('vue').PropType<SelectContentProps['sticky']>} */ (String), required: false },
         hideWhenDetached: { type: Boolean, required: false },
-        positionStrategy: { type: String, required: false },
-        updatePositionStrategy: { type: String, required: false },
+        positionStrategy: {
+            type: /** @type {import('vue').PropType<SelectContentProps['positionStrategy']>} */ (String),
+            required: false
+        },
+        updatePositionStrategy: {
+            type: /** @type {import('vue').PropType<SelectContentProps['updatePositionStrategy']>} */ (String),
+            required: false
+        },
         disableUpdateOnLayoutShift: { type: Boolean, required: false },
         prioritizePosition: { type: Boolean, required: false },
         reference: { type: null, required: false },

@@ -3,8 +3,13 @@
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
 
+    /** @typedef {import('reka-ui').SeparatorProps} SeparatorProps */
+
     const props = defineProps({
-        orientation: { type: String, required: false },
+        orientation: {
+            type: /** @type {import('vue').PropType<SeparatorProps['orientation']>} */ (String),
+            required: false
+        },
         decorative: { type: Boolean, required: false },
         asChild: { type: Boolean, required: false },
         as: { type: null, required: false },

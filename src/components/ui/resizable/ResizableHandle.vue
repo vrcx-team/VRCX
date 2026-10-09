@@ -4,9 +4,14 @@
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
 
+    /** @typedef {import('reka-ui').SplitterResizeHandleProps} SplitterResizeHandleProps */
+
     const props = defineProps({
         id: { type: String, required: false },
-        hitAreaMargins: { type: Object, required: false },
+        hitAreaMargins: {
+            type: /** @type {import('vue').PropType<SplitterResizeHandleProps['hitAreaMargins']>} */ (Object),
+            required: false
+        },
         tabindex: { type: Number, required: false },
         disabled: { type: Boolean, required: false },
         nonce: { type: String, required: false },

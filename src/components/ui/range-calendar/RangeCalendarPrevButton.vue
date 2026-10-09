@@ -5,8 +5,13 @@
     import { cn } from '@/lib/utils';
     import { reactiveOmit } from '@vueuse/core';
 
+    /** @typedef {import('reka-ui').RangeCalendarPrevProps} RangeCalendarPrevProps */
+
     const props = defineProps({
-        prevPage: { type: Function, required: false },
+        prevPage: {
+            type: /** @type {import('vue').PropType<RangeCalendarPrevProps['prevPage']>} */ (Function),
+            required: false
+        },
         asChild: { type: Boolean, required: false },
         as: { type: null, required: false },
         class: { type: null, required: false }
