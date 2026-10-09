@@ -4,23 +4,33 @@ import { applyWorld } from '../coordinators/worldCoordinator';
 
 const worldReq = {
     /**
-     * @type {import('../types/api/world').GetWorld}
+     * @param {{ worldId: string }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').World>;
+     *     ref: any;
+     *     params: { worldId: string };
+     * }>}
      */
     getWorld(params) {
         return request(`worlds/${params.worldId}`, {
             method: 'GET'
         }).then((json) => {
-            const args = {
+            return {
                 json,
-                params
+                params,
+                ref: applyWorld(json)
             };
-            args.ref = applyWorld(json);
-            return args;
         });
     },
 
     /**
-     * @type {import('../types/api/world').GetWorlds}
+     * @param {import('vrchat').SearchWorlds['query']} params
+     * @param {string} [option]
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').LimitedWorld[]>;
+     *     params: import('vrchat').SearchWorlds['query'];
+     *     option?: string;
+     * }>}
      */
     getWorlds(params, option) {
         let endpoint = 'worlds';
@@ -59,7 +69,11 @@ const worldReq = {
     },
 
     /**
-     * @type {import('../types/api/world').SaveWorld}
+     * @param {import('vrchat').UpdateWorldRequest & { id: string }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').World>;
+     *     params: import('vrchat').UpdateWorldRequest & { id: string };
+     * }>}
      */
     saveWorld(params) {
         return request(`worlds/${params.id}`, {

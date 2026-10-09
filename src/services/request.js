@@ -16,10 +16,11 @@ const t = i18n.global.t;
 
 /**
  * @param {string} endpoint
- * @param {object} [options]
- * @returns {object} Init object ready for webApiService.execute
+ * @param {import('@/types/vrcx').RequestOptions} [options]
+ * @returns {import('@/types/vrcx').WebApiOptions} Init object ready for webApiService.execute
  */
 export function buildRequestInit(endpoint, options) {
+    /** @type {import('@/types/vrcx').WebApiOptions} */
     const init = {
         url: `${AppDebug.endpointDomain}/${endpoint}`,
         method: 'GET',
@@ -72,7 +73,7 @@ export function parseResponse(response) {
 /**
  * @template T
  * @param {string} endpoint
- * @param {RequestInit & { params?: any } & { customMsg?: string }} [options]
+ * @param {import('@/types/vrcx').RequestOptions} [options]
  * @returns {Promise<T>}
  */
 export function request(endpoint, options) {

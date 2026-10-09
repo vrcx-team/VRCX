@@ -31,7 +31,11 @@ const favoriteReq = {
     },
 
     /**
-     * @type {import('../types/api/favorite').GetFavorites}
+     * @param {import('vrchat').GetFavorites['query']} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Favorite[]>;
+     *     params: import('vrchat').GetFavorites['query'];
+     * }>}
      */
     getFavorites(params) {
         return request('favorites', {
@@ -47,7 +51,11 @@ const favoriteReq = {
     },
 
     /**
-     * @type {import('../types/api/favorite').AddFavorite}
+     * @param {{ type: string; favoriteId: string; tags: string }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Favorite>;
+     *     params: { type: string; favoriteId: string; tags: string };
+     * }>}
      */
     addFavorite(params) {
         return request('favorites', {
@@ -140,7 +148,11 @@ const favoriteReq = {
     },
 
     /**
-     * @type {import('../types/api/favorite').GetFavoriteWorlds}
+     * @param {import('vrchat').GetFavoritedWorlds['query']} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').FavoritedWorld[]>;
+     *     params: import('vrchat').GetFavoritedWorlds['query'];
+     * }>}
      */
     getFavoriteWorlds(params) {
         return request('worlds/favorites', {
@@ -156,7 +168,11 @@ const favoriteReq = {
     },
 
     /**
-     * @type {import('../types/api/favorite').GetFavoriteAvatars}
+     * @param {import('vrchat').GetFavoritedAvatars['query']} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Avatar[]>;
+     *     params: import('vrchat').GetFavoritedAvatars['query'];
+     * }>}
      */
     getFavoriteAvatars(params) {
         return request('avatars/favorites', {

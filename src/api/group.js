@@ -77,7 +77,11 @@ const groupReq = {
         });
     },
     /**
-     * @type {import('../types/api/group').GetGroup}
+     * @param {{ groupId: string; includeRoles?: boolean }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Group>;
+     *     params: { groupId: string; includeRoles?: boolean };
+     * }>}
      */
     getGroup(params) {
         return request(`groups/${params.groupId}`, {
@@ -126,7 +130,11 @@ const groupReq = {
     },
 
     /**
-     * @type {import('../types/api/group').CheckTransferGroup}
+     * @param {{ groupId: string; transferTargetId: string }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').GroupTransferable>;
+     *     params: { groupId: string; transferTargetId: string };
+     * }>}
      */
     checkTransferGroup(params) {
         return request(`groups/${params.groupId}/transfer`, {
@@ -902,7 +910,8 @@ const groupReq = {
         });
     },
     /**
-     * @type {import('../types/api/group').GetCalendars}
+     * @param {{ date: string }} params
+     * @returns {Promise<import('@/types/vrcx').Json<import('vrchat').PaginatedCalendarEventList>>}
      */
     getGroupCalendars(params) {
         return request('calendar', {
@@ -912,7 +921,8 @@ const groupReq = {
     },
 
     /**
-     * @type {import('../types/api/group').GetFollowingCalendars}
+     * @param {{ date: string }} params
+     * @returns {Promise<import('@/types/vrcx').Json<import('vrchat').PaginatedCalendarEventList>>}
      */
     getFollowingGroupCalendars(params) {
         return request('calendar/following', {
@@ -922,7 +932,8 @@ const groupReq = {
     },
 
     /**
-     * @type {import('../types/api/group').GetFeaturedCalendars}
+     * @param {{ date: string }} params
+     * @returns {Promise<import('@/types/vrcx').Json<import('vrchat').PaginatedCalendarEventList>>}
      */
     getFeaturedGroupCalendars(params) {
         return request('calendar/featured', {

@@ -19,7 +19,11 @@ const friendReq = {
     /**
      * Fetch friends of current user.
      *
-     * @type {import('../types/api/friend').GetFriends}
+     * @param {import('vrchat').GetFriends['query']} params
+     * @returns {Promise<{
+     *     json: (import('@/types/vrcx').Json<import('vrchat').LimitedUserFriend> & { state?: string })[];
+     *     params: import('vrchat').GetFriends['query'];
+     * }>}
      */
     getFriends(params) {
         const userStore = useUserStore();

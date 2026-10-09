@@ -38,7 +38,7 @@ export const useUserStore = defineStore('User', () => {
     const { t } = useI18n();
 
     const currentUser = ref(
-        /** @type {import('../types/api/user').VrcxCurrentUser} */ ({
+        /** @type {import('@/types/vrcx').VrcxCurrentUser} */ {
             acceptedPrivacyVersion: 0,
             acceptedTOSVersion: 0,
             accountDeletionDate: null,
@@ -174,7 +174,7 @@ export const useUserStore = defineStore('User', () => {
             $languages: [],
             $locationTag: '',
             $travelingToLocation: ''
-        })
+        }
     );
 
     const currentUserCredits = ref(null);

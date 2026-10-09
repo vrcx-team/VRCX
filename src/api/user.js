@@ -15,7 +15,12 @@ const userReq = {
      * Fetch user from API.
      * identifier of registered user
      *
-     * @type {import('../types/api/user').GetUser}
+     * @param {{ userId: string }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').User>;
+     *     ref: import('@/types/vrcx').VrcxUser;
+     *     params: { userId: string };
+     * }>}
      */
     getUser(params) {
         return request(`users/${params.userId}`, {
@@ -35,7 +40,11 @@ const userReq = {
     },
 
     /**
-     * @type {import('../types/api/user').GetUsers}
+     * @param {import('vrchat').SearchUsers['query']} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').LimitedUserSearch[]>;
+     *     params: import('vrchat').SearchUsers['query'];
+     * }>}
      */
     getUsers(params) {
         return request('users', {
@@ -108,7 +117,12 @@ const userReq = {
     /**
      * Updates current user's status.
      *
-     * @type {import('../types/api/user').GetCurrentUser}
+     * @param {import('@/types/vrcx').VrcxUpdateUserRequest} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').CurrentUser>;
+     *     ref: import('@/types/vrcx').VrcxCurrentUser;
+     *     params: import('@/types/vrcx').VrcxUpdateUserRequest;
+     * }>}
      */
     saveCurrentUser(params) {
         return request(`users/${getCurrentUserId()}`, {
@@ -188,9 +202,9 @@ const userReq = {
     /**
      * @param {{ userId: string }} params
      * @returns {Promise<{
-     *     json: import('../types/api/profile').publicProfile;
+     *     json: import('@/types/vrcx').Json<import('vrchat').PublicProfile>;
      *     params: { userId: string };
-     *     ref: import('../types/api/profile').publicProfile & { $lastFetch?: number };
+     *     ref: import('@/types/vrcx').Json<import('vrchat').PublicProfile> & { $lastFetch?: number };
      * }>}
      */
     getPublicProfile(params) {
@@ -209,7 +223,10 @@ const userReq = {
 
     /**
      * @param {{ userId: string }} params
-     * @returns {Promise<{ json: import('../types/api/profile').privateProfile; params: { userId: string } }>}
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').PrivateProfile>;
+     *     params: { userId: string };
+     * }>}
      */
     getPrivateProfile(params) {
         return request(`profile/${params.userId}/private`, {
@@ -224,7 +241,7 @@ const userReq = {
     },
 
     /**
-     * @returns {Promise<{ json: import('../types/api/profile').selfProfile; params: {} }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').SelfProfile; params: {} }>}
      */
     getSelfProfile() {
         return request(`profile/${getCurrentUserId()}`, {
@@ -242,10 +259,10 @@ const userReq = {
     },
 
     /**
-     * @param {Partial<import('../types/api/profile').publicProfile>} params
+     * @param {Partial<import('@/types/vrcx').Json<import('vrchat').PublicProfile>>} params
      * @returns {Promise<{
-     *     json: import('../types/api/profile').publicProfile;
-     *     params: Partial<import('../types/api/profile').publicProfile>;
+     *     json: import('@/types/vrcx').Json<import('vrchat').PublicProfile>;
+     *     params: Partial<import('@/types/vrcx').Json<import('vrchat').PublicProfile>>;
      * }>}
      */
     saveProfile(params) {

@@ -6,24 +6,29 @@ import { useInstanceStore } from '../stores';
 
 const instanceReq = {
     /**
-     * @type {import('../types/api/instance').GetInstance}
+     * @param {{ worldId: string; instanceId: string }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Instance>;
+     *     ref: import('@/types/vrcx').Json<import('vrchat').Instance>;
+     *     params: { worldId: string; instanceId: string };
+     * }>}
      */
     getInstance(params) {
         const instanceStore = useInstanceStore();
         return request(`instances/${params.worldId}:${params.instanceId}`, {
             method: 'GET'
         }).then((json) => {
-            const args = {
+            return {
                 json,
-                params
+                params,
+                ref: instanceStore.applyInstance(json)
             };
-            args.ref = instanceStore.applyInstance(json);
-            return args;
         });
     },
 
     /**
-     * @type {import('../types/api/instance').CreateInstance}
+     * @param {any} params
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Instance>; params: any }>}
      */
     createInstance(params) {
         const instanceStore = useInstanceStore();
@@ -41,7 +46,12 @@ const instanceReq = {
     },
 
     /**
-     * @type {import('../types/api/instance').GetInstanceShortName}
+     * @param {{ worldId: string; instanceId: string; shortName?: string }} instance
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').InstanceShortNameResponse>;
+     *     instance: { worldId: string; instanceId: string };
+     *     params?: { shortName?: string };
+     * }>}
      */
     getInstanceShortName(instance) {
         const params = {};
@@ -117,7 +127,11 @@ const instanceReq = {
     /**
      * Send instance announcement
      *
-     * @type {import('../types/api/instance').InstanceAnnouncement}
+     * @param {{ location: string; title: string; message: string; imageId?: string; imageVersion?: string }} params
+     * @returns {Promise<{
+     *     json: any;
+     *     params: { location: string; title: string; message: string; imageId?: string; imageVersion?: string };
+     * }>}
      */
     instanceAnnouncement(params) {
         return request(`instances/${params.location}/announce`, {

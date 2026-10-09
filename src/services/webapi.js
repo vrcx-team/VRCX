@@ -14,7 +14,7 @@ class WebApiService {
     }
 
     /**
-     * @param {any} options
+     * @param {import('@/types/vrcx').WebApiOptions} options
      * @returns {Promise<{ status: number; data?: string }>}
      */
     async execute(options) {

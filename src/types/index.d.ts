@@ -1,16 +1,5 @@
-// API Types
-export * from './api/user';
-export * from './api/friend';
-export * from './api/avatar';
-export * from './api/world';
-export * from './api/instance';
-export * from './api/group';
-export * from './api/favorite';
-export * from './api/auth';
-export * from './api/notification';
-
-// Common Types
-export * from './common';
+// VRChat API types live in the `vrchat` package
+export * from './vrcx';
 
 // Global Types
 export * from './globals';

@@ -4,7 +4,11 @@ import { applyCurrentUser } from '../coordinators/userCoordinator';
 
 const avatarReq = {
     /**
-     * @type {import('../types/api/avatar').GetAvatar}
+     * @param {{ avatarId: string }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Avatar>;
+     *     params: { avatarId: string };
+     * }>}
      */
     getAvatar(params) {
         return request(`avatars/${params.avatarId}`, {
@@ -19,7 +23,11 @@ const avatarReq = {
     },
 
     /**
-     * @type {import('../types/api/avatar').GetAvatars}
+     * @param {import('vrchat').SearchAvatars['query']} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Avatar[]>;
+     *     params: import('vrchat').SearchAvatars['query'];
+     * }>}
      */
     getAvatars(params) {
         return request('avatars', {
@@ -36,7 +44,11 @@ const avatarReq = {
     },
 
     /**
-     * @type {import('../types/api/avatar').SaveAvatar}
+     * @param {import('vrchat').UpdateAvatarRequest & { id: string }} params
+     * @returns {Promise<{
+     *     json: import('@/types/vrcx').Json<import('vrchat').Avatar>;
+     *     params: import('vrchat').UpdateAvatarRequest & { id: string };
+     * }>}
      */
     saveAvatar(params) {
         return request(`avatars/${params.id}`, {
