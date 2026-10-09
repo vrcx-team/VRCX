@@ -1198,7 +1198,7 @@
             return;
         }
 
-        /** @type {import('@/types/vrcx').VrcxUpdateUserRequest} */
+        /** @type {import('vrchat').UpdateUserRequest} */
         const userPayload = {};
         if (D.status !== currentUser.value.status) {
             userPayload.status = D.status;
@@ -1210,7 +1210,7 @@
             userPayload.pronouns = D.pronouns;
         }
 
-        /** @type {import('@/types/vrcx').VrcxUpdateProfileRequest} */
+        /** @type {import('vrchat').UpdateProfileRequest} */
         const profilePayload = {};
         if (D.bio !== D.selfProfileRef.bio) {
             profilePayload.bio = D.bio;

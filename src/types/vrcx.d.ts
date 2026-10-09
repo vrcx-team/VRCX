@@ -1,10 +1,6 @@
 import type {
     CurrentUser,
     Group,
-    GroupMyMember,
-    PublicProfile,
-    UpdateProfileRequest,
-    UpdateUserRequest,
     User
 } from 'vrchat';
 
@@ -85,28 +81,6 @@ export interface VrcxGroup extends Json<Group> {
     memberVisibility: string | boolean;
     mutualGroup: boolean;
     $languages: { key: string; value: string }[];
-}
-
-export interface VrcxUpdateUserRequest extends UpdateUserRequest {
-    allowAvatarCopying?: boolean;
-    homeLocation?: string;
-    status?: string; // override type
-}
-
-export interface VrcxUpdateProfileRequest extends UpdateProfileRequest {
-    bannerCustomUrl?: string;
-    backgroundGradientTop?: string;
-    backgroundGradientBottom?: string;
-}
-
-export interface SelfProfile extends Json<PublicProfile> {
-    themes?: {
-        buttonColor: string;
-        iconColor: string;
-        id: string;
-        name: string;
-        subtextColor: string;
-    }[];
 }
 
 export interface RequestOptions {

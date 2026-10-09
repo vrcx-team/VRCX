@@ -126,11 +126,11 @@ const userReq = {
     /**
      * Updates current user's status.
      *
-     * @param {import('@/types/vrcx').VrcxUpdateUserRequest} params
+     * @param {import('vrchat').UpdateUserRequest} params
      * @returns {Promise<{
      *     json: import('@/types/vrcx').Json<import('vrchat').CurrentUser>;
      *     ref: import('@/types/vrcx').VrcxCurrentUser;
-     *     params: import('@/types/vrcx').VrcxUpdateUserRequest;
+     *     params: import('vrchat').UpdateUserRequest;
      * }>}
      */
     saveCurrentUser(params) {
@@ -271,7 +271,7 @@ const userReq = {
     },
 
     /**
-     * @returns {Promise<{ json: import('@/types/vrcx').SelfProfile; params: {} }>}
+     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').PublicProfile>; params: {} }>}
      */
     getSelfProfile() {
         return request(`profile/${getCurrentUserId()}`, {
@@ -289,10 +289,10 @@ const userReq = {
     },
 
     /**
-     * @param {import('@/types/vrcx').VrcxUpdateProfileRequest} params
+     * @param {import('vrchat').UpdateProfileRequest} params
      * @returns {Promise<{
      *     json: import('@/types/vrcx').Json<import('vrchat').PublicProfile>;
-     *     params: import('@/types/vrcx').VrcxUpdateProfileRequest;
+     *     params: import('vrchat').UpdateProfileRequest;
      * }>}
      */
     saveProfile(params) {

@@ -1112,9 +1112,11 @@ export function updateAutoStateChange() {
     }
 
     const currentStatus = userStore.currentUser.status;
-    const newStatus = withCompany
-        ? generalSettingsStore.autoStateChangeCompanyStatus
-        : generalSettingsStore.autoStateChangeAloneStatus;
+    const newStatus = /** @type {import('vrchat').UserStatus} */ (
+        withCompany
+            ? generalSettingsStore.autoStateChangeCompanyStatus
+            : generalSettingsStore.autoStateChangeAloneStatus
+    );
 
     if (currentStatus === newStatus) {
         return;
