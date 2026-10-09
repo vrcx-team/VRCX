@@ -252,7 +252,7 @@ export async function addGameLogEntry(gameLog, location) {
             if (typeof ref1 === 'undefined') {
                 break;
             }
-            const time = dayjs(gameLog.dt) - ref1.joinTime;
+            const time = dayjs(gameLog.dt).valueOf() - ref1.joinTime;
             locationStore.lastLocation.playerList.delete(userId);
             locationStore.lastLocation.friendList.delete(userId);
             gameLogStore.state.lastLocationAvatarList.delete(gameLog.displayName);

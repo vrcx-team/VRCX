@@ -469,7 +469,7 @@
 
     const gameSessionText = computed(() => {
         if (!gameStore.isGameRunning || !userStore.currentUser.$online_for) return '';
-        const elapsed = now.value - userStore.currentUser.$online_for;
+        const elapsed = now.value.getTime() - userStore.currentUser.$online_for;
         return elapsed > 0 ? timeToText(elapsed) : '';
     });
 
@@ -480,7 +480,7 @@
 
     const gameSessionDetailText = computed(() => {
         if (!gameStore.isGameRunning || !userStore.currentUser.$online_for) return '-';
-        const elapsed = now.value - userStore.currentUser.$online_for;
+        const elapsed = now.value.getTime() - userStore.currentUser.$online_for;
         return elapsed > 0 ? timeToText(elapsed, true) : '-';
     });
 
@@ -614,7 +614,7 @@
     });
 
     const appUptimeText = computed(() => {
-        const elapsedSeconds = Math.floor((now.value - vrcxStore.appStartAt) / 1000);
+        const elapsedSeconds = Math.floor((now.value.getTime() - vrcxStore.appStartAt) / 1000);
         return formatAppUptime(elapsedSeconds);
     });
 

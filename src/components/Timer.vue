@@ -16,6 +16,6 @@
 
     const now = useNow({ interval: 15000 });
     const text = computed(() => {
-        return props.epoch ? timeToText(now.value - props.epoch) : '-';
+        return props.epoch ? timeToText(now.value.getTime() - props.epoch) : '-';
     });
 </script>
