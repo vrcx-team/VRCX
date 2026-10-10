@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <Configurations>Debug;Release</Configurations>
     <Platforms>x64;ARM64</Platforms>
-    <RuntimeIdentifiers>linux-x64;linux-arm64;win-x64;osx-x64;osx-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>linux-x64;linux-arm64;win-x64;win-arm64;osx-x64;osx-arm64</RuntimeIdentifiers>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.*</ApplicationVersion>
     <ApplicationIcon>..\images\VRCX.ico</ApplicationIcon>
@@ -75,7 +75,8 @@
     <PackageReference Include="SourceGear.sqlite3" Version="3.53.4" />
     <PackageReference Include="System.Drawing.Common" Version="10.0.12" />
     <PackageReference Condition="'$(RuntimeIdentifier)'=='linux-arm64'" Include="System.Data.SQLite" Version="2.0.3" />
-    <PackageReference Condition="'$(RuntimeIdentifier)'!='linux-arm64'" Include="System.Data.SQLite" Version="1.0.119" />
+    <PackageReference Condition="'$(RuntimeIdentifier)'=='win-arm64'" Include="System.Data.SQLite" Version="2.0.4" />
+    <PackageReference Condition="'$(RuntimeIdentifier)'!='linux-arm64' and '$(RuntimeIdentifier)'!='win-arm64'" Include="System.Data.SQLite" Version="1.0.119" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
     <PackageReference Include="System.Management" Version="10.0.12" />
     <PackageReference Include="Websocket.Client" Version="5.5.1" />

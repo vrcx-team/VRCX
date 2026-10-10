@@ -85,6 +85,11 @@ module.exports = {
         executableName: 'VRCX',
         minimumSystemVersion: '14.0'
     },
+    win: {
+        artifactName: 'VRCX_Version.${ext}',
+        target: ['nsis'],
+        icon: 'images/VRCX.ico'
+    },
     toolsets: {
         appimage: '1.0.3'
     }
