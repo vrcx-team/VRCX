@@ -24,7 +24,7 @@
                     class="block truncate font-medium leading-[18px]"
                     :style="{ color: friend.ref.$userColour }"
                     >{{ friend.ref.displayName
-                    }}{{ isGroupByInstance && allFavoriteFriendIds.has(friend.id) ? ' ⭐' : '' }}</span
+                    }}{{ isGroupByInstance && isFavorite ? ' ⭐' : '' }}</span
                 >
 
                 <span v-if="isFriendActiveOrOffline" class="block truncate text-xs">{{
@@ -90,11 +90,12 @@
 
     const props = defineProps({
         friend: { type: Object, required: true },
-        isGroupByInstance: Boolean
+        isGroupByInstance: Boolean,
+        isFavorite: Boolean
     });
 
     const { hideNicknames, sidebarCosmetics } = storeToRefs(useAppearanceSettingsStore());
-    const { isRefreshFriendsLoading, allFavoriteFriendIds } = storeToRefs(useFriendStore());
+    const { isRefreshFriendsLoading } = storeToRefs(useFriendStore());
     const { userImage, userStatusClass } = useUserDisplay();
 
     const { t } = useI18n();

@@ -150,7 +150,8 @@
                                         <FriendItem
                                             :friend="item.row.friend"
                                             :style="item.row.itemStyle"
-                                            :is-group-by-instance="item.row.isGroupByInstance" />
+                                            :is-group-by-instance="item.row.isGroupByInstance"
+                                            :is-favorite="selectedFavoriteGroupIds.has(item.row.friend.id)" />
                                     </ContextMenuTrigger>
                                     <ContextMenuContent>
                                         <ContextMenuItem
@@ -263,14 +264,8 @@
     const { t } = useI18n();
 
     const friendStore = useFriendStore();
-    const {
-        allFavoriteOnlineFriends,
-        allFavoriteFriendIds,
-        onlineFriends,
-        activeFriends,
-        offlineFriends,
-        friendsInSameInstance
-    } = storeToRefs(friendStore);
+    const { vipFriends, onlineFriends, activeFriends, offlineFriends, friendsInSameInstance } =
+        storeToRefs(friendStore);
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const {
         isSidebarGroupByInstance,
@@ -320,36 +315,45 @@
 
     const shouldHideSameInstance = computed(() => isSidebarGroupByInstance.value && isHideFriendsInSameInstance.value);
 
-    const selectedFavoriteGroupKeys = computed(() => new Set(sidebarFavoriteGroups.value));
-
-    const selectedFavoriteGroupIds = computed(() => {
-        const selectedGroups = selectedFavoriteGroupKeys.value;
+    const selectedFavoriteGroups = computed(() => {
+        const remoteFriendsByGroup = groupedByGroupKeyFavoriteFriends.value;
+        const selectedGroups = new Set(sidebarFavoriteGroups.value);
         const hasFilter = selectedGroups.size > 0;
-        if (!hasFilter) {
-            return allFavoriteFriendIds.value;
+        const groups = [];
+
+        for (const key in remoteFriendsByGroup) {
+            if (hasFilter && !selectedGroups.has(key)) continue;
+            const groupName = favoriteFriendGroups.value.find((g) => g.key === key)?.displayName || '';
+            const memberIds = new Set(remoteFriendsByGroup[key].map((f) => f.id));
+            groups.push({ key, groupName, memberIds });
         }
 
-        const ids = new Set();
-        const remoteFriendsByGroup = groupedByGroupKeyFavoriteFriends.value;
-        for (const key of selectedGroups) {
-            if (key.startsWith('local:')) {
-                const groupName = key.slice(6);
-                const userIds = localFriendFavorites.value?.[groupName];
-                if (userIds) {
-                    for (const id of userIds) ids.add(id);
-                }
-            } else if (remoteFriendsByGroup[key]) {
-                for (const friend of remoteFriendsByGroup[key]) ids.add(friend.id);
+        for (const groupName in localFriendFavorites.value) {
+            const key = `local:${groupName}`;
+            if (hasFilter && !selectedGroups.has(key)) continue;
+            const userIds = localFriendFavorites.value[groupName];
+            if (userIds?.length) {
+                groups.push({ key, groupName, memberIds: new Set(userIds) });
             }
+        }
+        return groups;
+    });
+
+    const selectedFavoriteGroupIds = computed(() => {
+        const ids = new Set();
+        for (const { memberIds } of selectedFavoriteGroups.value) {
+            for (const id of memberIds) ids.add(id);
         }
         return ids;
     });
 
+    const allOnlineFriends = computed(() =>
+        [...vipFriends.value, ...onlineFriends.value].sort(getFriendsSortFunction(sidebarSortMethods.value))
+    );
+
     const visibleFavoriteOnlineFriends = computed(() => {
-        const filtered = allFavoriteOnlineFriends.value.filter((friend) =>
-            selectedFavoriteGroupIds.value.has(friend.id)
-        );
-        return excludeSameInstance(filtered);
+        const selectedIds = selectedFavoriteGroupIds.value;
+        return excludeSameInstance(allOnlineFriends.value.filter((f) => selectedIds.has(f.id)));
     });
 
     /**
@@ -363,57 +367,13 @@
     }
 
     const onlineFriendsByGroupStatus = computed(() => {
-        const selectedGroups = sidebarFavoriteGroups.value;
-        const hasFilter = selectedGroups.length > 0;
-        if (!hasFilter) {
-            return excludeSameInstance(
-                onlineFriends.value
-                    .filter((f) => !allFavoriteFriendIds.value.has(f.id))
-                    .sort(getFriendsSortFunction(sidebarSortMethods.value))
-            );
-        }
-        // When group filter is active, friends in unselected groups should appear in the online list
         const selectedIds = selectedFavoriteGroupIds.value;
-        const nonFavOnline = onlineFriends.value.filter((f) => !selectedIds.has(f.id));
-        const existingIds = new Set(nonFavOnline.map((f) => f.id));
-        const unselectedGroupFriends = allFavoriteOnlineFriends.value.filter(
-            (f) => !selectedIds.has(f.id) && !existingIds.has(f.id)
-        );
-        return excludeSameInstance(
-            [...nonFavOnline, ...unselectedGroupFriends].sort(getFriendsSortFunction(sidebarSortMethods.value))
-        );
+        return excludeSameInstance(allOnlineFriends.value.filter((f) => !selectedIds.has(f.id)));
     });
 
-    // VIP friends divide by group
     const vipFriendsDivideByGroup = computed(() => {
-        const remoteFriendsByGroup = groupedByGroupKeyFavoriteFriends.value;
-        const selectedGroups = selectedFavoriteGroupKeys.value;
-        const hasFilter = selectedGroups.size > 0;
-
-        // Build a normalized list of { key, groupName, memberIds }
-        const groups = [];
-
-        for (const key in remoteFriendsByGroup) {
-            if (Object.hasOwn(remoteFriendsByGroup, key)) {
-                if (hasFilter && !selectedGroups.has(key)) continue;
-                const groupName = favoriteFriendGroups.value.find((g) => g.key === key)?.displayName || '';
-                const memberIds = new Set(remoteFriendsByGroup[key].map((f) => f.id));
-                groups.push({ key, groupName, memberIds });
-            }
-        }
-
-        for (const groupName in localFriendFavorites.value) {
-            const selectedKey = `local:${groupName}`;
-            if (hasFilter && !selectedGroups.has(selectedKey)) continue;
-            const userIds = localFriendFavorites.value[groupName];
-            if (userIds?.length) {
-                groups.push({ key: selectedKey, groupName, memberIds: new Set(userIds) });
-            }
-        }
-
-        // Filter vipFriends per group, preserving vipFriends sort order
         const result = [];
-        for (const { key, groupName, memberIds } of groups) {
+        for (const { key, groupName, memberIds } of selectedFavoriteGroups.value) {
             const filteredFriends = visibleFavoriteOnlineFriends.value.filter((friend) => memberIds.has(friend.id));
             if (filteredFriends.length > 0) {
                 result.push(filteredFriends.map((item) => ({ groupName, key, ...item })));
