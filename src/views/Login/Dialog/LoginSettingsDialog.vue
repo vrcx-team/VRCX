@@ -1,7 +1,7 @@
 <template>
     <Dialog v-model:open="open">
         <DialogTrigger as-child>
-            <TooltipWrapper side="top" :content="t('view.login.settings')">
+            <TooltipWrapper side="top" :content="t('view.login.proxy_settings')">
                 <Button class="rounded-full mr-2 text-xs" size="icon-sm" variant="ghost"><Settings /></Button>
             </TooltipWrapper>
         </DialogTrigger>

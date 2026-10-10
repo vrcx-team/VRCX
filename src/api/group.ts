@@ -697,12 +697,14 @@ const groupReq = {
         params: { groupId: string; roleId: string } & UpdateGroupRoleRequest & {
                 isAddedOnJoin?: boolean;
                 requiresTwoFactor?: boolean;
+                requiresPurchase?: boolean;
             }
     ): Promise<{
         json: Json<GroupRole[]>;
         params: { groupId: string; roleId: string } & UpdateGroupRoleRequest & {
                 isAddedOnJoin?: boolean;
                 requiresTwoFactor?: boolean;
+                requiresPurchase?: boolean;
             };
     }> {
         const { groupId, roleId, ...body } = params;

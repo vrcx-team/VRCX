@@ -42,9 +42,7 @@ const avatarReq = {
         });
     },
 
-    saveAvatar(
-        params: UpdateAvatarRequest & { id: string }
-    ): Promise<{ json: Json<Avatar>; params: UpdateAvatarRequest & { id: string } }> {
+    saveAvatar(params: UpdateAvatarRequest): Promise<{ json: Json<Avatar>; params: UpdateAvatarRequest }> {
         return request(`avatars/${params.id}`, {
             method: 'PUT',
             params

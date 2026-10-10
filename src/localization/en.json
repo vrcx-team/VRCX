@@ -2570,6 +2570,8 @@
             "added_on_join_description": "Automatically given to new members",
             "requires_two_factor": "Requires 2FA",
             "requires_two_factor_description": "Members need two-factor authentication enabled to use this role",
+            "requires_purchase": "Requires Purchase",
+            "requires_purchase_description": "Members must purchase a group subscription to get this role",
             "permissions": "Permissions",
             "management_permissions": "Management Permissions",
             "default_role": "Default Role",
