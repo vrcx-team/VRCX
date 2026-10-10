@@ -1,17 +1,11 @@
+import type { File, LimitedWorld, SearchWorlds, UpdateWorldRequest, World } from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { patchAndRefetchActiveQuery, queryKeys } from '../queries';
 import { request } from '../services/request';
 import { applyWorld } from '../coordinators/worldCoordinator';
 
 const worldReq = {
-    /**
-     * @param {{ worldId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').World>;
-     *     ref: any;
-     *     params: { worldId: string };
-     * }>}
-     */
-    getWorld(params) {
+    getWorld(params: { worldId: string }): Promise<{ json: Json<World>; ref: any; params: { worldId: string } }> {
         return request(`worlds/${params.worldId}`, {
             method: 'GET'
         }).then((json) => {
@@ -23,16 +17,10 @@ const worldReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').SearchWorlds['query']} params
-     * @param {string} [option]
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').LimitedWorld[]>;
-     *     params: import('vrchat').SearchWorlds['query'];
-     *     option?: string;
-     * }>}
-     */
-    getWorlds(params, option) {
+    getWorlds(
+        params: SearchWorlds['query'],
+        option?: string
+    ): Promise<{ json: Json<LimitedWorld[]>; params: SearchWorlds['query']; option?: string }> {
         let endpoint = 'worlds';
         if (typeof option !== 'undefined') {
             endpoint = `worlds/${option}`;
@@ -52,11 +40,7 @@ const worldReq = {
             return args;
         });
     },
-    /**
-     * @param {{ worldId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').World>; params }>}
-     */
-    deleteWorld(params) {
+    deleteWorld(params: { worldId: string }): Promise<{ json: Json<World>; params }> {
         return request(`worlds/${params.worldId}`, {
             method: 'DELETE'
         }).then((json) => {
@@ -68,23 +52,18 @@ const worldReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').UpdateWorldRequest & { id: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').World>;
-     *     params: import('vrchat').UpdateWorldRequest & { id: string };
-     * }>}
-     */
-    saveWorld(params) {
+    saveWorld(
+        params: UpdateWorldRequest & { id: string }
+    ): Promise<{ json: Json<World>; params: UpdateWorldRequest & { id: string } }> {
         return request(`worlds/${params.id}`, {
             method: 'PUT',
             params
         }).then((json) => {
             const args = {
                 json,
-                params
+                params,
+                ref: applyWorld(json)
             };
-            args.ref = applyWorld(json);
             patchAndRefetchActiveQuery({
                 queryKey: queryKeys.world(args.ref.id),
                 nextData: args
@@ -95,20 +74,16 @@ const worldReq = {
         });
     },
 
-    /**
-     * @param {{ worldId: string }} params
-     * @returns {Promise<{ json: unknown; params }>}
-     */
-    publishWorld(params) {
+    publishWorld(params: { worldId: string }): Promise<{ json: unknown; params }> {
         return request(`worlds/${params.worldId}/publish`, {
             method: 'PUT',
             params
         }).then((json) => {
             const args = {
                 json,
-                params
+                params,
+                ref: applyWorld(json)
             };
-            args.ref = applyWorld(json);
             patchAndRefetchActiveQuery({
                 queryKey: queryKeys.world(args.ref.id),
                 nextData: args
@@ -119,20 +94,16 @@ const worldReq = {
         });
     },
 
-    /**
-     * @param {{ worldId: string }} params
-     * @returns {Promise<{ json: unknown; params }>}
-     */
-    unpublishWorld(params) {
+    unpublishWorld(params: { worldId: string }): Promise<{ json: unknown; params }> {
         return request(`worlds/${params.worldId}/publish`, {
             method: 'DELETE',
             params
         }).then((json) => {
             const args = {
                 json,
-                params
+                params,
+                ref: applyWorld(json)
             };
-            args.ref = applyWorld(json);
             patchAndRefetchActiveQuery({
                 queryKey: queryKeys.world(args.ref.id),
                 nextData: args
@@ -143,11 +114,7 @@ const worldReq = {
         });
     },
 
-    /**
-     * @param {string} imageData
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; params: { tag: string } }>}
-     */
-    uploadWorldImage(imageData) {
+    uploadWorldImage(imageData: string): Promise<{ json: Json<File>; params: { tag: string } }> {
         const params = {
             tag: 'worldimage'
         };

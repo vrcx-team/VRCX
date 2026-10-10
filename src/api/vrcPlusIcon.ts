@@ -1,3 +1,5 @@
+import type { File, GetFiles } from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { queryClient } from '../queries';
 import { request } from '../services/request';
 
@@ -13,14 +15,7 @@ function refetchActiveGalleryQueries() {
 }
 
 const VRCPlusIconsReq = {
-    /**
-     * @param {import('vrchat').GetFiles['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').File[]>;
-     *     params: import('vrchat').GetFiles['query'];
-     * }>}
-     */
-    getFileList(params) {
+    getFileList(params: GetFiles['query']): Promise<{ json: Json<File[]>; params: GetFiles['query'] }> {
         return request('files', {
             method: 'GET',
             params
@@ -33,11 +28,7 @@ const VRCPlusIconsReq = {
         });
     },
 
-    /**
-     * @param {string} fileId
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; fileId: string }>}
-     */
-    deleteFile(fileId) {
+    deleteFile(fileId: string): Promise<{ json: Json<File>; fileId: string }> {
         return request(`file/${fileId}`, {
             method: 'DELETE'
         }).then((json) => {
@@ -50,11 +41,7 @@ const VRCPlusIconsReq = {
         });
     },
 
-    /**
-     * @param {string} imageData
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; params: { tag: string } }>}
-     */
-    uploadVRCPlusIcon(imageData) {
+    uploadVRCPlusIcon(imageData: string): Promise<{ json: Json<File>; params: { tag: string } }> {
         const params = {
             tag: 'icon'
         };

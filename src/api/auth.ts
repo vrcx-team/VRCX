@@ -1,15 +1,17 @@
+import type {
+    ApiConfig,
+    Permission,
+    TwoFactorAuthCode,
+    TwoFactorEmailCode,
+    Verify2FaEmailCodeResult,
+    Verify2FaResult
+} from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { request } from '../services/request';
 import { handleConfig } from '../coordinators/userCoordinator';
 
 const loginReq = {
-    /**
-     * @param {import('vrchat').TwoFactorAuthCode} params One-time password
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Verify2FaResult>;
-     *     params: import('vrchat').TwoFactorAuthCode;
-     * }>}
-     */
-    verifyOTP(params) {
+    verifyOTP(params: TwoFactorAuthCode): Promise<{ json: Json<Verify2FaResult>; params: TwoFactorAuthCode }> {
         return request('auth/twofactorauth/otp/verify', {
             method: 'POST',
             params
@@ -22,14 +24,7 @@ const loginReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').TwoFactorAuthCode} params One-time token
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Verify2FaResult>;
-     *     params: import('vrchat').TwoFactorAuthCode;
-     * }>}
-     */
-    verifyTOTP(params) {
+    verifyTOTP(params: TwoFactorAuthCode): Promise<{ json: Json<Verify2FaResult>; params: TwoFactorAuthCode }> {
         return request('auth/twofactorauth/totp/verify', {
             method: 'POST',
             params
@@ -42,14 +37,9 @@ const loginReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').TwoFactorEmailCode} params One-time token
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Verify2FaEmailCodeResult>;
-     *     params: import('vrchat').TwoFactorEmailCode;
-     * }>}
-     */
-    verifyEmailOTP(params) {
+    verifyEmailOTP(
+        params: TwoFactorEmailCode
+    ): Promise<{ json: Json<Verify2FaEmailCodeResult>; params: TwoFactorEmailCode }> {
         return request('auth/twofactorauth/emailotp/verify', {
             method: 'POST',
             params
@@ -62,10 +52,7 @@ const loginReq = {
         });
     },
 
-    /**
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').ApiConfig> }>}
-     */
-    getConfig() {
+    getConfig(): Promise<{ json: Json<ApiConfig> }> {
         return request('config', {
             method: 'GET'
         }).then((json) => {
@@ -77,10 +64,7 @@ const loginReq = {
         });
     },
 
-    /**
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Permission[]> }>}
-     */
-    getPermissions() {
+    getPermissions(): Promise<{ json: Json<Permission[]> }> {
         return request('auth/permissions', {
             method: 'GET',
             params: { condensed: true }

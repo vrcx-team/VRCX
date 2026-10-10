@@ -1,11 +1,9 @@
+import type { Prop } from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { request } from '../services/request';
 
 const propReq = {
-    /**
-     * @param {{ propId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Prop>; params }>}
-     */
-    getProp(params) {
+    getProp(params: { propId: string }): Promise<{ json: Json<Prop>; params }> {
         return request(`props/${params.propId}`, {
             method: 'GET',
             params

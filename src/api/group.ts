@@ -1,3 +1,56 @@
+import type {
+    BanGroupMemberRequest,
+    CalendarEvent,
+    CreateCalendarEventRequest,
+    CreateGroupInviteRequest,
+    CreateGroupPostRequest,
+    CreateGroupRequest,
+    CreateGroupRoleRequest,
+    DeleteGroup,
+    FollowCalendarEventRequest,
+    GetCalendarEvents,
+    GetFeaturedCalendarEvents,
+    GetFollowedCalendarEvents,
+    GetGroup,
+    GetGroupBans,
+    GetGroupGalleryImages,
+    GetGroupGalleryImagesResponse,
+    GetGroupInvites,
+    GetGroupMemberResponse,
+    GetGroupMembers,
+    GetGroupPosts,
+    GetGroupPostsResponse,
+    GetGroupRequests,
+    GetGroupRoleTemplatesResponse,
+    GetGroupTransferability,
+    GetUserGroupInstancesForGroupResponse,
+    GetUserGroupInstancesResponse,
+    Group,
+    GroupAuditLogEntryType,
+    GroupMember,
+    GroupPermission,
+    GroupPost,
+    GroupRole,
+    GroupRoleIdList,
+    GroupTransferable,
+    LimitedGroup,
+    LimitedUserGroups,
+    PaginatedCalendarEventList,
+    PaginatedGroupAuditLogEntryList,
+    RepresentedGroup,
+    SearchGroupMembers,
+    SearchGroupMembersResponse,
+    SearchGroups,
+    Success,
+    TransferGroupRequest,
+    UpdateCalendarEventRequest,
+    UpdateGroupMemberRequest,
+    UpdateGroupRepresentation,
+    UpdateGroupRequest,
+    UpdateGroupRoleRequest,
+    UserAllGroupPermissions
+} from 'vrchat';
+import type { Json, VrcxGroup } from '../types/vrcx';
 import { useUserStore } from '../stores';
 import { applyGroup } from '../coordinators/groupCoordinator';
 import { queryClient } from '../queries';
@@ -7,9 +60,6 @@ function getCurrentUserId() {
     return useUserStore().currentUser.id;
 }
 
-/**
- * @param groupId
- */
 function refetchActiveGroupScope(groupId) {
     if (!groupId) {
         return;
@@ -24,12 +74,7 @@ function refetchActiveGroupScope(groupId) {
         });
 }
 const groupReq = {
-    /**
-     * @param {string} groupId
-     * @param {import('vrchat').UpdateGroupRepresentation['body']} params
-     * @returns
-     */
-    setGroupRepresentation(groupId, params) {
+    setGroupRepresentation(groupId: string, params: UpdateGroupRepresentation['body']) {
         return request(`groups/${groupId}/representation`, {
             method: 'PUT',
             params
@@ -44,11 +89,7 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{ groupId: string }} params
-     * @returns {Promise<{ json: unknown; params }>}
-     */
-    cancelGroupRequest(params) {
+    cancelGroupRequest(params: { groupId: string }): Promise<{ json: unknown; params }> {
         return request(`groups/${params.groupId}/requests`, {
             method: 'DELETE'
         }).then((json) => {
@@ -60,11 +101,7 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{ groupId: string; postId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Success>; params }>}
-     */
-    deleteGroupPost(params) {
+    deleteGroupPost(params: { groupId: string; postId: string }): Promise<{ json: Json<Success>; params }> {
         return request(`groups/${params.groupId}/posts/${params.postId}`, {
             method: 'DELETE'
         }).then((json) => {
@@ -76,15 +113,9 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string } & import('vrchat').GetGroup['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Group>;
-     *     params: { groupId: string } & import('vrchat').GetGroup['query'];
-     *     ref: import('@/types/vrcx').VrcxGroup;
-     * }>}
-     */
-    getGroup(params) {
+    getGroup(
+        params: { groupId: string } & GetGroup['query']
+    ): Promise<{ json: Json<Group>; params: { groupId: string } & GetGroup['query']; ref: VrcxGroup }> {
         return request(`groups/${params.groupId}`, {
             method: 'GET',
             params: {
@@ -99,11 +130,7 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ userId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').RepresentedGroup>; params }>}
-     */
-    getRepresentedGroup(params) {
+    getRepresentedGroup(params: { userId: string }): Promise<{ json: Json<RepresentedGroup>; params }> {
         return request(`users/${params.userId}/groups/represented`, {
             method: 'GET'
         }).then((json) => {
@@ -114,11 +141,7 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ userId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').LimitedUserGroups[]>; params }>}
-     */
-    getGroups(params) {
+    getGroups(params: { userId: string }): Promise<{ json: Json<LimitedUserGroups[]>; params }> {
         return request(`users/${params.userId}/groups`, {
             method: 'GET'
         }).then((json) => {
@@ -130,14 +153,9 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{ groupId: string } & import('vrchat').GetGroupTransferability['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GroupTransferable>;
-     *     params: { groupId: string } & import('vrchat').GetGroupTransferability['query'];
-     * }>}
-     */
-    checkTransferGroup(params) {
+    checkTransferGroup(
+        params: { groupId: string } & GetGroupTransferability['query']
+    ): Promise<{ json: Json<GroupTransferable>; params: { groupId: string } & GetGroupTransferability['query'] }> {
         return request(`groups/${params.groupId}/transfer`, {
             method: 'GET',
             params: {
@@ -152,14 +170,9 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{ groupId: string } & import('vrchat').TransferGroupRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Success>;
-     *     params: { groupId: string } & import('vrchat').TransferGroupRequest;
-     * }>}
-     */
-    transferGroup(params) {
+    transferGroup(
+        params: { groupId: string } & TransferGroupRequest
+    ): Promise<{ json: Json<Success>; params: { groupId: string } & TransferGroupRequest }> {
         return request(`groups/${params.groupId}/transfer`, {
             method: 'POST',
             params: {
@@ -175,14 +188,9 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{ groupId: string } & import('vrchat').DeleteGroup['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Success>;
-     *     params: { groupId: string } & import('vrchat').DeleteGroup['query'];
-     * }>}
-     */
-    deleteGroup(params) {
+    deleteGroup(
+        params: { groupId: string } & DeleteGroup['query']
+    ): Promise<{ json: Json<Success>; params: { groupId: string } & DeleteGroup['query'] }> {
         return request(`groups/${params.groupId}`, {
             method: 'DELETE',
             params: {
@@ -197,11 +205,7 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{ groupId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').GroupMember>; params }>}
-     */
-    joinGroup(params) {
+    joinGroup(params: { groupId: string }): Promise<{ json: Json<GroupMember>; params }> {
         return request(`groups/${params.groupId}/join`, {
             method: 'POST'
         }).then((json) => {
@@ -213,11 +217,7 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string }} params
-     * @returns {Promise<{ json: unknown; params }>}
-     */
-    leaveGroup(params) {
+    leaveGroup(params: { groupId: string }): Promise<{ json: unknown; params }> {
         return request(`groups/${params.groupId}/leave`, {
             method: 'POST'
         }).then((json) => {
@@ -229,11 +229,7 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ query: string }} params
-     * @returns {Promise<{ json: any; params }>}
-     */
-    groupStrictsearch(params) {
+    groupStrictsearch(params: { query: string }): Promise<{ json: any; params }> {
         return request(`groups/strictsearch`, {
             method: 'GET',
             params
@@ -245,18 +241,11 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {string} userId
-     * @param {string} groupId
-     * @param {import('vrchat').UpdateGroupMemberRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GroupMember>;
-     *     userId: string;
-     *     groupId: string;
-     *     params: import('vrchat').UpdateGroupMemberRequest;
-     * }>}
-     */
-    setGroupMemberProps(userId, groupId, params) {
+    setGroupMemberProps(
+        userId: string,
+        groupId: string,
+        params: UpdateGroupMemberRequest
+    ): Promise<{ json: Json<GroupMember>; userId: string; groupId: string; params: UpdateGroupMemberRequest }> {
         return request(`groups/${groupId}/members/${userId}`, {
             method: 'PUT',
             params
@@ -271,15 +260,11 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{
-     *     userId: string;
-     *     groupId: string;
-     *     roleId: string;
-     * }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').GroupRoleIdList>; params }>}
-     */
-    addGroupMemberRole(params) {
+    addGroupMemberRole(params: {
+        userId: string;
+        groupId: string;
+        roleId: string;
+    }): Promise<{ json: Json<GroupRoleIdList>; params }> {
         return request(`groups/${params.groupId}/members/${params.userId}/roles/${params.roleId}`, {
             method: 'PUT'
         }).then((json) => {
@@ -291,15 +276,11 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{
-     *     userId: string;
-     *     groupId: string;
-     *     roleId: string;
-     * }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').GroupRoleIdList>; params }>}
-     */
-    removeGroupMemberRole(params) {
+    removeGroupMemberRole(params: {
+        userId: string;
+        groupId: string;
+        roleId: string;
+    }): Promise<{ json: Json<GroupRoleIdList>; params }> {
         return request(`groups/${params.groupId}/members/${params.userId}/roles/${params.roleId}`, {
             method: 'DELETE'
         }).then((json) => {
@@ -311,14 +292,9 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ userId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').UserAllGroupPermissions>;
-     *     params: { userId: string };
-     * }>}
-     */
-    getGroupPermissions(params) {
+    getGroupPermissions(params: {
+        userId: string;
+    }): Promise<{ json: Json<UserAllGroupPermissions>; params: { userId: string } }> {
         return request(`users/${params.userId}/groups/permissions`, {
             method: 'GET'
         }).then((json) => {
@@ -329,14 +305,9 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string } & import('vrchat').GetGroupPosts['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GetGroupPostsResponse>;
-     *     params: { groupId: string } & import('vrchat').GetGroupPosts['query'];
-     * }>}
-     */
-    getGroupPosts(params) {
+    getGroupPosts(
+        params: { groupId: string } & GetGroupPosts['query']
+    ): Promise<{ json: Json<GetGroupPostsResponse>; params: { groupId: string } & GetGroupPosts['query'] }> {
         return request(`groups/${params.groupId}/posts`, {
             method: 'GET',
             params
@@ -348,14 +319,10 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string; postId: string } & Partial<import('vrchat').CreateGroupPostRequest>} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GroupPost>;
-     *     params: { groupId: string; postId: string } & Partial<import('vrchat').CreateGroupPostRequest>;
-     * }>}
-     */
-    editGroupPost(params) {
+    editGroupPost(params: { groupId: string; postId: string } & Partial<CreateGroupPostRequest>): Promise<{
+        json: Json<GroupPost>;
+        params: { groupId: string; postId: string } & Partial<CreateGroupPostRequest>;
+    }> {
         return request(`groups/${params.groupId}/posts/${params.postId}`, {
             method: 'PUT',
             params
@@ -368,14 +335,9 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string } & import('vrchat').CreateGroupPostRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GroupPost>;
-     *     params: { groupId: string } & import('vrchat').CreateGroupPostRequest;
-     * }>}
-     */
-    createGroupPost(params) {
+    createGroupPost(
+        params: { groupId: string } & CreateGroupPostRequest
+    ): Promise<{ json: Json<GroupPost>; params: { groupId: string } & CreateGroupPostRequest }> {
         return request(`groups/${params.groupId}/posts`, {
             method: 'POST',
             params
@@ -388,18 +350,10 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{
-     *     groupId: string;
-     *     userId: string;
-     * }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GetGroupMemberResponse>;
-     *     params;
-     *     ref?: any;
-     * }>}
-     */
-    getGroupMember(params) {
+    getGroupMember(params: {
+        groupId: string;
+        userId: string;
+    }): Promise<{ json: Json<GetGroupMemberResponse>; params; ref?: any }> {
         return request(`groups/${params.groupId}/members/${params.userId}`, {
             method: 'GET'
         }).then((json) => {
@@ -410,14 +364,9 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string } & import('vrchat').GetGroupMembers['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GroupMember[]>;
-     *     params: { groupId: string } & import('vrchat').GetGroupMembers['query'];
-     * }>}
-     */
-    getGroupMembers(params) {
+    getGroupMembers(
+        params: { groupId: string } & GetGroupMembers['query']
+    ): Promise<{ json: Json<GroupMember[]>; params: { groupId: string } & GetGroupMembers['query'] }> {
         return request(`groups/${params.groupId}/members`, {
             method: 'GET',
             params
@@ -429,14 +378,9 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string } & import('vrchat').SearchGroupMembers['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').SearchGroupMembersResponse>;
-     *     params: { groupId: string } & import('vrchat').SearchGroupMembers['query'];
-     * }>}
-     */
-    getGroupMembersSearch(params) {
+    getGroupMembersSearch(
+        params: { groupId: string } & SearchGroupMembers['query']
+    ): Promise<{ json: Json<SearchGroupMembersResponse>; params: { groupId: string } & SearchGroupMembers['query'] }> {
         return request(`groups/${params.groupId}/members/search`, {
             method: 'GET',
             params
@@ -449,13 +393,9 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{
-     *     membershipStatus: 'invited' | 'requested' | 'userblocked';
-     * }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Group[]>; params }>}
-     */
-    getBlockedGroups(params) {
+    getBlockedGroups(params: {
+        membershipStatus: 'invited' | 'requested' | 'userblocked';
+    }): Promise<{ json: Json<Group[]>; params }> {
         return request(`users/${getCurrentUserId()}/groups/${params.membershipStatus}`, {
             method: 'GET'
         }).then((json) => {
@@ -467,13 +407,7 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{
-     *     groupId: string;
-     * }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Success>; params }>}
-     */
-    blockGroup(params) {
+    blockGroup(params: { groupId: string }): Promise<{ json: Json<Success>; params }> {
         return request(`groups/${params.groupId}/block`, {
             method: 'POST'
         }).then((json) => {
@@ -485,14 +419,7 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{
-     *     groupId: string;
-     *     userId: string;
-     * }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Success>; params }>}
-     */
-    unblockGroup(params) {
+    unblockGroup(params: { groupId: string; userId: string }): Promise<{ json: Json<Success>; params }> {
         return request(`groups/${params.groupId}/members/${params.userId}`, {
             method: 'DELETE'
         }).then((json) => {
@@ -504,14 +431,9 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string } & import('vrchat').CreateGroupInviteRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Success>;
-     *     params: { groupId: string } & import('vrchat').CreateGroupInviteRequest;
-     * }>}
-     */
-    sendGroupInvite(params) {
+    sendGroupInvite(
+        params: { groupId: string } & CreateGroupInviteRequest
+    ): Promise<{ json: Json<Success>; params: { groupId: string } & CreateGroupInviteRequest }> {
         return request(`groups/${params.groupId}/invites`, {
             method: 'POST',
             params: {
@@ -525,14 +447,7 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{
-     *     groupId: string;
-     *     userId: string;
-     * }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Success>; params }>}
-     */
-    kickGroupMember(params) {
+    kickGroupMember(params: { groupId: string; userId: string }): Promise<{ json: Json<Success>; params }> {
         return request(`groups/${params.groupId}/members/${params.userId}`, {
             method: 'DELETE'
         }).then((json) => {
@@ -544,14 +459,9 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string } & import('vrchat').BanGroupMemberRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GroupMember>;
-     *     params: { groupId: string } & import('vrchat').BanGroupMemberRequest;
-     * }>}
-     */
-    banGroupMember(params) {
+    banGroupMember(
+        params: { groupId: string } & BanGroupMemberRequest
+    ): Promise<{ json: Json<GroupMember>; params: { groupId: string } & BanGroupMemberRequest }> {
         return request(`groups/${params.groupId}/bans`, {
             method: 'POST',
             params: {
@@ -566,14 +476,10 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string; userId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GroupMember>;
-     *     params: { groupId: string; userId: string };
-     * }>}
-     */
-    unbanGroupMember(params) {
+    unbanGroupMember(params: {
+        groupId: string;
+        userId: string;
+    }): Promise<{ json: Json<GroupMember>; params: { groupId: string; userId: string } }> {
         return request(`groups/${params.groupId}/bans/${params.userId}`, {
             method: 'DELETE'
         }).then((json) => {
@@ -585,11 +491,7 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string; userId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Success>; params }>}
-     */
-    deleteSentGroupInvite(params) {
+    deleteSentGroupInvite(params: { groupId: string; userId: string }): Promise<{ json: Json<Success>; params }> {
         return request(`groups/${params.groupId}/invites/${params.userId}`, {
             method: 'DELETE'
         }).then((json) => {
@@ -600,14 +502,10 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string; userId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Success>;
-     *     params: { groupId: string; userId: string };
-     * }>}
-     */
-    deleteBlockedGroupRequest(params) {
+    deleteBlockedGroupRequest(params: {
+        groupId: string;
+        userId: string;
+    }): Promise<{ json: Json<Success>; params: { groupId: string; userId: string } }> {
         return request(`groups/${params.groupId}/members/${params.userId}`, {
             method: 'DELETE'
         }).then((json) => {
@@ -618,11 +516,10 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string; userId: string }} params
-     * @returns {Promise<{ json: unknown; params: { groupId: string; userId: string } }>}
-     */
-    acceptGroupInviteRequest(params) {
+    acceptGroupInviteRequest(params: {
+        groupId: string;
+        userId: string;
+    }): Promise<{ json: unknown; params: { groupId: string; userId: string } }> {
         return request(`groups/${params.groupId}/requests/${params.userId}`, {
             method: 'PUT',
             params: {
@@ -637,11 +534,10 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string; userId: string }} params
-     * @returns {Promise<{ json: unknown; params: { groupId: string; userId: string } }>}
-     */
-    rejectGroupInviteRequest(params) {
+    rejectGroupInviteRequest(params: {
+        groupId: string;
+        userId: string;
+    }): Promise<{ json: unknown; params: { groupId: string; userId: string } }> {
         return request(`groups/${params.groupId}/requests/${params.userId}`, {
             method: 'PUT',
             params: {
@@ -656,11 +552,10 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string; userId: string }} params
-     * @returns {Promise<{ json: unknown; params: { groupId: string; userId: string } }>}
-     */
-    blockGroupInviteRequest(params) {
+    blockGroupInviteRequest(params: {
+        groupId: string;
+        userId: string;
+    }): Promise<{ json: unknown; params: { groupId: string; userId: string } }> {
         return request(`groups/${params.groupId}/requests/${params.userId}`, {
             method: 'PUT',
             params: {
@@ -676,14 +571,9 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string } & import('vrchat').GetGroupBans['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GroupMember[]>;
-     *     params: { groupId: string } & import('vrchat').GetGroupBans['query'];
-     * }>}
-     */
-    getGroupBans(params) {
+    getGroupBans(
+        params: { groupId: string } & GetGroupBans['query']
+    ): Promise<{ json: Json<GroupMember[]>; params: { groupId: string } & GetGroupBans['query'] }> {
         return request(`groups/${params.groupId}/bans`, {
             method: 'GET',
             params
@@ -695,11 +585,7 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').GroupAuditLogEntryType[]>; params }>}
-     */
-    getGroupAuditLogTypes(params) {
+    getGroupAuditLogTypes(params: { groupId: string }): Promise<{ json: Json<GroupAuditLogEntryType[]>; params }> {
         return request(`groups/${params.groupId}/auditLogTypes`, {
             method: 'GET'
         }).then((json) => {
@@ -710,14 +596,10 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string; n: number; offset: number; eventTypes?: string[] }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').PaginatedGroupAuditLogEntryList>;
-     *     params: { groupId: string; n: number; offset: number; eventTypes?: string[] };
-     * }>}
-     */
-    getGroupLogs(params) {
+    getGroupLogs(params: { groupId: string; n: number; offset: number; eventTypes?: string[] }): Promise<{
+        json: Json<PaginatedGroupAuditLogEntryList>;
+        params: { groupId: string; n: number; offset: number; eventTypes?: string[] };
+    }> {
         return request(`groups/${params.groupId}/auditLogs`, {
             method: 'GET',
             params
@@ -729,14 +611,9 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string } & import('vrchat').GetGroupInvites['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GroupMember[]>;
-     *     params: { groupId: string } & import('vrchat').GetGroupInvites['query'];
-     * }>}
-     */
-    getGroupInvites(params) {
+    getGroupInvites(
+        params: { groupId: string } & GetGroupInvites['query']
+    ): Promise<{ json: Json<GroupMember[]>; params: { groupId: string } & GetGroupInvites['query'] }> {
         return request(`groups/${params.groupId}/invites`, {
             method: 'GET',
             params
@@ -748,14 +625,9 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string } & import('vrchat').GetGroupRequests['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GroupMember[]>;
-     *     params: { groupId: string } & import('vrchat').GetGroupRequests['query'];
-     * }>}
-     */
-    getGroupJoinRequests(params) {
+    getGroupJoinRequests(
+        params: { groupId: string } & GetGroupRequests['query']
+    ): Promise<{ json: Json<GroupMember[]>; params: { groupId: string } & GetGroupRequests['query'] }> {
         return request(`groups/${params.groupId}/requests`, {
             method: 'GET',
             params
@@ -767,14 +639,9 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GetUserGroupInstancesForGroupResponse>;
-     *     params;
-     * }>}
-     */
-    getGroupInstances(params) {
+    getGroupInstances(params: {
+        groupId: string;
+    }): Promise<{ json: Json<GetUserGroupInstancesForGroupResponse>; params }> {
         return request(`users/${getCurrentUserId()}/instances/groups/${params.groupId}`, {
             method: 'GET'
         }).then((json) => {
@@ -785,11 +652,7 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').GroupRole[]>; params }>}
-     */
-    getGroupRoles(params) {
+    getGroupRoles(params: { groupId: string }): Promise<{ json: Json<GroupRole[]>; params }> {
         return request(`groups/${params.groupId}/roles`, {
             method: 'GET',
             params
@@ -802,22 +665,20 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{ groupId: string } & import('vrchat').CreateGroupRoleRequest & {
-     *         isAddedOnJoin?: boolean;
-     *         requiresTwoFactor?: boolean;
-     *         requiresPurchase?: boolean;
-     *     }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GroupRole>;
-     *     params: { groupId: string } & import('vrchat').CreateGroupRoleRequest & {
-     *             isAddedOnJoin?: boolean;
-     *             requiresTwoFactor?: boolean;
-     *             requiresPurchase?: boolean;
-     *         };
-     * }>}
-     */
-    createGroupRole(params) {
+    createGroupRole(
+        params: { groupId: string } & CreateGroupRoleRequest & {
+                isAddedOnJoin?: boolean;
+                requiresTwoFactor?: boolean;
+                requiresPurchase?: boolean;
+            }
+    ): Promise<{
+        json: Json<GroupRole>;
+        params: { groupId: string } & CreateGroupRoleRequest & {
+                isAddedOnJoin?: boolean;
+                requiresTwoFactor?: boolean;
+                requiresPurchase?: boolean;
+            };
+    }> {
         const { groupId, ...body } = params;
         return request(`groups/${groupId}/roles`, {
             method: 'POST',
@@ -832,20 +693,18 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{ groupId: string; roleId: string } & import('vrchat').UpdateGroupRoleRequest & {
-     *         isAddedOnJoin?: boolean;
-     *         requiresTwoFactor?: boolean;
-     *     }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GroupRole[]>;
-     *     params: { groupId: string; roleId: string } & import('vrchat').UpdateGroupRoleRequest & {
-     *             isAddedOnJoin?: boolean;
-     *             requiresTwoFactor?: boolean;
-     *         };
-     * }>}
-     */
-    editGroupRole(params) {
+    editGroupRole(
+        params: { groupId: string; roleId: string } & UpdateGroupRoleRequest & {
+                isAddedOnJoin?: boolean;
+                requiresTwoFactor?: boolean;
+            }
+    ): Promise<{
+        json: Json<GroupRole[]>;
+        params: { groupId: string; roleId: string } & UpdateGroupRoleRequest & {
+                isAddedOnJoin?: boolean;
+                requiresTwoFactor?: boolean;
+            };
+    }> {
         const { groupId, roleId, ...body } = params;
         return request(`groups/${groupId}/roles/${roleId}`, {
             method: 'PUT',
@@ -860,11 +719,7 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{ groupId: string; roleId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').GroupRole[]>; params }>}
-     */
-    deleteGroupRole(params) {
+    deleteGroupRole(params: { groupId: string; roleId: string }): Promise<{ json: Json<GroupRole[]>; params }> {
         return request(`groups/${params.groupId}/roles/${params.roleId}`, {
             method: 'DELETE'
         }).then((json) => {
@@ -877,11 +732,7 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{ groupId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').GroupPermission[]>; params }>}
-     */
-    getGroupPermissionList(params) {
+    getGroupPermissionList(params: { groupId: string }): Promise<{ json: Json<GroupPermission[]>; params }> {
         return request(`groups/${params.groupId}/permissions`, {
             method: 'GET'
         }).then((json) => {
@@ -893,10 +744,7 @@ const groupReq = {
         });
     },
 
-    /**
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').GetUserGroupInstancesResponse> }>}
-     */
-    getUsersGroupInstances() {
+    getUsersGroupInstances(): Promise<{ json: Json<GetUserGroupInstancesResponse> }> {
         return request(`users/${getCurrentUserId()}/instances/groups`, {
             method: 'GET'
         }).then((json) => {
@@ -907,14 +755,7 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').SearchGroups['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').LimitedGroup[]>;
-     *     params: import('vrchat').SearchGroups['query'];
-     * }>}
-     */
-    groupSearch(params) {
+    groupSearch(params: SearchGroups['query']): Promise<{ json: Json<LimitedGroup[]>; params: SearchGroups['query'] }> {
         return request(`groups`, {
             method: 'GET',
             params
@@ -926,14 +767,10 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {{ groupId: string; galleryId: string } & import('vrchat').GetGroupGalleryImages['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GetGroupGalleryImagesResponse>;
-     *     params: { groupId: string; galleryId: string } & import('vrchat').GetGroupGalleryImages['query'];
-     * }>}
-     */
-    getGroupGallery(params) {
+    getGroupGallery(params: { groupId: string; galleryId: string } & GetGroupGalleryImages['query']): Promise<{
+        json: Json<GetGroupGalleryImagesResponse>;
+        params: { groupId: string; galleryId: string } & GetGroupGalleryImages['query'];
+    }> {
         return request(`groups/${params.groupId}/galleries/${params.galleryId}`, {
             method: 'GET',
             params: {
@@ -949,14 +786,9 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {string} groupId
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').PaginatedCalendarEventList>;
-     *     params: { groupId: string };
-     * }>}
-     */
-    getGroupCalendar(groupId) {
+    getGroupCalendar(
+        groupId: string
+    ): Promise<{ json: Json<PaginatedCalendarEventList>; params: { groupId: string } }> {
         return request(`calendar/${groupId}`, {
             method: 'GET'
         }).then((json) => {
@@ -970,14 +802,10 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{
-     *     groupId: string;
-     *     eventId: string;
-     * }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').CalendarEvent>; params }>}
-     */
-    getGroupCalendarEvent(params) {
+    getGroupCalendarEvent(params: {
+        groupId: string;
+        eventId: string;
+    }): Promise<{ json: Json<CalendarEvent>; params }> {
         return request(`calendar/${params.groupId}/${params.eventId}`, {
             method: 'GET'
         }).then((json) => {
@@ -988,47 +816,35 @@ const groupReq = {
             return args;
         });
     },
-    /**
-     * @param {import('@/types/vrcx').Json<import('vrchat').GetCalendarEvents['query']>} params
-     * @returns {Promise<import('@/types/vrcx').Json<import('vrchat').PaginatedCalendarEventList>>}
-     */
-    getGroupCalendars(params) {
+    getGroupCalendars(params: Json<GetCalendarEvents['query']>): Promise<Json<PaginatedCalendarEventList>> {
         return request('calendar', {
             method: 'GET',
             params
         });
     },
 
-    /**
-     * @param {import('@/types/vrcx').Json<import('vrchat').GetFollowedCalendarEvents['query']>} params
-     * @returns {Promise<import('@/types/vrcx').Json<import('vrchat').PaginatedCalendarEventList>>}
-     */
-    getFollowingGroupCalendars(params) {
+    getFollowingGroupCalendars(
+        params: Json<GetFollowedCalendarEvents['query']>
+    ): Promise<Json<PaginatedCalendarEventList>> {
         return request('calendar/following', {
             method: 'GET',
             params
         });
     },
 
-    /**
-     * @param {import('@/types/vrcx').Json<import('vrchat').GetFeaturedCalendarEvents['query']>} params
-     * @returns {Promise<import('@/types/vrcx').Json<import('vrchat').PaginatedCalendarEventList>>}
-     */
-    getFeaturedGroupCalendars(params) {
+    getFeaturedGroupCalendars(
+        params: Json<GetFeaturedCalendarEvents['query']>
+    ): Promise<Json<PaginatedCalendarEventList>> {
         return request('calendar/featured', {
             method: 'GET',
             params
         });
     },
 
-    /**
-     * @param {{ groupId: string; eventId: string } & import('vrchat').FollowCalendarEventRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').CalendarEvent>;
-     *     params: { groupId: string; eventId: string } & import('vrchat').FollowCalendarEventRequest;
-     * }>}
-     */
-    followGroupEvent(params) {
+    followGroupEvent(params: { groupId: string; eventId: string } & FollowCalendarEventRequest): Promise<{
+        json: Json<CalendarEvent>;
+        params: { groupId: string; eventId: string } & FollowCalendarEventRequest;
+    }> {
         return request(`calendar/${params.groupId}/${params.eventId}/follow`, {
             method: 'POST',
             params: {
@@ -1043,14 +859,10 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{ groupId: string; eventId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Success>;
-     *     params: { groupId: string; eventId: string };
-     * }>}
-     */
-    deleteGroupEvent(params) {
+    deleteGroupEvent(params: {
+        groupId: string;
+        eventId: string;
+    }): Promise<{ json: Json<Success>; params: { groupId: string; eventId: string } }> {
         return request(`calendar/${params.groupId}/${params.eventId}`, {
             method: 'DELETE'
         }).then((json) => {
@@ -1062,14 +874,9 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{ groupId: string } & import('@/types/vrcx').Json<import('vrchat').CreateCalendarEventRequest>} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').CalendarEvent>;
-     *     params: { groupId: string } & import('@/types/vrcx').Json<import('vrchat').CreateCalendarEventRequest>;
-     * }>}
-     */
-    createGroupEvent(params) {
+    createGroupEvent(
+        params: { groupId: string } & Json<CreateCalendarEventRequest>
+    ): Promise<{ json: Json<CalendarEvent>; params: { groupId: string } & Json<CreateCalendarEventRequest> }> {
         return request(`calendar/${params.groupId}/event`, {
             method: 'POST',
             params
@@ -1082,22 +889,16 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{ groupId: string; eventId: string } & import('@/types/vrcx').Json<
-     *     import('vrchat').UpdateCalendarEventRequest
-     * > & {
-     *         accessType?: import('vrchat').CreateCalendarEventRequest['accessType'];
-     *     }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').CalendarEvent>;
-     *     params: { groupId: string; eventId: string } & import('@/types/vrcx').Json<
-     *         import('vrchat').UpdateCalendarEventRequest
-     *     > & {
-     *             accessType?: import('vrchat').CreateCalendarEventRequest['accessType'];
-     *         };
-     * }>}
-     */
-    editGroupEvent(params) {
+    editGroupEvent(
+        params: { groupId: string; eventId: string } & Json<UpdateCalendarEventRequest> & {
+                accessType?: CreateCalendarEventRequest['accessType'];
+            }
+    ): Promise<{
+        json: Json<CalendarEvent>;
+        params: { groupId: string; eventId: string } & Json<UpdateCalendarEventRequest> & {
+                accessType?: CreateCalendarEventRequest['accessType'];
+            };
+    }> {
         return request(`calendar/${params.groupId}/${params.eventId}/event`, {
             method: 'PUT',
             params
@@ -1110,14 +911,7 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').CreateGroupRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Group>;
-     *     params: import('vrchat').CreateGroupRequest;
-     * }>}
-     */
-    createGroup(params) {
+    createGroup(params: CreateGroupRequest): Promise<{ json: Json<Group>; params: CreateGroupRequest }> {
         return request('groups', {
             method: 'POST',
             params
@@ -1130,14 +924,10 @@ const groupReq = {
         });
     },
 
-    /**
-     * @param {{ id: string } & import('vrchat').UpdateGroupRequest & { allowGroupJoinPrompt?: boolean }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Group>;
-     *     params: { id: string } & import('vrchat').UpdateGroupRequest & { allowGroupJoinPrompt?: boolean };
-     * }>}
-     */
-    editGroup(params) {
+    editGroup(params: { id: string } & UpdateGroupRequest & { allowGroupJoinPrompt?: boolean }): Promise<{
+        json: Json<Group>;
+        params: { id: string } & UpdateGroupRequest & { allowGroupJoinPrompt?: boolean };
+    }> {
         return request(`groups/${params.id}`, {
             method: 'PUT',
             params
@@ -1150,10 +940,7 @@ const groupReq = {
         });
     },
 
-    /**
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').GetGroupRoleTemplatesResponse> }>}
-     */
-    getRoleTemplates() {
+    getRoleTemplates(): Promise<{ json: Json<GetGroupRoleTemplatesResponse> }> {
         return request('groups/roleTemplates', {
             method: 'GET'
         }).then((json) => {

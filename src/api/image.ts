@@ -1,12 +1,19 @@
+import type {
+    Avatar,
+    CreateFileVersionRequest,
+    File,
+    FileUploadUrl,
+    UpdateAvatarRequest,
+    UpdateWorldRequest,
+    World
+} from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { useAvatarStore, useWorldStore } from '../stores';
 import { applyWorld } from '../coordinators/worldCoordinator';
 import { request } from '../services/request';
 
 const imageReq = {
-    /**
-     * @param {string} id
-     */
-    async uploadAvatarFailCleanup(id) {
+    async uploadAvatarFailCleanup(id: string) {
         const avatarStore = useAvatarStore();
         try {
             const json = await request(`file/${id}`, {
@@ -26,16 +33,10 @@ const imageReq = {
         avatarStore.setAvatarDialogLoading(false);
     },
 
-    /**
-     * @param {import('vrchat').CreateFileVersionRequest} params
-     * @param {string} fileId
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
-     *     params: import('vrchat').CreateFileVersionRequest;
-     *     fileId: string;
-     * }>}
-     */
-    async uploadAvatarImage(params, fileId) {
+    async uploadAvatarImage(
+        params: CreateFileVersionRequest,
+        fileId: string
+    ): Promise<{ json: Json<File>; params: CreateFileVersionRequest; fileId: string }> {
         try {
             return await request(`file/${fileId}`, {
                 method: 'POST',
@@ -55,14 +56,10 @@ const imageReq = {
         }
     },
 
-    /**
-     * @param {{ fileId: string; fileVersion: number }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').FileUploadUrl>;
-     *     params: { fileId: string; fileVersion: number };
-     * }>}
-     */
-    async uploadAvatarImageFileStart(params) {
+    async uploadAvatarImageFileStart(params: {
+        fileId: string;
+        fileVersion: number;
+    }): Promise<{ json: Json<FileUploadUrl>; params: { fileId: string; fileVersion: number } }> {
         try {
             return await request(`file/${params.fileId}/${params.fileVersion}/file/start`, {
                 method: 'PUT'
@@ -79,14 +76,10 @@ const imageReq = {
         }
     },
 
-    /**
-     * @param {{ fileId: string; fileVersion: number }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
-     *     params: { fileId: string; fileVersion: number };
-     * }>}
-     */
-    uploadAvatarImageFileFinish(params) {
+    uploadAvatarImageFileFinish(params: {
+        fileId: string;
+        fileVersion: number;
+    }): Promise<{ json: Json<File>; params: { fileId: string; fileVersion: number } }> {
         return request(`file/${params.fileId}/${params.fileVersion}/file/finish`, {
             method: 'PUT',
             params: {
@@ -102,14 +95,10 @@ const imageReq = {
         });
     },
 
-    /**
-     * @param {{ fileId: string; fileVersion: number }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').FileUploadUrl>;
-     *     params: { fileId: string; fileVersion: number };
-     * }>}
-     */
-    async uploadAvatarImageSigStart(params) {
+    async uploadAvatarImageSigStart(params: {
+        fileId: string;
+        fileVersion: number;
+    }): Promise<{ json: Json<FileUploadUrl>; params: { fileId: string; fileVersion: number } }> {
         try {
             return await request(`file/${params.fileId}/${params.fileVersion}/signature/start`, {
                 method: 'PUT'
@@ -126,14 +115,10 @@ const imageReq = {
         }
     },
 
-    /**
-     * @param {{ fileId: string; fileVersion: number }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
-     *     params: { fileId: string; fileVersion: number };
-     * }>}
-     */
-    uploadAvatarImageSigFinish(params) {
+    uploadAvatarImageSigFinish(params: {
+        fileId: string;
+        fileVersion: number;
+    }): Promise<{ json: Json<File>; params: { fileId: string; fileVersion: number } }> {
         return request(`file/${params.fileId}/${params.fileVersion}/signature/finish`, {
             method: 'PUT',
             params: {
@@ -149,14 +134,9 @@ const imageReq = {
         });
     },
 
-    /**
-     * @param {{ id: string } & import('vrchat').UpdateAvatarRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Avatar>;
-     *     params: { id: string } & import('vrchat').UpdateAvatarRequest;
-     * }>}
-     */
-    setAvatarImage(params) {
+    setAvatarImage(
+        params: { id: string } & UpdateAvatarRequest
+    ): Promise<{ json: Json<Avatar>; params: { id: string } & UpdateAvatarRequest }> {
         return request(`avatars/${params.id}`, {
             method: 'PUT',
             params
@@ -169,10 +149,7 @@ const imageReq = {
         });
     },
 
-    /**
-     * @param {string} id
-     */
-    async uploadWorldFailCleanup(id) {
+    async uploadWorldFailCleanup(id: string) {
         const worldStore = useWorldStore();
         try {
             const json = await request(`file/${id}`, {
@@ -192,16 +169,10 @@ const imageReq = {
         worldStore.setWorldDialogLoading(false);
     },
 
-    /**
-     * @param {import('vrchat').CreateFileVersionRequest} params
-     * @param {string} fileId
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
-     *     params: import('vrchat').CreateFileVersionRequest;
-     *     fileId: string;
-     * }>}
-     */
-    async uploadWorldImage(params, fileId) {
+    async uploadWorldImage(
+        params: CreateFileVersionRequest,
+        fileId: string
+    ): Promise<{ json: Json<File>; params: CreateFileVersionRequest; fileId: string }> {
         try {
             return await request(`file/${fileId}`, {
                 method: 'POST',
@@ -221,14 +192,10 @@ const imageReq = {
         return void 0;
     },
 
-    /**
-     * @param {{ fileId: string; fileVersion: number }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').FileUploadUrl>;
-     *     params: { fileId: string; fileVersion: number };
-     * }>}
-     */
-    async uploadWorldImageFileStart(params) {
+    async uploadWorldImageFileStart(params: {
+        fileId: string;
+        fileVersion: number;
+    }): Promise<{ json: Json<FileUploadUrl>; params: { fileId: string; fileVersion: number } }> {
         try {
             return await request(`file/${params.fileId}/${params.fileVersion}/file/start`, {
                 method: 'PUT'
@@ -246,14 +213,10 @@ const imageReq = {
         return void 0;
     },
 
-    /**
-     * @param {{ fileId: string; fileVersion: number }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
-     *     params: { fileId: string; fileVersion: number };
-     * }>}
-     */
-    uploadWorldImageFileFinish(params) {
+    uploadWorldImageFileFinish(params: {
+        fileId: string;
+        fileVersion: number;
+    }): Promise<{ json: Json<File>; params: { fileId: string; fileVersion: number } }> {
         return request(`file/${params.fileId}/${params.fileVersion}/file/finish`, {
             method: 'PUT',
             params: {
@@ -269,14 +232,10 @@ const imageReq = {
         });
     },
 
-    /**
-     * @param {{ fileId: string; fileVersion: number }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').FileUploadUrl>;
-     *     params: { fileId: string; fileVersion: number };
-     * }>}
-     */
-    async uploadWorldImageSigStart(params) {
+    async uploadWorldImageSigStart(params: {
+        fileId: string;
+        fileVersion: number;
+    }): Promise<{ json: Json<FileUploadUrl>; params: { fileId: string; fileVersion: number } }> {
         try {
             return await request(`file/${params.fileId}/${params.fileVersion}/signature/start`, {
                 method: 'PUT'
@@ -294,14 +253,10 @@ const imageReq = {
         return void 0;
     },
 
-    /**
-     * @param {{ fileId: string; fileVersion: number }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
-     *     params: { fileId: string; fileVersion: number };
-     * }>}
-     */
-    uploadWorldImageSigFinish(params) {
+    uploadWorldImageSigFinish(params: {
+        fileId: string;
+        fileVersion: number;
+    }): Promise<{ json: Json<File>; params: { fileId: string; fileVersion: number } }> {
         return request(`file/${params.fileId}/${params.fileVersion}/signature/finish`, {
             method: 'PUT',
             params: {
@@ -317,15 +272,9 @@ const imageReq = {
         });
     },
 
-    /**
-     * @param {{ id: string } & import('vrchat').UpdateWorldRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').World>;
-     *     params: { id: string } & import('vrchat').UpdateWorldRequest;
-     *     ref: any;
-     * }>}
-     */
-    setWorldImage(params) {
+    setWorldImage(
+        params: { id: string } & UpdateWorldRequest
+    ): Promise<{ json: Json<World>; params: { id: string } & UpdateWorldRequest; ref: any }> {
         return request(`worlds/${params.id}`, {
             method: 'PUT',
             params
@@ -338,11 +287,7 @@ const imageReq = {
         });
     },
 
-    /**
-     * @param {{ fileId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; params: { fileId: string } }>}
-     */
-    getAvatarImages(params) {
+    getAvatarImages(params: { fileId: string }): Promise<{ json: Json<File>; params: { fileId: string } }> {
         return request(`file/${params.fileId}`, {
             method: 'GET'
         }).then((json) => {
@@ -354,11 +299,7 @@ const imageReq = {
         });
     },
 
-    /**
-     * @param {{ fileId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; params: { fileId: string } }>}
-     */
-    getWorldImages(params) {
+    getWorldImages(params: { fileId: string }): Promise<{ json: Json<File>; params: { fileId: string } }> {
         return request(`file/${params.fileId}`, {
             method: 'GET',
             params

@@ -1,3 +1,15 @@
+import type {
+    Balance,
+    BoopRequest,
+    File,
+    FileAnalysis,
+    Instance,
+    Success,
+    UpdateUserBadgeRequest,
+    UpdateUserNoteRequest,
+    UpdateUserNoteResponse
+} from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { queryClient, queryKeys } from '../queries';
 import { request } from '../services/request';
 import { useUserStore } from '../stores';
@@ -7,11 +19,7 @@ function getCurrentUserId() {
 }
 
 const miscReq = {
-    /**
-     * @param {{ fileId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; params: { fileId: string } }>}
-     */
-    getFile(params) {
+    getFile(params: { fileId: string }): Promise<{ json: Json<File>; params: { fileId: string } }> {
         return request(`file/${params.fileId}`, {
             method: 'GET'
         }).then((json) => {
@@ -23,14 +31,9 @@ const miscReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').UpdateUserNoteRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').UpdateUserNoteResponse>;
-     *     params: import('vrchat').UpdateUserNoteRequest;
-     * }>}
-     */
-    saveNote(params) {
+    saveNote(
+        params: UpdateUserNoteRequest
+    ): Promise<{ json: Json<UpdateUserNoteResponse>; params: UpdateUserNoteRequest }> {
         return request('userNotes', {
             method: 'POST',
             params
@@ -43,16 +46,12 @@ const miscReq = {
         });
     },
 
-    /**
-     * @param {{
-     *     userId: string;
-     *     contentType: string;
-     *     reason: string;
-     *     type: string;
-     * }} params
-     * @returns {Promise<{ json: any; params }>}
-     */
-    reportUser(params) {
+    reportUser(params: {
+        userId: string;
+        contentType: string;
+        reason: string;
+        type: string;
+    }): Promise<{ json: any; params }> {
         return request(`feedback/${params.userId}/user`, {
             method: 'POST',
             params: {
@@ -69,15 +68,11 @@ const miscReq = {
         });
     },
 
-    /**
-     * @param {{
-     *     fileId: string;
-     *     version: number;
-     *     variant: string;
-     * }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').FileAnalysis>; params }>}
-     */
-    getFileAnalysis(params) {
+    getFileAnalysis(params: {
+        fileId: string;
+        version: number;
+        variant: string;
+    }): Promise<{ json: Json<FileAnalysis>; params }> {
         return request(`analysis/${params.fileId}/${params.version}/${params.variant}`, {
             method: 'GET'
         }).then((json) => {
@@ -89,10 +84,7 @@ const miscReq = {
         });
     },
 
-    /**
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Balance> }>}
-     */
-    getVRChatCredits() {
+    getVRChatCredits(): Promise<{ json: Json<Balance> }> {
         return request(`user/${getCurrentUserId()}/economy/balance`, {
             method: 'GET'
         }).then((json) => {
@@ -103,14 +95,7 @@ const miscReq = {
         });
     },
 
-    /**
-     * @param {{
-     *     location: string;
-     *     hardClose: boolean;
-     * }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Instance>; params }>}
-     */
-    closeInstance(params) {
+    closeInstance(params: { location: string; hardClose: boolean }): Promise<{ json: Json<Instance>; params }> {
         return request(`instances/${params.location}`, {
             method: 'DELETE',
             params: {
@@ -125,13 +110,7 @@ const miscReq = {
         });
     },
 
-    /**
-     * @param {{
-     *     worldId: string;
-     * }} params
-     * @returns {Promise<{ json: unknown; params }>}
-     */
-    deleteWorldPersistData(params) {
+    deleteWorldPersistData(params: { worldId: string }): Promise<{ json: unknown; params }> {
         return request(`users/${getCurrentUserId()}/${params.worldId}/persist`, {
             method: 'DELETE'
         }).then((json) => {
@@ -143,13 +122,7 @@ const miscReq = {
         });
     },
 
-    /**
-     * @param {{
-     *     worldId: string;
-     * }} params
-     * @returns {Promise<{ json: unknown; params }>}
-     */
-    hasWorldPersistData(params) {
+    hasWorldPersistData(params: { worldId: string }): Promise<{ json: unknown; params }> {
         return request(`users/${getCurrentUserId()}/${params.worldId}/persist/exists`, {
             method: 'GET'
         }).then((json) => {
@@ -161,11 +134,9 @@ const miscReq = {
         });
     },
 
-    /**
-     * @param {{ badgeId: string } & import('vrchat').UpdateUserBadgeRequest} params
-     * @returns {Promise<{ json: unknown; params: { badgeId: string } & import('vrchat').UpdateUserBadgeRequest }>}
-     */
-    updateBadge(params) {
+    updateBadge(
+        params: { badgeId: string } & UpdateUserBadgeRequest
+    ): Promise<{ json: unknown; params: { badgeId: string } & UpdateUserBadgeRequest }> {
         return request(`users/${getCurrentUserId()}/badges/${params.badgeId}`, {
             method: 'PUT',
             params: {
@@ -183,10 +154,7 @@ const miscReq = {
         });
     },
 
-    /**
-     * @returns {Promise<{ json: number }>}
-     */
-    getVisits() {
+    getVisits(): Promise<{ json: number }> {
         return request('visits', {
             method: 'GET'
         }).then((json) => {
@@ -197,11 +165,7 @@ const miscReq = {
         });
     },
 
-    /**
-     * @param {string} fileId
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; fileId: string }>}
-     */
-    deleteFile(fileId) {
+    deleteFile(fileId: string): Promise<{ json: Json<File>; fileId: string }> {
         return request(`file/${fileId}`, {
             method: 'DELETE'
         }).then((json) => {
@@ -217,14 +181,9 @@ const miscReq = {
         });
     },
 
-    /**
-     * @param {{ userId: string } & import('vrchat').BoopRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Success>;
-     *     params: { userId: string } & import('vrchat').BoopRequest;
-     * }>}
-     */
-    sendBoop(params) {
+    sendBoop(
+        params: { userId: string } & BoopRequest
+    ): Promise<{ json: Json<Success>; params: { userId: string } & BoopRequest }> {
         return request(`users/${params.userId}/boop`, {
             method: 'POST',
             params: {

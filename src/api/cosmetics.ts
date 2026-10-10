@@ -1,10 +1,9 @@
+import type { InventoryTemplate } from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { request } from '../services/request';
 
 const cosmeticsReq = {
-    /**
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').InventoryTemplate[]> }>}
-     */
-    getProfileEffects() {
+    getProfileEffects(): Promise<{ json: Json<InventoryTemplate[]> }> {
         return request('cosmetics/index/profileEffect', {
             method: 'GET'
         }).then((json) => {
@@ -15,10 +14,7 @@ const cosmeticsReq = {
         });
     },
 
-    /**
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').InventoryTemplate[]> }>}
-     */
-    getIconFrames() {
+    getIconFrames(): Promise<{ json: Json<InventoryTemplate[]> }> {
         return request('cosmetics/index/iconFrame', {
             method: 'GET'
         }).then((json) => {
@@ -29,10 +25,7 @@ const cosmeticsReq = {
         });
     },
 
-    /**
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').InventoryTemplate[]> }>}
-     */
-    getNameplateEffects() {
+    getNameplateEffects(): Promise<{ json: Json<InventoryTemplate[]> }> {
         return request('cosmetics/index/nameplateEffect', {
             method: 'GET'
         }).then((json) => {

@@ -1,3 +1,5 @@
+import type { Instance, InstanceShortNameResponse, SentNotification } from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { toast } from 'vue-sonner';
 
 import { i18n } from '../plugins/i18n';
@@ -5,15 +7,10 @@ import { request } from '../services/request';
 import { useInstanceStore } from '../stores';
 
 const instanceReq = {
-    /**
-     * @param {{ worldId: string; instanceId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Instance>;
-     *     ref: import('@/types/vrcx').Json<import('vrchat').Instance>;
-     *     params: { worldId: string; instanceId: string };
-     * }>}
-     */
-    getInstance(params) {
+    getInstance(params: {
+        worldId: string;
+        instanceId: string;
+    }): Promise<{ json: Json<Instance>; ref: Json<Instance>; params: { worldId: string; instanceId: string } }> {
         const instanceStore = useInstanceStore();
         return request(`instances/${params.worldId}:${params.instanceId}`, {
             method: 'GET'
@@ -26,11 +23,7 @@ const instanceReq = {
         });
     },
 
-    /**
-     * @param {any} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Instance>; params: any }>}
-     */
-    createInstance(params) {
+    createInstance(params: any): Promise<{ json: Json<Instance>; params: any }> {
         const instanceStore = useInstanceStore();
         return request('instances', {
             method: 'POST',
@@ -38,23 +31,19 @@ const instanceReq = {
         }).then((json) => {
             const args = {
                 json,
-                params
+                params,
+                ref: instanceStore.applyInstance(json)
             };
-            args.ref = instanceStore.applyInstance(json);
             return args;
         });
     },
 
-    /**
-     * @param {{ worldId: string; instanceId: string; shortName?: string }} instance
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').InstanceShortNameResponse>;
-     *     instance: { worldId: string; instanceId: string };
-     *     params?: { shortName?: string };
-     * }>}
-     */
-    getInstanceShortName(instance) {
-        const params = {};
+    getInstanceShortName(instance: { worldId: string; instanceId: string; shortName?: string }): Promise<{
+        json: Json<InstanceShortNameResponse>;
+        instance: { worldId: string; instanceId: string };
+        params?: { shortName?: string };
+    }> {
+        const params: { shortName?: string } = {};
         if (instance.shortName) {
             params.shortName = instance.shortName;
         }
@@ -71,35 +60,26 @@ const instanceReq = {
         });
     },
 
-    /**
-     * @param {{ shortName: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Instance>; params }>}
-     */
-    getInstanceFromShortName(params) {
+    getInstanceFromShortName(params: { shortName: string }): Promise<{ json: Json<Instance>; params }> {
         const instanceStore = useInstanceStore();
         return request(`instances/s/${params.shortName}`, {
             method: 'GET'
         }).then((json) => {
             const args = {
                 json,
-                params
+                params,
+                ref: instanceStore.applyInstance(json)
             };
-            args.ref = instanceStore.applyInstance(json);
             return args;
         });
     },
 
-    /**
-     * Send invite to current user.
-     *
-     * @param {{ worldId: string; instanceId: string; shortName?: string }} instance
-     * @returns {Promise<{ instance; json: import('@/types/vrcx').Json<import('vrchat').SentNotification>; params }>}
-     */
-    selfInvite(instance) {
-        /**
-         * @type {{ shortName?: string }}
-         */
-        const params = {};
+    selfInvite(instance: {
+        worldId: string;
+        instanceId: string;
+        shortName?: string;
+    }): Promise<{ instance; json: Json<SentNotification>; params }> {
+        const params: { shortName?: string } = {};
         if (instance.shortName) {
             params.shortName = instance.shortName;
         }
@@ -124,16 +104,16 @@ const instanceReq = {
             });
     },
 
-    /**
-     * Send instance announcement
-     *
-     * @param {{ location: string; title: string; message: string; imageId?: string; imageVersion?: string }} params
-     * @returns {Promise<{
-     *     json: any;
-     *     params: { location: string; title: string; message: string; imageId?: string; imageVersion?: string };
-     * }>}
-     */
-    instanceAnnouncement(params) {
+    instanceAnnouncement(params: {
+        location: string;
+        title: string;
+        message: string;
+        imageId?: string;
+        imageVersion?: string;
+    }): Promise<{
+        json: any;
+        params: { location: string; title: string; message: string; imageId?: string; imageVersion?: string };
+    }> {
         return request(`instances/${params.location}/announce`, {
             method: 'POST',
             params

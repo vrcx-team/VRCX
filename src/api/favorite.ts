@@ -1,3 +1,18 @@
+import type {
+    Avatar,
+    Favorite,
+    FavoriteGroup,
+    FavoriteLimits,
+    FavoritedWorld,
+    GetFavoriteGroups,
+    GetFavoritedAvatars,
+    GetFavoritedWorlds,
+    GetFavorites,
+    Success,
+    UpdateFavoriteGroupRequest,
+    UpdateFavoriteGroupResponse
+} from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { useUserStore } from '../stores';
 import { handleFavoriteAdd, handleFavoriteDelete, handleFavoriteGroupClear } from '../coordinators/favoriteCoordinator';
 import { queryClient } from '../queries';
@@ -19,10 +34,7 @@ function refetchActiveFavoriteQueries() {
 }
 
 const favoriteReq = {
-    /**
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').FavoriteLimits> }>}
-     */
-    getFavoriteLimits() {
+    getFavoriteLimits(): Promise<{ json: Json<FavoriteLimits> }> {
         return request('auth/user/favoritelimits', {
             method: 'GET'
         }).then((json) => {
@@ -33,14 +45,7 @@ const favoriteReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').GetFavorites['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Favorite[]>;
-     *     params: import('vrchat').GetFavorites['query'];
-     * }>}
-     */
-    getFavorites(params) {
+    getFavorites(params: GetFavorites['query']): Promise<{ json: Json<Favorite[]>; params: GetFavorites['query'] }> {
         return request('favorites', {
             method: 'GET',
             params
@@ -53,14 +58,11 @@ const favoriteReq = {
         });
     },
 
-    /**
-     * @param {{ type: string; favoriteId: string; tags: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Favorite>;
-     *     params: { type: string; favoriteId: string; tags: string };
-     * }>}
-     */
-    addFavorite(params) {
+    addFavorite(params: {
+        type: string;
+        favoriteId: string;
+        tags: string;
+    }): Promise<{ json: Json<Favorite>; params: { type: string; favoriteId: string; tags: string } }> {
         return request('favorites', {
             method: 'POST',
             params
@@ -75,11 +77,7 @@ const favoriteReq = {
         });
     },
 
-    /**
-     * @param {{ objectId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Success>; params }>}
-     */
-    deleteFavorite(params) {
+    deleteFavorite(params: { objectId: string }): Promise<{ json: Json<Success>; params }> {
         return request(`favorites/${params.objectId}`, {
             method: 'DELETE'
         }).then((json) => {
@@ -93,14 +91,9 @@ const favoriteReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').GetFavoriteGroups['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').FavoriteGroup[]>;
-     *     params: import('vrchat').GetFavoriteGroups['query'];
-     * }>}
-     */
-    getFavoriteGroups(params) {
+    getFavoriteGroups(
+        params: GetFavoriteGroups['query']
+    ): Promise<{ json: Json<FavoriteGroup[]>; params: GetFavoriteGroups['query'] }> {
         return request('favorite/groups', {
             method: 'GET',
             params
@@ -113,14 +106,10 @@ const favoriteReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').UpdateFavoriteGroupRequest & { type: string; group: string }} params Group is a name
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').UpdateFavoriteGroupResponse>;
-     *     params: import('vrchat').UpdateFavoriteGroupRequest & { type: string; group: string };
-     * }>}
-     */
-    saveFavoriteGroup(params) {
+    saveFavoriteGroup(params: UpdateFavoriteGroupRequest & { type: string; group: string }): Promise<{
+        json: Json<UpdateFavoriteGroupResponse>;
+        params: UpdateFavoriteGroupRequest & { type: string; group: string };
+    }> {
         return request(`favorite/group/${params.type}/${params.group}/${getCurrentUserId()}`, {
             method: 'PUT',
             params
@@ -134,14 +123,7 @@ const favoriteReq = {
         });
     },
 
-    /**
-     * @param {{
-     *     type: string;
-     *     group: string;
-     * }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Success>; params }>}
-     */
-    clearFavoriteGroup(params) {
+    clearFavoriteGroup(params: { type: string; group: string }): Promise<{ json: Json<Success>; params }> {
         return request(`favorite/group/${params.type}/${params.group}/${getCurrentUserId()}`, {
             method: 'DELETE',
             params
@@ -156,14 +138,9 @@ const favoriteReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').GetFavoritedWorlds['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').FavoritedWorld[]>;
-     *     params: import('vrchat').GetFavoritedWorlds['query'];
-     * }>}
-     */
-    getFavoriteWorlds(params) {
+    getFavoriteWorlds(
+        params: GetFavoritedWorlds['query']
+    ): Promise<{ json: Json<FavoritedWorld[]>; params: GetFavoritedWorlds['query'] }> {
         return request('worlds/favorites', {
             method: 'GET',
             params
@@ -176,14 +153,9 @@ const favoriteReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').GetFavoritedAvatars['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Avatar[]>;
-     *     params: import('vrchat').GetFavoritedAvatars['query'];
-     * }>}
-     */
-    getFavoriteAvatars(params) {
+    getFavoriteAvatars(
+        params: GetFavoritedAvatars['query']
+    ): Promise<{ json: Json<Avatar[]>; params: GetFavoritedAvatars['query'] }> {
         return request('avatars/favorites', {
             method: 'GET',
             params

@@ -1,3 +1,5 @@
+import type { InviteMessage, InviteMessageType, UpdateInviteMessageRequest } from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { request } from '../services/request';
 import { useUserStore } from '../stores';
 
@@ -6,14 +8,9 @@ function getCurrentUserId() {
 }
 
 const inviteMessagesReq = {
-    /**
-     * @param {import('vrchat').InviteMessageType} messageType
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').InviteMessage[]>;
-     *     messageType: import('vrchat').InviteMessageType;
-     * }>}
-     */
-    refreshInviteMessageTableData(messageType) {
+    refreshInviteMessageTableData(
+        messageType: InviteMessageType
+    ): Promise<{ json: Json<InviteMessage[]>; messageType: InviteMessageType }> {
         return request(`message/${getCurrentUserId()}/${messageType}`, {
             method: 'GET'
         }).then((json) => {
@@ -25,18 +22,16 @@ const inviteMessagesReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').UpdateInviteMessageRequest} params
-     * @param {import('vrchat').InviteMessageType} messageType
-     * @param {number} slot
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').InviteMessage[]>;
-     *     params: import('vrchat').UpdateInviteMessageRequest;
-     *     messageType: import('vrchat').InviteMessageType;
-     *     slot: number;
-     * }>}
-     */
-    editInviteMessage(params, messageType, slot) {
+    editInviteMessage(
+        params: UpdateInviteMessageRequest,
+        messageType: InviteMessageType,
+        slot: number
+    ): Promise<{
+        json: Json<InviteMessage[]>;
+        params: UpdateInviteMessageRequest;
+        messageType: InviteMessageType;
+        slot: number;
+    }> {
         return request(`message/${getCurrentUserId()}/${messageType}/${slot}`, {
             method: 'PUT',
             params

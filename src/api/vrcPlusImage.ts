@@ -1,3 +1,5 @@
+import type { File, Print, UploadImage, UploadPrint } from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { queryClient } from '../queries';
 import { request } from '../services/request';
 import { useUserStore } from '../stores';
@@ -17,11 +19,7 @@ function refetchActiveGalleryQueries() {
         });
 }
 const vrcPlusImageReq = {
-    /**
-     * @param {string} imageData
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; params: { tag: string } }>}
-     */
-    uploadGalleryImage(imageData) {
+    uploadGalleryImage(imageData: string): Promise<{ json: Json<File>; params: { tag: string } }> {
         const params = {
             tag: 'gallery'
         };
@@ -40,15 +38,10 @@ const vrcPlusImageReq = {
         });
     },
 
-    /**
-     * @param {string} imageData
-     * @param {Omit<NonNullable<import('vrchat').UploadImage['body']>, 'file'>} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
-     *     params: Omit<NonNullable<import('vrchat').UploadImage['body']>, 'file'>;
-     * }>}
-     */
-    uploadSticker(imageData, params) {
+    uploadSticker(
+        imageData: string,
+        params: Omit<NonNullable<UploadImage['body']>, 'file'>
+    ): Promise<{ json: Json<File>; params: Omit<NonNullable<UploadImage['body']>, 'file'> }> {
         return request('file/image', {
             uploadImage: true,
             matchingDimensions: true,
@@ -64,11 +57,7 @@ const vrcPlusImageReq = {
         });
     },
 
-    /**
-     * @param {{ n?: number }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Print[]>; params: { n?: number } }>}
-     */
-    getPrints(params) {
+    getPrints(params: { n?: number }): Promise<{ json: Json<Print[]>; params: { n?: number } }> {
         return request(`prints/user/${getCurrentUserId()}`, {
             method: 'GET',
             params
@@ -81,11 +70,7 @@ const vrcPlusImageReq = {
         });
     },
 
-    /**
-     * @param {string} printId
-     * @returns {Promise<{ json: unknown; printId: string }>}
-     */
-    deletePrint(printId) {
+    deletePrint(printId: string): Promise<{ json: unknown; printId: string }> {
         return request(`prints/${printId}`, {
             method: 'DELETE'
         }).then((json) => {
@@ -98,16 +83,11 @@ const vrcPlusImageReq = {
         });
     },
 
-    /**
-     * @param {string} imageData
-     * @param {boolean} cropWhiteBorder
-     * @param {import('@/types/vrcx').Json<Omit<NonNullable<import('vrchat').UploadPrint['body']>, 'image'>>} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Print>;
-     *     params: import('@/types/vrcx').Json<Omit<NonNullable<import('vrchat').UploadPrint['body']>, 'image'>>;
-     * }>}
-     */
-    uploadPrint(imageData, cropWhiteBorder, params) {
+    uploadPrint(
+        imageData: string,
+        cropWhiteBorder: boolean,
+        params: Json<Omit<NonNullable<UploadPrint['body']>, 'image'>>
+    ): Promise<{ json: Json<Print>; params: Json<Omit<NonNullable<UploadPrint['body']>, 'image'>> }> {
         return request('prints', {
             uploadImagePrint: true,
             cropWhiteBorder,
@@ -123,11 +103,7 @@ const vrcPlusImageReq = {
         });
     },
 
-    /**
-     * @param {{ printId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Print>; params: { printId: string } }>}
-     */
-    getPrint(params) {
+    getPrint(params: { printId: string }): Promise<{ json: Json<Print>; params: { printId: string } }> {
         return request(`prints/${params.printId}`, {
             method: 'GET'
         }).then((json) => {
@@ -139,15 +115,10 @@ const vrcPlusImageReq = {
         });
     },
 
-    /**
-     * @param {string} imageData
-     * @param {Omit<NonNullable<import('vrchat').UploadImage['body']>, 'file'>} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').File>;
-     *     params: Omit<NonNullable<import('vrchat').UploadImage['body']>, 'file'>;
-     * }>}
-     */
-    uploadEmoji(imageData, params) {
+    uploadEmoji(
+        imageData: string,
+        params: Omit<NonNullable<UploadImage['body']>, 'file'>
+    ): Promise<{ json: Json<File>; params: Omit<NonNullable<UploadImage['body']>, 'file'> }> {
         return request('file/image', {
             uploadImage: true,
             matchingDimensions: true,

@@ -196,13 +196,7 @@ const registry = Object.freeze({
 });
 
 const queryRequest = {
-    /**
-     * @template T
-     * @param {keyof typeof registry} resource
-     * @param {any} [params]
-     * @returns {Promise<T & { cache: boolean }>}
-     */
-    async fetch(resource, params = {}) {
+    async fetch<T>(resource: keyof typeof registry, params: any = {}): Promise<T & { cache: boolean }> {
         const entry = registry[resource];
         if (!entry) {
             throw new Error(`Unknown query resource: ${String(resource)}`);

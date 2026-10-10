@@ -1,16 +1,22 @@
+import type {
+    Avatar,
+    AvatarStyle,
+    CurrentUser,
+    File,
+    GetLicensedAvatars,
+    GroupGalleryFileOrder,
+    GroupGalleryFileOrderRequest,
+    SearchAvatars,
+    ServiceStatus,
+    UpdateAvatarRequest
+} from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { patchAndRefetchActiveQuery, queryKeys } from '../queries';
 import { request } from '../services/request';
 import { applyCurrentUser } from '../coordinators/userCoordinator';
 
 const avatarReq = {
-    /**
-     * @param {{ avatarId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Avatar>;
-     *     params: { avatarId: string };
-     * }>}
-     */
-    getAvatar(params) {
+    getAvatar(params: { avatarId: string }): Promise<{ json: Json<Avatar>; params: { avatarId: string } }> {
         return request(`avatars/${params.avatarId}`, {
             method: 'GET'
         }).then((json) => {
@@ -22,14 +28,7 @@ const avatarReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').SearchAvatars['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Avatar[]>;
-     *     params: import('vrchat').SearchAvatars['query'];
-     * }>}
-     */
-    getAvatars(params) {
+    getAvatars(params: SearchAvatars['query']): Promise<{ json: Json<Avatar[]>; params: SearchAvatars['query'] }> {
         return request('avatars', {
             method: 'GET',
             params
@@ -43,14 +42,9 @@ const avatarReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').UpdateAvatarRequest & { id: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Avatar>;
-     *     params: import('vrchat').UpdateAvatarRequest & { id: string };
-     * }>}
-     */
-    saveAvatar(params) {
+    saveAvatar(
+        params: UpdateAvatarRequest & { id: string }
+    ): Promise<{ json: Json<Avatar>; params: UpdateAvatarRequest & { id: string } }> {
         return request(`avatars/${params.id}`, {
             method: 'PUT',
             params
@@ -69,11 +63,7 @@ const avatarReq = {
         });
     },
 
-    /**
-     * @param {{ avatarId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').CurrentUser>; params }>}
-     */
-    selectAvatar(params) {
+    selectAvatar(params: { avatarId: string }): Promise<{ json: Json<CurrentUser>; params }> {
         return request(`avatars/${params.avatarId}/select`, {
             method: 'PUT',
             params
@@ -97,11 +87,7 @@ const avatarReq = {
         });
     },
 
-    /**
-     * @param {{ avatarId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').CurrentUser>; params }>}
-     */
-    selectFallbackAvatar(params) {
+    selectFallbackAvatar(params: { avatarId: string }): Promise<{ json: Json<CurrentUser>; params }> {
         return request(`avatars/${params.avatarId}/selectfallback`, {
             method: 'PUT',
             params
@@ -125,11 +111,7 @@ const avatarReq = {
         });
     },
 
-    /**
-     * @param {{ avatarId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Avatar>; params }>}
-     */
-    deleteAvatar(params) {
+    deleteAvatar(params: { avatarId: string }): Promise<{ json: Json<Avatar>; params }> {
         return request(`avatars/${params.avatarId}`, {
             method: 'DELETE'
         }).then((json) => {
@@ -141,11 +123,7 @@ const avatarReq = {
         });
     },
 
-    /**
-     * @param {{ avatarId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').ServiceStatus>; params }>}
-     */
-    createImposter(params) {
+    createImposter(params: { avatarId: string }): Promise<{ json: Json<ServiceStatus>; params }> {
         return request(`avatars/${params.avatarId}/impostor/enqueue`, {
             method: 'POST'
         }).then((json) => {
@@ -157,11 +135,7 @@ const avatarReq = {
         });
     },
 
-    /**
-     * @param {{ avatarId: string }} params
-     * @returns {Promise<{ json: unknown; params }>}
-     */
-    deleteImposter(params) {
+    deleteImposter(params: { avatarId: string }): Promise<{ json: unknown; params }> {
         return request(`avatars/${params.avatarId}/impostor`, {
             method: 'DELETE'
         }).then((json) => {
@@ -173,10 +147,7 @@ const avatarReq = {
         });
     },
 
-    /**
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').AvatarStyle[]> }>}
-     */
-    getAvailableAvatarStyles() {
+    getAvailableAvatarStyles(): Promise<{ json: Json<AvatarStyle[]> }> {
         return request('avatarStyles', {
             method: 'GET'
         }).then((json) => {
@@ -187,14 +158,9 @@ const avatarReq = {
         });
     },
 
-    /**
-     * @param {string} avatarId
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').File[]>;
-     *     params: { tag: string; galleryId: string; n: number; offset: number };
-     * }>}
-     */
-    getAvatarGallery(avatarId) {
+    getAvatarGallery(
+        avatarId: string
+    ): Promise<{ json: Json<File[]>; params: { tag: string; galleryId: string; n: number; offset: number } }> {
         const params = {
             tag: 'avatargallery',
             galleryId: avatarId,
@@ -213,11 +179,7 @@ const avatarReq = {
         });
     },
 
-    /**
-     * @param {string} imageData
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; params: { tag: string } }>}
-     */
-    uploadAvatarImage(imageData) {
+    uploadAvatarImage(imageData: string): Promise<{ json: Json<File>; params: { tag: string } }> {
         const params = {
             tag: 'avatarimage'
         };
@@ -235,12 +197,7 @@ const avatarReq = {
         });
     },
 
-    /**
-     * @param {string} imageData
-     * @param {string} avatarId
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').File>; params: any }>}
-     */
-    uploadAvatarGalleryImage(imageData, avatarId) {
+    uploadAvatarGalleryImage(imageData: string, avatarId: string): Promise<{ json: Json<File>; params: any }> {
         const params = {
             tag: 'avatargallery',
             galleryId: avatarId
@@ -259,15 +216,10 @@ const avatarReq = {
         });
     },
 
-    /**
-     * @param {string[]} order
-     * @param {string} galleryId
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').GroupGalleryFileOrder>;
-     *     params: import('vrchat').GroupGalleryFileOrderRequest;
-     * }>}
-     */
-    setAvatarGalleryOrder(order, galleryId) {
+    setAvatarGalleryOrder(
+        order: string[],
+        galleryId: string
+    ): Promise<{ json: Json<GroupGalleryFileOrder>; params: GroupGalleryFileOrderRequest }> {
         const params = {
             ids: order,
             galleryId
@@ -284,14 +236,9 @@ const avatarReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').GetLicensedAvatars['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Avatar[]>;
-     *     params: import('vrchat').GetLicensedAvatars['query'];
-     * }>}
-     */
-    getLicensedAvatars(params) {
+    getLicensedAvatars(
+        params: GetLicensedAvatars['query']
+    ): Promise<{ json: Json<Avatar[]>; params: GetLicensedAvatars['query'] }> {
         return request('avatars/licensed', {
             method: 'GET',
             params

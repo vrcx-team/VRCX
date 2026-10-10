@@ -71,7 +71,7 @@ export function parseResponse(response) {
 }
 
 /**
- * @template T
+ * @template [T=any]
  * @param {string} endpoint
  * @param {import('@/types/vrcx').RequestOptions} [options]
  * @returns {Promise<T>}

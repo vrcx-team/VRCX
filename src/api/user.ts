@@ -1,28 +1,34 @@
+import type {
+    ChangeUserTagsRequest,
+    CurrentUser,
+    Feedback,
+    GetMutualFriends,
+    GetMutualGroups,
+    GetUserNotes,
+    LimitedUserGroups,
+    LimitedUserSearch,
+    MutualFriend,
+    Mutuals,
+    PrivateProfile,
+    PublicProfile,
+    SearchUsers,
+    UpdateProfileRequest,
+    UpdateUserRequest,
+    User,
+    UserNote
+} from 'vrchat';
+import type { Json, VrcxCurrentUser, VrcxUser } from '../types/vrcx';
 import { patchAndRefetchActiveQuery, queryKeys } from '../queries';
 import { request } from '../services/request';
 import { useUserStore } from '../stores';
 import { applyUser, applyCurrentUser, applyPublicProfile } from '../coordinators/userCoordinator';
 
-/**
- * @returns {string}
- */
-function getCurrentUserId() {
+function getCurrentUserId(): string {
     return useUserStore().currentUser.id;
 }
 
 const userReq = {
-    /**
-     * Fetch user from API.
-     * identifier of registered user
-     *
-     * @param {{ userId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').User>;
-     *     ref: import('@/types/vrcx').VrcxUser;
-     *     params: { userId: string };
-     * }>}
-     */
-    getUser(params) {
+    getUser(params: { userId: string }): Promise<{ json: Json<User>; ref: VrcxUser; params: { userId: string } }> {
         return request(`users/${params.userId}`, {
             method: 'GET'
         }).then((json) => {
@@ -39,14 +45,7 @@ const userReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').SearchUsers['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').LimitedUserSearch[]>;
-     *     params: import('vrchat').SearchUsers['query'];
-     * }>}
-     */
-    getUsers(params) {
+    getUsers(params: SearchUsers['query']): Promise<{ json: Json<LimitedUserSearch[]>; params: SearchUsers['query'] }> {
         return request('users', {
             method: 'GET',
             params
@@ -59,14 +58,7 @@ const userReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').ChangeUserTagsRequest} params User tags to add
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').CurrentUser>;
-     *     params: import('vrchat').ChangeUserTagsRequest;
-     * }>}
-     */
-    addUserTags(params) {
+    addUserTags(params: ChangeUserTagsRequest): Promise<{ json: Json<CurrentUser>; params: ChangeUserTagsRequest }> {
         return request(`users/${getCurrentUserId()}/addTags`, {
             method: 'POST',
             params
@@ -80,14 +72,7 @@ const userReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').ChangeUserTagsRequest} params User tags to remove
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').CurrentUser>;
-     *     params: import('vrchat').ChangeUserTagsRequest;
-     * }>}
-     */
-    removeUserTags(params) {
+    removeUserTags(params: ChangeUserTagsRequest): Promise<{ json: Json<CurrentUser>; params: ChangeUserTagsRequest }> {
         return request(`users/${getCurrentUserId()}/removeTags`, {
             method: 'POST',
             params
@@ -101,14 +86,7 @@ const userReq = {
         });
     },
 
-    /**
-     * @param {{ userId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Feedback[]>;
-     *     params: { userId: string };
-     * }>}
-     */
-    getUserFeedback(params) {
+    getUserFeedback(params: { userId: string }): Promise<{ json: Json<Feedback[]>; params: { userId: string } }> {
         return request(`users/${params.userId}/feedback`, {
             method: 'GET',
             params: {
@@ -123,17 +101,9 @@ const userReq = {
         });
     },
 
-    /**
-     * Updates current user's status.
-     *
-     * @param {import('vrchat').UpdateUserRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').CurrentUser>;
-     *     ref: import('@/types/vrcx').VrcxCurrentUser;
-     *     params: import('vrchat').UpdateUserRequest;
-     * }>}
-     */
-    saveCurrentUser(params) {
+    saveCurrentUser(
+        params: UpdateUserRequest
+    ): Promise<{ json: Json<CurrentUser>; ref: VrcxCurrentUser; params: UpdateUserRequest }> {
         return request(`users/${getCurrentUserId()}`, {
             method: 'PUT',
             params
@@ -153,14 +123,7 @@ const userReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').GetUserNotes['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').UserNote[]>;
-     *     params: import('vrchat').GetUserNotes['query'];
-     * }>}
-     */
-    getUserNotes(params) {
+    getUserNotes(params: GetUserNotes['query']): Promise<{ json: Json<UserNote[]>; params: GetUserNotes['query'] }> {
         return request(`userNotes`, {
             method: 'GET',
             params
@@ -173,11 +136,7 @@ const userReq = {
         });
     },
 
-    /**
-     * @param {{ userId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Mutuals>; params: { userId: string } }>}
-     */
-    getMutualCounts(params) {
+    getMutualCounts(params: { userId: string }): Promise<{ json: Json<Mutuals>; params: { userId: string } }> {
         return request(`users/${params.userId}/mutuals`, {
             method: 'GET'
         }).then((json) => {
@@ -189,14 +148,9 @@ const userReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').GetMutualFriends['path'] & import('vrchat').GetMutualFriends['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').MutualFriend[]>;
-     *     params: import('vrchat').GetMutualFriends['path'] & import('vrchat').GetMutualFriends['query'];
-     * }>}
-     */
-    getMutualFriends(params) {
+    getMutualFriends(
+        params: GetMutualFriends['path'] & GetMutualFriends['query']
+    ): Promise<{ json: Json<MutualFriend[]>; params: GetMutualFriends['path'] & GetMutualFriends['query'] }> {
         return request(`users/${params.userId}/mutuals/friends`, {
             method: 'GET',
             params
@@ -209,14 +163,9 @@ const userReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').GetMutualGroups['path'] & import('vrchat').GetMutualGroups['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').LimitedUserGroups[]>;
-     *     params: import('vrchat').GetMutualGroups['path'] & import('vrchat').GetMutualGroups['query'];
-     * }>}
-     */
-    getMutualGroups(params) {
+    getMutualGroups(
+        params: GetMutualGroups['path'] & GetMutualGroups['query']
+    ): Promise<{ json: Json<LimitedUserGroups[]>; params: GetMutualGroups['path'] & GetMutualGroups['query'] }> {
         return request(`users/${params.userId}/mutuals/groups`, {
             method: 'GET',
             params
@@ -229,15 +178,11 @@ const userReq = {
         });
     },
 
-    /**
-     * @param {{ userId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').PublicProfile>;
-     *     params: { userId: string };
-     *     ref: import('@/types/vrcx').Json<import('vrchat').PublicProfile> & { $lastFetch?: number };
-     * }>}
-     */
-    getPublicProfile(params) {
+    getPublicProfile(params: { userId: string }): Promise<{
+        json: Json<PublicProfile>;
+        params: { userId: string };
+        ref: Json<PublicProfile> & { $lastFetch?: number };
+    }> {
         return request(`profile/${params.userId}`, {
             method: 'GET'
         }).then((json) => {
@@ -251,14 +196,7 @@ const userReq = {
         });
     },
 
-    /**
-     * @param {{ userId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').PrivateProfile>;
-     *     params: { userId: string };
-     * }>}
-     */
-    getPrivateProfile(params) {
+    getPrivateProfile(params: { userId: string }): Promise<{ json: Json<PrivateProfile>; params: { userId: string } }> {
         return request(`profile/${params.userId}/private`, {
             method: 'GET'
         }).then((json) => {
@@ -270,10 +208,7 @@ const userReq = {
         });
     },
 
-    /**
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').PublicProfile>; params: {} }>}
-     */
-    getSelfProfile() {
+    getSelfProfile(): Promise<{ json: Json<PublicProfile>; params: {} }> {
         return request(`profile/${getCurrentUserId()}`, {
             method: 'GET',
             params: {
@@ -288,14 +223,7 @@ const userReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').UpdateProfileRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').PublicProfile>;
-     *     params: import('vrchat').UpdateProfileRequest;
-     * }>}
-     */
-    saveProfile(params) {
+    saveProfile(params: UpdateProfileRequest): Promise<{ json: Json<PublicProfile>; params: UpdateProfileRequest }> {
         return request(`profile/${getCurrentUserId()}`, {
             method: 'PUT',
             params
@@ -308,10 +236,13 @@ const userReq = {
         });
     },
 
-    /**
-     * @param {{ buttonColor: string; iconColor: string; themeId: string; name: string; subtextColor: string }} params
-     */
-    saveProfileTheme(params) {
+    saveProfileTheme(params: {
+        buttonColor: string;
+        iconColor: string;
+        themeId: string;
+        name: string;
+        subtextColor: string;
+    }) {
         return request(`profile/theme/${params.themeId}`, {
             method: 'PUT',
             params
@@ -324,10 +255,7 @@ const userReq = {
         });
     },
 
-    /**
-     * @param {{ buttonColor?: string; iconColor?: string; name: string; subtextColor?: string }} params
-     */
-    createProfileTheme(params) {
+    createProfileTheme(params: { buttonColor?: string; iconColor?: string; name: string; subtextColor?: string }) {
         return request(`profile/theme`, {
             method: 'POST',
             params
@@ -340,10 +268,7 @@ const userReq = {
         });
     },
 
-    /**
-     * @param {{ id: string }} params
-     */
-    deleteProfileTheme(params) {
+    deleteProfileTheme(params: { id: string }) {
         return request(`profile/theme/${params.id}`, {
             method: 'DELETE'
         }).then((json) => {

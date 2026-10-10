@@ -1,3 +1,5 @@
+import type { FriendStatus, GetFriends, LimitedUserFriend, Notification, Success } from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { queryClient } from '../queries';
 import { request } from '../services/request';
 import { useUserStore } from '../stores/user';
@@ -16,16 +18,9 @@ function refetchActiveFriendListQueries() {
 }
 
 const friendReq = {
-    /**
-     * Fetch friends of current user.
-     *
-     * @param {import('vrchat').GetFriends['query']} params
-     * @returns {Promise<{
-     *     json: (import('@/types/vrcx').Json<import('vrchat').LimitedUserFriend> & { state?: string })[];
-     *     params: import('vrchat').GetFriends['query'];
-     * }>}
-     */
-    getFriends(params) {
+    getFriends(
+        params: GetFriends['query']
+    ): Promise<{ json: (Json<LimitedUserFriend> & { state?: string })[]; params: GetFriends['query'] }> {
         const userStore = useUserStore();
         return request('auth/user/friends', {
             method: 'GET',
@@ -58,14 +53,7 @@ const friendReq = {
         });
     },
 
-    /**
-     * @param {{ userId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Notification>;
-     *     params: { userId: string };
-     * }>}
-     */
-    sendFriendRequest(params) {
+    sendFriendRequest(params: { userId: string }): Promise<{ json: Json<Notification>; params: { userId: string } }> {
         return request(`user/${params.userId}/friendRequest`, {
             method: 'POST'
         }).then((json) => {
@@ -78,11 +66,7 @@ const friendReq = {
         });
     },
 
-    /**
-     * @param {{ userId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Success>; params: { userId: string } }>}
-     */
-    cancelFriendRequest(params) {
+    cancelFriendRequest(params: { userId: string }): Promise<{ json: Json<Success>; params: { userId: string } }> {
         return request(`user/${params.userId}/friendRequest`, {
             method: 'DELETE'
         }).then((json) => {
@@ -95,12 +79,7 @@ const friendReq = {
         });
     },
 
-    /**
-     * @param {{ userId: string }} params
-     * @param customMsg
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Success>; params: { userId: string } }>}
-     */
-    deleteFriend(params, customMsg) {
+    deleteFriend(params: { userId: string }, customMsg): Promise<{ json: Json<Success>; params: { userId: string } }> {
         return request(`auth/user/friends/${params.userId}`, {
             method: 'DELETE',
             customMsg
@@ -114,16 +93,10 @@ const friendReq = {
         });
     },
 
-    /**
-     * CurrentUserId for own reference
-     *
-     * @param {{ userId: string; currentUserId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').FriendStatus>;
-     *     params: { userId: string; currentUserId: string };
-     * }>}
-     */
-    getFriendStatus(params) {
+    getFriendStatus(params: {
+        userId: string;
+        currentUserId: string;
+    }): Promise<{ json: Json<FriendStatus>; params: { userId: string; currentUserId: string } }> {
         return request(`user/${params.userId}/friendStatus`, {
             method: 'GET'
         }).then((json) => {
@@ -136,12 +109,10 @@ const friendReq = {
         });
     },
 
-    /**
-     * @param {any} params
-     * @param {string} userId
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').Success>; params: any; userId: string }>}
-     */
-    deleteHiddenFriendRequest(params, userId) {
+    deleteHiddenFriendRequest(
+        params: any,
+        userId: string
+    ): Promise<{ json: Json<Success>; params: any; userId: string }> {
         return request(`user/${userId}/friendRequest`, {
             method: 'DELETE',
             params

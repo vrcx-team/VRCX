@@ -1,10 +1,15 @@
+import type {
+    AvatarModeration,
+    AvatarModerationCreated,
+    CreateAvatarModerationRequest,
+    DeleteGlobalAvatarModeration,
+    OkStatus2
+} from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { request } from '../services/request';
 
 const avatarModerationReq = {
-    /**
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').AvatarModeration[]> }>}
-     */
-    getAvatarModerations() {
+    getAvatarModerations(): Promise<{ json: Json<AvatarModeration[]> }> {
         return request('auth/user/avatarmoderations', {
             method: 'GET'
         }).then((json) => {
@@ -15,14 +20,9 @@ const avatarModerationReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').CreateAvatarModerationRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').AvatarModerationCreated>;
-     *     params: import('vrchat').CreateAvatarModerationRequest;
-     * }>}
-     */
-    sendAvatarModeration(params) {
+    sendAvatarModeration(
+        params: CreateAvatarModerationRequest
+    ): Promise<{ json: Json<AvatarModerationCreated>; params: CreateAvatarModerationRequest }> {
         return request('auth/user/avatarmoderations', {
             method: 'POST',
             params
@@ -35,14 +35,9 @@ const avatarModerationReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').DeleteGlobalAvatarModeration['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').OkStatus2>;
-     *     params: import('vrchat').DeleteGlobalAvatarModeration['query'];
-     * }>}
-     */
-    deleteAvatarModeration(params) {
+    deleteAvatarModeration(
+        params: DeleteGlobalAvatarModeration['query']
+    ): Promise<{ json: Json<OkStatus2>; params: DeleteGlobalAvatarModeration['query'] }> {
         return request(
             `auth/user/avatarmoderations?targetAvatarId=${encodeURIComponent(
                 params.targetAvatarId

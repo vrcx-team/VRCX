@@ -1,3 +1,14 @@
+import type {
+    EquipInventoryItemRequest,
+    GetInventory,
+    Inventory,
+    InventoryConsumptionResults,
+    InventoryItem,
+    InventoryTemplate,
+    RewardRedemptionRequest,
+    RewardRedemptionResult
+} from 'vrchat';
+import type { Json } from '../types/vrcx';
 import { queryClient } from '../queries';
 import { request } from '../services/request';
 
@@ -13,11 +24,11 @@ function refetchActiveInventoryQueries() {
 }
 
 const inventoryReq = {
-    /**
-     * @param {{ inventoryId: string; userId: string; flags }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').InventoryItem>; params }>}
-     */
-    getUserInventoryItem(params) {
+    getUserInventoryItem(params: {
+        inventoryId: string;
+        userId: string;
+        flags;
+    }): Promise<{ json: Json<InventoryItem>; params }> {
         return request(`user/${params.userId}/inventory/${params.inventoryId}`, {
             method: 'GET'
         }).then((json) => {
@@ -29,11 +40,7 @@ const inventoryReq = {
         });
     },
 
-    /**
-     * @param {{ inventoryId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').InventoryItem>; params }>}
-     */
-    getInventoryItem(params) {
+    getInventoryItem(params: { inventoryId: string }): Promise<{ json: Json<InventoryItem>; params }> {
         return request(`inventory/${params.inventoryId}`, {
             method: 'GET',
             params
@@ -46,14 +53,9 @@ const inventoryReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').GetInventory['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Inventory>;
-     *     params: import('vrchat').GetInventory['query'];
-     * }>}
-     */
-    getInventoryItems(params) {
+    getInventoryItems(
+        params: GetInventory['query']
+    ): Promise<{ json: Json<Inventory>; params: GetInventory['query'] }> {
         return request('inventory', {
             method: 'GET',
             params
@@ -66,11 +68,9 @@ const inventoryReq = {
         });
     },
 
-    /**
-     * @param {{ inventoryId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').InventoryConsumptionResults>; params }>}
-     */
-    consumeInventoryBundle(params) {
+    consumeInventoryBundle(params: {
+        inventoryId: string;
+    }): Promise<{ json: Json<InventoryConsumptionResults>; params }> {
         return request(`inventory/${params.inventoryId}/consume`, {
             method: 'PUT',
             params
@@ -84,11 +84,7 @@ const inventoryReq = {
         });
     },
 
-    /**
-     * @param {{ inventoryTemplateId: string }} params
-     * @returns {Promise<{ json: import('@/types/vrcx').Json<import('vrchat').InventoryTemplate>; params }>}
-     */
-    getInventoryTemplate(params) {
+    getInventoryTemplate(params: { inventoryTemplateId: string }): Promise<{ json: Json<InventoryTemplate>; params }> {
         return request(`inventory/template/${params.inventoryTemplateId}`, {
             method: 'GET',
             params
@@ -101,15 +97,9 @@ const inventoryReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').RewardRedemptionRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').RewardRedemptionResult[]>;
-     *     params: import('vrchat').RewardRedemptionRequest;
-     * }>}
-     *   Note: Do not redeem
-     */
-    redeemReward(params) {
+    redeemReward(
+        params: RewardRedemptionRequest
+    ): Promise<{ json: Json<RewardRedemptionResult[]>; params: RewardRedemptionRequest }> {
         return request('reward/redeem', {
             method: 'POST',
             params
@@ -123,10 +113,7 @@ const inventoryReq = {
         });
     },
 
-    /**
-     * @returns {Promise<{ json: any; params }>}
-     */
-    getGlobalInventory() {
+    getGlobalInventory(): Promise<{ json: any; params }> {
         return request('inventory/global', {
             method: 'GET'
         }).then((json) => {
@@ -138,14 +125,7 @@ const inventoryReq = {
         });
     },
 
-    /**
-     * @param {import('vrchat').GetInventory['query']} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').Inventory>;
-     *     params: import('vrchat').GetInventory['query'];
-     * }>}
-     */
-    getEquipSlot(params) {
+    getEquipSlot(params: GetInventory['query']): Promise<{ json: Json<Inventory>; params: GetInventory['query'] }> {
         return request('inventory', {
             method: 'GET',
             params
@@ -158,14 +138,9 @@ const inventoryReq = {
         });
     },
 
-    /**
-     * @param {{ inventoryId: string } & import('vrchat').EquipInventoryItemRequest} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').InventoryItem>;
-     *     params: { inventoryId: string } & import('vrchat').EquipInventoryItemRequest;
-     * }>}
-     */
-    equipItem(params) {
+    equipItem(
+        params: { inventoryId: string } & EquipInventoryItemRequest
+    ): Promise<{ json: Json<InventoryItem>; params: { inventoryId: string } & EquipInventoryItemRequest }> {
         return request(`inventory/${params.inventoryId}/equip`, {
             method: 'PUT',
             params
@@ -178,14 +153,9 @@ const inventoryReq = {
         });
     },
 
-    /**
-     * @param {{ inventoryId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').InventoryItem>;
-     *     params: { inventoryId: string };
-     * }>}
-     */
-    archiveItem(params) {
+    archiveItem(params: {
+        inventoryId: string;
+    }): Promise<{ json: Json<InventoryItem>; params: { inventoryId: string } }> {
         return request(`inventory/${params.inventoryId}`, {
             method: 'PUT',
             params: {
@@ -200,14 +170,9 @@ const inventoryReq = {
         });
     },
 
-    /**
-     * @param {{ inventoryId: string }} params
-     * @returns {Promise<{
-     *     json: import('@/types/vrcx').Json<import('vrchat').InventoryItem>;
-     *     params: { inventoryId: string };
-     * }>}
-     */
-    unArchiveItem(params) {
+    unArchiveItem(params: {
+        inventoryId: string;
+    }): Promise<{ json: Json<InventoryItem>; params: { inventoryId: string } }> {
         return request(`inventory/${params.inventoryId}`, {
             method: 'PUT',
             params: {
