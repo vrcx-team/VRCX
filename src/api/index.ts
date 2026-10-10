@@ -16,6 +16,7 @@ import instanceRequest from './instance';
 import inventoryRequest from './inventory';
 import inviteMessagesRequest from './inviteMessages';
 import miscRequest from './misc';
+import moderationReportRequest from './moderationReport';
 import notificationRequest from './notification';
 import playerModerationRequest from './playerModeration';
 import propRequest from './prop';
@@ -47,7 +48,8 @@ window.request = {
     propRequest,
     imageRequest,
     queryRequest,
-    cosmeticsRequest
+    cosmeticsRequest,
+    moderationReportRequest
 };
 
 export {
@@ -71,5 +73,6 @@ export {
     propRequest,
     imageRequest,
     queryRequest,
-    cosmeticsRequest
+    cosmeticsRequest,
+    moderationReportRequest
 };
