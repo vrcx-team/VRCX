@@ -21,7 +21,6 @@ import { showAvatarDialog } from '../coordinators/avatarCoordinator';
 import { showUserDialog } from '../coordinators/userCoordinator';
 import { useInstanceStore } from './instance';
 import { useNotificationStore } from './notification';
-import { useNotificationsSettingsStore } from './settings/notifications';
 import { useSearchStore } from './search';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';

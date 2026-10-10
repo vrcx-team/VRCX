@@ -16,13 +16,10 @@ import {
 } from '../navConfigUtils';
 import { normalizeHiddenKeys, sanitizeLayout } from '../navMenuUtils';
 
-import { useNotificationsSettingsStore } from '../../../stores/settings/notifications';
-
 export function useNavLayout({ t, locale, router, dashboardStore, dashboards, directAccessPaste, triggerTool }) {
     const navLayout = ref([]);
     const navLayoutReady = ref(false);
     const navHiddenKeys = ref([]);
-    const notificationsSettingsStore = useNotificationsSettingsStore();
 
     const allNavDefinitions = computed(() => [...navDefinitions, ...dashboardStore.getDashboardNavDefinitions()]);
 

@@ -541,7 +541,7 @@ function handlePipeline(args) {
             break;
 
         case 'economy-update':
-            userStore.currentUserCredits = content?.walletBalance;
+            userStore.setCurrentUserCredits(content?.walletBalance);
             break;
 
         default:

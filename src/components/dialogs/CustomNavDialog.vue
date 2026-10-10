@@ -176,8 +176,18 @@
 
     import SortableTreeNode from './SortableTreeNode.vue';
 
-    /** @typedef {{ type: string, key?: string, id?: string, name?: string, nameKey?: string | null, icon?: string, items?: string[] }} NavLayoutEntry */
-    /** @typedef {{ key: string, icon?: string, labelKey?: string, isDashboard?: boolean }} NavDefinition */
+    /**
+     * @typedef {{
+     *     type: string;
+     *     key?: string;
+     *     id?: string;
+     *     name?: string;
+     *     nameKey?: string | null;
+     *     icon?: string;
+     *     items?: string[];
+     * }} NavLayoutEntry
+     */
+    /** @typedef {{ key: string; icon?: string; labelKey?: string; isDashboard?: boolean }} NavDefinition */
 
     const props = defineProps({
         visible: {
@@ -318,14 +328,15 @@
 
     const expandedKeys = ref([]);
 
-    const hiddenItems = computed(() =>
-        /** @type {NavDefinition[]} */ (props.definitions?.length ? props.definitions : navDefinitions)
-            .filter((def) => hiddenKeySet.value.has(def.key) && !isToolNavKey(def.key))
-            .map((def) => ({
-                key: def.key,
-                icon: def.icon,
-                label: def.isDashboard ? def.labelKey : t(def.labelKey)
-            }))
+    const hiddenItems = computed(
+        () =>
+            /** @type {NavDefinition[]} */ (props.definitions?.length ? props.definitions : navDefinitions)
+                .filter((def) => hiddenKeySet.value.has(def.key) && !isToolNavKey(def.key))
+                .map((def) => ({
+                    key: def.key,
+                    icon: def.icon,
+                    label: def.isDashboard ? def.labelKey : t(def.labelKey)
+                }))
     );
 
     const isPlaceholder = (item) => Boolean(item?.value?._placeholder);

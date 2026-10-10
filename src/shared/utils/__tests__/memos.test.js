@@ -29,13 +29,7 @@ vi.mock('../../../services/database', () => ({
     database: mocks.database
 }));
 
-import {
-    getAllUserMemos,
-    getUserMemo,
-    getWorldMemo,
-    migrateMemos,
-    saveUserMemo
-} from '../../../coordinators/memoCoordinator.js';
+import { getUserMemo, getWorldMemo, migrateMemos } from '../../../coordinators/memoCoordinator.js';
 
 describe('memos utils', () => {
     let consoleErrorSpy;

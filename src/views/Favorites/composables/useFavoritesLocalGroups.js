@@ -1,7 +1,7 @@
 import { nextTick, ref } from 'vue';
 
 /**
- * @param {{ createGroup?: Function, selectGroup?: Function }} options
+ * @param {{ createGroup?: Function; selectGroup?: Function }} options
  * @returns {object}
  */
 export function useFavoritesLocalGroups(options = {}) {

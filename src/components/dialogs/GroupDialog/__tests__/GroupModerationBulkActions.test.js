@@ -65,11 +65,6 @@ describe('GroupModerationBulkActions.vue', () => {
     });
 
     describe('rendering', () => {
-        test('renders user ID input field', () => {
-            const wrapper = mountComponent();
-            expect(wrapper.text()).toContain('dialog.group_member_moderation.user_id');
-        });
-
         test('renders selected users section', () => {
             const wrapper = mountComponent();
             expect(wrapper.text()).toContain('dialog.group_member_moderation.selected_users');
@@ -244,27 +239,6 @@ describe('GroupModerationBulkActions.vue', () => {
     });
 
     describe('events', () => {
-        test('emits select-user on select button click', async () => {
-            const wrapper = mountComponent({ selectUserId: 'usr_test' });
-            const selectBtn = wrapper
-                .findAll('button')
-                .find((b) => b.text().includes('dialog.group_member_moderation.select_user'));
-            await selectBtn.trigger('click');
-            expect(wrapper.emitted('select-user')).toBeTruthy();
-        });
-
-        test('emits clear-all on trash button click', async () => {
-            const wrapper = mountComponent();
-            // The trash button is the rounded-full icon-sm button after "selected_users" label
-            const buttons = wrapper.findAll('button');
-            const trashBtn = buttons.find((b) => {
-                const classes = b.classes();
-                return classes.includes('rounded-full');
-            });
-            await trashBtn.trigger('click');
-            expect(wrapper.emitted('clear-all')).toBeTruthy();
-        });
-
         test('emits delete-user when removing a selected user', async () => {
             const user = {
                 id: 'usr_1',

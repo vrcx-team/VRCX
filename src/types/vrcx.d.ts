@@ -1,8 +1,4 @@
-import type {
-    CurrentUser,
-    Group,
-    User
-} from 'vrchat';
+import type { CurrentUser, Group, User } from 'vrchat';
 
 // cursed line to convert Date and bigint to expected types
 export type Json<T> = T extends Date

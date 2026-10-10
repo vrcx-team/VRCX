@@ -9,15 +9,13 @@ import { getNotificationMessage, toNotificationText } from '../../shared/utils/n
  * @param {object} deps.queryRequest
  * @param {object} deps.notificationsSettingsStore
  * @param {object} deps.advancedSettingsStore
- * @param {object} deps.appearanceSettingsStore
  * @returns {object} The overlay dispatch functions
  */
 export function createOverlayDispatch({
     getUserIdFromNoty,
     queryRequest,
     notificationsSettingsStore,
-    advancedSettingsStore,
-    appearanceSettingsStore
+    advancedSettingsStore
 }) {
     /**
      * @param {object} noty

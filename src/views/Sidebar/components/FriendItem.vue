@@ -23,8 +23,7 @@
                     v-else
                     class="block truncate font-medium leading-[18px]"
                     :style="{ color: friend.ref.$userColour }"
-                    >{{ friend.ref.displayName
-                    }}{{ isGroupByInstance && isFavorite ? ' ⭐' : '' }}</span
+                    >{{ friend.ref.displayName }}{{ isGroupByInstance && isFavorite ? ' ⭐' : '' }}</span
                 >
 
                 <span v-if="isFriendActiveOrOffline" class="block truncate text-xs">{{

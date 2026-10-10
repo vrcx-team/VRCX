@@ -783,6 +783,13 @@ export const useUserStore = defineStore('User', () => {
     }
 
     /**
+     * @param {number | null} value
+     */
+    function setCurrentUserCredits(value) {
+        currentUserCredits.value = value;
+    }
+
+    /**
      * @param {object} value
      */
     function setSubsetOfLanguages(value) {
@@ -1009,6 +1016,7 @@ export const useUserStore = defineStore('User', () => {
         setCurrentUserTravelingToTime,
         setCurrentUser,
         setSubsetOfLanguages,
+        setCurrentUserCredits,
         markCurrentUserGameStarted,
         markCurrentUserGameStopped,
         checkNote,

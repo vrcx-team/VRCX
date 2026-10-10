@@ -508,8 +508,9 @@ export const usePhotonStore = defineStore('Photon', () => {
                 return 0;
             });
             if (timeoutHudOverlay.value) {
+                let filteredHudTimeout;
                 if (timeoutHudOverlayFilter.value === 'VIP' || timeoutHudOverlayFilter.value === 'Friends') {
-                    var filteredHudTimeout = [];
+                    filteredHudTimeout = [];
                     hudTimeout.forEach((item) => {
                         if (
                             timeoutHudOverlayFilter.value === 'VIP' &&
@@ -524,7 +525,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                         }
                     });
                 } else {
-                    var filteredHudTimeout = hudTimeout;
+                    filteredHudTimeout = hudTimeout;
                 }
                 AppApi.ExecuteVrOverlayFunction('updateHudTimeout', JSON.stringify(filteredHudTimeout));
             }
@@ -648,6 +649,7 @@ export const usePhotonStore = defineStore('Photon', () => {
     // }
 
     function parsePhotonEvent(data, gameLogDate) {
+        let photonId, lobbyJointime, hasInstantiated, ref;
         switch (data.Code) {
             case 253:
                 // SetUserProperties
@@ -668,8 +670,8 @@ export const usePhotonStore = defineStore('Photon', () => {
                         if (typeof user.groupOnNameplate !== 'undefined') {
                             parsePhotonGroupChange(idNum, user.user, user.groupOnNameplate, gameLogDate);
                         }
-                        var hasInstantiated = false;
-                        var lobbyJointime = photonLobbyJointime.value.get(idNum);
+                        hasInstantiated = false;
+                        lobbyJointime = photonLobbyJointime.value.get(idNum);
                         if (typeof lobbyJointime !== 'undefined') {
                             hasInstantiated = lobbyJointime.hasInstantiated;
                         }
@@ -704,8 +706,8 @@ export const usePhotonStore = defineStore('Photon', () => {
                     if (typeof user.groupOnNameplate !== 'undefined') {
                         parsePhotonGroupChange(idNum, user.user, user.groupOnNameplate, gameLogDate);
                     }
-                    var hasInstantiated = false;
-                    var lobbyJointime = photonLobbyJointime.value.get(idNum);
+                    hasInstantiated = false;
+                    lobbyJointime = photonLobbyJointime.value.get(idNum);
                     if (typeof lobbyJointime !== 'undefined') {
                         hasInstantiated = lobbyJointime.hasInstantiated;
                     }
@@ -740,7 +742,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                 if (typeof user42.groupOnNameplate !== 'undefined') {
                     parsePhotonGroupChange(id42, user42.user, user42.groupOnNameplate, gameLogDate);
                 }
-                var lobbyJointime = photonLobbyJointime.value.get(id42);
+                lobbyJointime = photonLobbyJointime.value.get(id42);
                 photonLobbyJointime.value.set(id42, {
                     hasInstantiated: true,
                     ...lobbyJointime,
@@ -775,12 +777,12 @@ export const usePhotonStore = defineStore('Photon', () => {
                     }
                 }
                 parsePhotonLobbyIds(data.Parameters[252]);
-                var hasInstantiated = false;
+                hasInstantiated = false;
                 if (photonLobbyCurrentUser.value === id255) {
                     // fix current user
                     hasInstantiated = true;
                 }
-                var ref = photonLobbyCurrent.value.get(id255);
+                ref = photonLobbyCurrent.value.get(id255);
                 if (typeof ref !== 'undefined') {
                     // fix for join event firing twice
                     // fix instantiation happening out of order before join event
@@ -805,7 +807,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                 break;
             case 254:
                 // Leave
-                var photonId = data.Parameters[254];
+                photonId = data.Parameters[254];
                 photonUserLeave(photonId, gameLogDate);
                 photonLobbyCurrent.value.delete(photonId);
                 photonLobbyLastModeration.value.delete(photonId);
@@ -824,10 +826,10 @@ export const usePhotonStore = defineStore('Photon', () => {
                 // Moderation
                 if (data.Parameters[245]['0'] === 21) {
                     if (data.Parameters[245]['1']) {
-                        var photonId = data.Parameters[245]['1'];
+                        photonId = data.Parameters[245]['1'];
                         const block = data.Parameters[245]['10'];
                         const mute = data.Parameters[245]['11'];
-                        var ref = photonLobby.value.get(photonId);
+                        ref = photonLobby.value.get(photonId);
                         if (typeof ref !== 'undefined' && typeof ref.id !== 'undefined') {
                             photonModerationUpdate(ref, photonId, block, mute, gameLogDate);
                         } else {
@@ -900,7 +902,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                 if (!photonLobbyCurrent.value.has(data.Parameters[254])) {
                     photonLobbyCurrent.value.set(data.Parameters[254]);
                 }
-                var lobbyJointime = photonLobbyJointime.value.get(data.Parameters[254]);
+                lobbyJointime = photonLobbyJointime.value.get(data.Parameters[254]);
                 if (typeof lobbyJointime !== 'undefined') {
                     photonLobbyJointime.value.set(data.Parameters[254], {
                         ...lobbyJointime,
@@ -915,7 +917,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                 break;
             case 43:
                 // Chatbox Message
-                var photonId = data.Parameters[254];
+                photonId = data.Parameters[254];
                 var text = data.Parameters[245];
                 if (photonLobbyCurrentUser.value === photonId) {
                     return;
@@ -1009,7 +1011,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                 break;
             case 71:
                 // Spawn Emoji
-                var photonId = data.Parameters[254];
+                photonId = data.Parameters[254];
                 if (photonId === photonLobbyCurrentUser.value) {
                     return;
                 }
@@ -1057,23 +1059,24 @@ export const usePhotonStore = defineStore('Photon', () => {
         }
         if (eventData.EventType === 14) {
             let type = 'Event';
+            let text;
             if (eventData.EventName === 'ChangeVisibility') {
                 if (eventData.Data[0] === true) {
-                    var text = 'EnableCamera';
+                    text = 'EnableCamera';
                 } else if (eventData.Data[0] === false) {
-                    var text = 'DisableCamera';
+                    text = 'DisableCamera';
                 }
                 type = 'Camera';
             } else if (eventData.EventName === 'PhotoCapture') {
-                var text = 'PhotoCapture';
+                text = 'PhotoCapture';
                 type = 'Camera';
             } else if (eventData.EventName === 'TimerBloop') {
-                var text = 'TimerBloop';
+                text = 'TimerBloop';
                 type = 'Camera';
             } else if (eventData.EventName === 'ReloadAvatarNetworkedRPC') {
-                var text = 'AvatarReset';
+                text = 'AvatarReset';
             } else if (eventData.EventName === 'ReleaseBones') {
-                var text = 'ResetPhysBones';
+                text = 'ResetPhysBones';
             } else if (eventData.EventName === 'SpawnEmojiRPC') {
                 // var text = this.oldPhotonEmojis[eventData.Data];
                 type = 'SpawnEmoji';
@@ -1082,7 +1085,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                 if (eventData.Data && eventData.Data.length > 0) {
                     eventVrc = ` ${JSON.stringify(eventData.Data).replace(/"([^(")"]+)":/g, '$1:')}`;
                 }
-                var text = `${eventData.EventName}${eventVrc}`;
+                text = `${eventData.EventName}${eventVrc}`;
             }
             addEntryPhotonEvent({
                 photonId: senderId,
@@ -1285,7 +1288,7 @@ export const usePhotonStore = defineStore('Photon', () => {
             photonLobbyCurrent.value.set(photonId, ref);
             // check moderation queue
             if (moderationEventQueue.value.has(photonId)) {
-                var { block, mute, gameLogDate } = moderationEventQueue.value.get(photonId);
+                const { block, mute, gameLogDate } = moderationEventQueue.value.get(photonId);
                 moderationEventQueue.value.delete(photonId);
                 photonModerationUpdate(ref, photonId, block, mute, gameLogDate);
             }

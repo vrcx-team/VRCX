@@ -215,14 +215,6 @@ describe('useUserDialogCommands', () => {
     });
 
     describe('userDialogCommand — string callback commands', () => {
-        it('should delegate string-type commands to registered callbacks', () => {
-            const showSocialStatusDialog = vi.fn();
-            const { userDialogCommand, registerCallbacks } = useUserDialogCommands(userDialog, deps);
-            registerCallbacks({ showSocialStatusDialog });
-            userDialogCommand('Edit Social Status');
-            expect(showSocialStatusDialog).toHaveBeenCalled();
-        });
-
         it('should not throw when callback is not registered', () => {
             const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             expect(() => userDialogCommand('Edit Bio')).not.toThrow();

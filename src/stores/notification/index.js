@@ -29,7 +29,6 @@ import { getNotificationCategory, getNotificationTs } from '../../shared/utils/n
 import { AppDebug } from '../../services/appConfig';
 import { createOverlayDispatch } from './overlayDispatch';
 import { useAdvancedSettingsStore } from '../settings/advanced';
-import { useAppearanceSettingsStore } from '../settings/appearance';
 import { useFavoriteStore } from '../favorite';
 import { useFriendStore } from '../friend';
 import { handleFriendAdd } from '../../coordinators/friendRelationshipCoordinator';
@@ -58,7 +57,6 @@ export const useNotificationStore = defineStore('Notification', () => {
     const friendStore = useFriendStore();
     const notificationsSettingsStore = useNotificationsSettingsStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
-    const appearanceSettingsStore = useAppearanceSettingsStore();
     const userStore = useUserStore();
     const wristOverlaySettingsStore = useWristOverlaySettingsStore();
     const uiStore = useUiStore();
@@ -886,8 +884,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         getUserIdFromNoty,
         queryRequest,
         notificationsSettingsStore,
-        advancedSettingsStore,
-        appearanceSettingsStore
+        advancedSettingsStore
     });
 
     // Overlay dispatch functions (notySaveImage, displayDesktopToast, etc.)
