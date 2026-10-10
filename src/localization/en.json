@@ -2607,7 +2607,12 @@
             "saved": "Role saved",
             "save_failed": "Failed to save role",
             "deleted": "Role deleted",
-            "delete_failed": "Failed to delete role"
+            "delete_failed": "Failed to delete role",
+            "add_self": "Add Myself",
+            "remove_self": "Remove Myself",
+            "self_role_added": "Role added",
+            "self_role_removed": "Role removed",
+            "self_role_failed": "Failed to update role"
         },
         "group_post_edit": {
             "header": "Create/Edit Post",

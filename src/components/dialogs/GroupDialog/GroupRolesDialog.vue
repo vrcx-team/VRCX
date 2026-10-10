@@ -235,6 +235,21 @@
                     </div>
 
                     <div class="flex justify-end gap-2 pt-4">
+                        <Button
+                            v-if="selectedRole && canToggleSelfRole(selectedRole)"
+                            class="mr-auto"
+                            variant="outline"
+                            :disabled="groupRolesDialog.loading"
+                            @click="toggleSelfRole(selectedRole)">
+                            <template v-if="isMyRole(selectedRole)">
+                                <UserMinus />
+                                {{ t('dialog.group_roles.remove_self') }}
+                            </template>
+                            <template v-else>
+                                <UserPlus />
+                                {{ t('dialog.group_roles.add_self') }}
+                            </template>
+                        </Button>
                         <Button variant="outline" :disabled="groupRolesDialog.loading" @click="cancelEdit">
                             {{ t('dialog.group_roles.cancel') }}
                         </Button>
@@ -249,7 +264,7 @@
 </template>
 
 <script setup>
-    import { Plus, RefreshCw, Trash2 } from 'lucide-vue-next';
+    import { Plus, RefreshCw, Trash2, UserMinus, UserPlus } from 'lucide-vue-next';
     import { computed, ref, watch } from 'vue';
     import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
     import { Field, FieldContent, FieldGroup, FieldLabel } from '@/components/ui/field';
@@ -265,7 +280,7 @@
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
-    import { useGroupStore, useModalStore } from '../../../stores';
+    import { useGroupStore, useModalStore, useUserStore } from '../../../stores';
     import { groupRequest } from '../../../api';
     import { hasGroupPermission } from '../../../shared/utils';
     import { loadGroupRolesDialogRoles } from '../../../coordinators/groupCoordinator';
@@ -275,6 +290,7 @@
     const { t } = useI18n();
     const modalStore = useModalStore();
     const { groupRolesDialog } = storeToRefs(useGroupStore());
+    const { currentUser } = storeToRefs(useUserStore());
 
     const form = ref(createBlankForm());
     const listKey = ref(0);
@@ -295,6 +311,7 @@
     );
 
     const canManage = computed(() => hasGroupPermission(groupRolesDialog.value.groupRef, 'group-roles-manage'));
+    const canAssignRoles = computed(() => hasGroupPermission(groupRolesDialog.value.groupRef, 'group-roles-assign'));
     const canManageDefaultRole = computed(() =>
         hasGroupPermission(groupRolesDialog.value.groupRef, 'group-default-role-manage')
     );
@@ -525,6 +542,46 @@
     function isMyRole(role) {
         const roleIds = groupRolesDialog.value.groupRef?.myMember?.roleIds;
         return Array.isArray(roleIds) && roleIds.includes(role.id);
+    }
+
+    /**
+     * @param {object} role
+     * @returns {boolean}
+     */
+    function canToggleSelfRole(role) {
+        if (role.defaultRole === true || isOwnerRole(role)) {
+            return false;
+        }
+        if (groupRolesDialog.value.groupRef?.myMember?.membershipStatus !== 'member') {
+            return false;
+        }
+        return role.isSelfAssignable === true || (canAssignRoles.value && role.order > myHighestRoleOrder.value);
+    }
+
+    /**
+     * @param {object} role
+     */
+    async function toggleSelfRole(role) {
+        const D = groupRolesDialog.value;
+        const isRemoving = isMyRole(role);
+        const params = { groupId: D.id, userId: currentUser.value.id, roleId: role.id };
+        D.loading = true;
+        try {
+            const args = isRemoving
+                ? await groupRequest.removeGroupMemberRole(params)
+                : await groupRequest.addGroupMemberRole(params);
+            if (D.id === params.groupId && D.groupRef?.myMember) {
+                D.groupRef.myMember.roleIds = args.json;
+            }
+            toast.success(
+                isRemoving ? t('dialog.group_roles.self_role_removed') : t('dialog.group_roles.self_role_added')
+            );
+        } catch (error) {
+            console.error('Failed to update own group role:', error);
+            toast.error(t('dialog.group_roles.self_role_failed'));
+        } finally {
+            D.loading = false;
+        }
     }
 
     /**
