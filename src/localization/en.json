@@ -1996,7 +1996,26 @@
                 "confirm_description": "Send a request to transfer ownership of {groupName} to {displayName}?"
             },
             "gallery": {
-                "header": "Photos"
+                "header": "Photos",
+                "create_tooltip": "Create Gallery",
+                "delete_tooltip": "Delete Gallery",
+                "edit_tooltip": "Edit Gallery",
+                "add_image_tooltip": "Add Image",
+                "delete_image_tooltip": "Delete Image",
+                "name": "Name",
+                "description": "Description",
+                "members_only": "Members only",
+                "visibility_public": "Visible to everyone",
+                "visibility_members": "Visible to group members",
+                "visibility_roles": "Visible to specific roles",
+                "save": "Save",
+                "create": "Create",
+                "saved": "Gallery updated",
+                "created": "Gallery created",
+                "deleted": "Gallery deleted",
+                "image_added": "Image added",
+                "image_pending_approval": "Image submitted for approval",
+                "image_deleted": "Image deleted"
             },
             "json": {
                 "header": "JSON"
@@ -2734,6 +2753,8 @@
         "clear_group": "Continue? Clear Group",
         "delete_group": "Continue? Delete Group {name}",
         "delete_post": "Are you sure you want to delete this post?",
+        "delete_gallery_image": "Are you sure you want to delete this image?",
+        "delete_gallery": "Are you sure you want to delete the gallery {name} and all of its images?",
         "block_group": "Are you sure you want to block this group?",
         "unblock_group": "Are you sure you want to unblock this group?",
         "leave_group": "Are you sure you want to leave this group?",

@@ -3,6 +3,7 @@ import type {
     BanGroupMemberRequest,
     CalendarEvent,
     CreateCalendarEventRequest,
+    CreateGroupGalleryRequest,
     CreateGroupInviteRequest,
     CreateGroupPostRequest,
     CreateGroupRequest,
@@ -788,6 +789,40 @@ const groupReq = {
                 json,
                 params
             };
+            return args;
+        });
+    },
+
+    createGroupGallery(params: { groupId: string } & CreateGroupGalleryRequest): Promise<{
+        json: Json<GroupGallery>;
+        params: { groupId: string } & CreateGroupGalleryRequest;
+    }> {
+        const { groupId, ...body } = params;
+        return request(`groups/${groupId}/galleries`, {
+            method: 'POST',
+            params: body
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            refetchActiveGroupScope(groupId);
+            return args;
+        });
+    },
+
+    deleteGroupGallery(params: {
+        groupId: string;
+        galleryId: string;
+    }): Promise<{ json: Json<Success>; params: { groupId: string; galleryId: string } }> {
+        return request(`groups/${params.groupId}/galleries/${params.galleryId}`, {
+            method: 'DELETE'
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
