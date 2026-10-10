@@ -232,7 +232,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             }
             if (
                 WINDOWS &&
-                asset.name.endsWith('.exe') &&
+                (asset.name.endsWith('Setup_x64.exe') || asset.name.endsWith('Setup.exe')) &&
                 (asset.content_type === 'application/x-msdownload' ||
                     asset.content_type === 'application/x-msdos-program')
             ) {

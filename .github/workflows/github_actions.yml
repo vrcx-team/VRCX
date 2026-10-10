@@ -102,9 +102,9 @@ jobs:
           additional-plugin-paths: Installer/Plugins
       - name: Rename setup
         run: |
-          file_name="VRCX_${{ needs.set_version.outputs.version }}_Setup.exe"
+          file_name="VRCX_${{ needs.set_version.outputs.version }}_Setup_x64.exe"
           echo "Setup FileName: ${file_name}"
-          mv Installer/VRCX_Setup.exe $file_name
+          mv Installer/VRCX_Setup_x64.exe $file_name
       - name: Sign Cef setup
         uses: azure/trusted-signing-action@v1
         if: steps.check_sign.outputs.sign == 'true'
@@ -119,7 +119,7 @@ jobs:
           timestamp-rfc3161: http://timestamp.acs.microsoft.com
           timestamp-digest: SHA256
           files: |
-            ${{ github.workspace }}\VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
+            ${{ github.workspace }}\VRCX_${{ needs.set_version.outputs.version }}_Setup_x64.exe
 
       - name: Upload Cef dotnet artifacts
         uses: actions/upload-artifact@v7
@@ -130,7 +130,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: Cef-Setup
-          path: VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
+          path: VRCX_${{ needs.set_version.outputs.version }}_Setup_x64.exe
 
   build_dotnet_linux:
     runs-on: ubuntu-latest
