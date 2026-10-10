@@ -519,9 +519,15 @@
     }
 
     async function friendsListLoadUsers() {
+        await loadFriendProfiles();
         const toFetch = Array.from(friends.value.values())
-            .filter((ctx) => ctx.ref && !ctx.ref.date_joined)
-            .map((ctx) => ctx.id);
+            .filter((ctx) => ctx.ref)
+            .map((ctx) => ({
+                userId: ctx.id,
+                needsUser: !ctx.ref.date_joined,
+                needsProfile: !friendProfiles.value.has(ctx.id)
+            }))
+            .filter((item) => item.needsUser || item.needsProfile);
         const total = toFetch.length;
         friendsListLoadingTotal.value = total;
         friendsListLoadingCurrent.value = 0;
@@ -532,19 +538,25 @@
         friendsListLoading.value = true;
         friendsListLoadDialogVisible.value = true;
         let cancelled = false;
-        for (const userId of toFetch) {
+        for (const { userId, needsUser, needsProfile } of toFetch) {
             if (!friendsListLoading.value) {
                 cancelled = true;
                 break;
             }
             friendsListLoadingCurrent.value += 1;
             try {
-                await userRequest.getUser({ userId });
+                if (needsUser) {
+                    await userRequest.getUser({ userId });
+                }
+                if (needsProfile) {
+                    await userRequest.getPublicProfile({ userId });
+                }
             } catch (err) {
                 console.error(err);
             }
         }
         friendsListLoading.value = false;
+        loadFriendProfiles();
         friendsListLoadDialogVisible.value = false;
         friendsListLoadingCurrent.value = 0;
         friendsListLoadingTotal.value = 0;
