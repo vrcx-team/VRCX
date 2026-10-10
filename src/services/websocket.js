@@ -442,14 +442,10 @@ function handlePipeline(args) {
                 console.error('group-member-updated missing member', content);
                 break;
             }
-            const groupId1 = member.groupId;
-            if (groupStore.groupDialog.visible && groupStore.groupDialog.id === groupId1) {
-                getGroupDialogGroup(groupId1);
-            }
             handleGroupMember({
                 json: member,
                 params: {
-                    groupId: groupId1
+                    groupId: member.groupId
                 }
             });
             console.log('group-member-updated', member);

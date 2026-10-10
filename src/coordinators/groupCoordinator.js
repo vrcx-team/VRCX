@@ -154,17 +154,25 @@ export function applyGroupMember(json) {
     if (json?.userId === userStore.currentUser.id) {
         ref = groupStore.cachedGroups.get(json.groupId);
         if (typeof ref !== 'undefined') {
-            const newJson = {
-                id: json.groupId,
-                memberVisibility: json.visibility,
+            /** @type {import('@/types/vrcx').Json<import('vrchat').GroupMyMember>} */
+            const groupMember = {
+                ...ref.myMember,
+                id: json.id,
                 isRepresenting: json.isRepresenting,
                 isSubscribedToAnnouncements: json.isSubscribedToAnnouncements,
                 isSubscribedToEventAnnouncements: json.isSubscribedToEventAnnouncements,
                 joinedAt: json.joinedAt,
+                lastPostReadAt: json.lastPostReadAt,
+                mRoleIds: json.mRoleIds,
+                membershipStatus: json.membershipStatus,
                 roleIds: json.roleIds,
-                membershipStatus: json.membershipStatus
+                userId: json.userId,
+                visibility: json.visibility
             };
-            applyGroup(newJson);
+            applyGroup({
+                id: json.groupId,
+                myMember: groupMember
+            });
         }
     }
 

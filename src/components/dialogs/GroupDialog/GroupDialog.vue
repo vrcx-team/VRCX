@@ -835,7 +835,6 @@
                         ...groupDialog.value,
                         ref: { ...groupDialog.value.ref, isRepresenting: args.params.isRepresenting }
                     });
-                    getGroupDialogGroup(groupId);
                 }
                 refetchActiveEntityQuery(queryKeys.representedGroup(currentUser.value.id));
             });
