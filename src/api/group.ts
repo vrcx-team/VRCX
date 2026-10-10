@@ -398,7 +398,7 @@ const groupReq = {
         });
     },
 
-    getBlockedGroups(params: {
+    getMyGroupsByStatus(params: {
         membershipStatus: 'invited' | 'requested' | 'userblocked';
     }): Promise<{ json: Json<Group[]>; params }> {
         return request(`users/${getCurrentUserId()}/groups/${params.membershipStatus}`, {
@@ -433,6 +433,17 @@ const groupReq = {
                 params
             };
             refetchActiveGroupScope(params.groupId);
+            return args;
+        });
+    },
+    declineGroupInvite(params: { groupId: string }): Promise<{ json: Json<Success>; params }> {
+        return request(`groups/${params.groupId}/members/${getCurrentUserId()}`, {
+            method: 'DELETE'
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
             return args;
         });
     },

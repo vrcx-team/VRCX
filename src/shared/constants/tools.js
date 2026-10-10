@@ -166,6 +166,26 @@ const toolDefinitions = [
         action: { type: 'dialog', dialogKey: 'group-calendar' }
     },
     {
+        key: 'blocked-groups',
+        category: 'group',
+        iconKey: 'ban',
+        navIcon: 'ri-forbid-line',
+        titleKey: 'view.tools.group.blocked_groups',
+        descriptionKey: 'view.tools.group.blocked_groups_description',
+        navEligible: true,
+        action: { type: 'dialog', dialogKey: 'blocked-groups' }
+    },
+    {
+        key: 'group-invites',
+        category: 'group',
+        iconKey: 'mail',
+        navIcon: 'ri-mail-line',
+        titleKey: 'view.tools.group.group_invites',
+        descriptionKey: 'view.tools.group.group_invites_description',
+        navEligible: true,
+        action: { type: 'dialog', dialogKey: 'group-invites' }
+    },
+    {
         key: 'discord-names',
         category: 'user',
         iconKey: 'users',

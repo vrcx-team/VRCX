@@ -667,7 +667,11 @@
             "group": {
                 "header": "Group",
                 "calendar": "Calendar",
-                "calendar_description": "Group Events Calendar"
+                "calendar_description": "Group Events Calendar",
+                "blocked_groups": "Blocked Groups",
+                "blocked_groups_description": "View and unblock groups you have blocked",
+                "group_invites": "Group Invites",
+                "group_invites_description": "Accept, decline or block pending group invites"
             },
             "user": {
                 "discord_names_description": "Find the Discord usernames of your VRChat friends",
@@ -2672,6 +2676,20 @@
             "all": "All",
             "load_more": "Load More",
             "delete_confirm": "Delete this report?"
+        },
+        "blocked_groups": {
+            "header": "Blocked Groups",
+            "unblock": "Unblock"
+        },
+        "group_invites": {
+            "header": "Group Invites",
+            "invited": "Invited",
+            "requested": "Requested",
+            "cancel_request": "Cancel join request",
+            "accept": "Accept",
+            "decline": "Decline",
+            "block": "Block",
+            "accepted": "Joined group"
         },
         "boop_dialog": {
             "header": "Boop",
