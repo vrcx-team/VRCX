@@ -1,4 +1,5 @@
 import type {
+    AddGroupGalleryImageRequest,
     BanGroupMemberRequest,
     CalendarEvent,
     CreateCalendarEventRequest,
@@ -27,6 +28,8 @@ import type {
     GetUserGroupInstancesResponse,
     Group,
     GroupAuditLogEntryType,
+    GroupGallery,
+    GroupGalleryImage,
     GroupMember,
     GroupPermission,
     GroupPost,
@@ -44,6 +47,7 @@ import type {
     Success,
     TransferGroupRequest,
     UpdateCalendarEventRequest,
+    UpdateGroupGalleryRequest,
     UpdateGroupMemberRequest,
     UpdateGroupRepresentation,
     UpdateGroupRequest,
@@ -784,6 +788,60 @@ const groupReq = {
                 json,
                 params
             };
+            return args;
+        });
+    },
+
+    editGroupGallery(params: { groupId: string; galleryId: string } & UpdateGroupGalleryRequest): Promise<{
+        json: Json<GroupGallery>;
+        params: { groupId: string; galleryId: string } & UpdateGroupGalleryRequest;
+    }> {
+        const { groupId, galleryId, ...body } = params;
+        return request(`groups/${groupId}/galleries/${galleryId}`, {
+            method: 'PUT',
+            params: body
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            refetchActiveGroupScope(groupId);
+            return args;
+        });
+    },
+
+    addGroupGalleryImage(params: { groupId: string; galleryId: string } & AddGroupGalleryImageRequest): Promise<{
+        json: Json<GroupGalleryImage>;
+        params: { groupId: string; galleryId: string } & AddGroupGalleryImageRequest;
+    }> {
+        return request(`groups/${params.groupId}/galleries/${params.galleryId}/images`, {
+            method: 'POST',
+            params: {
+                fileId: params.fileId
+            }
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            refetchActiveGroupScope(params.groupId);
+            return args;
+        });
+    },
+
+    deleteGroupGalleryImage(params: {
+        groupId: string;
+        galleryId: string;
+        imageId: string;
+    }): Promise<{ json: Json<Success>; params: { groupId: string; galleryId: string; imageId: string } }> {
+        return request(`groups/${params.groupId}/galleries/${params.galleryId}/images/${params.imageId}`, {
+            method: 'DELETE'
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            refetchActiveGroupScope(params.groupId);
             return args;
         });
     },
