@@ -386,6 +386,16 @@
                             : t('dialog.user.info.avatar_cloning_deny')
                     }}</span>
                 </div>
+                <div
+                    class="flex justify-between items-center text-xs cursor-pointer hover:text-foreground"
+                    @click="toggleReducedProfileAnimations">
+                    <span class="text-muted-foreground">{{ t('dialog.user.info.reduced_profile_animations') }}</span>
+                    <span class="text-muted-foreground">{{
+                        currentUserClientConfig.accessReduceDecorAnim
+                            ? t('dialog.user.info.avatar_cloning_allow')
+                            : t('dialog.user.info.avatar_cloning_deny')
+                    }}</span>
+                </div>
             </div>
         </div>
     </div>
@@ -540,9 +550,14 @@
 
     const { t } = useI18n();
 
-    const { userDialog, currentUser } = storeToRefs(useUserStore());
-    const { toggleSharedConnectionsOptOut, toggleDiscordFriendsOptOut, toggleAvatarCopying, toggleAllowBooping } =
-        useUserStore();
+    const { userDialog, currentUser, currentUserClientConfig } = storeToRefs(useUserStore());
+    const {
+        toggleSharedConnectionsOptOut,
+        toggleDiscordFriendsOptOut,
+        toggleAvatarCopying,
+        toggleAllowBooping,
+        toggleReducedProfileAnimations
+    } = useUserStore();
 
     const { showFullscreenImageDialog } = useGalleryStore();
     const { userStatusClass } = useUserDisplay();

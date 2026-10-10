@@ -3,25 +3,25 @@
         <div class="absolute inset-0 rounded-b-lg" :style="nameplateStyle"></div>
         <img
             v-if="mainUrl"
-            v-show="isBrowserFocused && !introActive"
+            v-show="isAnimated && !introActive"
             :src="mainUrl"
             class="absolute right-0 top-0 h-full w-auto object-contain object-right opacity-100 transition-opacity rounded-b-lg" />
         <img
-            v-if="introUrl && isBrowserFocused"
+            v-if="introUrl && isAnimated"
             v-show="introActive"
             :src="introUrl"
             @load="startIntroTimer"
             class="absolute right-0 top-0 h-full w-auto object-contain object-right opacity-100 transition-opacity rounded-b-lg" />
         <img
             v-if="baseUrl"
-            v-show="!isBrowserFocused"
+            v-show="!isAnimated"
             :src="baseUrl"
             class="absolute right-0 top-0 h-full w-auto object-contain object-right opacity-100 transition-opacity rounded-b-lg" />
     </div>
 </template>
 
 <script setup>
-    import { onBeforeUnmount, ref, watch } from 'vue';
+    import { computed, onBeforeUnmount, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
 
     import { useAppearanceSettingsStore, useUserStore, useVrcxStore } from '../stores';
@@ -32,9 +32,11 @@
         nameplateEffect: { type: String, default: '' }
     });
 
-    const { cachedNameplateEffects } = storeToRefs(useUserStore());
+    const { cachedNameplateEffects, currentUserClientConfig } = storeToRefs(useUserStore());
     const { displayVRCProfileCosmetics } = storeToRefs(useAppearanceSettingsStore());
     const { isBrowserFocused } = storeToRefs(useVrcxStore());
+
+    const isAnimated = computed(() => isBrowserFocused.value && !currentUserClientConfig.value.accessReduceDecorAnim);
 
     const baseUrl = ref(null);
     const mainUrl = ref(null);
@@ -56,8 +58,8 @@
         }, introDuration.value);
     }
 
-    watch(isBrowserFocused, (focused) => {
-        if (focused) {
+    watch(isAnimated, (animated) => {
+        if (animated) {
             return;
         }
         clearIntroTimer();

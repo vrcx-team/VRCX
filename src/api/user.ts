@@ -13,8 +13,10 @@ import type {
     PublicProfile,
     SearchUsers,
     UpdateProfileRequest,
+    UpdateUserClientConfigRequest,
     UpdateUserRequest,
     User,
+    UserClientConfig,
     UserNote
 } from 'vrchat';
 import type { AccountStanding, Json, VrcxCurrentUser, VrcxUser } from '../types/vrcx';
@@ -199,6 +201,32 @@ const userReq = {
     getPrivateProfile(params: { userId: string }): Promise<{ json: Json<PrivateProfile>; params: { userId: string } }> {
         return request(`profile/${params.userId}/private`, {
             method: 'GET'
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    getClientConfig(): Promise<{ json: Json<UserClientConfig> }> {
+        return request(`users/${getCurrentUserId()}/clientConfig`, {
+            method: 'GET'
+        }).then((json) => {
+            const args = {
+                json
+            };
+            return args;
+        });
+    },
+
+    saveClientConfig(
+        params: UpdateUserClientConfigRequest
+    ): Promise<{ json: Json<UserClientConfig>; params: UpdateUserClientConfigRequest }> {
+        return request(`users/${getCurrentUserId()}/clientConfig`, {
+            method: 'PUT',
+            params
         }).then((json) => {
             const args = {
                 json,

@@ -2,12 +2,12 @@
     <template v-if="displayVRCProfileCosmetics">
         <img
             v-if="mainUrl"
-            v-show="isBrowserFocused && !introActive"
+            v-show="isAnimated && !introActive"
             v-bind="$attrs"
             :src="mainUrl"
             class="absolute inset-0 block h-full w-full object-fit object-top pointer-events-none" />
         <img
-            v-if="introUrl && isBrowserFocused"
+            v-if="introUrl && isAnimated"
             v-show="introActive"
             v-bind="$attrs"
             :src="introUrl"
@@ -15,7 +15,7 @@
             class="absolute inset-0 block h-full w-full object-fit object-top pointer-events-none" />
         <img
             v-if="baseUrl"
-            v-show="!isBrowserFocused"
+            v-show="!isAnimated"
             v-bind="$attrs"
             :src="baseUrl"
             class="absolute inset-0 block h-full w-full object-fit object-top pointer-events-none" />
@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-    import { onBeforeUnmount, ref, watch } from 'vue';
+    import { computed, onBeforeUnmount, ref, watch } from 'vue';
     import { storeToRefs } from 'pinia';
 
     import { useAppearanceSettingsStore, useUserStore, useVrcxStore } from '../stores';
@@ -34,9 +34,11 @@
         profileEffect: { type: String, default: '' }
     });
 
-    const { cachedProfileEffects } = storeToRefs(useUserStore());
+    const { cachedProfileEffects, currentUserClientConfig } = storeToRefs(useUserStore());
     const { displayVRCProfileCosmetics } = storeToRefs(useAppearanceSettingsStore());
     const { isBrowserFocused } = storeToRefs(useVrcxStore());
+
+    const isAnimated = computed(() => isBrowserFocused.value && !currentUserClientConfig.value.accessReduceDecorAnim);
 
     const baseUrl = ref(null);
     const mainUrl = ref(null);
@@ -57,8 +59,8 @@
         }, introDuration.value);
     }
 
-    watch(isBrowserFocused, (focused) => {
-        if (focused) {
+    watch(isAnimated, (animated) => {
+        if (animated) {
             return;
         }
         clearIntroTimer();

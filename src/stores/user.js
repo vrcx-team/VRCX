@@ -342,6 +342,11 @@ export const useUserStore = defineStore('User', () => {
     const cachedIconFrames = shallowReactive(new Map());
     const cachedNameplateEffects = shallowReactive(new Map());
 
+    const currentUserClientConfig = ref({
+        accessReduceDecorAnim: false,
+        configString: ''
+    });
+
     function addCachedUserDisplayNameEntry(displayName, userId) {
         if (!displayName || !userId) {
             return;
@@ -934,6 +939,23 @@ export const useUserStore = defineStore('User', () => {
         });
     }
 
+    async function toggleReducedProfileAnimations() {
+        const accessReduceDecorAnim = !currentUserClientConfig.value.accessReduceDecorAnim;
+        if (
+            !(await confirmCurrentUserToggle(t('dialog.user.info.reduced_profile_animations'), accessReduceDecorAnim))
+        ) {
+            return;
+        }
+        const { json } = await userRequest.saveClientConfig({ accessReduceDecorAnim });
+        currentUserClientConfig.value = json;
+    }
+
+    function getClientConfig() {
+        userRequest.getClientConfig().then(({ json }) => {
+            currentUserClientConfig.value = json;
+        });
+    }
+
     function changePassword(currentPassword, password) {
         return userRequest.saveCurrentUser({
             currentPassword,
@@ -953,6 +975,7 @@ export const useUserStore = defineStore('User', () => {
         (isLoggedIn) => {
             if (isLoggedIn) {
                 getCosmetics();
+                getClientConfig();
             }
         },
         { flush: 'sync' }
@@ -995,6 +1018,7 @@ export const useUserStore = defineStore('User', () => {
         cachedProfileEffects,
         cachedIconFrames,
         cachedNameplateEffects,
+        currentUserClientConfig,
         applyUserLanguage,
         applyPresenceLocation,
         applyUserDialogLocation,
@@ -1023,6 +1047,7 @@ export const useUserStore = defineStore('User', () => {
         toggleSharedConnectionsOptOut,
         toggleDiscordFriendsOptOut,
         toggleAllowBooping,
+        toggleReducedProfileAnimations,
         toggleAvatarCopying,
         changePassword,
         changeContentFilterSettings,
