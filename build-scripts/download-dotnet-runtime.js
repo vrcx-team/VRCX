@@ -72,6 +72,30 @@ async function extractTarGz(tarGzPath, extractDir) {
 }
 
 /**
+ * Extracts a zip file to a target directory
+ *
+ * @param {string} zipPath
+ * @param {string} extractDir
+ * @returns {Promise<void>} A promise that resolves when the file is extracted
+ */
+async function extractZip(zipPath, extractDir) {
+    return new Promise((resolve, reject) => {
+        // Windows ships bsdtar, which also handles zip archives.
+        // The Windows runtime zip has a flat layout (no top-level folder),
+        // so no --strip-components is needed.
+        const tar = spawnSync('tar', ['-xf', zipPath, '-C', extractDir], {
+            stdio: 'inherit'
+        });
+
+        if (tar.status === 0) {
+            resolve();
+        } else {
+            reject(new Error(`zip extraction failed with status ${tar.status}`));
+        }
+    });
+}
+
+/**
  * Downloads the .NET runtime for the specified architecture and platform
  *
  * @param {string} arch
@@ -89,10 +113,7 @@ async function downloadDotnetRuntime(arch, platform) {
     } else if (platform === 'darwin') {
         dotnetPlatform = 'osx';
     } else if (platform === 'win32') {
-        // Windows is a zip file instead of tar.gz, which we do not handle here, skip
-        console.log('Skipping .NET runtime download on Windows');
-        return;
-        // dotnetPlatform = 'win';
+        dotnetPlatform = 'win';
     } else {
         throw new Error(`Unsupported platform: ${platform}`);
     }
@@ -105,8 +126,9 @@ async function downloadDotnetRuntime(arch, platform) {
         fs.mkdirSync(DOTNET_RUNTIME_DIR, { recursive: true });
     }
 
-    const fileName = `dotnet-runtime-${DOTNET_VERSION}-${dotnetPlatform}-${arch}.tar.gz`;
-    const tarGzPath = path.join(DOTNET_RUNTIME_DIR, fileName);
+    const archiveExt = dotnetPlatform === 'win' ? 'zip' : 'tar.gz';
+    const fileName = `dotnet-runtime-${DOTNET_VERSION}-${dotnetPlatform}-${arch}.${archiveExt}`;
+    const archivePath = path.join(DOTNET_RUNTIME_DIR, fileName);
     const dotnetRuntimeUrl = `https://builds.dotnet.microsoft.com/dotnet/Runtime/${DOTNET_VERSION}/${fileName}`;
     const cacheFilePath = path.join(DOTNET_CACHE_DIR, fileName);
 
@@ -120,8 +142,8 @@ async function downloadDotnetRuntime(arch, platform) {
     }
 
     // copy the cached file to the target directory
-    await copyFile(cacheFilePath, tarGzPath);
-    console.log(`Copied ${cacheFilePath} to ${tarGzPath}`);
+    await copyFile(cacheFilePath, archivePath);
+    console.log(`Copied ${cacheFilePath} to ${archivePath}`);
 
     // Extract .NET runtime to a temporary directory first
     const tempExtractDir = path.join(DOTNET_RUNTIME_DIR, 'temp');
@@ -130,16 +152,23 @@ async function downloadDotnetRuntime(arch, platform) {
     }
 
     console.log('Extracting .NET runtime...');
-    await extractTarGz(tarGzPath, tempExtractDir);
+    if (archiveExt === 'zip') {
+        await extractZip(archivePath, tempExtractDir);
+    } else {
+        await extractTarGz(archivePath, tempExtractDir);
+    }
     console.log('Extraction completed');
 
-    // Clean up tar.gz file
-    fs.unlinkSync(tarGzPath);
+    // Clean up downloaded archive
+    fs.unlinkSync(archivePath);
     console.log('Cleanup completed');
 
-    // Ensure the dotnet executable is executable
+    // Ensure the dotnet executable is executable (Unix only; the Windows
+    // archive contains dotnet.exe instead)
     const extractedDotnet = path.join(tempExtractDir, 'dotnet');
-    fs.chmodSync(extractedDotnet, 0o755);
+    if (fs.existsSync(extractedDotnet)) {
+        fs.chmodSync(extractedDotnet, 0o755);
+    }
 
     // Move all other files to the root of dotnet-runtime
     const files = fs.readdirSync(tempExtractDir);

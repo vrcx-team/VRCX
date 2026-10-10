@@ -53,6 +53,20 @@ function renameBuild(arch, platform) {
             console.error('Error renaming files:', err);
             process.exit(1);
         }
+    } else if (platform === 'win32') {
+        const oldSetup = path.join(buildDir, 'VRCX_Version.exe');
+        const newSetup = path.join(buildDir, `VRCX_${version}_Setup_${arch}.exe`);
+        try {
+            if (fs.existsSync(oldSetup)) {
+                fs.renameSync(oldSetup, newSetup);
+                console.log(`Renamed: ${oldSetup} -> ${newSetup}`);
+            } else {
+                console.log(`File not found: ${oldSetup}`);
+            }
+        } catch (err) {
+            console.error('Error renaming files:', err);
+            process.exit(1);
+        }
     } else {
         console.log('No renaming needed for this platform.');
     }
