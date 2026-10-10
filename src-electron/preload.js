@@ -45,6 +45,8 @@ contextBridge.exposeInMainWorld('electron', {
     getClipboardText: () => ipcRenderer.invoke('app:getClipboardText'),
     getNoUpdater: () => ipcRenderer.invoke('app:getNoUpdater'),
     setTrayIconNotification: (notify) => ipcRenderer.invoke('app:setTrayIconNotification', notify),
+    setThemeSource: (source) => ipcRenderer.invoke('app:setThemeSource', source),
+    onSystemThemeChanged: (callback) => registerManagedListener('systemThemeChanged', callback),
     openFileDialog: () => ipcRenderer.invoke('dialog:openFile'),
     openDirectoryDialog: () => ipcRenderer.invoke('dialog:openDirectory'),
     onWindowPositionChanged: (callback) => registerManagedListener('setWindowPosition', callback),

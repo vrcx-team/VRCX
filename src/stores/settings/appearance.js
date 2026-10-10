@@ -21,6 +21,7 @@ import {
     changeAppThemeStyle,
     changeHtmlLangAttribute,
     getThemeMode,
+    setSystemIsDarkMode,
     updateTrustColorClasses
 } from '../../shared/utils/base/ui';
 import { computeTrustLevel, getNameColour } from '../../shared/utils';
@@ -435,11 +436,20 @@ export const useAppearanceSettingsStore = defineStore(
             }
         }
 
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async () => {
-            if (themeMode.value === 'system') {
-                setThemeMode(themeMode.value);
-            }
-        });
+        if (LINUX) {
+            window.electron.onSystemThemeChanged((_event, isDark) => {
+                setSystemIsDarkMode(isDark);
+                if (themeMode.value === 'system' && isDarkMode.value !== isDark) {
+                    setThemeMode(themeMode.value);
+                }
+            });
+        } else {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async () => {
+                if (themeMode.value === 'system') {
+                    setThemeMode(themeMode.value);
+                }
+            });
+        }
 
         /**
          * @param {string} mode

@@ -39,6 +39,8 @@ declare global {
             getClipboardText: () => Promise<string>;
             getNoUpdater: () => Promise<boolean>;
             setTrayIconNotification: (notify: boolean) => Promise<void>;
+            setThemeSource: (source: 'system' | 'light' | 'dark') => Promise<void>;
+            onSystemThemeChanged: (Function: (event: any, isDark: boolean) => void) => () => void;
             openFileDialog: () => Promise<string>;
             openDirectoryDialog: () => Promise<string>;
             desktopNotification: (displayName: string, body?: string, image?: string) => Promise<void>;

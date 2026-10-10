@@ -94,11 +94,17 @@ function useThemeColor() {
     };
 }
 
-/**
- * @returns {boolean}
- */
+let electronSystemIsDark = null;
+
 function systemIsDarkMode() {
+    if (electronSystemIsDark !== null) {
+        return electronSystemIsDark;
+    }
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function setSystemIsDarkMode(isDark) {
+    electronSystemIsDark = isDark;
 }
 
 function applyThemeFonts(themeKey, fontLinks = []) {
@@ -238,7 +244,8 @@ function applyAppCjkFontPack(packKey) {
 }
 
 function changeAppThemeStyle(themeMode) {
-    if (themeMode === 'system') {
+    let isSystemMode = themeMode === 'system';
+    if (isSystemMode) {
         themeMode = systemIsDarkMode() ? 'dark' : 'light';
     }
 
@@ -247,6 +254,7 @@ function changeAppThemeStyle(themeMode) {
         // fallback to system
         console.error('Invalid theme mode:', themeMode);
         configRepository.setString('VRCX_ThemeMode', 'system');
+        isSystemMode = true;
         themeMode = systemIsDarkMode() ? 'dark' : 'light';
         themeConfig = THEME_CONFIG[themeMode];
     }
@@ -268,6 +276,10 @@ function changeAppThemeStyle(themeMode) {
         AppApi.ChangeTheme(1);
     } else {
         AppApi.ChangeTheme(0);
+    }
+
+    if (LINUX) {
+        window.electron?.setThemeSource(isSystemMode ? 'system' : themeConfig.isDark ? 'dark' : 'light');
     }
 
     return { isDark: themeConfig.isDark };
@@ -496,5 +508,6 @@ export {
     formatJsonVars,
     changeHtmlLangAttribute,
     getThemeMode,
+    setSystemIsDarkMode,
     redirectToToolsTab
 };

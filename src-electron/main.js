@@ -9,7 +9,8 @@ const {
     Menu,
     dialog,
     Notification: ElectronNotification,
-    nativeImage
+    nativeImage,
+    nativeTheme
 } = require('electron');
 const { spawnSync } = require('child_process');
 const fs = require('fs');
@@ -277,6 +278,22 @@ ipcMain.handle('app:getNoUpdater', () => {
 ipcMain.handle('app:setTrayIconNotification', (_event, notify) => {
     setTrayIconNotification(notify);
 });
+
+function sendSystemTheme() {
+    if (mainWindow && !mainWindow.isDestroyed() && nativeTheme.themeSource === 'system') {
+        mainWindow.webContents.send('systemThemeChanged', nativeTheme.shouldUseDarkColors);
+    }
+}
+
+ipcMain.handle('app:setThemeSource', (_event, source) => {
+    if (!['system', 'light', 'dark'].includes(source)) {
+        return;
+    }
+    nativeTheme.themeSource = source;
+    sendSystemTheme();
+});
+
+nativeTheme.on('updated', sendSystemTheme);
 
 function createWindow() {
     console.log('Creating main window');
