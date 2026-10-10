@@ -214,6 +214,16 @@ const toolDefinitions = [
         descriptionKey: 'view.tools.other.edit_invite_message_description',
         navEligible: true,
         action: { type: 'dialog', dialogKey: 'edit-invite-messages' }
+    },
+    {
+        key: 'moderation-reports',
+        category: 'other',
+        iconKey: 'flag',
+        navIcon: 'ri-flag-line',
+        titleKey: 'view.tools.other.moderation_reports',
+        descriptionKey: 'view.tools.other.moderation_reports_description',
+        navEligible: true,
+        action: { type: 'dialog', dialogKey: 'moderation-reports' }
     }
 ];
 

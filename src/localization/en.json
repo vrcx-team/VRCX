@@ -716,7 +716,9 @@
             "other": {
                 "header": "Other",
                 "edit_invite_message": "Edit Invite Messages",
-                "edit_invite_message_description": "Edit invite and invite response messages"
+                "edit_invite_message_description": "Edit invite and invite response messages",
+                "moderation_reports": "My Reports",
+                "moderation_reports_description": "View and delete moderation reports you have submitted"
             }
         },
         "profile": {
@@ -1394,7 +1396,7 @@
                 "edit_language": "Language",
                 "edit_bio": "Bio",
                 "edit_pronouns": "Pronouns",
-                "report_hacking": "Report For Hacking",
+                "report_user": "Report User",
                 "unfriend": "Unfriend",
                 "unfriend_success_msg": "Unfriended",
                 "logout": "Logout",
@@ -2645,6 +2647,24 @@
             "header": "Moderate Group Member",
             "choose_group_placeholder": "Choose Group",
             "moderation_tools": "Moderation Tools"
+        },
+        "moderation_report": {
+            "header": "Report",
+            "category": "Category",
+            "reason": "Reason",
+            "description": "Description",
+            "description_placeholder": "Describe what happened (optional)",
+            "no_options": "No report options are available for this content.",
+            "cancel": "Cancel",
+            "submit": "Submit Report",
+            "success": "Report submitted"
+        },
+        "moderation_reports": {
+            "header": "My Reports",
+            "filter_type": "Type",
+            "all": "All",
+            "load_more": "Load More",
+            "delete_confirm": "Delete this report?"
         },
         "boop_dialog": {
             "header": "Boop",

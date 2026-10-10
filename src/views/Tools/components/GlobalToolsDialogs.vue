@@ -11,6 +11,9 @@
     <AutoChangeStatusDialog
         :isAutoChangeStatusDialogVisible="autoChangeStatus"
         @close="closeDialog('autoChangeStatus')" />
+    <ModerationReportsDialog
+        :isModerationReportsDialogVisible="moderationReports"
+        @close="closeDialog('moderationReports')" />
 </template>
 
 <script setup>
@@ -26,6 +29,7 @@
     import ExportDiscordNamesDialog from '../dialogs/ExportDiscordNamesDialog.vue';
     import ExportFriendsListDialog from '../dialogs/ExportFriendsListDialog.vue';
     import GroupCalendarDialog from '../dialogs/GroupCalendarDialog.vue';
+    import ModerationReportsDialog from '../dialogs/ModerationReportsDialog.vue';
     import NoteExportDialog from '../dialogs/NoteExportDialog.vue';
 
     const { friends } = storeToRefs(useFriendStore());
@@ -37,6 +41,7 @@
         exportDiscordNames,
         exportFriendsList,
         groupCalendar,
+        moderationReports,
         noteExport
     } = storeToRefs(toolsStore);
 

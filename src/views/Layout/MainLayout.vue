@@ -76,6 +76,7 @@
         <VRChatConfigDialog />
         <PrimaryPasswordDialog />
         <SendBoopDialog />
+        <ModerationReportDialog />
         <GlobalToolsDialogs />
         <ChangelogDialog />
         <WhatsNewDialog />
@@ -109,6 +110,7 @@
     import LaunchDialog from '../../components/dialogs/LaunchDialog.vue';
     import LaunchOptionsDialog from '../Settings/dialogs/LaunchOptionsDialog.vue';
     import MainDialogContainer from '../../components/dialogs/MainDialogContainer.vue';
+    import ModerationReportDialog from '../../components/dialogs/ModerationReportDialog.vue';
     import NavMenu from '../../components/nav-menu/NavMenu.vue';
     import PrimaryPasswordDialog from '../Settings/dialogs/PrimaryPasswordDialog.vue';
     import SendBoopDialog from '../../components/dialogs/SendBoopDialog.vue';

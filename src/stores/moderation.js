@@ -10,6 +10,13 @@ export const useModerationStore = defineStore('Moderation', () => {
 
     const cachedPlayerModerations = reactive(new Map());
     const cachedPlayerModerationsUserIds = reactive(new Set());
+    const moderationReportDialog = ref({
+        visible: false,
+        type: '',
+        contentId: '',
+        contentName: '',
+        details: undefined
+    });
     const playerModerationTable = ref({
         data: [],
         search: '',
@@ -206,10 +213,26 @@ export const useModerationStore = defineStore('Moderation', () => {
         return moderations;
     }
 
+    /**
+     * @param {{ type: string; contentId: string; contentName?: string; details?: object }} params
+     */
+    function showModerationReportDialog({ type, contentId, contentName = '', details = undefined }) {
+        moderationReportDialog.value = {
+            visible: true,
+            type,
+            contentId,
+            contentName,
+            details
+        };
+    }
+
     return {
         cachedPlayerModerations,
         cachedPlayerModerationsUserIds,
         playerModerationTable,
+        moderationReportDialog,
+
+        showModerationReportDialog,
 
         expirePlayerModerations,
         deleteExpiredPlayerModerations,

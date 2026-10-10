@@ -46,28 +46,6 @@ const miscReq = {
         });
     },
 
-    reportUser(params: {
-        userId: string;
-        contentType: string;
-        reason: string;
-        type: string;
-    }): Promise<{ json: any; params }> {
-        return request(`feedback/${params.userId}/user`, {
-            method: 'POST',
-            params: {
-                contentType: params.contentType,
-                reason: params.reason,
-                type: params.type
-            }
-        }).then((json) => {
-            const args = {
-                json,
-                params
-            };
-            return args;
-        });
-    },
-
     getFileAnalysis(params: {
         fileId: string;
         version: number;

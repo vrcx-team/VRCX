@@ -3,7 +3,6 @@ import { ref } from 'vue';
 import {
     favoriteRequest,
     friendRequest,
-    miscRequest,
     notificationRequest,
     playerModerationRequest,
     queryRequest
@@ -33,6 +32,7 @@ import { recordRecentAction } from '../../../composables/useRecentActions';
  * @param deps.showAvatarAuthorDialog
  * @param deps.showModerateGroupDialog
  * @param deps.showSendBoopDialog
+ * @param deps.showModerationReportDialog
  * @param deps.showGalleryPage
  * @param deps.getFriendRequest
  * @param deps.handleFriendDelete
@@ -63,6 +63,7 @@ export function useUserDialogCommands(
         showAvatarAuthorDialog,
         showModerateGroupDialog,
         showSendBoopDialog,
+        showModerationReportDialog,
         showGalleryPage,
         getFriendRequest,
         handleFriendDelete,
@@ -334,6 +335,13 @@ export function useUserDialogCommands(
             'Send Boop': () => {
                 showSendBoopDialog(D().id);
             },
+            'Report User': () => {
+                showModerationReportDialog({
+                    type: 'user',
+                    contentId: D().id,
+                    contentName: D().ref.displayName
+                });
+            },
             'Group Moderation': () => {
                 showModerateGroupDialog(D().id);
             },
@@ -573,22 +581,6 @@ export function useUserDialogCommands(
                         type: 'muteChat'
                     });
                     handleSendPlayerModeration(args);
-                }
-            },
-            'Report Hacking': {
-                confirm: () => ({
-                    title: t('confirm.title'),
-                    description: t('confirm.command_question', {
-                        command: t('dialog.user.actions.report_hacking')
-                    })
-                }),
-                handler: (userId) => {
-                    miscRequest.reportUser({
-                        userId,
-                        contentType: 'user',
-                        reason: 'behavior-hacking',
-                        type: 'report'
-                    });
                 }
             },
             Unfriend: {
