@@ -1272,7 +1272,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             case 'openNotificationLink':
             case 'OpenSafetyCenter':
             default:
-                toast.error('Unsupported notification link type');
+                toast.error(`Unsupported notification link type: "${link}"`);
                 break;
         }
     }

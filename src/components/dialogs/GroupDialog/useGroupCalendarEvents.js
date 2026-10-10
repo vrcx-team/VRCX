@@ -19,18 +19,20 @@ export function useGroupCalendarEvents(groupDialog) {
         const now = Date.now();
         const series = new Set();
         const sortedEvents = [...groupDialog.value.calendar].sort((a, b) => a.startsAt.localeCompare(b.startsAt));
-        return sortedEvents.filter((event) => {
-            const eventEnd = new Date(event.endsAt).getTime();
-            if (event.seriesId) {
-                if (series.has(event.seriesId)) {
-                    return false;
+        return sortedEvents
+            .filter((event) => {
+                const eventEnd = new Date(event.endsAt).getTime();
+                if (event.seriesId) {
+                    if (series.has(event.seriesId)) {
+                        return false;
+                    }
+                    if (eventEnd < now) {
+                        series.add(event.seriesId);
+                    }
                 }
-                if (eventEnd < now) {
-                    series.add(event.seriesId);
-                }
-            }
-            return eventEnd < now;
-        });
+                return eventEnd < now;
+            })
+            .reverse();
     });
 
     const upcomingCalenderEvents = computed(() => {
@@ -40,18 +42,20 @@ export function useGroupCalendarEvents(groupDialog) {
         const now = Date.now();
         const series = new Set();
         const sortedEvents = [...groupDialog.value.calendar].sort((a, b) => a.startsAt.localeCompare(b.startsAt));
-        return sortedEvents.filter((event) => {
-            const eventEnd = new Date(event.endsAt).getTime();
-            if (event.seriesId) {
-                if (series.has(event.seriesId)) {
-                    return false;
+        return sortedEvents
+            .filter((event) => {
+                const eventEnd = new Date(event.endsAt).getTime();
+                if (event.seriesId) {
+                    if (series.has(event.seriesId)) {
+                        return false;
+                    }
+                    if (eventEnd >= now) {
+                        series.add(event.seriesId);
+                    }
                 }
-                if (eventEnd >= now) {
-                    series.add(event.seriesId);
-                }
-            }
-            return eventEnd >= now;
-        });
+                return eventEnd >= now;
+            })
+            .reverse();
     });
 
     /**
