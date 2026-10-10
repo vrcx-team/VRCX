@@ -150,6 +150,23 @@
                     </Badge>
                 </TooltipWrapper>
                 <TooltipWrapper
+                    v-if="userDialog.id === currentUser.id && currentUser.accountStanding"
+                    side="top"
+                    :content="t('dialog.user.tags.account_standing')">
+                    <Badge
+                        variant="outline"
+                        class="h-5 px-1.5 text-[11px] leading-none capitalize"
+                        :class="
+                            currentUser.accountStanding === 'good'
+                                ? 'text-green-500 border-green-500!'
+                                : 'text-red-500 border-red-500!'
+                        ">
+                        <ShieldCheck v-if="currentUser.accountStanding === 'good'" class="h-2.5 w-2.5" />
+                        <ShieldAlert v-else class="h-2.5 w-2.5" />
+                        {{ currentUser.accountStanding }}
+                    </Badge>
+                </TooltipWrapper>
+                <TooltipWrapper
                     v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"
                     side="top"
                     :content="t('dialog.user.tags.age_verified')">
@@ -462,6 +479,8 @@
         Info,
         Monitor,
         Shield,
+        ShieldAlert,
+        ShieldCheck,
         Smartphone,
         Hand,
         UserPlus,

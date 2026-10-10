@@ -108,3 +108,9 @@ export interface TableFilter {
     value: any;
     filterFn?: (row: any, filter: TableFilter) => boolean;
 }
+
+export interface AccountStanding {
+    issueClearDays: number;
+    sanctions: unknown[];
+    standing: string;
+}

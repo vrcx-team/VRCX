@@ -17,7 +17,7 @@ import type {
     User,
     UserNote
 } from 'vrchat';
-import type { Json, VrcxCurrentUser, VrcxUser } from '../types/vrcx';
+import type { AccountStanding, Json, VrcxCurrentUser, VrcxUser } from '../types/vrcx';
 import { patchAndRefetchActiveQuery, queryKeys } from '../queries';
 import { request } from '../services/request';
 import { useUserStore } from '../stores';
@@ -203,6 +203,17 @@ const userReq = {
             const args = {
                 json,
                 params
+            };
+            return args;
+        });
+    },
+
+    getAccountStanding(): Promise<{ json: AccountStanding }> {
+        return request('auth/user/accountStanding', {
+            method: 'GET'
+        }).then((json) => {
+            const args = {
+                json
             };
             return args;
         });
