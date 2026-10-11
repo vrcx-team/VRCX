@@ -1,6 +1,7 @@
 import { getGroupName, getWorldName, isRealInstance, parseLocation } from '../shared/utils';
 import { database } from '../services/database';
 import { useAdvancedSettingsStore } from '../stores/settings/advanced';
+import { useFriendStore } from '../stores/friend';
 import { useGameLogStore } from '../stores/gameLog';
 import { useGameStore } from '../stores/game';
 import { useInstanceStore } from '../stores/instance';
@@ -131,6 +132,7 @@ export async function runLastLocationResetFlow(gameLogDate) {
     const vrStore = useVrStore();
     const userStore = useUserStore();
     const locationStore = useLocationStore();
+    const friendStore = useFriendStore();
 
     let dateTime = gameLogDate;
     if (!gameLogDate) {
@@ -150,6 +152,7 @@ export async function runLastLocationResetFlow(gameLogDate) {
             time: dateTimeStamp - ref.joinTime
         };
         dataBaseEntries.unshift(entry);
+        friendStore.updateFriendLastSeen(ref.userId, dateTime);
     }
     const persistedEntries = await database.addGamelogJoinLeaveBulk(dataBaseEntries);
     for (const entry of persistedEntries) {
