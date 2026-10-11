@@ -518,6 +518,9 @@ export const useAuthStore = defineStore('Auth', () => {
                 if (shouldTrackLoginNetworkIssueHint && shouldCountLoginFailureForNetworkHint(err)) {
                     maybeShowLoginNetworkIssueHint();
                 }
+                if (err.message.includes('Check your email')) {
+                    toast.error(t('message.auth.check_your_email'));
+                }
                 await handleLogoutEvent();
                 throw err;
             }
@@ -611,6 +614,9 @@ export const useAuthStore = defineStore('Auth', () => {
                     } catch (err) {
                         if (shouldCountLoginFailureForNetworkHint(err)) {
                             maybeShowLoginNetworkIssueHint();
+                        }
+                        if (err.message.includes('Check your email')) {
+                            toast.error(t('message.auth.check_your_email'));
                         }
                         throw err;
                     }

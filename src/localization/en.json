@@ -3041,7 +3041,8 @@
             "auto_login_failed": "Failed to login automatically.",
             "offline": "You're offline.",
             "login_network_issue_hint_title": "Having trouble signing in?",
-            "login_network_issue_hint_description": "Several recent sign-in attempts failed. Click Open for the troubleshooting guide."
+            "login_network_issue_hint_description": "Several recent sign-in attempts failed. Click Open for the troubleshooting guide.",
+            "check_your_email": "Check your email for a message from VRChat"
         },
         "vrcx_updater": {
             "failed": "Failed to check for update, {message}",
