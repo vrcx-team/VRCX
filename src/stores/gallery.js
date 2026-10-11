@@ -261,15 +261,40 @@ export const useGalleryStore = defineStore('Gallery', () => {
         const monthFolder = createdAt.slice(0, 7);
         const fileNameDate = createdAt.replace(/:/g, '-').replace(/T/g, '_').replace(/Z/g, '');
         const fileName = `${displayName}_${fileNameDate}_${inventoryId}.png`;
-        const filePath = await AppApi.SaveStickerToFile(
-            imageUrl,
-            advancedSettingsStore.ugcFolderPath,
-            monthFolder,
-            fileName
-        );
-        if (filePath) {
-            console.log(`Sticker saved to file: ${monthFolder}\\${fileName}`);
+        try {
+            const filePath = await AppApi.SaveStickerToFile(
+                imageUrl,
+                advancedSettingsStore.ugcFolderPath,
+                monthFolder,
+                fileName
+            );
+            if (filePath) {
+                console.log(`Sticker saved to file: ${monthFolder}\\${fileName}`);
+            }
+        } catch (e) {
+            handleFileSaveError(e, 'sticker');
         }
+    }
+
+    /**
+     * @param {Error} error
+     * @param {string} itemType
+     */
+    function handleFileSaveError(error, itemType) {
+        if (error?.message?.includes('Could not find file')) {
+            modalStore
+                .confirm({
+                    description: `Windows has blocked VRCX from creating files on your system. Please allow VRCX to create files to save ${itemType}s, would you like to see instructions on how to fix this?`,
+                    title: `Failed to create ${itemType} folder`,
+                    cancelText: 'Ignore'
+                })
+                .then(({ ok }) => {
+                    if (!ok) return;
+                    openExternalLink('https://www.youtube.com/watch?v=1mwmmCdA4D8&t=213s');
+                })
+                .catch(() => {});
+        }
+        console.error(`Failed to save ${itemType} to file:`, error);
     }
 
     async function refreshPrintTable() {
@@ -344,19 +369,23 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
         const monthFolder = createdAt.toISOString().slice(0, 7);
         const fileName = getPrintFileName(print);
-        const filePath = await AppApi.SavePrintToFile(
-            imageUrl,
-            advancedSettingsStore.ugcFolderPath,
-            monthFolder,
-            fileName
-        );
-        if (filePath) {
-            console.log(`Print saved to file: ${monthFolder}\\${fileName}`);
-            if (advancedSettingsStore.cropInstancePrints) {
-                if (!(await AppApi.CropPrintImage(filePath))) {
-                    console.error('Failed to crop print image');
+        try {
+            const filePath = await AppApi.SavePrintToFile(
+                imageUrl,
+                advancedSettingsStore.ugcFolderPath,
+                monthFolder,
+                fileName
+            );
+            if (filePath) {
+                console.log(`Print saved to file: ${monthFolder}\\${fileName}`);
+                if (advancedSettingsStore.cropInstancePrints) {
+                    if (!(await AppApi.CropPrintImage(filePath))) {
+                        console.error('Failed to crop print image');
+                    }
                 }
             }
+        } catch (e) {
+            handleFileSaveError(e, 'print');
         }
 
         if (state.printQueue.length === 0) {
@@ -541,21 +570,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
                 console.log(`Emoji saved to file: ${monthFolder}\\${emojiFileName}`);
             }
         } catch (e) {
-            if (e.message.includes('Could not find file')) {
-                modalStore
-                    .confirm({
-                        description:
-                            'Windows has blocked VRCX from creating files on your system. Please allow VRCX to create files to save emojis, would you like to see instructions on how to fix this?',
-                        title: 'Failed to create emoji folder',
-                        cancelText: 'Ignore'
-                    })
-                    .then(({ ok }) => {
-                        if (!ok) return;
-                        openExternalLink('https://www.youtube.com/watch?v=1mwmmCdA4D8&t=213s');
-                    })
-                    .catch(() => {});
-            }
-            console.error('Failed to save emoji to file:', e);
+            handleFileSaveError(e, 'emoji');
         }
 
         if (state.instanceInventoryQueue.length === 0) {
