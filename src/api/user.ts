@@ -1,4 +1,5 @@
 import type {
+    AccountStanding,
     ChangeUserTagsRequest,
     CurrentUser,
     Feedback,
@@ -19,7 +20,7 @@ import type {
     UserClientConfig,
     UserNote
 } from 'vrchat';
-import type { AccountStanding, Json, VrcxCurrentUser, VrcxUser } from '../types/vrcx';
+import type { Json, VrcxCurrentUser, VrcxUser } from '../types/vrcx';
 import { patchAndRefetchActiveQuery, queryKeys } from '../queries';
 import { request } from '../services/request';
 import { useUserStore } from '../stores';
