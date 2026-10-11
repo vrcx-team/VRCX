@@ -11,7 +11,8 @@ const initialDialogState = () => ({
     exportAvatarsList: false,
     editInviteMessages: false,
     autoChangeStatus: false,
-    moderationReports: false
+    moderationReports: false,
+    infoPush: false
 });
 
 export const useToolsStore = defineStore('Tools', () => {

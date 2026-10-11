@@ -244,6 +244,16 @@ const toolDefinitions = [
         descriptionKey: 'view.tools.other.moderation_reports_description',
         navEligible: true,
         action: { type: 'dialog', dialogKey: 'moderation-reports' }
+    },
+    {
+        key: 'info-push',
+        category: 'other',
+        iconKey: 'megaphone',
+        navIcon: 'ri-megaphone-line',
+        titleKey: 'view.tools.other.info_push',
+        descriptionKey: 'view.tools.other.info_push_description',
+        navEligible: true,
+        action: { type: 'dialog', dialogKey: 'info-push' }
     }
 ];
 

@@ -3,6 +3,7 @@ import type {
     BoopRequest,
     File,
     FileAnalysis,
+    InfoPush,
     Instance,
     Success,
     UpdateUserBadgeRequest,
@@ -168,6 +169,23 @@ const miscReq = {
                 emojiId: params.emojiId
                 // inventoryItemId
             }
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    getInfoPush(params: { require?: string; include?: string[] }): Promise<{ json: Json<InfoPush[]>; params }> {
+        const query: Record<string, any> = {
+            require: params.require,
+            include: params.include
+        };
+        return request('infoPush', {
+            method: 'GET',
+            params: query
         }).then((json) => {
             const args = {
                 json,

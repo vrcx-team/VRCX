@@ -722,7 +722,9 @@
                 "edit_invite_message": "Edit Invite Messages",
                 "edit_invite_message_description": "Edit invite and invite response messages",
                 "moderation_reports": "My Reports",
-                "moderation_reports_description": "View and delete moderation reports you have submitted"
+                "moderation_reports_description": "View and delete moderation reports you have submitted",
+                "info_push": "Info Push",
+                "info_push_description": "Browse VRChat info push announcements and content"
             }
         },
         "profile": {
@@ -2676,6 +2678,21 @@
             "all": "All",
             "load_more": "Load More",
             "delete_confirm": "Delete this report?"
+        },
+        "info_push": {
+            "header": "Info Push",
+            "categories": {
+                "help-article": "Help Articles",
+                "quick-menu-banner": "Quick Menu Banners",
+                "loading-screen-banners": "Loading Screens"
+            },
+            "end_date": "Ends",
+            "open_link": "Open link",
+            "open_video": "Open video",
+            "domains": "Domains",
+            "disabled": "Disabled",
+            "expired": "Expired",
+            "scheduled": "Scheduled"
         },
         "blocked_groups": {
             "header": "Blocked Groups",

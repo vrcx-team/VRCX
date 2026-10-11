@@ -16,6 +16,7 @@
     <ModerationReportsDialog
         :isModerationReportsDialogVisible="moderationReports"
         @close="closeDialog('moderationReports')" />
+    <InfoPushDialog :isInfoPushDialogVisible="infoPush" @close="closeDialog('infoPush')" />
 </template>
 
 <script setup>
@@ -33,6 +34,7 @@
     import ExportFriendsListDialog from '../dialogs/ExportFriendsListDialog.vue';
     import GroupCalendarDialog from '../dialogs/GroupCalendarDialog.vue';
     import GroupInvitesDialog from '../dialogs/GroupInvitesDialog.vue';
+    import InfoPushDialog from '../dialogs/InfoPushDialog.vue';
     import ModerationReportsDialog from '../dialogs/ModerationReportsDialog.vue';
     import NoteExportDialog from '../dialogs/NoteExportDialog.vue';
 
@@ -47,6 +49,7 @@
         exportFriendsList,
         groupCalendar,
         groupInvites,
+        infoPush,
         moderationReports,
         noteExport
     } = storeToRefs(toolsStore);
