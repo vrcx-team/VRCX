@@ -128,13 +128,18 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
     }
 
-    function showGalleryPage() {
+    /**
+     * @param {string} [tab]
+     */
+    function showGalleryPage(tab) {
         galleryDialogVisible.value = true;
+        const query = typeof tab === 'string' ? { tab } : {};
         if (router.currentRoute.value?.name === 'gallery') {
             loadGalleryData();
+            router.replace({ name: 'gallery', query });
             return;
         }
-        router.push({ name: 'gallery' });
+        router.push({ name: 'gallery', query });
     }
 
     function loadGalleryData() {

@@ -40,7 +40,7 @@
             </div>
 
             <DialogFooter>
-                <Button size="sm" variant="outline" class="sm:mr-auto" @click="showGalleryPage">{{
+                <Button size="sm" variant="outline" class="sm:mr-auto" @click="showGalleryPage('emojis')">{{
                     t('dialog.boop_dialog.emoji_manager')
                 }}</Button>
                 <Button size="sm" variant="secondary" @click="closeDialog">{{ t('dialog.boop_dialog.cancel') }}</Button>
