@@ -643,13 +643,13 @@
     const { t } = useI18n();
     const router = useRouter();
     const route = useRoute();
-    const activeTab = ref(route.query.tab || 'gallery');
+    const activeTab = ref(String(route.query.tab || 'gallery'));
 
     watch(
         () => route.query.tab,
         (tab) => {
             if (tab) {
-                activeTab.value = tab;
+                activeTab.value = String(tab);
             }
         }
     );

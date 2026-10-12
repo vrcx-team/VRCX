@@ -4,7 +4,6 @@ import { toast } from 'vue-sonner';
 import {
     useFriendStore,
     useGalleryStore,
-    useGroupStore,
     useInstanceStore,
     useNotificationStore,
     useSharedFeedStore,
@@ -12,7 +11,7 @@ import {
     useUserStore
 } from '../stores';
 import { applyUser, applyCurrentUser } from '../coordinators/userCoordinator';
-import { onGroupLeft, applyGroup, getGroupDialogGroup, handleGroupMember } from '../coordinators/groupCoordinator';
+import { onGroupLeft, applyGroup, handleGroupMember } from '../coordinators/groupCoordinator';
 import { handleFriendAdd, handleFriendDelete } from '../coordinators/friendRelationshipCoordinator';
 import { parseLocation } from '../shared/utils';
 import { AppDebug } from './appConfig';
@@ -189,7 +188,6 @@ function handlePipeline(args) {
     const notificationStore = useNotificationStore();
     const sharedFeedStore = useSharedFeedStore();
 
-    const groupStore = useGroupStore();
     const uiStore = useUiStore();
     const instanceStore = useInstanceStore();
     const { type, content, err } = args.json;

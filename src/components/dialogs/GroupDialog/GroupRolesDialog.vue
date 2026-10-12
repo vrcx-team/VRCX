@@ -431,6 +431,7 @@
             return;
         }
         const D = groupRolesDialog.value;
+        /** @type {any} */
         const params = { groupId: D.id };
         if (!isDetailsReadOnly.value) {
             params.name = form.value.name.trim();
