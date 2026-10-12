@@ -1,12 +1,7 @@
 <template>
     <div class="h-full min-h-0 flex flex-col p-2 rounded-xl bg-(--profile-card)">
         <div class="flex items-center gap-1">
-            <Button
-                class="rounded-full"
-                variant="ghost"
-                size="icon-sm"
-                :disabled="isLoading"
-                @click="getGroupListings">
+            <Button class="rounded-full" variant="ghost" size="icon-sm" :disabled="isLoading" @click="getGroupListings">
                 <Spinner v-if="isLoading" />
                 <RefreshCw v-else />
             </Button>

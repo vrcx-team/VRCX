@@ -160,7 +160,10 @@ const expandedRow = ({ row }) => {
             <div class="pl-5 text-sm">
                 <pre
                     class="text-xs leading-5.5 whitespace-pre-wrap font-[inherit]"
-                    innerHTML={formatDifference(replaceBioSymbols(original.previousBio), replaceBioSymbols(original.bio))}
+                    innerHTML={formatDifference(
+                        replaceBioSymbols(original.previousBio),
+                        replaceBioSymbols(original.bio)
+                    )}
                 ></pre>
                 {links.length ? (
                     <div class="mt-1 flex flex-col gap-0.5 text-xs">
