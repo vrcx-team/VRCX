@@ -39,7 +39,8 @@ export const useGroupStore = defineStore('Group', () => {
             value: 'joinedAt:desc'
         },
         postsSearch: '',
-        galleries: {}
+        galleries: {},
+        listings: []
     });
 
     const groupEditDialog = ref({

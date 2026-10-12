@@ -3,8 +3,10 @@ import type {
     BoopRequest,
     File,
     FileAnalysis,
+    GetStore,
     InfoPush,
     Instance,
+    Store,
     Success,
     UpdateUserBadgeRequest,
     UpdateUserNoteRequest,
@@ -69,6 +71,19 @@ const miscReq = {
         }).then((json) => {
             const args = {
                 json
+            };
+            return args;
+        });
+    },
+
+    getStore(params: GetStore['query']): Promise<{ json: Json<Store>; params: GetStore['query'] }> {
+        return request('economy/store', {
+            method: 'GET',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
             };
             return args;
         });

@@ -2028,6 +2028,9 @@
                 "image_pending_approval": "Image submitted for approval",
                 "image_deleted": "Image deleted"
             },
+            "store": {
+                "header": "Store"
+            },
             "json": {
                 "header": "JSON"
             }

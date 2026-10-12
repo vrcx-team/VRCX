@@ -612,6 +612,9 @@
                 <template #Photos>
                     <GroupDialogPhotosTab ref="photosTabRef" />
                 </template>
+                <template #Store>
+                    <GroupDialogStoreTab ref="storeTabRef" />
+                </template>
                 <template #JSON>
                     <DialogJsonTab
                         class="rounded-xl bg-(--profile-card) p-2"
@@ -709,6 +712,7 @@
     import GroupDialogMembersTab from './GroupDialogMembersTab.vue';
     import GroupDialogPhotosTab from './GroupDialogPhotosTab.vue';
     import GroupDialogPostsTab from './GroupDialogPostsTab.vue';
+    import GroupDialogStoreTab from './GroupDialogStoreTab.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
     import GroupTransferDialog from './GroupTransferDialog.vue';
     import { showUserDialog } from '../../../coordinators/userCoordinator';
@@ -720,6 +724,7 @@
         { value: 'Posts', label: t('dialog.group.posts.header') },
         { value: 'Members', label: t('dialog.group.members.header') },
         { value: 'Photos', label: t('dialog.group.gallery.header') },
+        ...(groupDialog.value.ref.storeId ? [{ value: 'Store', label: t('dialog.group.store.header') }] : []),
         { value: 'JSON', label: t('dialog.group.json.header') }
     ]);
 
@@ -784,6 +789,7 @@
     );
     const membersTabRef = ref(null);
     const photosTabRef = ref(null);
+    const storeTabRef = ref(null);
 
     const selectedGalleryFile = ref({
         selectedFileId: '',
@@ -923,12 +929,19 @@
             membersTabRef.value?.getGroupDialogGroupMembers();
         } else if (tabName === 'Photos') {
             photosTabRef.value?.getGroupGalleries();
+        } else if (tabName === 'Store') {
+            storeTabRef.value?.getGroupListings();
         } else if (tabName === 'JSON') {
             refreshGroupDialogTreeData();
         }
     }
 
     function loadLastActiveTab() {
+        if (groupDialog.value.lastActiveTab === 'Store' && !groupDialog.value.ref.storeId) {
+            groupDialog.value.activeTab = 'Info';
+            groupDialogTabCurrentName.value = 'Info';
+            groupDialog.value.lastActiveTab = 'Info';
+        }
         handleGroupDialogTab(groupDialog.value.lastActiveTab);
     }
 

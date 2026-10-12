@@ -304,6 +304,7 @@ export function showGroupDialog(groupId, options = {}) {
     D.memberSearch = '';
     D.memberSearchResults = [];
     D.galleries = {};
+    D.listings = [];
     D.members = [];
     D.memberFilter = FILTER_EVERYONE;
     D.calendar = [];
