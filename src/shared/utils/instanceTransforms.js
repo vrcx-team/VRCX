@@ -22,11 +22,11 @@ export function computeDisabledContentSettings(contentSettings, settingsList) {
 /**
  * Create a default instance ref object.
  *
- * @param {object} json - API response to merge
- * @returns {object}
+ * @param {Partial<import('@/types/vrcx').VrcxInstance>} json - API response to merge
+ * @returns {import('@/types/vrcx').VrcxInstance}
  */
 export function createDefaultInstanceRef(json) {
-    return {
+    return /** @type {import('@/types/vrcx').VrcxInstance} */ ({
         id: '',
         location: '',
         instanceId: '',
@@ -68,9 +68,24 @@ export function createDefaultInstanceRef(json) {
         instancePersistenceEnabled: null,
         playerPersistenceEnabled: null,
         ageGate: null,
+        calendarEntryId: null, // only present when instance is linked to a group event
+        friends: '', // part of instance tag
+        creatorId: null,
+        categoryId: null,
+        description: null,
+        displayVibeId: null,
+        vibeIds: [],
+        dominantLanguage: '',
+        languages: [],
+        languagesIso639: [],
+        languageRatio: {},
+        creationLanguages: [],
+        disabledPropAbilities: [],
+        minimumAvatarPerformance: null,
+        userIcons: [],
         // VRCX
         $fetchedAt: '',
         $disabledContentSettings: [],
         ...json
-    };
+    });
 }

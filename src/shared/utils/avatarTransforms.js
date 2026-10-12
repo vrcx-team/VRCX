@@ -1,12 +1,16 @@
 /**
  * Create a default avatar ref object.
  *
- * @param {object} json - API response to merge
- * @returns {object}
+ * @param {Partial<import('@/types/vrcx').Json<import('vrchat').Avatar>>} json - API response to merge
+ * @returns {import('@/types/vrcx').Json<import('vrchat').Avatar>}
  */
 export function createDefaultAvatarRef(json) {
-    return {
+    return /** @type {import('@/types/vrcx').Json<import('vrchat').Avatar>} */ ({
         acknowledgements: '',
+        activeAssetReviewId: '',
+        assetUrl: '',
+        assetUrlObject: {},
+        attribution: null,
         authorId: '',
         authorName: '',
         created_at: '',
@@ -34,5 +38,5 @@ export function createDefaultAvatarRef(json) {
         updated_at: '',
         version: 0,
         ...json
-    };
+    });
 }

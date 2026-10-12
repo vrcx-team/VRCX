@@ -1,11 +1,11 @@
 /**
  * Create a default group ref object.
  *
- * @param {object} json - API response to merge
- * @returns {object}
+ * @param {Partial<import('@/types/vrcx').VrcxGroup>} json - API response to merge
+ * @returns {import('@/types/vrcx').VrcxGroup}
  */
 export function createDefaultGroupRef(json) {
-    return {
+    return /** @type {import('@/types/vrcx').VrcxGroup} */ ({
         id: '',
         name: '',
         shortCode: '',
@@ -29,6 +29,16 @@ export function createDefaultGroupRef(json) {
         privacy: '',
         rules: null,
         tags: [],
+        ageVerificationBetaCode: '',
+        ageVerificationBetaSlots: 0,
+        ageVerificationSlotsAvailable: false,
+        allowGroupJoinPrompt: false,
+        badges: [],
+        lastPostCreatedAt: '',
+        nameplateId: null,
+        nameplateUrl: null,
+        storeId: '',
+        transferTargetId: '',
         // in group
         initialRoleIds: [],
         myMember: {
@@ -62,5 +72,5 @@ export function createDefaultGroupRef(json) {
         // VRCX
         $languages: [],
         ...json
-    };
+    });
 }

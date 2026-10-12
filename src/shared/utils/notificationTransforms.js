@@ -50,14 +50,15 @@ export function parseNotificationDetails(details) {
  * Does NOT perform cache lookup — caller is responsible for
  * checking existing refs and merging.
  *
- * @param {object} json - Sanitized notification JSON
- * @returns {object} Default notification ref
+ * @param {Partial<import('@/types/vrcx').VrcxNotification>} json - Sanitized notification JSON
+ * @returns {import('@/types/vrcx').VrcxNotification} Default notification ref
  */
 export function createDefaultNotificationRef(json) {
-    const ref = {
+    const ref = /** @type {import('@/types/vrcx').VrcxNotification} */ ({
         id: '',
         senderUserId: '',
         senderUsername: '',
+        receiverUserId: '',
         type: '',
         message: '',
         details: {},
@@ -67,7 +68,7 @@ export function createDefaultNotificationRef(json) {
         $isExpired: false,
         //
         ...json
-    };
+    });
     ref.details = parseNotificationDetails(ref.details);
     return ref;
 }
@@ -76,11 +77,11 @@ export function createDefaultNotificationRef(json) {
  * Build a default V2 notification ref from JSON data.
  * Handles boop legacy formatting.
  *
- * @param {object} json - Sanitized notification JSON
- * @returns {object} Default notification V2 ref
+ * @param {Partial<import('@/types/vrcx').Json<import('vrchat').NotificationV2>>} json - Sanitized notification JSON
+ * @returns {import('@/types/vrcx').Json<import('vrchat').NotificationV2>} Default notification V2 ref
  */
 export function createDefaultNotificationV2Ref(json) {
-    return {
+    return /** @type {import('@/types/vrcx').Json<import('vrchat').NotificationV2>} */ ({
         id: '',
         createdAt: '',
         updatedAt: '',
@@ -94,12 +95,24 @@ export function createDefaultNotificationV2Ref(json) {
         seen: false,
         senderUserId: '',
         senderUsername: '',
+        receiverUserId: '',
         data: {},
         responses: [],
         details: {},
         version: 2,
+        canDelete: false,
+        category: '',
+        displayData: null,
+        expiryAfterSeen: 0,
+        ignoreDND: false,
+        isSystem: false,
+        linkTextKey: '',
+        messageKey: '',
+        relatedNotificationsId: '',
+        requireSeen: false,
+        titleKey: '',
         ...json
-    };
+    });
 }
 
 /**
