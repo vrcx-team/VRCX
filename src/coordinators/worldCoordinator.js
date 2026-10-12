@@ -83,6 +83,7 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
     D.isQuest = false;
     D.isIos = false;
     D.hasPersistData = false;
+    D.listings = [];
     D.memo = '';
     const LL = parseLocation(locationStore.lastLocation.location);
     let currentWorldMatch = false;

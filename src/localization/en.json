@@ -1676,6 +1676,9 @@
                 "time_spent": "Time Spent",
                 "description": "Description"
             },
+            "store": {
+                "header": "Store"
+            },
             "json": {
                 "header": "JSON"
             }
