@@ -1465,6 +1465,7 @@
                 "close_instance": "Close Instance",
                 "instance_age_gated": "Age Gated",
                 "instance_role_restricted": "Role Restricted",
+                "instance_calendar_event": "Calendar Event",
                 "open_previous_instance": "Open Previous Instances",
                 "show_mutual_friends": "Show Mutual Friends",
                 "show_discord_connections": "Show Discord Connections",

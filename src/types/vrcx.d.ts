@@ -1,4 +1,4 @@
-import type { CurrentUser, Group, User } from 'vrchat';
+import type { CurrentUser, Group, Instance, User } from 'vrchat';
 
 // cursed line to convert Date and bigint to expected types
 export type Json<T> = T extends Date
@@ -77,6 +77,11 @@ export interface VrcxGroup extends Json<Group> {
     memberVisibility: string | boolean;
     mutualGroup: boolean;
     $languages: { key: string; value: string }[];
+}
+
+export interface VrcxInstance extends Json<Instance> {
+    $fetchedAt: string;
+    $disabledContentSettings: string[];
 }
 
 export interface RequestOptions {

@@ -195,6 +195,37 @@
                     </span>
                 </TooltipWrapper>
                 <TooltipWrapper
+                    v-if="instance?.calendarEntryId && !isInGroup"
+                    side="top"
+                    :content="t('dialog.user.info.instance_calendar_event')">
+                    <span class="flex items-center gap-0.5">
+                        <CalendarDays class="h-4 w-4" />
+                    </span>
+                </TooltipWrapper>
+                <Popover v-else-if="instance?.calendarEntryId" :open="calendarPopoverOpen">
+                    <PopoverTrigger as-child>
+                        <span
+                            class="flex items-center gap-0.5"
+                            @mouseenter="openCalendarPopover"
+                            @mouseleave="scheduleCloseCalendarPopover">
+                            <CalendarDays class="h-4 w-4" />
+                        </span>
+                    </PopoverTrigger>
+                    <PopoverContent
+                        side="top"
+                        class="w-125 p-3"
+                        @mouseenter="openCalendarPopover"
+                        @mouseleave="scheduleCloseCalendarPopover">
+                        <GroupCalendarEventDetails v-if="calendarEvent" :event="calendarEvent" relative-time />
+                        <span v-else-if="calendarEventFailed" class="text-xs">
+                            {{ t('dialog.user.info.instance_calendar_event') }}
+                        </span>
+                        <div v-else class="flex justify-center">
+                            <Loader2 class="h-4 w-4 animate-spin" />
+                        </div>
+                    </PopoverContent>
+                </Popover>
+                <TooltipWrapper
                     v-if="instance?.minimumAvatarPerformance && instance.minimumAvatarPerformance !== 'None'"
                     side="top"
                     :content="
@@ -215,6 +246,7 @@
 
 <script lang="ts" setup>
     import {
+        CalendarDays,
         History,
         Loader2,
         LogIn,
@@ -231,6 +263,7 @@
     } from 'lucide-vue-next';
     import { computed, reactive, ref, watch } from 'vue';
     import { Button } from '@/components/ui/button';
+    import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
@@ -247,8 +280,9 @@
     } from '../stores';
     import { hasGroupPermission, parseLocation } from '../shared/utils';
     import { useInviteChecks } from '../composables/useInviteChecks';
-    import { instanceRequest, miscRequest } from '../api';
+    import { instanceRequest, miscRequest, queryRequest } from '../api';
     import InstanceAnnouncementDialog from './dialogs/InstanceAnnouncementDialog.vue';
+    import GroupCalendarEventDetails from '../views/Tools/components/GroupCalendarEventDetails.vue';
 
     defineOptions({
         inheritAttrs: false
@@ -376,6 +410,7 @@
             props.instance?.queueSize ||
             instanceInfoState.isAgeGated ||
             instanceInfoState.isRoleRestricted ||
+            props.instance?.calendarEntryId ||
             (props.instance.minimumAvatarPerformance && props.instance.minimumAvatarPerformance !== 'None')
         );
     });
@@ -488,6 +523,49 @@
             })
             .catch(() => {});
     };
+
+    const calendarPopoverOpen = ref(false);
+    const calendarEvent = ref(null);
+    const calendarEventFailed = ref(false);
+    let calendarPopoverCloseTimer = null;
+
+    const isInGroup = computed(() => groupStore.currentUserGroups.has(props.instance?.ownerId));
+
+    const fetchCalendarEvent = async () => {
+        const groupId = props.instance?.ownerId;
+        const eventId = props.instance?.calendarEntryId;
+        if (!groupId || !eventId || !isInGroup.value || calendarEvent.value?.id === eventId) return;
+        try {
+            const args = await queryRequest.fetch<{ json: any }>('groupCalendarEvent', { groupId, eventId });
+            if (props.instance?.calendarEntryId === eventId) {
+                calendarEvent.value = groupStore.applyGroupEvent(args.json);
+            }
+        } catch (error) {
+            console.error('Failed to load calendar event:', error);
+            calendarEventFailed.value = true;
+        }
+    };
+
+    const openCalendarPopover = () => {
+        clearTimeout(calendarPopoverCloseTimer);
+        calendarPopoverOpen.value = true;
+        fetchCalendarEvent();
+    };
+
+    const scheduleCloseCalendarPopover = () => {
+        clearTimeout(calendarPopoverCloseTimer);
+        calendarPopoverCloseTimer = setTimeout(() => {
+            calendarPopoverOpen.value = false;
+        }, 100);
+    };
+
+    watch(
+        () => props.instance?.calendarEntryId,
+        () => {
+            calendarEvent.value = null;
+            calendarEventFailed.value = false;
+        }
+    );
 
     watch(() => resolvedLastJoinLocation.value, parseLastJoin, { immediate: true });
     watch(() => props.currentlocation, parseLastJoin);
