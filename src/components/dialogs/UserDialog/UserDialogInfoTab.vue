@@ -164,7 +164,7 @@
                     <pre
                         class="text-xs font-[inherit]"
                         style="white-space: pre-wrap; max-height: 210px; overflow-y: auto"
-                        >{{ bioCache.translated || userDialog.publicProfileRef?.bio || '—' }}</pre>
+                        >{{ bioCache.translated || replaceBioSymbols(userDialog.publicProfileRef?.bio) || '—' }}</pre>
                     <div
                         v-if="userDialog.publicProfileRef?.bioLinks && userDialog.publicProfileRef?.bioLinks.length"
                         class="flex flex-wrap items-center gap-1.5 mt-2">
@@ -474,6 +474,7 @@
         isFriendOnline,
         isRealInstance,
         openExternalLink,
+        replaceBioSymbols,
         timeToText,
         userOnlineForTimestamp,
         timeAgo
@@ -548,7 +549,7 @@
         if (translateLoading.value) {
             return;
         }
-        const bio = userDialog.value.ref.bio;
+        const bio = replaceBioSymbols(userDialog.value.ref.bio);
         if (!bio) {
             return;
         }

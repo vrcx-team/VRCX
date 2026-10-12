@@ -106,7 +106,7 @@
                         </TooltipWrapper>
                         <span v-if="userDialog.ref.pronouns" class="basis-full h-0"></span>
                         <TooltipWrapper v-if="userDialog.ref.pronouns" side="top" :content="t('dialog.user.pronouns')">
-                            <span class="x-grey font-mono text-xs" v-text="userDialog.ref.pronouns"></span>
+                            <span class="x-grey font-mono text-xs" v-text="replaceBioSymbols(userDialog.ref.pronouns)"></span>
                         </TooltipWrapper>
                     </div>
                     <template v-if="userDialog.ref.id === currentUser.id">
@@ -510,7 +510,8 @@
         copyToClipboard,
         formatDateFilter,
         languageClass,
-        openDiscordProfile
+        openDiscordProfile,
+        replaceBioSymbols
     } from '../../../shared/utils';
     import { useUserDisplay } from '../../../composables/useUserDisplay';
     import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover';

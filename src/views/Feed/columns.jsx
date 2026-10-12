@@ -4,7 +4,14 @@ import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 import { ArrowDown, ArrowRight, ArrowUpDown, ChevronDown, ChevronRight } from 'lucide-vue-next';
-import { formatDateFilter, getFaviconUrl, openExternalLink, statusClass, timeToText } from '../../shared/utils';
+import {
+    formatDateFilter,
+    getFaviconUrl,
+    openExternalLink,
+    replaceBioSymbols,
+    statusClass,
+    timeToText
+} from '../../shared/utils';
 import { i18n } from '../../plugins/i18n';
 import { useGalleryStore, useFriendStore } from '../../stores';
 import { showUserDialog } from '../../coordinators/userCoordinator';
@@ -153,7 +160,7 @@ const expandedRow = ({ row }) => {
             <div class="pl-5 text-sm">
                 <pre
                     class="text-xs leading-5.5 whitespace-pre-wrap font-[inherit]"
-                    innerHTML={formatDifference(original.previousBio, original.bio)}
+                    innerHTML={formatDifference(replaceBioSymbols(original.previousBio), replaceBioSymbols(original.bio))}
                 ></pre>
                 {links.length ? (
                     <div class="mt-1 flex flex-col gap-0.5 text-xs">
@@ -344,7 +351,7 @@ export const columns = [
             }
 
             if (type === 'Bio') {
-                return <span class="block w-full min-w-0 truncate">{original.bio}</span>;
+                return <span class="block w-full min-w-0 truncate">{replaceBioSymbols(original.bio)}</span>;
             }
 
             return null;

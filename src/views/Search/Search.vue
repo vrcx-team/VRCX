@@ -83,7 +83,7 @@
                                             :title="item.value" />
                                     </ItemTitle>
                                     <ItemDescription v-if="user.bio" class="line-clamp-1 text-xs!">
-                                        {{ user.bio }}
+                                        {{ replaceBioSymbols(user.bio) }}
                                     </ItemDescription>
                                 </ItemContent>
                             </Item>
@@ -331,7 +331,7 @@
     import { useI18n } from 'vue-i18n';
 
     import { useAppearanceSettingsStore, useAuthStore, useAvatarProviderStore, useSearchStore } from '../../stores';
-    import { convertFileUrlToImageUrl, languageClass } from '../../shared/utils';
+    import { convertFileUrlToImageUrl, languageClass, replaceBioSymbols } from '../../shared/utils';
     import { useUserDisplay } from '../../composables/useUserDisplay';
     import { showAvatarDialog } from '../../coordinators/avatarCoordinator';
     import { showGroupDialog } from '../../coordinators/groupCoordinator';

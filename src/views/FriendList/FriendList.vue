@@ -164,7 +164,7 @@
     import { Toggle } from '../../components/ui/toggle';
     import { TooltipWrapper } from '../../components/ui/tooltip';
     import { createColumns } from './columns.jsx';
-    import { localeIncludes } from '../../shared/utils';
+    import { localeIncludes, replaceBioSymbols } from '../../shared/utils';
     import removeConfusables, { removeWhitespace } from '../../services/confusables';
     import { useVrcxVueTable } from '../../lib/table/useVrcxVueTable';
     import { showUserDialog } from '../../coordinators/userCoordinator';
@@ -397,7 +397,7 @@
         }
         const entry = {
             signature,
-            bio: friendProfiles.value.get(ctx.id)?.bio ?? '',
+            bio: replaceBioSymbols(friendProfiles.value.get(ctx.id)?.bio),
             displayName: ctx.ref.displayName ?? '',
             memo: ctx.ref.$memo ?? '',
             normalizedDisplayName: removeConfusables(ctx.ref.displayName ?? ''),

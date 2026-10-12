@@ -15,9 +15,6 @@ export function sanitizeUserJson(json, robotUrl) {
         json.statusDescription = replaceBioSymbols(json.statusDescription);
         json.statusDescription = removeEmojis(json.statusDescription);
     }
-    if (json.bio) {
-        json.bio = replaceBioSymbols(json.bio);
-    }
     if (json.note) {
         json.note = replaceBioSymbols(json.note);
     }
