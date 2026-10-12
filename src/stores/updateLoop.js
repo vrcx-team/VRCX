@@ -13,6 +13,7 @@ import { useDiscordPresenceSettingsStore } from './settings/discordPresence';
 import { useFriendStore } from './friend';
 import { handleGroupUserInstances } from '../coordinators/groupCoordinator';
 import { getCurrentUser, updateAutoStateChange } from '../coordinators/userCoordinator';
+import { useNotificationStore } from './notification';
 import { useUserStore } from './user';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
 import { useVrStore } from './vr';
@@ -29,6 +30,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     const discordPresenceSettingsStore = useDiscordPresenceSettingsStore();
     const vrcxUpdaterStore = useVRCXUpdaterStore();
     const vrStore = useVrStore();
+    const notificationStore = useNotificationStore();
     const state = {
         nextCurrentUserRefresh: 300,
         nextFriendsRefresh: 3600,
@@ -40,7 +42,8 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         nextAutoStateChange: 0,
         nextGetLogCheck: 0,
         nextGameRunningCheck: 0,
-        nextDatabaseOptimize: 3600
+        nextDatabaseOptimize: 3600,
+        nextBundleCheck: 60
     };
 
     watch(
@@ -49,6 +52,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
             state.nextCurrentUserRefresh = 300;
             state.nextFriendsRefresh = 3600;
             state.nextGroupInstanceRefresh = 0;
+            state.nextBundleCheck = 60;
         },
         { flush: 'sync' }
     );
@@ -126,6 +130,10 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 if (--state.nextDatabaseOptimize <= 0) {
                     state.nextDatabaseOptimize = 86400; // 1 day
                     database.optimize().catch(console.error);
+                }
+                if (--state.nextBundleCheck <= 0) {
+                    state.nextBundleCheck = 10800; // 3hours
+                    notificationStore.checkInventoryBundles();
                 }
             }
         } catch (err) {

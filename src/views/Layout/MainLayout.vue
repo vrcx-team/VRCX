@@ -76,6 +76,7 @@
         <VRChatConfigDialog />
         <PrimaryPasswordDialog />
         <SendBoopDialog />
+        <InventoryBundleDialog />
         <ModerationReportDialog />
         <GlobalToolsDialogs />
         <ChangelogDialog />
@@ -106,6 +107,7 @@
     import GlobalToolsDialogs from '../Tools/components/GlobalToolsDialogs.vue';
     import GroupEditDialog from '../../components/dialogs/GroupDialog/GroupEditDialog.vue';
     import GroupEventEditDialog from '../../components/dialogs/GroupDialog/GroupEventEditDialog.vue';
+    import InventoryBundleDialog from '../../components/dialogs/InventoryBundleDialog.vue';
     import InviteGroupDialog from '../../components/dialogs/InviteGroupDialog.vue';
     import LaunchDialog from '../../components/dialogs/LaunchDialog.vue';
     import LaunchOptionsDialog from '../Settings/dialogs/LaunchOptionsDialog.vue';

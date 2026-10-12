@@ -18,7 +18,7 @@ import {
     sanitizeNotificationJson
 } from '../../shared/utils';
 import { getUserMemo } from '../../coordinators/memoCoordinator';
-import { friendRequest, instanceRequest, notificationRequest, queryRequest } from '../../api';
+import { friendRequest, instanceRequest, inventoryRequest, notificationRequest, queryRequest } from '../../api';
 import {
     getNotificationMessage,
     getUserIdFromNoty as getUserIdFromNotyBase,
@@ -87,6 +87,11 @@ export const useNotificationStore = defineStore('Notification', () => {
     const unseenNotifications = ref([]);
     const isNotificationsLoading = ref(false);
     const isNotificationCenterOpen = ref(false);
+    const inventoryBundleDialog = ref({
+        visible: false,
+        bundles: []
+    });
+    const shownBundleIds = new Set();
 
     const friendNotifications = computed(() =>
         notificationTable.value.data.filter((n) => getNotificationCategory(n.type) === 'friend')
@@ -128,11 +133,23 @@ export const useNotificationStore = defineStore('Notification', () => {
         (isLoggedIn) => {
             isNotificationsLoading.value = false;
             notificationTable.value.data = [];
+            inventoryBundleDialog.value.visible = false;
             if (isLoggedIn) {
                 initNotifications();
             }
         },
         { flush: 'sync' }
+    );
+
+    watch(
+        () => notificationsSettingsStore.inventoryBundleNotifications,
+        (enabled) => {
+            if (!enabled) {
+                inventoryBundleDialog.value.visible = false;
+            } else if (watchState.isLoggedIn) {
+                checkInventoryBundles();
+            }
+        }
     );
 
     async function init() {
@@ -1051,6 +1068,39 @@ export const useNotificationStore = defineStore('Notification', () => {
         refreshNotifications();
     }
 
+    async function checkInventoryBundles() {
+        if (!notificationsSettingsStore.inventoryBundleNotifications) {
+            return;
+        }
+        let bundles;
+        try {
+            const args = await inventoryRequest.getInventoryItems({
+                n: 100,
+                offset: 0,
+                types: 'bundle',
+                order: 'newest'
+            });
+            bundles = args.json.data;
+        } catch (err) {
+            console.error('Failed to check inventory bundles:', err);
+            return;
+        }
+        const newBundles = bundles.filter((item) => !shownBundleIds.has(item.id));
+        if (newBundles.length === 0) {
+            return;
+        }
+        for (const item of newBundles) {
+            shownBundleIds.add(item.id);
+        }
+        const dialog = inventoryBundleDialog.value;
+        if (dialog.visible) {
+            dialog.bundles.push(...newBundles);
+        } else {
+            dialog.bundles = newBundles;
+        }
+        dialog.visible = true;
+    }
+
     function testNotification() {
         playNoty({
             type: 'Event',
@@ -1282,10 +1332,12 @@ export const useNotificationStore = defineStore('Notification', () => {
         notificationTable,
         unseenNotifications,
         isNotificationsLoading,
+        inventoryBundleDialog,
 
         initNotifications,
         expireNotification,
         refreshNotifications,
+        checkInventoryBundles,
         queueNotificationNoty,
         playNoty,
         queueGameLogNoty,

@@ -1039,6 +1039,7 @@
                     "busy_warning": "Notifications are disabled while your status is set to Do Not Disturb.",
                     "notification_filter": "Notification Filters",
                     "test_notification": "Send Test Notification",
+                    "inventory_bundle_notifications": "Inventory Bundle Notifications",
                     "test_message": "Test notification.",
                     "steamvr_notifications": {
                         "header": "SteamVR Notifications",
@@ -2707,6 +2708,14 @@
             "decline": "Decline",
             "block": "Block",
             "accepted": "Joined group"
+        },
+        "inventory_bundle_dialog": {
+            "header": "New Inventory Bundles",
+            "description": "You have unopened bundles in your inventory.",
+            "dont_show_again": "Don't show this again",
+            "close": "Close",
+            "consume": "Consume",
+            "consume_success": "Bundle consumed"
         },
         "boop_dialog": {
             "header": "Boop",
