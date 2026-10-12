@@ -617,10 +617,9 @@ export const useInstanceStore = defineStore('Instance', () => {
             return;
         }
         const instances = {};
-        if (D.ref.instances) {
-            for (instance of D.ref.instances) {
-                // instance = [ instanceId, occupants ]
-                const instanceId = instance[0];
+        if (D.ref.slimInstances) {
+            for (instance of D.ref.slimInstances) {
+                const { instanceId, n_users } = instance;
                 instances[instanceId] = {
                     id: instanceId,
                     tag: `${D.id}:${instanceId}`,
@@ -628,7 +627,10 @@ export const useInstanceStore = defineStore('Instance', () => {
                     friendCount: 0,
                     users: [],
                     shortName: '',
-                    ref: {}
+                    ref: {
+                        userCount: n_users,
+                        capacity: D.ref.capacity
+                    }
                 };
             }
         }

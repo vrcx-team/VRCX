@@ -126,9 +126,9 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
             if (D.id === args.ref.id) {
                 D.ref = args.ref;
                 uiStore.setDialogCrumbLabel('world', D.id, D.ref?.name || D.id);
-                if (args.ref.instances) {
-                    for (const instance of args.ref.instances) {
-                        const instanceId = instance[0];
+                if (args.ref.slimInstances) {
+                    for (const instance of args.ref.slimInstances) {
+                        const { instanceId } = instance;
                         const tag = `${D.id}:${instanceId}`;
                         if (isRealInstance(tag)) {
                             instanceRequest.getInstance({
