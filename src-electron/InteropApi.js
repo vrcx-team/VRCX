@@ -16,6 +16,16 @@ class InteropApi {
     }
 
     callMethod(className, methodName, args) {
+        if (typeof className !== 'string' || typeof methodName !== 'string' || !Array.isArray(args)) {
+            throw new Error('Invalid .NET bridge call.');
+        }
+        // Plaintext session data is reserved for the main-process encrypted vault.
+        if (
+            className.toLowerCase() === 'webapi' &&
+            ['exportexternalsession', 'restoreexternalsession'].includes(methodName.toLowerCase())
+        ) {
+            throw new Error('Session data is restricted to the main application process.');
+        }
         try {
             const obj = this.getDotNetObject(className);
             if (typeof obj[methodName] !== 'function') {
