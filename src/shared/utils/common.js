@@ -11,7 +11,7 @@ import { getAvailablePlatforms } from './platformUtils';
  * @returns {string}
  */
 function convertFileUrlToImageUrl(url, resolution = 128, endpointDomain = AppDebug.endpointDomain) {
-    if (!url) {
+    if (!url || typeof url !== 'string') {
         return '';
     }
     /**
