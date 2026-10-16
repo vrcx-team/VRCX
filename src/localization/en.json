@@ -736,6 +736,7 @@
                 "header": "Game Info",
                 "online_users": "Online Users",
                 "user_online": "{count} users online.",
+                "instances_active": "{count} active instances.",
                 "refresh": "Click to refresh"
             },
             "config_json": "Config JSON",

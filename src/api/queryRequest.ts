@@ -4,6 +4,7 @@ import avatarRequest from './avatar';
 import favoriteRequest from './favorite';
 
 import groupRequest from './group';
+import instanceRequest from './instance';
 import inventoryRequest from './inventory';
 import miscRequest from './misc';
 import userRequest from './user';
@@ -172,6 +173,11 @@ const registry = Object.freeze({
         key: () => queryKeys.visits(),
         policy: entityQueryPolicies.visits,
         queryFn: () => miscRequest.getVisits()
+    },
+    instanceCount: {
+        key: () => queryKeys.instanceCount(),
+        policy: entityQueryPolicies.instanceCount,
+        queryFn: () => instanceRequest.getInstanceCount()
     },
     file: {
         key: (params) => queryKeys.file(params.fileId),

@@ -87,7 +87,13 @@ export const entityQueryPolicies = Object.freeze({
         refetchOnWindowFocus: false
     }),
     visits: Object.freeze({
-        staleTime: 30 * MINUTE,
+        staleTime: 4 * MINUTE,
+        gcTime: 120 * MINUTE,
+        retry: 1,
+        refetchOnWindowFocus: false
+    }),
+    instanceCount: Object.freeze({
+        staleTime: 4 * MINUTE,
         gcTime: 120 * MINUTE,
         retry: 1,
         refetchOnWindowFocus: false

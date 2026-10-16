@@ -85,6 +85,12 @@ export interface VrcxInstance extends Json<Instance> {
     $disabledContentSettings: string[];
 }
 
+export interface InstanceCount {
+    asOf: string;
+    events: number;
+    instances: number;
+}
+
 export interface VrcxWorld extends Json<World> {
     $isLabs: boolean;
 }

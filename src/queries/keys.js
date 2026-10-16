@@ -58,6 +58,7 @@ export const queryKeys = Object.freeze({
     worldPersistData: (worldId) => ['world', worldId, 'persistData'],
     mutualCounts: (userId) => ['user', userId, 'mutualCounts'],
     visits: () => ['visits'],
+    instanceCount: () => ['instances', 'count'],
     file: (fileId) => ['file', fileId],
     avatarStyles: () => ['avatar', 'styles'],
     representedGroup: (userId) => ['user', userId, 'representedGroup'],

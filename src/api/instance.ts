@@ -1,5 +1,5 @@
 import type { Instance, InstanceShortNameResponse, SentNotification } from 'vrchat';
-import type { Json } from '../types/vrcx';
+import type { InstanceCount, Json } from '../types/vrcx';
 import { toast } from 'vue-sonner';
 
 import { i18n } from '../plugins/i18n';
@@ -102,6 +102,16 @@ const instanceReq = {
                 toast.error(i18n.global.t('message.instance.not_allowed'));
                 throw err;
             });
+    },
+
+    getInstanceCount(): Promise<{ json: InstanceCount }> {
+        return request('instances/count', {
+            method: 'GET'
+        }).then((json) => {
+            return {
+                json
+            };
+        });
     },
 
     instanceAnnouncement(params: {
