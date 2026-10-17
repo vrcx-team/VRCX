@@ -218,6 +218,7 @@ export const useUserStore = defineStore('User', () => {
         },
         worlds: [],
         avatars: [],
+        licensedAvatars: [],
         isWorldsLoading: false,
         isFavoriteWorldsLoading: false,
         isAvatarsLoading: false,
@@ -610,16 +611,23 @@ export const useUserStore = defineStore('User', () => {
     /**
      * @param array
      */
-    function sortUserDialogAvatars(array) {
-        const D = userDialog.value;
-        if (D.avatarSorting === 'update') {
-            array.sort(compareByUpdatedAt);
-        } else if (D.avatarSorting === 'createdAt') {
-            array.sort(compareByCreatedAt);
-        } else {
-            array.sort(compareByName);
+    function getUserDialogAvatarComparator() {
+        const { avatarSorting } = userDialog.value;
+        if (avatarSorting === 'update') {
+            return compareByUpdatedAt;
         }
-        D.avatars = array;
+        if (avatarSorting === 'createdAt') {
+            return compareByCreatedAt;
+        }
+        return compareByName;
+    }
+
+    function sortUserDialogAvatars(array) {
+        userDialog.value.avatars = array.sort(getUserDialogAvatarComparator());
+    }
+
+    function sortUserDialogLicensedAvatars(array) {
+        userDialog.value.licensedAvatars = array.sort(getUserDialogAvatarComparator());
     }
 
     async function initUserNotes() {
@@ -1029,6 +1037,7 @@ export const useUserStore = defineStore('User', () => {
         clearCachedUsers,
         rebuildCachedUserDisplayNameIndex,
         sortUserDialogAvatars,
+        sortUserDialogLicensedAvatars,
         initUserNotes,
         showSendBoopDialog,
         showEditProfileDialog,

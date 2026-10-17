@@ -669,34 +669,51 @@ export async function refreshUserDialogAvatars(fileId) {
         }
     }
     const map = new Map();
-    await processBulk({
-        fn: avatarRequest.getAvatars,
-        N: -1,
-        params,
-        handle: (args) => {
-            for (const json of args.json) {
-                const ref = applyAvatar(json);
-                map.set(ref.id, ref);
-            }
-        },
-        done: () => {
-            const array = Array.from(map.values());
-            if (userId === D.id) {
-                userStore.sortUserDialogAvatars(array);
-            }
-            D.isAvatarsLoading = false;
-            if (fileId) {
-                D.loading = false;
-                for (const ref of array) {
-                    if (extractFileId(ref.imageUrl) === fileId) {
-                        showAvatarDialog(ref.id);
-                        return;
-                    }
+    const licensedMap = new Map();
+    await Promise.all([
+        processBulk({
+            fn: avatarRequest.getAvatars,
+            N: -1,
+            params,
+            handle: (args) => {
+                for (const json of args.json) {
+                    const ref = applyAvatar(json);
+                    map.set(ref.id, ref);
                 }
-                toast.error('Own avatar not found');
+            }
+        }),
+        processBulk({
+            fn: avatarRequest.getLicensedAvatars,
+            N: -1,
+            params: { n: 100, offset: 0 },
+            handle: (args) => {
+                for (const json of args.json) {
+                    const ref = applyAvatar(json);
+                    licensedMap.set(ref.id, ref);
+                }
+            },
+            done: (success) => {
+                if (success && userId === D.id) {
+                    userStore.sortUserDialogLicensedAvatars(Array.from(licensedMap.values()));
+                }
+            }
+        })
+    ]);
+    const array = Array.from(map.values());
+    if (userId === D.id) {
+        userStore.sortUserDialogAvatars(array);
+    }
+    D.isAvatarsLoading = false;
+    if (fileId) {
+        D.loading = false;
+        for (const ref of array) {
+            if (extractFileId(ref.imageUrl) === fileId) {
+                showAvatarDialog(ref.id);
+                return;
             }
         }
-    });
+        toast.error('Own avatar not found');
+    }
 }
 
 /**
