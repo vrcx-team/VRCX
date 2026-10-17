@@ -1,5 +1,4 @@
 import type {
-    Balance,
     BoopRequest,
     File,
     FileAnalysis,
@@ -60,17 +59,6 @@ const miscReq = {
             const args = {
                 json,
                 params
-            };
-            return args;
-        });
-    },
-
-    getVRChatCredits(): Promise<{ json: Json<Balance> }> {
-        return request(`user/${getCurrentUserId()}/economy/balance`, {
-            method: 'GET'
-        }).then((json) => {
-            const args = {
-                json
             };
             return args;
         });

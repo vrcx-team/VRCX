@@ -1,6 +1,7 @@
-import type { Avatar } from 'vrchat';
+import type { Avatar, Balance } from 'vrchat';
 import type { Json, MarketplaceAvatarSearchParams } from '../types/vrcx';
 import { request } from '../services/request';
+import { useUserStore } from '../stores';
 
 type MarketplaceAvatarSearchResponse = {
     hasNext: boolean;
@@ -20,6 +21,30 @@ const marketplaceReq = {
             const args = {
                 json,
                 params
+            };
+            return args;
+        });
+    },
+
+    purchaseListing(params: { listingId: string; totalPrice: number; quantity: number }) {
+        return request('economy/purchase/listing', {
+            method: 'POST',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    getVRChatCredits(): Promise<{ json: Json<Balance> }> {
+        return request(`user/${useUserStore().currentUser.id}/economy/balance`, {
+            method: 'GET'
+        }).then((json) => {
+            const args = {
+                json
             };
             return args;
         });
