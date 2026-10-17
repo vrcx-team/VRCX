@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { toast } from 'vue-sonner';
 
-import { debounce } from '../../../shared/utils';
+import { debounce, mergeGroupMemberSearchResults } from '../../../shared/utils';
 import { queryRequest } from '../../../api';
 
 import * as workerTimers from 'worker-timers';
@@ -88,7 +88,11 @@ export function useGroupModerationData(deps) {
         await loadMoreGroupMembers();
     }
 
-    async function loadMoreGroupMembers() {
+    /**
+     * @param {object} [options]
+     * @param {boolean} [options.preserveSearch] - Keep the active member search when loading more members
+     */
+    async function loadMoreGroupMembers(options = {}) {
         if (isGroupMembersDone.value || isGroupMembersLoading.value) {
             return;
         }
@@ -96,7 +100,9 @@ export function useGroupModerationData(deps) {
         if (params.roleId === '') {
             delete params.roleId;
         }
-        memberSearch.value = '';
+        if (!options.preserveSearch) {
+            memberSearch.value = '';
+        }
         isGroupMembersLoading.value = true;
         await groupRequest
             .getGroupMembers(params)
@@ -123,10 +129,12 @@ export function useGroupModerationData(deps) {
                     isGroupMembersDone.value = true;
                 }
                 members.value = [...members.value, ...args.json];
-                tables.members.data = members.value.map((member) => ({
-                    ...member,
-                    $selected: Boolean(selection.selectedUsers[member.userId])
-                }));
+                if (!options.preserveSearch) {
+                    tables.members.data = members.value.map((member) => ({
+                        ...member,
+                        $selected: Boolean(selection.selectedUsers[member.userId])
+                    }));
+                }
                 params.offset += params.n;
                 return args;
             })
@@ -173,48 +181,105 @@ export function useGroupModerationData(deps) {
         await getGroupMembers();
     }
 
+    let memberSearchRequestId = 0;
+    const groupMembersSearchDebounced = debounce(groupMembersSearchRequest, 200);
+    const groupMembersSearchMaxPages = 10;
+
     function groupMembersSearch() {
+        memberSearchRequestId += 1;
         if (memberSearch.value.length < 3) {
             tables.members.data = [];
             isGroupMembersLoading.value = false;
             return;
         }
-        isGroupMembersLoading.value = true;
-        debounce(groupMembersSearchDebounced, 200)();
+        groupMembersSearchDebounced();
     }
 
-    function groupMembersSearchDebounced() {
+    async function groupMembersSearchRequest() {
         const groupId = groupMemberModeration.value.id;
         const search = memberSearch.value;
+        const requestId = memberSearchRequestId;
         tables.members.data = [];
-        if (memberSearch.value.length < 3) {
+        if (!search || search.length < 3) {
+            isGroupMembersLoading.value = false;
             return;
         }
         isGroupMembersLoading.value = true;
-        groupRequest
-            .getGroupMembersSearch({
+        try {
+            const args = await groupRequest.getGroupMembersSearch({
                 groupId,
                 query: search,
                 n: 100,
                 offset: 0
-            })
-            .then((args) => {
-                for (const json of args.json.results) {
-                    handleGroupMember({
-                        json,
-                        params: { groupId: args.params.groupId }
-                    });
-                }
-                if (groupId === args.params.groupId) {
-                    tables.members.data = args.json.results.map((member) => ({
-                        ...member,
-                        $selected: Boolean(selection.selectedUsers[member.userId])
-                    }));
-                }
-            })
-            .finally(() => {
-                isGroupMembersLoading.value = false;
             });
+            for (const json of args.json.results) {
+                handleGroupMember({
+                    json,
+                    params: { groupId: args.params.groupId }
+                });
+            }
+            if (
+                requestId !== memberSearchRequestId ||
+                groupId !== args.params.groupId ||
+                search !== memberSearch.value
+            ) {
+                return;
+            }
+            const results = mergeGroupMemberSearchResults(args.json.results, members.value, search);
+            tables.members.data = results.map((member) => ({
+                ...member,
+                $selected: Boolean(selection.selectedUsers[member.userId])
+            }));
+            await groupMembersSearchLoadRemaining(requestId, search);
+        } catch {
+            // ignore search errors, they are reported by the request layer
+        } finally {
+            if (requestId === memberSearchRequestId) {
+                isGroupMembersLoading.value = false;
+            }
+        }
+    }
+
+    async function groupMembersSearchLoadRemaining(requestId, search) {
+        const groupId = groupMemberModeration.value.id;
+        for (let page = 0; page < groupMembersSearchMaxPages; ++page) {
+            if (
+                tables.members.data.length ||
+                !groupMemberModeration.value.visible ||
+                loadMoreGroupMembersParams.value.groupId !== groupId ||
+                requestId !== memberSearchRequestId ||
+                search !== memberSearch.value ||
+                isGroupMembersDone.value
+            ) {
+                return;
+            }
+            isGroupMembersLoading.value = true;
+            await new Promise((resolve) => {
+                workerTimers.setTimeout(resolve, 1000);
+            });
+            isGroupMembersLoading.value = false;
+            if (
+                !groupMemberModeration.value.visible ||
+                requestId !== memberSearchRequestId ||
+                search !== memberSearch.value ||
+                isGroupMembersDone.value
+            ) {
+                return;
+            }
+            try {
+                await loadMoreGroupMembers({ preserveSearch: true });
+            } catch {
+                return;
+            }
+            if (requestId !== memberSearchRequestId || search !== memberSearch.value) {
+                return;
+            }
+            const results = mergeGroupMemberSearchResults(tables.members.data, members.value, search);
+            tables.members.data = results.map((member) => ({
+                ...member,
+                $selected: Boolean(selection.selectedUsers[member.userId])
+            }));
+        }
     }
 
     // ── Bans ─────────────────────────────────────────────────────

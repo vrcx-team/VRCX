@@ -1,4 +1,4 @@
-import { hasGroupModerationPermission, hasGroupPermission } from '../group';
+import { hasGroupModerationPermission, hasGroupPermission, mergeGroupMemberSearchResults } from '../group';
 
 // Mock transitive deps to avoid import errors
 vi.mock('../../../views/Feed/Feed.vue', () => ({
@@ -97,6 +97,25 @@ describe('Group Utils', () => {
 
         test('returns false for null ref', () => {
             expect(hasGroupModerationPermission(null)).toBe(false);
+        });
+    });
+
+    describe('mergeGroupMemberSearchResults', () => {
+        test('appends local matches missing from server results without duplicates', () => {
+            const results = [{ userId: 'usr_2', user: { displayName: 'Jammy' } }];
+            const members = [
+                { userId: 'usr_1', user: { displayName: 'Jamie Doe' } },
+                { userId: 'usr_2', user: { displayName: 'Jammy' } },
+                { userId: 'usr_3', user: { displayName: 'Other User' } }
+            ];
+            const merged = mergeGroupMemberSearchResults(results, members, 'jam');
+            expect(merged.map((member) => member.userId)).toEqual(['usr_2', 'usr_1']);
+        });
+
+        test('matches display names case-insensitively', () => {
+            const members = [{ userId: 'usr_1', user: { displayName: 'JAMIE Doe' } }];
+            const merged = mergeGroupMemberSearchResults([], members, 'jam');
+            expect(merged.map((member) => member.userId)).toEqual(['usr_1']);
         });
     });
 });

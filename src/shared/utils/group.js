@@ -67,4 +67,30 @@ async function getGroupName(data) {
     return groupName;
 }
 
-export { hasGroupPermission, hasGroupModerationPermission, getGroupName };
+/**
+ * Merges group member search results with matches from locally loaded members.
+ * The server-side search index can lag behind recent member joins, so members
+ * visible in the loaded list may be missing from API search results.
+ *
+ * @param {Array} results - API search results
+ * @param {Array} members - Locally loaded group members
+ * @param {string} search - Current search query
+ * @returns {Array} Merged, deduplicated results
+ */
+function mergeGroupMemberSearchResults(results, members, search) {
+    const merged = [...results];
+    const seenUserIds = new Set(merged.map((member) => member.userId));
+    const query = search.toLowerCase();
+    for (const member of members) {
+        if (!seenUserIds.has(member.userId)) {
+            const displayName = (member.user?.displayName ?? '').toLowerCase();
+            if (displayName.includes(query)) {
+                merged.push(member);
+                seenUserIds.add(member.userId);
+            }
+        }
+    }
+    return merged;
+}
+
+export { hasGroupPermission, hasGroupModerationPermission, getGroupName, mergeGroupMemberSearchResults };
