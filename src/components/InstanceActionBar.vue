@@ -129,6 +129,15 @@
                             </span>
                         </div>
 
+                        <div v-if="instanceLanguages.length" class="flex flex-col gap-1">
+                            <span>{{ t('dialog.user.info.instance_languages') }}</span>
+                            <span v-for="lang in instanceLanguages" :key="lang.key" class="flex items-center gap-1.5">
+                                <span :class="['flags', 'inline-block', languageClass(lang.flagKey)]"></span>
+                                {{ lang.name }}
+                                <span class="text-muted-foreground">{{ lang.percent }}%</span>
+                            </span>
+                        </div>
+
                         <span>
                             {{ t('dialog.user.info.instance_game_version') }} {{ instance?.gameServerVersion }}
                         </span>
@@ -295,7 +304,7 @@
         useModalStore,
         useUserStore
     } from '../stores';
-    import { hasGroupPermission, parseLocation } from '../shared/utils';
+    import { hasGroupPermission, languageClass, parseLocation } from '../shared/utils';
     import { useInviteChecks } from '../composables/useInviteChecks';
     import { instanceRequest, miscRequest, queryRequest } from '../api';
     import InstanceAnnouncementDialog from './dialogs/InstanceAnnouncementDialog.vue';
@@ -448,6 +457,29 @@
         isAgeGated: false,
         isRoleRestricted: false,
         disabledContentSettings: ''
+    });
+
+    const instanceLanguages = computed(() => {
+        const languages = props.instance?.languages;
+        if (!Array.isArray(languages)) return [];
+        const iso639 = props.instance?.languagesIso639 ?? [];
+        const ratio = props.instance?.languageRatio ?? {};
+        const baseOf = (code) => code.split('-')[0];
+        const uniqueBases = [...new Set(languages.map(baseOf))];
+        const iso639ByBase = Object.fromEntries(uniqueBases.map((base, i) => [base, iso639[i]]));
+        return languages
+            .map((code) => {
+                const key = iso639ByBase[baseOf(code)] ?? code;
+                const region = code.split('-')[1];
+                const name = userStore.subsetOfLanguages?.[key] ?? code;
+                return {
+                    key: code,
+                    flagKey: key,
+                    name: region ? `${name} (${region.toUpperCase()})` : name,
+                    percent: Math.round((ratio[code] ?? 0) * 100)
+                };
+            })
+            .sort((a, b) => b.percent - a.percent);
     });
 
     const handleRefresh = () => {

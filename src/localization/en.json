@@ -1425,6 +1425,7 @@
                 "instance_users": "Users:",
                 "instance_friends_tooltip": "Friends in this instance",
                 "instance_game_version": "Game Version:",
+                "instance_languages": "Languages:",
                 "last_join": "Last Join",
                 "instance_queuing_enabled": "Queuing Enabled",
                 "instance_disabled_content": "Disabled Content:",
