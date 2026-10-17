@@ -151,16 +151,28 @@
                             {{ instanceInfoState.disabledContentSettings }}
                         </span>
 
-                        <Button
-                            v-if="instanceInfoState.canCloseInstance && !instance?.closedAt"
-                            class="w-12 h-6 text-xs hover:text-muted-foreground"
-                            size="icon-sm"
-                            variant="destructive"
-                            :title="t('dialog.user.info.close_instance')"
-                            :ariaLabel="t('dialog.user.info.close_instance')"
-                            @click="closeInstance(resolvedInstanceLocation)">
-                            <PowerIcon class="h-4 w-4" />
-                        </Button>
+                        <div class="flex gap-2">
+                            <Button
+                                v-if="!instance?.closedAt && instanceInfoState.canCloseInstance"
+                                class="w-12 h-6 text-xs hover:text-muted-foreground"
+                                size="icon-sm"
+                                variant="destructive"
+                                :title="t('dialog.user.info.close_instance')"
+                                :ariaLabel="t('dialog.user.info.close_instance')"
+                                @click="closeInstance(resolvedInstanceLocation)">
+                                <PowerIcon class="h-4 w-4" />
+                            </Button>
+                            <Button
+                                v-if="instanceInfoState.canRenameInstance"
+                                class="w-12 h-6 text-xs hover:text-muted-foreground"
+                                size="icon-sm"
+                                variant="secondary"
+                                :title="t('dialog.user.info.rename_instance')"
+                                :ariaLabel="t('dialog.user.info.rename_instance')"
+                                @click="renameInstance(resolvedInstanceLocation)">
+                                <Pencil class="h-4 w-4" />
+                            </Button>
+                        </div>
                     </div>
                 </template>
                 <div :class="cn('flex items-center gap-0.5', !instance?.hasCapacityForYou ? 'text-red-500' : null)">
@@ -279,6 +291,7 @@
         Mail,
         MapPin,
         Megaphone,
+        Pencil,
         PowerIcon,
         RefreshCw,
         UsersRound,
@@ -452,6 +465,7 @@
     const instanceInfoState = reactive({
         isValidInstance: false,
         canCloseInstance: false,
+        canRenameInstance: false,
         canSendAnnouncement: false,
         canLinkCalendarEvent: false,
         isAgeGated: false,
@@ -533,6 +547,7 @@
         Object.assign(instanceInfoState, {
             isValidInstance: false,
             canCloseInstance: false,
+            canRenameInstance: false,
             canSendAnnouncement: false,
             canLinkCalendarEvent: false,
             isAgeGated: false,
@@ -545,9 +560,11 @@
         instanceInfoState.isValidInstance = true;
         if (props.instance.ownerId === userStore.currentUser.id) {
             instanceInfoState.canCloseInstance = true;
+            instanceInfoState.canRenameInstance = userStore.isLocalUserVrcPlusSupporter;
         } else if (props.instance.ownerId?.startsWith('grp_')) {
             const group = groupStore.cachedGroups.get(props.instance.ownerId);
             instanceInfoState.canCloseInstance = hasGroupPermission(group, 'group-instance-moderate');
+            instanceInfoState.canRenameInstance = hasGroupPermission(group, 'group-instance-manage');
             instanceInfoState.canSendAnnouncement =
                 hasGroupPermission(group, 'group-instance-announcement-create') &&
                 resolvedInstanceLocation.value === locationStore.lastLocation.location;
@@ -563,6 +580,11 @@
         }
     };
 
+    const refreshInstance = (location) => {
+        const L = parseLocation(location);
+        return instanceRequest.getInstance({ worldId: L.worldId, instanceId: L.instanceId });
+    };
+
     const closeInstance = (location) => {
         modalStore
             .confirm({
@@ -575,7 +597,26 @@
                 if (args.json) {
                     toast.success(t('message.instance.closed'));
                     instanceStore.applyInstance(args.json);
+                    await refreshInstance(location);
                 }
+            })
+            .catch(() => {});
+    };
+
+    const renameInstance = (location) => {
+        modalStore
+            .prompt({
+                title: t('prompt.rename_instance.header'),
+                description: t('prompt.rename_instance.description'),
+                inputValue: props.instance?.displayName ?? ''
+            })
+            .then(async ({ ok, value }) => {
+                if (!ok) return;
+                const displayName = value.trim() || null;
+                if (displayName === (props.instance?.displayName ?? null)) return;
+                await instanceRequest.updateInstance({ location, displayName });
+                toast.success(t('message.instance.renamed'));
+                await refreshInstance(location);
             })
             .catch(() => {});
     };

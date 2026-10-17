@@ -1465,6 +1465,7 @@
                 "instance_age_restricted": "Restricted",
                 "instance_age_restricted_tooltip": "In an age-restricted instance",
                 "close_instance": "Close Instance",
+                "rename_instance": "Rename Instance",
                 "instance_age_gated": "Age Gated",
                 "instance_role_restricted": "Role Restricted",
                 "instance_calendar_event": "Calendar Event",
@@ -2920,6 +2921,10 @@
             "ok": "OK",
             "input_error": "Valid number is required"
         },
+        "rename_instance": {
+            "header": "Rename Instance",
+            "description": "Enter instance name, leave empty to clear"
+        },
         "rename_avatar": {
             "header": "Rename Avatar",
             "description": "Enter avatar name",
@@ -3085,6 +3090,7 @@
         },
         "instance": {
             "closed": "Instance closed",
+            "renamed": "Instance renamed",
             "removed_form_queue": "Removed instance {worldName} from queue",
             "not_allowed": "You're not allowed to access this instance",
             "create_failed": "Failed to create instance",
