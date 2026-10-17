@@ -16,3 +16,4 @@ AGENTS.md
 AI_GUIDE.md
 CLAUDE.md
 coverage/
+tests/**/bin/

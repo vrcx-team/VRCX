@@ -65,6 +65,9 @@ const mocks = vi.hoisted(() => ({
         remove: vi.fn()
     },
     webApiService: {
+        saveExternalSession: vi.fn().mockResolvedValue(true),
+        loadExternalSession: vi.fn(),
+        deleteExternalSession: vi.fn().mockResolvedValue(undefined),
         clearCookies: vi.fn().mockResolvedValue(undefined),
         getCookies: vi.fn().mockResolvedValue([]),
         setCookies: vi.fn().mockResolvedValue(undefined)
@@ -295,6 +298,95 @@ describe('useAuthStore login failure toast policy', () => {
 
     afterEach(() => {
         vi.useRealTimers();
+    });
+
+    test('restores session accounts without Basic authentication', async () => {
+        const store = await createAuthStore();
+        const user = { id: 'usr_saved', displayName: 'Saved' };
+        mocks.webApiService.loadExternalSession.mockResolvedValue({ status: 'ready', user });
+        await store.relogin({ user, authMethod: 'session', provider: 'apple', loginParams: {} });
+        expect(mocks.request).not.toHaveBeenCalled();
+        expect(mocks.webApiService.setCookies).not.toHaveBeenCalled();
+        expect(mocks.runLoginSuccessFlow).toHaveBeenCalledWith(user);
+    });
+
+    test('cookie recovery still clears cookies when the saved account no longer exists', async () => {
+        const store = await createAuthStore();
+        store.loginForm.lastUserLoggedIn = 'usr_missing';
+        await store.clearCookiesTryLogin();
+        expect(mocks.webApiService.clearCookies).toHaveBeenCalledOnce();
+        expect(mocks.request).not.toHaveBeenCalled();
+    });
+
+    test('session cookie recovery asks for authorization without retrying Basic login', async () => {
+        const store = await createAuthStore();
+        mocks.configRepository.getString.mockImplementation((key, fallback) =>
+            Promise.resolve(
+                key === 'savedCredentials'
+                    ? JSON.stringify({
+                          usr_saved: { user: { id: 'usr_saved' }, authMethod: 'session', loginParams: {} }
+                      })
+                    : fallback
+            )
+        );
+        store.loginForm.lastUserLoggedIn = 'usr_saved';
+        await store.clearCookiesTryLogin();
+        expect(mocks.webApiService.clearCookies).not.toHaveBeenCalled();
+        expect(mocks.request).not.toHaveBeenCalled();
+        expect(mocks.toast.error).toHaveBeenCalledWith('view.login.external.errors.reauthorize');
+    });
+
+    test('expired session accounts are retained and require authorization', async () => {
+        const store = await createAuthStore();
+        mocks.webApiService.loadExternalSession.mockResolvedValue({ status: 'reauthorize' });
+        await expect(
+            store.relogin({ user: { id: 'usr_saved' }, authMethod: 'session', loginParams: {} })
+        ).rejects.toThrow();
+        expect(mocks.toast.error).toHaveBeenCalledWith('view.login.external.errors.reauthorize');
+        expect(mocks.configRepository.setString).not.toHaveBeenCalled();
+        expect(mocks.request).not.toHaveBeenCalled();
+    });
+
+    test('temporary network failures do not discard a session or force reauthorization', async () => {
+        const store = await createAuthStore();
+        mocks.webApiService.loadExternalSession.mockResolvedValue({ status: 'retry', error: 'network_error' });
+        await expect(
+            store.relogin({ user: { id: 'usr_saved' }, authMethod: 'session', loginParams: {} })
+        ).rejects.toThrow();
+        expect(mocks.toast.error).toHaveBeenCalledWith('view.login.external.errors.network_error');
+        expect(mocks.runLogoutFlow).not.toHaveBeenCalled();
+        expect(mocks.webApiService.deleteExternalSession).not.toHaveBeenCalled();
+    });
+
+    test('primary password mode does not save a browser session', async () => {
+        const store = await createAuthStore();
+        mocks.advancedSettingsStore.enablePrimaryPassword = true;
+        await store.completeExternalLogin({ id: 'usr_me' }, 'apple', true);
+        expect(mocks.webApiService.saveExternalSession).not.toHaveBeenCalled();
+        expect(mocks.webApiService.getCookies).not.toHaveBeenCalled();
+        expect(mocks.runLoginSuccessFlow).toHaveBeenCalled();
+    });
+
+    test('first remembered browser login saves protected state and metadata without cookies', async () => {
+        const store = await createAuthStore();
+        const user = { id: 'usr_me', displayName: 'Tester' };
+        await store.completeExternalLogin(user, 'apple', true);
+        expect(mocks.webApiService.saveExternalSession).toHaveBeenCalledWith(user.id);
+        const writes = mocks.configRepository.setString.mock.calls.filter(([key]) => key === 'savedCredentials');
+        const saved = JSON.parse(writes.at(-1)[1])[user.id];
+        expect(saved.authMethod).toBe('session');
+        expect(saved.cookies).toBeUndefined();
+        expect(saved.loginParams.password).toBe('');
+        expect(mocks.webApiService.getCookies).not.toHaveBeenCalled();
+    });
+
+    test('secure storage failure permits only the current session', async () => {
+        const store = await createAuthStore();
+        mocks.webApiService.saveExternalSession.mockRejectedValueOnce(new Error('Keychain unavailable'));
+        await store.completeExternalLogin({ id: 'usr_me' }, 'apple', true);
+        expect(mocks.toast.error).toHaveBeenCalledWith('view.login.external.errors.storage_unavailable');
+        expect(mocks.runLoginSuccessFlow).toHaveBeenCalled();
+        expect(mocks.configRepository.remove).toHaveBeenCalledWith('lastUserLoggedIn');
     });
 
     test('shows a single warning toast on the third manual login failure inside 90 seconds', async () => {

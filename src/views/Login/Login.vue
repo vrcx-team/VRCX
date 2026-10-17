@@ -46,7 +46,7 @@
             <div class="x-login-form-container">
                 <div>
                     <h2 class="m-0" style="font-weight: bold; text-align: center">{{ t('view.login.login') }}</h2>
-                    <form id="login-form" @submit.prevent="onSubmit">
+                    <form v-show="!externalLoginActive" id="login-form" @submit.prevent="onSubmit">
                         <FieldGroup class="gap-3">
                             <VeeField v-slot="{ field, errors }" name="username">
                                 <Field :data-invalid="!!errors.length">
@@ -90,27 +90,33 @@
                                 </Field>
                             </VeeField>
                         </FieldGroup>
-                        <label class="inline-flex items-center gap-2 mr-2 mt-3 text-sm">
-                            <Checkbox v-model="loginForm.saveCredentials" />
+                        <label class="inline-flex items-center gap-2 mr-2 mt-3 text-sm" data-testid="save-login-data">
+                            <Checkbox v-model="loginForm.saveCredentials" :disabled="loginForm.loading" />
                             <span>{{ t('view.login.field.saveCredentials') }}</span>
                         </label>
 
                         <Field class="mt-4">
-                            <Button type="submit" size="lg" style="width: 100%">{{ t('view.login.login') }}</Button>
+                            <Button type="submit" size="lg" style="width: 100%" :disabled="loginForm.loading">{{
+                                t('view.login.login')
+                            }}</Button>
                         </Field>
                     </form>
                     <Button
+                        v-show="!externalLoginActive"
                         variant="Secondary"
                         size="lg"
                         style="width: 100%"
                         @click="openExternalLink('https://vrchat.com/register')"
                         >{{ t('view.login.register') }}</Button
                     >
+                    <ExternalLogin @active-change="externalLoginActive = $event" />
                 </div>
 
-                <hr v-if="Object.keys(savedCredentials).length !== 0" class="x-vertical-divider" />
+                <hr
+                    v-if="Object.keys(savedCredentials).length !== 0 && !externalLoginActive"
+                    class="x-vertical-divider" />
 
-                <div v-if="Object.keys(savedCredentials).length !== 0">
+                <div v-if="Object.keys(savedCredentials).length !== 0 && !externalLoginActive">
                     <h2 class="m-0" style="font-weight: bold; text-align: center">
                         {{ t('view.login.savedAccounts') }}
                     </h2>
@@ -220,6 +226,7 @@
     import { watchState } from '../../services/watchState';
 
     import LoginSettingsDialog from './Dialog/LoginSettingsDialog.vue';
+    import ExternalLogin from './components/ExternalLogin.vue';
 
     const { userImage } = useUserDisplay();
     const { showVRCXUpdateDialog } = useVRCXUpdaterStore();
@@ -237,6 +244,7 @@
     const vrcStatusStore = useVrcStatusStore();
 
     const { t } = useI18n();
+    const externalLoginActive = ref(false);
 
     /** @type {import('vue').Ref<Record<string, any>>} */
     const savedCredentials = ref({});
@@ -269,6 +277,7 @@
      * @param user
      */
     async function clickSavedLogin(user) {
+        if (loginForm.value.loading) return;
         try {
             await relogin(user);
         } catch {
@@ -418,13 +427,19 @@
         display: grid;
         grid-template-rows: repeat(2, auto);
         align-items: center;
-        max-width: clamp(600px, 60svw, 800px);
+        width: min(360px, calc(100svw - 32px));
+        max-width: 800px;
+    }
+
+    .x-login:has(.x-saved-account-list) {
+        width: min(720px, calc(100svw - 32px));
     }
 
     .x-login-form-container {
         display: grid;
         gap: 8px;
-        height: 380px;
+        height: 500px;
+        max-height: calc(100svh - 210px);
     }
 
     .x-login-form-container:has(> div:nth-child(3)) {
@@ -437,6 +452,19 @@
         min-height: 0;
         padding: 16px;
         overflow-y: auto;
+    }
+
+    @media (max-width: 600px) {
+        .x-login-form-container:has(> div:nth-child(3)) {
+            grid-template-columns: 1fr;
+            height: auto;
+        }
+        hr.x-vertical-divider {
+            display: none;
+        }
+        .x-login-form-container > div {
+            min-height: 320px;
+        }
     }
 
     .x-scroll-wrapper {

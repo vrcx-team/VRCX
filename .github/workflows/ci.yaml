@@ -52,6 +52,30 @@ jobs:
           dotnet format whitespace --no-restore --verify-no-changes
           dotnet format style --no-restore --verify-no-changes
 
+  test_external_auth:
+    name: Test browser and QR authentication
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: npm
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - run: npm ci
+      - name: Test login UI, lifecycle, recovery and requests
+        run: >-
+          npm test --
+          src/coordinators/__tests__/externalAuthCoordinator.test.js
+          src/views/Login/__tests__/Login.test.js
+          src/views/Login/Dialog/__tests__/LoginSettingsDialog.test.js
+          src/stores/__tests__/authLoginFailureToast.test.js
+          src/services/__tests__/request.test.js
+      - run: npm run test:auth-vault
+      - run: npm run test:external-auth-backend
+
   test_build_dotnet_windows:
     runs-on: windows-latest
     defaults:

@@ -63,6 +63,7 @@ export const useAuthStore = defineStore('Auth', () => {
     });
 
     const credentialsToSave = ref(null);
+    const externalSessionAccount = ref(null);
 
     const twoFactorAuthDialogVisible = ref(false);
 
@@ -198,6 +199,14 @@ export const useAuthStore = defineStore('Auth', () => {
                 AppDebug.websocketDomain = user.loginParams.websocket;
             }
             await applyAutoLoginDelay();
+            if (user?.authMethod === 'session') {
+                try {
+                    await relogin(user);
+                } catch {
+                    /* Reauthorization is shown by relogin. */
+                }
+                return;
+            }
             // login at startup
             loginForm.value.loading = true;
             try {
@@ -215,15 +224,19 @@ export const useAuthStore = defineStore('Auth', () => {
     }
 
     async function clearCookiesTryLogin() {
+        const user = loginForm.value.lastUserLoggedIn
+            ? await getSavedCredentials(loginForm.value.lastUserLoggedIn)
+            : null;
+        if (user?.authMethod === 'session') {
+            toast.error(t('view.login.external.errors.reauthorize'));
+            return;
+        }
         await webApiService.clearCookies();
-        if (loginForm.value.lastUserLoggedIn) {
-            const user = await getSavedCredentials(loginForm.value.lastUserLoggedIn);
-            if (user) {
-                delete user.cookies;
-                await relogin(user, {
-                    shouldTrackLoginNetworkIssueHint: false
-                });
-            }
+        if (user) {
+            delete user.cookies;
+            await relogin(user, {
+                shouldTrackLoginNetworkIssueHint: false
+            });
         }
     }
 
@@ -231,6 +244,7 @@ export const useAuthStore = defineStore('Auth', () => {
         if (loginForm.value.lastUserLoggedIn) {
             const user = await getSavedCredentials(loginForm.value.lastUserLoggedIn);
             if (user) {
+                if (user.authMethod === 'session') return;
                 await webApiService.clearCookies();
                 delete user.cookies;
                 relogin(user, {
@@ -315,7 +329,14 @@ export const useAuthStore = defineStore('Auth', () => {
         });
     }
 
-    function enablePrimaryPasswordChange() {
+    async function enablePrimaryPasswordChange() {
+        if (
+            !advancedSettingsStore.enablePrimaryPassword &&
+            Object.values(await getAllSavedCredentials()).some((user) => user.authMethod === 'session')
+        ) {
+            toast.error(t('view.login.external.errors.primary_password'));
+            return;
+        }
         advancedSettingsStore.setEnablePrimaryPassword(!advancedSettingsStore.enablePrimaryPassword);
 
         enablePrimaryPasswordDialog.value.password = '';
@@ -369,6 +390,7 @@ export const useAuthStore = defineStore('Auth', () => {
             const key = enablePrimaryPasswordDialog.value.password;
             const savedCredentials = await getAllSavedCredentials();
             for (const userId in savedCredentials) {
+                if (savedCredentials[userId].authMethod === 'session') continue;
                 security.encrypt(savedCredentials[userId].loginParams.password, key).then((ct) => {
                     credentialsToSave.value = {
                         username: savedCredentials[userId].loginParams.username,
@@ -384,7 +406,35 @@ export const useAuthStore = defineStore('Auth', () => {
      * @param user
      */
     async function updateStoredUser(user) {
+        if (!user?.id) return;
         const savedCredentials = await getAllSavedCredentials();
+        if (externalSessionAccount.value?.id === user.id) {
+            const { provider, remember } = externalSessionAccount.value;
+            if (remember) {
+                try {
+                    await webApiService.saveExternalSession(user.id);
+                } catch {
+                    externalSessionAccount.value.remember = false;
+                    loginForm.value.lastUserLoggedIn = '';
+                    await configRepository.remove('lastUserLoggedIn');
+                    toast.error(t('view.login.external.errors.storage_unavailable'));
+                    return;
+                }
+                savedCredentials[user.id] = {
+                    user,
+                    authMethod: 'session',
+                    provider,
+                    credentialVersion: 1,
+                    loginParams: { username: '', password: '', endpoint: '', websocket: '' }
+                };
+                await configRepository.setString('savedCredentials', JSON.stringify(savedCredentials));
+                await configRepository.setString('lastUserLoggedIn', user.id);
+            } else {
+                await configRepository.remove('lastUserLoggedIn');
+            }
+            loginForm.value.lastUserLoggedIn = remember ? user.id : '';
+            return;
+        }
         if (credentialsToSave.value) {
             savedCredentials[user.id] = {
                 user,
@@ -399,7 +449,9 @@ export const useAuthStore = defineStore('Auth', () => {
             credentialsToSave.value = null;
         } else if (typeof savedCredentials[user.id] !== 'undefined') {
             savedCredentials[user.id].user = user;
-            savedCredentials[user.id].cookies = await webApiService.getCookies();
+            if (savedCredentials[user.id].authMethod !== 'session') {
+                savedCredentials[user.id].cookies = await webApiService.getCookies();
+            }
         }
         const jsonCredentialsArray = JSON.stringify(savedCredentials);
         await configRepository.setString('savedCredentials', jsonCredentialsArray);
@@ -473,6 +525,35 @@ export const useAuthStore = defineStore('Auth', () => {
      * @param user
      */
     async function relogin(user, { shouldTrackLoginNetworkIssueHint = !attemptingAutoLogin.value } = {}) {
+        if (loginForm.value.loading) throw new Error('Another login is in progress.');
+        if (user.authMethod === 'session') {
+            if (advancedSettingsStore.enablePrimaryPassword) throw new Error('Primary password is enabled.');
+            loginForm.value.loading = true;
+            try {
+                AppDebug.endpointDomain = AppDebug.endpointDomainVrchat;
+                AppDebug.websocketDomain = AppDebug.websocketDomainVrchat;
+                await authRequest.getConfig();
+                const result = await webApiService.loadExternalSession(user.user.id);
+                if (result.status === 'retry' || result.status === 'unavailable') {
+                    toast.error(t(`view.login.external.errors.${result.error || 'network_error'}`));
+                    throw new Error('External session is temporarily unavailable.');
+                }
+                if (result.status !== 'ready' || result.user?.id !== user.user.id) {
+                    toast.error(t('view.login.external.errors.reauthorize'));
+                    if (watchState.isLoggedIn) {
+                        externalSessionAccount.value = null;
+                        await handleLogoutEvent();
+                    }
+                    throw new Error('External session requires authorization.');
+                }
+                externalSessionAccount.value = { id: result.user.id, provider: user.provider, remember: true };
+                handleCurrentUserUpdate(result.user);
+            } finally {
+                loginForm.value.loading = false;
+            }
+            return;
+        }
+        externalSessionAccount.value = null;
         const { loginParams } = user;
         if (user.cookies) {
             await webApiService.setCookies(user.cookies);
@@ -540,6 +621,9 @@ export const useAuthStore = defineStore('Auth', () => {
      */
     async function deleteSavedLogin(userId) {
         const savedCredentials = await getAllSavedCredentials();
+        if (savedCredentials[userId]?.authMethod === 'session') {
+            await webApiService.deleteExternalSession(userId);
+        }
         delete savedCredentials[userId];
         // Disable primary password when no account is available.
         if (Object.keys(savedCredentials).length === 0) {
@@ -551,6 +635,8 @@ export const useAuthStore = defineStore('Auth', () => {
     }
 
     async function login() {
+        if (loginForm.value.loading) return;
+        externalSessionAccount.value = null;
         // TODO: remove/refactor saveCredentials & primaryPassword (security)
         await webApiService.clearCookies();
         if (!loginForm.value.loading) {
@@ -801,6 +887,29 @@ export const useAuthStore = defineStore('Auth', () => {
         }
     }
 
+    async function completeExternalLogin(user, provider, remember) {
+        if (enableCustomEndpoint.value || advancedSettingsStore.enablePrimaryPassword) remember = false;
+        externalSessionAccount.value = { id: user.id, provider, remember };
+        credentialsToSave.value = null;
+        AppDebug.endpointDomain = AppDebug.endpointDomainVrchat;
+        AppDebug.websocketDomain = AppDebug.websocketDomainVrchat;
+        try {
+            await updateStoredUser(user);
+        } catch {
+            externalSessionAccount.value.remember = false;
+            await configRepository.remove('lastUserLoggedIn');
+            toast.error(t('view.login.external.errors.storage_unavailable'));
+        }
+        handleCurrentUserUpdate(user);
+    }
+
+    async function prepareExternalLogin() {
+        if (enableCustomEndpoint.value) throw new Error('Official login requires the official API.');
+        AppDebug.endpointDomain = AppDebug.endpointDomainVrchat;
+        AppDebug.websocketDomain = AppDebug.websocketDomainVrchat;
+        await authRequest.getConfig();
+    }
+
     async function handleAutoLogin() {
         const canAutoLogin = await vrcxStore.waitForDatabaseInit();
         if (!canAutoLogin) {
@@ -908,6 +1017,8 @@ export const useAuthStore = defineStore('Auth', () => {
         relogin,
         deleteSavedLogin,
         login,
+        completeExternalLogin,
+        prepareExternalLogin,
         handleAutoLogin,
         handleLogoutEvent,
         handleCurrentUserUpdate,
