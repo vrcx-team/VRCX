@@ -97,6 +97,24 @@ export interface VrcxUpdateInstanceRequest {
     displayName?: string | null;
 }
 
+export interface MarketplaceAvatarSearchParams {
+    n: number;
+    offset: number;
+    search: string;
+    releaseStatus: string;
+    order: string;
+    marketplace: string;
+    metadata: boolean;
+    minPrice?: number;
+    maxPrice?: number;
+    performanceAtLeast?: string;
+    platform?: string;
+    minUnityVersion?: string;
+    maxUnityVersion?: string;
+    minAssetVersion?: number;
+    maxAssetVersion?: number;
+}
+
 export interface VrcxWorld extends Json<World> {
     $isLabs: boolean;
 }

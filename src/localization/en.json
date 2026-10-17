@@ -357,6 +357,9 @@
                 "sort_update": "Sort by update",
                 "sort_created": "Sort by created"
             },
+            "marketplace": {
+                "header": "Marketplace"
+            },
             "group": {
                 "header": "Group"
             }

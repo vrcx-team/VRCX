@@ -26,6 +26,7 @@ import vrcPlusIconRequest from './vrcPlusIcon';
 import vrcPlusImageRequest from './vrcPlusImage';
 import worldRequest from './world';
 import cosmeticsRequest from './cosmetics';
+import marketplaceRequest from './marketplace';
 
 window.request = {
     request,
@@ -49,6 +50,7 @@ window.request = {
     imageRequest,
     queryRequest,
     cosmeticsRequest,
+    marketplaceRequest,
     moderationReportRequest
 };
 
@@ -74,5 +76,6 @@ export {
     imageRequest,
     queryRequest,
     cosmeticsRequest,
+    marketplaceRequest,
     moderationReportRequest
 };
