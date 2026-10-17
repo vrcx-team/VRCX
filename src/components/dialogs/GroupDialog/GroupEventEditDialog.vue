@@ -46,6 +46,9 @@
                                     type="datetime-local"
                                     size="sm"
                                     :disabled="groupEventEditDialog.loading" />
+                                <p v-if="hasPastStartDate" class="mt-1 text-xs text-destructive">
+                                    {{ t('dialog.group_event_edit.start_in_past') }}
+                                </p>
                             </FieldContent>
                         </Field>
                         <Field>
@@ -610,6 +613,10 @@
         const endsAt = Date.parse(groupEventEditDialog.value.endsAt);
         return Number.isFinite(startsAt) && Number.isFinite(endsAt) && endsAt <= startsAt;
     });
+    const hasPastStartDate = computed(() => {
+        const startsAt = Date.parse(groupEventEditDialog.value.startsAt);
+        return !isEditMode.value && Number.isFinite(startsAt) && startsAt <= Date.now();
+    });
     const repeatFrequencySelection = computed(() => groupEventEditDialog.value.recurrence?.frequency ?? 'none');
     const recurrenceEndType = computed({
         get: () => groupEventEditDialog.value.recurrence?.end?.type ?? 'never',
@@ -660,6 +667,7 @@
             Number.isFinite(Date.parse(D.startsAt)) &&
             Number.isFinite(Date.parse(D.endsAt)) &&
             !hasInvalidDateRange.value &&
+            !hasPastStartDate.value &&
             [D.hostEarlyJoinMinutes, D.guestEarlyJoinMinutes, D.closeInstanceAfterEndMinutes].every(
                 (value) => Number.isInteger(Number(value)) && Number(value) >= 0
             )

@@ -1474,7 +1474,8 @@
                 "instance_minimum_avatar_performance": "Minimum Avatar Performance",
                 "current_instance": "Current Instance",
                 "economy_creator": "Economy Creator",
-                "instance_announcement_tooltip": "Send Instance Announcement"
+                "instance_announcement_tooltip": "Send Instance Announcement",
+                "instance_calendar_link_tooltip": "Assign Group Event"
             },
             "groups": {
                 "header": "Groups",
@@ -1800,6 +1801,7 @@
             "starts_at": "Starts At",
             "ends_at": "Ends At",
             "invalid_date_range": "The event must end after it starts.",
+            "start_in_past": "The event must start in the future.",
             "access_type": "Access",
             "access_group": "Group",
             "access_public": "Public",
@@ -2807,6 +2809,14 @@
             "select_image": "Select Image",
             "sending": "Sending...",
             "send": "Send Announcement"
+        },
+        "instance_calendar_link": {
+            "header": "Assign Group Event",
+            "event": "Event",
+            "no_events": "No events starting within the next 6 hours or ended within the last 6 hours",
+            "assign": "Assign",
+            "remove": "Remove Link",
+            "saving": "Saving..."
         }
     },
     "confirm": {

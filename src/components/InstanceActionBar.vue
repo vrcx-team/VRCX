@@ -65,6 +65,20 @@
                     <Megaphone class="h-4 w-4" />
                 </Button>
             </TooltipWrapper>
+            <TooltipWrapper
+                v-if="instanceInfoState.canLinkCalendarEvent"
+                side="top"
+                :content="t('dialog.user.info.instance_calendar_link_tooltip')">
+                <Button
+                    class="rounded-full h-6 w-6 text-xs text-muted-foreground hover:text-foreground"
+                    :style="buttonStyle"
+                    size="icon-sm"
+                    variant="outline"
+                    :ariaLabel="t('dialog.user.info.instance_calendar_link_tooltip')"
+                    @click="instanceCalendarLinkDialogVisible = true">
+                    <CalendarPlus class="h-4 w-4" />
+                </Button>
+            </TooltipWrapper>
             <TooltipWrapper v-if="showRefreshButton" side="top" :content="refreshTooltip">
                 <Button
                     class="rounded-full w-6 h-6 text-xs text-muted-foreground hover:text-foreground"
@@ -128,19 +142,16 @@
                             {{ instanceInfoState.disabledContentSettings }}
                         </span>
 
-                        <TooltipWrapper
+                        <Button
                             v-if="instanceInfoState.canCloseInstance && !instance?.closedAt"
-                            side="top"
-                            :content="t('dialog.user.info.close_instance')">
-                            <Button
-                                class="w-12 h-6 text-xs hover:text-muted-foreground"
-                                size="icon-sm"
-                                variant="destructive"
-                                :ariaLabel="t('dialog.user.info.close_instance')"
-                                @click="closeInstance(resolvedInstanceLocation)">
-                                <PowerIcon class="h-4 w-4" />
-                            </Button>
-                        </TooltipWrapper>
+                            class="w-12 h-6 text-xs hover:text-muted-foreground"
+                            size="icon-sm"
+                            variant="destructive"
+                            :title="t('dialog.user.info.close_instance')"
+                            :ariaLabel="t('dialog.user.info.close_instance')"
+                            @click="closeInstance(resolvedInstanceLocation)">
+                            <PowerIcon class="h-4 w-4" />
+                        </Button>
                     </div>
                 </template>
                 <div :class="cn('flex items-center gap-0.5', !instance?.hasCapacityForYou ? 'text-red-500' : null)">
@@ -241,12 +252,18 @@
             v-if="instanceAnnouncementDialogVisible"
             v-model:open="instanceAnnouncementDialogVisible"
             :location="resolvedInstanceLocation" />
+        <InstanceCalendarLinkDialog
+            v-if="instanceCalendarLinkDialogVisible"
+            v-model:open="instanceCalendarLinkDialogVisible"
+            :location="resolvedInstanceLocation"
+            :current-event-id="instance?.calendarEntryId ?? ''" />
     </div>
 </template>
 
 <script lang="ts" setup>
     import {
         CalendarDays,
+        CalendarPlus,
         History,
         Loader2,
         LogIn,
@@ -282,6 +299,7 @@
     import { useInviteChecks } from '../composables/useInviteChecks';
     import { instanceRequest, miscRequest, queryRequest } from '../api';
     import InstanceAnnouncementDialog from './dialogs/InstanceAnnouncementDialog.vue';
+    import InstanceCalendarLinkDialog from './dialogs/InstanceCalendarLinkDialog.vue';
     import GroupCalendarEventDetails from '../views/Tools/components/GroupCalendarEventDetails.vue';
 
     defineOptions({
@@ -404,6 +422,7 @@
 
     const lastJoin = ref(null);
     const instanceAnnouncementDialogVisible = ref(false);
+    const instanceCalendarLinkDialogVisible = ref(false);
     const showLastJoinIndicator = computed(() => props.showLastJoin && lastJoin.value);
     const hasInstanceMetadata = computed(() => {
         return !!(
@@ -425,6 +444,7 @@
         isValidInstance: false,
         canCloseInstance: false,
         canSendAnnouncement: false,
+        canLinkCalendarEvent: false,
         isAgeGated: false,
         isRoleRestricted: false,
         disabledContentSettings: ''
@@ -482,6 +502,7 @@
             isValidInstance: false,
             canCloseInstance: false,
             canSendAnnouncement: false,
+            canLinkCalendarEvent: false,
             isAgeGated: false,
             isRoleRestricted: false,
             disabledContentSettings: ''
@@ -498,6 +519,9 @@
             instanceInfoState.canSendAnnouncement =
                 hasGroupPermission(group, 'group-instance-announcement-create') &&
                 resolvedInstanceLocation.value === locationStore.lastLocation.location;
+            instanceInfoState.canLinkCalendarEvent =
+                hasGroupPermission(group, 'group-instance-manage') &&
+                hasGroupPermission(group, 'group-instance-calendar-link');
         }
         instanceInfoState.isAgeGated = props.instance.ageGate === true;
         if (resolvedInstanceLocation.value?.includes('~ageGate')) instanceInfoState.isAgeGated = true;

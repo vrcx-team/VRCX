@@ -13,6 +13,7 @@ import type {
     GetCalendarEvents,
     GetFeaturedCalendarEvents,
     GetFollowedCalendarEvents,
+    GetGroupCalendarEvents,
     GetGroup,
     GetGroupBans,
     GetGroupGalleryImages,
@@ -893,10 +894,12 @@ const groupReq = {
     },
 
     getGroupCalendar(
-        groupId: string
+        groupId: string,
+        query?: Json<GetGroupCalendarEvents['query']>
     ): Promise<{ json: Json<PaginatedCalendarEventList>; params: { groupId: string } }> {
         return request(`calendar/${groupId}`, {
-            method: 'GET'
+            method: 'GET',
+            params: query
         }).then((json) => {
             const args = {
                 json,

@@ -1,4 +1,4 @@
-import type { CurrentUser, Favorite, Group, Instance, Notification, User, World } from 'vrchat';
+import type { CurrentUser, Favorite, Group, Instance, Notification, UpdateInstanceRequest, User, World } from 'vrchat';
 
 // cursed line to convert Date and bigint to expected types
 export type Json<T> = T extends Date
@@ -89,6 +89,12 @@ export interface InstanceCount {
     asOf: string;
     events: number;
     instances: number;
+}
+
+export interface VrcxUpdateInstanceRequest {
+    location: string;
+    calendarEntryId?: UpdateInstanceRequest['calendarEntryId'];
+    displayName?: string | null;
 }
 
 export interface VrcxWorld extends Json<World> {
