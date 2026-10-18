@@ -160,7 +160,7 @@
                 "FriendRequest": "Запрос в друзья",
                 "CancelFriendRequest": "Отменённые запросы в друзья",
                 "DisplayName": "Отоброжаемое имя",
-                "TrustLevel": "Уровнь доверия"
+                "TrustLevel": "Уровень доверия"
             }
         },
         "moderation": {
