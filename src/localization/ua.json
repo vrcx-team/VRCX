@@ -1,0 +1,3588 @@
+{
+    "language": "Українська (uk)",
+    "translator": "Tiko",
+    "common": {
+        "no_data": "Немає даних",
+        "no_matching_records": "Немає відповідних записів",
+        "tabs": {
+            "scroll_left": "Прокрутити вкладки вліво",
+            "scroll_right": "Прокрутити вкладки вправо"
+        },
+        "feature_relocated": {
+            "title": "Попередження про застарівання",
+            "description": "Цю функцію буде видалено в одному з наступних оновлень. Будь ласка, використовуйте натомість {feature}."
+        },
+        "actions": {
+            "open": "Відкрити",
+            "confirm": "Підтвердити",
+            "clear": "Очистити",
+            "delete": "Видалити",
+            "remove": "Прибрати",
+            "reset": "Скинути",
+            "view_details": "Докладніше",
+            "configure": "Налаштувати",
+            "refresh": "Оновити",
+            "cancel": "Скасувати",
+            "copy": "Копіювати",
+            "open_link": "Відкрити посилання"
+        },
+        "sort_by": "Сортувати за:",
+        "time_units": {
+            "y": "р",
+            "d": "д",
+            "h": "г",
+            "m": "хв",
+            "s": "с",
+            "year": "рік",
+            "month": "місяць",
+            "day": "день",
+            "hour": "година",
+            "min": "хв",
+            "sec": "сек",
+            "years": "років",
+            "months": "місяців",
+            "days": "днів",
+            "hours": "годин",
+            "mins": "хв",
+            "secs": "сек"
+        },
+        "days": {
+            "sunday": "Неділя",
+            "monday": "Понеділок",
+            "tuesday": "Вівторок",
+            "wednesday": "Середа",
+            "thursday": "Четвер",
+            "friday": "П'ятниця",
+            "saturday": "Субота"
+        },
+        "duration": "Тривалість",
+        "load_more": "Завантажити ще",
+        "no_more": "Більше записів немає",
+        "current_session": "Поточна"
+    },
+    "nav_tooltip": {
+        "friends_locations": "Інстанси друзів",
+        "feed": "Стрічка",
+        "game_log": "Журнал гри",
+        "player_list": "Список гравців",
+        "search": "Пошук",
+        "favorites": "Обране",
+        "favorite_friends": "Обрані друзі",
+        "favorite_worlds": "Обрані світи",
+        "favorite_avatars": "Обрані аватари",
+        "my_avatars": "Мої аватари",
+        "social": "Соціальне",
+        "friend_log": "Журнал друзів",
+        "moderation": "Модерація",
+        "notification": "Сповіщення",
+        "friend_list": "Список друзів",
+        "charts": "Графіки",
+        "tools": "Інструменти",
+        "settings": "Налаштування",
+        "manage": "Керування",
+        "help_support": "Довідка та підтримка",
+        "expand_menu": "Розгорнути меню",
+        "collapse_menu": "Згорнути меню",
+        "expand_sidebar": "Розгорнути бічну панель",
+        "toggle_theme": "Перемкнути тему"
+    },
+    "nav_menu": {
+        "resources": "РЕСУРСИ",
+        "wiki": "Вікі",
+        "get_help": "ОТРИМАТИ ДОПОМОГУ",
+        "github": "VRCX на GitHub",
+        "discord": "Приєднуйтесь до нашого Discord",
+        "changelog": "Список змін",
+        "update_available": "Доступне оновлення",
+        "update": "Оновити",
+        "mark_all_read": "Позначити все як прочитане",
+        "edit_dashboard": "Редагувати дашборд",
+        "delete_dashboard": "Видалити дашборд",
+        "custom_nav": {
+            "header": "Налаштувати навігацію",
+            "dialog_title": "Налаштування меню навігації",
+            "new_folder": "Нова тека",
+            "folder_name_placeholder": "Назва теки",
+            "folder_icon_placeholder": "Клас іконки (напр. ri-menu-fold-line)",
+            "edit_folder": "Редагувати теку",
+            "delete_folder": "Видалити теку",
+            "edit_dashboard": "Редагувати дашборд",
+            "delete_dashboard": "Видалити дашборд",
+            "folder_empty": "Ця тека порожня",
+            "folder_drop_here": "Перетягніть елементи сюди",
+            "hide": "Сховати",
+            "show": "Показати",
+            "hidden_items": "Приховані",
+            "pin_to_nav": "Закріпити в навігації",
+            "unpin_from_nav": "Відкріпити",
+            "pinned": "Додано до навігації",
+            "unpinned": "Прибрано з навігації",
+            "confirm": "Підтвердити",
+            "cancel": "Скасувати",
+            "restore_default": "Відновити стандартні",
+            "restore_default_confirm": "Відновити стандартний порядок навігації?"
+        }
+    },
+    "dashboard": {
+        "default_name": "Дашборд",
+        "new_dashboard": "Новий дашборд",
+        "empty": "Цей дашборд порожній",
+        "actions": {
+            "start_editing": "Почати редагування",
+            "add_row": "Додати рядок",
+            "add_full_row": "Додати повний рядок",
+            "add_split_row": "Додати розділений рядок",
+            "add_vertical_row": "Додати вертикальний рядок",
+            "cancel": "Скасувати",
+            "save": "Зберегти",
+            "delete": "Видалити"
+        },
+        "toolbar": {
+            "name_placeholder": "Назва дашборда",
+            "icon_placeholder": "Клас іконки (необов'язково)"
+        },
+        "panel": {
+            "not_selected": "Панель не вибрано",
+            "select": "Вибрати панель",
+            "not_configured": "Панель не налаштовано"
+        },
+        "selector": {
+            "title": "Вибір вмісту панелі",
+            "clear": "Очистити панель",
+            "widgets": "Віджети",
+            "pages": "Повні сторінки"
+        },
+        "widget": {
+            "feed": "Віджет стрічки",
+            "game_log": "Віджет журналу гри",
+            "instance": "Віджет інстансу",
+            "config": {
+                "filters": "Типи подій",
+                "columns": "Стовпці",
+                "detail": "Деталі",
+                "show_type": "Показувати тип"
+            },
+            "no_data": "Немає даних",
+            "unknown_world": "Невідомий світ",
+            "feed_online": "онлайн",
+            "feed_offline": "офлайн",
+            "feed_avatar": "→",
+            "feed_bio": "оновив(-ла) біо",
+            "instance_players": "гравців",
+            "instance_not_in_game": "Не в грі",
+            "time_ago": "{time} тому"
+        },
+        "first_save_tip": "Кнопку «Новий дашборд» можна сховати в Налаштування > Інтерфейс > Навігація.",
+        "confirmations": {
+            "delete_title": "Видалити дашборд",
+            "delete_description": "Ви впевнені, що хочете видалити цей дашборд? Цю дію неможливо скасувати."
+        }
+    },
+    "side_panel": {
+        "search_placeholder": "Швидкий пошук...",
+        "search_no_results": "Нічого не знайдено",
+        "search_min_chars": "Введіть щонайменше 2 символи",
+        "search_categories": "Шукати...",
+        "search_scope_all": "Ім'я, мемо та нотатки",
+        "search_scope_avatars": "Власні та обрані",
+        "search_scope_worlds": "Власні та обрані",
+        "search_scope_joined": "Власні та відвідані",
+        "search_friends": "Друзі",
+        "search_avatars": "Аватари",
+        "search_own_avatars": "Власні аватари",
+        "search_fav_avatars": "Обрані аватари",
+        "search_worlds": "Світи",
+        "search_own_worlds": "Власні світи",
+        "search_fav_worlds": "Обрані світи",
+        "search_groups": "Групи",
+        "search_own_groups": "Власні групи",
+        "search_joined_groups": "Групи, до яких ви приєднались",
+        "search_result_active": "Офлайн",
+        "search_result_offline": "Активний",
+        "search_result_more": "Шукати ще:",
+        "refresh_tooltip": "Оновити друзів",
+        "groups": "Групи",
+        "friends": "Друзі",
+        "me": "Я",
+        "favorite": "ОБРАНЕ",
+        "same_instance": "ОДИН ІНСТАНС",
+        "online": "ОНЛАЙН",
+        "active": "АКТИВНІ",
+        "offline": "ОФЛАЙН",
+        "pending_offline": "Очікує офлайн",
+        "settings": {
+            "display": "Відображення",
+            "sort": "Сортування",
+            "advanced": "Додатково",
+            "sorting": "Сортування",
+            "favorites_section": "Обране",
+            "group_by_instance": "Групувати за інстансом",
+            "split_favorite_friends": "Показувати групи обраного",
+            "hide_friends_in_same_instance": "Сховати згрупованих друзів",
+            "same_instance_above_favorites": "Пріоритет друзям в одному інстансі",
+            "sort_primary": "Сортувати за",
+            "sort_secondary": "Потім за",
+            "sort_tertiary": "Потім за",
+            "favorite_groups": "Групи обраного",
+            "favorite_groups_placeholder": "Усі групи",
+            "edit_group_order": "Змінити порядок груп"
+        },
+        "notifications": "Сповіщення",
+        "notification_center": {
+            "title": "Центр сповіщень",
+            "view_more": "Показати більше",
+            "tab_friend": "Друзі",
+            "tab_group": "Групи",
+            "tab_other": "Інше",
+            "past_notifications": "Останні 24 години",
+            "no_new_notifications": "Немає нових сповіщень за останні 24 години",
+            "no_unseen_notifications": "Немає непрочитаних сповіщень"
+        }
+    },
+    "view": {
+        "login": {
+            "savedAccounts": "Збережені акаунти",
+            "login": "Увійти",
+            "register": "Зареєструватися",
+            "forgotPassword": "Забули пароль?",
+            "updater": "Оновлення",
+            "proxy_settings": "Налаштування проксі",
+            "settings": "Налаштування",
+            "language": "Мова",
+            "field": {
+                "username": "Ім'я користувача або email",
+                "password": "Пароль",
+                "saveCredentials": "Зберегти дані для входу",
+                "devEndpoint": "Dev-endpoint",
+                "endpoint": "Endpoint",
+                "websocket": "WebSocket"
+            },
+            "language_detect": {
+                "title": "Виявлено мову",
+                "description": "Схоже, мова вашої системи — {language}. Бажаєте перемкнутися на неї?"
+            }
+        },
+        "feed": {
+            "favorites_only_tooltip": "Показувати лише обраних",
+            "search_placeholder": "Пошук",
+            "filters": {
+                "GPS": "GPS",
+                "Online": "Онлайн",
+                "Offline": "Офлайн",
+                "Status": "Статус",
+                "Avatar": "Аватар",
+                "Bio": "Біо"
+            },
+            "photon_event_logging": "Логування подій Photon"
+        },
+        "friends_locations": {
+            "online": "Онлайн",
+            "favorite": "Обране",
+            "same_instance": "Один інстанс",
+            "active": "Активні",
+            "offline": "Офлайн",
+            "search_placeholder": "Пошук друзів",
+            "spacing": "Інтервал",
+            "scale": "Масштаб",
+            "separate_same_instance_friends": "Відокремити друзів в одному інстансі",
+            "loading_more": "Завантаження..."
+        },
+        "game_log": {
+            "filter_placeholder": "Фільтр",
+            "search_placeholder": "Пошук",
+            "filters": {
+                "Location": "Локація",
+                "OnPlayerJoined": "Гравець приєднався",
+                "OnPlayerLeft": "Гравець вийшов",
+                "PortalSpawn": "Поява порталу",
+                "VideoPlay": "Відтворення відео",
+                "Event": "Подія",
+                "External": "Зовнішнє",
+                "StringLoad": "Завантаження рядка",
+                "ImageLoad": "Завантаження зображення"
+            },
+            "sessions": {
+                "switch_to_table": "Табличний вигляд",
+                "switch_to_sessions": "Вигляд сесій",
+                "date_range": "Діапазон дат",
+                "players_joined": "Приєдналось гравців: {count}",
+                "players_left": "Вийшло гравців: {count}",
+                "play_count": "×{count}",
+                "no_data": "Немає даних журналу гри"
+            }
+        },
+        "player_list": {
+            "photon": {
+                "current": "Поточний",
+                "previous": "Попередній",
+                "search_placeholder": "Пошук",
+                "filter_placeholder": "Фільтр",
+                "chatbox_blacklist": "Чорний список чатбокса",
+                "status_tooltip": "Статус VRCX Companion"
+            }
+        },
+        "my_avatars": {
+            "filter": "Фільтр",
+            "clear_filters": "Очистити все",
+            "table_view": "Табличний вигляд",
+            "grid_view": "Вигляд сіткою"
+        },
+        "search": {
+            "search_placeholder": "Пошук",
+            "clear_results_tooltip": "Очистити результати пошуку",
+            "user": {
+                "header": "Гравець",
+                "sort_by_last_logged_in": "Сортувати за останнім входом"
+            },
+            "world": {
+                "header": "Світ",
+                "category": "Пошук за категорією",
+                "community_lab": "Враховувати ком'юніті-лаби"
+            },
+            "avatar": {
+                "header": "Аватар",
+                "search_provider": "Провайдер пошуку",
+                "no_provider": "Провайдер пошуку аватарів не налаштовано",
+                "search_placeholder_avatar": "Введіть щонайменше 3 символи",
+                "min_chars_warning": "Введіть щонайменше 3 символи для пошуку",
+                "refresh_tooltip": "Оновити власні аватари",
+                "result_count": "Результатів: {count}",
+                "all": "Усі",
+                "all_tags": "Усі теги",
+                "public": "Публічні",
+                "private": "Приватні",
+                "local": "Локальні",
+                "remote": "Віддалені",
+                "sort_name": "Сортувати за назвою",
+                "sort_update": "Сортувати за оновленням",
+                "sort_created": "Сортувати за створенням"
+            },
+            "marketplace": {
+                "header": "Маркетплейс"
+            },
+            "store": {
+                "header": "Магазин VRChat",
+                "refresh_tooltip": "Оновити магазин",
+                "free": "Безкоштовно",
+                "vrc_plus_price": "{price} з VRC+",
+                "credits": "{credits}V",
+                "buy": "Купити",
+                "owned": "Придбано"
+            },
+            "group": {
+                "header": "Група"
+            }
+        },
+        "favorite": {
+            "worlds": {
+                "search": "Пошук",
+                "search_by_tag": "Пошук за тегом",
+                "search_mode_name": "Назва",
+                "search_mode_tag": "Тег",
+                "vrchat_favorites": "Обране VRChat",
+                "local_favorites": "Локальне обране",
+                "new_group": "Нова група",
+                "cancel_refresh": "Скасувати оновлення"
+            },
+            "avatars": {
+                "search": "Пошук",
+                "vrchat_favorites": "Обране VRChat",
+                "new_group": "Нова група",
+                "cancel_refresh": "Скасувати оновлення",
+                "check_invalid": "Перевірити на видалені/приватні аватари",
+                "check_description": "Виявити та видалити недійсні аватари з цієї групи",
+                "checking": "Перевірка недійсних аватарів...",
+                "removed_list_header": "Аватари, що очікують видалення:",
+                "copy_removed_ids": "Копіювати ID аватарів",
+                "copied_ids": "ID аватарів скопійовано в буфер обміну",
+                "copy_failed": "Не вдалося скопіювати в буфер обміну",
+                "dismiss": "Закрити",
+                "checking_progress": "Перевірка аватара ({current}/{total})...",
+                "confirm_delete_invalid": "Видалити недійсні аватари?",
+                "confirm_delete_description": "Знайдено недійсних аватарів: {count}. Видалити їх?",
+                "delete_summary": "Успішно видалено недійсних аватарів: {removed}",
+                "no_invalid_found": "Недійсних аватарів не знайдено",
+                "delete_cancelled": "Видалення скасовано",
+                "local_history": "Локальна історія",
+                "no_group_selected": "Групу не вибрано",
+                "styles": "Стилі",
+                "almost_nuisance": "Майже порушник"
+            },
+            "edit_mode": "Режим редагування",
+            "copy": "Копіювати",
+            "clear": "Очистити",
+            "select_all": "Вибрати все",
+            "deselect_all": "Зняти вибір",
+            "bulk_unfavorite": "Масово прибрати з обраного",
+            "refresh_favorites_tooltip": "Оновити обране VRChat",
+            "export": "Експорт",
+            "import": "Імпорт",
+            "move_tooltip": "Перемістити",
+            "copy_tooltip": "Копіювати",
+            "unfavorite_tooltip": "Прибрати з обраного",
+            "edit_favorite_tooltip": "Редагувати обране",
+            "visibility_tooltip": "Змінити видимість",
+            "visibility": {
+                "public": "Публічне",
+                "friends": "Для друзів",
+                "private": "Приватне"
+            },
+            "rename_tooltip": "Перейменувати",
+            "clear_tooltip": "Очистити",
+            "delete_tooltip": "Видалити",
+            "unavailable_tooltip": "Недоступно",
+            "private": "Приватне",
+            "select_avatar_tooltip": "Вибрати аватар"
+        },
+        "friend_log": {
+            "filter_placeholder": "Фільтр",
+            "search_placeholder": "Пошук",
+            "filters": {
+                "Friend": "Новий друг",
+                "Unfriend": "Видалення з друзів",
+                "FriendRequest": "Запит у друзі",
+                "CancelFriendRequest": "Скасування запиту в друзі",
+                "DisplayName": "Відображуване ім'я",
+                "TrustLevel": "Рівень довіри"
+            }
+        },
+        "moderation": {
+            "filter_placeholder": "Фільтр",
+            "search_placeholder": "Пошук",
+            "refresh_tooltip": "Оновити",
+            "clear_type_placeholder": "Очистити всі види модерації",
+            "clear_all": "Очистити все",
+            "clear_confirm_title": "Очистити модерацію",
+            "clear_confirm_description": "УВАГА: Це видалить усі записи модерації типу «{type}» з вашого акаунта, і цю дію неможливо скасувати. Продовжити?",
+            "filters": {
+                "block": "Блокування",
+                "unblock": "Розблокування",
+                "mute": "М'ют",
+                "unmute": "Зняття м'юта",
+                "interactOn": "Взаємодію ввімкнено",
+                "interactOff": "Взаємодію вимкнено",
+                "muteChat": "М'ют чату",
+                "unmuteChat": "Зняття м'юта чату"
+            }
+        },
+        "notification": {
+            "filter_placeholder": "Фільтр",
+            "search_placeholder": "Пошук",
+            "refresh_tooltip": "Оновити",
+            "actions": {
+                "accept": "Прийняти",
+                "invite": "Запросити",
+                "decline": "Відхилити",
+                "delete_log": "Видалити запис",
+                "decline_with_message": "Відхилити з повідомленням"
+            },
+            "filters": {
+                "requestInvite": "Запит на запрошення",
+                "invite": "Запрошення",
+                "requestInviteResponse": "Відповідь на запит на запрошення",
+                "inviteResponse": "Відповідь на запрошення",
+                "friendRequest": "Запит у друзі",
+                "ignoredFriendRequest": "Проігнорований запит у друзі",
+                "message": "Повідомлення",
+                "boop": "Boop",
+                "groupChange": "Зміна групи",
+                "event": {
+                    "announcement": "Оголошення події"
+                },
+                "group": {
+                    "announcement": "Оголошення групи",
+                    "informative": "Інформація групи",
+                    "invite": "Запрошення в групу",
+                    "joinRequest": "Запит на вступ до групи",
+                    "transfer": "Передача групи",
+                    "queueReady": "Черга готова",
+                    "event": {
+                        "created": "Створено подію групи",
+                        "starting": "Подія групи починається"
+                    }
+                },
+                "moderation": {
+                    "warning": {
+                        "group": "Попередження модерації групи"
+                    },
+                    "report": {
+                        "closed": "Скаргу модерації закрито"
+                    },
+                    "contentrestriction": "Обмеження контенту модерацією",
+                    "sanction": "Санкція модерації"
+                },
+                "instance": {
+                    "closed": "Інстанс закрито",
+                    "announcement": "Оголошення інстансу"
+                },
+                "badge": {
+                    "earned": "Отримано значок"
+                },
+                "vrcplus": {
+                    "gift": "Подарунок VRC+"
+                },
+                "localNotifs": "Система",
+                "economy": {
+                    "received": {
+                        "gift": "Отримано подарунок"
+                    },
+                    "alert": "Сповіщення економіки"
+                },
+                "twitchdrop": {
+                    "fulfilled": "Twitch Drop отримано"
+                }
+            }
+        },
+        "friend_list": {
+            "bulk_unfriend": "Режим масового видалення з друзів",
+            "bulk_unfriend_selection": "Вибір для масового видалення з друзів",
+            "load": "Завантажити відсутні записи",
+            "load_dialog_title": "Завантаження відсутніх записів",
+            "load_dialog_message": "Отримання відсутніх полів профілів ваших друзів.",
+            "load_cancel": "Скасувати",
+            "load_complete": "Відсутні записи завантажено",
+            "favorites_only_tooltip": "Показувати лише обраних",
+            "search_placeholder": "Пошук",
+            "filter_placeholder": "Фільтр",
+            "load_mutual_friends": "Завантажити спільних друзів",
+            "mutual_loading_hint": "Прогрес можна переглянути на сторінці графа спільних друзів"
+        },
+        "charts": {
+            "instance_activity": {
+                "header": "Активність в інстансах",
+                "online_time": "Час онлайн",
+                "previous_day": "Попередній день",
+                "next_day": "Наступний день",
+                "refresh": "Оновити",
+                "tips": {
+                    "online_time": "Час онлайн — це ігровий час, записаний VRCX за поточний день.",
+                    "click_Y_axis": "Натисніть на підпис осі Y, щоб перейти до деталей інстансу або відкрити вікно гравця.",
+                    "click_instance_name": "Натисніть на назву інстансу, щоб відкрити вікно інформації про попередній інстанс."
+                },
+                "settings": {
+                    "header": "Налаштування",
+                    "bar_width": "Ширина стовпчика",
+                    "show_solo_instance": "Показувати соло-інстанси",
+                    "show_no_friend_instance": "Показувати інстанси без друзів",
+                    "show_detail": "Показувати деталі"
+                }
+            },
+            "mutual_friend": {
+                "tab_label": "Мережа спільних друзів",
+                "actions": {
+                    "start_fetch": "Почати збір",
+                    "fetch_again": "Зібрати знову",
+                    "stop": "Зупинити",
+                    "stop_fetching": "Зупинити збір",
+                    "go_to_friend": "Перейти до друга"
+                },
+                "status": {
+                    "no_friends_to_process": "У вас немає друзів для обробки",
+                    "loading_cache": "Завантаження кешованих спільних друзів з бази даних"
+                },
+                "progress": {
+                    "friends_processed": "Друзів оброблено",
+                    "no_relationships_discovered": "Зв'язків не виявлено"
+                },
+                "prompt": {
+                    "title": "Мережа спільних друзів",
+                    "message": "Кешованих даних про спільних друзів не знайдено. Почати збір зараз? Це може тривати довго, ми повідомимо вас, коли він завершиться",
+                    "confirm": "Почати збір",
+                    "cancel": "Пізніше"
+                },
+                "enable_sharing_prompt": {
+                    "title": "Увімкнути обмін спільними друзями",
+                    "message": "Обмін спільними друзями наразі вимкнено. Бажаєте увімкнути його зараз?",
+                    "confirm": "Увімкнути",
+                    "cancel": "Скасувати"
+                },
+                "messages": {
+                    "fetch_cancelled_graph_not_updated": "Збір скасовано"
+                },
+                "notifications": {
+                    "start_fetching": "Збір розпочато",
+                    "mutual_friend_graph_ready_title": "Граф мережі спільних друзів",
+                    "mutual_friend_graph_ready_message": "Граф мережі спільних друзів готовий",
+                    "friend_list_changed_fetch_again": "Список друзів змінився. Будь ласка, зберіть мережу спільних друзів знову."
+                },
+                "settings": {
+                    "title": "Налаштування розкладки графа",
+                    "layout_iterations": "Ітерації розкладки",
+                    "layout_iterations_help": "Як довго працює розкладка. Більше значення — стабільніший і впорядкованіший результат.",
+                    "layout_spacing": "Відступи розкладки",
+                    "layout_spacing_help": "Наскільки розсіяний граф. Більше значення — менш тісно.",
+                    "edge_curvature": "Кривизна ребер",
+                    "edge_curvature_help": "Наскільки вигнуті лінії. Більше значення — плавніші лінії в щільних ділянках.",
+                    "community_separation": "Розділення спільнот",
+                    "community_separation_help": "Наскільки далеко відсуваються різні спільноти. Більше значення — чіткіші кластери.",
+                    "reset_defaults": "Скинути до стандартних",
+                    "exclude_friends": "Виключити друзів",
+                    "exclude_friends_placeholder": "Виберіть друзів, яких виключити",
+                    "exclude_friends_help": "Вибраних друзів буде приховано з графа."
+                },
+                "context_menu": {
+                    "view_details": "Докладніше",
+                    "hide_friend": "Сховати з графа",
+                    "refresh_mutuals": "Оновити спільних друзів",
+                    "confirm_non_friend_title": "Не друг",
+                    "confirm_non_friend_message": "Цей гравець більше не ваш друг. Все одно зібрати дані про його спільних друзів?",
+                    "refresh_success": "Дані про спільних друзів оновлено для {name}",
+                    "user_opted_out": "Цей гравець вимкнув обмін спільними друзями. Наявні дані збережено.",
+                    "refresh_error": "Не вдалося оновити дані про спільних друзів",
+                    "last_fetched": "Востаннє зібрано"
+                }
+            },
+            "playtime_trend": {
+                "header": "Щоденний ігровий час",
+                "online_hours": "Години",
+                "daily_avg": "Середнє за день",
+                "total": "Загалом",
+                "waiting": "Дані про ігровий час формуються, поверніться пізніше.",
+                "no_data": "Немає даних про ігровий час"
+            },
+            "hot_worlds": {
+                "tab_label": "Гарячі світи",
+                "header": "Гарячі світи",
+                "refresh": "Оновити",
+                "sorted_by": "Сортування за кількістю унікальних друзів",
+                "tips": {
+                    "description": "Показує, які світи ваші друзі відвідували найчастіше. Рейтинг за кількістю унікальних друзів, що їх відвідали. Тренд порівнює першу та другу половини обраного періоду."
+                },
+                "period": {
+                    "days_7": "Останні 7 д.",
+                    "days_30": "Останні 30 д.",
+                    "days_90": "Останні 90 д."
+                },
+                "trend": {
+                    "rising": "Зростає",
+                    "cooling": "Холоне"
+                },
+                "stats_line": {
+                    "friends": "Друзів: {count}",
+                    "visits": "Візитів: {count}"
+                },
+                "stats": {
+                    "top_friends": "топ друзів",
+                    "total_visits": "усього візитів",
+                    "rising": "зростає",
+                    "cooling": "холоне"
+                },
+                "sheet": {
+                    "friends_who_visited": "Друзі, які відвідали"
+                },
+                "no_friend_data": "Немає даних про візити друзів",
+                "friend_visits": "Візитів: {count}"
+            }
+        },
+        "tools": {
+            "header": "Інструменти",
+            "group": {
+                "header": "Група",
+                "calendar": "Календар",
+                "calendar_description": "Календар подій груп",
+                "blocked_groups": "Заблоковані групи",
+                "blocked_groups_description": "Перегляд і розблокування груп, які ви заблокували",
+                "group_invites": "Запрошення в групи",
+                "group_invites_description": "Прийняття, відхилення або блокування запрошень у групи"
+            },
+            "user": {
+                "discord_names_description": "Знайдіть імена в Discord своїх друзів з VRChat",
+                "export_friend_list_description": "Експорт вашого списку друзів з VRChat",
+                "export_own_avatars_description": "Експорт ваших особистих аватарів з VRChat"
+            },
+            "export": {
+                "header": "Експорт",
+                "export_notes": "Експорт мемо про гравців",
+                "export_notes_description": "Експорт мемо про гравців VRCX у нотатки VRChat",
+                "discord_names": "Імена в Discord",
+                "export_friend_list": "Експорт списку друзів",
+                "export_own_avatars": "Експорт власних аватарів"
+            },
+            "redirect_message": "Ця функція тепер доступна на цій сторінці.",
+            "pictures": {
+                "pictures": {
+                    "vrc_photos": "Фото VRChat",
+                    "steam_screenshots": "Скриншоти Steam",
+                    "vrc_photos_description": "Відкриває теку з фото VRChat",
+                    "steam_screenshots_description": "Відкриває теку зі скриншотами Steam"
+                },
+                "header": "Зображення",
+                "screenshot": "Менеджер скриншотів",
+                "screenshot_description": "Перегляд і керування метаданими скриншотів",
+                "gallery": "Інвентар",
+                "gallery_description": "Керування зображеннями та інвентарем"
+            },
+            "shortcuts": {
+                "header": "Ярлики",
+                "vrcx_data": "Дані VRCX",
+                "vrcx_data_description": "Відкрити теку з даними VRCX",
+                "vrchat_data": "Дані VRChat",
+                "vrchat_data_description": "Відкрити теку з даними VRChat",
+                "crash_dumps": "Дампи збоїв",
+                "crash_dumps_description": "Відкрити теку з дампами збоїв VRChat"
+            },
+            "system_tools": {
+                "header": "Системні інструменти",
+                "vrchat_config": "Конфіг VRChat",
+                "vrchat_config_description": "Відкрити налаштування config.json VRChat",
+                "launch_options_description": "Редагувати параметри запуску VRChat",
+                "registry_backup": "Резервна копія реєстру VRChat",
+                "registry_backup_description": "Створити або відновити резервну копію реєстру VRChat"
+            },
+            "other": {
+                "header": "Інше",
+                "edit_invite_message": "Редагувати повідомлення запрошень",
+                "edit_invite_message_description": "Редагувати повідомлення запрошень та відповідей на них",
+                "moderation_reports": "Мої скарги",
+                "moderation_reports_description": "Перегляд і видалення скарг модерації, які ви надіслали",
+                "info_push": "Info Push",
+                "info_push_description": "Перегляд оголошень і контенту VRChat Info Push"
+            }
+        },
+        "profile": {
+            "profile": {
+                "vrchat_credits": "Кредити VRChat",
+                "refresh": "Натисніть, щоб оновити"
+            },
+            "game_info": {
+                "header": "Інформація про гру",
+                "online_users": "Гравців онлайн",
+                "user_online": "Гравців онлайн: {count}.",
+                "instances_active": "Активних інстансів: {count}.",
+                "refresh": "Натисніть, щоб оновити"
+            },
+            "config_json": "Config JSON",
+            "refresh_tooltip": "Оновити",
+            "clear_results_tooltip": "Очистити результати"
+        },
+        "settings": {
+            "header": "Налаштування",
+            "category": {
+                "general": "Загальні",
+                "appearance": "Вигляд",
+                "notifications": "Сповіщення",
+                "wrist_overlay": "Оверлей на зап'ясті",
+                "discord_presence": "Discord Presence",
+                "pictures": "Зображення",
+                "advanced": "Додатково",
+                "system": "Система",
+                "interface": "Інтерфейс",
+                "social": "Соціальне",
+                "vr": "VR",
+                "media": "Медіа",
+                "integrations": "Інтеграції"
+            },
+            "social": {
+                "interaction": {
+                    "header": "Взаємодія"
+                },
+                "favorites": {
+                    "header": "Обране"
+                },
+                "friend_requests": {
+                    "header": "Запити в друзі"
+                }
+            },
+            "vr": {
+                "vr_core": {
+                    "header": "Основне VR"
+                },
+                "vr_notifications": {
+                    "header": "VR-сповіщення"
+                },
+                "wrist_overlay": {
+                    "header": "Оверлей на зап'ясті"
+                },
+                "vr_extras": {
+                    "header": "VR-додатки"
+                }
+            },
+            "interface": {
+                "navigation": {
+                    "header": "Навігація",
+                    "show_new_dashboard_button": "Показувати кнопку «Новий дашборд»"
+                },
+                "lists_tables": {
+                    "header": "Списки та таблиці"
+                }
+            },
+            "integrations": {
+                "header": "Інтеграції"
+            },
+            "advanced_groups": {
+                "system": {
+                    "header": "Система"
+                },
+                "security": {
+                    "header": "Безпека"
+                },
+                "diagnostics": {
+                    "header": "Діагностика"
+                },
+                "database": {
+                    "header": "База даних"
+                },
+                "nightly": {
+                    "header": "Nightly"
+                }
+            },
+            "general": {
+                "general": {
+                    "header": "Загальні",
+                    "version": "Версія",
+                    "latest_app_version": "Остання версія",
+                    "latest_app_version_refresh": "Натисніть, щоб оновити",
+                    "repository_url": "URL репозиторію",
+                    "support": "Підтримка"
+                },
+                "vrcx_updater": {
+                    "header": "Оновлення VRCX",
+                    "change_build": "Змінити збірку",
+                    "update_action": "Дія при оновленні",
+                    "auto_update_off": "Вимкнено",
+                    "auto_update_notify": "Сповіщати",
+                    "auto_update_download": "Автозавантаження",
+                    "change_log": "Список змін",
+                    "updater_disabled": "Оновлення вимкнено, оновленнями керує ваш менеджер пакетів."
+                },
+                "application": {
+                    "header": "Застосунок",
+                    "startup": "Запускати разом із Windows",
+                    "minimized": "Запускати згорнутим при старті системи",
+                    "tray": "Згортати в трей при закритті",
+                    "disable_gpu_acceleration": "Вимкнути GPU-прискорення",
+                    "disable_gpu_acceleration_tooltip": "Змінюйте цей параметр, лише якщо розумієте, що робите. Може виправити проблеми з інтерфейсом, потребує перезапуску VRCX",
+                    "disable_vr_overlay_gpu_acceleration": "Вимкнути GPU-прискорення VR-оверлея",
+                    "proxy": "Налаштування проксі",
+                    "startup_linux": "Додайте аргумент \"--startup\" до файлу запуску VRCX.desktop, щоб VRCX запускався згорнутим при старті системи"
+                },
+                "favorites": {
+                    "header": "Фільтр обраних груп",
+                    "header_tooltip": "Коли фільтр обраного ввімкнено на сторінках «Стрічка», «Журнал гри», «Сповіщення» або у VR-оверлеї, показуватимуться лише записи з вибраних груп",
+                    "group_placeholder": "Виберіть групи"
+                },
+                "logging": {
+                    "header": "Логування",
+                    "resource_load": "Логувати завантаження рядків/зображень Udon",
+                    "auto_login_delay": "Затримка автовходу",
+                    "auto_login_delay_button": "Задати затримку в секундах"
+                },
+                "automation": {
+                    "auto_change_status": "Автостатус і запрошення",
+                    "auto_change_status_switch": "Автозміна статусу",
+                    "auto_state_change_tooltip": "Налаштування автоматичної зміни статусу та обробки запитів на запрошення",
+                    "auto_state_change_switch_tooltip": "Автоматично змінювати статус, коли в інстансі є інші гравці (Сам / Компанія)",
+                    "alone_condition": "Вважати, що я сам, коли",
+                    "alone": "Немає інших гравців",
+                    "no_friends": "Немає друзів в інстансі",
+                    "alone_status": "Статус «Сам»",
+                    "company_status": "Статус «Компанія»",
+                    "allowed_instance_types": "Діє в типах інстансів",
+                    "instance_type_placeholder": "Усі типи інстансів",
+                    "auto_invite_request_accept": "Автоприйняття запитів на запрошення",
+                    "auto_invite_request_accept_tooltip": "Автоматично приймати запити на запрошення від обраних друзів",
+                    "auto_invite_request_accept_favs": "Усе обране",
+                    "auto_invite_request_accept_favs_hint": "Включає локальні групи обраних друзів",
+                    "auto_invite_request_accept_selected_favs": "Власні групи обраного",
+                    "change_status_description": "Змінити опис статусу",
+                    "status_description_placeholder": "Опис статусу (макс. 32 символи)",
+                    "auto_change_status_groups": "Враховувати лише друзів із",
+                    "auto_change_status_groups_placeholder": "Виберіть групи",
+                    "auto_accept_invite_groups": "Приймати лише від",
+                    "auto_accept_invite_groups_placeholder": "Виберіть групи",
+                    "auto_accept_invite_statuses": "Приймати лише коли мій статус",
+                    "auto_accept_invite_statuses_placeholder": "Усі статуси"
+                },
+                "legal_notice": {
+                    "header": "Юридична інформація",
+                    "info": "VRCX — це допоміжний застосунок для VRChat, який надає інформацію про друзів і дозволяє керувати дружбою. Застосунок використовує неофіційний VRChat API SDK.",
+                    "disclaimer1": "VRCX не схвалений VRChat і не відображає погляди чи думки VRChat або будь-кого, хто офіційно причетний до створення чи керування продуктами VRChat. VRChat і всі пов'язані продукти є торговельними марками або зареєстрованими торговельними марками VRChat Inc. VRChat © VRChat Inc.",
+                    "disclaimer2": "pypy, Natsumi та всі контриб'ютори не несуть відповідальності за будь-які проблеми, спричинені VRCX. Користуйтеся на власний ризик!",
+                    "open_source_software_notice": "Повідомлення про програмне забезпечення з відкритим кодом"
+                },
+                "contributors": {
+                    "header": "Контриб'ютори"
+                },
+                "friend_requests": {
+                    "header": "Автовідхилення спам-запитів у друзі",
+                    "header_tooltip": "Автоматично відхиляти запити від гравців, з якими ви не перетиналися (ніколи не були в одному інстансі)."
+                }
+            },
+            "appearance": {
+                "appearance": {
+                    "header": "Вигляд",
+                    "language": "Мова",
+                    "bio_language": "Цільова мова",
+                    "theme_mode": "Тема",
+                    "font_family": "Шрифт",
+                    "cjk_font_pack": "CJK-шрифт",
+                    "font_family_inter": "Inter (за замовчуванням)",
+                    "font_family_noto_sans": "Noto Sans",
+                    "font_family_geist": "Geist",
+                    "font_family_nunito_sans": "Nunito Sans",
+                    "font_family_ibm_plex_sans": "IBM Plex Sans",
+                    "font_family_jetbrains_mono": "JetBrains Mono",
+                    "font_family_fantasque_sans_mono": "Fantasque Sans Mono",
+                    "font_family_system_ui": "Системний шрифт",
+                    "font_family_custom": "Власний",
+                    "font_family_custom_dialog_title": "Власна родина шрифтів",
+                    "font_family_custom_dialog_description": "Введіть коректне значення CSS font-family",
+                    "font_family_custom_invalid": "Недійсний font-family. Використовуйте назви шрифтів через кому, напр. 'My Font', Arial, sans-serif",
+                    "cjk_font_pack_noto": "Noto Sans CJK",
+                    "cjk_font_pack_pht": "PuHuiTi CJK",
+                    "theme_mode_system": "Системна",
+                    "theme_mode_light": "Світла",
+                    "theme_mode_dark": "Темна",
+                    "theme_mode_midnight": "Опівнічна",
+                    "theme_mode_blue": "Синя",
+                    "theme_mode_darkblue": "Темно-синя",
+                    "theme_mode_amoled": "Amoled",
+                    "theme_mode_darkvanillaold": "Dark Vanilla (стара)",
+                    "theme_mode_darkvanilla": "Dark Vanilla",
+                    "theme_mode_pink": "Рожева",
+                    "theme_mode_material3": "Material 3",
+                    "zoom": "Масштаб",
+                    "vrc_profile_themes": "Теми профілю VRChat",
+                    "show_instance_id": "Показувати ID інстансу",
+                    "show_status_bar": "Показувати рядок стану",
+                    "age_gated_instances": "Показувати інстанси з віковим обмеженням",
+                    "age_gated_instances_description": "Показувати інстанси з віковим обмеженням. Якщо вимкнено, такі інстанси приховуються й відображаються як обмежені.",
+                    "closed_instances": "Показувати закриті інстанси",
+                    "closed_instances_description": "Показувати інстанси, які було закрито. Якщо вимкнено, закриті інстанси приховуються зі списку інстансів світу.",
+                    "nicknames": "Нікнейми з мемо друзів",
+                    "nicknames_description": "Показувати ваші власні імена з мемо після імен гравців.",
+                    "sort_favorite_by": "Сортувати обране за",
+                    "sort_favorite_by_name": "Назвою",
+                    "sort_favorite_by_date": "Датою",
+                    "sort_favorite_by_players": "Гравцями",
+                    "sort_instance_users_by": "Сортувати гравців в інстансі за",
+                    "sort_instance_users_by_time": "Часом в інстансі",
+                    "sort_instance_users_by_alphabet": "Ім'ям",
+                    "table_page_sizes": "Розміри сторінок таблиць",
+                    "table_page_sizes_error": "Розмір сторінки має бути числом від 1 до 1000",
+                    "show_notification_icon_dot": "Крапка сповіщення в треї",
+                    "striped_data_table_mode": "Смугасті таблиці",
+                    "accessible_status_indicators": "Доступні індикатори статусу",
+                    "accessible_status_indicators_description": "Використовувати фігури на додачу до кольору для розрізнення статусів.",
+                    "table_density": "Щільність таблиць",
+                    "table_density_standard": "Стандартна",
+                    "table_density_comfortable": "Комфортна",
+                    "table_density_compact": "Компактна",
+                    "table_entries_settings": "Налаштування записів таблиць",
+                    "table_entries_settings_description": "Керуйте тим, скільки елементів завантажується для списків і пошуку.",
+                    "vrc_profile_backgrounds": "Фони профілів VRChat",
+                    "vrc_profile_backgrounds_description": "Показувати фони профілів у вікні гравця, напр. кольоровий градієнт або фон VRC+.",
+                    "vrc_profile_backgrounds_opacity": "Непрозорість фону профілю",
+                    "vrc_profile_backgrounds_opacity_description": "Вищі значення погіршують читабельність тексту.",
+                    "vrc_profile_cosmetics": "Косметика профілю",
+                    "cosmetics_description": "Показує рамку іконки та ефекти профілю",
+                    "show_cosmetics": "Показувати косметику"
+                },
+                "display": {
+                    "header": "Відображення"
+                },
+                "sorting_tables": {
+                    "header": "Сортування та таблиці"
+                },
+                "timedate": {
+                    "header": "Час/дата",
+                    "time_format": "Формат часу",
+                    "time_format_24": "24-годинний",
+                    "time_format_12": "12-годинний",
+                    "force_iso_date_format": "Примусовий формат дати ISO",
+                    "week_starts_on": "Тиждень починається з",
+                    "week_starts_on_description": "Виберіть перший день тижня. Впливає на календарі, графіки та перегляди активності."
+                },
+                "theme_color": {
+                    "header": "Колір теми",
+                    "default": "Цинковий",
+                    "blue": "Синій",
+                    "green": "Зелений",
+                    "orange": "Помаранчевий",
+                    "red": "Червоний",
+                    "rose": "Трояндовий",
+                    "violet": "Фіолетовий",
+                    "yellow": "Жовтий"
+                },
+                "side_panel": {
+                    "sorting": {
+                        "header": "Порядок сортування",
+                        "alphabetical": "За алфавітом",
+                        "private_to_bottom": "Приватні вниз",
+                        "status": "Статус",
+                        "location": "Локація",
+                        "last_active": "Остання активність",
+                        "last_seen": "Востаннє бачили",
+                        "time_in_instance": "Час в інстансі",
+                        "placeholder": "Порядок сортування"
+                    }
+                },
+                "user_dialog": {
+                    "header": "Вікно гравця",
+                    "vrchat_notes": "Нотатки VRChat",
+                    "vrchat_notes_description": "Показує нотатки, збережені у VRChat",
+                    "vrcx_memos": "Мемо VRCX",
+                    "vrcx_memos_description": "Показує нотатки, збережені локально у VRCX",
+                    "recent_action_cooldown": "Іконка нещодавньої дії",
+                    "recent_action_cooldown_description": "Показувати іконку годинника біля нещодавніх дій із запрошеннями та запитами.",
+                    "recent_action_cooldown_minutes": "Кулдаун (хвилини)"
+                },
+                "user_colors": {
+                    "header": "Кольори гравців",
+                    "random_colors_from_user_id": "Постійні кольори для гравців",
+                    "random_colors_from_user_id_description": "Призначати кожному гравцю постійний колір на основі його ID.",
+                    "trust_levels": {
+                        "visitor": "Visitor",
+                        "new_user": "New User",
+                        "user": "User",
+                        "known_user": "Known User",
+                        "trusted_user": "Trusted User",
+                        "vrchat_team": "VRChat Team",
+                        "nuisance": "Nuisance"
+                    }
+                },
+                "friend_log": {
+                    "header": "Журнал друзів",
+                    "hide_unfriends": "Ховати події видалення з друзів"
+                }
+            },
+            "notifications": {
+                "notifications": {
+                    "header": "Сповіщення",
+                    "busy_warning": "Сповіщення вимкнено, поки ваш статус — «Не турбувати».",
+                    "notification_filter": "Фільтри сповіщень",
+                    "test_notification": "Надіслати тестове сповіщення",
+                    "inventory_bundle_notifications": "Сповіщення про набори інвентаря",
+                    "test_message": "Тестове сповіщення.",
+                    "steamvr_notifications": {
+                        "header": "Сповіщення SteamVR",
+                        "steamvr_overlay": "Оверлей SteamVR",
+                        "overlay_notifications": "Сповіщення в оверлеї",
+                        "notification_position": "Позиція сповіщень",
+                        "xsoverlay_notifications": "Сповіщення XSOverlay",
+                        "wayvr_notifications": "Сповіщення WayVR",
+                        "ovrtoolkit_hud_notifications": "Сповіщення OVR Toolkit HUD",
+                        "ovrtoolkit_wrist_notifications": "Сповіщення OVR Toolkit на зап'ясті",
+                        "user_images": "Показувати іконки гравців",
+                        "user_images_description": "Може вплинути на продуктивність.",
+                        "notification_opacity": "Непрозорість сповіщень",
+                        "notification_timeout": "Тривалість показу сповіщень"
+                    },
+                    "conditions": {
+                        "never": "Ніколи",
+                        "desktop": "Лише на десктопі",
+                        "inside_vr": "У VR",
+                        "outside_vr": "Поза VR",
+                        "inside_vrchat": "У VRChat",
+                        "outside_vrchat": "Поза VRChat",
+                        "always": "Завжди"
+                    },
+                    "desktop_notifications": {
+                        "header": "Сповіщення на десктопі",
+                        "when_to_display": "Показувати сповіщення на десктопі",
+                        "when_to_display_vr": "Показувати VR-сповіщення",
+                        "desktop_notification_while_afk": "Показувати сповіщення під час AFK"
+                    },
+                    "text_to_speech": {
+                        "header": "Синтез мовлення",
+                        "when_to_play": "Озвучення сповіщень",
+                        "tts_voice": "Голос озвучення",
+                        "use_memo_nicknames": "Використовувати нікнейми з мемо для озвучення",
+                        "play": "Відтворити",
+                        "tts_test_placeholder": "Відтворити тестове озвучення"
+                    }
+                }
+            },
+            "wrist_overlay": {
+                "steamvr_wrist_overlay": {
+                    "header": "Оверлей SteamVR на зап'ясті",
+                    "description": "* Запускається автоматично, поки працює VRChat.",
+                    "grip": "Grip: захоплення на Vive або інших контролерах, кнопки X/A на Oculus",
+                    "menu": "Меню: кнопка меню на Vive, B на Index, кнопки Y/B на Oculus",
+                    "steamvr_overlay": "Оверлей SteamVR",
+                    "wrist_feed_overlay": "Оверлей стрічки на зап'ясті",
+                    "hide_private_worlds": "Ховати приватні світи",
+                    "start_overlay_with": "Запускати оверлей через",
+                    "overlay_button": "Кнопка оверлея",
+                    "overlay_button_grip": "Grip",
+                    "overlay_button_menu": "Меню",
+                    "display_overlay_on": "Показувати на",
+                    "display_overlay_on_left": "Лівій руці",
+                    "display_overlay_on_right": "Правій руці",
+                    "display_overlay_on_both": "Обох руках",
+                    "grey_background": "Сірий фон",
+                    "minimal_feed_icons": "Мінімальні іконки стрічки",
+                    "show_vr_devices": "Показувати VR-пристрої",
+                    "show_cpu_usage": "Показувати навантаження CPU",
+                    "show_game_uptime": "Показувати час роботи гри",
+                    "show_pc_uptime": "Показувати час роботи ПК",
+                    "wrist_feed_filters": "Фільтри стрічки на зап'ясті"
+                }
+            },
+            "discord_presence": {
+                "discord_presence": {
+                    "header": "Discord Presence",
+                    "description": "* Активний лише під час перебування в інстансі.",
+                    "enable": "Увімкнути",
+                    "enable_tooltip": "Вимкніть Rich Presence у VRChat, щоб уникнути конфліктів.",
+                    "instance_type_player_count": "Тип інстансу та кількість гравців",
+                    "join_button": "Кнопка «Приєднатись» (лише для публічних)",
+                    "show_details_in_private": "Показувати деталі в приватних інстансах",
+                    "show_images": "Показувати зображення світів",
+                    "show_current_platform": "Показувати поточну платформу",
+                    "world_integration": "Інтеграція зі світами",
+                    "world_integration_tooltip": "Показувати «Дивиться/Слухає» для Popcorn Palace, PyPyDance, VRDancing та LS Media",
+                    "display_world_name_as_discord_status": "Назва світу як активність"
+                },
+                "rpc": {
+                    "vr": "VR",
+                    "desktop": "Десктоп",
+                    "powered_by_vrcx": "На базі VRCX",
+                    "private_world": "Приватний світ"
+                }
+            },
+            "pictures": {
+                "pictures": {
+                    "auto_delete_old_prints": "Автовидалення старих принтів",
+                    "auto_delete_prints_from_vrc": "Автовидалення старих принтів при досягненні ліміту"
+                }
+            },
+            "advanced": {
+                "advanced": {
+                    "launch_options": "Параметри запуску",
+                    "vrc_registry_backup": "Резервна копія реєстру VRC",
+                    "vrchat_settings": {
+                        "header": "VRChat"
+                    },
+                    "vrcx_settings": {
+                        "header": "VRCX"
+                    },
+                    "primary_password": {
+                        "header": "Основний пароль",
+                        "description": "Шифрувати пароль (вимикає автовхід)"
+                    },
+                    "relaunch_vrchat": {
+                        "header": "Автоперезапуск VRChat після збою",
+                        "description": "Автоматично перезапускати гру та повертатися в останній інстанс після збою."
+                    },
+                    "vrchat_quit_fix": {
+                        "header": "Примусове закриття VRChat при виході",
+                        "description": "Завершувати процес VRChat після виходу з гри"
+                    },
+                    "auto_cache_management": {
+                        "header": "Автокеш-менеджмент при виході",
+                        "description": "Автоматично очищати старі дані кешу при закритті VRChat."
+                    },
+                    "self_invite": {
+                        "header": "Дія «Запросити себе»",
+                        "description": "Використовувати запрошення самого себе замість відкриття інстансу у VRChat."
+                    },
+                    "anonymous_error_reporting": {
+                        "header": "Анонімні звіти про помилки (лише Nightly)",
+                        "description": "Допоможіть покращити VRCX, надсилаючи анонімні звіти про збої та помилки. Особисті дані та дані VRChat не збираються.",
+                        "consent_title": "Анонімні звіти про помилки",
+                        "consent_description": "Дозволити анонімні звіти про помилки, щоб допомогти покращити VRCX?\n\n• Лише дані про збої та помилки\n• Без особистих даних і даних VRChat\n• Лише збірки Nightly\n• Можна вимкнути в розширених налаштуваннях",
+                        "enabled_restart_description": "Звіти про помилки увімкнено. Перезапустити VRCX, щоб застосувати зміни?",
+                        "disabled_restart_description": "Звіти про помилки вимкнено. Перезапустити VRCX, щоб застосувати зміни?"
+                    },
+                    "save_instance_prints_to_file": {
+                        "header": "Зберігати принти інстансу у файл",
+                        "header_tooltip": "Потрібен параметр запуску VRChat --enable-sdk-log-levels.",
+                        "description": "Зберігати створені принти в теку зображень VRChat",
+                        "crop": "Автоматично прибирати білу рамку з принтів",
+                        "crop_convert_old": "Бажаєте обрізати всі вже збережені принти?",
+                        "crop_convert_old_confirm": "Так",
+                        "crop_convert_old_cancel": "Ні"
+                    },
+                    "save_instance_stickers_to_file": {
+                        "header": "Зберігати стікери інстансу у файл",
+                        "description": "Зберігати розміщені стікери в теку зображень VRChat"
+                    },
+                    "save_instance_emoji_to_file": {
+                        "header": "Зберігати емодзі інстансу у файл",
+                        "description": "Зберігати створені емодзі в теку зображень VRChat"
+                    },
+                    "delete_all_screenshot_metadata": {
+                        "button": "Видалити метадані скриншотів",
+                        "ask": "Ви впевнені, що хочете видалити всі метадані скриншотів VRC і VRCX із теки зображень VRChat?",
+                        "confirm": "Видалення всіх метаданих скриншотів — дуже руйнівна дія, яку неможливо скасувати! Це стосується всіх принтів, підтек та інших сторонніх зображень у теці зображень VRChat. Якщо ці фото для вас цінні, зробіть резервну копію перед продовженням.",
+                        "confirm_yes": "Так",
+                        "confirm_no": "Ні"
+                    },
+                    "remote_database": {
+                        "header": "Віддалена база аватарів",
+                        "enable": "Увімкнути",
+                        "enable_description": "Дозволяє отримувати дані аватарів із віддаленої бази даних",
+                        "avatar_database_provider": "Провайдер бази аватарів"
+                    },
+                    "youtube_api": {
+                        "header": "YouTube API",
+                        "enable": "Увімкнути",
+                        "youtube_api_key": "Ключ YouTube API",
+                        "enable_tooltip": "Отримує назви відео для gameLog і тривалість для індикатора прогресу в оверлеї"
+                    },
+                    "translation_api": {
+                        "header": "Увімкнути переклад контенту",
+                        "enable": "Увімкнути",
+                        "translation_api_key": "Ключ API перекладу",
+                        "enable_tooltip": "Переклад біо гравців та описів світів на вимогу."
+                    },
+                    "video_progress_pie": {
+                        "header": "Кругова діаграма прогресу відео в оверлеї",
+                        "enable": "Увімкнути",
+                        "enable_tooltip": "Потрібен увімкнений оверлей SteamVR",
+                        "dance_world_only": "Лише підтримувані світи"
+                    },
+                    "launch_commands": {
+                        "header": "Команди запуску (Deep Links)",
+                        "docs": "Документація команд запуску",
+                        "show_confirmation_on_switch_avatar_enable": "Підтверджувати перед зміною аватара",
+                        "show_confirmation_on_switch_avatar_tooltip": "Якщо вимкнено, VRCX не питатиме підтвердження перед зміною аватара.",
+                        "website_userscript": "Юзерскрипт для сайту VRC"
+                    },
+                    "screenshot_helper": {
+                        "header": "Помічник скриншотів",
+                        "description": "Вбудовувати дані світу та інстансу у скриншоти VRChat як метадані PNG.",
+                        "description_tooltip": "Windows не показує текстові метадані PNG нативно. Використовуйте інструменти на кшталт ExifTool або PNG-інспектора для перегляду.",
+                        "enable": "Увімкнути метадані скриншотів",
+                        "modify_filename": "Змінювати ім'я файлу",
+                        "modify_filename_tooltip": "Додаватиме ID світу до імені файлу скриншота на додачу до метаданих файлу.",
+                        "copy_to_clipboard": "Копіювати в буфер обміну"
+                    },
+                    "app_launcher": {
+                        "header": "Запуск застосунків",
+                        "folder": "Тека автозапуску",
+                        "folder_tooltip": "Щоб автоматично запускати застосунки разом із VRChat, помістіть ярлики в цю теку або використайте підтеки для окремих платформ. Ярлики застосунків Steam також підтримуються",
+                        "auto_close": "Автозакриття застосунків",
+                        "run_process_once": "Запускати лише один інстанс застосунку"
+                    },
+                    "cache_debug": {
+                        "header": "Кеш/налагодження VRCX",
+                        "udon_exception_logging": "Логування винятків Udon",
+                        "disable_gamelog": "Вимкнути GameLog",
+                        "disable_gamelog_notice": "(імовірно, щось зламається)",
+                        "user_cache": "Кеш гравців:",
+                        "world_cache": "Кеш світів:",
+                        "avatar_cache": "Кеш аватарів:",
+                        "group_cache": "Кеш груп:",
+                        "avatar_name_cache": "Кеш назв аватарів:",
+                        "instance_cache": "Кеш інстансів:",
+                        "clear_cache": "Очистити кеш",
+                        "refresh_cache": "Оновити кеш",
+                        "auto_clear_cache": "Автоочищення кешу",
+                        "show_console": "Показати консоль"
+                    },
+                    "sqlite_table_size": {
+                        "header": "Розмір таблиць SQLite",
+                        "refresh": "Оновити",
+                        "gps": "GPS:",
+                        "status": "Статус:",
+                        "bio": "Біо:",
+                        "avatar": "Аватар:",
+                        "online_offline": "Онлайн/Офлайн:",
+                        "friend_log_history": "Історія журналу друзів:",
+                        "notification": "Сповіщення:",
+                        "location": "Локація:",
+                        "join_leave": "Вхід/Вихід:",
+                        "portal_spawn": "Поява порталів:",
+                        "video_play": "Відтворення відео:",
+                        "event": "Події:"
+                    },
+                    "database_cleanup": {
+                        "header": "Очищення бази даних",
+                        "auto_cleanup": "Автоочищення даних аватарів старіших за",
+                        "auto_cleanup_description": "Перевіряється раз на тиждень при запуску",
+                        "auto_cleanup_off": "Вимкнено",
+                        "auto_cleanup_30": "30 днів",
+                        "auto_cleanup_90": "90 днів",
+                        "auto_cleanup_180": "6 місяців",
+                        "auto_cleanup_365": "1 рік",
+                        "purge_button": "Очистити дані стрічки аватарів",
+                        "purge": "Очистити",
+                        "purge_older_than": "Видалити дані аватарів старіші за",
+                        "purge_option_180": "6 місяців",
+                        "purge_option_365": "1 рік",
+                        "purge_option_730": "2 роки",
+                        "purge_option_all": "Усі дані",
+                        "purge_confirm_title": "Очищення даних стрічки аватарів",
+                        "purge_confirm_description_1": "Це назавжди видалить записи про зміну аватарів із бази даних і звільнить місце на диску.",
+                        "purge_confirm_description_2": "Цю дію неможливо скасувати!",
+                        "purge_confirm_description_3": "VRCX перезапуститься після завершення операції.",
+                        "purge_confirm_alert": "Наполегливо рекомендуємо створити резервну копію файлу бази даних перед продовженням!",
+                        "purge_confirm_button": "Очистити та перезапустити",
+                        "purge_in_progress": "Очищення даних аватарів...",
+                        "purge_complete": "Дані аватарів успішно очищено. Перезапуск...",
+                        "purge_failed": "Не вдалося очистити: {error}"
+                    },
+                    "user_generated_content": {
+                        "header": "Тека контенту",
+                        "folder": "Відкрити теку",
+                        "description": "Відкрийте або задайте теку для контенту VRChat, як-от принти та стікери.",
+                        "set_folder": "Задати теку",
+                        "reset_override": "Скинути"
+                    }
+                },
+                "photon": {
+                    "header": "Оверлей логування Photon",
+                    "event_hud": {
+                        "header": "HUD подій Photon",
+                        "enable": "Увімкнути",
+                        "enable_tooltip": "Потрібен увімкнений оверлей SteamVR",
+                        "filter": "Фільтр",
+                        "filter_favorites": "Обрані",
+                        "filter_friends": "Друзі",
+                        "filter_everyone": "Усі",
+                        "message_timeout": "Тривалість показу повідомлень",
+                        "type_filter_placeholder": "Фільтр"
+                    },
+                    "timeout_hud": {
+                        "header": "HUD таймауту гравців",
+                        "enable": "Увімкнути",
+                        "enable_tooltip": "Потрібен увімкнений оверлей SteamVR",
+                        "filter": "Фільтр",
+                        "filter_favorites": "Обрані",
+                        "filter_friends": "Друзі",
+                        "filter_everyone": "Усі",
+                        "timeout_threshold": "Поріг таймауту"
+                    }
+                }
+            }
+        }
+    },
+    "dialog": {
+        "alertdialog": {
+            "ok": "OK",
+            "cancel": "Скасувати",
+            "confirm": "Підтвердити"
+        },
+        "prompt": {
+            "input_invalid": "Некоректне значення"
+        },
+        "user": {
+            "status": {
+                "active": "Активний",
+                "offline": "Офлайн",
+                "online": "Онлайн",
+                "join_me": "Join me",
+                "ask_me": "Ask Me",
+                "busy": "Не турбувати"
+            },
+            "previous_display_names": "Попередні відображувані імена:",
+            "pronouns": "Займенники",
+            "tags": {
+                "friend_number": "Номер друга",
+                "vrchat_team": "Команда VRChat",
+                "age_verified": "Вік підтверджено",
+                "trust_level": "Рівень довіри",
+                "account_standing": "Стан акаунта",
+                "mutual_friends": "Спільні друзі",
+                "open_in_discord": "Відкрити в Discord",
+                "discord": "Discord"
+            },
+            "badges": {
+                "assigned": "Призначені",
+                "hidden": "Приховані",
+                "showcased": "Виставлені"
+            },
+            "actions": {
+                "favorites_tooltip": "Обране",
+                "refresh": "Оновити",
+                "share": "Поділитися",
+                "invite": "Запросити",
+                "invite_with_message": "Запросити з повідомленням",
+                "request_invite": "Запит на запрошення",
+                "request_invite_with_message": "Запит на запрошення з повідомленням",
+                "invite_to_group": "Запросити в групу",
+                "group_moderation": "Модерація групи",
+                "send_boop": "Надіслати Буп",
+                "manage_gallery_inventory_icon": "Керування зображеннями VRC+ та інвентарем",
+                "accept_friend_request": "Прийняти запит у друзі",
+                "decline_friend_request": "Відхилити запит у друзі",
+                "cancel_friend_request": "Скасувати запит у друзі",
+                "send_friend_request": "Надіслати запит у друзі",
+                "show_avatar_author": "Показати автора аватара",
+                "show_fallback_avatar": "Показати деталі запасного аватара",
+                "show_previous_instances": "Показати попередні інстанси",
+                "moderation_block": "Заблокувати",
+                "moderation_unblock": "Розблокувати",
+                "moderation_mute": "Вимкнути звук (м'ют)",
+                "moderation_unmute": "Увімкнути звук (зняти м'ют)",
+                "moderation_hide_avatar": "Сховати аватар",
+                "moderation_show_avatar": "Показати аватар",
+                "moderation_enable_avatar_interaction": "Увімкнути взаємодію з аватаром",
+                "moderation_disable_avatar_interaction": "Вимкнути взаємодію з аватаром",
+                "moderation_enable_chatbox": "Зняти м'ют із чатбокса",
+                "moderation_disable_chatbox": "М'ют чатбокса",
+                "edit_status": "Соціальний статус",
+                "edit_language": "Мова",
+                "edit_bio": "Біо",
+                "edit_pronouns": "Займенники",
+                "report_user": "Поскаржитися на гравця",
+                "unfriend": "Видалити з друзів",
+                "unfriend_success_msg": "Видалено з друзів",
+                "logout": "Вийти",
+                "edit_note_memo": "Редагувати нотатку та мемо",
+                "reset_home": "Скинути домашній світ",
+                "edit_profile": "Редагувати профіль"
+            },
+            "info": {
+                "header": "Інфо",
+                "vrcx_info": "Інфо VRCX",
+                "vrcx_info_tooltip": "Інформація VRCX може бути неточною",
+                "launch_invite_tooltip": "Запуск/запрошення",
+                "self_invite_tooltip": "Запросити себе",
+                "open_in_vrchat_tooltip": "Відкрити у VRChat",
+                "refresh_instance_info": "Оновити інформацію про інстанс",
+                "instance_queue": "Черга",
+                "instance_users": "Гравців:",
+                "instance_friends_tooltip": "Друзі в цьому інстансі",
+                "instance_game_version": "Версія гри:",
+                "instance_languages": "Мови:",
+                "last_join": "Останній вхід до інстансу",
+                "instance_queuing_enabled": "Чергу ввімкнено",
+                "instance_disabled_content": "Вимкнений контент:",
+                "instance_creator": "Творець інстансу",
+                "note": "Нотатка",
+                "note_placeholder": "Натисніть, щоб додати нотатку",
+                "memo": "Мемо",
+                "memo_placeholder": "Натисніть, щоб додати мемо",
+                "avatar_info": "Інфо про аватар",
+                "unknown_avatar": "Невідомий аватар",
+                "represented_group": "Представлена група",
+                "bio": "Біо",
+                "last_seen": "Востаннє бачили",
+                "join_count": "Кількість входів",
+                "time_together": "Час разом",
+                "play_time": "Ігровий час",
+                "online_for": "Онлайн",
+                "offline_for": "Офлайн",
+                "last_activity": "Остання активність",
+                "last_login": "Останній вхід",
+                "date_joined": "Дата реєстрації",
+                "friended": "Додано в друзі",
+                "unfriended": "Видалено з друзів",
+                "avatar_cloning": "Клонування аватара",
+                "booping": "Boop",
+                "avatar_cloning_allow": "Дозволено",
+                "avatar_cloning_deny": "Заборонено",
+                "home_location": "Домашній світ",
+                "id": "ID гравця",
+                "id_tooltip": "Копіювати в буфер обміну",
+                "copy_id": "Копіювати ID",
+                "copy_url": "Копіювати URL",
+                "copy_display_name": "Копіювати DisplayName",
+                "icon_hides_avatar": "Коли встановлено іконку гравця, інформація про аватар прихована. Це також ховає зміни аватарів у стрічці",
+                "instance_full": "Заповнений",
+                "instance_closed_at": "Інстанс закрито о",
+                "instance_age_restricted": "Обмежений",
+                "instance_age_restricted_tooltip": "В інстансі з віковим обмеженням",
+                "close_instance": "Закрити інстанс",
+                "rename_instance": "Перейменувати інстанс",
+                "instance_age_gated": "З віковим обмеженням",
+                "instance_role_restricted": "Обмежений за роллю",
+                "instance_calendar_event": "Подія календаря",
+                "open_previous_instance": "Відкрити попередні інстанси",
+                "show_mutual_friends": "Показати спільних друзів",
+                "show_discord_connections": "Показати з'єднання з Discord",
+                "reduced_profile_animations": "Зменшені анімації профілю",
+                "instance_minimum_avatar_performance": "Мінімальна продуктивність аватара",
+                "current_instance": "Поточний інстанс",
+                "economy_creator": "Творець економіки",
+                "instance_announcement_tooltip": "Надіслати оголошення інстансу",
+                "instance_calendar_link_tooltip": "Призначити подію групи"
+            },
+            "groups": {
+                "header": "Групи",
+                "total_count": "Усього: {count}",
+                "search_placeholder": "Пошук груп",
+                "sort_by": "Сортувати за:",
+                "edit_mode": "Режим редагування",
+                "exit_edit_mode": "Вийти з режиму редагування",
+                "create_requires_vrc_plus": "Для створення групи потрібен VRC+",
+                "create_limit_reached": "Ви досягли ліміту власних груп",
+                "hold_shift": "Утримуйте Shift, щоб вийти без підтвердження",
+                "own_groups": "Власні групи",
+                "mutual_groups": "Спільні групи",
+                "groups": "Групи",
+                "sorting": {
+                    "alphabetical": "За алфавітом",
+                    "members": "Учасники",
+                    "in_game": "Порядок у грі"
+                },
+                "leave_group_tooltip": "Вийти з групи"
+            },
+            "worlds": {
+                "header": "Світи",
+                "total_count": "Усього: {count}",
+                "search_placeholder": "Пошук світів",
+                "sort_by": "Сортувати за:",
+                "order_by": "Порядок:",
+                "sorting": {
+                    "name": "Назва",
+                    "updated": "Оновлення",
+                    "created": "Створення",
+                    "favorites": "Обране",
+                    "popularity": "Популярність"
+                },
+                "order": {
+                    "descending": "За спаданням",
+                    "ascending": "За зростанням"
+                }
+            },
+            "favorite_worlds": {
+                "header": "Обрані світи",
+                "search_placeholder": "Пошук світів"
+            },
+            "avatars": {
+                "header": "Аватари",
+                "total_count": "Усього: {count}",
+                "search_placeholder": "Пошук аватарів",
+                "sort_by": "Сортувати за:",
+                "sort_by_name": "Назва",
+                "sort_by_update": "Оновлення",
+                "sort_by_uploaded": "Завантаження",
+                "all": "Усі",
+                "public": "Публічні",
+                "private": "Приватні",
+                "purchased": "Придбані",
+                "group_by": "Групувати за:"
+            },
+            "json": {
+                "header": "JSON"
+            },
+            "mutual_friends": {
+                "header": "Спільні друзі",
+                "search_placeholder": "Пошук друзів",
+                "sorting": {
+                    "alphabetical": "За алфавітом",
+                    "last_active": "Остання активність",
+                    "friend_order": "Порядок друзів"
+                }
+            },
+            "activity": {
+                "header": "Активність",
+                "load": "Завантажити активність",
+                "load_hint": "Завантажувати дані активності з локальної бази даних за потреби.",
+                "refresh_hint": "Оновити дані активності",
+                "total_events": "Подій онлайн: {count}",
+                "times_online": "разів онлайн",
+                "most_active_day": "Найактивніший день:",
+                "most_active_time": "Пікові години:",
+                "period": "Період:",
+                "period_90": "Останні 90 днів",
+                "period_180": "Останні 6 місяців",
+                "period_365": "Останній рік",
+                "period_all": "Увесь час",
+                "building_cache": "Обчислення даних активності за розширені періоди...",
+                "period_30": "Останні 30 днів",
+                "period_7": "Останні 7 днів",
+                "minutes_online": "хв онлайн",
+                "no_data_in_period": "Немає даних активності за вибраний період",
+                "days": {
+                    "mon": "Пн",
+                    "tue": "Вт",
+                    "wed": "Ср",
+                    "thu": "Чт",
+                    "fri": "Пт",
+                    "sat": "Сб",
+                    "sun": "Нд"
+                },
+                "chart_hint": "Сьогодні вже нафармили зелені квадратики?",
+                "chart_hint_reply": "Це не пофармиш.",
+                "overlap": {
+                    "header": "Збіг за онлайном",
+                    "peak_overlap": "Пік збігу:",
+                    "exclude_hours": "Виключити години",
+                    "no_data": "Недостатньо даних для обчислення збігу",
+                    "times_overlap": "разів збігалися",
+                    "minutes_overlap": "хв збігу"
+                },
+                "most_visited_worlds": {
+                    "header": "Найвідвідуваніші світи",
+                    "loading": "Завантаження найвідвідуваніших світів...",
+                    "exclude_home_world": "Виключити домашній світ",
+                    "sort_by_time": "За часом",
+                    "sort_by_count": "За візитами",
+                    "visit_count_label": "Візитів: {count}"
+                },
+                "preparing_data": "Підготовка даних активності...",
+                "preparing_data_hint": "При першому завантаженні це може зайняти трохи часу.",
+                "data_ready": "Дані активності готові"
+            },
+            "note_memo": {
+                "header": "Редагувати нотатку та мемо",
+                "cancel": "Скасувати",
+                "confirm": "Підтвердити"
+            }
+        },
+        "world": {
+            "tags": {
+                "public": "Публічний",
+                "private": "Приватний",
+                "avatar_scaling_disabled": "Масштабування аватара вимкнено",
+                "focus_view_disabled": "Focus View вимкнено",
+                "future_proofing": "Future Proofing",
+                "labs": "Labs",
+                "cache": "Кеш",
+                "content_horror": "Хорор",
+                "content_gore": "Жорстокість (гор)",
+                "content_violence": "Насильство",
+                "content_adult": "Для дорослих",
+                "content_sex": "Сексуальний контент"
+            },
+            "actions": {
+                "delete_cache_tooltip": "Видалити світ із кешу",
+                "favorites_tooltip": "Обране",
+                "refresh": "Оновити",
+                "share": "Поділитися",
+                "new_instance": "Новий інстанс",
+                "new_instance_and_self_invite": "Новий інстанс і запросити себе",
+                "new_instance_and_open_ingame": "Новий інстанс і відкрити в грі",
+                "make_home": "Зробити домашнім",
+                "reset_home": "Скинути домашній світ",
+                "show_previous_instances": "Показати попередні інстанси",
+                "rename": "Перейменувати",
+                "change_description": "Змінити опис",
+                "change_capacity": "Змінити місткість",
+                "change_recommended_capacity": "Змінити рекомендовану місткість",
+                "change_preview": "Змінити прев'ю YouTube",
+                "change_warnings_settings_tags": "Змінити попередження про контент, налаштування та теги",
+                "change_image": "Змінити зображення",
+                "change_allowed_video_player_domains": "Змінити дозволені домени відеоплеєра",
+                "download_package": "Завантажити Unity-пакет",
+                "publish_to_labs": "Опублікувати в Labs. Публікувати можна лише раз на тиждень (7 днів).",
+                "unpublish": "Зняти з публікації",
+                "delete_persistent_data": "Видалити постійні дані",
+                "delete": "Видалити"
+            },
+            "instances": {
+                "header": "Інстанси",
+                "public_count": "Публічних: {count}",
+                "private_count": "Приватних: {count}",
+                "capacity_count": "Місткість: {count} ({max})",
+                "refresh_instance_info": "Оновити інформацію про інстанс",
+                "instance_creator": "Творець інстансу"
+            },
+            "info": {
+                "header": "Інфо",
+                "memo": "Мемо",
+                "memo_placeholder": "Натисніть, щоб додати мемо",
+                "id": "ID світу",
+                "id_tooltip": "Копіювати в буфер обміну",
+                "copy_id": "Копіювати ID",
+                "copy_url": "Копіювати URL",
+                "copy_name": "Копіювати назву",
+                "youtube_preview": "Прев'ю YouTube",
+                "author_tags": "Теги автора",
+                "more_info": "Докладніше",
+                "players": "Гравці",
+                "favorites": "Обране",
+                "visits": "Візити",
+                "capacity": "Місткість",
+                "heat": "Популярність (Heat)",
+                "popularity": "Рейтинг популярності",
+                "created": "Створено",
+                "last_updated": "Останнє оновлення",
+                "publication_date": "Дата публікації",
+                "labs_publication_date": "Дата публікації в Labs",
+                "time_in_labs": "Час у Labs:",
+                "version": "Версія",
+                "platform": "Платформа",
+                "last_visited": "Востаннє відвідано",
+                "visit_count": "Кількість відвідувань",
+                "time_spent": "Проведений час",
+                "description": "Опис"
+            },
+            "store": {
+                "header": "Магазин"
+            },
+            "json": {
+                "header": "JSON"
+            }
+        },
+        "avatar": {
+            "tags": {
+                "public": "Публічний",
+                "private": "Приватний",
+                "fallback": "Запасний",
+                "impostor": "Імпостор",
+                "future_proofing": "Future Proofing",
+                "cache": "Кеш",
+                "content_horror": "Хорор",
+                "content_gore": "Жорстокість (гор)",
+                "content_violence": "Насильство",
+                "content_adult": "Для дорослих",
+                "content_sex": "Сексуальний контент",
+                "performanceRating": {
+                    "Excellent": "Відмінна",
+                    "Good": "Хороша",
+                    "Medium": "Середня",
+                    "Poor": "Погана",
+                    "VeryPoor": "Дуже погана",
+                    "None": "Немає"
+                }
+            },
+            "labels": {
+                "public": "(Публічний)",
+                "private": "(Приватний)"
+            },
+            "actions": {
+                "delete_cache_tooltip": "Видалити аватар із кешу",
+                "favorite_tooltip": "Обране",
+                "refresh": "Оновити",
+                "share": "Поділитися",
+                "select": "Вибрати аватар",
+                "select_fallback": "Вибрати запасний аватар",
+                "block": "Заблокувати аватар",
+                "unblock": "Розблокувати аватар",
+                "make_public": "Зробити публічним",
+                "make_private": "Зробити приватним",
+                "rename": "Перейменувати",
+                "change_description": "Змінити опис",
+                "change_content_tags": "Змінити теги контенту",
+                "change_styles_author_tags": "Змінити стилі та теги автора",
+                "change_image": "Змінити зображення",
+                "download_package": "Завантажити Unity-пакет",
+                "delete": "Видалити",
+                "delete_impostor": "Видалити імпостор",
+                "regenerate_impostor": "Перегенерувати імпостор",
+                "create_impostor": "Створити імпостор",
+                "manage_tags": "Керування тегами",
+                "manage_tags_placeholder": "Додати тег...",
+                "manage_tags_hint": "Натисніть на тег, щоб змінити його колір",
+                "view_details": "Докладніше"
+            },
+            "info": {
+                "header": "Інфо",
+                "name": "Назва",
+                "id": "ID аватара",
+                "id_tooltip": "Копіювати в буфер обміну",
+                "copy_id": "Копіювати ID",
+                "copy_url": "Копіювати URL",
+                "copy_name": "Копіювати назву",
+                "created_at": "Створено",
+                "last_updated": "Останнє оновлення",
+                "version": "Версія",
+                "platform": "Платформа",
+                "pc_performance": "Продуктивність на ПК",
+                "android_performance": "Продуктивність на Android",
+                "ios_performance": "Продуктивність на iOS",
+                "time_spent": "Проведений час",
+                "visibility": "Видимість",
+                "tags": "Теги",
+                "memo": "Мемо",
+                "memo_placeholder": "Натисніть, щоб додати мемо",
+                "listings": "Пропозиції",
+                "purchase_confirm": "Придбати {name} за {price} VRC Credits? VRC Credits купуються за реальні гроші, і цю покупку неможливо скасувати.",
+                "purchase_success": "Покупку успішно здійснено",
+                "gallery": "Галерея",
+                "gallery_move_left": "Перемістити вліво",
+                "gallery_move_right": "Перемістити вправо",
+                "gallery_delete": "Видалити зображення"
+            },
+            "json": {
+                "header": "JSON"
+            }
+        },
+        "group_edit": {
+            "create_header": "Створити групу",
+            "edit_header": "Редагувати групу",
+            "name": "Назва",
+            "short_code": "Короткий код",
+            "description": "Опис",
+            "join_state": "Режим вступу",
+            "privacy": "Приватність",
+            "role_template": "Шаблон ролей",
+            "loading_role_templates": "Завантаження шаблонів ролей...",
+            "language": "Мови",
+            "no_language": "Без мов",
+            "rules": "Правила",
+            "links": "Посилання",
+            "add_link": "Додати посилання",
+            "allow_join_prompt": "Автоматичні запрошення в групу",
+            "allow_join_prompt_description": "Автоматично надсилати запрошення в групу гравцям, які не є учасниками, але провели понад 5 хвилин в інстансах цієї групи або знайшли там друга. Доступно лише для відкритих груп.",
+            "banner": "Банер",
+            "icon": "Іконка",
+            "select_image": "Вибрати зображення",
+            "clear_image": "Прибрати зображення",
+            "saving": "Збереження...",
+            "save": "Зберегти зміни",
+            "create": "Створити групу",
+            "create_success": "Групу створено",
+            "edit_success": "Групу оновлено"
+        },
+        "group_event_edit": {
+            "create_header": "Створити подію групи",
+            "edit_header": "Редагувати подію групи",
+            "title": "Заголовок",
+            "description": "Опис",
+            "starts_at": "Початок",
+            "ends_at": "Завершення",
+            "invalid_date_range": "Подія має закінчитися після її початку.",
+            "start_in_past": "Подія має початися в майбутньому.",
+            "access_type": "Доступ",
+            "access_group": "Група",
+            "access_public": "Публічний",
+            "category": "Категорія",
+            "categories": {
+                "arts": "Мистецтво",
+                "avatars": "Аватари",
+                "dance": "Танці",
+                "education": "Освіта",
+                "exploration": "Дослідження",
+                "film_media": "Кіно та медіа",
+                "gaming": "Ігри",
+                "hangout": "Тусовка",
+                "music": "Музика",
+                "other": "Інше",
+                "performance": "Виступи",
+                "roleplaying": "Рольові ігри",
+                "wellness": "Велнес"
+            },
+            "tags": "Теги",
+            "tags_help": "Розділіть до п'яти тегів комами. Кожен тег може містити до 100 символів.",
+            "languages": "Мови",
+            "platforms": "Платформи",
+            "platform_values": {
+                "android": "Android",
+                "ios": "iOS",
+                "standalonewindows": "Windows"
+            },
+            "none_selected": "Нічого не вибрано",
+            "roles": "Ролі",
+            "all_members": "Усі учасники",
+            "image": "Зображення",
+            "select_image": "Вибрати зображення",
+            "clear_image": "Прибрати зображення",
+            "host_early_join": "Ранній вхід для організатора (хвилини)",
+            "guest_early_join": "Ранній вхід для гостей (хвилини)",
+            "close_after_end": "Закрити після завершення (хвилини)",
+            "send_notification": "Надіслати сповіщення про створення",
+            "repeat": "Повторення",
+            "repeat_every": "Повторювати кожні",
+            "repeat_values": {
+                "none": "Ніколи",
+                "weekly": "Тиждень",
+                "monthly": "Місяць",
+                "yearly": "Рік"
+            },
+            "weekly_pattern": "Шаблон тижневого повторення",
+            "weekly_pattern_values": {
+                "every_week": "Щотижня",
+                "weekdays": "Щобудня",
+                "weekend": "Щовихідних",
+                "custom": "Власні дні"
+            },
+            "custom_days": "Виберіть дні",
+            "weekday_values": {
+                "MO": "Понеділок",
+                "TU": "Вівторок",
+                "WE": "Середа",
+                "TH": "Четвер",
+                "FR": "П'ятниця",
+                "SA": "Субота",
+                "SU": "Неділя"
+            },
+            "ends": "Завершується",
+            "ends_values": {
+                "never": "Ніколи",
+                "after_occurrences": "Після кількості повторень",
+                "after_date": "У вказану дату"
+            },
+            "occurrence_count": "Кількість повторень",
+            "end_date": "Дата завершення",
+            "saving": "Збереження...",
+            "save": "Зберегти зміни",
+            "edit_parent": "Редагувати батьківську подію",
+            "create": "Створити подію",
+            "create_success": "Подію групи створено",
+            "edit_success": "Подію групи оновлено",
+            "delete_success": "Подію групи видалено",
+            "save_error": "Не вдалося зберегти подію групи",
+            "delete_error": "Не вдалося видалити подію групи",
+            "load_error": "Не вдалося завантажити подію групи",
+            "delete_confirm": "Ви впевнені, що хочете видалити цю подію групи?"
+        },
+        "group": {
+            "tags": {
+                "verified": "Верифіковано",
+                "public": "Публічна",
+                "private": "Приватна",
+                "open": "Відкрита",
+                "request": "За запитом",
+                "invite": "За запрошенням",
+                "closed": "Закрита",
+                "joined": "Ви в групі",
+                "banned": "Заблоковано",
+                "everyone": "Усі",
+                "visible": "Видимо",
+                "friends": "Друзі",
+                "hidden": "Приховано",
+                "subscribed": "Підписано"
+            },
+            "actions": {
+                "represent_tooltip": "Обрати для представлення",
+                "unrepresent_tooltip": "Припинити представлення",
+                "cancel_join_request_tooltip": "Скасувати запит на вступ",
+                "pending_request_tooltip": "Запрошення очікує",
+                "request_join_tooltip": "Подати запит на вступ",
+                "invite_required_tooltip": "Потрібне запрошення",
+                "join_group_tooltip": "Вступити в групу",
+                "refresh": "Оновити",
+                "share": "Поділитися",
+                "unsubscribe": "Відписатися від оголошень",
+                "subscribe": "Підписатися на оголошення",
+                "invite_to_group": "Запросити в групу",
+                "manage_selected": "Керування вибраними групами",
+                "select_all": "Вибрати все",
+                "deselect_all": "Зняти вибір",
+                "visibility_everyone": "Видимість: усі",
+                "visibility_friends": "Видимість: друзі",
+                "visibility_hidden": "Видимість: прихована",
+                "create_post": "Створити допис",
+                "create_event": "Створити подію",
+                "moderation_tools": "Інструменти модерації",
+                "manage_roles": "Керування ролями",
+                "view_roles": "Переглянути ролі",
+                "transfer": "Передати групу",
+                "delete": "Видалити групу",
+                "leave": "Вийти з групи",
+                "block": "Заблокувати групу",
+                "unblock": "Розблокувати групу",
+                "unsubscribe_event": "Відписатися від оголошень про події",
+                "subscribe_event": "Підписатися на оголошення про події"
+            },
+            "info": {
+                "header": "Інфо",
+                "instances": "Інстанси",
+                "announcement": "Оголошення",
+                "rules": "Правила",
+                "members": "Учасники",
+                "online_members": "Учасники онлайн",
+                "created": "Створено",
+                "links": "Посилання",
+                "url": "URL групи",
+                "id": "ID групи",
+                "copy_id": "Копіювати ID",
+                "copy_url": "Копіювати URL",
+                "joined_at": "Дата вступу",
+                "roles": "Ролі",
+                "role": "Роль:",
+                "role_description": "Опис:",
+                "role_updated_at": "Оновлено:",
+                "role_created_at": "Створено:",
+                "role_permissions": "Дозволи:",
+                "last_visited": "Востаннє відвідано",
+                "past_events": "Минулі події",
+                "upcoming_events": "Майбутні події",
+                "member_info": "Інфо про учасника",
+                "visibility": "Видимість",
+                "short_code": "Короткий код"
+            },
+            "posts": {
+                "header": "Дописи",
+                "visibility": "Видимість:",
+                "edited_at": "Відредаговано:",
+                "created_at": "Створено:",
+                "edit_tooltip": "Редагувати допис",
+                "delete_tooltip": "Видалити допис",
+                "edited_by": "Редагував(-ла):",
+                "search_placeholder": "Пошук",
+                "posts_count": "Дописів: "
+            },
+            "members": {
+                "header": "Учасники",
+                "all_members": "Усі учасники",
+                "friends_only": "Лише друзі",
+                "load_more": "Завантажити ще...",
+                "sort_by": "Сортувати за:",
+                "sorting": {
+                    "joined_at_asc": "Датою вступу (за зростанням)",
+                    "joined_at_desc": "Датою вступу (за спаданням)"
+                },
+                "filter": "Фільтр:",
+                "filters": {
+                    "everyone": "Усі",
+                    "users_with_no_role": "Гравці без ролі"
+                },
+                "unsubscribed_announcements": "Відписані від оголошень",
+                "visibility": "Видимість:",
+                "representing": "Представляє групу",
+                "manager_notes": "Нотатки менеджера:",
+                "search": "Пошук"
+            },
+            "transfer": {
+                "header": "Передати групу",
+                "description": "Знайдіть учасника, якому передати власність на {groupName}.",
+                "search_placeholder": "Пошук учасників групи",
+                "search_minimum": "Введіть щонайменше {count} символів для пошуку.",
+                "no_results": "Відповідних учасників не знайдено.",
+                "cancel": "Скасувати",
+                "submit": "Передати групу",
+                "requirements_title": "Неможливо передати групу",
+                "requirements_description": "{displayName} не відповідає всім вимогам для володіння цією групою. Невиконані вимоги: {requirements}.",
+                "requirements": {
+                    "group_not_monetized": "група не повинна бути монетизованою",
+                    "has_vrc_plus": "у учасника має бути VRC+",
+                    "has_verified_email": "у учасника має бути підтверджена електронна пошта",
+                    "can_own_more_groups": "учасник не повинен перевищувати максимальну кількість груп, якими може володіти",
+                    "is_group_member": "гравець має бути учасником групи"
+                },
+                "confirm_title": "Передача власності на групу",
+                "confirm_description": "Надіслати запит на передачу власності на {groupName} гравцю {displayName}?"
+            },
+            "gallery": {
+                "header": "Фото",
+                "create_tooltip": "Створити галерею",
+                "delete_tooltip": "Видалити галерею",
+                "edit_tooltip": "Редагувати галерею",
+                "add_image_tooltip": "Додати зображення",
+                "delete_image_tooltip": "Видалити зображення",
+                "name": "Назва",
+                "description": "Опис",
+                "members_only": "Лише для учасників",
+                "visibility_public": "Видима всім",
+                "visibility_members": "Видима учасникам групи",
+                "visibility_roles": "Видима певним ролям",
+                "save": "Зберегти",
+                "create": "Створити",
+                "saved": "Галерею оновлено",
+                "created": "Галерею створено",
+                "deleted": "Галерею видалено",
+                "image_added": "Зображення додано",
+                "image_pending_approval": "Зображення надіслано на схвалення",
+                "image_deleted": "Зображення видалено"
+            },
+            "store": {
+                "header": "Магазин"
+            },
+            "json": {
+                "header": "JSON"
+            }
+        },
+        "favorite": {
+            "header": "Виберіть групу",
+            "vrchat_favorites": "Обране VRChat",
+            "local_favorites": "Локальне обране",
+            "local_avatar_favorites": "Локальне обране (потрібен VRC+)"
+        },
+        "social_status": {
+            "header": "Соціальний статус",
+            "history": "Історія",
+            "status_placeholder": "Статус",
+            "update": "Оновити",
+            "presets": "Пресети",
+            "save_preset": "Зберегти як пресет",
+            "preset_saved": "Пресет збережено",
+            "preset_exists": "Такий пресет уже існує",
+            "preset_limit": "Максимум пресетів: {max}"
+        },
+        "language": {
+            "header": "Мова",
+            "select_language": "Виберіть мову"
+        },
+        "bio": {
+            "header": "Біо",
+            "bio_placeholder": "Введіть біо",
+            "add_link": "Додати посилання",
+            "update": "Оновити"
+        },
+        "pronouns": {
+            "header": "Займенники",
+            "pronouns_placeholder": "Введіть ваші займенники",
+            "update": "Оновити"
+        },
+        "edit_profile": {
+            "banner": "Банер",
+            "banner_color": "Колір банера",
+            "banner_type_color": "Колір",
+            "banner_type_avatar_banner": "Зображення аватара",
+            "banner_type_custom_image": "Власне зображення",
+            "button": "Кнопка",
+            "icon": "Іконка",
+            "subtext": "Підпис",
+            "profile_theme": "Тема профілю",
+            "theme_name_placeholder": "Назва теми",
+            "create_theme": "Створити тему",
+            "delete_theme": "Видалити тему",
+            "profile_background": "Фон профілю",
+            "profile_background_type_none": "Немає",
+            "profile_background_type_image": "Зображення",
+            "profile_background_type_gradient": "Градієнт",
+            "gradient_top": "Верх градієнта",
+            "gradient_bottom": "Низ градієнта",
+            "nameplate_effect": "Ефект неймплейта",
+            "profile_effect": "Ефект профілю",
+            "icon_frame": "Рамка іконки",
+            "select_effect": "Виберіть ефект"
+        },
+        "new_instance": {
+            "header": "Новий інстанс",
+            "access_type": "Тип доступу",
+            "access_type_public": "Публічний",
+            "access_type_group": "Група",
+            "access_type_friend_plus": "Друзі+",
+            "access_type_friend": "Друзі",
+            "access_type_invite_plus": "За запрошенням+",
+            "access_type_invite": "За запрошенням",
+            "group_access_type": "Доступ до групи",
+            "group_access_type_members": "Учасники",
+            "group_access_type_plus": "Плюс",
+            "group_access_type_public": "Публічний",
+            "region": "Регіон",
+            "region_usw": "Захід США",
+            "region_use": "Схід США",
+            "region_eu": "Європа",
+            "region_jp": "Японія",
+            "content_emoji": "Емодзі",
+            "content_stickers": "Стікери",
+            "content_pedestals": "П'єдестали для шерингу",
+            "content_prints": "Принти",
+            "content_drones": "Дрони",
+            "content_items": "Предмети",
+            "content_third_person": "Вигляд від третьої особи",
+            "content_prop_movement": "Пропи, що змінюють рух гравця",
+            "world_id": "ID світу",
+            "instance_id": "ID інстансу",
+            "instance_id_placeholder": "Випадковий",
+            "instance_creator": "Творець інстансу",
+            "instance_creator_placeholder": "Виберіть гравця",
+            "group_placeholder": "Виберіть групу",
+            "role_placeholder": "Виберіть ролі",
+            "group_id": "Група",
+            "location": "Локація",
+            "url": "URL",
+            "copy_url": "Копіювати URL",
+            "self_invite": "Запросити себе",
+            "invite": "Запросити",
+            "launch": "Запустити",
+            "create_instance": "Створити інстанс",
+            "queueEnabled": "Черга",
+            "ageGate": "Вікове обмеження",
+            "normal": "Звичайний",
+            "group": "Група",
+            "legacy": "Legacy",
+            "roles": "Ролі",
+            "open_ingame": "Відкрити в грі",
+            "display_name": "Відображуване ім'я (VRC+)",
+            "minimum_avatar_performance": "Мінімальна продуктивність аватара"
+        },
+        "launch": {
+            "header": "Запуск",
+            "url": "URL",
+            "short_url": "Коротке посилання",
+            "short_url_notice": "Короткі посилання діють обмежений час",
+            "location": "Локація",
+            "copy_tooltip": "Копіювати в буфер обміну",
+            "start_as_desktop": "Запустити (десктоп)",
+            "invite": "Запросити",
+            "launch": "Запустити (VR)",
+            "open_ingame": "Відкрити в грі",
+            "self_invite": "Запросити себе",
+            "game_running_warning": "Ви впевнені, що хочете запустити другий інстанс VRChat?",
+            "confirm_yes": "Так",
+            "confirm_no": "Ні"
+        },
+        "launch_options": {
+            "header": "Параметри запуску VRChat",
+            "description": "Ці параметри призначені лише для досвідчених користувачів.",
+            "example": "(щоб змінити макс. FPS: напр. --fps=<N>)",
+            "path_override": "Власний шлях до VRChat",
+            "vrchat_docs": "Документація VRChat",
+            "unity_manual": "Посібник Unity",
+            "save": "Зберегти"
+        },
+        "invite": {
+            "header": "Запросити",
+            "select_placeholder": "Виберіть друзів",
+            "add_self": "Додати себе",
+            "add_friends_in_instance": "Додати друзів в інстансі",
+            "add_favorite_friends": "Додати обраних друзів",
+            "invite_with_message": "Запросити з повідомленням",
+            "invite": "Запросити",
+            "friends_in_instance": "Друзі в інстансі"
+        },
+        "invite_to_group": {
+            "header": "Запросити в групу",
+            "description": "Не спамте запрошеннями, інакше вас обмежать за частотою запитів.",
+            "choose_group_placeholder": "Виберіть групу",
+            "groups_with_invite_permission": "Групи з правом запрошення",
+            "choose_friends_placeholder": "Виберіть друзів",
+            "selected_users": "Вибрані гравці",
+            "invite": "Запросити"
+        },
+        "invite_message": {
+            "header": "Надіслати повідомлення із запрошенням",
+            "confirmation": "Ви впевнені, що хочете надіслати?",
+            "select_image": "Вибрати зображення",
+            "clear_selected_image": "Прибрати вибране зображення",
+            "cancel": "Скасувати",
+            "refresh": "Оновити",
+            "confirm": "Підтвердити"
+        },
+        "invite_request_message": {
+            "header": "Надіслати повідомлення із запитом на запрошення",
+            "confirmation": "Ви впевнені, що хочете надіслати?",
+            "cancel": "Скасувати",
+            "refresh": "Оновити"
+        },
+        "invite_response_message": {
+            "header": "Надіслати повідомлення з відповіддю на запрошення",
+            "confirmation": "Ви впевнені, що хочете надіслати?",
+            "cancel": "Скасувати",
+            "refresh": "Оновити",
+            "confirm": "Підтвердити"
+        },
+        "invite_request_response_message": {
+            "header": "Надіслати повідомлення з відповіддю на запит на запрошення",
+            "cancel": "Скасувати",
+            "refresh": "Оновити"
+        },
+        "edit_invite_messages": {
+            "header": "Редагувати повідомлення запрошень",
+            "invite_message_tab": "Запрошення",
+            "invite_request_tab": "Запит на запрошення",
+            "invite_request_response_tab": "Відповідь на запит на запрошення",
+            "invite_response_tab": "Відповідь на запрошення"
+        },
+        "edit_invite_message": {
+            "header": "Редагувати повідомлення запрошення",
+            "description": "Перерва між редагуваннями — 1 година.",
+            "cancel": "Скасувати",
+            "save": "Зберегти"
+        },
+        "edit_send_invite_message": {
+            "header": "Редагувати та надіслати повідомлення запрошення",
+            "description": "Перерва між редагуваннями — 1 година.",
+            "cancel": "Скасувати",
+            "send": "Надіслати"
+        },
+        "edit_send_invite_response_message": {
+            "header": "Редагувати та надіслати повідомлення з відповіддю на запрошення",
+            "description": "Перерва між редагуваннями — 1 година.",
+            "cancel": "Скасувати",
+            "send": "Надіслати"
+        },
+        "world_export": {
+            "header": "Експорт обраних світів",
+            "all_favorites": "Усе обране",
+            "select_group": "Виберіть групу"
+        },
+        "world_import": {
+            "header": "Імпорт обраних світів",
+            "description": "Введіть список ID світів",
+            "process_list": "Обробити список",
+            "process_progress": "Прогрес:",
+            "select_vrchat_group_placeholder": "Виберіть групу",
+            "select_local_group_placeholder": "Виберіть групу",
+            "import": "Імпортувати світи",
+            "cancel": "Скасувати",
+            "import_progress": "Прогрес імпорту:",
+            "clear_table": "Очистити таблицю",
+            "errors": "Помилки:",
+            "clear_errors": "Очистити помилки"
+        },
+        "avatar_export": {
+            "header": "Експорт обраних аватарів",
+            "all_favorites": "Усе обране",
+            "select_group": "Виберіть групу"
+        },
+        "avatar_import": {
+            "header": "Імпорт обраних аватарів",
+            "description": "Введіть список ID аватарів",
+            "process_list": "Обробити список",
+            "process_progress": "Прогрес:",
+            "select_group_placeholder": "Виберіть групу",
+            "import": "Імпортувати аватари",
+            "cancel": "Скасувати",
+            "import_progress": "Прогрес імпорту:",
+            "clear_table": "Очистити таблицю",
+            "errors": "Помилки:",
+            "clear_errors": "Очистити помилки"
+        },
+        "friend_export": {
+            "header": "Експорт обраних друзів",
+            "all_favorites": "Усе обране",
+            "select_group": "Виберіть групу"
+        },
+        "friend_import": {
+            "header": "Імпорт обраних друзів",
+            "description": "Введіть список ID гравців",
+            "process_list": "Обробити список",
+            "process_progress": "Прогрес:",
+            "select_group_placeholder": "Виберіть групу",
+            "import": "Імпортувати друзів",
+            "cancel": "Скасувати",
+            "import_progress": "Прогрес імпорту:",
+            "clear_table": "Очистити таблицю",
+            "errors": "Помилки:",
+            "clear_errors": "Очистити помилки"
+        },
+        "export_friends_list": {
+            "header": "Експорт списку друзів",
+            "csv": "CSV",
+            "json": "JSON"
+        },
+        "export_own_avatars": {
+            "header": "Експорт власних аватарів",
+            "public_only": "Лише публічні аватари"
+        },
+        "discord_names": {
+            "header": "Імена в Discord",
+            "description": "Натисніть «Завантажити відсутні записи» на вкладці «Список друзів», щоб шукати по всьому списку друзів"
+        },
+        "note_export": {
+            "header": "Експорт нотаток",
+            "description1": "Цей процес експортує всі ваші мемо VRCX та імпортує їх у нотатки VRChat.",
+            "description2": "Зверніть увагу на такі обмеження:",
+            "description3": "- Ендпоінт API має ліміт запитів, через що потрібна велика затримка між запитами.",
+            "description4": "- Ліміт 256 символів на нотатку.",
+            "description5": "- Фільтр нецензурної лексики (без жартів).",
+            "description6": "- Без нових рядків (їх буде замінено пробілом).",
+            "description7": "- Це перезапише наявні нотатки VRChat для цих гравців.",
+            "description8": "- Будь-які зміни тут не вплинуть на мемо VRCX, але вплинуть на нотатки VRChat після експорту.",
+            "refresh": "Оновити",
+            "export": "Експортувати",
+            "cancel": "Скасувати",
+            "progress": "Прогрес:",
+            "errors": "Помилки:",
+            "clear_errors": "Очистити помилки"
+        },
+        "gallery_icons": {
+            "header": "Керування фото, іконками, емодзі та стікерами",
+            "recommended_image_size": "Рекомендований розмір зображення",
+            "gallery": "Фото",
+            "icons": "Іконки",
+            "emojis": "Емодзі",
+            "stickers": "Стікери",
+            "prints": "Принти",
+            "inventory": "Інвентар",
+            "all_types": "Усі типи",
+            "refresh": "Оновити",
+            "upload": "Завантажити",
+            "clear": "Очистити",
+            "emoji_animation_styles": "Стилі анімації",
+            "emoji_animation_type": "Анімоване емодзі",
+            "emoji_animation_fps": "FPS:",
+            "emoji_animation_frame_count": "Кількість кадрів:",
+            "emoji_loop_pingpong": "Зациклити «туди-сюди»",
+            "flipbook_info": "Виберіть PNG-спрайтшит 1024x1024 для анімованого емодзі. Доступні розміри сітки кадрів: 4, 16 або 64 (макс. FPS 64, макс. кадрів 64)",
+            "note": "Нотатка",
+            "crop_print_border": "Обрізати рамку принта",
+            "consume_bundle": "Використати",
+            "item": "Предмет",
+            "sticker": "Стікер",
+            "drone_skin": "Скін дрона",
+            "emoji": "Емодзі",
+            "redeem": "Активувати",
+            "create_animated_emoji": "Генератор анімованих емодзі"
+        },
+        "image_crop": {
+            "rotate_left": "Повернути вліво",
+            "rotate_right": "Повернути вправо",
+            "flip_h": "Віддзеркалити горизонтально",
+            "flip_v": "Віддзеркалити вертикально",
+            "zoom_in": "Збільшити",
+            "zoom_out": "Зменшити",
+            "mode_fit": "Перейти в режим підгонки",
+            "mode_free": "Перейти у вільний режим",
+            "reset": "Скинути",
+            "auto_resize": "Автопідгонка зображення"
+        },
+        "gallery_select": {
+            "header": "Вибрати зображення",
+            "gallery": "Фото",
+            "none": "Немає",
+            "refresh": "Оновити",
+            "upload": "Завантажити"
+        },
+        "change_content_image": {
+            "avatar": "Змінити зображення аватара",
+            "world": "Змінити зображення світу",
+            "description": "Рекомендований розмір зображення: 1200x900 пікс. (4:3)",
+            "upload": "Завантажити зображення",
+            "confirm": "Підтвердити обрізання",
+            "cancel": "Скасувати"
+        },
+        "screenshot_metadata": {
+            "header": "Метадані скриншота",
+            "drag": "Перетягніть сюди скриншот",
+            "browse": "Огляд",
+            "last_screenshot": "Останній скриншот",
+            "copy_image": "Копіювати зображення",
+            "open_folder": "Відкрити теку",
+            "delete_metadata": "Видалити метадані",
+            "upload": "Завантажити",
+            "search_placeholder": "Пошук",
+            "search_type_placeholder": "Тип пошуку",
+            "search_types": {
+                "player_name": "Ім'я гравця",
+                "player_id": "ID гравця",
+                "world_name": "Назва світу",
+                "world_id": "ID світу"
+            },
+            "no_results": "Нічого не знайдено",
+            "invalid_file": "Вибрано недійсний файл. Виберіть коректний скриншот VRChat.",
+            "section_location": "Локація",
+            "section_players": "Гравці",
+            "section_file_info": "Інформація про файл",
+            "section_note": "Нотатка",
+            "section_actions": "Дії",
+            "col_date": "Дата",
+            "col_world": "Світ",
+            "col_players": "Гравці",
+            "col_resolution": "Роздільна здатність",
+            "col_match": "Збіг",
+            "col_author": "Автор",
+            "back_to_results": "Назад до результатів: {count}",
+            "result_count": "Результатів: {count}"
+        },
+        "set_world_tags": {
+            "header": "Задати теги світу",
+            "avatar_scaling_disabled": "Вимкнути масштабування аватара",
+            "focus_view_disabled": "Вимкнути режим фокусу",
+            "enable_debugging": "Увімкнути налагодження світу для інших",
+            "author_tags": "Теги автора (через кому)",
+            "content_tags": "Теги попереджень про контент",
+            "content_horror": "Хорор",
+            "content_gore": "Жорстокість (гор)",
+            "content_violence": "Насильство",
+            "content_adult": "Для дорослих",
+            "content_sex": "Сексуальний контент",
+            "default_content_settings": "Налаштування контенту за замовчуванням",
+            "cancel": "Скасувати",
+            "save": "Зберегти"
+        },
+        "set_avatar_tags": {
+            "header": "Задати теги аватара",
+            "content_horror": "Хорор",
+            "content_gore": "Жорстокість (гор)",
+            "content_violence": "Насильство",
+            "content_adult": "Для дорослих",
+            "content_sex": "Сексуальний контент",
+            "custom_tags_placeholder": "Власні теги",
+            "select_all": "Вибрати все",
+            "select_none": "Зняти вибір",
+            "cancel": "Скасувати",
+            "save": "Зберегти"
+        },
+        "set_avatar_styles": {
+            "header": "Задати стилі аватара",
+            "primary_style": "Основний стиль",
+            "secondary_style": "Додатковий стиль",
+            "select_style": "Виберіть стиль",
+            "save_success": "Стилі аватара успішно змінено",
+            "save_failed": "Не вдалося змінити стилі аватара",
+            "cancel": "Скасувати",
+            "save": "Зберегти"
+        },
+        "allowed_video_player_domains": {
+            "header": "Дозволені домени відеоплеєра",
+            "add_domain": "Додати домен",
+            "save": "Зберегти"
+        },
+        "config_json": {
+            "header": "Config JSON VRChat",
+            "description1": "Ці параметри призначені лише для досвідчених користувачів.",
+            "description2": "Залиште поле порожнім, щоб скинути до стандартного значення. Для застосування налаштувань потрібен перезапуск гри.",
+            "cache_size": "Розмір кешу:",
+            "refresh": "Оновити",
+            "delete_all_cache": "Видалити весь кеш",
+            "delete_cache": "Видалити кеш",
+            "delete_old_cache": "Видалити старі версії з кешу",
+            "sweep_cache": "Очистити кеш від застарілого",
+            "max_cache_size": "Макс. розмір кешу [ГБ] (мін. 30)",
+            "cache_expiry_delay": "Термін дії кешу [днів] (мін. 30)",
+            "cache_directory": "Власне розташування теки кешу",
+            "picture_directory": "Власне розташування теки зображень",
+            "fpv_steadycam_fov": "FOV стедікаму від першої особи",
+            "camera_resolution": "Роздільна здатність камери",
+            "spout_resolution": "Роздільна здатність Spout",
+            "screenshot_resolution": "Роздільна здатність скриншотів",
+            "picture_sort_by_date": "Сортувати зображення по теках за датою",
+            "disable_discord_presence": "Вимкнути Discord Rich Presence",
+            "vrchat_docs": "Документація VRChat",
+            "cancel": "Скасувати",
+            "save": "Зберегти"
+        },
+        "youtube_api": {
+            "header": "YouTube API",
+            "description": "Введіть ваш ключ YouTube API (необов'язково)",
+            "placeholder": "Ключ YouTube API",
+            "guide": "Інструкція",
+            "save": "Зберегти"
+        },
+        "translation_api": {
+            "header": "API перекладу біо",
+            "description": "Введіть ваш ключ Google Translate API",
+            "guide": "Інструкція",
+            "mode": "Провайдер",
+            "mode_google": "Google Translate",
+            "mode_openai": "OpenAI",
+            "test": "Перевірити",
+            "save": "Зберегти",
+            "msg_fill_endpoint_model": "Будь ласка, вкажіть ендпоінт і модель",
+            "msg_settings_saved": "Налаштування перекладу збережено",
+            "msg_test_success": "Перевірка успішна",
+            "msg_test_failed": "Перевірка не вдалася",
+            "openai": {
+                "endpoint": "Ендпоінт API",
+                "api_key": "Ключ API (необов'язково)",
+                "model": "Назва моделі",
+                "prompt_optional": "Промпт (необов'язково)"
+            },
+            "fetch_models": "Отримати моделі",
+            "fetching_models": "Отримання...",
+            "msg_endpoint_required": "Спершу вкажіть ендпоінт",
+            "msg_models_fetched": "Знайдено моделей: {count}",
+            "msg_no_models_found": "Моделей не знайдено"
+        },
+        "notification_position": {
+            "header": "Позиція сповіщень",
+            "description": "Виберіть позицію сповіщень.",
+            "ok": "OK"
+        },
+        "shared_feed_filters": {
+            "notification": "Фільтри сповіщень",
+            "wrist": "Фільтри стрічки на зап'ясті",
+            "on": "Увімк.",
+            "off": "Вимк.",
+            "favorite": "Обрані",
+            "friends": "Друзі",
+            "everyone": "Усі",
+            "reset": "Скинути",
+            "close": "Закрити"
+        },
+        "previous_instances": {
+            "header": "Попередні інстанси",
+            "info": "Інформація про попередній інстанс",
+            "search_placeholder": "Пошук",
+            "table_view": "Табличний вигляд",
+            "chart_view": "Вигляд діаграми"
+        },
+        "group_member_moderation": {
+            "header": "Модерація учасників групи",
+            "filter_type": "Тип фільтра",
+            "members": "Учасники",
+            "bans": "Баны",
+            "invites": "Запрошення",
+            "logs": "Логи",
+            "sent_invites": "Надіслані запрошення",
+            "join_requests": "Запити на вступ",
+            "blocked_requests": "Заблоковані запити",
+            "notes": "Нотатка менеджера",
+            "note_placeholder": "Натисніть, щоб додати нотатку",
+            "actions": "Дії",
+            "kick": "Кікнути",
+            "ban": "Забанити",
+            "unban": "Розбанити",
+            "save_note": "Зберегти нотатку",
+            "delete_sent_invite": "Видалити надіслане запрошення",
+            "delete_blocked_requests": "Видалити заблоковані запити",
+            "accept_join_requests": "Прийняти запити на вступ",
+            "reject_join_requests": "Відхилити запити на вступ",
+            "block_join_requests": "Заблокувати запити на вступ",
+            "progress": "Прогрес:",
+            "display_name": "Відображуване ім'я",
+            "visibility": "Видимість",
+            "avatar": "Аватар",
+            "joined_at": "Дата вступу",
+            "banned_at": "Дата бану",
+            "created_at": "Дата створення",
+            "type": "Тип",
+            "description": "Опис",
+            "data": "Дані",
+            "note": "Нотатка",
+            "roles": "Ролі",
+            "user_id": "ID гравця",
+            "user_id_placeholder": "Введіть ID гравця (гравців)",
+            "select_user": "Вибрати гравця",
+            "selected_users": "Вибрані гравці",
+            "select_all": "Вибрати все",
+            "user_isnt_in_group": "Гравця немає в групі",
+            "cancel": "Скасувати",
+            "choose_roles_placeholder": "Виберіть ролі",
+            "selected_roles": "Вибрані ролі",
+            "remove_roles": "Прибрати ролі",
+            "add_roles": "Додати ролі",
+            "export_logs": "Експорт логів",
+            "export_bans": "Експорт банів",
+            "import_bans": "Імпорт банів",
+            "import_bans_description": "Вставте CSV або ID гравців нижче. Стовпець userId буде автоматично визначено із заголовків CSV, або ж буде витягнуто всі ID вигляду usr_.",
+            "import_bans_warning": "Не імпортуйте забагато за раз. Це чутлива операція, за якою активно стежить і яку суворо контролює офіційна команда, ризикуєте на власний розсуд!",
+            "import_bans_placeholder": "Вставте CSV або ID гравців сюди (по одному в рядок)\nusr_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "import_bans_start": "Імпортувати та забанити",
+            "import_bans_clear_errors": "Очистити помилки"
+        },
+        "group_roles": {
+            "header": "Керування ролями групи",
+            "view_header": "Ролі групи",
+            "new_role": "Нова роль",
+            "no_roles": "Ролей не знайдено",
+            "no_role_selected": "Виберіть роль для редагування або створіть нову",
+            "name": "Назва",
+            "description": "Опис",
+            "self_assignable": "Самопризначення",
+            "self_assignable_description": "Учасники можуть призначати цю роль собі самостійно",
+            "added_on_join": "Додається при вступі",
+            "added_on_join_description": "Автоматично видається новим учасникам",
+            "requires_two_factor": "Потрібна 2FA",
+            "requires_two_factor_description": "Для використання цієї ролі учасникам потрібна ввімкнена двофакторна автентифікація",
+            "requires_purchase": "Потрібна покупка",
+            "requires_purchase_description": "Щоб отримати цю роль, учасники мають придбати підписку на групу",
+            "permissions": "Дозволи",
+            "management_permissions": "Дозволи керування",
+            "default_role": "Стандартна роль",
+            "management_roles": "Ролі керування",
+            "member_roles": "Ролі учасників",
+            "assigned_to_you": "Призначені вам",
+            "delete": "Видалити роль",
+            "delete_confirm": "Видалити роль «{name}»? Цю дію неможливо скасувати.",
+            "cancel": "Скасувати",
+            "create": "Створити роль",
+            "save": "Зберегти",
+            "saved": "Роль збережено",
+            "save_failed": "Не вдалося зберегти роль",
+            "deleted": "Роль видалено",
+            "delete_failed": "Не вдалося видалити роль",
+            "add_self": "Додати собі",
+            "remove_self": "Прибрати в себе",
+            "self_role_added": "Роль додано",
+            "self_role_removed": "Роль прибрано",
+            "self_role_failed": "Не вдалося оновити роль"
+        },
+        "group_post_edit": {
+            "header": "Створити/редагувати допис",
+            "title": "Заголовок",
+            "message": "Повідомлення",
+            "send_notification": "Надіслати сповіщення",
+            "post_visibility": "Видимість допису",
+            "visibility_public": "Публічний",
+            "visibility_group": "Група",
+            "image": "Зображення",
+            "cancel": "Скасувати",
+            "create_post": "Створити допис",
+            "edit_post": "Редагувати допис"
+        },
+        "group_calendar": {
+            "header": "Календар групи",
+            "list_view": "Вигляд списком",
+            "calendar_view": "Вигляд календаря",
+            "no_events": "Подій не знайдено",
+            "search_placeholder": "Пошук груп або подій...",
+            "search_no_matching": "Відповідних подій не знайдено",
+            "search_no_this_month": "Цього місяця подій немає",
+            "event_card": {
+                "category": "Категорія",
+                "interested_user": "Зацікавлені гравці",
+                "close_time": "Закрити інстанс після завершення",
+                "created": "Дата створення",
+                "description": "Опис",
+                "export_to_calendar": "Експорт у календар",
+                "download_ics": "Завантажити .ics",
+                "copied_event_link": "URL події календаря скопійовано в буфер обміну",
+                "repeating_event_tooltip": "Повторювана подія"
+            },
+            "featured_events": "Рекомендовані події"
+        },
+        "moderate_group": {
+            "header": "Модерація учасника групи",
+            "choose_group_placeholder": "Виберіть групу",
+            "moderation_tools": "Інструменти модерації"
+        },
+        "moderation_report": {
+            "header": "Скарга",
+            "category": "Категорія",
+            "reason": "Причина",
+            "description": "Опис",
+            "description_placeholder": "Опишіть, що сталося (необов'язково)",
+            "no_options": "Для цього контенту немає доступних варіантів скарги.",
+            "cancel": "Скасувати",
+            "submit": "Надіслати скаргу",
+            "success": "Скаргу надіслано"
+        },
+        "moderation_reports": {
+            "header": "Мої скарги",
+            "filter_type": "Тип",
+            "all": "Усі",
+            "load_more": "Завантажити ще",
+            "delete_confirm": "Видалити цю скаргу?"
+        },
+        "info_push": {
+            "header": "Info Push",
+            "categories": {
+                "help-article": "Довідкові статті",
+                "quick-menu-banner": "Банери швидкого меню",
+                "loading-screen-banners": "Екрани завантаження"
+            },
+            "end_date": "Завершується",
+            "open_link": "Відкрити посилання",
+            "open_video": "Відкрити відео",
+            "domains": "Домени",
+            "disabled": "Вимкнено",
+            "expired": "Закінчився термін",
+            "scheduled": "Заплановано"
+        },
+        "blocked_groups": {
+            "header": "Заблоковані групи",
+            "unblock": "Розблокувати"
+        },
+        "group_invites": {
+            "header": "Запрошення в групи",
+            "invited": "Запрошено",
+            "requested": "Запит надіслано",
+            "cancel_request": "Скасувати запит на вступ",
+            "accept": "Прийняти",
+            "decline": "Відхилити",
+            "block": "Заблокувати",
+            "accepted": "Ви вступили в групу"
+        },
+        "inventory_bundle_dialog": {
+            "header": "Нові набори інвентаря",
+            "description": "У вашому інвентарі є невідкриті набори.",
+            "dont_show_again": "Більше не показувати",
+            "close": "Закрити",
+            "consume": "Використати",
+            "consume_success": "Набір використано"
+        },
+        "boop_dialog": {
+            "header": "Boop",
+            "emoji_manager": "Менеджер емодзі",
+            "select_default_emoji": "Виберіть емодзі за замовчуванням",
+            "default_emojis": "Емодзі за замовчуванням",
+            "cancel": "Скасувати",
+            "send": "Надіслати"
+        },
+        "chatbox_blacklist": {
+            "header": "Чорний список чатбокса",
+            "keyword_blacklist": "Чорний список ключових слів",
+            "user_blacklist": "Чорний список гравців",
+            "add_item": "Додати елемент"
+        },
+        "vrcx_updater": {
+            "header": "Оновлення VRCX",
+            "latest_version": "У вас остання версія VRCX.",
+            "ready_for_update": "Готово до встановлення, перезапустіть VRCX, щоб застосувати.",
+            "branch_stable": "Стабільна",
+            "branch_nightly": "Nightly",
+            "nightly_title": "Збірки Nightly",
+            "nightly_notice": "Збірки Nightly призначені для тестування. Для стабільності використовуйте стабільну збірку.",
+            "release": "Реліз",
+            "download": "Завантажити",
+            "install": "Встановити",
+            "cancel": "Скасувати"
+        },
+        "change_log": {
+            "header": "Список змін",
+            "description": "Розгляньте можливість пожертви на підтримку подальшої розробки VRCX",
+            "close": "Закрити",
+            "donate": "Підтримати",
+            "github": "GitHub"
+        },
+        "open_source": {
+            "header": "Повідомлення про програмне забезпечення з відкритим кодом",
+            "description": "VRCX базується на програмному забезпеченні з відкритим кодом. Це стало можливим завдяки їхньому внеску.",
+            "loading": "Завантаження згенерованих повідомлень про сторонні компоненти...",
+            "unavailable": "У цій збірці немає згенерованого маніфесту сторонніх повідомлень. Запустіть production-збірку, щоб згенерувати його заново.",
+            "search_placeholder": "Пошук пакетів, версій або ліцензій",
+            "notice_location_prefix": "Розташування повного файлу повідомлень у теці застосунку:",
+            "open_project": "Відкрити проєкт",
+            "open_license_url": "Відкрити URL ліцензії",
+            "notice_unavailable": "Для цього запису не згенеровано локального тексту ліцензії. Відкрийте повний файл повідомлень і перегляньте цей компонент перед релізом.",
+            "select_package": "Виберіть пакет, щоб переглянути деталі.",
+            "review_required": "Потрібна перевірка",
+            "no_results": "Відповідних пакетів не знайдено.",
+            "no_version": "Немає метаданих версії"
+        },
+        "primary_password": {
+            "header": "Потрібен основний пароль",
+            "password_placeholder": "Введіть новий пароль",
+            "re_input_placeholder": "Введіть пароль ще раз",
+            "ok": "OK"
+        },
+        "registry_backup": {
+            "header": "Резервна копія налаштувань реєстру VRC",
+            "backup": "Створити копію",
+            "restore": "Відновити",
+            "save_to_file": "Зберегти у файл",
+            "delete": "Видалити",
+            "restore_from_file": "Відновити з файлу",
+            "reset": "Скинути",
+            "name": "Назва",
+            "date": "Дата",
+            "action": "Дія",
+            "auto_backup": "Автокопіювання кожні 3 дні (видаляється через 2 тижні)",
+            "ask_to_restore": "Пропонувати відновлення, коли налаштувань реєстру VRC немає",
+            "restore_prompt": "VRCX помітив, що автокопіювання налаштувань реєстру VRChat увімкнено, але на цьому комп'ютері їх немає. Якщо хочете відновити з резервної копії, зробіть це тут."
+        },
+        "avatar_database_provider": {
+            "header": "Провайдер бази аватарів",
+            "add_provider": "Додати провайдера"
+        },
+        "instance_announcement": {
+            "header": "Надіслати оголошення інстансу",
+            "message": "Повідомлення",
+            "image": "Зображення (необов'язково)",
+            "clear_image": "Прибрати зображення",
+            "select_image": "Вибрати зображення",
+            "sending": "Надсилання...",
+            "send": "Надіслати оголошення"
+        },
+        "instance_calendar_link": {
+            "header": "Призначити подію групи",
+            "event": "Подія",
+            "no_events": "Немає подій, що починаються протягом наступних 6 годин або закінчились протягом останніх 6 годин",
+            "assign": "Призначити",
+            "remove": "Прибрати зв'язок",
+            "saving": "Збереження..."
+        }
+    },
+    "confirm": {
+        "title": "Підтвердження",
+        "confirm_button": "Підтвердити",
+        "cancel_button": "Скасувати",
+        "message": "Продовжити {command}?",
+        "logout": "Продовжити? Вихід з акаунта",
+        "unfriend": "Продовжити? Видалення з друзів",
+        "clear_avatar_history": "Продовжити? Очищення історії аватарів",
+        "select_avatar": "Продовжити? Вибір аватара",
+        "invite": "Продовжити? Запрошення",
+        "invite_group": "Продовжити? Запрошення гравців у групу",
+        "delete_log": "Продовжити? Видалення запису журналу",
+        "accept_friend_request": "Продовжити? Прийняття запиту в друзі",
+        "send_invite": "Продовжити? Надіслати запрошення",
+        "decline_type": "Продовжити? Відхилення {type}",
+        "delete_type": "Продовжити? {type}",
+        "command_question": "Ви впевнені, що хочете {command}?",
+        "command_question_toggle": "Ви впевнені, що хочете {action} {command}?",
+        "enable_action": "увімкнути",
+        "disable_action": "вимкнути",
+        "clear_group": "Продовжити? Очистити групу",
+        "delete_group": "Продовжити? Видалити групу {name}",
+        "delete_post": "Ви впевнені, що хочете видалити цей допис?",
+        "delete_gallery_image": "Ви впевнені, що хочете видалити це зображення?",
+        "delete_gallery": "Ви впевнені, що хочете видалити галерею {name} і всі її зображення?",
+        "block_group": "Ви впевнені, що хочете заблокувати цю групу?",
+        "unblock_group": "Ви впевнені, що хочете розблокувати цю групу?",
+        "leave_group": "Ви впевнені, що хочете вийти з цієї групи?",
+        "disable_gamelog": "Продовжити? Вимкнути GameLog",
+        "restore_backup": "Продовжити? Відновити резервну копію",
+        "delete_vrc_registry": "Продовжити? Видалити налаштування реєстру VRC",
+        "clear_cache": "Продовжити? Очистити весь кеш VRChat",
+        "close_instance": "Продовжити? Закрити інстанс, ніхто не зможе приєднатися",
+        "bulk_unfavorite": "Ви впевнені, що хочете прибрати з обраного ({count})?\nЦю дію неможливо скасувати.",
+        "bulk_unfavorite_title": "Видалити з обраного ({count})?",
+        "restart_required_title": "Потрібен перезапуск",
+        "restart_now": "Перезапустити зараз",
+        "restart_later": "Пізніше"
+    },
+    "prompt": {
+        "totp": {
+            "header": "Двофакторна автентифікація",
+            "description": "Введіть числовий код із вашого застосунку-автентифікатора",
+            "use_otp": "Використати OTP",
+            "verify": "Підтвердити",
+            "input_error": "Недійсний код"
+        },
+        "otp": {
+            "header": "Двофакторна автентифікація",
+            "description": "Введіть один зі збережених кодів відновлення",
+            "use_totp": "Використати TOTP",
+            "verify": "Підтвердити",
+            "input_error": "Недійсний код"
+        },
+        "email_otp": {
+            "header": "Двофакторна автентифікація",
+            "description": "Введіть числовий код, надісланий на вашу пошту",
+            "resend": "Надіслати лист ще раз",
+            "verify": "Підтвердити",
+            "input_error": "Недійсний код"
+        },
+        "primary_password": {
+            "header": "Потрібен основний пароль",
+            "description": "Будь ласка, введіть ваш основний пароль."
+        },
+        "change_favorite_group_name": {
+            "header": "Змінити назву групи",
+            "description": "Введіть нову назву",
+            "cancel": "Скасувати",
+            "change": "Змінити",
+            "input_error": "Потрібна назва",
+            "message": {
+                "success": "Групу перейменовано"
+            }
+        },
+        "direct_access_omni": {
+            "header": "Прямий доступ",
+            "description": "Введіть URL або ID (UUID) гравця/світу/інстансу/аватара/групи",
+            "cancel": "Скасувати",
+            "ok": "OK",
+            "input_error": "Потрібен URL/ID",
+            "message": {
+                "error": "Недійсний URL/ID",
+                "opened_from_clipboard": "Відкрито з буфера обміну"
+            }
+        },
+        "notification_timeout": {
+            "header": "Тривалість показу сповіщень",
+            "description": "Введіть кількість секунд",
+            "cancel": "Скасувати",
+            "ok": "OK",
+            "input_error": "Потрібне коректне число"
+        },
+        "overlay_message_timeout": {
+            "header": "Тривалість показу повідомлень оверлея",
+            "description": "Введіть кількість секунд",
+            "cancel": "Скасувати",
+            "ok": "OK",
+            "input_error": "Потрібне коректне число"
+        },
+        "rename_instance": {
+            "header": "Перейменувати інстанс",
+            "description": "Введіть назву інстансу, залиште порожнім, щоб очистити"
+        },
+        "rename_avatar": {
+            "header": "Перейменувати аватар",
+            "description": "Введіть назву аватара",
+            "cancel": "Скасувати",
+            "ok": "OK",
+            "input_error": "Потрібна коректна назва",
+            "message": {
+                "success": "Аватар перейменовано"
+            }
+        },
+        "change_avatar_description": {
+            "header": "Змінити опис",
+            "description": "Введіть опис аватара",
+            "cancel": "Скасувати",
+            "ok": "OK",
+            "input_error": "Потрібен коректний опис",
+            "message": {
+                "success": "Опис аватара змінено"
+            }
+        },
+        "rename_world": {
+            "header": "Перейменувати світ",
+            "description": "Введіть назву світу",
+            "cancel": "Скасувати",
+            "ok": "OK",
+            "input_error": "Потрібна коректна назва",
+            "message": {
+                "success": "Світ перейменовано"
+            }
+        },
+        "change_world_description": {
+            "header": "Змінити опис",
+            "description": "Введіть опис світу",
+            "cancel": "Скасувати",
+            "ok": "OK",
+            "input_error": "Потрібен коректний опис",
+            "message": {
+                "success": "Опис світу змінено"
+            }
+        },
+        "change_world_capacity": {
+            "header": "Змінити місткість",
+            "description": "Введіть максимальну місткість світу (жорсткий ліміт), макс.: 80",
+            "cancel": "Скасувати",
+            "ok": "OK",
+            "input_error": "Потрібне коректне число",
+            "message": {
+                "success": "Місткість світу змінено"
+            }
+        },
+        "change_world_recommended_capacity": {
+            "header": "Змінити рекомендовану місткість",
+            "description": "Введіть рекомендовану місткість світу (м'який ліміт)",
+            "input_error": "Потрібне коректне число",
+            "message": {
+                "success": "Рекомендовану місткість світу змінено"
+            }
+        },
+        "change_world_preview": {
+            "header": "Змінити прев'ю YouTube",
+            "description": "Введіть прев'ю YouTube для світу",
+            "cancel": "Скасувати",
+            "ok": "OK",
+            "input_error": "Потрібен коректний URL YouTube",
+            "message": {
+                "error": "Недійсний URL YouTube",
+                "success": "Прев'ю YouTube для світу змінено"
+            }
+        },
+        "photon_lobby_timeout": {
+            "header": "Поріг таймауту гравця",
+            "description": "Введіть кількість секунд (за замовчуванням: 3)",
+            "cancel": "Скасувати",
+            "ok": "OK",
+            "input_error": "Потрібне коректне число"
+        },
+        "auto_clear_cache": {
+            "header": "Таймер очищення кешу VRCX",
+            "description": "Введіть кількість годин, великі значення можуть впливати на використання RAM і продуктивність (за замовчуванням: 24, вимкнено: 0)",
+            "cancel": "Скасувати",
+            "ok": "OK",
+            "input_error": "Потрібне коректне число"
+        },
+        "new_local_favorite_group": {
+            "message": {
+                "error": "Група з назвою {name} уже існує"
+            }
+        },
+        "local_favorite_group_rename": {
+            "header": "Перейменувати групу",
+            "description": "Введіть назву групи обраних світів",
+            "cancel": "Скасувати",
+            "save": "Зберегти",
+            "input_error": "Потрібна назва",
+            "message": {
+                "error": "Група з назвою {name} уже існує"
+            }
+        },
+        "backup_name": {
+            "header": "Назва резервної копії",
+            "description": "Введіть назву для резервної копії",
+            "input_error": "Потрібна назва"
+        },
+        "auto_login_delay": {
+            "header": "Затримка автовходу",
+            "description": "Введіть затримку в секундах (0 — вимкнути, макс. 10).",
+            "input_error": "Введіть ціле число від 0 до 10."
+        },
+        "proxy_settings": {
+            "header": "Налаштування проксі",
+            "description": "Введіть адресу та порт проксі-сервера",
+            "close": "Закрити",
+            "restart": "Перезапустити"
+        },
+        "redeem": {
+            "header": "Активація коду",
+            "description": "Введіть код для активації",
+            "cancel": "Скасувати",
+            "redeem": "Активувати",
+            "success": "Код успішно активовано"
+        },
+        "table_entries_settings": {
+            "header": "Налаштування записів таблиць",
+            "description": "Обмежте кількість записів, які VRCX завантажує з бази даних в інтерфейс. Велике число може впливати на використання RAM і продуктивність",
+            "table_max_entries": "Макс. записів у таблиці",
+            "table_max_entries_error": "Введіть число від {min} до {max}.",
+            "table_max_entries_hint": "Допустимий діапазон: {min} – {max}.",
+            "search_limit_returns": "Ліміт результатів пошуку",
+            "search_limit_returns_error": "Введіть число від {min} до {max}.",
+            "search_limit_returns_hint": "Допустимий діапазон: {min} – {max}.",
+            "search_limit_returns_warning": "Надто великі значення можуть призвести до зависання застосунку.",
+            "cancel": "Скасувати",
+            "save": "Зберегти"
+        }
+    },
+    "message": {
+        "auto_login_delay_countdown": "Автовхід через {seconds} с...",
+        "auth": {
+            "login_greeting": "Привіт, {name}!",
+            "logout_greeting": "До зустрічі, {name}!",
+            "email_2fa_resent": "Лист із кодом 2FA надіслано повторно.",
+            "email_2fa_no_credentials": "Неможливо надіслати лист із кодом 2FA без збережених даних для входу. Будь ласка, увійдіть знову.",
+            "incorrect_primary_password": "Неправильний основний пароль",
+            "saved_credentials_invalid": "Збережені дані для входу більше недійсні.",
+            "account_removed": "Акаунт видалено.",
+            "auto_login_success": "Автоматичний вхід виконано.",
+            "auto_login_failed": "Не вдалося виконати автоматичний вхід.",
+            "offline": "Ви офлайн.",
+            "login_network_issue_hint_title": "Проблеми з входом?",
+            "login_network_issue_hint_description": "Кілька останніх спроб входу не вдалися. Натисніть «Відкрити», щоб переглянути інструкцію з усунення проблем.",
+            "check_your_email": "Перевірте пошту: там лист від VRChat"
+        },
+        "vrcx_updater": {
+            "failed": "Не вдалося перевірити оновлення: {message}",
+            "failed_install": "Не вдалося встановити оновлення",
+            "checking_hash": "Перевірка хешу..."
+        },
+        "api_handler": {
+            "avatar_private_or_deleted": "Аватар приватний або видалений"
+        },
+        "badge": {
+            "updated": "Значок оновлено"
+        },
+        "instance": {
+            "closed": "Інстанс закрито",
+            "renamed": "Інстанс перейменовано",
+            "removed_form_queue": "Інстанс {worldName} прибрано з черги",
+            "not_allowed": "Вам заборонено доступ до цього інстансу",
+            "create_failed": "Не вдалося створити інстанс",
+            "announcement_sent": "Оголошення інстансу надіслано"
+        },
+        "avatar": {
+            "selected": "Аватар змінено",
+            "already_selected": "Аватар уже вибрано",
+            "change_moderation_failed": "Не вдалося змінити модерацію аватара",
+            "fallback_changed": "Запасний аватар змінено",
+            "blocked": "Аватар заблоковано",
+            "updated_public": "Аватар зроблено публічним",
+            "updated_private": "Аватар зроблено приватним",
+            "deleted": "Аватар видалено",
+            "impostor_deleted": "Імпостор видалено",
+            "impostor_queued": "Імпостор поставлено в чергу на створення",
+            "impostor_regenerated": "Імпостор видалено та поставлено в чергу на створення"
+        },
+        "avatar_lookup": {
+            "not_found": "Аватар не знайдено у провайдерах пошуку",
+            "failed": "Не вдалося знайти аватар",
+            "private_or_not_found": "Аватар гравця приватний або не знайдений у провайдерах пошуку",
+            "loading": "Пошук аватара у провайдерах пошуку"
+        },
+        "database": {
+            "upgrade_complete": "Оновлення бази даних завершено",
+            "upgrade_in_progress_title": "Триває оновлення бази даних",
+            "upgrade_in_progress_description": "Оновлення бази даних з версії {from} до {to}. Будь ласка, не закривайте VRCX.",
+            "upgrade_in_progress_initializing": "Ініціалізація оновлення бази даних. Будь ласка, не закривайте VRCX.",
+            "upgrade_in_progress_wait": "Дії користувача тимчасово заблоковано до завершення оновлення.",
+            "upgrade_failed_title": "Не вдалося оновити базу даних",
+            "upgrade_failed_description": "Не вдалося оновити базу даних. Подробиці дивіться в консолі.",
+            "disk_space": "Будь ласка, звільніть трохи місця на диску.",
+            "disk_error": "Будь ласка, перевірте диск на помилки."
+        },
+        "file": {
+            "not_image": "Файл не є зображенням",
+            "too_large": "Розмір файлу завеликий",
+            "folder_opened": "Теку відкрито",
+            "folder_missing": "Теки не існує"
+        },
+        "group": {
+            "load_failed": "Не вдалося завантажити групу",
+            "joined": "Ви вступили в групу",
+            "join_request_sent": "Запит на вступ до групи надіслано",
+            "visibility_updated": "Видимість групи оновлено",
+            "subscription_updated": "Підписку на групу оновлено",
+            "event_announcement_updated": "Оголошення подій групи оновлено",
+            "transfer_requested": "Запит на передачу групи надіслано"
+        },
+        "invite": {
+            "self_sent": "Запрошення собі надіслано",
+            "sent": "Запрошення надіслано",
+            "message_update_failed": "VRChat API не оновив повідомлення, спробуйте ще раз",
+            "message_updated": "Повідомлення запрошення оновлено",
+            "response_sent": "Повідомлення з відповіддю на запрошення надіслано",
+            "response_photo_sent": "Фото-повідомлення з відповіддю на запрошення надіслано"
+        },
+        "launch": {
+            "invalid_path": "Недійсний шлях, потрібно вказати теку VRChat або launch.exe"
+        },
+        "gallery": {
+            "uploaded": "Зображення в галерею завантажено",
+            "failed": "Не вдалося завантажити зображення в галерею",
+            "profile_pic_changed": "Зображення профілю змінено",
+            "profile_icon_changed": "Іконку профілю змінено"
+        },
+        "upload": {
+            "loading": "Завантаження",
+            "success": "Завантаження завершено",
+            "error": "Не вдалося завантажити"
+        },
+        "world": {
+            "load_failed": "Не вдалося завантажити світ",
+            "home_updated": "Домашній світ оновлено",
+            "home_reset": "Домашній світ скинуто",
+            "published": "Світ опубліковано",
+            "unpublished": "Світ знято з публікації",
+            "persistent_data_deleted": "Постійні дані видалено",
+            "deleted": "Світ видалено",
+            "id_copied": "ID світу скопійовано в буфер обміну",
+            "url_copied": "URL світу скопійовано в буфер обміну",
+            "name_copied": "Назву світу скопійовано в буфер обміну"
+        },
+        "user": {
+            "moderated": "Гравця відмодеровано",
+            "load_failed": "Не вдалося завантажити гравця",
+            "id_copied": "ID гравця скопійовано в буфер обміну",
+            "url_copied": "URL гравця скопійовано в буфер обміну",
+            "display_name_copied": "DisplayName гравця скопійовано в буфер обміну",
+            "home_reset": "Домашній світ скинуто",
+            "request_invite_sent": "Запит на запрошення надіслано",
+            "no_fallback_avatar": "Запасний аватар не задано"
+        },
+        "friend": {
+            "load_failed": "Не вдалося завантажити список друзів, вихід з акаунта"
+        },
+        "vrcplus": {
+            "required": "Потрібен VRC+"
+        },
+        "screenshot_metadata": {
+            "deleted": "Метадані скриншота видалено",
+            "delete_failed": "Не вдалося видалити метадані скриншота"
+        },
+        "crash": {
+            "vrcx_reload": "VRCX було перезавантажено для стабільності"
+        },
+        "image": {
+            "downloading": "Завантаження зображення...",
+            "copied_to_clipboard": "Зображення скопійовано в буфер обміну"
+        },
+        "registry": {
+            "restored": "Налаштування реєстру VRC відновлено",
+            "deleted": "Налаштування реєстру VRC видалено",
+            "restore_failed": "Не вдалося відновити налаштування реєстру VRC, повну помилку дивіться в консолі: {error}",
+            "invalid_json": "Недійсний JSON"
+        },
+        "cache": {
+            "deleted": "Увесь кеш VRChat видалено",
+            "delete_error": "Помилка видалення кешу VRChat: {error}",
+            "invalid_config": "Недійсний JSON у config.json"
+        },
+        "gamelog": {
+            "vrchat_must_be_closed": "Щоб змінити цей параметр, потрібно закрити VRChat"
+        },
+        "copy_failed": "Не вдалося скопіювати",
+        "error": "Помилка"
+    },
+    "notifications": {
+        "has_joined": "приєднався(-лась)",
+        "has_left": "вийшов(-ла)",
+        "is_joining": "приєднується",
+        "gps": "перебуває в {location}",
+        "online_location": "увійшов(-ла) в {location}",
+        "online": "увійшов(-ла) в мережу",
+        "offline": "вийшов(-ла) з мережі",
+        "status_update": "статус змінено на {status} {description}",
+        "invite": "запросив(-ла) вас до {location} {message}",
+        "request_invite": "надіслав(-ла) запит на запрошення {message}",
+        "invite_response": "відповів(-ла) на ваше запрошення {message}",
+        "request_invite_response": "відповів(-ла) на ваш запит на запрошення {message}",
+        "friend_request": "надіслав(-ла) вам запит у друзі",
+        "friend": "тепер ваш друг",
+        "unfriend": "більше не ваш друг",
+        "trust_level": "Рівень довіри тепер: {trustLevel}",
+        "display_name": "змінив(-ла) ім'я на {displayName}",
+        "group_announcement_title": "Оголошення групи",
+        "group_event_created_title": "Створено подію групи",
+        "group_event_starting_title": "Подія групи починається",
+        "group_informative_title": "Інформація групи",
+        "group_invite_title": "Запрошення в групу",
+        "group_join_request_title": "Запит на вступ до групи",
+        "group_transfer_request_title": "Запит на передачу групи",
+        "group_queue_ready_title": "Черга інстансу готова",
+        "instance_closed_title": "Інстанс закрито",
+        "portal_spawn_name": "створив(-ла) портал до {location}",
+        "portal_spawn": "Гравець створив портал",
+        "avatar_change": "змінив(-ла) аватар на {avatar}",
+        "chat_message": "сказав(-ла): {message}",
+        "blocked_player_joined": "Заблокований гравець приєднався",
+        "blocked_player_left": "Заблокований гравець вийшов",
+        "muted_player_joined": "Гравець у м'юті приєднався",
+        "muted_player_left": "Гравець у м'юті вийшов",
+        "blocked": "заблокував(-ла) вас",
+        "unblocked": "розблокував(-ла) вас",
+        "muted": "вимкнув(-ла) вам звук (м'ют)",
+        "unmuted": "зняв(-ла) з вас м'ют"
+    },
+    "status": {
+        "title": "Статус VRChat"
+    },
+    "location": {
+        "offline": "Офлайн",
+        "private": "Приватний",
+        "traveling": "У подорожі"
+    },
+    "table": {
+        "header_menu": {
+            "reset_all": "Скинути все",
+            "lock_column_order": "Зафіксувати стовпець"
+        },
+        "pagination": {
+            "rows_per_page": "Рядків на сторінці",
+            "first": "Перша",
+            "previous": "Попередня",
+            "next": "Наступна",
+            "last": "Остання",
+            "more_pages": "Більше сторінок"
+        },
+        "feed": {
+            "date": "Дата",
+            "type": "Тип",
+            "user": "Гравець",
+            "detail": "Деталі"
+        },
+        "gameLog": {
+            "date": "Дата",
+            "type": "Тип",
+            "icon": "Іконки",
+            "user": "Гравець",
+            "detail": "Деталі",
+            "action": "Дія"
+        },
+        "playerList": {
+            "avatar": "Аватар",
+            "timer": "Таймер",
+            "photonId": "Photon ID",
+            "icon": "Іконки",
+            "platform": "Платформа",
+            "displayName": "Відображуване ім'я",
+            "status": "Статус",
+            "rank": "Ранг",
+            "language": "Мова",
+            "bioLink": "Посилання в біо",
+            "note": "Нотатка",
+            "memo": "Мемо",
+            "date": "Дата",
+            "user": "Гравець",
+            "type": "Тип",
+            "detail": "Деталі"
+        },
+        "friendLog": {
+            "date": "Дата",
+            "type": "Тип",
+            "user": "Гравець",
+            "action": "Дія"
+        },
+        "moderation": {
+            "date": "Дата",
+            "type": "Тип",
+            "source": "Джерело",
+            "target": "Ціль",
+            "action": "Дія"
+        },
+        "notification": {
+            "date": "Дата",
+            "type": "Тип",
+            "user": "Гравець",
+            "group": "Група",
+            "photo": "Фото",
+            "message": "Повідомлення",
+            "action": "Дія"
+        },
+        "friendList": {
+            "no": "№",
+            "avatar": "Аватар",
+            "displayName": "Відображуване ім'я",
+            "rank": "Ранг",
+            "status": "Статус",
+            "language": "Мова",
+            "bioLink": "Посилання в біо",
+            "joinCount": "Кількість входів",
+            "timeTogether": "Час разом",
+            "lastSeen": "Востаннє бачили",
+            "lastActivity": "Остання активність",
+            "lastLogin": "Останній вхід",
+            "dateJoined": "Дата реєстрації",
+            "unfriend": "Видалити з друзів",
+            "mutualFriends": "Спільні друзі",
+            "mutualOptedOut": "Цей гравець вимкнув обмін спільними друзями. Показано кешовані дані."
+        },
+        "profile": {
+            "invite_messages": {
+                "slot": "Слот",
+                "message": "Повідомлення",
+                "cool_down": "Кулдаун",
+                "action": "Дія"
+            }
+        },
+        "import": {
+            "image": "Зображення",
+            "name": "Назва",
+            "author": "Автор",
+            "status": "Статус",
+            "note": "Нотатка",
+            "skip_export": "Пропустити експорт",
+            "action": "Дія"
+        },
+        "previous_instances": {
+            "date": "Дата",
+            "display_name": "Відображуване ім'я",
+            "world": "Світ",
+            "instance_name": "Назва інстансу",
+            "instance_creator": "Творець інстансу",
+            "time": "Час",
+            "count": "Кількість",
+            "action": "Дія"
+        }
+    },
+    "vr": {
+        "status": {
+            "timer": "Таймер:",
+            "players": "Гравців:",
+            "cpu": "CPU:",
+            "online": "Онлайн:"
+        }
+    },
+    "api": {
+        "status_code": {
+            "100": "Продовжувати",
+            "101": "Перемикання протоколів",
+            "102": "Обробляється",
+            "103": "Ранні підказки",
+            "200": "OK",
+            "201": "Створено",
+            "202": "Прийнято",
+            "203": "Неавторитетна інформація",
+            "204": "Немає вмісту",
+            "205": "Скинути вміст",
+            "206": "Частковий вміст",
+            "207": "Мультистатус",
+            "208": "Уже повідомлено",
+            "226": "Використано IM",
+            "300": "Кілька варіантів",
+            "301": "Переміщено назавжди",
+            "302": "Знайдено",
+            "303": "Дивіться інший ресурс",
+            "304": "Не змінювалося",
+            "305": "Використовуйте проксі",
+            "306": "Змініть проксі",
+            "307": "Тимчасове перенаправлення",
+            "308": "Постійне перенаправлення",
+            "400": "Неправильний запит",
+            "401": "Неавторизовано",
+            "402": "Потрібна оплата",
+            "403": "Заборонено",
+            "404": "Не знайдено",
+            "405": "Метод не дозволено",
+            "406": "Неприйнятно",
+            "407": "Потрібна автентифікація проксі",
+            "408": "Тайм-аут запиту",
+            "409": "Конфлікт",
+            "410": "Зникло",
+            "411": "Потрібна довжина",
+            "412": "Передумову не виконано",
+            "413": "Завелике тіло запиту",
+            "414": "URI завеликий",
+            "415": "Непідтримуваний тип медіа",
+            "416": "Діапазон недосяжний",
+            "417": "Очікування не виправдалося",
+            "418": "Я чайник",
+            "421": "Хибно спрямований запит",
+            "422": "Необроблювана сутність",
+            "423": "Заблоковано",
+            "424": "Невдала залежність",
+            "425": "Надто рано",
+            "426": "Потрібне оновлення",
+            "428": "Потрібна передумова",
+            "429": "Забагато запитів",
+            "431": "Завеликі поля заголовка запиту",
+            "451": "Недоступно з юридичних причин",
+            "500": "Внутрішня помилка сервера",
+            "501": "Не реалізовано",
+            "502": "Поганий шлюз",
+            "503": "Сервіс недоступний",
+            "504": "Тайм-аут шлюзу",
+            "505": "Версія HTTP не підтримується",
+            "506": "Варіант також веде перемовини",
+            "507": "Недостатньо сховища",
+            "508": "Виявлено цикл",
+            "510": "Не розширено",
+            "511": "Потрібна автентифікація в мережі",
+            "520": "Вебсервер повертає невідому помилку",
+            "521": "Вебсервер не працює",
+            "522": "Час очікування з'єднання вичерпано",
+            "523": "Початковий сервер недоступний",
+            "524": "Сталося перевищення часу очікування",
+            "525": "Не вдалося виконати SSL-рукостискання",
+            "526": "Недійсний SSL-сертифікат",
+            "527": "Помилка Railgun Listener до початкового сервера"
+        },
+        "error": {
+            "message": {
+                "error_message": "Повідомлення про помилку",
+                "endpoint": "Ендпоінт",
+                "missing_credentials": "Відсутні облікові дані",
+                "vpn_in_use": "VRChat наразі блокує більшість VPN. Будь ласка, вимкніть усі підключені VPN і спробуйте ще раз.",
+                "login_error": "Помилка входу",
+                "invalid_json_response": "Недійсна відповідь JSON",
+                "403_404_bailing_request": "Запит скасовано через нещодавні помилки 404/403",
+                "unavailable": "Сервіс може бути недоступний через внутрішні проблеми VRChat"
+            }
+        }
+    },
+    "accessibility": {
+        "toggle_sidebar": "Перемкнути бічну панель",
+        "back_to_top": "Нагору",
+        "toggle_password": "Перемкнути видимість пароля",
+        "clear_input": "Очистити поле"
+    },
+    "onboarding": {
+        "welcome": {
+            "title": "Ласкаво просимо до VRCX",
+            "subtitle": "Ось кілька речей, які ви могли б не відкрити самостійно.",
+            "features": {
+                "user_profiles": {
+                    "title": "Профілі гравців",
+                    "description": "Натисніть на будь-якого гравця, щоб побачити спільних друзів, теплові карти активності та журнали сесій з деталями входів/виходів"
+                },
+                "right_click": {
+                    "title": "Контекстні меню",
+                    "description": "Клацніть правою кнопкою миші на ключових елементах для швидких дій і додаткових опцій"
+                },
+                "dashboard": {
+                    "title": "Власні дашборди",
+                    "description": "Скомпонуйте власний робочий простір із панелей, які вам підходять"
+                },
+                "quick_search": {
+                    "title": "Швидкий пошук",
+                    "description": "Натисніть Ctrl+K (⌘+K на Mac), щоб миттєво шукати гравців, світи та аватари"
+                }
+            },
+            "cta": "Почати"
+        },
+        "whatsnew": {
+            "title": "Що нового у VRCX",
+            "subtitle": "Ось що змінилося в цьому оновленні.",
+            "cta": "Зрозуміло",
+            "common": {
+                "got_it": "Зрозуміло",
+                "view_changelog": "Переглянути всі зміни",
+                "support": "Підтримати VRCX"
+            },
+            "releases": {
+                "2026_05_03": {
+                    "title": "Відкрийте нові функції",
+                    "subtitle": "Кілька корисних функцій, які ви могли не помітити",
+                    "items": {
+                        "quick_search": {
+                            "title": "Швидкий пошук",
+                            "description": "Натисніть Ctrl+K (⌘K), щоб знайти гравців, світи, групи та аватари."
+                        },
+                        "local_favorite_groups": {
+                            "title": "Локальне обране",
+                            "description": "Створюйте необмежену кількість власних груп друзів поза лімітами VRChat."
+                        },
+                        "auto_status": {
+                            "title": "Автостатус",
+                            "description": "Автоматично перемикайте статус залежно від присутності друзів, з фільтром за групами."
+                        },
+                        "right_click_menus": {
+                            "title": "Контекстні меню",
+                            "description": "Клацайте правою кнопкою на друзях, таблицях і заголовках для швидких дій."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "status_bar": {
+        "game": "Гра",
+        "game_running": "VRChat запущено",
+        "game_stopped": "VRChat не запущено",
+        "game_started_at": "Запущено",
+        "game_session_duration": "Тривалість",
+        "game_last_session": "Остання сесія",
+        "game_last_offline": "Офлайн з",
+        "servers": "Сервери",
+        "servers_ok": "Сервери VRChat працюють",
+        "servers_issue": "Проблеми із серверами VRChat",
+        "steamvr": "SteamVR",
+        "steamvr_running": "SteamVR запущено",
+        "steamvr_stopped": "SteamVR не запущено",
+        "proxy": "Проксі",
+        "ws_connected": "Підключено",
+        "ws_disconnected": "Відключено",
+        "ws_avg_per_minute": "{count} сер./хв",
+        "zoom": "Масштаб",
+        "zoom_tooltip": "Натисніть, щоб змінити масштаб",
+        "app_uptime": "Час роботи застосунку",
+        "app_uptime_short": "Час роботи",
+        "clocks": "Годинники",
+        "clock": "Годинник",
+        "clocks_label": "Годинники",
+        "clocks_none": "Немає",
+        "timezone": "Часовий пояс",
+        "now_playing": "Зараз грає"
+    }
+}
