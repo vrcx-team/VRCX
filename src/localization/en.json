@@ -360,6 +360,15 @@
             "marketplace": {
                 "header": "Marketplace"
             },
+            "store": {
+                "header": "VRChat Store",
+                "refresh_tooltip": "Refresh store",
+                "free": "Free",
+                "vrc_plus_price": "{price} with VRC+",
+                "credits": "{credits}V",
+                "buy": "Buy",
+                "owned": "Owned"
+            },
             "group": {
                 "header": "Group"
             }

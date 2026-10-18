@@ -1,4 +1,4 @@
-import type { Avatar, Balance } from 'vrchat';
+import type { Avatar, Balance, GetProductPurchases, GetStoreShelves, ProductPurchase, StoreShelf } from 'vrchat';
 import type { Json, MarketplaceAvatarSearchParams } from '../types/vrcx';
 import { request } from '../services/request';
 import { useUserStore } from '../stores';
@@ -17,6 +17,36 @@ const marketplaceReq = {
         return request('avatars', {
             method: 'GET',
             params: query
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    getStoreShelves(
+        params: GetStoreShelves['query']
+    ): Promise<{ json: Json<StoreShelf>[]; params: GetStoreShelves['query'] }> {
+        return request('economy/store/shelves', {
+            method: 'GET',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    getProductPurchases(
+        params: GetProductPurchases['query']
+    ): Promise<{ json: Json<ProductPurchase>[]; params: GetProductPurchases['query'] }> {
+        return request('economy/purchases', {
+            method: 'GET',
+            params
         }).then((json) => {
             const args = {
                 json,
