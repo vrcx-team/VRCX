@@ -57,7 +57,11 @@ export function useSearchMarketplace() {
             .then((args) => {
                 const map = new Map();
                 for (const json of args.json.results ?? []) {
-                    map.set(json.id, json);
+                    map.set(json.id, {
+                        ...json,
+                        name: replaceBioSymbols(json.name),
+                        authorName: replaceBioSymbols(json.authorName)
+                    });
                 }
                 searchMarketplaceResults.value = Array.from(map.values());
                 searchMarketplaceHasNext.value = Boolean(args.json.hasNext);

@@ -59,7 +59,7 @@
                             <SelectItem value="all">{{ t('dialog.user.avatars.all') }}</SelectItem>
                             <SelectItem value="public">{{ t('dialog.user.avatars.public') }}</SelectItem>
                             <SelectItem value="private">{{ t('dialog.user.avatars.private') }}</SelectItem>
-                            <SelectItem value="licensed">{{ t('dialog.user.avatars.licensed') }}</SelectItem>
+                            <SelectItem value="licensed">{{ t('dialog.user.avatars.purchased') }}</SelectItem>
                         </SelectContent>
                     </Select>
                 </template>

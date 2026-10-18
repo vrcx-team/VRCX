@@ -1535,7 +1535,7 @@
                 "all": "All",
                 "public": "Public",
                 "private": "Private",
-                "licensed": "Licensed",
+                "purchased": "Purchased",
                 "group_by": "Group by:"
             },
             "json": {

@@ -535,7 +535,11 @@
     }
 
     function formatMarketplacePrice(avatar) {
-        const { lowestPrice, highestPrice } = avatar;
+        const prices = (avatar.publishedListings ?? [])
+            .map((listing) => listing.priceTokens)
+            .filter((price) => typeof price === 'number');
+        const lowestPrice = prices.length ? Math.min(...prices) : avatar.lowestPrice;
+        const highestPrice = prices.length ? Math.max(...prices) : avatar.highestPrice;
         if (lowestPrice == null) {
             return '';
         }
