@@ -208,6 +208,12 @@ export function useAvatarDialogCommands(
             Share: () => {
                 copyAvatarUrl(D().id);
             },
+            'Copy Avatar Name': () => {
+                copyToClipboard(D().ref.name);
+            },
+            'Copy Avatar ID': () => {
+                copyToClipboard(D().id);
+            },
             Rename: () => {
                 promptRenameAvatar(D());
             },

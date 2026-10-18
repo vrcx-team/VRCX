@@ -212,10 +212,26 @@
                                         <RefreshCw class="size-4" />
                                         {{ t('dialog.avatar.actions.refresh') }}
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem @click="avatarDialogCommand('Share')">
-                                        <Share2 class="size-4" />
-                                        {{ t('dialog.avatar.actions.share') }}
-                                    </DropdownMenuItem>
+                                    <DropdownMenuSub>
+                                        <DropdownMenuSubTrigger @click="avatarDialogCommand('Share')">
+                                            <Share2 class="size-4 mr-2" />
+                                            <span>{{ t('dialog.avatar.actions.share') }}</span>
+                                        </DropdownMenuSubTrigger>
+                                        <DropdownMenuSubContent side="right" align="start" class="w-56">
+                                            <DropdownMenuItem @click="avatarDialogCommand('Share')">
+                                                <Copy class="size-4" />
+                                                {{ t('dialog.avatar.info.copy_url') }}
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem @click="avatarDialogCommand('Copy Avatar Name')">
+                                                <Copy class="size-4" />
+                                                {{ t('dialog.avatar.info.copy_name') }}
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem @click="avatarDialogCommand('Copy Avatar ID')">
+                                                <Copy class="size-4" />
+                                                {{ t('dialog.avatar.info.copy_id') }}
+                                            </DropdownMenuItem>
+                                        </DropdownMenuSubContent>
+                                    </DropdownMenuSub>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem
                                         v-if="avatarDialog.isBlocked"
@@ -701,6 +717,9 @@
         DropdownMenuContent,
         DropdownMenuItem,
         DropdownMenuSeparator,
+        DropdownMenuSub,
+        DropdownMenuSubContent,
+        DropdownMenuSubTrigger,
         DropdownMenuTrigger
     } from '../../ui/dropdown-menu';
     import { Badge } from '../../ui/badge';
