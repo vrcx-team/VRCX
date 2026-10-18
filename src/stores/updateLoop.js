@@ -81,6 +81,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                         new Date(userStore.currentUser.last_activity) > new Date(Date.now() - 3600 * 1000) // 1hour
                     ) {
                         runRefreshPlayerModerationsFlow();
+                        userStore.getAllProductPurchases();
                     }
                 }
                 if (--state.nextGroupInstanceRefresh <= 0) {

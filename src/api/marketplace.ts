@@ -48,6 +48,7 @@ const marketplaceReq = {
             method: 'GET',
             params
         }).then((json) => {
+            useUserStore().setCachedPurchases(json);
             const args = {
                 json,
                 params

@@ -21,14 +21,12 @@ export function useSearchStoreShelves() {
     const { t } = useI18n();
     const { searchText } = storeToRefs(useSearchStore());
     const userStore = useUserStore();
-    const { currentUserCredits, isLocalUserVrcPlusSupporter } = storeToRefs(userStore);
+    const { currentUserCredits, isLocalUserVrcPlusSupporter, ownedListingIds, ownedProductIds } = storeToRefs(userStore);
     const modalStore = useModalStore();
 
     const storeShelves = ref([]);
     const isStoreShelvesLoading = ref(false);
     const purchasingListingId = ref('');
-    const ownedListingIds = ref(new Set());
-    const ownedProductIds = ref(new Set());
 
     const filteredStoreShelves = computed(() => {
         const query = searchText.value.trim().toLowerCase();
@@ -79,35 +77,6 @@ export function useSearchStoreShelves() {
         }
     }
 
-    async function getOwnedListingIds() {
-        const pageSize = 50;
-        const listingIds = new Set();
-        const productIds = new Set();
-        for (let offset = 0; ; offset += pageSize) {
-            const args = await marketplaceRequest.getProductPurchases({
-                buyerId: userStore.currentUser.id,
-                order: 'desc',
-                sort: 'purchaseDate',
-                n: pageSize,
-                offset
-            });
-            const purchases = args.json ?? [];
-            for (const purchase of purchases) {
-                if (purchase.purchaseActive) {
-                    listingIds.add(purchase.listingId);
-                    for (const product of purchase.products ?? []) {
-                        productIds.add(product.id);
-                    }
-                }
-            }
-            if (purchases.length < pageSize) {
-                break;
-            }
-        }
-        ownedListingIds.value = listingIds;
-        ownedProductIds.value = productIds;
-    }
-
     async function getStoreShelves() {
         isStoreShelvesLoading.value = true;
         try {
@@ -121,7 +90,7 @@ export function useSearchStoreShelves() {
                         })
                     )
                 ),
-                getOwnedListingIds().catch((err) => console.error(err))
+                userStore.getAllProductPurchases()
             ]);
             storeShelves.value = results
                 .flatMap((args) => args.json ?? [])
@@ -162,12 +131,12 @@ export function useSearchStoreShelves() {
                 quantity: 1
             });
             toast.success(t('dialog.avatar.info.purchase_success'));
-            ownedListingIds.value = new Set(ownedListingIds.value).add(listing.id);
             await refreshCredits();
         } catch (err) {
             console.error('Failed to purchase listing', err);
         } finally {
             purchasingListingId.value = '';
+            userStore.getAllProductPurchases();
         }
     }
 

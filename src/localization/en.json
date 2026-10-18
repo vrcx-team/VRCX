@@ -1773,7 +1773,6 @@
                 "memo": "Memo",
                 "memo_placeholder": "Click to add a memo",
                 "listings": "Listings",
-                "purchase": "Purchase",
                 "purchase_confirm": "Purchase {name} for {price} VRC Credits? VRC Credits are purchased with real money and this purchase cannot be reversed.",
                 "purchase_success": "Purchase successful",
                 "gallery": "Gallery",

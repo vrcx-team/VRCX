@@ -597,9 +597,13 @@
                                         size="sm"
                                         variant="outline"
                                         class="flex-none ml-2"
-                                        :disabled="!canPurchaseListing(listing)"
+                                        :disabled="isListingOwned(listing) || !canPurchaseListing(listing)"
                                         @click="purchaseListing(listing)">
-                                        {{ t('dialog.avatar.info.purchase') }}
+                                        {{
+                                            isListingOwned(listing)
+                                                ? t('view.search.store.owned')
+                                                : t('view.search.store.buy')
+                                        }}
                                     </Button>
                                 </div>
                             </div>
@@ -744,8 +748,9 @@
     import SetAvatarTagsDialog from './SetAvatarTagsDialog.vue';
     import { AppDebug } from '@/services/appConfig';
 
-    const { sortUserDialogAvatars } = useUserStore();
-    const { userDialog, currentUser, currentUserCredits } = storeToRefs(useUserStore());
+    const { sortUserDialogAvatars, getAllProductPurchases } = useUserStore();
+    const { userDialog, currentUser, currentUserCredits, ownedListingIds, ownedProductIds } =
+        storeToRefs(useUserStore());
     const avatarStore = useAvatarStore();
     const { cachedAvatarModerations, cachedAvatars } = avatarStore;
     const { avatarDialog } = storeToRefs(avatarStore);
@@ -949,6 +954,13 @@
         treeData.value = {};
         getAvatarTimeSpent();
         getAvatarMemo();
+    }
+
+    function isListingOwned(listing) {
+        return (
+            ownedListingIds.value.has(listing.listingId) ||
+            ownedProductIds.value.has(avatarDialog.value.ref.productId)
+        );
     }
 
     function canPurchaseListing(listing) {
@@ -1203,6 +1215,8 @@
             toast.success(t('dialog.avatar.info.purchase_success'));
         } catch (error) {
             console.error('Failed to purchase listing', error);
+        } finally {
+            getAllProductPurchases();
         }
     }
 </script>
