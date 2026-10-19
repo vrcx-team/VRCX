@@ -735,6 +735,8 @@
                 "edit_invite_message_description": "Edit invite and invite response messages",
                 "moderation_reports": "My Reports",
                 "moderation_reports_description": "View and delete moderation reports you have submitted",
+                "purchase_history": "Purchase History",
+                "purchase_history_description": "View items you have purchased from the VRChat store and marketplace",
                 "info_push": "Info Push",
                 "info_push_description": "Browse VRChat info push announcements and content"
             }
@@ -2707,6 +2709,20 @@
             "all": "All",
             "load_more": "Load More",
             "delete_confirm": "Delete this report?"
+        },
+        "purchase_history": {
+            "header": "Purchase History",
+            "filter_type": "Type",
+            "all": "All",
+            "gift": "Gift",
+            "inactive": "Inactive",
+            "seller": "Seller",
+            "free": "Free",
+            "ends": "Ends",
+            "purchases": "Purchases",
+            "transactions": "Transactions",
+            "from": "From",
+            "balance": "Balance"
         },
         "info_push": {
             "header": "Info Push",

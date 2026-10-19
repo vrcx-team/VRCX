@@ -12,6 +12,7 @@ const initialDialogState = () => ({
     editInviteMessages: false,
     autoChangeStatus: false,
     moderationReports: false,
+    purchaseHistory: false,
     infoPush: false
 });
 

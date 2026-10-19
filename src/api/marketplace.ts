@@ -1,4 +1,14 @@
-import type { Avatar, Balance, GetProductPurchases, GetStoreShelves, ProductPurchase, StoreShelf } from 'vrchat';
+import type {
+    Avatar,
+    Balance,
+    GetProductPurchaseHistory,
+    GetProductPurchases,
+    GetStoreShelves,
+    ProductListing,
+    ProductPurchase,
+    ProductPurchaseHistory,
+    StoreShelf
+} from 'vrchat';
 import type { Json, MarketplaceAvatarSearchParams } from '../types/vrcx';
 import { request } from '../services/request';
 import { useUserStore } from '../stores';
@@ -57,9 +67,52 @@ const marketplaceReq = {
         });
     },
 
+    getProductListing(params: {
+        listingId: string;
+    }): Promise<{ json: Json<ProductListing>; params: { listingId: string } }> {
+        return request(`listing/${params.listingId}`, {
+            method: 'GET',
+            params: { hydrate: true }
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
     purchaseListing(params: { listingId: string; totalPrice: number; quantity: number }) {
         return request('economy/purchase/listing', {
             method: 'POST',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    getEconomySubscriptions(params: { subscriberId: string; n?: number; offset?: number }) {
+        return request('economy/subscriptions', {
+            method: 'GET',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    getEconomyTransactions(
+        params: GetProductPurchaseHistory['query']
+    ): Promise<{ json: Json<ProductPurchaseHistory>; params: GetProductPurchaseHistory['query'] }> {
+        return request(`user/${useUserStore().currentUser.id}/economy/transactions`, {
+            method: 'GET',
             params
         }).then((json) => {
             const args = {
