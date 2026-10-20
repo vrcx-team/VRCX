@@ -1055,6 +1055,7 @@
                     "notification_filter": "Notification Filters",
                     "test_notification": "Send Test Notification",
                     "inventory_bundle_notifications": "Inventory Bundle Notifications",
+                    "free_store_item_notifications": "Free Store Item Notifications",
                     "test_message": "Test notification.",
                     "steamvr_notifications": {
                         "header": "SteamVR Notifications",
@@ -2760,6 +2761,14 @@
             "close": "Close",
             "consume": "Consume",
             "consume_success": "Bundle consumed"
+        },
+        "free_store_item_dialog": {
+            "header": "Free Store Items",
+            "description": "These free items are available in the VRChat store.",
+            "dont_show_again": "Don't show this again",
+            "close": "Close",
+            "claim": "Claim All",
+            "claim_success": "Claimed {count} free item(s)"
         },
         "boop_dialog": {
             "header": "Boop",

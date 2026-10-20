@@ -77,6 +77,7 @@
         <PrimaryPasswordDialog />
         <SendBoopDialog />
         <InventoryBundleDialog />
+        <FreeStoreItemDialog />
         <ModerationReportDialog />
         <GlobalToolsDialogs />
         <ChangelogDialog />
@@ -102,6 +103,7 @@
     import AvatarImportDialog from '../Favorites/dialogs/AvatarImportDialog.vue';
     import ChangelogDialog from '../Settings/dialogs/ChangelogDialog.vue';
     import ChooseFavoriteGroupDialog from '../../components/dialogs/ChooseFavoriteGroupDialog.vue';
+    import FreeStoreItemDialog from '../../components/dialogs/FreeStoreItemDialog.vue';
     import FriendImportDialog from '../Favorites/dialogs/FriendImportDialog.vue';
     import FullscreenImagePreview from '../../components/FullscreenImagePreview.vue';
     import GlobalToolsDialogs from '../Tools/components/GlobalToolsDialogs.vue';

@@ -24,6 +24,13 @@
                     :ariaLabel="t('view.settings.notifications.notifications.inventory_bundle_notifications')"
                     @update:modelValue="setInventoryBundleNotifications" />
             </SettingsItem>
+
+            <SettingsItem :label="t('view.settings.notifications.notifications.free_store_item_notifications')" toggle>
+                <Switch
+                    :model-value="freeStoreItemNotifications"
+                    :ariaLabel="t('view.settings.notifications.notifications.free_store_item_notifications')"
+                    @update:modelValue="setFreeStoreItemNotifications" />
+            </SettingsItem>
         </SettingsGroup>
 
         <SettingsGroup :title="t('view.settings.notifications.notifications.desktop_notifications.header')">
@@ -180,6 +187,7 @@
         notificationTTS,
         notificationTTSNickName,
         inventoryBundleNotifications,
+        freeStoreItemNotifications,
         isTestTTSVisible,
         notificationTTSTest,
         TTSvoices
@@ -190,6 +198,7 @@
         setAfkDesktopToast,
         setNotificationTTSNickName,
         setInventoryBundleNotifications,
+        setFreeStoreItemNotifications,
         getTTSVoiceName,
         changeTTSVoice,
         saveNotificationTTS,

@@ -135,6 +135,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 if (--state.nextBundleCheck <= 0) {
                     state.nextBundleCheck = 10800; // 3hours
                     notificationStore.checkInventoryBundles();
+                    notificationStore.checkFreeStoreItems();
                 }
             }
         } catch (err) {

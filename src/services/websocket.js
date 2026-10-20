@@ -13,7 +13,7 @@ import {
 import { applyUser, applyCurrentUser } from '../coordinators/userCoordinator';
 import { onGroupLeft, applyGroup, handleGroupMember } from '../coordinators/groupCoordinator';
 import { handleFriendAdd, handleFriendDelete } from '../coordinators/friendRelationshipCoordinator';
-import { parseLocation } from '../shared/utils';
+import { debounce, parseLocation } from '../shared/utils';
 import { AppDebug } from './appConfig';
 import { groupRequest } from '../api';
 import { request } from './request';
@@ -26,6 +26,8 @@ import * as workerTimers from 'worker-timers';
 let webSocket = null;
 let lastWebSocketMessage = '';
 let webSocketClosedGracefully = true;
+
+const refreshOwnedItems = debounce(() => useUserStore().getAllProductPurchases(), 5000);
 
 /**
  * Reactive WebSocket state for status bar telemetry.
@@ -506,6 +508,7 @@ function handlePipeline(args) {
                 if (galleryStore.galleryDialogVisible && !galleryStore.galleryDialogInventoryLoading) {
                     galleryStore.getInventory();
                 }
+                refreshOwnedItems();
                 // on consuming a bundle
                 // {contentType: 'inventory', itemId: 'inv_', itemType: 'prop', actionType: 'add'}
             } else if (!contentType) {

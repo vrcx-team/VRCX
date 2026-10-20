@@ -353,9 +353,7 @@ export const useUserStore = defineStore('User', () => {
     const ownedListingIds = computed(() => new Set(activePurchases.value.map((purchase) => purchase.listingId)));
     const ownedProductIds = computed(
         () =>
-            new Set(
-                activePurchases.value.flatMap((purchase) => (purchase.products ?? []).map((product) => product.id))
-            )
+            new Set(activePurchases.value.flatMap((purchase) => (purchase.products ?? []).map((product) => product.id)))
     );
 
     const currentUserClientConfig = ref({

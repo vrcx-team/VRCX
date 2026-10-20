@@ -15,3 +15,4 @@ export * from './accessType';
 export * from './tags';
 export * from './dashboard';
 export * from './tools';
+export * from './marketplace';

@@ -6,12 +6,7 @@ import { useI18n } from 'vue-i18n';
 import { useModalStore, useSearchStore, useUserStore } from '../../../stores';
 import { commaNumber, replaceBioSymbols } from '../../../shared/utils';
 import { marketplaceRequest } from '../../../api';
-
-const VRCHAT_STORE_IDS = [
-    'esto_00000000-0000-0000-0000-000000000000',
-    'esto_00000000-0000-0000-0000-000000000001',
-    'esto_00000000-0000-0000-0000-000000000002'
-];
+import { VRCHAT_STORE_IDS } from '../../../shared/constants';
 
 /**
  * VRChat store shelves composable for Search view.
@@ -21,7 +16,8 @@ export function useSearchStoreShelves() {
     const { t } = useI18n();
     const { searchText } = storeToRefs(useSearchStore());
     const userStore = useUserStore();
-    const { currentUserCredits, isLocalUserVrcPlusSupporter, ownedListingIds, ownedProductIds } = storeToRefs(userStore);
+    const { currentUserCredits, isLocalUserVrcPlusSupporter, ownedListingIds, ownedProductIds } =
+        storeToRefs(userStore);
     const modalStore = useModalStore();
 
     const storeShelves = ref([]);
