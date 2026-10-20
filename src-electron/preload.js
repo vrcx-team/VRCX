@@ -41,6 +41,9 @@ contextBridge.exposeInMainWorld('interopApi', {
 const validChannels = ['launch-command'];
 
 contextBridge.exposeInMainWorld('electron', {
+    saveAuthSession: (userId) => ipcRenderer.invoke('auth-session:save', userId),
+    loadAuthSession: (userId) => ipcRenderer.invoke('auth-session:load', userId),
+    deleteAuthSession: (userId) => ipcRenderer.invoke('auth-session:delete', userId),
     getArch: () => ipcRenderer.invoke('app:getArch'),
     getClipboardText: () => ipcRenderer.invoke('app:getClipboardText'),
     getNoUpdater: () => ipcRenderer.invoke('app:getNoUpdater'),

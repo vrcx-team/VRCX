@@ -10,7 +10,8 @@ const {
     dialog,
     Notification: ElectronNotification,
     nativeImage,
-    nativeTheme
+    nativeTheme,
+    safeStorage
 } = require('electron');
 const { spawnSync } = require('child_process');
 const fs = require('fs');
@@ -144,6 +145,25 @@ ipcMain.handle('callDotNetMethod', (_event, className, methodName, args) => {
 
 /** @type {Electron.CrossProcessExports.BrowserWindow} */
 let mainWindow = undefined;
+
+const { createAuthSessionVault } = require('./auth-session-vault.js');
+const authSessionVault = createAuthSessionVault(
+    path.join(userDataPath, 'auth-sessions'),
+    safeStorage,
+    interopApi.getDotNetObject('WebApi')
+);
+for (const [action, method] of [
+    ['save', 'save'],
+    ['load', 'load'],
+    ['delete', 'remove']
+]) {
+    ipcMain.handle(`auth-session:${action}`, (event, userId) => {
+        if (event.sender !== mainWindow?.webContents || event.senderFrame !== event.sender.mainFrame) {
+            throw new Error('Session storage is restricted to the main application.');
+        }
+        return authSessionVault[method](userId);
+    });
+}
 
 const VRCXStorage = interopApi.getDotNetObject('VRCXStorage');
 const hasAskedToMoveAppImage = VRCXStorage.Get('VRCX_HasAskedToMoveAppImage') === 'true';

@@ -35,6 +35,9 @@ declare global {
             callDotNetMethod: (className: any, methodName: any, args: any) => Promise<any>;
         };
         electron: {
+            saveAuthSession: (userId: string) => Promise<boolean>;
+            loadAuthSession: (userId: string) => Promise<string>;
+            deleteAuthSession: (userId: string) => Promise<void>;
             getArch: () => Promise<string>;
             getClipboardText: () => Promise<string>;
             getNoUpdater: () => Promise<boolean>;
@@ -298,6 +301,14 @@ declare global {
     };
 
     const WebApi: {
+        BeginExternalLogin(provider: string): Promise<string>;
+        GetExternalLoginState(operationId: string): Promise<string>;
+        OpenExternalLogin(operationId: string): Promise<boolean>;
+        CancelExternalLogin(): Promise<void>;
+        CommitExternalLogin(operationId: string): Promise<string>;
+        SaveExternalSession(userId: string): Promise<boolean>;
+        LoadExternalSession(userId: string): Promise<string>;
+        DeleteExternalSession(userId: string): Promise<void>;
         ClearCookies(): Promise<void>;
         GetCookies(): Promise<string>;
         SetCookies(cookie: string): Promise<void>;

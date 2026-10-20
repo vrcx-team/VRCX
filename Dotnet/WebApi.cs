@@ -23,7 +23,7 @@ using System.Windows.Forms;
 
 namespace VRCX
 {
-    public class WebApi
+    public partial class WebApi
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public static WebApi Instance;
@@ -34,6 +34,7 @@ namespace VRCX
 
         public CookieContainer CookieContainer;
         private bool _cookieDirty;
+        private readonly object _cookiePersistenceGate = new();
         private Timer _timer;
 
         private HttpClient _httpClient;
@@ -132,19 +133,24 @@ namespace VRCX
 
         public void Exit()
         {
+            CancelExternalLogin();
             _timer.Change(-1, -1);
             SaveCookies();
         }
 
         public void ClearCookies()
         {
+            lock (_cookiePersistenceGate)
+            {
+                _externalSession = false;
 #if !LINUX
-            Cef.GetGlobalCookieManager().DeleteCookies();
+                Cef.GetGlobalCookieManager().DeleteCookies();
 #endif
-            CookieContainer = new CookieContainer();
-            InitializeHttpClient();
-            _cookieDirty = true;
-            SaveCookies();
+                CookieContainer = new CookieContainer();
+                InitializeHttpClient();
+                _cookieDirty = true;
+                SaveCookies();
+            }
         }
 
         private void LoadCookies()
@@ -212,54 +218,69 @@ namespace VRCX
 
         public void SaveCookies()
         {
-            if (!_cookieDirty)
-                return;
-
-            try
+            lock (_cookiePersistenceGate)
             {
-                var cookies = GetAllCookies();
-                using var memoryStream = new MemoryStream();
-                System.Text.Json.JsonSerializer.Serialize(memoryStream, cookies);
-                SQLite.Instance.ExecuteNonQuery(
-                    "INSERT OR REPLACE INTO `cookies` (`key`, `value`) VALUES (@key, @value)",
-                    new Dictionary<string, object>()
-                    {
+                // Browser/device sessions are saved only in the protected session vault.
+                if (_externalSession)
+                    return;
+                if (!_cookieDirty)
+                    return;
+
+                try
+                {
+                    var cookies = GetAllCookies();
+                    using var memoryStream = new MemoryStream();
+                    System.Text.Json.JsonSerializer.Serialize(memoryStream, cookies);
+                    SQLite.Instance.ExecuteNonQuery(
+                        "INSERT OR REPLACE INTO `cookies` (`key`, `value`) VALUES (@key, @value)",
+                        new Dictionary<string, object>()
+                        {
                         { "@key", "default" },
                         { "@value", Convert.ToBase64String(memoryStream.ToArray()) }
-                    }
-                );
+                        }
+                    );
 
-                _cookieDirty = false;
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"Failed to save cookies: {e.Message}");
+                    _cookieDirty = false;
+                }
+                catch (Exception e)
+                {
+                    Logger.Error($"Failed to save cookies: {e.Message}");
+                }
             }
         }
 
         public string GetCookies()
         {
-            _cookieDirty = true; // force cookies to be saved for lastUserLoggedIn
+            lock (_cookiePersistenceGate)
+            {
+                if (_externalSession) throw new InvalidOperationException("Use protected storage for external sessions.");
+                _cookieDirty = true; // force cookies to be saved for lastUserLoggedIn
 
-            using var memoryStream = new MemoryStream();
-            System.Text.Json.JsonSerializer.Serialize(memoryStream, GetAllCookies());
-            return Convert.ToBase64String(memoryStream.ToArray());
+                using var memoryStream = new MemoryStream();
+                System.Text.Json.JsonSerializer.Serialize(memoryStream, GetAllCookies());
+                return Convert.ToBase64String(memoryStream.ToArray());
+            }
         }
 
         public void SetCookies(string cookies)
         {
-            try
+            lock (_cookiePersistenceGate)
             {
-                using var stream = new MemoryStream(Convert.FromBase64String(cookies));
-                var data = System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream);
-                CookieContainer.Add(data);
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"Failed to set cookies: {e.Message}");
-            }
+                if (_externalSession)
+                    ClearCookies();
+                try
+                {
+                    using var stream = new MemoryStream(Convert.FromBase64String(cookies));
+                    var data = System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream);
+                    CookieContainer.Add(data);
+                }
+                catch (Exception e)
+                {
+                    Logger.Error($"Failed to set cookies: {e.Message}");
+                }
 
-            _cookieDirty = true; // force cookies to be saved for lastUserLoggedIn
+                _cookieDirty = true; // force cookies to be saved for lastUserLoggedIn
+            }
         }
 
         private async Task<HttpRequestMessage> BuildLegacyImageUploadRequest(string url, IDictionary<string, object> options)

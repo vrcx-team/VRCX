@@ -259,6 +259,55 @@
             "language_detect": {
                 "title": "界面语言",
                 "description": "你的系统语言似乎是 {language}。是否切换到该语言？"
+            },
+            "external": {
+                "title": "或使用以下方式登录",
+                "provider_label": "使用 {provider} 登录",
+                "official_only": "浏览器登录仅支持官方 VRChat API。",
+                "stage_prefix": "步骤：",
+                "response_fields": "响应字段：",
+                "stages": {
+                    "configuration": "加载登录配置",
+                    "authorization": "浏览器授权",
+                    "callback_exchange": "交换授权结果",
+                    "session_exchange": "建立 VRChat 会话",
+                    "verify_account": "验证账号"
+                },
+                "primary_password_hint": "启用主密码时，浏览器登录仅在本次运行期间有效。",
+                "cancel": "取消登录",
+                "qr_button": "扫码登录",
+                "qr_alt": "VRChat 手机登录二维码",
+                "qr_hint": "使用 VRChat 手机应用扫码登录。",
+                "status": {
+                    "starting": "正在准备登录…",
+                    "waiting": "正在等待授权…",
+                    "validating": "正在验证 VRChat 会话…",
+                    "ready": "正在登录…",
+                    "committing": "正在登录…",
+                    "cancelling": "正在取消…",
+                    "failed": "未能完成登录。",
+                    "expired": "登录已过期，请重新开始。"
+                },
+                "errors": {
+                    "browser_failed": "无法打开默认浏览器。",
+                    "unavailable": "浏览器登录暂时不可用，请稍后重试。",
+                    "configuration_failed": "VRChat 未提供有效的桌面登录配置。",
+                    "provider_cancelled": "已在浏览器中拒绝或取消授权。",
+                    "authorization_failed": "第三方平台未能完成授权，请重新开始。",
+                    "callback_failed": "VRChat 未能交换授权码。请重新登录；若仍失败，请反馈登录平台、步骤和 HTTP 状态码。",
+                    "login_failed": "VRChat 拒绝了登录交换。若仍失败，请反馈登录平台、步骤和 HTTP 状态码。",
+                    "unexpected_response": "VRChat 返回了尚不支持的登录响应。请反馈平台和步骤，不要发送令牌或回调链接。",
+                    "identity_mismatch": "返回的 Google 身份与本次登录请求不符，请重新开始。",
+                    "rate_limited": "VRChat 限制了登录请求，请稍后再试。",
+                    "website_required": "请先在 vrchat.com 完成注册、账号关联或验证，然后重试。",
+                    "account_mismatch": "登录期间账号发生变化，请重新开始。",
+                    "network_error": "无法连接 VRChat，请检查网络后重试。",
+                    "expired": "设备码已过期，请重新开始。",
+                    "session_failed": "无法启用此会话，请重新开始。",
+                    "reauthorize": "保存的浏览器会话已失效，请使用对应方式重新登录。",
+                    "storage_unavailable": "安全存储不可用，本次登录仅在当前运行期间有效。",
+                    "primary_password": "启用主密码前请先移除保存的浏览器账号。浏览器会话使用系统保护的存储。"
+                }
             }
         },
         "feed": {

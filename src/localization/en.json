@@ -260,6 +260,55 @@
             "language_detect": {
                 "title": "Language Detected",
                 "description": "Your system language appears to be {language}. Would you like to switch to it?"
+            },
+            "external": {
+                "title": "Or continue with",
+                "provider_label": "Sign in with {provider}",
+                "official_only": "Browser login requires the official VRChat API.",
+                "stage_prefix": "Step:",
+                "response_fields": "Response fields:",
+                "stages": {
+                    "configuration": "Load login configuration",
+                    "authorization": "Browser authorization",
+                    "callback_exchange": "Exchange authorization result",
+                    "session_exchange": "Create VRChat session",
+                    "verify_account": "Verify account"
+                },
+                "primary_password_hint": "With a primary password enabled, browser login is available for this session only.",
+                "cancel": "Cancel login",
+                "qr_button": "Sign in with QR code",
+                "qr_alt": "VRChat mobile login QR code",
+                "qr_hint": "Scan with the VRChat mobile app to sign in.",
+                "status": {
+                    "starting": "Preparing login…",
+                    "waiting": "Waiting for authorization…",
+                    "validating": "Checking the VRChat session…",
+                    "ready": "Signing in…",
+                    "committing": "Signing in…",
+                    "cancelling": "Cancelling…",
+                    "failed": "Login could not be completed.",
+                    "expired": "Login expired. Start again."
+                },
+                "errors": {
+                    "browser_failed": "Could not open your default browser.",
+                    "unavailable": "Browser login is unavailable. Please try again later.",
+                    "configuration_failed": "VRChat did not provide a valid desktop login configuration.",
+                    "provider_cancelled": "Authorization was declined or cancelled in the browser.",
+                    "authorization_failed": "The provider could not complete authorization. Start again.",
+                    "callback_failed": "VRChat could not exchange the authorization code. Start a new login; if it persists, report the provider, step and HTTP status.",
+                    "login_failed": "VRChat rejected the login exchange. If it persists, report the provider, step and HTTP status.",
+                    "unexpected_response": "VRChat returned an unsupported login response. Report the provider and step; do not share tokens or the callback URL.",
+                    "identity_mismatch": "The returned Google identity did not match this login request. Start again.",
+                    "rate_limited": "VRChat limited login requests. Wait before trying again.",
+                    "website_required": "Complete registration, account linking or verification on vrchat.com, then try again.",
+                    "account_mismatch": "The account changed during login. Start again.",
+                    "network_error": "Could not reach VRChat. Check the connection and try again.",
+                    "expired": "The device code expired. Start again.",
+                    "session_failed": "The session could not be activated. Start again.",
+                    "reauthorize": "This saved browser session has expired. Sign in again using its provider.",
+                    "storage_unavailable": "Secure storage is unavailable. You are signed in for this session only.",
+                    "primary_password": "Remove saved browser sessions before enabling a primary password. Browser sessions use system-protected storage."
+                }
             }
         },
         "feed": {
