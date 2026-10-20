@@ -17,18 +17,48 @@
                     ><Play />{{ t('view.settings.notifications.notifications.test_notification') }}</Button
                 >
             </SettingsItem>
+        </SettingsGroup>
 
-            <SettingsItem :label="t('view.settings.notifications.notifications.inventory_bundle_notifications')" toggle>
+        <SettingsGroup :title="t('view.settings.notifications.notifications.inventory_notifications.header')">
+            <SettingsItem
+                :label="
+                    t(
+                        'view.settings.notifications.notifications.inventory_notifications.inventory_bundle_notifications'
+                    )
+                "
+                :description="
+                    t(
+                        'view.settings.notifications.notifications.inventory_notifications.inventory_bundle_notifications_description'
+                    )
+                "
+                toggle>
                 <Switch
                     :model-value="inventoryBundleNotifications"
-                    :ariaLabel="t('view.settings.notifications.notifications.inventory_bundle_notifications')"
+                    :ariaLabel="
+                        t(
+                            'view.settings.notifications.notifications.inventory_notifications.inventory_bundle_notifications'
+                        )
+                    "
                     @update:modelValue="setInventoryBundleNotifications" />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.notifications.notifications.free_store_item_notifications')" toggle>
+            <SettingsItem
+                :label="
+                    t('view.settings.notifications.notifications.inventory_notifications.free_store_item_notifications')
+                "
+                :description="
+                    t(
+                        'view.settings.notifications.notifications.inventory_notifications.free_store_item_notifications_description'
+                    )
+                "
+                toggle>
                 <Switch
                     :model-value="freeStoreItemNotifications"
-                    :ariaLabel="t('view.settings.notifications.notifications.free_store_item_notifications')"
+                    :ariaLabel="
+                        t(
+                            'view.settings.notifications.notifications.inventory_notifications.free_store_item_notifications'
+                        )
+                    "
                     @update:modelValue="setFreeStoreItemNotifications" />
             </SettingsItem>
         </SettingsGroup>

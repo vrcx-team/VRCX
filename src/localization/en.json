@@ -1054,9 +1054,14 @@
                     "busy_warning": "Notifications are disabled while your status is set to Do Not Disturb.",
                     "notification_filter": "Notification Filters",
                     "test_notification": "Send Test Notification",
-                    "inventory_bundle_notifications": "Inventory Bundle Notifications",
-                    "free_store_item_notifications": "Free Store Item Notifications",
                     "test_message": "Test notification.",
+                    "inventory_notifications": {
+                        "header": "Inventory & Store",
+                        "inventory_bundle_notifications": "Unredeemed Bundles",
+                        "inventory_bundle_notifications_description": "Notify when a bundle in your inventory is ready to redeem.",
+                        "free_store_item_notifications": "Free Store Items",
+                        "free_store_item_notifications_description": "Notify when a new free item is available in the store."
+                    },
                     "steamvr_notifications": {
                         "header": "SteamVR Notifications",
                         "steamvr_overlay": "SteamVR Overlay",
