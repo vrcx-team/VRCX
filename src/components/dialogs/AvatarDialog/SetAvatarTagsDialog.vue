@@ -61,6 +61,23 @@
                     {{ setAvatarTagsDialog.ownAvatars.length }}</span
                 >
                 <Spinner v-if="setAvatarTagsDialog.loading" class="inline-block ml-2" />
+                <span v-if="setAvatarTagsDialog.loading && saveProgress" role="status" aria-live="polite">
+                    {{
+                        saveProgress.refreshing
+                            ? t('dialog.set_avatar_tags.refreshing')
+                            : t('dialog.set_avatar_tags.save_progress', {
+                                  total: saveProgress.toUpdate,
+                                  saved: saveProgress.saved,
+                                  unchanged: saveProgress.unchanged,
+                                  unavailable: saveProgress.unavailable,
+                                  remaining:
+                                      saveProgress.total -
+                                      saveProgress.saved -
+                                      saveProgress.unchanged -
+                                      saveProgress.unavailable
+                              })
+                    }}
+                </span>
                 <div
                     class="flex flex-wrap items-start max-h-[300px] overflow-auto"
                     style="margin-top: 8px; min-height: 60px">
@@ -105,7 +122,9 @@
                 <Button variant="secondary" class="mr-2" @click="closeSetAvatarTagsDialog">{{
                     t('dialog.set_avatar_tags.cancel')
                 }}</Button>
-                <Button @click="saveSetAvatarTagsDialog">{{ t('dialog.set_avatar_tags.save') }}</Button>
+                <Button :disabled="setAvatarTagsDialog.loading" @click="saveSetAvatarTagsDialog">{{
+                    t('dialog.set_avatar_tags.save')
+                }}</Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>
@@ -117,16 +136,16 @@
     import { Checkbox } from '@/components/ui/checkbox';
     import { InputGroupTextareaField } from '@/components/ui/input-group';
     import { Spinner } from '@/components/ui/spinner';
-    import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
-    import { watch } from 'vue';
+    import { ref, watch } from 'vue';
 
     import { avatarRequest } from '../../../api';
-    import { removeFromArray } from '../../../shared/utils';
-    import { useAvatarStore } from '../../../stores';
-    import { showAvatarDialog, applyAvatar } from '../../../coordinators/avatarCoordinator';
+    import { arraysMatch, removeFromArray } from '../../../shared/utils';
+    import { useModalStore, useUserStore } from '../../../stores';
+    import { showAvatarDialog, applyAvatar, preloadOwnAvatars } from '../../../coordinators/avatarCoordinator';
 
-    const { cachedAvatars } = useAvatarStore();
+    const modalStore = useModalStore();
+    const userStore = useUserStore();
 
     const { t } = useI18n();
     const props = defineProps({
@@ -136,6 +155,7 @@
         }
     });
     const avatarTagStrings = new Map();
+    const saveProgress = ref(null);
 
     const emit = defineEmits(['update:setAvatarTagsDialog']);
 
@@ -143,6 +163,7 @@
         () => props.setAvatarTagsDialog.visible,
         (newVal) => {
             if (newVal) {
+                saveProgress.value = null;
                 updateAvatarTagsString();
                 updateSelectedAvatarTags();
                 updateInputAvatarTags();
@@ -257,47 +278,82 @@
         if (D.loading) {
             return;
         }
+        const selectedAvatarIds = [...D.selectedAvatarIds];
+        const selectedTags = [...D.selectedTags];
+        const userId = userStore.currentUser.id;
+        saveProgress.value = {
+            saved: 0,
+            unchanged: 0,
+            unavailable: 0,
+            total: selectedAvatarIds.length,
+            toUpdate: 0,
+            refreshing: true
+        };
+        const progress = saveProgress.value;
+        let error = '';
         D.loading = true;
-        let saved = 0;
         try {
-            for (const avatarId of D.selectedAvatarIds) {
-                console.log('Saving tags for avatar', avatarId);
-                const ref = cachedAvatars.get(avatarId);
-                if (!D.visible || !ref) {
-                    console.error('Aborting avatar tag save, dialog closed or avatar not found', avatarId);
-                    break;
+            const avatars = await preloadOwnAvatars();
+            if (!avatars) {
+                throw new Error('Failed to refresh own avatars');
+            }
+            const updates = [];
+            for (const avatarId of selectedAvatarIds) {
+                const ref = avatars.get(avatarId);
+                if (!ref) {
+                    progress.unavailable++;
+                    continue;
                 }
-                const tags = [...D.selectedTags];
+                const tags = [...selectedTags];
                 for (const tag of ref.tags) {
                     if (!tag.startsWith('content_')) {
                         tags.push(tag);
                     }
                 }
+                if (arraysMatch([...ref.tags].sort(), [...tags].sort())) {
+                    progress.unchanged++;
+                } else {
+                    updates.push({ id: ref.id, tags });
+                }
+            }
+            progress.toUpdate = updates.length;
+            progress.refreshing = false;
+            for (const params of updates) {
+                if (!D.visible || props.setAvatarTagsDialog !== D || userStore.currentUser.id !== userId) {
+                    break;
+                }
                 try {
-                    const args = await avatarRequest.saveAvatar({
-                        id: ref.id,
-                        tags
-                    });
+                    const args = await avatarRequest.saveAvatar(params);
                     applyAvatar(args.json);
-                    saved++;
+                    progress.saved++;
                 } catch (err) {
                     if (err.status !== 404) {
                         throw err;
                     }
+                    progress.unavailable++;
                 }
             }
         } catch (err) {
             console.error(err);
-            toast.error('Error saving avatar tags');
+            error = t('dialog.set_avatar_tags.save_error');
         } finally {
             D.loading = false;
             D.visible = false;
-            toast.info(
-                t('dialog.set_avatar_tags.save_result', {
-                    saved,
-                    remaining: D.selectedAvatarIds.length - saved
-                })
-            );
+            modalStore.alert({
+                title: t('dialog.set_avatar_tags.header'),
+                dismissible: false,
+                description: [
+                    error,
+                    t('dialog.set_avatar_tags.save_result', {
+                        saved: progress.saved,
+                        unchanged: progress.unchanged,
+                        unavailable: progress.unavailable,
+                        remaining: progress.total - progress.saved - progress.unchanged - progress.unavailable
+                    })
+                ]
+                    .filter(Boolean)
+                    .join(' ')
+            });
         }
     }
 
