@@ -258,6 +258,7 @@
             return;
         }
         D.loading = true;
+        let saved = 0;
         try {
             for (const avatarId of D.selectedAvatarIds) {
                 console.log('Saving tags for avatar', avatarId);
@@ -272,11 +273,18 @@
                         tags.push(tag);
                     }
                 }
-                const args = await avatarRequest.saveAvatar({
-                    id: ref.id,
-                    tags
-                });
-                applyAvatar(args.json);
+                try {
+                    const args = await avatarRequest.saveAvatar({
+                        id: ref.id,
+                        tags
+                    });
+                    applyAvatar(args.json);
+                    saved++;
+                } catch (err) {
+                    if (err.status !== 404) {
+                        throw err;
+                    }
+                }
             }
         } catch (err) {
             console.error(err);
@@ -284,6 +292,12 @@
         } finally {
             D.loading = false;
             D.visible = false;
+            toast.info(
+                t('dialog.set_avatar_tags.save_result', {
+                    saved,
+                    remaining: D.selectedAvatarIds.length - saved
+                })
+            );
         }
     }
 

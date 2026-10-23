@@ -2463,6 +2463,7 @@
         },
         "set_avatar_tags": {
             "header": "Set Avatar Tags",
+            "save_result": "Saved: {saved}. Remaining: {remaining}.",
             "content_horror": "Horror",
             "content_gore": "Gore",
             "content_violence": "Violence",
