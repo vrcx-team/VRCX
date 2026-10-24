@@ -96,15 +96,17 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
         const bracketArray = title.split('(');
         const text1 = bracketArray.pop();
         let displayName = text1.slice(0, -1);
-        let text2 = bracketArray.join('(');
+        const text2 = bracketArray.join('(').trim();
+        const isCustomUrl = text2 === 'Custom URL';
         let videoId = '';
-        if (text2 === 'Custom URL') {
+        let videoName = '';
+        if (isCustomUrl) {
             videoId = 'YouTube';
         } else {
-            videoId = text2.substr(0, text2.indexOf(':') - 1);
-            text2 = text2.substr(text2.indexOf(':') + 2);
+            const colonIndex = text2.indexOf(':');
+            videoId = text2.slice(0, colonIndex).trim();
+            videoName = text2.slice(colonIndex + 1).trim();
         }
-        const videoName = text2.slice(0, -1);
         if (displayName === 'Random') {
             displayName = '';
         }
@@ -124,7 +126,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                 findUserByDisplayName(userStore.cachedUsers, displayName, userStore.cachedUserIdsByDisplayName)?.id ??
                 '';
         }
-        if (videoId === 'YouTube') {
+        if (isCustomUrl) {
             const entry1 = {
                 dt: gameLog.dt,
                 videoUrl,
