@@ -2,6 +2,7 @@
     "language": "Русский (ru)",
     "translator": "Ronner (Ronner231), like3ds, Sergey004",
     "nav_tooltip": {
+        "friends_locations": "Инстансы друзей",
         "feed": "Лента",
         "game_log": "Журнал игры",
         "player_list": "Список игроков",
@@ -69,7 +70,7 @@
             "search_placeholder": "Поиск",
             "filters": {
                 "Location": "Местоположение",
-                "OnPlayerJoined": "Игрог подключился",
+                "OnPlayerJoined": "Игрок подключился",
                 "OnPlayerLeft": "Игрок отключился",
                 "PortalSpawn": "Спавн портала",
                 "VideoPlay": "Проигрованние видео",
@@ -157,9 +158,9 @@
                 "Friend": "Новый друг",
                 "Unfriend": "Удалён из друзей",
                 "FriendRequest": "Запрос в друзья",
-                "CancelFriendRequest": "Отменйнные запросы в друзья",
-                "DisplayName": "Выводное имя",
-                "TrustLevel": "Уровнь доверия"
+                "CancelFriendRequest": "Отменённые запросы в друзья",
+                "DisplayName": "Отоброжаемое имя",
+                "TrustLevel": "Уровень доверия"
             }
         },
         "moderation": {
