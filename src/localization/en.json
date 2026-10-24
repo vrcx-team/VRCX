@@ -245,6 +245,12 @@
             "login": "Login",
             "register": "Register",
             "forgotPassword": "Forgot Password?",
+            "reset_password": {
+                "title": "Reset Password",
+                "description": "Enter the email address linked to your VRChat account and we'll send you a password recovery email.",
+                "email": "Email",
+                "send": "Send"
+            },
             "updater": "Updater",
             "proxy_settings": "Proxy Settings",
             "settings": "Settings",
