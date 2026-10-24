@@ -248,7 +248,7 @@ export function shouldIgnoreError(code, endpoint) {
     if ((code === 403 || code === 404 || code === -1) && endpoint?.startsWith('instances/')) {
         return true;
     }
-    if (endpoint?.startsWith('analysis/')) {
+    if (endpoint?.startsWith('analysis/') || endpoint?.startsWith('auth/device/')) {
         return true;
     }
     if (endpoint?.endsWith('/mutuals') && (code === 403 || code === -1)) {

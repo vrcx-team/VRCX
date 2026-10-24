@@ -260,6 +260,12 @@
             "language_detect": {
                 "title": "Language Detected",
                 "description": "Your system language appears to be {language}. Would you like to switch to it?"
+            },
+            "qr": {
+                "button": "Login with QR Code",
+                "hint": "Scan with a device signed in to VRChat, then approve the login.",
+                "cancel": "Cancel",
+                "failed": "QR login failed"
             }
         },
         "feed": {

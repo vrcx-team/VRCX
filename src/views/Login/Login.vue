@@ -103,9 +103,10 @@
                         variant="Secondary"
                         size="lg"
                         style="width: 100%"
-                        @click="openExternalLink('https://vrchat.com/register')"
+                        @click="openExternalLink('https://vrchat.com/home/register')"
                         >{{ t('view.login.register') }}</Button
                     >
+                    <QrLogin />
                 </div>
 
                 <hr v-if="Object.keys(savedCredentials).length !== 0" class="x-vertical-divider" />

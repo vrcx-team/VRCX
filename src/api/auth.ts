@@ -64,6 +64,34 @@ const loginReq = {
         });
     },
 
+    getDeviceCode(): Promise<{
+        json: { deviceCode: string; verificationUrlComplete: string; interval: number; expiresIn: number };
+    }> {
+        return request('auth/device/code', {
+            method: 'POST'
+        }).then((json) => {
+            const args = {
+                json
+            };
+            return args;
+        });
+    },
+
+    getDeviceStatus(params: {
+        deviceCode: string;
+    }): Promise<{ json: { user?: object }; params: { deviceCode: string } }> {
+        return request('auth/device/status', {
+            method: 'POST',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
     getPermissions(): Promise<{ json: Json<Permission[]> }> {
         return request('auth/permissions', {
             method: 'GET',
