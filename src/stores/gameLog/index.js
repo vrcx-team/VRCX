@@ -12,6 +12,7 @@ import {
     getGroupName
 } from '../../shared/utils';
 import { createMediaParsers } from './mediaParsers';
+import { createNowPlayingSpecHandler } from './nowPlayingSpec';
 import { database } from '../../services/database';
 import { tryLoadPlayerList } from '../../coordinators/gameLogCoordinator';
 import { useAdvancedSettingsStore } from '../settings/advanced';
@@ -33,6 +34,26 @@ const SESSIONS_EVENT_FILTER_TYPES = ['OnPlayerJoined', 'OnPlayerLeft', 'VideoPla
 const SESSIONS_DATE_RANGE_MAX_DAYS = 7;
 const SESSIONS_GLOBAL_SEARCH_INITIAL_LOCATIONS = 50;
 const SESSIONS_SEARCH_BATCH_ATTEMPTS = 3;
+
+function createEmptyNowPlaying() {
+    return {
+        url: '',
+        name: '',
+        videoName: '',
+        length: 0,
+        startTime: 0,
+        offset: 0,
+        elapsed: 0,
+        percentage: 0,
+        remainingText: '',
+        playing: false,
+        thumbnailUrl: '',
+        speed: 1,
+        paused: false,
+        spec: false,
+        urlHidden: false
+    };
+}
 
 export const useGameLogStore = defineStore('GameLog', () => {
     const notificationStore = useNotificationStore();
@@ -84,18 +105,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
     });
     const sessionsDateRangeActive = computed(() => !!sessionsDateFrom.value || !!sessionsDateTo.value);
 
-    const nowPlaying = ref({
-        url: '',
-        name: '',
-        length: 0,
-        startTime: 0,
-        offset: 0,
-        elapsed: 0,
-        percentage: 0,
-        remainingText: '',
-        playing: false,
-        thumbnailUrl: ''
-    });
+    const nowPlaying = ref(createEmptyNowPlaying());
+    let nowPlayingTimer = null;
+    let nowPlayingEntry = null;
 
     const lastVideoUrl = ref('');
 
@@ -199,19 +211,37 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     function clearNowPlaying() {
-        nowPlaying.value = {
-            url: '',
-            name: '',
-            length: 0,
-            startTime: 0,
-            offset: 0,
-            elapsed: 0,
-            percentage: 0,
-            remainingText: '',
-            playing: false,
-            thumbnailUrl: ''
-        };
+        stopNowPlayingTicker();
+        nowPlayingEntry = null;
+        nowPlaying.value = createEmptyNowPlaying();
         vrStore.updateVrNowPlaying();
+    }
+
+    /**
+     * Fills in the title of the current video play row when it was logged without one.
+     *
+     * @param {string} videoName
+     */
+    async function updateNowPlayingVideoName(videoName) {
+        const entry = nowPlayingEntry;
+        if (!entry || entry.videoName || !videoName) {
+            return;
+        }
+        const updated = { ...entry, videoName };
+        nowPlayingEntry = updated;
+        await database.updateGamelogVideoPlayName(entry.rowId, videoName);
+
+        if (gameLogTableData.value.includes(entry)) {
+            gameLogTableData.value = gameLogTableData.value.map((row) => (row === entry ? updated : row));
+        }
+        const isSameEvent = (event) =>
+            event.type === 'VideoPlay' && event.created_at === entry.created_at && event.videoUrl === entry.videoUrl;
+        if (sessionsRawEvents.value.some(isSameEvent)) {
+            sessionsRawEvents.value = sessionsRawEvents.value.map((event) =>
+                isSameEvent(event) ? { ...event, videoName } : event
+            );
+            rebuildSessionsDebounced();
+        }
     }
 
     function resetLastMediaUrls() {
@@ -230,27 +260,26 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     findUserByDisplayName(userStore.cachedUsers, ctx.displayName, userStore.cachedUserIdsByDisplayName)
                         ?.id ?? '';
             }
-            notificationStore.queueGameLogNoty(ctx);
-            const persistedEntry = await database.addGamelogVideoPlayToDatabase(ctx);
+            const logEntry = ctx.urlHidden ? { ...ctx, videoUrl: '' } : ctx;
+            notificationStore.queueGameLogNoty(logEntry);
+            const persistedEntry = await database.addGamelogVideoPlayToDatabase(logEntry);
+            nowPlayingEntry = persistedEntry ?? null;
             if (persistedEntry) {
                 addGameLog(persistedEntry);
             }
 
-            let displayName = '';
-            if (ctx.displayName) {
-                displayName = ` (${ctx.displayName})`;
+            let name = '';
+            if (ctx.videoName) {
+                name = ctx.displayName ? `${ctx.videoName} (${ctx.displayName})` : ctx.videoName;
             }
-            const name = `${ctx.videoName}${displayName}`;
             nowPlaying.value = {
+                ...createEmptyNowPlaying(),
                 url: ctx.videoUrl,
                 name,
+                videoName: ctx.videoName || '',
                 length: ctx.videoLength,
                 startTime: Date.parse(ctx.created_at) / 1000,
                 offset: ctx.videoPos,
-                elapsed: 0,
-                percentage: 0,
-                remainingText: '',
-                playing: false,
                 thumbnailUrl: ctx.thumbnailUrl
             };
         } else {
@@ -272,18 +301,11 @@ export const useGameLogStore = defineStore('GameLog', () => {
         vrStore.updateVrNowPlaying();
         if (!nowPlaying.value.playing && ctx.videoLength > 0) {
             nowPlaying.value.playing = true;
-            updateNowPlaying();
+            startNowPlayingTicker();
         }
     }
 
-    const {
-        addGameLogVideo,
-        addGameLogPyPyDance,
-        addGameLogVRDancing,
-        addGameLogZuwaZuwaDance,
-        addGameLogLSMedia,
-        addGameLogPopcornPalace
-    } = createMediaParsers({
+    const { addGameLogVideo, addGameLogVRDancing, addGameLogLSMedia, addGameLogPopcornPalace } = createMediaParsers({
         nowPlaying,
         setNowPlaying,
         clearNowPlaying,
@@ -291,22 +313,51 @@ export const useGameLogStore = defineStore('GameLog', () => {
         advancedSettingsStore
     });
 
+    const { handleNowPlayingEvent, resetNowPlayingProducers, hasNowPlayingProducer } = createNowPlayingSpecHandler({
+        nowPlaying,
+        setNowPlaying,
+        clearNowPlaying,
+        startNowPlayingTicker,
+        updateNowPlayingVideoName,
+        addGameLogVideo
+    });
+
+    function stopNowPlayingTicker() {
+        if (nowPlayingTimer !== null) {
+            workerTimers.clearTimeout(nowPlayingTimer);
+            nowPlayingTimer = null;
+        }
+    }
+
+    function startNowPlayingTicker() {
+        stopNowPlayingTicker();
+        updateNowPlaying();
+    }
+
     function updateNowPlaying() {
+        nowPlayingTimer = null;
         const np = nowPlaying.value;
-        if (!nowPlaying.value.playing) {
+        if (!np.playing) {
             return;
         }
 
-        const now = Date.now() / 1000;
-        np.elapsed = Math.round((now - np.startTime) * 10) / 10;
+        if (!np.paused) {
+            const now = Date.now() / 1000;
+            np.elapsed = Math.round((now - np.startTime) * np.speed * 10) / 10;
+        }
         if (np.elapsed >= np.length) {
-            clearNowPlaying();
-            return;
+            if (!np.spec) {
+                clearNowPlaying();
+                return;
+            }
+            np.elapsed = np.length;
         }
         np.remainingText = formatSeconds(np.length - np.elapsed);
         np.percentage = Math.round(((np.elapsed * 100) / np.length) * 10) / 10;
         vrStore.updateVrNowPlaying();
-        workerTimers.setTimeout(() => updateNowPlaying(), 1000);
+        if (!np.paused && np.elapsed < np.length) {
+            nowPlayingTimer = workerTimers.setTimeout(() => updateNowPlaying(), 1000);
+        }
     }
 
     /**
@@ -1153,11 +1204,12 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
         // Media parsers (used by coordinator)
         addGameLogVideo,
-        addGameLogPyPyDance,
         addGameLogVRDancing,
-        addGameLogZuwaZuwaDance,
         addGameLogLSMedia,
         addGameLogPopcornPalace,
+        handleNowPlayingEvent,
+        resetNowPlayingProducers,
+        hasNowPlayingProducer,
         setLastVideoUrl,
         setLastResourceloadUrl
     };

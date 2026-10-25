@@ -88,7 +88,7 @@
                                             >{{ item.videoId }}:</span
                                         >
                                         <span
-                                            v-if="item.videoId !== 'LSMedia' && item.videoId !== 'PopcornPalace'"
+                                            v-if="item.videoId !== 'PopcornPalace' && !!item.videoUrl"
                                             class="cursor-pointer text-muted-foreground hover:underline"
                                             @click="openExternalLink(item.videoUrl)"
                                             >{{ item.videoName || item.videoUrl }}</span

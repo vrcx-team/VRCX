@@ -28,7 +28,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
             videoPos = gameLog.videoPos;
         }
         if (!isRpcWorld(location) || gameLog.videoId === 'YouTube') {
-            // skip PyPyDance and VRDancing videos
+            // skip videos in worlds with their own integration
             try {
                 url = new URL(videoUrl);
                 if (
@@ -71,7 +71,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                 created_at: gameLog.dt,
                 type: 'VideoPlay',
                 videoUrl,
-                videoId,
+                videoId: gameLog.mediaIdOverride || videoId,
                 videoName,
                 videoLength,
                 location,
@@ -80,75 +80,6 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                 videoPos
             };
             await setNowPlaying(entry);
-        }
-    }
-
-    async function addGameLogPyPyDance(gameLog, location) {
-        const data = /VideoPlay\(PyPyDance\) "(.+?)",([\d.]+),([\d.]+),"(.*)"/g.exec(gameLog.data);
-        if (!data) {
-            console.error('failed to parse', gameLog.data);
-            return;
-        }
-        const videoUrl = data[1];
-        const videoPos = Number(data[2]);
-        const videoLength = Number(data[3]);
-        const title = data[4];
-        const bracketArray = title.split('(');
-        const text1 = bracketArray.pop();
-        let displayName = text1.slice(0, -1);
-        const text2 = bracketArray.join('(').trim();
-        const isCustomUrl = text2 === 'Custom URL';
-        let videoId = '';
-        let videoName = '';
-        if (isCustomUrl) {
-            videoId = 'YouTube';
-        } else {
-            const colonIndex = text2.indexOf(':');
-            videoId = text2.slice(0, colonIndex).trim();
-            videoName = text2.slice(colonIndex + 1).trim();
-        }
-        if (displayName === 'Random') {
-            displayName = '';
-        }
-        if (videoUrl === nowPlaying.value.url) {
-            const entry = {
-                updatedAt: gameLog.dt,
-                videoUrl,
-                videoLength,
-                videoPos
-            };
-            await setNowPlaying(entry);
-            return;
-        }
-        let userId = '';
-        if (displayName) {
-            userId =
-                findUserByDisplayName(userStore.cachedUsers, displayName, userStore.cachedUserIdsByDisplayName)?.id ??
-                '';
-        }
-        if (isCustomUrl) {
-            const entry1 = {
-                dt: gameLog.dt,
-                videoUrl,
-                displayName,
-                videoPos,
-                videoId
-            };
-            await addGameLogVideo(entry1, location, userId);
-        } else {
-            const entry2 = {
-                created_at: gameLog.dt,
-                type: 'VideoPlay',
-                videoUrl,
-                videoId,
-                videoName,
-                videoLength,
-                location,
-                displayName,
-                userId,
-                videoPos
-            };
-            await setNowPlaying(entry2);
         }
     }
 
@@ -174,68 +105,6 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
         if (videoPos === videoLength) {
             // ummm okay
             videoPos = 0;
-        }
-        if (videoUrl === nowPlaying.value.url) {
-            const entry = {
-                updatedAt: gameLog.dt,
-                videoUrl,
-                videoLength,
-                videoPos
-            };
-            await setNowPlaying(entry);
-            return;
-        }
-        let userId = '';
-        if (displayName) {
-            userId =
-                findUserByDisplayName(userStore.cachedUsers, displayName, userStore.cachedUserIdsByDisplayName)?.id ??
-                '';
-        }
-        if (videoId === 'YouTube') {
-            const entry1 = {
-                dt: gameLog.dt,
-                videoUrl,
-                displayName,
-                videoPos,
-                videoId
-            };
-            await addGameLogVideo(entry1, location, userId);
-        } else {
-            const entry2 = {
-                created_at: gameLog.dt,
-                type: 'VideoPlay',
-                videoUrl,
-                videoId,
-                videoName,
-                videoLength,
-                location,
-                displayName,
-                userId,
-                videoPos
-            };
-            await setNowPlaying(entry2);
-        }
-    }
-
-    async function addGameLogZuwaZuwaDance(gameLog, location) {
-        const data = /VideoPlay\(ZuwaZuwaDance\) "(.+?)",([\d.]+),([\d.]+),(-?[\d.]+),"(.+?)","(.+?)"/g.exec(
-            gameLog.data
-        );
-        if (!data) {
-            console.error('failed to parse', gameLog.data);
-            return;
-        }
-        const videoUrl = data[1];
-        const videoPos = Number(data[2]);
-        const videoLength = Number(data[3]);
-        let videoId = data[4];
-        let displayName = data[5];
-        const videoName = data[6];
-        if (displayName === 'Random') {
-            displayName = '';
-        }
-        if (videoId === '9999') {
-            videoId = 'YouTube';
         }
         if (videoUrl === nowPlaying.value.url) {
             const entry = {
@@ -383,9 +252,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
 
     return {
         addGameLogVideo,
-        addGameLogPyPyDance,
         addGameLogVRDancing,
-        addGameLogZuwaZuwaDance,
         addGameLogLSMedia,
         addGameLogPopcornPalace
     };

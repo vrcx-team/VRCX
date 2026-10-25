@@ -1148,11 +1148,15 @@
                     "instance_type_player_count": "Instance Type & Player Count",
                     "join_button": "Join Button (Public Only)",
                     "show_details_in_private": "Show Details in Private Instances",
+                    "show_details_in_private_tooltip": "Show world and instance details for Invite, Invite+ and Group Members instances, or while using the Ask Me status",
                     "show_images": "Show World Images",
+                    "show_media_images": "Show Media Images",
+                    "show_media_images_tooltip": "Use the thumbnail of the currently playing video when the world's media player provides one",
                     "show_current_platform": "Show Current Platform",
                     "world_integration": "World Integration",
-                    "world_integration_tooltip": "Show \"Watching/Listening to\" for Popcorn Palace, PyPyDance, VRDancing and LS Media",
-                    "display_world_name_as_discord_status": "Use World Name as Activity"
+                    "world_integration_tooltip": "Show \"Watching/Listening to\" for Popcorn Palace, PyPyDance, VRDancing, LS Media and more",
+                    "display_world_name_as_discord_status": "Use World Name as Activity",
+                    "display_world_name_as_discord_status_tooltip": "Show the world name instead of \"VRChat\" in your Discord status, e.g. \"Playing The Black Cat\""
                 },
                 "rpc": {
                     "vr": "VR",

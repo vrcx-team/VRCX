@@ -176,6 +176,7 @@ export async function addGameLogEntry(gameLog, location) {
                 instanceStore.removeQueuedInstance(gameLog.location);
                 runUpdateCurrentUserLocationFlow();
                 gameLogStore.clearNowPlaying();
+                gameLogStore.resetNowPlayingProducers();
                 instanceStore.updateCurrentInstanceWorld();
                 userStore.applyUserDialogLocation();
                 instanceStore.applyWorldDialogInstances();
@@ -188,6 +189,7 @@ export async function addGameLogEntry(gameLog, location) {
             if (gameStore.isGameRunning) {
                 await runLastLocationResetFlow(gameLog.dt);
                 gameLogStore.clearNowPlaying();
+                gameLogStore.resetNowPlayingProducers();
                 locationStore.setLastLocation({
                     date: Date.parse(gameLog.dt),
                     location: gameLog.location,
@@ -271,7 +273,13 @@ export async function addGameLogEntry(gameLog, location) {
             entry = createPortalSpawnEntry(gameLog.dt, location);
             persistedEntryPromise = database.addGamelogPortalSpawnToDatabase(entry);
             break;
+        case 'nowplaying':
+            await gameLogStore.handleNowPlayingEvent(gameLog, location);
+            break;
         case 'video-play':
+            if (gameLogStore.hasNowPlayingProducer()) {
+                break;
+            }
             gameLog.videoUrl = decodeURI(gameLog.videoUrl);
             if (gameLogStore.lastVideoUrl === gameLog.videoUrl) {
                 break;
@@ -337,12 +345,8 @@ export async function addGameLogEntry(gameLog, location) {
             break;
         case 'vrcx':
             const type = gameLog.data.substr(0, gameLog.data.indexOf(' '));
-            if (type === 'VideoPlay(PyPyDance)') {
-                await gameLogStore.addGameLogPyPyDance(gameLog, location);
-            } else if (type === 'VideoPlay(VRDancing)') {
+            if (type === 'VideoPlay(VRDancing)') {
                 await gameLogStore.addGameLogVRDancing(gameLog, location);
-            } else if (type === 'VideoPlay(ZuwaZuwaDance)') {
-                await gameLogStore.addGameLogZuwaZuwaDance(gameLog, location);
             } else if (type === 'LSMedia') {
                 await gameLogStore.addGameLogLSMedia(gameLog, location);
             } else if (type === 'VideoPlay(PopcornPalace)') {

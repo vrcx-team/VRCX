@@ -170,7 +170,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                 }
 
                 if (original.type === 'VideoPlay') {
-                    const showLink = original.videoId !== 'LSMedia' && original.videoId !== 'PopcornPalace';
+                    const showLink = original.videoId !== 'PopcornPalace' && !!original.videoUrl;
                     const label = original.videoName || original.videoUrl;
                     const tooltipText = original.videoId ? `${original.videoId}: ${label}` : label;
                     return (
@@ -202,7 +202,9 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                                         <ContextMenuSeparator />
                                     </>
                                 ) : null}
-                                <ContextMenuItem onClick={() => copyToClipboard(original.videoUrl)}>
+                                <ContextMenuItem
+                                    onClick={() => copyToClipboard(original.videoUrl || original.videoName)}
+                                >
                                     <Copy class="size-4" />
                                     {t('common.actions.copy')}
                                 </ContextMenuItem>

@@ -175,18 +175,26 @@
                             class="flex items-center gap-1 px-2 h-[22px] whitespace-nowrap border-r border-border min-w-0 max-w-[400px]">
                             <i v-if="!isYouTubeNowPlaying" class="ri-play-fill text-[10px] shrink-0" />
                             <i v-if="isYouTubeNowPlaying" class="ri-youtube-fill text-[#FF0000] shrink-0 text-[12px]" />
-                            <TooltipWrapper v-else :content="nowPlaying.url" side="top">
-                                <span
-                                    class="text-[10px] shrink-0 truncate max-w-[180px] cursor-pointer hover:text-foreground"
-                                    @click="handleNowPlayingClick"
-                                    >{{ nowPlaying.url }}</span
-                                >
-                            </TooltipWrapper>
-                            <TooltipWrapper :content="nowPlaying.name" side="top">
+                            <TooltipWrapper side="top" content-class="p-2">
+                                <template #content>
+                                    <div class="flex flex-col gap-1.5 max-w-[320px]">
+                                        <img
+                                            v-if="nowPlaying.thumbnailUrl"
+                                            :src="nowPlaying.thumbnailUrl"
+                                            class="w-full max-h-[180px] object-contain rounded"
+                                            loading="lazy" />
+                                        <span v-if="nowPlaying.name" class="whitespace-pre-wrap">{{
+                                            nowPlaying.name
+                                        }}</span>
+                                        <span v-if="!nowPlaying.urlHidden" class="break-all text-muted-foreground">{{
+                                            nowPlaying.url
+                                        }}</span>
+                                    </div>
+                                </template>
                                 <span
                                     class="text-[11px] text-foreground truncate cursor-pointer"
                                     @click="handleNowPlayingClick"
-                                    >{{ nowPlaying.name }}</span
+                                    >{{ nowPlaying.name || nowPlaying.url }}</span
                                 >
                             </TooltipWrapper>
                             <template v-if="nowPlaying.playing">
@@ -457,7 +465,7 @@
 
     function handleNowPlayingClick() {
         const url = nowPlaying.value.url;
-        if (url) {
+        if (url && !nowPlaying.value.urlHidden) {
             openExternalLink(url);
         }
     }

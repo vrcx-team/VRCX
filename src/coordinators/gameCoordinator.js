@@ -61,6 +61,7 @@ export async function runGameRunningChangedFlow(isGameRunning) {
 
     await runLastLocationResetFlow();
     gameLogStore.clearNowPlaying();
+    gameLogStore.resetNowPlayingProducers();
     vrStore.updateVRLastLocation();
     workerTimers.setTimeout(() => runCheckVRChatDebugLoggingFlow(), 60000);
     updateLoopStore.setNextDiscordUpdate(0);

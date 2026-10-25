@@ -53,6 +53,7 @@ class GameLogService {
                 break;
 
             case 'vrcx':
+            case 'nowplaying':
                 gameLog.data = args[0];
                 break;
 

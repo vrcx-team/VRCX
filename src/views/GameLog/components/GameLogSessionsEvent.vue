@@ -158,7 +158,7 @@
                         {{ t('common.actions.open_link') }}
                     </ContextMenuItem>
                     <ContextMenuSeparator v-if="showLink" />
-                    <ContextMenuItem @click="copyToClipboard(event.videoUrl)">
+                    <ContextMenuItem @click="copyToClipboard(event.videoUrl || event.videoName)">
                         <Copy class="size-4" />
                         {{ t('common.actions.copy') }}
                     </ContextMenuItem>
@@ -198,7 +198,7 @@
 
     const showLink = computed(() => {
         if (props.event.type !== 'VideoPlay') return false;
-        return props.event.videoId !== 'LSMedia' && props.event.videoId !== 'PopcornPalace';
+        return props.event.videoId !== 'PopcornPalace' && !!props.event.videoUrl;
     });
 
     const videoLabel = computed(() => {

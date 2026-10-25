@@ -185,6 +185,13 @@ const gameLog = {
         return rowId ? { ...entry, rowId } : undefined;
     },
 
+    updateGamelogVideoPlayName(rowId, videoName) {
+        return sqliteService.executeNonQuery(`UPDATE gamelog_video_play SET video_name = @video_name WHERE id = @id`, {
+            '@video_name': videoName,
+            '@id': rowId
+        });
+    },
+
     async addGamelogResourceLoadToDatabase(entry) {
         const rowId = await sqliteService.executeInsert(
             `INSERT OR IGNORE INTO gamelog_resource_load (created_at, resource_url, resource_type, location) VALUES (@created_at, @resource_url, @resource_type, @location)`,

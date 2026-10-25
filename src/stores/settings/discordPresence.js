@@ -55,6 +55,7 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
     const discordShowPlatform = ref(true);
     const discordWorldIntegration = ref(true);
     const discordWorldNameAsDiscordStatus = ref(false);
+    const discordMediaImage = ref(false);
 
     function setDiscordActive() {
         discordActive.value = !discordActive.value;
@@ -88,6 +89,10 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
         discordWorldNameAsDiscordStatus.value = !discordWorldNameAsDiscordStatus.value;
         configRepository.setBool('discordWorldNameAsDiscordStatus', discordWorldNameAsDiscordStatus.value);
     }
+    function setDiscordMediaImage() {
+        discordMediaImage.value = !discordMediaImage.value;
+        configRepository.setBool('discordMediaImage', discordMediaImage.value);
+    }
 
     async function initDiscordPresenceSettings() {
         const [
@@ -98,7 +103,8 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
             discordHideImageConfig,
             discordShowPlatformConfig,
             discordWorldIntegrationConfig,
-            discordWorldNameAsDiscordStatusConfig
+            discordWorldNameAsDiscordStatusConfig,
+            discordMediaImageConfig
         ] = await Promise.all([
             configRepository.getBool('discordActive', false),
             configRepository.getBool('discordInstance', true),
@@ -107,7 +113,8 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
             configRepository.getBool('discordHideImage', false),
             configRepository.getBool('discordShowPlatform', true),
             configRepository.getBool('discordWorldIntegration', true),
-            configRepository.getBool('discordWorldNameAsDiscordStatus', false)
+            configRepository.getBool('discordWorldNameAsDiscordStatus', false),
+            configRepository.getBool('discordMediaImage', false)
         ]);
 
         discordActive.value = discordActiveConfig;
@@ -118,6 +125,7 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
         discordShowPlatform.value = discordShowPlatformConfig;
         discordWorldIntegration.value = discordWorldIntegrationConfig;
         discordWorldNameAsDiscordStatus.value = discordWorldNameAsDiscordStatusConfig;
+        discordMediaImage.value = discordMediaImageConfig;
     }
 
     initDiscordPresenceSettings();
@@ -270,32 +278,41 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
             buttonUrl = '';
         }
 
-        const rpcConfig =
-            isRpcWorld(state.lastLocationDetails.tag) && discordWorldIntegration.value
+        if (!discordHideImage.value && state.lastLocationDetails.thumbnailImageUrl) {
+            bigIcon = state.lastLocationDetails.thumbnailImageUrl;
+        }
+
+        const np = gameLogStore.nowPlaying;
+        if (discordWorldIntegration.value && np.playing && !np.paused && np.videoName) {
+            activityType = ActivityType.Watching;
+
+            const rpcConfig = isRpcWorld(state.lastLocationDetails.tag)
                 ? getRpcWorldConfig(state.lastLocationDetails.worldId)
                 : null;
+            if (rpcConfig) {
+                activityType = rpcConfig.activityType;
+                statusDisplayType = rpcConfig.statusDisplayType;
+                appId = rpcConfig.appId;
+                bigIcon = rpcConfig.bigIcon;
+                details = np.videoName;
+                if (
+                    isPopcornPalaceWorld(state.lastLocationDetails.worldId) &&
+                    !discordHideImage.value &&
+                    np.thumbnailUrl
+                ) {
+                    bigIcon = np.thumbnailUrl;
+                }
+            }
 
-        if (rpcConfig) {
-            activityType = rpcConfig.activityType;
-            statusDisplayType = rpcConfig.statusDisplayType;
-            appId = rpcConfig.appId;
-            bigIcon = rpcConfig.bigIcon;
-            if (
-                isPopcornPalaceWorld(state.lastLocationDetails.worldId) &&
-                !discordHideImage.value &&
-                gameLogStore.nowPlaying.thumbnailUrl
-            ) {
-                bigIcon = gameLogStore.nowPlaying.thumbnailUrl;
+            if (np.length > 0) {
+                startTime = np.startTime * 1000;
+                endTime = (np.startTime + np.length / np.speed) * 1000;
             }
-            if (gameLogStore.nowPlaying.name) {
-                details = gameLogStore.nowPlaying.name;
+
+            const mediaImage = getMediaImage();
+            if (mediaImage) {
+                bigIcon = mediaImage;
             }
-            if (gameLogStore.nowPlaying.playing) {
-                startTime = gameLogStore.nowPlaying.startTime * 1000;
-                endTime = (gameLogStore.nowPlaying.startTime + gameLogStore.nowPlaying.length) * 1000;
-            }
-        } else if (!discordHideImage.value && state.lastLocationDetails.thumbnailImageUrl) {
-            bigIcon = state.lastLocationDetails.thumbnailImageUrl;
         }
 
         if (hidePrivate) {
@@ -343,6 +360,17 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
         );
     }
 
+    function getMediaImage() {
+        if (!discordMediaImage.value || discordHideImage.value) {
+            return '';
+        }
+        const url = gameLogStore.nowPlaying.thumbnailUrl;
+        if (!url || !url.startsWith('https://') || url.length > 256) {
+            return '';
+        }
+        return url;
+    }
+
     /**
      * @param active
      */
@@ -372,6 +400,7 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
         discordShowPlatform,
         discordWorldIntegration,
         discordWorldNameAsDiscordStatus,
+        discordMediaImage,
 
         setDiscordActive,
         setDiscordInstance,
@@ -380,6 +409,7 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
         setDiscordHideImage,
         setDiscordShowPlatform,
         setDiscordWorldIntegration,
+        setDiscordMediaImage,
         setDiscordWorldNameAsDiscordStatus,
         updateDiscord,
         saveDiscordOption

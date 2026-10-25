@@ -57,7 +57,10 @@
                     " />
             </SettingsItem>
 
-            <SettingsItem :label="t('view.settings.discord_presence.discord_presence.show_details_in_private')" toggle>
+            <SettingsItem
+                :label="t('view.settings.discord_presence.discord_presence.show_details_in_private')"
+                :description="t('view.settings.discord_presence.discord_presence.show_details_in_private_tooltip')"
+                toggle>
                 <Switch
                     :model-value="!discordHideInvite"
                     :disabled="!discordActive"
@@ -91,7 +94,24 @@
             </SettingsItem>
 
             <SettingsItem
+                :label="t('view.settings.discord_presence.discord_presence.show_media_images')"
+                :description="t('view.settings.discord_presence.discord_presence.show_media_images_tooltip')"
+                toggle>
+                <Switch
+                    :model-value="discordMediaImage"
+                    :disabled="!discordActive || discordHideImage"
+                    :ariaLabel="t('view.settings.discord_presence.discord_presence.show_media_images')"
+                    @update:modelValue="
+                        setDiscordMediaImage();
+                        saveDiscordOption();
+                    " />
+            </SettingsItem>
+
+            <SettingsItem
                 :label="t('view.settings.discord_presence.discord_presence.display_world_name_as_discord_status')"
+                :description="
+                    t('view.settings.discord_presence.discord_presence.display_world_name_as_discord_status_tooltip')
+                "
                 toggle>
                 <Switch
                     :model-value="discordWorldNameAsDiscordStatus"
@@ -205,6 +225,7 @@
         setDiscordShowPlatform,
         setDiscordWorldIntegration,
         setDiscordWorldNameAsDiscordStatus,
+        setDiscordMediaImage,
         saveDiscordOption
     } = useDiscordPresenceSettingsStore();
 
@@ -216,7 +237,8 @@
         discordHideImage,
         discordShowPlatform,
         discordWorldIntegration,
-        discordWorldNameAsDiscordStatus
+        discordWorldNameAsDiscordStatus,
+        discordMediaImage
     } = storeToRefs(useDiscordPresenceSettingsStore());
 
     const { showVRChatConfig } = advancedSettingsStore;
