@@ -19,6 +19,7 @@
                     <ResizablePanelGroup
                         direction="horizontal"
                         auto-save-id="vrcx-main-layout-right-sidebar"
+                        :storage="asideLayoutStorage"
                         :class="[
                             'group/main-layout flex-1 h-full min-w-0',
                             { 'aside-collapsed': isAsideCollapsedStatic }
@@ -190,6 +191,15 @@
     const asidePanelRef = ref(null);
     const showAsideExpandButton = computed(() => isSideBarTabShow.value && isAsideCollapsedStatic.value);
     let restoreAsideAfterHiddenRoute = false;
+
+    const asideLayoutStorage = {
+        getItem: (name) => localStorage.getItem(name),
+        setItem: (name, value) => {
+            if (isSideBarTabShow.value) {
+                localStorage.setItem(name, value);
+            }
+        }
+    };
 
     watch(isSideBarTabShow, async (show) => {
         if (!show) {
