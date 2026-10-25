@@ -257,6 +257,32 @@
                         </div>
                     </PopoverContent>
                 </Popover>
+                <TooltipWrapper v-if="currentHypeTrain" side="top">
+                    <template #content>
+                        <div class="flex flex-col gap-1">
+                            <span class="font-medium">{{ t('dialog.user.info.instance_hype_train') }}</span>
+                            <span>
+                                {{ t('dialog.user.info.instance_hype_train_gifts') }}
+                                {{ currentHypeTrain.currentGiftCount }}/{{ currentHypeTrain.totalGiftGoal }}
+                            </span>
+                            <span>
+                                {{ t('dialog.user.info.instance_hype_train_contributors') }}
+                                {{ currentHypeTrain.totalGiftContributors }}
+                            </span>
+                            <span v-if="hypeTrainTimeRemaining">
+                                {{ t('dialog.user.info.instance_hype_train_time_remaining') }}
+                                {{ hypeTrainTimeRemaining }}
+                            </span>
+                            <span v-if="hypeTrainStartEpoch">
+                                {{ t('dialog.user.info.instance_hype_train_started') }}
+                                <Timer :epoch="hypeTrainStartEpoch" />
+                            </span>
+                        </div>
+                    </template>
+                    <span class="flex items-center gap-0.5">
+                        <TrainFront class="h-4 w-4" />
+                    </span>
+                </TooltipWrapper>
                 <TooltipWrapper
                     v-if="instance?.minimumAvatarPerformance && instance.minimumAvatarPerformance !== 'None'"
                     side="top"
@@ -297,10 +323,12 @@
         UsersRound,
         SquareStack,
         IdCard,
+        TrainFront,
         UserLock,
         UserPlus2
     } from 'lucide-vue-next';
     import { computed, reactive, ref, watch } from 'vue';
+    import { useIntervalFn } from '@vueuse/core';
     import { Button } from '@/components/ui/button';
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
     import { storeToRefs } from 'pinia';
@@ -317,7 +345,7 @@
         useModalStore,
         useUserStore
     } from '../stores';
-    import { hasGroupPermission, languageClass, parseLocation } from '../shared/utils';
+    import { formatSeconds, hasGroupPermission, languageClass, parseLocation } from '../shared/utils';
     import { useInviteChecks } from '../composables/useInviteChecks';
     import { instanceRequest, miscRequest, queryRequest } from '../api';
     import InstanceAnnouncementDialog from './dialogs/InstanceAnnouncementDialog.vue';
@@ -452,6 +480,7 @@
             instanceInfoState.isAgeGated ||
             instanceInfoState.isRoleRestricted ||
             props.instance?.calendarEntryId ||
+            props.instance?.hypeTrain?.current ||
             (props.instance.minimumAvatarPerformance && props.instance.minimumAvatarPerformance !== 'None')
         );
     });
@@ -494,6 +523,23 @@
                 };
             })
             .sort((a, b) => b.percent - a.percent);
+    });
+
+    const currentHypeTrain = computed(() => props.instance?.hypeTrain?.current ?? null);
+    const hypeTrainStartEpoch = computed(() => {
+        const startDate = currentHypeTrain.value?.startDate;
+        return startDate ? Date.parse(startDate) || 0 : 0;
+    });
+    const now = ref(Date.now());
+    const { pause: pauseNow, resume: resumeNow } = useIntervalFn(() => (now.value = Date.now()), 1000, {
+        immediate: false,
+        immediateCallback: true
+    });
+    watch(currentHypeTrain, (train) => (train ? resumeNow() : pauseNow()), { immediate: true });
+    const hypeTrainTimeRemaining = computed(() => {
+        const endEpoch = Date.parse(currentHypeTrain.value?.endDate);
+        if (!endEpoch) return '';
+        return formatSeconds(Math.max(0, (endEpoch - now.value) / 1000));
     });
 
     const handleRefresh = () => {

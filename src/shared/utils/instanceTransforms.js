@@ -83,6 +83,7 @@ export function createDefaultInstanceRef(json) {
         disabledPropAbilities: [],
         minimumAvatarPerformance: null,
         userIcons: [],
+        hypeTrain: null,
         // VRCX
         $fetchedAt: '',
         $disabledContentSettings: [],
