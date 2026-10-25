@@ -137,26 +137,18 @@ namespace VRCX
             if (File.Exists(_lastCefVersionPath))
             {
                 var lastCefVersion = File.ReadAllText(_lastCefVersionPath).Trim();
-                var lastCefVersionParts = lastCefVersion.Split('.');
-                var currentVersionParts = currentVersion.Split('.');
-                if (lastCefVersionParts.Length != currentVersionParts.Length)
+                if (!Version.TryParse(lastCefVersion, out var lastVersion) ||
+                    !Version.TryParse(currentVersion, out var parsedCurrentVersion))
                 {
                     logger.Info("Cef version mismatch detected, deleting userdata: {0} -> {1}", lastCefVersion,
                         currentVersion);
                     DeleteUserData(userDataDir);
                 }
-
-                for (var i = 0; i < lastCefVersionParts.Length; i++)
+                else if (lastVersion > parsedCurrentVersion)
                 {
-                    if (int.TryParse(lastCefVersionParts[i], out var lastPart) &&
-                        int.TryParse(currentVersionParts[i], out var currentPart) &&
-                        lastPart > currentPart)
-                    {
-                        logger.Info("Cef downgrade detected, deleting userdata: {0} -> {1}", lastCefVersion,
-                            currentVersion);
-                        DeleteUserData(userDataDir);
-                        break;
-                    }
+                    logger.Info("Cef downgrade detected, deleting userdata: {0} -> {1}", lastCefVersion,
+                        currentVersion);
+                    DeleteUserData(userDataDir);
                 }
             }
 
