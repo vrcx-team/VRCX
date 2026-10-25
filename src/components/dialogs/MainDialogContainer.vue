@@ -257,9 +257,11 @@
                                         type="button"
                                         variant="ghost"
                                         size="sm"
-                                        class="max-w-40 justify-start truncate text-left"
+                                        class="max-w-40 justify-start text-left"
                                         @click="handleBreadcrumbClick(0)">
-                                        {{ dialogCrumbs[0]?.label || dialogCrumbs[0]?.id }}
+                                        <span class="truncate">{{
+                                            dialogCrumbs[0]?.label || dialogCrumbs[0]?.id
+                                        }}</span>
                                     </Button>
                                 </BreadcrumbLink>
                             </TooltipWrapper>
@@ -293,47 +295,51 @@
                                         type="button"
                                         variant="ghost"
                                         size="sm"
-                                        class="max-w-40 justify-start truncate text-left"
+                                        class="max-w-40 justify-start text-left"
                                         @click="handleBreadcrumbClick(dialogCrumbs.length - 2)">
-                                        {{
+                                        <span class="truncate">{{
                                             dialogCrumbs[dialogCrumbs.length - 2]?.label ||
                                             dialogCrumbs[dialogCrumbs.length - 2]?.id
-                                        }}
+                                        }}</span>
                                     </Button>
                                 </BreadcrumbLink>
                             </TooltipWrapper>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <BreadcrumbPage class="max-w-40 truncate">
-                                {{
+                            <TooltipWrapper
+                                :content="
                                     dialogCrumbs[dialogCrumbs.length - 1]?.label ||
                                     dialogCrumbs[dialogCrumbs.length - 1]?.id
-                                }}
-                            </BreadcrumbPage>
+                                "
+                                :delayDuration="500">
+                                <BreadcrumbPage class="max-w-40 truncate">
+                                    {{
+                                        dialogCrumbs[dialogCrumbs.length - 1]?.label ||
+                                        dialogCrumbs[dialogCrumbs.length - 1]?.id
+                                    }}
+                                </BreadcrumbPage>
+                            </TooltipWrapper>
                         </BreadcrumbItem>
                     </template>
                     <template v-else>
                         <template v-for="(crumb, index) in dialogCrumbs" :key="`${crumb.type}-${crumb.id}`">
                             <BreadcrumbItem>
-                                <TooltipWrapper
-                                    v-if="index < dialogCrumbs.length - 1"
-                                    :content="crumb.label || crumb.id"
-                                    :delayDuration="500">
-                                    <BreadcrumbLink as-child>
+                                <TooltipWrapper :content="crumb.label || crumb.id" :delayDuration="500">
+                                    <BreadcrumbLink v-if="index < dialogCrumbs.length - 1" as-child>
                                         <Button
                                             type="button"
                                             variant="ghost"
                                             size="sm"
-                                            class="max-w-40 justify-start truncate text-left"
+                                            class="max-w-40 justify-start text-left"
                                             @click="handleBreadcrumbClick(index)">
-                                            {{ crumb.label || crumb.id }}
+                                            <span class="truncate">{{ crumb.label || crumb.id }}</span>
                                         </Button>
                                     </BreadcrumbLink>
+                                    <BreadcrumbPage v-else class="max-w-40 truncate">
+                                        {{ crumb.label || crumb.id }}
+                                    </BreadcrumbPage>
                                 </TooltipWrapper>
-                                <BreadcrumbPage v-else class="max-w-40 truncate">
-                                    {{ crumb.label || crumb.id }}
-                                </BreadcrumbPage>
                             </BreadcrumbItem>
                             <BreadcrumbSeparator v-if="index < dialogCrumbs.length - 1" />
                         </template>

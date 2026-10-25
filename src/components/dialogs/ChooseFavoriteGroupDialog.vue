@@ -5,7 +5,7 @@
                 <DialogTitle>{{ t('dialog.favorite.header') }}</DialogTitle>
             </DialogHeader>
             <div>
-                <span style="display: block">{{ t('dialog.favorite.vrchat_favorites') }}</span>
+                <span style="display: block; text-align: center">{{ t('dialog.favorite.vrchat_favorites') }}</span>
                 <template v-if="favoriteDialog.currentGroup && favoriteDialog.currentGroup.key">
                     <Button
                         variant="outline"
@@ -73,7 +73,9 @@
                 </template>
             </div>
             <div v-if="favoriteDialog.type === 'avatar'" style="margin-top: 20px">
-                <span style="text-align: center">{{ t('dialog.favorite.local_avatar_favorites') }}</span>
+                <span style="display: block; text-align: center">{{
+                    t('dialog.favorite.local_avatar_favorites')
+                }}</span>
                 <template v-for="group in localAvatarFavoriteGroups" :key="group">
                     <Button
                         variant="outline"

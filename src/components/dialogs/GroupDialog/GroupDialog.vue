@@ -50,7 +50,9 @@
                                 @click="copyToClipboard(groupDialog.ref.name)">
                                 <span class="flex min-w-0 items-center gap-1">
                                     <span v-if="groupDialog.ref.ownerId === currentUser.id" class="shrink-0">👑</span>
-                                    <span class="truncate">{{ groupDialog.ref.name }}</span>
+                                    <span class="truncate" :title="groupDialog.ref.name">{{
+                                        groupDialog.ref.name
+                                    }}</span>
                                 </span>
                             </span>
                             <span
