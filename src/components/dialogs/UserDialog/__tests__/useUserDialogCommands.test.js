@@ -205,7 +205,6 @@ describe('useUserDialogCommands', () => {
     });
 
     describe('userDialogCommand — string callback commands', () => {
-
         it('should not throw when callback is not registered', () => {
             const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             expect(() => userDialogCommand('Edit Bio')).not.toThrow();
