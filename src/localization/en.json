@@ -1373,7 +1373,8 @@
         "alertdialog": {
             "ok": "OK",
             "cancel": "Cancel",
-            "confirm": "Confirm"
+            "confirm": "Confirm",
+            "dont_show_again": "Don't show this again"
         },
         "prompt": {
             "input_invalid": "Invalid input"
@@ -2908,6 +2909,8 @@
         "unblock_group": "Are you sure you want to unblock this group?",
         "leave_group": "Are you sure you want to leave this group?",
         "disable_gamelog": "Continue? Disable GameLog",
+        "youtube_bot_error_title": "YouTube video failed to load",
+        "youtube_bot_error": "YouTube is blocking video playback with a \"Sign in to confirm\" error. VRCVideoCacher can fix this, would you like to open its Steam store page?",
         "restore_backup": "Continue? Restore Backup",
         "delete_vrc_registry": "Continue? Delete VRC Registry Settings",
         "clear_cache": "Continue? Clear all VRChat cache",

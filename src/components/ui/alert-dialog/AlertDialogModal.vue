@@ -9,6 +9,7 @@
         AlertDialogHeader,
         AlertDialogTitle
     } from '@/components/ui/alert-dialog';
+    import { Checkbox } from '@/components/ui/checkbox';
     import { storeToRefs } from 'pinia';
     import { useModalStore } from '@/stores';
     import { nextTick, ref, watch } from 'vue';
@@ -23,7 +24,9 @@
         alertOkText,
         alertCancelText,
         alertDismissible,
-        alertDestructive
+        alertDestructive,
+        alertCheckboxLabel,
+        alertChecked
     } = storeToRefs(modalStore);
 
     const actionRef = ref(null);
@@ -75,6 +78,10 @@
             </AlertDialogHeader>
 
             <AlertDialogFooter>
+                <label v-if="alertCheckboxLabel" class="inline-flex items-center gap-2 text-sm sm:mr-auto">
+                    <Checkbox v-model="alertChecked" />
+                    <span>{{ alertCheckboxLabel }}</span>
+                </label>
                 <AlertDialogCancel v-if="alertMode === 'confirm'" @click="modalStore.handleCancel">
                     {{ alertCancelText }}
                 </AlertDialogCancel>

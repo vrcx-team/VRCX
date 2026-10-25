@@ -73,6 +73,14 @@ namespace VRCX
             });
         }
 
+        public void OpenSteamStorePage(int appId)
+        {
+            Process.Start(new ProcessStartInfo($"steam://openurl/https://store.steampowered.com/app/{appId}/")
+            {
+                UseShellExecute = true
+            });
+        }
+
         public string GetLaunchCommand()
         {
             var command = StartupArgs.LaunchArguments.LaunchCommand;

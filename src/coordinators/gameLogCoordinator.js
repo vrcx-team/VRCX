@@ -382,6 +382,9 @@ export async function addGameLogEntry(gameLog, location) {
                 data: gameLog.event
             };
             persistedEntryPromise = database.addGamelogEventToDatabase(entry);
+            if (gameStore.isGameRunning && gameLog.event.startsWith('VideoError: ')) {
+                checkYoutubeBotError(gameLog.event);
+            }
             break;
         case 'vrc-quit':
             if (!gameStore.isGameRunning) {
@@ -437,6 +440,33 @@ export async function addGameLogEntry(gameLog, location) {
         } else {
             gameLogStore.addGameLog(entry);
         }
+    }
+}
+
+let youtubeBotErrorPrompted = false;
+
+/**
+ * @param {string} videoError
+ */
+async function checkYoutubeBotError(videoError) {
+    if (youtubeBotErrorPrompted || !videoError.includes('Sign in to confirm')) {
+        return;
+    }
+    youtubeBotErrorPrompted = true;
+    if (await configRepository.getBool('VRCX_hideYoutubeBotErrorPrompt', false)) {
+        return;
+    }
+    const t = i18n.global.t;
+    const { ok, checked } = await useModalStore().confirm({
+        description: t('confirm.youtube_bot_error'),
+        title: t('confirm.youtube_bot_error_title'),
+        checkboxLabel: t('dialog.alertdialog.dont_show_again')
+    });
+    if (checked) {
+        configRepository.setBool('VRCX_hideYoutubeBotErrorPrompt', true);
+    }
+    if (ok) {
+        AppApi.OpenSteamStorePage(4296960);
     }
 }
 
