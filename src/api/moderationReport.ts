@@ -39,6 +39,7 @@ const moderationReportReq = {
         });
     },
 
+    // deprecated
     deleteModerationReport(params: {
         moderationReportId: string;
     }): Promise<{ json: Json<SuccessFlag>; params: { moderationReportId: string } }> {

@@ -51,9 +51,6 @@
                             {{ formatDateFilter(report.created, 'long') }}
                         </div>
                     </div>
-                    <Button size="icon-sm" variant="ghost" @click="deleteReport(report)">
-                        <Trash2 class="size-4" />
-                    </Button>
                 </div>
             </div>
 
@@ -193,21 +190,5 @@
                 showGroupDialog(report.contentId);
                 break;
         }
-    }
-
-    /**
-     * @param {object} report
-     */
-    async function deleteReport(report) {
-        const { ok } = await modalStore.confirm({
-            title: t('confirm.title'),
-            description: t('dialog.moderation_reports.delete_confirm'),
-            destructive: true
-        });
-        if (!ok) {
-            return;
-        }
-        await moderationReportRequest.deleteModerationReport({ moderationReportId: report.id });
-        reports.value = reports.value.filter((r) => r.id !== report.id);
     }
 </script>
