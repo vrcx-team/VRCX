@@ -301,14 +301,14 @@
     import { Slider } from '@/components/ui/slider';
     import { Spinner } from '@/components/ui/spinner';
     import { VirtualCombobox } from '@/components/ui/virtual-combobox';
-    import { createNodeBorderProgram } from '@sigma/node-border';
+    import { layerBorder } from '@sigma/node-border';
+    import { pathCurved } from 'sigma/rendering';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
     import { useI18n } from 'vue-i18n';
 
     import BackToTop from '@/components/BackToTop.vue';
     import dayjs from 'dayjs';
-    import EdgeCurveProgram from '@sigma/edge-curve';
     import Graph from 'graphology';
     import Sigma from 'sigma';
     import louvain from 'graphology-communities-louvain';
@@ -358,18 +358,48 @@
         '#ea7ccc'
     ];
 
-    const NodeBorderProgram = createNodeBorderProgram({
+    const NODE_BORDER_LAYER = layerBorder({
         borders: [
-            { size: { value: 0.1 }, color: { value: '#f2f2f2' } },
-            { size: { fill: true }, color: { attribute: 'color' } }
+            { size: 0.1, color: '#f2f2f2', mode: 'relative' },
+            { size: 0, color: { attribute: 'color' }, fill: true }
         ]
     });
+
+    function renderLastFetchedAttachment({ attributes, pixelRatio }) {
+        if (!attributes.lastFetchedAt) return null;
+
+        const text = `${t('view.charts.mutual_friend.context_menu.last_fetched')}: ${dayjs(attributes.lastFetchedAt).format('YYYY-MM-DD HH:mm')}`;
+        const fontSize = 10;
+        const font = `${fontSize}px sans-serif`;
+        const paddingX = 6;
+        const paddingY = 3;
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.font = font;
+        const width = Math.ceil(ctx.measureText(text).width) + paddingX * 2;
+        const height = fontSize + paddingY * 2;
+
+        canvas.width = width * pixelRatio;
+        canvas.height = height * pixelRatio;
+        ctx.scale(pixelRatio, pixelRatio);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+        ctx.font = font;
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = attributes.optedOut ? '#dc2626' : '#6b7280';
+        ctx.fillText(text, paddingX, height / 2);
+
+        return /** @type {const} */ ({ type: 'canvas', canvas });
+    }
 
     const graphContainerRef = ref(null);
     const mutualGraphRef = ref(null);
 
     let sigmaInstance = null;
     let currentGraph = null;
+    let hoveredNode = null;
+    let hoveredNeighbors = new Set();
     let resizeObserver = null;
     let mutualGraphResizeObserver = null;
     let pendingRender = null;
@@ -761,10 +791,9 @@
 
     function applyEdgeCurvature(graph) {
         const curvature = clampNumber(layoutSettings.edgeCurvature, EDGE_CURVATURE_MIN, EDGE_CURVATURE_MAX);
-        const type = curvature > 0 ? 'curve' : 'line';
 
         graph.forEachEdge((edge) => {
-            graph.mergeEdgeAttributes(edge, { curvature, type });
+            graph.mergeEdgeAttributes(edge, { curvature });
         });
     }
 
@@ -904,7 +933,7 @@
             const degree = nodeDegree.get(id) || 0;
             const size = 4 + (maxDegree ? (degree / maxDegree) * 18 : 0);
             const label = truncateLabelText(nodeNames.get(id) || id);
-            const attrs = { label, size, type: 'border' };
+            const attrs = { label, size };
             if (meta?.has(id)) {
                 const m = meta.get(id);
                 attrs.optedOut = m.optedOut;
@@ -939,9 +968,11 @@
 
         const DEFAULT_LABEL_THRESHOLD = 10;
 
-        const labelColor = isDarkMode.value ? '#e2e8f0' : '#111827';
-        const EDGE_BASE = isDarkMode.value ? '#334155' : '#94a3b8';
-        const EDGE_ACTIVE = isDarkMode.value ? '#bac1c9' : '#0f172a';
+        const labelColor = isDarkMode.value ? '#ffffff' : '#000000';
+        const EDGE_BASE = isDarkMode.value ? '#334155' : '#cbd5e1';
+        const EDGE_ACTIVE = isDarkMode.value ? '#bac1c9' : '#475569';
+        const NODE_FADED = isDarkMode.value ? 'rgba(148,163,184,0.04)' : 'rgba(100,116,139,0.06)';
+        const LABEL_BACKGROUND = isDarkMode.value ? 'rgba(10,10,10,0.65)' : 'rgba(255,255,255,0.7)';
 
         let cameraState = null;
 
@@ -956,173 +987,111 @@
             sigmaInstance = null;
         }
 
-        if (!sigmaInstance) {
-            sigmaInstance = new Sigma(graph, container, {
+        hoveredNode = null;
+        hoveredNeighbors = new Set();
+
+        if (sigmaInstance) {
+            sigmaInstance.setGraph(graph);
+            sigmaInstance.refresh();
+            return;
+        }
+
+        sigmaInstance = new Sigma(graph, container, {
+            primitives: {
+                nodes: {
+                    layers: [NODE_BORDER_LAYER],
+                    label: {},
+                    backdrop: {},
+                    labelAttachments: { lastFetched: renderLastFetchedAttachment }
+                },
+                edges: {
+                    paths: [pathCurved()]
+                }
+            },
+            settings: {
                 // Sentry: VRCX-WEB-2EG
                 allowInvalidContainer: true,
                 renderLabels: true,
-                labelRenderedSizeThreshold: DEFAULT_LABEL_THRESHOLD,
-                labelColor: { color: labelColor },
-                defaultEdgeColor: EDGE_BASE,
-                zIndex: true,
-                defaultNodeType: 'border',
-                nodeProgramClasses: { border: NodeBorderProgram },
-                edgeProgramClasses: { curve: EdgeCurveProgram },
-                defaultDrawNodeHover: (ctx, data, settings) => {
-                    if (!data.label) return;
+                itemSizesReference: 'screen',
+                labelRenderedSizeThreshold: DEFAULT_LABEL_THRESHOLD
+            },
+            nodeReducer: (node, data, attrs) => {
+                const res = {
+                    labelColor,
+                    labelBackgroundColor: LABEL_BACKGROUND,
+                    labelBackgroundPadding: 2
+                };
 
-                    const fontSize = settings.labelSize ?? 12;
-                    const font = settings.labelFont ?? 'sans-serif';
-                    const smallFontSize = Math.max(9, fontSize - 2);
-
-                    ctx.font = `${fontSize}px ${font}`;
-                    ctx.textBaseline = 'middle';
-
-                    const paddingX = 6;
-                    const paddingY = 4;
-
-                    let subLine = '';
-                    if (data.lastFetchedAt) {
-                        subLine = `${t('view.charts.mutual_friend.context_menu.last_fetched')}: ${dayjs(data.lastFetchedAt).format('YYYY-MM-DD HH:mm')}`;
-                    }
-
-                    const labelWidth = ctx.measureText(data.label).width;
-                    ctx.font = `${smallFontSize}px ${font}`;
-                    const subWidth = subLine ? ctx.measureText(subLine).width : 0;
-                    ctx.font = `${fontSize}px ${font}`;
-
-                    const w = Math.max(labelWidth, subWidth) + paddingX * 2;
-                    const lineHeight = fontSize + paddingY;
-                    const totalLines = subLine ? 2 : 1;
-                    const h = lineHeight * totalLines + paddingY;
-
-                    const x = data.x + data.size - 5;
-                    const y = data.y - h / 2;
-
-                    ctx.shadowColor = 'rgba(0, 0, 0, 0.25)';
-                    ctx.shadowBlur = 6;
-                    ctx.shadowOffsetX = 0;
-                    ctx.shadowOffsetY = 2;
-
-                    ctx.fillStyle = 'rgba(255, 255, 255, 1)';
-                    ctx.fillRect(x, y, w, h);
-
-                    ctx.shadowBlur = 0;
-                    ctx.shadowColor = 'transparent';
-
-                    ctx.fillStyle = '#111827';
-                    ctx.font = `${fontSize}px ${font}`;
-                    ctx.fillText(data.label, x + paddingX, y + paddingY + fontSize / 2);
-
-                    if (subLine) {
-                        ctx.fillStyle = data.optedOut ? '#dc2626' : '#6b7280';
-                        ctx.font = `${smallFontSize}px ${font}`;
-                        ctx.fillText(subLine, x + paddingX, y + paddingY + lineHeight + smallFontSize / 2);
-                    }
+                if (attrs.optedOut) {
+                    res.borderColor = '#9ca3af';
                 }
-            });
-        } else {
-            sigmaInstance.setGraph(graph);
-            sigmaInstance.setSetting('labelRenderedSizeThreshold', DEFAULT_LABEL_THRESHOLD);
-            sigmaInstance.setSetting('labelColor', { color: labelColor });
-            sigmaInstance.setSetting('defaultEdgeColor', EDGE_BASE);
-            sigmaInstance.setSetting('zIndex', true);
-        }
+
+                if (!hoveredNode) {
+                    res.color = attrs.optedOut ? '#d1d5db' : data.color;
+                    res.zIndex = 1;
+                    return res;
+                }
+
+                if (node === hoveredNode) {
+                    res.color = '#facc15';
+                    res.size = (attrs.size || 4) * 1.2;
+                    res.label = `${data.label} (${hoveredNeighbors.size})`;
+                    res.labelColor = '#111827';
+                    res.labelBackgroundColor = null;
+                    res.labelVisibility = 'visible';
+                    res.labelAttachment = attrs.lastFetchedAt ? 'lastFetched' : null;
+                    res.zIndex = 3;
+                    return res;
+                }
+
+                if (hoveredNeighbors.has(node)) {
+                    res.labelVisibility = 'visible';
+                    res.zIndex = 2;
+                    return res;
+                }
+
+                res.color = NODE_FADED;
+                res.size = 0.7;
+                res.labelVisibility = 'hidden';
+                res.zIndex = 0;
+                return res;
+            },
+            edgeReducer: (edge, data, attrs, state, graphState, g) => {
+                if (!hoveredNode) {
+                    return { color: EDGE_BASE };
+                }
+                const [s, t] = g.extremities(edge);
+                if (s === hoveredNode || t === hoveredNode) {
+                    return { color: EDGE_ACTIVE };
+                }
+                return { visibility: 'hidden' };
+            }
+        });
 
         if (cameraState) {
             try {
-                const cam = sigmaInstance.getCamera?.();
-                cam?.setState?.(cameraState);
+                sigmaInstance.getCamera().setState(cameraState);
             } catch {
                 // do nothing
             }
         }
 
-        let hovered = null;
-        let neighbors = new Set();
-
-        const rebuildNeighbors = (node) => {
-            neighbors = node ? new Set(graph.neighbors(node)) : new Set();
-        };
-
-        sigmaInstance.setSetting('nodeReducer', (node, data) => {
-            const res = { ...data };
-
-            if (data.optedOut) {
-                res.borderColor = '#9ca3af';
-            }
-
-            if (!hovered) {
-                res.color = data.optedOut ? '#d1d5db' : data.color;
-                res.zIndex = 1;
-                return res;
-            }
-
-            const isHover = node === hovered;
-            const isNeighbor = neighbors.has(node);
-
-            if (isHover) {
-                res.color = '#facc15';
-                res.size = (data.size || 4) * 1.6;
-                res.label = `${data.label} (${neighbors.size})`;
-                res.labelColor = '#111827';
-                res.zIndex = 3;
-                return res;
-            }
-
-            if (isNeighbor) {
-                res.color = data.color;
-                res.size = (data.size || 4) * 1.2;
-                res.label = data.label;
-                res.labelColor = '#111827';
-                res.zIndex = 2;
-                return res;
-            }
-
-            res.color = isDarkMode.value ? 'rgba(148,163,184,0.04)' : 'rgba(100,116,139,0.06)';
-            res.size = 0.7;
-            res.label = '';
-            res.zIndex = 0;
-            return res;
+        // Sigma 4 shares one label buffer across depth layers and only rebuilds it
+        // when labels are dirty, so the hovered node's top-layer label wipes out the
+        // others until the camera moves. Force a rebuild every frame while hovering.
+        sigmaInstance.on('beforeRender', () => {
+            if (hoveredNode) sigmaInstance.labelRenderer.labelsDirty = true;
         });
-
-        sigmaInstance.setSetting('edgeReducer', (edge, data) => {
-            const res = { ...data };
-
-            if (!hovered) {
-                res.hidden = false;
-                res.color = EDGE_BASE;
-                res.size = data.size || 1;
-                return res;
-            }
-
-            const [s, t] = graph.extremities(edge);
-            const active = s === hovered || t === hovered;
-
-            if (active) {
-                res.hidden = false;
-                res.color = EDGE_ACTIVE;
-                res.size = data.size || 1;
-                return res;
-            }
-
-            res.hidden = true;
-            return res;
-        });
-
-        sigmaInstance.removeAllListeners?.();
 
         sigmaInstance.on('enterNode', ({ node }) => {
-            hovered = node;
-            rebuildNeighbors(node);
-            sigmaInstance.setSetting('labelRenderedSizeThreshold', 0);
+            hoveredNode = node;
+            hoveredNeighbors = new Set(sigmaInstance.getGraph().neighbors(node));
             sigmaInstance.refresh();
         });
 
         sigmaInstance.on('leaveNode', () => {
-            hovered = null;
-            rebuildNeighbors(null);
-            sigmaInstance.setSetting('labelRenderedSizeThreshold', DEFAULT_LABEL_THRESHOLD);
+            hoveredNode = null;
+            hoveredNeighbors = new Set();
             sigmaInstance.refresh();
         });
 
@@ -1137,8 +1106,6 @@
         sigmaInstance.on('rightClickStage', () => {
             contextMenuNodeId.value = null;
         });
-
-        sigmaInstance.refresh();
     }
 
     async function applyGraph(mutualMap) {
