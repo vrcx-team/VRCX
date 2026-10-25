@@ -111,7 +111,7 @@ export const createColumns = ({
                     <ArrowUpDown class="ml-1 h-4 w-4" />
                 </Button>
             ),
-            sortingFn: (rowA, rowB, columnId) => {
+            sortFn: (rowA, rowB, columnId) => {
                 const a = rowA.getValue(columnId) ?? 0;
                 const b = rowB.getValue(columnId) ?? 0;
                 if (a !== b) {

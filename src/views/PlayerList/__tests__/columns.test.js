@@ -109,7 +109,7 @@ describe('views/PlayerList/columns.jsx', () => {
         });
         const displayNameCol = cols.find((c) => c.id === 'displayName');
 
-        const result = displayNameCol.sortingFn(
+        const result = displayNameCol.sortFn(
             { original: { displayName: 'Alice' } },
             { original: { displayName: 'Bob' } }
         );
@@ -167,6 +167,6 @@ describe('views/PlayerList/columns.jsx', () => {
         const master = { original: { isMaster: true } };
         const friend = { original: { isFriend: true } };
 
-        expect(iconCol.sortingFn(master, friend, 'icon')).toBeGreaterThan(0);
+        expect(iconCol.sortFn(master, friend, 'icon')).toBeGreaterThan(0);
     });
 });

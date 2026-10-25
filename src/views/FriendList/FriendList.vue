@@ -200,11 +200,6 @@
     const pageSizes = computed(() => appearanceSettingsStore.tablePageSizes);
     const defaultSorting = [{ id: 'friendNumber', desc: true }];
 
-    // const initialColumnPinning = {
-    //     left: ['displayName'],
-    //     right: []
-    // };
-
     const friendsListLoadingPercent = computed(() => {
         if (!friendsListLoadingTotal.value) return 0;
         return Math.min(100, Math.round((friendsListLoadingCurrent.value / friendsListLoadingTotal.value) * 100));

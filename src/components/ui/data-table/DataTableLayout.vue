@@ -482,13 +482,13 @@
         const pinned = getPinnedState(col);
         if (!pinned) return null;
 
-        if (pinned === 'left') {
-            const left = col?.getStart?.('left') ?? 0;
+        if (pinned === 'start') {
+            const left = col?.getStart?.('start') ?? 0;
             return { left: `${left}px` };
         }
 
-        if (pinned === 'right') {
-            const right = col?.getAfter?.('right') ?? 0;
+        if (pinned === 'end') {
+            const right = col?.getAfter?.('end') ?? 0;
             return { right: `${right}px` };
         }
 
@@ -592,7 +592,7 @@
     };
 
     const pageSizeProxy = computed({
-        get: () => props.table.getState?.().pagination?.pageSize ?? 0,
+        get: () => props.table.atoms?.pagination?.get()?.pageSize ?? 0,
         set: (size) => handlePageSizeChange(size)
     });
 
@@ -615,7 +615,7 @@
     });
 
     const currentPage = computed({
-        get: () => (props.table.getState?.().pagination?.pageIndex ?? 0) + 1,
+        get: () => (props.table.atoms?.pagination?.get()?.pageIndex ?? 0) + 1,
         set: (page) => {
             props.table.setPageIndex(page - 1);
             if (props.onPageChange) {
@@ -624,7 +624,7 @@
         }
     });
 
-    const sortBy = computed(() => props.table.getState?.().sorting ?? []);
+    const sortBy = computed(() => props.table.atoms?.sorting?.get() ?? []);
 
     watch(sortBy, (newSorting) => {
         if (props.onSortChange) {
@@ -638,7 +638,7 @@
         () => props.table.getPageCount?.(),
         (pageCount) => {
             if (pageCount == null || pageCount <= 0) return;
-            const pageIndex = props.table.getState?.().pagination?.pageIndex ?? 0;
+            const pageIndex = props.table.atoms?.pagination?.get()?.pageIndex ?? 0;
             if (pageIndex >= pageCount) {
                 props.table.setPageIndex(pageCount - 1);
             }

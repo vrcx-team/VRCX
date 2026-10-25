@@ -1,13 +1,48 @@
 import {
-    getCoreRowModel,
-    getExpandedRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
+    columnFilteringFeature,
+    columnOrderingFeature,
+    columnPinningFeature,
+    columnResizingFeature,
+    columnSizingFeature,
+    columnVisibilityFeature,
+    createExpandedRowModel,
+    createFilteredRowModel,
+    createPaginatedRowModel,
+    createSortedRowModel,
     isFunction,
-    useVueTable
+    rowExpandingFeature,
+    rowPaginationFeature,
+    rowSortingFeature,
+    sortFn_alphanumeric,
+    sortFn_alphanumericCaseSensitive,
+    sortFn_basic,
+    sortFn_datetime,
+    sortFn_text,
+    sortFn_textCaseSensitive,
+    tableFeatures,
+    useTable
 } from '@tanstack/vue-table';
 import { computed, ref, unref, watch } from 'vue';
+
+const baseFeatures = {
+    rowSortingFeature,
+    rowPaginationFeature,
+    rowExpandingFeature,
+    columnFilteringFeature,
+    columnPinningFeature,
+    columnSizingFeature,
+    columnResizingFeature,
+    columnOrderingFeature,
+    columnVisibilityFeature,
+    sortFns: {
+        alphanumeric: sortFn_alphanumeric,
+        alphanumericCaseSensitive: sortFn_alphanumericCaseSensitive,
+        basic: sortFn_basic,
+        datetime: sortFn_datetime,
+        text: sortFn_text,
+        textCaseSensitive: sortFn_textCaseSensitive
+    }
+};
 
 /**
  * @param str
@@ -225,7 +260,7 @@ export function useVrcxVueTable(options) {
 
     const expanded = ref(initialExpanded ?? {});
     const pagination = ref(initialPagination ?? { pageIndex: 0, pageSize: 50 });
-    const columnPinning = ref(initialColumnPinning ?? { left: [], right: [] });
+    const columnPinning = ref(initialColumnPinning ?? { start: [], end: [] });
     const columnSizing = ref(initialColumnSizing ?? {});
     const columnOrder = ref(initialColumnOrder ?? []);
     const columnVisibility = ref(initialColumnVisibility ?? {});
@@ -325,11 +360,11 @@ export function useVrcxVueTable(options) {
     }
 
     register(enableSorting, 'sorting', sorting, 'onSortingChange', {
-        getSortedRowModel: getSortedRowModel()
+        sortedRowModel: createSortedRowModel()
     });
 
     register(enablePagination, 'pagination', pagination, 'onPaginationChange', {
-        getPaginationRowModel: getPaginationRowModel()
+        paginatedRowModel: createPaginatedRowModel()
     });
 
     register(
@@ -337,7 +372,7 @@ export function useVrcxVueTable(options) {
         'expanded',
         expanded,
         'onExpandedChange',
-        { getExpandedRowModel: getExpandedRowModel() },
+        { expandedRowModel: createExpandedRowModel() },
         { getRowCanExpand }
     );
 
@@ -354,14 +389,15 @@ export function useVrcxVueTable(options) {
 
     if (enableFiltering) {
         Object.assign(rowModels, {
-            getFilteredRowModel: getFilteredRowModel()
+            filteredRowModel: createFilteredRowModel()
         });
     }
 
     const dataSource = computed(() => options.data);
     const columnsSource = computed(() => resolveMaybeGetter(options.columns));
 
-    const table = useVueTable({
+    const table = useTable({
+        features: tableFeatures({ ...baseFeatures, ...rowModels }),
         data: dataSource,
         get columns() {
             const cols = columnsSource.value;
@@ -372,8 +408,6 @@ export function useVrcxVueTable(options) {
         },
         getRowId,
 
-        getCoreRowModel: getCoreRowModel(),
-        ...rowModels,
         ...handlers,
         ...extra,
 
@@ -394,7 +428,6 @@ export function useVrcxVueTable(options) {
                 ...prev,
                 columns: withSpacerColumn(next, fillRemainingSpace, spacerColumnId, findStretchColumnId(next))
             }));
-            table.setState((prev) => ({ ...prev }));
         },
         { immediate: true }
     );
