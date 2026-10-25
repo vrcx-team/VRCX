@@ -208,6 +208,17 @@
                     </Badge>
                 </TooltipWrapper>
                 <TooltipWrapper
+                    v-if="userDialog.mutualGroupCount"
+                    side="top"
+                    :content="t('dialog.user.tags.mutual_groups')">
+                    <Badge
+                        variant="outline"
+                        class="h-5 px-1.5 text-[11px] leading-none border-zinc-500/50! dark:border-zinc-400!">
+                        <Network class="h-2.5 w-2.5" />
+                        {{ userDialog.mutualGroupCount }}
+                    </Badge>
+                </TooltipWrapper>
+                <TooltipWrapper
                     v-if="userDialog.ref.discordId"
                     side="top"
                     :content="t('dialog.user.tags.open_in_discord')">
@@ -492,6 +503,7 @@
         Image,
         Info,
         Monitor,
+        Network,
         Shield,
         ShieldAlert,
         ShieldCheck,
