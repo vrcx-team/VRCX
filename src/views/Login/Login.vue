@@ -1,5 +1,5 @@
 <template>
-    <div class="absolute inset-0 flex flex-col items-center overflow-y-auto px-4 pt-12 before:flex-1">
+    <div class="absolute inset-0 flex flex-col items-center overflow-y-auto px-4 pt-12">
         <div class="absolute top-0 left-0 m-1.5">
             <LoginSettingsDialog />
             <TooltipWrapper v-if="!noUpdater" side="top" :content="t('view.login.updater')">
@@ -31,7 +31,7 @@
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>
-        <div class="flex w-full max-w-sm flex-col" :class="{ 'sm:max-w-3xl': hasSavedCredentials }">
+        <div class="my-auto flex w-full max-w-sm flex-col" :class="{ 'sm:max-w-3xl': hasSavedCredentials }">
             <Alert
                 v-if="vrcStatusStore.hasIssue"
                 :variant="vrcStatusStore.isMajor ? 'destructive' : 'warning'"
@@ -46,61 +46,66 @@
             <div class="flex flex-col gap-2 sm:flex-row">
                 <div class="flex min-w-0 flex-col p-4 sm:flex-1">
                     <h2 class="mb-4 text-center text-lg font-semibold">{{ t('view.login.login') }}</h2>
-                    <form id="login-form" @submit.prevent="onSubmit">
-                        <FieldGroup class="gap-3">
-                            <VeeField v-slot="{ field, errors }" name="username">
-                                <Field :data-invalid="!!errors.length">
-                                    <FieldLabel for="login-form-username" class="text-foreground">
-                                        {{ t('view.login.field.username') }}
-                                    </FieldLabel>
-                                    <FieldContent>
-                                        <InputGroupField
-                                            id="login-form-username"
-                                            :model-value="field.value"
-                                            autocomplete="off"
-                                            name="username"
-                                            :placeholder="t('view.login.field.username')"
-                                            :aria-invalid="!!errors.length"
-                                            @update:modelValue="field.onChange"
-                                            @blur="field.onBlur" />
-                                        <FieldError v-if="errors.length" :errors="errors" />
-                                    </FieldContent>
-                                </Field>
-                            </VeeField>
-                            <VeeField v-slot="{ field, errors, handleChange }" name="password">
-                                <Field :data-invalid="!!errors.length">
-                                    <FieldLabel for="login-form-password" class="text-foreground">
-                                        {{ t('view.login.field.password') }}
-                                    </FieldLabel>
-                                    <FieldContent>
-                                        <InputGroupField
-                                            id="login-form-password"
-                                            :model-value="field.value"
-                                            type="password"
-                                            autocomplete="off"
-                                            name="password"
-                                            :placeholder="t('view.login.field.password')"
-                                            :aria-invalid="!!errors.length"
-                                            show-password
-                                            @keydown.delete="handleChange('', false)"
-                                            @update:modelValue="field.onChange"
-                                            @blur="field.onBlur" />
-                                        <FieldError v-if="errors.length" :errors="errors" />
-                                    </FieldContent>
-                                </Field>
-                            </VeeField>
-                        </FieldGroup>
-                        <div class="mt-3 flex items-center justify-between gap-2 text-sm">
-                            <label class="flex w-fit items-center gap-2">
-                                <Checkbox v-model="loginForm.saveCredentials" />
-                                <span>{{ t('view.login.field.saveCredentials') }}</span>
-                            </label>
-                            <ResetPasswordDialog />
-                        </div>
+                    <QrLogin v-model:active="qrActive">
+                        <form id="login-form" @submit.prevent="onSubmit">
+                            <FieldGroup v-show="!qrActive" class="gap-3">
+                                <VeeField v-slot="{ field, errors }" name="username">
+                                    <Field :data-invalid="!!errors.length">
+                                        <FieldLabel for="login-form-username" class="text-foreground">
+                                            {{ t('view.login.field.username') }}
+                                        </FieldLabel>
+                                        <FieldContent>
+                                            <InputGroupField
+                                                id="login-form-username"
+                                                input-class="text-sm"
+                                                :model-value="field.value"
+                                                autocomplete="off"
+                                                name="username"
+                                                :placeholder="t('view.login.field.username')"
+                                                :aria-invalid="!!errors.length"
+                                                @update:modelValue="field.onChange"
+                                                @blur="field.onBlur" />
+                                            <FieldError v-if="errors.length" :errors="errors" />
+                                        </FieldContent>
+                                    </Field>
+                                </VeeField>
+                                <VeeField v-slot="{ field, errors, handleChange }" name="password">
+                                    <Field :data-invalid="!!errors.length">
+                                        <FieldLabel for="login-form-password" class="text-foreground">
+                                            {{ t('view.login.field.password') }}
+                                        </FieldLabel>
+                                        <FieldContent>
+                                            <InputGroupField
+                                                id="login-form-password"
+                                                input-class="text-sm"
+                                                :model-value="field.value"
+                                                type="password"
+                                                autocomplete="off"
+                                                name="password"
+                                                :placeholder="t('view.login.field.password')"
+                                                :aria-invalid="!!errors.length"
+                                                show-password
+                                                @keydown.delete="handleChange('', false)"
+                                                @update:modelValue="field.onChange"
+                                                @blur="field.onBlur" />
+                                            <FieldError v-if="errors.length" :errors="errors" />
+                                        </FieldContent>
+                                    </Field>
+                                </VeeField>
+                            </FieldGroup>
+                            <div class="mt-3 flex items-center justify-between gap-2 text-sm">
+                                <label class="flex w-fit items-center gap-2">
+                                    <Checkbox v-model="loginForm.saveCredentials" />
+                                    <span>{{ t('view.login.field.saveCredentials') }}</span>
+                                </label>
+                                <ResetPasswordDialog />
+                            </div>
 
-                        <Button type="submit" size="lg" class="mt-4 w-full">{{ t('view.login.login') }}</Button>
-                    </form>
-                    <QrLogin />
+                            <Button v-show="!qrActive" type="submit" size="lg" class="mt-4 w-full">{{
+                                t('view.login.login')
+                            }}</Button>
+                        </form>
+                    </QrLogin>
                     <Button
                         variant="outline"
                         size="lg"
@@ -155,8 +160,7 @@
             </div>
         </div>
 
-        <div
-            class="flex max-w-3xl flex-1 flex-col justify-end gap-1 pt-6 pb-4 text-center text-xs text-muted-foreground">
+        <div class="flex max-w-3xl flex-col gap-1 pt-12 pb-8 text-center text-xs text-muted-foreground">
             <p>
                 &copy; 2019-2026
                 <a
@@ -247,6 +251,7 @@
     /** @type {import('vue').Ref<Record<string, any>>} */
     const savedCredentials = ref({});
     const hasSavedCredentials = computed(() => Object.keys(savedCredentials.value).length !== 0);
+    const qrActive = ref(false);
     const requiredMessage = 'Required';
 
     const formSchema = toTypedSchema(
@@ -261,6 +266,12 @@
         initialValues: {
             username: loginForm.value.username,
             password: loginForm.value.password
+        }
+    });
+
+    watch(qrActive, (active) => {
+        if (active) {
+            resetForm({ values: { username: '', password: '' } });
         }
     });
 

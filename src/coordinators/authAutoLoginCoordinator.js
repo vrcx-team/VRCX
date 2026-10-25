@@ -27,7 +27,7 @@ export async function runHandleAutoLoginFlow({ isOnline = () => navigator.onLine
         authStore.setAttemptingAutoLogin(false);
         return;
     }
-    if (advancedSettingsStore.enablePrimaryPassword) {
+    if (advancedSettingsStore.enablePrimaryPassword && user.loginParams.password) {
         console.error('Primary password is enabled, this disables auto login.');
         authStore.setAttemptingAutoLogin(false);
         await authStore.handleLogoutEvent();
