@@ -42,7 +42,7 @@
     },
     "dependencies": {
         "hazardous": "^0.3.0",
-        "node-api-dotnet": "^0.9.27"
+        "node-api-dotnet": "^0.9.31"
     },
     "devDependencies": {
         "@dnd-kit/vue": "^0.5.1",
@@ -72,8 +72,8 @@
         "cross-env": "^10.1.0",
         "dayjs": "^1.11.23",
         "echarts": "^6.1.0",
-        "electron": "^40.4.1",
-        "electron-builder": "^26.15.7",
+        "electron": "^45.0.0",
+        "electron-builder": "^26.18.0",
         "embla-carousel-vue": "^8.6.0",
         "globals": "^17.13.0",
         "graphology": "^0.26.0",
