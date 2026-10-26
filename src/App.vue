@@ -57,8 +57,17 @@
 
     const store = createGlobalStores();
 
+    const coordinatorModules = import.meta.glob('./coordinators/*.js', { eager: true });
+    const coordinators = Object.fromEntries(
+        Object.entries(coordinatorModules).map(([path, module]) => [
+            path.replace('./coordinators/', '').replace('Coordinator.js', ''),
+            module
+        ])
+    );
+
     if (typeof window !== 'undefined') {
         window.$pinia = store;
+        window.$coordinators = coordinators;
         window.$bridge = {
             updateIsGameRunning: runUpdateIsGameRunningFlow,
             updateIsHmdAfk: runUpdateIsHmdAfkFlow,
