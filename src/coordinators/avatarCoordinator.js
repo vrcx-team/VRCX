@@ -51,7 +51,7 @@ export function applyAvatar(json) {
             ref.unityPackages = unityPackages;
         }
     }
-    for (const listing of ref.publishedListings) {
+    for (const listing of ref.publishedListings ?? []) {
         listing.displayName = replaceBioSymbols(listing.displayName);
         listing.description = replaceBioSymbols(listing.description);
     }
@@ -586,9 +586,11 @@ export function addAvatarWearTime(avatarId) {
 }
 
 /**
- * Preload all own avatars into cache at startup for global search.
+ * Refresh own avatars in cache and return the fetched list, or null on failure.
  */
 export async function preloadOwnAvatars() {
+    const avatars = new Map();
+    let complete = false;
     const params = {
         n: 50,
         offset: 0,
@@ -604,9 +606,14 @@ export async function preloadOwnAvatars() {
         handle: (args) => {
             for (const json of args.json) {
                 applyAvatar(json);
+                avatars.set(json.id, json);
             }
+        },
+        done: (success) => {
+            complete = success;
         }
     });
+    return complete ? avatars : null;
 }
 
 /**
