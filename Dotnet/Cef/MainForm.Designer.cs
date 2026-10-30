@@ -89,7 +89,7 @@ namespace VRCX
             //
             this.TrayMenu_Quit.Name = "TrayMenu_Quit";
             this.TrayMenu_Quit.Size = new Size(131, 22);
-            this.TrayMenu_Quit.Text = "Quit VRCX";
+            this.TrayMenu_Quit.Text = "Quit Nexy";
             this.TrayMenu_Quit.Click += new EventHandler(this.TrayMenu_Quit_Click);
             //
             // TrayIcon

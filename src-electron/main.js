@@ -46,7 +46,7 @@ function dotnetSetup() {
 }
 dotnetSetup();
 
-const VRCX_URI_PREFIX = 'vrcx';
+const NEXY_URI_PREFIX = 'nexy';
 let isOverlayActive = false;
 let appIsQuitting = false;
 const rootDir = app.getAppPath();
@@ -70,9 +70,9 @@ const debug = args.includes('--hot-reload');
 const noUpdater = args.includes('--no-updater') || fs.existsSync(path.join(rootDir, '.no-updater'));
 if (app.isPackaged && process.defaultApp && process.platform !== 'win32') {
     if (process.argv.length >= 2) {
-        app.setAsDefaultProtocolClient(VRCX_URI_PREFIX, process.execPath, [path.resolve(process.argv[1])]);
+        app.setAsDefaultProtocolClient(NEXY_URI_PREFIX, process.execPath, [path.resolve(process.argv[1])]);
     } else {
-        app.setAsDefaultProtocolClient(VRCX_URI_PREFIX);
+        app.setAsDefaultProtocolClient(NEXY_URI_PREFIX);
     }
 }
 
@@ -156,7 +156,7 @@ function getCloseToTray() {
 }
 
 const gotTheLock = app.requestSingleInstanceLock();
-const strip_vrcx_prefix_regex = new RegExp('^' + VRCX_URI_PREFIX + '://');
+const strip_nexy_prefix_regex = new RegExp('^' + NEXY_URI_PREFIX + '://');
 
 if (!gotTheLock) {
     console.log('Another instance is already running. Exiting.');
@@ -167,7 +167,7 @@ if (!gotTheLock) {
             try {
                 mainWindow.webContents.send(
                     'launch-command',
-                    commandLine.pop().trim().replace(strip_vrcx_prefix_regex, '')
+                    commandLine.pop().trim().replace(strip_nexy_prefix_regex, '')
                 );
             } catch (err) {
                 console.error('Error processing second-instance command:', err);
@@ -177,7 +177,7 @@ if (!gotTheLock) {
 
     app.on('open-url', (_event, url) => {
         if (mainWindow && url) {
-            mainWindow.webContents.send('launch-command', url.replace(strip_vrcx_prefix_regex, ''));
+            mainWindow.webContents.send('launch-command', url.replace(strip_nexy_prefix_regex, ''));
         }
     });
 }
@@ -314,7 +314,7 @@ function createWindow() {
         y,
         width,
         height,
-        icon: path.join(rootDir, 'images/VRCX.png'),
+        icon: path.join(rootDir, 'images/Nexy.png'),
         autoHideMenuBar: true,
         titleBarStyle: 'hiddenInset',
         webPreferences: {
@@ -438,7 +438,7 @@ function createOverlayWindowOffscreen() {
         y,
         width,
         height,
-        icon: path.join(rootDir, 'images/VRCX.png'),
+        icon: path.join(rootDir, 'images/Nexy.png'),
         autoHideMenuBar: true,
         transparent: true,
         frame: false,
@@ -491,20 +491,20 @@ function destroyTray() {
 
 function createTray() {
     if (process.platform === 'darwin') {
-        const image = nativeImage.createFromPath(path.join(rootDir, 'images/VRCX.png'));
+        const image = nativeImage.createFromPath(path.join(rootDir, 'images/Nexy.png'));
         trayIcon = image.resize({ width: 16, height: 16 });
 
-        const imageNotify = nativeImage.createFromPath(path.join(rootDir, 'images/VRCX_notify.png'));
+        const imageNotify = nativeImage.createFromPath(path.join(rootDir, 'images/Nexy_notify.png'));
         trayIconNotify = imageNotify.resize({ width: 16, height: 16 });
     } else if (process.platform === 'linux') {
-        const image = nativeImage.createFromPath(path.join(rootDir, 'images/VRCX.png'));
+        const image = nativeImage.createFromPath(path.join(rootDir, 'images/Nexy.png'));
         trayIcon = image.resize({ width: 64, height: 64 });
 
-        const imageNotify = nativeImage.createFromPath(path.join(rootDir, 'images/VRCX_notify.png'));
+        const imageNotify = nativeImage.createFromPath(path.join(rootDir, 'images/Nexy_notify.png'));
         trayIconNotify = imageNotify.resize({ width: 64, height: 64 });
     } else {
-        trayIcon = path.join(rootDir, 'images/VRCX.ico');
-        trayIconNotify = path.join(rootDir, 'images/VRCX_notify.ico');
+        trayIcon = path.join(rootDir, 'images/Nexy.ico');
+        trayIconNotify = path.join(rootDir, 'images/Nexy_notify.ico');
     }
     tray = new Tray(trayIcon);
     const contextMenu = Menu.buildFromTemplate([
@@ -626,7 +626,7 @@ async function installVRCX() {
 }
 
 /**
- * Create or update VRCX desktop file.
+ * Create or update Nexy desktop file.
  *
  * If the --no-desktop flag is set this function does nothing.
  * If there is an existing .desktop file, it will be updated with the current AppImage path.

@@ -283,7 +283,7 @@
 
     const hasNotifications = computed(() => notifiedMenus.value.length > 0);
     const version = computed(() => appVersion.value?.split('Nexy ')?.[1] || '-');
-    const vrcxLogo = new URL('../../../images/VRCX.png', import.meta.url).href;
+    const vrcxLogo = new URL('../../../images/Nexy.png', import.meta.url).href;
 
     const isEntryNotified = (entry) => checkEntryNotified(entry, notifiedMenus.value);
 

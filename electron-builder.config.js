@@ -6,14 +6,14 @@
 module.exports = {
     appId: 'app.nexy',
     productName: 'Nexy',
-    icon: 'images/VRCX.png',
+    icon: 'images/Nexy.png',
     files: [
         'build/html/**/*',
         'src-electron/*',
-        'images/VRCX.png',
-        'images/VRCX.ico',
-        'images/VRCX_notify.png',
-        'images/VRCX_notify.ico',
+        'images/Nexy.png',
+        'images/Nexy.ico',
+        'images/Nexy_notify.png',
+        'images/Nexy_notify.ico',
         'Version',
         'src-electron/libs/linux/libopenvr_api.so',
         '.no-updater'
@@ -60,29 +60,29 @@ module.exports = {
     linux: {
         artifactName: 'Nexy_Version.${ext}',
         target: ['AppImage'],
-        icon: 'images/VRCX.png',
+        icon: 'images/Nexy.png',
         executableName: 'Nexy',
-        mimeTypes: ['x-scheme-handler/vrcx'],
+        mimeTypes: ['x-scheme-handler/nexy'],
         desktop: {
             entry: {
                 Name: 'Nexy',
                 Comment: 'Friendship management tool for NexVR',
-                Icon: 'VRCX',
+                Icon: 'Nexy',
                 Terminal: 'false',
                 Type: 'Application',
                 Categories: 'Utility;Application;',
                 StartupWMClass: 'Nexy',
-                MimeType: 'x-scheme-handler/vrcx;'
+                MimeType: 'x-scheme-handler/nexy;'
             }
         },
         maintainer: 'rs189 <35667100+rs189@users.noreply.github.com>',
-        description: 'Friendship management tool for VRChat',
+        description: 'Friendship management tool for NexVR',
         syncDesktopName: true
     },
     mac: {
         artifactName: 'Nexy_Version.${ext}',
         target: ['dmg'],
-        icon: 'images/VRCX.png',
+        icon: 'images/Nexy.png',
         category: 'public.app-category.utilities',
         executableName: 'Nexy',
         minimumSystemVersion: '14.0'
@@ -90,7 +90,7 @@ module.exports = {
     win: {
         artifactName: 'Nexy_Version.${ext}',
         target: ['nsis'],
-        icon: 'images/VRCX.ico'
+        icon: 'images/Nexy.ico'
     },
     toolsets: {
         appimage: '1.0.3'

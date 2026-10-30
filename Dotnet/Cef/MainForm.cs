@@ -38,8 +38,8 @@ namespace VRCX
             try
             {
                 var path = Path.GetDirectoryName(Environment.ProcessPath) ?? string.Empty;
-                _appIcon = new Icon(Path.Combine(path, "VRCX.ico"));
-                _appIconNoty = new Icon(Path.Combine(path, "VRCX_notify.ico"));
+                _appIcon = new Icon(Path.Combine(path, "Nexy.ico"));
+                _appIconNoty = new Icon(Path.Combine(path, "Nexy_notify.ico"));
                 Icon = _appIcon;
                 TrayIcon.Icon = _appIcon;
             }

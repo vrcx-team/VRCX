@@ -410,7 +410,7 @@ function enrichDotnetEntries(entries) {
  */
 function createThirdPartyNoticeText(frontendLicenseMarkdown, entries) {
     const lines = [
-        'VRCX Third-Party Notices',
+        'Nexy Third-Party Notices',
         '',
         `Generated: ${new Date().toISOString()}`,
         '',

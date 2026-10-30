@@ -1,11 +1,11 @@
 <div align="center">
 
-# <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/images/VRCX.ico" width="64" height="64"> </img> VRCX
+# <img src="../images/Nexy.svg" width="64" height="64"> Nexy
 
-[![GitHub release](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/vrcx-team/VRCX/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/vrcx-team/VRCX/total?color=6451f1)](https://github.com/vrcx-team/VRCX/releases/latest)
-[![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
-[![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
+[![Nexy releases](https://img.shields.io/github/v/release/valzzu/Nexy)](https://github.com/valzzu/Nexy/releases/latest)
+
+> Nexy is a fork of [VRCX](https://github.com/vrcx-team/VRCX). This page is an upstream VRCX translation that has not yet been adapted for NexVR. See the [Nexy README](../README.md) for current information.
+
 
 | [English](/README.md) |
 

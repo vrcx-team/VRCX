@@ -75,6 +75,8 @@ npm run build-electron
 
 The NexVR integration lives in [`src/services/nexvr/`](src/services/nexvr/): the API translation layer, the realtime client, and the game session feed.
 
+Nexy icons are sourced from `images/Nexy.svg` and `images/Nexy_notify.svg`, with PNG and ICO files committed for packaging.
+
 Found a bug or have a request? [Open an issue](https://github.com/valzzu/nexy/issues).
 
 ## Credits
