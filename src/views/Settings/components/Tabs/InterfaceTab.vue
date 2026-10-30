@@ -432,10 +432,20 @@
             <div class="settings-item">
                 <div class="flex flex-col gap-2 py-2">
                     <div v-for="colorEntry in trustColorEntries" :key="colorEntry.key" class="flex items-center gap-3">
-                        <span :class="colorEntry.tagClass">{{ colorEntry.label ?? t(colorEntry.labelKey) }}</span>
+                        <span
+                            v-if="colorEntry.label"
+                            :class="[
+                                colorEntry.tagClass,
+                                'nexvr-rank-badge inline-flex min-w-8 items-center justify-center rounded border px-2 py-1 text-xs font-semibold'
+                            ]"
+                            :aria-label="colorEntry.label"
+                            :title="colorEntry.label"
+                            >{{ colorEntry.label.slice(5) }}</span
+                        >
+                        <span v-else :class="colorEntry.tagClass">{{ t(colorEntry.labelKey) }}</span>
                         <ColorPickerButton
                             :model-value="trustColor[colorEntry.key]"
-                            :presets="colorEntry.presets"
+                            :presets="colorEntry.presets ?? rankColorPresets(colorEntry.key)"
                             @change="updateTrustColor(colorEntry.key, $event)" />
                     </div>
                 </div>
@@ -487,6 +497,7 @@
     import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
     import { getLanguageName, languageCodes } from '@/localization';
     import { APP_CJK_FONT_PACKS, APP_FONT_CONFIG, APP_FONT_DEFAULT_KEY, APP_FONT_FAMILIES } from '@/shared/constants';
+    import { NEXVR_RANK_COLORS } from '@/shared/constants/nexvrRankColors';
     import { Button } from '@/components/ui/button';
     import { storeToRefs } from 'pinia';
     import { toast } from 'vue-sonner';
@@ -527,6 +538,7 @@
         hideUnfriends,
         randomUserColours,
         trustColor,
+        isDarkMode,
         notificationIconDot,
         tablePageSizes,
         isDataTableStriped,
@@ -565,14 +577,16 @@
         setAppCjkFontPack
     } = appearanceSettingsStore;
 
+    const rankColorPresets = (key) => [NEXVR_RANK_COLORS[isDarkMode.value ? 'dark' : 'light'][key]];
+
     const trustColorEntries = [
-        { key: 'rankE', tagClass: 'x-tag-rankE', label: 'Rank E', presets: ['#8D94A3'] },
-        { key: 'rankD', tagClass: 'x-tag-rankD', label: 'Rank D', presets: ['#6FDC8C'] },
-        { key: 'rankC', tagClass: 'x-tag-rankC', label: 'Rank C', presets: ['#4F9CFF'] },
-        { key: 'rankB', tagClass: 'x-tag-rankB', label: 'Rank B', presets: ['#B48CFF'] },
-        { key: 'rankA', tagClass: 'x-tag-rankA', label: 'Rank A', presets: ['#FF9A52'] },
-        { key: 'rankS', tagClass: 'x-tag-rankS', label: 'Rank S', presets: ['#857241'] },
-        { key: 'rankSPlus', tagClass: 'x-tag-rankSPlus', label: 'Rank S+', presets: ['#4779C8'] },
+        { key: 'rankE', tagClass: 'x-tag-rankE', label: 'Rank E' },
+        { key: 'rankD', tagClass: 'x-tag-rankD', label: 'Rank D' },
+        { key: 'rankC', tagClass: 'x-tag-rankC', label: 'Rank C' },
+        { key: 'rankB', tagClass: 'x-tag-rankB', label: 'Rank B' },
+        { key: 'rankA', tagClass: 'x-tag-rankA', label: 'Rank A' },
+        { key: 'rankS', tagClass: 'x-tag-rankS', label: 'Rank S' },
+        { key: 'rankSPlus', tagClass: 'x-tag-rankSPlus', label: 'Rank S+' },
         {
             key: 'untrusted',
             tagClass: 'x-tag-untrusted',

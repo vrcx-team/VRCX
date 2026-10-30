@@ -149,8 +149,16 @@
                     <Badge
                         variant="outline"
                         class="name h-5 px-1.5 text-[11px] leading-none"
-                        :class="userDialog.ref.$trustClass">
-                        <Shield class="h-2.5 w-2.5" /> {{ userDialog.ref.$trustLevel }}
+                        :class="[
+                            userDialog.ref.$trustClass,
+                            { 'nexvr-rank-badge': userDialog.ref.$trustLevel?.startsWith('Rank ') }
+                        ]">
+                        <Shield v-if="!userDialog.ref.$trustLevel?.startsWith('Rank ')" class="h-2.5 w-2.5" />
+                        {{
+                            userDialog.ref.$trustLevel?.startsWith('Rank ')
+                                ? userDialog.ref.$trustLevel.slice(5)
+                                : userDialog.ref.$trustLevel
+                        }}
                     </Badge>
                 </TooltipWrapper>
                 <TooltipWrapper

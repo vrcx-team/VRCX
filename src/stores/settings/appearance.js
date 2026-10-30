@@ -25,6 +25,12 @@ import {
     updateTrustColorClasses
 } from '../../shared/utils/base/ui';
 import { computeTrustLevel, getNameColour } from '../../shared/utils';
+import {
+    getNexvrRankColors,
+    NEXVR_RANK_COLOR_KEYS,
+    NEXVR_RANK_COLORS,
+    sanitizeNexvrRankColorOverrides
+} from '../../shared/constants/nexvrRankColors';
 import { database } from '../../services/database';
 
 import { loadLocalizedStrings } from '../../plugins';
@@ -94,16 +100,6 @@ export const useAppearanceSettingsStore = defineStore(
         const randomUserColours = ref(false);
         const tableDensity = ref('standard');
         const TRUST_COLOR_DEFAULTS = Object.freeze({
-            // NexVR social ranks (E through S+), sampled from the rank palette.
-            rankE: '#8D94A3',
-            rankD: '#6FDC8C',
-            rankC: '#4F9CFF',
-            rankB: '#B48CFF',
-            rankA: '#FF9A52',
-            rankS: '#857241',
-            // S+ uses a blue gradient badge; a solid blue works for name text and borders.
-            rankSPlus: '#4779C8',
-            // Legacy VRChat trust ranks and moderation colours remain independent.
             untrusted: '#CCCCCC',
             basic: '#1778FF',
             known: '#2BCF5C',
@@ -112,7 +108,17 @@ export const useAppearanceSettingsStore = defineStore(
             vip: '#FF2626',
             troll: '#782F2F'
         });
-        const trustColor = ref({ ...TRUST_COLOR_DEFAULTS });
+        const legacyTrustColors = ref({ ...TRUST_COLOR_DEFAULTS });
+        const rankColorOverrides = ref({ light: {}, dark: {} });
+        const trustColor = ref({ ...TRUST_COLOR_DEFAULTS, ...getNexvrRankColors(false) });
+
+        function applyThemeRankColors() {
+            const themeKey = isDarkMode.value ? 'dark' : 'light';
+            trustColor.value = {
+                ...legacyTrustColors.value,
+                ...getNexvrRankColors(isDarkMode.value, rankColorOverrides.value[themeKey])
+            };
+        }
         const currentCulture = ref('');
         const notificationIconDot = ref(false);
         const isNavCollapsed = ref(true);
@@ -178,6 +184,7 @@ export const useAppearanceSettingsStore = defineStore(
                 tableDensityConfig,
                 compactTableModeConfig,
                 trustColorConfig,
+                rankColorOverridesConfig,
                 notificationIconDotConfig,
                 navIsCollapsedConfig,
                 dataTableStripedConfig,
@@ -223,6 +230,7 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getString('VRCX_tableDensity'),
                 configRepository.getBool('VRCX_compactTableMode', false),
                 configRepository.getString('VRCX_trustColor', JSON.stringify(TRUST_COLOR_DEFAULTS)),
+                configRepository.getString('VRCX_nexvrRankColorOverrides', '{}'),
                 configRepository.getBool('VRCX_notificationIconDot', true),
                 configRepository.getBool('VRCX_navIsCollapsed', false),
                 configRepository.getBool('VRCX_dataTableStriped', false),
@@ -288,27 +296,62 @@ export const useAppearanceSettingsStore = defineStore(
                 sidebarSortMethod3.value = sidebarSortMethods.value[2];
             }
 
-            // Add new rank defaults without erasing existing user-selected colours.
+            // Preserve legacy custom colours, but migrate NexVR ranks to the official
+            // per-theme palette rather than keeping the previous single-theme defaults.
             let savedTrustColors = {};
             try {
                 const parsed = JSON.parse(trustColorConfig);
                 if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-                    savedTrustColors = Object.fromEntries(
-                        Object.entries(parsed).filter(
-                            ([key, color]) =>
-                                Object.hasOwn(TRUST_COLOR_DEFAULTS, key) &&
-                                typeof color === 'string' &&
-                                /^#[0-9a-fA-F]{6}$/.test(color)
-                        )
-                    );
+                    savedTrustColors = parsed;
                 }
             } catch {
                 // Invalid saved configuration falls back to the default palette.
             }
-            trustColor.value = { ...TRUST_COLOR_DEFAULTS, ...savedTrustColors };
-            if (trustColorConfig !== JSON.stringify(trustColor.value)) {
-                await configRepository.setString('VRCX_trustColor', JSON.stringify(trustColor.value));
+            legacyTrustColors.value = {
+                ...TRUST_COLOR_DEFAULTS,
+                ...Object.fromEntries(
+                    Object.entries(savedTrustColors).filter(
+                        ([key, color]) =>
+                            Object.hasOwn(TRUST_COLOR_DEFAULTS, key) &&
+                            typeof color === 'string' &&
+                            /^#[0-9a-fA-F]{6}$/.test(color)
+                    )
+                )
+            };
+            if (trustColorConfig !== JSON.stringify(legacyTrustColors.value)) {
+                await configRepository.setString('VRCX_trustColor', JSON.stringify(legacyTrustColors.value));
             }
+            let savedOverrides = {};
+            try {
+                savedOverrides = JSON.parse(rankColorOverridesConfig);
+            } catch {
+                // Malformed rank settings do not replace the official palette.
+            }
+            rankColorOverrides.value = {
+                light: sanitizeNexvrRankColorOverrides(savedOverrides?.light),
+                dark: sanitizeNexvrRankColorOverrides(savedOverrides?.dark)
+            };
+            // Keep any explicitly customized colours from the earlier rank feature.
+            // Its shipped defaults are intentionally discarded in favour of the official table.
+            const previousRankDefaults = ['#8D94A3', '#6FDC8C', '#4F9CFF', '#B48CFF', '#FF9A52', '#857241', '#4779C8'];
+            for (const [index, key] of NEXVR_RANK_COLOR_KEYS.entries()) {
+                const previousColor = savedTrustColors[key];
+                if (
+                    typeof previousColor === 'string' &&
+                    /^#[0-9a-fA-F]{6}$/.test(previousColor) &&
+                    previousColor.toLowerCase() !== previousRankDefaults[index].toLowerCase() &&
+                    !rankColorOverrides.value.dark[key]
+                ) {
+                    rankColorOverrides.value.dark[key] = previousColor;
+                }
+            }
+            if (rankColorOverridesConfig !== JSON.stringify(rankColorOverrides.value)) {
+                await configRepository.setString(
+                    'VRCX_nexvrRankColorOverrides',
+                    JSON.stringify(rankColorOverrides.value)
+                );
+            }
+            applyThemeRankColors();
             navWidth.value = clampInt(navWidthConfig, 64, 480);
             isSidebarGroupByInstance.value = isSidebarGroupByInstanceConfig;
             isHideFriendsInSameInstance.value = isHideFriendsInSameInstanceConfig;
@@ -394,6 +437,7 @@ export const useAppearanceSettingsStore = defineStore(
                 setRandomUserColours();
             }
             if (typeof userStore.currentUser?.id === 'undefined') {
+                updateTrustColorClasses(trustColor.value);
                 return;
             }
             if (field && color) {
@@ -491,6 +535,7 @@ export const useAppearanceSettingsStore = defineStore(
             }
             const { isDark } = changeAppThemeStyle(mode);
             isDarkMode.value = isDark;
+            applyThemeRankColors();
             vrStore.updateVRConfigVars();
             updateTrustColor(undefined, undefined);
         }
@@ -796,9 +841,25 @@ export const useAppearanceSettingsStore = defineStore(
          * @param {object} color
          */
         function setTrustColor(color) {
-            // @ts-ignore
-            trustColor.value = color;
-            configRepository.setString('VRCX_trustColor', JSON.stringify(trustColor.value));
+            const themeKey = isDarkMode.value ? 'dark' : 'light';
+            const overrides = { ...rankColorOverrides.value[themeKey] };
+            for (const key of NEXVR_RANK_COLOR_KEYS) {
+                if (color[key] !== trustColor.value[key]) {
+                    if (color[key] === NEXVR_RANK_COLORS[themeKey][key]) {
+                        delete overrides[key];
+                    } else {
+                        overrides[key] = color[key];
+                    }
+                }
+            }
+            rankColorOverrides.value = { ...rankColorOverrides.value, [themeKey]: overrides };
+            legacyTrustColors.value = {
+                ...TRUST_COLOR_DEFAULTS,
+                ...Object.fromEntries(Object.keys(TRUST_COLOR_DEFAULTS).map((key) => [key, color[key]]))
+            };
+            applyThemeRankColors();
+            configRepository.setString('VRCX_trustColor', JSON.stringify(legacyTrustColors.value));
+            configRepository.setString('VRCX_nexvrRankColorOverrides', JSON.stringify(rankColorOverrides.value));
         }
 
         function handleSaveSidebarSortOrder() {
