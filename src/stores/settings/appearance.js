@@ -94,6 +94,16 @@ export const useAppearanceSettingsStore = defineStore(
         const randomUserColours = ref(false);
         const tableDensity = ref('standard');
         const TRUST_COLOR_DEFAULTS = Object.freeze({
+            // NexVR social ranks (E through S+), sampled from the rank palette.
+            rankE: '#8D94A3',
+            rankD: '#6FDC8C',
+            rankC: '#4F9CFF',
+            rankB: '#B48CFF',
+            rankA: '#FF9A52',
+            rankS: '#857241',
+            // S+ uses a blue gradient badge; a solid blue works for name text and borders.
+            rankSPlus: '#4779C8',
+            // Legacy VRChat trust ranks and moderation colours remain independent.
             untrusted: '#CCCCCC',
             basic: '#1778FF',
             known: '#2BCF5C',
@@ -278,10 +288,27 @@ export const useAppearanceSettingsStore = defineStore(
                 sidebarSortMethod3.value = sidebarSortMethods.value[2];
             }
 
-            if (trustColorConfig !== JSON.stringify(TRUST_COLOR_DEFAULTS)) {
-                await configRepository.setString('VRCX_trustColor', JSON.stringify(TRUST_COLOR_DEFAULTS));
+            // Add new rank defaults without erasing existing user-selected colours.
+            let savedTrustColors = {};
+            try {
+                const parsed = JSON.parse(trustColorConfig);
+                if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                    savedTrustColors = Object.fromEntries(
+                        Object.entries(parsed).filter(
+                            ([key, color]) =>
+                                Object.hasOwn(TRUST_COLOR_DEFAULTS, key) &&
+                                typeof color === 'string' &&
+                                /^#[0-9a-fA-F]{6}$/.test(color)
+                        )
+                    );
+                }
+            } catch {
+                // Invalid saved configuration falls back to the default palette.
             }
-            trustColor.value = { ...TRUST_COLOR_DEFAULTS };
+            trustColor.value = { ...TRUST_COLOR_DEFAULTS, ...savedTrustColors };
+            if (trustColorConfig !== JSON.stringify(trustColor.value)) {
+                await configRepository.setString('VRCX_trustColor', JSON.stringify(trustColor.value));
+            }
             navWidth.value = clampInt(navWidthConfig, 64, 480);
             isSidebarGroupByInstance.value = isSidebarGroupByInstanceConfig;
             isHideFriendsInSameInstance.value = isHideFriendsInSameInstanceConfig;

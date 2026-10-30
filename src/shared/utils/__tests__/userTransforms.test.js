@@ -62,6 +62,22 @@ describe('computeTrustLevel', () => {
         expect(result.trustSortNum).toBe(1);
     });
 
+    it.each([
+        ['E', 'rankE', 1],
+        ['D', 'rankD', 2],
+        ['C', 'rankC', 3],
+        ['B', 'rankB', 4],
+        ['A', 'rankA', 5],
+        ['S', 'rankS', 5.5],
+        ['S+', 'rankSPlus', 5.8]
+    ])('gives social rank %s its own color and sort order', (rank, colorKey, sortNum) => {
+        const result = computeTrustLevel([`nexvr_rank_${rank}`], 'none');
+        expect(result.trustLevel).toBe(`Rank ${rank}`);
+        expect(result.trustClass).toBe(`x-tag-${colorKey}`);
+        expect(result.trustColorKey).toBe(colorKey);
+        expect(result.trustSortNum).toBe(sortNum);
+    });
+
     it('returns Trusted User for veteran tags', () => {
         const result = computeTrustLevel(['system_trust_veteran'], '');
         expect(result.trustLevel).toBe('Trusted User');
