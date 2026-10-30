@@ -107,8 +107,8 @@ namespace VRCX
             public const string Overlay = "--overlay";
             public bool IsOverlay { get; set; } = false;
 
-            public const string LaunchCommandPrefix = "/uri=vrcx://";
-            public const string LinuxLaunchCommandPrefix = "vrcx://";
+            public const string LaunchCommandPrefix = "/uri=nexy://";
+            public const string LinuxLaunchCommandPrefix = "nexy://";
             public string LaunchCommand { get; set; } = null;
 
             public const string ConfigDirectoryPrefix = "--config";
@@ -120,7 +120,7 @@ namespace VRCX
 
         private static bool IsDuplicateProcessRunning(VrcxLaunchArguments launchArguments)
         {
-            var processes = Process.GetProcessesByName("VRCX");
+            var processes = Process.GetProcessesByName("Nexy");
             var isDuplicateProcessRunning = false;
             foreach (var process in processes)
             {

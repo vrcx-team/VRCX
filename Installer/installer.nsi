@@ -17,10 +17,11 @@
     VIProductVersion "${PRODUCT_VERSION}"
     VIFileVersion "${VERSION}"
     VIAddVersionKey "FileVersion" "${VERSION}"
-    VIAddVersionKey "ProductName" "VRCX"
+    VIAddVersionKey "ProductName" "Nexy"
     VIAddVersionKey "ProductVersion" "${PRODUCT_VERSION}"
-    VIAddVersionKey "LegalCopyright" "Copyright vrcx-team, pypy, natsumi"
-    VIAddVersionKey "FileDescription" "Friendship management tool for VRChat"
+    VIAddVersionKey "LegalCopyright" "Copyright Nexy contributors"
+    VIAddVersionKey "FileDescription" "Friendship management tool for NexVR"
+    VIAddVersionKey "Comments" "Nexy is a fork of VRCX (https://github.com/vrcx-team/VRCX)"
 
 ;--------------------------------
 ;Include Modern UI
@@ -35,10 +36,10 @@
     SetCompressor /SOLID lzma
     SetCompressorDictSize 16
     Unicode True
-    Name "VRCX"
-    OutFile "VRCX_Setup_x64.exe"
-    InstallDir "$PROGRAMFILES64\VRCX"
-    InstallDirRegKey HKLM "Software\VRCX" "InstallDir"
+    Name "Nexy"
+    OutFile "Nexy_Setup_x64.exe"
+    InstallDir "$PROGRAMFILES64\Nexy"
+    InstallDirRegKey HKLM "Software\Nexy" "InstallDir"
     RequestExecutionLevel admin
     ShowInstDetails show
 
@@ -55,8 +56,8 @@
 ;--------------------------------
 ;Icons
 
-    !define MUI_ICON "../images/VRCX.ico"
-    !define MUI_UNICON "../images/VRCX.ico"
+    !define MUI_ICON "../images/Nexy.ico"
+    !define MUI_UNICON "../images/Nexy.ico"
 
 ;--------------------------------
 ;Pages
@@ -72,10 +73,10 @@
     ;------------------------------
     ; Finish Page
 
-    ; Checkbox to launch VRCX.
+    ; Checkbox to launch Nexy.
     !define MUI_FINISHPAGE_RUN
-    !define MUI_FINISHPAGE_RUN_TEXT "Launch VRCX"
-    !define MUI_FINISHPAGE_RUN_FUNCTION launchVRCX
+    !define MUI_FINISHPAGE_RUN_TEXT "Launch Nexy"
+    !define MUI_FINISHPAGE_RUN_FUNCTION launchNexy
 
     ; Checkbox to create desktop shortcut.
     !define MUI_FINISHPAGE_SHOWREADME
@@ -109,43 +110,28 @@ FunctionEnd
 Function .onInit
     StrCpy $upgradeInstallation 0
 
-    ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "UninstallString"
+    ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Nexy" "UninstallString"
     StrCmp $R0 "" notInstalled
         StrCpy $upgradeInstallation 1
     notInstalled:
 
-    ; If VRCX is already running, display a warning message
-    loop:
-    StrCpy $1 "VRCX.exe"
-    nsProcess::_FindProcess "$1"
-    Pop $R1
-    ${If} $R1 = 0
-        MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION "VRCX is still running. $\n$\nClick `OK` to kill the running process or `Cancel` to cancel this installer." /SD IDOK IDCANCEL cancel
-            nsExec::ExecToStack "taskkill /IM VRCX.exe"
-    ${Else}
-        Goto done
-    ${EndIf}
-    Sleep 1000
-    Goto loop
-
-    cancel:
-        Abort
-    done:
+    ; The updater exits before launching this installer. Do not kill every
+    ; VRCX.exe process: the original VRCX application may also be running.
 FunctionEnd
 
 Function .onInstSuccess
     ${If} $upgradeInstallation = 1
-        Call launchVRCX
+        Call launchNexy
     ${EndIf}
 FunctionEnd
 
 Function createDesktopShortcut
-    CreateShortcut "$DESKTOP\VRCX.lnk" "$INSTDIR\VRCX.exe"
+    CreateShortcut "$DESKTOP\Nexy.lnk" "$INSTDIR\Nexy.exe"
 FunctionEnd
 
-Function launchVRCX
+Function launchNexy
     SetOutPath $INSTDIR
-    ShellExecAsUser::ShellExecAsUser "" "$INSTDIR\VRCX.exe" ""
+    ShellExecAsUser::ShellExecAsUser "" "$INSTDIR\Nexy.exe" ""
 FunctionEnd
 
 ;--------------------------------
@@ -169,57 +155,52 @@ Section "Install" SecInstall
 
     File /r /x *.log /x *.pdb "..\build\Cef\*.*"
 
-    WriteRegStr HKLM "Software\VRCX" "InstallDir" $INSTDIR
+    WriteRegStr HKLM "Software\Nexy" "InstallDir" $INSTDIR
     WriteUninstaller "$INSTDIR\Uninstall.exe"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayName" "VRCX"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "Publisher" "vrcx-team"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayVersion" "${VERSION}"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayArch" "x64"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "InstallLocation" "$INSTDIR"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayIcon" "$\"$INSTDIR\VRCX.ico$\""
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Nexy" "DisplayName" "Nexy"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Nexy" "Publisher" "Nexy contributors"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Nexy" "DisplayVersion" "${VERSION}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Nexy" "DisplayArch" "x64"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Nexy" "InstallLocation" "$INSTDIR"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Nexy" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Nexy" "DisplayIcon" "$\"$INSTDIR\Nexy.ico$\""
 
     ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
     IntFmt $0 "0x%08X" $0
-    WriteRegDWORD HKLM  "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "EstimatedSize" "$0"
+    WriteRegDWORD HKLM  "Software\Microsoft\Windows\CurrentVersion\Uninstall\Nexy" "EstimatedSize" "$0"
 
     ${GetParameters} $R2
     ${GetOptions} $R2 /SKIP_SHORTCUT= $3
     StrCmp $3 "true" noShortcut
-        CreateShortCut "$SMPROGRAMS\VRCX.lnk" "$INSTDIR\VRCX.exe"
-        ApplicationID::Set "$SMPROGRAMS\VRCX.lnk" "VRCX"
+        CreateShortCut "$SMPROGRAMS\Nexy.lnk" "$INSTDIR\Nexy.exe"
+        ApplicationID::Set "$SMPROGRAMS\Nexy.lnk" "Nexy"
     noShortcut:
 
-    WriteRegStr HKCU "Software\Classes\vrcx" "" "URL:vrcx"
-    WriteRegStr HKCU "Software\Classes\vrcx" "FriendlyTypeName" "VRCX"
-    WriteRegStr HKCU "Software\Classes\vrcx" "URL Protocol" ""
-    WriteRegExpandStr HKCU "Software\Classes\vrcx\DefaultIcon" "" "$INSTDIR\VRCX.ico"
-    WriteRegStr HKCU "Software\Classes\vrcx\shell" "" "open"
-    WriteRegStr HKCU "Software\Classes\vrcx\shell\open" "FriendlyAppName" "VRCX"
-    WriteRegStr HKCU "Software\Classes\vrcx\shell\open\command" "" '"$INSTDIR\VRCX.exe" /uri="%1" /params="%2 %3 %4"'
+    ; Nexy owns a separate URI scheme, never the original VRCX scheme.
+    WriteRegStr HKLM "Software\Classes\nexy" "" "URL:nexy"
+    WriteRegStr HKLM "Software\Classes\nexy" "FriendlyTypeName" "Nexy"
+    WriteRegStr HKLM "Software\Classes\nexy" "URL Protocol" ""
+    WriteRegStr HKLM "Software\Classes\nexy\DefaultIcon" "" "$INSTDIR\Nexy.ico"
+    WriteRegStr HKLM "Software\Classes\nexy\shell\open" "FriendlyAppName" "Nexy"
+    WriteRegStr HKLM "Software\Classes\nexy\shell\open\command" "" '"$INSTDIR\Nexy.exe" /uri="%1"'
+
 SectionEnd
 
 ;--------------------------------
 ;Uninstaller Section
 
 Section "Uninstall"
-    ; If VRCX is already running, display a warning message and exit
-    StrCpy $1 "VRCX.exe"
-    nsProcess::_FindProcess "$1"
-    Pop $R1
-    ${If} $R1 = 0
-        MessageBox MB_OK|MB_ICONEXCLAMATION "VRCX is still running. Cannot uninstall this software.$\nPlease close VRCX and try again." /SD IDOK
-        Abort
-    ${EndIf}
+    ; Rely on Windows file-in-use handling; do not block uninstall because
+    ; the unrelated VRCX application happens to be running.
 
     RMDir /r "$INSTDIR"
 
-    DeleteRegKey HKLM "Software\VRCX"
-    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX"
-    DeleteRegKey HKCU "Software\Classes\vrcx"
+    DeleteRegKey HKLM "Software\Classes\nexy"
+    DeleteRegKey HKLM "Software\Nexy"
+    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Nexy"
 
     ${IfNot} ${Silent}
-        Delete "$SMPROGRAMS\VRCX.lnk"
-        Delete "$DESKTOP\VRCX.lnk"
+        Delete "$SMPROGRAMS\Nexy.lnk"
+        Delete "$DESKTOP\Nexy.lnk"
     ${EndIf}
 SectionEnd

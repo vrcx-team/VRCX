@@ -9,7 +9,7 @@ const { unlink, copyFile, rename } = require('node:fs/promises');
 const DOTNET_VERSION = '10.0.8';
 const DOTNET_RUNTIME_DIR = path.join(__dirname, '..', 'build', 'Electron', 'dotnet-runtime');
 
-const DOTNET_CACHE_DIR = path.join(os.homedir(), '.cache', 'vrcx-build', 'dotnet-cache');
+const DOTNET_CACHE_DIR = path.join(os.homedir(), '.cache', 'nexy-build', 'dotnet-cache');
 
 /**
  * Downloads a file from a URL and saves it to a target path

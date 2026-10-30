@@ -100,7 +100,7 @@ namespace VRCX
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = Path.Join(Program.BaseDirectory, "VRCX.exe"),
+                    FileName = Path.Join(Program.BaseDirectory, "Nexy.exe"),
                     Arguments = string.Join(' ', args),
                     UseShellExecute = true,
                     WorkingDirectory = Program.BaseDirectory

@@ -1,8 +1,8 @@
 name: 'Build Electron'
 description: 'Build Electron .NET files for packaging in the calling job'
 inputs:
-  vrcx-version:
-    description: 'VRCX version number'
+  nexy-version:
+    description: 'Nexy version number'
     required: true
   platform:
     description: 'The platform being built, x64 or arm64'
@@ -24,7 +24,7 @@ runs:
     - name: Set version
       shell: pwsh
       run: |
-        echo "${{ inputs.vrcx-version }}" > Version
+        echo "${{ inputs.nexy-version }}" > Version
         cat Version
     - uses: actions/cache@v5
       with:

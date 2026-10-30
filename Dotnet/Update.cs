@@ -17,7 +17,7 @@ namespace VRCX
     public class Update
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        private static readonly string VrcxSetupExecutable = Path.Join(Program.AppDataDirectory, "VRCX_Setup.exe");
+        private static readonly string NexySetupExecutable = Path.Join(Program.AppDataDirectory, "Nexy_Setup.exe");
         private static readonly string UpdateExecutable = Path.Join(Program.AppDataDirectory, "update.exe");
         private static readonly string TempDownload = Path.Join(Program.AppDataDirectory, "tempDownload");
         private static readonly HttpClient httpClient;
@@ -48,13 +48,13 @@ namespace VRCX
 
         public static void Check()
         {
-            if (Process.GetProcessesByName("VRCX_Setup").Length > 0)
+            if (Process.GetProcessesByName("Nexy_Setup").Length > 0)
                 Environment.Exit(0);
 
             if (File.Exists(TempDownload))
                 File.Delete(TempDownload);
-            if (File.Exists(VrcxSetupExecutable))
-                File.Delete(VrcxSetupExecutable);
+            if (File.Exists(NexySetupExecutable))
+                File.Delete(NexySetupExecutable);
 
             if (File.Exists(UpdateExecutable))
                 InstallUpdate();
@@ -66,20 +66,20 @@ namespace VRCX
 
             try
             {
-                if (File.Exists(VrcxSetupExecutable))
-                    File.Delete(VrcxSetupExecutable);
-                File.Move(UpdateExecutable, VrcxSetupExecutable);
-                var vrcxProcess = new Process
+                if (File.Exists(NexySetupExecutable))
+                    File.Delete(NexySetupExecutable);
+                File.Move(UpdateExecutable, NexySetupExecutable);
+                var nexyProcess = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
-                        FileName = VrcxSetupExecutable,
+                        FileName = NexySetupExecutable,
                         Arguments = setupArguments,
                         UseShellExecute = true,
                         WorkingDirectory = Program.AppDataDirectory
                     }
                 };
-                vrcxProcess.Start();
+                nexyProcess.Start();
                 Environment.Exit(0);
             }
             catch (Exception e)
@@ -125,7 +125,7 @@ namespace VRCX
                 throw new Exception($"Failed to download the file. Status code: {response.StatusCode}");
 
             var fileName = GetFileNameFromContentDisposition(response);
-            var tempPath = Path.Join(Path.GetTempPath(), "VRCX");
+            var tempPath = Path.Join(Path.GetTempPath(), "Nexy");
             Directory.CreateDirectory(tempPath);
             var filePath = Path.Join(tempPath, fileName);
             await using var fileStream = File.Create(filePath);
